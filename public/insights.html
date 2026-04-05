@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Insights — KIRA RESEARCH</title>
+  <meta name="description" content="Free market intelligence articles covering Southeast Asia's top industries. Fintech, FMCG, E-Commerce, EV, and more." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0B0D10;color:#fff;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(30,111,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(30,111,255,0.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;border-bottom:1px solid #1A1D24;background:rgba(11,13,16,.9);backdrop-filter:blur(16px)}
+    .nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo img{height:32px;width:auto;display:block}
+    .nav-links{display:flex;align-items:center;gap:24px}
+    .nav-links a{font-size:13px;color:#A3A9B6;transition:color .2s}.nav-links a:hover{color:#fff}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:Arial,sans-serif}
+    .btn-ghost{background:transparent;color:#A3A9B6}.btn-ghost:hover{color:#fff}
+    .btn-primary{background:#1E6FFF;color:#fff}.btn-primary:hover{background:#1558CC}
+    .container{max-width:1120px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+    .page{padding-top:96px;padding-bottom:96px}
+
+    /* hero */
+    .insights-hero{padding:48px 0 40px;border-bottom:1px solid #1A1D24;margin-bottom:48px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+    .eyebrow{font-size:11px;color:#1E6FFF;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px}
+    .hero-title{font-size:clamp(24px,3.5vw,40px);font-weight:700;letter-spacing:-.5px;margin-bottom:8px}
+    .hero-sub{font-size:15px;color:#A3A9B6;max-width:500px}
+
+    /* filters */
+    .filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+    .filter-btn{padding:7px 14px;background:transparent;border:1px solid #1A1D24;border-radius:20px;font-size:12px;color:#5A6278;cursor:pointer;transition:all .2s;font-family:Arial,sans-serif}
+    .filter-btn:hover{border-color:#242A35;color:#A3A9B6}
+    .filter-btn.active{background:rgba(30,111,255,.1);border-color:rgba(30,111,255,.3);color:#1E6FFF}
+
+    /* layout: featured + grid */
+    .featured-article{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#11151C;border:1px solid #1A1D24;border-radius:16px;overflow:hidden;margin-bottom:32px;transition:border-color .2s;cursor:pointer}
+    .featured-article:hover{border-color:#242A35}
+    .featured-img{background:linear-gradient(135deg,#11151C,#161B24);min-height:280px;display:flex;align-items:center;justify-content:center;font-size:64px;border-right:1px solid #1A1D24}
+    .featured-body{padding:36px}
+    .featured-label{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#1E6FFF;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+    .featured-label .new-dot{width:6px;height:6px;background:#1E6FFF;border-radius:50%;animation:pulse-dot 2s ease-in-out infinite}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+    .featured-title{font-size:22px;font-weight:700;line-height:1.35;margin-bottom:12px;letter-spacing:-.2px}
+    .featured-excerpt{font-size:13px;color:#A3A9B6;line-height:1.75;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .article-meta{display:flex;align-items:center;gap:12px;font-size:11px;color:#5A6278}
+    .meta-dot{width:3px;height:3px;background:#5A6278;border-radius:50%}
+    .read-more{margin-top:20px;font-size:12px;color:#1E6FFF;font-weight:600}
+
+    /* grid */
+    .articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .article-card{background:#11151C;border:1px solid #1A1D24;border-radius:12px;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer;display:flex;flex-direction:column}
+    .article-card:hover{border-color:#242A35;transform:translateY(-2px)}
+    .article-card-img{background:linear-gradient(135deg,#11151C,#161B24);height:100px;display:flex;align-items:center;justify-content:center;font-size:36px;border-bottom:1px solid #1A1D24}
+    .article-card-body{padding:20px;flex:1;display:flex;flex-direction:column}
+    .article-industry{font-size:10px;color:#1E6FFF;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+    .article-title{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:10px;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .article-excerpt{font-size:12px;color:#5A6278;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:14px}
+    .article-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#5A6278}
+    .article-country{display:flex;align-items:center;gap:4px}
+
+    /* article view (when slug is in URL) */
+    #view-article{display:none}
+    .article-layout{display:grid;grid-template-columns:1fr 280px;gap:48px;align-items:start}
+    .article-main{}
+    .article-header{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #1A1D24}
+    .article-header .eyebrow{margin-bottom:12px}
+    .article-header h1{font-size:clamp(24px,3.5vw,38px);font-weight:700;line-height:1.2;letter-spacing:-.3px;margin-bottom:16px}
+    .article-byline{font-size:12px;color:#5A6278;display:flex;align-items:center;gap:12px}
+    .article-body{font-size:15px;color:#A3A9B6;line-height:1.85}
+    .article-body h2{color:#fff;font-size:20px;font-weight:700;margin:32px 0 12px;letter-spacing:-.2px}
+    .article-body h3{color:#fff;font-size:16px;font-weight:700;margin:24px 0 10px}
+    .article-body p{margin-bottom:18px}
+    .article-body strong{color:#fff}
+    .article-body ul{margin:12px 0 18px 20px;display:flex;flex-direction:column;gap:6px}
+    .article-body ul li{color:#A3A9B6}
+    .article-sidebar{position:sticky;top:88px}
+    .sidebar-card{background:#11151C;border:1px solid #1A1D24;border-radius:12px;padding:24px;margin-bottom:16px}
+    .sidebar-title{font-size:12px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+    .sidebar-report-title{font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.4}
+    .sidebar-report-desc{font-size:12px;color:#5A6278;margin-bottom:14px;line-height:1.5}
+    .sidebar-cta{display:block;text-align:center;padding:10px;background:#1E6FFF;color:#fff;border-radius:6px;font-size:12px;font-weight:600;transition:all .2s}
+    .sidebar-cta:hover{background:#1558CC}
+    .related-list{display:flex;flex-direction:column;gap:10px}
+    .related-item{font-size:13px;color:#A3A9B6;cursor:pointer;transition:color .2s;padding-bottom:10px;border-bottom:1px solid #1A1D24;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .related-item:last-child{border-bottom:none;padding-bottom:0}
+    .related-item:hover{color:#fff}
+
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5A6278;margin-bottom:32px;transition:color .2s;cursor:pointer}
+    .back-link:hover{color:#fff}
+
+    /* skeleton */
+    .skeleton{background:linear-gradient(90deg,#11151C 25%,#161B24 50%,#11151C 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    footer{border-top:1px solid #1A1D24;padding:40px 0;margin-top:60px}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .footer-links{display:flex;gap:28px}
+    .footer-links a{font-size:12px;color:#5A6278;transition:color .2s}.footer-links a:hover{color:#A3A9B6}
+
+    @media(max-width:1000px){.article-layout{grid-template-columns:1fr}.article-sidebar{display:none}}
+    @media(max-width:860px){.featured-article{grid-template-columns:1fr}.featured-img{display:none}.articles-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}}
+    @media(max-width:560px){.container{padding:0 20px}.articles-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo.png" alt="KIRA RESEARCH" /></a>
+    <div class="nav-links">
+      <a href="/report.html">Reports</a>
+      <a href="/library.html">Library</a>
+      <a href="/pricing.html">Pricing</a>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="/auth.html" class="btn btn-ghost" id="nav-signin">Sign in</a>
+      <a href="/profile.html" class="btn btn-ghost" id="nav-profile" style="display:none">My Reports</a>
+      <button class="btn btn-ghost" id="nav-signout" style="display:none">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="container">
+
+    <!-- LIST VIEW -->
+    <div id="view-list">
+      <div class="insights-hero">
+        <div>
+          <p class="eyebrow">Insights</p>
+          <h1 class="hero-title">Market intelligence. Free.</h1>
+          <p class="hero-sub">Weekly articles on Southeast Asia's fastest-moving markets, generated from live research and our proprietary data library.</p>
+        </div>
+        <a href="/report.html" class="btn btn-primary" style="flex-shrink:0">Generate Custom Report →</a>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-row" id="filters-row">
+        <button class="filter-btn active" onclick="setFilter('')">All</button>
+        <button class="filter-btn" onclick="setFilter('fintech')">Fintech</button>
+        <button class="filter-btn" onclick="setFilter('ecommerce')">E-Commerce</button>
+        <button class="filter-btn" onclick="setFilter('fmcg')">FMCG</button>
+        <button class="filter-btn" onclick="setFilter('automotive')">Automotive</button>
+        <button class="filter-btn" onclick="setFilter('healthtech')">Healthtech</button>
+        <button class="filter-btn" onclick="setFilter('logistics')">Logistics</button>
+      </div>
+
+      <!-- Featured -->
+      <div id="featured-slot"></div>
+
+      <!-- Grid -->
+      <div class="articles-grid" id="articles-grid">
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE VIEW -->
+    <div id="view-article">
+      <div class="back-link" onclick="goBack()">← Back to Insights</div>
+      <div class="article-layout">
+        <div class="article-main">
+          <div class="article-header">
+            <p class="eyebrow" id="art-industry"></p>
+            <h1 id="art-title"></h1>
+            <div class="article-byline">
+              <span>KIRA RESEARCH</span>
+              <span class="meta-dot"></span>
+              <span id="art-date"></span>
+              <span class="meta-dot"></span>
+              <span id="art-readtime"></span>
+            </div>
+          </div>
+          <div class="article-body" id="art-body"></div>
+        </div>
+        <div class="article-sidebar">
+          <div class="sidebar-card">
+            <div class="sidebar-title">Related report</div>
+            <div class="sidebar-report-title" id="sidebar-report-title">—</div>
+            <div class="sidebar-report-desc" id="sidebar-report-desc">—</div>
+            <a href="#" class="sidebar-cta" id="sidebar-cta">Get Full Report — $49 →</a>
+          </div>
+          <div class="sidebar-card">
+            <div class="sidebar-title">Related Insights</div>
+            <div class="related-list" id="related-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <img src="/logo.png" alt="KIRA RESEARCH" style="height:24px;opacity:.7" />
+      <div class="footer-links">
+        <a href="/report.html">Reports</a>
+        <a href="/library.html">Library</a>
+        <a href="/pricing.html">Pricing</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <span style="font-size:11px;color:#5A6278">© 2026 KIRA RESEARCH</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const EMOJI_MAP = { fintech:'💳', ecommerce:'🛍️', fmcg:'🧴', automotive:'🚗', healthtech:'🏥', logistics:'📦', edtech:'📚', real_estate:'🏢' };
+const FLAG_MAP  = { Vietnam:'🇻🇳', Indonesia:'🇮🇩', Thailand:'🇹🇭', Philippines:'🇵🇭', Malaysia:'🇲🇾', Singapore:'🇸🇬' };
+
+let allArticles = [], activeFilter = '', currentArticle = null;
+
+// ── Load articles ─────────────────────────────────────────
+async function loadInsights() {
+  try {
+    const res  = await fetch('/api/insights?limit=20');
+    const data = await res.json();
+    allArticles = data.articles || [];
+  } catch {
+    allArticles = getSampleArticles();
+  }
+  renderList(allArticles);
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === (f || 'all'));
+  });
+  const filtered = f ? allArticles.filter(a => (a.industry || '').toLowerCase().includes(f)) : allArticles;
+  renderList(filtered);
+}
+
+// ── Render list ───────────────────────────────────────────
+function renderList(articles) {
+  document.getElementById('view-list').style.display    = 'block';
+  document.getElementById('view-article').style.display = 'none';
+
+  const [featured, ...rest] = articles;
+
+  // Featured
+  const featSlot = document.getElementById('featured-slot');
+  if (featured) {
+    const emoji = EMOJI_MAP[featured.industry?.toLowerCase()] || '📊';
+    featSlot.innerHTML = `
+      <div class="featured-article" onclick="openArticle('${featured.slug}')">
+        <div class="featured-img">${emoji}</div>
+        <div class="featured-body">
+          <div class="featured-label"><span class="new-dot"></span>${(featured.industry || 'market analysis').toUpperCase()}</div>
+          <div class="featured-title">${featured.title}</div>
+          <div class="featured-excerpt">${featured.content?.slice(0,280) || ''}</div>
+          <div class="article-meta">
+            <span>${FLAG_MAP[featured.country] || '🌏'} ${featured.country || 'Southeast Asia'}</span>
+            <span class="meta-dot"></span>
+            <span>${formatDate(featured.created_at)}</span>
+            <span class="meta-dot"></span>
+            <span>${readTime(featured.content)} min read</span>
+          </div>
+          <div class="read-more">Read article →</div>
+        </div>
+      </div>`;
+  } else {
+    featSlot.innerHTML = '';
+  }
+
+  // Grid
+  const grid = document.getElementById('articles-grid');
+  if (!rest.length) { grid.innerHTML = '<p style="color:#5A6278;font-size:13px;grid-column:span 3;text-align:center;padding:40px 0">No articles yet. Check back soon.</p>'; return; }
+
+  grid.innerHTML = rest.map(a => {
+    const emoji = EMOJI_MAP[a.industry?.toLowerCase()] || '📊';
+    return `<div class="article-card" onclick="openArticle('${a.slug}')">
+      <div class="article-card-img">${emoji}</div>
+      <div class="article-card-body">
+        <div class="article-industry">${(a.industry || '').toUpperCase()}</div>
+        <div class="article-title">${a.title}</div>
+        <div class="article-excerpt">${a.content?.slice(0,140) || ''}</div>
+        <div class="article-foot">
+          <span class="article-country">${FLAG_MAP[a.country] || '🌏'} ${a.country || 'SEA'}</span>
+          <span>${readTime(a.content)} min read</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Open article ──────────────────────────────────────────
+async function openArticle(slug) {
+  let article = allArticles.find(a => a.slug === slug);
+
+  if (!article) {
+    try {
+      const res  = await fetch('/api/insights?slug=' + slug);
+      const data = await res.json();
+      article = data.article;
+    } catch { return; }
+  }
+
+  if (!article) return;
+  currentArticle = article;
+
+  // Update URL without reload
+  history.pushState({ slug }, '', '/insights.html?slug=' + slug);
+
+  document.getElementById('view-list').style.display    = 'none';
+  document.getElementById('view-article').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  document.getElementById('art-industry').textContent = (article.industry || '').toUpperCase();
+  document.getElementById('art-title').textContent    = article.title;
+  document.getElementById('art-date').textContent     = formatDate(article.created_at);
+  document.getElementById('art-readtime').textContent = readTime(article.content) + ' min read';
+  document.getElementById('art-body').innerHTML       = markdownToHtml(article.content || '');
+
+  // Sidebar: related report
+  const reportUrl = '/report.html';
+  document.getElementById('sidebar-report-title').textContent = (article.industry || 'Market') + ' Market — ' + (article.country || 'Southeast Asia');
+  document.getElementById('sidebar-report-desc').textContent  = 'Full 12-section analysis: market sizing, competitive landscape, consumer insights, and strategic recommendations.';
+  document.getElementById('sidebar-cta').href = reportUrl + '?prefill_industry=' + encodeURIComponent(article.industry || '') + '&prefill_country=' + encodeURIComponent(article.country || '');
+
+  // Related articles
+  const related = allArticles.filter(a => a.slug !== slug && (a.industry === article.industry || a.country === article.country)).slice(0, 4);
+  document.getElementById('related-list').innerHTML = related.map(r =>
+    `<div class="related-item" onclick="openArticle('${r.slug}')">${r.title}</div>`
+  ).join('') || '<span style="font-size:12px;color:#5A6278">No related articles yet</span>';
+}
+
+function goBack() {
+  history.pushState({}, '', '/insights.html');
+  renderList(activeFilter ? allArticles.filter(a => (a.industry||'').toLowerCase().includes(activeFilter)) : allArticles);
+}
+
+window.addEventListener('popstate', () => {
+  const slug = new URLSearchParams(window.location.search).get('slug');
+  if (slug) openArticle(slug); else goBack();
+});
+
+// ── Helpers ───────────────────────────────────────────────
+function formatDate(d) {
+  if (!d) return '2026';
+  return new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function readTime(text) {
+  return Math.max(1, Math.round((text || '').split(' ').length / 200));
+}
+
+function markdownToHtml(text) {
+  return text
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m + '</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[h|u|l])(.+)$/gm, (m) => m.startsWith('<') ? m : '<p>' + m + '</p>');
+}
+
+function getSampleArticles() {
+  return [
+    { slug:'vietnam-fintech-2026', title:'Vietnam Fintech 2026: What\'s Driving the Next Wave of Digital Payment Growth', industry:'fintech', country:'Vietnam', created_at: new Date().toISOString(), content:`## Executive Overview\n\nVietnam\'s fintech sector is entering a new phase of maturity, moving beyond the early-stage cashless promotion era into a more competitive, consolidation-driven market.\n\n## Key Trends\n\nThe market is being shaped by three converging forces: regulatory tightening on e-wallets, aggressive super-app expansion, and the growing importance of B2B payment infrastructure.\n\n**QR Code standardization** completed in 2024 has fundamentally changed merchant acquisition economics. What previously required proprietary hardware now requires only a printed QR code, collapsing the cost of merchant onboarding by an estimated 70%.\n\n## Competitive Dynamics\n\nMoMo retains market leadership in consumer-facing digital wallets with an estimated 35% share of active users. However, ZaloPay\'s integration with Zalo\'s 74 million users gives it a structural distribution advantage that pure-play wallets cannot easily replicate.\n\n## What This Means for Entrants\n\nFor foreign fintech players, the window for standalone wallet plays is largely closed. The opportunity lies in infrastructure — payment processing, lending APIs, and embedded finance solutions for the country\'s 900,000+ SMEs.` },
+    { slug:'indonesia-ecommerce-2026', title:'Indonesia E-Commerce 2026: The Battle for Tier-2 Cities', industry:'ecommerce', country:'Indonesia', created_at: new Date(Date.now() - 86400000*2).toISOString(), content:`## Market Context\n\nIndonesia\'s e-commerce market has reached maturity in Java\'s major cities. The next phase of growth — and the next competitive battleground — is in tier-2 and tier-3 cities across Sumatra, Kalimantan, and Sulawesi.\n\n## The Logistics Challenge\n\nLast-mile delivery costs in non-Java markets remain the primary structural barrier. Shipping a 1kg package from Jakarta to Medan costs approximately 3x the equivalent in Java, fundamentally limiting price competitiveness for physical goods.\n\n## TikTok Shop\'s Disruptive Impact\n\nTikTok Shop\'s live-streaming commerce model has proven particularly effective in tier-2 markets, where entertainment and commerce blend naturally. Estimated GMV reached $8 billion in 2025, driven largely by fashion, beauty, and FMCG categories.` },
+    { slug:'thailand-fmcg-2026', title:'Thailand FMCG 2026: Health & Wellness Is Reshaping Shelf Space', industry:'fmcg', country:'Thailand', created_at: new Date(Date.now() - 86400000*4).toISOString(), content:`## Overview\n\nThailand\'s packaged food market is undergoing its most significant structural shift in a decade, as health and wellness positioning moves from premium niche to mainstream expectation.\n\n## The Wellness Premium\n\nProducts with functional health claims command 20–40% price premiums over conventional equivalents and are growing at 12–15% annually versus 3–4% for standard categories. This is not a premium-only phenomenon — mass market players are reformulating core products to reduce sugar, sodium, and artificial additives.\n\n## Modern Trade Evolution\n\nConvenience stores, led by 7-Eleven\'s 14,000+ outlets, are evolving from transaction points into daily lifestyle touchpoints. Fresh food, meal solutions, and health products now account for a growing share of 7-Eleven\'s revenue mix.` },
+    { slug:'sea-ev-2026', title:'Southeast Asia EV 2026: Which Markets Are Actually Ready?', industry:'automotive', country:'Vietnam', created_at: new Date(Date.now() - 86400000*6).toISOString(), content:`## Regional Overview\n\nSoutheast Asia\'s EV market recorded approximately 180,000 unit registrations across all vehicle types in 2025. The headline number masks significant variation by market maturity, infrastructure readiness, and policy environment.\n\n## Thailand: The Manufacturing Bet\n\nThailand is positioning itself as Southeast Asia\'s EV manufacturing hub, leveraging its established automotive supply chain. BYD, Great Wall Motor, and SAIC have all committed to local production, attracted by the EV 3.5 incentive package.\n\n## Vietnam: Two-Wheel Dominance\n\nVietnam leads the region in two-wheel EV penetration, driven almost entirely by VinFast\'s aggressive pricing and distribution. The four-wheel market remains nascent outside of Hanoi and Ho Chi Minh City.` },
+    { slug:'philippines-healthtech-2026', title:'Philippines Digital Health 2026: Infrastructure Gap as Opportunity', industry:'healthtech', country:'Philippines', created_at: new Date(Date.now() - 86400000*8).toISOString(), content:`## Market Snapshot\n\nThe Philippines\' digital health market is growing at 24% annually from a low base, driven by a fundamental mismatch between healthcare demand and physical infrastructure supply.\n\n## The Geography Argument\n\nWith 7,600 islands and specialist care concentrated in Metro Manila, the Philippines presents the strongest structural case for telemedicine in Southeast Asia. A patient in Cebu seeking specialist consultation faces a choice between a 2-hour flight and a 20-minute video call.\n\n## Regulatory Developments\n\nThe FDA\'s digital health framework, updated in 2025, has clarified approval pathways for software as a medical device (SaMD), reducing regulatory uncertainty for health tech entrants.` },
+    { slug:'malaysia-logistics-2026', title:'Malaysia Logistics 2026: Cold Chain Is the Underbuilt Opportunity', industry:'logistics', country:'Malaysia', created_at: new Date(Date.now() - 86400000*10).toISOString(), content:`## Overview\n\nMalaysia\'s logistics sector is well-developed relative to its Southeast Asian peers, with strong port infrastructure, a mature 3PL market, and competitive last-mile density in the Klang Valley. The gap is cold chain.\n\n## Cold Chain Deficit\n\nMalaysia generates approximately 18 million tons of fresh produce annually but loses an estimated 30–40% to spoilage due to inadequate cold chain infrastructure. Modern cold storage capacity is concentrated in Peninsular Malaysia, with near-zero purpose-built capacity in Sabah and Sarawak.\n\n## The E-Commerce Catalyst\n\nGrocery e-commerce adoption — accelerated post-COVID and now sustaining at 2–3x pre-pandemic levels — is creating sustained demand for urban cold chain last-mile solutions that traditional logistics players were not built to serve.` },
+  ];
+}
+
+// ── Init ──────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadInsights();
+  const slug = new URLSearchParams(window.location.search).get('slug');
+  if (slug) openArticle(slug);
+});
+</script>
+</body>
+</html>
