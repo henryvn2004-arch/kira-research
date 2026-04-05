@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Processing — KIRA RESEARCH</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0B0D10;color:#fff;font-family:Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(30,111,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(30,111,255,0.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+    .card{background:#11151C;border:1px solid #242A35;border-radius:16px;padding:48px 40px;max-width:420px;width:100%;position:relative;z-index:1}
+    .icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:24px}
+    .icon-spin{background:rgba(30,111,255,.15);animation:spin-pulse 1.5s ease-in-out infinite}
+    .icon-ok{background:rgba(56,217,150,.15)}
+    .icon-err{background:rgba(229,62,62,.15)}
+    @keyframes spin-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.9)}}
+    h2{font-size:20px;font-weight:700;margin-bottom:8px}
+    p{font-size:14px;color:#A3A9B6;line-height:1.6}
+    .sub{font-size:12px;color:#5A6278;margin-top:16px}
+    .btn{display:inline-flex;align-items:center;padding:11px 24px;background:#1E6FFF;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;margin-top:24px;transition:background .2s}
+    .btn:hover{background:#1558CC}
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="icon icon-spin" id="icon">⟳</div>
+    <h2 id="title">Confirming your payment…</h2>
+    <p id="message">Please wait while we verify your payment with PayPal.</p>
+  </div>
+  <script>
+  async function init() {
+    const params  = new URLSearchParams(window.location.search);
+    const orderId = params.get('token');
+    const slug    = sessionStorage.getItem('kira_pending_slug');
+    const pending = JSON.parse(sessionStorage.getItem('kira_pending_report') || '{}');
+    if (!orderId) return showError('No payment token found. Please try again.');
+    try {
+      const user = await window.kiraAuth.getUser();
+      const res  = await fetch('/api/payment?action=capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, slug, userId: user?.id, reportType: pending.reportType, amount: getAmount(pending.reportType) })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Capture failed');
+      showSuccess();
+      setTimeout(() => { window.location.href = getDestination(slug||'') + '?unlocked=1&slug=' + (slug||''); }, 1500);
+    } catch(e) { showError('Payment confirmation failed: ' + e.message); }
+  }
+  function getAmount(t) { return ({industry_deep_dive:49,competitive_comparison:29,market_entry_brief:39})[t]||49; }
+  function getDestination(slug) {
+    if (slug.startsWith('industry'))  return '/report.html';
+    if (slug.startsWith('competiti')) return '/compare.html';
+    if (slug.startsWith('market'))    return '/tracker.html';
+    return '/report.html';
+  }
+  function showSuccess() {
+    document.getElementById('icon').textContent='✓';
+    document.getElementById('icon').className='icon icon-ok';
+    document.getElementById('title').textContent='Payment confirmed!';
+    document.getElementById('message').textContent='Redirecting to your report…';
+  }
+  function showError(msg) {
+    document.getElementById('icon').textContent='✕';
+    document.getElementById('icon').className='icon icon-err';
+    document.getElementById('title').textContent='Something went wrong';
+    document.getElementById('message').textContent=msg;
+    const btn=document.createElement('button');
+    btn.className='btn';btn.textContent='← Back to report form';
+    btn.onclick=()=>window.location.href='/report.html';
+    document.getElementById('card').appendChild(btn);
+  }
+  init();
+  </script>
+</body>
+</html>
