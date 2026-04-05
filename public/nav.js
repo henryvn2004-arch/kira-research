@@ -134,7 +134,7 @@
   padding: 0 32px; height: 64px;
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
 }
-.nav-logo img { height: 34px; width: auto; display: block; }
+.nav-logo img { height: 36px; width: auto; max-width: 160px; object-fit: contain; display: block; }
 .nav-links {
   display: flex; align-items: center; gap: 4px; list-style: none;
   margin: 0; padding: 0;
@@ -257,7 +257,7 @@
   border-bottom: 1px solid #1A1D24;
 }
 .footer-brand { display: flex; flex-direction: column; gap: 12px; }
-.footer-logo { height: 28px; width: auto; opacity: .8; }
+.footer-logo { height: auto; width: 140px; max-width: 140px; object-fit: contain; opacity: .85; display: block; }
 .footer-tagline { font-size: 12px; color: #5A6278; }
 .footer-cols { display: flex; gap: 64px; }
 .footer-col { display: flex; flex-direction: column; gap: 10px; }
