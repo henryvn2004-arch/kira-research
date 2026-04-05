@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — KIRA RESEARCH</title>
+  <meta name="description" content="Simple, per-report pricing. No subscriptions. Pay only for what you need." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0B0D10;color:#fff;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(30,111,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(30,111,255,0.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;border-bottom:1px solid #1A1D24;background:rgba(11,13,16,.9);backdrop-filter:blur(16px)}
+    .nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo img{height:32px;width:auto;display:block}
+    .nav-links{display:flex;align-items:center;gap:24px}
+    .nav-links a{font-size:13px;color:#A3A9B6;transition:color .2s}.nav-links a:hover{color:#fff}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:Arial,sans-serif}
+    .btn-ghost{background:transparent;color:#A3A9B6}.btn-ghost:hover{color:#fff}
+    .btn-primary{background:#1E6FFF;color:#fff}.btn-primary:hover{background:#1558CC;box-shadow:0 0 20px rgba(30,111,255,.3)}
+    .container{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+    .page{padding-top:120px;padding-bottom:96px}
+
+    .page-eyebrow{font-size:11px;color:#1E6FFF;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;text-align:center}
+    .page-title{font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.5px;text-align:center;margin-bottom:16px}
+    .page-sub{font-size:16px;color:#A3A9B6;text-align:center;max-width:520px;margin:0 auto 64px}
+
+    /* pricing grid */
+    .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1A1D24;border:1px solid #1A1D24;border-radius:16px;overflow:hidden;margin-bottom:64px}
+    .pricing-card{background:#11151C;padding:40px 36px;display:flex;flex-direction:column;position:relative}
+    .pricing-card.featured{background:#161B24}
+    .pricing-card.featured::before{content:'MOST POPULAR';position:absolute;top:0;right:0;font-size:9px;letter-spacing:.12em;color:#0B0D10;background:#1E6FFF;padding:4px 12px;border-radius:0 0 0 8px}
+    .plan-name{font-size:13px;font-weight:700;color:#A3A9B6;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .plan-price{font-size:48px;font-weight:700;line-height:1;margin-bottom:4px}
+    .plan-price sup{font-size:20px;vertical-align:top;margin-top:8px;font-weight:400;color:#A3A9B6}
+    .plan-period{font-size:12px;color:#5A6278;margin-bottom:24px}
+    .plan-desc{font-size:13px;color:#A3A9B6;line-height:1.65;margin-bottom:28px;flex:1}
+    .feature-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+    .feature-list li{font-size:13px;color:#A3A9B6;display:flex;align-items:flex-start;gap:10px}
+    .feature-list li::before{content:'';width:16px;height:16px;background:rgba(30,111,255,.1);border-radius:50%;flex-shrink:0;margin-top:1px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8l3 3L12.5 5' stroke='%231E6FFF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:contain}
+    .plan-cta{display:block;text-align:center;padding:13px;border-radius:8px;font-size:14px;font-weight:600;transition:all .2s}
+    .plan-cta.primary{background:#1E6FFF;color:#fff}.plan-cta.primary:hover{background:#1558CC;box-shadow:0 0 20px rgba(30,111,255,.3)}
+    .plan-cta.outline{background:transparent;color:#fff;border:1px solid #242A35}.plan-cta.outline:hover{border-color:#1E6FFF;color:#1E6FFF}
+
+    /* compare table */
+    .compare-section{margin-bottom:64px}
+    .compare-title{font-size:20px;font-weight:700;margin-bottom:24px;text-align:center}
+    table{width:100%;border-collapse:collapse}
+    thead th{padding:14px 20px;text-align:left;font-size:12px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #1A1D24}
+    thead th:first-child{width:40%}
+    tbody td{padding:14px 20px;font-size:13px;color:#A3A9B6;border-bottom:1px solid #0F1218;vertical-align:middle}
+    tbody td:first-child{color:#fff;font-weight:500}
+    tbody tr:last-child td{border-bottom:none}
+    .check{color:#1E6FFF;font-size:16px}
+    .cross{color:#5A6278;font-size:16px}
+    .tag{font-size:10px;background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.2);padding:2px 7px;border-radius:4px;margin-left:6px}
+
+    /* FAQ */
+    .faq-section{max-width:680px;margin:0 auto}
+    .faq-title{font-size:20px;font-weight:700;margin-bottom:32px;text-align:center}
+    .faq-item{border-bottom:1px solid #1A1D24;padding:20px 0}
+    .faq-item:last-child{border-bottom:none}
+    .faq-q{font-size:14px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .faq-q::after{content:'+';color:#1E6FFF;font-size:20px;flex-shrink:0;transition:transform .2s}
+    .faq-item.open .faq-q::after{transform:rotate(45deg)}
+    .faq-a{font-size:13px;color:#A3A9B6;line-height:1.7;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s}
+    .faq-item.open .faq-a{max-height:200px;padding-top:12px}
+
+    /* CTA strip */
+    .cta-strip{background:#11151C;border:1px solid #1A1D24;border-radius:16px;padding:48px;text-align:center;margin-top:64px;position:relative;overflow:hidden}
+    .cta-strip::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(30,111,255,.1) 0%,transparent 65%);pointer-events:none}
+    .cta-strip h2{font-size:28px;font-weight:700;margin-bottom:12px;position:relative;z-index:1}
+    .cta-strip p{font-size:15px;color:#A3A9B6;margin-bottom:28px;position:relative;z-index:1}
+    .cta-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+    .btn-lg{padding:13px 28px;font-size:14px;border-radius:8px}
+    .btn-outline-lg{background:transparent;color:#fff;border:1px solid #242A35;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;transition:all .2s}
+    .btn-outline-lg:hover{border-color:#1E6FFF;color:#1E6FFF}
+
+    footer{border-top:1px solid #1A1D24;padding:40px 0}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .footer-links{display:flex;gap:28px}
+    .footer-links a{font-size:12px;color:#5A6278;transition:color .2s}.footer-links a:hover{color:#A3A9B6}
+    .footer-copy{font-size:11px;color:#5A6278}
+
+    @media(max-width:860px){.pricing-grid{grid-template-columns:1fr}.nav-links{display:none}}
+    @media(max-width:560px){.container{padding:0 20px}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo.png" alt="KIRA RESEARCH" /></a>
+    <div class="nav-links">
+      <a href="/report.html">Reports</a>
+      <a href="/library.html">Library</a>
+      <a href="/insights.html">Insights</a>
+      <a href="/about.html">About</a>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="/auth.html" class="btn btn-ghost" id="nav-signin">Sign in</a>
+      <a href="/profile.html" class="btn btn-ghost" id="nav-profile" style="display:none">My Reports</a>
+      <button class="btn btn-ghost" id="nav-signout" style="display:none">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="container">
+
+    <p class="page-eyebrow">Pricing</p>
+    <h1 class="page-title">Pay per report. No subscriptions.</h1>
+    <p class="page-sub">Every report is generated fresh using live web research and a proprietary library of primary market studies.</p>
+
+    <!-- Pricing grid -->
+    <div class="pricing-grid">
+
+      <!-- Competitive Analysis -->
+      <div class="pricing-card">
+        <div class="plan-name">Competitive Analysis</div>
+        <div class="plan-price"><sup>$</sup>29</div>
+        <div class="plan-period">one-time per report</div>
+        <div class="plan-desc">Compare 2–5 companies side by side. Positioning, market share, strengths/weaknesses, and strategic outlook.</div>
+        <ul class="feature-list">
+          <li>6-section structured report</li>
+          <li>Company profiles side by side</li>
+          <li>Competitive positioning analysis</li>
+          <li>Strengths & weaknesses matrix</li>
+          <li>Strategic recommendations</li>
+          <li>AI chatbox follow-up included</li>
+        </ul>
+        <a href="/compare.html" class="plan-cta outline">Generate Comparison</a>
+      </div>
+
+      <!-- Industry Deep Dive -->
+      <div class="pricing-card featured">
+        <div class="plan-name">Industry Deep Dive</div>
+        <div class="plan-price"><sup>$</sup>49</div>
+        <div class="plan-period">one-time per report</div>
+        <div class="plan-desc">Full consulting-grade market analysis. Market sizing, competitive landscape, consumer insights, regulatory environment, and strategic recommendations.</div>
+        <ul class="feature-list">
+          <li>8–12 section full report</li>
+          <li>Market sizing + 3–5yr forecast</li>
+          <li>Competitive landscape + profiles</li>
+          <li>Consumer insights & behavior</li>
+          <li>Regulatory environment</li>
+          <li>Channel & distribution analysis</li>
+          <li>Pricing analysis</li>
+          <li>AI chatbox follow-up included</li>
+        </ul>
+        <a href="/report.html" class="plan-cta primary">Generate Deep Dive</a>
+      </div>
+
+      <!-- Market Entry Brief -->
+      <div class="pricing-card">
+        <div class="plan-name">Market Entry Brief</div>
+        <div class="plan-price"><sup>$</sup>39</div>
+        <div class="plan-period">one-time per report</div>
+        <div class="plan-desc">Fast-track your go/no-go decision. Covers regulatory requirements, distribution landscape, pricing benchmarks, and a partner shortlist.</div>
+        <ul class="feature-list">
+          <li>7-section brief report</li>
+          <li>Regulatory & compliance map</li>
+          <li>Distribution channel landscape</li>
+          <li>Pricing & positioning benchmarks</li>
+          <li>Potential partner shortlist</li>
+          <li>Entry strategy recommendations</li>
+          <li>AI chatbox follow-up included</li>
+        </ul>
+        <a href="/tracker.html" class="plan-cta outline">Generate Entry Brief</a>
+      </div>
+
+    </div>
+
+    <!-- Feature comparison table -->
+    <div class="compare-section">
+      <div class="compare-title">What's included in every report</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Competitive<br/>$29</th>
+            <th>Deep Dive<br/>$49</th>
+            <th>Entry Brief<br/>$39</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Live web research (current data)</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Proprietary research library context</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>AI chatbox for follow-up Q&A</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Lifetime access to your report</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Market sizing + forecast</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Regulatory environment</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Distribution & channel analysis</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Partner & supplier shortlist</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Consumer behavior & insights</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td></tr>
+          <tr><td>Number of sections</td><td>6</td><td>8–12</td><td>7</td></tr>
+          <tr><td>Generation time</td><td>~2 min</td><td>~5 min</td><td>~3 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <div class="faq-title">Frequently asked questions</div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How is KIRA RESEARCH different from a Google search?</div>
+        <div class="faq-a">KIRA doesn't surface links — it synthesizes. Every report combines live web research with patterns extracted from a proprietary library of 1,000+ primary market studies. The output is structured, analytical, consulting-grade prose, not a list of articles to read.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How current is the data?</div>
+        <div class="faq-a">Each report runs live web research at generation time, pulling current market data, news, and competitive intelligence. The structural frameworks come from our historical research library and are clearly separated from current data.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How long does generation take?</div>
+        <div class="faq-a">Competitive Analysis takes ~2 minutes. Market Entry Briefs take ~3 minutes. Industry Deep Dives take 4–6 minutes depending on the complexity of the market. You can leave the page — your report is saved and accessible from your profile.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I access my report again after closing the browser?</div>
+        <div class="faq-a">Yes. Every report is saved to your account permanently. Log in and visit your profile to access all past reports at any time. The AI chatbox remains active too.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What payment methods do you accept?</div>
+        <div class="faq-a">We accept all major credit and debit cards via PayPal — no PayPal account required. Transactions are processed securely by PayPal.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Do you offer refunds?</div>
+        <div class="faq-a">If your report fails to generate due to a technical issue on our side, we will refund in full or regenerate at no charge. As reports are generated on-demand using AI, we cannot offer refunds for completed reports.</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-strip">
+      <h2>Ready to generate your first report?</h2>
+      <p>Takes 60 seconds to configure. Delivered in under 5 minutes.</p>
+      <div class="cta-actions">
+        <a href="/report.html" class="btn btn-primary btn-lg">Industry Deep Dive — $49</a>
+        <a href="/library.html" class="btn-outline-lg">Browse Living Reports</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <img src="/logo.png" alt="KIRA RESEARCH" style="height:24px;opacity:.7" />
+      <div class="footer-links">
+        <a href="/about.html">About</a>
+        <a href="/library.html">Library</a>
+        <a href="/insights.html">Insights</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <span class="footer-copy">© 2026 KIRA RESEARCH</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
