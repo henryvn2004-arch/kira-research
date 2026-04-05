@@ -3,8 +3,8 @@
 // Supabase Auth helper, include in every page via <script src="/auth.js">
 // ============================================================
 
-const SUPABASE_URL  = 'https://YOUR_PROJECT.supabase.co'; // replace after setup
-const SUPABASE_ANON = 'YOUR_ANON_KEY';                    // replace after setup
+const SUPABASE_URL  = 'https://iygoynbnscednfzdsflc.supabase.co'; // replace after setup
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5Z295bmJuc2NlZG5memRzZmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzY1OTksImV4cCI6MjA5MDk1MjU5OX0.gGI12Rjwq1WAvJuUKkgrmfaXP2idWBRXOdfYFnMtb5o';                    // replace after setup
 
 // ── Init Supabase client ──────────────────────────────────
 const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
