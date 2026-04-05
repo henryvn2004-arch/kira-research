@@ -5,6 +5,7 @@
 // ============================================================
 
 (function () {
+  function init() {
   // ── NAV HTML ─────────────────────────────────────────────
   const NAV_HTML = `
 <nav id="kira-nav">
@@ -373,5 +374,13 @@
     document.addEventListener('DOMContentLoaded', updateNav);
   } else {
     updateNav();
+  }
+
+  } // end init
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
