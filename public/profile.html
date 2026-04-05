@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js"></script>
+  <script src="/nav.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:#0B0D10;color:#fff;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -21,7 +22,7 @@
     .btn-ghost{background:transparent;color:#A3A9B6}.btn-ghost:hover{color:#fff}
     .btn-primary{background:#1E6FFF;color:#fff}.btn-primary:hover{background:#1558CC}
     .container{max-width:1000px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
-    .page{padding-top:96px;padding-bottom:80px;min-height:100vh}
+    .page{;padding-bottom:80px;min-height:100vh}
 
     /* header */
     .profile-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:16px}
@@ -80,21 +81,7 @@
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <a href="/" class="nav-logo"><img src="/logo.png" alt="KIRA RESEARCH" /></a>
-    <div class="nav-links">
-      <a href="/report.html">Reports</a>
-      <a href="/library.html">Library</a>
-      <a href="/pricing.html">Pricing</a>
-    </div>
-    <div style="display:flex;gap:8px">
-      <a href="/profile.html" class="btn btn-ghost" id="nav-profile" style="display:none">My Reports</a>
-      <button class="btn btn-ghost" id="nav-signout" style="display:none">Sign out</button>
-      <a href="/auth.html" class="btn btn-ghost" id="nav-signin">Sign in</a>
-    </div>
-  </div>
-</nav>
+
 
 <div class="page">
   <div class="container">
@@ -139,19 +126,7 @@
   </div>
 </div>
 
-<footer>
-  <div class="container">
-    <div class="footer-inner">
-      <img src="/logo.png" alt="KIRA RESEARCH" style="height:24px;opacity:.7" />
-      <div class="footer-links">
-        <a href="/pricing.html">Pricing</a>
-        <a href="/library.html">Library</a>
-        <a href="/contact.html">Contact</a>
-      </div>
-      <span style="font-size:11px;color:#5A6278">© 2026 KIRA RESEARCH</span>
-    </div>
-  </div>
-</footer>
+
 
 <script>
 const SUPABASE_URL  = document.querySelector('script[src="/auth.js"]') ? null : null;
