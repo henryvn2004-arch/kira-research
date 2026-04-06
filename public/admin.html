@@ -365,6 +365,39 @@ function setQueueStatus(idx, status) {
 }
 
 // -- Process queue -----------------------------------------
+async function runEmbeddings() {
+  document.getElementById('btn-embed').disabled = true;
+  addLog('\nRunning embeddings via /api/embed...');
+  try {
+    const res  = await fetch('/api/embed', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + EDGE_ANON,
+      },
+      body: JSON.stringify({ type: 'chunk' }),
+    });
+    const data = await res.json();
+    addLog(`OK Chunks embedded: ${data.embedded}/${data.total}`, 'done');
+
+    const res2 = await fetch('/api/embed', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + EDGE_ANON,
+      },
+      body: JSON.stringify({ type: 'pattern' }),
+    });
+    const data2 = await res2.json();
+    addLog(`OK Patterns embedded: ${data2.embedded}/${data2.total}`, 'done');
+    addLog('OK All embeddings complete! Knowledge base ready.', 'done');
+    loadStats();
+  } catch(e) {
+    addLog('Error: ' + e.message, 'err');
+  }
+  document.getElementById('btn-embed').disabled = false;
+}
+
 async function processQueue() {
   // No manual config needed - Claude auto-detects everything
 
@@ -417,14 +450,13 @@ async function processQueue() {
       addLog(`  Uploaded: ${filePath}`);
       item.filePath = filePath;
 
-      // 2. Call Edge Function
-      addLog('* Calling Edge Function (this takes 2-4 min)...');
-      const res = await fetch(EDGE_URL, {
+      // 2. Call Vercel ingest API
+      addLog('Calling ingest API...');
+      const res = await fetch('/api/ingest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + EDGE_ANON,
-          'apikey': EDGE_ANON,
         },
         body: JSON.stringify({ filePath }),
       });
@@ -451,6 +483,7 @@ async function processQueue() {
 
   addLog('\nDONE Queue processing complete.', 'done');
   document.getElementById('btn-process').disabled = false;
+  document.getElementById('btn-embed').disabled = false;
   loadStats();
 }
 
