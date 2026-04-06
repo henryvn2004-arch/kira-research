@@ -159,10 +159,10 @@
     <div class="card">
       <h2>Step 2 — Select PDF Files</h2>
       <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
-        Select one or more PDF files. They'll be uploaded to Supabase Storage then processed one by one.
+        Select .txt or .md files (recommended) or .pdf under 100 pages. Processed one by one.
       </p>
       <label>PDF File(s) *</label>
-      <input type="file" id="pdf-files" accept=".pdf" multiple onchange="addToQueue()" />
+      <input type="file" id="pdf-files" accept=".txt,.md,.pdf" multiple onchange="addToQueue()" />
 
       <div class="queue-list" id="queue-list"></div>
     </div>
@@ -350,7 +350,7 @@ async function processQueue() {
 
       const { error: upErr } = await window.db.storage
         .from('reports')
-        .upload(filePath, item.file, { contentType: 'application/pdf', upsert: false });
+        .upload(filePath, item.file, { contentType: item.file.type || 'text/plain', upsert: false });
 
       if (upErr) throw new Error('Upload failed: ' + upErr.message);
       addLog(`  Uploaded: ${filePath}`);
