@@ -16,7 +16,6 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase      = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const OPENAI_KEY    = process.env.OPENAI_API_KEY;
 const ANON_KEY      = process.env.SUPABASE_ANON_KEY;
 
 export default async function handler(req, res) {
@@ -131,74 +130,19 @@ export default async function handler(req, res) {
       if (!error) chunksSaved++;
     }
 
-    // ── [4] OpenAI embeddings ──────────────────────────────
-    console.log('[ingest] Generating embeddings...');
-
-    const { data: patterns } = await supabase
-      .from('industry_patterns')
-      .select('id, description')
-      .eq('source_report_ids', `{${sourceReportId}}`)
-      .is('embedding', null);
-
-    const { data: chunks } = await supabase
-      .from('report_chunks')
-      .select('id, content')
-      .eq('source_report_id', sourceReportId)
-      .is('embedding', null);
-
-    const toEmbed = [
-      ...(patterns || []).map(r => ({ id: r.id, text: r.description, table: 'industry_patterns' })),
-      ...(chunks   || []).map(r => ({ id: r.id, text: r.content,     table: 'report_chunks' })),
-    ];
-
-    let embedded = 0;
-    const BATCH = 20;
-
-    for (let i = 0; i < toEmbed.length; i += BATCH) {
-      const batch = toEmbed.slice(i, i + BATCH);
-      const texts = batch.map(b => b.text.slice(0, 8000));
-
-      const embRes = await fetch('https://api.openai.com/v1/embeddings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'text-embedding-3-large',
-          input: texts,
-          dimensions: 1536,
-        }),
-      });
-
-      const embData = await embRes.json();
-      if (!embRes.ok) {
-        console.warn('[ingest] Embed batch error:', embData.error?.message);
-        continue;
-      }
-
-      for (const item of embData.data) {
-        const row = batch[item.index];
-        await supabase.from(row.table)
-          .update({ embedding: item.embedding })
-          .eq('id', row.id);
-        embedded++;
-      }
-    }
-
-    // ── [5] Mark extracted ────────────────────────────────
+    // ── [4] Mark extracted (embeddings run via /api/embed) ──
     await supabase.from('source_reports')
       .update({ extracted: true })
       .eq('id', sourceReportId);
 
-    console.log(`[ingest] DONE: ${patternsSaved} patterns, ${chunksSaved} chunks, ${embedded} embeddings`);
+    console.log(`[ingest] DONE: ${patternsSaved} patterns, ${chunksSaved} chunks`);
 
     return res.json({
-      success: true,
+      success:      true,
       sourceReportId,
-      patterns:  patternsSaved,
-      chunks:    chunksSaved,
-      embedded,
+      patterns:     patternsSaved,
+      chunks:       chunksSaved,
+      embedPending: patternsSaved + chunksSaved,
     });
 
   } catch (e) {
