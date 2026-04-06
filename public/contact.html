@@ -177,18 +177,11 @@ async function submitForm() {
   btn.disabled = true; btn.textContent = 'Sending...';
 
   try {
-    const res  = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name, email,
-        company: document.getElementById('f-company').value.trim(),
-        subject, message,
-      }),
+    await window.kiraDB.submitContact({
+      name, email,
+      company: document.getElementById('f-company').value.trim(),
+      subject, message,
     });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Submit failed');
-
     document.getElementById('contact-form').style.display = 'none';
     document.getElementById('success-msg').style.display  = 'block';
   } catch (e) {

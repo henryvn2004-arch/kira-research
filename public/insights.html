@@ -197,9 +197,7 @@ let allArticles = [], activeFilter = '', currentArticle = null;
 // ── Load articles ─────────────────────────────────────────
 async function loadInsights() {
   try {
-    const res  = await fetch('/api/insights?limit=20');
-    const data = await res.json();
-    allArticles = data.articles || [];
+    allArticles = await window.kiraDB.getInsights({ limit: 20 });
   } catch {
     allArticles = getSampleArticles();
   }
@@ -274,9 +272,7 @@ async function openArticle(slug) {
 
   if (!article) {
     try {
-      const res  = await fetch('/api/insights?slug=' + slug);
-      const data = await res.json();
-      article = data.article;
+      article = await window.kiraDB.getInsightBySlug(slug);
     } catch { return; }
   }
 

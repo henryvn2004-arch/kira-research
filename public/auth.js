@@ -1,51 +1,40 @@
 // ============================================================
 // KIRA RESEARCH — auth.js
-// Supabase Auth helper, include in every page via <script src="/auth.js">
+// Supabase Auth + direct DB queries (replaces serverless fns)
+// Include on every page: <script src="/auth.js"></script>
 // ============================================================
 
-const SUPABASE_URL  = 'https://iygoynbnscednfzdsflc.supabase.co'; // replace after setup
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5Z295bmJuc2NlZG5memRzZmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzY1OTksImV4cCI6MjA5MDk1MjU5OX0.gGI12Rjwq1WAvJuUKkgrmfaXP2idWBRXOdfYFnMtb5o';                    // replace after setup
+const SUPABASE_URL  = 'https://YOUR_PROJECT.supabase.co'; // ← replace
+const SUPABASE_ANON = 'YOUR_ANON_KEY';                    // ← replace
 
-// ── Init Supabase client ──────────────────────────────────
 const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
 });
 
-// ── Public helpers ────────────────────────────────────────
+window.db = _supa;
 
-/** Get current session (null if not logged in) */
 async function getSession() {
   const { data } = await _supa.auth.getSession();
   return data.session;
 }
-
-/** Get current user object */
 async function getUser() {
   const session = await getSession();
   return session ? session.user : null;
 }
-
-/** Sign up with email + password */
 async function signUp(email, password) {
   const { data, error } = await _supa.auth.signUp({ email, password });
   if (error) throw error;
   return data;
 }
-
-/** Sign in with email + password */
 async function signIn(email, password) {
   const { data, error } = await _supa.auth.signInWithPassword({ email, password });
   if (error) throw error;
   return data;
 }
-
-/** Sign out */
 async function signOut() {
   await _supa.auth.signOut();
   window.location.href = '/';
 }
-
-/** Require login — redirect to auth page if not logged in */
 async function requireAuth() {
   const user = await getUser();
   if (!user) {
@@ -54,52 +43,82 @@ async function requireAuth() {
   }
   return user;
 }
-
-/** Check if user has purchased a specific report slug */
 async function hasPurchased(slug) {
-  // Allow bypass for testing
   if (localStorage.getItem('PAYWALL_DISABLED') === 'true') return true;
-
   const user = await getUser();
   if (!user) return false;
-
-  const { data, error } = await _supa
-    .from('purchases')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('slug', slug)
-    .eq('status', 'completed')
+  const { data } = await _supa
+    .from('purchases').select('id')
+    .eq('user_id', user.id).eq('slug', slug).eq('status', 'completed')
     .maybeSingle();
-
-  return !error && data !== null;
+  return !!data;
 }
 
-/** Update navbar UI based on auth state */
-async function updateNavAuth() {
-  const user = await getUser();
-  const signInBtn  = document.getElementById('nav-signin');
-  const signOutBtn = document.getElementById('nav-signout');
-  const profileBtn = document.getElementById('nav-profile');
+// ── Direct DB helpers (no serverless needed) ──────────────
+window.kiraDB = {
+  async searchLibrary({ q='', industry='', country='', limit=50 }={}) {
+    let query = _supa.from('living_reports')
+      .select('id,slug,title,industry,country,report_type,preview_content,price,last_refreshed,tags')
+      .eq('status','active').order('last_refreshed',{ascending:false}).limit(limit);
+    if (industry) query = query.ilike('industry',`%${industry}%`);
+    if (country)  query = query.eq('country', country);
+    if (q) query = query.or(`title.ilike.%${q}%,industry.ilike.%${q}%,country.ilike.%${q}%`);
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  },
 
-  if (user) {
-    if (signInBtn)  signInBtn.style.display  = 'none';
-    if (signOutBtn) signOutBtn.style.display = 'inline-flex';
-    if (profileBtn) profileBtn.style.display = 'inline-flex';
-  } else {
-    if (signInBtn)  signInBtn.style.display  = 'inline-flex';
-    if (signOutBtn) signOutBtn.style.display = 'none';
-    if (profileBtn) profileBtn.style.display = 'none';
-  }
-}
+  async getLivingReport(idOrSlug) {
+    const isUUID = /^[0-9a-f-]{36}$/.test(idOrSlug);
+    const col = isUUID ? 'id' : 'slug';
+    const { data, error } = await _supa.from('living_reports')
+      .select('*').eq('status','active').eq(col, idOrSlug).single();
+    if (error) throw error;
+    return data;
+  },
 
-// ── Auto-run on every page ────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  updateNavAuth();
+  async getInsights({ industry='', country='', limit=20 }={}) {
+    let query = _supa.from('insights')
+      .select('id,slug,title,content,industry,country,tags,created_at')
+      .eq('status','published').order('created_at',{ascending:false}).limit(limit);
+    if (industry) query = query.ilike('industry',`%${industry}%`);
+    if (country)  query = query.eq('country', country);
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  },
 
-  // Sign-out button (if present on page)
-  const signOutBtn = document.getElementById('nav-signout');
-  if (signOutBtn) signOutBtn.addEventListener('click', signOut);
-});
+  async getInsightBySlug(slug) {
+    const { data, error } = await _supa.from('insights')
+      .select('*').eq('slug', slug).eq('status','published').single();
+    if (error) throw error;
+    return data;
+  },
 
-// ── Expose on window ──────────────────────────────────────
+  async getMyReports() {
+    const user = await getUser();
+    if (!user) return { reports: [], purchases: [] };
+    const [{ data: reports }, { data: purchases }] = await Promise.all([
+      _supa.from('custom_reports')
+        .select('id,slug,report_type,status,input_params,created_at')
+        .eq('user_id', user.id).order('created_at',{ascending:false}),
+      _supa.from('purchases')
+        .select('id,slug,report_type,amount,status,created_at')
+        .eq('user_id', user.id).eq('status','completed')
+        .order('created_at',{ascending:false}),
+    ]);
+    return {
+      reports: (reports||[]).map(r=>({...r, source:'custom', reportType:r.report_type, createdAt:r.created_at})),
+      purchases: purchases||[],
+    };
+  },
+
+  async submitContact({ name, email, company, subject, message }) {
+    const { error } = await _supa.from('contacts')
+      .insert({ name, email, company: company||null, subject, message });
+    if (error) throw error;
+    return true;
+  },
+};
+
 window.kiraAuth = { getSession, getUser, signUp, signIn, signOut, requireAuth, hasPurchased };
