@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — KIRA RESEARCH</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0B0D10;color:#fff;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;padding:40px 24px}
+    h1{font-size:22px;font-weight:700;margin-bottom:4px}
+    h2{font-size:15px;font-weight:700;margin-bottom:16px;color:#A3A9B6;text-transform:uppercase;letter-spacing:.06em}
+    .sub{font-size:13px;color:#5A6278;margin-bottom:32px}
+    .wrap{max-width:960px;margin:0 auto}
+    .card{background:#11151C;border:1px solid #1A1D24;border-radius:12px;padding:28px;margin-bottom:20px}
+    label{font-size:12px;color:#A3A9B6;display:block;margin-bottom:6px;font-weight:600}
+    input,select{width:100%;background:#0B0D10;border:1px solid #242A35;border-radius:6px;padding:10px 12px;font-size:13px;color:#fff;font-family:Arial,sans-serif;outline:none;margin-bottom:16px;transition:border-color .2s}
+    input:focus,select:focus{border-color:#1E6FFF}
+    input[type=file]{padding:8px;cursor:pointer}
+    select option{background:#0B0D10}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:Arial,sans-serif;transition:all .2s}
+    .btn-primary{background:#1E6FFF;color:#fff}.btn-primary:hover{background:#1558CC}
+    .btn-sm{padding:6px 14px;font-size:12px}
+    .btn:disabled{opacity:.4;cursor:not-allowed}
+    .btn-full{width:100%;justify-content:center;padding:12px}
+
+    /* log */
+    .log-wrap{background:#0B0D10;border:1px solid #1A1D24;border-radius:8px;padding:16px;margin-top:20px}
+    .log-title{font-size:11px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+    .log-body{font-family:'Courier New',monospace;font-size:12px;color:#38D996;max-height:320px;overflow-y:auto;line-height:1.8;white-space:pre-wrap}
+    .log-body .err{color:#FC8181}
+    .log-body .info{color:#A3A9B6}
+    .log-body .warn{color:#F6AD55}
+    .log-body .done{color:#38D996;font-weight:700}
+
+    /* progress */
+    .progress-wrap{margin-top:16px;display:none}
+    .progress-label{font-size:12px;color:#A3A9B6;margin-bottom:6px;display:flex;justify-content:space-between}
+    .pbar{height:4px;background:#1A1D24;border-radius:2px;overflow:hidden}
+    .pbar-fill{height:100%;background:#1E6FFF;border-radius:2px;transition:width .4s}
+
+    /* queue */
+    .queue-list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+    .queue-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#0B0D10;border:1px solid #1A1D24;border-radius:8px;font-size:13px}
+    .qi-name{flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .qi-status{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:700;flex-shrink:0}
+    .qi-pending{background:rgba(163,169,182,.1);color:#A3A9B6;border:1px solid #1A1D24}
+    .qi-processing{background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.2)}
+    .qi-done{background:rgba(56,217,150,.1);color:#38D996;border:1px solid rgba(56,217,150,.2)}
+    .qi-error{background:rgba(229,62,62,.1);color:#FC8181;border:1px solid rgba(229,62,62,.2)}
+    .qi-remove{background:transparent;border:none;color:#5A6278;cursor:pointer;font-size:16px;padding:2px 6px;transition:color .2s}
+    .qi-remove:hover{color:#FC8181}
+
+    /* stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .stat-box{background:#0B0D10;border:1px solid #1A1D24;border-radius:8px;padding:16px}
+    .stat-val{font-size:28px;font-weight:700;color:#1E6FFF}
+    .stat-lbl{font-size:11px;color:#5A6278;margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+
+    /* tabs */
+    .tabs{display:flex;border-bottom:1px solid #1A1D24;margin-bottom:24px;gap:0}
+    .tab{padding:10px 18px;font-size:13px;font-weight:600;color:#5A6278;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+    .tab.active{color:#1E6FFF;border-bottom-color:#1E6FFF}
+    .section{display:none}.section.active{display:block}
+
+    /* login */
+    #login-screen{position:fixed;inset:0;background:#0B0D10;display:flex;align-items:center;justify-content:center;z-index:100}
+    .login-card{background:#11151C;border:1px solid #242A35;border-radius:12px;padding:40px;width:100%;max-width:360px;text-align:center}
+    .login-card h2{font-size:18px;margin-bottom:20px}
+    .login-err{color:#FC8181;font-size:13px;margin-top:8px;display:none}
+
+    /* source reports table */
+    table{width:100%;border-collapse:collapse}
+    th{text-align:left;padding:8px 12px;color:#5A6278;border-bottom:1px solid #1A1D24;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+    td{padding:10px 12px;border-bottom:1px solid #0F1218;color:#A3A9B6;vertical-align:middle;font-size:13px}
+    td:first-child{color:#fff}
+    tr:last-child td{border-bottom:none}
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-screen">
+  <div class="login-card">
+    <h2>🔐 Admin</h2>
+    <p style="font-size:13px;color:#5A6278;margin-bottom:20px">KIRA RESEARCH internal tools</p>
+    <label>Admin Password</label>
+    <input type="password" id="admin-pwd" placeholder="Enter password"
+      style="text-align:center" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="btn btn-primary btn-full" onclick="doLogin()">Enter</button>
+    <div class="login-err" id="login-err">Incorrect password</div>
+  </div>
+</div>
+
+<div class="wrap" id="main" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <h1>KIRA RESEARCH Admin</h1>
+    <a href="/" style="font-size:12px;color:#5A6278">← Back to site</a>
+  </div>
+  <p class="sub">Knowledge base ingestion · Source report management</p>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('ingest')">📄 Ingest PDFs</div>
+    <div class="tab" onclick="switchTab('sources')">📚 Source Reports</div>
+    <div class="tab" onclick="switchTab('stats')">📈 Stats</div>
+  </div>
+
+  <!-- ══ TAB: INGEST ══ -->
+  <div class="section active" id="tab-ingest">
+
+    <!-- Step 1: Configure -->
+    <div class="card">
+      <h2>Step 1 — Configure Report</h2>
+      <div class="grid2">
+        <div>
+          <label>Competency Type *</label>
+          <select id="comp-type">
+            <option value="">Select type...</option>
+            <option value="market_analysis">Market Analysis</option>
+            <option value="competitive_landscape">Competitive Landscape</option>
+            <option value="market_entry">Market Entry</option>
+            <option value="channel_analysis">Channel Analysis</option>
+            <option value="pricing_study">Pricing Study</option>
+            <option value="consumer_insights">Consumer Insights</option>
+            <option value="partner_search">Partner Search</option>
+            <option value="market_sizing">Market Sizing</option>
+            <option value="industry_mapping">Industry Mapping</option>
+          </select>
+        </div>
+        <div>
+          <label>Country *</label>
+          <select id="pdf-country">
+            <option value="">Select country...</option>
+            <option>Vietnam</option><option>Indonesia</option><option>Thailand</option>
+            <option>Philippines</option><option>Malaysia</option><option>Singapore</option>
+            <option>Myanmar</option><option>Cambodia</option><option>India</option>
+            <option>Bangladesh</option>
+          </select>
+        </div>
+        <div>
+          <label>Product Category *</label>
+          <input type="text" id="pdf-category" placeholder="e.g. Home Appliances, FMCG, Fintech" style="margin-bottom:0" />
+        </div>
+        <div>
+          <label>Sub-category (optional)</label>
+          <input type="text" id="pdf-subcategory" placeholder="e.g. Vacuum Cleaners, Instant Noodles" style="margin-bottom:0" />
+        </div>
+        <div>
+          <label>Year *</label>
+          <input type="number" id="pdf-year" placeholder="e.g. 2019" min="2000" max="2026" style="margin-bottom:0" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Upload -->
+    <div class="card">
+      <h2>Step 2 — Select PDF Files</h2>
+      <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
+        Select one or more PDF files. They'll be uploaded to Supabase Storage then processed one by one.
+      </p>
+      <label>PDF File(s) *</label>
+      <input type="file" id="pdf-files" accept=".pdf" multiple onchange="addToQueue()" />
+
+      <div class="queue-list" id="queue-list"></div>
+    </div>
+
+    <!-- Step 3: Process -->
+    <div class="card">
+      <h2>Step 3 — Process Queue</h2>
+      <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
+        Each PDF takes 2–4 minutes. Files are processed one at a time.
+        Claude reads the PDF, extracts patterns and chunks, then OpenAI embeds everything.
+      </p>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="btn-process" onclick="processQueue()">
+          ▶ Start Processing Queue
+        </button>
+        <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
+          onclick="clearQueue()">Clear Queue</button>
+      </div>
+
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-label">
+          <span id="progress-label-text">Processing...</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="pbar"><div class="pbar-fill" id="pbar-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="log-wrap">
+        <div class="log-title">Processing Log</div>
+        <div class="log-body" id="log-body">Ready. Configure and add PDFs to start...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: SOURCE REPORTS ══ -->
+  <div class="section" id="tab-sources">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="margin:0">Processed Source Reports</h2>
+        <button class="btn btn-sm" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
+          onclick="loadSources()">↻ Refresh</button>
+      </div>
+      <table id="sources-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Country</th>
+            <th>Year</th>
+            <th>Type</th>
+            <th>Extracted</th>
+          </tr>
+        </thead>
+        <tbody id="sources-tbody">
+          <tr><td colspan="6" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ TAB: STATS ══ -->
+  <div class="section" id="tab-stats">
+    <div class="card">
+      <h2>Knowledge Base Stats</h2>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="s-reports">—</div><div class="stat-lbl">Source Reports</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-patterns">—</div><div class="stat-lbl">Industry Patterns</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-chunks">—</div><div class="stat-lbl">Report Chunks</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-embedded">—</div><div class="stat-lbl">Embedded</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────
+// Replace with your actual Supabase Edge Function URL
+const EDGE_URL    = 'https://YOUR_PROJECT.supabase.co/functions/v1/ingest-report';
+const EDGE_ANON   = 'YOUR_ANON_KEY'; // same as SUPABASE_ANON in auth.js
+const ADMIN_PWD   = 'YOUR_ADMIN_PASSWORD'; // set a strong password here
+
+let queue = []; // [{file, name, status, filePath}]
+
+// ── Login ─────────────────────────────────────────────────
+function doLogin() {
+  const pwd = document.getElementById('admin-pwd').value;
+  if (pwd === ADMIN_PWD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    loadStats();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+
+// ── Tabs ──────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) =>
+    t.classList.toggle('active', ['ingest','sources','stats'][i] === name));
+  document.querySelectorAll('.section').forEach((s,i) =>
+    s.classList.toggle('active', ['tab-ingest','tab-sources','tab-stats'][i] === 'tab-'+name));
+  if (name === 'sources') loadSources();
+  if (name === 'stats')   loadStats();
+}
+
+// ── Queue management ──────────────────────────────────────
+function addToQueue() {
+  const files = Array.from(document.getElementById('pdf-files').files);
+  for (const file of files) {
+    if (!queue.find(q => q.name === file.name)) {
+      queue.push({ file, name: file.name, status: 'pending', filePath: null });
+    }
+  }
+  renderQueue();
+}
+
+function removeFromQueue(idx) {
+  queue.splice(idx, 1);
+  renderQueue();
+}
+
+function clearQueue() {
+  queue = queue.filter(q => q.status === 'processing');
+  renderQueue();
+}
+
+function renderQueue() {
+  const list = document.getElementById('queue-list');
+  if (!queue.length) { list.innerHTML = ''; return; }
+  list.innerHTML = queue.map((q, i) => `
+    <div class="queue-item" id="qi-${i}">
+      <span>📄</span>
+      <span class="qi-name">${q.name}</span>
+      <span class="qi-status qi-${q.status}">${q.status}</span>
+      ${q.status === 'pending'
+        ? `<button class="qi-remove" onclick="removeFromQueue(${i})">×</button>`
+        : '<span style="width:28px"></span>'}
+    </div>`).join('');
+}
+
+function setQueueStatus(idx, status) {
+  queue[idx].status = status;
+  const el = document.getElementById(`qi-${idx}`);
+  if (el) {
+    el.querySelector('.qi-status').className = `qi-status qi-${status}`;
+    el.querySelector('.qi-status').textContent = status;
+  }
+}
+
+// ── Process queue ─────────────────────────────────────────
+async function processQueue() {
+  const compType = document.getElementById('comp-type').value;
+  const country  = document.getElementById('pdf-country').value;
+  const category = document.getElementById('pdf-category').value.trim();
+  const year     = document.getElementById('pdf-year').value;
+
+  if (!compType) return alert('Please select a competency type.');
+  if (!country)  return alert('Please select a country.');
+  if (!category) return alert('Please enter a product category.');
+  if (!year)     return alert('Please enter the report year.');
+
+  const pending = queue.filter(q => q.status === 'pending');
+  if (!pending.length) return alert('No pending files in queue.');
+
+  document.getElementById('btn-process').disabled = true;
+  document.getElementById('progress-wrap').style.display = 'block';
+  clearLog();
+
+  let done = 0;
+  for (let i = 0; i < queue.length; i++) {
+    const item = queue[i];
+    if (item.status !== 'pending') continue;
+
+    setQueueStatus(i, 'processing');
+    addLog(`\n─── Processing: ${item.name} ───`);
+
+    try {
+      // 1. Upload to Supabase Storage
+      addLog('↑ Uploading to Storage...');
+      const filePath = `reports/${Date.now()}-${item.name.replace(/\s+/g,'-')}`;
+
+      const { error: upErr } = await window.db.storage
+        .from('reports')
+        .upload(filePath, item.file, { contentType: 'application/pdf', upsert: false });
+
+      if (upErr) throw new Error('Upload failed: ' + upErr.message);
+      addLog(`  Uploaded: ${filePath}`);
+      item.filePath = filePath;
+
+      // 2. Call Edge Function
+      addLog('⚙ Calling Edge Function (this takes 2-4 min)...');
+      const res = await fetch(EDGE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${EDGE_ANON}`,
+        },
+        body: JSON.stringify({
+          filePath,
+          competencyType: compType,
+          country,
+          year:            Number(year),
+          productCategory: category,
+          subCategory:     document.getElementById('pdf-subcategory').value.trim() || null,
+        }),
+      });
+
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error || 'Edge function failed');
+
+      addLog(`✓ Done: ${result.patterns} patterns · ${result.chunks} chunks · ${result.embedded} embeddings`, 'done');
+      setQueueStatus(i, 'done');
+
+    } catch (e) {
+      addLog(`✗ Error: ${e.message}`, 'err');
+      setQueueStatus(i, 'error');
+    }
+
+    done++;
+    const total   = pending.length;
+    const pct     = Math.round((done / total) * 100);
+    document.getElementById('pbar-fill').style.width  = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-label-text').textContent =
+      `${done}/${total} files processed`;
+  }
+
+  addLog('\n✅ Queue processing complete.', 'done');
+  document.getElementById('btn-process').disabled = false;
+  loadStats();
+}
+
+// ── Log helpers ───────────────────────────────────────────
+function addLog(msg, type = '') {
+  const el  = document.getElementById('log-body');
+  const cls = type ? `<span class="${type}">${msg}</span>\n` : msg + '\n';
+  el.innerHTML += cls;
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('log-body').innerHTML = '';
+}
+
+// ── Load source reports ───────────────────────────────────
+async function loadSources() {
+  const tbody = document.getElementById('sources-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
+  const { data, error } = await window.db.from('source_reports')
+    .select('title,product_category,country,year,competency_type,extracted')
+    .order('created_at', { ascending: false }).limit(100);
+  if (error || !data?.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => `<tr>
+    <td>${r.title || '—'}</td>
+    <td>${r.product_category || '—'}</td>
+    <td>${r.country}</td>
+    <td>${r.year}</td>
+    <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
+    <td>${r.extracted
+      ? '<span style="color:#38D996">✓ Yes</span>'
+      : '<span style="color:#5A6278">Pending</span>'}</td>
+  </tr>`).join('');
+}
+
+// ── Load stats ────────────────────────────────────────────
+async function loadStats() {
+  const tables = ['source_reports','industry_patterns','report_chunks'];
+  const counts = await Promise.all(
+    tables.map(t => window.db.from(t).select('*', { count:'exact', head:true }))
+  );
+  const { count: embedded } = await window.db.from('report_chunks')
+    .select('*', { count:'exact', head:true })
+    .not('embedding', 'is', null);
+
+  document.getElementById('s-reports').textContent  = counts[0].count ?? '—';
+  document.getElementById('s-patterns').textContent = counts[1].count ?? '—';
+  document.getElementById('s-chunks').textContent   = counts[2].count ?? '—';
+  document.getElementById('s-embedded').textContent = embedded ?? '—';
+}
+</script>
+</body>
+</html>
