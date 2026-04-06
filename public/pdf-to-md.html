@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF → Text Converter — KIRA RESEARCH</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- PDF.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0B0D10;color:#fff;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;padding:40px 24px;min-height:100vh}
+    .wrap{max-width:860px;margin:0 auto}
+    h1{font-size:22px;font-weight:700;margin-bottom:6px}
+    .sub{font-size:13px;color:#5A6278;margin-bottom:32px;display:flex;align-items:center;gap:8px}
+    .privacy-badge{background:rgba(56,217,150,.1);border:1px solid rgba(56,217,150,.2);color:#38D996;font-size:11px;padding:3px 9px;border-radius:4px;font-weight:600}
+
+    /* drop zone */
+    .drop-zone{border:2px dashed #242A35;border-radius:12px;padding:48px 24px;text-align:center;transition:all .2s;cursor:pointer;background:#11151C;position:relative}
+    .drop-zone.drag-over{border-color:#1E6FFF;background:rgba(30,111,255,.06)}
+    .drop-zone.has-file{border-color:#1E6FFF;border-style:solid}
+    .drop-icon{font-size:36px;margin-bottom:12px;opacity:.5}
+    .drop-title{font-size:16px;font-weight:600;margin-bottom:6px}
+    .drop-sub{font-size:13px;color:#5A6278}
+    .drop-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+    .file-name{font-size:13px;color:#1E6FFF;margin-top:8px;font-weight:600}
+
+    /* options */
+    .options{display:flex;align-items:center;gap:16px;margin:20px 0;flex-wrap:wrap}
+    .opt-label{font-size:12px;color:#A3A9B6;font-weight:600}
+    .toggle-group{display:flex;gap:4px}
+    .toggle-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #242A35;background:transparent;color:#5A6278;font-family:Arial,sans-serif;transition:all .2s}
+    .toggle-btn.active{background:rgba(30,111,255,.15);border-color:rgba(30,111,255,.4);color:#1E6FFF}
+
+    /* progress */
+    .progress-wrap{display:none;margin:20px 0}
+    .progress-bar-bg{height:4px;background:#1A1D24;border-radius:2px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:#1E6FFF;border-radius:2px;transition:width .3s}
+    .progress-label{font-size:12px;color:#5A6278;margin-top:6px;display:flex;justify-content:space-between}
+
+    /* output */
+    .output-wrap{display:none;margin-top:24px}
+    .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px}
+    .output-title{font-size:13px;font-weight:600;color:#A3A9B6}
+    .output-meta{font-size:11px;color:#5A6278}
+    .output-actions{display:flex;gap:8px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:Arial,sans-serif;transition:all .2s}
+    .btn-primary{background:#1E6FFF;color:#fff}.btn-primary:hover{background:#1558CC}
+    .btn-secondary{background:#161B24;color:#A3A9B6;border:1px solid #1A1D24}.btn-secondary:hover{color:#fff;border-color:#242A35}
+    .btn-success{background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3)}
+
+    textarea.output{width:100%;background:#0B0D10;border:1px solid #1A1D24;border-radius:8px;padding:16px;font-family:'Courier New',monospace;font-size:12px;color:#A3A9B6;line-height:1.7;min-height:400px;resize:vertical;outline:none}
+    textarea.output:focus{border-color:#1E6FFF}
+
+    /* file list */
+    .file-list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+    .file-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#11151C;border:1px solid #1A1D24;border-radius:8px;font-size:13px}
+    .fi-name{flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .fi-status{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:700;flex-shrink:0}
+    .fi-pending{background:rgba(163,169,182,.1);color:#A3A9B6;border:1px solid #1A1D24}
+    .fi-processing{background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.2)}
+    .fi-done{background:rgba(56,217,150,.1);color:#38D996;border:1px solid rgba(56,217,150,.2)}
+    .fi-error{background:rgba(229,62,62,.1);color:#FC8181;border:1px solid rgba(229,62,62,.2)}
+    .fi-dl{padding:4px 10px;font-size:11px;border-radius:4px;background:#1E6FFF;color:#fff;cursor:pointer;border:none;font-family:Arial,sans-serif;font-weight:600;white-space:nowrap}
+    .fi-dl:disabled{opacity:.3;cursor:not-allowed}
+
+    .btn-convert{width:100%;padding:13px;font-size:14px;border-radius:8px;margin-top:4px}
+    .btn-convert:disabled{opacity:.4;cursor:not-allowed}
+
+    .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-top:16px}
+    .alert-info{background:rgba(30,111,255,.08);border:1px solid rgba(30,111,255,.2);color:#A3A9B6}
+
+    @media(max-width:560px){body{padding:24px 16px}.options{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <h1>PDF to Text Converter</h1>
+    <a href="/admin.html" style="font-size:12px;color:#5A6278">Back to Admin</a>
+  </div>
+  <div class="sub">
+    <span>Convert PDFs to .txt for ingestion into KIRA knowledge base</span>
+    <span class="privacy-badge">100% Local — no upload</span>
+  </div>
+
+  <!-- Drop zone -->
+  <div class="drop-zone" id="drop-zone">
+    <input type="file" class="drop-input" id="file-input" accept=".pdf" multiple
+      onchange="handleFiles(this.files)" />
+    <div class="drop-icon">PDF</div>
+    <div class="drop-title">Drop PDF files here</div>
+    <div class="drop-sub">or click to select — multiple files supported</div>
+    <div class="file-name" id="file-name-display"></div>
+  </div>
+
+  <!-- Options -->
+  <div class="options">
+    <span class="opt-label">Output format:</span>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="fmt-txt" onclick="setFormat('txt')">Plain .txt</button>
+      <button class="toggle-btn" id="fmt-md" onclick="setFormat('md')">Markdown .md</button>
+    </div>
+    <span class="opt-label" style="margin-left:8px">Page headers:</span>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="hdr-on" onclick="setHeaders(true)">On</button>
+      <button class="toggle-btn" id="hdr-off" onclick="setHeaders(false)">Off</button>
+    </div>
+  </div>
+
+  <!-- File list -->
+  <div class="file-list" id="file-list"></div>
+
+  <!-- Convert button -->
+  <button class="btn btn-primary btn-convert" id="btn-convert"
+    onclick="convertAll()" disabled>
+    Convert All Files
+  </button>
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-label">
+      <span id="progress-text">Processing...</span>
+      <span id="progress-pct">0%</span>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:20px">
+    Files are processed entirely in your browser. Nothing is uploaded to any server.
+    After conversion, download each .txt file and upload to KIRA Admin for ingestion.
+  </div>
+</div>
+
+<script>
+// Set PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let files = [];
+let outputFormat = 'txt';
+let includeHeaders = true;
+
+// ── Format + header toggles ───────────────────────────────
+function setFormat(f) {
+  outputFormat = f;
+  document.getElementById('fmt-txt').classList.toggle('active', f === 'txt');
+  document.getElementById('fmt-md').classList.toggle('active', f === 'md');
+}
+
+function setHeaders(v) {
+  includeHeaders = v;
+  document.getElementById('hdr-on').classList.toggle('active', v);
+  document.getElementById('hdr-off').classList.toggle('active', !v);
+}
+
+// ── File handling ─────────────────────────────────────────
+function handleFiles(fileList) {
+  files = Array.from(fileList);
+  document.getElementById('file-name-display').textContent =
+    files.length === 1 ? files[0].name : `${files.length} files selected`;
+  document.getElementById('drop-zone').classList.add('has-file');
+  document.getElementById('btn-convert').disabled = false;
+  renderFileList();
+}
+
+function renderFileList() {
+  const list = document.getElementById('file-list');
+  list.innerHTML = files.map((f, i) => `
+    <div class="file-item" id="fi-${i}">
+      <span style="font-size:16px">PDF</span>
+      <span class="fi-name">${f.name}</span>
+      <span class="fi-status fi-pending" id="fi-status-${i}">pending</span>
+      <button class="fi-dl" id="fi-dl-${i}" disabled onclick="downloadFile(${i})">
+        Download .${outputFormat}
+      </button>
+    </div>`).join('');
+}
+
+// Drag and drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  const dropped = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+  if (dropped.length) handleFiles(dropped);
+});
+
+// ── Convert all ───────────────────────────────────────────
+const results = {};
+
+async function convertAll() {
+  document.getElementById('btn-convert').disabled = true;
+  document.getElementById('progress-wrap').style.display = 'block';
+
+  for (let i = 0; i < files.length; i++) {
+    setFileStatus(i, 'processing');
+    try {
+      const text = await convertPDF(files[i], i);
+      results[i] = { name: files[i].name, text };
+      setFileStatus(i, 'done');
+      document.getElementById(`fi-dl-${i}`).disabled = false;
+      document.getElementById(`fi-dl-${i}`).textContent = `Download .${outputFormat}`;
+    } catch (e) {
+      setFileStatus(i, 'error');
+      console.error(e);
+    }
+
+    const pct = Math.round(((i + 1) / files.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-text').textContent =
+      `${i + 1}/${files.length} files converted`;
+  }
+
+  document.getElementById('btn-convert').disabled = false;
+}
+
+async function convertPDF(file, fileIdx) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const totalPages = pdf.numPages;
+
+  let output = '';
+
+  if (outputFormat === 'md') {
+    output += `# ${file.name.replace('.pdf', '')}\n\n`;
+    output += `**Source:** ${file.name}  \n`;
+    output += `**Pages:** ${totalPages}  \n`;
+    output += `**Converted:** ${new Date().toLocaleDateString()}  \n\n`;
+    output += '---\n\n';
+  }
+
+  for (let p = 1; p <= totalPages; p++) {
+    const page     = await pdf.getPage(p);
+    const content  = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(' ')
+      .replace(/\s+/g, ' ').trim();
+
+    if (!pageText) continue;
+
+    if (includeHeaders) {
+      if (outputFormat === 'md') {
+        output += `## Page ${p}\n\n`;
+      } else {
+        output += `\n--- PAGE ${p} ---\n\n`;
+      }
+    }
+
+    // Basic paragraph detection: split on double spaces or sentence ends
+    const paragraphs = pageText
+      .replace(/([.!?])\s{2,}/g, '$1\n\n')
+      .replace(/\s{3,}/g, '\n\n');
+
+    output += paragraphs + '\n\n';
+
+    // Update progress within file
+    const filePct = Math.round((p / totalPages) * 100);
+    document.getElementById('progress-text').textContent =
+      `File ${fileIdx + 1}/${files.length}: page ${p}/${totalPages}`;
+  }
+
+  return output;
+}
+
+function setFileStatus(i, status) {
+  const el = document.getElementById(`fi-status-${i}`);
+  if (!el) return;
+  el.className = `fi-status fi-${status}`;
+  el.textContent = status;
+}
+
+// ── Download ──────────────────────────────────────────────
+function downloadFile(i) {
+  const result = results[i];
+  if (!result) return;
+
+  const ext      = outputFormat;
+  const filename = result.name.replace(/\.pdf$/i, '') + '.' + ext;
+  const blob     = new Blob([result.text], { type: 'text/plain;charset=utf-8' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href         = url;
+  a.download     = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@
   <title>Admin — KIRA RESEARCH</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="/auth.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -159,10 +160,10 @@
     <div class="card">
       <h2>Step 2 — Select PDF Files</h2>
       <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
-        Select .txt or .md files (recommended) or .pdf under 100 pages. Processed one by one.
+        Select PDF files. PDFs are converted to .md automatically in your browser before upload — nothing leaves your device.
       </p>
       <label>PDF File(s) *</label>
-      <input type="file" id="pdf-files" accept=".txt,.md,.pdf" multiple onchange="addToQueue()" />
+      <input type="file" id="pdf-files" accept=".pdf,.txt,.md" multiple onchange="addToQueue()" />
 
       <div class="queue-list" id="queue-list"></div>
     </div>
@@ -280,6 +281,45 @@ function switchTab(name) {
   if (name === 'stats')   loadStats();
 }
 
+// -- PDF.js init --
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+async function pdfToMd(file, onProgress) {
+  const buf  = await file.arrayBuffer();
+  const pdf  = await pdfjsLib.getDocument({ data: buf }).promise;
+  const name = file.name.replace(/\.pdf$/i, '');
+  let md = `# ${name}\n\n`;
+  md += `> Source: ${file.name} | Pages: ${pdf.numPages} | Converted: ${new Date().toLocaleDateString()}\n\n---\n\n`;
+
+  for (let p = 1; p <= pdf.numPages; p++) {
+    if (onProgress) onProgress(p, pdf.numPages);
+    const page    = await pdf.getPage(p);
+    const content = await page.getTextContent();
+
+    // Group items into lines by Y position
+    const byY = {};
+    for (const item of content.items) {
+      if (!item.str.trim()) continue;
+      const y = Math.round(item.transform[5]);
+      if (!byY[y]) byY[y] = [];
+      byY[y].push(item.str);
+    }
+
+    // Sort lines top-to-bottom (descending Y in PDF coords)
+    const lines = Object.keys(byY)
+      .sort((a, b) => b - a)
+      .map(y => byY[y].join(' ').trim())
+      .filter(Boolean);
+
+    if (!lines.length) continue;
+
+    md += `## Page ${p}\n\n`;
+    md += lines.join('\n') + '\n\n';
+  }
+  return md;
+}
+
 // -- Queue management --------------------------------------
 function addToQueue() {
   const files = Array.from(document.getElementById('pdf-files').files);
@@ -344,13 +384,34 @@ async function processQueue() {
     addLog(`\n--- Processing: ${item.name} ---`);
 
     try {
-      // 1. Upload to Supabase Storage
-      addLog('^ Uploading to Storage...');
-      const filePath = `reports/${Date.now()}-${item.name.replace(/\s+/g,'-')}`;
+      // 1a. Convert PDF to .md in browser if needed
+      let textContent, uploadName;
+      const isPdf = item.file.name.toLowerCase().endsWith('.pdf');
+      if (isPdf) {
+        addLog('Converting PDF to .md...');
+        let lastPage = 0;
+        textContent = await pdfToMd(item.file, (p, total) => {
+          if (p !== lastPage) {
+            document.getElementById('progress-label-text').textContent =
+              `File ${queue.indexOf(item)+1}: converting page ${p}/${total}`;
+            lastPage = p;
+          }
+        });
+        uploadName = item.name.replace(/\.pdf$/i, '.md');
+        addLog(`  Converted: ${Math.round(textContent.length/1024)}KB .md`);
+      } else {
+        textContent = await item.file.text();
+        uploadName  = item.name;
+      }
+
+      // 1b. Upload text to Supabase Storage
+      addLog('Uploading to Storage...');
+      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-')}`;
+      const blob = new Blob([textContent], { type: 'text/plain' });
 
       const { error: upErr } = await window.db.storage
         .from('reports')
-        .upload(filePath, item.file, { contentType: item.file.type || 'text/plain', upsert: false });
+        .upload(filePath, blob, { contentType: 'text/plain', upsert: false });
 
       if (upErr) throw new Error('Upload failed: ' + upErr.message);
       addLog(`  Uploaded: ${filePath}`);
