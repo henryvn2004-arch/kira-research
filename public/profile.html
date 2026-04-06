@@ -166,15 +166,11 @@ async function loadReports(user) {
 
   // Fetch via API instead (avoids duplicating keys)
   try {
-    const res  = await fetch('/api/get-my-reports', {
-      headers: { 'Authorization': 'Bearer ' + (await window.kiraAuth.getSession())?.access_token }
-    });
-    const data = await res.json();
-    allReports = data.reports || [];
-    renderStats(allReports, data.purchases || []);
+    const { reports, purchases } = await window.kiraDB.getMyReports();
+    allReports = reports;
+    renderStats(reports, purchases);
     renderReports('all');
   } catch (e) {
-    // Fallback: show empty state
     renderStats([], []);
     renderReports('all');
   }

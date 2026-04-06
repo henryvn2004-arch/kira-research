@@ -209,11 +209,8 @@ const COUNTRY_FLAG = { Vietnam:'🇻🇳', Indonesia:'🇮🇩', Thailand:'🇹�
 // ── Load reports from API ──────────────────────────────────
 async function loadLibrary() {
   try {
-    const res  = await fetch('/api/search?type=library&limit=50');
-    const data = await res.json();
-    allReports = data.reports || [];
+    allReports = await window.kiraDB.searchLibrary({ limit: 50 });
   } catch (e) {
-    // If API not ready, use sample data
     allReports = getSampleReports();
   }
   filteredReports = [...allReports];
@@ -280,9 +277,7 @@ function renderGrid(reports) {
 // ── Open report modal ─────────────────────────────────────
 async function openReport(idOrSlug) {
   try {
-    const res  = await fetch(`/api/search?type=living&id=${idOrSlug}`);
-    const data = await res.json();
-    currentReport = data.report || getSampleReports().find(r => r.id === idOrSlug || r.slug === idOrSlug);
+    currentReport = await window.kiraDB.getLivingReport(idOrSlug);
   } catch {
     currentReport = getSampleReports().find(r => r.id === idOrSlug || r.slug === idOrSlug);
   }
