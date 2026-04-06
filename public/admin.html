@@ -242,9 +242,9 @@
 <script>
 // -- Config ------------------------------------------------
 // Replace with your actual Supabase Edge Function URL
-const EDGE_URL    = 'https://iygoynbnscednfzdsflc.supabase.co/functions/v1/ingest-report';
-const EDGE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5Z295bmJuc2NlZG5memRzZmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzY1OTksImV4cCI6MjA5MDk1MjU5OX0.gGI12Rjwq1WAvJuUKkgrmfaXP2idWBRXOdfYFnMtb5o'; // same as SUPABASE_ANON in auth.js
-const ADMIN_PWD   = 'Saigon456$%^'; // set a strong password here
+const EDGE_URL    = 'https://YOUR_PROJECT.supabase.co/functions/v1/ingest-report';
+const EDGE_ANON   = 'YOUR_ANON_KEY'; // same as SUPABASE_ANON in auth.js
+const ADMIN_PWD   = 'YOUR_ADMIN_PASSWORD'; // set a strong password here
 
 let queue = []; // [{file, name, status, filePath}]
 
@@ -316,15 +316,7 @@ function setQueueStatus(idx, status) {
 
 // -- Process queue -----------------------------------------
 async function processQueue() {
-  const compType = document.getElementById('comp-type').value;
-  const country  = document.getElementById('pdf-country').value;
-  const category = document.getElementById('pdf-category').value.trim();
-  const year     = document.getElementById('pdf-year').value;
-
-  if (!compType) return alert('Please select a competency type.');
-  if (!country)  return alert('Please select a country.');
-  if (!category) return alert('Please enter a product category.');
-  if (!year)     return alert('Please enter the report year.');
+  // No manual config needed - Claude auto-detects everything
 
   const pending = queue.filter(q => q.status === 'pending');
   if (!pending.length) return alert('No pending files in queue.');
@@ -362,14 +354,7 @@ async function processQueue() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${EDGE_ANON}`,
         },
-        body: JSON.stringify({
-          filePath,
-          competencyType: compType,
-          country,
-          year:            Number(year),
-          productCategory: category,
-          subCategory:     document.getElementById('pdf-subcategory').value.trim() || null,
-        }),
+        body: JSON.stringify({ filePath }),
       });
 
       const result = await res.json();
