@@ -108,7 +108,7 @@
     <div class="tab" onclick="switchTab('stats')">📈 Stats</div>
   </div>
 
-  <!-- ══ TAB: INGEST ══ -->
+  <!-- == TAB: INGEST == -->
   <div class="section active" id="tab-ingest">
 
     <!-- Step 1: Configure -->
@@ -198,7 +198,7 @@
     </div>
   </div>
 
-  <!-- ══ TAB: SOURCE REPORTS ══ -->
+  <!-- == TAB: SOURCE REPORTS == -->
   <div class="section" id="tab-sources">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -224,7 +224,7 @@
     </div>
   </div>
 
-  <!-- ══ TAB: STATS ══ -->
+  <!-- == TAB: STATS == -->
   <div class="section" id="tab-stats">
     <div class="card">
       <h2>Knowledge Base Stats</h2>
@@ -240,15 +240,15 @@
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────────
+// -- Config ------------------------------------------------
 // Replace with your actual Supabase Edge Function URL
-const EDGE_URL    = 'https://iygoynbnscednfzdsflc.supabase.co/functions/v1/ingest-report';
-const EDGE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5Z295bmJuc2NlZG5memRzZmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzY1OTksImV4cCI6MjA5MDk1MjU5OX0.gGI12Rjwq1WAvJuUKkgrmfaXP2idWBRXOdfYFnMtb5o
-const ADMIN_PWD   = 'Kira@456$%^
+const EDGE_URL    = 'https://YOUR_PROJECT.supabase.co/functions/v1/ingest-report';
+const EDGE_ANON   = 'YOUR_ANON_KEY'; // same as SUPABASE_ANON in auth.js
+const ADMIN_PWD   = 'YOUR_ADMIN_PASSWORD'; // set a strong password here
 
 let queue = []; // [{file, name, status, filePath}]
 
-// ── Login ─────────────────────────────────────────────────
+// -- Login -------------------------------------------------
 function doLogin() {
   const pwd = document.getElementById('admin-pwd').value;
   if (pwd === ADMIN_PWD) {
@@ -260,7 +260,7 @@ function doLogin() {
   }
 }
 
-// ── Tabs ──────────────────────────────────────────────────
+// -- Tabs --------------------------------------------------
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) =>
     t.classList.toggle('active', ['ingest','sources','stats'][i] === name));
@@ -270,7 +270,7 @@ function switchTab(name) {
   if (name === 'stats')   loadStats();
 }
 
-// ── Queue management ──────────────────────────────────────
+// -- Queue management --------------------------------------
 function addToQueue() {
   const files = Array.from(document.getElementById('pdf-files').files);
   for (const file of files) {
@@ -296,11 +296,11 @@ function renderQueue() {
   if (!queue.length) { list.innerHTML = ''; return; }
   list.innerHTML = queue.map((q, i) => `
     <div class="queue-item" id="qi-${i}">
-      <span>📄</span>
+      <span>[PDF]</span>
       <span class="qi-name">${q.name}</span>
       <span class="qi-status qi-${q.status}">${q.status}</span>
       ${q.status === 'pending'
-        ? `<button class="qi-remove" onclick="removeFromQueue(${i})">×</button>`
+        ? `<button class="qi-remove" onclick="removeFromQueue(${i})">x</button>`
         : '<span style="width:28px"></span>'}
     </div>`).join('');
 }
@@ -314,7 +314,7 @@ function setQueueStatus(idx, status) {
   }
 }
 
-// ── Process queue ─────────────────────────────────────────
+// -- Process queue -----------------------------------------
 async function processQueue() {
   const compType = document.getElementById('comp-type').value;
   const country  = document.getElementById('pdf-country').value;
@@ -339,11 +339,11 @@ async function processQueue() {
     if (item.status !== 'pending') continue;
 
     setQueueStatus(i, 'processing');
-    addLog(`\n─── Processing: ${item.name} ───`);
+    addLog(`\n--- Processing: ${item.name} ---`);
 
     try {
       // 1. Upload to Supabase Storage
-      addLog('↑ Uploading to Storage...');
+      addLog('^ Uploading to Storage...');
       const filePath = `reports/${Date.now()}-${item.name.replace(/\s+/g,'-')}`;
 
       const { error: upErr } = await window.db.storage
@@ -355,7 +355,7 @@ async function processQueue() {
       item.filePath = filePath;
 
       // 2. Call Edge Function
-      addLog('⚙ Calling Edge Function (this takes 2-4 min)...');
+      addLog('* Calling Edge Function (this takes 2-4 min)...');
       const res = await fetch(EDGE_URL, {
         method: 'POST',
         headers: {
@@ -375,11 +375,11 @@ async function processQueue() {
       const result = await res.json();
       if (!result.success) throw new Error(result.error || 'Edge function failed');
 
-      addLog(`✓ Done: ${result.patterns} patterns · ${result.chunks} chunks · ${result.embedded} embeddings`, 'done');
+      addLog(`OK Done: ${result.patterns} patterns ? ${result.chunks} chunks ? ${result.embedded} embeddings`, 'done');
       setQueueStatus(i, 'done');
 
     } catch (e) {
-      addLog(`✗ Error: ${e.message}`, 'err');
+      addLog(`? Error: ${e.message}`, 'err');
       setQueueStatus(i, 'error');
     }
 
@@ -392,12 +392,12 @@ async function processQueue() {
       `${done}/${total} files processed`;
   }
 
-  addLog('\n✅ Queue processing complete.', 'done');
+  addLog('\nDONE Queue processing complete.', 'done');
   document.getElementById('btn-process').disabled = false;
   loadStats();
 }
 
-// ── Log helpers ───────────────────────────────────────────
+// -- Log helpers -------------------------------------------
 function addLog(msg, type = '') {
   const el  = document.getElementById('log-body');
   const cls = type ? `<span class="${type}">${msg}</span>\n` : msg + '\n';
@@ -409,7 +409,7 @@ function clearLog() {
   document.getElementById('log-body').innerHTML = '';
 }
 
-// ── Load source reports ───────────────────────────────────
+// -- Load source reports -----------------------------------
 async function loadSources() {
   const tbody = document.getElementById('sources-tbody');
   tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
@@ -421,18 +421,18 @@ async function loadSources() {
     return;
   }
   tbody.innerHTML = data.map(r => `<tr>
-    <td>${r.title || '—'}</td>
-    <td>${r.product_category || '—'}</td>
+    <td>${r.title || '?'}</td>
+    <td>${r.product_category || '?'}</td>
     <td>${r.country}</td>
     <td>${r.year}</td>
     <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
     <td>${r.extracted
-      ? '<span style="color:#38D996">✓ Yes</span>'
+      ? '<span style="color:#38D996">OK Yes</span>'
       : '<span style="color:#5A6278">Pending</span>'}</td>
   </tr>`).join('');
 }
 
-// ── Load stats ────────────────────────────────────────────
+// -- Load stats --------------------------------------------
 async function loadStats() {
   const tables = ['source_reports','industry_patterns','report_chunks'];
   const counts = await Promise.all(
@@ -442,10 +442,10 @@ async function loadStats() {
     .select('*', { count:'exact', head:true })
     .not('embedding', 'is', null);
 
-  document.getElementById('s-reports').textContent  = counts[0].count ?? '—';
-  document.getElementById('s-patterns').textContent = counts[1].count ?? '—';
-  document.getElementById('s-chunks').textContent   = counts[2].count ?? '—';
-  document.getElementById('s-embedded').textContent = embedded ?? '—';
+  document.getElementById('s-reports').textContent  = counts[0].count ?? '?';
+  document.getElementById('s-patterns').textContent = counts[1].count ?? '?';
+  document.getElementById('s-chunks').textContent   = counts[2].count ?? '?';
+  document.getElementById('s-embedded').textContent = embedded ?? '?';
 }
 </script>
 </body>
