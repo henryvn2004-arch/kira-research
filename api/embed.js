@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${OPENAI_KEY}`,
       },
       body: JSON.stringify({
-        model: 'text-embedding-3-small',
+        model: 'text-embedding-3-large',
         input: texts,
       }),
     });
