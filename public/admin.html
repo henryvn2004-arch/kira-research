@@ -246,6 +246,7 @@
 const EDGE_URL    = 'https://iygoynbnscednfzdsflc.supabase.co/functions/v1/ingest-report';
 const EDGE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5Z295bmJuc2NlZG5memRzZmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzY1OTksImV4cCI6MjA5MDk1MjU5OX0.gGI12Rjwq1WAvJuUKkgrmfaXP2idWBRXOdfYFnMtb5o';
 const ADMIN_PWD   = 'Saigon@123';
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY'; // replace with your key
 
 let queue = []; // [{file, name, status, filePath}]
 
@@ -365,6 +366,78 @@ function setQueueStatus(idx, status) {
 }
 
 // -- Process queue -----------------------------------------
+async function callClaude(fileText) {
+  const truncated = fileText.length > 80000
+    ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]'
+    : fileText;
+
+  const prompt = `You are analyzing a consulting market research report.
+Read carefully and return ONLY valid JSON (no markdown, no backticks):
+
+{
+  "metadata": {
+    "title": "report title",
+    "product_category": "main category",
+    "sub_category": "sub-category or null",
+    "country": "country name",
+    "region": "southeast_asia|south_asia|east_asia or null",
+    "year": 2019,
+    "client_industry": "industry or null",
+    "competency_type": "market_analysis|competitive_landscape|market_entry|channel_analysis|pricing_study|consumer_insights|partner_search|market_sizing|industry_mapping",
+    "methodology_used": ["survey","focus_groups","trade_interviews","desk_research"],
+    "respondent_types": ["consumers","trade","experts"]
+  },
+  "template": {
+    "name": "template name",
+    "section_structure": [{"section": "...", "purpose": "..."}],
+    "methodology": "methodology description"
+  },
+  "patterns": [
+    {
+      "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
+      "industry": "industry name",
+      "sub_industry": "sub-industry or null",
+      "description": "structural insight - STRIP all specific numbers/dates",
+      "applicable_regions": ["southeast_asia"],
+      "confidence": "high|medium|low"
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
+      "content": "50-150 word insight - STRIP specific numbers, keep structural insights",
+      "section": "section name",
+      "data_type": "null"
+    }
+  ]
+}
+
+Rules: 5-15 patterns, 20-50 chunks. Return ONLY JSON.
+
+REPORT:
+` + truncated;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
+  const text  = data.content?.[0]?.text || '';
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
 async function runEmbeddings() {
   document.getElementById('btn-embed').disabled = true;
   addLog('\nRunning embeddings via /api/embed...');
