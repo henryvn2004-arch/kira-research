@@ -375,25 +375,34 @@ function setQueueStatus(idx, status) {
 
 // -- Process queue -----------------------------------------
 // Split text into chunks of ~40k chars, respecting paragraph breaks
-function splitIntoChunks(text, chunkSize = 40000) {
-  const chunks = [];
-  let start = 0;
-  while (start < text.length) {
-    let end = start + chunkSize;
-    if (end < text.length) {
-      // Try to break at paragraph boundary
-      const breakAt = text.lastIndexOf('\n\n', end);
-      if (breakAt > start + chunkSize * 0.7) end = breakAt;
-    }
-    chunks.push(text.slice(start, Math.min(end, text.length)));
-    start = end;
-  }
-  return chunks;
+// ── ANTHROPIC direct call helper ─────────────────────────────
+async function callAnthropic(messages, maxTokens = 3000) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: maxTokens,
+      messages,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error('Claude API: ' + (data.error?.message || JSON.stringify(data)));
+  return data.content?.[0]?.text || '';
 }
 
-// Call Anthropic directly from browser — no Vercel proxy, no timeout limit
-async function callClaudeChunk(chunkText, chunkIndex, totalChunks, isFirst) {
-  const metadataRequest = isFirst ? `
+// ── PASS 1: Find Table of Contents → extract section headers ──
+async function detectSections(fileText) {
+  const preview = fileText.slice(0, 8000); // cover + ToC usually in first 8000 chars
+  const prompt = `You are reading the beginning of a consulting market research report (cover page + table of contents area).
+
+Return ONLY valid JSON (no markdown, no backticks):
+{
   "metadata": {
     "title": "report title",
     "product_category": "main industry/product category",
@@ -408,16 +417,78 @@ async function callClaudeChunk(chunkText, chunkIndex, totalChunks, isFirst) {
   },
   "template": {
     "name": "template name",
-    "section_structure": [{"section": "...", "purpose": "..."}],
+    "section_structure": [{"section": "Section Name", "purpose": "what this section covers"}],
     "methodology": "brief methodology description"
-  },` : `
-  "metadata": null,
-  "template": null,`;
+  },
+  "toc_found": true,
+  "section_headers": ["Exact Section Header 1", "Exact Section Header 2", "..."]
+}
 
-  const prompt = `You are extracting reusable intelligence from part ${chunkIndex+1} of ${totalChunks} of a consulting market research report.
-Return ONLY valid JSON (no markdown, no backticks, no explanation):
+PRIORITY: Look for a Table of Contents (ToC) — it usually appears in the first pages and lists all sections with page numbers.
+If ToC found (toc_found: true): extract the EXACT section heading text from the ToC (e.g. "3. Competitive Landscape", "Section 4: Channel Structure").
+If no ToC found (toc_found: false): identify major section headings from the content itself.
 
-{${metadataRequest}
+section_headers must be the EXACT strings as they appear in the document body — these will be used to locate and split the full report text.
+Include all major sections, typically 6-12 headers.
+
+REPORT BEGINNING:
+${preview}`;
+
+  const text = await callAnthropic([{ role: 'user', content: prompt }], 1500);
+  const clean = text.replace(/```json|```/g, '').trim();
+  const result = JSON.parse(clean);
+
+  return result;
+}
+
+// ── Split full text into sections using detected headers ──────
+function splitBySections(fullText, headers) {
+  if (!headers || headers.length === 0) {
+    // Fallback: split into 3 equal parts
+    const size = Math.ceil(fullText.length / 3);
+    return [
+      { header: 'Part 1', text: fullText.slice(0, size) },
+      { header: 'Part 2', text: fullText.slice(size, size * 2) },
+      { header: 'Part 3', text: fullText.slice(size * 2) },
+    ];
+  }
+
+  const sections = [];
+  let remaining = fullText;
+
+  for (let i = 0; i < headers.length; i++) {
+    const header = headers[i];
+    const nextHeader = headers[i + 1];
+
+    const startIdx = remaining.indexOf(header);
+    if (startIdx === -1) continue; // header not found, skip
+
+    const endIdx = nextHeader ? remaining.indexOf(nextHeader, startIdx + header.length) : remaining.length;
+    const sectionText = remaining.slice(startIdx, endIdx === -1 ? remaining.length : endIdx).trim();
+
+    if (sectionText.length > 200) { // skip tiny sections
+      sections.push({ header, text: sectionText });
+    }
+  }
+
+  // Fallback if detection failed
+  if (sections.length === 0) {
+    const size = Math.ceil(fullText.length / 4);
+    return Array.from({ length: 4 }, (_, i) => ({
+      header: `Part ${i + 1}`,
+      text: fullText.slice(i * size, (i + 1) * size),
+    }));
+  }
+
+  return sections;
+}
+
+// ── PASS 2: Extract patterns + chunks from one section ────────
+async function extractSection(section, sectionIndex, totalSections) {
+  const prompt = `You are extracting reusable market intelligence from section "${section.header}" (${sectionIndex+1} of ${totalSections}) of a consulting report.
+
+Return ONLY valid JSON (no markdown, no backticks):
+{
   "patterns": [
     {
       "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
@@ -431,60 +502,60 @@ Return ONLY valid JSON (no markdown, no backticks, no explanation):
   "chunks": [
     {
       "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
-      "content": "50-150 word insight — STRIP specific numbers/dates, keep structural insights",
-      "section": "section name from report"
+      "content": "60-150 word insight — STRIP specific numbers/dates, keep structural insights only",
+      "section": "${section.header}"
     }
   ]
 }
 
-Rules: extract 3-8 patterns and 8-15 chunks from THIS section only. Return ONLY JSON.
+Rules:
+- Extract 2-6 patterns and 4-10 chunks from THIS section only
+- Focus on STRUCTURAL insights that apply beyond this specific report
+- STRIP all specific brand names, company names, exact figures, dates
+- Return ONLY JSON
 
-REPORT SECTION:
-${chunkText}`;
+SECTION CONTENT:
+${section.text.slice(0, 45000)}`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 3000,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
-  const text  = data.content?.[0]?.text || '';
+  const text = await callAnthropic([{ role: 'user', content: prompt }], 2500);
   const clean = text.replace(/```json|```/g, '').trim();
   return JSON.parse(clean);
 }
 
-// Main extraction: chunk full text, call Claude per chunk, merge results
+// ── MAIN: Pass1 detect → split by sections → Pass2 extract each ──
 async function extractFullReport(fileText, onProgress) {
-  const chunks = splitIntoChunks(fileText, 40000);
-  onProgress(`  Split into ${chunks.length} chunks`);
+  // Pass 1: detect sections + metadata
+  onProgress('  Pass 1: detecting report structure...');
+  const detection = await detectSections(fileText);
+  const headers = detection.section_headers || [];
+  const tocStatus = detection.toc_found ? '✓ ToC found' : '⚠ No ToC — headers inferred from content';
+  onProgress(`  ${tocStatus} → ${headers.length} sections: ${headers.slice(0, 3).join(' | ')}...`);
 
-  let merged = { metadata: null, template: null, patterns: [], chunks: [] };
+  // Split by real section headers
+  const sections = splitBySections(fileText, headers);
+  onProgress(`  Split into ${sections.length} sections`);
 
-  for (let i = 0; i < chunks.length; i++) {
-    onProgress(`  Chunk ${i+1}/${chunks.length}: calling Claude...`);
-    const result = await callClaudeChunk(chunks[i], i, chunks.length, i === 0);
+  // Pass 2: extract each section
+  let merged = {
+    metadata: detection.metadata || null,
+    template: detection.template || null,
+    patterns: [],
+    chunks: [],
+  };
 
-    if (i === 0 && result.metadata) merged.metadata = result.metadata;
-    if (i === 0 && result.template) merged.template = result.template;
-    merged.patterns.push(...(result.patterns || []));
-    merged.chunks.push(...(result.chunks || []));
-
-    // Delay between chunks to avoid rate limit
-    if (i < chunks.length - 1) await sleep(2000);
+  for (let i = 0; i < sections.length; i++) {
+    onProgress(`  Section ${i+1}/${sections.length}: "${sections[i].header}" (${Math.round(sections[i].text.length/1024)}KB)`);
+    try {
+      const result = await extractSection(sections[i], i, sections.length);
+      merged.patterns.push(...(result.patterns || []));
+      merged.chunks.push(...(result.chunks || []));
+    } catch(e) {
+      onProgress(`  ⚠ Section ${i+1} failed: ${e.message} — skipping`);
+    }
+    if (i < sections.length - 1) await sleep(2000);
   }
 
-  onProgress(`  Total extracted: ${merged.patterns.length} patterns, ${merged.chunks.length} chunks`);
+  onProgress(`  ✓ Total: ${merged.patterns.length} patterns, ${merged.chunks.length} chunks`);
   return merged;
 }
 
