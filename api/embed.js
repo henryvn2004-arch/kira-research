@@ -19,9 +19,9 @@ const BATCH_SIZE = 100; // OpenAI allows up to 2048 inputs per request
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Simple auth check — only callable with CRON_SECRET
-  const auth = req.headers.authorization;
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Auth: accept ANON_KEY (from admin UI) or CRON_SECRET
+  const auth = req.headers.authorization?.replace('Bearer ', '');
+  if (auth !== process.env.SUPABASE_ANON_KEY && auth !== process.env.CRON_SECRET) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -55,6 +55,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'text-embedding-3-large',
         input: texts,
+        dimensions: 1536,
       }),
     });
 
