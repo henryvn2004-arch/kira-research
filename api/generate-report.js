@@ -1,8 +1,9 @@
 // ============================================================
 // KIRA RESEARCH — api/generate-report.js
-// Flow: Create job → Research (Claude web_search) → RAG →
-//       Generate sections (Claude Sonnet) → Save to Supabase
 // POST /api/generate-report
+// Phase 1 only: create job + research via web_search (~20s)
+// Returns { reportId, sections, researchSummary, ragContext }
+// Browser then drives /api/generate-section per section
 // ============================================================
 
 export const config = { maxDuration: 60 };
@@ -14,7 +15,6 @@ const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const OPENAI_KEY           = process.env.OPENAI_API_KEY;
 
-// ── Supabase helper ──────────────────────────────────────
 async function sb(path, method = 'GET', body = null) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     method,
@@ -31,7 +31,7 @@ async function sb(path, method = 'GET', body = null) {
 }
 
 async function sbUpdate(table, id, body) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+  await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
     method: 'PATCH',
     headers: {
       'apikey': SUPABASE_SERVICE_KEY,
@@ -41,32 +41,9 @@ async function sbUpdate(table, id, body) {
     },
     body: JSON.stringify(body)
   });
-  return res;
 }
 
-// ── Claude call (no tools) ───────────────────────────────
-async function claude(systemPrompt, userPrompt, maxTokens = 1500) {
-  const res = await fetch(ANTHROPIC_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }]
-    })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error('Claude error: ' + data.error.message);
-  return data.content?.[0]?.text || '';
-}
-
-// ── Claude with web_search tool ─────────────────────────
-async function claudeResearch(prompt, maxTokens = 2000) {
+async function claudeResearch(prompt) {
   const res = await fetch(ANTHROPIC_URL, {
     method: 'POST',
     headers: {
@@ -77,327 +54,122 @@ async function claudeResearch(prompt, maxTokens = 2000) {
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: maxTokens,
+      max_tokens: 2500,
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       messages: [{ role: 'user', content: prompt }]
     })
   });
   const data = await res.json();
-  if (data.error) throw new Error('Claude research error: ' + data.error.message);
-  // Extract text blocks from response (web_search may return multiple blocks)
-  const texts = (data.content || [])
-    .filter(b => b.type === 'text')
-    .map(b => b.text)
-    .join('\n\n');
-  return texts;
+  if (data.error) throw new Error(data.error.message);
+  return (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n\n');
 }
 
-// ── OpenAI embeddings ────────────────────────────────────
 async function embed(text) {
   const res = await fetch('https://api.openai.com/v1/embeddings', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_KEY}`
-    },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_KEY}` },
     body: JSON.stringify({ model: 'text-embedding-3-large', input: text, dimensions: 1536 })
   });
   const data = await res.json();
-  if (data.error) throw new Error('Embedding error: ' + data.error.message);
+  if (data.error) throw new Error(data.error.message);
   return data.data[0].embedding;
 }
 
-// ── RAG: search relevant chunks + patterns ───────────────
 async function ragSearch(industry, country, reportType) {
   try {
-    const query   = `${industry} ${country} ${reportType} market analysis`;
-    const vector  = await embed(query);
-
-    // RPC calls to pgvector functions defined in schema
+    const vector = await embed(`${industry} ${country} ${reportType} market analysis`);
     const [chunks, patterns] = await Promise.all([
       fetch(`${SUPABASE_URL}/rest/v1/rpc/search_report_chunks`, {
         method: 'POST',
-        headers: {
-          'apikey': SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          query_embedding: vector,
-          match_threshold: 0.65,
-          match_count: 8
-        })
+        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query_embedding: vector, match_threshold: 0.65, match_count: 8 })
       }).then(r => r.json()),
-
       fetch(`${SUPABASE_URL}/rest/v1/rpc/search_industry_patterns`, {
         method: 'POST',
-        headers: {
-          'apikey': SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          query_embedding: vector,
-          match_threshold: 0.65,
-          match_count: 5
-        })
+        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query_embedding: vector, match_threshold: 0.65, match_count: 5 })
       }).then(r => r.json())
     ]);
-
-    const chunkText   = (chunks || []).map(c => `[${c.chunk_type}] ${c.content}`).join('\n\n');
-    const patternText = (patterns || []).map(p => `[${p.pattern_type}] ${p.description}`).join('\n\n');
-    return { chunkText, patternText };
-
-  } catch (e) {
-    console.warn('RAG search failed (non-fatal):', e.message);
-    return { chunkText: '', patternText: '' };
-  }
+    return {
+      chunkText:   (chunks   || []).map(c => `[${c.chunk_type}] ${c.content}`).join('\n\n'),
+      patternText: (patterns || []).map(p => `[${p.pattern_type}] ${p.description}`).join('\n\n')
+    };
+  } catch { return { chunkText: '', patternText: '' }; }
 }
 
-// ── Section templates ────────────────────────────────────
 const SECTION_TEMPLATES = {
   industry_deep_dive: [
-    { title: 'Executive Summary',         tokens: 2000 },
-    { title: 'Market Assessment',         tokens: 1500 },
-    { title: 'Market Segmentation',       tokens: 1500 },
-    { title: 'Industry Structure',        tokens: 1500 },
-    { title: 'Competitive Landscape',     tokens: 1500 },
-    { title: 'Competitor Profiles',       tokens: 1800 },
-    { title: 'Market Drivers & Trends',   tokens: 1500 },
-    { title: 'Consumer Insights',         tokens: 1500 },
-    { title: 'Pricing Analysis',          tokens: 1200 },
-    { title: 'Regulatory Environment',    tokens: 1200 },
-    { title: 'Market Forecast',           tokens: 1200 },
-    { title: 'Recommendations',           tokens: 1500 }
+    'Executive Summary', 'Market Assessment', 'Market Segmentation',
+    'Industry Structure', 'Competitive Landscape', 'Competitor Profiles',
+    'Market Drivers & Trends', 'Consumer Insights', 'Pricing Analysis',
+    'Regulatory Environment', 'Market Forecast', 'Recommendations'
   ],
   competitive_comparison: [
-    { title: 'Companies Overview',                      tokens: 1800 },
-    { title: 'Product & Service Comparison',            tokens: 1500 },
-    { title: 'Market Position & Share',                 tokens: 1500 },
-    { title: 'Competitive Strengths & Weaknesses',      tokens: 1500 },
-    { title: 'Strategic Moves & Recent Developments',   tokens: 1500 },
-    { title: 'Competitive Outlook & Recommendations',   tokens: 1500 }
+    'Companies Overview', 'Product & Service Comparison', 'Market Position & Share',
+    'Competitive Strengths & Weaknesses', 'Strategic Moves & Developments', 'Competitive Outlook'
   ],
   market_entry_brief: [
-    { title: 'Market Opportunity Summary',          tokens: 1800 },
-    { title: 'Regulatory & Compliance Requirements',tokens: 1500 },
-    { title: 'Distribution & Channel Landscape',    tokens: 1500 },
-    { title: 'Competitive Environment',             tokens: 1500 },
-    { title: 'Pricing & Positioning Benchmarks',    tokens: 1200 },
-    { title: 'Potential Partners & Service Providers', tokens: 1500 },
-    { title: 'Entry Strategy Recommendations',      tokens: 1500 }
+    'Market Opportunity Summary', 'Regulatory & Compliance', 'Distribution & Channels',
+    'Competitive Environment', 'Pricing & Positioning', 'Potential Partners', 'Entry Strategy'
   ]
 };
 
-// ── CORS ─────────────────────────────────────────────────
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
-// ── Main handler ─────────────────────────────────────────
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { industry, country, reportType, questions, companies, slug, userId } = req.body;
+  if (!industry || !country || !reportType) return res.status(400).json({ error: 'Missing required fields' });
 
-  if (!industry || !country || !reportType) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
+  const sections = SECTION_TEMPLATES[reportType] || SECTION_TEMPLATES.industry_deep_dive;
 
-  const sections  = SECTION_TEMPLATES[reportType] || SECTION_TEMPLATES.industry_deep_dive;
-  const inputParams = { industry, country, reportType, questions, companies };
-
-  // ── Create job record in Supabase ─────────────────────
   let report;
   try {
     const created = await sb('custom_reports', 'POST', {
-      user_id: userId || null,
-      slug: slug || `${reportType}-${Date.now()}`,
-      report_type: reportType,
-      input_params: inputParams,
-      sections: sections.map(s => ({ title: s.title, content: '', status: 'pending' })),
-      status: 'pending'
+      user_id:      userId || null,
+      slug:         slug || `${reportType}-${Date.now()}`,
+      report_type:  reportType,
+      input_params: { industry, country, reportType, questions, companies },
+      sections:     sections.map(t => ({ title: t, content: '', status: 'pending' })),
+      status:       'researching'
     });
     report = Array.isArray(created) ? created[0] : created;
   } catch (e) {
-    return res.status(500).json({ error: 'Failed to create report job: ' + e.message });
+    return res.status(500).json({ error: 'Failed to create job: ' + e.message });
   }
 
-  // ── Return reportId immediately so client can start polling ──
-  res.json({ reportId: report.id, status: 'pending' });
-
-  // ── Heavy lifting happens after response is sent ──────
-  // (Vercel will keep function alive until complete or maxDuration)
-  generateInBackground(report, sections, inputParams).catch(async (e) => {
-    console.error('[generate-report] background error:', e);
-    await sbUpdate('custom_reports', report.id, { status: 'failed' }).catch(() => {});
-  });
-}
-
-// ── Background generation ────────────────────────────────
-async function generateInBackground(report, sections, inputParams) {
-  const { industry, country, reportType, questions, companies } = inputParams;
-  const reportId = report.id;
-
-  // ── Phase 1: Update status → researching ─────────────
-  await sbUpdate('custom_reports', reportId, { status: 'researching' });
-
-  // ── Phase 2: Research via Claude web_search ───────────
-  let researchData = '';
   try {
-    const researchPrompt = buildResearchPrompt(industry, country, reportType, questions, companies);
-    researchData = await claudeResearch(researchPrompt, 3000);
+    const [researchSummary, rag] = await Promise.all([
+      claudeResearch(`Research ${reportType.replace(/_/g,' ')} for ${industry} in ${country}.
+Compile: market size & growth rate, key players & market share, distribution channels, pricing landscape, recent trends, regulations.
+${companies ? 'Companies to include: ' + companies : ''}${questions ? '\nClient focus: ' + questions : ''}
+Be specific and data-rich. Cite data years where known.`),
+      ragSearch(industry, country, reportType)
+    ]);
+
+    await sbUpdate('custom_reports', report.id, {
+      research_data: { summary: researchSummary },
+      rag_context:   { chunkText: rag.chunkText, patternText: rag.patternText },
+      status:        'generating'
+    });
+
+    return res.json({
+      reportId:        report.id,
+      sections,
+      researchSummary,
+      ragContext:      rag,
+      status:          'generating'
+    });
+
   } catch (e) {
-    console.warn('Research phase failed, continuing without web data:', e.message);
-    researchData = `Market: ${industry} in ${country}. Research data unavailable — generating from knowledge base.`;
+    await sbUpdate('custom_reports', report.id, { status: 'failed' });
+    return res.status(500).json({ error: 'Research failed: ' + e.message });
   }
-
-  await sbUpdate('custom_reports', reportId, {
-    research_data: { summary: researchData },
-    status: 'generating'
-  });
-
-  // ── Phase 3: RAG context ──────────────────────────────
-  const { chunkText, patternText } = await ragSearch(industry, country, reportType);
-
-  // ── Phase 4: Generate sections sequentially ───────────
-  const completedSections = [];
-  const systemPrompt = buildSystemPrompt(industry, country, reportType, researchData, chunkText, patternText, questions);
-
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
-
-    // Mark this section as generating
-    const updatedSections = sections.map((s, idx) => ({
-      title: s.title,
-      content: idx < i ? completedSections[idx]?.content || '' : '',
-      status: idx < i ? 'completed' : idx === i ? 'generating' : 'pending'
-    }));
-    await sbUpdate('custom_reports', reportId, { sections: updatedSections });
-
-    // Build user prompt with context from previous sections
-    const prevContext = completedSections.slice(-2)
-      .map(s => `## ${s.title}\n${s.content.substring(0, 400)}...`)
-      .join('\n\n');
-
-    const userPrompt = buildSectionPrompt(section.title, i + 1, sections.length, prevContext, inputParams);
-
-    try {
-      const raw = await claude(systemPrompt, userPrompt, section.tokens);
-      // Parse structured JSON output
-      let content;
-      try {
-        const clean = raw.replace(/```json|```/g, '').trim();
-        content = JSON.parse(clean);
-      } catch {
-        // Fallback: wrap plain text in structured format
-        content = { headline: '', chart: null, table: null, commentary: raw };
-      }
-      completedSections.push({ title: section.title, content: JSON.stringify(content), status: 'completed' });
-    } catch (e) {
-      console.error(`Section "${section.title}" failed:`, e.message);
-      completedSections.push({
-        title: section.title,
-        content: `This section could not be generated. Please contact support.`,
-        status: 'failed'
-      });
-    }
-  }
-
-  // ── Phase 5: Save completed report ───────────────────
-  await sbUpdate('custom_reports', reportId, {
-    sections: completedSections,
-    rag_context: { chunks_used: !!chunkText, patterns_used: !!patternText },
-    status: 'completed',
-    updated_at: new Date().toISOString()
-  });
-}
-
-// ── Prompt builders ──────────────────────────────────────
-function buildResearchPrompt(industry, country, reportType, questions, companies) {
-  const typeLabel = reportType.replace(/_/g, ' ');
-  const focus = questions ? `\nFocus areas: ${questions}` : '';
-  const comps  = companies ? `\nCompanies to research: ${companies}` : '';
-
-  return `You are a market research analyst. Research the following for a ${typeLabel} report.
-
-Industry: ${industry}
-Country/Market: ${country}${comps}${focus}
-
-Search for and compile:
-1. Current market size and growth rate (2024-2026 data preferred)
-2. Key players and their approximate market share
-3. Major distribution channels and how they work in this market
-4. Current pricing landscape and price ranges
-5. Key market trends and recent developments (last 12 months)
-6. Relevant regulations or policy changes
-7. Consumer/customer behavior patterns
-${companies ? '8. Specific data on each company: ' + companies : ''}
-
-Provide specific data points, statistics, and facts where available. Cite the year of data when known. Be concise but data-rich.`;
-}
-
-function buildSystemPrompt(industry, country, reportType, researchData, chunkText, patternText, questions) {
-  const ragContext = [
-    chunkText ? `RELEVANT FRAMEWORKS FROM RESEARCH LIBRARY:\n${chunkText}` : '',
-    patternText ? `INDUSTRY PATTERNS FOR THIS TYPE OF MARKET:\n${patternText}` : ''
-  ].filter(Boolean).join('\n\n---\n\n');
-
-  return `You are a senior market research consultant writing a professional ${reportType.replace(/_/g,' ')} report in structured slide-deck format.
-
-CLIENT BRIEF:
-- Industry: ${industry}
-- Market: ${country}
-- Report type: ${reportType.replace(/_/g,' ')}
-${questions ? `- Client focus areas: ${questions}` : ''}
-
-CURRENT MARKET RESEARCH DATA:
-${researchData || 'Limited data available — draw on industry knowledge.'}
-
-${ragContext ? `PROPRIETARY RESEARCH LIBRARY CONTEXT:\n${ragContext}` : ''}
-
-OUTPUT FORMAT — Return ONLY valid JSON for each section (no markdown, no backticks):
-{
-  "headline": "The single most important finding for this section in 1-2 punchy sentences",
-  "chart": {
-    "type": "bar|line|pie|radar|donut",
-    "title": "Chart title",
-    "labels": ["Label 1", "Label 2", "..."],
-    "datasets": [{"label": "Series name", "data": [num1, num2, ...]}]
-  },
-  "table": {
-    "title": "Table title",
-    "headers": ["Col 1", "Col 2", "Col 3"],
-    "rows": [["val", "val", "val"], ...]
-  },
-  "commentary": "Full analytical prose — 200-400 words. Lead with insight, support with evidence, end with implication. Use **bold** for key terms. Use \\n\\n for paragraph breaks."
-}
-
-RULES:
-- headline: always required. 1-2 sentences, punchy, data-driven.
-- chart: include when section has quantitative data (market size, share, growth, pricing, rankings). Set null if not applicable.
-- table: include when section benefits from structured comparison (competitors, channels, features, pricing tiers). Set null if not applicable.
-- commentary: always required. Analytical prose, not a list. Explain what the data means strategically.
-- chart AND table can both be present, or just one, or neither (commentary-only sections).
-- Numbers in chart/table should be realistic estimates if exact data unavailable — label as "estimated" in the title.
-- Do NOT mention AI, data limitations, or add disclaimers.
-- Return ONLY the JSON object. No preamble, no explanation.`;
-}
-
-function buildSectionPrompt(sectionTitle, sectionNum, totalSections, prevContext, inputParams) {
-  const { industry, country, companies } = inputParams;
-  const companiesTip = companies && sectionTitle.toLowerCase().includes('compet')
-    ? `\nFocus on these companies: ${companies}` : '';
-
-  return `Write Section ${sectionNum} of ${totalSections}: "${sectionTitle}"
-
-Market: ${industry} in ${country}${companiesTip}
-
-${prevContext ? `CONTEXT FROM PREVIOUS SECTIONS (for continuity):\n${prevContext}` : ''}
-
-Write a thorough, consulting-grade "${sectionTitle}" section. Be specific, data-driven, and analytical. Do not repeat what was covered in previous sections.`;
 }
