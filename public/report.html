@@ -132,27 +132,33 @@
     /* ── SLIDE DECK SECTIONS ── */
     .section-block{background:#11151C;border:1px solid #1A1D24;border-radius:14px;margin-bottom:20px;overflow:hidden;opacity:0;transform:translateY(14px);transition:all .5s ease}
     .section-block.visible{opacity:1;transform:translateY(0)}
-    .section-block.generating{border-color:rgba(30,111,255,.3)}
+    .section-block.generating{border-color:rgba(30,111,255,.3);animation:border-pulse 2s ease-in-out infinite}
+    @keyframes border-pulse{0%,100%{border-color:rgba(30,111,255,.3)}50%{border-color:rgba(30,111,255,.6)}}
 
-    /* Section header bar */
     .slide-header{padding:20px 28px 16px;border-bottom:1px solid #1A1D24;display:flex;align-items:center;gap:12px}
-    .slide-num{font-size:10px;font-weight:700;color:#1E6FFF;letter-spacing:.15em;text-transform:uppercase;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);padding:3px 8px;border-radius:4px;flex-shrink:0}
+    .slide-num{font-size:10px;font-weight:700;color:#1E6FFF;letter-spacing:.15em;text-transform:uppercase;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);padding:3px 9px;border-radius:4px;flex-shrink:0}
     .slide-title{font-size:17px;font-weight:700;color:#fff}
 
-    /* Headline / key finding */
-    .slide-headline{margin:0 28px 20px;padding:16px 20px;background:rgba(30,111,255,.06);border-left:3px solid #1E6FFF;border-radius:0 8px 8px 0}
+    .slide-headline{margin:20px 28px;padding:16px 20px;background:rgba(30,111,255,.06);border-left:3px solid #1E6FFF;border-radius:0 8px 8px 0}
     .slide-headline-label{font-size:10px;color:#1E6FFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-weight:700}
-    .slide-headline-text{font-size:14px;color:#fff;line-height:1.6;font-weight:500}
+    .slide-headline-text{font-size:14px;color:#fff;line-height:1.65;font-weight:500}
 
-    /* Chart + Table row */
-    .slide-visuals{display:grid;gap:20px;padding:0 28px 20px}
+    /* Stat pictograms */
+    .slide-stats{display:flex;gap:12px;padding:0 28px 20px;flex-wrap:wrap}
+    .stat-pill{display:flex;align-items:center;gap:10px;background:#0B0D10;border:1px solid #1A1D24;border-radius:10px;padding:12px 16px;min-width:140px;flex:1}
+    .stat-icon{width:32px;height:32px;border-radius:8px;background:rgba(30,111,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .stat-icon svg{width:16px;height:16px;stroke:#1E6FFF;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .stat-value{font-size:18px;font-weight:700;color:#fff;line-height:1}
+    .stat-label{font-size:11px;color:#5A6278;margin-top:2px}
+
+    /* Visuals grid */
+    .slide-visuals{display:grid;gap:16px;padding:0 28px 20px}
     .slide-visuals.has-both{grid-template-columns:1fr 1fr}
     .slide-visuals.has-one{grid-template-columns:1fr}
     .visual-box{background:#0B0D10;border:1px solid #1A1D24;border-radius:10px;padding:20px}
-    .visual-title{font-size:11px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:600}
+    .visual-title{font-size:11px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;font-weight:600}
     .chart-wrap{position:relative;height:220px}
 
-    /* Table */
     .slide-table{width:100%;border-collapse:collapse;font-size:13px}
     .slide-table th{background:#11151C;color:#A3A9B6;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1A1D24;font-weight:600}
     .slide-table td{padding:9px 12px;border-bottom:1px solid #0F1218;color:#A3A9B6;vertical-align:top}
@@ -160,19 +166,47 @@
     .slide-table tr:hover td{background:rgba(255,255,255,.02);color:#fff}
     .slide-table td:first-child{color:#fff;font-weight:500}
 
-    /* Commentary */
     .slide-commentary{padding:0 28px 28px;font-size:14px;color:#A3A9B6;line-height:1.85}
     .slide-commentary p{margin-bottom:14px}
     .slide-commentary p:last-child{margin-bottom:0}
     .slide-commentary strong{color:#fff}
-    .slide-commentary h3{color:#fff;font-size:14px;font-weight:700;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
+    .slide-commentary h3{color:#fff;font-size:11px;font-weight:700;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.08em;color:#1E6FFF}
 
-    /* Generating pulse */
     .generating-pulse{display:flex;align-items:center;gap:8px;font-size:13px;color:#5A6278;padding:28px}
     .generating-pulse .dot{width:6px;height:6px;background:#1E6FFF;border-radius:50%;animation:pulse-dot 1.2s ease-in-out infinite}
     .generating-pulse .dot:nth-child(2){animation-delay:.2s}
     .generating-pulse .dot:nth-child(3){animation-delay:.4s}
     @keyframes pulse-dot{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+    /* ── PROGRESS REDESIGN ── */
+    .progress-card{background:#11151C;border:1px solid #242A35;border-radius:16px;overflow:hidden;max-width:680px;margin:0 auto}
+    .progress-header{padding:28px 32px 20px}
+    .progress-title{font-size:20px;font-weight:700;margin-bottom:6px}
+    .progress-subtitle{font-size:13px;color:#5A6278}
+    .progress-body{padding:0 32px 28px}
+
+    /* Time estimate bar */
+    .time-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:14px 16px;background:#0B0D10;border:1px solid #1A1D24;border-radius:10px}
+    .time-elapsed{font-size:12px;color:#5A6278}
+    .time-remaining{font-size:13px;font-weight:700;color:#1E6FFF}
+    .time-total{font-size:11px;color:#5A6278}
+
+    /* Section progress list */
+    .section-progress-list{display:flex;flex-direction:column;gap:3px;margin-bottom:20px}
+    .sec-prog-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;font-size:12px;color:#5A6278;transition:all .25s}
+    .sec-prog-item.done{color:#A3A9B6;background:rgba(56,217,150,.04)}
+    .sec-prog-item.active{color:#fff;background:rgba(30,111,255,.08);border:1px solid rgba(30,111,255,.15)}
+    .sec-prog-item.pending{color:#3A3F4B}
+    .sec-prog-dot{width:6px;height:6px;border-radius:50%;background:#242A35;flex-shrink:0;transition:all .25s}
+    .sec-prog-item.done .sec-prog-dot{background:#38D996}
+    .sec-prog-item.active .sec-prog-dot{background:#1E6FFF;box-shadow:0 0 6px rgba(30,111,255,.6);animation:dot-glow 1.5s ease-in-out infinite}
+    @keyframes dot-glow{0%,100%{box-shadow:0 0 4px rgba(30,111,255,.4)}50%{box-shadow:0 0 10px rgba(30,111,255,.8)}}
+    .sec-prog-time{margin-left:auto;font-size:11px;color:#3A3F4B}
+    .sec-prog-item.done .sec-prog-time{color:#38D996}
+    .sec-prog-item.active .sec-prog-time{color:#1E6FFF}
+
+    .progress-bar-wrap{height:3px;background:#1A1D24;border-radius:2px;overflow:hidden;margin-top:4px}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,#1E6FFF,#00C9A7);border-radius:2px;transition:width .6s ease}
 
     /* chatbox */
     .chatbox-wrap{margin-top:32px;background:#11151C;border:1px solid #1A1D24;border-radius:12px;overflow:hidden}
@@ -344,40 +378,33 @@
     <div id="view-progress">
       <p class="page-eyebrow" style="text-align:center;margin-bottom:8px">Generating</p>
       <h2 class="page-title" style="text-align:center;margin-bottom:8px">Your report is being created</h2>
-      <p class="page-sub" style="text-align:center;margin-bottom:40px">This takes 3–5 minutes. You can leave this page — we'll save your report automatically.</p>
+      <p class="page-sub" style="text-align:center;margin-bottom:40px">AI is researching live market data and writing each section.</p>
 
       <div class="progress-card">
         <div class="progress-header">
           <div class="progress-title" id="prog-title">Initializing...</div>
-          <div class="progress-subtitle" id="prog-subtitle">Setting up your report</div>
+          <div class="progress-subtitle" id="prog-subtitle">Starting up</div>
         </div>
         <div class="progress-body">
-          <div class="phase-list" id="phase-list">
-            <div class="phase-item" id="phase-plan">
-              <div class="phase-icon">📋</div>
-              <span>Planning report structure</span>
+
+          <div class="time-bar">
+            <div>
+              <div class="time-elapsed" id="time-elapsed">Elapsed: 0s</div>
             </div>
-            <div class="phase-item" id="phase-research">
-              <div class="phase-icon">🔍</div>
-              <span>Researching current market data</span>
-            </div>
-            <div class="phase-item" id="phase-rag">
-              <div class="phase-icon">📚</div>
-              <span>Pulling patterns from research library</span>
-            </div>
-            <div class="phase-item" id="phase-generate">
-              <div class="phase-icon">✍️</div>
-              <span>Writing report sections</span>
-            </div>
-            <div class="phase-item" id="phase-save">
-              <div class="phase-icon">💾</div>
-              <span>Finalizing & saving report</span>
+            <div style="text-align:right">
+              <div class="time-remaining" id="time-remaining">Estimating...</div>
+              <div class="time-total" id="time-total"></div>
             </div>
           </div>
+
+          <div class="section-progress-list" id="section-progress-list">
+            <!-- populated by JS -->
+          </div>
+
           <div class="progress-bar-wrap">
             <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
           </div>
-          <div class="progress-pct" id="progress-pct">0%</div>
+
         </div>
       </div>
     </div>
@@ -491,26 +518,28 @@ async function handlePay() {
   btn.textContent = 'Generating...';
 
   const params = {
-    reportType:  currentType,
-    industry:    document.getElementById('f-industry').value.trim(),
-    country:     document.getElementById('f-country').value,
-    questions:   document.getElementById('f-questions').value.trim(),
-    companies:   document.getElementById('f-companies').value.trim(),
+    reportType: currentType,
+    industry:   document.getElementById('f-industry').value.trim(),
+    country:    document.getElementById('f-country').value,
+    questions:  document.getElementById('f-questions').value.trim(),
+    companies:  document.getElementById('f-companies').value.trim(),
   };
 
   const slug = currentType.split('_')[0] + '-' +
     params.industry.toLowerCase().replace(/\s+/g,'-') + '-' +
-    params.country.toLowerCase().replace(/\s+/g,'-') + '-' +
-    Date.now();
+    params.country.toLowerCase().replace(/\s+/g,'-') + '-' + Date.now();
 
   sessionStorage.setItem('kira_pending_report', JSON.stringify(params));
   sessionStorage.setItem('kira_pending_slug', slug);
 
-  // PAYWALL_DISABLED: skip payment, go straight to generation
+  // PAYWALL_DISABLED — skip payment
   await startGeneration();
 }
 
-// ── After payment return ─────────────────────────────────
+// ── Generation flow (client-driven) ─────────────────────
+const SEC_PER_SECTION = 12; // estimated seconds per section
+let startTime, elapsedTimer;
+
 async function startGeneration() {
   const params = JSON.parse(sessionStorage.getItem('kira_pending_report') || '{}');
   const slug   = sessionStorage.getItem('kira_pending_slug');
@@ -518,253 +547,331 @@ async function startGeneration() {
 
   setStep(3);
   showView('progress');
-  setPhase('plan');
+  startTime = Date.now();
+
+  // Start elapsed timer
+  elapsedTimer = setInterval(() => {
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('time-elapsed').textContent = `Elapsed: ${s}s`;
+  }, 1000);
 
   try {
-    const user = await window.kiraAuth.getUser();
-    const res = await fetch('/api/generate-report', {
+    const user = await window.kiraAuth?.getUser();
+
+    // ── Phase 1: Research (~20s) ─────────────────────────
+    document.getElementById('prog-title').textContent = 'Researching market data...';
+    document.getElementById('prog-subtitle').textContent = 'Searching live data sources — ~20 seconds';
+    document.getElementById('time-remaining').textContent = '~3-4 min remaining';
+    document.getElementById('progress-bar').style.width = '5%';
+
+    const initRes = await fetch('/api/generate-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...params, slug, userId: user?.id })
     });
-    const data = await res.json();
-    if (!data.reportId) throw new Error(data.error || 'Generation failed');
-    reportId = data.reportId;
-    reportSlug = slug;
+    const initData = await initRes.json();
+    if (!initData.reportId) throw new Error(initData.error || 'Research phase failed');
 
-    // Poll for status
-    pollInterval = setInterval(pollStatus, 3000);
+    reportId = initData.reportId;
+    reportSlug = slug;
+    const sections        = initData.sections || [];
+    const researchSummary = initData.researchSummary || '';
+    const ragContext      = initData.ragContext || {};
+    const totalSections   = sections.length;
+    const totalEstSecs    = totalSections * SEC_PER_SECTION;
+
+    // Build section progress list
+    buildSectionProgressList(sections);
+    document.getElementById('time-total').textContent =
+      `Est. total: ~${Math.ceil(totalEstSecs / 60)} min`;
+
+    document.getElementById('prog-title').textContent = 'Writing report sections...';
+    document.getElementById('prog-subtitle').textContent =
+      `${totalSections} sections · ~${SEC_PER_SECTION}s each`;
+    document.getElementById('progress-bar').style.width = '10%';
+
+    // ── Phase 2: Generate sections one-by-one ────────────
+    const completedSections = [];
+
+    for (let i = 0; i < sections.length; i++) {
+      const title = sections[i];
+      setSectionStatus(i, 'active');
+
+      const secsLeft  = (totalSections - i) * SEC_PER_SECTION;
+      const minsLeft  = Math.ceil(secsLeft / 60);
+      document.getElementById('time-remaining').textContent =
+        secsLeft > 60 ? `~${minsLeft} min remaining` : `~${secsLeft}s remaining`;
+      document.getElementById('prog-title').textContent =
+        `Writing: ${title}`;
+      document.getElementById('prog-subtitle').textContent =
+        `Section ${i + 1} of ${totalSections}`;
+
+      const pct = Math.round(10 + (i / totalSections) * 85);
+      document.getElementById('progress-bar').style.width = pct + '%';
+
+      const secRes = await fetch('/api/generate-section', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reportId, sectionIndex: i, sectionTitle: title,
+          totalSections, ...params, researchSummary, ragContext,
+          prevSections: completedSections.slice(-2)
+        })
+      });
+      const secData = await secRes.json();
+
+      const sectionContent = secData.content || JSON.stringify({
+        headline: '', stats: [], chart: null, table: null,
+        commentary: 'Section could not be generated.'
+      });
+
+      completedSections.push({ title, content: sectionContent, status: 'completed' });
+      setSectionStatus(i, 'done', SEC_PER_SECTION);
+
+      // Progressive render — show slide as it completes
+      renderSection({ title, content: sectionContent, status: 'completed' }, i, totalSections);
+    }
+
+    // Done
+    clearInterval(elapsedTimer);
+    document.getElementById('progress-bar').style.width = '100%';
+    document.getElementById('time-remaining').textContent = 'Complete!';
+    document.getElementById('prog-title').textContent = 'Report ready';
+    document.getElementById('prog-subtitle').textContent = 'All sections generated';
+
+    sessionStorage.removeItem('kira_pending_report');
+    sessionStorage.removeItem('kira_pending_slug');
+
+    setStep(4);
+    showView('report');
+
+    // Render meta header
+    renderReportMeta(params, slug);
+
+    // Show chatbox
+    setTimeout(() => {
+      document.getElementById('chatbox').style.display = 'block';
+    }, 500);
 
   } catch (e) {
+    clearInterval(elapsedTimer);
     document.getElementById('prog-title').textContent = 'Error';
     document.getElementById('prog-subtitle').textContent = e.message;
   }
 }
 
-async function pollStatus() {
-  if (!reportId) return;
-  try {
-    const res  = await fetch('/api/get-report?id=' + reportId);
-    const data = await res.json();
-
-    updateProgress(data);
-
-    if (data.status === 'completed') {
-      clearInterval(pollInterval);
-      sessionStorage.removeItem('kira_pending_report');
-      sessionStorage.removeItem('kira_pending_slug');
-      renderReport(data);
-    } else if (data.status === 'failed') {
-      clearInterval(pollInterval);
-      document.getElementById('prog-title').textContent = 'Generation failed';
-      document.getElementById('prog-subtitle').textContent = 'Please contact support.';
-    }
-  } catch (e) { console.error('Poll error:', e); }
+// ── Progress UI helpers ───────────────────────────────────
+function buildSectionProgressList(sections) {
+  const list = document.getElementById('section-progress-list');
+  list.innerHTML = sections.map((title, i) => `
+    <div class="sec-prog-item pending" id="secprog-${i}">
+      <span class="sec-prog-dot"></span>
+      <span>${title}</span>
+      <span class="sec-prog-time" id="secprog-time-${i}">~${SEC_PER_SECTION}s</span>
+    </div>`).join('');
 }
 
-function updateProgress(data) {
-  const phases = ['plan','research','rag','generate','save'];
-  const statusMap = { pending:'plan', researching:'research', generating:'generate', completed:'save' };
-  const currentPhase = statusMap[data.status] || 'plan';
-  const phaseIdx = phases.indexOf(currentPhase);
-
-  phases.forEach((p, i) => {
-    const el = document.getElementById('phase-' + p);
-    el.classList.remove('done','active','pending');
-    if (i < phaseIdx) el.classList.add('done');
-    else if (i === phaseIdx) el.classList.add('active');
-    else el.classList.add('pending');
-  });
-
-  const total    = data.totalSections || 8;
-  const done     = (data.sections || []).filter(s => s.status === 'completed').length;
-  const pct      = data.status === 'completed' ? 100 : Math.round((done / total) * 80 + 10);
-  document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('prog-title').textContent = data.status === 'generating'
-    ? `Writing section ${done + 1} of ${total}...`
-    : data.status === 'researching' ? 'Researching market data...'
-    : data.status === 'completed' ? 'Report complete!'
-    : 'Preparing...';
+const sectionStartTimes = {};
+function setSectionStatus(i, status, tookSecs = null) {
+  const el = document.getElementById(`secprog-${i}`);
+  const timeEl = document.getElementById(`secprog-time-${i}`);
+  if (!el) return;
+  el.classList.remove('pending', 'active', 'done');
+  el.classList.add(status);
+  if (status === 'active') {
+    sectionStartTimes[i] = Date.now();
+    timeEl.textContent = 'writing...';
+  }
+  if (status === 'done') {
+    const took = sectionStartTimes[i] ? Math.round((Date.now() - sectionStartTimes[i]) / 1000) : tookSecs;
+    timeEl.textContent = `✓ ${took}s`;
+  }
 }
 
-function setPhase(phase) {
-  ['plan','research','rag','generate','save'].forEach(p => {
-    const el = document.getElementById('phase-' + p);
-    el.classList.remove('done','active','pending');
-    el.classList.add('pending');
-  });
-  document.getElementById('phase-' + phase).classList.remove('pending');
-  document.getElementById('phase-' + phase).classList.add('active');
-}
-
-// ── Render report (slide-deck style) ────────────────────
+// ── Render functions ──────────────────────────────────────
 const chartInstances = {};
 
-function renderReport(data) {
-  setStep(4);
-  showView('report');
-
+function renderReportMeta(params, slug) {
   document.getElementById('report-title').textContent =
-    (data.inputParams?.industry || '—') + ' Market — ' + (data.inputParams?.country || '—');
+    (params.industry || '—') + ' Market — ' + (params.country || '—');
   document.getElementById('report-meta-sub').textContent =
-    data.inputParams?.country + ' · ' +
-    (data.inputParams?.industry || '').toUpperCase() + ' · 2026 · ' + (data.slug || '').toUpperCase();
-
+    params.country + ' · ' + (params.industry || '').toUpperCase() + ' · 2026';
   const badges = document.getElementById('report-badges');
   badges.innerHTML = '';
-  [data.inputParams?.country, data.inputParams?.reportType?.replace(/_/g,' '), '2026'].forEach(b => {
+  [params.country, params.reportType?.replace(/_/g,' '), '2026'].forEach(b => {
     if (!b) return;
     const span = document.createElement('span');
     span.className = 'meta-badge';
     span.textContent = b.charAt(0).toUpperCase() + b.slice(1);
     badges.appendChild(span);
   });
+}
 
-  const sections  = data.sections || [];
+function renderReport(data) {
+  // Called when loading existing completed report
+  setStep(4);
+  showView('report');
+  renderReportMeta(data.inputParams || {}, data.slug || '');
+
   const container = document.getElementById('sections-container');
   const tocList   = document.getElementById('toc-list');
   container.innerHTML = '';
   tocList.innerHTML   = '';
 
-  sections.forEach((sec, i) => {
-    // TOC
-    const tocItem = document.createElement('div');
-    tocItem.className = 'toc-item done';
-    tocItem.id = 'toc-' + i;
-    tocItem.innerHTML = `<span class="toc-dot"></span><span>${sec.title}</span>`;
-    tocItem.onclick = () => document.getElementById('sec-' + i)?.scrollIntoView({ behavior: 'smooth' });
-    tocList.appendChild(tocItem);
-
-    // Parse section content
-    let parsed = null;
-    if (sec.content) {
-      try { parsed = JSON.parse(sec.content); } catch { parsed = null; }
-    }
-
-    // Build slide block
-    const block = document.createElement('div');
-    block.className = 'section-block';
-    block.id = 'sec-' + i;
-
-    if (sec.status === 'generating') {
-      block.classList.add('generating');
-      block.innerHTML = `
-        <div class="slide-header">
-          <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
-          <span class="slide-title">${sec.title}</span>
-        </div>
-        <div class="generating-pulse"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:4px">Writing...</span></div>`;
-    } else if (parsed) {
-      const hasChart = parsed.chart && parsed.chart.labels?.length;
-      const hasTable = parsed.table && parsed.table.headers?.length;
-      const chartId  = `chart-${i}`;
-
-      let visualsHtml = '';
-      if (hasChart || hasTable) {
-        const gridClass = hasChart && hasTable ? 'has-both' : 'has-one';
-        let chartHtml = '', tableHtml = '';
-
-        if (hasChart) {
-          chartHtml = `<div class="visual-box">
-            <div class="visual-title">${parsed.chart.title || ''}</div>
-            <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
-          </div>`;
-        }
-        if (hasTable) {
-          const headerCells = parsed.table.headers.map(h => `<th>${h}</th>`).join('');
-          const bodyRows    = (parsed.table.rows || []).map(row =>
-            `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
-          ).join('');
-          tableHtml = `<div class="visual-box">
-            <div class="visual-title">${parsed.table.title || ''}</div>
-            <div style="overflow-x:auto">
-              <table class="slide-table"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>
-            </div>
-          </div>`;
-        }
-        visualsHtml = `<div class="slide-visuals ${gridClass}">${chartHtml}${tableHtml}</div>`;
-      }
-
-      const commentaryHtml = (parsed.commentary || '')
-        .split('\n\n')
-        .filter(Boolean)
-        .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>')}</p>`)
-        .join('');
-
-      block.innerHTML = `
-        <div class="slide-header">
-          <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
-          <span class="slide-title">${sec.title}</span>
-        </div>
-        ${parsed.headline ? `
-        <div class="slide-headline">
-          <div class="slide-headline-label">Key Finding</div>
-          <div class="slide-headline-text">${parsed.headline}</div>
-        </div>` : ''}
-        ${visualsHtml}
-        ${commentaryHtml ? `<div class="slide-commentary">${commentaryHtml}</div>` : ''}`;
-
-      // Mount Chart.js after DOM insertion
-      if (hasChart) {
-        setTimeout(() => renderChart(chartId, parsed.chart), 50 + i * 20);
-      }
-    } else {
-      // Fallback: plain text
-      block.innerHTML = `
-        <div class="slide-header">
-          <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
-          <span class="slide-title">${sec.title}</span>
-        </div>
-        <div class="slide-commentary"><p>${(sec.content || '').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</p></div>`;
-    }
-
-    container.appendChild(block);
-    setTimeout(() => block.classList.add('visible'), i * 130);
+  (data.sections || []).forEach((sec, i) => {
+    addTocItem(sec.title, i);
+    renderSection(sec, i, data.sections.length);
   });
 
   setTimeout(() => {
     document.getElementById('chatbox').style.display = 'block';
-  }, sections.length * 130 + 400);
-
+  }, 500);
   reportSlug = data.slug;
 }
 
+function addTocItem(title, i) {
+  const tocList = document.getElementById('toc-list');
+  const el = document.createElement('div');
+  el.className = 'toc-item done';
+  el.id = 'toc-' + i;
+  el.innerHTML = `<span class="toc-dot"></span><span>${title}</span>`;
+  el.onclick = () => document.getElementById('sec-' + i)?.scrollIntoView({ behavior: 'smooth' });
+  tocList.appendChild(el);
+}
+
+function renderSection(sec, i, total) {
+  const container = document.getElementById('sections-container');
+  addTocItem(sec.title, i);
+
+  let parsed = null;
+  try { parsed = JSON.parse(sec.content); } catch { parsed = null; }
+
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.id = 'sec-' + i;
+
+  if (!parsed || sec.status === 'generating') {
+    block.classList.add('generating');
+    block.innerHTML = `
+      <div class="slide-header">
+        <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
+        <span class="slide-title">${sec.title}</span>
+      </div>
+      <div class="generating-pulse"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:6px">Writing...</span></div>`;
+    container.appendChild(block);
+    setTimeout(() => block.classList.add('visible'), 50);
+    return;
+  }
+
+  // Stats row
+  const statsHtml = (parsed.stats?.length)
+    ? `<div class="slide-stats">${parsed.stats.map(s => `
+        <div class="stat-pill">
+          <div class="stat-icon">${getStatIcon(s.icon)}</div>
+          <div>
+            <div class="stat-value">${s.value}</div>
+            <div class="stat-label">${s.label}</div>
+          </div>
+        </div>`).join('')}</div>`
+    : '';
+
+  // Chart + Table
+  const hasChart = parsed.chart?.labels?.length;
+  const hasTable = parsed.table?.headers?.length;
+  const chartId  = `chart-${i}`;
+  let visualsHtml = '';
+  if (hasChart || hasTable) {
+    const gridClass = hasChart && hasTable ? 'has-both' : 'has-one';
+    const chartHtml = hasChart ? `
+      <div class="visual-box">
+        <div class="visual-title">${parsed.chart.title || ''}</div>
+        <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
+      </div>` : '';
+    const tableHtml = hasTable ? `
+      <div class="visual-box">
+        <div class="visual-title">${parsed.table.title || ''}</div>
+        <div style="overflow-x:auto">
+          <table class="slide-table">
+            <thead><tr>${parsed.table.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+            <tbody>${(parsed.table.rows||[]).map(row=>`<tr>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>` : '';
+    visualsHtml = `<div class="slide-visuals ${gridClass}">${chartHtml}${tableHtml}</div>`;
+  }
+
+  // Commentary
+  const commentaryHtml = (parsed.commentary || '')
+    .split('\n\n').filter(Boolean)
+    .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>')}</p>`)
+    .join('');
+
+  block.innerHTML = `
+    <div class="slide-header">
+      <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
+      <span class="slide-title">${sec.title}</span>
+    </div>
+    ${parsed.headline ? `
+    <div class="slide-headline">
+      <div class="slide-headline-label">Key Finding</div>
+      <div class="slide-headline-text">${parsed.headline}</div>
+    </div>` : ''}
+    ${statsHtml}
+    ${visualsHtml}
+    ${commentaryHtml ? `<div class="slide-commentary">${commentaryHtml}</div>` : ''}`;
+
+  container.appendChild(block);
+  setTimeout(() => {
+    block.classList.add('visible');
+    if (hasChart) renderChart(chartId, parsed.chart);
+  }, 80);
+}
+
+// ── Stat icons (line art SVG) ─────────────────────────────
+function getStatIcon(type) {
+  const icons = {
+    pie:     `<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>`,
+    growth:  `<svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+    trend:   `<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/></svg>`,
+    users:   `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    channel: `<svg viewBox="0 0 24 24"><rect x="2" y="7" width="6" height="10" rx="1"/><rect x="9" y="4" width="6" height="16" rx="1"/><rect x="16" y="9" width="6" height="8" rx="1"/></svg>`,
+    price:   `<svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+    globe:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+    check:   `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+  };
+  return icons[type] || icons.trend;
+}
+
+// ── Chart.js renderer ─────────────────────────────────────
 function renderChart(canvasId, chartDef) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
-
-  const CHART_COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3'];
-
+  const COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3','#68D391'];
+  const type   = chartDef.type === 'donut' ? 'doughnut' : (chartDef.type || 'bar');
+  const isPie  = type === 'pie' || type === 'doughnut';
   const datasets = (chartDef.datasets || []).map((ds, di) => ({
-    label: ds.label || '',
-    data: ds.data || [],
-    backgroundColor: chartDef.type === 'line'
-      ? CHART_COLORS[di % CHART_COLORS.length] + '20'
-      : (chartDef.type === 'pie' || chartDef.type === 'donut')
-        ? CHART_COLORS
-        : CHART_COLORS[di % CHART_COLORS.length],
-    borderColor: CHART_COLORS[di % CHART_COLORS.length],
-    borderWidth: chartDef.type === 'line' ? 2 : 0,
-    fill: chartDef.type === 'line',
-    tension: 0.4,
-    borderRadius: chartDef.type === 'bar' ? 4 : 0,
+    label:           ds.label || '',
+    data:            ds.data  || [],
+    backgroundColor: isPie ? COLORS : COLORS[di % COLORS.length],
+    borderColor:     COLORS[di % COLORS.length],
+    borderWidth:     type === 'line' ? 2 : 0,
+    fill:            type === 'line',
+    tension:         0.4,
+    borderRadius:    type === 'bar' ? 4 : 0,
   }));
-
   chartInstances[canvasId] = new Chart(canvas, {
-    type: chartDef.type === 'donut' ? 'doughnut' : (chartDef.type || 'bar'),
+    type,
     data: { labels: chartDef.labels || [], datasets },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: '#A3A9B6', font: { size: 11, family: 'Arial' }, boxWidth: 12 } },
+        legend: { labels: { color: '#A3A9B6', font: { size: 11, family: 'Arial' }, boxWidth: 12, padding: 16 } },
         tooltip: { backgroundColor: '#161B24', titleColor: '#fff', bodyColor: '#A3A9B6', borderColor: '#242A35', borderWidth: 1 }
       },
-      scales: (chartDef.type === 'pie' || chartDef.type === 'donut' || chartDef.type === 'radar') ? {} : {
+      scales: (isPie || type === 'radar') ? {} : {
         x: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' } },
-        y: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' } }
+        y: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' }, beginAtZero: true }
       }
     }
   });
