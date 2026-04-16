@@ -180,6 +180,9 @@
         <button class="btn btn-primary" id="btn-process" onclick="processQueue()">
           ▶ Start Processing Queue
         </button>
+        <button class="btn" id="btn-pause"
+          style="background:#161B24;color:#F6AD55;border:1px solid rgba(246,173,85,.3);display:none"
+          onclick="togglePause()">⏸ Pause</button>
         <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
           onclick="clearQueue()">Clear Queue</button>
         <button class="btn" id="btn-embed"
@@ -371,18 +374,29 @@ function setQueueStatus(idx, status) {
 }
 
 // -- Process queue -----------------------------------------
-async function callClaude(fileText) {
-  const truncated = fileText.length > 80000
-    ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]'
-    : fileText;
+// Split text into chunks of ~40k chars, respecting paragraph breaks
+function splitIntoChunks(text, chunkSize = 40000) {
+  const chunks = [];
+  let start = 0;
+  while (start < text.length) {
+    let end = start + chunkSize;
+    if (end < text.length) {
+      // Try to break at paragraph boundary
+      const breakAt = text.lastIndexOf('\n\n', end);
+      if (breakAt > start + chunkSize * 0.7) end = breakAt;
+    }
+    chunks.push(text.slice(start, Math.min(end, text.length)));
+    start = end;
+  }
+  return chunks;
+}
 
-  const prompt = `You are analyzing a consulting market research report.
-Read carefully and return ONLY valid JSON (no markdown, no backticks):
-
-{
+// Call Anthropic directly from browser — no Vercel proxy, no timeout limit
+async function callClaudeChunk(chunkText, chunkIndex, totalChunks, isFirst) {
+  const metadataRequest = isFirst ? `
   "metadata": {
     "title": "report title",
-    "product_category": "main category",
+    "product_category": "main industry/product category",
     "sub_category": "sub-category or null",
     "country": "country name",
     "region": "southeast_asia|south_asia|east_asia or null",
@@ -395,14 +409,21 @@ Read carefully and return ONLY valid JSON (no markdown, no backticks):
   "template": {
     "name": "template name",
     "section_structure": [{"section": "...", "purpose": "..."}],
-    "methodology": "methodology description"
-  },
+    "methodology": "brief methodology description"
+  },` : `
+  "metadata": null,
+  "template": null,`;
+
+  const prompt = `You are extracting reusable intelligence from part ${chunkIndex+1} of ${totalChunks} of a consulting market research report.
+Return ONLY valid JSON (no markdown, no backticks, no explanation):
+
+{${metadataRequest}
   "patterns": [
     {
       "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
       "industry": "industry name",
       "sub_industry": "sub-industry or null",
-      "description": "structural insight - STRIP all specific numbers/dates",
+      "description": "structural insight — STRIP all specific numbers/dates, keep structural/behavioral patterns only",
       "applicable_regions": ["southeast_asia"],
       "confidence": "high|medium|low"
     }
@@ -410,24 +431,28 @@ Read carefully and return ONLY valid JSON (no markdown, no backticks):
   "chunks": [
     {
       "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
-      "content": "50-150 word insight - STRIP specific numbers, keep structural insights",
-      "section": "section name",
-      "data_type": "null"
+      "content": "50-150 word insight — STRIP specific numbers/dates, keep structural insights",
+      "section": "section name from report"
     }
   ]
 }
 
-Rules: 5-15 patterns, 20-50 chunks. Return ONLY JSON.
+Rules: extract 3-8 patterns and 8-15 chunks from THIS section only. Return ONLY JSON.
 
-REPORT:
-` + truncated;
+REPORT SECTION:
+${chunkText}`;
 
-  const res = await fetch('/api/claude-proxy', {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
     body: JSON.stringify({
       model: 'claude-sonnet-4-5',
-      max_tokens: 4000,
+      max_tokens: 3000,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -437,6 +462,30 @@ REPORT:
   const text  = data.content?.[0]?.text || '';
   const clean = text.replace(/```json|```/g, '').trim();
   return JSON.parse(clean);
+}
+
+// Main extraction: chunk full text, call Claude per chunk, merge results
+async function extractFullReport(fileText, onProgress) {
+  const chunks = splitIntoChunks(fileText, 40000);
+  onProgress(`  Split into ${chunks.length} chunks`);
+
+  let merged = { metadata: null, template: null, patterns: [], chunks: [] };
+
+  for (let i = 0; i < chunks.length; i++) {
+    onProgress(`  Chunk ${i+1}/${chunks.length}: calling Claude...`);
+    const result = await callClaudeChunk(chunks[i], i, chunks.length, i === 0);
+
+    if (i === 0 && result.metadata) merged.metadata = result.metadata;
+    if (i === 0 && result.template) merged.template = result.template;
+    merged.patterns.push(...(result.patterns || []));
+    merged.chunks.push(...(result.chunks || []));
+
+    // Delay between chunks to avoid rate limit
+    if (i < chunks.length - 1) await sleep(2000);
+  }
+
+  onProgress(`  Total extracted: ${merged.patterns.length} patterns, ${merged.chunks.length} chunks`);
+  return merged;
 }
 
 async function runEmbeddings() {
@@ -472,99 +521,104 @@ async function runEmbeddings() {
   document.getElementById('btn-embed').disabled = false;
 }
 
-async function processQueue() {
-  // No manual config needed - Claude auto-detects everything
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+let processingPaused = false;
+
+async function processQueue() {
   const pending = queue.filter(q => q.status === 'pending');
   if (!pending.length) return alert('No pending files in queue.');
 
+  processingPaused = false;
   document.getElementById('btn-process').disabled = true;
+  document.getElementById('btn-pause').style.display = 'inline-flex';
   document.getElementById('progress-wrap').style.display = 'block';
   clearLog();
 
   let done = 0;
+  const total = pending.length;
+
   for (let i = 0; i < queue.length; i++) {
     const item = queue[i];
     if (item.status !== 'pending') continue;
 
+    // Check pause
+    while (processingPaused) await sleep(500);
+
     setQueueStatus(i, 'processing');
-    addLog(`\n--- Processing: ${item.name} ---`);
+    addLog(`\n[${done+1}/${total}] ${item.name}`);
 
     try {
-      // 1a. Convert PDF to .md in browser if needed
+      // 1a. Convert PDF → .md
       let textContent, uploadName;
       const isPdf = item.file.name.toLowerCase().endsWith('.pdf');
       if (isPdf) {
-        addLog('Converting PDF to .md...');
+        addLog('  Converting PDF...');
         let lastPage = 0;
-        textContent = await pdfToMd(item.file, (p, total) => {
+        textContent = await pdfToMd(item.file, (p, tot) => {
           if (p !== lastPage) {
             document.getElementById('progress-label-text').textContent =
-              `File ${queue.indexOf(item)+1}: converting page ${p}/${total}`;
+              `[${done+1}/${total}] Converting page ${p}/${tot}`;
             lastPage = p;
           }
         });
         uploadName = item.name.replace(/\.pdf$/i, '.md');
-        addLog(`  Converted: ${Math.round(textContent.length/1024)}KB .md`);
+        addLog(`  Converted: ${Math.round(textContent.length/1024)}KB`);
       } else {
         textContent = await item.file.text();
         uploadName  = item.name;
       }
 
-      // 1b. Upload text to Supabase Storage
-      addLog('Uploading to Storage...');
+      // 1b. Upload .md to Storage
+      addLog('  Uploading to Storage...');
       const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-')}`;
-      const blob = new Blob([textContent], { type: 'text/plain' });
-
       const { error: upErr } = await window.db.storage
         .from('reports')
-        .upload(filePath, blob, { contentType: 'text/plain', upsert: false });
+        .upload(filePath, new Blob([textContent], { type: 'text/plain' }),
+          { contentType: 'text/plain', upsert: false });
+      if (upErr) throw new Error('Upload: ' + upErr.message);
+      addLog(`  Stored: ${filePath}`);
 
-      if (upErr) throw new Error('Upload failed: ' + upErr.message);
-      addLog(`  Uploaded: ${filePath}`);
-      item.filePath = filePath;
+      // 2. Chunk + extract via Claude (direct browser call, no timeout)
+      const extraction = await extractFullReport(textContent, msg => addLog(msg));
 
-      // 2. Call Claude via proxy to extract patterns + chunks
-      addLog('Calling Claude to extract patterns + chunks...');
-      const extraction = await callClaude(textContent);
-      addLog(`  Extracted: ${extraction.patterns?.length || 0} patterns, ${extraction.chunks?.length || 0} chunks`);
-
-      // 3. Save to DB via ingest-save
-      addLog('Saving to database...');
+      // 3. Save to DB
+      addLog('  Saving to DB...');
       const saveRes = await fetch('/api/ingest-save', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + EDGE_ANON,
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
         body: JSON.stringify({ filePath, extraction }),
       });
-
       const result = await saveRes.json();
       if (!result.success) throw new Error(result.error || 'Save failed');
 
-      addLog(`Done: ${result.patterns} patterns, ${result.chunks} chunks saved.`, 'done');
-      addLog(`Run embeddings next — click [Embed All].`, 'info');
-      document.getElementById('btn-embed').disabled = false;
+      addLog(`  ✓ ${result.patterns} patterns, ${result.chunks} chunks saved`, 'done');
       setQueueStatus(i, 'done');
+      document.getElementById('btn-embed').disabled = false;
 
     } catch (e) {
-      addLog(`? Error: ${e.message}`, 'err');
+      addLog(`  ✗ Error: ${e.message}`, 'err');
       setQueueStatus(i, 'error');
     }
 
     done++;
-    const total   = pending.length;
-    const pct     = Math.round((done / total) * 100);
-    document.getElementById('pbar-fill').style.width  = pct + '%';
-    document.getElementById('progress-pct').textContent = pct + '%';
-    document.getElementById('progress-label-text').textContent =
-      `${done}/${total} files processed`;
+    document.getElementById('pbar-fill').style.width = Math.round(done/total*100) + '%';
+    document.getElementById('progress-pct').textContent = Math.round(done/total*100) + '%';
+    document.getElementById('progress-label-text').textContent = `${done}/${total} files done`;
+
+    // Delay between files to avoid rate limit
+    if (done < total) await sleep(3000);
   }
 
-  addLog('\nDONE Queue processing complete.', 'done');
+  addLog('\n✓ Queue complete!', 'done');
   document.getElementById('btn-process').disabled = false;
+  document.getElementById('btn-pause').style.display = 'none';
   loadStats();
+}
+
+function togglePause() {
+  processingPaused = !processingPaused;
+  document.getElementById('btn-pause').textContent = processingPaused ? '▶ Resume' : '⏸ Pause';
 }
 
 // -- Log helpers -------------------------------------------
