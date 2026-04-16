@@ -7,6 +7,7 @@
   <meta name="description" content="Generate a custom AI-powered market intelligence report for any industry in Southeast Asia." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="/auth.js"></script>
   <script src="/nav.js"></script>
   <style>
@@ -128,15 +129,46 @@
     .report-meta-right{display:flex;gap:8px;flex-wrap:wrap}
     .meta-badge{font-size:11px;color:#1E6FFF;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);padding:4px 10px;border-radius:20px}
 
-    .section-block{background:#11151C;border:1px solid #1A1D24;border-radius:12px;padding:32px;margin-bottom:16px;opacity:0;transform:translateY(12px);transition:all .5s ease}
+    /* ── SLIDE DECK SECTIONS ── */
+    .section-block{background:#11151C;border:1px solid #1A1D24;border-radius:14px;margin-bottom:20px;overflow:hidden;opacity:0;transform:translateY(14px);transition:all .5s ease}
     .section-block.visible{opacity:1;transform:translateY(0)}
-    .section-block.generating{border-color:rgba(30,111,255,.3);background:rgba(30,111,255,.04)}
-    .section-num{font-size:10px;color:#1E6FFF;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
-    .section-title{font-size:18px;font-weight:700;margin-bottom:16px}
-    .section-body{font-size:14px;color:#A3A9B6;line-height:1.85;white-space:pre-wrap}
-    .section-body h3{color:#fff;font-size:15px;margin:20px 0 8px}
-    .section-body strong{color:#fff}
-    .generating-pulse{display:flex;align-items:center;gap:8px;font-size:13px;color:#5A6278;padding:16px 0}
+    .section-block.generating{border-color:rgba(30,111,255,.3)}
+
+    /* Section header bar */
+    .slide-header{padding:20px 28px 16px;border-bottom:1px solid #1A1D24;display:flex;align-items:center;gap:12px}
+    .slide-num{font-size:10px;font-weight:700;color:#1E6FFF;letter-spacing:.15em;text-transform:uppercase;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);padding:3px 8px;border-radius:4px;flex-shrink:0}
+    .slide-title{font-size:17px;font-weight:700;color:#fff}
+
+    /* Headline / key finding */
+    .slide-headline{margin:0 28px 20px;padding:16px 20px;background:rgba(30,111,255,.06);border-left:3px solid #1E6FFF;border-radius:0 8px 8px 0}
+    .slide-headline-label{font-size:10px;color:#1E6FFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-weight:700}
+    .slide-headline-text{font-size:14px;color:#fff;line-height:1.6;font-weight:500}
+
+    /* Chart + Table row */
+    .slide-visuals{display:grid;gap:20px;padding:0 28px 20px}
+    .slide-visuals.has-both{grid-template-columns:1fr 1fr}
+    .slide-visuals.has-one{grid-template-columns:1fr}
+    .visual-box{background:#0B0D10;border:1px solid #1A1D24;border-radius:10px;padding:20px}
+    .visual-title{font-size:11px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:600}
+    .chart-wrap{position:relative;height:220px}
+
+    /* Table */
+    .slide-table{width:100%;border-collapse:collapse;font-size:13px}
+    .slide-table th{background:#11151C;color:#A3A9B6;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1A1D24;font-weight:600}
+    .slide-table td{padding:9px 12px;border-bottom:1px solid #0F1218;color:#A3A9B6;vertical-align:top}
+    .slide-table tr:last-child td{border-bottom:none}
+    .slide-table tr:hover td{background:rgba(255,255,255,.02);color:#fff}
+    .slide-table td:first-child{color:#fff;font-weight:500}
+
+    /* Commentary */
+    .slide-commentary{padding:0 28px 28px;font-size:14px;color:#A3A9B6;line-height:1.85}
+    .slide-commentary p{margin-bottom:14px}
+    .slide-commentary p:last-child{margin-bottom:0}
+    .slide-commentary strong{color:#fff}
+    .slide-commentary h3{color:#fff;font-size:14px;font-weight:700;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
+
+    /* Generating pulse */
+    .generating-pulse{display:flex;align-items:center;gap:8px;font-size:13px;color:#5A6278;padding:28px}
     .generating-pulse .dot{width:6px;height:6px;background:#1E6FFF;border-radius:50%;animation:pulse-dot 1.2s ease-in-out infinite}
     .generating-pulse .dot:nth-child(2){animation-delay:.2s}
     .generating-pulse .dot:nth-child(3){animation-delay:.4s}
@@ -456,7 +488,7 @@ async function handlePay() {
 
   const btn = document.getElementById('btn-pay');
   btn.disabled = true;
-  btn.textContent = 'Redirecting to payment...';
+  btn.textContent = 'Generating...';
 
   const params = {
     reportType:  currentType,
@@ -466,33 +498,16 @@ async function handlePay() {
     companies:   document.getElementById('f-companies').value.trim(),
   };
 
-  // Save to sessionStorage before PayPal redirect
-  sessionStorage.setItem('kira_pending_report', JSON.stringify(params));
-
   const slug = currentType.split('_')[0] + '-' +
     params.industry.toLowerCase().replace(/\s+/g,'-') + '-' +
     params.country.toLowerCase().replace(/\s+/g,'-') + '-' +
     Date.now();
 
+  sessionStorage.setItem('kira_pending_report', JSON.stringify(params));
   sessionStorage.setItem('kira_pending_slug', slug);
 
-  try {
-    const res = await fetch('/api/payment?action=create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, amount: PRICES[currentType], reportType: currentType })
-    });
-    const data = await res.json();
-    if (data.approveUrl) {
-      window.location.href = data.approveUrl;
-    } else {
-      throw new Error(data.error || 'Payment init failed');
-    }
-  } catch (e) {
-    showAlert('alert-form', 'Payment error: ' + e.message);
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pay & Generate Report';
-  }
+  // PAYWALL_DISABLED: skip payment, go straight to generation
+  await startGeneration();
 }
 
 // ── After payment return ─────────────────────────────────
@@ -583,7 +598,9 @@ function setPhase(phase) {
   document.getElementById('phase-' + phase).classList.add('active');
 }
 
-// ── Render report ────────────────────────────────────────
+// ── Render report (slide-deck style) ────────────────────
+const chartInstances = {};
+
 function renderReport(data) {
   setStep(4);
   showView('report');
@@ -611,7 +628,7 @@ function renderReport(data) {
   tocList.innerHTML   = '';
 
   sections.forEach((sec, i) => {
-    // TOC item
+    // TOC
     const tocItem = document.createElement('div');
     tocItem.className = 'toc-item done';
     tocItem.id = 'toc-' + i;
@@ -619,34 +636,138 @@ function renderReport(data) {
     tocItem.onclick = () => document.getElementById('sec-' + i)?.scrollIntoView({ behavior: 'smooth' });
     tocList.appendChild(tocItem);
 
-    // Section block
+    // Parse section content
+    let parsed = null;
+    if (sec.content) {
+      try { parsed = JSON.parse(sec.content); } catch { parsed = null; }
+    }
+
+    // Build slide block
     const block = document.createElement('div');
     block.className = 'section-block';
     block.id = 'sec-' + i;
-    block.innerHTML = `
-      <div class="section-num">Section ${String(i+1).padStart(2,'0')}</div>
-      <div class="section-title">${sec.title}</div>
-      <div class="section-body">${formatContent(sec.content)}</div>`;
-    container.appendChild(block);
 
-    // Stagger reveal
-    setTimeout(() => block.classList.add('visible'), i * 120);
+    if (sec.status === 'generating') {
+      block.classList.add('generating');
+      block.innerHTML = `
+        <div class="slide-header">
+          <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
+          <span class="slide-title">${sec.title}</span>
+        </div>
+        <div class="generating-pulse"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:4px">Writing...</span></div>`;
+    } else if (parsed) {
+      const hasChart = parsed.chart && parsed.chart.labels?.length;
+      const hasTable = parsed.table && parsed.table.headers?.length;
+      const chartId  = `chart-${i}`;
+
+      let visualsHtml = '';
+      if (hasChart || hasTable) {
+        const gridClass = hasChart && hasTable ? 'has-both' : 'has-one';
+        let chartHtml = '', tableHtml = '';
+
+        if (hasChart) {
+          chartHtml = `<div class="visual-box">
+            <div class="visual-title">${parsed.chart.title || ''}</div>
+            <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
+          </div>`;
+        }
+        if (hasTable) {
+          const headerCells = parsed.table.headers.map(h => `<th>${h}</th>`).join('');
+          const bodyRows    = (parsed.table.rows || []).map(row =>
+            `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
+          ).join('');
+          tableHtml = `<div class="visual-box">
+            <div class="visual-title">${parsed.table.title || ''}</div>
+            <div style="overflow-x:auto">
+              <table class="slide-table"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>
+            </div>
+          </div>`;
+        }
+        visualsHtml = `<div class="slide-visuals ${gridClass}">${chartHtml}${tableHtml}</div>`;
+      }
+
+      const commentaryHtml = (parsed.commentary || '')
+        .split('\n\n')
+        .filter(Boolean)
+        .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>')}</p>`)
+        .join('');
+
+      block.innerHTML = `
+        <div class="slide-header">
+          <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
+          <span class="slide-title">${sec.title}</span>
+        </div>
+        ${parsed.headline ? `
+        <div class="slide-headline">
+          <div class="slide-headline-label">Key Finding</div>
+          <div class="slide-headline-text">${parsed.headline}</div>
+        </div>` : ''}
+        ${visualsHtml}
+        ${commentaryHtml ? `<div class="slide-commentary">${commentaryHtml}</div>` : ''}`;
+
+      // Mount Chart.js after DOM insertion
+      if (hasChart) {
+        setTimeout(() => renderChart(chartId, parsed.chart), 50 + i * 20);
+      }
+    } else {
+      // Fallback: plain text
+      block.innerHTML = `
+        <div class="slide-header">
+          <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
+          <span class="slide-title">${sec.title}</span>
+        </div>
+        <div class="slide-commentary"><p>${(sec.content || '').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</p></div>`;
+    }
+
+    container.appendChild(block);
+    setTimeout(() => block.classList.add('visible'), i * 130);
   });
 
-  // Show chatbox
   setTimeout(() => {
     document.getElementById('chatbox').style.display = 'block';
-  }, sections.length * 120 + 400);
+  }, sections.length * 130 + 400);
 
   reportSlug = data.slug;
 }
 
-function formatContent(text) {
-  if (!text) return '';
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h3>$1</h3>');
+function renderChart(canvasId, chartDef) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+
+  const CHART_COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3'];
+
+  const datasets = (chartDef.datasets || []).map((ds, di) => ({
+    label: ds.label || '',
+    data: ds.data || [],
+    backgroundColor: chartDef.type === 'line'
+      ? CHART_COLORS[di % CHART_COLORS.length] + '20'
+      : (chartDef.type === 'pie' || chartDef.type === 'donut')
+        ? CHART_COLORS
+        : CHART_COLORS[di % CHART_COLORS.length],
+    borderColor: CHART_COLORS[di % CHART_COLORS.length],
+    borderWidth: chartDef.type === 'line' ? 2 : 0,
+    fill: chartDef.type === 'line',
+    tension: 0.4,
+    borderRadius: chartDef.type === 'bar' ? 4 : 0,
+  }));
+
+  chartInstances[canvasId] = new Chart(canvas, {
+    type: chartDef.type === 'donut' ? 'doughnut' : (chartDef.type || 'bar'),
+    data: { labels: chartDef.labels || [], datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#A3A9B6', font: { size: 11, family: 'Arial' }, boxWidth: 12 } },
+        tooltip: { backgroundColor: '#161B24', titleColor: '#fff', bodyColor: '#A3A9B6', borderColor: '#242A35', borderWidth: 1 }
+      },
+      scales: (chartDef.type === 'pie' || chartDef.type === 'donut' || chartDef.type === 'radar') ? {} : {
+        x: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' } },
+        y: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' } }
+      }
+    }
+  });
 }
 
 // ── Chat ─────────────────────────────────────────────────
