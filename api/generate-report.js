@@ -100,7 +100,7 @@ async function embed(text) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_KEY}`
     },
-    body: JSON.stringify({ model: 'text-embedding-3-small', input: text })
+    body: JSON.stringify({ model: 'text-embedding-3-large', input: text, dimensions: 1536 })
   });
   const data = await res.json();
   if (data.error) throw new Error('Embedding error: ' + data.error.message);
