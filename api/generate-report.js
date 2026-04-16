@@ -287,8 +287,17 @@ async function generateInBackground(report, sections, inputParams) {
     const userPrompt = buildSectionPrompt(section.title, i + 1, sections.length, prevContext, inputParams);
 
     try {
-      const content = await claude(systemPrompt, userPrompt, section.tokens);
-      completedSections.push({ title: section.title, content, status: 'completed' });
+      const raw = await claude(systemPrompt, userPrompt, section.tokens);
+      // Parse structured JSON output
+      let content;
+      try {
+        const clean = raw.replace(/```json|```/g, '').trim();
+        content = JSON.parse(clean);
+      } catch {
+        // Fallback: wrap plain text in structured format
+        content = { headline: '', chart: null, table: null, commentary: raw };
+      }
+      completedSections.push({ title: section.title, content: JSON.stringify(content), status: 'completed' });
     } catch (e) {
       console.error(`Section "${section.title}" failed:`, e.message);
       completedSections.push({
@@ -338,7 +347,7 @@ function buildSystemPrompt(industry, country, reportType, researchData, chunkTex
     patternText ? `INDUSTRY PATTERNS FOR THIS TYPE OF MARKET:\n${patternText}` : ''
   ].filter(Boolean).join('\n\n---\n\n');
 
-  return `You are a senior market research consultant writing a professional ${reportType.replace(/_/g,' ')} report.
+  return `You are a senior market research consultant writing a professional ${reportType.replace(/_/g,' ')} report in structured slide-deck format.
 
 CLIENT BRIEF:
 - Industry: ${industry}
@@ -351,17 +360,32 @@ ${researchData || 'Limited data available — draw on industry knowledge.'}
 
 ${ragContext ? `PROPRIETARY RESEARCH LIBRARY CONTEXT:\n${ragContext}` : ''}
 
-WRITING STANDARDS:
-- Write in clear, professional consulting prose
-- Lead each section with the most important finding or insight
-- Use specific data points and numbers where available
-- Structure content with logical flow — insight → evidence → implication
-- Use **bold** for key terms, data points, and company names
-- Use ### for sub-headers within a section
-- Be analytical, not just descriptive — explain what data means
-- Length: match the depth expected for a paid consulting report
-- Do NOT add disclaimers, caveats about AI, or mention data limitations
-- Do NOT start with "In this section..." — lead with the insight directly`;
+OUTPUT FORMAT — Return ONLY valid JSON for each section (no markdown, no backticks):
+{
+  "headline": "The single most important finding for this section in 1-2 punchy sentences",
+  "chart": {
+    "type": "bar|line|pie|radar|donut",
+    "title": "Chart title",
+    "labels": ["Label 1", "Label 2", "..."],
+    "datasets": [{"label": "Series name", "data": [num1, num2, ...]}]
+  },
+  "table": {
+    "title": "Table title",
+    "headers": ["Col 1", "Col 2", "Col 3"],
+    "rows": [["val", "val", "val"], ...]
+  },
+  "commentary": "Full analytical prose — 200-400 words. Lead with insight, support with evidence, end with implication. Use **bold** for key terms. Use \\n\\n for paragraph breaks."
+}
+
+RULES:
+- headline: always required. 1-2 sentences, punchy, data-driven.
+- chart: include when section has quantitative data (market size, share, growth, pricing, rankings). Set null if not applicable.
+- table: include when section benefits from structured comparison (competitors, channels, features, pricing tiers). Set null if not applicable.
+- commentary: always required. Analytical prose, not a list. Explain what the data means strategically.
+- chart AND table can both be present, or just one, or neither (commentary-only sections).
+- Numbers in chart/table should be realistic estimates if exact data unavailable — label as "estimated" in the title.
+- Do NOT mention AI, data limitations, or add disclaimers.
+- Return ONLY the JSON object. No preamble, no explanation.`;
 }
 
 function buildSectionPrompt(sectionTitle, sectionNum, totalSections, prevContext, inputParams) {
