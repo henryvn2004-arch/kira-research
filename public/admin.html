@@ -182,6 +182,11 @@
         </button>
         <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
           onclick="clearQueue()">Clear Queue</button>
+        <button class="btn" id="btn-embed"
+          style="background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3)"
+          onclick="runEmbeddings()" disabled>
+          ⚡ Embed All (Step 2)
+        </button>
       </div>
 
       <div class="progress-wrap" id="progress-wrap">
@@ -523,21 +528,28 @@ async function processQueue() {
       addLog(`  Uploaded: ${filePath}`);
       item.filePath = filePath;
 
-      // 2. Call Vercel ingest API
-      addLog('Calling ingest API...');
-      const res = await fetch('/api/ingest', {
+      // 2. Call Claude API directly from browser to extract patterns + chunks
+      addLog('Calling Claude to extract patterns + chunks...');
+      const extraction = await callClaude(textContent);
+      addLog(`  Extracted: ${extraction.patterns?.length || 0} patterns, ${extraction.chunks?.length || 0} chunks`);
+
+      // 3. Save extracted data to DB via /api/ingest-save
+      addLog('Saving to database...');
+      const saveRes = await fetch('/api/ingest-save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + EDGE_ANON,
         },
-        body: JSON.stringify({ filePath }),
+        body: JSON.stringify({ filePath, extraction }),
       });
 
-      const result = await res.json();
-      if (!result.success) throw new Error(result.error || 'Edge function failed');
+      const result = await saveRes.json();
+      if (!result.success) throw new Error(result.error || 'Save failed');
 
-      addLog(`OK Done: ${result.patterns} patterns ? ${result.chunks} chunks ? ${result.embedded} embeddings`, 'done');
+      addLog(`OK Done: ${result.patterns} patterns, ${result.chunks} chunks saved.`, 'done');
+      addLog(`  Run embeddings next — click [Embed All] button.`, 'info');
+      document.getElementById('btn-embed').disabled = false;
       setQueueStatus(i, 'done');
 
     } catch (e) {
