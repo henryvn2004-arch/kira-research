@@ -1,167 +1,97 @@
-// ============================================================
 // KIRA RESEARCH — api/generate-report.js
 // POST /api/generate-report
-// Phase 1 only: create job + research via web_search (~20s)
-// Returns { reportId, sections, researchSummary, ragContext }
-// Browser then drives /api/generate-section per section
-// ============================================================
+// Phase 1: plan sections + research → return to browser
+// Browser drives section generation via /api/generate-section
 
 export const config = { maxDuration: 60 };
 
-const ANTHROPIC_URL        = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_KEY        = process.env.ANTHROPIC_API_KEY;
-const CLAUDE_MODEL         = 'claude-sonnet-4-5';
-const SUPABASE_URL         = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const OPENAI_KEY           = process.env.OPENAI_API_KEY;
+const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+const CLAUDE_MODEL  = 'claude-sonnet-4-5';
+const SB_URL        = process.env.SUPABASE_URL;
+const SB_KEY        = process.env.SUPABASE_SERVICE_KEY;
+const OAI_KEY       = process.env.OPENAI_API_KEY;
+const ANT_KEY       = process.env.ANTHROPIC_API_KEY;
 
-async function sb(path, method = 'GET', body = null) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method,
-    headers: {
-      'apikey': SUPABASE_SERVICE_KEY,
-      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
-    },
-    body: body ? JSON.stringify(body) : undefined
+// ── Helpers ───────────────────────────────────────────────
+async function sbPost(table, body) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify(body)
   });
-  if (res.status === 204) return null;
-  return res.json();
+  const d = await r.json();
+  return Array.isArray(d) ? d[0] : d;
 }
 
-async function sbUpdate(table, id, body) {
-  await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+async function sbPatch(table, id, body) {
+  await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
     method: 'PATCH',
-    headers: {
-      'apikey': SUPABASE_SERVICE_KEY,
-      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
-    },
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
     body: JSON.stringify(body)
   });
 }
 
-async function claudeResearch(prompt) {
-  const res = await fetch(ANTHROPIC_URL, {
+async function callClaude(prompt, maxTokens) {
+  const r = await fetch(ANTHROPIC_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] })
   });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.content?.[0]?.text || '';
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.content?.[0]?.text || '';
 }
 
-async function embed(text) {
-  const res = await fetch('https://api.openai.com/v1/embeddings', {
+async function getEmbedding(text) {
+  const r = await fetch('https://api.openai.com/v1/embeddings', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_KEY}` },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OAI_KEY}` },
     body: JSON.stringify({ model: 'text-embedding-3-large', input: text, dimensions: 1536 })
   });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.data[0].embedding;
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.data[0].embedding;
 }
 
 async function ragSearch(industry, country, reportType) {
   try {
-    const vector = await embed(`${industry} ${country} ${reportType} market analysis`);
-    const [chunks, patterns] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/rpc/search_report_chunks`, {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query_embedding: vector, match_threshold: 0.65, match_count: 8 })
-      }).then(r => r.json()),
-      fetch(`${SUPABASE_URL}/rest/v1/rpc/search_industry_patterns`, {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query_embedding: vector, match_threshold: 0.65, match_count: 5 })
-      }).then(r => r.json())
+    const vec = await getEmbedding(`${industry} ${country} ${reportType}`);
+    const opts = { method: 'POST', headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' } };
+    const [c, p] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/rpc/search_report_chunks`, { ...opts, body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 8 }) }).then(r => r.json()),
+      fetch(`${SB_URL}/rest/v1/rpc/search_industry_patterns`, { ...opts, body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 5 }) }).then(r => r.json())
     ]);
     return {
-      chunkText:   (chunks   || []).map(c => `[${c.chunk_type}] ${c.content}`).join('\n\n'),
-      patternText: (patterns || []).map(p => `[${p.pattern_type}] ${p.description}`).join('\n\n')
+      chunkText:   (c || []).map(x => `[${x.chunk_type}] ${x.content}`).join('\n\n'),
+      patternText: (p || []).map(x => `[${x.pattern_type}] ${x.description}`).join('\n\n')
     };
-  } catch { return { chunkText: '', patternText: '' }; }
+  } catch {
+    return { chunkText: '', patternText: '' };
+  }
 }
 
-// ── Section planning — Claude decides sections dynamically ──
-async function planSections(industry, country, reportType, questions, companies) {
-  const typeDescriptions = {
-    industry_deep_dive:      'full market analysis report',
-    competitive_comparison:  'competitive comparison report',
-    market_entry_brief:      'market entry brief'
-  };
-  const typeDesc = typeDescriptions[reportType] || 'market research report';
-
-  const prompt = `You are planning a ${typeDesc} for: ${industry} in ${country}.
-${questions ? `Client focus: ${questions}` : ''}
-${companies ? `Companies: ${companies}` : ''}
-
-Decide the most relevant sections for THIS specific report. Think about what a consulting client actually needs for this industry and market.
-
-Return ONLY a JSON array of section title strings (6-12 sections), no explanation:
-["Section Title 1", "Section Title 2", ...]
-
-Rules:
-- Tailor to the industry (e.g. for fintech include Regulatory & Licensing; for FMCG include Shopper Behavior; for EV include Infrastructure & Charging)
-- Always start with Executive Summary
-- Always end with Recommendations or Strategic Implications  
-- ${reportType === 'competitive_comparison' ? 'Focus on comparison sections: profiles, positioning, strengths/weaknesses, strategic moves' : ''}
-- ${reportType === 'market_entry_brief' ? 'Focus on entry-relevant sections: opportunity, barriers, channels, partners, entry strategy' : ''}
-- Between 8-12 sections for deep dive, 6-8 for others
-- Return ONLY the JSON array`;
-
-  const res = await fetch(ANTHROPIC_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 500,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  const text  = data.content?.[0]?.text || '';
-  const clean = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
-};
-
-function cors(res) {
+// ── CORS ──────────────────────────────────────────────────
+function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
+// ── Handler ───────────────────────────────────────────────
 export default async function handler(req, res) {
-  cors(res);
+  setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { industry, country, reportType, questions, companies, slug, userId } = req.body;
-  if (!industry || !country || !reportType) return res.status(400).json({ error: 'Missing required fields' });
+  if (!industry || !country || !reportType) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
 
-  const sections = SECTION_TEMPLATES[reportType] || SECTION_TEMPLATES.industry_deep_dive;
-
-  // Create job record (sections TBD after planning)
-  let report;
+  // Step 1: Create job record
+  let reportId;
   try {
-    const created = await sb('custom_reports', 'POST', {
+    const job = await sbPost('custom_reports', {
       user_id:      userId || null,
       slug:         slug || `${reportType}-${Date.now()}`,
       report_type:  reportType,
@@ -169,40 +99,61 @@ export default async function handler(req, res) {
       sections:     [],
       status:       'researching'
     });
-    report = Array.isArray(created) ? created[0] : created;
+    reportId = job.id;
+    if (!reportId) throw new Error('No ID returned from DB');
   } catch (e) {
-    return res.status(500).json({ error: 'Failed to create job: ' + e.message });
+    return res.status(500).json({ error: 'DB error: ' + e.message });
   }
 
-  // Plan sections + research in parallel
-  let sections, researchSummary, rag;
+  // Step 2: Plan sections + research + RAG in parallel
+  let plannedSections, research, rag;
   try {
-    [sections, researchSummary, rag] = await Promise.all([
-      planSections(industry, country, reportType, questions, companies),
-      claudeResearch(`Compile market intelligence for a ${reportType.replace(/_/g,' ')} on ${industry} in ${country}.
-Include: market size & growth, key players & share, distribution channels, pricing, recent trends, regulations.
+    const typeNames = { industry_deep_dive: 'full market analysis', competitive_comparison: 'competitive comparison', market_entry_brief: 'market entry brief' };
+    const typeName  = typeNames[reportType] || 'market research report';
+
+    const planPrompt = `Plan sections for a ${typeName}: ${industry} in ${country}.
+${questions ? 'Client focus: ' + questions : ''}
+${companies ? 'Companies: ' + companies : ''}
+
+Return ONLY a JSON array of 8-12 section titles tailored to this specific industry and market.
+Rules: start with "Executive Summary", end with "Recommendations". Include industry-specific sections.
+Example for fintech: include "Regulatory & Licensing Environment". For EV: include "Charging Infrastructure".
+Return ONLY valid JSON array, no explanation: ["Title 1", "Title 2", ...]`;
+
+    const researchPrompt = `Compile market intelligence for ${typeName}: ${industry} in ${country}.
 ${companies ? 'Companies: ' + companies : ''}${questions ? '\nFocus: ' + questions : ''}
-Be specific and data-rich.`),
+Include: market size & growth, key players, distribution channels, pricing, trends, regulations.
+Be concise and data-rich.`;
+
+    [plannedSections, research, rag] = await Promise.all([
+      callClaude(planPrompt, 400).then(t => JSON.parse(t.replace(/```json|```/g, '').trim())),
+      callClaude(researchPrompt, 1500),
       ragSearch(industry, country, reportType)
     ]);
 
-    await sbUpdate('custom_reports', report.id, {
-      sections:      sections.map(t => ({ title: t, content: '', status: 'pending' })),
-      research_data: { summary: researchSummary },
+  } catch (e) {
+    await sbPatch('custom_reports', reportId, { status: 'failed' });
+    return res.status(500).json({ error: 'Planning/research failed: ' + e.message });
+  }
+
+  // Step 3: Save context to DB
+  try {
+    await sbPatch('custom_reports', reportId, {
+      sections:      plannedSections.map(t => ({ title: t, content: '', status: 'pending' })),
+      research_data: { summary: research },
       rag_context:   { chunkText: rag.chunkText, patternText: rag.patternText },
       status:        'generating'
     });
-
-    return res.json({
-      reportId:        report.id,
-      sections,
-      researchSummary,
-      ragContext:      rag,
-      status:          'generating'
-    });
-
   } catch (e) {
-    await sbUpdate('custom_reports', report.id, { status: 'failed' });
-    return res.status(500).json({ error: 'Research failed: ' + e.message });
+    // non-fatal — still return data to browser
+    console.warn('DB update failed:', e.message);
   }
+
+  return res.json({
+    reportId,
+    sections:        plannedSections,
+    researchSummary: research,
+    ragContext:      rag,
+    status:          'generating'
+  });
 }
