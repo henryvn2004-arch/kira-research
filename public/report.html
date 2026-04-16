@@ -508,7 +508,6 @@ function validate() {
   return null;
 }
 
-// ── Pay & Generate ───────────────────────────────────────
 async function handlePay() {
   const err = validate();
   if (err) return showAlert('alert-form', err);
@@ -532,36 +531,43 @@ async function handlePay() {
   sessionStorage.setItem('kira_pending_report', JSON.stringify(params));
   sessionStorage.setItem('kira_pending_slug', slug);
 
+  // Show progress immediately — sections will populate after planning
+  setStep(3);
+  showView('progress');
+  startTime = Date.now();
+  elapsedTimer = setInterval(() => {
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('time-elapsed').textContent = `Elapsed: ${s}s`;
+  }, 1000);
+
+  document.getElementById('prog-title').textContent = 'Planning report structure...';
+  document.getElementById('prog-subtitle').textContent = 'Claude is deciding which sections fit your request';
+  document.getElementById('time-remaining').textContent = 'Estimating...';
+  document.getElementById('section-progress-list').innerHTML =
+    `<div class="sec-prog-item active" style="justify-content:center;padding:16px">
+      <span class="sec-prog-dot"></span>
+      <span style="color:#A3A9B6">Analyzing your request and planning sections...</span>
+    </div>`;
+
   // PAYWALL_DISABLED — skip payment
-  await startGeneration();
+  await startGeneration(params, slug);
 }
 
 // ── Generation flow (client-driven) ─────────────────────
 const SEC_PER_SECTION = 12; // estimated seconds per section
 let startTime, elapsedTimer;
 
-async function startGeneration() {
-  const params = JSON.parse(sessionStorage.getItem('kira_pending_report') || '{}');
-  const slug   = sessionStorage.getItem('kira_pending_slug');
+async function startGeneration(params, slug) {
+  if (!params) {
+    params = JSON.parse(sessionStorage.getItem('kira_pending_report') || '{}');
+    slug   = sessionStorage.getItem('kira_pending_slug');
+  }
   if (!params.industry || !slug) return;
-
-  setStep(3);
-  showView('progress');
-  startTime = Date.now();
-
-  // Start elapsed timer
-  elapsedTimer = setInterval(() => {
-    const s = Math.floor((Date.now() - startTime) / 1000);
-    document.getElementById('time-elapsed').textContent = `Elapsed: ${s}s`;
-  }, 1000);
 
   try {
     const user = await window.kiraAuth?.getUser();
 
-    // ── Phase 1: Research (~20s) ─────────────────────────
-    document.getElementById('prog-title').textContent = 'Researching market data...';
-    document.getElementById('prog-subtitle').textContent = 'Searching live data sources — ~20 seconds';
-    document.getElementById('time-remaining').textContent = '~3-4 min remaining';
+    // Phase 1: Plan + Research
     document.getElementById('progress-bar').style.width = '5%';
 
     const initRes = await fetch('/api/generate-report', {
@@ -570,7 +576,7 @@ async function startGeneration() {
       body: JSON.stringify({ ...params, slug, userId: user?.id })
     });
     const initData = await initRes.json();
-    if (!initData.reportId) throw new Error(initData.error || 'Research phase failed');
+    if (!initData.reportId) throw new Error(initData.error || 'Planning phase failed');
 
     reportId = initData.reportId;
     reportSlug = slug;
@@ -578,19 +584,17 @@ async function startGeneration() {
     const researchSummary = initData.researchSummary || '';
     const ragContext      = initData.ragContext || {};
     const totalSections   = sections.length;
-    const totalEstSecs    = totalSections * SEC_PER_SECTION;
 
-    // Build section progress list
+    // Now build section list from dynamic response
     buildSectionProgressList(sections);
     document.getElementById('time-total').textContent =
-      `Est. total: ~${Math.ceil(totalEstSecs / 60)} min`;
-
+      `Est. total: ~${Math.ceil((totalSections * SEC_PER_SECTION) / 60)} min`;
+    document.getElementById('time-remaining').textContent =
+      `~${Math.ceil((totalSections * SEC_PER_SECTION) / 60)} min remaining`;
     document.getElementById('prog-title').textContent = 'Writing report sections...';
     document.getElementById('prog-subtitle').textContent =
       `${totalSections} sections · ~${SEC_PER_SECTION}s each`;
     document.getElementById('progress-bar').style.width = '10%';
-
-    // ── Phase 2: Generate sections one-by-one ────────────
     const completedSections = [];
 
     for (let i = 0; i < sections.length; i++) {
