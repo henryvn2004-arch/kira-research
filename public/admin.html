@@ -238,10 +238,12 @@
             <th>Year</th>
             <th>Type</th>
             <th>Extracted</th>
+            <th>Embedded</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="sources-tbody">
-          <tr><td colspan="6" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
+          <tr><td colspan="8" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -743,24 +745,72 @@ function clearLog() {
 // -- Load source reports -----------------------------------
 async function loadSources() {
   const tbody = document.getElementById('sources-tbody');
-  tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
+
   const { data, error } = await window.db.from('source_reports')
-    .select('title,product_category,country,year,competency_type,extracted')
+    .select('id,title,product_category,country,year,competency_type,extracted')
     .order('created_at', { ascending: false }).limit(100);
+
   if (error || !data?.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(r => `<tr>
-    <td>${r.title || '?'}</td>
-    <td>${r.product_category || '?'}</td>
-    <td>${r.country}</td>
-    <td>${r.year}</td>
-    <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
-    <td>${r.extracted
-      ? '<span style="color:#38D996">OK Yes</span>'
-      : '<span style="color:#5A6278">Pending</span>'}</td>
-  </tr>`).join('');
+
+  // Check embedded count per source report
+  const ids = data.map(r => r.id);
+  const { data: embeddedChunks } = await window.db.from('report_chunks')
+    .select('source_report_id')
+    .in('source_report_id', ids)
+    .not('embedding', 'is', null);
+
+  const embeddedSet = new Set((embeddedChunks || []).map(c => c.source_report_id));
+
+  tbody.innerHTML = data.map(r => {
+    const isEmbedded = embeddedSet.has(r.id);
+    const embedBtn = r.extracted && !isEmbedded
+      ? `<button class="btn btn-sm" onclick="embedSingle('${r.id}', this)"
+           style="background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3);padding:4px 10px;font-size:11px">
+           ⚡ Embed
+         </button>`
+      : '';
+    return `<tr>
+      <td>${r.title || '?'}</td>
+      <td>${r.product_category || '?'}</td>
+      <td>${r.country}</td>
+      <td>${r.year}</td>
+      <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
+      <td>${r.extracted ? '<span style="color:#38D996">✓ Yes</span>' : '<span style="color:#5A6278">Pending</span>'}</td>
+      <td>${isEmbedded ? '<span style="color:#38D996">✓ Yes</span>' : r.extracted ? '<span style="color:#F6AD55">Not yet</span>' : '—'}</td>
+      <td>${embedBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function embedSingle(sourceReportId, btn) {
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    // Embed chunks for this report
+    let total = 0;
+    while (true) {
+      const res = await fetch('/api/embed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
+        body: JSON.stringify({ type: 'chunk', source_report_id: sourceReportId }),
+      });
+      const d = await res.json();
+      if (!d.embedded) break;
+      total += d.embedded;
+      await sleep(800);
+    }
+    btn.textContent = `✓ ${total} embedded`;
+    btn.style.color = '#38D996';
+    setTimeout(() => loadSources(), 1000);
+  } catch(e) {
+    btn.textContent = '✗ Failed';
+    btn.style.color = '#FC8181';
+    btn.disabled = false;
+  }
 }
 
 // -- Load stats --------------------------------------------
