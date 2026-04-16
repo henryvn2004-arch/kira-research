@@ -168,12 +168,11 @@
       <div class="queue-list" id="queue-list"></div>
     </div>
 
-    <!-- Step 3: Process -->
+    <!-- Step 3: Extract -->
     <div class="card">
-      <h2>Step 3 — Process Queue</h2>
+      <h2>Step 3 — Extract Patterns & Chunks</h2>
       <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
-        Each PDF takes 2–4 minutes. Files are processed one at a time.
-        Claude reads the PDF, extracts patterns and chunks, then OpenAI embeds everything.
+        Each PDF: detect sections from ToC → extract patterns + chunks per section → save to DB. ~3–6 min/file.
       </p>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -185,11 +184,6 @@
           onclick="togglePause()">⏸ Pause</button>
         <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
           onclick="clearQueue()">Clear Queue</button>
-        <button class="btn" id="btn-embed"
-          style="background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3)"
-          onclick="runEmbeddings()" disabled>
-          ⚡ Embed All (Step 2)
-        </button>
       </div>
 
       <div class="progress-wrap" id="progress-wrap">
@@ -201,8 +195,28 @@
       </div>
 
       <div class="log-wrap">
-        <div class="log-title">Processing Log</div>
-        <div class="log-body" id="log-body">Ready. Configure and add PDFs to start...</div>
+        <div class="log-title">Extract Log</div>
+        <div class="log-body" id="log-body">Ready. Add PDFs above and click Start Processing Queue...</div>
+      </div>
+    </div>
+
+    <!-- Step 4: Embed -->
+    <div class="card">
+      <h2>Step 4 — Generate Embeddings</h2>
+      <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
+        Run anytime — embeds all extracted chunks + patterns that don't have vectors yet. Safe to run multiple times.
+      </p>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <button class="btn" id="btn-embed"
+          style="background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3)"
+          onclick="runEmbeddings()">
+          ⚡ Embed All Unembedded
+        </button>
+        <span id="embed-status" style="font-size:12px;color:#5A6278"></span>
+      </div>
+      <div class="log-wrap" style="margin-top:16px">
+        <div class="log-title">Embed Log</div>
+        <div class="log-body" id="embed-log-body">Click "Embed All" to start...</div>
       </div>
     </div>
   </div>
@@ -560,8 +574,19 @@ async function extractFullReport(fileText, onProgress) {
 }
 
 async function runEmbeddings() {
-  document.getElementById('btn-embed').disabled = true;
-  addLog('\n⚡ Starting embed — will loop until all chunks + patterns are embedded...');
+  const btn = document.getElementById('btn-embed');
+  const status = document.getElementById('embed-status');
+  btn.disabled = true;
+
+  function embedLog(msg, type = '') {
+    const el = document.getElementById('embed-log-body');
+    const cls = type ? `<span class="${type}">${msg}</span>\n` : msg + '\n';
+    el.innerHTML += cls;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  document.getElementById('embed-log-body').innerHTML = '';
+  embedLog('Starting — looping until all chunks + patterns embedded...');
 
   async function embedAll(type) {
     let totalEmbedded = 0;
@@ -575,31 +600,32 @@ async function runEmbeddings() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Embed failed');
-
-      if (data.embedded === 0) break; // nothing left to embed
-
+      if (data.embedded === 0) break;
       totalEmbedded += data.embedded;
-      addLog(`  ${type} batch ${batch}: ${data.embedded} embedded (total so far: ${totalEmbedded})`);
-      await sleep(1000); // brief pause between batches
+      embedLog(`  ${type} batch ${batch}: +${data.embedded} (total: ${totalEmbedded})`);
+      status.textContent = `${type}s: ${totalEmbedded} embedded...`;
+      await sleep(1000);
     }
     return totalEmbedded;
   }
 
   try {
-    addLog('  Embedding chunks...');
+    embedLog('Embedding chunks...');
     const chunks = await embedAll('chunk');
-    addLog(`  ✓ Chunks done: ${chunks} total embedded`, 'done');
+    embedLog(`✓ Chunks done: ${chunks} embedded`, 'done');
 
-    addLog('  Embedding patterns...');
+    embedLog('Embedding patterns...');
     const patterns = await embedAll('pattern');
-    addLog(`  ✓ Patterns done: ${patterns} total embedded`, 'done');
+    embedLog(`✓ Patterns done: ${patterns} embedded`, 'done');
 
-    addLog('\n✓ All embeddings complete! Knowledge base ready for RAG.', 'done');
+    embedLog('\n✓ Knowledge base ready for RAG!', 'done');
+    status.textContent = `Done — ${chunks} chunks + ${patterns} patterns embedded`;
     loadStats();
   } catch(e) {
-    addLog('✗ Embed error: ' + e.message, 'err');
-    document.getElementById('btn-embed').disabled = false;
+    embedLog('✗ Error: ' + e.message, 'err');
+    status.textContent = '';
   }
+  btn.disabled = false;
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
