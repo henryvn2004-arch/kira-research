@@ -49,19 +49,17 @@ async function claudeResearch(prompt) {
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'web-search-2025-03-05'
+      'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 2500,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     })
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
-  return (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n\n');
+  return data.content?.[0]?.text || '';
 }
 
 async function embed(text) {
@@ -97,21 +95,51 @@ async function ragSearch(industry, country, reportType) {
   } catch { return { chunkText: '', patternText: '' }; }
 }
 
-const SECTION_TEMPLATES = {
-  industry_deep_dive: [
-    'Executive Summary', 'Market Assessment', 'Market Segmentation',
-    'Industry Structure', 'Competitive Landscape', 'Competitor Profiles',
-    'Market Drivers & Trends', 'Consumer Insights', 'Pricing Analysis',
-    'Regulatory Environment', 'Market Forecast', 'Recommendations'
-  ],
-  competitive_comparison: [
-    'Companies Overview', 'Product & Service Comparison', 'Market Position & Share',
-    'Competitive Strengths & Weaknesses', 'Strategic Moves & Developments', 'Competitive Outlook'
-  ],
-  market_entry_brief: [
-    'Market Opportunity Summary', 'Regulatory & Compliance', 'Distribution & Channels',
-    'Competitive Environment', 'Pricing & Positioning', 'Potential Partners', 'Entry Strategy'
-  ]
+// ── Section planning — Claude decides sections dynamically ──
+async function planSections(industry, country, reportType, questions, companies) {
+  const typeDescriptions = {
+    industry_deep_dive:      'full market analysis report',
+    competitive_comparison:  'competitive comparison report',
+    market_entry_brief:      'market entry brief'
+  };
+  const typeDesc = typeDescriptions[reportType] || 'market research report';
+
+  const prompt = `You are planning a ${typeDesc} for: ${industry} in ${country}.
+${questions ? `Client focus: ${questions}` : ''}
+${companies ? `Companies: ${companies}` : ''}
+
+Decide the most relevant sections for THIS specific report. Think about what a consulting client actually needs for this industry and market.
+
+Return ONLY a JSON array of section title strings (6-12 sections), no explanation:
+["Section Title 1", "Section Title 2", ...]
+
+Rules:
+- Tailor to the industry (e.g. for fintech include Regulatory & Licensing; for FMCG include Shopper Behavior; for EV include Infrastructure & Charging)
+- Always start with Executive Summary
+- Always end with Recommendations or Strategic Implications  
+- ${reportType === 'competitive_comparison' ? 'Focus on comparison sections: profiles, positioning, strengths/weaknesses, strategic moves' : ''}
+- ${reportType === 'market_entry_brief' ? 'Focus on entry-relevant sections: opportunity, barriers, channels, partners, entry strategy' : ''}
+- Between 8-12 sections for deep dive, 6-8 for others
+- Return ONLY the JSON array`;
+
+  const res = await fetch(ANTHROPIC_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: 500,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  const text  = data.content?.[0]?.text || '';
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
 };
 
 function cors(res) {
@@ -130,6 +158,7 @@ export default async function handler(req, res) {
 
   const sections = SECTION_TEMPLATES[reportType] || SECTION_TEMPLATES.industry_deep_dive;
 
+  // Create job record (sections TBD after planning)
   let report;
   try {
     const created = await sb('custom_reports', 'POST', {
@@ -137,7 +166,7 @@ export default async function handler(req, res) {
       slug:         slug || `${reportType}-${Date.now()}`,
       report_type:  reportType,
       input_params: { industry, country, reportType, questions, companies },
-      sections:     sections.map(t => ({ title: t, content: '', status: 'pending' })),
+      sections:     [],
       status:       'researching'
     });
     report = Array.isArray(created) ? created[0] : created;
@@ -145,16 +174,20 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Failed to create job: ' + e.message });
   }
 
+  // Plan sections + research in parallel
+  let sections, researchSummary, rag;
   try {
-    const [researchSummary, rag] = await Promise.all([
-      claudeResearch(`Research ${reportType.replace(/_/g,' ')} for ${industry} in ${country}.
-Compile: market size & growth rate, key players & market share, distribution channels, pricing landscape, recent trends, regulations.
-${companies ? 'Companies to include: ' + companies : ''}${questions ? '\nClient focus: ' + questions : ''}
-Be specific and data-rich. Cite data years where known.`),
+    [sections, researchSummary, rag] = await Promise.all([
+      planSections(industry, country, reportType, questions, companies),
+      claudeResearch(`Compile market intelligence for a ${reportType.replace(/_/g,' ')} on ${industry} in ${country}.
+Include: market size & growth, key players & share, distribution channels, pricing, recent trends, regulations.
+${companies ? 'Companies: ' + companies : ''}${questions ? '\nFocus: ' + questions : ''}
+Be specific and data-rich.`),
       ragSearch(industry, country, reportType)
     ]);
 
     await sbUpdate('custom_reports', report.id, {
+      sections:      sections.map(t => ({ title: t, content: '', status: 'pending' })),
       research_data: { summary: researchSummary },
       rag_context:   { chunkText: rag.chunkText, patternText: rag.patternText },
       status:        'generating'
