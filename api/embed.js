@@ -25,9 +25,9 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { type = 'chunk', ids } = req.body;
+  const { type = 'chunk', ids, source_report_id } = req.body;
   const table  = type === 'pattern' ? 'industry_patterns' : 'report_chunks';
-  const column = 'content'; // field to embed
+  const column = 'content';
 
   // ── Fetch rows without embeddings ─────────────────────
   let query = supabase
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     .limit(BATCH_SIZE);
 
   if (ids?.length) query = query.in('id', ids);
+  if (source_report_id) query = query.eq('source_report_id', source_report_id);
 
   const { data: rows, error } = await query;
   if (error) return res.status(500).json({ error: error.message });
