@@ -561,35 +561,45 @@ async function extractFullReport(fileText, onProgress) {
 
 async function runEmbeddings() {
   document.getElementById('btn-embed').disabled = true;
-  addLog('\nRunning embeddings via /api/embed...');
-  try {
-    const res  = await fetch('/api/embed', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + EDGE_ANON,
-      },
-      body: JSON.stringify({ type: 'chunk' }),
-    });
-    const data = await res.json();
-    addLog(`OK Chunks embedded: ${data.embedded}/${data.total}`, 'done');
+  addLog('\n⚡ Starting embed — will loop until all chunks + patterns are embedded...');
 
-    const res2 = await fetch('/api/embed', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + EDGE_ANON,
-      },
-      body: JSON.stringify({ type: 'pattern' }),
-    });
-    const data2 = await res2.json();
-    addLog(`OK Patterns embedded: ${data2.embedded}/${data2.total}`, 'done');
-    addLog('OK All embeddings complete! Knowledge base ready.', 'done');
+  async function embedAll(type) {
+    let totalEmbedded = 0;
+    let batch = 0;
+    while (true) {
+      batch++;
+      const res = await fetch('/api/embed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
+        body: JSON.stringify({ type }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Embed failed');
+
+      if (data.embedded === 0) break; // nothing left to embed
+
+      totalEmbedded += data.embedded;
+      addLog(`  ${type} batch ${batch}: ${data.embedded} embedded (total so far: ${totalEmbedded})`);
+      await sleep(1000); // brief pause between batches
+    }
+    return totalEmbedded;
+  }
+
+  try {
+    addLog('  Embedding chunks...');
+    const chunks = await embedAll('chunk');
+    addLog(`  ✓ Chunks done: ${chunks} total embedded`, 'done');
+
+    addLog('  Embedding patterns...');
+    const patterns = await embedAll('pattern');
+    addLog(`  ✓ Patterns done: ${patterns} total embedded`, 'done');
+
+    addLog('\n✓ All embeddings complete! Knowledge base ready for RAG.', 'done');
     loadStats();
   } catch(e) {
-    addLog('Error: ' + e.message, 'err');
+    addLog('✗ Embed error: ' + e.message, 'err');
+    document.getElementById('btn-embed').disabled = false;
   }
-  document.getElementById('btn-embed').disabled = false;
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
