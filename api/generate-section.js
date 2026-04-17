@@ -143,11 +143,13 @@ Write 250-350 words of consulting-grade analytical prose:
   // ── Phase 2: Extract meta + visuals from commentary ────
   let meta = { headline: '', stats: [], chart: null, table: null, sources: [] };
   try {
+    const isNarrativeSection = /executive summary|recommendation|strategic outlook|conclusion/i.test(sectionTitle);
+
     const extractPrompt = `You wrote this section "${sectionTitle}" of a market research report:
 
 ${fullCommentary}
 
-Extract structured data FROM this text. Return ONLY valid JSON:
+Extract structured data and build visuals. Return ONLY valid JSON:
 {
   "headline": "Most important finding in 1-2 punchy sentences",
   "stats": [{ "value": "~45%", "label": "VinFast market share", "icon": "pie" }],
@@ -156,15 +158,47 @@ Extract structured data FROM this text. Return ONLY valid JSON:
   "sources": ["VAMA (2024)", "Industry estimate"]
 }
 
-Rules:
-- headline: always required
-- stats: 2-4 key standalone metrics. icon: pie|growth|trend|users|channel|price|globe|check. [] if no metrics.
-- chart: only if text has 3+ comparable numbers. type: bar|line|pie|donut|radar. Use ONLY numbers from text. Add "(est.)" to title if estimates. Prefer chart over table for numeric data. null if insufficient numbers.
-- table: only if text compares 3+ entities across 2+ attributes. null if data is narrative.
-- sources: 1-3 sources mentioned or implied in text.
+headline: always required.
+
+stats: 2-4 standalone metrics. icon: pie|growth|trend|users|channel|price|globe|check. Use "~" prefix for estimates.
+
+${isNarrativeSection ? `chart: null
+table: null` : `chart: REQUIRED. Choose the BEST chart type for this specific data — do NOT default to bar/line. Use this decision framework:
+
+DATA TYPE → BEST CHART TYPE:
+- Market size over time (with CAGR) → "line" (extrapolate full series 2022-2027 if needed)
+- Market share / composition → "donut" (more modern than pie)
+- Player ranking by size/revenue → "bar" (horizontal, sorted descending)
+- Growth rate comparison across players/segments → "bar" (vertical)  
+- Price positioning (multiple brands across price spectrum) → "bar" (horizontal, sorted by price)
+- Multi-attribute comparison (e.g. 4-5 players scored on 5 dimensions) → "radar"
+- Market share TREND over multiple years → "line" with multiple datasets
+- Volume vs value (two metrics) → "bar" with two datasets
+- Segment breakdown over time → "bar" with stacked datasets (use multiple datasets)
+
+For stacked bar: datasets = [{label: "Seg A", data: [...]}, {label: "Seg B", data: [...]}]
+For radar: labels = attributes, datasets = [{label: "Company A", data: [score1..scoreN]}]
+
+EXTRAPOLATION RULES (standard consulting practice):
+- If text has CAGR + 1 anchor year → back/forward-calculate full series, label title "(proj. based on X% CAGR)"
+- If text has shares for some players → add "Others" to complete 100%
+- Round all numbers to 1 decimal max
+- DO NOT default to plain bar/line if another type better represents the data
+- DO NOT return null
+
+table: REQUIRED. Build the most insightful comparison table for this section:
+- Competitive landscape → player, market share, key strength, pricing tier, distribution
+- Channel analysis → channel type, share %, growth trend, dominant players, margin profile  
+- Pricing → segment, price range (USD), key models, target buyer, notes
+- Consumer segments → segment name, size, key needs, willingness to pay, channel preference
+- Regulatory → requirement, details, timeline, impact on market
+- If no obvious structure → key facts table (metric, value, source) 3-5 rows
+- DO NOT return null`}
+
+sources: 1-3 sources from text or "Industry estimate" / "Analyst projection".
 Return ONLY JSON.`;
 
-    const raw    = await callClaude(extractPrompt, 700);
+    const raw    = await callClaude(extractPrompt, 1000);
     const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
     meta = { ...meta, ...parsed };
   } catch (e) {
