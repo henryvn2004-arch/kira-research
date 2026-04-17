@@ -108,7 +108,8 @@ Return ONLY valid JSON (no markdown):
     "title": "Table title",
     "headers": ["Col1","Col2","Col3"],
     "rows": [["v","v","v"]]
-  }
+  },
+  "sources": ["Source name / org (year)", "Source 2"]
 }
 
 Rules:
@@ -116,7 +117,7 @@ Rules:
 - stats: 2-4 key metrics. icon options: pie|growth|trend|users|channel|price|globe|check. Use "~" if estimated. Omit array if section has no metrics.
 - chart: include if quantitative data (share, size, growth, pricing). null if not applicable.
 - table: include if comparison helps (competitors, channels, tiers). null if not applicable.
-- Return ONLY JSON, no explanation.`;
+- sources: 1-4 sources that back the data in this section. Use real org names where applicable: industry reports, government stats, trade associations, news. Format: "Organization / Report Name (year)". If purely estimated, use "Industry estimate" or "Analyst consensus".`;
 
     const metaRes = await fetch(ANT_URL, {
       method: 'POST',
