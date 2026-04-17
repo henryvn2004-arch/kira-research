@@ -1,42 +1,64 @@
-// ============================================================
 // KIRA RESEARCH — api/generate-section.js
 // POST /api/generate-section
-// Body: { reportId, sectionIndex, sectionTitle, industry, country,
-//         reportType, questions, companies, researchSummary,
-//         ragContext, prevSections }
-// Returns structured JSON for 1 slide section
-// ~8-12s per call — well within 60s Vercel limit
-// ============================================================
+// Streams response as SSE:
+//   1. event: meta  → { headline, stats, chart, table }  (~2s)
+//   2. event: token → { text }  (streaming commentary)
+//   3. event: done  → { sectionIndex }
 
-export const config = { maxDuration: 30 };
+export const config = { maxDuration: 60, runtime: 'nodejs' };
 
-const ANTHROPIC_URL        = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_KEY        = process.env.ANTHROPIC_API_KEY;
-const CLAUDE_MODEL         = 'claude-sonnet-4-5';
-const SUPABASE_URL         = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const ANT_URL   = 'https://api.anthropic.com/v1/messages';
+const ANT_KEY   = process.env.ANTHROPIC_API_KEY;
+const MODEL     = 'claude-sonnet-4-5';
+const SB_URL    = process.env.SUPABASE_URL;
+const SB_KEY    = process.env.SUPABASE_SERVICE_KEY;
 
-async function sbUpdate(table, id, body) {
-  await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+async function sbGet(table, id) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+  });
+  const d = await r.json();
+  return d?.[0];
+}
+
+async function sbPatch(table, id, body) {
+  await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
     method: 'PATCH',
-    headers: {
-      'apikey': SUPABASE_SERVICE_KEY,
-      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
-    },
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
     body: JSON.stringify(body)
   });
 }
 
-function cors(res) {
+function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
+function buildContext(params, ragContext, researchSummary, prevSections) {
+  const { industry, country, reportType, questions, companies } = params;
+  const rag = [
+    ragContext?.chunkText   ? `RESEARCH LIBRARY:\n${ragContext.chunkText}`   : '',
+    ragContext?.patternText ? `INDUSTRY PATTERNS:\n${ragContext.patternText}` : ''
+  ].filter(Boolean).join('\n\n');
+
+  const prev = (prevSections || []).slice(-2).map(s => {
+    try { const p = JSON.parse(s.content); return `## ${s.title}\n${p.headline || ''}`; }
+    catch { return `## ${s.title}`; }
+  }).join('\n\n');
+
+  return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
+${questions ? `Client focus: ${questions}` : ''}
+${companies ? `Companies: ${companies}` : ''}
+
+RESEARCH DATA:
+${researchSummary || 'Draw on your knowledge.'}
+${rag ? `\n${rag}` : ''}
+${prev ? `\nPREVIOUS SECTIONS (do not repeat):\n${prev}` : ''}`;
+}
+
 export default async function handler(req, res) {
-  cors(res);
+  setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -46,147 +68,160 @@ export default async function handler(req, res) {
     researchSummary, ragContext, prevSections = []
   } = req.body;
 
-  if (!reportId || !sectionTitle) return res.status(400).json({ error: 'Missing required fields' });
+  if (!sectionTitle) return res.status(400).json({ error: 'Missing sectionTitle' });
 
-  const ragBlock = [
-    ragContext?.chunkText   ? `RESEARCH LIBRARY FRAMEWORKS:\n${ragContext.chunkText}`   : '',
-    ragContext?.patternText ? `INDUSTRY PATTERNS:\n${ragContext.patternText}` : ''
-  ].filter(Boolean).join('\n\n---\n\n');
+  const context = buildContext(
+    { industry, country, reportType, questions, companies },
+    ragContext, researchSummary, prevSections
+  );
 
-  const prevContext = prevSections.slice(-2)
-    .map(s => {
-      try {
-        const p = JSON.parse(s.content);
-        return `## ${s.title}\n${p.headline || ''}\n${(p.commentary || '').slice(0, 300)}...`;
-      } catch { return `## ${s.title}\n${(s.content || '').slice(0, 300)}...`; }
-    }).join('\n\n');
+  // ── SSE headers ──────────────────────────────────────────
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
 
-  const systemPrompt = `You are a senior market research consultant writing section ${sectionIndex + 1} of ${totalSections} for a ${reportType.replace(/_/g,' ')} report.
+  const send = (type, data) => {
+    res.write(`data: ${JSON.stringify({ type, ...data })}\n\n`);
+  };
 
-REPORT CONTEXT:
-- Industry: ${industry}
-- Market: ${country}
-${questions ? `- Client focus: ${questions}` : ''}
-${companies ? `- Companies: ${companies}` : ''}
+  // ── Phase 1: Meta (headline, stats, chart, table) ~2s ────
+  let meta = { headline: '', stats: [], chart: null, table: null };
+  try {
+    const metaPrompt = `You are writing section "${sectionTitle}" of a market research report.
 
-CURRENT MARKET RESEARCH DATA:
-${researchSummary || 'Draw on your knowledge of this market.'}
+${context}
 
-${ragBlock ? `PROPRIETARY RESEARCH LIBRARY:\n${ragBlock}` : ''}
-
-${prevContext ? `PREVIOUS SECTIONS (for continuity — do NOT repeat):\n${prevContext}` : ''}
-
-OUTPUT FORMAT — Return ONLY a valid JSON object (no markdown, no backticks, no explanation):
+Return ONLY valid JSON (no markdown):
 {
-  "headline": "The single most important finding for this section — 1-2 punchy sentences, data-driven",
-
+  "headline": "Most important finding in 1-2 punchy sentences",
   "stats": [
-    { "value": "67%", "label": "Market share top 3", "icon": "pie" },
-    { "value": "$2.4B", "label": "Market size 2025", "icon": "growth" },
-    { "value": "18%", "label": "Annual growth rate", "icon": "trend" }
+    { "value": "67%", "label": "Market share top 3", "icon": "pie" }
   ],
-
   "chart": {
     "type": "bar",
-    "title": "Chart title (add 'est.' if estimated)",
-    "labels": ["Label 1", "Label 2", "Label 3"],
-    "datasets": [{ "label": "Series name", "data": [30, 45, 25] }]
+    "title": "Chart title (add est. if estimated)",
+    "labels": ["A","B","C"],
+    "datasets": [{ "label": "Series", "data": [30,45,25] }]
   },
-
   "table": {
     "title": "Table title",
-    "headers": ["Column 1", "Column 2", "Column 3"],
-    "rows": [["value", "value", "value"], ["value", "value", "value"]]
-  },
-
-  "commentary": "Full analytical prose — 250-400 words. Lead with the strategic insight, support with evidence from research data, end with implication for business. Use **bold** for key terms and company names. Use \\n\\n for paragraph breaks. Subheadings with ### if needed."
+    "headers": ["Col1","Col2","Col3"],
+    "rows": [["v","v","v"]]
+  }
 }
 
-RULES FOR EACH FIELD:
-- headline: always required. One punchy insight.
-- stats: 2-4 key metrics. Pick icon from: pie|growth|trend|users|channel|price|globe|check. Use "~" prefix if estimated. Omit if section has no metrics (e.g. Regulatory, Recommendations).
-- chart: include when quantitative data exists (share, size, growth, pricing, rankings). type: bar|line|pie|radar|donut. null if not applicable.
-- table: include when structured comparison helps (competitors, channels, price tiers, partner list). null if not applicable.
-- commentary: always required. Analytical and strategic — not descriptive or generic.
-- Do NOT add AI disclaimers, mention data limitations, or say "based on available data".
-- Numbers should be realistic estimates if exact data unavailable.
-- Return ONLY the JSON object.`;
+Rules:
+- headline: always required
+- stats: 2-4 key metrics. icon options: pie|growth|trend|users|channel|price|globe|check. Use "~" if estimated. Omit array if section has no metrics.
+- chart: include if quantitative data (share, size, growth, pricing). null if not applicable.
+- table: include if comparison helps (competitors, channels, tiers). null if not applicable.
+- Return ONLY JSON, no explanation.`;
 
-  const userPrompt = `Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}) for the ${industry} market in ${country}.`;
+    const metaRes = await fetch(ANT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: MODEL, max_tokens: 800, messages: [{ role: 'user', content: metaPrompt }] })
+    });
+    const metaData = await metaRes.json();
+    if (!metaData.error) {
+      const raw   = metaData.content?.[0]?.text || '';
+      const clean = raw.replace(/```json|```/g, '').trim();
+      meta = JSON.parse(clean);
+    }
+  } catch (e) {
+    // Non-fatal — continue with empty meta
+    console.warn('Meta phase failed:', e.message);
+  }
 
+  send('meta', meta);
+
+  // ── Phase 2: Stream commentary ───────────────────────────
+  let fullCommentary = '';
   try {
-    const apiRes = await fetch(ANTHROPIC_URL, {
+    const commentaryPrompt = `Write the analytical commentary for section "${sectionTitle}" of a market research report.
+
+${context}
+
+Key finding already established: "${meta.headline}"
+
+Write 300-450 words of consulting-grade analytical prose:
+- Lead with the strategic insight, not "In this section..."
+- Support with specific evidence and data points from the research
+- Explain what the data means strategically for the business
+- Use **bold** for key terms and company names
+- Use ### for sub-headings if needed
+- End with a forward-looking implication
+- Do NOT add AI disclaimers or mention data limitations
+- Write flowing paragraphs, not bullet points`;
+
+    const streamRes = await fetch(ANT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
+        'x-api-key': ANT_KEY,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 2000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
+        model: MODEL,
+        max_tokens: 1200,
+        stream: true,
+        messages: [{ role: 'user', content: commentaryPrompt }]
       })
     });
 
-    const data = await apiRes.json();
-    if (data.error) throw new Error(data.error.message);
+    const reader = streamRes.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
 
-    const raw   = data.content?.[0]?.text || '';
-    const clean = raw.replace(/```json|```/g, '').trim();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    let parsed;
-    try {
-      parsed = JSON.parse(clean);
-    } catch {
-      parsed = { headline: '', stats: [], chart: null, table: null, commentary: raw };
-    }
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete line
 
-    const content = JSON.stringify(parsed);
-
-    // Update this section in Supabase
-    const sbRes = await fetch(`${SUPABASE_URL}/rest/v1/custom_reports?id=eq.${reportId}`, {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json'
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const evt = JSON.parse(raw);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            const token = evt.delta.text;
+            fullCommentary += token;
+            send('token', { text: token });
+          }
+        } catch {}
       }
-    });
-    const reports = await sbRes.json();
-    const report  = reports?.[0];
-
-    if (report) {
-      const updatedSections = (report.sections || []).map((s, i) =>
-        i === sectionIndex ? { ...s, content, status: 'completed' } : s
-      );
-      const allDone = updatedSections.every(s => s.status === 'completed');
-      await sbUpdate('custom_reports', reportId, {
-        sections:   updatedSections,
-        status:     allDone ? 'completed' : 'generating',
-        updated_at: new Date().toISOString()
-      });
     }
-
-    return res.json({ success: true, sectionIndex, content, parsed });
-
   } catch (e) {
-    // Save error state for this section
-    try {
-      const sbRes = await fetch(`${SUPABASE_URL}/rest/v1/custom_reports?id=eq.${reportId}`, {
-        method: 'GET',
-        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` }
-      });
-      const reports = await sbRes.json();
-      const report  = reports?.[0];
-      if (report) {
-        const updatedSections = (report.sections || []).map((s, i) =>
-          i === sectionIndex ? { ...s, content: JSON.stringify({ headline: '', stats: [], chart: null, table: null, commentary: `Section generation failed: ${e.message}` }), status: 'failed' } : s
-        );
-        await sbUpdate('custom_reports', reportId, { sections: updatedSections });
-      }
-    } catch {}
-    return res.status(500).json({ error: e.message });
+    send('token', { text: '\n\n*Commentary generation encountered an error.*' });
+    fullCommentary = 'Error: ' + e.message;
   }
+
+  // ── Save completed section to DB ──────────────────────────
+  if (reportId) {
+    try {
+      const report = await sbGet('custom_reports', reportId);
+      if (report) {
+        const fullContent = JSON.stringify({ ...meta, commentary: fullCommentary });
+        const updatedSections = (report.sections || []).map((s, i) =>
+          i === sectionIndex ? { ...s, content: fullContent, status: 'completed' } : s
+        );
+        const allDone = updatedSections.every(s => s.status === 'completed');
+        await sbPatch('custom_reports', reportId, {
+          sections:   updatedSections,
+          status:     allDone ? 'completed' : 'generating',
+          updated_at: new Date().toISOString()
+        });
+      }
+    } catch (e) {
+      console.warn('DB save failed:', e.message);
+    }
+  }
+
+  send('done', { sectionIndex });
+  res.end();
 }
