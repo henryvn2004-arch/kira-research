@@ -248,6 +248,23 @@
     }
     @media(max-width:560px){.container{padding:0 20px}}
 
+    /* ── Floating status bar ── */
+    #status-bar{
+      position:fixed;bottom:0;left:0;right:0;z-index:200;
+      background:rgba(11,13,16,.92);backdrop-filter:blur(12px);
+      border-top:1px solid #1A1D24;
+      padding:10px 24px;
+      display:none;align-items:center;gap:16px;
+    }
+    .status-spinner{width:14px;height:14px;border:2px solid #242A35;border-top-color:#1E6FFF;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .status-text{font-size:12px;color:#A3A9B6;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status-text strong{color:#fff;font-weight:600}
+    .status-prog{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .status-pbar{width:80px;height:3px;background:#1A1D24;border-radius:2px;overflow:hidden}
+    .status-pbar-fill{height:100%;background:#1E6FFF;border-radius:2px;transition:width .4s}
+    .status-pct{font-size:11px;color:#5A6278;min-width:32px;text-align:right}
+
     /* ── PRINT / PDF ── */
     @media print {
       body{background:#fff!important;color:#000!important}
@@ -506,9 +523,19 @@
   </div>
 </div>
 
+<!-- Floating status bar -->
+<div id="status-bar">
+  <div class="status-spinner"></div>
+  <div class="status-text" id="status-text">Initializing...</div>
+  <div class="status-prog">
+    <div class="status-pbar"><div class="status-pbar-fill" id="status-pbar-fill" style="width:0%"></div></div>
+    <div class="status-pct" id="status-pct">0%</div>
+  </div>
+</div>
+
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
 const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
@@ -669,6 +696,7 @@ async function startGeneration(params, slug) {
     document.getElementById('prog-title').textContent = 'Searching live market data...';
     document.getElementById('prog-subtitle').textContent = 'Web search in progress — ~15 seconds';
     document.getElementById('progress-bar').style.width = '5%';
+    setStatus('🔍 <strong>Searching live market data</strong> — gathering latest figures & sources...', 5);
 
     let liveResearch = '';
     try {
@@ -677,14 +705,17 @@ async function startGeneration(params, slug) {
         params.questions, params.companies
       );
       document.getElementById('prog-subtitle').textContent = '✓ Live data collected';
+      setStatus('✓ <strong>Market data collected</strong> — planning report structure...', 15);
     } catch(e) {
       console.warn('Web search failed, falling back to knowledge:', e.message);
       document.getElementById('prog-subtitle').textContent = 'Using knowledge base...';
+      setStatus('⚠ Web search unavailable — using knowledge base...', 10);
     }
 
     // Phase 1: Plan sections + RAG (Vercel — lightweight, no search)
     document.getElementById('prog-title').textContent = 'Planning report structure...';
     document.getElementById('progress-bar').style.width = '10%';
+    setStatus('📋 <strong>Planning sections</strong> — analyzing research to determine report structure...', 15);
 
     const initRes = await fetch('/api/generate-report', {
       method: 'POST',
@@ -729,6 +760,7 @@ async function startGeneration(params, slug) {
 
       const pct = Math.round(10 + (i / totalSections) * 85);
       document.getElementById('progress-bar').style.width = pct + '%';
+      setStatus(`✍️ <strong>Writing section ${i+1}/${totalSections}</strong> — ${title}`, pct);
 
       // Switch to report view on first section so user sees slides appear
       if (i === 0) {
@@ -758,6 +790,8 @@ async function startGeneration(params, slug) {
     // Done
     clearInterval(elapsedTimer);
     document.getElementById('progress-bar').style.width = '100%';
+    setStatus('✓ <strong>Report complete</strong>', 100);
+    setTimeout(() => setStatus(null, null, false), 3000); // hide after 3s
     sessionStorage.removeItem('kira_pending_report');
     sessionStorage.removeItem('kira_pending_slug');
 
@@ -808,37 +842,57 @@ async function streamSection(payload, sectionIndex) {
       try {
         const evt = JSON.parse(line.slice(6));
 
-        // Phase 1: headline + stats appear immediately
-        if (evt.type === 'headline') {
-          headlineData = evt;
-          if (block) {
-            renderSectionHeadline(block, sectionIndex, payload.sectionTitle, evt);
+        // Phase 1: tokens stream — show commentary live
+        if (evt.type === 'token' && evt.text) {
+          // Init skeleton on first token
+          if (!commentaryEl && block) {
+            block.classList.remove('generating');
+            block.innerHTML = `
+              <div class="slide-header">
+                <span class="slide-num">Section ${String(sectionIndex+1).padStart(2,'0')}</span>
+                <span class="slide-title">${payload.sectionTitle}</span>
+              </div>
+              <div class="slide-commentary"></div>`;
             commentaryEl = block.querySelector('.slide-commentary');
           }
-        }
-
-        // Phase 2: stream tokens into commentary
-        if (evt.type === 'token' && evt.text) {
           commentary += evt.text;
           if (commentaryEl) {
             commentaryEl.innerHTML = formatCommentary(commentary) + '<span class="stream-cursor">|</span>';
           }
         }
 
-        // Phase 3: visuals extracted from real text
-        if (evt.type === 'visuals') {
-          visuals = evt;
-          if (commentaryEl) {
-            commentaryEl.innerHTML = formatCommentary(commentary);
-          }
-          // Append visuals below commentary
-          if (block && (evt.chart?.labels?.length || evt.table?.headers?.length)) {
-            appendVisuals(block, sectionIndex, evt.chart, evt.table);
-          }
-          // Append sources
-          const sources = headlineData?.sources || [];
-          if (block && sources.length) {
-            appendSources(block, sources);
+        // Phase 2: meta arrives after stream — add headline, stats, visuals
+        if (evt.type === 'meta') {
+          headlineData = evt;
+          setStatus(`📊 <strong>Extracting data visuals</strong> — building charts & tables...`, null);
+          if (commentaryEl) commentaryEl.innerHTML = formatCommentary(commentary);
+
+          if (block) {
+            // Inject headline + stats BEFORE commentary
+            const statsHtml = (evt.stats?.length)
+              ? `<div class="slide-stats">${evt.stats.map(s => `
+                  <div class="stat-pill">
+                    <div class="stat-icon">${getStatIcon(s.icon)}</div>
+                    <div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>
+                  </div>`).join('')}</div>`
+              : '';
+            const headlineEl = evt.headline ? `
+              <div class="slide-headline">
+                <div class="slide-headline-label">Key Finding</div>
+                <div class="slide-headline-text">${evt.headline}</div>
+              </div>` : '';
+
+            const header = block.querySelector('.slide-header');
+            if (header) {
+              header.insertAdjacentHTML('afterend', headlineEl + statsHtml);
+            }
+
+            // Append chart/table
+            if (evt.chart?.labels?.length || evt.table?.headers?.length) {
+              appendVisuals(block, sectionIndex, evt.chart, evt.table);
+            }
+            // Append sources
+            if (evt.sources?.length) appendSources(block, evt.sources);
           }
         }
 
@@ -852,8 +906,8 @@ async function streamSection(payload, sectionIndex) {
   return JSON.stringify({
     headline:  headlineData?.headline || '',
     stats:     headlineData?.stats    || [],
-    chart:     visuals.chart,
-    table:     visuals.table,
+    chart:     headlineData?.chart    || null,
+    table:     headlineData?.table    || null,
     sources:   headlineData?.sources  || [],
     commentary
   });
@@ -1174,6 +1228,18 @@ function renderChart(canvasId, chartDef) {
       }
     }
   });
+}
+
+// ── Status bar ────────────────────────────────────────────
+function setStatus(text, pct, visible = true) {
+  const bar = document.getElementById('status-bar');
+  if (!bar) return;
+  bar.style.display = visible ? 'flex' : 'none';
+  if (text !== null) document.getElementById('status-text').innerHTML = text;
+  if (pct !== null) {
+    document.getElementById('status-pbar-fill').style.width = pct + '%';
+    document.getElementById('status-pct').textContent = pct + '%';
+  }
 }
 
 // ── Export PDF ────────────────────────────────────────────
