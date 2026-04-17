@@ -507,6 +507,9 @@
 </div>
 
 <script>
+// ── Config ────────────────────────────────────────────────
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
+
 // ── State ────────────────────────────────────────────────
 const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
 let currentType  = 'industry_deep_dive';
@@ -514,6 +517,56 @@ let reportId     = null;
 let reportSlug   = null;
 let pollInterval = null;
 let chatHistory  = [];
+
+// ── Browser web_search research (no timeout) ─────────────
+async function browserResearch(industry, country, reportType, questions, companies) {
+  const typeNames = {
+    industry_deep_dive:     'full market analysis',
+    competitive_comparison: 'competitive comparison',
+    market_entry_brief:     'market entry brief'
+  };
+  const prompt = `Research the following for a ${typeNames[reportType] || 'market research'} report:
+Industry: ${industry}
+Market: ${country}
+${companies ? 'Companies: ' + companies : ''}
+${questions ? 'Focus: ' + questions : ''}
+
+Search for and compile:
+1. Current market size and growth rate (most recent data available)
+2. Key players and their market share (with specific % if available)
+3. Major distribution channels
+4. Current pricing landscape and price ranges
+5. Key trends and recent developments (last 12-18 months)
+6. Relevant regulations or policy changes
+7. Consumer behavior patterns
+${companies ? '8. Specific data on: ' + companies : ''}
+
+Provide specific numbers, statistics, and facts. Cite the source and year for each data point.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-beta': 'web-search-2025-03-05',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 3000,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  const data = await res.json();
+  if (data.error) throw new Error('Research: ' + data.error.message);
+  return (data.content || [])
+    .filter(b => b.type === 'text')
+    .map(b => b.text)
+    .join('\n\n');
+}
 
 // ── Type selection ───────────────────────────────────────
 function selectType(type) {
@@ -612,13 +665,31 @@ async function startGeneration(params, slug) {
   try {
     const user = await window.kiraAuth?.getUser();
 
-    // Phase 1: Plan + Research
+    // Phase 0: Browser web_search — live data, no timeout
+    document.getElementById('prog-title').textContent = 'Searching live market data...';
+    document.getElementById('prog-subtitle').textContent = 'Web search in progress — ~15 seconds';
     document.getElementById('progress-bar').style.width = '5%';
+
+    let liveResearch = '';
+    try {
+      liveResearch = await browserResearch(
+        params.industry, params.country, params.reportType,
+        params.questions, params.companies
+      );
+      document.getElementById('prog-subtitle').textContent = '✓ Live data collected';
+    } catch(e) {
+      console.warn('Web search failed, falling back to knowledge:', e.message);
+      document.getElementById('prog-subtitle').textContent = 'Using knowledge base...';
+    }
+
+    // Phase 1: Plan sections + RAG (Vercel — lightweight, no search)
+    document.getElementById('prog-title').textContent = 'Planning report structure...';
+    document.getElementById('progress-bar').style.width = '10%';
 
     const initRes = await fetch('/api/generate-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...params, slug, userId: user?.id })
+      body: JSON.stringify({ ...params, slug, userId: user?.id, liveResearch })
     });
     const initData = await initRes.json();
     if (!initData.reportId) throw new Error(initData.error || 'Planning phase failed');
