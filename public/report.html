@@ -151,13 +151,16 @@
     .stat-value{font-size:18px;font-weight:700;color:#fff;line-height:1}
     .stat-label{font-size:11px;color:#5A6278;margin-top:2px}
 
-    /* Visuals grid */
-    .slide-visuals{display:grid;gap:16px;padding:0 28px 20px}
-    .slide-visuals.has-both{grid-template-columns:1fr 1fr}
-    .slide-visuals.has-one{grid-template-columns:1fr}
+    /* Visuals - stacked vertically */
+    .slide-visuals{display:flex;flex-direction:column;gap:16px;padding:0 28px 20px}
     .visual-box{background:#0B0D10;border:1px solid #1A1D24;border-radius:10px;padding:20px}
     .visual-title{font-size:11px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;font-weight:600}
-    .chart-wrap{position:relative;height:220px}
+    .chart-wrap{position:relative;height:260px}
+
+    /* Sources footer */
+    .slide-sources{padding:12px 28px 20px;border-top:1px solid #1A1D24;margin-top:4px;display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+    .sources-label{font-size:10px;color:#5A6278;text-transform:uppercase;letter-spacing:.1em;font-weight:700;flex-shrink:0;padding-top:1px}
+    .source-tag{font-size:11px;color:#5A6278;background:#0B0D10;border:1px solid #1A1D24;padding:2px 8px;border-radius:4px}
 
     .slide-table{width:100%;border-collapse:collapse;font-size:13px}
     .slide-table th{background:#11151C;color:#A3A9B6;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1A1D24;font-weight:600}
@@ -743,7 +746,6 @@ function renderSectionMeta(block, i, title, meta) {
 
   let visualsHtml = '';
   if (hasChart || hasTable) {
-    const gridClass = hasChart && hasTable ? 'has-both' : 'has-one';
     const chartHtml = hasChart ? `
       <div class="visual-box">
         <div class="visual-title">${meta.chart.title || ''}</div>
@@ -759,8 +761,15 @@ function renderSectionMeta(block, i, title, meta) {
           </table>
         </div>
       </div>` : '';
-    visualsHtml = `<div class="slide-visuals ${gridClass}">${chartHtml}${tableHtml}</div>`;
+    visualsHtml = `<div class="slide-visuals">${chartHtml}${tableHtml}</div>`;
   }
+
+  const sourcesHtml = (meta.sources?.length)
+    ? `<div class="slide-sources">
+        <span class="sources-label">Sources</span>
+        ${meta.sources.map(s => `<span class="source-tag">${s}</span>`).join('')}
+       </div>`
+    : '';
 
   block.classList.remove('generating');
   block.innerHTML = `
@@ -775,7 +784,8 @@ function renderSectionMeta(block, i, title, meta) {
     </div>` : ''}
     ${statsHtml}
     ${visualsHtml}
-    <div class="slide-commentary"></div>`;
+    <div class="slide-commentary"></div>
+    ${sourcesHtml}`;
 
   if (hasChart) {
     setTimeout(() => renderChart(chartId, meta.chart), 50);
@@ -914,7 +924,6 @@ function renderSection(sec, i, total) {
   const chartId  = `chart-${i}`;
   let visualsHtml = '';
   if (hasChart || hasTable) {
-    const gridClass = hasChart && hasTable ? 'has-both' : 'has-one';
     const chartHtml = hasChart ? `
       <div class="visual-box">
         <div class="visual-title">${parsed.chart.title || ''}</div>
@@ -930,7 +939,7 @@ function renderSection(sec, i, total) {
           </table>
         </div>
       </div>` : '';
-    visualsHtml = `<div class="slide-visuals ${gridClass}">${chartHtml}${tableHtml}</div>`;
+    visualsHtml = `<div class="slide-visuals">${chartHtml}${tableHtml}</div>`;
   }
 
   // Commentary
@@ -938,6 +947,13 @@ function renderSection(sec, i, total) {
     .split('\n\n').filter(Boolean)
     .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>')}</p>`)
     .join('');
+
+  const sourcesHtml = (parsed.sources?.length)
+    ? `<div class="slide-sources">
+        <span class="sources-label">Sources</span>
+        ${parsed.sources.map(s => `<span class="source-tag">${s}</span>`).join('')}
+       </div>`
+    : '';
 
   block.innerHTML = `
     <div class="slide-header">
@@ -951,7 +967,8 @@ function renderSection(sec, i, total) {
     </div>` : ''}
     ${statsHtml}
     ${visualsHtml}
-    ${commentaryHtml ? `<div class="slide-commentary">${commentaryHtml}</div>` : ''}`;
+    ${commentaryHtml ? `<div class="slide-commentary">${commentaryHtml}</div>` : ''}
+    ${sourcesHtml}`;
 
   container.appendChild(block);
   setTimeout(() => {
