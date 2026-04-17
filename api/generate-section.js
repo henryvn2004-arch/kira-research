@@ -1,24 +1,26 @@
 // KIRA RESEARCH — api/generate-section.js
-// POST /api/generate-section
-// Streams response as SSE:
-//   1. event: meta  → { headline, stats, chart, table }  (~2s)
-//   2. event: token → { text }  (streaming commentary)
-//   3. event: done  → { sectionIndex }
+// Option B: Stream commentary first, then extract chart/table from real text
+//
+// SSE events:
+//   event: headline  → { headline, stats, sources }   ~1s
+//   event: token     → { text }                        streaming
+//   event: visuals   → { chart, table }                ~2s after stream ends
+//   event: done      → { sectionIndex }
 
 export const config = { maxDuration: 60, runtime: 'nodejs' };
 
-const ANT_URL   = 'https://api.anthropic.com/v1/messages';
-const ANT_KEY   = process.env.ANTHROPIC_API_KEY;
-const MODEL     = 'claude-sonnet-4-5';
-const SB_URL    = process.env.SUPABASE_URL;
-const SB_KEY    = process.env.SUPABASE_SERVICE_KEY;
+const ANT_URL = 'https://api.anthropic.com/v1/messages';
+const ANT_KEY = process.env.ANTHROPIC_API_KEY;
+const MODEL   = 'claude-sonnet-4-5';
+const SB_URL  = process.env.SUPABASE_URL;
+const SB_KEY  = process.env.SUPABASE_SERVICE_KEY;
 
+// ── DB helpers ────────────────────────────────────────────
 async function sbGet(table, id) {
   const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
     headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
   });
-  const d = await r.json();
-  return d?.[0];
+  return (await r.json())?.[0];
 }
 
 async function sbPatch(table, id, body) {
@@ -29,12 +31,26 @@ async function sbPatch(table, id, body) {
   });
 }
 
+// ── Claude call (non-streaming) ───────────────────────────
+async function callClaude(prompt, maxTokens) {
+  const r = await fetch(ANT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.content?.[0]?.text || '';
+}
+
+// ── CORS ──────────────────────────────────────────────────
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
+// ── Build context string ──────────────────────────────────
 function buildContext(params, ragContext, researchSummary, prevSections) {
   const { industry, country, reportType, questions, companies } = params;
   const rag = [
@@ -47,16 +63,17 @@ function buildContext(params, ragContext, researchSummary, prevSections) {
     catch { return `## ${s.title}`; }
   }).join('\n\n');
 
-  return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
+  return `Industry: ${industry} | Market: ${country} | Report type: ${reportType.replace(/_/g,' ')}
 ${questions ? `Client focus: ${questions}` : ''}
 ${companies ? `Companies: ${companies}` : ''}
 
 RESEARCH DATA:
-${researchSummary || 'Draw on your knowledge.'}
+${researchSummary || 'Draw on your knowledge of this market.'}
 ${rag ? `\n${rag}` : ''}
 ${prev ? `\nPREVIOUS SECTIONS (do not repeat):\n${prev}` : ''}`;
 }
 
+// ── Handler ───────────────────────────────────────────────
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -75,114 +92,83 @@ export default async function handler(req, res) {
     ragContext, researchSummary, prevSections
   );
 
-  // ── SSE headers ──────────────────────────────────────────
+  // ── SSE setup ─────────────────────────────────────────────
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('X-Accel-Buffering', 'no');
 
-  const send = (type, data) => {
-    res.write(`data: ${JSON.stringify({ type, ...data })}\n\n`);
-  };
+  const send = (type, data) => res.write(`data: ${JSON.stringify({ type, ...data })}\n\n`);
 
-  // ── Phase 1: Meta (headline, stats, chart, table) ~2s ────
-  let meta = { headline: '', stats: [], chart: null, table: null };
+  // ══════════════════════════════════════════════════════════
+  // PHASE 1: Headline + stats (~1s, non-streaming)
+  // ══════════════════════════════════════════════════════════
+  let headline = '', stats = [], sources = [];
   try {
-    const metaPrompt = `You are writing section "${sectionTitle}" of a market research report.
-
+    const headlinePrompt = `Section "${sectionTitle}" of a market research report.
 ${context}
 
-Return ONLY valid JSON (no markdown):
+Return ONLY valid JSON:
 {
-  "headline": "Most important finding in 1-2 punchy sentences",
-  "stats": [
-    { "value": "67%", "label": "Market share top 3", "icon": "pie" }
-  ],
-  "chart": {
-    "type": "bar",
-    "title": "Chart title (add est. if estimated)",
-    "labels": ["A","B","C"],
-    "datasets": [{ "label": "Series", "data": [30,45,25] }]
-  },
-  "table": {
-    "title": "Table title",
-    "headers": ["Col1","Col2","Col3"],
-    "rows": [["v","v","v"]]
-  },
-  "sources": ["Source name / org (year)", "Source 2"]
+  "headline": "Most important finding — 1-2 punchy data-driven sentences",
+  "stats": [{ "value": "~$2.4B", "label": "Market size 2024", "icon": "growth" }],
+  "sources": ["Vietnam EV Association (2024)", "BloombergNEF (2024)"]
 }
 
 Rules:
-- headline: always required
-- stats: 2-4 key metrics. icon options: pie|growth|trend|users|channel|price|globe|check. Use "~" if estimated. Omit array if section has no metrics.
-- chart: include if quantitative data (share, size, growth, pricing). null if not applicable.
-- table: include if comparison helps (competitors, channels, tiers). null if not applicable.
-- sources: 1-4 sources that back the data in this section. Use real org names where applicable: industry reports, government stats, trade associations, news. Format: "Organization / Report Name (year)". If purely estimated, use "Industry estimate" or "Analyst consensus".`;
+- headline: always required. Lead with the key insight.
+- stats: 2-4 standalone metrics worth highlighting. icon: pie|growth|trend|users|channel|price|globe|check. Use ~ prefix if estimated. Set [] if section has no metrics (e.g. Recommendations, Regulatory overview).
+- sources: 1-3 real sources. Format: "Organization (year)". Use "Industry estimate" if no real source.
+Return ONLY JSON.`;
 
-    const metaRes = await fetch(ANT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: MODEL, max_tokens: 800, messages: [{ role: 'user', content: metaPrompt }] })
-    });
-    const metaData = await metaRes.json();
-    if (!metaData.error) {
-      const raw   = metaData.content?.[0]?.text || '';
-      const clean = raw.replace(/```json|```/g, '').trim();
-      meta = JSON.parse(clean);
-    }
+    const raw = await callClaude(headlinePrompt, 400);
+    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    headline = parsed.headline || '';
+    stats    = parsed.stats    || [];
+    sources  = parsed.sources  || [];
   } catch (e) {
-    // Non-fatal — continue with empty meta
-    console.warn('Meta phase failed:', e.message);
+    console.warn('Headline phase failed:', e.message);
   }
 
-  send('meta', meta);
+  send('headline', { headline, stats, sources });
 
-  // ── Phase 2: Stream commentary ───────────────────────────
+  // ══════════════════════════════════════════════════════════
+  // PHASE 2: Stream commentary
+  // ══════════════════════════════════════════════════════════
   let fullCommentary = '';
   try {
-    const commentaryPrompt = `Write the analytical commentary for section "${sectionTitle}" of a market research report.
+    const commentaryPrompt = `Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}) of a market research report.
 
 ${context}
 
-Key finding already established: "${meta.headline}"
+Key finding already established: "${headline}"
 
 Write 300-450 words of consulting-grade analytical prose:
-- Lead with the strategic insight, not "In this section..."
-- Support with specific evidence and data points from the research
-- Explain what the data means strategically for the business
+- Lead with the strategic insight
+- Reference specific data points, companies, figures from the research data
+- When mentioning numbers (market share %, sizes, growth rates, prices), be explicit — these will be used to generate charts
 - Use **bold** for key terms and company names
-- Use ### for sub-headings if needed
-- End with a forward-looking implication
-- Do NOT add AI disclaimers or mention data limitations
-- Write flowing paragraphs, not bullet points`;
+- Use ### for sub-headings if helpful
+- End with strategic implication
+- No AI disclaimers, no "based on available data"
+- Flowing paragraphs, not bullet points`;
 
     const streamRes = await fetch(ANT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANT_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 1200,
-        stream: true,
-        messages: [{ role: 'user', content: commentaryPrompt }]
-      })
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: MODEL, max_tokens: 1200, stream: true, messages: [{ role: 'user', content: commentaryPrompt }] })
     });
 
-    const reader = streamRes.body.getReader();
+    const reader  = streamRes.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
-      buffer = lines.pop(); // keep incomplete line
-
+      buffer = lines.pop();
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         const raw = line.slice(6).trim();
@@ -198,16 +184,59 @@ Write 300-450 words of consulting-grade analytical prose:
       }
     }
   } catch (e) {
-    send('token', { text: '\n\n*Commentary generation encountered an error.*' });
-    fullCommentary = 'Error: ' + e.message;
+    send('token', { text: '\n\n*Commentary generation failed.*' });
   }
 
-  // ── Save completed section to DB ──────────────────────────
+  // ══════════════════════════════════════════════════════════
+  // PHASE 3: Extract chart + table from real commentary text
+  // ══════════════════════════════════════════════════════════
+  let chart = null, table = null;
+  try {
+    const extractPrompt = `You just wrote this section of a market research report:
+
+SECTION TITLE: "${sectionTitle}"
+
+COMMENTARY:
+${fullCommentary}
+
+Now extract structured visual data FROM the text above. Return ONLY valid JSON:
+{
+  "chart": null,
+  "table": null
+}
+
+Rules — only include what the text actually supports:
+
+chart: Extract if the commentary contains quantitative comparisons (market share %, growth rates, sizes, rankings, price points across 3+ items).
+- type: "bar" for rankings/comparisons, "line" for time series, "pie" or "donut" for share breakdown, "radar" for multi-attribute
+- Use ONLY numbers mentioned in the commentary — do NOT invent data
+- If the text doesn't contain enough real numbers for a chart → null
+
+table: Extract if the commentary compares multiple entities across 2+ attributes (competitors, channels, products, regulations, partners).
+- Use ONLY information explicitly stated in the commentary
+- If the text is purely narrative → null
+
+IMPORTANT: If neither chart nor table is supported by actual data in the text, return { "chart": null, "table": null }.
+Return ONLY JSON.`;
+
+    const raw    = await callClaude(extractPrompt, 600);
+    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    chart = parsed.chart || null;
+    table = parsed.table || null;
+  } catch (e) {
+    console.warn('Visual extraction failed:', e.message);
+  }
+
+  send('visuals', { chart, table });
+
+  // ══════════════════════════════════════════════════════════
+  // Save to DB
+  // ══════════════════════════════════════════════════════════
   if (reportId) {
     try {
       const report = await sbGet('custom_reports', reportId);
       if (report) {
-        const fullContent = JSON.stringify({ ...meta, commentary: fullCommentary });
+        const fullContent = JSON.stringify({ headline, stats, chart, table, commentary: fullCommentary, sources });
         const updatedSections = (report.sections || []).map((s, i) =>
           i === sectionIndex ? { ...s, content: fullContent, status: 'completed' } : s
         );
