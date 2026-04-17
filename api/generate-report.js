@@ -108,8 +108,26 @@ export default async function handler(req, res) {
   // Step 2: Research + RAG + Plan sections
   let plannedSections, research, rag;
   try {
-    const typeNames = { industry_deep_dive: 'full market analysis', competitive_comparison: 'competitive comparison', market_entry_brief: 'market entry brief' };
+    const typeNames = {
+      market_overview:          'Market Overview analysis',
+      competitive_analysis:     'Competitive Analysis',
+      customer_intelligence:    'Customer Intelligence report',
+      value_chain:              'Value Chain Consulting report',
+      proposition_development:  'Proposition Development report',
+      partner_search:           'Partner Search report',
+      go_to_market:             'Go-To-Market report',
+    };
     const typeName  = typeNames[reportType] || 'market research report';
+
+    const moduleGuidance = {
+      market_overview:         'Focus on: market sizing & potential, environmental overview, segmentation, growth estimation, forecasting & scenario planning. 8-10 sections.',
+      competitive_analysis:    'Focus on: industry competitiveness, competitor profiles & tracking, strategy & performance, pipeline & alliances, best practices & key success factors. 8-10 sections.',
+      customer_intelligence:   'Focus on: key account targeting, installed base & usage patterns, pain points, decision-making cycles, budgets, switching costs, brand perceptions & preferences. 8-10 sections.',
+      value_chain:             'Focus on: industry structure, value chain mapping, pricing & margin analysis, value-adding activities prioritisation, supply web efficiencies. 7-9 sections.',
+      proposition_development: 'Focus on: gap analysis, innovation scouting, price-positioning, customer segment prioritisation, branding & promotions, channel strategy. 8-10 sections.',
+      partner_search:          'Focus on: partner identification criteria, distribution partner evaluation, JV/acquisition targets, technology & manufacturing partners, commercial due diligence framework. 7-9 sections.',
+      go_to_market:            'Focus on: barriers & drivers, entry mode options, market entry phases & timeline, exit strategy, marketing & communications, product launch roadmap. 7-9 sections.',
+    }[reportType] || '8-10 sections.';
 
     // Use live research from browser if provided, otherwise call Claude knowledge
     if (liveResearch) {
@@ -142,6 +160,7 @@ Rules: start with "Executive Summary", end with "Recommendations" or "Strategic 
 ${reportType === 'competitive_comparison' ? 'Use 6-8 sections focused on competitive comparison.' : ''}
 ${reportType === 'market_entry_brief' ? 'Use 7-8 sections focused on entry decision-making.' : ''}
 Return ONLY the JSON array: ["Title 1", "Title 2", ...]
+Module guidance: ${moduleGuidance}
 ${language && language !== 'English' ? `Section titles must be in ${language}.` : ''}`;
 
     plannedSections = await callClaude(planPrompt, 500)
