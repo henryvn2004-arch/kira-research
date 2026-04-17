@@ -435,7 +435,13 @@
               <div class="report-meta-title" id="report-title">—</div>
               <div class="report-meta-sub" id="report-meta-sub">—</div>
             </div>
-            <div class="report-meta-right" id="report-badges"></div>
+            <div class="report-meta-right" id="report-badges">
+              <button class="btn" id="btn-export-pptx"
+                style="background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.3);display:none"
+                onclick="exportPptx()">
+                ↓ Export PPTX
+              </button>
+            </div>
           </div>
 
           <div id="sections-container"></div>
@@ -585,6 +591,7 @@ async function startGeneration(params, slug) {
 
     reportId = initData.reportId;
     reportSlug = slug;
+    currentParams = params; // store for PPTX export
     const sections        = initData.sections || [];
     const researchSummary = initData.researchSummary || '';
     const ragContext      = initData.ragContext || {};
@@ -636,6 +643,7 @@ async function startGeneration(params, slug) {
       }, i);
 
       completedSections.push({ title, content: sectionContent, status: 'completed' });
+      window._completedSections = completedSections; // store for PPTX export
       setSectionStatus(i, 'done');
     }
 
@@ -645,9 +653,10 @@ async function startGeneration(params, slug) {
     sessionStorage.removeItem('kira_pending_report');
     sessionStorage.removeItem('kira_pending_slug');
 
-    // Show chatbox
+    // Show chatbox + export button
     setTimeout(() => {
       document.getElementById('chatbox').style.display = 'block';
+      document.getElementById('btn-export-pptx').style.display = 'inline-flex';
     }, 500);
 
   } catch (e) {
@@ -873,6 +882,8 @@ function renderReport(data) {
   setStep(4);
   showView('report');
   renderReportMeta(data.inputParams || {}, data.slug || '');
+  currentParams = data.inputParams || {};
+  window._completedSections = data.sections || [];
 
   const container = document.getElementById('sections-container');
   const tocList   = document.getElementById('toc-list');
@@ -886,6 +897,7 @@ function renderReport(data) {
 
   setTimeout(() => {
     document.getElementById('chatbox').style.display = 'block';
+    document.getElementById('btn-export-pptx').style.display = 'inline-flex';
   }, 500);
   reportSlug = data.slug;
 }
@@ -1043,6 +1055,47 @@ function renderChart(canvasId, chartDef) {
       }
     }
   });
+}
+
+// ── Export PPTX ───────────────────────────────────────────
+let currentParams = null; // set during generation
+
+async function exportPptx() {
+  const btn = document.getElementById('btn-export-pptx');
+  btn.disabled = true;
+  btn.textContent = '↓ Generating...';
+
+  try {
+    const payload = {
+      title:      document.getElementById('report-title')?.textContent || '',
+      industry:   currentParams?.industry   || '',
+      country:    currentParams?.country    || '',
+      reportType: currentParams?.reportType || '',
+      sections:   window._completedSections || []
+    };
+
+    if (!payload.sections.length) throw new Error('No sections to export');
+
+    const res = await fetch('/api/export-pptx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Export failed: ' + res.status);
+
+    const blob     = await res.blob();
+    const url      = URL.createObjectURL(blob);
+    const a        = document.createElement('a');
+    const cd       = res.headers.get('Content-Disposition') || '';
+    const filename = cd.match(/filename="(.+)"/)?.[1] || 'kira-report.pptx';
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    btn.textContent = '↓ Export PPTX';
+  } catch (e) {
+    alert('Export error: ' + e.message);
+    btn.textContent = '↓ Export PPTX';
+  }
+  btn.disabled = false;
 }
 
 // ── Chat ─────────────────────────────────────────────────
