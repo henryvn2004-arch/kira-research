@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Industry Deep Dive — KIRA RESEARCH</title>
-  <meta name="description" content="Generate a custom AI-powered market intelligence report for any industry in Southeast Asia." />
+  <title>Market Analysis — KIRA RESEARCH</title>
+  <meta name="description" content="Generate a custom AI-powered market intelligence report for any industry across Asia Pacific." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -409,21 +409,46 @@
           <select id="f-country">
             <option value="">Select market...</option>
             <optgroup label="Southeast Asia">
-              <option value="Vietnam">Vietnam</option>
-              <option value="Indonesia">Indonesia</option>
-              <option value="Thailand">Thailand</option>
-              <option value="Philippines">Philippines</option>
-              <option value="Malaysia">Malaysia</option>
-              <option value="Singapore">Singapore</option>
-              <option value="Myanmar">Myanmar</option>
-              <option value="Cambodia">Cambodia</option>
+              <option>Vietnam</option>
+              <option>Indonesia</option>
+              <option>Thailand</option>
+              <option>Philippines</option>
+              <option>Malaysia</option>
+              <option>Singapore</option>
+              <option>Myanmar</option>
+              <option>Cambodia</option>
+              <option>Laos</option>
+              <option>Brunei</option>
+              <option>Timor-Leste</option>
+            </optgroup>
+            <optgroup label="East Asia">
+              <option>China</option>
+              <option>Japan</option>
+              <option>South Korea</option>
+              <option>Hong Kong</option>
+              <option>Taiwan</option>
+              <option>Mongolia</option>
             </optgroup>
             <optgroup label="South Asia">
-              <option value="India">India</option>
-              <option value="Bangladesh">Bangladesh</option>
+              <option>India</option>
+              <option>Bangladesh</option>
+              <option>Pakistan</option>
+              <option>Sri Lanka</option>
+              <option>Nepal</option>
+            </optgroup>
+            <optgroup label="Oceania">
+              <option>Australia</option>
+              <option>New Zealand</option>
+            </optgroup>
+            <optgroup label="Central Asia">
+              <option>Kazakhstan</option>
+              <option>Uzbekistan</option>
             </optgroup>
             <optgroup label="Regional">
+              <option value="Asia Pacific (Regional)">Asia Pacific (Regional)</option>
               <option value="Southeast Asia (Regional)">Southeast Asia (Regional)</option>
+              <option value="East Asia (Regional)">East Asia (Regional)</option>
+              <option value="South Asia (Regional)">South Asia (Regional)</option>
             </optgroup>
           </select>
         </div>
@@ -587,29 +612,25 @@
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:13px;color:#fff" id="confirm-lang">English</span>
         <div style="display:flex;align-items:center;gap:8px">
-          <input id="confirm-lang-select" list="lang-list"
-            style="background:#0B0D10;border:1px solid #242A35;border-radius:6px;padding:5px 10px;font-size:13px;color:#fff;font-family:Arial,sans-serif;outline:none;width:180px"
-            placeholder="Type language..." />
-          <datalist id="lang-list">
-            <option value="English"/>
-            <option value="Vietnamese"/>
-            <option value="Chinese (Simplified)"/>
-            <option value="Chinese (Traditional)"/>
-            <option value="Japanese"/>
-            <option value="Korean"/>
-            <option value="Thai"/>
-            <option value="Indonesian"/>
-            <option value="Malay"/>
-            <option value="Burmese"/>
-            <option value="Khmer"/>
-            <option value="Hindi"/>
-            <option value="Bengali"/>
-            <option value="Spanish"/>
-            <option value="French"/>
-            <option value="German"/>
-            <option value="Arabic"/>
-            <option value="Portuguese"/>
-          </datalist>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <select id="confirm-lang-select"
+            style="background:#0B0D10;border:1px solid #242A35;border-radius:6px;padding:5px 10px;font-size:13px;color:#fff;font-family:Arial,sans-serif;outline:none"
+            onchange="handleLangChange(this)">
+            <option value="English">English</option>
+            <option value="Chinese (Simplified)">Chinese (Simplified)</option>
+            <option value="Chinese (Traditional)">Chinese (Traditional)</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Vietnamese">Vietnamese</option>
+            <option value="Thai">Thai</option>
+            <option value="Indonesian">Indonesian</option>
+            <option value="Malay">Malay</option>
+            <option value="Hindi">Hindi</option>
+            <option value="other">Other...</option>
+          </select>
+          <input id="confirm-lang-other" placeholder="Type language..."
+            style="display:none;background:#0B0D10;border:1px solid #1E6FFF;border-radius:6px;padding:5px 10px;font-size:13px;color:#fff;font-family:Arial,sans-serif;outline:none;width:140px" />
+        </div>
         </div>
         </div>
       </div>
@@ -642,7 +663,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
 const MODULES = {
@@ -782,7 +803,19 @@ function validate() {
   return null;
 }
 
-// ── Language detection ────────────────────────────────────
+function handleLangChange(sel) {
+  const other = document.getElementById('confirm-lang-other');
+  other.style.display = sel.value === 'other' ? 'inline-block' : 'none';
+  if (sel.value !== 'other') other.value = '';
+}
+
+function getSelectedLanguage() {
+  const sel = document.getElementById('confirm-lang-select');
+  if (sel.value === 'other') {
+    return document.getElementById('confirm-lang-other').value.trim() || 'English';
+  }
+  return sel.value || 'English';
+}
 function detectLanguage(text) {
   if (!text) return 'English';
   // Vietnamese
@@ -838,10 +871,18 @@ async function handlePay() {
     questionsRow.style.display = 'flex';
   } else { questionsRow.style.display = 'none'; }
 
-  // Set detected language in input
+  // Set detected language in dropdown
   document.getElementById('confirm-lang').textContent = detectedLang;
-  const langInput = document.getElementById('confirm-lang-select');
-  langInput.value = detectedLang;
+  const langSel = document.getElementById('confirm-lang-select');
+  // Check if detected lang is in options, otherwise select Other
+  const opts = Array.from(langSel.options).map(o => o.value);
+  if (opts.includes(detectedLang)) {
+    langSel.value = detectedLang;
+  } else {
+    langSel.value = 'other';
+    document.getElementById('confirm-lang-other').style.display = 'inline-block';
+    document.getElementById('confirm-lang-other').value = detectedLang;
+  }
 
   // Show modal
   const modal = document.getElementById('confirm-modal');
@@ -858,7 +899,7 @@ async function confirmGenerate() {
   document.getElementById('confirm-modal').style.display = 'none';
 
   const params    = _pendingParams;
-  const language  = document.getElementById('confirm-lang-select').value.trim() || 'English';
+  const language  = getSelectedLanguage();
   params.language = language; // attach language to params
   _pendingParams  = null;
 
