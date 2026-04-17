@@ -105,31 +105,54 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'DB error: ' + e.message });
   }
 
-  // Step 2: Plan sections + research + RAG in parallel
+  // Step 2: Research + RAG first (parallel), then plan sections from real data
   let plannedSections, research, rag;
   try {
     const typeNames = { industry_deep_dive: 'full market analysis', competitive_comparison: 'competitive comparison', market_entry_brief: 'market entry brief' };
     const typeName  = typeNames[reportType] || 'market research report';
 
-    const planPrompt = `Plan sections for a ${typeName}: ${industry} in ${country}.
-${questions ? 'Client focus: ' + questions : ''}
-${companies ? 'Companies: ' + companies : ''}
+    const researchPrompt = `Compile market intelligence for a ${typeName}: ${industry} in ${country}.
+${companies ? 'Companies: ' + companies : ''}${questions ? '\nClient focus: ' + questions : ''}
+Include: market size & growth, key players & share, distribution channels, pricing, trends, regulations, key challenges.
+Be specific and data-rich. Surface the most important issues and dynamics.`;
 
-Return ONLY a JSON array of 8-12 section titles tailored to this specific industry and market.
-Rules: start with "Executive Summary", end with "Recommendations". Include industry-specific sections.
-Example for fintech: include "Regulatory & Licensing Environment". For EV: include "Charging Infrastructure".
-Return ONLY valid JSON array, no explanation: ["Title 1", "Title 2", ...]`;
-
-    const researchPrompt = `Compile market intelligence for ${typeName}: ${industry} in ${country}.
-${companies ? 'Companies: ' + companies : ''}${questions ? '\nFocus: ' + questions : ''}
-Include: market size & growth, key players, distribution channels, pricing, trends, regulations.
-Be concise and data-rich.`;
-
-    [plannedSections, research, rag] = await Promise.all([
-      callClaude(planPrompt, 400).then(t => JSON.parse(t.replace(/```json|```/g, '').trim())),
+    // Research + RAG in parallel first
+    [research, rag] = await Promise.all([
       callClaude(researchPrompt, 1500),
       ragSearch(industry, country, reportType)
     ]);
+
+    // Now plan sections INFORMED by what research actually found
+    const planPrompt = `You are planning a ${typeName} report for: ${industry} in ${country}.
+${questions ? 'Client focus: ' + questions : ''}
+${companies ? 'Companies: ' + companies : ''}
+
+WHAT THE RESEARCH ACTUALLY FOUND:
+${research}
+
+RAG PATTERNS FROM SIMILAR REPORTS:
+${rag.patternText || 'None available'}
+
+Based on the research above, decide the most relevant sections for THIS specific report.
+The sections should reflect what's actually important in this market — not a generic template.
+
+For example:
+- If research shows regulatory uncertainty is a key issue → add a dedicated regulatory section
+- If research shows 2-3 dominant players → add a competitor profiles section
+- If research shows rapid channel shifts → add a distribution/channel section
+- If the client asked about a specific angle → make sure it has its own section
+
+Return ONLY a JSON array of 8-12 section titles.
+Rules:
+- Always start with "Executive Summary"
+- Always end with "Recommendations" or "Strategic Outlook"
+- Section titles should be specific to this industry/market (not generic)
+- ${reportType === 'competitive_comparison' ? '6-8 sections focused on competitive comparison' : ''}
+- ${reportType === 'market_entry_brief' ? '7-8 sections focused on entry decision-making' : ''}
+Return ONLY the JSON array: ["Title 1", "Title 2", ...]`;
+
+    plannedSections = await callClaude(planPrompt, 500)
+      .then(t => JSON.parse(t.replace(/```json|```/g, '').trim()));
 
   } catch (e) {
     await sbPatch('custom_reports', reportId, { status: 'failed' });
