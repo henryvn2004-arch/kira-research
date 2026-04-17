@@ -247,6 +247,30 @@
       .nav-links{display:none}
     }
     @media(max-width:560px){.container{padding:0 20px}}
+
+    /* ── PRINT / PDF ── */
+    @media print {
+      body{background:#fff!important;color:#000!important}
+      body::before{display:none}
+      nav,.report-toc,#chatbox,.steps-bar,#view-form,#view-progress,
+      .report-meta-right,.chat-input-row{display:none!important}
+      .report-layout{display:block!important}
+      .report-content{width:100%!important}
+      .report-meta{background:#fff!important;border:1px solid #ddd!important;break-inside:avoid}
+      .section-block{opacity:1!important;transform:none!important;
+        border:1px solid #ddd!important;background:#fff!important;
+        page-break-inside:avoid;break-inside:avoid;
+        margin-bottom:0!important;page-break-after:always;break-after:always}
+      .section-block:last-child{page-break-after:auto;break-after:auto}
+      .slide-header{background:#0A1628!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .slide-num{background:rgba(30,111,255,.2)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .slide-headline{background:rgba(30,111,255,.06)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .visual-box{background:#f7fafc!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .slide-commentary{color:#1a1a1a!important}
+      .slide-commentary strong{color:#000!important}
+      .stat-pill{background:#f0f4f8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      a{color:inherit!important;text-decoration:none!important}
+    }
   </style>
 </head>
 <body>
@@ -436,6 +460,11 @@
               <div class="report-meta-sub" id="report-meta-sub">—</div>
             </div>
             <div class="report-meta-right" id="report-badges">
+              <button class="btn" id="btn-export-pdf"
+                style="background:rgba(0,201,167,.1);color:#00C9A7;border:1px solid rgba(0,201,167,.3);display:none"
+                onclick="exportPdf()">
+                ↓ Export PDF
+              </button>
               <button class="btn" id="btn-export-pptx"
                 style="background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.3);display:none"
                 onclick="exportPptx()">
@@ -657,6 +686,7 @@ async function startGeneration(params, slug) {
     setTimeout(() => {
       document.getElementById('chatbox').style.display = 'block';
       document.getElementById('btn-export-pptx').style.display = 'inline-flex';
+      document.getElementById('btn-export-pdf').style.display = 'inline-flex';
     }, 500);
 
   } catch (e) {
@@ -898,6 +928,7 @@ function renderReport(data) {
   setTimeout(() => {
     document.getElementById('chatbox').style.display = 'block';
     document.getElementById('btn-export-pptx').style.display = 'inline-flex';
+      document.getElementById('btn-export-pdf').style.display = 'inline-flex';
   }, 500);
   reportSlug = data.slug;
 }
@@ -1055,6 +1086,16 @@ function renderChart(canvasId, chartDef) {
       }
     }
   });
+}
+
+// ── Export PDF ────────────────────────────────────────────
+function exportPdf() {
+  // Set document title for PDF filename
+  const title = document.getElementById('report-title')?.textContent || 'KIRA Report';
+  const origTitle = document.title;
+  document.title = title;
+  window.print();
+  document.title = origTitle;
 }
 
 // ── Export PPTX ───────────────────────────────────────────
