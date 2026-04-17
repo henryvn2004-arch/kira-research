@@ -26,26 +26,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17h6M9 13h6M9 9h3m-6 13h12a2 2 0 002-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v15a2 2 0 002 2z"/></svg>
             </div>
             <div class="ddm-text">
-              <span class="ddm-label">Industry Deep Dive</span>
-              <span class="ddm-desc">Full market analysis · 8–12 sections · $49</span>
-            </div>
-          </a>
-          <a href="/compare.html" class="ddm-item">
-            <div class="ddm-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 7h12M8 12h12M8 17h12M3 7h.01M3 12h.01M3 17h.01"/></svg>
-            </div>
-            <div class="ddm-text">
-              <span class="ddm-label">Competitive Analysis</span>
-              <span class="ddm-desc">Compare 2–5 companies · $29</span>
-            </div>
-          </a>
-          <a href="/tracker.html" class="ddm-item">
-            <div class="ddm-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-            </div>
-            <div class="ddm-text">
-              <span class="ddm-label">Market Entry Brief</span>
-              <span class="ddm-desc">Go/no-go decision brief · $39</span>
+              <span class="ddm-label">Market Analysis</span>
+              <span class="ddm-desc">7 modules · Market overview, competitive, customer intelligence & more</span>
             </div>
           </a>
         </div>
@@ -74,9 +56,7 @@
 <div class="mobile-nav" id="mobile-nav">
   <div class="mobile-nav-inner">
     <div class="mobile-section-label">Reports</div>
-    <a href="/report.html"   class="mobile-link">Industry Deep Dive <span class="mobile-price">$49</span></a>
-    <a href="/compare.html"  class="mobile-link">Competitive Analysis <span class="mobile-price">$29</span></a>
-    <a href="/tracker.html"  class="mobile-link">Market Entry Brief <span class="mobile-price">$39</span></a>
+    <a href="/report.html"   class="mobile-link">Market Analysis</a>
     <div class="mobile-divider"></div>
     <a href="/library.html"  class="mobile-link">Library</a>
     <a href="/insights.html" class="mobile-link">Insights</a>
@@ -100,9 +80,7 @@
     <div class="footer-cols">
       <div class="footer-col">
         <div class="footer-col-title">Reports</div>
-        <a href="/report.html">Industry Deep Dive</a>
-        <a href="/compare.html">Competitive Analysis</a>
-        <a href="/tracker.html">Market Entry Brief</a>
+        <a href="/report.html">Market Analysis</a>
         <a href="/library.html">Living Library</a>
       </div>
       <div class="footer-col">
