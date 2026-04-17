@@ -171,6 +171,8 @@
     .slide-commentary p:last-child{margin-bottom:0}
     .slide-commentary strong{color:#fff}
     .slide-commentary h3{color:#fff;font-size:11px;font-weight:700;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.08em;color:#1E6FFF}
+    .stream-cursor{display:inline-block;width:2px;height:14px;background:#1E6FFF;margin-left:2px;vertical-align:middle;animation:blink .7s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
     .generating-pulse{display:flex;align-items:center;gap:8px;font-size:13px;color:#5A6278;padding:28px}
     .generating-pulse .dot{width:6px;height:6px;background:#1E6FFF;border-radius:50%;animation:pulse-dot 1.2s ease-in-out infinite}
@@ -613,44 +615,32 @@ async function startGeneration(params, slug) {
       const pct = Math.round(10 + (i / totalSections) * 85);
       document.getElementById('progress-bar').style.width = pct + '%';
 
-      const secRes = await fetch('/api/generate-section', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reportId, sectionIndex: i, sectionTitle: title,
-          totalSections, ...params, researchSummary, ragContext,
-          prevSections: completedSections.slice(-2)
-        })
-      });
-      const secData = await secRes.json();
+      // Switch to report view on first section so user sees slides appear
+      if (i === 0) {
+        setStep(4);
+        showView('report');
+        renderReportMeta(params, slug);
+      }
 
-      const sectionContent = secData.content || JSON.stringify({
-        headline: '', stats: [], chart: null, table: null,
-        commentary: 'Section could not be generated.'
-      });
+      // Render empty slide immediately with generating state
+      renderSection({ title, content: null, status: 'generating' }, i, totalSections);
+
+      // Stream section via SSE
+      const sectionContent = await streamSection({
+        reportId, sectionIndex: i, sectionTitle: title,
+        totalSections, ...params, researchSummary, ragContext,
+        prevSections: completedSections.slice(-2)
+      }, i);
 
       completedSections.push({ title, content: sectionContent, status: 'completed' });
-      setSectionStatus(i, 'done', SEC_PER_SECTION);
-
-      // Progressive render — show slide as it completes
-      renderSection({ title, content: sectionContent, status: 'completed' }, i, totalSections);
+      setSectionStatus(i, 'done');
     }
 
     // Done
     clearInterval(elapsedTimer);
     document.getElementById('progress-bar').style.width = '100%';
-    document.getElementById('time-remaining').textContent = 'Complete!';
-    document.getElementById('prog-title').textContent = 'Report ready';
-    document.getElementById('prog-subtitle').textContent = 'All sections generated';
-
     sessionStorage.removeItem('kira_pending_report');
     sessionStorage.removeItem('kira_pending_slug');
-
-    setStep(4);
-    showView('report');
-
-    // Render meta header
-    renderReportMeta(params, slug);
 
     // Show chatbox
     setTimeout(() => {
@@ -662,6 +652,145 @@ async function startGeneration(params, slug) {
     document.getElementById('prog-title').textContent = 'Error';
     document.getElementById('prog-subtitle').textContent = e.message;
   }
+}
+
+// ── Stream one section via SSE ────────────────────────────
+async function streamSection(payload, sectionIndex) {
+  const res = await fetch('/api/generate-section', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('Section failed: ' + err);
+  }
+
+  const reader  = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let meta = null;
+  let commentary = '';
+
+  // Get the slide DOM elements for live update
+  const block       = document.getElementById('sec-' + sectionIndex);
+  let commentaryEl  = null;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      try {
+        const evt = JSON.parse(line.slice(6));
+
+        if (evt.type === 'meta') {
+          meta = evt;
+          // Replace generating skeleton with real meta content
+          if (block) {
+            renderSectionMeta(block, sectionIndex, payload.sectionTitle, meta);
+            // Find the commentary div that was created
+            commentaryEl = block.querySelector('.slide-commentary');
+          }
+        }
+
+        if (evt.type === 'token' && evt.text) {
+          commentary += evt.text;
+          // Live-stream tokens into commentary div
+          if (commentaryEl) {
+            commentaryEl.innerHTML = formatCommentary(commentary) + '<span class="stream-cursor">|</span>';
+          }
+        }
+
+        if (evt.type === 'done') {
+          // Finalize commentary — remove cursor, format properly
+          if (commentaryEl) {
+            commentaryEl.innerHTML = formatCommentary(commentary);
+          }
+        }
+      } catch {}
+    }
+  }
+
+  return JSON.stringify({
+    headline:    meta?.headline    || '',
+    stats:       meta?.stats       || [],
+    chart:       meta?.chart       || null,
+    table:       meta?.table       || null,
+    commentary
+  });
+}
+
+// Render meta part of a slide (headline, stats, chart, table + empty commentary)
+function renderSectionMeta(block, i, title, meta) {
+  const chartId = `chart-${i}`;
+  const hasChart = meta.chart?.labels?.length;
+  const hasTable = meta.table?.headers?.length;
+
+  const statsHtml = (meta.stats?.length)
+    ? `<div class="slide-stats">${meta.stats.map(s => `
+        <div class="stat-pill">
+          <div class="stat-icon">${getStatIcon(s.icon)}</div>
+          <div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>
+        </div>`).join('')}</div>`
+    : '';
+
+  let visualsHtml = '';
+  if (hasChart || hasTable) {
+    const gridClass = hasChart && hasTable ? 'has-both' : 'has-one';
+    const chartHtml = hasChart ? `
+      <div class="visual-box">
+        <div class="visual-title">${meta.chart.title || ''}</div>
+        <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
+      </div>` : '';
+    const tableHtml = hasTable ? `
+      <div class="visual-box">
+        <div class="visual-title">${meta.table.title || ''}</div>
+        <div style="overflow-x:auto">
+          <table class="slide-table">
+            <thead><tr>${meta.table.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+            <tbody>${(meta.table.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>` : '';
+    visualsHtml = `<div class="slide-visuals ${gridClass}">${chartHtml}${tableHtml}</div>`;
+  }
+
+  block.classList.remove('generating');
+  block.innerHTML = `
+    <div class="slide-header">
+      <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
+      <span class="slide-title">${title}</span>
+    </div>
+    ${meta.headline ? `
+    <div class="slide-headline">
+      <div class="slide-headline-label">Key Finding</div>
+      <div class="slide-headline-text">${meta.headline}</div>
+    </div>` : ''}
+    ${statsHtml}
+    ${visualsHtml}
+    <div class="slide-commentary"></div>`;
+
+  if (hasChart) {
+    setTimeout(() => renderChart(chartId, meta.chart), 50);
+  }
+}
+
+function formatCommentary(text) {
+  if (!text) return '';
+  return text
+    .split('\n\n').filter(Boolean)
+    .map(p => `<p>${p
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    }</p>`)
+    .join('');
 }
 
 // ── Progress UI helpers ───────────────────────────────────
