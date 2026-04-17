@@ -535,7 +535,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
 const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
@@ -750,47 +750,61 @@ async function startGeneration(params, slug) {
     document.getElementById('prog-subtitle').textContent =
       `${totalSections} sections · ~${SEC_PER_SECTION}s each`;
     document.getElementById('progress-bar').style.width = '10%';
-    const completedSections = [];
+    const completedSections = new Array(totalSections).fill(null);
 
-    for (let i = 0; i < sections.length; i++) {
+    // Generate Executive Summary last — it needs all other sections as context
+    // Reorder: [1,2,3,...,N,0] so exec summary (index 0) generates last
+    const isExecFirst = sections[0]?.toLowerCase().includes('executive summary');
+    const generateOrder = isExecFirst
+      ? [...sections.slice(1).map((_, i) => i + 1), 0]
+      : sections.map((_, i) => i);
+
+    for (let gi = 0; gi < generateOrder.length; gi++) {
+      const i     = generateOrder[gi]; // actual section index in final report
       const title = sections[i];
       setSectionStatus(i, 'active');
 
-      const secsLeft  = (totalSections - i) * SEC_PER_SECTION;
-      const minsLeft  = Math.ceil(secsLeft / 60);
-      document.getElementById('time-remaining').textContent =
-        secsLeft > 60 ? `~${minsLeft} min remaining` : `~${secsLeft}s remaining`;
-      document.getElementById('prog-title').textContent =
-        `Writing: ${title}`;
-      document.getElementById('prog-subtitle').textContent =
-        `Section ${i + 1} of ${totalSections}`;
-
-      const pct = Math.round(10 + (i / totalSections) * 85);
+      const pct = Math.round(10 + (gi / totalSections) * 85);
       document.getElementById('progress-bar').style.width = pct + '%';
-      setStatus(`✍️ <strong>Writing section ${i+1}/${totalSections}</strong> — ${title}`, pct);
+      setStatus(`✍️ <strong>Writing section ${gi+1}/${totalSections}</strong> — ${title}`, pct);
 
-      // Switch to report view on first section so user sees slides appear
-      if (i === 0) {
+      // Switch to report view on first generate call
+      if (gi === 0) {
         setStep(4);
         showView('report');
         renderReportMeta(params, slug);
-        // Show export buttons immediately
         document.getElementById('btn-export-pptx').style.display = 'inline-flex';
         document.getElementById('btn-export-pdf').style.display = 'inline-flex';
       }
 
-      // Render empty slide immediately with generating state
+      // Render skeleton at correct display position
       renderSection({ title, content: null, status: 'generating' }, i, totalSections);
 
-      // Stream section via SSE
-      const sectionContent = await streamSection({
-        reportId, sectionIndex: i, sectionTitle: title,
-        totalSections, ...params, researchSummary, ragContext,
-        prevSections: completedSections.slice(-2)
-      }, i);
+      // Build prevSections context from already-completed sections
+      const prevDone = completedSections.filter(Boolean).slice(-2);
 
-      completedSections.push({ title, content: sectionContent, status: 'completed' });
-      window._completedSections = completedSections; // store for PPTX export
+      // Stream section — with per-section error handling
+      let sectionContent;
+      try {
+        console.log(`[Section ${i+1} "${title}"] Calling generate-section...`);
+        sectionContent = await streamSection({
+          reportId, sectionIndex: i, sectionTitle: title,
+          totalSections, ...params, researchSummary, ragContext,
+          prevSections: prevDone
+        }, i);
+        console.log(`[Section ${i+1}] Done`);
+      } catch (sErr) {
+        console.error(`[Section ${i+1}] Error:`, sErr);
+        setStatus(`⚠ Section "${title}" failed: ${sErr.message}`, pct);
+        sectionContent = JSON.stringify({
+          headline: '', stats: [], chart: null, table: null,
+          commentary: `Could not generate this section. Error: ${sErr.message}`,
+          sources: []
+        });
+      }
+
+      completedSections[i] = { title, content: sectionContent, status: 'completed' };
+      window._completedSections = completedSections.filter(Boolean);
       setSectionStatus(i, 'done');
     }
 
@@ -798,21 +812,18 @@ async function startGeneration(params, slug) {
     clearInterval(elapsedTimer);
     document.getElementById('progress-bar').style.width = '100%';
     setStatus('✓ <strong>Report complete</strong>', 100);
-    setTimeout(() => setStatus(null, null, false), 3000); // hide after 3s
+    setTimeout(() => setStatus(null, null, false), 3000);
     sessionStorage.removeItem('kira_pending_report');
     sessionStorage.removeItem('kira_pending_slug');
 
-    // Show chatbox + export button
     setTimeout(() => {
       document.getElementById('chatbox').style.display = 'block';
-      document.getElementById('btn-export-pptx').style.display = 'inline-flex';
-      document.getElementById('btn-export-pdf').style.display = 'inline-flex';
     }, 500);
 
   } catch (e) {
     clearInterval(elapsedTimer);
-    document.getElementById('prog-title').textContent = 'Error';
-    document.getElementById('prog-subtitle').textContent = e.message;
+    console.error('[Generation] Fatal error:', e);
+    setStatus(`✗ <strong>Error:</strong> ${e.message}`, null);
   }
 }
 
