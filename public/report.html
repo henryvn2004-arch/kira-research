@@ -67,7 +67,7 @@
     .field-hint{font-size:11px;color:#5A6278;margin-top:-4px}
 
     /* Report type cards */
-    .type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0}
+    .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:0}
     .type-card{background:#11151C;border:1px solid #242A35;border-radius:10px;padding:20px;cursor:pointer;transition:all .2s;position:relative}
     .type-card:hover{border-color:#1E6FFF;background:#161B24}
     .type-card.selected{border-color:#1E6FFF;background:rgba(30,111,255,.08)}
@@ -241,7 +241,7 @@
     @media(max-width:900px){
       .form-grid{grid-template-columns:1fr}
       .field.span2{grid-column:span 1}
-      .type-grid{grid-template-columns:1fr}
+      .type-grid{grid-template-columns:repeat(2,1fr)}
       .report-layout{grid-template-columns:1fr}
       .report-toc{display:none}
       .nav-links{display:none}
@@ -325,38 +325,76 @@
          VIEW 1: CONFIGURE FORM
     ════════════════════════════════════════ -->
     <div id="view-form">
-      <p class="page-eyebrow">Industry Deep Dive</p>
-      <h1 class="page-title">Configure your report</h1>
-      <p class="page-sub">Fill in the details below — the more specific, the better your report.</p>
+      <p class="page-eyebrow">Market Analysis</p>
+      <h1 class="page-title">Select a module</h1>
+      <p class="page-sub">Choose the analysis type that best fits your objective.</p>
 
       <div id="alert-form" class="alert alert-error"></div>
 
-      <!-- Report Type -->
+      <!-- Module Selection — 7 modules -->
       <div style="margin-bottom:28px">
-        <label style="display:block;margin-bottom:12px">Report Type <span class="req">*</span></label>
-        <div class="type-grid">
-          <label class="type-card selected" id="type-industry">
-            <input type="radio" name="report_type" value="industry_deep_dive" checked onchange="selectType('industry')"/>
+        <div class="type-grid" style="grid-template-columns:repeat(4,1fr)">
+
+          <label class="type-card selected" id="type-market_overview">
+            <input type="radio" name="report_type" value="market_overview" checked onchange="selectModule('market_overview')"/>
             <div class="type-icon">📊</div>
-            <div class="type-name">Industry Deep Dive</div>
-            <div class="type-desc">Full market analysis, 8–12 sections. Market sizing, competitive landscape, consumer insights & recommendations.</div>
+            <div class="type-name">Market Overview</div>
+            <div class="type-desc">Market sizing, growth estimation, segmentation, forecasting & scenario planning.</div>
             <div class="type-price">$49</div>
           </label>
-          <label class="type-card" id="type-compare">
-            <input type="radio" name="report_type" value="competitive_comparison" onchange="selectType('compare')"/>
+
+          <label class="type-card" id="type-competitive_analysis">
+            <input type="radio" name="report_type" value="competitive_analysis" onchange="selectModule('competitive_analysis')"/>
             <div class="type-icon">⚔️</div>
             <div class="type-name">Competitive Analysis</div>
-            <div class="type-desc">Compare 2–5 companies side by side. Positioning, strengths/weaknesses, market share & strategic outlook.</div>
-            <div class="type-price">$29</div>
+            <div class="type-desc">Industry competitiveness, competitor tracking, best practices & key success factors.</div>
+            <div class="type-price">$49</div>
           </label>
-          <label class="type-card" id="type-entry">
-            <input type="radio" name="report_type" value="market_entry_brief" onchange="selectType('entry')"/>
-            <div class="type-icon">🗺️</div>
-            <div class="type-name">Market Entry Brief</div>
-            <div class="type-desc">Go/no-go decision brief. Regulatory, distribution, competitive environment, pricing & partner shortlist.</div>
-            <div class="type-price">$39</div>
+
+          <label class="type-card" id="type-customer_intelligence">
+            <input type="radio" name="report_type" value="customer_intelligence" onchange="selectModule('customer_intelligence')"/>
+            <div class="type-icon">🎯</div>
+            <div class="type-name">Customer Intelligence</div>
+            <div class="type-desc">Key accounts, usage patterns, pain points, buying cycles & brand perceptions.</div>
+            <div class="type-price">$49</div>
           </label>
+
+          <label class="type-card" id="type-value_chain">
+            <input type="radio" name="report_type" value="value_chain" onchange="selectModule('value_chain')"/>
+            <div class="type-icon">🔗</div>
+            <div class="type-name">Value Chain</div>
+            <div class="type-desc">Industry structure, pricing & margin analysis, value-adding activities & supply web.</div>
+            <div class="type-price">$49</div>
+          </label>
+
+          <label class="type-card" id="type-proposition_development">
+            <input type="radio" name="report_type" value="proposition_development" onchange="selectModule('proposition_development')"/>
+            <div class="type-icon">💡</div>
+            <div class="type-name">Proposition Development</div>
+            <div class="type-desc">Gap analysis, innovation scouting, price-positioning, segmentation & channel strategy.</div>
+            <div class="type-price">$49</div>
+          </label>
+
+          <label class="type-card" id="type-partner_search">
+            <input type="radio" name="report_type" value="partner_search" onchange="selectModule('partner_search')"/>
+            <div class="type-icon">🤝</div>
+            <div class="type-name">Partner Search</div>
+            <div class="type-desc">Identify & evaluate partners for distribution, JV, technology, manufacturing & M&A.</div>
+            <div class="type-price">$49</div>
+          </label>
+
+          <label class="type-card" id="type-go_to_market">
+            <input type="radio" name="report_type" value="go_to_market" onchange="selectModule('go_to_market')"/>
+            <div class="type-icon">🚀</div>
+            <div class="type-name">Go-To-Market</div>
+            <div class="type-desc">Entry barriers & drivers, entry modes, launch phases, exit strategy & communications.</div>
+            <div class="type-price">$49</div>
+          </label>
+
         </div>
+
+        <!-- Module description strip -->
+        <div id="module-desc-strip" style="margin-top:12px;padding:14px 16px;background:#11151C;border:1px solid #242A35;border-radius:8px;font-size:13px;color:#A3A9B6;line-height:1.6"></div>
       </div>
 
       <!-- Form fields -->
@@ -390,16 +428,9 @@
           </select>
         </div>
 
-        <!-- Companies field (shown only for competitive comparison) -->
-        <div class="field span2" id="field-companies" style="display:none">
-          <label>Companies to Compare <span class="req">*</span></label>
-          <input type="text" id="f-companies" placeholder="e.g. MoMo, ZaloPay, VNPay, Moca" />
-          <span class="field-hint">Enter 2–5 company names, separated by commas</span>
-        </div>
-
         <div class="field span2">
           <label>Specific Questions or Focus Areas</label>
-          <textarea id="f-questions" placeholder="e.g. Focus on the B2C segment. What are the main distribution channels? How do local brands compete with international ones?"></textarea>
+          <textarea id="f-questions" placeholder="e.g. Focus on the B2C segment. Which partners should we prioritize? How do local brands compete with international ones?"></textarea>
           <span class="field-hint">Optional — helps the AI prioritize what matters most to you</span>
         </div>
       </div>
@@ -413,7 +444,7 @@
         </div>
         <button class="btn btn-primary btn-pay" id="btn-pay" onclick="handlePay()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          Pay & Generate Report
+          Generate Report
         </button>
       </div>
     </div>
@@ -611,11 +642,65 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
-const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
-let currentType  = 'industry_deep_dive';
+const MODULES = {
+  market_overview: {
+    label: 'Market Overview',
+    desc: 'Environmental context, market sizing & potential, segmentation, growth estimation, forecasting, sensitivity analysis and scenario planning.',
+    price: 49
+  },
+  competitive_analysis: {
+    label: 'Competitive Analysis',
+    desc: 'Industry competitiveness assessment, competitor strategy & performance tracking, pipeline analysis, alliance mapping, and identification of industry best practices and key success factors.',
+    price: 49
+  },
+  customer_intelligence: {
+    label: 'Customer Intelligence',
+    desc: 'Key account targeting, installed base analysis, usage patterns and pain-points, decision-making cycles, budgets, switching costs, brand affinity and customer perceptions.',
+    price: 49
+  },
+  value_chain: {
+    label: 'Value Chain Consulting',
+    desc: 'Industry structure and development analysis, pricing and margin stack, mapping and prioritisation of value-adding activities, and efficiency analysis across the supply web.',
+    price: 49
+  },
+  proposition_development: {
+    label: 'Proposition Development',
+    desc: 'Gap analysis, innovation scouting, price-positioning strategy, customer segment prioritisation, branding & promotions framework, and channel strategy.',
+    price: 49
+  },
+  partner_search: {
+    label: 'Partner Search',
+    desc: 'Identification of potential partners, in-depth evaluation for distribution, acquisition/JV, technology and manufacturing partnerships, plus commercial due diligence and market valuation.',
+    price: 49
+  },
+  go_to_market: {
+    label: 'Go-To-Market',
+    desc: 'Barriers and drivers analysis, entry mode options, market entry phases, exit strategy planning, marketing & communications framework, and product launch roadmap.',
+    price: 49
+  }
+};
+
+let currentType = 'market_overview';
+
+function selectModule(moduleId) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('type-' + moduleId);
+  if (card) card.classList.add('selected');
+  currentType = moduleId;
+  const mod = MODULES[moduleId];
+  document.getElementById('price-display').textContent = '$' + (mod?.price || 49);
+  const strip = document.getElementById('module-desc-strip');
+  if (strip && mod) strip.textContent = mod.desc;
+}
+
+// Init description strip
+document.addEventListener('DOMContentLoaded', () => {
+  const strip = document.getElementById('module-desc-strip');
+  if (strip) strip.textContent = MODULES.market_overview.desc;
+});
 let reportId     = null;
 let reportSlug   = null;
 let pollInterval = null;
@@ -672,15 +757,7 @@ Provide specific numbers, statistics, and facts. Cite the source and year for ea
 }
 
 // ── Type selection ───────────────────────────────────────
-function selectType(type) {
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-  const map = { industry: 'industry_deep_dive', compare: 'competitive_comparison', entry: 'market_entry_brief' };
-  const idMap = { industry: 'type-industry', compare: 'type-compare', entry: 'type-entry' };
-  document.getElementById(idMap[type]).classList.add('selected');
-  currentType = map[type];
-  document.getElementById('price-display').textContent = '$' + PRICES[currentType];
-  document.getElementById('field-companies').style.display = type === 'compare' ? 'flex' : 'none';
-}
+// (handled by selectModule above)
 
 // ── Step indicator ───────────────────────────────────────
 function setStep(n) {
@@ -702,10 +779,6 @@ function validate() {
   const country  = document.getElementById('f-country').value;
   if (!industry) return 'Please enter an industry or product category.';
   if (!country)  return 'Please select a target market.';
-  if (currentType === 'competitive_comparison') {
-    const companies = document.getElementById('f-companies').value.trim();
-    if (!companies) return 'Please enter the companies to compare.';
-  }
   return null;
 }
 
