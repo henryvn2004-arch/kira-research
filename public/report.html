@@ -1035,7 +1035,7 @@ async function sendChat() {
     });
     const data = await res.json();
     const reply = data.reply || 'Sorry, I could not generate a response.';
-    aiMsg.innerHTML = formatContent(reply);
+    aiMsg.innerHTML = formatCommentary(reply);
     chatHistory.push({ role: 'assistant', content: reply });
   } catch (e) {
     aiMsg.textContent = 'Error: ' + e.message;
