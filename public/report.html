@@ -458,6 +458,11 @@
             <div class="report-meta-left">
               <div class="report-meta-title" id="report-title">—</div>
               <div class="report-meta-sub" id="report-meta-sub">—</div>
+              <div id="report-url-row" style="display:none;margin-top:8px;display:none;align-items:center;gap:8px">
+                <span style="font-size:11px;color:#5A6278">Report URL:</span>
+                <code id="report-url-text" style="font-size:11px;color:#A3A9B6;background:#0B0D10;padding:3px 8px;border-radius:4px;border:1px solid #1A1D24;cursor:pointer" onclick="copyReportUrl()" title="Click to copy"></code>
+                <span id="copy-confirm" style="font-size:11px;color:#38D996;display:none">✓ Copied</span>
+              </div>
             </div>
             <div class="report-meta-right" id="report-badges">
               <button class="btn" id="btn-export-pdf"
@@ -899,6 +904,15 @@ function renderReportMeta(params, slug) {
     (params.industry || '—') + ' Market — ' + (params.country || '—');
   document.getElementById('report-meta-sub').textContent =
     params.country + ' · ' + (params.industry || '').toUpperCase() + ' · 2026';
+
+  // Show report URL for easy access later
+  if (slug) {
+    const url = `${location.origin}/report.html?slug=${slug}`;
+    const urlEl = document.getElementById('report-url-text');
+    const row   = document.getElementById('report-url-row');
+    if (urlEl) urlEl.textContent = url;
+    if (row)   row.style.display = 'flex';
+  }
   const badges = document.getElementById('report-badges');
   badges.innerHTML = '';
   [params.country, params.reportType?.replace(/_/g,' '), '2026'].forEach(b => {
@@ -1234,6 +1248,16 @@ window.addEventListener('DOMContentLoaded', async () => {
   showView('form');
   setStep(1);
 });
+
+function copyReportUrl() {
+  const url = document.getElementById('report-url-text')?.textContent;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    const el = document.getElementById('copy-confirm');
+    el.style.display = 'inline';
+    setTimeout(() => el.style.display = 'none', 2000);
+  });
+}
 </script>
 </body>
 </html>
