@@ -83,7 +83,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { industry, country, reportType, questions, companies, slug, userId, liveResearch } = req.body;
+  const { industry, country, reportType, questions, companies, slug, userId, liveResearch, language } = req.body;
   if (!industry || !country || !reportType) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -141,7 +141,8 @@ Return ONLY a JSON array of 8-12 section titles.
 Rules: start with "Executive Summary", end with "Recommendations" or "Strategic Outlook".
 ${reportType === 'competitive_comparison' ? 'Use 6-8 sections focused on competitive comparison.' : ''}
 ${reportType === 'market_entry_brief' ? 'Use 7-8 sections focused on entry decision-making.' : ''}
-Return ONLY the JSON array: ["Title 1", "Title 2", ...]`;
+Return ONLY the JSON array: ["Title 1", "Title 2", ...]
+${language && language !== 'English' ? `Section titles must be in ${language}.` : ''}`;
 
     plannedSections = await callClaude(planPrompt, 500)
       .then(t => JSON.parse(t.replace(/```json|```/g, '').trim()));

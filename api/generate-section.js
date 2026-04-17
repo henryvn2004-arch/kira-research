@@ -45,7 +45,10 @@ function setCors(res) {
 }
 
 function buildContext(params, ragContext, researchSummary, prevSections) {
-  const { industry, country, reportType, questions, companies } = params;
+  const { industry, country, reportType, questions, companies, language } = params;
+  const langInstruction = (language && language !== 'English')
+    ? `\nOUTPUT LANGUAGE: Write ALL content in ${language}. This includes headlines, commentary, table headers, chart labels, and all text.`
+    : '';
   const rag = [
     ragContext?.chunkText   ? `RESEARCH LIBRARY:\n${ragContext.chunkText}`   : '',
     ragContext?.patternText ? `INDUSTRY PATTERNS:\n${ragContext.patternText}` : ''
@@ -55,7 +58,7 @@ function buildContext(params, ragContext, researchSummary, prevSections) {
     catch { return `## ${s.title}`; }
   }).join('\n\n');
   return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
-${questions ? `Client focus: ${questions}` : ''}${companies ? `\nCompanies: ${companies}` : ''}
+${questions ? `Client focus: ${questions}` : ''}${companies ? `\nCompanies: ${companies}` : ''}${langInstruction}
 
 RESEARCH DATA:
 ${researchSummary || 'Draw on your knowledge.'}
