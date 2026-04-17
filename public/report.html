@@ -535,7 +535,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
 const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
@@ -720,7 +720,10 @@ async function startGeneration(params, slug) {
     const initRes = await fetch('/api/generate-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...params, slug, userId: user?.id, liveResearch })
+      body: JSON.stringify({
+        ...params, slug, userId: user?.id,
+        liveResearch: liveResearch.slice(0, 6000) // truncate for Vercel payload
+      })
     });
     const initData = await initRes.json();
     if (!initData.reportId) throw new Error(initData.error || 'Planning phase failed');
@@ -729,8 +732,12 @@ async function startGeneration(params, slug) {
     reportSlug = slug;
     currentParams = params; // store for PPTX export
     const sections        = initData.sections || [];
-    const researchSummary = initData.researchSummary || '';
-    const ragContext      = initData.ragContext || {};
+    // Truncate researchSummary — full text is too large for section payloads
+    const researchSummary = (initData.researchSummary || '').slice(0, 4000);
+    const ragContext      = {
+      chunkText:   (initData.ragContext?.chunkText   || '').slice(0, 2000),
+      patternText: (initData.ragContext?.patternText || '').slice(0, 1000),
+    };
     const totalSections   = sections.length;
 
     // Now build section list from dynamic response
