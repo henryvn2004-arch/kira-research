@@ -523,6 +523,67 @@
   </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center">
+  <div style="background:#11151C;border:1px solid #242A35;border-radius:16px;padding:32px;width:100%;max-width:480px;margin:0 24px">
+    <div style="font-size:11px;color:#1E6FFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-weight:700">Confirm Report Generation</div>
+    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:24px" id="confirm-title">—</div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:11px;color:#5A6278;min-width:80px;padding-top:2px">Type</span>
+        <span style="font-size:13px;color:#fff" id="confirm-type">—</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:11px;color:#5A6278;min-width:80px;padding-top:2px">Industry</span>
+        <span style="font-size:13px;color:#fff" id="confirm-industry">—</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:11px;color:#5A6278;min-width:80px;padding-top:2px">Market</span>
+        <span style="font-size:13px;color:#fff" id="confirm-country">—</span>
+      </div>
+      <div id="confirm-companies-row" style="display:flex;gap:12px;align-items:flex-start;display:none">
+        <span style="font-size:11px;color:#5A6278;min-width:80px;padding-top:2px">Companies</span>
+        <span style="font-size:13px;color:#fff" id="confirm-companies">—</span>
+      </div>
+      <div id="confirm-questions-row" style="display:flex;gap:12px;align-items:flex-start;display:none">
+        <span style="font-size:11px;color:#5A6278;min-width:80px;padding-top:2px">Focus</span>
+        <span style="font-size:13px;color:#A3A9B6;font-style:italic" id="confirm-questions">—</span>
+      </div>
+      <div style="height:1px;background:#1A1D24;margin:4px 0"></div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <span style="font-size:11px;color:#5A6278;min-width:80px">Language</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:13px;color:#fff" id="confirm-lang">English</span>
+          <select id="confirm-lang-select" style="background:#0B0D10;border:1px solid #242A35;border-radius:6px;padding:4px 8px;font-size:12px;color:#A3A9B6;font-family:Arial,sans-serif;outline:none">
+            <option value="English">English</option>
+            <option value="Vietnamese">Tiếng Việt</option>
+            <option value="Chinese">中文</option>
+            <option value="Japanese">日本語</option>
+            <option value="Korean">한국어</option>
+            <option value="Thai">ภาษาไทย</option>
+            <option value="Indonesian">Bahasa Indonesia</option>
+            <option value="Malay">Bahasa Melayu</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <span style="font-size:11px;color:#5A6278;min-width:80px">Sections</span>
+        <span style="font-size:13px;color:#fff">~10–12 sections · ~3 min</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <button onclick="closeConfirm()" style="flex:1;padding:12px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:14px;cursor:pointer;font-family:Arial,sans-serif">
+        Cancel
+      </button>
+      <button onclick="confirmGenerate()" style="flex:2;padding:12px;background:#1E6FFF;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif">
+        Generate Report →
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Floating status bar -->
 <div id="status-bar">
   <div class="status-spinner"></div>
@@ -633,13 +694,27 @@ function validate() {
   return null;
 }
 
+// ── Language detection ────────────────────────────────────
+function detectLanguage(text) {
+  if (!text) return 'English';
+  // Vietnamese
+  if (/[àáâãèéêìíòóôõùúýăđơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i.test(text)) return 'Vietnamese';
+  // Chinese
+  if (/[\u4e00-\u9fff]/.test(text)) return 'Chinese';
+  // Japanese
+  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(text)) return 'Japanese';
+  // Korean
+  if (/[\uac00-\ud7af]/.test(text)) return 'Korean';
+  // Thai
+  if (/[\u0e00-\u0e7f]/.test(text)) return 'Thai';
+  return 'English';
+}
+
+let _pendingParams = null;
+
 async function handlePay() {
   const err = validate();
   if (err) return showAlert('alert-form', err);
-
-  const btn = document.getElementById('btn-pay');
-  btn.disabled = true;
-  btn.textContent = 'Generating...';
 
   const params = {
     reportType: currentType,
@@ -649,6 +724,57 @@ async function handlePay() {
     companies:  document.getElementById('f-companies').value.trim(),
   };
 
+  // Detect language from user input
+  const allText = [params.industry, params.questions, params.companies].join(' ');
+  const detectedLang = detectLanguage(allText);
+
+  // Store pending params
+  _pendingParams = params;
+
+  // Populate modal
+  const typeLabels = { industry_deep_dive: 'Industry Deep Dive', competitive_comparison: 'Competitive Analysis', market_entry_brief: 'Market Entry Brief' };
+  document.getElementById('confirm-title').textContent = `${params.industry} — ${params.country}`;
+  document.getElementById('confirm-type').textContent = typeLabels[currentType] || currentType;
+  document.getElementById('confirm-industry').textContent = params.industry;
+  document.getElementById('confirm-country').textContent = params.country;
+
+  const companiesRow = document.getElementById('confirm-companies-row');
+  if (params.companies) {
+    document.getElementById('confirm-companies').textContent = params.companies;
+    companiesRow.style.display = 'flex';
+  } else { companiesRow.style.display = 'none'; }
+
+  const questionsRow = document.getElementById('confirm-questions-row');
+  if (params.questions) {
+    document.getElementById('confirm-questions').textContent = params.questions;
+    questionsRow.style.display = 'flex';
+  } else { questionsRow.style.display = 'none'; }
+
+  // Set detected language
+  document.getElementById('confirm-lang').textContent = detectedLang;
+  const sel = document.getElementById('confirm-lang-select');
+  sel.value = detectedLang;
+  sel.onchange = () => document.getElementById('confirm-lang').textContent = sel.value;
+
+  // Show modal
+  const modal = document.getElementById('confirm-modal');
+  modal.style.display = 'flex';
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  _pendingParams = null;
+}
+
+async function confirmGenerate() {
+  if (!_pendingParams) return;
+  document.getElementById('confirm-modal').style.display = 'none';
+
+  const params    = _pendingParams;
+  const language  = document.getElementById('confirm-lang-select').value;
+  params.language = language; // attach language to params
+  _pendingParams  = null;
+
   const slug = currentType.split('_')[0] + '-' +
     params.industry.toLowerCase().replace(/\s+/g,'-') + '-' +
     params.country.toLowerCase().replace(/\s+/g,'-') + '-' + Date.now();
@@ -656,7 +782,7 @@ async function handlePay() {
   sessionStorage.setItem('kira_pending_report', JSON.stringify(params));
   sessionStorage.setItem('kira_pending_slug', slug);
 
-  // Show progress immediately — sections will populate after planning
+  // Show progress immediately
   setStep(3);
   showView('progress');
   startTime = Date.now();
@@ -674,7 +800,6 @@ async function handlePay() {
       <span style="color:#A3A9B6">Analyzing your request and planning sections...</span>
     </div>`;
 
-  // PAYWALL_DISABLED — skip payment
   await startGeneration(params, slug);
 }
 
