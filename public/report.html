@@ -665,20 +665,17 @@ async function streamSection(payload, sectionIndex) {
     body: JSON.stringify(payload)
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error('Section failed: ' + err);
-  }
+  if (!res.ok) throw new Error('Section failed: ' + await res.text());
 
   const reader  = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
-  let meta = null;
-  let commentary = '';
+  let headlineData = null;
+  let commentary   = '';
+  let visuals      = { chart: null, table: null };
 
-  // Get the slide DOM elements for live update
-  const block       = document.getElementById('sec-' + sectionIndex);
-  let commentaryEl  = null;
+  const block = document.getElementById('sec-' + sectionIndex);
+  let commentaryEl = null;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -693,82 +690,65 @@ async function streamSection(payload, sectionIndex) {
       try {
         const evt = JSON.parse(line.slice(6));
 
-        if (evt.type === 'meta') {
-          meta = evt;
-          // Replace generating skeleton with real meta content
+        // Phase 1: headline + stats appear immediately
+        if (evt.type === 'headline') {
+          headlineData = evt;
           if (block) {
-            renderSectionMeta(block, sectionIndex, payload.sectionTitle, meta);
-            // Find the commentary div that was created
+            renderSectionHeadline(block, sectionIndex, payload.sectionTitle, evt);
             commentaryEl = block.querySelector('.slide-commentary');
           }
         }
 
+        // Phase 2: stream tokens into commentary
         if (evt.type === 'token' && evt.text) {
           commentary += evt.text;
-          // Live-stream tokens into commentary div
           if (commentaryEl) {
             commentaryEl.innerHTML = formatCommentary(commentary) + '<span class="stream-cursor">|</span>';
           }
         }
 
-        if (evt.type === 'done') {
-          // Finalize commentary — remove cursor, format properly
+        // Phase 3: visuals extracted from real text
+        if (evt.type === 'visuals') {
+          visuals = evt;
           if (commentaryEl) {
             commentaryEl.innerHTML = formatCommentary(commentary);
           }
+          // Append visuals below commentary
+          if (block && (evt.chart?.labels?.length || evt.table?.headers?.length)) {
+            appendVisuals(block, sectionIndex, evt.chart, evt.table);
+          }
+          // Append sources
+          const sources = headlineData?.sources || [];
+          if (block && sources.length) {
+            appendSources(block, sources);
+          }
+        }
+
+        if (evt.type === 'done') {
+          if (commentaryEl) commentaryEl.innerHTML = formatCommentary(commentary);
         }
       } catch {}
     }
   }
 
   return JSON.stringify({
-    headline:    meta?.headline    || '',
-    stats:       meta?.stats       || [],
-    chart:       meta?.chart       || null,
-    table:       meta?.table       || null,
+    headline:  headlineData?.headline || '',
+    stats:     headlineData?.stats    || [],
+    chart:     visuals.chart,
+    table:     visuals.table,
+    sources:   headlineData?.sources  || [],
     commentary
   });
 }
 
-// Render meta part of a slide (headline, stats, chart, table + empty commentary)
-function renderSectionMeta(block, i, title, meta) {
-  const chartId = `chart-${i}`;
-  const hasChart = meta.chart?.labels?.length;
-  const hasTable = meta.table?.headers?.length;
-
-  const statsHtml = (meta.stats?.length)
-    ? `<div class="slide-stats">${meta.stats.map(s => `
+// Render headline + stats immediately (no chart yet)
+function renderSectionHeadline(block, i, title, data) {
+  const statsHtml = (data.stats?.length)
+    ? `<div class="slide-stats">${data.stats.map(s => `
         <div class="stat-pill">
           <div class="stat-icon">${getStatIcon(s.icon)}</div>
           <div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>
         </div>`).join('')}</div>`
-    : '';
-
-  let visualsHtml = '';
-  if (hasChart || hasTable) {
-    const chartHtml = hasChart ? `
-      <div class="visual-box">
-        <div class="visual-title">${meta.chart.title || ''}</div>
-        <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
-      </div>` : '';
-    const tableHtml = hasTable ? `
-      <div class="visual-box">
-        <div class="visual-title">${meta.table.title || ''}</div>
-        <div style="overflow-x:auto">
-          <table class="slide-table">
-            <thead><tr>${meta.table.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-            <tbody>${(meta.table.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
-          </table>
-        </div>
-      </div>` : '';
-    visualsHtml = `<div class="slide-visuals">${chartHtml}${tableHtml}</div>`;
-  }
-
-  const sourcesHtml = (meta.sources?.length)
-    ? `<div class="slide-sources">
-        <span class="sources-label">Sources</span>
-        ${meta.sources.map(s => `<span class="source-tag">${s}</span>`).join('')}
-       </div>`
     : '';
 
   block.classList.remove('generating');
@@ -777,20 +757,58 @@ function renderSectionMeta(block, i, title, meta) {
       <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
       <span class="slide-title">${title}</span>
     </div>
-    ${meta.headline ? `
+    ${data.headline ? `
     <div class="slide-headline">
       <div class="slide-headline-label">Key Finding</div>
-      <div class="slide-headline-text">${meta.headline}</div>
+      <div class="slide-headline-text">${data.headline}</div>
     </div>` : ''}
     ${statsHtml}
-    ${visualsHtml}
-    <div class="slide-commentary"></div>
-    ${sourcesHtml}`;
-
-  if (hasChart) {
-    setTimeout(() => renderChart(chartId, meta.chart), 50);
-  }
+    <div class="slide-commentary"></div>`;
 }
+
+// Append chart + table after commentary is done
+function appendVisuals(block, i, chart, table) {
+  const chartId = `chart-${i}`;
+  const hasChart = chart?.labels?.length;
+  const hasTable = table?.headers?.length;
+
+  const chartHtml = hasChart ? `
+    <div class="visual-box">
+      <div class="visual-title">${chart.title || ''}</div>
+      <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
+    </div>` : '';
+
+  const tableHtml = hasTable ? `
+    <div class="visual-box">
+      <div class="visual-title">${table.title || ''}</div>
+      <div style="overflow-x:auto">
+        <table class="slide-table">
+          <thead><tr>${table.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>${(table.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>` : '';
+
+  if (!chartHtml && !tableHtml) return;
+
+  const div = document.createElement('div');
+  div.className = 'slide-visuals';
+  div.innerHTML = chartHtml + tableHtml;
+  block.appendChild(div);
+
+  if (hasChart) setTimeout(() => renderChart(chartId, chart), 50);
+}
+
+function appendSources(block, sources) {
+  if (!sources?.length) return;
+  const div = document.createElement('div');
+  div.className = 'slide-sources';
+  div.innerHTML = `<span class="sources-label">Sources</span>${sources.map(s=>`<span class="source-tag">${s}</span>`).join('')}`;
+  block.appendChild(div);
+}
+
+
+
 
 function formatCommentary(text) {
   if (!text) return '';
