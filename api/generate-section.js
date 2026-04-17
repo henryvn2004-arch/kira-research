@@ -200,25 +200,28 @@ SECTION TITLE: "${sectionTitle}"
 COMMENTARY:
 ${fullCommentary}
 
-Now extract structured visual data FROM the text above. Return ONLY valid JSON:
+Extract structured visual data FROM the text above. Return ONLY valid JSON:
 {
   "chart": null,
   "table": null
 }
 
-Rules — only include what the text actually supports:
+Rules:
 
-chart: Extract if the commentary contains quantitative comparisons (market share %, growth rates, sizes, rankings, price points across 3+ items).
-- type: "bar" for rankings/comparisons, "line" for time series, "pie" or "donut" for share breakdown, "radar" for multi-attribute
-- Use ONLY numbers mentioned in the commentary — do NOT invent data
-- If the text doesn't contain enough real numbers for a chart → null
+chart: Extract if the commentary mentions ANY numbers that can be compared visually — even estimates (marked as "est." or "approx.") are fine to use.
+- type: "bar" for rankings/comparisons, "line" for time series, "pie" or "donut" for share/composition breakdown, "radar" for multi-attribute
+- Use numbers from the text. If they are estimates, add "(est.)" to the chart title.
+- Prefer chart over table when data is numeric
+- Examples that warrant a chart: market shares, growth rates, market sizes across years, price comparisons, rankings
+- If the section has NO numbers at all → null
 
-table: Extract if the commentary compares multiple entities across 2+ attributes (competitors, channels, products, regulations, partners).
-- Use ONLY information explicitly stated in the commentary
-- If the text is purely narrative → null
+table: Extract if the commentary compares 3+ entities across 2+ attributes in a structured way.
+- Good for: competitor profiles, channel comparison, regulatory requirements, partner lists
+- Use ONLY entities and attributes explicitly mentioned in the text
+- Prefer chart if the data is numeric — don't make a table just to have a visual
 
-IMPORTANT: If neither chart nor table is supported by actual data in the text, return { "chart": null, "table": null }.
-Return ONLY JSON.`;
+PRIORITY: If data can be shown as either chart or table, prefer chart.
+Return ONLY valid JSON.`;
 
     const raw    = await callClaude(extractPrompt, 600);
     const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
