@@ -535,7 +535,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
 const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
@@ -1223,32 +1223,75 @@ function renderChart(canvasId, chartDef) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
-  const COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3','#68D391'];
-  const type   = chartDef.type === 'donut' ? 'doughnut' : (chartDef.type || 'bar');
-  const isPie  = type === 'pie' || type === 'doughnut';
+
+  const COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3','#68D391','#60A5FA','#34D399'];
+  const rawType = chartDef.type || 'bar';
+  const isHorizontalBar = rawType === 'horizontalBar' || rawType === 'bar_horizontal';
+  const isStacked = chartDef.stacked || (chartDef.datasets?.length > 1 && rawType === 'bar');
+  const type = (rawType === 'donut') ? 'doughnut'
+             : (isHorizontalBar)     ? 'bar'
+             : rawType;
+  const isPie    = type === 'pie' || type === 'doughnut';
+  const isRadar  = type === 'radar';
+  const isLine   = type === 'line';
+
   const datasets = (chartDef.datasets || []).map((ds, di) => ({
-    label:           ds.label || '',
-    data:            ds.data  || [],
-    backgroundColor: isPie ? COLORS : COLORS[di % COLORS.length],
-    borderColor:     COLORS[di % COLORS.length],
-    borderWidth:     type === 'line' ? 2 : 0,
-    fill:            type === 'line',
-    tension:         0.4,
-    borderRadius:    type === 'bar' ? 4 : 0,
+    label:            ds.label || '',
+    data:             ds.data  || [],
+    backgroundColor:  isPie    ? COLORS
+                    : isRadar  ? COLORS[di % COLORS.length] + '33'
+                    : COLORS[di % COLORS.length],
+    borderColor:      COLORS[di % COLORS.length],
+    borderWidth:      isLine   ? 2 : isRadar ? 1.5 : 0,
+    fill:             isLine && di === 0,
+    tension:          0.4,
+    borderRadius:     (!isPie && !isRadar && !isLine) ? 4 : 0,
+    pointBackgroundColor: isRadar ? COLORS[di % COLORS.length] : undefined,
+    pointRadius:          isRadar ? 4 : undefined,
   }));
+
+  const scalesConfig = isPie || isRadar ? {} : {
+    x: {
+      ticks:  { color: '#5A6278', font: { size: 11 } },
+      grid:   { color: '#1A1D24' },
+      stacked: isStacked,
+      ...(isHorizontalBar ? {} : {}),
+    },
+    y: {
+      ticks:  { color: '#5A6278', font: { size: 11 } },
+      grid:   { color: '#1A1D24' },
+      beginAtZero: true,
+      stacked: isStacked,
+    }
+  };
+
+  const radarScales = isRadar ? {
+    r: {
+      ticks:        { color: '#5A6278', font: { size: 10 }, backdropColor: 'transparent' },
+      grid:         { color: '#1A1D24' },
+      pointLabels:  { color: '#A3A9B6', font: { size: 11 } },
+      angleLines:   { color: '#1A1D24' },
+    }
+  } : {};
+
   chartInstances[canvasId] = new Chart(canvas, {
     type,
     data: { labels: chartDef.labels || [], datasets },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: isHorizontalBar ? 'y' : 'x',
       plugins: {
-        legend: { labels: { color: '#A3A9B6', font: { size: 11, family: 'Arial' }, boxWidth: 12, padding: 16 } },
-        tooltip: { backgroundColor: '#161B24', titleColor: '#fff', bodyColor: '#A3A9B6', borderColor: '#242A35', borderWidth: 1 }
+        legend: {
+          display: datasets.length > 1 || isPie || isRadar,
+          labels: { color: '#A3A9B6', font: { size: 11, family: 'Arial' }, boxWidth: 12, padding: 14 }
+        },
+        tooltip: {
+          backgroundColor: '#161B24', titleColor: '#fff',
+          bodyColor: '#A3A9B6', borderColor: '#242A35', borderWidth: 1
+        }
       },
-      scales: (isPie || type === 'radar') ? {} : {
-        x: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' } },
-        y: { ticks: { color: '#5A6278', font: { size: 11 } }, grid: { color: '#1A1D24' }, beginAtZero: true }
-      }
+      scales: isRadar ? radarScales : scalesConfig,
     }
   });
 }
