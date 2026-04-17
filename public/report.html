@@ -555,16 +555,31 @@
         <span style="font-size:11px;color:#5A6278;min-width:80px">Language</span>
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:13px;color:#fff" id="confirm-lang">English</span>
-          <select id="confirm-lang-select" style="background:#0B0D10;border:1px solid #242A35;border-radius:6px;padding:4px 8px;font-size:12px;color:#A3A9B6;font-family:Arial,sans-serif;outline:none">
-            <option value="English">English</option>
-            <option value="Vietnamese">Tiếng Việt</option>
-            <option value="Chinese">中文</option>
-            <option value="Japanese">日本語</option>
-            <option value="Korean">한국어</option>
-            <option value="Thai">ภาษาไทย</option>
-            <option value="Indonesian">Bahasa Indonesia</option>
-            <option value="Malay">Bahasa Melayu</option>
-          </select>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input id="confirm-lang-select" list="lang-list"
+            style="background:#0B0D10;border:1px solid #242A35;border-radius:6px;padding:5px 10px;font-size:13px;color:#fff;font-family:Arial,sans-serif;outline:none;width:180px"
+            placeholder="Type language..." />
+          <datalist id="lang-list">
+            <option value="English"/>
+            <option value="Vietnamese"/>
+            <option value="Chinese (Simplified)"/>
+            <option value="Chinese (Traditional)"/>
+            <option value="Japanese"/>
+            <option value="Korean"/>
+            <option value="Thai"/>
+            <option value="Indonesian"/>
+            <option value="Malay"/>
+            <option value="Burmese"/>
+            <option value="Khmer"/>
+            <option value="Hindi"/>
+            <option value="Bengali"/>
+            <option value="Spanish"/>
+            <option value="French"/>
+            <option value="German"/>
+            <option value="Arabic"/>
+            <option value="Portuguese"/>
+          </datalist>
+        </div>
         </div>
       </div>
       <div style="display:flex;gap:12px;align-items:center">
@@ -596,7 +611,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_KEY_HERE'; // replace with sk-ant-...
 
 // ── State ────────────────────────────────────────────────
 const PRICES = { industry_deep_dive: 49, competitive_comparison: 29, market_entry_brief: 39 };
@@ -750,11 +765,10 @@ async function handlePay() {
     questionsRow.style.display = 'flex';
   } else { questionsRow.style.display = 'none'; }
 
-  // Set detected language
+  // Set detected language in input
   document.getElementById('confirm-lang').textContent = detectedLang;
-  const sel = document.getElementById('confirm-lang-select');
-  sel.value = detectedLang;
-  sel.onchange = () => document.getElementById('confirm-lang').textContent = sel.value;
+  const langInput = document.getElementById('confirm-lang-select');
+  langInput.value = detectedLang;
 
   // Show modal
   const modal = document.getElementById('confirm-modal');
@@ -771,7 +785,7 @@ async function confirmGenerate() {
   document.getElementById('confirm-modal').style.display = 'none';
 
   const params    = _pendingParams;
-  const language  = document.getElementById('confirm-lang-select').value;
+  const language  = document.getElementById('confirm-lang-select').value.trim() || 'English';
   params.language = language; // attach language to params
   _pendingParams  = null;
 
@@ -819,7 +833,7 @@ async function startGeneration(params, slug) {
 
     // Phase 0: Browser web_search — live data, no timeout
     document.getElementById('prog-title').textContent = 'Searching live market data...';
-    document.getElementById('prog-subtitle').textContent = 'Web search in progress — ~15 seconds';
+    document.getElementById('prog-subtitle').textContent = 'Web search in progress — ~60-90 seconds';
     document.getElementById('progress-bar').style.width = '5%';
     setStatus('🔍 <strong>Searching live market data</strong> — gathering latest figures & sources...', 5);
 
@@ -877,15 +891,12 @@ async function startGeneration(params, slug) {
     document.getElementById('progress-bar').style.width = '10%';
     const completedSections = new Array(totalSections).fill(null);
 
-    // Generate Executive Summary last — it needs all other sections as context
-    // Reorder: [1,2,3,...,N,0] so exec summary (index 0) generates last
-    const isExecFirst = sections[0]?.toLowerCase().includes('executive summary');
-    const generateOrder = isExecFirst
-      ? [...sections.slice(1).map((_, i) => i + 1), 0]
-      : sections.map((_, i) => i);
+    // Generate all sections in order — Executive Summary first (independent)
+    // It gets full research context so it doesn't need other sections
+    const generateOrder = sections.map((_, i) => i);
 
     for (let gi = 0; gi < generateOrder.length; gi++) {
-      const i     = generateOrder[gi]; // actual section index in final report
+      const i     = generateOrder[gi];
       const title = sections[i];
       setSectionStatus(i, 'active');
 
@@ -1184,13 +1195,14 @@ function renderReportMeta(params, slug) {
     if (row)   row.style.display = 'flex';
   }
   const badges = document.getElementById('report-badges');
-  badges.innerHTML = '';
+  // Remove only meta-badge spans, keep export buttons
+  badges.querySelectorAll('.meta-badge').forEach(el => el.remove());
   [params.country, params.reportType?.replace(/_/g,' '), '2026'].forEach(b => {
     if (!b) return;
     const span = document.createElement('span');
     span.className = 'meta-badge';
     span.textContent = b.charAt(0).toUpperCase() + b.slice(1);
-    badges.appendChild(span);
+    badges.insertBefore(span, badges.firstChild);
   });
 }
 
