@@ -147,10 +147,11 @@ Write 300-450 words of consulting-grade analytical prose:
 - Lead with the strategic insight
 - Reference specific data points, companies, figures from the research data
 - When mentioning numbers (market share %, sizes, growth rates, prices), be explicit — these will be used to generate charts
+- IMPORTANT: For any specific number that is not directly cited from a named source in the research data, add "est." or "approx." before it — e.g. "est. 45% market share", "approx. $2.4B market size". Only omit est./approx. if you can attribute the figure to a specific named source (e.g. "According to Vietnam EV Association, 38% of...")
 - Use **bold** for key terms and company names
 - Use ### for sub-headings if helpful
 - End with strategic implication
-- No AI disclaimers, no "based on available data"
+- No generic AI disclaimers
 - Flowing paragraphs, not bullet points`;
 
     const streamRes = await fetch(ANT_URL, {
