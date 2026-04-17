@@ -73,14 +73,14 @@ export default async function handler(req, res) {
 
   const {
     reportId, sectionIndex, sectionTitle, totalSections,
-    industry, country, reportType, questions, companies,
+    industry, country, reportType, questions, companies, language,
     researchSummary, ragContext, prevSections = []
   } = req.body;
 
   if (!sectionTitle) return res.status(400).json({ error: 'Missing sectionTitle' });
 
   const context = buildContext(
-    { industry, country, reportType, questions, companies },
+    { industry, country, reportType, questions, companies, language },
     ragContext, researchSummary, prevSections
   );
 
@@ -148,7 +148,12 @@ Write 250-350 words of consulting-grade analytical prose:
   try {
     const isNarrativeSection = /executive summary|recommendation|strategic outlook|conclusion/i.test(sectionTitle);
 
+    const langNote = (language && language !== 'English')
+      ? `\nIMPORTANT: All text output (headline, stat labels, table headers, chart title, chart labels) must be in ${language}.`
+      : '';
+
     const extractPrompt = `You wrote this section "${sectionTitle}" of a market research report:
+${langNote}
 
 ${fullCommentary}
 
