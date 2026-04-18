@@ -76,6 +76,11 @@
 
     /* source reports table */
     table{width:100%;border-collapse:collapse}
+
+    /* industry tags */
+    .ind-tag{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #1A1D24;color:#5A6278;background:#11151C;transition:all .15s;user-select:none}
+    .ind-tag:hover{border-color:#1E6FFF;color:#A3A9B6}
+    .ind-tag.selected{background:rgba(30,111,255,.15);border-color:#1E6FFF;color:#1E6FFF}
     th{text-align:left;padding:8px 12px;color:#5A6278;border-bottom:1px solid #1A1D24;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
     td{padding:10px 12px;border-bottom:1px solid #0F1218;color:#A3A9B6;vertical-align:middle;font-size:13px}
     td:first-child{color:#fff}
@@ -211,9 +216,9 @@
 
     <!-- Step 1: Category -->
     <div class="card">
-      <h2>Step 1 — Framework Category</h2>
+      <h2>Step 1 — Configure Framework</h2>
       <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
-        Select the category that best describes these frameworks. Used for RAG filtering when generating strategy playbooks.
+        Configure before uploading. These fields are applied to <em>all files</em> in the queue below.
       </p>
       <div class="grid2">
         <div>
@@ -232,13 +237,30 @@
             <option value="analytics">Analytics</option>
           </select>
         </div>
-        <div style="display:flex;align-items:flex-end;padding-bottom:16px">
-          <div style="font-size:12px;color:#5A6278;line-height:1.8">
-            <span style="color:#1E6FFF">✓</span> Claude Vision reads slides + diagrams<br/>
-            <span style="color:#1E6FFF">✓</span> Auto-detects framework name<br/>
-            <span style="color:#1E6FFF">✓</span> Chunks by section/principle
-          </div>
+        <div>
+          <label>Framework Name <span style="color:#5A6278;font-weight:400">(optional — auto-detected if blank)</span></label>
+          <input type="text" id="fw-name" placeholder="e.g. Strategic Choice Cascade, Jobs-to-be-Done" style="margin-bottom:0" />
         </div>
+      </div>
+      <div style="margin-top:4px">
+        <label>Applicable Industries <span style="color:#5A6278;font-weight:400">(click to select, multiple OK)</span></label>
+        <div id="fw-industries" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+          <span class="ind-tag" data-v="all">All Industries</span>
+          <span class="ind-tag" data-v="fmcg">FMCG</span>
+          <span class="ind-tag" data-v="retail">Retail</span>
+          <span class="ind-tag" data-v="banking">Banking</span>
+          <span class="ind-tag" data-v="pharma">Pharma</span>
+          <span class="ind-tag" data-v="technology">Technology</span>
+          <span class="ind-tag" data-v="b2b">B2B</span>
+          <span class="ind-tag" data-v="industrial">Industrial</span>
+          <span class="ind-tag" data-v="telecom">Telecom</span>
+          <span class="ind-tag" data-v="automotive">Automotive</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:#5A6278;line-height:1.8">
+        <span style="color:#1E6FFF">✓</span> PDF pages rendered as images — Claude Vision reads diagrams &amp; charts<br/>
+        <span style="color:#1E6FFF">✓</span> PPTX slides extracted via JSZip — text + embedded images sent to Vision<br/>
+        <span style="color:#1E6FFF">✓</span> All brand/firm names stripped automatically
       </div>
     </div>
 
@@ -826,6 +848,55 @@ async function embedReport(sourceReportId, rowIdx, isFramework = false) {
 
 let fwQueue = [];
 
+// -- Industry tag toggle -----------------------------------
+document.addEventListener('click', e => {
+  if (!e.target.classList.contains('ind-tag')) return;
+  const tag = e.target;
+  // "All Industries" is exclusive
+  if (tag.dataset.v === 'all') {
+    document.querySelectorAll('.ind-tag').forEach(t => t.classList.remove('selected'));
+    tag.classList.add('selected');
+  } else {
+    document.querySelector('.ind-tag[data-v="all"]')?.classList.remove('selected');
+    tag.classList.toggle('selected');
+  }
+});
+
+function getFwIndustries() {
+  const selected = [...document.querySelectorAll('.ind-tag.selected')].map(t => t.dataset.v);
+  return selected.length ? selected : ['all'];
+}
+
+// -- PDF → page images (Claude Vision) --------------------
+async function pdfToImages(file, onProgress) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  const buf  = await file.arrayBuffer();
+  const pdf  = await pdfjsLib.getDocument({ data: buf }).promise;
+  const images = [];
+
+  for (let p = 1; p <= pdf.numPages; p++) {
+    if (onProgress) onProgress(p, pdf.numPages);
+    const page     = await pdf.getPage(p);
+    const viewport = page.getViewport({ scale: 1.5 }); // 1.5x = good quality vs size balance
+    const canvas   = document.createElement('canvas');
+    canvas.width   = viewport.width;
+    canvas.height  = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    page.cleanup();
+
+    const base64 = canvas.toDataURL('image/png').split(',')[1];
+    images.push({ pageNum: p, data: base64, mime: 'image/png' });
+
+    // Release canvas memory immediately
+    canvas.width = 0; canvas.height = 0;
+  }
+
+  pdf.destroy();
+  return images;
+}
+
 // -- Framework queue management ----------------------------
 function addToFwQueue() {
   const files = Array.from(document.getElementById('fw-files').files);
@@ -938,161 +1009,155 @@ async function pptxToSlides(file) {
   return slides;
 }
 
-// -- Parse PDF for frameworks (reuses pdfToMd, returns text only) --
-async function pdfToTextForFramework(file) {
-  const text = await pdfToMd(file);
-  return text;
-}
-
-// -- Build Claude message content from a slide batch -------
-function buildSlideContent(slides) {
+// -- Build Claude message content from a batch of images ---
+// Works for both PPTX slide images and PDF page images
+function buildImageContent(images, labelPrefix) {
   const content = [];
-  for (const slide of slides) {
-    if (slide.text) {
-      content.push({ type: 'text', text: `\n--- Slide ${slide.slideNum} ---\n${slide.text}` });
+  for (const img of images) {
+    const label = labelPrefix
+      ? `${labelPrefix} ${img.slideNum ?? img.pageNum}`
+      : null;
+    if (label) content.push({ type: 'text', text: `\n--- ${label} ---` });
+    // Inline text for PPTX slides
+    if (img.text) content.push({ type: 'text', text: img.text });
+    // Image (PDF page render or PPTX embedded image)
+    const imgData = img.data;
+    if (imgData && ['image/jpeg','image/png','image/gif','image/webp'].includes(img.mime)) {
+      content.push({ type: 'image', source: { type: 'base64', media_type: img.mime, data: imgData } });
     }
-    for (const img of slide.images) {
-      // Skip if MIME is not directly supported by Claude (emf/wmf fallback)
-      if (!['image/jpeg','image/png','image/gif','image/webp'].includes(img.mime)) continue;
-      content.push({
-        type: 'image',
-        source: { type: 'base64', media_type: img.mime, data: img.data }
-      });
+    // PPTX: also push embedded images within the slide
+    if (img.images) {
+      for (const embedded of img.images) {
+        if (['image/jpeg','image/png','image/gif','image/webp'].includes(embedded.mime)) {
+          content.push({ type: 'image', source: { type: 'base64', media_type: embedded.mime, data: embedded.data } });
+        }
+      }
     }
   }
   return content;
 }
 
 // -- Framework extraction: 2-pass Claude Vision call -------
-async function callClaudeFramework(slides, frameworkCategory, isPdf, pdfText) {
-  // ── Pass 1: Detect name + structure from first slides ──────────
-  addFwLog('  Pass 1: detecting framework structure...');
+// pdfImages: [{pageNum, data, mime}] — from pdfToImages()
+// slides:    [{slideNum, text, images[]}] — from pptxToSlides()
+async function callClaudeFramework(slides, frameworkCategory, isPdf, pdfImages, fwName, fwIndustries) {
+  const BATCH    = 8;  // images per Claude call
+  const industries = (fwIndustries || ['all']).join(', ');
+  // Use all images: PDF page images OR PPTX slide objects
+  const allImages = isPdf ? pdfImages : slides;
+  const labelPrefix = isPdf ? 'Page' : 'Slide';
 
-  let pass1Content;
-  if (isPdf) {
-    pass1Content = [{ type: 'text', text: pdfText.slice(0, 10000) }];
-  } else {
-    pass1Content = buildSlideContent(slides.slice(0, Math.min(12, slides.length)));
-  }
+  // ── Pass 1: detect structure from first batch ───────────
+  addFwLog('  Pass 1: detecting framework structure...');
+  const pass1Images = allImages.slice(0, Math.min(10, allImages.length));
+  const pass1Content = buildImageContent(pass1Images, labelPrefix);
+  const nameHint = fwName ? `The framework name provided by the user is: "${fwName}". Use this name.` : 'Auto-detect the framework name from the content.';
 
   pass1Content.push({ type: 'text', text:
-    `You are reading a strategy/consulting framework deck. Analyze the content above.
+    `You are reading a consulting framework document. Analyze the content above.
+${nameHint}
 Return ONLY valid JSON:
 {
-  "framework_name": "exact name of this framework/playbook",
-  "framework_category": "${frameworkCategory || 'strategy'}",
-  "description": "2-3 sentence description of what this framework does and when to use it",
-  "core_sections": ["Section or Step 1", "Section or Step 2"],
-  "total_slides": ${isPdf ? 0 : slides.length},
+  "framework_name": "name of this framework",
+  "description": "2-3 sentence description: what it does, when to use it",
+  "core_sections": ["Step/Section 1", "Step/Section 2"],
   "applicable_situations": ["situation1", "situation2", "situation3"]
 }
-Rules: Strip all brand/firm names (replace with generic: "global consulting firm"). Return ONLY JSON.`
+CRITICAL: Strip ALL consulting firm names (McKinsey, BCG, Bain, Deloitte, Monitor, Accenture, PwC, EY, KPMG etc). Replace with "a leading consulting firm" or omit. Return ONLY JSON.`
   });
 
-  const p1Text = await claudeCall(pass1Content, 1000);
-  const p1 = safeParseJSON(p1Text);
-  addFwLog(`  Framework: "${p1.framework_name}" · ${p1.core_sections?.length || 0} sections`);
+  const p1 = safeParseJSON(await claudeCall(pass1Content, 800));
+  const resolvedName = fwName || p1.framework_name || 'Unknown Framework';
+  addFwLog(`  Framework: "${resolvedName}" · ${p1.core_sections?.length || 0} sections`);
 
-  // ── Pass 2: Extract chunks — batch slides ──────────────────────
-  addFwLog('  Pass 2: extracting chunks from all slides...');
+  // ── Pass 2: extract chunks in batches ──────────────────
+  addFwLog('  Pass 2: extracting chunks...');
   const allChunks = [];
-  const BATCH = 8;
+  const totalBatches = Math.ceil(allImages.length / BATCH);
 
-  if (isPdf) {
-    // For PDF: split text into sections and extract in one call
-    const truncated = pdfText.length > 60000 ? pdfText.slice(0, 60000) + '\n[TRUNCATED]' : pdfText;
-    const chunkContent = [
-      { type: 'text', text: truncated },
-      { type: 'text', text:
-        `Framework: "${p1.framework_name}" | Category: ${frameworkCategory}
-Extract all meaningful chunks from this framework. Each chunk = one principle/tool/step/matrix/insight.
+  for (let b = 0; b < allImages.length; b += BATCH) {
+    const batch      = allImages.slice(b, b + BATCH);
+    const batchNum   = Math.floor(b / BATCH) + 1;
+    const batchLabel = isPdf
+      ? `pages ${batch[0].pageNum}–${batch[batch.length-1].pageNum}`
+      : `slides ${batch[0].slideNum}–${batch[batch.length-1].slideNum}`;
+    addFwLog(`    Batch ${batchNum}/${totalBatches}: ${batchLabel}...`);
+
+    const batchContent = buildImageContent(batch, labelPrefix);
+    batchContent.push({ type: 'text', text:
+      `Framework: "${resolvedName}" | Category: ${frameworkCategory} | Industries: ${industries}
+Extract all meaningful chunks from these ${labelPrefix.toLowerCase()}s. Target 3-8 chunks per batch.
 Return ONLY valid JSON:
 {
   "chunks": [{
-    "principle_name": "name of this principle, tool, step, or concept",
-    "content": "150-250 word description: what this principle is, how to apply it, what it produces. NO brand names, NO specific company examples.",
-    "use_case": "one sentence: when/why to use this",
-    "applicable_situations": ["market_entry", "competitive_analysis", "pricing", "segmentation", etc]
-  }]
-}
-Rules: 8-25 chunks. Strip all brand/firm names. Focus on HOW-TO and STRUCTURE. Return ONLY JSON.`
-      }
-    ];
-    const res = safeParseJSON(await claudeCall(chunkContent, 6000));
-    allChunks.push(...(res.chunks || []));
-
-  } else {
-    // For PPTX: batch slides
-    for (let start = 0; start < slides.length; start += BATCH) {
-      const batch     = slides.slice(start, start + BATCH);
-      const batchNums = batch.map(s => s.slideNum).join(',');
-      addFwLog(`    Batch slides ${batchNums}...`);
-
-      const batchContent = buildSlideContent(batch);
-      batchContent.push({ type: 'text', text:
-        `Framework: "${p1.framework_name}" | Category: ${frameworkCategory} | Slides: ${batchNums}
-Extract all meaningful chunks visible in these slides. Each chunk = one principle/step/tool/matrix/insight.
-Return ONLY valid JSON:
-{
-  "chunks": [{
-    "principle_name": "name of this principle or step",
-    "content": "150-250 word description: what this is, how to apply it, what it produces. NO brand names. Describe any visible diagrams/matrices in words.",
+    "chunk_type": "framework_definition|framework_structure|application_approach|diagnostic_question|decision_criteria|pitfall|case_pattern",
+    "principle_name": "name of this principle, step, tool, or concept",
+    "content": "150-250 words: what it is, how to apply it, what it produces. NO brand/firm names. Describe any diagrams or matrices visible in the images.",
     "use_case": "one sentence: when/why to apply this",
-    "applicable_situations": ["market_entry", "competitive_analysis", "pricing", "segmentation", etc],
-    "slide_refs": [${batch[0].slideNum}]
+    "applicable_situations": ["market_entry", "competitive_analysis", "pricing", "segmentation"],
+    "page_reference": "${labelPrefix.toLowerCase()} X or ${labelPrefix.toLowerCase()}s X-Y"
   }]
 }
-Rules: skip intro/agenda/thank-you slides. Strip brand/firm names. Return ONLY JSON (or {"chunks":[]} if no useful content).`
-      });
+CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip ALL firm names. Return {"chunks":[]} if no useful content. Return ONLY JSON.`
+    });
 
+    let attempt = 0;
+    while (attempt < 3) {
       try {
-        const batchRes = safeParseJSON(await claudeCall(batchContent, 3000));
-        allChunks.push(...(batchRes.chunks || []));
+        const res = safeParseJSON(await claudeCall(batchContent, 3500));
+        allChunks.push(...(res.chunks || []));
+        break;
       } catch(e) {
-        addFwLog(`    Batch parse error (skipped): ${e.message}`, 'warn');
+        attempt++;
+        if (attempt < 3) {
+          addFwLog(`    Retry ${attempt}/3...`, 'warn');
+          await new Promise(r => setTimeout(r, 2000 * attempt));
+        } else {
+          addFwLog(`    Batch ${batchNum} failed after 3 retries: ${e.message}`, 'err');
+        }
       }
-
-      // Small delay between batches
-      await new Promise(r => setTimeout(r, 500));
     }
+
+    if (b + BATCH < allImages.length) await new Promise(r => setTimeout(r, 600));
   }
 
-  addFwLog(`  Extracted: ${allChunks.length} chunks`);
+  addFwLog(`  Extracted: ${allChunks.length} chunks total`);
 
-  // ── Build output in ingest-save format ─────────────────────────
+  // ── Build output for ingest-save ───────────────────────
   const year = new Date().getFullYear();
   return {
     metadata: {
-      title:            p1.framework_name,
+      title:            resolvedName,
       product_category: frameworkCategory,
       sub_category:     null,
       country:          'Global',
       region:           null,
       year,
-      client_industry:  null,
+      client_industry:  industries,
       competency_type:  'framework',
       methodology_used: [],
       respondent_types: []
     },
     template: {
-      name:             p1.framework_name,
+      name:              resolvedName,
       section_structure: (p1.core_sections || []).map(s => ({ section: s, purpose: '' })),
-      methodology:      p1.description || ''
+      methodology:       p1.description || ''
     },
     patterns: [],
     chunks: allChunks.map(c => ({
-      chunk_type:  'framework',
-      content:     c.content,
-      section:     c.principle_name,
-      data_type:   null,
-      // extra metadata stored in JSONB
+      chunk_type: 'framework',
+      content:    c.content,
+      section:    c.principle_name,
+      data_type:  null,
       _fw_meta: {
-        framework_name:        p1.framework_name,
+        framework_name:        resolvedName,
         framework_category:    frameworkCategory,
+        applicable_industries: fwIndustries || ['all'],
         principle_name:        c.principle_name,
+        chunk_type_detail:     c.chunk_type,
         use_case:              c.use_case,
         applicable_situations: c.applicable_situations || [],
-        slide_refs:            c.slide_refs || []
+        page_reference:        c.page_reference || ''
       }
     }))
   };
@@ -1100,8 +1165,10 @@ Rules: skip intro/agenda/thank-you slides. Strip brand/firm names. Return ONLY J
 
 // -- Process framework queue --------------------------------
 async function processFwQueue() {
-  const category = document.getElementById('fw-category').value;
+  const category    = document.getElementById('fw-category').value;
   if (!category) return alert('Please select a Framework Category first.');
+  const fwName      = document.getElementById('fw-name').value.trim();
+  const fwIndustries = getFwIndustries();
 
   const pending = fwQueue.filter(q => q.status === 'pending');
   if (!pending.length) return alert('No pending files in queue.');
@@ -1109,6 +1176,7 @@ async function processFwQueue() {
   document.getElementById('btn-fw-process').disabled = true;
   document.getElementById('fw-progress-wrap').style.display = 'block';
   document.getElementById('fw-log-body').innerHTML = '';
+  addFwLog(`Config: category=${category} | name="${fwName||'auto'}" | industries=${fwIndustries.join(',')}`, 'info');
 
   let done = 0;
   for (let i = 0; i < fwQueue.length; i++) {
@@ -1123,35 +1191,36 @@ async function processFwQueue() {
       const isPptx = ext === 'pptx' || ext === 'ppt';
       const isPdf  = ext === 'pdf';
 
-      let slides  = [];
-      let pdfText = '';
+      let slides     = [];
+      let pdfImages  = [];
       let uploadContent, uploadName;
 
       if (isPptx) {
         addFwLog('Extracting slides from PPTX...');
         slides = await pptxToSlides(item.file);
-        addFwLog(`  ${slides.length} slides found, ${slides.reduce((n,s)=>n+s.images.length,0)} images extracted`);
-        uploadName = item.name.replace(/\.pptx?$/i, '.json');
+        addFwLog(`  ${slides.length} slides, ${slides.reduce((n,s)=>n+s.images.length,0)} embedded images`);
+        uploadName    = item.name.replace(/\.pptx?$/i, '.json');
         uploadContent = JSON.stringify({ name: item.name, slides: slides.map(s => ({
           slideNum: s.slideNum, text: s.text, imageCount: s.images.length
         }))});
+
       } else if (isPdf) {
-        addFwLog('Converting PDF to text...');
+        addFwLog('Rendering PDF pages as images...');
         let lastP = 0;
-        pdfText = await pdfToMd(item.file, (p, total) => {
+        pdfImages = await pdfToImages(item.file, (p, total) => {
           if (p !== lastP) {
             document.getElementById('fw-progress-label-text').textContent =
-              `Converting page ${p}/${total}`;
+              `Rendering page ${p}/${total}`;
             lastP = p;
           }
         });
-        addFwLog(`  Converted: ${Math.round(pdfText.length/1024)}KB`);
-        uploadName = item.name.replace(/\.pdf$/i, '.md');
-        uploadContent = pdfText;
+        addFwLog(`  ${pdfImages.length} pages rendered`);
+        uploadName    = item.name.replace(/\.pdf$/i, '.json');
+        uploadContent = JSON.stringify({ name: item.name, pages: pdfImages.length });
       }
 
-      // Upload to 'frameworks' bucket
-      addFwLog('Uploading to Storage (frameworks bucket)...');
+      // Upload manifest to 'frameworks' bucket
+      addFwLog('Uploading manifest to Storage...');
       const filePath = `frameworks/${Date.now()}-${uploadName.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-_.]/g,'')}`;
       const blob = new Blob([uploadContent], { type: 'text/plain' });
       const { error: upErr } = await window.db.storage
@@ -1160,12 +1229,14 @@ async function processFwQueue() {
       if (upErr) throw new Error('Upload failed: ' + upErr.message);
       addFwLog(`  Stored: ${filePath}`);
 
-      // Claude extraction
+      // Claude Vision extraction — pass fw-name + industries
       addFwLog('Extracting with Claude Vision...');
-      const extraction = await callClaudeFramework(slides, category, isPdf, pdfText);
+      const extraction = await callClaudeFramework(
+        slides, category, isPdf, pdfImages, fwName, fwIndustries
+      );
       addFwLog(`  Done: "${extraction.metadata.title}" · ${extraction.chunks.length} chunks`);
 
-      // Reformat chunks for ingest-save (merge _fw_meta into metadata JSONB)
+      // Reformat chunks: merge _fw_meta into metadata JSONB
       extraction.chunks = extraction.chunks.map(c => {
         const { _fw_meta, ...rest } = c;
         return { ...rest, metadata: _fw_meta || {} };
@@ -1175,10 +1246,7 @@ async function processFwQueue() {
       addFwLog('Saving to database...');
       const saveRes = await fetch('/api/ingest-save', {
         method: 'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': 'Bearer ' + EDGE_ANON,
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
         body: JSON.stringify({ filePath, extraction }),
       });
       const saveData = await saveRes.json();
