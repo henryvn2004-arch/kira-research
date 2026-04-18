@@ -322,6 +322,7 @@
           <tr>
             <th>Title</th>
             <th>Category</th>
+            <th>Kind</th>
             <th>Country</th>
             <th>Year</th>
             <th>Type</th>
@@ -331,7 +332,7 @@
           </tr>
         </thead>
         <tbody id="sources-tbody">
-          <tr><td colspan="8" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
+          <tr><td colspan="9" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -389,9 +390,9 @@ function doLogin() {
 // -- Tabs --------------------------------------------------
 function switchTab(name) {
   const names = ['ingest','sources','frameworks','stats'];
-  const ids   = ['tab-ingest','tab-sources','tab-frameworks','tab-stats'];
+  // Match tabs by position, sections by ID (immune to HTML order)
   document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', names[i] === name));
-  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', ids[i] === 'tab-'+name));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'tab-'+name));
   if (name === 'sources')    loadSources();
   if (name === 'stats')      loadStats();
   if (name === 'frameworks') loadFrameworks();
@@ -727,14 +728,14 @@ function clearLog() {
 // -- Load source reports -----------------------------------
 async function loadSources() {
   const tbody = document.getElementById('sources-tbody');
-  tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
 
   const { data, error } = await window.db.from('source_reports')
     .select('id,title,product_category,country,year,competency_type,extracted')
     .order('created_at', { ascending: false }).limit(100);
 
   if (error || !data?.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="color:#5A6278;text-align:center;padding:20px">No records yet</td></tr>';
     return;
   }
 
@@ -753,12 +754,17 @@ async function loadSources() {
   tbody.innerHTML = data.map((r, i) => {
     const isEmbedded  = embeddedSet.has(r.id);
     const canEmbed    = r.extracted && !isEmbedded;
+    const isFramework = r.competency_type === 'framework';
+    const kindBadge   = isFramework
+      ? `<span style="font-size:11px;background:rgba(30,111,255,.12);color:#1E6FFF;border:1px solid rgba(30,111,255,.25);padding:2px 8px;border-radius:4px;font-weight:700">Framework</span>`
+      : `<span style="font-size:11px;background:rgba(56,217,150,.1);color:#38D996;border:1px solid rgba(56,217,150,.2);padding:2px 8px;border-radius:4px;font-weight:700">Report</span>`;
     return `<tr id="src-row-${i}">
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.title||''}">${r.title || '?'}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.title||''}">${r.title || '?'}</td>
       <td>${r.product_category || '?'}</td>
+      <td>${kindBadge}</td>
       <td>${r.country}</td>
       <td>${r.year}</td>
-      <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
+      <td style="color:#A3A9B6">${isFramework ? '—' : (r.competency_type||'').replace(/_/g,' ')}</td>
       <td>${r.extracted
         ? '<span style="color:#38D996">✓ Yes</span>'
         : '<span style="color:#5A6278">Pending</span>'}</td>
