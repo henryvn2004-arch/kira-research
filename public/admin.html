@@ -294,8 +294,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 async function pdfToMd(file, onProgress) {
+  // Re-set worker each time to avoid stale worker issues
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
   const buf  = await file.arrayBuffer();
-  const pdf  = await pdfjsLib.getDocument({ data: buf }).promise;
+  const loadingTask = pdfjsLib.getDocument({ data: buf });
+  const pdf  = await loadingTask.promise;
   const name = file.name.replace(/\.pdf$/i, '');
   let md = `# ${name}\n\n`;
   md += `> Source: ${file.name} | Pages: ${pdf.numPages} | Converted: ${new Date().toLocaleDateString()}\n\n---\n\n`;
@@ -304,6 +309,7 @@ async function pdfToMd(file, onProgress) {
     if (onProgress) onProgress(p, pdf.numPages);
     const page    = await pdf.getPage(p);
     const content = await page.getTextContent();
+    page.cleanup();
 
     // Group items into lines by Y position
     const byY = {};
@@ -325,6 +331,9 @@ async function pdfToMd(file, onProgress) {
     md += `## Page ${p}\n\n`;
     md += lines.join('\n') + '\n\n';
   }
+
+  // Destroy PDF document to free memory
+  pdf.destroy();
   return md;
 }
 
@@ -585,6 +594,9 @@ async function processQueue() {
     document.getElementById('progress-pct').textContent = pct + '%';
     document.getElementById('progress-label-text').textContent =
       `${done}/${total} files processed`;
+
+    // Small delay between files to free memory
+    if (i < queue.length - 1) await new Promise(r => setTimeout(r, 1500));
   }
 
   addLog('\nDONE Queue processing complete.', 'done');
