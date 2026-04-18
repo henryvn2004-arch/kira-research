@@ -519,15 +519,20 @@ async function processQueue() {
       addLog(`  Uploaded: ${filePath}`);
       item.filePath = filePath;
 
-      // 2. Call Vercel ingest API
-      addLog('Calling ingest API...');
+      // 2. Extract with Claude
+      addLog('Extracting with Claude...');
+      const extraction = await callClaude(textContent);
+      addLog(`  Extracted: ${extraction.patterns?.length || 0} patterns, ${extraction.chunks?.length || 0} chunks`);
+
+      // 3. Save to DB via ingest-save
+      addLog('Saving to database...');
       const res = await fetch('/api/ingest-save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + EDGE_ANON,
         },
-        body: JSON.stringify({ filePath }),
+        body: JSON.stringify({ filePath, extraction }),
       });
 
       const result = await res.json();
