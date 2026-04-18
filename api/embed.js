@@ -37,7 +37,13 @@ export default async function handler(req, res) {
     .limit(BATCH_SIZE);
 
   if (ids?.length) query = query.in('id', ids);
-  if (source_report_id) query = query.eq('source_report_id', source_report_id);
+  if (source_report_id) {
+    if (type === 'pattern') {
+      query = query.contains('source_report_ids', [source_report_id]);
+    } else {
+      query = query.eq('source_report_id', source_report_id);
+    }
+  }
 
   const { data: rows, error } = await query;
   if (error) return res.status(500).json({ error: error.message });
