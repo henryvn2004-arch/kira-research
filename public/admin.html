@@ -368,72 +368,97 @@ function setQueueStatus(idx, status) {
 }
 
 // -- Process queue -----------------------------------------
+async function claudeCall(messages, maxTokens) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: maxTokens, messages }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
+  return data.content?.[0]?.text || '';
+}
+
+function safeParseJSON(text) {
+  const clean = text.replace(/```json|```/g, '').trim();
+  try { return JSON.parse(clean); } catch(e) {
+    const lastClose = Math.max(clean.lastIndexOf('}\n'), clean.lastIndexOf('},\n'), clean.lastIndexOf('}]'));
+    if (lastClose > 100) {
+      try {
+        const t = clean.slice(0, lastClose + 1);
+        const opens  = (t.match(/\[/g)||[]).length - (t.match(/\]/g)||[]).length;
+        const braces = (t.match(/{/g)||[]).length  - (t.match(/}/g)||[]).length;
+        let fixed = t;
+        for (let i = 0; i < opens;  i++) fixed += ']';
+        for (let i = 0; i < braces; i++) fixed += '}';
+        return JSON.parse(fixed);
+      } catch(e2) {}
+    }
+    throw new Error('JSON parse failed: ' + e.message);
+  }
+}
+
 async function callClaude(fileText) {
-  const truncated = fileText.length > 80000
-    ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]'
-    : fileText;
+  const head = fileText.slice(0, 8000);
 
-  const prompt = `You are analyzing a consulting market research report.
-Read carefully and return ONLY valid JSON (no markdown, no backticks):
-
+  // Pass 1: detect metadata + sections from ToC
+  addLog('  Pass 1: detecting sections...');
+  const p1 = safeParseJSON(await claudeCall([{ role: 'user', content:
+    `Analyze the start of this consulting report. Return ONLY valid JSON:
 {
   "metadata": {
     "title": "report title",
-    "product_category": "main category",
+    "product_category": "main product/market category",
     "sub_category": "sub-category or null",
-    "country": "country name",
-    "region": "southeast_asia|south_asia|east_asia or null",
-    "year": 2019,
-    "client_industry": "industry or null",
+    "country": "country or region name",
+    "region": "southeast_asia|south_asia|east_asia|apac or null",
+    "year": 2010,
+    "client_industry": "client industry or null",
     "competency_type": "market_analysis|competitive_landscape|market_entry|channel_analysis|pricing_study|consumer_insights|partner_search|market_sizing|industry_mapping",
-    "methodology_used": ["survey","focus_groups","trade_interviews","desk_research"],
+    "methodology_used": ["desk_research","survey","trade_interviews","focus_groups"],
     "respondent_types": ["consumers","trade","experts"]
   },
   "template": {
     "name": "template name",
-    "section_structure": [{"section": "...", "purpose": "..."}],
-    "methodology": "methodology description"
+    "section_structure": [{"section": "Section Title", "purpose": "what this section covers"}],
+    "methodology": "brief methodology description"
   },
-  "patterns": [
-    {
-      "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
-      "industry": "industry name",
-      "sub_industry": "sub-industry or null",
-      "description": "structural insight - STRIP all specific numbers/dates",
-      "applicable_regions": ["southeast_asia"],
-      "confidence": "high|medium|low"
-    }
-  ],
-  "chunks": [
-    {
-      "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
-      "content": "50-150 word insight - STRIP specific numbers, keep structural insights",
-      "section": "section name",
-      "data_type": "null"
-    }
-  ]
+  "sections": ["Section 1", "Section 2"]
 }
+REPORT START:\n` + head }], 1500));
 
-Rules: 5-15 patterns, 20-50 chunks. Return ONLY JSON.
+  const sections = p1.sections || [];
+  addLog(`  Found ${sections.length} sections: ${sections.slice(0,3).join(', ')}...`);
 
-REPORT:
-` + truncated;
+  // Pass 2: extract patterns + chunks from full text
+  addLog('  Pass 2: extracting patterns & chunks...');
+  const truncated = fileText.length > 80000 ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]' : fileText;
+  const p2 = safeParseJSON(await claudeCall([{ role: 'user', content:
+    `Extract reusable intelligence from this consulting report.
+Sections: ${sections.join(', ')}
+Return ONLY valid JSON:
+{
+  "patterns": [{
+    "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
+    "industry": "industry", "sub_industry": "or null",
+    "description": "100-200 word structural insight — STRIP all specific numbers/dates/brand names",
+    "applicable_regions": ["southeast_asia"], "confidence": "high|medium|low"
+  }],
+  "chunks": [{
+    "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
+    "content": "80-200 word insight — STRIP specific numbers, keep structural patterns",
+    "section": "exact section title", "data_type": "margin_stack|price_ladder|channel_split|brand_map or null"
+  }]
+}
+Rules: 5-15 patterns, 1-2 chunks per section (max 30 chunks). STRIP numbers/dates. Return ONLY JSON.
+REPORT:\n` + truncated }], 8000));
 
-  const res = await fetch('/api/claude-proxy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
-  const text  = data.content?.[0]?.text || '';
-  const clean = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
+  return { metadata: p1.metadata, template: p1.template, patterns: p2.patterns||[], chunks: p2.chunks||[] };
 }
 
 async function runEmbeddings() {
@@ -510,7 +535,7 @@ async function processQueue() {
 
       // 1b. Upload text to Supabase Storage
       addLog('Uploading to Storage...');
-      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-')}`;
+      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-_.]/g, '')}`;
       const blob = new Blob([textContent], { type: 'text/plain' });
 
       const { error: upErr } = await window.db.storage
@@ -521,21 +546,26 @@ async function processQueue() {
       addLog(`  Uploaded: ${filePath}`);
       item.filePath = filePath;
 
-      // 2. Call Vercel ingest API
-      addLog('Calling ingest API...');
-      const res = await fetch('/api/ingest', {
+      // 2. Extract with Claude (2-pass: ToC + full text)
+      addLog('Extracting with Claude...');
+      const extraction = await callClaude(textContent);
+      addLog(`  Extracted: ${extraction.patterns?.length||0} patterns, ${extraction.chunks?.length||0} chunks`);
+
+      // 3. Save to DB
+      addLog('Saving to database...');
+      const res = await fetch('/api/ingest-save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + EDGE_ANON,
         },
-        body: JSON.stringify({ filePath }),
+        body: JSON.stringify({ filePath, extraction }),
       });
 
       const result = await res.json();
-      if (!result.success) throw new Error(result.error || 'Edge function failed');
+      if (!result.success) throw new Error(result.error || 'ingest-save failed');
 
-      addLog(`OK Done: ${result.patterns} patterns ? ${result.chunks} chunks ? ${result.embedded} embeddings`, 'done');
+      addLog(`✓ Done: ${result.patterns} patterns, ${result.chunks} chunks saved`, 'done');
       setQueueStatus(i, 'done');
 
     } catch (e) {
