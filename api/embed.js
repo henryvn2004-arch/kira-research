@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
   const { type = 'chunk', ids, source_report_id } = req.body;
   const table  = type === 'pattern' ? 'industry_patterns' : 'report_chunks';
-  const column = 'content';
+  const column = type === 'pattern' ? 'description' : 'content';
 
   // ── Fetch rows without embeddings ─────────────────────
   let query = supabase
