@@ -267,16 +267,11 @@
     <!-- Step 2: Upload -->
     <div class="card">
       <h2>Step 2 — Select Files</h2>
-      <div style="background:rgba(30,111,255,.08);border:1px solid rgba(30,111,255,.2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;line-height:1.7">
-        <strong style="color:#1E6FFF">💡 PDF recommended for best results.</strong><br/>
-        <span style="color:#A3A9B6">PowerPoint charts are stored as EMF vector files that browsers cannot render. When you upload PPTX, only text content is extracted — diagrams and charts are lost.<br/>
-        <strong style="color:#fff">In PowerPoint → File → Save As → PDF</strong>, then upload the PDF. All charts render perfectly.</span>
+      <div style="background:rgba(56,217,150,.06);border:1px solid rgba(56,217,150,.2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;line-height:1.7">
+        <strong style="color:#38D996">✓ PPTX/PPT:</strong> <span style="color:#A3A9B6">text extracted directly from XML — titles, bullets, tables, speaker notes. Fast &amp; accurate.</span><br/>
+        <strong style="color:#38D996">✓ PDF:</strong> <span style="color:#A3A9B6">each page rendered as image → Claude Vision reads charts, matrices, diagrams. Use PDF when visual layout matters.</span>
       </div>
-      <p style="font-size:13px;color:#5A6278;margin-bottom:12px">
-        <strong style="color:#fff">PDF:</strong> each page rendered as image — Claude Vision reads everything including charts &amp; matrices.<br/>
-        <strong style="color:#fff">PPTX/PPT:</strong> text extracted only — diagrams and charts will be missed.
-      </p>
-      <label>File(s) — PDF / PPTX / PPT</label>
+      <label>File(s) — PPTX / PPT / PDF</label>
       <input type="file" id="fw-files" accept=".pptx,.ppt,.pdf" multiple onchange="addToFwQueue()" />
       <div class="queue-list" id="fw-queue-list"></div>
     </div>
@@ -954,268 +949,136 @@ function addFwLog(msg, type = '') {
   el.scrollTop  = el.scrollHeight;
 }
 
-// -- PPTX → rendered slide images (canvas) ------------------
-// Renders each slide to a PNG via HTML5 canvas.
-// Captures: text boxes, PNG/JPG images at correct positions, shapes.
-// EMF/WMF charts still can't render (browser limitation) but
-// surrounding text labels and structure are preserved.
-async function pptxToRenderedImages(file, onProgress) {
+// -- PPTX → structured text slides (XML extraction) --------
+// Fast, accurate, no rendering. Extracts all text per slide in
+// reading order: title → body bullets → table cells → notes.
+async function pptxExtractText(file, onProgress) {
   const zip = await JSZip.loadAsync(file);
 
-  // Get slide canvas dimensions from presentation.xml
-  const EMU = 1 / 914400 * 96; // EMU → px at 96dpi
-  let slideW = 960, slideH = 540; // defaults (16:9)
-  try {
-    const presXml = await zip.file('ppt/presentation.xml').async('string');
-    const szMatch = presXml.match(/<p:sldSz[^>]+cx="(\d+)"[^>]+cy="(\d+)"/);
-    if (szMatch) { slideW = Math.round(parseInt(szMatch[1]) * EMU); slideH = Math.round(parseInt(szMatch[2]) * EMU); }
-  } catch(e) {}
-
-  // Collect slide paths in order
   const slidePaths = Object.keys(zip.files)
     .filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f))
-    .sort((a, b) => parseInt(a.match(/(\d+)\.xml$/)[1]) - parseInt(b.match(/(\d+)\.xml$/)[1]));
+    .sort((a,b) => parseInt(a.match(/(\d+)/)[1]) - parseInt(b.match(/(\d+)/)[1]));
 
-  // Build media map: rId → {dataUrl, mime} per slide via rels
-  const globalMedia = {};
-  for (const path of Object.keys(zip.files)) {
-    if (!/^ppt\/media\//i.test(path)) continue;
-    const ext = path.split('.').pop().toLowerCase();
-    if (!['png','jpg','jpeg','gif'].includes(ext)) continue;
-    try {
-      const b64  = await zip.file(path).async('base64');
-      const mime = (ext === 'jpg' || ext === 'jpeg') ? 'image/jpeg' : ext === 'gif' ? 'image/gif' : 'image/png';
-      globalMedia[path] = { dataUrl: `data:${mime};base64,${b64}`, mime };
-    } catch(e) {}
-  }
-
-  const rendered = [];
+  const slides = [];
 
   for (let si = 0; si < slidePaths.length; si++) {
     if (onProgress) onProgress(si + 1, slidePaths.length);
+    const path     = slidePaths[si];
+    const slideNum = parseInt(path.match(/(\d+)\.xml$/)[1]);
+    const xml      = await zip.file(path).async('string');
 
-    const slidePath = slidePaths[si];
-    const slideNum  = parseInt(slidePath.match(/(\d+)\.xml$/)[1]);
-    const slideXml  = await zip.file(slidePath).async('string');
-
-    // Build rId → media map for this slide
-    const relsPath = slidePath.replace('slides/slide', 'slides/_rels/slide') + '.rels';
-    const rIdMap   = {};
-    if (zip.file(relsPath)) {
-      const relsXml = await zip.file(relsPath).async('string');
-      for (const m of relsXml.matchAll(/Id="([^"]+)"[^/]*Target="[./]*media\/([^"]+)"/g)) {
-        const key = `ppt/media/${m[2]}`;
-        if (globalMedia[key]) rIdMap[m[1]] = globalMedia[key];
+    // Helper: extract text from a block preserving paragraph breaks
+    const extractBlock = raw => {
+      const paras = [];
+      for (const pm of raw.matchAll(/<a:p>([\s\S]*?)<\/a:p>/g)) {
+        const runs = [...pm[1].matchAll(/<a:t[^>]*>([^<]*)<\/a:t>/g)].map(m => m[1]).join('').trim();
+        if (runs) paras.push(runs);
       }
-    }
-
-    // ── Create canvas ────────────────────────────────────────
-    const canvas = document.createElement('canvas');
-    canvas.width  = slideW;
-    canvas.height = slideH;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, slideW, slideH);
-
-    // Helper: parse EMU position/size from XML element
-    const emu = v => Math.round(parseInt(v || 0) * EMU);
-    const getSpPr = xml => {
-      const m = xml.match(/<a:off[^>]+x="([^"]*)"[^>]+y="([^"]*)"|<a:ext[^>]+cx="([^"]*)"[^>]+cy="([^"]*)"/g) || [];
-      let x=0,y=0,w=slideW,h=slideH;
-      for (const part of m) {
-        const off = part.match(/<a:off[^>]+x="([^"]*)"[^>]+y="([^"]*)"/);
-        const ext = part.match(/<a:ext[^>]+cx="([^"]*)"[^>]+cy="([^"]*)"/);
-        if (off) { x = emu(off[1]); y = emu(off[2]); }
-        if (ext) { w = emu(ext[1]); h = emu(ext[2]); }
-      }
-      return {x,y,w,h};
+      return paras.join('\n');
     };
 
-    // ── Render pictures (PNG/JPG) ────────────────────────────
-    const picRegex = /<p:pic>([\s\S]*?)<\/p:pic>/g;
-    for (const pm of slideXml.matchAll(picRegex)) {
-      const picXml = pm[1];
-      const rId    = picXml.match(/r:embed="([^"]+)"/)?.[1];
-      const media  = rId && rIdMap[rId];
-      if (!media) continue;
-      const {x,y,w,h} = getSpPr(picXml);
-      if (w <= 0 || h <= 0) continue;
-      await new Promise(res => {
-        const img = new Image();
-        img.onload  = () => { try { ctx.drawImage(img, x, y, w, h); } catch(e){} res(); };
-        img.onerror = res;
-        img.src = media.dataUrl;
-      });
-    }
+    const lines = [];
 
-    // ── Render text shapes ───────────────────────────────────
-    const spRegex = /<p:sp>([\s\S]*?)<\/p:sp>/g;
-    for (const sm of slideXml.matchAll(spRegex)) {
-      const spXml = sm[1];
-      const {x,y,w} = getSpPr(spXml);
-
-      // Get background fill color if any
-      const fgMatch = spXml.match(/<a:solidFill>[\s\S]*?<a:srgbClr val="([^"]+)"/);
-      if (fgMatch) {
-        const {x:bx,y:by,w:bw,h:bh} = getSpPr(spXml);
-        ctx.fillStyle = `#${fgMatch[1]}`;
-        ctx.fillRect(bx, by, bw, bh);
-      }
-
-      const paras = [...spXml.matchAll(/<a:p>([\s\S]*?)<\/a:p>/g)];
-      let curY = y + 14;
-
-      for (const para of paras) {
-        const pXml = para[1];
-
-        // Font size (hundredths of a point)
-        const szRaw = parseInt(pXml.match(/sz="(\d+)"/)?.[1] || 1400);
-        const sz    = Math.max(8, Math.min(szRaw / 100, 28));
-        const bold  = /b="1"/.test(pXml) || /<a:b\/>/.test(pXml);
-        const color = pXml.match(/<a:srgbClr val="([^"]+)"/)?.[1] || '000000';
-
-        // Align
-        const algn = pXml.match(/algn="([^"]+)"/)?.[1] || 'l';
-        ctx.textAlign = algn === 'ctr' ? 'center' : algn === 'r' ? 'right' : 'left';
-
-        ctx.font      = `${bold ? 'bold ' : ''}${sz}px Arial, sans-serif`;
-        ctx.fillStyle = `#${color}`;
-
-        const runs  = [...pXml.matchAll(/<a:t[^>]*>([^<]*)<\/a:t>/g)].map(m => m[1]);
-        const line  = runs.join('').trim();
-        if (!line) { curY += sz * 0.6; continue; }
-
-        const drawX = algn === 'ctr' ? x + w / 2 : algn === 'r' ? x + w - 4 : x + 4;
-
-        // Word-wrap long lines
-        const words = line.split(' ');
-        let row = '';
-        for (const word of words) {
-          const test = row ? row + ' ' + word : word;
-          if (ctx.measureText(test).width > w - 8 && row) {
-            ctx.fillText(row, drawX, curY, w);
-            curY += sz * 1.3;
-            row = word;
-          } else { row = test; }
-        }
-        if (row) { ctx.fillText(row, drawX, curY, w); curY += sz * 1.4; }
+    // Title placeholder first
+    for (const m of xml.matchAll(/<p:sp>([\s\S]*?)<\/p:sp>/g)) {
+      const sp = m[1];
+      const phType = sp.match(/<p:ph[^>]+type="([^"]+)"/)?.[1] || '';
+      if (phType === 'title' || phType === 'ctrTitle') {
+        const t = extractBlock(sp);
+        if (t) lines.push(`# ${t}`);
       }
     }
 
-    // ── Export canvas to PNG base64 ──────────────────────────
-    const base64 = canvas.toDataURL('image/png').split(',')[1];
-    rendered.push({ pageNum: slideNum, data: base64, mime: 'image/png' });
+    // Body / content placeholders
+    for (const m of xml.matchAll(/<p:sp>([\s\S]*?)<\/p:sp>/g)) {
+      const sp = m[1];
+      const phType = sp.match(/<p:ph[^>]+type="([^"]+)"/)?.[1] || '';
+      if (!phType || phType === 'body' || phType === 'subTitle') {
+        const t = extractBlock(sp);
+        if (t) lines.push(t);
+      }
+    }
 
-    // Free canvas memory
-    canvas.width = 0; canvas.height = 0;
+    // Tables
+    for (const m of xml.matchAll(/<a:tbl>([\s\S]*?)<\/a:tbl>/g)) {
+      const rows = [];
+      for (const rm of m[1].matchAll(/<a:tr>([\s\S]*?)<\/a:tr>/g)) {
+        const cells = [...rm[1].matchAll(/<a:tc>([\s\S]*?)<\/a:tc>/g)]
+          .map(cm => extractBlock(cm[1])).filter(Boolean);
+        if (cells.length) rows.push(cells.join(' | '));
+      }
+      if (rows.length) lines.push('[TABLE]\n' + rows.join('\n'));
+    }
 
-    // Yield to browser to prevent UI freeze on large decks
-    if (si % 5 === 4) await new Promise(r => setTimeout(r, 0));
+    // Speaker notes
+    const noteFile = path.replace('slides/slide', 'notesSlides/notesSlide');
+    if (zip.file(noteFile)) {
+      const noteXml = await zip.file(noteFile).async('string');
+      const noteText = extractBlock(noteXml).trim();
+      if (noteText && noteText.length > 10) lines.push(`[NOTES] ${noteText}`);
+    }
+
+    slides.push({ slideNum, text: lines.join('\n').trim() });
   }
 
-  return rendered;
-}
-
-// -- Build Claude message content from a batch of images ---
-// Each image: {pageNum, data, mime} — from pdfToImages() or pptxToRenderedImages()
-function buildImageContent(images, labelPrefix) {
-  const content = [];
-  for (const img of images) {
-    if (labelPrefix) {
-      content.push({ type: 'text', text: `\n--- ${labelPrefix} ${img.pageNum} ---` });
-    }
-    if (img.data && ['image/jpeg','image/png','image/gif','image/webp'].includes(img.mime)) {
-      content.push({ type: 'image', source: { type: 'base64', media_type: img.mime, data: img.data } });
-    }
-  }
-  return content;
+  return slides;
 }
 
 // Strict JSON-only system prompt for all framework extraction calls
 const FW_JSON_SYSTEM = `You are a framework extraction engine. You output ONLY raw valid JSON — no markdown, no prose, no code fences, no explanation, no headers. Your entire response must be parseable by JSON.parse(). If you have nothing to extract, return {"chunks":[]}. Never start your response with #, *, or any character other than {.`;
 
-// -- Framework extraction: 2-pass Claude Vision call -------
-// images: [{pageNum, data, mime}] — from pdfToImages() OR pptxToRenderedImages()
-async function callClaudeFramework(images, frameworkCategory, fwName, fwIndustries) {
-  const BATCH      = 8;
-  const industries = (fwIndustries || ['all']).join(', ');
-  const labelPrefix = 'Page';
-
-  // ── Pass 1: detect structure from first batch ───────────
-  addFwLog('  Pass 1: detecting framework structure...');
-  const pass1Images = images.slice(0, Math.min(10, images.length));
-  const pass1Content = buildImageContent(pass1Images, labelPrefix);
-  const nameHint = fwName ? `The framework name provided by the user is: "${fwName}". Use this name.` : 'Auto-detect the framework name from the content.';
-
-  const categoryHint = frameworkCategory
-    ? `The framework category has been set to: "${frameworkCategory}". Use this.`
-    : `Detect the most appropriate category from: sales, segmentation, distribution, strategy, marketing, pricing, operations, market_entry, product_launch, analytics.`;
-
-  pass1Content.push({ type: 'text', text:
-    `You are reading a consulting framework document. Analyze the content above.
-${nameHint}
-${categoryHint}
-Return ONLY valid JSON:
-{
-  "framework_name": "name of this framework",
-  "framework_category": "one of: sales|segmentation|distribution|strategy|marketing|pricing|operations|market_entry|product_launch|analytics",
-  "description": "2-3 sentence description: what it does, when to use it",
-  "core_sections": ["Step/Section 1", "Step/Section 2"],
-  "applicable_situations": ["situation1", "situation2", "situation3"]
-}
-CRITICAL: Strip ALL consulting firm names (McKinsey, BCG, Bain, Deloitte, Monitor, Accenture, PwC, EY, KPMG etc). Replace with "a leading consulting firm" or omit. Return ONLY JSON.`
-  });
-
-  const p1 = safeParseJSON(await claudeCall([{ role: 'user', content: pass1Content }], 800, FW_JSON_SYSTEM));
-  const resolvedName     = fwName || p1.framework_name || 'Unknown Framework';
-  const resolvedCategory = frameworkCategory || p1.framework_category || 'strategy';
-
-  addFwLog(`  Framework: "${resolvedName}" · category: ${resolvedCategory} · ${p1.core_sections?.length || 0} sections`);
-
-  // ── Pass 2: extract chunks in batches ──────────────────
-  addFwLog('  Pass 2: extracting chunks...');
-  const allChunks = [];
-  const totalBatches = Math.ceil(images.length / BATCH);
-
-  for (let b = 0; b < images.length; b += BATCH) {
-    const batch      = images.slice(b, b + BATCH);
-    const batchNum   = Math.floor(b / BATCH) + 1;
-    const batchLabel = isPdf
-      ? `pages ${batch[0].pageNum}–${batch[batch.length-1].pageNum}`
-      : `slides ${batch[0].slideNum}–${batch[batch.length-1].slideNum}`;
-    addFwLog(`    Batch ${batchNum}/${totalBatches}: ${batchLabel}...`);
-
-    const batchContent = buildImageContent(batch, labelPrefix);
-
-    // Count actual images in batch for logging
-    const imgCount = batchContent.filter(c => c.type === 'image').length;
-    const txtCount = batchContent.filter(c => c.type === 'text' && !c.text.startsWith('\n---')).length;
-    if (imgCount === 0 && txtCount === 0) {
-      addFwLog(`    Batch ${batchNum}: no content, skipping`, 'info');
-      continue;
-    }
-    addFwLog(`    Batch ${batchNum}/${totalBatches}: ${batchLabel} (${imgCount} imgs, ${txtCount} text blocks)...`);
-    batchContent.push({ type: 'text', text:
-      `Framework: "${resolvedName}" | Category: ${resolvedCategory} | Industries: ${industries}
-Extract all meaningful chunks from these ${labelPrefix.toLowerCase()}s. Target 3-8 chunks per batch.
-Return ONLY valid JSON:
-{
+// Shared chunk extraction JSON schema (used in both modes)
+const CHUNK_SCHEMA = `{
   "chunks": [{
     "chunk_type": "framework_definition|framework_structure|application_approach|diagnostic_question|decision_criteria|pitfall|case_pattern",
     "principle_name": "name of this principle, step, tool, or concept",
-    "content": "150-250 words: what it is, how to apply it, what it produces. NO brand/firm names. Describe any diagrams or matrices visible in the images.",
+    "content": "150-250 words: what it is, how to apply it, what it produces. NO brand/firm names.",
     "use_case": "one sentence: when/why to apply this",
     "applicable_situations": ["market_entry", "competitive_analysis", "pricing", "segmentation"],
-    "page_reference": "${labelPrefix.toLowerCase()} X or ${labelPrefix.toLowerCase()}s X-Y"
+    "slide_ref": "slide X or slides X-Y"
   }]
-}
-CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip ALL firm names. Return {"chunks":[]} if no useful content. Return ONLY JSON.`
-    });
+}`;
+
+// ── MODE A: PPTX text extraction (fast, cheap, accurate) ───
+// Batches 15 slides per call as structured text. No images.
+async function extractFrameworkFromText(slides, resolvedName, resolvedCategory, industries) {
+  const BATCH = 15;
+  const allChunks = [];
+  const totalBatches = Math.ceil(slides.length / BATCH);
+
+  for (let b = 0; b < slides.length; b += BATCH) {
+    const batch    = slides.slice(b, b + BATCH);
+    const batchNum = Math.floor(b / BATCH) + 1;
+    addFwLog(`    Batch ${batchNum}/${totalBatches}: slides ${batch[0].slideNum}–${batch[batch.length-1].slideNum}...`);
+
+    // Build structured text block
+    const slideText = batch
+      .filter(s => s.text.trim())
+      .map(s => `=== Slide ${s.slideNum} ===\n${s.text}`)
+      .join('\n\n');
+
+    if (!slideText.trim()) {
+      addFwLog(`    Batch ${batchNum}: no text content, skipping`, 'info');
+      continue;
+    }
+
+    const content = `Framework: "${resolvedName}" | Category: ${resolvedCategory} | Industries: ${industries}
+
+${slideText}
+
+---
+Extract all meaningful chunks from these slides. Target 3-8 chunks per batch.
+Skip title/agenda/thank-you slides.
+Strip ALL consulting firm names (McKinsey, BCG, Bain, Deloitte, Monitor, Accenture etc).
+Return ONLY valid JSON:
+${CHUNK_SCHEMA}`;
 
     let attempt = 0;
     while (attempt < 3) {
       try {
-        const res = safeParseJSON(await claudeCall([{ role: 'user', content: batchContent }], 3500, FW_JSON_SYSTEM));
+        const res = safeParseJSON(await claudeCall(
+          [{ role: 'user', content }], 4000, FW_JSON_SYSTEM
+        ));
         allChunks.push(...(res.chunks || []));
         break;
       } catch(e) {
@@ -1224,35 +1087,122 @@ CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip
           addFwLog(`    Retry ${attempt}/3...`, 'warn');
           await new Promise(r => setTimeout(r, 2000 * attempt));
         } else {
-          addFwLog(`    Batch ${batchNum} failed after 3 retries: ${e.message}`, 'err');
+          addFwLog(`    Batch ${batchNum} failed: ${e.message}`, 'err');
+        }
+      }
+    }
+
+    if (b + BATCH < slides.length) await new Promise(r => setTimeout(r, 400));
+  }
+  return allChunks;
+}
+
+// ── MODE B: PDF Vision extraction (images, reads charts) ───
+// Batches 8 page images per call via Claude Vision.
+async function extractFrameworkFromImages(images, resolvedName, resolvedCategory, industries) {
+  const BATCH = 8;
+  const allChunks = [];
+  const totalBatches = Math.ceil(images.length / BATCH);
+
+  for (let b = 0; b < images.length; b += BATCH) {
+    const batch    = images.slice(b, b + BATCH);
+    const batchNum = Math.floor(b / BATCH) + 1;
+    addFwLog(`    Batch ${batchNum}/${totalBatches}: pages ${batch[0].pageNum}–${batch[batch.length-1].pageNum}...`);
+
+    const content = [];
+    for (const img of batch) {
+      content.push({ type: 'text', text: `\n--- Page ${img.pageNum} ---` });
+      content.push({ type: 'image', source: { type: 'base64', media_type: img.mime, data: img.data } });
+    }
+    content.push({ type: 'text', text:
+      `Framework: "${resolvedName}" | Category: ${resolvedCategory} | Industries: ${industries}
+
+Extract all meaningful chunks from these pages. Target 3-8 chunks per batch.
+Describe any visible diagrams, matrices, 2x2s, or charts in words.
+Skip title/agenda/thank-you pages. Strip ALL consulting firm names.
+Return ONLY valid JSON:
+${CHUNK_SCHEMA}`
+    });
+
+    let attempt = 0;
+    while (attempt < 3) {
+      try {
+        const res = safeParseJSON(await claudeCall(
+          [{ role: 'user', content }], 4000, FW_JSON_SYSTEM
+        ));
+        allChunks.push(...(res.chunks || []));
+        break;
+      } catch(e) {
+        attempt++;
+        if (attempt < 3) {
+          addFwLog(`    Retry ${attempt}/3...`, 'warn');
+          await new Promise(r => setTimeout(r, 2000 * attempt));
+        } else {
+          addFwLog(`    Batch ${batchNum} failed: ${e.message}`, 'err');
         }
       }
     }
 
     if (b + BATCH < images.length) await new Promise(r => setTimeout(r, 600));
   }
+  return allChunks;
+}
+
+// ── ORCHESTRATOR: pass 1 (detect) + pass 2 (extract) ───────
+async function callClaudeFramework(data, frameworkCategory, fwName, fwIndustries, isPptx) {
+  const industries = (fwIndustries || ['all']).join(', ');
+  const nameHint     = fwName ? `The framework name is: "${fwName}". Use this.` : 'Auto-detect the framework name.';
+  const categoryHint = frameworkCategory
+    ? `Category is: "${frameworkCategory}". Use this.`
+    : 'Detect the category from: sales|segmentation|distribution|strategy|marketing|pricing|operations|market_entry|product_launch|analytics';
+
+  // ── Pass 1: detect name + category from first 10 slides/pages
+  addFwLog('  Pass 1: detecting framework structure...');
+
+  let pass1Content;
+  if (isPptx) {
+    const preview = data.slice(0, Math.min(10, data.length))
+      .filter(s => s.text.trim())
+      .map(s => `=== Slide ${s.slideNum} ===\n${s.text}`)
+      .join('\n\n');
+    pass1Content = `${preview}\n\n---\n${nameHint}\n${categoryHint}\nReturn ONLY valid JSON:\n{"framework_name":"...","framework_category":"...","description":"2-3 sentences","core_sections":["..."],"applicable_situations":["..."]}`;
+  } else {
+    pass1Content = [...data.slice(0, Math.min(8, data.length)).flatMap(img => [
+      { type: 'text', text: `\n--- Page ${img.pageNum} ---` },
+      { type: 'image', source: { type: 'base64', media_type: img.mime, data: img.data } }
+    ]), { type: 'text', text: `${nameHint}\n${categoryHint}\nReturn ONLY valid JSON:\n{"framework_name":"...","framework_category":"...","description":"2-3 sentences","core_sections":["..."],"applicable_situations":["..."]}` }];
+  }
+
+  const p1 = safeParseJSON(await claudeCall(
+    [{ role: 'user', content: isPptx ? pass1Content : pass1Content }],
+    600, FW_JSON_SYSTEM
+  ));
+
+  const resolvedName     = fwName || p1.framework_name || 'Unknown Framework';
+  const resolvedCategory = frameworkCategory || p1.framework_category || 'strategy';
+  addFwLog(`  Framework: "${resolvedName}" · category: ${resolvedCategory} · ${p1.core_sections?.length || 0} sections`);
+
+  // ── Pass 2: extract chunks (mode-specific)
+  addFwLog(`  Pass 2: extracting chunks (${isPptx ? 'text mode' : 'vision mode'})...`);
+  const allChunks = isPptx
+    ? await extractFrameworkFromText(data, resolvedName, resolvedCategory, industries)
+    : await extractFrameworkFromImages(data, resolvedName, resolvedCategory, industries);
 
   addFwLog(`  Extracted: ${allChunks.length} chunks total`);
 
-  // ── Build output for ingest-save ───────────────────────
+  // ── Build output for ingest-save ────────────────────────
   const year = new Date().getFullYear();
   return {
     metadata: {
-      title:            resolvedName,
-      product_category: resolvedCategory,
-      sub_category:     null,
-      country:          'Global',
-      region:           null,
-      year,
-      client_industry:  industries,
-      competency_type:  'framework',
-      methodology_used: [],
-      respondent_types: []
+      title: resolvedName, product_category: resolvedCategory,
+      sub_category: null, country: 'Global', region: null, year,
+      client_industry: industries, competency_type: 'framework',
+      methodology_used: [], respondent_types: []
     },
     template: {
-      name:              resolvedName,
+      name: resolvedName,
       section_structure: (p1.core_sections || []).map(s => ({ section: s, purpose: '' })),
-      methodology:       p1.description || ''
+      methodology: p1.description || ''
     },
     patterns: [],
     chunks: allChunks.map(c => ({
@@ -1268,7 +1218,7 @@ CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip
         chunk_type_detail:     c.chunk_type,
         use_case:              c.use_case,
         applicable_situations: c.applicable_situations || [],
-        page_reference:        c.page_reference || ''
+        slide_ref:             c.slide_ref || ''
       }
     }))
   };
@@ -1301,23 +1251,36 @@ async function processFwQueue() {
       const isPptx = ext === 'pptx' || ext === 'ppt';
       const isPdf  = ext === 'pdf';
 
-      let slides     = [];
       let pdfImages  = [];
-      let uploadContent, uploadName;
+      let extraction = null;
+      let uploadName, uploadContent;
 
       if (isPptx) {
-        addFwLog('Rendering PPTX slides to canvas images...');
+        addFwLog('Extracting text from PPTX slides...');
         let lastP = 0;
-        pdfImages = await pptxToRenderedImages(item.file, (p, total) => {
+        const slides = await pptxExtractText(item.file, (p, total) => {
           if (p !== lastP) {
             document.getElementById('fw-progress-label-text').textContent =
-              `Rendering slide ${p}/${total}`;
+              `Parsing slide ${p}/${total}`;
             lastP = p;
           }
         });
-        addFwLog(`  ${pdfImages.length} slides rendered as PNG`);
+        const nonEmpty = slides.filter(s => s.text.trim()).length;
+        addFwLog(`  ${slides.length} slides parsed, ${nonEmpty} with content`);
         uploadName    = item.name.replace(/\.pptx?$/i, '.json');
-        uploadContent = JSON.stringify({ name: item.name, slides: pdfImages.length });
+        uploadContent = JSON.stringify({ name: item.name, slides: slides.length });
+
+        // Upload manifest
+        addFwLog('Uploading manifest to Storage...');
+        const fp = `frameworks/${Date.now()}-${uploadName.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-_.]/g,'')}`;
+        const bl = new Blob([uploadContent], { type: 'text/plain' });
+        const { error: upE } = await window.db.storage.from('frameworks').upload(fp, bl, { contentType: 'text/plain', upsert: false });
+        if (upE) throw new Error('Upload failed: ' + upE.message);
+        addFwLog(`  Stored: ${fp}`);
+
+        addFwLog('Extracting with Claude (text mode)...');
+        extraction = await callClaudeFramework(slides, category, fwName, fwIndustries, true);
+        item._filePath = fp;
 
       } else if (isPdf) {
         addFwLog('Rendering PDF pages as images...');
@@ -1332,23 +1295,19 @@ async function processFwQueue() {
         addFwLog(`  ${pdfImages.length} pages rendered`);
         uploadName    = item.name.replace(/\.pdf$/i, '.json');
         uploadContent = JSON.stringify({ name: item.name, pages: pdfImages.length });
+
+        // Upload manifest
+        addFwLog('Uploading manifest to Storage...');
+        const fp = `frameworks/${Date.now()}-${uploadName.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-_.]/g,'')}`;
+        const bl = new Blob([uploadContent], { type: 'text/plain' });
+        const { error: upE } = await window.db.storage.from('frameworks').upload(fp, bl, { contentType: 'text/plain', upsert: false });
+        if (upE) throw new Error('Upload failed: ' + upE.message);
+        addFwLog(`  Stored: ${fp}`);
+
+        addFwLog('Extracting with Claude Vision (image mode)...');
+        extraction = await callClaudeFramework(pdfImages, category, fwName, fwIndustries, false);
+        item._filePath = fp;
       }
-
-      // Upload manifest to 'frameworks' bucket
-      addFwLog('Uploading manifest to Storage...');
-      const filePath = `frameworks/${Date.now()}-${uploadName.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-_.]/g,'')}`;
-      const blob = new Blob([uploadContent], { type: 'text/plain' });
-      const { error: upErr } = await window.db.storage
-        .from('frameworks')
-        .upload(filePath, blob, { contentType: 'text/plain', upsert: false });
-      if (upErr) throw new Error('Upload failed: ' + upErr.message);
-      addFwLog(`  Stored: ${filePath}`);
-
-      // Claude Vision extraction — all files go through image pipeline
-      addFwLog('Extracting with Claude Vision...');
-      const extraction = await callClaudeFramework(
-        pdfImages, category, fwName, fwIndustries
-      );
       addFwLog(`  Done: "${extraction.metadata.title}" · ${extraction.chunks.length} chunks`);
 
       // Reformat chunks: merge _fw_meta into metadata JSONB
@@ -1362,7 +1321,7 @@ async function processFwQueue() {
       const saveRes = await fetch('/api/ingest-save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
-        body: JSON.stringify({ filePath, extraction }),
+        body: JSON.stringify({ filePath: item._filePath, extraction }),
       });
       const saveData = await saveRes.json();
       if (!saveData.success) throw new Error(saveData.error || 'ingest-save failed');
