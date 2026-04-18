@@ -222,7 +222,7 @@
       </p>
       <div class="grid2">
         <div>
-          <label>Framework Category *</label>
+          <label>Framework Category <span style="color:#5A6278;font-weight:400">(optional — auto-detected if blank)</span></label>
           <select id="fw-category">
             <option value="">Select category...</option>
             <option value="sales">Sales</option>
@@ -1053,12 +1053,18 @@ async function callClaudeFramework(slides, frameworkCategory, isPdf, pdfImages, 
   const pass1Content = buildImageContent(pass1Images, labelPrefix);
   const nameHint = fwName ? `The framework name provided by the user is: "${fwName}". Use this name.` : 'Auto-detect the framework name from the content.';
 
+  const categoryHint = frameworkCategory
+    ? `The framework category has been set to: "${frameworkCategory}". Use this.`
+    : `Detect the most appropriate category from: sales, segmentation, distribution, strategy, marketing, pricing, operations, market_entry, product_launch, analytics.`;
+
   pass1Content.push({ type: 'text', text:
     `You are reading a consulting framework document. Analyze the content above.
 ${nameHint}
+${categoryHint}
 Return ONLY valid JSON:
 {
   "framework_name": "name of this framework",
+  "framework_category": "one of: sales|segmentation|distribution|strategy|marketing|pricing|operations|market_entry|product_launch|analytics",
   "description": "2-3 sentence description: what it does, when to use it",
   "core_sections": ["Step/Section 1", "Step/Section 2"],
   "applicable_situations": ["situation1", "situation2", "situation3"]
@@ -1067,8 +1073,10 @@ CRITICAL: Strip ALL consulting firm names (McKinsey, BCG, Bain, Deloitte, Monito
   });
 
   const p1 = safeParseJSON(await claudeCall(pass1Content, 800));
-  const resolvedName = fwName || p1.framework_name || 'Unknown Framework';
-  addFwLog(`  Framework: "${resolvedName}" · ${p1.core_sections?.length || 0} sections`);
+  const resolvedName     = fwName || p1.framework_name || 'Unknown Framework';
+  const resolvedCategory = frameworkCategory || p1.framework_category || 'strategy';
+
+  addFwLog(`  Framework: "${resolvedName}" · category: ${resolvedCategory} · ${p1.core_sections?.length || 0} sections`);
 
   // ── Pass 2: extract chunks in batches ──────────────────
   addFwLog('  Pass 2: extracting chunks...');
@@ -1085,7 +1093,7 @@ CRITICAL: Strip ALL consulting firm names (McKinsey, BCG, Bain, Deloitte, Monito
 
     const batchContent = buildImageContent(batch, labelPrefix);
     batchContent.push({ type: 'text', text:
-      `Framework: "${resolvedName}" | Category: ${frameworkCategory} | Industries: ${industries}
+      `Framework: "${resolvedName}" | Category: ${resolvedCategory} | Industries: ${industries}
 Extract all meaningful chunks from these ${labelPrefix.toLowerCase()}s. Target 3-8 chunks per batch.
 Return ONLY valid JSON:
 {
@@ -1128,7 +1136,7 @@ CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip
   return {
     metadata: {
       title:            resolvedName,
-      product_category: frameworkCategory,
+      product_category: resolvedCategory,
       sub_category:     null,
       country:          'Global',
       region:           null,
@@ -1151,7 +1159,7 @@ CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip
       data_type:  null,
       _fw_meta: {
         framework_name:        resolvedName,
-        framework_category:    frameworkCategory,
+        framework_category:    resolvedCategory,
         applicable_industries: fwIndustries || ['all'],
         principle_name:        c.principle_name,
         chunk_type_detail:     c.chunk_type,
@@ -1165,9 +1173,8 @@ CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip
 
 // -- Process framework queue --------------------------------
 async function processFwQueue() {
-  const category    = document.getElementById('fw-category').value;
-  if (!category) return alert('Please select a Framework Category first.');
-  const fwName      = document.getElementById('fw-name').value.trim();
+  const category     = document.getElementById('fw-category').value; // optional hint
+  const fwName       = document.getElementById('fw-name').value.trim();
   const fwIndustries = getFwIndustries();
 
   const pending = fwQueue.filter(q => q.status === 'pending');
