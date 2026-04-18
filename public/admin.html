@@ -630,16 +630,17 @@ async function loadSources() {
     return;
   }
 
-  // Check which reports have embedded chunks
+  // Check which reports have at least 1 embedded chunk
   const ids = data.map(r => r.id);
-  const { data: embeddedRows } = await window.db
-    .from('report_chunks')
-    .select('source_report_id')
-    .in('source_report_id', ids)
-    .not('embedding', 'is', null)
-    .limit(500);
-
-  const embeddedSet = new Set((embeddedRows || []).map(r => r.source_report_id));
+  const embeddedSet = new Set();
+  for (const id of ids) {
+    const { count } = await window.db
+      .from('report_chunks')
+      .select('id', { count: 'exact', head: true })
+      .eq('source_report_id', id)
+      .not('embedding', 'is', null);
+    if (count > 0) embeddedSet.add(id);
+  }
 
   tbody.innerHTML = data.map((r, i) => {
     const isEmbedded  = embeddedSet.has(r.id);
