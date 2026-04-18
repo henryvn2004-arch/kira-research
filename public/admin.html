@@ -168,20 +168,18 @@
       <div class="queue-list" id="queue-list"></div>
     </div>
 
-    <!-- Step 3: Extract -->
+    <!-- Step 3: Process -->
     <div class="card">
-      <h2>Step 3 — Extract Patterns & Chunks</h2>
+      <h2>Step 3 — Process Queue</h2>
       <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
-        Each PDF: detect sections from ToC → extract patterns + chunks per section → save to DB. ~3–6 min/file.
+        Each PDF takes 2–4 minutes. Files are processed one at a time.
+        Claude reads the PDF, extracts patterns and chunks, then OpenAI embeds everything.
       </p>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn btn-primary" id="btn-process" onclick="processQueue()">
           ▶ Start Processing Queue
         </button>
-        <button class="btn" id="btn-pause"
-          style="background:#161B24;color:#F6AD55;border:1px solid rgba(246,173,85,.3);display:none"
-          onclick="togglePause()">⏸ Pause</button>
         <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
           onclick="clearQueue()">Clear Queue</button>
       </div>
@@ -195,28 +193,8 @@
       </div>
 
       <div class="log-wrap">
-        <div class="log-title">Extract Log</div>
-        <div class="log-body" id="log-body">Ready. Add PDFs above and click Start Processing Queue...</div>
-      </div>
-    </div>
-
-    <!-- Step 4: Embed -->
-    <div class="card">
-      <h2>Step 4 — Generate Embeddings</h2>
-      <p style="font-size:13px;color:#5A6278;margin-bottom:16px">
-        Run anytime — embeds all extracted chunks + patterns that don't have vectors yet. Safe to run multiple times.
-      </p>
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-        <button class="btn" id="btn-embed"
-          style="background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3)"
-          onclick="runEmbeddings()">
-          ⚡ Embed All Unembedded
-        </button>
-        <span id="embed-status" style="font-size:12px;color:#5A6278"></span>
-      </div>
-      <div class="log-wrap" style="margin-top:16px">
-        <div class="log-title">Embed Log</div>
-        <div class="log-body" id="embed-log-body">Click "Embed All" to start...</div>
+        <div class="log-title">Processing Log</div>
+        <div class="log-body" id="log-body">Ready. Configure and add PDFs to start...</div>
       </div>
     </div>
   </div>
@@ -238,12 +216,10 @@
             <th>Year</th>
             <th>Type</th>
             <th>Extracted</th>
-            <th>Embedded</th>
-            <th></th>
           </tr>
         </thead>
         <tbody id="sources-tbody">
-          <tr><td colspan="8" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
+          <tr><td colspan="6" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -390,38 +366,18 @@ function setQueueStatus(idx, status) {
 }
 
 // -- Process queue -----------------------------------------
-// Split text into chunks of ~40k chars, respecting paragraph breaks
-// ── ANTHROPIC direct call helper ─────────────────────────────
-async function callAnthropic(messages, maxTokens = 3000) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: maxTokens,
-      messages,
-    }),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error('Claude API: ' + (data.error?.message || JSON.stringify(data)));
-  return data.content?.[0]?.text || '';
-}
+async function callClaude(fileText) {
+  const truncated = fileText.length > 80000
+    ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]'
+    : fileText;
 
-// ── PASS 1: Find Table of Contents → extract section headers ──
-async function detectSections(fileText) {
-  const preview = fileText.slice(0, 8000); // cover + ToC usually in first 8000 chars
-  const prompt = `You are reading the beginning of a consulting market research report (cover page + table of contents area).
+  const prompt = `You are analyzing a consulting market research report.
+Read carefully and return ONLY valid JSON (no markdown, no backticks):
 
-Return ONLY valid JSON (no markdown, no backticks):
 {
   "metadata": {
     "title": "report title",
-    "product_category": "main industry/product category",
+    "product_category": "main category",
     "sub_category": "sub-category or null",
     "country": "country name",
     "region": "southeast_asia|south_asia|east_asia or null",
@@ -433,84 +389,15 @@ Return ONLY valid JSON (no markdown, no backticks):
   },
   "template": {
     "name": "template name",
-    "section_structure": [{"section": "Section Name", "purpose": "what this section covers"}],
-    "methodology": "brief methodology description"
+    "section_structure": [{"section": "...", "purpose": "..."}],
+    "methodology": "methodology description"
   },
-  "toc_found": true,
-  "section_headers": ["Exact Section Header 1", "Exact Section Header 2", "..."]
-}
-
-PRIORITY: Look for a Table of Contents (ToC) — it usually appears in the first pages and lists all sections with page numbers.
-If ToC found (toc_found: true): extract the EXACT section heading text from the ToC (e.g. "3. Competitive Landscape", "Section 4: Channel Structure").
-If no ToC found (toc_found: false): identify major section headings from the content itself.
-
-section_headers must be the EXACT strings as they appear in the document body — these will be used to locate and split the full report text.
-Include all major sections, typically 6-12 headers.
-
-REPORT BEGINNING:
-${preview}`;
-
-  const text = await callAnthropic([{ role: 'user', content: prompt }], 1500);
-  const clean = text.replace(/```json|```/g, '').trim();
-  const result = JSON.parse(clean);
-
-  return result;
-}
-
-// ── Split full text into sections using detected headers ──────
-function splitBySections(fullText, headers) {
-  if (!headers || headers.length === 0) {
-    // Fallback: split into 3 equal parts
-    const size = Math.ceil(fullText.length / 3);
-    return [
-      { header: 'Part 1', text: fullText.slice(0, size) },
-      { header: 'Part 2', text: fullText.slice(size, size * 2) },
-      { header: 'Part 3', text: fullText.slice(size * 2) },
-    ];
-  }
-
-  const sections = [];
-  let remaining = fullText;
-
-  for (let i = 0; i < headers.length; i++) {
-    const header = headers[i];
-    const nextHeader = headers[i + 1];
-
-    const startIdx = remaining.indexOf(header);
-    if (startIdx === -1) continue; // header not found, skip
-
-    const endIdx = nextHeader ? remaining.indexOf(nextHeader, startIdx + header.length) : remaining.length;
-    const sectionText = remaining.slice(startIdx, endIdx === -1 ? remaining.length : endIdx).trim();
-
-    if (sectionText.length > 200) { // skip tiny sections
-      sections.push({ header, text: sectionText });
-    }
-  }
-
-  // Fallback if detection failed
-  if (sections.length === 0) {
-    const size = Math.ceil(fullText.length / 4);
-    return Array.from({ length: 4 }, (_, i) => ({
-      header: `Part ${i + 1}`,
-      text: fullText.slice(i * size, (i + 1) * size),
-    }));
-  }
-
-  return sections;
-}
-
-// ── PASS 2: Extract patterns + chunks from one section ────────
-async function extractSection(section, sectionIndex, totalSections) {
-  const prompt = `You are extracting reusable market intelligence from section "${section.header}" (${sectionIndex+1} of ${totalSections}) of a consulting report.
-
-Return ONLY valid JSON (no markdown, no backticks):
-{
   "patterns": [
     {
       "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
       "industry": "industry name",
       "sub_industry": "sub-industry or null",
-      "description": "structural insight — STRIP all specific numbers/dates, keep structural/behavioral patterns only",
+      "description": "structural insight - STRIP all specific numbers/dates",
       "applicable_regions": ["southeast_asia"],
       "confidence": "high|medium|low"
     }
@@ -518,216 +405,154 @@ Return ONLY valid JSON (no markdown, no backticks):
   "chunks": [
     {
       "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
-      "content": "60-150 word insight — STRIP specific numbers/dates, keep structural insights only",
-      "section": "${section.header}"
+      "content": "50-150 word insight - STRIP specific numbers, keep structural insights",
+      "section": "section name",
+      "data_type": "null"
     }
   ]
 }
 
-Rules:
-- Extract 2-6 patterns and 4-10 chunks from THIS section only
-- Focus on STRUCTURAL insights that apply beyond this specific report
-- STRIP all specific brand names, company names, exact figures, dates
-- Return ONLY JSON
+Rules: 5-15 patterns, 20-50 chunks. Return ONLY JSON.
 
-SECTION CONTENT:
-${section.text.slice(0, 45000)}`;
+REPORT:
+` + truncated;
 
-  const text = await callAnthropic([{ role: 'user', content: prompt }], 2500);
+  const res = await fetch('/api/claude-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
+  const text  = data.content?.[0]?.text || '';
   const clean = text.replace(/```json|```/g, '').trim();
   return JSON.parse(clean);
 }
 
-// ── MAIN: Pass1 detect → split by sections → Pass2 extract each ──
-async function extractFullReport(fileText, onProgress) {
-  // Pass 1: detect sections + metadata
-  onProgress('  Pass 1: detecting report structure...');
-  const detection = await detectSections(fileText);
-  const headers = detection.section_headers || [];
-  const tocStatus = detection.toc_found ? '✓ ToC found' : '⚠ No ToC — headers inferred from content';
-  onProgress(`  ${tocStatus} → ${headers.length} sections: ${headers.slice(0, 3).join(' | ')}...`);
-
-  // Split by real section headers
-  const sections = splitBySections(fileText, headers);
-  onProgress(`  Split into ${sections.length} sections`);
-
-  // Pass 2: extract each section
-  let merged = {
-    metadata: detection.metadata || null,
-    template: detection.template || null,
-    patterns: [],
-    chunks: [],
-  };
-
-  for (let i = 0; i < sections.length; i++) {
-    onProgress(`  Section ${i+1}/${sections.length}: "${sections[i].header}" (${Math.round(sections[i].text.length/1024)}KB)`);
-    try {
-      const result = await extractSection(sections[i], i, sections.length);
-      merged.patterns.push(...(result.patterns || []));
-      merged.chunks.push(...(result.chunks || []));
-    } catch(e) {
-      onProgress(`  ⚠ Section ${i+1} failed: ${e.message} — skipping`);
-    }
-    if (i < sections.length - 1) await sleep(2000);
-  }
-
-  onProgress(`  ✓ Total: ${merged.patterns.length} patterns, ${merged.chunks.length} chunks`);
-  return merged;
-}
-
 async function runEmbeddings() {
-  const btn = document.getElementById('btn-embed');
-  const status = document.getElementById('embed-status');
-  btn.disabled = true;
-
-  function embedLog(msg, type = '') {
-    const el = document.getElementById('embed-log-body');
-    const cls = type ? `<span class="${type}">${msg}</span>\n` : msg + '\n';
-    el.innerHTML += cls;
-    el.scrollTop = el.scrollHeight;
-  }
-
-  document.getElementById('embed-log-body').innerHTML = '';
-  embedLog('Starting — looping until all chunks + patterns embedded...');
-
-  async function embedAll(type) {
-    let totalEmbedded = 0;
-    let batch = 0;
-    while (true) {
-      batch++;
-      const res = await fetch('/api/embed', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
-        body: JSON.stringify({ type }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Embed failed');
-      if (data.embedded === 0) break;
-      totalEmbedded += data.embedded;
-      embedLog(`  ${type} batch ${batch}: +${data.embedded} (total: ${totalEmbedded})`);
-      status.textContent = `${type}s: ${totalEmbedded} embedded...`;
-      await sleep(1000);
-    }
-    return totalEmbedded;
-  }
-
+  document.getElementById('btn-embed').disabled = true;
+  addLog('\nRunning embeddings via /api/embed...');
   try {
-    embedLog('Embedding chunks...');
-    const chunks = await embedAll('chunk');
-    embedLog(`✓ Chunks done: ${chunks} embedded`, 'done');
+    const res  = await fetch('/api/embed', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + EDGE_ANON,
+      },
+      body: JSON.stringify({ type: 'chunk' }),
+    });
+    const data = await res.json();
+    addLog(`OK Chunks embedded: ${data.embedded}/${data.total}`, 'done');
 
-    embedLog('Embedding patterns...');
-    const patterns = await embedAll('pattern');
-    embedLog(`✓ Patterns done: ${patterns} embedded`, 'done');
-
-    embedLog('\n✓ Knowledge base ready for RAG!', 'done');
-    status.textContent = `Done — ${chunks} chunks + ${patterns} patterns embedded`;
+    const res2 = await fetch('/api/embed', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + EDGE_ANON,
+      },
+      body: JSON.stringify({ type: 'pattern' }),
+    });
+    const data2 = await res2.json();
+    addLog(`OK Patterns embedded: ${data2.embedded}/${data2.total}`, 'done');
+    addLog('OK All embeddings complete! Knowledge base ready.', 'done');
     loadStats();
   } catch(e) {
-    embedLog('✗ Error: ' + e.message, 'err');
-    status.textContent = '';
+    addLog('Error: ' + e.message, 'err');
   }
-  btn.disabled = false;
+  document.getElementById('btn-embed').disabled = false;
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-let processingPaused = false;
-
 async function processQueue() {
+  // No manual config needed - Claude auto-detects everything
+
   const pending = queue.filter(q => q.status === 'pending');
   if (!pending.length) return alert('No pending files in queue.');
 
-  processingPaused = false;
   document.getElementById('btn-process').disabled = true;
-  document.getElementById('btn-pause').style.display = 'inline-flex';
   document.getElementById('progress-wrap').style.display = 'block';
   clearLog();
 
   let done = 0;
-  const total = pending.length;
-
   for (let i = 0; i < queue.length; i++) {
     const item = queue[i];
     if (item.status !== 'pending') continue;
 
-    // Check pause
-    while (processingPaused) await sleep(500);
-
     setQueueStatus(i, 'processing');
-    addLog(`\n[${done+1}/${total}] ${item.name}`);
+    addLog(`\n--- Processing: ${item.name} ---`);
 
     try {
-      // 1a. Convert PDF → .md
+      // 1a. Convert PDF to .md in browser if needed
       let textContent, uploadName;
       const isPdf = item.file.name.toLowerCase().endsWith('.pdf');
       if (isPdf) {
-        addLog('  Converting PDF...');
+        addLog('Converting PDF to .md...');
         let lastPage = 0;
-        textContent = await pdfToMd(item.file, (p, tot) => {
+        textContent = await pdfToMd(item.file, (p, total) => {
           if (p !== lastPage) {
             document.getElementById('progress-label-text').textContent =
-              `[${done+1}/${total}] Converting page ${p}/${tot}`;
+              `File ${queue.indexOf(item)+1}: converting page ${p}/${total}`;
             lastPage = p;
           }
         });
         uploadName = item.name.replace(/\.pdf$/i, '.md');
-        addLog(`  Converted: ${Math.round(textContent.length/1024)}KB`);
+        addLog(`  Converted: ${Math.round(textContent.length/1024)}KB .md`);
       } else {
         textContent = await item.file.text();
         uploadName  = item.name;
       }
 
-      // 1b. Upload .md to Storage
-      addLog('  Uploading to Storage...');
-      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-')}`;
+      // 1b. Upload text to Supabase Storage
+      addLog('Uploading to Storage...');
+      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-_.]/g, '')}`;
+      const blob = new Blob([textContent], { type: 'text/plain' });
+
       const { error: upErr } = await window.db.storage
         .from('reports')
-        .upload(filePath, new Blob([textContent], { type: 'text/plain' }),
-          { contentType: 'text/plain', upsert: false });
-      if (upErr) throw new Error('Upload: ' + upErr.message);
-      addLog(`  Stored: ${filePath}`);
+        .upload(filePath, blob, { contentType: 'text/plain', upsert: false });
 
-      // 2. Chunk + extract via Claude (direct browser call, no timeout)
-      const extraction = await extractFullReport(textContent, msg => addLog(msg));
+      if (upErr) throw new Error('Upload failed: ' + upErr.message);
+      addLog(`  Uploaded: ${filePath}`);
+      item.filePath = filePath;
 
-      // 3. Save to DB
-      addLog('  Saving to DB...');
-      const saveRes = await fetch('/api/ingest-save', {
+      // 2. Call Vercel ingest API
+      addLog('Calling ingest API...');
+      const res = await fetch('/api/ingest', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
-        body: JSON.stringify({ filePath, extraction }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + EDGE_ANON,
+        },
+        body: JSON.stringify({ filePath }),
       });
-      const result = await saveRes.json();
-      if (!result.success) throw new Error(result.error || 'Save failed');
 
-      addLog(`  ✓ ${result.patterns} patterns, ${result.chunks} chunks saved`, 'done');
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error || 'Edge function failed');
+
+      addLog(`OK Done: ${result.patterns} patterns ? ${result.chunks} chunks ? ${result.embedded} embeddings`, 'done');
       setQueueStatus(i, 'done');
-      document.getElementById('btn-embed').disabled = false;
 
     } catch (e) {
-      addLog(`  ✗ Error: ${e.message}`, 'err');
+      addLog(`? Error: ${e.message}`, 'err');
       setQueueStatus(i, 'error');
     }
 
     done++;
-    document.getElementById('pbar-fill').style.width = Math.round(done/total*100) + '%';
-    document.getElementById('progress-pct').textContent = Math.round(done/total*100) + '%';
-    document.getElementById('progress-label-text').textContent = `${done}/${total} files done`;
-
-    // Delay between files to avoid rate limit
-    if (done < total) await sleep(3000);
+    const total   = pending.length;
+    const pct     = Math.round((done / total) * 100);
+    document.getElementById('pbar-fill').style.width  = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-label-text').textContent =
+      `${done}/${total} files processed`;
   }
 
-  addLog('\n✓ Queue complete!', 'done');
+  addLog('\nDONE Queue processing complete.', 'done');
   document.getElementById('btn-process').disabled = false;
-  document.getElementById('btn-pause').style.display = 'none';
   loadStats();
-}
-
-function togglePause() {
-  processingPaused = !processingPaused;
-  document.getElementById('btn-pause').textContent = processingPaused ? '▶ Resume' : '⏸ Pause';
 }
 
 // -- Log helpers -------------------------------------------
@@ -745,72 +570,24 @@ function clearLog() {
 // -- Load source reports -----------------------------------
 async function loadSources() {
   const tbody = document.getElementById('sources-tbody');
-  tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
-
+  tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
   const { data, error } = await window.db.from('source_reports')
-    .select('id,title,product_category,country,year,competency_type,extracted')
+    .select('title,product_category,country,year,competency_type,extracted')
     .order('created_at', { ascending: false }).limit(100);
-
   if (error || !data?.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
     return;
   }
-
-  // Check embedded count per source report
-  const ids = data.map(r => r.id);
-  const { data: embeddedChunks } = await window.db.from('report_chunks')
-    .select('source_report_id')
-    .in('source_report_id', ids)
-    .not('embedding', 'is', null);
-
-  const embeddedSet = new Set((embeddedChunks || []).map(c => c.source_report_id));
-
-  tbody.innerHTML = data.map(r => {
-    const isEmbedded = embeddedSet.has(r.id);
-    const embedBtn = r.extracted && !isEmbedded
-      ? `<button class="btn btn-sm" onclick="embedSingle('${r.id}', this)"
-           style="background:rgba(56,217,150,.15);color:#38D996;border:1px solid rgba(56,217,150,.3);padding:4px 10px;font-size:11px">
-           ⚡ Embed
-         </button>`
-      : '';
-    return `<tr>
-      <td>${r.title || '?'}</td>
-      <td>${r.product_category || '?'}</td>
-      <td>${r.country}</td>
-      <td>${r.year}</td>
-      <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
-      <td>${r.extracted ? '<span style="color:#38D996">✓ Yes</span>' : '<span style="color:#5A6278">Pending</span>'}</td>
-      <td>${isEmbedded ? '<span style="color:#38D996">✓ Yes</span>' : r.extracted ? '<span style="color:#F6AD55">Not yet</span>' : '—'}</td>
-      <td>${embedBtn}</td>
-    </tr>`;
-  }).join('');
-}
-
-async function embedSingle(sourceReportId, btn) {
-  btn.disabled = true;
-  btn.textContent = '...';
-  try {
-    // Embed chunks for this report
-    let total = 0;
-    while (true) {
-      const res = await fetch('/api/embed', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
-        body: JSON.stringify({ type: 'chunk', source_report_id: sourceReportId }),
-      });
-      const d = await res.json();
-      if (!d.embedded) break;
-      total += d.embedded;
-      await sleep(800);
-    }
-    btn.textContent = `✓ ${total} embedded`;
-    btn.style.color = '#38D996';
-    setTimeout(() => loadSources(), 1000);
-  } catch(e) {
-    btn.textContent = '✗ Failed';
-    btn.style.color = '#FC8181';
-    btn.disabled = false;
-  }
+  tbody.innerHTML = data.map(r => `<tr>
+    <td>${r.title || '?'}</td>
+    <td>${r.product_category || '?'}</td>
+    <td>${r.country}</td>
+    <td>${r.year}</td>
+    <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
+    <td>${r.extracted
+      ? '<span style="color:#38D996">OK Yes</span>'
+      : '<span style="color:#5A6278">Pending</span>'}</td>
+  </tr>`).join('');
 }
 
 // -- Load stats --------------------------------------------
