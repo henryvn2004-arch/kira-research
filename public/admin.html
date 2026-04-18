@@ -1160,7 +1160,9 @@ ${CHUNK_SCHEMA}`
 // ── ORCHESTRATOR: pass 1 (detect) + pass 2 (extract) ───────
 async function callClaudeFramework(data, frameworkCategory, fwName, fwIndustries, isPptx) {
   const industries = (fwIndustries || ['all']).join(', ');
-  const nameHint     = fwName ? `The framework name is: "${fwName}". Use this.` : 'Auto-detect the framework name.';
+  const nameHint     = fwName
+    ? `The framework name is: "${fwName}". Use this EXACT name — do not rename or generalize it.`
+    : 'Auto-detect the framework name from the content.';
   const categoryHint = frameworkCategory
     ? `Category is: "${frameworkCategory}". Use this.`
     : 'Detect the category from: sales|segmentation|distribution|strategy|marketing|pricing|operations|market_entry|product_launch|analytics';
@@ -1288,7 +1290,9 @@ async function processFwQueue() {
         addFwLog(`  Stored: ${fp}`);
 
         addFwLog('Extracting with Claude (text mode)...');
-        extraction = await callClaudeFramework(slides, category, fwName, fwIndustries, true);
+        // Use filename as fallback if user didn't provide a name
+        const nameForExtraction = fwName || item.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').trim();
+        extraction = await callClaudeFramework(slides, category, nameForExtraction, fwIndustries, true);
         item._filePath = fp;
 
       } else if (isPdf) {
@@ -1314,7 +1318,8 @@ async function processFwQueue() {
         addFwLog(`  Stored: ${fp}`);
 
         addFwLog('Extracting with Claude Vision (image mode)...');
-        extraction = await callClaudeFramework(pdfImages, category, fwName, fwIndustries, false);
+        const nameForExtraction = fwName || item.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').trim();
+        extraction = await callClaudeFramework(pdfImages, category, nameForExtraction, fwIndustries, false);
         item._filePath = fp;
       }
       addFwLog(`  Done: "${extraction.metadata.title}" · ${extraction.chunks.length} chunks`);
