@@ -1072,7 +1072,7 @@ Return ONLY valid JSON:
 CRITICAL: Strip ALL consulting firm names (McKinsey, BCG, Bain, Deloitte, Monitor, Accenture, PwC, EY, KPMG etc). Replace with "a leading consulting firm" or omit. Return ONLY JSON.`
   });
 
-  const p1 = safeParseJSON(await claudeCall(pass1Content, 800));
+  const p1 = safeParseJSON(await claudeCall([{ role: 'user', content: pass1Content }], 800));
   const resolvedName     = fwName || p1.framework_name || 'Unknown Framework';
   const resolvedCategory = frameworkCategory || p1.framework_category || 'strategy';
 
@@ -1112,7 +1112,7 @@ CRITICAL rules: Skip title/agenda/thank-you ${labelPrefix.toLowerCase()}s. Strip
     let attempt = 0;
     while (attempt < 3) {
       try {
-        const res = safeParseJSON(await claudeCall(batchContent, 3500));
+        const res = safeParseJSON(await claudeCall([{ role: 'user', content: batchContent }], 3500));
         allChunks.push(...(res.chunks || []));
         break;
       } catch(e) {
