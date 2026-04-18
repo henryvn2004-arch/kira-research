@@ -180,11 +180,6 @@
         <button class="btn btn-primary" id="btn-process" onclick="processQueue()">
           ▶ Start Processing Queue
         </button>
-        <button class="btn" id="btn-embed"
-          style="background:#0B3D2E;color:#00C9A7;border:1px solid #00C9A7"
-          onclick="runEmbeddings()">
-          ⚡ Embed All
-        </button>
         <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
           onclick="clearQueue()">Clear Queue</button>
       </div>
@@ -221,10 +216,12 @@
             <th>Year</th>
             <th>Type</th>
             <th>Extracted</th>
+            <th>Embedded</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="sources-tbody">
-          <tr><td colspan="6" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
+          <tr><td colspan="8" style="color:#5A6278;text-align:center;padding:24px">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -371,128 +368,72 @@ function setQueueStatus(idx, status) {
 }
 
 // -- Process queue -----------------------------------------
-
-async function claudeCall(messages, maxTokens = 4000) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: maxTokens, messages }),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
-  return data.content?.[0]?.text || '';
-}
-
-function safeParseJSON(text) {
-  const clean = text.replace(/```json|```/g, '').trim();
-  try { return JSON.parse(clean); } catch(e) {
-    // Try to recover truncated JSON
-    const lastClose = Math.max(clean.lastIndexOf('}\n'), clean.lastIndexOf('},\n'), clean.lastIndexOf('}]'));
-    if (lastClose > 100) {
-      try {
-        const truncated = clean.slice(0, lastClose + 1);
-        const opens  = (truncated.match(/\[/g)||[]).length - (truncated.match(/\]/g)||[]).length;
-        const braces = (truncated.match(/{/g)||[]).length  - (truncated.match(/}/g)||[]).length;
-        let fixed = truncated;
-        for (let i = 0; i < opens;  i++) fixed += ']';
-        for (let i = 0; i < braces; i++) fixed += '}';
-        return JSON.parse(fixed);
-      } catch(e2) {}
-    }
-    throw new Error('JSON parse failed: ' + e.message);
-  }
-}
-
 async function callClaude(fileText) {
-  const head = fileText.slice(0, 8000); // first ~8000 chars for ToC detection
+  const truncated = fileText.length > 80000
+    ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]'
+    : fileText;
 
-  // ── Pass 1: Detect metadata + sections from ToC ─────────
-  addLog('  Pass 1: detecting sections...');
-  const pass1Text = await claudeCall([{ role: 'user', content:
-    `Analyze the beginning of this consulting report and return ONLY valid JSON:
+  const prompt = `You are analyzing a consulting market research report.
+Read carefully and return ONLY valid JSON (no markdown, no backticks):
+
 {
   "metadata": {
     "title": "report title",
-    "product_category": "main product/market category",
+    "product_category": "main category",
     "sub_category": "sub-category or null",
-    "country": "country or region name",
-    "region": "southeast_asia|south_asia|east_asia|apac or null",
-    "year": 2010,
-    "client_industry": "client industry or null",
+    "country": "country name",
+    "region": "southeast_asia|south_asia|east_asia or null",
+    "year": 2019,
+    "client_industry": "industry or null",
     "competency_type": "market_analysis|competitive_landscape|market_entry|channel_analysis|pricing_study|consumer_insights|partner_search|market_sizing|industry_mapping",
-    "methodology_used": ["desk_research","survey","trade_interviews","focus_groups"],
+    "methodology_used": ["survey","focus_groups","trade_interviews","desk_research"],
     "respondent_types": ["consumers","trade","experts"]
   },
   "template": {
     "name": "template name",
-    "section_structure": [{"section": "Section Title", "purpose": "what this section covers"}],
-    "methodology": "brief methodology description"
+    "section_structure": [{"section": "...", "purpose": "..."}],
+    "methodology": "methodology description"
   },
-  "sections": ["Section 1 Title", "Section 2 Title", "..."]
-}
-
-Return ONLY JSON. Sections = table of contents items.
-
-REPORT START:
-` + head }], 1500);
-
-  const pass1 = safeParseJSON(pass1Text);
-  const sections = pass1.sections || [];
-  addLog(`  Found ${sections.length} sections: ${sections.slice(0,3).join(', ')}...`);
-
-  // ── Pass 2: Extract patterns + chunks from full text ────
-  addLog('  Pass 2: extracting patterns & chunks...');
-  const truncated = fileText.length > 80000 ? fileText.slice(0, 80000) + '\n\n[TRUNCATED]' : fileText;
-
-  const pass2Text = await claudeCall([{ role: 'user', content:
-    `You are extracting reusable intelligence from a consulting report.
-Report sections identified: ${sections.join(', ')}
-
-Extract structural insights. Return ONLY valid JSON:
-{
   "patterns": [
     {
       "pattern_type": "channel_structure|pricing_dynamics|competitive_dynamics|consumer_behavior|regulatory|distribution|margin_structure",
-      "industry": "industry",
+      "industry": "industry name",
       "sub_industry": "sub-industry or null",
-      "description": "100-200 word structural insight — STRIP all specific numbers/dates/brand names, keep structural patterns only",
-      "applicable_regions": ["southeast_asia","south_asia","east_asia"],
+      "description": "structural insight - STRIP all specific numbers/dates",
+      "applicable_regions": ["southeast_asia"],
       "confidence": "high|medium|low"
     }
   ],
   "chunks": [
     {
       "chunk_type": "framework|industry_insight|channel_data|pricing_data|competitive_insight|consumer_insight|recommendation",
-      "content": "80-200 word insight from this section — STRIP specific numbers, keep structural insights and frameworks",
-      "section": "exact section title from ToC",
-      "data_type": "margin_stack|price_ladder|channel_split|brand_map or null"
+      "content": "50-150 word insight - STRIP specific numbers, keep structural insights",
+      "section": "section name",
+      "data_type": "null"
     }
   ]
 }
 
-Rules:
-- 5-15 patterns (structural, timeless, applicable beyond this specific market)
-- 1-2 chunks per section (${sections.length} sections = ~${Math.min(sections.length*2, 30)} chunks max)
-- Each chunk maps to ONE section from the ToC
-- STRIP all specific numbers, dates, brand names — keep only structural patterns
-- Return ONLY JSON, no trailing commas
+Rules: 5-15 patterns, 20-50 chunks. Return ONLY JSON.
 
-FULL REPORT:
-` + truncated }], 8000);
+REPORT:
+` + truncated;
 
-  const pass2 = safeParseJSON(pass2Text);
+  const res = await fetch('/api/claude-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
 
-  return {
-    metadata: pass1.metadata,
-    template: pass1.template,
-    patterns: pass2.patterns || [],
-    chunks:   pass2.chunks   || [],
-  };
+  const data = await res.json();
+  if (!res.ok) throw new Error('Claude: ' + (data.error?.message || JSON.stringify(data)));
+  const text  = data.content?.[0]?.text || '';
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
 }
 
 async function runEmbeddings() {
@@ -569,7 +510,7 @@ async function processQueue() {
 
       // 1b. Upload text to Supabase Storage
       addLog('Uploading to Storage...');
-      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-_.]/g, '')}`;
+      const filePath = `reports/${Date.now()}-${uploadName.replace(/\s+/g, '-')}`;
       const blob = new Blob([textContent], { type: 'text/plain' });
 
       const { error: upErr } = await window.db.storage
@@ -580,20 +521,15 @@ async function processQueue() {
       addLog(`  Uploaded: ${filePath}`);
       item.filePath = filePath;
 
-      // 2. Extract with Claude (2-pass: ToC detection + per-section chunking)
-      addLog('Extracting with Claude (2 passes)...');
-      const extraction = await callClaude(textContent);
-      addLog(`  Extracted: ${extraction.patterns?.length || 0} patterns, ${extraction.chunks?.length || 0} chunks across ${(extraction.template?.section_structure||[]).length} sections`);
-
-      // 3. Save to DB via ingest-save
-      addLog('Saving to database...');
-      const res = await fetch('/api/ingest-save', {
+      // 2. Call Vercel ingest API
+      addLog('Calling ingest API...');
+      const res = await fetch('/api/ingest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + EDGE_ANON,
         },
-        body: JSON.stringify({ filePath, extraction }),
+        body: JSON.stringify({ filePath }),
       });
 
       const result = await res.json();
@@ -636,24 +572,84 @@ function clearLog() {
 // -- Load source reports -----------------------------------
 async function loadSources() {
   const tbody = document.getElementById('sources-tbody');
-  tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">Loading...</td></tr>';
+
   const { data, error } = await window.db.from('source_reports')
-    .select('title,product_category,country,year,competency_type,extracted')
+    .select('id,title,product_category,country,year,competency_type,extracted')
     .order('created_at', { ascending: false }).limit(100);
+
   if (error || !data?.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="color:#5A6278;text-align:center;padding:20px">No reports yet</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(r => `<tr>
-    <td>${r.title || '?'}</td>
-    <td>${r.product_category || '?'}</td>
-    <td>${r.country}</td>
-    <td>${r.year}</td>
-    <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
-    <td>${r.extracted
-      ? '<span style="color:#38D996">OK Yes</span>'
-      : '<span style="color:#5A6278">Pending</span>'}</td>
-  </tr>`).join('');
+
+  // Check which reports have embedded chunks
+  const ids = data.map(r => r.id);
+  const { data: embeddedRows } = await window.db
+    .from('report_chunks')
+    .select('source_report_id')
+    .in('source_report_id', ids)
+    .not('embedding', 'is', null)
+    .limit(500);
+
+  const embeddedSet = new Set((embeddedRows || []).map(r => r.source_report_id));
+
+  tbody.innerHTML = data.map((r, i) => {
+    const isEmbedded  = embeddedSet.has(r.id);
+    const canEmbed    = r.extracted && !isEmbedded;
+    return `<tr id="src-row-${i}">
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.title||''}">${r.title || '?'}</td>
+      <td>${r.product_category || '?'}</td>
+      <td>${r.country}</td>
+      <td>${r.year}</td>
+      <td>${(r.competency_type||'').replace(/_/g,' ')}</td>
+      <td>${r.extracted
+        ? '<span style="color:#38D996">✓ Yes</span>'
+        : '<span style="color:#5A6278">Pending</span>'}</td>
+      <td>${isEmbedded
+        ? '<span style="color:#38D996">✓ Yes</span>'
+        : '<span style="color:#5A6278">No</span>'}</td>
+      <td>${canEmbed
+        ? `<button class="btn btn-sm" style="background:#0B3D2E;color:#00C9A7;border:1px solid #00C9A7"
+             onclick="embedReport('${r.id}', ${i})">⚡ Embed</button>`
+        : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function embedReport(sourceReportId, rowIdx) {
+  const btn = document.querySelector(`#src-row-${rowIdx} button`);
+  if (btn) { btn.disabled = true; btn.textContent = '⟳ Embedding...'; }
+
+  try {
+    const res = await fetch('/api/embed', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
+      body: JSON.stringify({ type: 'chunk', source_report_id: sourceReportId }),
+    });
+    const d = await res.json();
+
+    // Also embed patterns for this report
+    const res2 = await fetch('/api/embed', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
+      body: JSON.stringify({ type: 'pattern', source_report_id: sourceReportId }),
+    });
+    const d2 = await res2.json();
+
+    if (btn) {
+      btn.textContent = `✓ Done (${(d.embedded||0)+(d2.embedded||0)} embedded)`;
+      btn.style.color = '#38D996';
+      btn.style.borderColor = '#38D996';
+    }
+    // Update embedded cell
+    const row = document.getElementById(`src-row-${rowIdx}`);
+    if (row) row.cells[6].innerHTML = '<span style="color:#38D996">✓ Yes</span>';
+
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = '⚡ Embed'; }
+    alert('Embed failed: ' + e.message);
+  }
 }
 
 // -- Load stats --------------------------------------------
