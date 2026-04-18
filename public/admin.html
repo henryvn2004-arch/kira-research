@@ -532,22 +532,31 @@ async function claudeCall(messages, maxTokens, system = null) {
 }
 
 function safeParseJSON(text) {
-  const clean = text.replace(/```json|```/g, '').trim();
-  try { return JSON.parse(clean); } catch(e) {
-    const lastClose = Math.max(clean.lastIndexOf('}\n'), clean.lastIndexOf('},\n'), clean.lastIndexOf('}]'));
-    if (lastClose > 100) {
-      try {
-        const t = clean.slice(0, lastClose + 1);
-        const opens  = (t.match(/\[/g)||[]).length - (t.match(/\]/g)||[]).length;
-        const braces = (t.match(/{/g)||[]).length  - (t.match(/}/g)||[]).length;
-        let fixed = t;
-        for (let i = 0; i < opens;  i++) fixed += ']';
-        for (let i = 0; i < braces; i++) fixed += '}';
-        return JSON.parse(fixed);
-      } catch(e2) {}
-    }
-    throw new Error('JSON parse failed: ' + e.message);
+  // Step 1: strip markdown fences
+  let clean = text.replace(/```json|```/g, '').trim();
+
+  // Step 2: try direct parse first
+  try { return JSON.parse(clean); } catch(_) {}
+
+  // Step 3: extract largest {...} block (handles markdown preamble like "# Extracted...")
+  const first = clean.indexOf('{');
+  const last  = clean.lastIndexOf('}');
+  if (first !== -1 && last > first) {
+    const extracted = clean.slice(first, last + 1);
+    try { return JSON.parse(extracted); } catch(_) {}
+
+    // Step 4: truncation repair — close unclosed brackets
+    try {
+      const opens  = (extracted.match(/\[/g)||[]).length - (extracted.match(/\]/g)||[]).length;
+      const braces = (extracted.match(/{/g)||[]).length  - (extracted.match(/}/g)||[]).length;
+      let fixed = extracted;
+      for (let i = 0; i < opens;  i++) fixed += ']';
+      for (let i = 0; i < braces; i++) fixed += '}';
+      return JSON.parse(fixed);
+    } catch(e2) {}
   }
+
+  throw new Error('JSON parse failed: ' + text.slice(0, 80) + '...');
 }
 
 async function callClaude(fileText) {
