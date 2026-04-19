@@ -1457,7 +1457,6 @@ async function streamSection(payload, sectionIndex) {
           if (commentaryEl) {
             commentaryEl.innerHTML = formatCommentary(commentary);
             const secIdx = sectionIndex;
-            // Replace .slide-commentary with collapsible version
             const existingComm = block?.querySelector('.slide-commentary');
             if (existingComm) {
               const commHtml = existingComm.innerHTML;
@@ -1469,7 +1468,7 @@ async function streamSection(payload, sectionIndex) {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                   <span>Read full analysis</span>
                 </div>`;
-              commentaryEl = null; // no longer streaming
+              commentaryEl = null;
             }
           }
 
@@ -1488,23 +1487,49 @@ async function streamSection(payload, sectionIndex) {
               </div>` : '';
 
             const header = block.querySelector('.slide-header');
-            if (header) {
-              header.insertAdjacentHTML('afterend', headlineEl + statsHtml);
-            }
+            if (header) header.insertAdjacentHTML('afterend', headlineEl + statsHtml);
 
-            // Insert chart/table BEFORE commentary toggle
-            if (evt.chart?.labels?.length || evt.table?.headers?.length) {
+            // ── Resilient chart detection ──
+            // Accept chart if it has labels OR datasets (backend format may vary)
+            const hasChart = evt.chart &&
+              (evt.chart.labels?.length || evt.chart.datasets?.length ||
+               (Array.isArray(evt.chart.data) && evt.chart.data.length));
+            const hasTable = evt.table?.headers?.length;
+
+            if (hasChart || hasTable) {
               const toggle = block.querySelector('.commentary-toggle');
               const comm   = block.querySelector('.slide-commentary');
               const anchor = toggle || comm || null;
-              appendVisualsAt(block, sectionIndex, evt.chart, evt.table, anchor);
+              appendVisualsAt(block, sectionIndex, hasChart ? evt.chart : null, hasTable ? evt.table : null, anchor);
             }
             if (evt.sources?.length) appendSources(block, evt.sources);
           }
         }
 
         if (evt.type === 'done') {
-          if (commentaryEl) commentaryEl.innerHTML = formatCommentary(commentary);
+          if (commentaryEl) {
+            // commentary never got collapsed (no meta event) — wrap now
+            commentaryEl.innerHTML = formatCommentary(commentary);
+            const secIdx = sectionIndex;
+            const existingComm = block?.querySelector('.slide-commentary');
+            if (existingComm && commentary.length > 60) {
+              const commHtml = existingComm.innerHTML;
+              existingComm.outerHTML = `
+                <div class="slide-commentary">
+                  <div class="commentary-preview collapsed" id="cp-${secIdx}">${commHtml}</div>
+                </div>
+                <div class="commentary-toggle" id="ct-${secIdx}" onclick="toggleCommentary(${secIdx})">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  <span>Read full analysis</span>
+                </div>`;
+            }
+          }
+
+          // ── Post-process: extract visuals if none were rendered from meta ──
+          const hasVisuals = block?.querySelector('.slide-visuals');
+          if (!hasVisuals && commentary.length > 120) {
+            extractVisualsFromCommentary(commentary, payload.sectionTitle, sectionIndex, block);
+          }
         }
       } catch {}
     }
@@ -1548,12 +1573,43 @@ function renderSectionHeadline(block, i, title, data) {
 // Append visuals before a specific anchor element (e.g. before commentary)
 function appendVisualsAt(block, i, chart, table, anchor) {
   const chartId  = `chart-${i}`;
-  const hasChart = chart?.labels?.length;
+
+  // Normalize chart: backend may return {data:[...]} or {labels, datasets:[...]}
+  let normalizedChart = null;
+  if (chart) {
+    // Already in Chart.js format (has labels + datasets)
+    if (chart.labels?.length && chart.datasets?.length) {
+      normalizedChart = chart;
+    }
+    // Alternative: has labels but no datasets (bare format) → wrap
+    else if (chart.labels?.length && chart.data?.length) {
+      normalizedChart = {
+        ...chart,
+        datasets: [{ label: chart.title || 'Data', data: chart.data, borderColor: '#1E6FFF' }],
+      };
+    }
+    // Alternative: has data array on datasets items (pptx export format)
+    else if (Array.isArray(chart.data) && chart.data[0]?.labels?.length) {
+      const firstSeries = chart.data[0];
+      normalizedChart = {
+        type: chart.type || 'bar',
+        title: chart.title || '',
+        labels: firstSeries.labels,
+        datasets: chart.data.map((s, di) => ({
+          label:       s.name || '',
+          data:        s.values || [],
+          borderColor: ['#1E6FFF','#00C9A7','#F6AD55','#FC8181'][di % 4],
+        })),
+      };
+    }
+  }
+
+  const hasChart = !!(normalizedChart?.labels?.length && normalizedChart?.datasets?.length);
   const hasTable = table?.headers?.length;
 
   const chartHtml = hasChart ? `
     <div class="visual-box">
-      <div class="visual-title">${chart.title || ''}</div>
+      <div class="visual-title">${normalizedChart.title || ''}</div>
       <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
     </div>` : '';
 
@@ -1580,11 +1636,40 @@ function appendVisualsAt(block, i, chart, table, anchor) {
     block.appendChild(div);
   }
 
-  if (hasChart) setTimeout(() => renderChart(chartId, chart), 50);
+  if (hasChart) setTimeout(() => renderChart(chartId, normalizedChart), 50);
 }
 
 function appendVisuals(block, i, chart, table) {
   appendVisualsAt(block, i, chart, table, null);
+}
+
+// ── Post-process: Claude extracts best visual from commentary ─────────────
+async function extractVisualsFromCommentary(commentary, sectionTitle, sectionIndex, block) {
+  if (!block || !commentary) return;
+  try {
+    setStatus(`🔍 <strong>Extracting visuals</strong> for "${sectionTitle}"...`, null);
+    const res = await fetch('/api/extract-visuals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ commentary, sectionTitle, sectionIndex }),
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const hasChart = data.chart?.labels?.length && data.chart?.datasets?.length;
+    const hasTable = data.table?.headers?.length && data.table?.rows?.length;
+
+    if (hasChart || hasTable) {
+      // Insert before commentary toggle (or append if not found)
+      const toggle = block.querySelector('.commentary-toggle');
+      const comm   = block.querySelector('.slide-commentary');
+      const anchor = toggle || comm || null;
+      appendVisualsAt(block, sectionIndex, hasChart ? data.chart : null, hasTable ? data.table : null, anchor);
+      setStatus(`✓ <strong>Visual extracted</strong>`, null);
+    }
+  } catch(e) {
+    // fail silently — visual extraction is best-effort
+  }
 }
 
 function toggleCommentary(i) {
