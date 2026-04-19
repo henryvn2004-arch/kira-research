@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Document Intelligence — KIRA RESEARCH</title>
-<meta name="description" content="Upload your documents and generate consulting-grade reports with McKinsey-style presentation."/>
+<meta name="description" content="Upload your documents and generate consulting-grade reports with consulting-style presentation."/>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"/>
@@ -144,11 +144,11 @@
     <div class="doc-hero">
       <div class="doc-hero-badge">Document Intelligence</div>
       <h1>Turn your documents into<br/><span>consulting-grade reports</span></h1>
-      <p>Upload annual reports, financial statements, strategy decks or any business documents. Add your request and get a McKinsey-style report with charts, data tables and strategic analysis.</p>
+      <p>Upload annual reports, financial statements, strategy decks or any business documents. Add your request and get a consulting-grade report with charts, data tables and strategic analysis.</p>
       <div class="hero-features">
         <div class="hero-feat">Supports PDF, DOCX, XLSX, PPTX, images</div>
         <div class="hero-feat">Optional web research via Perplexity</div>
-        <div class="hero-feat">Streaming McKinsey-style output</div>
+        <div class="hero-feat">Streaming Consulting-style output</div>
         <div class="hero-feat">Export to PPTX or PDF</div>
       </div>
     </div>
@@ -173,7 +173,7 @@
       <div class="request-panel">
         <div>
           <label>YOUR REQUEST <span style="color:#1E6FFF">*</span></label>
-          <div style="font-size:11px;color:#5A6278;margin-bottom:8px">What do you want Claude to analyze or generate?</div>
+          <div style="font-size:11px;color:#5A6278;margin-bottom:8px">What do you want the AI to analyze or generate?</div>
           <textarea id="f-request" placeholder="e.g. Based on the annual reports, generate a 5-year growth strategy for 2026–2030 with market expansion priorities and risk analysis"></textarea>
         </div>
 
@@ -206,7 +206,7 @@
             <div class="toggle-switch" id="ws-switch"></div>
             <div>
               <div style="font-size:13px;color:#A3A9B6;font-weight:600">Supplement with live web search</div>
-              <div style="font-size:11px;color:#5A6278">Claude decides if external data is needed</div>
+              <div style="font-size:11px;color:#5A6278">AI decides if external data is needed</div>
             </div>
           </div>
         </div>
@@ -233,10 +233,10 @@
     <div style="max-width:600px;margin:0 auto">
       <div class="page-eyebrow" style="margin-top:32px">Step 2 of 4</div>
       <div class="page-title" style="margin-bottom:8px">One quick question</div>
-      <div class="page-sub" style="margin-bottom:32px">Claude read your documents and has one clarifying question before building the report plan.</div>
+      <div class="page-sub" style="margin-bottom:32px">AI analyzed your documents and has one clarifying question before building the report plan.</div>
       <div class="clarify-card">
         <div class="clarify-header">
-          <div style="font-size:9px;color:#1E6FFF;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:8px">What Claude found in your documents</div>
+          <div style="font-size:9px;color:#1E6FFF;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:8px">What AI found in your documents</div>
           <div id="clarify-insight" style="font-size:13px;color:#A3A9B6;line-height:1.6"></div>
         </div>
         <div class="clarify-body">
@@ -256,7 +256,7 @@
     <div style="max-width:720px;margin:0 auto">
       <div class="page-eyebrow" style="margin-top:32px">Step 3 of 4</div>
       <div class="page-title" style="margin-bottom:8px">Your report plan</div>
-      <div class="page-sub" style="margin-bottom:32px">Claude analyzed your documents and proposed this structure. Edit sections if needed, then generate.</div>
+      <div class="page-sub" style="margin-bottom:32px">AI analyzed your documents and proposed this structure. Edit sections if needed, then generate.</div>
 
       <div class="plan-card">
         <div class="plan-header">
@@ -293,7 +293,7 @@
     <div class="progress-card">
       <div class="progress-header">
         <div class="progress-title" id="prog-title">Analyzing documents...</div>
-        <div class="progress-subtitle" id="prog-subtitle">Claude is reading your files</div>
+        <div class="progress-subtitle" id="prog-subtitle">Reading and analyzing your files</div>
       </div>
       <div class="progress-body">
         <div id="section-progress-list" class="phase-list"></div>
@@ -379,7 +379,7 @@
         <div class="exp-fmt-btn active" id="expFmtPptx" onclick="setExpFmt('pptx')">
           <div style="font-size:20px;margin-bottom:6px">📊</div>
           <div style="font-size:13px;font-weight:700">PowerPoint</div>
-          <div style="font-size:10px;color:#5A6278;margin-top:3px">McKinsey layout</div>
+          <div style="font-size:10px;color:#5A6278;margin-top:3px">Consulting layout</div>
         </div>
         <div class="exp-fmt-btn" id="expFmtPdf" onclick="setExpFmt('pdf')">
           <div style="font-size:20px;margin-bottom:6px">📄</div>
@@ -832,7 +832,7 @@ async function startGeneration() {
     let liveResearch = '';
     if (planNeedsWeb) {
       setStatus('🔍 Searching live data...', 10);
-      document.getElementById('prog-subtitle').textContent = 'Perplexity searching for external data...';
+      document.getElementById('prog-subtitle').textContent = 'Searching live external data...';
       try {
         const res = await fetch('/api/browser-research', {
           method: 'POST',
