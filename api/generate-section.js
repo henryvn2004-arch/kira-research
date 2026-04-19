@@ -259,32 +259,67 @@ function buildContext(params, ragContext, researchSummary, prevSections, compete
     ? `\nOUTPUT LANGUAGE: Write ALL content in ${language}. This includes headlines, commentary, table headers, chart labels, and all text.`
     : '';
 
+  // ── Smart context trimming — only send what's relevant to THIS section ──
+  // Full research dump is 4000 tokens × 8 sections = 32K wasted input tokens.
+  // Instead: detect section type, extract relevant paragraphs from research.
+  const sectionType = getBlueprint(sectionTitle)?.angle?.split('—')[0]?.toLowerCase() || '';
+  const trimmedResearch = trimResearchForSection(researchSummary, sectionTitle, sectionType);
+
+  // RAG: trim to 800 tokens max (was 2000+1000)
   const rag = [
-    ragContext?.chunkText   ? `RESEARCH LIBRARY:\n${ragContext.chunkText}`   : '',
-    ragContext?.patternText ? `INDUSTRY PATTERNS:\n${ragContext.patternText}` : ''
+    ragContext?.chunkText   ? `LIBRARY:\n${ragContext.chunkText.slice(0,1000)}`   : '',
+    ragContext?.patternText ? `PATTERNS:\n${ragContext.patternText.slice(0,500)}`  : '',
   ].filter(Boolean).join('\n\n');
 
   const antiOverlap     = buildAntiOverlapContext(prevSections);
   const sectionGuidance = getSectionGuidance(competencyTemplate, sectionTitle);
+  const blueprint       = getBlueprint(sectionTitle);
+  const localHints      = buildLocalizedSearchHints(blueprint, language, industry, country, sectionTitle);
 
-  const blueprint  = getBlueprint(sectionTitle);
-  const localHints = buildLocalizedSearchHints(blueprint, language, industry, country, sectionTitle);
-
-  // Per-section targeted queries from generate-report localization step
   const targetedQueries = sectionQuery?.queries?.length
-    ? `\nTARGETED RESEARCH QUERIES FOR THIS SECTION (already searched — verify against research data above):\n${sectionQuery.queries.map(q => `  • ${q}`).join('\n')}`
+    ? `\nSECTION QUERIES (search terms for this section):\n${sectionQuery.queries.slice(0,3).map(q => `  • ${q}`).join('\n')}`
     : '';
 
   return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
-${questions ? `Client focus: ${questions}` : ''}${companies ? `\nCompanies: ${companies}` : ''}${langInstruction}
+${questions ? `Focus: ${questions}` : ''}${companies ? ` | Companies: ${companies}` : ''}${langInstruction}
 
 RESEARCH DATA:
-${researchSummary || 'Draw on your knowledge.'}
+${trimmedResearch}
 ${rag ? `\n${rag}` : ''}
 ${sectionGuidance ? `\n${sectionGuidance}` : ''}
 ${localHints ? `\n${localHints}` : ''}
 ${targetedQueries}
 ${antiOverlap ? `\n${antiOverlap}` : ''}`;
+}
+
+// Extract only research paragraphs relevant to current section type
+// Avoids sending 4000-token research dump to every section
+function trimResearchForSection(research, sectionTitle, sectionAngle) {
+  if (!research) return 'Draw on your knowledge.';
+  const lines = research.split('\n').filter(l => l.trim().length > 10);
+
+  // Keywords that indicate relevance to this section
+  const titleWords = sectionTitle.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w => w.length > 3);
+
+  // Score each paragraph by keyword overlap
+  const paragraphs = research.split('\n\n').filter(p => p.trim().length > 30);
+  const scored = paragraphs.map(p => {
+    const pl = p.toLowerCase();
+    const score = titleWords.reduce((s,w) => s + (pl.includes(w) ? 2 : 0), 0)
+      + (pl.includes('===') ? 3 : 0); // boost LOCAL DATA sections
+    return { p, score };
+  });
+
+  // Take top 4 most relevant paragraphs + always include LOCAL DATA section if present
+  const localDataIdx = paragraphs.findIndex(p => p.includes('=== LOCAL DATA'));
+  const sorted = scored.sort((a,b) => b.score - a.score).slice(0, 4).map(x => x.p);
+
+  if (localDataIdx >= 0 && !sorted.includes(paragraphs[localDataIdx])) {
+    sorted.push(paragraphs[localDataIdx]);
+  }
+
+  const result = sorted.join('\n\n').slice(0, 1800); // hard cap 1800 chars
+  return result || research.slice(0, 1800);
 }
 
 export default async function handler(req, res) {
@@ -460,7 +495,7 @@ sources: 1-3 sources referenced in text, or "Industry estimate" / "Analyst proje
 
 CRITICAL: Return ONLY the JSON object. No explanation. No markdown fences.`;
 
-    const raw = await callClaude(extractPrompt, 1500); // was 1000 — too tight for chart+table JSON
+    const raw = await callClaude(extractPrompt, 1100); // 1100 sufficient for chart+table JSON
 
     // Robust JSON parsing — handle truncated or fence-wrapped responses
     let parsed = null;
