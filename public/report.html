@@ -122,7 +122,7 @@
     .toc-item.active .toc-dot{background:#1E6FFF;box-shadow:0 0 6px rgba(30,111,255,.6)}
 
     .report-content{min-width:0}
-    .report-meta{background:#11151C;border:1px solid #1A1D24;border-radius:12px;padding:24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .report-meta{background:#11151C;border:1px solid #1A1D24;border-radius:12px;padding:24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;position:sticky;top:72px;z-index:50;backdrop-filter:blur(12px);background:rgba(17,21,28,.97)}
     .report-meta-left{display:flex;flex-direction:column;gap:4px}
     .report-meta-title{font-size:18px;font-weight:700}
     .report-meta-sub{font-size:12px;color:#5A6278}
@@ -175,12 +175,13 @@
     .slide-commentary p:last-child{margin-bottom:0}
     .slide-commentary strong{color:#fff}
     .slide-commentary h3{color:#1E6FFF;font-size:10px;font-weight:700;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.08em}
-    .commentary-preview{overflow:hidden;transition:max-height .35s ease}
-    .commentary-preview.collapsed{max-height:72px;mask-image:linear-gradient(to bottom,#000 40%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 40%,transparent 100%)}
-    .commentary-preview.expanded{max-height:2000px;mask-image:none;-webkit-mask-image:none}
-    .commentary-toggle{display:flex;align-items:center;gap:6px;padding:8px 28px 20px;font-size:12px;color:#5A6278;cursor:pointer;user-select:none;transition:color .15s}
-    .commentary-toggle:hover{color:#A3A9B6}
-    .commentary-toggle svg{width:13px;height:13px;transition:transform .25s;flex-shrink:0}
+    .commentary-preview{overflow:hidden;transition:max-height .4s ease}
+    .commentary-preview.collapsed{max-height:52px;mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+    .commentary-preview.expanded{max-height:3000px;mask-image:none;-webkit-mask-image:none}
+    .commentary-toggle{display:flex;align-items:center;gap:6px;padding:10px 28px 20px;font-size:12px;color:#1E6FFF;cursor:pointer;user-select:none;transition:color .15s;font-weight:600}
+    .commentary-toggle:hover{color:#5B9FFF}
+    .commentary-toggle svg{width:13px;height:13px;transition:transform .3s;flex-shrink:0;stroke:#1E6FFF}
+    .commentary-toggle:hover svg{stroke:#5B9FFF}
     .commentary-toggle.expanded svg{transform:rotate(180deg)}
     .stream-cursor{display:inline-block;width:2px;height:14px;background:#1E6FFF;margin-left:2px;vertical-align:middle;animation:blink .7s ease-in-out infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
@@ -273,28 +274,41 @@
     .status-pbar-fill{height:100%;background:#1E6FFF;border-radius:2px;transition:width .4s}
     .status-pct{font-size:11px;color:#5A6278;min-width:32px;text-align:right}
 
-    /* ── PRINT / PDF ── */
     @media print {
       body{background:#fff!important;color:#000!important}
       body::before{display:none}
       nav,.report-toc,#chatbox,.steps-bar,#view-form,#view-progress,
-      .report-meta-right,.chat-input-row{display:none!important}
+      .report-meta-right,.chat-input-row,.commentary-toggle,
+      #status-bar,.pres-ov,.exp-ov,#confirm-modal{display:none!important}
       .report-layout{display:block!important}
       .report-content{width:100%!important}
-      .report-meta{background:#fff!important;border:1px solid #ddd!important;break-inside:avoid}
-      .section-block{opacity:1!important;transform:none!important;
+      .report-meta{position:static!important;background:#fff!important;border:1px solid #ddd!important;break-inside:avoid}
+      .section-block{
+        opacity:1!important;transform:none!important;
         border:1px solid #ddd!important;background:#fff!important;
         page-break-inside:avoid;break-inside:avoid;
-        margin-bottom:0!important;page-break-after:always;break-after:always}
+        margin-bottom:0!important;page-break-after:always;break-after:always;
+        box-shadow:none!important;
+      }
       .section-block:last-child{page-break-after:auto;break-after:auto}
-      .slide-header{background:#0A1628!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .slide-header{background:#0A1628!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:14px 24px!important}
       .slide-num{background:rgba(30,111,255,.2)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       .slide-headline{background:rgba(30,111,255,.06)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      .visual-box{background:#f7fafc!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .visual-box{background:#f7fafc!important;border:1px solid #e2e8f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid}
+      /* Force expand all commentary for print */
+      .commentary-preview{max-height:none!important;mask-image:none!important;-webkit-mask-image:none!important;overflow:visible!important}
+      .commentary-preview.collapsed{max-height:none!important;mask-image:none!important;-webkit-mask-image:none!important}
       .slide-commentary{color:#1a1a1a!important}
       .slide-commentary strong{color:#000!important}
-      .stat-pill{background:#f0f4f8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .slide-commentary h3{color:#0A1628!important}
+      .stat-pill{background:#f0f4f8!important;border:1px solid #e2e8f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .stat-value{color:#0A1628!important}
+      .stat-label{color:#4a5568!important}
+      .slide-headline-text{color:#0A1628!important}
+      .slide-title{color:#fff!important}
+      .chart-wrap{height:220px!important}
       a{color:inherit!important;text-decoration:none!important}
+      @page{margin:0.5in}
     }
     /* ── EXPORT MODAL ── */
     .exp-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center}
@@ -1327,6 +1341,7 @@ async function startGeneration(params, slug) {
         const pdfBtn  = document.getElementById('btn-export-pdf');
         if (pptxBtn) pptxBtn.style.display = 'inline-flex';
         if (pdfBtn)  pdfBtn.style.display  = 'inline-flex';
+        if (presBtn0) presBtn0.style.display = 'inline-flex';
       }
 
       // Render skeleton at correct display position
@@ -1963,7 +1978,6 @@ async function doExpDownload() {
   btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Preparing…';
 
   try {
-    // Parse sections from window._completedSections into structured format
     const rawSections = window._completedSections || [];
     const sections = rawSections.map(sec => {
       let p = {};
@@ -1971,9 +1985,9 @@ async function doExpDownload() {
       return {
         label:   sec.title || '',
         title:   p.headline || sec.title || '',
-        source:  (p.sources || []).join('; '),
+        source:  (p.sources || []).slice(0,3).join('; '),
         finding: p.headline || '',
-        stats:   (p.stats || []).map(s => ({
+        stats:   (p.stats || []).slice(0, 6).map(s => ({
           label:       s.label || '',
           value:       s.value || '',
           change:      '',
@@ -1982,8 +1996,8 @@ async function doExpDownload() {
         })),
         chart: p.chart ? buildExpChart(p.chart) : undefined,
         tableHeaders: p.table?.headers,
-        tableRows:    p.table?.rows,
-        commentary:   p.commentary || '',
+        tableRows:    (p.table?.rows || []).slice(0, 20), // limit rows
+        commentary:   (p.commentary || '').slice(0, 800), // limit per section
       };
     });
 
@@ -2052,11 +2066,33 @@ function buildExpChart(ch) {
 
 // ── Export PDF ────────────────────────────────────────────
 function exportPdf() {
+  // Expand all collapsed commentary so full text prints
+  document.querySelectorAll('.commentary-preview.collapsed').forEach(el => {
+    el.classList.remove('collapsed');
+    el.classList.add('expanded');
+  });
+  document.querySelectorAll('.commentary-toggle').forEach(el => {
+    el.style.display = 'none';
+  });
+
   const title = document.getElementById('report-title')?.textContent || 'KIRA Report';
   const origTitle = document.title;
   document.title = title;
-  window.print();
-  document.title = origTitle;
+
+  setTimeout(() => {
+    window.print();
+    document.title = origTitle;
+    // Restore collapsed state after print dialog closes
+    setTimeout(() => {
+      document.querySelectorAll('.commentary-preview.expanded').forEach(el => {
+        el.classList.remove('expanded');
+        el.classList.add('collapsed');
+      });
+      document.querySelectorAll('.commentary-toggle').forEach(el => {
+        el.style.display = '';
+      });
+    }, 1000);
+  }, 100);
 }
 
 // Keep old exportPptx as alias in case called elsewhere
