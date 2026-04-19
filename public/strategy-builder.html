@@ -791,6 +791,11 @@ async function generate() {
                       .map(i => i.value.trim()).filter(Boolean);
   const { language, request, moduleKey, moduleName, docs } = currentParams;
 
+  // ── Credit gate ──────────────────────────────────────
+  const gate = await creditGate(moduleKey || 'strategy_builder');
+  if (!gate) return;
+  // ────────────────────────────────────────────────────
+
   showView('progress');
   startTime    = Date.now();
   elapsedTimer = setInterval(() => {
@@ -893,9 +898,71 @@ async function generate() {
 
   } catch (e) {
     clearInterval(elapsedTimer);
+    await refundCredits(gate, null);
     setStatus('✗ Error: ' + e.message, null);
   }
 }
+
+// ── CREDIT GATE ───────────────────────────────────────────
+const CREDIT_COSTS = {
+  market_overview:19, competitive_analysis:19, customer_intelligence:19,
+  value_chain:19, go_to_market:19, partner_search:19, proposition_development:19,
+  industry_deep_dive:19, strategy_builder:29, gtm_strategy:29,
+  doc_intelligence:9, document_analysis:9,
+};
+async function creditGate(reportType) {
+  const user = await window.kiraAuth?.getUser();
+  if (!user) {
+    sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+    window.location.href = '/auth.html';
+    return null;
+  }
+  const cost = CREDIT_COSTS[reportType] ?? 19;
+  let balance = 0;
+  try {
+    const r = await fetch(`/api/credits?action=balance&userId=${user.id}`);
+    const d = await r.json();
+    balance = d.balance ?? 0;
+  } catch { balance = 0; }
+  if (balance < cost) { showCreditModal(balance, cost, false); return null; }
+  try {
+    const r = await fetch('/api/credits?action=spend', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: user.id, reportType }),
+    });
+    const d = await r.json();
+    if (!d.success) { showCreditModal(d.balance ?? balance, cost, false); return null; }
+    return { userId: user.id, reportType, balance: d.balance };
+  } catch { showCreditModal(balance, cost, true); return null; }
+}
+async function refundCredits(gate, reportId) {
+  if (!gate?.userId) return;
+  try {
+    await fetch('/api/credits?action=refund', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId:gate.userId, reportType:gate.reportType, reportId:reportId||null, reason:'generation failed' }),
+    });
+  } catch {}
+}
+function showCreditModal(balance, cost, isError) {
+  const ex = document.getElementById('credit-gate-modal'); if (ex) ex.remove();
+  const m = document.createElement('div');
+  m.id = 'credit-gate-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px';
+  const inner = isError
+    ? `<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">There was an error processing credits. Please try again.</p>`
+    : `<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">This report costs <strong style="color:#fff">${cost} credits</strong> but your balance is only <strong style="color:#FC8181">${balance}</strong>.</p>`;
+  m.innerHTML = `<div style="background:#11151C;border:1px solid #242A35;border-radius:16px;padding:40px 36px;max-width:400px;width:100%;text-align:center">
+    <div style="font-size:36px;margin-bottom:16px">${isError?'⚠️':'💳'}</div>
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:#fff">${isError?'Error processing credits':'Insufficient credits'}</h3>
+    ${inner}
+    <a href="/pricing.html" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>
+    <button onclick="document.getElementById('credit-gate-modal').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>
+  </div>`;
+  document.body.appendChild(m);
+}
+// ── END CREDIT GATE ───────────────────────────────────────
+
 </script>
 </body>
 </html>

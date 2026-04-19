@@ -78,6 +78,14 @@
     table{width:100%;border-collapse:collapse}
 
     /* industry tags */
+    .pricing-rows{display:flex;flex-direction:column;gap:8px}
+    .pricing-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 14px;background:#0B0D10;border:1px solid #1A1D24;border-radius:8px}
+    .pr-label{font-size:13px;color:#fff;flex:1}
+    .pr-type{font-size:11px;color:#5A6278;flex:1}
+    .pr-input{width:80px;background:#11151C;border:1px solid #242A35;border-radius:6px;padding:6px 10px;font-size:14px;font-weight:700;color:#1E6FFF;text-align:center;font-family:Arial,sans-serif;outline:none}
+    .pr-input:focus{border-color:#1E6FFF}
+    .pr-unit{font-size:12px;color:#5A6278}
+    /* industry tags */
     .ind-tag{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #1A1D24;color:#5A6278;background:#11151C;transition:all .15s;user-select:none}
     .ind-tag:hover{border-color:#1E6FFF;color:#A3A9B6}
     .ind-tag.selected{background:rgba(30,111,255,.15);border-color:#1E6FFF;color:#1E6FFF}
@@ -113,6 +121,7 @@
     <div class="tab active" onclick="switchTab('ingest')">📄 Ingest PDFs</div>
     <div class="tab" onclick="switchTab('sources')">📚 Source Reports</div>
     <div class="tab" onclick="switchTab('frameworks')">🧩 Frameworks</div>
+    <div class="tab" onclick="switchTab('pricing')">💰 Pricing</div>
     <div class="tab" onclick="switchTab('stats')">📈 Stats</div>
   </div>
 
@@ -360,6 +369,69 @@
     </div>
   </div>
 
+  <!-- == TAB: PRICING == -->
+  <div class="section" id="tab-pricing">
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div>
+          <h2 style="margin:0">Report Credit Costs</h2>
+          <p style="font-size:12px;color:#5A6278;margin-top:4px">Changes take effect immediately — no redeploy needed.</p>
+        </div>
+        <button class="btn btn-sm" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
+          onclick="loadPricing()">↻ Refresh</button>
+      </div>
+
+      <!-- Tool sections -->
+      <div id="pricing-market" style="margin-bottom:28px">
+        <div style="font-size:11px;color:#1E6FFF;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#1E6FFF;display:inline-block"></span>
+          Market Analysis
+        </div>
+        <div id="pricing-rows-market" class="pricing-rows"></div>
+      </div>
+
+      <div id="pricing-strategy" style="margin-bottom:28px">
+        <div style="font-size:11px;color:#F6AD55;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#F6AD55;display:inline-block"></span>
+          Strategy Builder
+        </div>
+        <div id="pricing-rows-strategy" class="pricing-rows"></div>
+      </div>
+
+      <div id="pricing-doc" style="margin-bottom:28px">
+        <div style="font-size:11px;color:#00C9A7;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#00C9A7;display:inline-block"></span>
+          Doc Intelligence
+        </div>
+        <div id="pricing-rows-doc" class="pricing-rows"></div>
+      </div>
+
+      <div id="pricing-save-bar" style="display:none;padding-top:16px;border-top:1px solid #1A1D24;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <span style="font-size:13px;color:#F6AD55">⚠ Unsaved changes</span>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-sm" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24" onclick="loadPricing()">Discard</button>
+          <button class="btn btn-sm btn-primary" onclick="savePricing()">Save Changes</button>
+        </div>
+      </div>
+      <div id="pricing-msg" style="font-size:13px;margin-top:12px"></div>
+    </div>
+
+    <!-- Top-up packages (display only, edit in code) -->
+    <div class="card">
+      <h2>Top-Up Packages</h2>
+      <p style="font-size:13px;color:#5A6278;margin-bottom:20px">Defined in <code style="color:#A3A9B6;background:#0B0D10;padding:2px 6px;border-radius:4px">api/credits.js</code> — edit the <code style="color:#A3A9B6;background:#0B0D10;padding:2px 6px;border-radius:4px">PACKAGES</code> object to change.</p>
+      <table>
+        <thead><tr><th>Package</th><th>Price</th><th>Credits</th><th>Bonus</th></tr></thead>
+        <tbody>
+          <tr><td>Starter</td><td>$19</td><td>19</td><td style="color:#5A6278">—</td></tr>
+          <tr><td>Popular</td><td>$49</td><td>59</td><td style="color:#38D996">+20%</td></tr>
+          <tr><td>Professional</td><td>$99</td><td>129</td><td style="color:#38D996">+30%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- == TAB: STATS == -->
   <div class="section" id="tab-stats">
     <div class="card">
@@ -371,22 +443,6 @@
         <div class="stat-box"><div class="stat-val" id="s-embedded">—</div><div class="stat-lbl">Chunks Embedded</div></div>
         <div class="stat-box"><div class="stat-val" id="s-fw-sources">—</div><div class="stat-lbl">Frameworks</div></div>
         <div class="stat-box"><div class="stat-val" id="s-fw-chunks">—</div><div class="stat-lbl">Framework Chunks</div></div>
-        <div class="stat-box"><div class="stat-val" id="s-patterns-embedded">—</div><div class="stat-lbl">Patterns Embedded</div></div>
-        <div class="stat-box"><div class="stat-val" id="s-patterns-missing" style="color:#FC8181">—</div><div class="stat-lbl">Patterns Missing Embed</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2>Maintenance Actions</h2>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="runAllEmbeddings()">
-          ⚡ Embed All Missing (Chunks + Patterns)
-        </button>
-        <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
-          onclick="loadStats()">↻ Refresh Stats</button>
-      </div>
-      <div class="log-wrap" id="stats-log-wrap" style="display:none">
-        <div class="log-title">Embed Log</div>
-        <div class="log-body" id="stats-log-body"></div>
       </div>
     </div>
   </div>
@@ -427,13 +483,100 @@ function doLogin() {
 
 // -- Tabs --------------------------------------------------
 function switchTab(name) {
-  const names = ['ingest','sources','frameworks','stats'];
-  // Match tabs by position, sections by ID (immune to HTML order)
+  const names = ['ingest','sources','frameworks','pricing','stats'];
   document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', names[i] === name));
   document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'tab-'+name));
   if (name === 'sources')    loadSources();
   if (name === 'stats')      loadStats();
   if (name === 'frameworks') loadFrameworks();
+  if (name === 'pricing')    loadPricing();
+}
+
+// -- Pricing tab ------------------------------------------
+let pricingDirty = false;
+let pricingData  = [];
+
+async function loadPricing() {
+  pricingDirty = false;
+  document.getElementById('pricing-save-bar').style.display = 'none';
+  document.getElementById('pricing-msg').textContent = '';
+
+  const { data, error } = await window.db
+    .from('credit_costs')
+    .select('report_type, credits, label, tool')
+    .order('tool').order('credits').order('label');
+
+  if (error || !data?.length) {
+    ['market','strategy','doc'].forEach(t =>
+      document.getElementById(`pricing-rows-${t}`).innerHTML =
+        '<p style="font-size:13px;color:#5A6278">No data</p>');
+    return;
+  }
+
+  pricingData = data;
+
+  const groups = { market_analysis: [], strategy_builder: [], doc_intelligence: [] };
+  data.forEach(r => { if (groups[r.tool]) groups[r.tool].push(r); });
+
+  const toolKey = { market_analysis: 'market', strategy_builder: 'strategy', doc_intelligence: 'doc' };
+
+  for (const [tool, rows] of Object.entries(groups)) {
+    const key = toolKey[tool];
+    document.getElementById(`pricing-rows-${key}`).innerHTML = rows.map(r => `
+      <div class="pricing-row">
+        <span class="pr-label">${r.label}</span>
+        <span class="pr-type" style="font-size:11px;color:#5A6278">${r.report_type}</span>
+        <input class="pr-input" type="number" min="1" max="999"
+          id="pr-${r.report_type}" value="${r.credits}"
+          onchange="markPricingDirty()" oninput="markPricingDirty()" />
+        <span class="pr-unit">credits</span>
+      </div>`).join('');
+  }
+}
+
+function markPricingDirty() {
+  pricingDirty = true;
+  document.getElementById('pricing-save-bar').style.display = 'flex';
+}
+
+async function savePricing() {
+  const msg = document.getElementById('pricing-msg');
+  msg.textContent = '';
+
+  const updates = pricingData.map(r => {
+    const el  = document.getElementById(`pr-${r.report_type}`);
+    const val = el ? parseInt(el.value) : r.credits;
+    return { report_type: r.report_type, credits: isNaN(val) || val < 1 ? r.credits : val };
+  }).filter(u => {
+    const orig = pricingData.find(r => r.report_type === u.report_type);
+    return orig && u.credits !== orig.credits;
+  });
+
+  if (!updates.length) {
+    document.getElementById('pricing-save-bar').style.display = 'none';
+    msg.style.color = '#38D996';
+    msg.textContent = '✓ No changes to save.';
+    return;
+  }
+
+  // Update each changed row
+  let saved = 0;
+  for (const u of updates) {
+    const { error } = await window.db
+      .from('credit_costs')
+      .update({ credits: u.credits, updated_at: new Date().toISOString() })
+      .eq('report_type', u.report_type);
+    if (!error) saved++;
+  }
+
+  msg.style.color = saved === updates.length ? '#38D996' : '#FC8181';
+  msg.textContent = saved === updates.length
+    ? `✓ Saved ${saved} change${saved > 1 ? 's' : ''} successfully.`
+    : `⚠ ${saved}/${updates.length} saved. Some updates failed.`;
+
+  pricingDirty = false;
+  document.getElementById('pricing-save-bar').style.display = 'none';
+  await loadPricing(); // refresh to confirm saved values
 }
 
 // -- PDF.js init --
@@ -530,7 +673,7 @@ function setQueueStatus(idx, status) {
 
 // -- Process queue -----------------------------------------
 async function claudeCall(messages, maxTokens, system = null) {
-  const body = { model: 'claude-sonnet-4-6', max_tokens: maxTokens, messages };
+  const body = { model: 'claude-sonnet-4-5', max_tokens: maxTokens, messages };
   if (system) body.system = system;
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -1453,62 +1596,13 @@ async function loadStats() {
     .select('*', { count:'exact', head:true }).eq('competency_type', 'framework');
   const { count: fwChunks } = await window.db.from('report_chunks')
     .select('*', { count:'exact', head:true }).eq('chunk_type', 'framework');
-  const { count: patternsEmbedded } = await window.db.from('industry_patterns')
-    .select('*', { count:'exact', head:true }).not('embedding', 'is', null);
-  const patternsTotal   = counts[1].count ?? 0;
-  const patternsMissing = patternsTotal - (patternsEmbedded ?? 0);
 
   document.getElementById('s-reports').textContent    = counts[0].count ?? '?';
-  document.getElementById('s-patterns').textContent   = patternsTotal;
+  document.getElementById('s-patterns').textContent   = counts[1].count ?? '?';
   document.getElementById('s-chunks').textContent     = counts[2].count ?? '?';
   document.getElementById('s-embedded').textContent   = embedded ?? '?';
   document.getElementById('s-fw-sources').textContent = fwSources ?? '?';
   document.getElementById('s-fw-chunks').textContent  = fwChunks ?? '?';
-  if (document.getElementById('s-patterns-embedded')) {
-    document.getElementById('s-patterns-embedded').textContent = patternsEmbedded ?? '?';
-    document.getElementById('s-patterns-missing').textContent  = patternsMissing > 0 ? patternsMissing : '✓ 0';
-    if (patternsMissing === 0) document.getElementById('s-patterns-missing').style.color = '#38D996';
-  }
-}
-
-async function runAllEmbeddings() {
-  const logWrap = document.getElementById('stats-log-wrap');
-  const logBody = document.getElementById('stats-log-body');
-  logWrap.style.display = 'block';
-  logBody.textContent = '';
-
-  const log = (msg, cls='') => {
-    const span = document.createElement('span');
-    span.className = cls;
-    span.textContent = msg + '\n';
-    logBody.appendChild(span);
-    logBody.scrollTop = logBody.scrollHeight;
-  };
-
-  log('Embedding report chunks (type: chunk)...');
-  try {
-    const r1 = await fetch('/api/embed', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
-      body: JSON.stringify({ type: 'chunk' }),
-    });
-    const d1 = await r1.json();
-    log(`✓ Chunks: ${d1.embedded}/${d1.total || 0} embedded — ${d1.message}`, 'done');
-  } catch(e) { log('✗ Chunk embed error: ' + e.message, 'err'); }
-
-  log('Embedding industry patterns (type: pattern)...');
-  try {
-    const r2 = await fetch('/api/embed', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
-      body: JSON.stringify({ type: 'pattern' }),
-    });
-    const d2 = await r2.json();
-    log(`✓ Patterns: ${d2.embedded}/${d2.total || 0} embedded — ${d2.message}`, 'done');
-  } catch(e) { log('✗ Pattern embed error: ' + e.message, 'err'); }
-
-  log('\n✓ Done. Refreshing stats...', 'done');
-  await loadStats();
 }
 </script>
 </body>
