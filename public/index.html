@@ -1,425 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>KIRA RESEARCH — AI-Powered Market Intelligence</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/png" href="/favicon.svg" sizes="32x32" />
-  <link rel="apple-touch-icon" href="/favicon.svg" />
-  <meta name="description" content="Consulting-grade market intelligence reports for Southeast Asia. Powered by AI and a library of 1,000+ primary research studies." />
+  <meta name="description" content="Three AI-powered tools for consulting-grade market intelligence and strategy. Backed by 1,000+ primary research studies."/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
   <style>
-    :root {
-      --bg:#0B0D10; --surface:#11151C; --surface2:#161B24;
-      --primary:#1E6FFF; --primary-d:#1558CC;
-      --glow:rgba(30,111,255,0.18); --glow-sm:rgba(30,111,255,0.10);
-      --white:#FFFFFF; --muted:#A3A9B6; --dim:#5A6278;
-      --border:#1A1D24; --border-lt:#242A35;
-      --mono:Arial,sans-serif; --display:Arial,sans-serif;
+    :root{
+      --bg:#0B0D10;--surface:#0F1318;--surface2:#161B24;
+      --blue:#1E6FFF;--amber:#F6AD55;--teal:#00C9A7;
+      --white:#FFFFFF;--muted:#A3A9B6;--dim:#5A6278;
+      --border:#1A1D24;--border-lt:#242A35;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{background:var(--bg);color:var(--white);font-family:Arial,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
     a{color:inherit;text-decoration:none}
-    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(30,111,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(30,111,255,0.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+
+    /* dot grid */
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(30,111,255,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
     .container{max-width:1120px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
-    .section{padding:96px 0}
+    section{padding:96px 0}
 
-    /* NAV */
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:border-color .3s,background .3s,backdrop-filter .3s;border-bottom:1px solid transparent}
-    nav.scrolled{border-color:var(--border);background:rgba(11,13,16,.85);backdrop-filter:blur(16px)}
-    .nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
-    .nav-logo{display:flex;flex-direction:column;gap:1px;line-height:1}
-    .nav-logo .kira{font-family:Arial,sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--white)}
-    .nav-logo .research{font-family:Arial,sans-serif;font-size:9px;letter-spacing:.22em;color:var(--primary);text-transform:uppercase}
-    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
-    .nav-links a{font-size:13px;color:var(--muted);transition:color .2s;letter-spacing:.02em}
-    .nav-links a:hover{color:var(--white)}
-    .nav-links .dropdown{position:relative}
-    .nav-links .dropdown>a{display:flex;align-items:center;gap:4px;cursor:pointer}
-    .nav-links .dropdown>a::after{content:'';width:0;height:0;border-left:3.5px solid transparent;border-right:3.5px solid transparent;border-top:4px solid currentColor;opacity:.6;margin-top:1px}
-    .dropdown-menu{display:none;position:absolute;top:calc(100% + 16px);left:-16px;background:var(--surface);border:1px solid var(--border-lt);border-radius:10px;padding:8px;min-width:220px;box-shadow:0 16px 48px rgba(0,0,0,.5)}
-    .dropdown:hover .dropdown-menu{display:block}
-    .dropdown-menu a{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:6px;font-size:13px;color:var(--muted);transition:background .15s,color .15s}
-    .dropdown-menu a:hover{background:var(--surface2);color:var(--white)}
-    .dm-icon{width:28px;height:28px;background:var(--surface2);border:1px solid var(--border-lt);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .dm-icon svg{width:14px;height:14px;stroke:var(--primary);fill:none;stroke-width:1.5}
-    .dm-text{display:flex;flex-direction:column;gap:1px}
-    .dm-label{font-size:13px;font-weight:500;color:var(--white)}
-    .dm-desc{font-size:11px;color:var(--dim)}
-    .nav-cta{display:flex;align-items:center;gap:12px}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;letter-spacing:.01em;font-family:Arial,sans-serif}
-    .btn-ghost{background:transparent;color:var(--muted)}
-    .btn-ghost:hover{color:var(--white)}
-    .btn-primary{background:var(--primary);color:var(--white)}
-    .btn-primary:hover{background:var(--primary-d);box-shadow:0 0 24px var(--glow)}
+    /* ── BTN ── */
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;font-family:Arial,sans-serif;white-space:nowrap}
+    .btn-primary{background:var(--blue);color:#fff}
+    .btn-primary:hover{background:#1558CC;box-shadow:0 0 24px rgba(30,111,255,.35)}
     .btn-outline{background:transparent;color:var(--white);border:1px solid var(--border-lt)}
-    .btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-    .btn-lg{padding:13px 28px;font-size:14px;border-radius:8px}
+    .btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+    .btn-amber{background:var(--amber);color:#0B0D10}
+    .btn-amber:hover{opacity:.9;box-shadow:0 0 24px rgba(246,173,85,.3)}
+    .btn-teal{background:var(--teal);color:#0B0D10}
+    .btn-teal:hover{opacity:.9;box-shadow:0 0 24px rgba(0,201,167,.3)}
+    .btn-lg{padding:14px 32px;font-size:15px;border-radius:9px}
 
-    /* HERO */
-    .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden}
-    .hero::after{content:'';position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(30,111,255,.12) 0%,transparent 70%);pointer-events:none}
-    .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 8px;background:rgba(30,111,255,.08);border:1px solid rgba(30,111,255,.2);border-radius:100px;font-family:Arial,sans-serif;font-size:11px;color:var(--primary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:28px}
-    .hero-eyebrow .dot{width:6px;height:6px;background:var(--primary);border-radius:50%;animation:pulse-dot 2s ease-in-out infinite}
-    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
-    .hero-title{font-family:Arial,sans-serif;font-size:clamp(40px,5vw,62px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:24px}
-    .hero-title .accent{color:var(--primary)}
-    .hero-title .line-muted{color:var(--muted)}
-    .hero-sub{font-size:17px;color:var(--muted);line-height:1.7;margin-bottom:40px;max-width:480px}
-    .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-    .hero-stats{display:flex;align-items:center;gap:28px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
-    .stat{display:flex;flex-direction:column;gap:4px}
-    .stat-val{font-family:Arial,sans-serif;font-size:24px;font-weight:800}
-    .stat-lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-family:Arial,sans-serif}
-    .stat-sep{width:1px;height:36px;background:var(--border-lt)}
+    /* ── HERO ── */
+    .hero{min-height:100vh;display:flex;align-items:center;padding:140px 0 96px;position:relative;overflow:hidden}
+    .hero-glow{position:absolute;top:-5%;left:50%;transform:translateX(-50%);width:1000px;height:700px;background:radial-gradient(ellipse,rgba(30,111,255,.1) 0%,transparent 65%);pointer-events:none}
+    .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
 
-    /* REPORT CARD (hero visual) */
-    .hero-visual{position:relative}
-    .report-card{background:var(--surface);border:1px solid var(--border-lt);border-radius:16px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(30,111,255,.08)}
-    .rc-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-    .rc-tag{font-family:Arial,sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);background:rgba(30,111,255,.1);padding:3px 8px;border-radius:4px}
-    .rc-status{display:flex;align-items:center;gap:6px;font-size:11px;color:#38D996}
-    .rc-status::before{content:'';width:6px;height:6px;background:#38D996;border-radius:50%;animation:pulse-dot 1.5s ease-in-out infinite}
-    .rc-body{padding:20px}
-    .rc-title{font-family:Arial,sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
-    .rc-meta{font-size:11px;color:var(--dim);font-family:Arial,sans-serif;margin-bottom:20px}
-    .rc-sections{display:flex;flex-direction:column;gap:6px}
-    .rc-section{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);opacity:0;transform:translateX(12px);animation:slide-in .4s ease forwards}
-    @keyframes slide-in{to{opacity:1;transform:translateX(0)}}
-    .rc-section:nth-child(1){animation-delay:.5s}
-    .rc-section:nth-child(2){animation-delay:.7s}
-    .rc-section:nth-child(3){animation-delay:.9s}
-    .rc-section:nth-child(4){animation-delay:1.1s}
-    .rc-section:nth-child(5){animation-delay:1.3s}
-    .rc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-    .rc-section.done .rc-dot{background:var(--primary)}
-    .rc-section.active .rc-dot{background:transparent;border:2px solid var(--primary);animation:spin .8s linear infinite}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 13px 5px 9px;background:rgba(30,111,255,.08);border:1px solid rgba(30,111,255,.2);border-radius:100px;font-size:11px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:28px}
+    .hero-eyebrow .pulse{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+
+    .hero-title{font-size:clamp(38px,4.5vw,60px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:24px}
+    .hero-title .t-blue{color:var(--blue)}
+    .hero-title .t-dim{color:var(--muted)}
+    .hero-sub{font-size:17px;color:var(--muted);line-height:1.75;margin-bottom:40px;max-width:460px}
+    .hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:52px}
+    .hero-stats{display:flex;gap:32px;padding-top:32px;border-top:1px solid var(--border)}
+    .hs-val{font-size:22px;font-weight:800;margin-bottom:2px}
+    .hs-lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+
+    /* Hero visual — 3 stacked tool cards */
+    .hero-visual{position:relative;height:420px}
+    .tool-preview{position:absolute;background:var(--surface);border:1px solid var(--border-lt);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+    .tp-1{width:300px;left:60px;top:0;z-index:3;animation:float-a 5s ease-in-out infinite}
+    .tp-2{width:280px;left:0;top:120px;z-index:2;animation:float-b 5s ease-in-out 1s infinite}
+    .tp-3{width:270px;left:100px;top:220px;z-index:1;animation:float-a 5s ease-in-out 2s infinite}
+    @keyframes float-a{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes float-b{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+    .tp-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .tp-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+    .tp-tag.blue{background:rgba(30,111,255,.12);color:var(--blue)}
+    .tp-tag.amber{background:rgba(246,173,85,.12);color:var(--amber)}
+    .tp-tag.teal{background:rgba(0,201,167,.12);color:var(--teal)}
+    .tp-title{font-size:11px;font-weight:600;color:var(--muted)}
+    .tp-body{padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+    .tp-row{display:flex;align-items:center;gap:8px;font-size:11px}
+    .tp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .tp-dot.done{background:var(--blue)}
+    .tp-dot.amber{background:var(--amber)}
+    .tp-dot.teal{background:var(--teal)}
+    .tp-dot.active{background:transparent;border:1.5px solid var(--blue);animation:spin .8s linear infinite}
+    .tp-dot.dim{background:var(--border-lt)}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .rc-section.pending .rc-dot{background:var(--border-lt)}
-    .rc-section-title{font-size:12px;color:var(--muted);flex:1}
-    .rc-section.done .rc-section-title{color:var(--white)}
-    .rc-section-pct{font-family:Arial,sans-serif;font-size:10px;color:var(--dim)}
-    .rc-section.done .rc-section-pct{color:var(--primary)}
-    .rc-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-    .rc-footer-label{font-size:11px;color:var(--dim);font-family:Arial,sans-serif}
-    .rc-progress{width:120px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
-    .rc-progress-bar{height:100%;background:var(--primary);width:0%;animation:fill-prog 2.5s ease 1.5s forwards}
-    @keyframes fill-prog{to{width:60%}}
-    .hero-visual .dec{position:absolute;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border-lt);font-size:11px;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4)}
-    .dec-tl{top:-20px;left:-20px;animation:float-a 4s ease-in-out infinite}
-    .dec-br{bottom:-20px;right:-20px;animation:float-b 4s ease-in-out 1s infinite}
-    @keyframes float-a{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-    @keyframes float-b{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-    .dec-icon{width:26px;height:26px;background:rgba(30,111,255,.12);border-radius:5px;display:flex;align-items:center;justify-content:center}
-    .dec-icon svg{width:13px;height:13px;stroke:var(--primary);fill:none;stroke-width:2}
-    .dec-text{display:flex;flex-direction:column;gap:1px}
-    .dec-val{font-weight:600;color:var(--white);font-size:12px}
-    .dec-sub{color:var(--dim);font-size:10px}
+    .tp-sec{color:var(--muted);flex:1}
+    .tp-sec.done{color:var(--white)}
+    .tp-sec.dim{color:var(--border-lt)}
 
-    /* TRUST */
-    .trust{padding:36px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-    .trust-inner{display:flex;align-items:center;gap:48px;flex-wrap:wrap}
-    .trust-label{font-family:Arial,sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);white-space:nowrap;flex-shrink:0}
-    .trust-badges{display:flex;align-items:center;gap:32px;flex-wrap:wrap}
-    .trust-badge{font-family:Arial,sans-serif;font-size:11px;color:var(--dim);display:flex;align-items:center;gap:7px}
-    .trust-badge svg{width:13px;height:13px;stroke:var(--dim);fill:none;stroke-width:1.5}
+    /* ── SECTION HEADERS ── */
+    .section-eyebrow{font-size:11px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+    .section-title{font-size:clamp(28px,3vw,40px);font-weight:800;letter-spacing:-.6px;line-height:1.15;margin-bottom:16px}
+    .section-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:560px}
 
-    /* PRODUCTS */
-    .products-header{text-align:center;margin-bottom:56px}
-    .section-eyebrow{font-family:Arial,sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--primary);margin-bottom:16px}
-    .section-title{font-family:Arial,sans-serif;font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:16px}
-    .section-sub{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.7}
-    .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-    .product-card{background:var(--surface);padding:40px 36px;transition:background .2s;display:flex;flex-direction:column;position:relative;overflow:hidden}
-    .product-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--glow-sm),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
-    .product-card:hover::before{opacity:1}
-    .product-card:hover{background:var(--surface2)}
-    .product-card.featured{background:var(--surface2)}
-    .product-card.featured::after{content:'MOST POPULAR';position:absolute;top:0;right:0;font-family:Arial,sans-serif;font-size:9px;letter-spacing:.12em;color:var(--bg);background:var(--primary);padding:4px 12px;border-radius:0 0 0 8px}
-    .pc-icon{width:44px;height:44px;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
-    .pc-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:1.5}
-    .pc-name{font-family:Arial,sans-serif;font-size:18px;font-weight:700;margin-bottom:8px}
-    .pc-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:28px;flex:1}
-    .pc-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
-    .pc-features li{font-size:12px;color:var(--muted);display:flex;align-items:flex-start;gap:8px}
-    .pc-features li::before{content:'';width:14px;height:14px;background:rgba(30,111,255,.1);border-radius:50%;flex-shrink:0;margin-top:1px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3 7l2.5 2.5L11 4.5' stroke='%231E6FFF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:contain}
-    .pc-footer{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid var(--border)}
-    .pc-price{display:flex;flex-direction:column;gap:2px}
-    .pc-price-val{font-family:Arial,sans-serif;font-size:28px;font-weight:800}
-    .pc-price-lbl{font-family:Arial,sans-serif;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
-    .pc-cta{padding:9px 18px;border-radius:6px;font-size:12px;font-weight:500;background:var(--primary);color:var(--white);transition:all .2s;cursor:pointer;border:none;font-family:Arial,sans-serif}
-    .pc-cta:hover{background:var(--primary-d);box-shadow:0 0 20px var(--glow)}
+    /* ── TOOLS SECTION ── */
+    .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+    .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s,transform .2s;display:flex;flex-direction:column}
+    .tool-card:hover{transform:translateY(-4px)}
+    .tool-card.blue-card{border-top:2px solid var(--blue)}
+    .tool-card.amber-card{border-top:2px solid var(--amber)}
+    .tool-card.teal-card{border-top:2px solid var(--teal)}
+    .tc-head{padding:28px 28px 20px}
+    .tc-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
+    .tc-icon.blue{background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2)}
+    .tc-icon.amber{background:rgba(246,173,85,.1);border:1px solid rgba(246,173,85,.2)}
+    .tc-icon.teal{background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.2)}
+    .tc-name{font-size:18px;font-weight:800;margin-bottom:8px}
+    .tc-desc{font-size:13px;color:var(--muted);line-height:1.65}
+    .tc-features{padding:0 28px 24px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .tc-feat{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--dim);line-height:1.5}
+    .tc-feat::before{content:'→';flex-shrink:0;margin-top:1px}
+    .tc-feat.blue::before{color:var(--blue)}
+    .tc-feat.amber::before{color:var(--amber)}
+    .tc-feat.teal::before{color:var(--teal)}
+    .tc-footer{padding:20px 28px;border-top:1px solid var(--border)}
 
-    /* HOW IT WORKS */
+    /* ── HOW IT WORKS ── */
     .how-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-    .steps{display:flex;flex-direction:column}
-    .step{display:flex;gap:20px;padding:24px 0;border-bottom:1px solid var(--border);cursor:pointer;position:relative;padding-left:16px}
+    .steps{display:flex;flex-direction:column;gap:0}
+    .step{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all .2s;position:relative}
     .step:last-child{border-bottom:none}
-    .step-bar{position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--border)}
-    .step.active .step-bar{background:var(--primary)}
-    .step-num{font-family:Arial,sans-serif;font-size:11px;color:var(--dim);padding-top:3px;width:24px;flex-shrink:0;letter-spacing:.08em}
-    .step.active .step-num{color:var(--primary)}
-    .step-content{flex:1}
-    .step-title{font-size:15px;font-weight:600;margin-bottom:0;color:var(--muted);transition:color .2s}
-    .step.active .step-title{color:var(--white);margin-bottom:6px}
-    .step-desc{font-size:13px;color:var(--dim);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .4s ease}
-    .step.active .step-desc{max-height:80px;color:var(--muted)}
-    .terminal{background:var(--surface);border:1px solid var(--border-lt);border-radius:12px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
-    .terminal-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
-    .dot-r{width:10px;height:10px;border-radius:50%;background:#FF5F57}
-    .dot-y{width:10px;height:10px;border-radius:50%;background:#FFBD2E}
-    .dot-g{width:10px;height:10px;border-radius:50%;background:#28C840}
-    .terminal-body{padding:20px;font-family:Arial,sans-serif;font-size:12px;line-height:1.8}
-    .t-line{display:flex;gap:8px}
-    .t-prompt{color:var(--primary)}
+    .step-bar{position:absolute;left:-1px;top:0;width:2px;height:0;background:var(--blue);transition:height .4s ease;border-radius:2px}
+    .step.active .step-bar{height:100%}
+    .step-num{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.1em;padding-top:3px;width:24px;flex-shrink:0;font-family:Arial,sans-serif}
+    .step.active .step-num{color:var(--blue)}
+    .step-title{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:0;transition:color .2s}
+    .step.active .step-title{color:var(--white)}
+    .step-desc{font-size:12.5px;color:var(--dim);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .35s ease,margin .35s ease}
+    .step.active .step-desc{max-height:80px;margin-top:6px}
+
+    /* terminal */
+    .terminal{background:#080A0D;border:1px solid var(--border-lt);border-radius:12px;overflow:hidden;font-family:'Courier New',monospace;font-size:12px}
+    .terminal-header{padding:10px 16px;background:var(--surface2);display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+    .dot-r{width:10px;height:10px;border-radius:50%;background:#FC8181}
+    .dot-y{width:10px;height:10px;border-radius:50%;background:#F6AD55}
+    .dot-g{width:10px;height:10px;border-radius:50%;background:#68D391}
+    .terminal-body{padding:20px;line-height:2}
+    .t-prompt{color:var(--blue)}
     .t-cmd{color:var(--white)}
     .t-comment{color:var(--dim)}
-    .t-out{color:#38D996;padding-left:16px}
-    .t-out.warn{color:var(--primary)}
+    .t-out{color:#68D391}
+    .t-out.warn{color:var(--amber)}
     .t-out.dim{color:var(--dim)}
-    .t-cursor{display:inline-block;width:7px;height:14px;background:var(--primary);vertical-align:middle;animation:blink 1s step-end infinite}
+    .t-cursor{display:inline-block;width:8px;height:14px;background:var(--blue);vertical-align:middle;animation:blink .7s step-end infinite}
     @keyframes blink{50%{opacity:0}}
 
-    /* LIBRARY */
-    .library-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-    .lib-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s,transform .2s;cursor:pointer}
-    .lib-card:hover{border-color:var(--border-lt);transform:translateY(-2px)}
-    .lib-industry{font-family:Arial,sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:8px}
-    .lib-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:12px}
+    /* ── LIBRARY ── */
+    .lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .lib-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s}
+    .lib-card:hover{border-color:var(--blue);transform:translateY(-3px)}
+    .lib-industry{font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+    .lib-title{font-size:13px;font-weight:600;color:var(--white);line-height:1.5;margin-bottom:14px}
     .lib-meta{display:flex;align-items:center;justify-content:space-between}
     .lib-country{font-size:11px;color:var(--dim)}
-    .lib-price{font-family:Arial,sans-serif;font-size:11px;color:var(--white);background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);padding:2px 7px;border-radius:4px}
+    .lib-price{font-size:13px;font-weight:700;color:var(--blue)}
 
-    /* CTA */
-    .cta-section{padding:96px 0;text-align:center;position:relative;overflow:hidden}
-    .cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(30,111,255,.12) 0%,transparent 65%);pointer-events:none}
-    .cta-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+    /* ── CTA ── */
+    .cta-section{padding:96px 0;background:radial-gradient(ellipse at 50% 0%,rgba(30,111,255,.08) 0%,transparent 70%);border-top:1px solid var(--border)}
+    .cta-inner{text-align:center;max-width:640px;margin:0 auto}
+    .cta-tools{display:flex;gap:12px;justify-content:center;margin-top:40px;flex-wrap:wrap}
 
-    /* FOOTER */
-    footer{border-top:1px solid var(--border);padding:48px 0}
-    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px}
-    .footer-logo .kira{font-family:Arial,sans-serif;font-size:18px;font-weight:800}
-    .footer-logo .research{font-family:Arial,sans-serif;font-size:8px;letter-spacing:.22em;color:var(--primary);text-transform:uppercase}
-    .footer-links{display:flex;gap:32px}
-    .footer-links a{font-size:12px;color:var(--dim);transition:color .2s}
-    .footer-links a:hover{color:var(--muted)}
-    .footer-copy{font-family:Arial,sans-serif;font-size:10px;color:var(--dim)}
-
-    /* FADE-UP ANIMATION */
-    .fade-up{opacity:0;transform:translateY(24px);animation:fade-up .7s ease forwards}
-    @keyframes fade-up{to{opacity:1;transform:translateY(0)}}
-    .d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}
-
-    @media(max-width:900px){
-      .hero-inner,.how-grid{grid-template-columns:1fr;gap:48px}
-      .hero-visual,.terminal{display:none}
-      .product-grid{grid-template-columns:1fr}
-      .library-grid{grid-template-columns:1fr 1fr}
-      .nav-links{display:none}
-      .footer-inner{flex-direction:column;align-items:flex-start}
+    /* ── RESPONSIVE ── */
+    @media(max-width:960px){
+      .hero-inner{grid-template-columns:1fr}
+      .hero-visual{display:none}
+      .tools-grid{grid-template-columns:1fr}
+      .how-grid{grid-template-columns:1fr}
+      .terminal{display:none}
+      .lib-grid{grid-template-columns:repeat(2,1fr)}
     }
     @media(max-width:560px){
       .container{padding:0 20px}
-      .library-grid{grid-template-columns:1fr}
+      .lib-grid{grid-template-columns:1fr}
+      .hero-stats{flex-wrap:wrap;gap:20px}
+      .cta-tools{flex-direction:column;align-items:center}
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/auth.js"></script>
-  <script src="/nav.js"></script>
 </head>
 <body>
 
-<!-- NAV -->
-
-
-<!-- HERO -->
+<!-- ── HERO ── -->
 <section class="hero">
+  <div class="hero-glow"></div>
   <div class="container">
     <div class="hero-inner">
       <div>
-        <div class="hero-eyebrow fade-up d1"><span class="dot"></span>AI-Powered · Southeast Asia Focus</div>
-        <h1 class="hero-title fade-up d2">
-          Market intelligence<br/>
-          <span class="accent">at consulting</span><br/>
-          <span class="line-muted">grade.</span>
+        <div class="hero-eyebrow"><div class="pulse"></div>AI-Powered Intelligence</div>
+        <h1 class="hero-title">
+          Research.<br/>
+          <span class="t-blue">Strategy.</span><br/>
+          <span class="t-dim">Delivered.</span>
         </h1>
-        <p class="hero-sub fade-up d3">
-          Custom research reports powered by AI and a proprietary library of
-          1,000+ primary market studies spanning two decades of Southeast Asian markets.
-          Delivered in minutes, not months.
-        </p>
-        <div class="hero-actions fade-up d4">
-          <a href="/report.html" class="btn btn-primary btn-lg">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-            Generate a Report
-          </a>
-          <a href="/library.html" class="btn btn-outline btn-lg">Browse Library</a>
+        <p class="hero-sub">Three tools. One platform. Consulting-grade market intelligence and strategy reports — generated in minutes, backed by primary research.</p>
+        <div class="hero-actions">
+          <a href="/report.html"            class="btn btn-primary btn-lg">Market Analysis</a>
+          <a href="/strategy-builder.html"  class="btn btn-amber btn-lg">Strategy Builder</a>
+          <a href="/docreport.html"         class="btn btn-outline btn-lg">Doc Intelligence</a>
         </div>
-        <div class="hero-stats fade-up d4">
-          <div class="stat"><span class="stat-val">1,000+</span><span class="stat-lbl">Source reports</span></div>
-          <div class="stat-sep"></div>
-          <div class="stat"><span class="stat-val">12</span><span class="stat-lbl">SEA markets</span></div>
-          <div class="stat-sep"></div>
-          <div class="stat"><span class="stat-val">&lt;5 min</span><span class="stat-lbl">Generation time</span></div>
+        <div class="hero-stats">
+          <div><div class="hs-val">1,000+</div><div class="hs-lbl">Primary studies</div></div>
+          <div style="width:1px;background:var(--border-lt)"></div>
+          <div><div class="hs-val">3</div><div class="hs-lbl">AI tools</div></div>
+          <div style="width:1px;background:var(--border-lt)"></div>
+          <div><div class="hs-val">~5 min</div><div class="hs-lbl">Per report</div></div>
+          <div style="width:1px;background:var(--border-lt)"></div>
+          <div><div class="hs-val">10+</div><div class="hs-lbl">SEA markets</div></div>
         </div>
       </div>
 
-      <!-- Hero visual: animated report card -->
+      <!-- Animated tool cards -->
       <div class="hero-visual">
-        <div class="dec dec-tl">
-          <div class="dec-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <div class="dec-text"><span class="dec-val">12 Sections</span><span class="dec-sub">Industry Deep Dive</span></div>
-        </div>
-        <div class="report-card">
-          <div class="rc-header">
-            <span class="rc-tag">Industry Deep Dive</span>
-            <span class="rc-status">Generating</span>
+        <!-- Market Analysis card -->
+        <div class="tool-preview tp-1">
+          <div class="tp-header">
+            <div class="tp-tag blue">Market Analysis</div>
+            <div class="tp-title">Fintech · Vietnam</div>
           </div>
-          <div class="rc-body">
-            <div class="rc-title">Fintech Market — Vietnam</div>
-            <div class="rc-meta">VN · FINTECH · 2026 · KIRA/ID-0912</div>
-            <div class="rc-sections">
-              <div class="rc-section done"><div class="rc-dot"></div><span class="rc-section-title">Executive Summary</span><span class="rc-section-pct">✓</span></div>
-              <div class="rc-section done"><div class="rc-dot"></div><span class="rc-section-title">Market Assessment</span><span class="rc-section-pct">✓</span></div>
-              <div class="rc-section done"><div class="rc-dot"></div><span class="rc-section-title">Competitive Landscape</span><span class="rc-section-pct">✓</span></div>
-              <div class="rc-section active"><div class="rc-dot"></div><span class="rc-section-title">Consumer Insights</span><span class="rc-section-pct">4/8</span></div>
-              <div class="rc-section pending"><div class="rc-dot"></div><span class="rc-section-title">Pricing Analysis</span><span class="rc-section-pct">—</span></div>
-            </div>
-          </div>
-          <div class="rc-footer">
-            <span class="rc-footer-label">Generation progress</span>
-            <div class="rc-progress"><div class="rc-progress-bar"></div></div>
+          <div class="tp-body">
+            <div class="tp-row"><div class="tp-dot done"></div><div class="tp-sec done">Executive Summary</div></div>
+            <div class="tp-row"><div class="tp-dot done"></div><div class="tp-sec done">Market Assessment</div></div>
+            <div class="tp-row"><div class="tp-dot done"></div><div class="tp-sec done">Competitive Landscape</div></div>
+            <div class="tp-row"><div class="tp-dot active"></div><div class="tp-sec">Consumer Insights</div></div>
+            <div class="tp-row"><div class="tp-dot dim"></div><div class="tp-sec dim">Market Forecast</div></div>
           </div>
         </div>
-        <div class="dec dec-br">
-          <div class="dec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-          <div class="dec-text"><span class="dec-val">~4 minutes</span><span class="dec-sub">Avg. generation time</span></div>
+        <!-- Strategy Builder card -->
+        <div class="tool-preview tp-2">
+          <div class="tp-header">
+            <div class="tp-tag amber">Strategy Builder</div>
+            <div class="tp-title">Go-To-Market · Indonesia</div>
+          </div>
+          <div class="tp-body">
+            <div class="tp-row"><div class="tp-dot amber" style="background:var(--amber)"></div><div class="tp-sec done">Market Opportunity</div></div>
+            <div class="tp-row"><div class="tp-dot amber" style="background:var(--amber)"></div><div class="tp-sec done">Channel Strategy</div></div>
+            <div class="tp-row"><div class="tp-dot active" style="border-color:var(--amber)"></div><div class="tp-sec">Entry Sequencing</div></div>
+            <div class="tp-row"><div class="tp-dot dim"></div><div class="tp-sec dim">Partner Landscape</div></div>
+          </div>
+        </div>
+        <!-- Doc Intelligence card -->
+        <div class="tool-preview tp-3">
+          <div class="tp-header">
+            <div class="tp-tag teal">Doc Intelligence</div>
+            <div class="tp-title">Annual Report 2024</div>
+          </div>
+          <div class="tp-body">
+            <div class="tp-row"><div class="tp-dot teal" style="background:var(--teal)"></div><div class="tp-sec done">Revenue Analysis</div></div>
+            <div class="tp-row"><div class="tp-dot active" style="border-color:var(--teal)"></div><div class="tp-sec">Growth Strategy</div></div>
+            <div class="tp-row"><div class="tp-dot dim"></div><div class="tp-sec dim">Risk Assessment</div></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TRUST BAR -->
-<div class="trust">
+<!-- ── 3 TOOLS ── -->
+<section style="padding:80px 0;border-top:1px solid var(--border)">
   <div class="container">
-    <div class="trust-inner">
-      <span class="trust-label">Built on</span>
-      <div class="trust-badges">
-        <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Claude Sonnet</span>
-        <span class="trust-badge"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Perplexity Sonar</span>
-        <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Supabase pgvector</span>
-        <span class="trust-badge"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>1,000+ primary research studies</span>
-        <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>PayPal Secured</span>
-      </div>
+    <div style="max-width:560px">
+      <p class="section-eyebrow">Three tools</p>
+      <h2 class="section-title">Built for every research and strategy need</h2>
+      <p class="section-sub">From market sizing to competitive intelligence to strategic planning — each tool is purpose-built and powered by Claude Sonnet + primary research.</p>
     </div>
-  </div>
-</div>
+    <div class="tools-grid">
 
-<!-- PRODUCTS -->
-<section class="section">
-  <div class="container">
-    <div class="products-header">
-      <p class="section-eyebrow">Products</p>
-      <h2 class="section-title">Three tools. One intelligence layer.</h2>
-      <p class="section-sub">From full market deep dives to rapid competitive reads — every report is grounded in primary research, not scraped summaries.</p>
-    </div>
-    <div class="product-grid">
-      <div class="product-card featured">
-        <div class="pc-icon"><svg viewBox="0 0 24 24"><path d="M9 17h6M9 13h6M9 9h3m-6 13h12a2 2 0 002-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v15a2 2 0 002 2z"/></svg></div>
-        <h3 class="pc-name">Industry Deep Dive</h3>
-        <p class="pc-desc">A full consulting-grade market analysis. 8–12 sections covering market sizing, competitive landscape, consumer behavior, pricing dynamics, and strategic recommendations.</p>
-        <ul class="pc-features">
-          <li>Market sizing + 3–5yr forecast</li>
-          <li>Competitive landscape & profiles</li>
-          <li>Channel & distribution analysis</li>
-          <li>Consumer insights & behavior</li>
-          <li>Regulatory environment overview</li>
-          <li>AI chatbox for follow-up Q&A</li>
-        </ul>
-        <div class="pc-footer">
-          <div class="pc-price"><span class="pc-price-val">$49</span><span class="pc-price-lbl">per report</span></div>
-          <a href="/report.html" class="pc-cta">Generate →</a>
+      <!-- Market Analysis -->
+      <div class="tool-card blue-card">
+        <div class="tc-head">
+          <div class="tc-icon blue">📊</div>
+          <div class="tc-name">Market Analysis</div>
+          <p class="tc-desc">Consulting-grade market reports for any industry across Asia Pacific. 7 modules covering the full range of market intelligence needs.</p>
+        </div>
+        <div class="tc-features">
+          <div class="tc-feat blue">Market sizing, segmentation & growth forecast</div>
+          <div class="tc-feat blue">Competitive landscape + competitor profiles</div>
+          <div class="tc-feat blue">Consumer insights, pricing & channel analysis</div>
+          <div class="tc-feat blue">Live web research via Perplexity + RAG library</div>
+          <div class="tc-feat blue">Stream sections as they generate · Export PPTX/PDF</div>
+        </div>
+        <div class="tc-footer">
+          <a href="/report.html" class="btn btn-primary" style="width:100%;justify-content:center">Generate Market Report →</a>
         </div>
       </div>
-      <div class="product-card">
-        <div class="pc-icon"><svg viewBox="0 0 24 24"><path d="M8 7h12M8 12h12M8 17h12M3 7h.01M3 12h.01M3 17h.01"/></svg></div>
-        <h3 class="pc-name">Competitive Analysis</h3>
-        <p class="pc-desc">Side-by-side comparison of 2–5 companies. Positioning matrix, strengths/weaknesses breakdown, market share estimates, and strategic outlook.</p>
-        <ul class="pc-features">
-          <li>Company profiles side by side</li>
-          <li>Competitive positioning map</li>
-          <li>S/W matrix for each player</li>
-          <li>Market share estimates</li>
-          <li>Strategic recommendations</li>
-          <li>AI chatbox for follow-up Q&A</li>
-        </ul>
-        <div class="pc-footer">
-          <div class="pc-price"><span class="pc-price-val">$29</span><span class="pc-price-lbl">per report</span></div>
-          <a href="/compare.html" class="pc-cta">Generate →</a>
+
+      <!-- Strategy Builder -->
+      <div class="tool-card amber-card">
+        <div class="tc-head">
+          <div class="tc-icon amber">🧭</div>
+          <div class="tc-name">Strategy Builder</div>
+          <p class="tc-desc">Build strategic reports around 10 battle-tested modules. Upload supporting documents for company context, Claude builds the rest.</p>
+        </div>
+        <div class="tc-features">
+          <div class="tc-feat amber">10 modules: Sales, GTM, Pricing, Growth & more</div>
+          <div class="tc-feat amber">Upload annual reports, financials, strategy docs</div>
+          <div class="tc-feat amber">Claude clarifies, plans sections, you confirm</div>
+          <div class="tc-feat amber">Framework-informed structure from research library</div>
+          <div class="tc-feat amber">McKinsey-style output · Present mode · PPTX export</div>
+        </div>
+        <div class="tc-footer">
+          <a href="/strategy-builder.html" class="btn btn-amber" style="width:100%;justify-content:center">Open Strategy Builder →</a>
         </div>
       </div>
-      <div class="product-card">
-        <div class="pc-icon"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div>
-        <h3 class="pc-name">Market Entry Brief</h3>
-        <p class="pc-desc">The fastest path to a go/no-go decision. Covers regulatory requirements, distribution landscape, competitive environment, pricing benchmarks, and partner shortlist.</p>
-        <ul class="pc-features">
-          <li>Market opportunity summary</li>
-          <li>Regulatory & compliance map</li>
-          <li>Distribution channel landscape</li>
-          <li>Pricing & positioning benchmarks</li>
-          <li>Potential partner shortlist</li>
-          <li>Entry strategy recommendations</li>
-        </ul>
-        <div class="pc-footer">
-          <div class="pc-price"><span class="pc-price-val">$39</span><span class="pc-price-lbl">per report</span></div>
-          <a href="/tracker.html" class="pc-cta">Generate →</a>
+
+      <!-- Document Intelligence -->
+      <div class="tool-card teal-card">
+        <div class="tc-head">
+          <div class="tc-icon teal">📎</div>
+          <div class="tc-name">Document Intelligence</div>
+          <p class="tc-desc">Turn any document into a structured report. Upload PDFs, spreadsheets, decks or images — describe what you need, Claude delivers.</p>
+        </div>
+        <div class="tc-features">
+          <div class="tc-feat teal">PDF, DOCX, XLSX, PPTX, images — all supported</div>
+          <div class="tc-feat teal">Free-form request: no module constraints</div>
+          <div class="tc-feat teal">Optional web research supplements document data</div>
+          <div class="tc-feat teal">Section plan preview before generation starts</div>
+          <div class="tc-feat teal">Same stream UI and export as all other tools</div>
+        </div>
+        <div class="tc-footer">
+          <a href="/docreport.html" class="btn btn-teal" style="width:100%;justify-content:center">Open Doc Intelligence →</a>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+<!-- ── HOW IT WORKS ── -->
+<section style="padding:96px 0;border-top:1px solid var(--border)">
   <div class="container">
     <div class="how-grid">
       <div>
         <p class="section-eyebrow">How it works</p>
-        <h2 class="section-title" style="max-width:400px;margin-bottom:40px">Research-grade output.<br/>In minutes.</h2>
+        <h2 class="section-title" style="margin-bottom:36px">From request to report<br/>in under 5 minutes</h2>
         <div class="steps" id="steps">
           <div class="step active" onclick="setStep(0)">
             <div class="step-bar"></div>
             <span class="step-num">01</span>
             <div class="step-content">
-              <div class="step-title">Define your brief</div>
-              <div class="step-desc">Enter industry, target country, report type, and any specific questions. Takes 60 seconds.</div>
+              <div class="step-title">Select tool + define brief</div>
+              <div class="step-desc">Choose from Market Analysis, Strategy Builder, or Doc Intelligence. Select a module or describe your request. Upload documents if you have them.</div>
             </div>
           </div>
           <div class="step" onclick="setStep(1)">
             <div class="step-bar"></div>
             <span class="step-num">02</span>
             <div class="step-content">
-              <div class="step-title">AI runs multi-source research</div>
-              <div class="step-desc">Perplexity queries live sources for current data. Our RAG engine simultaneously pulls structural patterns from 1,000+ primary studies.</div>
+              <div class="step-title">Multi-source research runs automatically</div>
+              <div class="step-desc">Perplexity queries live sources for current data. Our RAG engine pulls structural frameworks from 1,000+ primary studies. Claude reads your documents.</div>
             </div>
           </div>
           <div class="step" onclick="setStep(2)">
             <div class="step-bar"></div>
             <span class="step-num">03</span>
             <div class="step-content">
-              <div class="step-title">Claude generates each section</div>
-              <div class="step-desc">Claude Sonnet synthesizes research + historical patterns into consulting-grade prose, writing sections sequentially — each building context for the next.</div>
+              <div class="step-title">Review the plan, then confirm</div>
+              <div class="step-desc">Claude proposes a tailored section structure. You can edit, reorder or add sections before generation starts — no surprises.</div>
             </div>
           </div>
           <div class="step" onclick="setStep(3)">
             <div class="step-bar"></div>
             <span class="step-num">04</span>
             <div class="step-content">
-              <div class="step-title">Read, download & ask follow-ups</div>
-              <div class="step-desc">Report unlocks instantly. Built-in AI chatbox lets you drill deeper into any section, powered by Claude Haiku with the full report as context.</div>
+              <div class="step-title">Stream, present, export & follow up</div>
+              <div class="step-desc">Sections appear as they generate. Present in McKinsey-style slides, export as PPTX or PDF, and ask follow-up questions via the built-in AI chat.</div>
             </div>
           </div>
         </div>
@@ -428,21 +368,22 @@
         <div class="terminal">
           <div class="terminal-header"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
           <div class="terminal-body">
-            <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd"> kira generate</span></div>
-            <div class="t-line"><span class="t-comment">  industry:"fintech" · country:"Vietnam"</span></div>
+            <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd"> kira strategy-builder</span></div>
+            <div class="t-line"><span class="t-comment">  module:"go_to_market" · country:"Indonesia"</span></div>
+            <div class="t-line"><span class="t-comment">  docs: ["annual_report_2024.pdf"]</span></div>
             <br/>
-            <div class="t-line"><span class="t-out warn">→ Planning 12-section structure...</span></div>
-            <div class="t-line"><span class="t-out warn">→ Running 11 Perplexity queries...</span></div>
-            <div class="t-line"><span class="t-out warn">→ Searching 2,847 report chunks...</span></div>
+            <div class="t-line"><span class="t-out warn">→ Reading 3 documents (142 pages)...</span></div>
+            <div class="t-line"><span class="t-out warn">→ Querying RAG framework library...</span></div>
+            <div class="t-line"><span class="t-out warn">→ Running Perplexity web research...</span></div>
+            <div class="t-line"><span class="t-out warn">→ Planning 8-section structure...</span></div>
             <br/>
-            <div class="t-line"><span class="t-out">✓ Executive Summary</span></div>
-            <div class="t-line"><span class="t-out">✓ Market Assessment ($4.2B · 18% CAGR)</span></div>
-            <div class="t-line"><span class="t-out">✓ Competitive Landscape</span></div>
-            <div class="t-line"><span class="t-out warn">⟳ Consumer Insights [generating...]</span></div>
-            <div class="t-line"><span class="t-out dim">  Pricing Analysis</span></div>
-            <div class="t-line"><span class="t-out dim">  Regulatory Environment</span></div>
-            <div class="t-line"><span class="t-out dim">  Market Forecast 2026–2030</span></div>
-            <div class="t-line"><span class="t-out dim">  Recommendations</span></div>
+            <div class="t-line"><span class="t-out">✓ Market Opportunity Assessment</span></div>
+            <div class="t-line"><span class="t-out">✓ Competitive Landscape Indonesia</span></div>
+            <div class="t-line"><span class="t-out">✓ Channel & Distribution Strategy</span></div>
+            <div class="t-line"><span class="t-out warn">⟳ Entry Sequencing [generating...]</span></div>
+            <div class="t-line"><span class="t-out dim">  Partner Landscape</span></div>
+            <div class="t-line"><span class="t-out dim">  Risk & Mitigation</span></div>
+            <div class="t-line"><span class="t-out dim">  90-Day Action Plan</span></div>
             <br/>
             <div class="t-line"><span class="t-prompt">_</span><span class="t-cursor"></span></div>
           </div>
@@ -452,8 +393,8 @@
   </div>
 </section>
 
-<!-- LIBRARY PREVIEW -->
-<section class="section">
+<!-- ── LIBRARY ── -->
+<section style="padding:80px 0;border-top:1px solid var(--border)">
   <div class="container">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:16px">
       <div>
@@ -462,7 +403,7 @@
       </div>
       <a href="/library.html" class="btn btn-outline">Browse all →</a>
     </div>
-    <div class="library-grid">
+    <div class="lib-grid">
       <div class="lib-card"><div class="lib-industry">Fintech</div><div class="lib-title">Digital Payments Market — Vietnam 2026</div><div class="lib-meta"><span class="lib-country">🇻🇳 Vietnam</span><span class="lib-price">$29</span></div></div>
       <div class="lib-card"><div class="lib-industry">E-Commerce</div><div class="lib-title">Online Retail Landscape — Indonesia 2026</div><div class="lib-meta"><span class="lib-country">🇮🇩 Indonesia</span><span class="lib-price">$29</span></div></div>
       <div class="lib-card"><div class="lib-industry">FMCG</div><div class="lib-title">Packaged Food Market — Thailand 2026</div><div class="lib-meta"><span class="lib-country">🇹🇭 Thailand</span><span class="lib-price">$29</span></div></div>
@@ -471,32 +412,29 @@
   </div>
 </section>
 
-<!-- CTA -->
+<!-- ── CTA ── -->
 <section class="cta-section">
   <div class="container">
-    <p class="section-eyebrow">Get started</p>
-    <h2 class="section-title" style="max-width:560px;margin:0 auto 16px">Your next market report<br/>is 5 minutes away.</h2>
-    <p class="section-sub" style="margin-bottom:40px">No subscriptions required. Pay per report.<br/>Each one backed by primary research, not summaries.</p>
-    <div class="cta-actions">
-      <a href="/report.html" class="btn btn-primary btn-lg">Generate a Report — $49</a>
-      <a href="/library.html" class="btn btn-outline btn-lg">Browse Living Reports</a>
+    <div class="cta-inner">
+      <p class="section-eyebrow">Get started</p>
+      <h2 class="section-title">Your next report is<br/>5 minutes away.</h2>
+      <p class="section-sub" style="margin:16px auto 0;text-align:center">No subscriptions. Pay per report. Three tools, one platform.</p>
+      <div class="cta-tools">
+        <a href="/report.html"           class="btn btn-primary btn-lg">Market Analysis</a>
+        <a href="/strategy-builder.html" class="btn btn-amber btn-lg">Strategy Builder</a>
+        <a href="/docreport.html"        class="btn btn-outline btn-lg">Document Intelligence</a>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-
-
+<script src="/nav.js"></script>
 <script>
-  // Navbar scroll
-  const nav = document.getElementById('navbar');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 20));
-
-  // Steps accordion + auto-advance
+  // Steps auto-advance
   const stepsEl = document.querySelectorAll('#steps .step');
   let cur = 0;
   function setStep(i) {
-    stepsEl.forEach((s, j) => s.classList.toggle('active', j === i));
+    stepsEl.forEach((s,j) => s.classList.toggle('active', j === i));
     cur = i;
   }
   setInterval(() => setStep((cur + 1) % stepsEl.length), 3500);
