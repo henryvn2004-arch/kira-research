@@ -24,6 +24,7 @@ const PACKAGES = {
 
 // ── Report credit costs ───────────────────────────────────
 const REPORT_COSTS = {
+  // Market Analysis = 19 credits
   market_overview:         19,
   competitive_analysis:    19,
   customer_intelligence:   19,
@@ -32,8 +33,10 @@ const REPORT_COSTS = {
   partner_search:          19,
   proposition_development: 19,
   industry_deep_dive:      19,
-  strategy_builder:        19,
-  gtm_strategy:            19,
+  // Strategy Builder = 29 credits
+  strategy_builder:        29,
+  gtm_strategy:            29,
+  // Doc Intelligence = 9 credits
   doc_intelligence:         9,
   document_analysis:        9,
 };
