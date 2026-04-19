@@ -36,15 +36,16 @@
             </div>
             <div class="ddm-text">
               <span class="ddm-label">Strategy Builder</span>
-              <span class="ddm-desc">10 modules · Upload docs · Claude builds your strategic report</span>
+              <span class="ddm-desc">10 modules · Upload docs · AI builds your strategic report</span>
             </div>
           </a>
+          <a href="/docreport.html" class="ddm-item">
             <div class="ddm-icon" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2)">
               <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
             <div class="ddm-text">
               <span class="ddm-label">Document Intelligence</span>
-              <span class="ddm-desc">Upload files · Claude analyzes · McKinsey-style output</span>
+              <span class="ddm-desc">Upload files · AI analyzes · consulting-style output</span>
             </div>
           </a>
         </div>
@@ -56,10 +57,35 @@
     </ul>
 
     <div class="nav-actions">
-      <a href="/auth.html"    class="nav-btn nav-btn-ghost" id="nav-signin"  style="display:none">Sign in</a>
-      <a href="/profile.html" class="nav-btn nav-btn-ghost" id="nav-profile" style="display:none">My Reports</a>
-      <button class="nav-btn nav-btn-ghost" id="nav-signout" style="display:none">Sign out</button>
-      <a href="/report.html"  class="nav-btn nav-btn-primary" id="nav-generate">Generate Report</a>
+      <!-- Logged OUT -->
+      <a href="/report.html" class="nav-btn nav-btn-ghost" id="nav-generate" style="display:none">Try Free</a>
+      <a href="/auth.html"   class="nav-btn nav-btn-primary" id="nav-signin">Sign In</a>
+
+      <!-- Logged IN: account widget -->
+      <div class="nav-account" id="nav-account" style="display:none">
+        <button class="nav-account-btn" id="nav-account-btn" onclick="toggleAccountMenu()">
+          <div class="nav-avatar" id="nav-avatar">?</div>
+          <div class="nav-credit-chip" id="nav-credit-chip">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polygon points="6,1 11,4 11,8 6,11 1,8 1,4" stroke="#1E6FFF" stroke-width="1.2" fill="rgba(30,111,255,.15)"/></svg>
+            <span id="nav-credit-val">—</span>
+          </div>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#A3A9B6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-account-menu" id="nav-account-menu">
+          <div class="nam-header">
+            <div class="nam-email" id="nam-email"></div>
+            <div class="nam-balance">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><polygon points="6,1 11,4 11,8 6,11 1,8 1,4" stroke="#1E6FFF" stroke-width="1.2" fill="rgba(30,111,255,.15)"/></svg>
+              <span id="nam-balance-val">—</span> credits
+            </div>
+          </div>
+          <div class="nam-divider"></div>
+          <a href="/profile.html"  class="nam-item">📄 My Reports</a>
+          <a href="/pricing.html"  class="nam-item nam-topup">⬡ Top Up Credits</a>
+          <div class="nam-divider"></div>
+          <button class="nam-item nam-signout" id="nav-signout">Sign Out</button>
+        </div>
+      </div>
     </div>
 
     <!-- Mobile burger -->
@@ -82,9 +108,16 @@
     <a href="/pricing.html"  class="mobile-link">Pricing</a>
     <a href="/about.html"    class="mobile-link">About</a>
     <div class="mobile-divider"></div>
-    <a href="/auth.html"     class="mobile-link" id="mobile-signin"  style="display:none">Sign in</a>
-    <a href="/profile.html"  class="mobile-link" id="mobile-profile" style="display:none">My Reports</a>
-    <button class="mobile-link mobile-signout" id="mobile-signout"   style="display:none">Sign out</button>
+    <a href="/auth.html"     class="mobile-link" id="mobile-signin"  style="display:none">Sign In</a>
+    <div id="mobile-account-section" style="display:none">
+      <div class="mobile-credit-row">
+        <span style="color:#A3A9B6;font-size:14px">Credits</span>
+        <span class="mobile-credit-val" id="mobile-credit-val">—</span>
+      </div>
+      <a href="/profile.html"  class="mobile-link" id="mobile-profile">My Reports</a>
+      <a href="/pricing.html"  class="mobile-link" style="color:#1E6FFF">⬡ Top Up Credits</a>
+      <button class="mobile-link mobile-signout" id="mobile-signout">Sign Out</button>
+    </div>
   </div>
 </div>`;
 
@@ -193,6 +226,62 @@
 .ddm-text { display: flex; flex-direction: column; gap: 2px; }
 .ddm-label { font-size: 13px; font-weight: 600; color: #fff; }
 .ddm-desc { font-size: 11px; color: #5A6278; }
+
+/* ── Account widget ── */
+.nav-account { position: relative; }
+.nav-account-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 10px 5px 5px; border-radius: 8px;
+  background: #11151C; border: 1px solid #1A1D24;
+  cursor: pointer; transition: border-color .15s;
+  font-family: Arial,sans-serif;
+}
+.nav-account-btn:hover { border-color: #242A35; }
+.nav-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(30,111,255,.2); border: 1px solid rgba(30,111,255,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #1E6FFF; flex-shrink: 0;
+}
+.nav-credit-chip {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 700; color: #fff;
+}
+.nav-account-menu {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: #11151C; border: 1px solid #242A35;
+  border-radius: 12px; padding: 6px; min-width: 220px;
+  box-shadow: 0 16px 48px rgba(0,0,0,.6);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  z-index: 200;
+}
+.nav-account-menu.open {
+  opacity: 1; visibility: visible; pointer-events: all; transform: translateY(0);
+}
+.nam-header { padding: 10px 12px 8px; }
+.nam-email { font-size: 12px; color: #A3A9B6; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nam-balance { font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 5px; }
+.nam-divider { height: 1px; background: #1A1D24; margin: 4px 0; }
+.nam-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 7px;
+  font-size: 13px; color: #A3A9B6; text-decoration: none;
+  transition: background .15s, color .15s;
+  background: transparent; border: none; cursor: pointer;
+  font-family: Arial,sans-serif; width: 100%; text-align: left;
+}
+.nam-item:hover { background: #161B24; color: #fff; }
+.nam-topup { color: #1E6FFF; }
+.nam-topup:hover { color: #1E6FFF; }
+.nam-signout:hover { color: #FC8181; }
+/* mobile credit row */
+.mobile-credit-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid #1A1D24;
+}
+.mobile-credit-val { font-size: 15px; font-weight: 700; color: #1E6FFF; }
 
 /* ── Nav actions ── */
 .nav-actions { display: flex; align-items: center; gap: 8px; }
@@ -339,34 +428,75 @@
     if (!window.kiraAuth) return;
     const user = await window.kiraAuth.getUser();
 
-    const signin   = document.getElementById('nav-signin');
-    const profile  = document.getElementById('nav-profile');
-    const signout  = document.getElementById('nav-signout');
-    const mSignin  = document.getElementById('mobile-signin');
-    const mProfile = document.getElementById('mobile-profile');
-    const mSignout = document.getElementById('mobile-signout');
+    const signin         = document.getElementById('nav-signin');
+    const navGenerate    = document.getElementById('nav-generate');
+    const navAccount     = document.getElementById('nav-account');
+    const mSignin        = document.getElementById('mobile-signin');
+    const mAccountSection = document.getElementById('mobile-account-section');
 
     if (user) {
-      if (signin)   signin.style.display   = 'none';
-      if (profile)  profile.style.display  = 'inline-flex';
-      if (signout)  signout.style.display  = 'inline-flex';
-      if (mSignin)  mSignin.style.display  = 'none';
-      if (mProfile) mProfile.style.display = 'flex';
-      if (mSignout) mSignout.style.display = 'flex';
-    } else {
-      if (signin)   signin.style.display   = 'inline-flex';
-      if (profile)  profile.style.display  = 'none';
-      if (signout)  signout.style.display  = 'none';
-      if (mSignin)  mSignin.style.display  = 'flex';
-      if (mProfile) mProfile.style.display = 'none';
-      if (mSignout) mSignout.style.display = 'none';
-    }
+      if (signin)          signin.style.display      = 'none';
+      if (navGenerate)     navGenerate.style.display  = 'none';
+      if (navAccount)      navAccount.style.display   = 'flex';
+      if (mSignin)         mSignin.style.display      = 'none';
+      if (mAccountSection) mAccountSection.style.display = 'block';
 
-    // sign out buttons
-    [signout, mSignout].forEach(btn => {
-      if (btn) btn.addEventListener('click', () => window.kiraAuth.signOut());
-    });
+      // Avatar initial
+      const initial = (user.user_metadata?.full_name || user.email || '?').charAt(0).toUpperCase();
+      const avatar  = document.getElementById('nav-avatar');
+      if (avatar) avatar.textContent = initial;
+
+      // Email in dropdown
+      const namEmail = document.getElementById('nam-email');
+      if (namEmail) namEmail.textContent = user.email || '';
+
+      // Mobile profile email
+      const mProfile = document.getElementById('mobile-profile');
+      if (mProfile) mProfile.textContent = 'My Reports';
+
+      // Load credit balance
+      try {
+        const r = await fetch(`/api/credits?action=balance&userId=${user.id}`);
+        const d = await r.json();
+        const bal = d.balance ?? 0;
+        const chip = document.getElementById('nav-credit-val');
+        const namBal = document.getElementById('nam-balance-val');
+        const mBal   = document.getElementById('mobile-credit-val');
+        if (chip)   chip.textContent   = bal;
+        if (namBal) namBal.textContent = bal;
+        if (mBal)   mBal.textContent   = bal + ' credits';
+      } catch {}
+
+      // Sign out
+      const signout  = document.getElementById('nav-signout');
+      const mSignout = document.getElementById('mobile-signout');
+      [signout, mSignout].forEach(btn => {
+        if (btn) btn.onclick = () => window.kiraAuth.signOut();
+      });
+
+    } else {
+      if (signin)          signin.style.display      = 'inline-flex';
+      if (navGenerate)     navGenerate.style.display  = 'inline-flex';
+      if (navAccount)      navAccount.style.display   = 'none';
+      if (mSignin)         mSignin.style.display      = 'flex';
+      if (mAccountSection) mAccountSection.style.display = 'none';
+    }
   }
+
+  // Account dropdown toggle
+  window.toggleAccountMenu = function () {
+    const menu = document.getElementById('nav-account-menu');
+    if (menu) menu.classList.toggle('open');
+  };
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    const widget = document.getElementById('nav-account');
+    const menu   = document.getElementById('nav-account-menu');
+    if (menu && widget && !widget.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
 
   // Run after DOM + auth ready
   if (document.readyState === 'loading') {

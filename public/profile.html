@@ -26,6 +26,33 @@
     .btn-primary{background:#1E6FFF;color:#fff}.btn-primary:hover{background:#1558CC}
     .btn-ghost{background:transparent;color:#A3A9B6;border:1px solid #242A35}.btn-ghost:hover{color:#fff;border-color:#A3A9B6}
 
+    /* credits */
+    .credit-section{background:linear-gradient(135deg,rgba(30,111,255,.08),rgba(30,111,255,.03));border:1px solid rgba(30,111,255,.2);border-radius:16px;padding:28px 32px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+    .credit-left{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+    .credit-balance-block{display:flex;flex-direction:column;gap:2px}
+    .credit-balance-val{font-size:48px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.02em}
+    .credit-balance-lbl{font-size:12px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em}
+    .credit-divider{width:1px;height:48px;background:#1A1D24}
+    .credit-cost-list{display:flex;flex-direction:column;gap:6px}
+    .credit-cost-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#A3A9B6}
+    .credit-cost-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);color:#1E6FFF;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:700}
+    .btn-topup{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;white-space:nowrap}
+    .btn-topup:hover{background:#1558CC;box-shadow:0 0 24px rgba(30,111,255,.3)}
+
+    /* transactions */
+    .tx-section{margin-top:40px}
+    .tx-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .tx-title{font-size:15px;font-weight:700}
+    table.tx-table{width:100%;border-collapse:collapse;background:#11151C;border:1px solid #1A1D24;border-radius:12px;overflow:hidden}
+    .tx-table th{text-align:left;padding:10px 16px;color:#5A6278;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1A1D24}
+    .tx-table td{padding:12px 16px;border-bottom:1px solid #0F1218;font-size:13px;color:#A3A9B6}
+    .tx-table td:first-child{color:#fff}
+    .tx-table tr:last-child td{border-bottom:none}
+    .tx-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+    .tx-topup{background:rgba(56,217,150,.1);color:#38D996;border:1px solid rgba(56,217,150,.2)}
+    .tx-spend{background:rgba(246,173,85,.1);color:#F6AD55;border:1px solid rgba(246,173,85,.2)}
+    .tx-refund{background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.2)}
+
     /* stats */
     .stats-row{display:flex;gap:16px;margin-bottom:40px;flex-wrap:wrap}
     .stat-card{background:#11151C;border:1px solid #1A1D24;border-radius:10px;padding:20px 24px;flex:1;min-width:140px}
@@ -80,6 +107,35 @@
 
 <div class="container">
 
+  <!-- Credit balance section -->
+  <div class="credit-section" id="credit-section">
+    <div class="credit-left">
+      <div class="credit-balance-block">
+        <div class="credit-balance-val" id="credit-balance-val">—</div>
+        <div class="credit-balance-lbl">Credits Available</div>
+      </div>
+      <div class="credit-divider"></div>
+      <div class="credit-cost-list">
+        <div class="credit-cost-item">
+          <span class="credit-cost-badge">⬡ 19</span>
+          Market Analysis
+        </div>
+        <div class="credit-cost-item">
+          <span class="credit-cost-badge">⬡ 29</span>
+          Strategy Builder
+        </div>
+        <div class="credit-cost-item">
+          <span class="credit-cost-badge" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2);color:#00C9A7">⬡ 9</span>
+          Doc Intelligence
+        </div>
+      </div>
+    </div>
+    <a href="/pricing.html" class="btn-topup">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Top Up Credits
+    </a>
+  </div>
+
   <!-- Profile header -->
   <div class="profile-header">
     <div class="profile-left">
@@ -115,6 +171,25 @@
     <div class="report-card skeleton" style="height:80px"></div>
     <div class="report-card skeleton" style="height:80px"></div>
     <div class="report-card skeleton" style="height:80px"></div>
+  </div>
+
+  <!-- Transaction history -->
+  <div class="tx-section" id="tx-section" style="display:none">
+    <div class="tx-header">
+      <div class="tx-title">Credit History</div>
+    </div>
+    <table class="tx-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th style="text-align:right">Credits</th>
+        </tr>
+      </thead>
+      <tbody id="tx-tbody">
+      </tbody>
+    </table>
   </div>
 
   <!-- Account section -->
@@ -161,15 +236,43 @@ async function loadProfile() {
   const user = await window.kiraAuth.requireAuth();
   if (!user) return;
 
-  // Fill profile header
   const email   = user.email || '';
-  document.getElementById('avatar').textContent        = email.charAt(0).toUpperCase();
+  document.getElementById('avatar').textContent        = (user.user_metadata?.full_name || email).charAt(0).toUpperCase();
   document.getElementById('profile-name').textContent  = user.user_metadata?.full_name || email.split('@')[0];
   document.getElementById('profile-email').textContent = email;
   document.getElementById('account-email').textContent = email;
 
-  // Load reports
-  await loadReports(user);
+  // Load credits + reports in parallel
+  await Promise.all([loadCredits(user), loadReports(user)]);
+}
+
+async function loadCredits(user) {
+  try {
+    const r = await fetch(`/api/credits?action=balance&userId=${user.id}`);
+    const d = await r.json();
+    const bal = d.balance ?? 0;
+    document.getElementById('credit-balance-val').textContent = bal;
+
+    // Render transaction history
+    const txs = d.transactions || [];
+    if (txs.length) {
+      document.getElementById('tx-section').style.display = 'block';
+      document.getElementById('tx-tbody').innerHTML = txs.map(tx => {
+        const date    = new Date(tx.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+        const isPos   = tx.amount > 0;
+        const badge   = tx.type === 'topup' ? 'tx-topup' : tx.type === 'refund' ? 'tx-refund' : 'tx-spend';
+        const label   = tx.type === 'topup' ? 'Top Up' : tx.type === 'refund' ? 'Refund' : 'Spent';
+        const sign    = isPos ? '+' : '';
+        const color   = isPos ? '#38D996' : '#F6AD55';
+        return `<tr>
+          <td style="color:#5A6278">${date}</td>
+          <td>${tx.description || '—'}</td>
+          <td><span class="tx-badge ${badge}">${label}</span></td>
+          <td style="text-align:right;font-weight:700;color:${color}">${sign}${tx.amount}</td>
+        </tr>`;
+      }).join('');
+    }
+  } catch {}
 }
 
 async function loadReports(user) {
