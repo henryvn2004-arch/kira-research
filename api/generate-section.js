@@ -310,16 +310,16 @@ function trimResearchForSection(research, sectionTitle, sectionAngle) {
     return { p, score };
   });
 
-  // Take top 4 most relevant paragraphs + always include LOCAL DATA section if present
+  // Take top 5 most relevant paragraphs + always include LOCAL DATA section if present
   const localDataIdx = paragraphs.findIndex(p => p.includes('=== LOCAL DATA'));
-  const sorted = scored.sort((a,b) => b.score - a.score).slice(0, 4).map(x => x.p);
+  const sorted = scored.sort((a,b) => b.score - a.score).slice(0, 5).map(x => x.p);
 
   if (localDataIdx >= 0 && !sorted.includes(paragraphs[localDataIdx])) {
     sorted.push(paragraphs[localDataIdx]);
   }
 
-  const result = sorted.join('\n\n').slice(0, 1800); // hard cap 1800 chars
-  return result || research.slice(0, 1800);
+  const result = sorted.join('\n\n').slice(0, 2500); // 2500 chars = ~600 tokens, balanced
+  return result || research.slice(0, 2500);
 }
 
 export default async function handler(req, res) {
@@ -356,23 +356,29 @@ export default async function handler(req, res) {
   // ── Phase 1: Stream commentary ─────────────────────────
   let fullCommentary = '';
   try {
-    const prompt = `Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}) of a market research report.
+    const prompt = `You are a senior market research analyst at a top consulting firm. Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}) of a market research report.
 
 ${context}
 
-Write 250-350 words of consulting-grade analytical prose:
-- Lead with the key strategic insight
-- Reference specific data, companies, numbers from the research
-- For estimated numbers, prefix with "est." or "approx."
-- If a number comes from a named source, attribute it: "According to X, ..."
-- Use **bold** for key terms and company names
-- End with strategic implication
-- No AI disclaimers. Flowing paragraphs only.`;
+Write 300-400 words of consulting-grade analytical prose.
+
+APPROACH:
+- Use the research data above as your primary factual foundation
+- SUPPLEMENT freely with your own knowledge of this industry, country, and market — do NOT limit yourself only to what the research explicitly states
+- If the research data is sparse, draw on your knowledge to provide depth and context
+- Lead with the single most important strategic insight for THIS section
+- Include specific numbers, company names, market dynamics
+- Attribute figures to sources where possible: "According to [source]..." or use "est." for estimates
+- Use **bold** for key terms, company names, data points
+- Connect insights to strategic implications throughout
+- End with a forward-looking strategic implication
+- No hedging, no AI disclaimers, no "based on the provided data" — write with authority
+- Flowing paragraphs only. No bullet lists.`;
 
     const streamRes = await fetch(ANT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: MODEL, max_tokens: 900, stream: true, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: MODEL, max_tokens: 1100, stream: true, messages: [{ role: 'user', content: prompt }] })
     });
 
     const reader  = streamRes.body.getReader();
