@@ -272,16 +272,32 @@ When citing data:
 - If local data is unavailable, clearly note "data unavailable for ${country}, estimated from regional benchmarks"`;
 }
 
-// ── Per-section RAG search ────────────────────────────────
-// Each section searches RAG with its own targeted query for more relevant context.
-// Falls back to the shared ragContext from generate-report if search fails.
-const SB_URL_S = process.env.SUPABASE_URL;
-const SB_KEY_S = process.env.SUPABASE_SERVICE_KEY;
-const OAI_KEY_S = process.env.OPENAI_API_KEY;
+// Map section blueprint type → chunk_type in RAG database
+// This tells us which chunk_type contains relevant HOW-TO-WRITE examples
+const SECTION_CHUNK_TYPE = {
+  executive_summary:      'framework',
+  market_assessment:      'industry_insight',
+  market_segmentation:    'industry_insight',
+  industry_structure:     'channel_data',
+  competitive_landscape:  'competitive_insight',
+  competitor_profiles:    'competitive_insight',
+  market_drivers:         'industry_insight',
+  consumer_insights:      'consumer_insight',
+  pricing_analysis:       'pricing_data',
+  regulatory:             'industry_insight',
+  market_forecast:        'industry_insight',
+  recommendations:        'recommendation',
+  industry_competitiveness: 'competitive_insight',
+  entry_mode:             'framework',
+  gap_analysis:           'consumer_insight',
+};
 
-async function sectionRagSearch(query) {
+// ── Per-section RAG search ────────────────────────────────
+// Runs 2 parallel queries:
+//   1. Semantic similarity on section-specific query → relevant DATA chunks
+//   2. chunk_type filter → HOW-TO-WRITE examples from similar reports in library
+async function sectionRagSearch(query, sectionType) {
   try {
-    // Generate embedding for section-specific query
     const embRes = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OAI_KEY_S}` },
@@ -291,22 +307,38 @@ async function sectionRagSearch(query) {
     if (embData.error) return null;
     const vec = embData.data[0].embedding;
 
+    const chunkType = sectionType ? (SECTION_CHUNK_TYPE[sectionType] || null) : null;
     const opts = { method: 'POST',
                    headers: { 'apikey': SB_KEY_S, 'Authorization': `Bearer ${SB_KEY_S}`,
                                'Content-Type': 'application/json' } };
-    const [chunks, patterns] = await Promise.all([
+
+    // Query 1: semantic similarity — finds DATA relevant to this section
+    // Query 2: chunk_type filter — finds HOW-TO-WRITE examples from library
+    // Query 3: industry patterns — structural patterns
+    const [dataChunks, frameworkChunks, patterns] = await Promise.all([
       fetch(`${SB_URL_S}/rest/v1/rpc/search_report_chunks`, {
         ...opts,
-        body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 5 })
+        body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 4 })
       }).then(r => r.json()),
+
+      chunkType ? fetch(`${SB_URL_S}/rest/v1/rpc/search_report_chunks`, {
+        ...opts,
+        // chunk_type_filter param — works with upgraded RPC, ignored if old RPC
+        body: JSON.stringify({ query_embedding: vec, match_threshold: 0.60, match_count: 2, chunk_type_filter: chunkType })
+      }).then(r => r.json()).catch(() => []) : Promise.resolve([]),
+
       fetch(`${SB_URL_S}/rest/v1/rpc/search_industry_patterns`, {
         ...opts,
         body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 3 })
       }).then(r => r.json()),
     ]);
 
+    // Framework chunks go first — they show Claude HOW to write this section type
+    // Data chunks follow — they provide the CONTENT to write about
+    const allChunks = [...(frameworkChunks || []), ...(dataChunks || [])];
+
     return {
-      chunkText:   (chunks   || []).map(x => `[${x.chunk_type}] ${x.content}`).join('\n\n'),
+      chunkText:   allChunks.map(x => `[${x.chunk_type}] ${x.content}`).join('\n\n'),
       patternText: (patterns || []).map(x => `[${x.pattern_type}] ${x.description}`).join('\n\n'),
     };
   } catch { return null; }
@@ -340,10 +372,21 @@ function buildContext(params, ragContext, researchSummary, prevSections, compete
   const sectionType = getBlueprint(sectionTitle)?.angle?.split('—')[0]?.toLowerCase() || '';
   const trimmedResearch = trimResearchForSection(researchSummary, sectionTitle, sectionType);
 
-  // RAG: trim to 800 tokens max (was 2000+1000)
-  const rag = [
-    ragContext?.chunkText   ? `LIBRARY:\n${ragContext.chunkText.slice(0,1000)}`   : '',
-    ragContext?.patternText ? `PATTERNS:\n${ragContext.patternText.slice(0,500)}`  : '',
+  // RAG: separate framework chunks (how-to-write) from data chunks (what-to-write-about)
+  const allChunks = effectiveRag.chunkText || '';
+  const frameworkChunks = allChunks.split('\n\n').filter(c => c.startsWith('[framework]'));
+  const dataChunks      = allChunks.split('\n\n').filter(c => !c.startsWith('[framework]'));
+
+  const ragBlock = [
+    frameworkChunks.length
+      ? `WRITING EXAMPLES FROM RESEARCH LIBRARY (how similar sections were structured in real reports):\n${frameworkChunks.slice(0,2).join('\n\n')}`
+      : '',
+    dataChunks.length
+      ? `RELEVANT DATA FROM LIBRARY:\n${dataChunks.slice(0,3).join('\n\n').slice(0,800)}`
+      : '',
+    effectiveRag.patternText
+      ? `INDUSTRY PATTERNS:\n${effectiveRag.patternText.slice(0,400)}`
+      : '',
   ].filter(Boolean).join('\n\n');
 
   const antiOverlap     = buildAntiOverlapContext(prevSections);
@@ -361,7 +404,7 @@ ${questions ? `\nCLIENT FOCUS — address this in your analysis: "${questions}"`
 
 RESEARCH DATA:
 ${trimmedResearch}
-${rag ? `\n${rag}` : ''}
+${ragBlock ? `\n${ragBlock}` : ''}
 ${sectionGuidance ? `\n${sectionGuidance}` : ''}
 ${localHints ? `\n${localHints}` : ''}
 ${targetedQueries}
@@ -417,7 +460,8 @@ export default async function handler(req, res) {
   // Per-section targeted RAG search — more relevant than generic report-level RAG
   // Runs in parallel with nothing (fast, ~0.3s) before Phase 1
   const sectionRagQuery = getSectionRagQuery(sectionTitle, industry, country);
-  const sectionRag = await sectionRagSearch(sectionRagQuery).catch(() => null);
+  const sectionType     = detectSectionType(sectionTitle);
+  const sectionRag      = await sectionRagSearch(sectionRagQuery, sectionType).catch(() => null);
 
   // Merge: section-specific RAG first (more relevant), fallback to shared ragContext
   const effectiveRag = sectionRag?.chunkText
