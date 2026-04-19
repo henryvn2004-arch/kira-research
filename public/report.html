@@ -155,7 +155,7 @@
     .slide-visuals{display:flex;flex-direction:column;gap:16px;padding:0 28px 20px}
     .visual-box{background:#0B0D10;border:1px solid #1A1D24;border-radius:10px;padding:20px}
     .visual-title{font-size:11px;color:#5A6278;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;font-weight:600}
-    .chart-wrap{position:relative;height:260px}
+    .chart-wrap{position:relative;height:300px}
 
     /* Sources footer */
     .slide-sources{padding:12px 28px 20px;border-top:1px solid #1A1D24;margin-top:4px;display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
@@ -169,11 +169,19 @@
     .slide-table tr:hover td{background:rgba(255,255,255,.02);color:#fff}
     .slide-table td:first-child{color:#fff;font-weight:500}
 
-    .slide-commentary{padding:0 28px 28px;font-size:14px;color:#A3A9B6;line-height:1.85}
-    .slide-commentary p{margin-bottom:14px}
+    /* Commentary — collapsed by default, full text on toggle */
+    .slide-commentary{padding:0 28px;font-size:13.5px;color:#A3A9B6;line-height:1.85}
+    .slide-commentary p{margin-bottom:12px}
     .slide-commentary p:last-child{margin-bottom:0}
     .slide-commentary strong{color:#fff}
-    .slide-commentary h3{color:#fff;font-size:11px;font-weight:700;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.08em;color:#1E6FFF}
+    .slide-commentary h3{color:#1E6FFF;font-size:10px;font-weight:700;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.08em}
+    .commentary-preview{overflow:hidden;transition:max-height .35s ease}
+    .commentary-preview.collapsed{max-height:72px;mask-image:linear-gradient(to bottom,#000 40%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 40%,transparent 100%)}
+    .commentary-preview.expanded{max-height:2000px;mask-image:none;-webkit-mask-image:none}
+    .commentary-toggle{display:flex;align-items:center;gap:6px;padding:8px 28px 20px;font-size:12px;color:#5A6278;cursor:pointer;user-select:none;transition:color .15s}
+    .commentary-toggle:hover{color:#A3A9B6}
+    .commentary-toggle svg{width:13px;height:13px;transition:transform .25s;flex-shrink:0}
+    .commentary-toggle.expanded svg{transform:rotate(180deg)}
     .stream-cursor{display:inline-block;width:2px;height:14px;background:#1E6FFF;margin-left:2px;vertical-align:middle;animation:blink .7s ease-in-out infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
@@ -337,6 +345,69 @@
     .exp-dl{display:flex;align-items:center;gap:6px;background:#1E6FFF;color:#fff;border:none;padding:9px 22px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif;font-size:13px;font-weight:700;transition:all .15s}
     .exp-dl:hover{background:#1558CC;box-shadow:0 4px 14px rgba(30,111,255,.3)}
     .exp-dl:disabled{opacity:.5;cursor:not-allowed}
+    /* ── PRESENTATION MODE ── */
+    .pres-ov{position:fixed;inset:0;background:#080A0D;z-index:600;display:none;flex-direction:column}
+    .pres-ov.open{display:flex}
+
+    /* Top bar */
+    .pres-topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:52px;border-bottom:1px solid #1A1D24;flex-shrink:0}
+    .pres-report-title{font-size:12px;color:#5A6278;font-weight:600;letter-spacing:.04em}
+    .pres-slide-counter{font-size:12px;color:#5A6278;font-family:Arial,sans-serif}
+    .pres-slide-counter span{color:#fff;font-weight:700}
+    .pres-close{background:#161B24;border:1px solid #242A35;color:#A3A9B6;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Arial,sans-serif;transition:all .15s}
+    .pres-close:hover{color:#fff;border-color:#5A6278}
+
+    /* Slide stage */
+    .pres-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;position:relative}
+    .pres-slide{width:100%;max-width:960px;min-height:480px;position:relative;animation:slideIn .22s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Divider slide */
+    .ps-divider{background:#0B0D10;border:1px solid #1A1D24;border-radius:12px;padding:56px 60px;min-height:420px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+    .ps-divider-ghost{position:absolute;right:-16px;top:-20px;font-size:260px;font-weight:900;color:rgba(255,255,255,.025);line-height:1;pointer-events:none;font-family:Arial,sans-serif}
+    .ps-divider-bar{width:48px;height:3px;background:#1E6FFF;border-radius:2px;margin-bottom:24px}
+    .ps-section-label{font-size:11px;font-weight:700;color:#1E6FFF;letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px}
+    .ps-divider-title{font-size:clamp(22px,3.2vw,34px);font-weight:700;color:#fff;line-height:1.3;max-width:700px;margin-bottom:24px}
+    .ps-divider-finding{background:rgba(30,111,255,.07);border-left:3px solid #1E6FFF;padding:14px 18px;border-radius:0 8px 8px 0;max-width:680px}
+    .ps-divider-finding-lbl{font-size:9px;font-weight:700;color:#1E6FFF;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+    .ps-divider-finding-text{font-size:14px;color:#fff;line-height:1.6}
+
+    /* Content slide */
+    .ps-content{background:#0E1219;border:1px solid #1A1D24;border-radius:12px;overflow:hidden;min-height:420px}
+    .ps-content-header{padding:16px 28px;border-bottom:1px solid #1A1D24;display:flex;align-items:center;gap:10px}
+    .ps-sec-badge{font-size:10px;font-weight:700;color:#1E6FFF;letter-spacing:.15em;text-transform:uppercase;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);padding:3px 9px;border-radius:4px;flex-shrink:0}
+    .ps-content-title{font-size:14px;font-weight:700;color:#fff}
+    .ps-content-body{padding:24px 28px}
+
+    /* Stats in pres mode */
+    .ps-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .ps-stat{background:#11151C;border:1px solid #1A1D24;border-radius:10px;padding:20px 18px;position:relative;overflow:hidden}
+    .ps-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#1E6FFF}
+    .ps-stat.ac::before{background:#00C9A7}
+    .ps-stat.gd::before{background:#C9A84C}
+    .ps-stat.rd::before{background:#E05252}
+    .ps-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#5A6278;font-weight:600;margin-bottom:6px}
+    .ps-stat-val{font-size:32px;font-weight:700;color:#fff;line-height:1}
+    .ps-stat-sub{font-size:12px;color:#5A6278;margin-top:6px}
+
+    /* Chart in pres mode */
+    .ps-chart-wrap{position:relative;height:340px}
+
+    /* Table in pres mode */
+    .ps-table-scroll{overflow-x:auto}
+
+    /* Bottom nav */
+    .pres-nav{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px;border-top:1px solid #1A1D24;flex-shrink:0}
+    .pres-btn{display:flex;align-items:center;gap:7px;background:#11151C;border:1px solid #1A1D24;color:#A3A9B6;padding:9px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-family:Arial,sans-serif;transition:all .15s}
+    .pres-btn:hover:not(:disabled){border-color:#1E6FFF;color:#fff;background:rgba(30,111,255,.1)}
+    .pres-btn:disabled{opacity:.3;cursor:not-allowed}
+    .pres-section-hint{font-size:11px;color:#3A3F4B;text-align:center;padding-bottom:4px}
+
+    /* Progress dots */
+    .pres-dots{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;max-width:200px}
+    .pres-dot{width:5px;height:5px;border-radius:50%;background:#1A1D24;transition:all .2s;flex-shrink:0}
+    .pres-dot.done{background:#242A35}
+    .pres-dot.active{background:#1E6FFF;box-shadow:0 0 6px rgba(30,111,255,.6);width:14px;border-radius:3px}
   </style>
 </head>
 <body>
@@ -587,6 +658,11 @@
               </div>
             </div>
             <div class="report-meta-right" id="report-badges">
+              <button class="btn" id="btn-present"
+                style="background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.15);display:none"
+                onclick="openPresentation()">
+                ▶ Present
+              </button>
               <button class="btn" id="btn-export-pdf"
                 style="background:rgba(0,201,167,.1);color:#00C9A7;border:1px solid rgba(0,201,167,.3);display:none"
                 onclick="openExpModal('pdf')">
@@ -710,6 +786,36 @@
   </div>
 </div>
 
+<!-- ── PRESENTATION MODE OVERLAY ── -->
+<div class="pres-ov" id="presOv">
+  <div class="pres-topbar">
+    <div class="pres-report-title" id="pres-report-title">—</div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="pres-dots" id="pres-dots"></div>
+      <div class="pres-slide-counter">Slide <span id="pres-cur">1</span> / <span id="pres-tot">1</span></div>
+    </div>
+    <button class="pres-close" onclick="closePresentation()">✕ Exit</button>
+  </div>
+
+  <div class="pres-stage">
+    <div class="pres-slide" id="pres-slide"></div>
+  </div>
+
+  <div>
+    <div class="pres-section-hint" id="pres-section-hint"></div>
+    <div class="pres-nav">
+      <button class="pres-btn" id="pres-prev" onclick="navPresent(-1)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Previous
+      </button>
+      <button class="pres-btn" id="pres-next" onclick="navPresent(1)">
+        Next
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Export Modal -->
 <div class="exp-ov" id="expOv" onclick="expBgClose(event)">
   <div class="exp-modal">
@@ -768,8 +874,17 @@
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────────
-const ANTHROPIC_KEY = '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'; // replace with sk-ant-...
+// ── Browser research — calls server-side proxy (key stays in Vercel env vars) ─
+async function browserResearch(industry, country, reportType, questions, companies) {
+  const res = await fetch('/api/browser-research', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ industry, country, reportType, questions, companies })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.research || '';
+}
 
 // ── State ────────────────────────────────────────────────
 const MODULES = {
@@ -832,56 +947,6 @@ let reportId     = null;
 let reportSlug   = null;
 let pollInterval = null;
 let chatHistory  = [];
-
-// ── Browser web_search research (no timeout) ─────────────
-async function browserResearch(industry, country, reportType, questions, companies) {
-  const typeNames = {
-    industry_deep_dive:     'full market analysis',
-    competitive_comparison: 'competitive comparison',
-    market_entry_brief:     'market entry brief'
-  };
-  const prompt = `Research the following for a ${typeNames[reportType] || 'market research'} report:
-Industry: ${industry}
-Market: ${country}
-${companies ? 'Companies: ' + companies : ''}
-${questions ? 'Focus: ' + questions : ''}
-
-Search for and compile:
-1. Current market size and growth rate (most recent data available)
-2. Key players and their market share (with specific % if available)
-3. Major distribution channels
-4. Current pricing landscape and price ranges
-5. Key trends and recent developments (last 12-18 months)
-6. Relevant regulations or policy changes
-7. Consumer behavior patterns
-${companies ? '8. Specific data on: ' + companies : ''}
-
-Provide specific numbers, statistics, and facts. Cite the source and year for each data point.`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'web-search-2025-03-05',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 3000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-
-  const data = await res.json();
-  if (data.error) throw new Error('Research: ' + data.error.message);
-  return (data.content || [])
-    .filter(b => b.type === 'text')
-    .map(b => b.text)
-    .join('\n\n');
-}
 
 // ── Type selection ───────────────────────────────────────
 // (handled by selectModule above)
@@ -1132,6 +1197,7 @@ async function startGeneration(params, slug) {
         showView('report');
         renderReportMeta(params, slug);
         const pptxBtn = document.getElementById('btn-export-pptx');
+        const presBtn0 = document.getElementById('btn-present');
         const pdfBtn  = document.getElementById('btn-export-pdf');
         if (pptxBtn) pptxBtn.style.display = 'inline-flex';
         if (pdfBtn)  pdfBtn.style.display  = 'inline-flex';
@@ -1245,10 +1311,28 @@ async function streamSection(payload, sectionIndex) {
         if (evt.type === 'meta') {
           headlineData = evt;
           setStatus(`📊 <strong>Extracting data visuals</strong> — building charts & tables...`, null);
-          if (commentaryEl) commentaryEl.innerHTML = formatCommentary(commentary);
+
+          // Wrap existing commentary in collapsible preview
+          if (commentaryEl) {
+            commentaryEl.innerHTML = formatCommentary(commentary);
+            const secIdx = sectionIndex;
+            // Replace .slide-commentary with collapsible version
+            const existingComm = block?.querySelector('.slide-commentary');
+            if (existingComm) {
+              const commHtml = existingComm.innerHTML;
+              existingComm.outerHTML = `
+                <div class="slide-commentary">
+                  <div class="commentary-preview collapsed" id="cp-${secIdx}">${commHtml}</div>
+                </div>
+                <div class="commentary-toggle" id="ct-${secIdx}" onclick="toggleCommentary(${secIdx})">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  <span>Read full analysis</span>
+                </div>`;
+              commentaryEl = null; // no longer streaming
+            }
+          }
 
           if (block) {
-            // Inject headline + stats BEFORE commentary
             const statsHtml = (evt.stats?.length)
               ? `<div class="slide-stats">${evt.stats.map(s => `
                   <div class="stat-pill">
@@ -1267,11 +1351,13 @@ async function streamSection(payload, sectionIndex) {
               header.insertAdjacentHTML('afterend', headlineEl + statsHtml);
             }
 
-            // Append chart/table
+            // Insert chart/table BEFORE commentary toggle
             if (evt.chart?.labels?.length || evt.table?.headers?.length) {
-              appendVisuals(block, sectionIndex, evt.chart, evt.table);
+              const toggle = block.querySelector('.commentary-toggle');
+              const comm   = block.querySelector('.slide-commentary');
+              const anchor = toggle || comm || null;
+              appendVisualsAt(block, sectionIndex, evt.chart, evt.table, anchor);
             }
-            // Append sources
             if (evt.sources?.length) appendSources(block, evt.sources);
           }
         }
@@ -1318,9 +1404,9 @@ function renderSectionHeadline(block, i, title, data) {
     <div class="slide-commentary"></div>`;
 }
 
-// Append chart + table after commentary is done
-function appendVisuals(block, i, chart, table) {
-  const chartId = `chart-${i}`;
+// Append visuals before a specific anchor element (e.g. before commentary)
+function appendVisualsAt(block, i, chart, table, anchor) {
+  const chartId  = `chart-${i}`;
   const hasChart = chart?.labels?.length;
   const hasTable = table?.headers?.length;
 
@@ -1346,9 +1432,29 @@ function appendVisuals(block, i, chart, table) {
   const div = document.createElement('div');
   div.className = 'slide-visuals';
   div.innerHTML = chartHtml + tableHtml;
-  block.appendChild(div);
+
+  if (anchor) {
+    block.insertBefore(div, anchor);
+  } else {
+    block.appendChild(div);
+  }
 
   if (hasChart) setTimeout(() => renderChart(chartId, chart), 50);
+}
+
+function appendVisuals(block, i, chart, table) {
+  appendVisualsAt(block, i, chart, table, null);
+}
+
+function toggleCommentary(i) {
+  const preview = document.getElementById('cp-' + i);
+  const toggle  = document.getElementById('ct-' + i);
+  if (!preview || !toggle) return;
+  const isExpanded = preview.classList.contains('expanded');
+  preview.classList.toggle('collapsed', isExpanded);
+  preview.classList.toggle('expanded', !isExpanded);
+  toggle.classList.toggle('expanded', !isExpanded);
+  toggle.querySelector('span').textContent = isExpanded ? 'Read full analysis' : 'Collapse';
 }
 
 function appendSources(block, sources) {
@@ -1452,9 +1558,11 @@ function renderReport(data) {
     const chatbox = document.getElementById('chatbox');
     const pptxBtn = document.getElementById('btn-export-pptx');
     const pdfBtn  = document.getElementById('btn-export-pdf');
+    const presBtn = document.getElementById('btn-present');
     if (chatbox) chatbox.style.display = 'block';
     if (pptxBtn) pptxBtn.style.display = 'inline-flex';
     if (pdfBtn)  pdfBtn.style.display  = 'inline-flex';
+    if (presBtn) presBtn.style.display = 'inline-flex';
   }, 500);
   reportSlug = data.slug;
 }
@@ -1493,7 +1601,7 @@ function renderSection(sec, i, total) {
     return;
   }
 
-  // Stats row
+  // ── Stats row ──
   const statsHtml = (parsed.stats?.length)
     ? `<div class="slide-stats">${parsed.stats.map(s => `
         <div class="stat-pill">
@@ -1505,7 +1613,7 @@ function renderSection(sec, i, total) {
         </div>`).join('')}</div>`
     : '';
 
-  // Chart + Table
+  // ── Chart + Table — rendered BEFORE commentary ──
   const hasChart = parsed.chart?.labels?.length;
   const hasTable = parsed.table?.headers?.length;
   const chartId  = `chart-${i}`;
@@ -1529,19 +1637,29 @@ function renderSection(sec, i, total) {
     visualsHtml = `<div class="slide-visuals">${chartHtml}${tableHtml}</div>`;
   }
 
-  // Commentary
-  const commentaryHtml = (parsed.commentary || '')
+  // ── Commentary — collapsible, visual-first ──
+  const commentaryParagraphs = (parsed.commentary || '')
     .split('\n\n').filter(Boolean)
     .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>')}</p>`)
     .join('');
 
+  const commentaryHtml = commentaryParagraphs ? `
+    <div class="slide-commentary">
+      <div class="commentary-preview collapsed" id="cp-${i}">${commentaryParagraphs}</div>
+    </div>
+    <div class="commentary-toggle" id="ct-${i}" onclick="toggleCommentary(${i})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      <span>Read full analysis</span>
+    </div>` : '';
+
+  // ── Sources ──
   const sourcesHtml = (parsed.sources?.length)
     ? `<div class="slide-sources">
         <span class="sources-label">Sources</span>
         ${parsed.sources.map(s => `<span class="source-tag">${s}</span>`).join('')}
-       </div>`
-    : '';
+       </div>` : '';
 
+  // ── Layout: finding → stats → visuals → commentary (collapsed) → sources ──
   block.innerHTML = `
     <div class="slide-header">
       <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
@@ -1554,7 +1672,7 @@ function renderSection(sec, i, total) {
     </div>` : ''}
     ${statsHtml}
     ${visualsHtml}
-    ${commentaryHtml ? `<div class="slide-commentary">${commentaryHtml}</div>` : ''}
+    ${commentaryHtml}
     ${sourcesHtml}`;
 
   container.appendChild(block);
@@ -1911,7 +2029,209 @@ window.addEventListener('DOMContentLoaded', async () => {
   setStep(1);
 });
 
-function copyReportUrl() {
+// ── PRESENTATION MODE ─────────────────────────────────────
+const presCharts = {};
+let presSlides = [], presIdx = 0;
+
+function buildPresentationSlides(sections) {
+  const slides = [];
+  const COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3','#68D391'];
+
+  sections.forEach((sec, si) => {
+    let p = {};
+    try { p = JSON.parse(sec.content || '{}'); } catch {}
+    const sectionNum = String(si + 1).padStart(2, '0');
+    const sectionTitle = sec.title || '';
+
+    // 1 — Divider slide (always)
+    slides.push({
+      type: 'divider',
+      sectionNum,
+      sectionTitle,
+      headline: p.headline || '',
+    });
+
+    // 2 — Stats slide
+    if (p.stats?.length) {
+      slides.push({ type: 'stats', sectionNum, sectionTitle, stats: p.stats });
+    }
+
+    // 3 — Chart slide
+    if (p.chart?.labels?.length) {
+      slides.push({ type: 'chart', sectionNum, sectionTitle, chart: p.chart, COLORS });
+    }
+
+    // 4 — Table slide
+    if (p.table?.headers?.length) {
+      slides.push({ type: 'table', sectionNum, sectionTitle, table: p.table });
+    }
+  });
+
+  return slides;
+}
+
+function renderPresentSlide(idx) {
+  // Destroy old pres chart instances
+  Object.values(presCharts).forEach(c => { try { c.destroy(); } catch {} });
+  Object.keys(presCharts).forEach(k => delete presCharts[k]);
+
+  const slide = presSlides[idx];
+  if (!slide) return;
+  const el = document.getElementById('pres-slide');
+
+  // Update counters + dots
+  document.getElementById('pres-cur').textContent = idx + 1;
+  document.getElementById('pres-tot').textContent = presSlides.length;
+  document.getElementById('pres-section-hint').textContent =
+    `${slide.sectionNum} — ${slide.sectionTitle}`;
+  document.getElementById('pres-prev').disabled = idx === 0;
+  document.getElementById('pres-next').disabled = idx === presSlides.length - 1;
+
+  // Dots
+  const dots = document.getElementById('pres-dots');
+  dots.innerHTML = presSlides.map((_, i) =>
+    `<div class="pres-dot ${i < idx ? 'done' : i === idx ? 'active' : ''}"></div>`
+  ).join('');
+
+  // ── DIVIDER SLIDE ──
+  if (slide.type === 'divider') {
+    el.innerHTML = `
+      <div class="ps-divider">
+        <div class="ps-divider-ghost">${slide.sectionNum}</div>
+        <div class="ps-divider-bar"></div>
+        <div class="ps-section-label">Section ${slide.sectionNum}</div>
+        <div class="ps-divider-title">${slide.sectionTitle}</div>
+        ${slide.headline ? `
+        <div class="ps-divider-finding">
+          <div class="ps-divider-finding-lbl">Key Finding</div>
+          <div class="ps-divider-finding-text">${slide.headline}</div>
+        </div>` : ''}
+      </div>`;
+    return;
+  }
+
+  // ── CONTENT SLIDE wrapper ──
+  let bodyHtml = '';
+  const chartId = `pc-${idx}`;
+
+  if (slide.type === 'stats') {
+    const ACCENT_MAP = { growth:'ac', trend:'ac', price:'gd', channel:'gd', users:'', globe:'', pie:'', check:'' };
+    bodyHtml = `<div class="ps-stats">
+      ${(slide.stats || []).map(s => `
+        <div class="ps-stat ${ACCENT_MAP[s.icon] || ''}">
+          <div class="ps-stat-lbl">${s.label}</div>
+          <div class="ps-stat-val">${s.value}</div>
+          ${s.icon ? `<div class="ps-stat-sub">${getStatIcon(s.icon)} ${s.icon}</div>` : ''}
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if (slide.type === 'chart') {
+    bodyHtml = `<div class="ps-chart-wrap"><canvas id="${chartId}"></canvas></div>`;
+  }
+
+  if (slide.type === 'table') {
+    const t = slide.table;
+    bodyHtml = `<div class="ps-table-scroll">
+      <table class="slide-table">
+        <thead><tr>${(t.headers||[]).map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${(t.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="ps-content">
+      <div class="ps-content-header">
+        <span class="ps-sec-badge">Section ${slide.sectionNum}</span>
+        <span class="ps-content-title">${slide.sectionTitle}</span>
+      </div>
+      <div class="ps-content-body">${bodyHtml}</div>
+    </div>`;
+
+  // Render chart after DOM is ready
+  if (slide.type === 'chart') {
+    setTimeout(() => {
+      const canvas = document.getElementById(chartId);
+      if (!canvas) return;
+      const ch = slide.chart;
+      const COLORS = slide.COLORS || ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4'];
+      const rawType = ch.type || 'bar';
+      const isHoriz  = rawType === 'horizontalBar' || rawType === 'bar_horizontal';
+      const type = rawType === 'donut' ? 'doughnut' : isHoriz ? 'bar' : rawType;
+      const isPie = type === 'pie' || type === 'doughnut';
+      const isRadar = type === 'radar';
+      const isLine  = type === 'line';
+      const isStacked = ch.stacked || (ch.datasets?.length > 1 && type === 'bar');
+      const datasets = (ch.datasets || []).map((ds, di) => ({
+        label: ds.label || '',
+        data:  ds.data  || [],
+        backgroundColor: isPie ? COLORS : isRadar ? COLORS[di % COLORS.length] + '33' : COLORS[di % COLORS.length],
+        borderColor:  COLORS[di % COLORS.length],
+        borderWidth:  isLine ? 2.5 : isRadar ? 1.5 : 0,
+        fill:         false,
+        tension:      0.4,
+        borderRadius: (!isPie && !isRadar && !isLine) ? 4 : 0,
+        pointBackgroundColor: isRadar ? COLORS[di % COLORS.length] : undefined,
+        pointRadius: isRadar ? 4 : undefined,
+      }));
+      presCharts[chartId] = new Chart(canvas, {
+        type,
+        data: { labels: ch.labels || [], datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          indexAxis: isHoriz ? 'y' : 'x',
+          plugins: {
+            legend: {
+              display: datasets.length > 1 || isPie || isRadar,
+              labels: { color: '#A3A9B6', font: { size: 12, family: 'Arial' }, boxWidth: 14, padding: 16 }
+            },
+            tooltip: { backgroundColor: '#161B24', titleColor: '#fff', bodyColor: '#A3A9B6', borderColor: '#242A35', borderWidth: 1 }
+          },
+          scales: isPie || isRadar ? (isRadar ? { r: { ticks: { color: '#5A6278', backdropColor: 'transparent', font: { size: 10 } }, grid: { color: '#1A1D24' }, pointLabels: { color: '#A3A9B6', font: { size: 12 } }, angleLines: { color: '#1A1D24' } } } : {}) : {
+            x: { ticks: { color: '#5A6278', font: { size: 12 } }, grid: { color: '#1A1D24' }, stacked: isStacked },
+            y: { ticks: { color: '#5A6278', font: { size: 12 } }, grid: { color: '#1A1D24' }, beginAtZero: true, stacked: isStacked }
+          }
+        }
+      });
+    }, 60);
+  }
+}
+
+function openPresentation() {
+  const sections = window._completedSections || [];
+  if (!sections.length) return alert('Report is still generating. Please wait.');
+  presSlides = buildPresentationSlides(sections);
+  presIdx = 0;
+  document.getElementById('pres-report-title').textContent =
+    document.getElementById('report-title')?.textContent || 'KIRA RESEARCH';
+  document.getElementById('presOv').classList.add('open');
+  renderPresentSlide(0);
+  document.body.style.overflow = 'hidden';
+}
+
+function closePresentation() {
+  document.getElementById('presOv').classList.remove('open');
+  document.body.style.overflow = '';
+  Object.values(presCharts).forEach(c => { try { c.destroy(); } catch {} });
+  Object.keys(presCharts).forEach(k => delete presCharts[k]);
+}
+
+function navPresent(dir) {
+  const n = presIdx + dir;
+  if (n >= 0 && n < presSlides.length) {
+    presIdx = n;
+    renderPresentSlide(presIdx);
+  }
+}
+
+// Keyboard nav in presentation mode
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('presOv').classList.contains('open')) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') navPresent(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')  navPresent(-1);
+  if (e.key === 'Escape') closePresentation();
+});
   const url = document.getElementById('report-url-text')?.textContent;
   if (!url) return;
   navigator.clipboard.writeText(url).then(() => {
