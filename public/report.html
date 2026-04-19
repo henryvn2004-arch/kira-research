@@ -175,9 +175,8 @@
     .slide-commentary p:last-child{margin-bottom:0}
     .slide-commentary strong{color:#fff}
     .slide-commentary h3{color:#1E6FFF;font-size:10px;font-weight:700;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.08em}
-    .commentary-preview{overflow:hidden;transition:max-height .4s ease}
-    .commentary-preview.collapsed{max-height:52px;mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
-    .commentary-preview.expanded{max-height:3000px;mask-image:none;-webkit-mask-image:none}
+    .commentary-preview{overflow:hidden;transition:max-height .4s ease;max-height:52px;mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+    .commentary-preview.collapsed{max-height:52px}
     .commentary-toggle{display:flex;align-items:center;gap:6px;padding:10px 28px 20px;font-size:12px;color:#1E6FFF;cursor:pointer;user-select:none;transition:color .15s;font-weight:600}
     .commentary-toggle:hover{color:#5B9FFF}
     .commentary-toggle svg{width:13px;height:13px;transition:transform .3s;flex-shrink:0;stroke:#1E6FFF}
@@ -1676,11 +1675,34 @@ function toggleCommentary(i) {
   const preview = document.getElementById('cp-' + i);
   const toggle  = document.getElementById('ct-' + i);
   if (!preview || !toggle) return;
-  const isExpanded = preview.classList.contains('expanded');
-  preview.classList.toggle('collapsed', isExpanded);
-  preview.classList.toggle('expanded', !isExpanded);
-  toggle.classList.toggle('expanded', !isExpanded);
-  toggle.querySelector('span').textContent = isExpanded ? 'Read full analysis' : 'Collapse';
+
+  const isExpanded = toggle.classList.contains('expanded');
+
+  if (!isExpanded) {
+    // Expand — set explicit pixel height so transition is smooth and visible
+    const fullH = Math.max(preview.scrollHeight, 120);
+    preview.style.maxHeight  = fullH + 'px';
+    preview.style.maskImage  = 'none';
+    preview.style.webkitMaskImage = 'none';
+    preview.classList.remove('collapsed');
+    toggle.classList.add('expanded');
+    toggle.querySelector('span').textContent = 'Collapse';
+    // After transition, let it grow freely (handles dynamic content)
+    setTimeout(() => { if (toggle.classList.contains('expanded')) preview.style.maxHeight = 'none'; }, 450);
+  } else {
+    // Collapse — first set explicit height so transition has a start point
+    preview.style.maxHeight  = preview.scrollHeight + 'px';
+    // Force reflow so browser registers the start value
+    preview.offsetHeight; // eslint-disable-line no-unused-expressions
+    requestAnimationFrame(() => {
+      preview.style.maxHeight  = '52px';
+      preview.style.maskImage  = 'linear-gradient(to bottom,#000 30%,transparent 100%)';
+      preview.style.webkitMaskImage = 'linear-gradient(to bottom,#000 30%,transparent 100%)';
+      preview.classList.add('collapsed');
+      toggle.classList.remove('expanded');
+      toggle.querySelector('span').textContent = 'Read full analysis';
+    });
+  }
 }
 
 function appendSources(block, sources) {
