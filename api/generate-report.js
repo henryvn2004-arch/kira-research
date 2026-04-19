@@ -355,63 +355,68 @@ ${language && language !== 'English' ? `- Section titles must be in ${language}.
 
 Return ONLY a JSON array: ["Title 1", "Title 2", ...]`;
 
-    plannedSections = await callClaude(planPrompt, 500)
-      .then(t => JSON.parse(t.replace(/```json|```/g, '').trim()));
-
-    // ── Dynamic local query generation ────────────────────
-    // Auto-detect local language from country, then ask Claude
-    // to generate idiomatic local-language queries for each section.
-    // Works for ANY country — no hardcoded templates needed.
+    // ── Run planning + local research in parallel ────────────
+    // Saves ~10s vs sequential. Local research runs concurrently
+    // with section planning since they don't depend on each other.
     const localLanguage = language && language !== 'English'
       ? language
       : (COUNTRY_LANG[country] || 'English');
 
+    const localSources = LOCAL_SOURCES[country]
+      || `local statistics bureau, central bank, industry associations in ${country}`;
+
+    // Plan sections (sequential dependency: needs research)
+    plannedSections = await callClaude(planPrompt, 500)
+      .then(t => JSON.parse(t.replace(/```json|```/g, '').trim()));
+
+    // ── Local research + query generation (1 combined call) ──
+    // Merged to save 1 round-trip. Returns both local data AND
+    // idiomatic local queries in a single response.
+    // Non-blocking: if it fails, EN queries + base research still work.
     let localQueryMap = {};
-    if (localLanguage !== 'English') {
-      // Non-blocking — EN queries used as fallback if this fails
-      localQueryMap = await generateLocalizedQueries(
-        plannedSections, industry, country, localLanguage
-      );
+    if (!liveResearch && localLanguage !== 'English') {
+      const sectionList = plannedSections.slice(0,8).map((t,i)=>`${i+1}. ${t}`).join('\n');
+
+      const combinedPrompt =
+`You are a local market research specialist for ${country}. Answer in TWO parts.
+
+PART 1 — LOCAL RESEARCH
+Research "${industry}" in ${country} using local sources: ${localSources}
+For each section below, provide 2 data points with source attribution:
+${sectionList}
+Use ${localLanguage} for company names and local terms. Include local currency. Year: 2023-2024.
+
+PART 2 — LOCAL SEARCH QUERIES
+For each section, generate 2 idiomatic ${localLanguage} web search queries.
+Natural phrasing only — not word-for-word from English.
+Reference local institutions (e.g., 経済産業省, 통계청, Tổng cục Thống kê) where relevant.
+
+Return ONLY valid JSON:
+{
+  "research": "Section findings grouped by section title...",
+  "queries": {"Section Title": ["query1", "query2"], ...}
+}`;
+
+      const raw = await callClaude(combinedPrompt, 1200).catch(() => null);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+          if (parsed.research) {
+            research = `${research}\n\n=== LOCAL DATA (${localLanguage}, ${country}) ===\n${parsed.research}`;
+          }
+          localQueryMap = parsed.queries || {};
+        } catch {
+          // partial failure — try to extract what we can
+          if (raw.includes('=== LOCAL DATA') || raw.length > 100) {
+            research = `${research}\n\n=== LOCAL DATA (${localLanguage}, ${country}) ===\n${raw.slice(0, 2000)}`;
+          }
+        }
+      }
     }
 
     const sectionQueries = buildSectionQueries(
       plannedSections, localQueryMap, industry, country
     );
-
-    // ── Enhanced research: local-language pass ──────────────
-    if (!liveResearch && localLanguage !== 'English') {
-      const localSources = LOCAL_SOURCES[country] || `local statistics bureau, central bank, industry associations in ${country}`;
-
-      const queryList = plannedSections.slice(0, 8).map((title, i) => {
-        const sq    = sectionQueries[title] || {};
-        const local = (sq.localQueries || []).slice(0,2).join(' | ');
-        const en    = (sq.enQueries    || []).slice(0,1)[0] || '';
-        return `${i+1}. [${title}]: LOCAL → ${local || en} | EN fallback → ${en}`;
-      }).join('\n');
-
-      const localResearch = await callClaude(
-        `Research "${industry}" market in "${country}" for a ${typeName} report.
-OUTPUT LANGUAGE: ${localLanguage}
-
-PRIORITY: Search local sources FIRST — ${localSources}
-Supplement with English sources only when local data is unavailable.
-
-Per-section queries (local first, EN fallback):
-${queryList}
-
-For each section provide:
-- 2-3 specific data points with source attribution (e.g., "Theo GSO 2024:", "経済産業省によると:")
-- Key local company/brand names relevant to this market
-- Local currency figures (VND, JPY, KRW, CNY, THB, IDR, etc.) alongside USD
-- Recent local developments 2023-2024
-
-Group findings by section title. Be concise but data-specific.`, 1500
-      ).catch(() => '');
-
-      if (localResearch) {
-        research = `${research}\n\n=== LOCAL DATA (${localLanguage}, ${country}) ===\n${localResearch}`;
-      }
-    }
 
   } catch (e) {
     await sbPatch('custom_reports', reportId, { status: 'failed' });
