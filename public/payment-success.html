@@ -134,19 +134,65 @@
 
     async function processPayment() {
       const params = new URLSearchParams(window.location.search);
-      const token  = params.get('token');      // PayPal order ID
+      const type   = params.get('type');   // 'topup' | undefined (report purchase)
+      const token  = params.get('token');  // PayPal order ID
       const slug   = params.get('slug');
       const userId = params.get('userId') || '';
 
-      const returnPage = getReturnPage(slug);
-
       // ── Cancelled flow ────────────────────────────────────
       if (params.get('cancelled') === '1') {
-        showCancelled(returnPage);
+        showCancelled(slug ? getReturnPage(slug) : '/pricing.html');
         return;
       }
 
-      // ── No token = direct navigation ──────────────────────
+      // ── CREDIT TOP-UP FLOW ────────────────────────────────
+      if (type === 'topup') {
+        const credits = params.get('credits');
+
+        // Update steps for topup context
+        document.getElementById('step-confirm').querySelector('span').textContent = 'Confirming payment with PayPal';
+        document.getElementById('step-save').querySelector('span').textContent    = 'Adding credits to your account';
+        document.getElementById('step-redirect').querySelector('span').textContent = 'Done!';
+
+        if (!token) {
+          return showError('No payment token found. Please try again.');
+        }
+
+        try {
+          setStep('confirm');
+          const r = await fetch('/api/credits?action=capture', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: token, userId, credits }),
+          });
+          const d = await r.json();
+          if (!d.success) throw new Error(d.error || 'Capture failed');
+
+          setStep('save');
+          await new Promise(r => setTimeout(r, 600));
+
+          setStep('redirect');
+          document.getElementById('progress-fill').style.width = '100%';
+
+          // Show success state
+          document.getElementById('status-icon').textContent = '✓';
+          document.getElementById('status-icon').className   = 'icon success';
+          document.getElementById('status-title').textContent = `${credits} credits added!`;
+          document.getElementById('status-sub').textContent   = `Your balance is now ${d.balance} credits.`;
+          document.getElementById('step-list').style.display  = 'none';
+          document.getElementById('error-area').innerHTML =
+            `<a href="/profile.html" class="btn">View My Account</a>
+             <br><a href="/report.html" class="btn-ghost">Generate a Report</a>`;
+
+        } catch (e) {
+          showError(e.message);
+        }
+        return;
+      }
+
+      // ── REPORT PAYMENT FLOW (legacy / future use) ─────────
+      const returnPage = getReturnPage(slug);
+
       if (!token) {
         document.getElementById('status-icon').textContent = '✕';
         document.getElementById('status-icon').className   = 'icon error';
@@ -162,7 +208,6 @@
       }
 
       try {
-        // Step 1: Capture payment
         setStep('confirm');
         const captureRes = await fetch('/api/payment?action=capture', {
           method: 'POST',
@@ -172,11 +217,9 @@
         const captureData = await captureRes.json();
         if (!captureData.success) throw new Error(captureData.error || 'Capture failed');
 
-        // Step 2: Brief UX pause
         setStep('save');
         await new Promise(r => setTimeout(r, 600));
 
-        // Step 3: Redirect to tool with unlocked flag
         setStep('redirect');
         document.getElementById('progress-fill').style.width = '100%';
         await new Promise(r => setTimeout(r, 500));
