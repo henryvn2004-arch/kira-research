@@ -3,6 +3,10 @@
 //   Phase 1: stream commentary (~15s)
 //   Phase 2: extract headline + stats + chart + table from text (~3s)
 // SSE events: token | meta | done
+//
+// CHANGES:
+// 4. Anti-overlap: full headline summary of ALL completed sections (was slice(-2))
+// 5. Competency template section guidance injected per section
 
 export const config = { maxDuration: 55, runtime: 'nodejs' };
 
@@ -44,26 +48,75 @@ function setCors(res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
-function buildContext(params, ragContext, researchSummary, prevSections) {
+// CHANGE 4: Build full anti-overlap context from ALL completed sections
+// (was slice(-2) — only last 2 sections)
+function buildAntiOverlapContext(prevSections) {
+  if (!prevSections?.length) return '';
+  const completed = prevSections
+    .filter(s => s.status === 'completed' && s.content)
+    .map(s => {
+      try {
+        const p = JSON.parse(s.content);
+        return `• ${s.title}: ${p.headline || '(no headline)'}`;
+      } catch {
+        return `• ${s.title}`;
+      }
+    });
+  if (!completed.length) return '';
+  return `SECTIONS ALREADY COVERED — do NOT repeat these topics or data points:
+${completed.join('\n')}
+
+Each section must introduce UNIQUE insights not covered above.`;
+}
+
+// CHANGE 5: Extract per-section guidance from competency template
+// Finds the matching section in section_structure by title similarity
+function getSectionGuidance(competencyTemplate, sectionTitle) {
+  if (!competencyTemplate?.section_structure) return '';
+  const sections = Array.isArray(competencyTemplate.section_structure)
+    ? competencyTemplate.section_structure
+    : [];
+  // fuzzy match by checking if section title words appear in template section name
+  const titleWords = sectionTitle.toLowerCase().split(/\s+/);
+  const match = sections.find(s => {
+    const sName = (s.section || '').toLowerCase();
+    return titleWords.some(w => w.length > 3 && sName.includes(w));
+  });
+  if (!match) return '';
+  const parts = [
+    match.purpose ? `Purpose: ${match.purpose}` : '',
+    match.typical_content ? `Expected content: ${match.typical_content}` : '',
+    match.data_points ? `Key data points to include: ${Array.isArray(match.data_points) ? match.data_points.join(', ') : match.data_points}` : '',
+    match.sub_sections?.length ? `Sub-sections: ${match.sub_sections.join(', ')}` : '',
+  ].filter(Boolean);
+  return parts.length ? `MODULE GUIDANCE FOR THIS SECTION:\n${parts.join('\n')}` : '';
+}
+
+function buildContext(params, ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle) {
   const { industry, country, reportType, questions, companies, language } = params;
   const langInstruction = (language && language !== 'English')
     ? `\nOUTPUT LANGUAGE: Write ALL content in ${language}. This includes headlines, commentary, table headers, chart labels, and all text.`
     : '';
+
   const rag = [
     ragContext?.chunkText   ? `RESEARCH LIBRARY:\n${ragContext.chunkText}`   : '',
     ragContext?.patternText ? `INDUSTRY PATTERNS:\n${ragContext.patternText}` : ''
   ].filter(Boolean).join('\n\n');
-  const prev = (prevSections || []).slice(-2).map(s => {
-    try { const p = JSON.parse(s.content); return `## ${s.title}\n${p.headline || ''}`; }
-    catch { return `## ${s.title}`; }
-  }).join('\n\n');
+
+  // CHANGE 4: Full anti-overlap context instead of slice(-2)
+  const antiOverlap = buildAntiOverlapContext(prevSections);
+
+  // CHANGE 5: Per-section guidance from competency template
+  const sectionGuidance = getSectionGuidance(competencyTemplate, sectionTitle);
+
   return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
 ${questions ? `Client focus: ${questions}` : ''}${companies ? `\nCompanies: ${companies}` : ''}${langInstruction}
 
 RESEARCH DATA:
 ${researchSummary || 'Draw on your knowledge.'}
 ${rag ? `\n${rag}` : ''}
-${prev ? `\nPREVIOUS SECTIONS (do not repeat):\n${prev}` : ''}`;
+${sectionGuidance ? `\n${sectionGuidance}` : ''}
+${antiOverlap ? `\n${antiOverlap}` : ''}`;
 }
 
 export default async function handler(req, res) {
@@ -74,14 +127,16 @@ export default async function handler(req, res) {
   const {
     reportId, sectionIndex, sectionTitle, totalSections,
     industry, country, reportType, questions, companies, language,
-    researchSummary, ragContext, prevSections = []
+    researchSummary, ragContext,
+    prevSections = [],
+    competencyTemplate = null,   // CHANGE 5: new param from generate-report
   } = req.body;
 
   if (!sectionTitle) return res.status(400).json({ error: 'Missing sectionTitle' });
 
   const context = buildContext(
     { industry, country, reportType, questions, companies, language },
-    ragContext, researchSummary, prevSections
+    ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle
   );
 
   // SSE setup
@@ -177,7 +232,7 @@ DATA TYPE → BEST CHART TYPE:
 - Market size over time (with CAGR) → "line" (extrapolate full series 2022-2027 if needed)
 - Market share / composition → "donut" (more modern than pie)
 - Player ranking by size/revenue → "bar" (horizontal, sorted descending)
-- Growth rate comparison across players/segments → "bar" (vertical)  
+- Growth rate comparison across players/segments → "bar" (vertical)
 - Price positioning (multiple brands across price spectrum) → "bar" (horizontal, sorted by price)
 - Multi-attribute comparison (e.g. 4-5 players scored on 5 dimensions) → "radar"
 - Market share TREND over multiple years → "line" with multiple datasets
@@ -196,7 +251,7 @@ EXTRAPOLATION RULES (standard consulting practice):
 
 table: REQUIRED. Build the most insightful comparison table for this section:
 - Competitive landscape → player, market share, key strength, pricing tier, distribution
-- Channel analysis → channel type, share %, growth trend, dominant players, margin profile  
+- Channel analysis → channel type, share %, growth trend, dominant players, margin profile
 - Pricing → segment, price range (USD), key models, target buyer, notes
 - Consumer segments → segment name, size, key needs, willingness to pay, channel preference
 - Regulatory → requirement, details, timeline, impact on market
