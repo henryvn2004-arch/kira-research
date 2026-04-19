@@ -253,7 +253,7 @@ ${completed.join('\n')}
 Rules: introduce UNIQUE data/angles; briefly cross-reference previous sections when needed ("as noted in [X]...") rather than repeating.`;
 }
 
-function buildContext(params, ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle) {
+function buildContext(params, ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery) {
   const { industry, country, reportType, questions, companies, language } = params;
   const langInstruction = (language && language !== 'English')
     ? `\nOUTPUT LANGUAGE: Write ALL content in ${language}. This includes headlines, commentary, table headers, chart labels, and all text.`
@@ -264,12 +264,16 @@ function buildContext(params, ragContext, researchSummary, prevSections, compete
     ragContext?.patternText ? `INDUSTRY PATTERNS:\n${ragContext.patternText}` : ''
   ].filter(Boolean).join('\n\n');
 
-  const antiOverlap    = buildAntiOverlapContext(prevSections);
+  const antiOverlap     = buildAntiOverlapContext(prevSections);
   const sectionGuidance = getSectionGuidance(competencyTemplate, sectionTitle);
 
-  // Localized search hints — generated from blueprint, guides Claude to cite local sources
-  const blueprint = getBlueprint(sectionTitle);
+  const blueprint  = getBlueprint(sectionTitle);
   const localHints = buildLocalizedSearchHints(blueprint, language, industry, country, sectionTitle);
+
+  // Per-section targeted queries from generate-report localization step
+  const targetedQueries = sectionQuery?.queries?.length
+    ? `\nTARGETED RESEARCH QUERIES FOR THIS SECTION (already searched — verify against research data above):\n${sectionQuery.queries.map(q => `  • ${q}`).join('\n')}`
+    : '';
 
   return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
 ${questions ? `Client focus: ${questions}` : ''}${companies ? `\nCompanies: ${companies}` : ''}${langInstruction}
@@ -279,6 +283,7 @@ ${researchSummary || 'Draw on your knowledge.'}
 ${rag ? `\n${rag}` : ''}
 ${sectionGuidance ? `\n${sectionGuidance}` : ''}
 ${localHints ? `\n${localHints}` : ''}
+${targetedQueries}
 ${antiOverlap ? `\n${antiOverlap}` : ''}`;
 }
 
@@ -292,14 +297,15 @@ export default async function handler(req, res) {
     industry, country, reportType, questions, companies, language,
     researchSummary, ragContext,
     prevSections = [],
-    competencyTemplate = null,   // CHANGE 5: new param from generate-report
+    competencyTemplate = null,
+    sectionQuery = null,       // per-section localized queries from generate-report
   } = req.body;
 
   if (!sectionTitle) return res.status(400).json({ error: 'Missing sectionTitle' });
 
   const context = buildContext(
     { industry, country, reportType, questions, companies, language },
-    ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle
+    ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery
   );
 
   // SSE setup

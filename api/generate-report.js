@@ -118,8 +118,95 @@ const TYPE_NAMES = {
   go_to_market:             'Go-To-Market report',
 };
 
-// ── CORS ──────────────────────────────────────────────────
-function setCors(res) {
+// ── Local-language query generation ──────────────────────
+// Map country → authoritative local sources to cite
+const LOCAL_SOURCES = {
+  'Vietnam':     'Tổng cục Thống kê (GSO), Ngân hàng Nhà nước (SBV), VCCI, CafeF, VnExpress, Tạp chí Kinh tế',
+  'Thailand':    'NESDC, Bank of Thailand, BOI, Bangkok Post, SET, Thai PBS',
+  'Indonesia':   'BPS, Bank Indonesia, OJK, Kementerian Perdagangan, Bisnis.com, Kompas',
+  'Malaysia':    'DOSM, BNM (Bank Negara), MITI, The Edge, Bernama',
+  'Philippines': 'PSA, BSP, DTI, Philippine Star, Philippine Daily Inquirer',
+  'Singapore':   'MTI, MAS, EDB, Channel NewsAsia, The Straits Times',
+  'Myanmar':     'MNPED, CBM, DICA, Myanmar Times',
+  'Cambodia':    'NIS, NBC, CRDB, Phnom Penh Post',
+  'Laos':        'LSB, NLBC, Vientiane Times',
+};
+
+// Query templates per section type, per language
+// format: (industry, country) => string[]
+const SECTION_QUERY_TEMPLATES = {
+  vi: {
+    executive_summary:    (I,C) => [`tổng quan thị trường ${I} ${C} 2024`, `quy mô ngành ${I} ${C}`],
+    market_assessment:    (I,C) => [`quy mô thị trường ${I} ${C} 2024 2025`, `tốc độ tăng trưởng ${I} ${C} CAGR`, `doanh thu ngành ${I} Việt Nam`],
+    market_segmentation:  (I,C) => [`phân khúc thị trường ${I} ${C}`, `phân loại sản phẩm ${I} ${C} theo giá`],
+    industry_structure:   (I,C) => [`chuỗi giá trị ${I} ${C}`, `kênh phân phối ${I} ${C}`, `biên lợi nhuận nhà phân phối ${I} ${C}`],
+    competitive_landscape:(I,C) => [`thị phần ${I} ${C} 2024`, `doanh nghiệp ${I} lớn nhất ${C}`, `xếp hạng công ty ${I} ${C}`],
+    competitor_profiles:  (I,C) => [`doanh thu ${I} ${C} công ty hàng đầu`, `chiến lược ${I} ${C} đối thủ cạnh tranh`],
+    market_drivers:       (I,C) => [`động lực tăng trưởng ngành ${I} ${C}`, `xu hướng ${I} ${C} 2024 2025`, `thách thức ${I} ${C}`],
+    consumer_insights:    (I,C) => [`hành vi người tiêu dùng ${I} ${C}`, `nhu cầu khách hàng ${I} ${C}`, `nhân khẩu học người mua ${I} ${C}`],
+    pricing_analysis:     (I,C) => [`giá ${I} ${C} theo phân khúc 2024`, `bảng giá ${I} ${C}`, `chiến lược định giá ${I} ${C}`],
+    regulatory:           (I,C) => [`quy định pháp lý ${I} ${C} 2024`, `điều kiện cấp phép ${I} ${C}`, `chính sách nhà nước ${I} ${C}`],
+    market_forecast:      (I,C) => [`dự báo thị trường ${I} ${C} 2025 2026 2027`, `kịch bản tăng trưởng ${I} ${C}`],
+    recommendations:      (I,C) => [`cơ hội kinh doanh ${I} ${C}`, `chiến lược thâm nhập thị trường ${I} ${C}`],
+  },
+  th: {
+    market_assessment:    (I,C) => [`ขนาดตลาด${I}${C} 2567`, `อัตราการเติบโต${I}ประเทศไทย`, `มูลค่าตลาด${I}ไทย`],
+    competitive_landscape:(I,C) => [`ส่วนแบ่งตลาด${I}ไทย`, `บริษัท${I}ชั้นนำประเทศไทย 2567`],
+    market_drivers:       (I,C) => [`แนวโน้ม${I}ประเทศไทย 2567`, `ปัจจัยขับเคลื่อน${I}ไทย`],
+    pricing_analysis:     (I,C) => [`ราคา${I}ประเทศไทยตามกลุ่ม`, `โครงสร้างราคา${I}ไทย`],
+    regulatory:           (I,C) => [`กฎระเบียบ${I}ประเทศไทย`, `นโยบายภาครัฐ${I}ไทย`],
+  },
+  id: {
+    market_assessment:    (I,C) => [`ukuran pasar ${I} Indonesia 2024`, `pertumbuhan ${I} Indonesia CAGR`],
+    competitive_landscape:(I,C) => [`pangsa pasar ${I} Indonesia 2024`, `perusahaan ${I} terbesar Indonesia`],
+    market_drivers:       (I,C) => [`tren ${I} Indonesia 2024`, `faktor pertumbuhan ${I} Indonesia`],
+    pricing_analysis:     (I,C) => [`harga ${I} Indonesia segmen`, `strategi harga ${I} Indonesia`],
+    regulatory:           (I,C) => [`regulasi ${I} Indonesia 2024`, `kebijakan pemerintah ${I} Indonesia`],
+  },
+};
+
+const LANG_CODE_MAP = {
+  'Vietnamese': 'vi', 'Thai': 'th', 'Indonesian': 'id', 'Malay': 'id',
+  'Filipino': 'tl', 'Khmer': 'km', 'Myanmar': 'my',
+};
+
+// Simple section-type detector (mirrors generate-section.js getBlueprint patterns)
+function detectSectionType(title) {
+  const patterns = [
+    [/exec.*sum|tóm.*(tắt|lược)|summary/i,                      'executive_summary'],
+    [/market.*assess|market.*overview|market.*size|quy.*mô|đánh.*giá.*thị/i, 'market_assessment'],
+    [/segment|phân.*khúc|phân.*loại/i,                           'market_segmentation'],
+    [/industry.*struct|value.*chain|channel.*struct|chuỗi|kênh/i,'industry_structure'],
+    [/compet.*landscape|market.*share|thị.*phần.*tổng|cạnh.*tranh.*tổng/i, 'competitive_landscape'],
+    [/compet.*profil|player.*profil|company.*profil|hồ.*sơ|đối.*thủ.*cụ/i, 'competitor_profiles'],
+    [/driver|trend|factor|động.*lực|xu.*hướng/i,                 'market_drivers'],
+    [/consumer|customer|buyer|người.*tiêu|khách.*hàng/i,         'consumer_insights'],
+    [/pric|giá|định.*giá/i,                                      'pricing_analysis'],
+    [/regulat|policy|legal|chính.*sách|pháp.*lý|quy.*định/i,    'regulatory'],
+    [/forecast|outlook|dự.*báo|kịch.*bản|tương.*lai/i,          'market_forecast'],
+    [/recommend|khuyến.*nghị|chiến.*lược.*đề/i,                  'recommendations'],
+  ];
+  for (const [rx, type] of patterns) {
+    if (rx.test(title)) return type;
+  }
+  return null;
+}
+
+// Build per-section localized queries from planned section titles
+function buildSectionQueries(sections, industry, country, language) {
+  const langCode  = LANG_CODE_MAP[language] || 'en';
+  const templates = SECTION_QUERY_TEMPLATES[langCode] || {};
+  const result    = {};
+
+  sections.forEach(title => {
+    const type    = detectSectionType(title);
+    const fn      = type && templates[type];
+    const queries = fn ? fn(industry, country) : [`${industry} ${title} ${country} 2024`];
+    result[title] = { type, queries };
+  });
+
+  return result;
+}
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
@@ -176,28 +263,21 @@ Be specific and data-rich.`, 1500),
       ]);
     }
 
-    // Build module guidance from real template or fallback
+    // ── Build module guidance ──
     let moduleGuidanceText;
     if (competencyTemplate?.section_structure) {
-      // Use real section_structure from uploaded module content
       const sections = Array.isArray(competencyTemplate.section_structure)
-        ? competencyTemplate.section_structure
-        : [];
+        ? competencyTemplate.section_structure : [];
       moduleGuidanceText = `MODULE SECTION STRUCTURE (from proprietary research library):
 ${sections.map((s, i) => `${i + 1}. ${s.section}${s.purpose ? ` — ${s.purpose}` : ''}${s.typical_content ? `: ${s.typical_content}` : ''}`).join('\n')}
-
 Methodology: ${competencyTemplate.methodology || 'standard consulting methodology'}
 Use this structure as the backbone. Adapt section titles to reflect what the research actually found.`;
     } else {
-      // Fallback to hardcoded
       moduleGuidanceText = `Module guidance: ${FALLBACK_GUIDANCE[reportType] || '8-10 sections.'}`;
     }
 
-    // CHANGE 2: Include chunkText in planning prompt (was missing before)
-    // Truncate to avoid hitting token limits
     const chunkSample = rag.chunkText
-      ? rag.chunkText.split('\n\n').slice(0, 4).join('\n\n')
-      : '';
+      ? rag.chunkText.split('\n\n').slice(0, 4).join('\n\n') : '';
 
     const planPrompt = `You are planning a ${typeName} report for: ${industry} in ${country}.
 ${questions ? 'Client focus: ' + questions : ''}
@@ -229,6 +309,41 @@ Return ONLY a JSON array: ["Title 1", "Title 2", ...]`;
     plannedSections = await callClaude(planPrompt, 500)
       .then(t => JSON.parse(t.replace(/```json|```/g, '').trim()));
 
+    // ── Build per-section localized queries ──────────────────
+    const sectionQueries = buildSectionQueries(plannedSections, industry, country, language);
+
+    // ── Enhanced research pass with localized section queries ──
+    // Only run if NOT using liveResearch and language is non-English
+    // Adds local-source data on top of the base research
+    if (!liveResearch && language && language !== 'English') {
+      const localSources = LOCAL_SOURCES[country] || 'local government statistics, industry associations, national news';
+      const queryList = plannedSections.slice(0, 8).map((title, i) => {
+        const queries = sectionQueries[title]?.queries || [];
+        return `${i+1}. [${title}]: ${queries.join(' | ')}`;
+      }).join('\n');
+
+      const localResearch = await callClaude(
+        `You are researching ${industry} in ${country} for a market intelligence report in ${language}.
+
+Prioritize LOCAL data sources: ${localSources}
+
+For each section below, find 2-3 specific data points (numbers, company names, percentages) from ${country} sources. Respond in ${language} where appropriate for local terms and company names.
+
+${queryList}
+
+For each section provide:
+- 1-2 specific statistics with approximate source (e.g., "GSO 2024", "industry estimate")  
+- Key local company names if relevant
+- Any recent local developments (2023-2024)
+
+Be concise but data-specific. Prefer local-currency figures.`, 1200
+      ).catch(() => ''); // non-blocking — fail gracefully
+
+      if (localResearch) {
+        research = `${research}\n\n--- LOCAL DATA (${country}, ${language} sources) ---\n${localResearch}`;
+      }
+    }
+
   } catch (e) {
     await sbPatch('custom_reports', reportId, { status: 'failed' });
     return res.status(500).json({ error: 'Planning/research failed: ' + e.message });
@@ -246,13 +361,14 @@ Return ONLY a JSON array: ["Title 1", "Title 2", ...]`;
     console.warn('DB update failed:', e.message);
   }
 
-  // CHANGE 3: Return competencyTemplate to browser so generate-section can use it
+  // CHANGE 3: Return competencyTemplate + sectionQueries to browser
   return res.json({
     reportId,
-    sections:            plannedSections,
-    researchSummary:     research,
-    ragContext:          rag,
-    competencyTemplate:  competencyTemplate || null,
-    status:              'generating'
+    sections:           plannedSections,
+    researchSummary:    research,
+    ragContext:         rag,
+    competencyTemplate: competencyTemplate || null,
+    sectionQueries:     sectionQueries || {},
+    status:             'generating'
   });
 }
