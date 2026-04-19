@@ -433,8 +433,10 @@ let planTitle      = '';
 let planDocSummary = '';
 let planNeedsWeb   = false;
 let planSearchFocus= '';
-let reportId       = null;
-let chatHistory    = [];
+// Use window.reportId so sendChat() in report-view.js can access it
+window.reportId = null;
+let reportSlug  = null;
+window.chatHistory = window.chatHistory || [];
 let completedSections = [];
 let startTime, elapsedTimer, currentParams;
 
@@ -709,7 +711,13 @@ async function runPlan(params) {
     if (plan.error) throw new Error(plan.error);
 
     // Stash state for generate
-    reportId       = plan.reportId;
+    window.reportId = plan.reportId;
+    reportSlug     = `strategy-${params.moduleKey}-${Date.now()}`;
+    currentParams  = { ...params,
+      industry:   params.moduleName,
+      country:    params.language !== 'English' ? params.language : 'Strategy Analysis',
+      reportType: params.moduleName,
+    };
     planTitle      = plan.reportTitle || params.request;
     planDocSummary = plan.docSummary  || '';
     planSections   = [...plan.sections];
@@ -846,7 +854,7 @@ async function generate() {
       let content;
       try {
         content = await streamSection({
-          reportId,
+          reportId: window.reportId,
           sectionIndex:  i,
           sectionTitle:  title,
           totalSections,

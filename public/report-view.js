@@ -86,10 +86,15 @@ function renderModulePreview(moduleId) {
 
 // Init on load
 document.addEventListener('DOMContentLoaded', () => renderModulePreview('market_overview'));
-let reportId     = null;
-let reportSlug   = null;
+// Shared state via window — accessible from both report-view.js and page scripts
+if (typeof window.reportId    === 'undefined') window.reportId    = null;
+if (typeof window.reportSlug  === 'undefined') window.reportSlug  = null;
+if (typeof window.chatHistory === 'undefined') window.chatHistory = [];
+// Local aliases for report.html (which doesn't redeclare these)
+let reportId     = window.reportId;
+let reportSlug   = window.reportSlug;
+let chatHistory  = window.chatHistory;
 let pollInterval = null;
-let chatHistory  = [];
 
 // ── Type selection ───────────────────────────────────────
 // (handled by selectModule above)
@@ -1264,7 +1269,9 @@ async function sendChat() {
 
   input.value = '';
   addChatMessage('user', msg);
-  chatHistory.push({ role: 'user', content: msg });
+  // Use window.chatHistory so page scripts sharing window scope work correctly
+  window.chatHistory = window.chatHistory || [];
+  window.chatHistory.push({ role: 'user', content: msg });
 
   const send = document.getElementById('chat-send');
   send.disabled = true;
@@ -1277,12 +1284,12 @@ async function sendChat() {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reportId, messages: chatHistory })
+      body: JSON.stringify({ reportId: window.reportId, messages: window.chatHistory })
     });
     const data = await res.json();
     const reply = data.reply || 'Sorry, I could not generate a response.';
     aiMsg.innerHTML = formatCommentary(reply);
-    chatHistory.push({ role: 'assistant', content: reply });
+    window.chatHistory.push({ role: 'assistant', content: reply });
   } catch (e) {
     aiMsg.textContent = 'Error: ' + e.message;
   }

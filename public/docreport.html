@@ -438,8 +438,9 @@ let planTitle      = '';
 let planDocSummary = '';
 let planNeedsWeb   = false;
 let planSearchFocus = '';
-let reportId       = null;
-let chatHistory    = [];
+// Use window.reportId so sendChat() in report-view.js can access it
+window.reportId = null;
+window.chatHistory = window.chatHistory || [];
 let completedSections = [];
 let startTime, elapsedTimer, currentParams;
 
@@ -748,7 +749,14 @@ async function runPlanPhase(docs, request, language, answers, docInsight, sugges
     if (!plan.sections?.length) throw new Error(plan.error || 'Planning failed');
 
     // Populate plan view
-    reportId        = plan.reportId;
+    window.reportId = plan.reportId;
+    reportSlug      = `doc-report-${Date.now()}`;
+    // currentParams includes title/type for PPTX cover slide
+    currentParams   = { ...currentParams,
+      industry: docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60),
+      country:  language !== 'English' ? language : 'Document Analysis',
+      reportType: 'Document Intelligence',
+    };
     planTitle       = plan.reportTitle || request;
     planDocSummary  = plan.docSummary  || docInsight || '';
     planSections    = [...plan.sections];
@@ -881,7 +889,7 @@ async function startGeneration() {
       let sectionContent;
       try {
         sectionContent = await streamSection({
-          reportId,
+          reportId: window.reportId,
           sectionIndex:  i,
           sectionTitle:  title,
           totalSections,
