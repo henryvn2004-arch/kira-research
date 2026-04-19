@@ -91,8 +91,9 @@ export default async function handler(req, res) {
             brand_name: 'KIRA RESEARCH',
             landing_page: 'BILLING',
             user_action: 'PAY_NOW',
-            return_url: `${SITE_URL}/payment-success.html`,
-            cancel_url: `${SITE_URL}/report.html?cancelled=1`
+            // slug + userId passed in URL so payment-success.html can read them
+            return_url: `${SITE_URL}/payment-success.html?slug=${encodeURIComponent(slug)}&userId=${encodeURIComponent(req.body.userId || '')}`,
+            cancel_url: `${SITE_URL}/payment-success.html?cancelled=1&slug=${encodeURIComponent(slug)}`
           }
         })
       }).then(r => r.json());
