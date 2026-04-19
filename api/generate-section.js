@@ -15,6 +15,7 @@ const ANT_KEY = process.env.ANTHROPIC_API_KEY;
 const MODEL   = 'claude-sonnet-4-20250514';
 const SB_URL  = process.env.SUPABASE_URL;
 const SB_KEY  = process.env.SUPABASE_SERVICE_KEY;
+const OAI_KEY = process.env.OPENAI_API_KEY;
 
 async function sbGet(table, id) {
   const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
@@ -300,7 +301,7 @@ async function sectionRagSearch(query, sectionType) {
   try {
     const embRes = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OAI_KEY_S}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OAI_KEY}` },
       body: JSON.stringify({ model: 'text-embedding-3-large', input: query, dimensions: 1536 })
     });
     const embData = await embRes.json();
@@ -309,25 +310,25 @@ async function sectionRagSearch(query, sectionType) {
 
     const chunkType = sectionType ? (SECTION_CHUNK_TYPE[sectionType] || null) : null;
     const opts = { method: 'POST',
-                   headers: { 'apikey': SB_KEY_S, 'Authorization': `Bearer ${SB_KEY_S}`,
+                   headers: { 'apikey`: SB_KEY}`,
                                'Content-Type': 'application/json' } };
 
     // Query 1: semantic similarity — finds DATA relevant to this section
     // Query 2: chunk_type filter — finds HOW-TO-WRITE examples from library
     // Query 3: industry patterns — structural patterns
     const [dataChunks, frameworkChunks, patterns] = await Promise.all([
-      fetch(`${SB_URL_S}/rest/v1/rpc/search_report_chunks`, {
+      fetch(`${SB_URL}/rest/v1/rpc/search_report_chunks`, {
         ...opts,
         body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 4 })
       }).then(r => r.json()),
 
-      chunkType ? fetch(`${SB_URL_S}/rest/v1/rpc/search_report_chunks`, {
+      chunkType ? fetch(`${SB_URL}/rest/v1/rpc/search_report_chunks`, {
         ...opts,
         // chunk_type_filter param — works with upgraded RPC, ignored if old RPC
         body: JSON.stringify({ query_embedding: vec, match_threshold: 0.60, match_count: 2, chunk_type_filter: chunkType })
       }).then(r => r.json()).catch(() => []) : Promise.resolve([]),
 
-      fetch(`${SB_URL_S}/rest/v1/rpc/search_industry_patterns`, {
+      fetch(`${SB_URL}/rest/v1/rpc/search_industry_patterns`, {
         ...opts,
         body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 3 })
       }).then(r => r.json()),
