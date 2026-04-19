@@ -79,7 +79,21 @@
     .type-desc{font-size:11px;color:#5A6278;line-height:1.5}
     .type-price{font-size:13px;font-weight:700;color:#1E6FFF;margin-top:10px}
 
-    /* ── PRICE SUMMARY ── */
+    /* ── MODULE SECTION PREVIEW ── */
+    .module-preview{margin-top:12px;background:#0D1018;border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;transition:all .3s}
+    .module-preview-head{padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
+    .module-preview-title{font-size:10px;font-weight:700;color:#A3A9B6;letter-spacing:.12em;text-transform:uppercase}
+    .module-preview-count{font-size:10px;color:#3A4560;background:rgba(255,255,255,.04);padding:2px 8px;border-radius:10px}
+    .module-preview-desc{padding:10px 16px 8px;font-size:12px;color:#5A6278;line-height:1.6;border-bottom:1px solid rgba(255,255,255,.04)}
+    .module-sections-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+    .module-sec-item{display:flex;align-items:center;gap:8px;padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03)}
+    .module-sec-item:nth-child(even){border-right:none}
+    .module-sec-item:nth-last-child(-n+2){border-bottom:none}
+    .module-sec-num{font-size:8px;font-weight:700;color:#1E6FFF;letter-spacing:.08em;width:20px;flex-shrink:0;opacity:.7}
+    .module-sec-name{font-size:11.5px;color:#8896A8}
+    .module-sec-name.first{color:#E8EDF5;font-weight:600}
+    .module-sec-name.last{color:#C8D0DE;font-style:italic}
+    @media(max-width:600px){.module-sections-grid{grid-template-columns:1fr}.module-sec-item:nth-child(even){border-right:none}.module-sec-item{border-right:none}}
     .price-summary{background:#11151C;border:1px solid #242A35;border-radius:12px;padding:24px;margin-top:32px;display:flex;align-items:center;justify-content:space-between;gap:24px}
     .price-label{font-size:13px;color:#A3A9B6}
     .price-val{font-size:28px;font-weight:700;color:#fff}
@@ -1130,40 +1144,40 @@ async function browserResearch(industry, country, reportType, questions, compani
 // ── State ────────────────────────────────────────────────
 const MODULES = {
   market_overview: {
-    label: 'Market Overview',
-    desc: 'Environmental context, market sizing & potential, segmentation, growth estimation, forecasting, sensitivity analysis and scenario planning.',
-    price: 49
+    label: 'Market Overview', price: 49,
+    desc: 'Environmental context, market sizing & potential, segmentation, growth estimation, forecasting and scenario planning.',
+    sections: ['Executive Summary','Market Sizing & Growth','Market Segmentation','Industry Structure & Value Chain','Competitive Landscape','Market Drivers & Restraints','Market Forecast & Scenarios','Recommendations'],
   },
   competitive_analysis: {
-    label: 'Competitive Analysis',
-    desc: 'Industry competitiveness assessment, competitor strategy & performance tracking, pipeline analysis, alliance mapping, and identification of industry best practices and key success factors.',
-    price: 49
+    label: 'Competitive Analysis', price: 49,
+    desc: 'Industry competitiveness, competitor profiles & strategy tracking, best practices and key success factors.',
+    sections: ['Executive Summary','Industry Competitiveness Overview','Competitive Positioning Map','Competitor Profiles (Top 3–5)','Competitive Strategy & Performance','Best Practices & Key Success Factors','Competitive Outlook & Recommendations'],
   },
   customer_intelligence: {
-    label: 'Customer Intelligence',
-    desc: 'Key account targeting, installed base analysis, usage patterns and pain-points, decision-making cycles, budgets, switching costs, brand affinity and customer perceptions.',
-    price: 49
+    label: 'Customer Intelligence', price: 49,
+    desc: 'Key account targeting, pain points, decision-making cycles, brand perception, willingness to pay.',
+    sections: ['Executive Summary','Customer Segmentation','Needs, Pain Points & Unmet Needs','Buying Behavior & Decision Journey','Brand Perception & Loyalty','Willingness to Pay & Price Sensitivity','Channel & Touchpoint Preferences','Recommendations'],
   },
   value_chain: {
-    label: 'Value Chain Consulting',
-    desc: 'Industry structure and development analysis, pricing and margin stack, mapping and prioritisation of value-adding activities, and efficiency analysis across the supply web.',
-    price: 49
+    label: 'Value Chain', price: 49,
+    desc: 'Industry structure, pricing & margin stack, value-adding activities, supply web efficiencies.',
+    sections: ['Executive Summary','Industry Structure & Players','Value Chain Mapping','Pricing & Margin Analysis','Value-Adding Activities & Bottlenecks','Supply Web Efficiencies & Benchmarks','Recommendations'],
   },
   proposition_development: {
-    label: 'Proposition Development',
-    desc: 'Gap analysis, innovation scouting, price-positioning strategy, customer segment prioritisation, branding & promotions framework, and channel strategy.',
-    price: 49
+    label: 'Proposition Development', price: 49,
+    desc: 'Gap analysis, innovation scouting, price-positioning, segment prioritisation, branding & channel strategy.',
+    sections: ['Executive Summary','Gap Analysis','Innovation Scouting','Price-Positioning Strategy','Customer Segment Prioritisation','Branding & Communication','Channel Strategy','Recommendations & Roadmap'],
   },
   partner_search: {
-    label: 'Partner Search',
-    desc: 'Identification of potential partners, in-depth evaluation for distribution, acquisition/JV, technology and manufacturing partnerships, plus commercial due diligence and market valuation.',
-    price: 49
+    label: 'Partner Search', price: 49,
+    desc: 'Partner identification, distribution evaluation, JV/acquisition targets, commercial due diligence.',
+    sections: ['Executive Summary','Partner Identification Criteria','Distribution Partner Evaluation','JV & Acquisition Targets','Technology & Manufacturing Partners','Commercial Due Diligence Framework','Recommendations & Shortlist'],
   },
   go_to_market: {
-    label: 'Go-To-Market',
-    desc: 'Barriers and drivers analysis, entry mode options, market entry phases, exit strategy planning, marketing & communications framework, and product launch roadmap.',
-    price: 49
-  }
+    label: 'Go-To-Market', price: 49,
+    desc: 'Barriers & drivers, entry mode options, phased timeline, marketing plan, exit strategy.',
+    sections: ['Executive Summary','Market Opportunity Assessment','Barriers & Entry Drivers','Entry Mode Options','Market Entry Phases & Timeline','Marketing & Communications Plan','Exit Strategy & Risk Management','Recommendations & Action Plan'],
+  },
 };
 
 let currentType = 'market_overview';
@@ -1175,15 +1189,34 @@ function selectModule(moduleId) {
   currentType = moduleId;
   const mod = MODULES[moduleId];
   document.getElementById('price-display').textContent = '$' + (mod?.price || 49);
-  const strip = document.getElementById('module-desc-strip');
-  if (strip && mod) strip.textContent = mod.desc;
+  renderModulePreview(moduleId);
 }
 
-// Init description strip
-document.addEventListener('DOMContentLoaded', () => {
+function renderModulePreview(moduleId) {
   const strip = document.getElementById('module-desc-strip');
-  if (strip) strip.textContent = MODULES.market_overview.desc;
-});
+  if (!strip) return;
+  const mod = MODULES[moduleId];
+  if (!mod) return;
+  const secs = mod.sections || [];
+  const items = secs.map((s, i) => {
+    const cls = i === 0 ? 'first' : i === secs.length - 1 ? 'last' : '';
+    return `<div class="module-sec-item">
+      <div class="module-sec-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="module-sec-name ${cls}">${s}</div>
+    </div>`;
+  }).join('');
+  strip.className = 'module-preview';
+  strip.innerHTML = `
+    <div class="module-preview-head">
+      <div class="module-preview-title">What's included</div>
+      <div class="module-preview-count">${secs.length} sections</div>
+    </div>
+    <div class="module-preview-desc">${mod.desc}</div>
+    <div class="module-sections-grid">${items}</div>`;
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', () => renderModulePreview('market_overview'));
 let reportId     = null;
 let reportSlug   = null;
 let pollInterval = null;
