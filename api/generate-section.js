@@ -203,67 +203,136 @@ Write 250-350 words of consulting-grade analytical prose:
   try {
     const isNarrativeSection = /executive summary|recommendation|strategic outlook|conclusion/i.test(sectionTitle);
 
+    // Section-title-based chart hints
+    const secLower = sectionTitle.toLowerCase();
+    let chartHint = '';
+    if (/market size|market.*value|revenue.*forecast|growth.*projection/.test(secLower)) {
+      chartHint = 'This is a MARKET SIZE section → use "line" chart with years as labels and projected values as data. Extrapolate to 5-year series using CAGR if mentioned.';
+    } else if (/market share|competitive landscape|player.*share/.test(secLower)) {
+      chartHint = 'This is a MARKET SHARE section → use "doughnut" chart with each player as a label and their share % as data. Add "Others" to reach 100%.';
+    } else if (/competitor|competitive|player.*profile|company.*comparison/.test(secLower)) {
+      chartHint = 'This is a COMPETITOR COMPARISON section → use "radar" chart: labels = 4-6 attributes (Price Competitiveness, Distribution, Brand Strength, Innovation, etc.), datasets = one per competitor with scores 1-10.';
+    } else if (/channel|distribution|retail.*channel/.test(secLower)) {
+      chartHint = 'This is a CHANNEL section → use "bar" (horizontal) with channel names as labels and share % or index as data.';
+    } else if (/pric|price|pricing/.test(secLower)) {
+      chartHint = 'This is a PRICING section → use "bar" (horizontal) sorted by price, showing price points for key brands/segments.';
+    } else if (/segment|segmentation|consumer.*type/.test(secLower)) {
+      chartHint = 'This is a SEGMENTATION section → use "doughnut" chart showing segment sizes, OR "bar" showing segment characteristics.';
+    } else if (/driver|trend|factor/.test(secLower)) {
+      chartHint = 'This is a DRIVERS section → use "bar" (horizontal) with drivers/factors as labels and importance scores 1-10 as data.';
+    } else if (/consumer|customer|buyer|shopper/.test(secLower)) {
+      chartHint = 'This is a CONSUMER section → use "bar" (horizontal) for preferences/attributes or "radar" for comparing consumer segments across needs.';
+    }
+
     const langNote = (language && language !== 'English')
-      ? `\nIMPORTANT: All text output (headline, stat labels, table headers, chart title, chart labels) must be in ${language}.`
+      ? `\nIMPORTANT: All text (headline, stat labels, chart title, chart labels, table headers) must be in ${language}.`
       : '';
 
-    const extractPrompt = `You wrote this section "${sectionTitle}" of a market research report:
+    const extractPrompt = `You wrote this market research section titled "${sectionTitle}":
 ${langNote}
 
 ${fullCommentary}
 
-Extract structured data and build visuals. Return ONLY valid JSON:
+Extract structured data. Return ONLY valid JSON with this exact structure:
 {
-  "headline": "Most important finding in 1-2 punchy sentences",
-  "stats": [{ "value": "~45%", "label": "VinFast market share", "icon": "pie" }],
-  "chart": null,
-  "table": null,
-  "sources": ["VAMA (2024)", "Industry estimate"]
+  "headline": "Key strategic finding in 1-2 sentences, specific and data-driven",
+  "stats": [
+    {"value": "~$2.4B", "label": "Market size 2024", "icon": "globe"},
+    {"value": "18%", "label": "CAGR 2024-2029", "icon": "growth"},
+    {"value": "3", "label": "Dominant players", "icon": "users"}
+  ],
+  "chart": {
+    "type": "line",
+    "title": "Market Size (USD Billion), 2022-2027",
+    "labels": ["2022", "2023", "2024", "2025", "2026", "2027"],
+    "datasets": [{"label": "Market Size ($B)", "data": [1.2, 1.5, 1.9, 2.3, 2.8, 3.4]}]
+  },
+  "table": {
+    "title": "Competitive Landscape Overview",
+    "headers": ["Player", "Est. Share", "Strengths", "Price Tier"],
+    "rows": [
+      ["Company A", "~35%", "Strong distribution", "Premium"],
+      ["Company B", "~22%", "Price leader", "Mid-range"]
+    ]
+  },
+  "sources": ["Industry report 2024", "Analyst estimate"]
 }
 
-headline: always required.
+RULES — read carefully:
 
-stats: 2-4 standalone metrics. icon: pie|growth|trend|users|channel|price|globe|check. Use "~" prefix for estimates.
+headline: 1-2 sentences, specific numbers, strategic insight.
 
-${isNarrativeSection ? `chart: null
-table: null` : `chart: REQUIRED. Choose the BEST chart type for this specific data — do NOT default to bar/line. Use this decision framework:
+stats: exactly 2-4 metrics. icon options: pie|growth|trend|users|channel|price|globe|check
 
-DATA TYPE → BEST CHART TYPE:
-- Market size over time (with CAGR) → "line" (extrapolate full series 2022-2027 if needed)
-- Market share / composition → "donut" (more modern than pie)
-- Player ranking by size/revenue → "bar" (horizontal, sorted descending)
-- Growth rate comparison across players/segments → "bar" (vertical)
-- Price positioning (multiple brands across price spectrum) → "bar" (horizontal, sorted by price)
-- Multi-attribute comparison (e.g. 4-5 players scored on 5 dimensions) → "radar"
-- Market share TREND over multiple years → "line" with multiple datasets
-- Volume vs value (two metrics) → "bar" with two datasets
-- Segment breakdown over time → "bar" with stacked datasets (use multiple datasets)
+chart: ${isNarrativeSection ? 'set to null for this narrative section.' : `REQUIRED — must NOT be null. ${chartHint}
 
-For stacked bar: datasets = [{label: "Seg A", data: [...]}, {label: "Seg B", data: [...]}]
-For radar: labels = attributes, datasets = [{label: "Company A", data: [score1..scoreN]}]
+Chart type decision:
+- Market size over time → "line" with year labels
+- Market share / composition → "doughnut" (add "Others" to reach 100%)
+- Competitor rankings → "bar" (horizontal, sorted by value)
+- Multi-attribute competitor comparison → "radar"
+- Growth rates or segment volumes → "bar" (vertical)
+- Price positioning → "bar" (horizontal, sorted by price)
 
-EXTRAPOLATION RULES (standard consulting practice):
-- If text has CAGR + 1 anchor year → back/forward-calculate full series, label title "(proj. based on X% CAGR)"
-- If text has shares for some players → add "Others" to complete 100%
-- Round all numbers to 1 decimal max
-- DO NOT default to plain bar/line if another type better represents the data
-- DO NOT return null
+datasets[].data values MUST be numbers (no strings, no currency symbols).
+labels length MUST equal datasets[0].data length.
+Max 8 labels. For multi-series bar/line, include all series in datasets array.`}
 
-table: REQUIRED. Build the most insightful comparison table for this section:
-- Competitive landscape → player, market share, key strength, pricing tier, distribution
-- Channel analysis → channel type, share %, growth trend, dominant players, margin profile
-- Pricing → segment, price range (USD), key models, target buyer, notes
-- Consumer segments → segment name, size, key needs, willingness to pay, channel preference
-- Regulatory → requirement, details, timeline, impact on market
-- If no obvious structure → key facts table (metric, value, source) 3-5 rows
-- DO NOT return null`}
+table: ${isNarrativeSection ? 'set to null for this narrative section.' : `REQUIRED — must NOT be null. Most useful table for this section type:
+- Competitive section → players × share/strengths/price/distribution
+- Channel section → channels × share/growth/dominant players/margin
+- Consumer section → segments × size/needs/willingness to pay/channel
+- Pricing section → tiers × price range/key brands/target buyer
+- Regulatory section → requirements × details/timeline/impact
+- Default → 3-col key facts table (Metric | Value | Source)
+Max 8 rows. All values as short strings.`}
 
-sources: 1-3 sources from text or "Industry estimate" / "Analyst projection".
-Return ONLY JSON.`;
+sources: 1-3 sources referenced in text, or "Industry estimate" / "Analyst projection".
 
-    const raw    = await callClaude(extractPrompt, 1000);
-    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
-    meta = { ...meta, ...parsed };
+CRITICAL: Return ONLY the JSON object. No explanation. No markdown fences.`;
+
+    const raw = await callClaude(extractPrompt, 1500); // was 1000 — too tight for chart+table JSON
+
+    // Robust JSON parsing — handle truncated or fence-wrapped responses
+    let parsed = null;
+    const clean = raw.replace(/```json\s*/g,'').replace(/```/g,'').trim();
+    try {
+      parsed = JSON.parse(clean);
+    } catch {
+      // Try to find a complete JSON object even if response was truncated
+      const objStart = clean.indexOf('{');
+      if (objStart >= 0) {
+        // Walk backwards to find the outermost closing brace
+        let depth = 0, lastClose = -1;
+        for (let ci = objStart; ci < clean.length; ci++) {
+          if (clean[ci] === '{' || clean[ci] === '[') depth++;
+          if (clean[ci] === '}' || clean[ci] === ']') { depth--; if (depth === 0) lastClose = ci; }
+        }
+        if (lastClose > objStart) {
+          try { parsed = JSON.parse(clean.slice(objStart, lastClose + 1)); } catch {}
+        }
+      }
+    }
+
+    if (parsed) {
+      // Sanitize chart: ensure data arrays are numbers
+      if (parsed.chart?.datasets) {
+        parsed.chart.datasets = parsed.chart.datasets.map(ds => ({
+          ...ds,
+          data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
+        }));
+        // Normalize type names
+        if (parsed.chart.type === 'donut') parsed.chart.type = 'doughnut';
+        if (parsed.chart.type === 'pie')   parsed.chart.type = 'doughnut';
+        if (parsed.chart.type === 'horizontal_bar' || parsed.chart.type === 'bar_horizontal') {
+          parsed.chart.type = 'bar';
+          parsed.chart.horizontal = true;
+        }
+      }
+      meta = { ...meta, ...parsed };
+    } else {
+      console.warn(`[generate-section] JSON parse failed for section "${sectionTitle}". Raw (first 200): ${raw.slice(0,200)}`);
+    }
   } catch (e) {
     console.warn('Meta extraction failed:', e.message);
   }
