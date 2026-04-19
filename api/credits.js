@@ -22,24 +22,24 @@ const PACKAGES = {
   professional:{ price: '99.00', credits: 129, label: 'Pro Pack'       },  // +30% bonus
 };
 
-// ── Report credit costs ───────────────────────────────────
-const REPORT_COSTS = {
-  // Market Analysis = 19 credits
-  market_overview:         19,
-  competitive_analysis:    19,
-  customer_intelligence:   19,
-  value_chain:             19,
-  go_to_market:            19,
-  partner_search:          19,
-  proposition_development: 19,
-  industry_deep_dive:      19,
-  // Strategy Builder = 29 credits
-  strategy_builder:        29,
-  gtm_strategy:            29,
-  // Doc Intelligence = 9 credits
-  doc_intelligence:         9,
-  document_analysis:        9,
+// ── Report credit costs (read from DB, fallback to defaults) ─
+const REPORT_COSTS_DEFAULT = {
+  market_overview:19, competitive_analysis:19, customer_intelligence:19,
+  value_chain:19, go_to_market:19, partner_search:19, proposition_development:19,
+  industry_deep_dive:19, strategy_builder:29, gtm_strategy:29,
+  doc_intelligence:9, document_analysis:9,
 };
+
+async function getReportCost(reportType) {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/credit_costs?report_type=eq.${reportType}&select=credits&limit=1`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+    const d = await r.json();
+    if (d?.[0]?.credits) return d[0].credits;
+  } catch {}
+  return REPORT_COSTS_DEFAULT[reportType] ?? 19;
+}
 
 // ── Helpers ───────────────────────────────────────────────
 function cors(res) {
@@ -124,7 +124,8 @@ export default async function handler(req, res) {
     // ── GET COST for a report type ────────────────────────
     if (action === 'cost' && req.method === 'GET') {
       const { reportType } = req.query;
-      return res.json({ credits: REPORT_COSTS[reportType] ?? 19 });
+      const credits = await getReportCost(reportType);
+      return res.json({ credits });
     }
 
     // ── GET PACKAGES ──────────────────────────────────────
@@ -205,7 +206,7 @@ export default async function handler(req, res) {
       const { userId, reportType, reportId } = req.body;
       if (!userId || !reportType) return res.status(400).json({ error: 'Missing params' });
 
-      const cost = REPORT_COSTS[reportType] ?? 19;
+      const cost = await getReportCost(reportType);
       const success = await rpc('spend_credits', {
         p_user_id:   userId,
         p_amount:    cost,
@@ -227,7 +228,7 @@ export default async function handler(req, res) {
       const { userId, reportType, reportId, reason } = req.body;
       if (!userId || !reportType) return res.status(400).json({ error: 'Missing params' });
 
-      const cost = REPORT_COSTS[reportType] ?? 19;
+      const cost = await getReportCost(reportType);
 
       // Add credits back
       await rpc('add_credits', {
