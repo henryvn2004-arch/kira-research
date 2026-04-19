@@ -48,86 +48,122 @@ function setCors(res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
-// ── SECTION BLUEPRINTS — hardcoded per section type ──────
-// Each entry: { angle, mustCover, mustNotCover, dataHints }
-// angle: the unique POV this section takes
-// mustCover: specific sub-topics / data points required
-// mustNotCover: what NOT to repeat (typically covered elsewhere)
-// dataHints: what numbers/facts to actively look for
+// ── SECTION BLUEPRINTS — guided authorship approach ──────
+// Philosophy: give Claude LENSES to look through, not CHECKBOXES to fill.
+// Claude decides depth per lens based on data availability.
+// "cover only what data supports, estimate honestly where needed"
+//
+// Each entry:
+//   angle:     the unique POV this section takes (differentiates from other sections)
+//   lenses:    analytical dimensions to assess — not all must appear, depth varies by data
+//   boundary:  what NOT to cover (belongs to adjacent sections — prevents overlap)
+//   ragQuery:  specific query for per-section RAG search (more relevant than generic query)
 const SECTION_BLUEPRINTS = {
   executive_summary: {
-    angle: 'Synthesize the 5-7 most strategically important findings across the entire report into a decision-ready brief. No new analysis — distill the highlights.',
-    mustCover: ['Overall market size & growth rate (1-2 numbers)', 'The single most important competitive insight', 'Top 2-3 strategic implications for the reader', 'Key opportunity or risk to act on'],
-    mustNotCover: ['Detailed methodology', 'Full competitive profiles', 'Detailed pricing breakdowns'],
-    dataHints: 'Market size USD, CAGR %, top player name & share %, 1 headline forecast',
+    angle: 'Decision-ready brief — synthesize the 5-7 most strategically important findings. No new analysis, only distillation.',
+    lenses: ['Overall market size & growth headline (1-2 numbers)', 'Single most important competitive dynamic', 'Top 2-3 strategic implications', 'Key opportunity or risk requiring action'],
+    boundary: 'Do NOT include detailed methodology, full competitive profiles, or granular pricing breakdowns.',
+    ragQuery: (I,C) => `${I} ${C} market executive summary key findings`,
   },
   market_assessment: {
-    angle: 'Quantify the market — size, growth trajectory, and structural health. Make the numbers credible.',
-    mustCover: ['Current market size (value + volume if relevant)', 'Historical growth rate (2-3 year trend)', 'Projected CAGR and forecast size in 3-5 years', 'Key demand drivers behind the growth', 'Any seasonality or cyclicality'],
-    mustNotCover: ['Who the players are (that is Competitive Landscape)', 'Channel structure (that is Industry Structure)', 'Consumer behavior details'],
-    dataHints: 'Market value in USD or local currency, CAGR %, year range for forecast, segment split %',
+    angle: 'Quantify the market — make the growth story credible with numbers.',
+    lenses: ['Current market size (value + volume if relevant)', 'Historical CAGR (2-3 year trend)', 'Forecast 3-5 years + assumptions', 'Demand drivers behind growth', 'Seasonality or structural cyclicality'],
+    boundary: 'Do NOT write about who the players are or channel structure — those belong to other sections.',
+    ragQuery: (I,C) => `${I} ${C} market size revenue growth CAGR forecast`,
   },
   market_segmentation: {
-    angle: 'Slice the market into meaningful sub-groups — which segments are growing fastest, which are most attractive.',
-    mustCover: ['Primary segmentation dimensions (by product/price/geography/channel)', 'Size of each segment as % of total', 'Which segments are growing vs declining', 'Segment profitability or attractiveness differences', 'Underserved or emerging segments'],
-    mustNotCover: ['Overall market size (already in Market Assessment)', 'Who plays where (Competitive Landscape)', 'Regulatory differences per segment (Regulatory section)'],
-    dataHints: 'Segment % breakdown, fastest growing segment name + CAGR, premium vs mass split',
+    angle: 'Slice the market — identify which sub-groups are growing fastest and most attractive.',
+    lenses: ['Primary segmentation dimensions (product/price/geography/channel)', 'Segment sizes as % of total', 'Fastest growing vs declining segments', 'Premium vs mass split', 'Underserved or emerging segments'],
+    boundary: 'Do NOT repeat overall market size or name which companies play in which segment.',
+    ragQuery: (I,C) => `${I} ${C} market segments breakdown product categories`,
   },
   industry_structure: {
-    angle: 'Map how value flows through the chain — who captures margin where, what the channel architecture looks like.',
-    mustCover: ['Value chain: from manufacturer/supplier → distributor → retailer/channel → end customer', 'Channel mix (% online vs offline, modern vs traditional trade)', 'Margin stack at each level (approximate % gross margins)', 'Key intermediaries and their role', 'Structural shifts happening (e.g., disintermediation, D2C growth)'],
-    mustNotCover: ['Who the end-market brands are (Competitive Landscape)', 'Consumer needs (Consumer Insights)', 'Regulatory requirements'],
-    dataHints: 'Channel share %, margin at each level %, online penetration %',
+    angle: 'Map how value flows — who captures margin where, what the channel architecture looks like.',
+    lenses: ['Value chain flow (manufacturer → distributor → channel → buyer)', 'Channel mix % (online vs offline, modern vs traditional)', 'Approximate margin stack at each level', 'Key intermediaries and their role', 'Structural shifts (disintermediation, D2C growth, digitization)'],
+    boundary: 'Do NOT name end-market brands or discuss consumer needs.',
+    ragQuery: (I,C) => `${I} ${C} distribution channels value chain margin stack`,
   },
   competitive_landscape: {
-    angle: 'Map the battle — who are the key players, how concentrated is the market, and what competitive dynamics define the fight.',
-    mustCover: ['Market share of top 3-5 players (% or ranking)', 'Competitive concentration (HHI / market structure type)', 'How players compete (price, distribution, innovation, brand?)', 'Recent significant competitive moves', 'Barriers to entry or competitive moats'],
-    mustNotCover: ['Detailed individual company financials (that is Competitor Profiles)', 'Market size (Market Assessment)', 'Channel details (Industry Structure)'],
-    dataHints: 'Named top players, market share %, HHI index, recent M&A or launches',
+    angle: 'Map the battle — market share, concentration, and what competitive dynamics define the fight.',
+    lenses: ['Market share of top 3-5 players (%)', 'Market concentration (fragmented/oligopoly/monopoly)', 'Basis of competition (price / distribution / brand / innovation?)', 'Recent significant moves', 'Barriers to entry'],
+    boundary: 'Do NOT profile individual companies in depth — that is Competitor Profiles.',
+    ragQuery: (I,C) => `${I} ${C} market share competitive landscape top companies ranking`,
   },
   competitor_profiles: {
-    angle: 'Deep-dive on each major player — their strategy, footprint, and vulnerabilities. Give the reader an edge in understanding the opposition.',
-    mustCover: ['For each top 3-5 player: business overview, product/service mix, distribution reach, pricing tier, key strengths and one key weakness', 'Recent strategic moves or notable campaigns', 'What makes each player hard to displace'],
-    mustNotCover: ['Overall market share summary (already in Competitive Landscape)', 'Generic market size numbers'],
-    dataHints: 'Company name, founding year or ownership, revenue estimate, distribution network size, key SKUs or product lines',
+    angle: 'Intelligence on each major player — their strategy, footprint, and where they are vulnerable.',
+    lenses: ['Market position (share/rank/trajectory — growing or losing?)', 'What they actually win on (differentiation)', 'Operational footprint (distribution reach, geographic coverage)', 'Pricing tier and pricing power', 'One clear vulnerability or strategic blind spot'],
+    boundary: 'Do NOT repeat overall market share summary or market size data.',
+    ragQuery: (I,C) => `${I} ${C} competitor company profile revenue strategy distribution`,
   },
   market_drivers: {
-    angle: 'Explain why this market moves — both the tailwinds accelerating growth and the headwinds creating friction.',
-    mustCover: ['3-5 key growth drivers (quantify each where possible)', '2-3 key restraints or challenges', '1-2 disruptive trends that could reshape the market', 'Which drivers are structural vs cyclical', 'Relative magnitude of each factor'],
-    mustNotCover: ['Market size (Market Assessment)', 'Player responses to these drivers (Competitor Profiles)', 'Consumer preferences (Consumer Insights — different angle)'],
-    dataHints: 'Driver magnitude (e.g., "internet penetration grew from X to Y"), trend growth rates, regulatory change dates',
+    angle: 'Explain why this market moves — tailwinds accelerating growth and headwinds creating friction.',
+    lenses: ['3-5 growth drivers (quantify where possible)', '2-3 restraints or challenges', '1-2 disruptive trends that could reshape the market', 'Structural vs cyclical classification', 'Relative magnitude (which driver matters most?)'],
+    boundary: 'Do NOT discuss market size (Market Assessment) or player responses (Competitor Profiles).',
+    ragQuery: (I,C) => `${I} ${C} market growth drivers trends challenges 2024`,
   },
   consumer_insights: {
-    angle: 'Humanize the demand side — who is buying, why, how, and what will change their behavior.',
-    mustCover: ['Primary buyer/consumer segments (demographics + psychographics)', 'Key purchase drivers and unmet needs', 'Buying process and decision journey', 'Brand perception and loyalty patterns', 'Willingness to pay and price sensitivity'],
-    mustNotCover: ['Channel structure (Industry Structure)', 'Market size numbers (Market Assessment)', 'Competitor positioning (Competitive Landscape)'],
-    dataHints: 'Consumer segment sizes, purchase frequency, brand NPS or awareness %, willingness to pay price range',
+    angle: 'Humanize the demand side — who buys, why, how, and what shifts behavior.',
+    lenses: ['Primary buyer segments (demographics + psychographics)', 'Key purchase drivers and unmet needs', 'Buying process and decision journey', 'Brand perception and loyalty patterns', 'Price sensitivity and willingness to pay range'],
+    boundary: 'Do NOT discuss channel structure or market size.',
+    ragQuery: (I,C) => `${I} ${C} consumer behavior customer insights buying decision`,
   },
   pricing_analysis: {
-    angle: 'Map the price architecture — how is the market stratified by price, who occupies each tier, and where is the value?',
-    mustCover: ['Price tier breakdown (economy / mid / premium / super-premium)', 'Price range for key products in each tier', 'Which players occupy which tiers', 'Price-volume relationship (which tier is largest by volume vs value)', 'Pricing trends (inflation, premiumization, downtrading?)'],
-    mustNotCover: ['Margin stack (Industry Structure)', 'Consumer willingness to pay in aggregate (Consumer Insights)', 'Brand-level competitive positioning'],
-    dataHints: 'Price points in local currency per unit, tier split % of volume, % price change YoY',
+    angle: 'Map the price architecture — how the market is stratified and where the value pools are.',
+    lenses: ['Price tier breakdown (economy / mid / premium / super-premium)', 'Price range for key products in each tier', 'Which players occupy which tiers', 'Price-volume relationship (largest tier by volume vs value)', 'Pricing trends (inflation, premiumization, downtrading)'],
+    boundary: 'Do NOT discuss margin stack (Industry Structure) or brand-level competitive positioning.',
+    ragQuery: (I,C) => `${I} ${C} pricing price tiers segments premium value`,
   },
   regulatory: {
-    angle: 'Map the regulatory landscape as a business risk and opportunity filter — what must players comply with and what is changing.',
-    mustCover: ['Key regulations or standards currently in force', 'Recent or upcoming regulatory changes (with dates)', 'Compliance costs or barriers to entry from regulation', 'Government policy stance (supportive / neutral / restrictive)', 'Regional regulatory variations if applicable'],
-    mustNotCover: ['Market size impact of regulation (captured in Market Drivers)', 'Competitor compliance status'],
-    dataHints: 'Regulation name, year enacted or anticipated, compliance cost estimate, license or certification requirements',
+    angle: 'Map the regulatory landscape as a business risk and opportunity filter.',
+    lenses: ['Key regulations or standards currently in force', 'Recent or upcoming changes (with dates)', 'Compliance costs or entry barriers', 'Government policy stance (supportive / neutral / restrictive)', 'Regional variations if applicable'],
+    boundary: 'Do NOT quantify market size impact — that goes in Market Drivers.',
+    ragQuery: (I,C) => `${I} ${C} regulations policy legal compliance requirements`,
   },
   market_forecast: {
-    angle: 'Build a forward view — what will this market look like in 3-5 years under different scenarios.',
-    mustCover: ['Base case forecast (market size, CAGR, key assumptions)', 'Optimistic scenario (what would drive upside)', 'Conservative scenario (what would cause underperformance)', 'Key inflection points or trigger events to watch', 'Which segments will grow fastest'],
-    mustNotCover: ['Historical market data (already in Market Assessment)', 'Current competitive positions (those will shift)'],
-    dataHints: 'Forecast market size by year, CAGR range, scenario probability, segment-level forecasts',
+    angle: 'Build a forward view — what this market looks like in 3-5 years across scenarios.',
+    lenses: ['Base case (CAGR + market size by year + assumptions)', 'Optimistic scenario (what drives upside)', 'Conservative scenario (what causes underperformance)', 'Key inflection points or triggers to watch', 'Fastest growing segments in forecast period'],
+    boundary: 'Do NOT repeat historical data — only forward-looking from current base.',
+    ragQuery: (I,C) => `${I} ${C} market forecast outlook projection 2025 2026 2027`,
   },
   recommendations: {
-    angle: 'Turn insights into action — concrete, prioritized strategic recommendations tailored to the client context.',
-    mustCover: ['Product/service strategy recommendation', 'Pricing and positioning recommendation', 'Channel and distribution recommendation', 'Market entry or expansion sequencing', 'Top 2-3 priority actions with rationale'],
-    mustNotCover: ['Repeat analysis already done in other sections — only reference conclusions'],
-    dataHints: 'Concrete action verbs, timelines (short/medium/long term), success metrics',
+    angle: 'Turn analysis into action — concrete, prioritized recommendations.',
+    lenses: ['Product/service strategy', 'Pricing and positioning', 'Channel and distribution approach', 'Entry sequencing (which segment/geography first)', 'Top 2-3 priority actions with rationale'],
+    boundary: 'Reference conclusions from previous sections, do NOT repeat the analysis.',
+    ragQuery: (I,C) => `${I} ${C} market entry strategy recommendations opportunities`,
+  },
+  // Partner Search / GTM specific
+  industry_competitiveness: {
+    angle: 'Competitive intensity — concentration, barriers to entry, structural dynamics.',
+    lenses: ['Market structure type (fragmented/concentrated)', 'Barriers to entry (capital/regulatory/distribution/brand)', 'Threat of new entrants and substitutes', 'Supplier and buyer power'],
+    boundary: 'Do NOT profile individual companies.',
+    ragQuery: (I,C) => `${I} ${C} competitive intensity barriers entry market structure`,
+  },
+  entry_mode: {
+    angle: 'Evaluate all viable entry modes — pros/cons/required resources for each.',
+    lenses: ['Export / distributor / JV / greenfield / acquisition options', 'Control vs risk tradeoff per mode', 'Investment level required', 'Recommended mode with rationale', 'Timing considerations'],
+    boundary: 'Do NOT discuss marketing plan — that is a separate section.',
+    ragQuery: (I,C) => `${I} ${C} market entry mode foreign company distributor JV`,
+  },
+  gap_analysis: {
+    angle: 'Identify the whitespace — where current offerings underserve, and what that creates.',
+    lenses: ['Unmet customer needs (from demand-side data)', 'Product/service gaps vs ideal offering', 'Competitive whitespace (underserved positioning)', 'Which segment is most underserved'],
+    boundary: 'Do NOT recommend solutions yet — that comes in recommendations.',
+    ragQuery: (I,C) => `${I} ${C} market gap unmet needs whitespace opportunity`,
   },
 };
+
+// ── RAG query per section ─────────────────────────────────
+// Instead of one generic RAG query for entire report,
+// each section gets its own targeted query for more relevant context.
+function getSectionRagQuery(sectionTitle, industry, country) {
+  const blueprint = getBlueprint(sectionTitle);
+  if (blueprint?.ragQuery) return blueprint.ragQuery(industry, country);
+  // Fallback: combine section title keywords with industry/country
+  const titleKeywords = sectionTitle.toLowerCase()
+    .replace(/[^a-z\s]/g, '')
+    .split(/\s+/).filter(w => w.length > 3).slice(0, 3).join(' ');
+  return `${industry} ${titleKeywords} ${country}`;
+}
 
 // Match a section title to a blueprint using normalized keyword matching
 function getBlueprint(sectionTitle) {
@@ -156,21 +192,23 @@ function getBlueprint(sectionTitle) {
   return null;
 }
 
-// Build section-specific focus guidance — replaces the fragile competency template lookup
+// Inject blueprint as analytical lenses — guided authorship, not checkbox
 function getSectionGuidance(competencyTemplate, sectionTitle) {
-  // Try blueprint first (hardcoded, reliable)
   const blueprint = getBlueprint(sectionTitle);
   if (blueprint) {
-    return [
-      `SECTION FOCUS — "${sectionTitle}"`,
-      `Unique angle: ${blueprint.angle}`,
-      `Must cover: ${blueprint.mustCover.map((x, i) => `\n  ${i+1}. ${x}`).join('')}`,
-      `Do NOT cover (belongs to other sections): ${blueprint.mustNotCover.join('; ')}`,
-      `Key data to cite: ${blueprint.dataHints}`,
-    ].join('\n');
+    return `ANALYTICAL FRAMEWORK for "${sectionTitle}":
+Angle: ${blueprint.angle}
+
+Assess through these lenses — cover what the data supports, skip what it doesn't, estimate honestly where needed ("est. ~X based on..."):
+${blueprint.lenses.map((l, i) => `  → ${l}`).join('\n')}
+
+${blueprint.boundary}
+
+Write in proportion to data richness: if one lens has strong data, give it more depth.
+Do not force equal coverage — consult data, then decide depth per lens.`;
   }
 
-  // Fallback to competency template if no blueprint match
+  // Fallback to competency template
   if (!competencyTemplate?.section_structure) return '';
   const sections = Array.isArray(competencyTemplate.section_structure)
     ? competencyTemplate.section_structure : [];
@@ -181,11 +219,11 @@ function getSectionGuidance(competencyTemplate, sectionTitle) {
   });
   if (!match) return '';
   const parts = [
-    match.purpose ? `Purpose: ${match.purpose}` : '',
+    match.purpose ? `Angle: ${match.purpose}` : '',
     match.typical_content ? `Expected content: ${match.typical_content}` : '',
-    match.data_points ? `Key data points: ${Array.isArray(match.data_points) ? match.data_points.join(', ') : match.data_points}` : '',
+    match.data_points ? `Key data: ${Array.isArray(match.data_points) ? match.data_points.join(', ') : match.data_points}` : '',
   ].filter(Boolean);
-  return parts.length ? `MODULE GUIDANCE:\n${parts.join('\n')}` : '';
+  return parts.length ? `SECTION GUIDANCE:\n${parts.join('\n')}` : '';
 }
 
 // ── Translate blueprint guidance into local-language search queries ──────
@@ -234,8 +272,45 @@ When citing data:
 - If local data is unavailable, clearly note "data unavailable for ${country}, estimated from regional benchmarks"`;
 }
 
-// Build anti-overlap context — tracks headlines AND key stats already used
-function buildAntiOverlapContext(prevSections) {
+// ── Per-section RAG search ────────────────────────────────
+// Each section searches RAG with its own targeted query for more relevant context.
+// Falls back to the shared ragContext from generate-report if search fails.
+const SB_URL_S = process.env.SUPABASE_URL;
+const SB_KEY_S = process.env.SUPABASE_SERVICE_KEY;
+const OAI_KEY_S = process.env.OPENAI_API_KEY;
+
+async function sectionRagSearch(query) {
+  try {
+    // Generate embedding for section-specific query
+    const embRes = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OAI_KEY_S}` },
+      body: JSON.stringify({ model: 'text-embedding-3-large', input: query, dimensions: 1536 })
+    });
+    const embData = await embRes.json();
+    if (embData.error) return null;
+    const vec = embData.data[0].embedding;
+
+    const opts = { method: 'POST',
+                   headers: { 'apikey': SB_KEY_S, 'Authorization': `Bearer ${SB_KEY_S}`,
+                               'Content-Type': 'application/json' } };
+    const [chunks, patterns] = await Promise.all([
+      fetch(`${SB_URL_S}/rest/v1/rpc/search_report_chunks`, {
+        ...opts,
+        body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 5 })
+      }).then(r => r.json()),
+      fetch(`${SB_URL_S}/rest/v1/rpc/search_industry_patterns`, {
+        ...opts,
+        body: JSON.stringify({ query_embedding: vec, match_threshold: 0.65, match_count: 3 })
+      }).then(r => r.json()),
+    ]);
+
+    return {
+      chunkText:   (chunks   || []).map(x => `[${x.chunk_type}] ${x.content}`).join('\n\n'),
+      patternText: (patterns || []).map(x => `[${x.pattern_type}] ${x.description}`).join('\n\n'),
+    };
+  } catch { return null; }
+}
   if (!prevSections?.length) return '';
   const completed = prevSections
     .filter(s => s.status === 'completed' && s.content)
@@ -339,9 +414,19 @@ export default async function handler(req, res) {
 
   if (!sectionTitle) return res.status(400).json({ error: 'Missing sectionTitle' });
 
+  // Per-section targeted RAG search — more relevant than generic report-level RAG
+  // Runs in parallel with nothing (fast, ~0.3s) before Phase 1
+  const sectionRagQuery = getSectionRagQuery(sectionTitle, industry, country);
+  const sectionRag = await sectionRagSearch(sectionRagQuery).catch(() => null);
+
+  // Merge: section-specific RAG first (more relevant), fallback to shared ragContext
+  const effectiveRag = sectionRag?.chunkText
+    ? sectionRag
+    : { chunkText: ragContext?.chunkText || '', patternText: ragContext?.patternText || '' };
+
   const context = buildContext(
     { industry, country, reportType, questions, companies, language },
-    ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery
+    effectiveRag, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery
   );
 
   // SSE setup
