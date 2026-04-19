@@ -1405,6 +1405,8 @@ async function startGeneration(params, slug) {
     };
     // Store competencyTemplate — passed to each section so Claude knows module structure
     const competencyTemplate = initData.competencyTemplate || null;
+    // Per-section localized queries from generate-report — each section knows what to search for
+    const sectionQueries = initData.sectionQueries || {};
     const totalSections   = sections.length;
 
     // Now build section list from dynamic response
@@ -1461,6 +1463,7 @@ async function startGeneration(params, slug) {
           totalSections, ...params, researchSummary, ragContext,
           prevSections: prevDone,
           competencyTemplate,
+          sectionQuery: sectionQueries[title] || null,
         }, i);
         console.log(`[Section ${i+1}] Done`);
       } catch (sErr) {
