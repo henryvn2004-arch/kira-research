@@ -62,9 +62,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { action } = req.query;
-  const SITE_URL = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'https://kiraresearch.com';
+  const SITE_URL = process.env.APP_URL || 'https://kiraresearch.com';
 
   try {
 
