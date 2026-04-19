@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Strategy Builder — KIRA RESEARCH</title>
+<meta name="description" content="Select a strategy module, add context, and generate a consulting-grade strategic report."/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="stylesheet" href="/report-view.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<style>
+/* ── STRATEGY BUILDER SPECIFIC ── */
+
+/* Hero */
+.sb-hero{padding:80px 0 52px;border-bottom:1px solid #1A1D24;margin-bottom:48px}
+.sb-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(246,173,85,.08);border:1px solid rgba(246,173,85,.2);border-radius:20px;padding:6px 14px;font-size:11px;color:#F6AD55;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+.sb-badge::before{content:'';width:6px;height:6px;background:#F6AD55;border-radius:50%;box-shadow:0 0 8px rgba(246,173,85,.6)}
+.sb-hero h1{font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.8px;line-height:1.1;margin-bottom:16px}
+.sb-hero h1 span{color:#F6AD55}
+.sb-hero p{font-size:16px;color:#5A6278;max-width:600px;line-height:1.7;margin-bottom:28px}
+.hero-features{display:flex;gap:24px;flex-wrap:wrap}
+.hero-feat{display:flex;align-items:center;gap:8px;font-size:12px;color:#3A4560}
+.hero-feat::before{content:'✓';color:#F6AD55;font-weight:700}
+
+/* Step label */
+.step-label{font-size:10px;font-weight:700;color:#F6AD55;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px}
+
+/* Module grid */
+.module-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}
+.module-card{background:#0D1018;border:1.5px solid #1A1D24;border-radius:10px;padding:16px 14px;cursor:pointer;transition:all .18s;position:relative;display:flex;flex-direction:column;gap:8px}
+.module-card:hover{border-color:#F6AD55;background:#110F08}
+.module-card.selected{border-color:#F6AD55;background:rgba(246,173,85,.07)}
+.module-card.selected::after{content:'✓';position:absolute;top:8px;right:10px;width:16px;height:16px;background:#F6AD55;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;color:#0B0D10;font-weight:900}
+.module-icon{font-size:18px;line-height:1}
+.module-name{font-size:12px;font-weight:700;color:#E8EDF5;line-height:1.3}
+.module-desc{font-size:10px;color:#5A6278;line-height:1.5}
+
+/* Module preview strip */
+.module-strip{background:#0A0C10;border:1px solid #1A1D24;border-radius:8px;padding:12px 16px;min-height:44px;margin-bottom:32px;font-size:12px;color:#5A6278;line-height:1.6;transition:all .2s}
+.module-strip strong{color:#F6AD55;margin-right:8px}
+
+/* Form grid */
+.form-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.form-col{display:flex;flex-direction:column;gap:16px}
+label.form-label{font-size:11px;font-weight:700;color:#A3A9B6;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:8px}
+textarea.sb-input{background:#0D1018;border:1px solid #1A1D24;border-radius:10px;padding:14px;font-size:14px;color:#fff;font-family:Arial,sans-serif;resize:vertical;min-height:130px;line-height:1.7;outline:none;width:100%;transition:border-color .2s}
+textarea.sb-input:focus{border-color:#F6AD55}
+select.sb-select{background:#0D1018;border:1px solid #1A1D24;border-radius:10px;padding:11px 14px;font-size:13px;color:#fff;font-family:Arial,sans-serif;outline:none;width:100%;cursor:pointer;transition:border-color .2s}
+select.sb-select:focus{border-color:#F6AD55}
+
+/* Upload zone compact */
+.upload-compact{border:1.5px dashed #1A1D24;border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:#080A0F;position:relative}
+.upload-compact:hover,.upload-compact.drag-over{border-color:#F6AD55;background:rgba(246,173,85,.03)}
+.upload-compact input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;width:100%;height:100%}
+.upload-compact-icon{font-size:20px;margin-bottom:8px}
+.upload-compact-text{font-size:12px;font-weight:600;color:#A3A9B6;margin-bottom:3px}
+.upload-compact-sub{font-size:10px;color:#3A4560}
+.upload-optional-tag{display:inline-block;font-size:9px;color:#F6AD55;background:rgba(246,173,85,.08);border:1px solid rgba(246,173,85,.15);border-radius:6px;padding:1px 7px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.file-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.file-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;background:#11151C;border:1px solid #242A35;border-radius:6px;font-size:10px;color:#A3A9B6;max-width:160px}
+.file-chip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.file-chip-status{font-size:9px;flex-shrink:0}
+.file-chip-status.ready{color:#F6AD55}
+.file-chip-status.extracting{color:#5A6278}
+.file-chip button{background:none;border:none;color:#3A4560;cursor:pointer;font-size:12px;padding:0 0 0 2px;line-height:1;transition:color .15s}
+.file-chip button:hover{color:#FC8181}
+
+/* Web toggle */
+.web-toggle{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#0D1018;border:1px solid #1A1D24;border-radius:10px;cursor:pointer;transition:border-color .2s}
+.web-toggle:hover{border-color:#F6AD55}
+.toggle-switch{width:34px;height:18px;background:#1A1D24;border-radius:9px;position:relative;transition:background .2s;flex-shrink:0}
+.toggle-switch.on{background:#F6AD55}
+.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle-switch.on::after{transform:translateX(16px)}
+
+/* CTA */
+.sb-cta{background:linear-gradient(135deg,#C05621,#F6AD55);color:#0B0D10;border:none;border-radius:10px;padding:15px 32px;font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:all .2s;font-family:Arial,sans-serif}
+.sb-cta:hover{opacity:.92;box-shadow:0 0 28px rgba(246,173,85,.25)}
+.sb-cta:disabled{opacity:.35;cursor:not-allowed}
+
+/* Clarify */
+#view-clarify{display:none}
+.clarify-card{max-width:580px;margin:0 auto;background:#0D1018;border:1px solid #242A35;border-radius:14px;overflow:hidden}
+.clarify-module-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#F6AD55;background:rgba(246,173,85,.08);border:1px solid rgba(246,173,85,.2);border-radius:6px;padding:3px 10px;margin-bottom:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.clarify-header{padding:24px 28px 20px;border-bottom:1px solid #1A1D24}
+.clarify-doc-insight{padding:14px 20px;font-size:12px;color:#8896A8;line-height:1.7;background:#080A0F;border-bottom:1px solid #1A1D24}
+.clarify-body{padding:24px 28px}
+.clarify-q{font-size:15px;font-weight:700;color:#fff;margin-bottom:18px;line-height:1.5}
+.clarify-opts{display:flex;flex-direction:column;gap:7px}
+.clarify-opt{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#0A0D13;border:1.5px solid #1A1D24;border-radius:10px;cursor:pointer;transition:all .18s;font-size:13px;color:#A3A9B6}
+.clarify-opt:hover{border-color:#F6AD55;color:#fff;background:#0D1018}
+.clarify-opt.selected{border-color:#F6AD55;background:rgba(246,173,85,.07);color:#fff}
+.clarify-dot{width:15px;height:15px;border-radius:50%;border:2px solid #2E3547;flex-shrink:0;transition:all .18s}
+.clarify-opt.selected .clarify-dot{border-color:#F6AD55;background:#F6AD55;box-shadow:inset 0 0 0 3px #0A0D13}
+.clarify-footer{padding:8px 28px 24px;display:flex;gap:10px}
+
+/* Plan confirm */
+#view-plan{display:none}
+.plan-card{max-width:720px;margin:0 auto;background:#0D1018;border:1px solid #242A35;border-radius:14px;overflow:hidden}
+.plan-header{padding:24px 28px;border-bottom:1px solid #1A1D24}
+.plan-context{font-size:12px;color:#8896A8;line-height:1.7;padding:14px 20px;border-bottom:1px solid #1A1D24;background:#080A0F}
+.plan-title-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.plan-title-input{flex:1;background:#0A0D13;border:1px solid #1A1D24;border-radius:8px;padding:10px 14px;font-size:14px;font-weight:700;color:#fff;font-family:Arial,sans-serif;outline:none;transition:border-color .2s}
+.plan-title-input:focus{border-color:#F6AD55}
+.plan-sections{border-top:none}
+.plan-sec-row{display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid #1A1D24;transition:background .15s}
+.plan-sec-row:last-child{border-bottom:none}
+.plan-sec-row:hover{background:#080A0F}
+.plan-sec-row:hover .plan-sec-del{opacity:1}
+.plan-sec-n{font-size:9px;font-weight:700;color:#F6AD55;width:22px;flex-shrink:0;letter-spacing:.08em}
+.plan-sec-input{flex:1;background:transparent;border:none;color:#E8EDF5;font-size:13px;font-family:Arial,sans-serif;outline:none;padding:3px 0}
+.plan-sec-input:focus{color:#fff}
+.plan-sec-del{opacity:0;background:none;border:none;color:#3A4560;cursor:pointer;font-size:15px;padding:3px;transition:all .15s;flex-shrink:0}
+.plan-sec-del:hover{color:#FC8181}
+.plan-add{width:100%;padding:11px 20px;background:#0A0D13;border:none;border-top:1px dashed #1A1D24;color:#5A6278;font-size:11px;cursor:pointer;font-family:Arial,sans-serif;text-align:left;transition:all .15s}
+.plan-add:hover{color:#A3A9B6;background:#0D1018}
+.plan-footer{padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid #1A1D24}
+.plan-meta{font-size:11px;color:#5A6278}
+.plan-meta strong{color:#A3A9B6}
+.web-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;background:rgba(246,173,85,.08);color:#F6AD55;border:1px solid rgba(246,173,85,.2);border-radius:10px;padding:2px 8px;margin-left:8px}
+
+/* Error */
+.sb-error{display:none;font-size:12px;color:#FC8181;padding:10px 14px;background:rgba(252,129,129,.07);border:1px solid rgba(252,129,129,.15);border-radius:8px;margin-top:12px}
+
+/* Progress + report: identical to report.html, from report-view.css */
+#view-progress{display:none;padding-top:32px}
+#view-report{display:none}
+
+@media(max-width:900px){.module-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.module-grid{grid-template-columns:repeat(2,1fr)}.form-layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container page" style="padding-top:80px">
+
+  <!-- ── VIEW: INPUT ── -->
+  <div id="view-input">
+
+    <div class="sb-hero">
+      <div class="sb-badge">Strategy Builder</div>
+      <h1>Build your <span>strategic playbook</span></h1>
+      <p>Choose a strategy module, describe what you need, and optionally upload supporting documents. Claude generates a consulting-grade strategic report tailored to your situation.</p>
+      <div class="hero-features">
+        <div class="hero-feat">10 strategy modules</div>
+        <div class="hero-feat">Optional document context</div>
+        <div class="hero-feat">Live web research via Perplexity</div>
+        <div class="hero-feat">McKinsey-style output + PPTX export</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Module -->
+    <div style="margin-bottom:32px">
+      <div class="step-label">Step 1 — Choose a module</div>
+      <div class="module-grid" id="module-grid"></div>
+      <div class="module-strip" id="module-strip">
+        <span style="color:#3A4560">← Select a module to see what it covers</span>
+      </div>
+    </div>
+
+    <!-- Step 2: Context + Request -->
+    <div class="step-label">Step 2 — Add context &amp; describe your goal</div>
+    <div class="form-layout">
+
+      <!-- Left: request + language -->
+      <div class="form-col">
+        <div>
+          <label class="form-label">Your strategic goal <span style="color:#F6AD55">*</span></label>
+          <textarea class="sb-input" id="f-request" rows="6"
+            placeholder="Describe what you want to achieve. Be as specific as you can — include company, market, timeframe, constraints if relevant.&#10;&#10;e.g. We're a Vietnamese FMCG brand looking to enter Indonesia in 2026. Build a market entry strategy covering channels, pricing, and local partner approach."></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label class="form-label">Language</label>
+            <select class="sb-select" id="f-language">
+              <option value="English">English</option>
+              <option value="Vietnamese">Tiếng Việt</option>
+              <option value="Thai">ภาษาไทย</option>
+              <option value="Indonesian">Bahasa Indonesia</option>
+              <option value="Chinese (Simplified)">中文 (简体)</option>
+              <option value="Japanese">日本語</option>
+              <option value="Korean">한국어</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Web research</label>
+            <div class="web-toggle" id="ws-toggle" onclick="toggleWS()">
+              <div class="toggle-switch" id="ws-switch"></div>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:#A3A9B6">Include live data</div>
+                <div style="font-size:10px;color:#5A6278">via Perplexity</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="sb-cta" id="btn-analyze" onclick="startFlow()" disabled>
+          Analyze &amp; Plan →
+        </button>
+        <div class="sb-error" id="sb-error"></div>
+      </div>
+
+      <!-- Right: optional upload -->
+      <div class="form-col">
+        <div>
+          <label class="form-label">Supporting documents <span style="font-size:9px;color:#5A6278;font-weight:400;letter-spacing:0;text-transform:none">(optional)</span></label>
+          <div class="upload-compact" id="upload-zone">
+            <input type="file" id="file-input" multiple
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.md,.png,.jpg,.jpeg,.gif,.webp"
+              style="display:none" onchange="handleFiles(this.files)"/>
+            <div class="upload-optional-tag">Optional</div>
+            <div class="upload-compact-icon">📎</div>
+            <div class="upload-compact-text">Drop files or click to browse</div>
+            <div class="upload-compact-sub">Annual reports, financials, research, strategy docs</div>
+            <div style="font-size:10px;color:#2E3547;margin-top:8px">PDF, DOCX, XLSX, PPTX, images · 5 files max · 20MB each</div>
+          </div>
+          <div class="file-chips" id="file-chips"></div>
+        </div>
+        <div style="background:#0A0D13;border:1px solid #1A1D24;border-radius:10px;padding:16px 18px">
+          <div style="font-size:10px;font-weight:700;color:#5A6278;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">What documents help with</div>
+          <div style="font-size:12px;color:#5A6278;line-height:1.8">
+            • Provide company-specific context Claude otherwise can't know<br/>
+            • Annual reports, P&amp;L data, org charts, competitor research<br/>
+            • Claude extracts what's strategically relevant to your module<br/>
+            • Without docs, Claude relies on expertise + web research
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIEW: CLARIFY ── -->
+  <div id="view-clarify">
+    <div style="max-width:580px;margin:40px auto 0">
+      <div class="page-eyebrow">One quick clarification</div>
+      <div class="page-title" style="margin-bottom:8px">Before we plan</div>
+      <div class="page-sub" style="margin-bottom:28px">Claude needs one more detail to tailor the strategy properly.</div>
+      <div class="clarify-card">
+        <div class="clarify-header">
+          <div class="clarify-module-tag" id="clarify-module-tag">Module</div>
+          <div id="clarify-insight" style="font-size:13px;color:#A3A9B6;line-height:1.6"></div>
+        </div>
+        <div class="clarify-body">
+          <div class="clarify-q" id="clarify-q"></div>
+          <div class="clarify-opts" id="clarify-opts"></div>
+        </div>
+        <div class="clarify-footer">
+          <button class="btn btn-primary" style="flex:1;padding:12px;background:#F6AD55;color:#0B0D10" onclick="submitClarify()">Proceed →</button>
+          <button class="btn btn-outline" onclick="skipClarify()">Skip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIEW: PLAN ── -->
+  <div id="view-plan">
+    <div style="max-width:720px;margin:40px auto 0">
+      <div class="page-eyebrow">Review &amp; confirm</div>
+      <div class="page-title" style="margin-bottom:8px">Your strategy report plan</div>
+      <div class="page-sub" style="margin-bottom:28px">Claude tailored these sections to your specific situation. Edit, reorder or add sections — then generate.</div>
+      <div class="plan-card">
+        <div class="plan-header">
+          <div id="plan-context" class="plan-context"></div>
+          <div class="plan-title-row">
+            <div style="font-size:10px;color:#5A6278;font-weight:700;letter-spacing:.1em;white-space:nowrap">TITLE</div>
+            <input class="plan-title-input" id="plan-title" placeholder="Report title"/>
+          </div>
+        </div>
+        <div id="plan-sec-list"></div>
+        <button class="plan-add" onclick="addSection()">+ Add section</button>
+        <div class="plan-footer">
+          <div class="plan-meta">
+            <span id="plan-count">8 sections</span>
+            <span id="plan-web-badge" class="web-badge" style="display:none">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20"/></svg>
+              Web search
+            </span>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-outline" onclick="showView('input')">← Back</button>
+            <button class="btn" style="background:#F6AD55;color:#0B0D10;font-weight:700;padding:12px 28px" onclick="generate()">Generate Report →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIEW: PROGRESS ── -->
+  <div id="view-progress">
+    <div class="progress-card">
+      <div class="progress-header">
+        <div class="progress-title" id="prog-title">Building your strategy report...</div>
+        <div class="progress-subtitle" id="prog-subtitle"></div>
+      </div>
+      <div class="progress-body">
+        <div id="section-progress-list" class="phase-list"></div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <div class="progress-pct" id="status-text"></div>
+          <div class="progress-pct" id="time-elapsed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIEW: REPORT ── (identical to report.html) -->
+  <div id="view-report">
+    <div class="report-layout">
+      <div class="report-toc">
+        <div class="toc-card">
+          <div class="toc-title">Contents</div>
+          <div id="toc-list"></div>
+        </div>
+      </div>
+      <div class="report-content">
+        <div class="report-meta">
+          <div class="report-meta-left">
+            <div class="report-meta-title" id="report-title">—</div>
+            <div class="report-meta-sub" id="report-meta-sub">—</div>
+          </div>
+          <div class="report-meta-right" id="report-badges">
+            <button class="btn" id="btn-present" style="background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.15);display:none" onclick="openPresentation()">▶ Present</button>
+            <button class="btn" id="btn-export-pdf" style="background:rgba(0,201,167,.1);color:#00C9A7;border:1px solid rgba(0,201,167,.3);display:none" onclick="openExpModal('pdf')">↓ PDF</button>
+            <button class="btn" id="btn-export-pptx" style="background:rgba(246,173,85,.1);color:#F6AD55;border:1px solid rgba(246,173,85,.3);display:none" onclick="openExpModal('pptx')">↓ PPTX</button>
+          </div>
+        </div>
+        <div id="sections-container"></div>
+        <div class="chatbox-wrap" id="chatbox" style="display:none">
+          <div class="chat-header">
+            <div class="chat-header-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+            <div><div class="chat-title">Ask follow-up questions</div><div class="chat-sub">Strategy consultant with full report context</div></div>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg ai">Hi! Your strategy report is ready. Ask me anything about the analysis, recommendations, or implementation.</div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chat-input" placeholder="Ask about the strategy..." onkeydown="if(event.key==='Enter')sendChat()"/>
+            <button class="chat-send" id="chat-send" onclick="sendChat()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- Presentation + Export overlays (identical to report.html) -->
+<div class="pres-ov" id="presOv">
+  <div class="pres-nav">
+    <button class="btn btn-ghost" onclick="closePresentation()">← Back to Report</button>
+    <div class="pres-counter"><span id="pres-current">1</span> / <span id="pres-total">1</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="navPresent(-1)">←</button>
+      <button class="btn btn-outline" onclick="navPresent(1)">→</button>
+      <button class="btn" style="background:rgba(246,173,85,.12);color:#F6AD55;border:1px solid rgba(246,173,85,.3)" onclick="openExpModal('pptx')">↓ PPTX</button>
+    </div>
+  </div>
+  <div class="pres-slide-wrap"><div class="pres-slide" id="presSlide"></div></div>
+  <div class="pres-progress"><div class="pres-progress-fill" id="presProgress"></div></div>
+</div>
+
+<div class="exp-ov" id="expOv" onclick="expBgClose(event)">
+  <div class="exp-modal">
+    <div class="exp-header"><div class="exp-title">Export Report</div><button class="exp-close" onclick="closeExpModal()">✕</button></div>
+    <div class="exp-body">
+      <div class="exp-fmt-row">
+        <div class="exp-fmt-btn active" id="expFmtPptx" onclick="setExpFmt('pptx')"><div style="font-size:20px;margin-bottom:6px">📊</div><div style="font-size:13px;font-weight:700">PowerPoint</div><div style="font-size:10px;color:#5A6278;margin-top:3px">McKinsey layout</div></div>
+        <div class="exp-fmt-btn" id="expFmtPdf" onclick="setExpFmt('pdf')"><div style="font-size:20px;margin-bottom:6px">📄</div><div style="font-size:13px;font-weight:700">PDF</div><div style="font-size:10px;color:#5A6278;margin-top:3px">Print-ready</div></div>
+      </div>
+      <div id="exp-pptx-opts">
+        <div style="font-size:12px;color:#A3A9B6;font-weight:700;margin-bottom:12px">THEME</div>
+        <div class="exp-theme-row">
+          <div class="exp-theme-btn active" id="expThemeDark" onclick="setExpTheme('dark')"><div style="width:24px;height:24px;background:#0B0D10;border-radius:4px;border:1px solid #333"></div><span>Dark</span></div>
+          <div class="exp-theme-btn" id="expThemeLight" onclick="setExpTheme('light')"><div style="width:24px;height:24px;background:#fff;border-radius:4px;border:1px solid #ddd"></div><span>Light</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="exp-foot">
+      <span class="exp-fname" id="expFname">strategy-dark.pptx</span>
+      <button class="exp-dl" id="expDlBtn" onclick="doExpDownload()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+    </div>
+  </div>
+</div>
+
+<script src="/nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/libs/pptxgen.bundle.js"></script>
+<script src="/report-view.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── MODULES ───────────────────────────────────────────────
+const MODULES = [
+  { key:'sales_planning',        icon:'📈', name:'Sales Planning',          desc:'Revenue targets, pipeline, channel mix, quota design' },
+  { key:'go_to_market',          icon:'🚀', name:'Go-To-Market',            desc:'Launch strategy, channel selection, activation' },
+  { key:'pricing_strategy',      icon:'💰', name:'Pricing Strategy',        desc:'Price positioning, tiers, value-based pricing' },
+  { key:'growth_strategy',       icon:'📊', name:'Growth Strategy',         desc:'Growth vectors, market expansion, investment priorities' },
+  { key:'market_entry',          icon:'🌏', name:'Market Entry',            desc:'Entry modes, barriers, sequencing, localization' },
+  { key:'competitive_response',  icon:'⚔️',  name:'Competitive Response',   desc:'Threat assessment, counter-positioning, differentiation' },
+  { key:'digital_transformation',icon:'💻', name:'Digital Transformation', desc:'Digital roadmap, capability gaps, tech investment' },
+  { key:'operational_excellence',icon:'⚙️',  name:'Operational Excellence', desc:'Process optimization, efficiency, cost reduction' },
+  { key:'partnership_bd',        icon:'🤝', name:'Partnership & BD',        desc:'Partner identification, deal structure, alliances' },
+  { key:'org_talent',            icon:'👥', name:'Org & Talent',            desc:'Org design, capability gaps, talent strategy' },
+];
+
+const MODULE_DETAIL = {
+  sales_planning:         'Sales planning covers: revenue target-setting, pipeline design, territory and quota allocation, channel mix optimization, sales process, and performance metrics.',
+  go_to_market:           'Go-to-market covers: target customer definition, value proposition, distribution channels, pricing, messaging, launch sequencing, and GTM metrics.',
+  pricing_strategy:       'Pricing strategy covers: price positioning, competitor price benchmarks, willingness to pay by segment, tier design, pricing model selection, and value communication.',
+  growth_strategy:        'Growth strategy covers: market sizing and growth vectors, organic vs. inorganic options, prioritized expansion markets, resource allocation, and 3-year roadmap.',
+  market_entry:           'Market entry covers: market attractiveness assessment, entry mode options (organic/JV/M&A), regulatory and distribution barriers, entry sequencing, and risk mitigation.',
+  competitive_response:   'Competitive response covers: threat assessment, competitive positioning, differentiation strategy, defensive moves, counter-positioning, and resource reallocation.',
+  digital_transformation: 'Digital transformation covers: current digital maturity, capability gaps, technology roadmap, change management approach, and digital P&L impact.',
+  operational_excellence: 'Operational excellence covers: process mapping, waste and inefficiency identification, lean implementation, cost reduction priorities, and measurement framework.',
+  partnership_bd:         'Partnership & BD covers: build-buy-partner framework, partner identification criteria, deal structure options, negotiation approach, and alliance governance.',
+  org_talent:             'Org & talent covers: current organizational design assessment, capability gap analysis, talent acquisition strategy, leadership development, and performance culture.',
+};
+
+// ── State ─────────────────────────────────────────────────
+let selectedModule = null;
+let uploadedFiles  = [];
+let webSearchOn    = false;
+let clarifyAnswer  = null;
+let planSections   = [];
+let planTitle      = '';
+let planDocSummary = '';
+let planNeedsWeb   = false;
+let planSearchFocus= '';
+let reportId       = null;
+let chatHistory    = [];
+let completedSections = [];
+let startTime, elapsedTimer, currentParams;
+
+// ── Init module grid ───────────────────────────────────────
+function initModules() {
+  const grid = document.getElementById('module-grid');
+  grid.innerHTML = MODULES.map(m => `
+    <div class="module-card" id="mc-${m.key}" onclick="selectModule('${m.key}')">
+      <div class="module-icon">${m.icon}</div>
+      <div class="module-name">${m.name}</div>
+      <div class="module-desc">${m.desc}</div>
+    </div>`).join('');
+}
+
+function selectModule(key) {
+  selectedModule = MODULES.find(m => m.key === key);
+  document.querySelectorAll('.module-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mc-' + key).classList.add('selected');
+  const strip = document.getElementById('module-strip');
+  strip.innerHTML = `<strong>${selectedModule.name}</strong> ${MODULE_DETAIL[key] || selectedModule.desc}`;
+  checkCta();
+}
+
+function checkCta() {
+  const btn = document.getElementById('btn-analyze');
+  if (btn) btn.disabled = !selectedModule;
+}
+
+// ── Web search toggle ──────────────────────────────────────
+function toggleWS() {
+  webSearchOn = !webSearchOn;
+  document.getElementById('ws-switch').classList.toggle('on', webSearchOn);
+}
+
+// ── View management ────────────────────────────────────────
+function showView(v) {
+  ['input','clarify','plan','progress','report'].forEach(id => {
+    const el = document.getElementById('view-' + id);
+    if (!el) return;
+    const active = id === v;
+    el.style.display = active ? 'block' : 'none';
+  });
+  if (v === 'report') {
+    document.getElementById('view-report').style.display = 'block';
+  }
+}
+
+function setStatus(text, pct, visible = true) {
+  const el = document.getElementById('status-text');
+  if (el) el.innerHTML = text || '';
+  const bar = document.getElementById('progress-bar');
+  if (bar && pct != null) bar.style.width = pct + '%';
+}
+
+// ── File handling (same as docreport.html) ─────────────────
+const MAX_FILES = 5, MAX_MB = 20, MAX_CHARS = 40000;
+
+function getExt(name) { return name.split('.').pop().toLowerCase(); }
+function fmtSize(b) {
+  if (b < 1024) return b + 'B';
+  if (b < 1048576) return (b/1024).toFixed(0) + 'KB';
+  return (b/1048576).toFixed(1) + 'MB';
+}
+function getBadgeCls(name) {
+  const e = getExt(name);
+  if (e === 'pdf')                        return 'badge-pdf';
+  if (['doc','docx'].includes(e))         return 'badge-docx';
+  if (['xls','xlsx','csv'].includes(e))   return 'badge-xlsx';
+  if (['ppt','pptx'].includes(e))         return 'badge-pptx';
+  if (['png','jpg','jpeg','gif','webp'].includes(e)) return 'badge-img';
+  return 'badge-txt';
+}
+
+function renderFileChips() {
+  const el = document.getElementById('file-chips');
+  if (!el) return;
+  el.innerHTML = uploadedFiles.map((f,i) => `
+    <div class="file-chip">
+      <span class="file-chip-name">${f.name}</span>
+      <span class="file-chip-status ${f.status}">${f.status === 'ready' ? '✓' : '…'}</span>
+      <button onclick="removeFile(${i})">×</button>
+    </div>`).join('');
+}
+
+function removeFile(i) { uploadedFiles.splice(i, 1); renderFileChips(); }
+
+async function extractFile(file, idx) {
+  const ext = getExt(file.name);
+  try {
+    let result;
+    if (ext === 'pdf') {
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      let text = '';
+      for (let i = 1; i <= Math.min(pdf.numPages, 80); i++) {
+        const pg = await pdf.getPage(i);
+        const ct = await pg.getTextContent();
+        text += ct.items.map(s=>s.str).join(' ') + '\n';
+      }
+      result = { text: text.slice(0, MAX_CHARS), pages: pdf.numPages };
+    } else if (['doc','docx'].includes(ext)) {
+      const buf = await file.arrayBuffer();
+      const r = await mammoth.extractRawText({ arrayBuffer: buf });
+      result = { text: r.value.slice(0, MAX_CHARS) };
+    } else if (['xls','xlsx','csv'].includes(ext)) {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: 'array' });
+      let text = '';
+      wb.SheetNames.forEach(n => { text += `[${n}]\n` + XLSX.utils.sheet_to_csv(wb.Sheets[n]) + '\n\n'; });
+      result = { text: text.slice(0, MAX_CHARS) };
+    } else if (['png','jpg','jpeg','gif','webp'].includes(ext)) {
+      result = await new Promise(res => {
+        const reader = new FileReader();
+        reader.onload = e => res({ text: null, imageBase64: e.target.result.split(',')[1], mimeType: file.type });
+        reader.readAsDataURL(file);
+      });
+    } else {
+      result = await new Promise(res => {
+        const reader = new FileReader();
+        reader.onload = e => res({ text: e.target.result.slice(0, MAX_CHARS) });
+        reader.readAsText(file);
+      });
+    }
+    uploadedFiles[idx] = { ...uploadedFiles[idx], ...result, status: 'ready' };
+  } catch (e) {
+    uploadedFiles[idx].status = 'error';
+    console.error('Extract:', file.name, e);
+  }
+  renderFileChips();
+}
+
+async function handleFiles(files) {
+  const err = document.getElementById('sb-error');
+  const arr = Array.from(files);
+  const remaining = MAX_FILES - uploadedFiles.length;
+  if (!remaining) { showError('Maximum 5 files'); return; }
+  for (const f of arr.slice(0, remaining)) {
+    if (f.size > MAX_MB * 1024 * 1024) { showError(`${f.name} exceeds ${MAX_MB}MB`); continue; }
+    const idx = uploadedFiles.length;
+    uploadedFiles.push({ name: f.name, rawSize: f.size, status: 'extracting' });
+    renderFileChips();
+    await extractFile(f, idx);
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('sb-error');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+// drag & drop
+document.addEventListener('DOMContentLoaded', () => {
+  initModules();
+  const z = document.getElementById('upload-zone');
+  const fi = document.getElementById('file-input');
+  if (z && fi) {
+    z.addEventListener('click', () => fi.click());
+    z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('drag-over'); });
+    z.addEventListener('dragleave', () => z.classList.remove('drag-over'));
+    z.addEventListener('drop', e => {
+      e.preventDefault(); z.classList.remove('drag-over');
+      handleFiles(e.dataTransfer.files);
+    });
+    fi.addEventListener('change', e => handleFiles(e.target.files));
+  }
+});
+
+// ── Main flow ──────────────────────────────────────────────
+async function startFlow() {
+  const request  = document.getElementById('f-request').value.trim();
+  const language = document.getElementById('f-language').value;
+  document.getElementById('sb-error').style.display = 'none';
+
+  if (!selectedModule) { showError('Please select a module'); return; }
+  if (!request)        { showError('Please describe your strategic goal'); return; }
+  if (uploadedFiles.some(f => f.status === 'extracting')) {
+    showError('Files still being extracted, please wait'); return;
+  }
+
+  const docs = uploadedFiles.filter(f => f.status === 'ready').map(f => ({
+    name: f.name, type: f.type || '',
+    text: f.text || null, imageBase64: f.imageBase64 || null,
+    mimeType: f.mimeType || null, pages: f.pages || null,
+  }));
+
+  showView('progress');
+  setStatus('Analyzing request...', 5);
+  document.getElementById('prog-title').textContent = 'Analyzing your request...';
+  document.getElementById('prog-subtitle').textContent = selectedModule.name;
+
+  // Store for later
+  currentParams = { request, language, moduleKey: selectedModule.key, moduleName: selectedModule.name, docs };
+
+  try {
+    const discoverRes = await fetch('/api/strategy-builder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phase: 'discover',
+        moduleKey: selectedModule.key,
+        moduleName: selectedModule.name,
+        docs, request, language,
+      }),
+    });
+    const discover = await discoverRes.json();
+    if (discover.error) throw new Error(discover.error);
+
+    if (!discover.clear) {
+      // Show clarification
+      document.getElementById('clarify-module-tag').textContent = selectedModule.name;
+      document.getElementById('clarify-insight').textContent = discover.docInsight || '';
+      document.getElementById('clarify-q').textContent       = discover.question   || '';
+      document.getElementById('clarify-opts').innerHTML = (discover.options || []).map(o =>
+        `<div class="clarify-opt" data-val="${o}" onclick="selectClarifyOpt(this)">
+          <div class="clarify-dot"></div><div>${o}</div>
+        </div>`).join('');
+      window._pendingFlow = { ...currentParams, docInsight: discover.docInsight };
+      showView('clarify');
+    } else {
+      await runPlan({ ...currentParams, docInsight: discover.docInsight });
+    }
+  } catch (e) {
+    setStatus('✗ ' + e.message, null);
+    setTimeout(() => showView('input'), 1500);
+    showError(e.message);
+  }
+}
+
+// ── Clarify ────────────────────────────────────────────────
+function selectClarifyOpt(el) {
+  document.querySelectorAll('.clarify-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  clarifyAnswer = el.dataset.val;
+}
+
+async function submitClarify() {
+  const state = window._pendingFlow;
+  if (!state) return;
+  showView('progress');
+  setStatus('Planning sections...', 20);
+  await runPlan({ ...state, answers: clarifyAnswer ? [clarifyAnswer] : [] });
+}
+
+function skipClarify() {
+  const state = window._pendingFlow;
+  if (!state) return;
+  showView('progress');
+  runPlan({ ...state, answers: [] });
+}
+
+// ── Plan phase ─────────────────────────────────────────────
+async function runPlan(params) {
+  setStatus('Planning sections...', 20);
+  document.getElementById('prog-title').textContent = 'Planning your strategy report...';
+
+  try {
+    const res = await fetch('/api/strategy-builder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phase: 'plan',
+        moduleKey: params.moduleKey,
+        moduleName: params.moduleName,
+        docs:       params.docs,
+        request:    params.request,
+        answers:    params.answers || [],
+        language:   params.language,
+        slug:       'sb-' + Date.now(),
+      }),
+    });
+    const plan = await res.json();
+    if (plan.error) throw new Error(plan.error);
+
+    // Stash state for generate
+    reportId       = plan.reportId;
+    planTitle      = plan.reportTitle || params.request;
+    planDocSummary = plan.docSummary  || '';
+    planSections   = [...plan.sections];
+    planNeedsWeb   = webSearchOn || plan.needsWebSearch;
+    planSearchFocus= plan.searchFocus || params.request;
+    currentParams  = params;
+
+    // Render plan view
+    document.getElementById('plan-title').value = planTitle;
+    document.getElementById('plan-context').innerHTML =
+      planDocSummary.replace(/\n/g, '<br/>') ||
+      `<span style="color:#3A4560">No documents provided — analysis based on ${params.moduleName} expertise and web research.</span>`;
+    renderPlanSections();
+    const wb = document.getElementById('plan-web-badge');
+    if (wb) wb.style.display = planNeedsWeb ? 'inline-flex' : 'none';
+    showView('plan');
+
+  } catch (e) {
+    setStatus('✗ ' + e.message, null);
+    setTimeout(() => showView('input'), 1500);
+  }
+}
+
+// ── Plan section list ──────────────────────────────────────
+function renderPlanSections() {
+  const el = document.getElementById('plan-sec-list');
+  if (!el) return;
+  el.innerHTML = planSections.map((s, i) => `
+    <div class="plan-sec-row" id="psr-${i}">
+      <div class="plan-sec-n">${String(i+1).padStart(2,'0')}</div>
+      <input class="plan-sec-input" value="${s}"
+        onchange="planSections[${i}] = this.value; updatePlanCount()"/>
+      <button class="plan-sec-del" onclick="delSection(${i})">×</button>
+    </div>`).join('');
+  updatePlanCount();
+}
+
+function delSection(i) { planSections.splice(i, 1); renderPlanSections(); }
+function addSection() {
+  planSections.push('New section');
+  renderPlanSections();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.plan-sec-input');
+    const last = inputs[inputs.length - 1];
+    if (last) { last.focus(); last.select(); }
+  }, 40);
+}
+function updatePlanCount() {
+  const el = document.getElementById('plan-count');
+  if (el) el.textContent = `${planSections.length} sections · ~${Math.round(planSections.length * 0.7 + 1)} min`;
+}
+
+// ── Build TOC ──────────────────────────────────────────────
+function buildToc(sections) {
+  const toc = document.getElementById('toc-list');
+  if (!toc) return;
+  toc.innerHTML = sections.map((t, i) => `
+    <div class="toc-item" id="toc-${i}"
+      onclick="document.getElementById('sec-${i}')?.scrollIntoView({behavior:'smooth'})">
+      <span class="toc-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="toc-dot"></div>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t}</span>
+    </div>`).join('');
+}
+
+// ── Generate ───────────────────────────────────────────────
+async function generate() {
+  // Read final plan from inputs
+  planTitle    = document.getElementById('plan-title').value.trim() || planTitle;
+  planSections = Array.from(document.querySelectorAll('.plan-sec-input'))
+                      .map(i => i.value.trim()).filter(Boolean);
+  const { language, request, moduleKey, moduleName, docs } = currentParams;
+
+  showView('progress');
+  startTime    = Date.now();
+  elapsedTimer = setInterval(() => {
+    document.getElementById('time-elapsed').textContent =
+      Math.floor((Date.now() - startTime) / 1000) + 's elapsed';
+  }, 1000);
+
+  document.getElementById('prog-title').textContent    = planTitle;
+  document.getElementById('prog-subtitle').textContent = selectedModule?.name || moduleName;
+  setStatus('Starting...', 5);
+
+  try {
+    // Step 1: web research if needed
+    let liveResearch = '';
+    if (planNeedsWeb) {
+      setStatus('🔍 Searching live data...', 10);
+      try {
+        const r = await fetch('/api/browser-research', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            industry:   planSearchFocus,
+            country:    'global',
+            reportType: moduleKey,
+            questions:  request,
+          }),
+        });
+        const d = await r.json();
+        liveResearch = d.research || '';
+        setStatus('✓ Research collected', 18);
+      } catch { /* non-fatal */ }
+    }
+
+    // Step 2: combined research context
+    const researchSummary = [
+      planDocSummary,
+      liveResearch ? `\n\n=== WEB RESEARCH ===\n${liveResearch}` : ''
+    ].filter(Boolean).join('');
+
+    // Step 3: build section list + TOC
+    buildSectionProgressList(planSections);
+    buildToc(planSections);
+
+    document.getElementById('report-title').textContent   = planTitle;
+    document.getElementById('report-meta-sub').textContent =
+      `${selectedModule?.name || moduleName} · ${planSections.length} sections`;
+
+    showView('report');
+    setStatus('📋 Ready', 20);
+
+    // Step 4: stream sections
+    const totalSections = planSections.length;
+    const prevDone = [];
+
+    for (let i = 0; i < planSections.length; i++) {
+      const title = planSections[i];
+      const pct   = 20 + Math.round((i / totalSections) * 75);
+      setStatus(`✍ <strong>${title}</strong>`, pct);
+      document.getElementById('prog-title').textContent = title;
+
+      let content;
+      try {
+        content = await streamSection({
+          reportId,
+          sectionIndex:  i,
+          sectionTitle:  title,
+          totalSections,
+          industry:      request.slice(0, 100),
+          country:       'Strategy Analysis',
+          reportType:    moduleKey || 'strategy_builder',
+          questions:     request,
+          language,
+          researchSummary,
+          ragContext:    { chunkText: '', patternText: '' },
+          prevSections:  prevDone,
+          sectionQuery:  null,
+        }, i);
+      } catch (err) {
+        content = JSON.stringify({
+          headline: '', stats: [], chart: null, table: null,
+          commentary: `Section generation failed: ${err.message}`, sources: []
+        });
+      }
+
+      completedSections[i] = { title, content, status: 'completed' };
+      window._completedSections = completedSections.filter(Boolean);
+      prevDone.push({ title, content, status: 'completed' });
+      setSectionStatus(i, 'done');
+    }
+
+    // Done
+    clearInterval(elapsedTimer);
+    document.getElementById('progress-bar').style.width = '100%';
+    setStatus('✓ <strong>Report complete</strong>', 100);
+    ['btn-present','btn-export-pdf','btn-export-pptx'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    });
+    document.getElementById('chatbox').style.display = 'block';
+
+  } catch (e) {
+    clearInterval(elapsedTimer);
+    setStatus('✗ Error: ' + e.message, null);
+  }
+}
+</script>
+</body>
+</html>

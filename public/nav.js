@@ -30,7 +30,15 @@
               <span class="ddm-desc">7 modules · Market overview, competitive, customer intelligence & more</span>
             </div>
           </a>
-          <a href="/docreport.html" class="ddm-item">
+          <a href="/strategy-builder.html" class="ddm-item">
+            <div class="ddm-icon" style="background:rgba(246,173,85,.1);border-color:rgba(246,173,85,.2)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F6AD55" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <div class="ddm-text">
+              <span class="ddm-label">Strategy Builder</span>
+              <span class="ddm-desc">10 modules · Upload docs · Claude builds your strategic report</span>
+            </div>
+          </a>
             <div class="ddm-icon" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2)">
               <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
@@ -65,8 +73,9 @@
 <div class="mobile-nav" id="mobile-nav">
   <div class="mobile-nav-inner">
     <div class="mobile-section-label">Reports</div>
-    <a href="/report.html"    class="mobile-link">Market Analysis</a>
-    <a href="/docreport.html" class="mobile-link">Document Intelligence</a>
+    <a href="/report.html"            class="mobile-link">Market Analysis</a>
+    <a href="/strategy-builder.html"  class="mobile-link">Strategy Builder</a>
+    <a href="/docreport.html"         class="mobile-link">Document Intelligence</a>
     <div class="mobile-divider"></div>
     <a href="/library.html"  class="mobile-link">Library</a>
     <a href="/insights.html" class="mobile-link">Insights</a>
@@ -91,6 +100,7 @@
       <div class="footer-col">
         <div class="footer-col-title">Reports</div>
         <a href="/report.html">Market Analysis</a>
+        <a href="/strategy-builder.html">Strategy Builder</a>
         <a href="/docreport.html">Document Intelligence</a>
         <a href="/library.html">Living Library</a>
       </div>
