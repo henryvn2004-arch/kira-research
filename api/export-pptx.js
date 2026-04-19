@@ -163,6 +163,30 @@ function addTableSlide(p, s, C, cy, headers, rows) {
   return cy + Math.min(tableH, 3.0) + 0.15;
 }
 
+// ── Extract key insight sentences from commentary ──
+function extractKeyPts(commentary, max) {
+  if (!commentary) return [];
+  const clean = commentary.replace(/\*\*(.*?)\*\*/g,'$1').replace(/###\s*/g,'');
+  const paras = clean.split(/\n\n+/).filter(p => p.trim().length > 30).slice(0, max + 1);
+  return paras.map(p => {
+    const sentences = p.match(/[^.!?]+[.!?]+/g) || [p];
+    return sentences.slice(0, 2).join(' ').trim().slice(0, 200);
+  }).filter(Boolean).slice(0, max);
+}
+
+// ── Render key insight bullets in left column ──
+function addKeyPoints(s, C, x, y, w, maxH, pts) {
+  if (!pts?.length) return y;
+  const lineH = 0.35;
+  pts.slice(0, Math.floor(maxH / lineH)).forEach((pt, i) => {
+    const yp = y + i * lineH;
+    // Blue tick mark
+    s.addShape(s._p?.shapes?.RECTANGLE || 'rect', { x: x, y: yp + 0.08, w: 0.04, h: lineH * 0.55, fill: { color: C.blue }, line: { color: C.blue } });
+    s.addText(pt, { x: x + 0.1, y: yp, w: w - 0.12, h: lineH, fontFace: 'Arial', fontSize: 8.5, color: C.textMid, wrap: true, valign: 'top', margin: 0 });
+  });
+  return y + pts.length * lineH;
+}
+
 async function generate(meta, sections, theme){
   const PptxGenJS = (await import('pptxgenjs')).default;
   const pres = new PptxGenJS();
@@ -186,102 +210,145 @@ async function generate(meta, sections, theme){
     s.addText("K",{x:6.5,y:0.1,w:4,h:5.3,fontFace:"Arial",fontSize:240,bold:true,color:C.ghostK,margin:0});
   }
 
-  // ── Content slides ──
+  // ── Content slides — generate sub-slides per section ──
+  let globalSlideNum = 1;
+  const totalSlides = sections.reduce((sum, sec) => {
+    let n = 1; // always divider
+    if (sec.stats?.length) n++;
+    if (sec.chart) n++;
+    if (sec.tableHeaders?.length) n++;
+    return sum + n;
+  }, 0);
+
   sections.forEach((sec, idx) => {
-    const s  = pres.addSlide();
-    s.background = {color:C.surface};
-    let cy   = header(pres, s, C, idx+1, sec.label||'', sec.title||'');
-    const cBg = C.isDark ? C.surface2 : "FFFFFF";
+    const keyPts = extractKeyPts(sec.commentary || '', 4);
+    const cBg    = C.isDark ? C.surface2 : 'FFFFFF';
 
-    // ── Stats (dynamic width — fits 1–6 without overflow) ──
-    if(sec.stats?.length){
-      const stats = sec.stats.slice(0, 6);
-      const n = stats.length;
-      const gap = 0.2;
-      const sw  = (9.3 - (n-1)*gap) / n;
-      const sh  = 0.82;
-      stats.forEach((st, i) =>
-        statCard(pres, s, C,
-          0.35 + i*(sw+gap), cy, sw, sh,
-          st.label||'', st.value||'', st.change||'',
-          st.accentColor || C.blue
-        )
-      );
-      cy += sh + 0.22;
-    }
-
-    // ── Chart — FIX: handle line/radar (datasets format) + bar/doughnut (data format) ──
-    if(sec.chart){
-      const ch   = sec.chart;
-      const data = toPptxData(ch); // unified transform
-      const chartH = ch.h ?? 2.4;
-
-      if(data && data.length && data[0].labels?.length){
-        // Make sure chart fits in remaining space
-        const availH = H - cy - 0.35;
-        const h = Math.min(chartH, availH);
-
-        const opts = {
-          x: 0.35, y: cy, w: 9.3, h,
-          ...cBase(C, cBg),
-          chartColors: ch.colors || [C.blue],
-          showValue: false, // avoid label clutter on export
-          title: ch.title||'',
-          showTitle: !!(ch.title),
-          titleFontSize: 9,
-          titleColor: C.textDim,
-          chartArea: {fill:{color:cBg}, border:{pt:C.isDark?0:0.5,color:C.borderLt}},
-          plotArea: {fill:{color:cBg}},
-        };
-
-        try {
-          if(ch.type==='bar'){
-            s.addChart(pres.charts.BAR, data, {...opts, barDir:ch.dir||'col', showValue:true, dataLabelPosition:"outEnd"});
-          } else if(ch.type==='line'){
-            s.addChart(pres.charts.LINE, data, {...opts, lineSize:2, lineSmooth:true, showLegend:data.length>1, legendPos:'r', legendFontSize:8, legendColor:C.textMid});
-          } else if(ch.type==='doughnut'){
-            s.addChart(pres.charts.DOUGHNUT, data, {...opts, holeSize:52, showLabel:false, showPercent:false, showLegend:true, legendPos:'b', legendFontSize:8, legendColor:C.textMid});
-          } else if(ch.type==='radar'){
-            s.addChart(pres.charts.RADAR, data, {...opts, showLegend:data.length>1, legendPos:'r', legendFontSize:8, legendColor:C.textMid, radarStyle:'marker'});
-          }
-          cy += h + 0.15;
-        } catch(chartErr) {
-          console.warn(`Chart render skipped (sec ${idx+1}):`, chartErr.message);
-        }
+    // ── A: Section divider slide ──
+    {
+      const s = pres.addSlide();
+      s.background = {color:C.bg};
+      if(!C.isDark) s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:W,h:0.06,fill:{color:C.blue},line:{color:C.blue}});
+      s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:0.05,h:H,fill:{color:C.blue},line:{color:C.blue}});
+      // Ghost section number
+      s.addText(String(idx+1).padStart(2,'0'),{x:5.5,y:0.1,w:5,h:5.3,fontFace:"Arial",fontSize:240,bold:true,color:C.ghostK,margin:0});
+      s.addText(`${String(idx+1).padStart(2,'0')}  —  SECTION`,{x:0.5,y:1.6,w:7,h:0.28,fontFace:"Arial",fontSize:9,bold:true,color:C.blue,charSpacing:3,margin:0});
+      const tfs = (sec.label||'').length > 60 ? 22 : (sec.label||'').length > 40 ? 26 : 30;
+      s.addText(sec.label||sec.title||'',{x:0.5,y:2.1,w:8,h:1.6,fontFace:"Arial",fontSize:tfs,bold:true,color:C.text,margin:0});
+      if(sec.finding){
+        s.addShape(pres.shapes.RECTANGLE,{x:0.5,y:3.55,w:0.04,h:0.82,fill:{color:C.blue},line:{color:C.blue}});
+        s.addShape(pres.shapes.RECTANGLE,{x:0.5,y:3.55,w:8.8,h:0.82,fill:{color:C.isDark?C.surface2:C.surface2},line:{color:C.border,width:0.5}});
+        s.addText('KEY FINDING',{x:0.65,y:3.62,w:3,h:0.16,fontFace:"Arial",fontSize:7,bold:true,color:C.blue,charSpacing:2,margin:0});
+        s.addText(sec.finding,{x:0.65,y:3.8,w:8.5,h:0.48,fontFace:"Arial",fontSize:9.5,color:C.text,margin:0});
       }
+      footer(pres,s,C,sec.source||'',globalSlideNum++,totalSlides);
     }
 
-    // ── Table ──
-    if(sec.tableHeaders?.length && sec.tableRows?.length){
-      cy = addTableSlide(pres, s, C, cy, sec.tableHeaders, sec.tableRows);
+    // ── B: Dashboard slide — stats + key points ──
+    if(sec.stats?.length) {
+      const s = pres.addSlide();
+      s.background = {color:C.surface};
+      let cy = header(pres,s,C,idx+1,sec.label||'',sec.title||sec.finding||'Key Metrics Overview');
+
+      // Stats row — dynamic width
+      const stats = sec.stats.slice(0,4);
+      const n = stats.length;
+      const gap = 0.18, sw = (9.3-(n-1)*gap)/n, sh = 0.82;
+      stats.forEach((st,i) => statCard(pres,s,C,0.35+i*(sw+gap),cy,sw,sh,st.label||'',st.value||'',st.change||'',st.accentColor||C.blue));
+      cy += sh + 0.2;
+
+      // Key points below stats
+      if(keyPts.length) {
+        s.addText('KEY INSIGHTS',{x:0.35,y:cy,w:3,h:0.2,fontFace:"Arial",fontSize:7,bold:true,color:C.blue,charSpacing:2,margin:0});
+        cy += 0.22;
+        keyPts.slice(0,3).forEach((pt,i) => {
+          const yp = cy + i*0.48;
+          s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.08,w:0.03,h:0.28,fill:{color:C.border},line:{color:C.border}});
+          s.addText(pt,{x:0.5,y:yp,w:8.8,h:0.44,fontFace:"Arial",fontSize:9,color:C.textMid,wrap:true,valign:'top',margin:0});
+        });
+      }
+      footer(pres,s,C,sec.source||'',globalSlideNum++,totalSlides);
     }
 
-    // ── Key Finding (anchored above footer) ──
-    if(sec.finding){
-      const fy = Math.min(cy, H - 1.1);
-      finding(pres, s, C, fy, sec.finding);
-    }
+    // ── C: Analysis slide — 2-col: key points LEFT | chart RIGHT ──
+    if(sec.chart) {
+      const ch = sec.chart;
+      const s = pres.addSlide();
+      s.background = {color:C.surface};
+      header(pres,s,C,idx+1,sec.label||'',ch.title||sec.title||'');
 
-    // ── Commentary text (if no chart + no table — show brief text) ──
-    if(!sec.chart && !sec.tableHeaders?.length && sec.commentary){
-      const snippet = sec.commentary.slice(0, 600);
-      const availH  = Math.max(0.5, H - cy - 0.35 - (sec.finding ? 0.9 : 0));
-      s.addText(snippet, {
-        x:0.35, y:cy, w:9.3, h:Math.min(availH, 2.2),
-        fontFace:"Arial", fontSize:9, color:C.textMid,
-        wrap:true, valign:'top', margin:[0,0,0,0]
+      // Divider between columns
+      const divX = 3.6;
+      s.addShape(pres.shapes.LINE,{x:divX,y:1.2,w:0,h:H-1.55,line:{color:C.border,width:0.5}});
+
+      // LEFT: key points
+      s.addText('ANALYSIS',{x:0.35,y:1.25,w:3,h:0.18,fontFace:"Arial",fontSize:7,bold:true,color:C.blue,charSpacing:2,margin:0});
+      if(sec.finding){
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:1.5,w:0.03,h:0.68,fill:{color:C.blue},line:{color:C.blue}});
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:1.5,w:3.1,h:0.68,fill:{color:cBg},line:{color:C.borderLt,width:0.5}});
+        s.addText(sec.finding,{x:0.5,y:1.52,w:2.9,h:0.62,fontFace:"Arial",fontSize:8.5,bold:true,color:C.text,wrap:true,valign:'top',margin:0});
+      }
+      const kpY = sec.finding ? 2.28 : 1.5;
+      keyPts.slice(0,3).forEach((pt,i) => {
+        const yp = kpY + i*0.56;
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.1,w:0.03,h:0.32,fill:{color:C.border},line:{color:C.border}});
+        s.addText(pt,{x:0.5,y:yp,w:2.9,h:0.52,fontFace:"Arial",fontSize:8.5,color:C.textMid,wrap:true,valign:'top',margin:0});
       });
+
+      // RIGHT: chart
+      const data = toPptxData(ch);
+      if(data?.length && data[0]?.labels?.length) {
+        const opts = {
+          x:divX+0.2, y:1.2, w:9.3-divX-0.15, h:H-1.55,
+          ...cBase(C,cBg),
+          chartColors:ch.colors||[C.blue],
+          showValue:false,
+          title:ch.title||'',showTitle:!!(ch.title),titleFontSize:8.5,titleColor:C.textDim,
+          chartArea:{fill:{color:cBg},border:{pt:0}},
+          plotArea:{fill:{color:cBg}},
+        };
+        try {
+          if(ch.type==='bar') s.addChart(pres.charts.BAR,data,{...opts,barDir:ch.dir||'col'});
+          else if(ch.type==='line') s.addChart(pres.charts.LINE,data,{...opts,lineSize:1.8,lineSmooth:true,showLegend:data.length>1,legendPos:'b',legendFontSize:7,legendColor:C.textMid});
+          else if(ch.type==='doughnut') s.addChart(pres.charts.DOUGHNUT,data,{...opts,holeSize:50,showLegend:true,legendPos:'b',legendFontSize:7,legendColor:C.textMid});
+          else if(ch.type==='radar') s.addChart(pres.charts.RADAR,data,{...opts,showLegend:data.length>1,legendPos:'b',legendFontSize:7,radarStyle:'marker'});
+        } catch(e) { console.warn('Chart render err:',e.message); }
+      }
+      footer(pres,s,C,sec.source||'',globalSlideNum++,totalSlides);
     }
 
-    // ── Bullets (legacy field, kept for compatibility) ──
-    if(sec.bullets?.length){
-      const items = sec.bullets.map((b,i) => ({text:String(b), options:{bullet:true, breakLine:i<sec.bullets.length-1, color:C.textMid, fontSize:10, paraSpaceAfter:4}}));
-      const bh = Math.min(sec.bullets.length*0.38, 1.8);
-      s.addText(items, {x:0.35, y:cy, w:9.3, h:bh, fontFace:"Arial", margin:[0,0,0,8]});
-      cy += bh + 0.15;
-    }
+    // ── D: Data slide — 2-col: key points LEFT | table RIGHT ──
+    if(sec.tableHeaders?.length && sec.tableRows?.length) {
+      const s = pres.addSlide();
+      s.background = {color:C.surface};
+      header(pres,s,C,idx+1,sec.label||'',sec.tableTitle||sec.title||'');
 
-    footer(pres, s, C, sec.source||'', idx+1, sections.length);
+      const divX = 3.6;
+      s.addShape(pres.shapes.LINE,{x:divX,y:1.2,w:0,h:H-1.55,line:{color:C.border,width:0.5}});
+
+      // LEFT: key points
+      s.addText('ANALYSIS',{x:0.35,y:1.25,w:3,h:0.18,fontFace:"Arial",fontSize:7,bold:true,color:C.blue,charSpacing:2,margin:0});
+      const kpStart = 1.52;
+      const kpSlice = keyPts.slice(-3);
+      kpSlice.forEach((pt,i) => {
+        const yp = kpStart + i * 0.6;
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.1,w:0.03,h:0.35,fill:{color:C.border},line:{color:C.border}});
+        s.addText(pt,{x:0.5,y:yp,w:2.9,h:0.56,fontFace:"Arial",fontSize:8.5,color:C.textMid,wrap:true,valign:'top',margin:0});
+      });
+
+      // RIGHT: table
+      const tableH = Math.min(H - 1.55, 0.28 * (1 + (sec.tableRows||[]).length));
+      const colW = (9.3 - divX - 0.15) / sec.tableHeaders.length;
+      const tRows = [
+        sec.tableHeaders.map(h=>({text:h.toUpperCase(),options:{bold:true,fontSize:7.5,color:C.textDim,charSpacing:1,fill:{color:C.isDark?C.surface:C.surface2},align:'left',border:[{pt:0},{pt:0},{pt:0.4,color:C.border},{pt:0}]}})),
+        ...(sec.tableRows||[]).slice(0,10).map((row,ri)=>row.map((cell,ci)=>({text:String(cell||''),options:{fontSize:8.5,color:ci===0?C.text:C.textMid,bold:ci===0,fill:{color:ri%2===0?cBg:(C.isDark?C.surface:'F7FAFC')},align:'left',border:[{pt:0},{pt:0},{pt:0.3,color:C.borderLt},{pt:0}]}}))),
+      ];
+      try {
+        s.addTable(tRows,{x:divX+0.2,y:1.2,w:9.3-divX-0.2,rowH:0.28,fontFace:'Arial',border:{pt:0.5,color:C.border},fill:{color:cBg}});
+      } catch(e) { console.warn('Table render err:',e.message); }
+
+      footer(pres,s,C,sec.source||'',globalSlideNum++,totalSlides);
+    }
   });
 
   // ── Back cover ──
