@@ -17,6 +17,7 @@
     .icon.processing{background:rgba(30,111,255,.15);border:2px solid rgba(30,111,255,.3);animation:pulse 1.5s ease-in-out infinite}
     .icon.success{background:rgba(56,217,150,.12);border:2px solid rgba(56,217,150,.3)}
     .icon.error{background:rgba(229,62,62,.1);border:2px solid rgba(229,62,62,.25)}
+    .icon.cancelled{background:rgba(163,169,182,.1);border:2px solid rgba(163,169,182,.25)}
     @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(30,111,255,.3)}50%{box-shadow:0 0 0 12px rgba(30,111,255,0)}}
     h2{font-size:22px;font-weight:700;margin-bottom:8px}
     p{font-size:14px;color:#A3A9B6;line-height:1.6;margin-bottom:0}
@@ -32,6 +33,8 @@
     @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
     .btn{display:inline-block;margin-top:24px;padding:12px 28px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:Arial,sans-serif;text-decoration:none}
     .btn:hover{background:#1558CC}
+    .btn-ghost{display:inline-block;margin-top:12px;padding:10px 24px;background:transparent;color:#A3A9B6;border:1px solid #242A35;border-radius:8px;font-size:14px;cursor:pointer;transition:all .2s;text-decoration:none}
+    .btn-ghost:hover{border-color:#A3A9B6;color:#fff}
     .error-msg{background:rgba(229,62,62,.08);border:1px solid rgba(229,62,62,.2);border-radius:8px;padding:12px;font-size:13px;color:#FC8181;margin-top:16px}
   </style>
 </head>
@@ -41,11 +44,11 @@
     <h2 id="status-title">Processing payment...</h2>
     <p id="status-sub">Please wait while we confirm your payment.</p>
 
-    <div class="progress">
+    <div class="progress" id="progress-bar">
       <div class="progress-fill" id="progress-fill"></div>
     </div>
 
-    <div class="step-list">
+    <div class="step-list" id="step-list">
       <div class="step-row active" id="step-confirm">
         <div class="step-dot"></div>
         <span>Confirming payment with PayPal</span>
@@ -64,55 +67,93 @@
   </div>
 
   <script>
+    // ── Route map: slug prefix → tool page ──────────────────
+    // Covers all 3 live tools + legacy slugs from old report types
+    const ROUTE_MAP = {
+      // Market Analysis (report.html)
+      'market':       '/report.html',
+      'industry':     '/report.html',
+      'competitive':  '/report.html',
+      'customer':     '/report.html',
+      'value':        '/report.html',
+      'pricing':      '/report.html',
+      'partner':      '/report.html',
+      // Strategy Builder
+      'strategy':     '/strategy-builder.html',
+      'go':           '/strategy-builder.html',
+      'proposition':  '/strategy-builder.html',
+      'gtm':          '/strategy-builder.html',
+      // Doc Intelligence
+      'doc':          '/docreport.html',
+      'document':     '/docreport.html',
+      // Library
+      'living':       '/library.html',
+    };
+
+    function getReturnPage(slug) {
+      const prefix = (slug || '').toLowerCase().split('-')[0];
+      return ROUTE_MAP[prefix] || '/report.html';
+    }
+
     function setStep(name) {
-      ['confirm','save','redirect'].forEach(s => {
-        const el = document.getElementById('step-' + s);
-        el.classList.remove('active','done');
-      });
-      const steps = ['confirm','save','redirect'];
+      const steps = ['confirm', 'save', 'redirect'];
       const idx   = steps.indexOf(name);
       steps.forEach((s, i) => {
         const el = document.getElementById('step-' + s);
-        if (i < idx) el.classList.add('done');
-        else if (i === idx) el.classList.add('active');
+        el.classList.remove('active', 'done');
+        if (i < idx)  el.classList.add('done');
+        if (i === idx) el.classList.add('active');
       });
-      document.getElementById('progress-fill').style.width =
-        name === 'confirm' ? '20%' : name === 'save' ? '60%' : '90%';
+      const pct = name === 'confirm' ? '20%' : name === 'save' ? '60%' : '90%';
+      document.getElementById('progress-fill').style.width = pct;
     }
 
     function showError(msg) {
       document.getElementById('status-icon').textContent = '✕';
       document.getElementById('status-icon').className   = 'icon error';
       document.getElementById('status-title').textContent = 'Payment Error';
-      document.getElementById('status-sub').textContent   = 'Something went wrong. Please contact support.';
+      document.getElementById('status-sub').textContent   = 'Something went wrong. Please try again or contact support.';
+      document.getElementById('step-list').style.display  = 'none';
+      document.getElementById('progress-bar').style.display = 'none';
       document.getElementById('error-area').innerHTML =
         `<div class="error-msg">${msg}</div>
          <a href="/" class="btn">Return Home</a>`;
     }
 
+    function showCancelled(returnPage) {
+      document.getElementById('status-icon').textContent = '↩';
+      document.getElementById('status-icon').className   = 'icon cancelled';
+      document.getElementById('status-title').textContent = 'Payment cancelled';
+      document.getElementById('status-sub').textContent   = 'Your payment was cancelled. No charge was made.';
+      document.getElementById('step-list').style.display  = 'none';
+      document.getElementById('progress-bar').style.display = 'none';
+      document.getElementById('error-area').innerHTML =
+        `<a href="${returnPage}" class="btn">Try Again</a>
+         <br><a href="/" class="btn-ghost">Return Home</a>`;
+    }
+
     async function processPayment() {
-      const params  = new URLSearchParams(window.location.search);
-      // PayPal appends ?token=ORDER_ID&PayerID=... to return_url
-      const token   = params.get('token');
-      const slug    = params.get('slug');
-      const userId  = params.get('userId') || '';
+      const params = new URLSearchParams(window.location.search);
+      const token  = params.get('token');      // PayPal order ID
+      const slug   = params.get('slug');
+      const userId = params.get('userId') || '';
 
-      // Route map by slug prefix
-      const routeMap = {
-        'industry':    '/report.html',
-        'competitive': '/compare.html',
-        'market':      '/tracker.html',
-      };
-      const prefix     = (slug || '').split('-')[0];
-      const returnPage = routeMap[prefix] || '/report.html';
+      const returnPage = getReturnPage(slug);
 
+      // ── Cancelled flow ────────────────────────────────────
+      if (params.get('cancelled') === '1') {
+        showCancelled(returnPage);
+        return;
+      }
+
+      // ── No token = direct navigation ──────────────────────
       if (!token) {
-        // No token = user cancelled or direct navigation
         document.getElementById('status-icon').textContent = '✕';
         document.getElementById('status-icon').className   = 'icon error';
         document.getElementById('status-title').textContent = 'No payment found';
         document.getElementById('status-sub').textContent   = 'Redirecting you back...';
-        setTimeout(() => window.location.href = returnPage, 2000);
+        document.getElementById('step-list').style.display  = 'none';
+        setTimeout(() => window.location.href = returnPage || '/', 2500);
         return;
       }
 
@@ -121,7 +162,7 @@
       }
 
       try {
-        // Step 1: Capture
+        // Step 1: Capture payment
         setStep('confirm');
         const captureRes = await fetch('/api/payment?action=capture', {
           method: 'POST',
@@ -131,16 +172,16 @@
         const captureData = await captureRes.json();
         if (!captureData.success) throw new Error(captureData.error || 'Capture failed');
 
-        // Step 2: Save
+        // Step 2: Brief UX pause
         setStep('save');
-        await new Promise(r => setTimeout(r, 600)); // small pause for UX
+        await new Promise(r => setTimeout(r, 600));
 
-        // Step 3: Redirect to generation page
+        // Step 3: Redirect to tool with unlocked flag
         setStep('redirect');
         document.getElementById('progress-fill').style.width = '100%';
         await new Promise(r => setTimeout(r, 500));
 
-        window.location.href = `${returnPage}?unlocked=1&slug=${slug}`;
+        window.location.href = `${returnPage}?unlocked=1&slug=${encodeURIComponent(slug)}`;
 
       } catch (e) {
         showError(e.message);
