@@ -118,95 +118,144 @@ const TYPE_NAMES = {
   go_to_market:             'Go-To-Market report',
 };
 
-// ── Local-language query generation ──────────────────────
-// Map country → authoritative local sources to cite
+// ── Country → language detection ────────────────────────
+// Auto-detect local language from market selection.
+// Covers all APAC + major markets — no per-language maintenance needed.
+const COUNTRY_LANG = {
+  // Southeast Asia
+  'Vietnam':'Vietnamese','Thailand':'Thai','Indonesia':'Indonesian',
+  'Malaysia':'Malay','Philippines':'Filipino','Myanmar':'Burmese',
+  'Cambodia':'Khmer','Laos':'Lao','Singapore':'English','Brunei':'Malay',
+  // East Asia
+  'Japan':'Japanese','South Korea':'Korean','Korea':'Korean',
+  'China':'Chinese (Simplified)','Taiwan':'Chinese (Traditional)',
+  'Hong Kong':'Chinese (Traditional)','Macau':'Chinese (Traditional)',
+  // South Asia
+  'India':'Hindi','Bangladesh':'Bengali','Sri Lanka':'Sinhala',
+  'Pakistan':'Urdu','Nepal':'Nepali',
+  // Other
+  'Australia':'English','New Zealand':'English','United States':'English',
+};
+
+// Local authoritative sources per country — referenced in research prompt
 const LOCAL_SOURCES = {
-  'Vietnam':     'Tổng cục Thống kê (GSO), Ngân hàng Nhà nước (SBV), VCCI, CafeF, VnExpress, Tạp chí Kinh tế',
-  'Thailand':    'NESDC, Bank of Thailand, BOI, Bangkok Post, SET, Thai PBS',
+  'Vietnam':     'Tổng cục Thống kê (GSO), Ngân hàng Nhà nước (SBV), VCCI, CafeF, VnExpress',
+  'Thailand':    'NESDC, Bank of Thailand, BOI, Bangkok Post, SET',
   'Indonesia':   'BPS, Bank Indonesia, OJK, Kementerian Perdagangan, Bisnis.com, Kompas',
   'Malaysia':    'DOSM, BNM (Bank Negara), MITI, The Edge, Bernama',
-  'Philippines': 'PSA, BSP, DTI, Philippine Star, Philippine Daily Inquirer',
+  'Philippines': 'PSA, BSP, DTI, Philippine Star',
   'Singapore':   'MTI, MAS, EDB, Channel NewsAsia, The Straits Times',
+  'Japan':       '経済産業省 (METI), 日本銀行 (BOJ), 総務省統計局, 日経新聞, 東洋経済',
+  'South Korea': '통계청 (KOSTAT), 한국은행 (BOK), 산업통상자원부, 한국경제, 매일경제',
+  'Korea':       '통계청 (KOSTAT), 한국은행 (BOK), 산업통상자원부, 한국경제, 매일경제',
+  'China':       '国家统计局 (NBS), 商务部, 中国人民银行, 财新, 第一财经',
+  'Taiwan':      '主計總處 (DGBAS), 中央銀行, 工業總會, 經濟日報',
+  'India':       'MOSPI, RBI, DPIIT, Economic Times, Business Standard',
   'Myanmar':     'MNPED, CBM, DICA, Myanmar Times',
   'Cambodia':    'NIS, NBC, CRDB, Phnom Penh Post',
-  'Laos':        'LSB, NLBC, Vientiane Times',
 };
 
-// Query templates per section type, per language
-// format: (industry, country) => string[]
-const SECTION_QUERY_TEMPLATES = {
-  vi: {
-    executive_summary:    (I,C) => [`tổng quan thị trường ${I} ${C} 2024`, `quy mô ngành ${I} ${C}`],
-    market_assessment:    (I,C) => [`quy mô thị trường ${I} ${C} 2024 2025`, `tốc độ tăng trưởng ${I} ${C} CAGR`, `doanh thu ngành ${I} Việt Nam`],
-    market_segmentation:  (I,C) => [`phân khúc thị trường ${I} ${C}`, `phân loại sản phẩm ${I} ${C} theo giá`],
-    industry_structure:   (I,C) => [`chuỗi giá trị ${I} ${C}`, `kênh phân phối ${I} ${C}`, `biên lợi nhuận nhà phân phối ${I} ${C}`],
-    competitive_landscape:(I,C) => [`thị phần ${I} ${C} 2024`, `doanh nghiệp ${I} lớn nhất ${C}`, `xếp hạng công ty ${I} ${C}`],
-    competitor_profiles:  (I,C) => [`doanh thu ${I} ${C} công ty hàng đầu`, `chiến lược ${I} ${C} đối thủ cạnh tranh`],
-    market_drivers:       (I,C) => [`động lực tăng trưởng ngành ${I} ${C}`, `xu hướng ${I} ${C} 2024 2025`, `thách thức ${I} ${C}`],
-    consumer_insights:    (I,C) => [`hành vi người tiêu dùng ${I} ${C}`, `nhu cầu khách hàng ${I} ${C}`, `nhân khẩu học người mua ${I} ${C}`],
-    pricing_analysis:     (I,C) => [`giá ${I} ${C} theo phân khúc 2024`, `bảng giá ${I} ${C}`, `chiến lược định giá ${I} ${C}`],
-    regulatory:           (I,C) => [`quy định pháp lý ${I} ${C} 2024`, `điều kiện cấp phép ${I} ${C}`, `chính sách nhà nước ${I} ${C}`],
-    market_forecast:      (I,C) => [`dự báo thị trường ${I} ${C} 2025 2026 2027`, `kịch bản tăng trưởng ${I} ${C}`],
-    recommendations:      (I,C) => [`cơ hội kinh doanh ${I} ${C}`, `chiến lược thâm nhập thị trường ${I} ${C}`],
-  },
-  th: {
-    market_assessment:    (I,C) => [`ขนาดตลาด${I}${C} 2567`, `อัตราการเติบโต${I}ประเทศไทย`, `มูลค่าตลาด${I}ไทย`],
-    competitive_landscape:(I,C) => [`ส่วนแบ่งตลาด${I}ไทย`, `บริษัท${I}ชั้นนำประเทศไทย 2567`],
-    market_drivers:       (I,C) => [`แนวโน้ม${I}ประเทศไทย 2567`, `ปัจจัยขับเคลื่อน${I}ไทย`],
-    pricing_analysis:     (I,C) => [`ราคา${I}ประเทศไทยตามกลุ่ม`, `โครงสร้างราคา${I}ไทย`],
-    regulatory:           (I,C) => [`กฎระเบียบ${I}ประเทศไทย`, `นโยบายภาครัฐ${I}ไทย`],
-  },
-  id: {
-    market_assessment:    (I,C) => [`ukuran pasar ${I} Indonesia 2024`, `pertumbuhan ${I} Indonesia CAGR`],
-    competitive_landscape:(I,C) => [`pangsa pasar ${I} Indonesia 2024`, `perusahaan ${I} terbesar Indonesia`],
-    market_drivers:       (I,C) => [`tren ${I} Indonesia 2024`, `faktor pertumbuhan ${I} Indonesia`],
-    pricing_analysis:     (I,C) => [`harga ${I} Indonesia segmen`, `strategi harga ${I} Indonesia`],
-    regulatory:           (I,C) => [`regulasi ${I} Indonesia 2024`, `kebijakan pemerintah ${I} Indonesia`],
-  },
+// ── EN fallback queries per section type ─────────────────
+const EN_QUERIES = {
+  executive_summary:     (I,C) => [`${I} market overview ${C} 2024 key findings`],
+  market_assessment:     (I,C) => [`${I} market size ${C} 2024 revenue USD`,`${I} market growth CAGR ${C}`],
+  market_segmentation:   (I,C) => [`${I} market segments ${C} product categories breakdown`],
+  industry_structure:    (I,C) => [`${I} distribution channels ${C} share`,`${I} value chain margin stack ${C}`],
+  competitive_landscape: (I,C) => [`${I} market share ${C} 2024 top companies ranking`],
+  competitor_profiles:   (I,C) => [`${I} company revenue strategy ${C} 2024`,`${I} leading player ${C} profile`],
+  market_drivers:        (I,C) => [`${I} growth drivers ${C} 2024`,`${I} challenges barriers ${C}`],
+  consumer_insights:     (I,C) => [`${I} consumer behavior ${C} 2024 survey`],
+  pricing_analysis:      (I,C) => [`${I} pricing segments ${C}`,`${I} price tier strategy ${C}`],
+  regulatory:            (I,C) => [`${I} regulations ${C} 2024`,`${I} government policy ${C}`],
+  market_forecast:       (I,C) => [`${I} market forecast ${C} 2025 2026 2027 scenario`],
+  recommendations:       (I,C) => [`${I} market entry opportunity strategy ${C}`],
+  industry_competitiveness:(I,C)=>[`${I} competitive intensity ${C} barriers entry`],
+  pricing_margin:        (I,C) => [`${I} distributor retailer margin stack ${C}`],
+  partner_identification:(I,C) => [`${I} distribution partner ${C}`,`${I} business partner ${C} 2024`],
+  entry_mode:            (I,C) => [`${I} market entry mode ${C} distributor JV greenfield`],
+  gap_analysis:          (I,C) => [`${I} market gap unmet needs ${C} whitespace`],
 };
 
-const LANG_CODE_MAP = {
-  'Vietnamese': 'vi', 'Thai': 'th', 'Indonesian': 'id', 'Malay': 'id',
-  'Filipino': 'tl', 'Khmer': 'km', 'Myanmar': 'my',
-};
-
-// Simple section-type detector (mirrors generate-section.js getBlueprint patterns)
+// Section type detector — works for any language section titles
 function detectSectionType(title) {
   const patterns = [
-    [/exec.*sum|tóm.*(tắt|lược)|summary/i,                      'executive_summary'],
-    [/market.*assess|market.*overview|market.*size|quy.*mô|đánh.*giá.*thị/i, 'market_assessment'],
-    [/segment|phân.*khúc|phân.*loại/i,                           'market_segmentation'],
-    [/industry.*struct|value.*chain|channel.*struct|chuỗi|kênh/i,'industry_structure'],
-    [/compet.*landscape|market.*share|thị.*phần.*tổng|cạnh.*tranh.*tổng/i, 'competitive_landscape'],
-    [/compet.*profil|player.*profil|company.*profil|hồ.*sơ|đối.*thủ.*cụ/i, 'competitor_profiles'],
-    [/driver|trend|factor|động.*lực|xu.*hướng/i,                 'market_drivers'],
-    [/consumer|customer|buyer|người.*tiêu|khách.*hàng/i,         'consumer_insights'],
-    [/pric|giá|định.*giá/i,                                      'pricing_analysis'],
-    [/regulat|policy|legal|chính.*sách|pháp.*lý|quy.*định/i,    'regulatory'],
-    [/forecast|outlook|dự.*báo|kịch.*bản|tương.*lai/i,          'market_forecast'],
-    [/recommend|khuyến.*nghị|chiến.*lược.*đề/i,                  'recommendations'],
+    [/exec.*sum|summary.*exec|tóm.*tắt|エグゼクティブ|요약|执行摘要|ringkasan/i, 'executive_summary'],
+    [/market.*siz|market.*assess|market.*over|quy.*mô|市場規模|시장.*규모|市场规模|ukuran pasar|ขนาดตลาด/i,'market_assessment'],
+    [/segment|phân.*khúc|セグメント|세분화|市场细分|segmen/i,  'market_segmentation'],
+    [/value.*chain|industry.*struct|channel.*struct|chuỗi|kênh|バリューチェーン|가치.*사슬|价值链/i,'industry_structure'],
+    [/compet.*land|market.*share|thị.*phần.*tổng|市場シェア|시장.*점유|市场份额/i,'competitive_landscape'],
+    [/compet.*profil|player.*profil|hồ.*sơ|競合.*プロフィール|경쟁.*프로필|竞争对手/i,'competitor_profiles'],
+    [/driver|trend|factor|động.*lực|xu.*hướng|動向|트렌드|趋势|แนวโน้ม|tren/i,'market_drivers'],
+    [/consumer|customer|buyer|khách.*hàng|người.*tiêu|消費者|소비자|消费者/i,'consumer_insights'],
+    [/pric|giá|定.*価|가격|定价|ราคา|harga/i,               'pricing_analysis'],
+    [/regulat|policy|pháp.*lý|chính.*sách|規制|규제|监管|กฎระเบียบ|regulasi/i,'regulatory'],
+    [/forecast|dự.*báo|kịch.*bản|予測|예측|预测|การคาดการณ์|proyeksi/i,'market_forecast'],
+    [/recommend|khuyến.*nghị|提言|권고|建议|estrategi/i,      'recommendations'],
+    [/competit.*intensity|industry.*comp/i,                  'industry_competitiveness'],
+    [/margin.*anal|pricing.*margin|value.*chain.*map/i,      'pricing_margin'],
+    [/partner.*ident|partner.*crit|distribution.*eval/i,     'partner_identification'],
+    [/entry.*mode|phương.*thức|参入モード|진입.*방식|进入方式/i,'entry_mode'],
+    [/gap.*anal|innovation.*scout/i,                         'gap_analysis'],
   ];
-  for (const [rx, type] of patterns) {
-    if (rx.test(title)) return type;
-  }
+  for (const [rx, type] of patterns) if (rx.test(title)) return type;
   return null;
 }
 
-// Build per-section localized queries from planned section titles
-function buildSectionQueries(sections, industry, country, language) {
-  const langCode  = LANG_CODE_MAP[language] || 'en';
-  const templates = SECTION_QUERY_TEMPLATES[langCode] || {};
-  const result    = {};
+// ── Dynamic local query generation via Claude ─────────────
+// Instead of hardcoded per-language templates, Claude generates
+// idiomatic queries for ANY language/country automatically.
+async function generateLocalizedQueries(sections, industry, country, localLanguage) {
+  if (!localLanguage || localLanguage === 'English') return {};
 
+  const localSources = LOCAL_SOURCES[country] || `local statistics bureau, central bank, industry associations in ${country}`;
+  const sectionList  = sections.slice(0, 10).map((t,i) => `${i+1}. ${t}`).join('\n');
+
+  const prompt = `Generate idiomatic ${localLanguage} web search queries for market research on "${industry}" in ${country}.
+
+Local authoritative sources to reference: ${localSources}
+
+Sections needing queries:
+${sectionList}
+
+For each section: 2 search queries in ${localLanguage} that would find real primary data.
+Rules:
+- Natural ${localLanguage} phrasing — NOT word-for-word translation from English
+- Reference local institution names where relevant (e.g., 経済産業省, 통계청, Tổng cục Thống kê)
+- Include year 2024 where relevant
+- Specific enough to return data (not generic news articles)
+
+Return ONLY JSON: {"Section Title": ["query1", "query2"], ...}`;
+
+  try {
+    const raw   = await callClaude(prompt, 600);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    return JSON.parse(clean);
+  } catch {
+    return {}; // fail silently — EN queries will cover
+  }
+}
+
+// Build final per-section query map — local FIRST, EN fallback appended
+function buildSectionQueries(sections, localQueryMap, industry, country) {
+  const result = {};
   sections.forEach(title => {
-    const type    = detectSectionType(title);
-    const fn      = type && templates[type];
-    const queries = fn ? fn(industry, country) : [`${industry} ${title} ${country} 2024`];
-    result[title] = { type, queries };
+    const type   = detectSectionType(title);
+    const localQ = localQueryMap[title] || [];
+    const enQ    = EN_QUERIES[type]
+      ? EN_QUERIES[type](industry, country)
+      : [`${industry} ${title} ${country} 2024`];
+    result[title] = {
+      type,
+      queries:      [...localQ, ...enQ], // local FIRST
+      localQueries: localQ,
+      enQueries:    enQ,
+    };
   });
-
   return result;
 }
+
+// ── CORS ──────────────────────────────────────────────────
+function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
@@ -309,38 +358,58 @@ Return ONLY a JSON array: ["Title 1", "Title 2", ...]`;
     plannedSections = await callClaude(planPrompt, 500)
       .then(t => JSON.parse(t.replace(/```json|```/g, '').trim()));
 
-    // ── Build per-section localized queries ──────────────────
-    const sectionQueries = buildSectionQueries(plannedSections, industry, country, language);
+    // ── Dynamic local query generation ────────────────────
+    // Auto-detect local language from country, then ask Claude
+    // to generate idiomatic local-language queries for each section.
+    // Works for ANY country — no hardcoded templates needed.
+    const localLanguage = language && language !== 'English'
+      ? language
+      : (COUNTRY_LANG[country] || 'English');
 
-    // ── Enhanced research pass with localized section queries ──
-    // Only run if NOT using liveResearch and language is non-English
-    // Adds local-source data on top of the base research
-    if (!liveResearch && language && language !== 'English') {
-      const localSources = LOCAL_SOURCES[country] || 'local government statistics, industry associations, national news';
+    let localQueryMap = {};
+    if (localLanguage !== 'English') {
+      // Non-blocking — EN queries used as fallback if this fails
+      localQueryMap = await generateLocalizedQueries(
+        plannedSections, industry, country, localLanguage
+      );
+    }
+
+    const sectionQueries = buildSectionQueries(
+      plannedSections, localQueryMap, industry, country
+    );
+
+    // ── Enhanced research: local-language pass ──────────────
+    if (!liveResearch && localLanguage !== 'English') {
+      const localSources = LOCAL_SOURCES[country] || `local statistics bureau, central bank, industry associations in ${country}`;
+
       const queryList = plannedSections.slice(0, 8).map((title, i) => {
-        const queries = sectionQueries[title]?.queries || [];
-        return `${i+1}. [${title}]: ${queries.join(' | ')}`;
+        const sq    = sectionQueries[title] || {};
+        const local = (sq.localQueries || []).slice(0,2).join(' | ');
+        const en    = (sq.enQueries    || []).slice(0,1)[0] || '';
+        return `${i+1}. [${title}]: LOCAL → ${local || en} | EN fallback → ${en}`;
       }).join('\n');
 
       const localResearch = await callClaude(
-        `You are researching ${industry} in ${country} for a market intelligence report in ${language}.
+        `Research "${industry}" market in "${country}" for a ${typeName} report.
+OUTPUT LANGUAGE: ${localLanguage}
 
-Prioritize LOCAL data sources: ${localSources}
+PRIORITY: Search local sources FIRST — ${localSources}
+Supplement with English sources only when local data is unavailable.
 
-For each section below, find 2-3 specific data points (numbers, company names, percentages) from ${country} sources. Respond in ${language} where appropriate for local terms and company names.
-
+Per-section queries (local first, EN fallback):
 ${queryList}
 
 For each section provide:
-- 1-2 specific statistics with approximate source (e.g., "GSO 2024", "industry estimate")  
-- Key local company names if relevant
-- Any recent local developments (2023-2024)
+- 2-3 specific data points with source attribution (e.g., "Theo GSO 2024:", "経済産業省によると:")
+- Key local company/brand names relevant to this market
+- Local currency figures (VND, JPY, KRW, CNY, THB, IDR, etc.) alongside USD
+- Recent local developments 2023-2024
 
-Be concise but data-specific. Prefer local-currency figures.`, 1200
-      ).catch(() => ''); // non-blocking — fail gracefully
+Group findings by section title. Be concise but data-specific.`, 1500
+      ).catch(() => '');
 
       if (localResearch) {
-        research = `${research}\n\n--- LOCAL DATA (${country}, ${language} sources) ---\n${localResearch}`;
+        research = `${research}\n\n=== LOCAL DATA (${localLanguage}, ${country}) ===\n${localResearch}`;
       }
     }
 
