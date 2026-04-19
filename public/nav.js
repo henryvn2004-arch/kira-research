@@ -245,9 +245,9 @@
   gap: 48px; flex-wrap: wrap;
   border-bottom: 1px solid #1A1D24;
 }
-.footer-brand { display: flex; flex-direction: column; gap: 12px; }
+.footer-brand { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
 .footer-logo { height: auto; width: 240px; max-width: 240px; object-fit: contain; opacity: .9; display: block; }
-.footer-tagline { font-size: 12px; color: #5A6278; }
+.footer-tagline { font-size: 14px; color: #5A6278; font-weight: 700; width: 240px; text-align: center; }
 .footer-cols { display: flex; gap: 64px; }
 .footer-col { display: flex; flex-direction: column; gap: 10px; }
 .footer-col-title {
