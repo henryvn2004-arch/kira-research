@@ -11,7 +11,7 @@
 export const config = { maxDuration: 60 };
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_MODEL  = 'claude-sonnet-4-5';
+const CLAUDE_MODEL  = 'claude-sonnet-4-20250514';
 const SB_URL        = process.env.SUPABASE_URL;
 const SB_KEY        = process.env.SUPABASE_SERVICE_KEY;
 const OAI_KEY       = process.env.OPENAI_API_KEY;

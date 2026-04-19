@@ -12,7 +12,7 @@ export const config = { maxDuration: 55, runtime: 'nodejs' };
 
 const ANT_URL = 'https://api.anthropic.com/v1/messages';
 const ANT_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL   = 'claude-sonnet-4-5';
+const MODEL   = 'claude-sonnet-4-20250514';
 const SB_URL  = process.env.SUPABASE_URL;
 const SB_KEY  = process.env.SUPABASE_SERVICE_KEY;
 
