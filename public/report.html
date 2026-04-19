@@ -280,20 +280,42 @@
       .report-meta-right,.chat-input-row,.commentary-toggle,
       #status-bar,.pres-ov,.exp-ov,#confirm-modal{display:none!important}
       .report-layout{display:block!important}
-      .report-content{width:100%!important}
-      .report-meta{position:static!important;background:#fff!important;border:1px solid #ddd!important;break-inside:avoid}
+      .report-content{width:100%!important;max-width:100%!important}
+      .report-meta{position:static!important;background:#fff!important;border:1px solid #ddd!important;break-inside:avoid;padding:12px 16px!important}
       .section-block{
         opacity:1!important;transform:none!important;
         border:1px solid #ddd!important;background:#fff!important;
         page-break-inside:avoid;break-inside:avoid;
-        margin-bottom:0!important;page-break-after:always;break-after:always;
-        box-shadow:none!important;
+        margin-bottom:20px!important;page-break-after:always;break-after:always;
+        box-shadow:none!important;overflow:visible!important;
       }
       .section-block:last-child{page-break-after:auto;break-after:auto}
       .slide-header{background:#0A1628!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:14px 24px!important}
       .slide-num{background:rgba(30,111,255,.2)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       .slide-headline{background:rgba(30,111,255,.06)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      .visual-box{background:#f7fafc!important;border:1px solid #e2e8f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid}
+      /* Constrain visuals — prevent chart/table overflow */
+      .slide-visuals{width:100%!important;box-sizing:border-box!important;overflow:hidden!important}
+      .visual-box{
+        background:#f7fafc!important;border:1px solid #e2e8f0!important;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;
+        break-inside:avoid;width:100%!important;
+        box-sizing:border-box!important;overflow:hidden!important;
+        max-width:100%!important;
+      }
+      .chart-wrap{
+        height:200px!important;max-height:200px!important;
+        width:100%!important;max-width:100%!important;
+        overflow:hidden!important;box-sizing:border-box!important;
+        position:relative!important;
+      }
+      .chart-wrap canvas{
+        max-width:100%!important;max-height:200px!important;
+        width:100%!important;height:auto!important;
+        display:block!important;
+      }
+      /* Table overflow fix */
+      .slide-table{width:100%!important;table-layout:fixed!important;word-break:break-word!important}
+      .slide-table th,.slide-table td{overflow:hidden!important;text-overflow:ellipsis!important;max-width:0!important}
       /* Force expand all commentary for print */
       .commentary-preview{max-height:none!important;mask-image:none!important;-webkit-mask-image:none!important;overflow:visible!important}
       .commentary-preview.collapsed{max-height:none!important;mask-image:none!important;-webkit-mask-image:none!important}
@@ -305,9 +327,8 @@
       .stat-label{color:#4a5568!important}
       .slide-headline-text{color:#0A1628!important}
       .slide-title{color:#fff!important}
-      .chart-wrap{height:220px!important}
       a{color:inherit!important;text-decoration:none!important}
-      @page{margin:0.5in}
+      @page{margin:0.5in;size:A4}
     }
     /* ── EXPORT MODAL ── */
     .exp-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center}
@@ -374,11 +395,12 @@
     .pres-slide-counter{font-size:11px;color:#444C60;font-family:Arial,sans-serif;letter-spacing:.06em}
     .pres-slide-counter span{color:#8897B2;font-weight:700}
     .pres-close{
-      background:transparent;border:1px solid rgba(255,255,255,.1);color:#5A6278;
-      padding:5px 14px;border-radius:4px;cursor:pointer;font-size:11px;
-      font-family:Arial,sans-serif;letter-spacing:.06em;transition:all .15s;text-transform:uppercase;
+      background:#1E6FFF;border:none;color:#fff;
+      padding:8px 18px;border-radius:4px;cursor:pointer;font-size:11px;
+      font-family:Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+      transition:background .15s;display:flex;align-items:center;gap:5px;
     }
-    .pres-close:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+    .pres-close:hover{background:#1558CC}
 
     /* Slide stage */
     .pres-stage{
@@ -414,75 +436,72 @@
     .mc-slide-meta{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.06em;text-align:right}
     .mc-slide-meta strong{color:rgba(255,255,255,.7)}
 
-    /* Slide body */
-    .mc-slide-body{flex:1;display:flex;flex-direction:column;padding:36px 40px 24px;}
+    /* Slide body (simple full-width, used only for divider-content) */
+    .mc-slide-body{flex:1;display:flex;flex-direction:column;padding:28px 40px 20px;}
 
-    /* Section label + title area */
-    .mc-sec-label{
-      font-size:9px;font-weight:700;color:#1565D8;
-      letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;
-    }
-    .mc-slide-title{
-      font-size:clamp(18px,2.2vw,26px);font-weight:700;
-      color:#0A1628;line-height:1.25;margin-bottom:0;
-    }
-    .mc-title-rule{height:2px;background:#1565D8;width:56px;margin:16px 0 24px;border-radius:1px}
+    /* ── Key message bar (below header) — the slide's headline sentence ── */
+    .mc-msg-bar{padding:9px 40px 7px;border-bottom:1px solid #E2E8F0;flex-shrink:0}
+    .mc-msg-text{font-size:12.5px;font-weight:700;color:#0A1628;line-height:1.35;font-style:italic}
 
-    /* Key finding callout (above content, full width) */
-    .mc-finding{
-      background:#EEF4FF;border-left:3px solid #1565D8;
-      padding:12px 18px;border-radius:0 4px 4px 0;
-      margin-bottom:24px;
-    }
-    .mc-finding-lbl{font-size:8px;font-weight:700;color:#1565D8;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px}
-    .mc-finding-text{font-size:13px;color:#0A1628;line-height:1.55;font-weight:500}
-
-    /* Content area */
-    .mc-slide-content{flex:1;display:flex;flex-direction:column;gap:16px}
+    /* ── DASHBOARD layout ── */
+    .mc-dash{flex:1;display:flex;flex-direction:column;padding:14px 40px 10px;gap:10px;overflow:hidden;min-height:0}
+    .mc-dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0}
 
     /* Stats grid */
-    .mc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:4px}
-    .mc-stat{
-      border:1px solid #E2E8F0;border-radius:3px;
-      padding:20px 18px;position:relative;overflow:hidden;background:#fff;
-    }
-    .mc-stat::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:3px;
-      background:#1565D8;
-    }
+    .mc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;flex-shrink:0}
+    .mc-stat{border:1px solid #E2E8F0;border-radius:3px;padding:16px 14px;position:relative;overflow:hidden;background:#fff;flex-shrink:0}
+    .mc-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#1565D8}
     .mc-stat.v2::before{background:#00A878}
     .mc-stat.v3::before{background:#C9960A}
     .mc-stat.v4::before{background:#D04040}
     .mc-stat.v5::before{background:#7B52D3}
-    .mc-stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#8896A8;font-weight:700;margin-bottom:8px}
-    .mc-stat-val{font-size:28px;font-weight:700;color:#0A1628;line-height:1;letter-spacing:-.5px}
-    .mc-stat-sub{font-size:11px;color:#8896A8;margin-top:6px}
+    .mc-stat-lbl{font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;color:#8896A8;font-weight:700;margin-bottom:6px;line-height:1.3}
+    .mc-stat-val{font-size:22px;font-weight:700;color:#0A1628;line-height:1;letter-spacing:-.5px}
+    .mc-stat-sub{display:none} /* hide icon sub-label — color bar differentiates */
 
-    /* Chart in pres mode */
-    .mc-chart-wrap{position:relative;height:300px;flex:1}
+    /* Dashboard commentary area */
+    .mc-dash-comm{flex:1;display:flex;flex-direction:column;gap:6px;overflow:hidden;min-height:0}
 
-    /* Table in pres mode */
-    .mc-table-wrap{overflow-x:auto;flex:1}
-    .mc-table{width:100%;border-collapse:collapse;font-size:12px}
+    /* ── 2-COLUMN McKinsey layout (analysis + data slides) ── */
+    .mc-2col{flex:1;display:grid;grid-template-columns:38% 1fr;overflow:hidden;min-height:0}
+    .mc-2col-left{padding:14px 18px 12px 40px;border-right:1px solid #E2E8F0;display:flex;flex-direction:column;gap:8px;overflow:hidden;min-height:0}
+    .mc-2col-right{padding:14px 40px 12px 18px;display:flex;flex-direction:column;gap:6px;overflow:hidden;min-height:0}
+
+    /* Column tag label */
+    .mc-col-tag{font-size:7.5px;font-weight:700;color:#1565D8;letter-spacing:.2em;text-transform:uppercase;flex-shrink:0}
+
+    /* Key finding box inside left column */
+    .mc-col-find{background:#EEF4FF;border-left:3px solid #1565D8;padding:7px 11px;border-radius:0 3px 3px 0;flex-shrink:0}
+    .mc-col-find-lbl{font-size:7px;font-weight:700;color:#1565D8;letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px}
+    .mc-col-find-txt{font-size:10px;font-weight:600;color:#0A1628;line-height:1.45}
+
+    /* Key insight bullets */
+    .mc-keypts{display:flex;flex-direction:column;gap:7px;flex:1;overflow:hidden}
+    .mc-keypt{font-size:9.5px;color:#374151;line-height:1.5;padding-left:10px;border-left:2px solid #CBD5E0;flex-shrink:0}
+    .mc-keypt strong{color:#0A1628}
+    .mc-col-vis-title{font-size:9px;font-weight:700;color:#5A6B80;letter-spacing:.06em;flex-shrink:0;text-transform:uppercase}
+
+    /* Chart in 2-col right */
+    .mc-chart-2col{flex:1;position:relative;min-height:160px}
+
+    /* Table in 2-col right */
+    .mc-table-2col{flex:1;overflow:auto;min-height:0}
+
+    /* Shared table styles */
+    .mc-table{width:100%;border-collapse:collapse;font-size:10.5px}
     .mc-table thead tr{border-bottom:2px solid #0A1628}
-    .mc-table th{
-      padding:9px 14px;text-align:left;font-size:9px;font-weight:700;
-      text-transform:uppercase;letter-spacing:.12em;color:#5A6B80;
-    }
-    .mc-table td{padding:10px 14px;border-bottom:1px solid #EDF2F7;color:#374151;vertical-align:top;font-size:12px}
+    .mc-table th{padding:7px 10px;text-align:left;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#5A6B80}
+    .mc-table td{padding:7px 10px;border-bottom:1px solid #EDF2F7;color:#374151;vertical-align:top}
     .mc-table tbody tr:last-child td{border-bottom:none}
     .mc-table tbody tr:nth-child(even) td{background:#F9FAFC}
     .mc-table td:first-child{color:#0A1628;font-weight:600}
 
     /* Slide footer */
-    .mc-slide-foot{
-      background:#F7F8FA;border-top:1px solid #E2E8F0;
-      padding:9px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-    }
-    .mc-foot-source{font-size:9px;color:#A0AEC0;font-style:italic}
+    .mc-slide-foot{background:#F7F8FA;border-top:1px solid #E2E8F0;padding:7px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .mc-foot-source{font-size:8.5px;color:#A0AEC0;font-style:italic}
     .mc-foot-right{display:flex;align-items:center;gap:10px}
-    .mc-foot-brand{font-size:9px;font-weight:700;color:#0A1628;letter-spacing:.14em;text-transform:uppercase;opacity:.4}
-    .mc-foot-pager{font-size:9px;color:#A0AEC0}
+    .mc-foot-brand{font-size:8.5px;font-weight:700;color:#0A1628;letter-spacing:.14em;text-transform:uppercase;opacity:.35}
+    .mc-foot-pager{font-size:8.5px;color:#A0AEC0}
 
     /* ── DIVIDER slide variant ── */
     .mc-divider-slide{
@@ -933,7 +952,9 @@
       <div class="pres-dots" id="pres-dots"></div>
       <div class="pres-slide-counter"><span id="pres-cur">1</span> / <span id="pres-tot">1</span></div>
     </div>
-    <button class="pres-close" onclick="closePresentation()">&#10005; &nbsp;Exit</button>
+    <button class="pres-close" onclick="closePresentation()">
+      &#10005; &nbsp;Back to Report
+    </button>
   </div>
 
   <div class="pres-stage">
@@ -947,6 +968,9 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
         Prev
       </button>
+      <button class="pres-btn" onclick="closePresentation()" style="border-color:rgba(30,111,255,.4);color:#1E6FFF">
+        &#10005; Close
+      </button>
       <button class="pres-btn" id="pres-next" onclick="navPresent(1)">
         Next
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
@@ -959,14 +983,15 @@
 <div class="exp-ov" id="expOv" onclick="expBgClose(event)">
   <div class="exp-modal">
     <div class="exp-head">
-      <div><h3>Export report</h3><p>Choose format and visual style</p></div>
+      <div><h3>Export report</h3><p id="exp-head-sub">Choose format and visual style</p></div>
       <button class="exp-close" onclick="closeExpModal()">✕</button>
     </div>
     <div class="exp-fmts">
       <button class="exp-fmt on" id="efmt-pptx" onclick="setExpFmt('pptx')">PowerPoint .pptx</button>
       <button class="exp-fmt" id="efmt-pdf" onclick="setExpFmt('pdf')">PDF</button>
     </div>
-    <div class="exp-themes">
+    <!-- Theme chooser: shown for PPTX only; PDF always light -->
+    <div class="exp-themes" id="exp-themes-block">
       <!-- Dark -->
       <div class="exp-tc sel" id="etc-dark" onclick="setExpTheme('dark')">
         <div class="tp-d">
@@ -2057,6 +2082,17 @@ function setExpFmt(f) {
   _expFmt = f;
   document.getElementById('efmt-pptx').classList.toggle('on', f === 'pptx');
   document.getElementById('efmt-pdf').classList.toggle('on', f === 'pdf');
+  // For PDF: hide dark theme option, auto-select light
+  const themesBlock = document.getElementById('exp-themes-block');
+  const headSub = document.getElementById('exp-head-sub');
+  if (f === 'pdf') {
+    if (themesBlock) themesBlock.style.display = 'none';
+    if (headSub) headSub.textContent = 'Print-ready PDF — light theme';
+    _expTheme = 'light';
+  } else {
+    if (themesBlock) themesBlock.style.display = 'grid';
+    if (headSub) headSub.textContent = 'Choose format and visual style';
+  }
   updateExpFname();
 }
 
@@ -2174,12 +2210,26 @@ function buildExpChart(ch) {
 // ── Export PDF ────────────────────────────────────────────
 function exportPdf() {
   // Expand all collapsed commentary so full text prints
-  document.querySelectorAll('.commentary-preview.collapsed').forEach(el => {
+  document.querySelectorAll('.commentary-preview').forEach(el => {
+    el.style.maxHeight  = 'none';
+    el.style.maskImage  = 'none';
+    el.style.webkitMaskImage = 'none';
     el.classList.remove('collapsed');
-    el.classList.add('expanded');
   });
-  document.querySelectorAll('.commentary-toggle').forEach(el => {
-    el.style.display = 'none';
+  document.querySelectorAll('.commentary-toggle').forEach(el => { el.style.display = 'none'; });
+
+  // Force all Chart.js instances to resize to container (prevents overflow in PDF)
+  document.querySelectorAll('.chart-wrap canvas').forEach(canvas => {
+    const wrap = canvas.parentElement;
+    if (wrap) {
+      canvas.style.maxWidth  = '100%';
+      canvas.style.maxHeight = '200px';
+      canvas.style.width     = '100%';
+      canvas.style.height    = 'auto';
+    }
+    // Trigger Chart.js resize if instance exists
+    const chartInst = Chart.getChart?.(canvas);
+    if (chartInst) { try { chartInst.resize(canvas.offsetWidth || 600, 200); } catch {} }
   });
 
   const title = document.getElementById('report-title')?.textContent || 'KIRA Report';
@@ -2189,17 +2239,23 @@ function exportPdf() {
   setTimeout(() => {
     window.print();
     document.title = origTitle;
-    // Restore collapsed state after print dialog closes
+    // Restore state after print dialog closes
     setTimeout(() => {
-      document.querySelectorAll('.commentary-preview.expanded').forEach(el => {
-        el.classList.remove('expanded');
+      document.querySelectorAll('.commentary-preview').forEach(el => {
+        el.style.maxHeight = '52px';
+        el.style.maskImage = '';
+        el.style.webkitMaskImage = '';
         el.classList.add('collapsed');
       });
-      document.querySelectorAll('.commentary-toggle').forEach(el => {
-        el.style.display = '';
+      document.querySelectorAll('.commentary-toggle').forEach(el => { el.style.display = ''; });
+      document.querySelectorAll('.chart-wrap canvas').forEach(canvas => {
+        canvas.style.maxWidth = '';
+        canvas.style.maxHeight = '';
+        canvas.style.width = '';
+        canvas.style.height = '';
       });
-    }, 1000);
-  }, 100);
+    }, 1500);
+  }, 200);
 }
 
 // Keep old exportPptx as alias in case called elsewhere
@@ -2302,37 +2358,82 @@ window.addEventListener('DOMContentLoaded', async () => {
 const presCharts = {};
 let presSlides = [], presIdx = 0;
 
+// Extract 3-4 key insight sentences from commentary prose
+function extractKeyPoints(commentary, max) {
+  if (!commentary) return [];
+  const clean = commentary.replace(/\*\*(.*?)\*\*/g, '$1').replace(/###\s*/g, '');
+  const paras = clean.split(/\n\n+/).filter(p => p.trim().length > 40).slice(0, max + 1);
+  return paras.map(p => {
+    // First 2 sentences of each paragraph
+    const sentences = p.match(/[^.!?]+[.!?]+/g) || [p];
+    return sentences.slice(0, 2).join(' ').trim().slice(0, 220);
+  }).filter(Boolean).slice(0, max);
+}
+
 function buildPresentationSlides(sections) {
   const slides = [];
-  const COLORS = ['#1E6FFF','#00C9A7','#F6AD55','#FC8181','#B794F4','#4FD1C5','#F687B3','#68D391'];
 
   sections.forEach((sec, si) => {
     let p = {};
     try { p = JSON.parse(sec.content || '{}'); } catch {}
     const sectionNum = String(si + 1).padStart(2, '0');
     const sectionTitle = sec.title || '';
+    const commentary   = p.commentary || '';
+    const headline     = p.headline   || '';
+    const stats        = p.stats      || [];
+    const keyPoints    = extractKeyPoints(commentary, 4);
+    const sources      = (p.sources   || []).slice(0, 2).join('; ') || '';
 
-    // 1 — Divider slide (always)
+    // ── Slide A: DIVIDER (dark navy section opener) ──────────
     slides.push({
       type: 'divider',
-      sectionNum,
-      sectionTitle,
-      headline: p.headline || '',
+      sectionNum, sectionTitle, headline, sources,
     });
 
-    // 2 — Stats slide
-    if (p.stats?.length) {
-      slides.push({ type: 'stats', sectionNum, sectionTitle, stats: p.stats });
+    // ── Slide B: DASHBOARD — stats + key finding + insight bullets ──
+    if (stats.length || headline) {
+      slides.push({
+        type: 'dashboard',
+        sectionNum, sectionTitle, headline, stats, sources,
+        subtitle: headline || sectionTitle,
+        keyPoints: keyPoints.slice(0, 2),
+      });
     }
 
-    // 3 — Chart slide
-    if (p.chart?.labels?.length) {
-      slides.push({ type: 'chart', sectionNum, sectionTitle, chart: p.chart, COLORS });
+    // ── Slide C: ANALYSIS — 2-col: commentary LEFT | chart RIGHT ──
+    const hasChart = p.chart?.labels?.length && p.chart?.datasets?.length;
+    if (hasChart) {
+      const chartTitle = p.chart.title || sectionTitle;
+      slides.push({
+        type: 'analysis',
+        sectionNum, sectionTitle, headline, sources,
+        subtitle: chartTitle,
+        chart: p.chart,
+        keyPoints: keyPoints.slice(0, 3),
+      });
     }
 
-    // 4 — Table slide
-    if (p.table?.headers?.length) {
-      slides.push({ type: 'table', sectionNum, sectionTitle, table: p.table });
+    // ── Slide D: DATA — 2-col: commentary LEFT | table RIGHT ──
+    const hasTable = p.table?.headers?.length && p.table?.rows?.length;
+    if (hasTable) {
+      const tableTitle = p.table.title || sectionTitle;
+      slides.push({
+        type: 'data',
+        sectionNum, sectionTitle, headline, sources,
+        subtitle: tableTitle,
+        table: p.table,
+        keyPoints: keyPoints.slice(hasChart ? 2 : 0, hasChart ? 4 : 3),
+      });
+    }
+
+    // ── Fallback: if no stats/chart/table, just a text insight slide ──
+    if (!stats.length && !hasChart && !hasTable && keyPoints.length) {
+      slides.push({
+        type: 'insight',
+        sectionNum, sectionTitle, headline, sources,
+        subtitle: headline || sectionTitle,
+        keyPoints,
+      });
     }
   });
 
@@ -2340,17 +2441,13 @@ function buildPresentationSlides(sections) {
 }
 
 function renderPresentSlide(idx) {
-  // Destroy old pres chart instances
   Object.values(presCharts).forEach(c => { try { c.destroy(); } catch {} });
   Object.keys(presCharts).forEach(k => delete presCharts[k]);
 
   const slide = presSlides[idx];
   if (!slide) return;
   const el = document.getElementById('pres-slide');
-  const reportTitle = document.getElementById('pres-report-title').textContent || 'KIRA RESEARCH';
-  const pageLabel = `${idx + 1} / ${presSlides.length}`;
 
-  // Update counters + dots
   document.getElementById('pres-cur').textContent = idx + 1;
   document.getElementById('pres-tot').textContent = presSlides.length;
   document.getElementById('pres-section-hint').textContent =
@@ -2358,21 +2455,52 @@ function renderPresentSlide(idx) {
   document.getElementById('pres-prev').disabled = idx === 0;
   document.getElementById('pres-next').disabled = idx === presSlides.length - 1;
 
-  // Dots
   const dots = document.getElementById('pres-dots');
   dots.innerHTML = presSlides.map((_, i) =>
     `<div class="pres-dot ${i < idx ? 'done' : i === idx ? 'active' : ''}"></div>`
   ).join('');
 
-  // ── McKINSEY DIVIDER SLIDE ──
+  const reportTitle = document.getElementById('pres-report-title').textContent || 'KIRA RESEARCH';
+  const pageLabel   = `${idx + 1} / ${presSlides.length}`;
+  const src         = slide.sources || 'Proprietary research library';
+
+  // ── Shared sub-components ──
+  const slideHead = (secNum, meta) => `
+    <div class="mc-slide-head">
+      <div class="mc-slide-brand"><div class="mc-brand-mark"></div><div class="mc-brand-name">KIRA RESEARCH</div></div>
+      <div class="mc-slide-meta"><strong>${secNum}</strong>${meta ? ` &mdash; ${meta}` : ''}</div>
+    </div>`;
+
+  const slideFoot = () => `
+    <div class="mc-slide-foot">
+      <div class="mc-foot-source">Source: ${src}</div>
+      <div class="mc-foot-right"><div class="mc-foot-brand">KIRA RESEARCH</div><div class="mc-foot-pager">${pageLabel}</div></div>
+    </div>`;
+
+  const msgBar = (text) => text ? `
+    <div class="mc-msg-bar"><div class="mc-msg-text">${text}</div></div>` : '';
+
+  const findingBox = (headline) => headline ? `
+    <div class="mc-col-find">
+      <div class="mc-col-find-lbl">Key Finding</div>
+      <div class="mc-col-find-txt">${headline}</div>
+    </div>` : '';
+
+  const keyPointsHtml = (pts) => pts?.length ? `
+    <div class="mc-keypts">${pts.map(pt =>
+      `<div class="mc-keypt">${pt}</div>`
+    ).join('')}</div>` : '';
+
+  const VARIANT = ['', 'v2', 'v3', 'v4', 'v5', '', 'v2', 'v3'];
+
+  // ─────────────────────────────────────────────────────
+  // DIVIDER slide — dark navy, section opener
+  // ─────────────────────────────────────────────────────
   if (slide.type === 'divider') {
     el.innerHTML = `
       <div class="mc-divider-slide">
         <div class="mc-div-head">
-          <div class="mc-div-brand">
-            <div class="mc-div-brand-mark"></div>
-            <div class="mc-div-brand-name">KIRA RESEARCH</div>
-          </div>
+          <div class="mc-div-brand"><div class="mc-div-brand-mark"></div><div class="mc-div-brand-name">KIRA RESEARCH</div></div>
           <div class="mc-div-meta">Market Intelligence</div>
         </div>
         <div class="mc-div-body">
@@ -2387,123 +2515,170 @@ function renderPresentSlide(idx) {
           </div>` : ''}
         </div>
         <div class="mc-div-foot">
-          <div class="mc-div-foot-src">Source: Proprietary research library, primary studies</div>
+          <div class="mc-div-foot-src">Source: ${src}</div>
           <div class="mc-div-foot-pg">${pageLabel}</div>
         </div>
       </div>`;
     return;
   }
 
-  // ── McKINSEY CONTENT SLIDE ──
-  const chartId = `pc-${idx}`;
-  let contentHtml = '';
+  // ─────────────────────────────────────────────────────
+  // DASHBOARD slide — stats grid + finding + key points
+  // ─────────────────────────────────────────────────────
+  if (slide.type === 'dashboard') {
+    const statsHtml = (slide.stats || []).slice(0, 4).map((s, i) => `
+      <div class="mc-stat ${VARIANT[i]}">
+        <div class="mc-stat-lbl">${s.label || ''}</div>
+        <div class="mc-stat-val">${s.value || ''}</div>
+      </div>`).join('');
 
-  if (slide.type === 'stats') {
-    const VARIANT = ['', 'v2', 'v3', 'v4', 'v5', '', 'v2', 'v3'];
-    contentHtml = `<div class="mc-stats">
-      ${(slide.stats || []).map((s, i) => `
-        <div class="mc-stat ${VARIANT[i % VARIANT.length]}">
-          <div class="mc-stat-lbl">${s.label}</div>
-          <div class="mc-stat-val">${s.value}</div>
-          ${s.icon ? `<div class="mc-stat-sub">${getStatIcon(s.icon)} ${s.icon}</div>` : ''}
-        </div>`).join('')}
-    </div>`;
+    el.innerHTML = `
+      <div class="mc-slide">
+        ${slideHead(slide.sectionNum, slide.sectionTitle)}
+        ${msgBar(slide.headline)}
+        <div class="mc-dash">
+          <div class="mc-dash-stats">${statsHtml}</div>
+          <div class="mc-dash-comm">
+            <div class="mc-col-tag">Key Insights</div>
+            ${keyPointsHtml(slide.keyPoints)}
+          </div>
+        </div>
+        ${slideFoot()}
+      </div>`;
+    return;
   }
 
-  if (slide.type === 'chart') {
-    contentHtml = `<div class="mc-chart-wrap"><canvas id="${chartId}"></canvas></div>`;
+  // ─────────────────────────────────────────────────────
+  // ANALYSIS slide — 2-col McKinsey: commentary | chart
+  // ─────────────────────────────────────────────────────
+  if (slide.type === 'analysis') {
+    const chartId = `pc-${idx}`;
+    el.innerHTML = `
+      <div class="mc-slide">
+        ${slideHead(slide.sectionNum, slide.sectionTitle)}
+        ${msgBar(slide.subtitle)}
+        <div class="mc-2col">
+          <div class="mc-2col-left">
+            <div class="mc-col-tag">Analysis</div>
+            ${findingBox(slide.headline)}
+            ${keyPointsHtml(slide.keyPoints)}
+          </div>
+          <div class="mc-2col-right">
+            <div class="mc-col-vis-title">${slide.chart?.title || 'Data Visualization'}</div>
+            <div class="mc-chart-2col"><canvas id="${chartId}"></canvas></div>
+          </div>
+        </div>
+        ${slideFoot()}
+      </div>`;
+
+    setTimeout(() => {
+      const canvas = document.getElementById(chartId);
+      if (!canvas || !slide.chart) return;
+      renderPresChart(chartId, slide.chart);
+    }, 60);
+    return;
   }
 
-  if (slide.type === 'table') {
+  // ─────────────────────────────────────────────────────
+  // DATA slide — 2-col McKinsey: commentary | table
+  // ─────────────────────────────────────────────────────
+  if (slide.type === 'data') {
     const t = slide.table;
-    contentHtml = `<div class="mc-table-wrap">
+    const tableHtml = `
       <table class="mc-table">
         <thead><tr>${(t.headers||[]).map(h=>`<th>${h}</th>`).join('')}</tr></thead>
         <tbody>${(t.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
-      </table>
-    </div>`;
+      </table>`;
+
+    el.innerHTML = `
+      <div class="mc-slide">
+        ${slideHead(slide.sectionNum, slide.sectionTitle)}
+        ${msgBar(slide.subtitle)}
+        <div class="mc-2col">
+          <div class="mc-2col-left">
+            <div class="mc-col-tag">Analysis</div>
+            ${findingBox(slide.headline)}
+            ${keyPointsHtml(slide.keyPoints)}
+          </div>
+          <div class="mc-2col-right">
+            <div class="mc-col-vis-title">${t.title || 'Data Table'}</div>
+            <div class="mc-table-2col">${tableHtml}</div>
+          </div>
+        </div>
+        ${slideFoot()}
+      </div>`;
+    return;
   }
 
-  el.innerHTML = `
-    <div class="mc-slide">
-      <div class="mc-slide-head">
-        <div class="mc-slide-brand">
-          <div class="mc-brand-mark"></div>
-          <div class="mc-brand-name">KIRA RESEARCH</div>
+  // ─────────────────────────────────────────────────────
+  // INSIGHT slide — full-width key points (no visual)
+  // ─────────────────────────────────────────────────────
+  if (slide.type === 'insight') {
+    el.innerHTML = `
+      <div class="mc-slide">
+        ${slideHead(slide.sectionNum, slide.sectionTitle)}
+        ${msgBar(slide.headline)}
+        <div class="mc-slide-body">
+          <div class="mc-col-tag" style="margin-bottom:16px">Key Insights</div>
+          <div class="mc-keypts" style="gap:14px">
+            ${(slide.keyPoints||[]).map(pt=>`
+              <div class="mc-keypt" style="font-size:11px;padding:10px 14px">${pt}</div>
+            `).join('')}
+          </div>
         </div>
-        <div class="mc-slide-meta"><strong>${slide.sectionNum}</strong> &mdash; Market Intelligence</div>
-      </div>
-      <div class="mc-slide-body">
-        <div class="mc-sec-label">Section ${slide.sectionNum}</div>
-        <div class="mc-slide-title">${slide.sectionTitle}</div>
-        <div class="mc-title-rule"></div>
-        <div class="mc-slide-content">
-          ${contentHtml}
-        </div>
-      </div>
-      <div class="mc-slide-foot">
-        <div class="mc-foot-source">Source: Proprietary research library &mdash; primary market studies</div>
-        <div class="mc-foot-right">
-          <div class="mc-foot-brand">KIRA RESEARCH</div>
-          <div class="mc-foot-pager">${pageLabel}</div>
-        </div>
-      </div>
-    </div>`;
-
-  // Render chart with light-theme colors
-  if (slide.type === 'chart') {
-    setTimeout(() => {
-      const canvas = document.getElementById(chartId);
-      if (!canvas) return;
-      const ch = slide.chart;
-      const COLORS = ['#1565D8','#00A878','#D4820A','#C93535','#6B3DC9','#0891B2','#BE185D','#15803D'];
-      const rawType = ch.type || 'bar';
-      const isHoriz  = rawType === 'horizontalBar' || rawType === 'bar_horizontal';
-      const type = rawType === 'donut' ? 'doughnut' : isHoriz ? 'bar' : rawType;
-      const isPie = type === 'pie' || type === 'doughnut';
-      const isRadar = type === 'radar';
-      const isLine  = type === 'line';
-      const isStacked = ch.stacked || (ch.datasets?.length > 1 && type === 'bar');
-      const datasets = (ch.datasets || []).map((ds, di) => ({
-        label: ds.label || '',
-        data:  ds.data  || [],
-        backgroundColor: isPie ? COLORS : isRadar ? COLORS[di % COLORS.length] + '22' : COLORS[di % COLORS.length],
-        borderColor:  COLORS[di % COLORS.length],
-        borderWidth:  isLine ? 2 : isRadar ? 1.5 : 0,
-        fill:         false,
-        tension:      0.4,
-        borderRadius: (!isPie && !isRadar && !isLine) ? 3 : 0,
-        pointBackgroundColor: isRadar ? COLORS[di % COLORS.length] : undefined,
-        pointRadius: isRadar ? 4 : undefined,
-      }));
-      presCharts[chartId] = new Chart(canvas, {
-        type,
-        data: { labels: ch.labels || [], datasets },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          indexAxis: isHoriz ? 'y' : 'x',
-          plugins: {
-            legend: {
-              display: datasets.length > 1 || isPie || isRadar,
-              labels: { color: '#4A5568', font: { size: 11, family: 'Arial' }, boxWidth: 12, padding: 14 }
-            },
-            tooltip: { backgroundColor: '#0A1E4A', titleColor: '#fff', bodyColor: '#E2E8F0', borderColor: '#1565D8', borderWidth: 1 }
-          },
-          scales: isPie || isRadar ? (isRadar ? {
-            r: {
-              ticks: { color: '#8896A8', backdropColor: 'transparent', font: { size: 10 } },
-              grid: { color: '#E2E8F0' },
-              pointLabels: { color: '#374151', font: { size: 11 } },
-              angleLines: { color: '#E2E8F0' }
-            }
-          } : {}) : {
-            x: { ticks: { color: '#6B7280', font: { size: 11 } }, grid: { color: '#F3F4F6' }, stacked: isStacked },
-            y: { ticks: { color: '#6B7280', font: { size: 11 } }, grid: { color: '#F3F4F6' }, beginAtZero: true, stacked: isStacked }
-          }
-        }
-      });
-    }, 60);
+        ${slideFoot()}
+      </div>`;
+    return;
   }
+}
+
+// ── Chart renderer for presentation mode (light theme) ──
+function renderPresChart(chartId, chartDef) {
+  const canvas = document.getElementById(chartId);
+  if (!canvas || !chartDef) return;
+  if (presCharts[chartId]) { try { presCharts[chartId].destroy(); } catch {} }
+
+  const COLORS = ['#1565D8','#00A878','#D4820A','#C93535','#6B3DC9','#0891B2'];
+  const rawType = chartDef.type || 'bar';
+  const isHoriz = rawType === 'horizontalBar' || rawType === 'bar_horizontal' || chartDef.horizontal;
+  const type    = rawType === 'donut' ? 'doughnut' : rawType === 'pie' ? 'doughnut' : isHoriz ? 'bar' : rawType;
+  const isPie   = type === 'pie' || type === 'doughnut';
+  const isRadar = type === 'radar';
+  const isLine  = type === 'line';
+  const isStacked = chartDef.stacked;
+
+  const datasets = (chartDef.datasets || []).map((ds, di) => ({
+    label:           ds.label || '',
+    data:            (ds.data || []).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
+    backgroundColor: isPie ? COLORS : isRadar ? COLORS[di % COLORS.length] + '22' : COLORS[di % COLORS.length],
+    borderColor:     COLORS[di % COLORS.length],
+    borderWidth:     isLine ? 2 : isRadar ? 1.5 : 0,
+    fill:            false, tension: 0.4,
+    borderRadius:    (!isPie && !isRadar && !isLine) ? 3 : 0,
+  }));
+
+  presCharts[chartId] = new Chart(canvas, {
+    type,
+    data: { labels: chartDef.labels || [], datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: isHoriz ? 'y' : 'x',
+      plugins: {
+        legend: {
+          display: datasets.length > 1 || isPie || isRadar,
+          labels: { color: '#4A5568', font: { size: 10, family: 'Arial' }, boxWidth: 10, padding: 12 }
+        },
+        tooltip: { backgroundColor: '#0A1E4A', titleColor: '#fff', bodyColor: '#E2E8F0', borderColor: '#1565D8', borderWidth: 1 }
+      },
+      scales: isPie || isRadar ? (isRadar ? {
+        r: { ticks:{ color:'#8896A8',backdropColor:'transparent',font:{size:9} }, grid:{color:'#E2E8F0'},
+             pointLabels:{color:'#374151',font:{size:10}}, angleLines:{color:'#E2E8F0'} }
+      } : {}) : {
+        x: { ticks:{color:'#6B7280',font:{size:9}}, grid:{color:'#F3F4F6'}, stacked:isStacked },
+        y: { ticks:{color:'#6B7280',font:{size:9}}, grid:{color:'#F3F4F6'}, beginAtZero:true, stacked:isStacked }
+      }
+    }
+  });
 }
 
 function openPresentation() {
