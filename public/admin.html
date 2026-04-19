@@ -371,6 +371,22 @@
         <div class="stat-box"><div class="stat-val" id="s-embedded">—</div><div class="stat-lbl">Chunks Embedded</div></div>
         <div class="stat-box"><div class="stat-val" id="s-fw-sources">—</div><div class="stat-lbl">Frameworks</div></div>
         <div class="stat-box"><div class="stat-val" id="s-fw-chunks">—</div><div class="stat-lbl">Framework Chunks</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-patterns-embedded">—</div><div class="stat-lbl">Patterns Embedded</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-patterns-missing" style="color:#FC8181">—</div><div class="stat-lbl">Patterns Missing Embed</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Maintenance Actions</h2>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runAllEmbeddings()">
+          ⚡ Embed All Missing (Chunks + Patterns)
+        </button>
+        <button class="btn" style="background:#161B24;color:#A3A9B6;border:1px solid #1A1D24"
+          onclick="loadStats()">↻ Refresh Stats</button>
+      </div>
+      <div class="log-wrap" id="stats-log-wrap" style="display:none">
+        <div class="log-title">Embed Log</div>
+        <div class="log-body" id="stats-log-body"></div>
       </div>
     </div>
   </div>
@@ -514,7 +530,7 @@ function setQueueStatus(idx, status) {
 
 // -- Process queue -----------------------------------------
 async function claudeCall(messages, maxTokens, system = null) {
-  const body = { model: 'claude-sonnet-4-5', max_tokens: maxTokens, messages };
+  const body = { model: 'claude-sonnet-4-6', max_tokens: maxTokens, messages };
   if (system) body.system = system;
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -1437,13 +1453,62 @@ async function loadStats() {
     .select('*', { count:'exact', head:true }).eq('competency_type', 'framework');
   const { count: fwChunks } = await window.db.from('report_chunks')
     .select('*', { count:'exact', head:true }).eq('chunk_type', 'framework');
+  const { count: patternsEmbedded } = await window.db.from('industry_patterns')
+    .select('*', { count:'exact', head:true }).not('embedding', 'is', null);
+  const patternsTotal   = counts[1].count ?? 0;
+  const patternsMissing = patternsTotal - (patternsEmbedded ?? 0);
 
   document.getElementById('s-reports').textContent    = counts[0].count ?? '?';
-  document.getElementById('s-patterns').textContent   = counts[1].count ?? '?';
+  document.getElementById('s-patterns').textContent   = patternsTotal;
   document.getElementById('s-chunks').textContent     = counts[2].count ?? '?';
   document.getElementById('s-embedded').textContent   = embedded ?? '?';
   document.getElementById('s-fw-sources').textContent = fwSources ?? '?';
   document.getElementById('s-fw-chunks').textContent  = fwChunks ?? '?';
+  if (document.getElementById('s-patterns-embedded')) {
+    document.getElementById('s-patterns-embedded').textContent = patternsEmbedded ?? '?';
+    document.getElementById('s-patterns-missing').textContent  = patternsMissing > 0 ? patternsMissing : '✓ 0';
+    if (patternsMissing === 0) document.getElementById('s-patterns-missing').style.color = '#38D996';
+  }
+}
+
+async function runAllEmbeddings() {
+  const logWrap = document.getElementById('stats-log-wrap');
+  const logBody = document.getElementById('stats-log-body');
+  logWrap.style.display = 'block';
+  logBody.textContent = '';
+
+  const log = (msg, cls='') => {
+    const span = document.createElement('span');
+    span.className = cls;
+    span.textContent = msg + '\n';
+    logBody.appendChild(span);
+    logBody.scrollTop = logBody.scrollHeight;
+  };
+
+  log('Embedding report chunks (type: chunk)...');
+  try {
+    const r1 = await fetch('/api/embed', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
+      body: JSON.stringify({ type: 'chunk' }),
+    });
+    const d1 = await r1.json();
+    log(`✓ Chunks: ${d1.embedded}/${d1.total || 0} embedded — ${d1.message}`, 'done');
+  } catch(e) { log('✗ Chunk embed error: ' + e.message, 'err'); }
+
+  log('Embedding industry patterns (type: pattern)...');
+  try {
+    const r2 = await fetch('/api/embed', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + EDGE_ANON },
+      body: JSON.stringify({ type: 'pattern' }),
+    });
+    const d2 = await r2.json();
+    log(`✓ Patterns: ${d2.embedded}/${d2.total || 0} embedded — ${d2.message}`, 'done');
+  } catch(e) { log('✗ Pattern embed error: ' + e.message, 'err'); }
+
+  log('\n✓ Done. Refreshing stats...', 'done');
+  await loadStats();
 }
 </script>
 </body>
