@@ -1546,9 +1546,10 @@ async function streamSection(payload, sectionIndex) {
   const reader  = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
-  let headlineData = null;
-  let commentary   = '';
-  let visuals      = { chart: null, table: null };
+  let headlineData  = null;
+  let commentary    = '';
+  let visuals       = { chart: null, table: null };
+  let metaSucceeded = false; // true when Phase 2 ran (even if chart/table were null)
 
   const block = document.getElementById('sec-' + sectionIndex);
   let commentaryEl = null;
@@ -1588,6 +1589,13 @@ async function streamSection(payload, sectionIndex) {
         // Phase 2: meta arrives after stream — add headline, stats, visuals
         if (evt.type === 'meta') {
           headlineData = evt;
+          metaSucceeded = true; // Phase 2 ran — don't call extract-visuals as fallback
+
+          // Debug logging — visible in browser console
+          const hasChart = !!(evt.chart?.labels?.length || evt.chart?.datasets?.length);
+          const hasTable = !!(evt.table?.headers?.length);
+          console.log(`[Section ${sectionIndex+1} "${payload.sectionTitle}"] meta: chart=${hasChart}, table=${hasTable}, stats=${evt.stats?.length||0}`);
+
           setStatus(`📊 <strong>Extracting data visuals</strong> — building charts & tables...`, null);
 
           // Wrap existing commentary in collapsible preview
@@ -1662,9 +1670,13 @@ async function streamSection(payload, sectionIndex) {
             }
           }
 
-          // ── Post-process: extract visuals if none were rendered from meta ──
+          // ── Post-process: extract visuals only when Phase 2 failed entirely ──
+          // metaSucceeded = Phase 2 ran and returned (chart may be null by design for
+          // narrative sections like Executive Summary — that's intentional, not a failure).
+          // Only call extract-visuals when meta never fired at all (network error, timeout).
           const hasVisuals = block?.querySelector('.slide-visuals');
-          if (!hasVisuals && commentary.length > 120) {
+          if (!hasVisuals && !metaSucceeded && commentary.length > 120) {
+            console.log(`[Section] Phase 2 never fired — calling extract-visuals fallback`);
             extractVisualsFromCommentary(commentary, payload.sectionTitle, sectionIndex, block);
           }
         }
