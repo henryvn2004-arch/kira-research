@@ -120,10 +120,10 @@
 }
 #kira-nav .nav-inner {
   max-width: 1120px; margin: 0 auto;
-  padding: 0 32px; height: 64px;
+  padding: 0 32px; height: 96px;
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
 }
-.nav-logo img { height: 44px; width: auto; max-width: 180px; object-fit: contain; display: block; }
+.nav-logo img { height: 88px; width: auto; max-width: 280px; object-fit: contain; display: block; }
 .nav-links {
   display: flex; align-items: center; gap: 4px; list-style: none;
   margin: 0; padding: 0;
@@ -210,7 +210,7 @@
 
 /* ── Mobile nav ── */
 .mobile-nav {
-  display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
+  display: none; position: fixed; top: 96px; left: 0; right: 0; bottom: 0;
   background: #0B0D10; z-index: 999; overflow-y: auto;
   border-top: 1px solid #1A1D24;
 }
@@ -246,7 +246,7 @@
   border-bottom: 1px solid #1A1D24;
 }
 .footer-brand { display: flex; flex-direction: column; gap: 12px; }
-.footer-logo { height: auto; width: 160px; max-width: 160px; object-fit: contain; opacity: .9; display: block; }
+.footer-logo { height: auto; width: 240px; max-width: 240px; object-fit: contain; opacity: .9; display: block; }
 .footer-tagline { font-size: 12px; color: #5A6278; }
 .footer-cols { display: flex; gap: 64px; }
 .footer-col { display: flex; flex-direction: column; gap: 10px; }
@@ -296,7 +296,7 @@
   document.body.appendChild(footWrap.firstElementChild);
 
   // ── Add body padding so content isn't behind fixed nav ───
-  document.body.style.paddingTop = '64px';
+  document.body.style.paddingTop = '96px';
 
   // ── Active page highlight ─────────────────────────────────
   const path = window.location.pathname;
