@@ -79,19 +79,26 @@ export default async function handler(req, res) {
 
   const focus = TYPE_FOCUS[reportType] || 'market size, key players, trends, regulations';
 
-  const prompt = `Research the ${industry} market in ${country}.
-${companies ? `Key companies: ${companies}` : ''}
-${questions  ? `Specific focus: ${questions}` : ''}
+  // questions drives the research angle — prioritized before generic topics
+  const focusInstruction = questions
+    ? `CLIENT'S SPECIFIC FOCUS (prioritize this above all else): ${questions}`
+    : `Research focus: ${focus}`;
 
-Find current data on: ${focus}
+  const prompt = `Research the ${industry} market in ${country}.
+${companies ? `Key companies to cover: ${companies}` : ''}
+
+${focusInstruction}
+
+Also cover these standard topics where relevant: ${focus}
 
 For each topic provide:
 - Specific numbers/percentages with year (e.g. "Market size: $2.3B in 2024")
 - Top 3-5 company names and estimated market share
 - Source attribution (e.g. "according to GSO", "industry estimate")
 - Local currency figures where available
+- Answer the client's specific focus questions with real data
 
-Be specific and data-dense. Max 400 words.`;
+Max 500 words. Be specific and data-dense.`;
 
   try {
     let research = '';

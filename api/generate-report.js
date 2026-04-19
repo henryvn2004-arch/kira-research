@@ -278,8 +278,8 @@ Be specific. Max 400 words.`, 800),
       ? rag.chunkText.split('\n\n').slice(0, 3).join('\n\n') : '';
 
     const planPrompt = `Plan sections for a ${typeName} report: ${industry} in ${country}.
-${questions ? 'Client focus: ' + questions : ''}
-${companies ? 'Companies: '    + companies : ''}
+${companies ? 'Companies: ' + companies : ''}
+${questions  ? `\nCLIENT'S SPECIFIC QUESTIONS (these MUST be answered by the report structure):\n"${questions}"\n\nEnsure the section list directly addresses these questions. Add or rename sections to cover the client's specific focus — do not default to a generic structure if the client has specific needs.` : ''}
 
 RESEARCH SUMMARY:
 ${(research || '').slice(0, 2000)}

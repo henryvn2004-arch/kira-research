@@ -281,7 +281,8 @@ function buildContext(params, ragContext, researchSummary, prevSections, compete
     : '';
 
   return `Industry: ${industry} | Market: ${country} | Report: ${reportType.replace(/_/g,' ')}
-${questions ? `Focus: ${questions}` : ''}${companies ? ` | Companies: ${companies}` : ''}${langInstruction}
+${companies ? `Key companies: ${companies}` : ''}${langInstruction}
+${questions ? `\nCLIENT FOCUS — address this in your analysis: "${questions}"` : ''}
 
 RESEARCH DATA:
 ${trimmedResearch}
