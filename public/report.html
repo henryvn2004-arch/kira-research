@@ -441,15 +441,39 @@ function drawChart(id,ch){
         plugins:{legend:{position:'bottom',labels:{color:'#8A96A8',font:{size:11},padding:10,boxWidth:10}},tooltip:{enabled:true}}}};
   } else if(ch.type==='bar'){
     const horiz=ch.dir==='horizontal';
-    const bgs=Array.isArray(ch.colors)&&ch.colors.length>1?ch.colors:Array(ch.data.length).fill(ch.colors?.[0]||CC.blue);
+    // Handle multi-series (datasets) OR single-series (data)
+    let datasets;
+    if(ch.datasets?.length){
+      const COLS=['#1E6FFF','#00D4A8','#C9A84C','#8B5CF6','#E05252','#505A6B'];
+      datasets=ch.datasets.map((ds,i)=>({
+        label:ds.label||'',data:ds.data,
+        backgroundColor:ds.color||COLS[i%COLS.length],
+        borderWidth:0,borderRadius:2
+      }));
+    } else {
+      const bgs=Array.isArray(ch.colors)&&ch.colors.length>1?ch.colors:Array((ch.data||[]).length).fill(ch.colors?.[0]||CC.blue);
+      datasets=[{data:ch.data||[],backgroundColor:bgs,borderWidth:0,borderRadius:2}];
+    }
     cfg={type:'bar',
-      data:{labels:ch.labels,datasets:[{data:ch.data,backgroundColor:bgs,borderWidth:0,borderRadius:2}]},
+      data:{labels:ch.labels||[],datasets},
       options:{indexAxis:horiz?'y':'x',responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
+        plugins:{legend:{display:ch.datasets?.length>1,position:'top',align:'end',labels:{color:'#8A96A8',font:{size:10},boxWidth:12,padding:10}}},
         scales:{
           x:{grid:{color:horiz?'#242D3D':'transparent'},ticks:{color:'#8A96A8',font:{size:10}}},
           y:{grid:{color:horiz?'transparent':'#242D3D'},ticks:{color:'#8A96A8',font:{size:10}}}
         }}};
+  } else if(ch.type==='radar'){
+    const COLS=['#1E6FFF','#00D4A8','#C9A84C','#8B5CF6','#E05252'];
+    cfg={type:'radar',
+      data:{labels:ch.labels||[],datasets:(ch.datasets||[]).map((ds,i)=>({
+        label:ds.label||'',data:ds.data,
+        borderColor:ds.color||COLS[i%COLS.length],
+        backgroundColor:(ds.color||COLS[i%COLS.length])+'22',
+        borderWidth:2,pointRadius:3,pointBackgroundColor:ds.color||COLS[i%COLS.length]
+      }))},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',align:'end',labels:{color:'#8A96A8',font:{size:10},boxWidth:12,padding:10}}},
+        scales:{r:{grid:{color:'#242D3D'},pointLabels:{color:'#8A96A8',font:{size:10}},ticks:{color:'#505A6B',font:{size:9},backdropColor:'transparent'}}}}};
   } else if(ch.type==='line'){
     cfg={type:'line',
       data:{labels:ch.labels,datasets:ch.datasets.map(ds=>({label:ds.label,data:ds.data,borderColor:ds.color,backgroundColor:'transparent',borderWidth:2.5,tension:.4,pointBackgroundColor:ds.color,pointRadius:3,pointHoverRadius:5}))},
@@ -516,9 +540,34 @@ async function doExport(){
 }
 
 function buildPPTXChart(ch){
-  if(ch.type==='bar') return {type:'bar',dir:ch.dir==='horizontal'?'bar':'col',title:ch.title,data:[{name:'Data',labels:ch.labels,values:ch.data}],colors:ch.colors?.map(c=>c.replace('#',''))||['1E6FFF']};
-  if(ch.type==='doughnut') return {type:'doughnut',title:ch.title,data:[{name:'Mix',labels:ch.labels,values:ch.data}],colors:ch.colors?.map(c=>c.replace('#',''))||['1E6FFF']};
-  if(ch.type==='line') return {type:'line',title:ch.title,labels:ch.labels,datasets:ch.datasets?.map(d=>({name:d.label,values:d.data,color:d.color?.replace('#','')||'1E6FFF'}))};
+  if(!ch?.type) return null;
+  const hex=c=>(c||'1E6FFF').replace('#','');
+  if(ch.type==='bar'){
+    const dir=ch.dir==='horizontal'?'bar':'col';
+    // Multi-series (stacked/grouped bar)
+    if(ch.datasets?.length){
+      return {type:'bar',dir,title:ch.title,
+        data:ch.datasets.map(ds=>({name:ds.label,labels:ch.labels,values:ds.data})),
+        colors:ch.datasets.map(ds=>hex(ds.color))};
+    }
+    // Single series
+    return {type:'bar',dir,title:ch.title,
+      data:[{name:'Data',labels:ch.labels,values:ch.data||[]}],
+      colors:(ch.colors||[]).map(hex)||['1E6FFF']};
+  }
+  if(ch.type==='doughnut'){
+    return {type:'doughnut',title:ch.title,
+      data:[{name:'Mix',labels:ch.labels,values:ch.data||[]}],
+      colors:(ch.colors||[]).map(hex)};
+  }
+  if(ch.type==='line'){
+    return {type:'line',title:ch.title,labels:ch.labels,
+      datasets:(ch.datasets||[]).map(d=>({name:d.label,values:d.data,color:hex(d.color)}))};
+  }
+  if(ch.type==='radar'){
+    return {type:'radar',title:ch.title,labels:ch.labels,
+      datasets:(ch.datasets||[]).map(d=>({name:d.label,values:d.data,color:hex(d.color)}))};
+  }
   return null;
 }
 
