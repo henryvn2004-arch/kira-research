@@ -310,7 +310,7 @@ async function sectionRagSearch(query, sectionType) {
 
     const chunkType = sectionType ? (SECTION_CHUNK_TYPE[sectionType] || null) : null;
     const opts = { method: 'POST',
-                   headers: { 'apikey`: SB_KEY}`,
+                   headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`,
                                'Content-Type': 'application/json' } };
 
     // Query 1: semantic similarity — finds DATA relevant to this section
@@ -344,6 +344,8 @@ async function sectionRagSearch(query, sectionType) {
     };
   } catch { return null; }
 }
+
+function buildAntiOverlapContext(prevSections) {
   if (!prevSections?.length) return '';
   const completed = prevSections
     .filter(s => s.status === 'completed' && s.content)
@@ -374,7 +376,8 @@ function buildContext(params, ragContext, researchSummary, prevSections, compete
   const trimmedResearch = trimResearchForSection(researchSummary, sectionTitle, sectionType);
 
   // RAG: separate framework chunks (how-to-write) from data chunks (what-to-write-about)
-  const allChunks = effectiveRag.chunkText || '';
+  const effectiveRag  = ragContext || {};
+  const allChunks     = effectiveRag.chunkText || '';
   const frameworkChunks = allChunks.split('\n\n').filter(c => c.startsWith('[framework]'));
   const dataChunks      = allChunks.split('\n\n').filter(c => !c.startsWith('[framework]'));
 

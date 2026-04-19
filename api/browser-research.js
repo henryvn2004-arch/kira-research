@@ -25,28 +25,38 @@ const TYPE_FOCUS = {
 };
 
 async function researchWithPerplexity(prompt) {
-  const r = await fetch('https://api.perplexity.ai/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PERPLEXITY_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'sonar-pro',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a market research analyst. Provide specific data with source attributions. Always include numbers, percentages, and company names. Focus on recent 2023-2024 data.',
-        },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 1000,
-      temperature: 0.1, // low temp = more factual
-    }),
-  });
-  if (!r.ok) throw new Error(`Perplexity ${r.status}: ${await r.text().then(t=>t.slice(0,100))}`);
-  const d = await r.json();
-  return d.choices?.[0]?.message?.content || '';
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 40000); // 40s hard cap
+  try {
+    const r = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${PERPLEXITY_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'sonar-pro',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a market research analyst. Provide specific data with source attributions. Always include numbers, percentages, and company names. Focus on recent 2023-2024 data.',
+          },
+          { role: 'user', content: prompt },
+        ],
+        max_tokens: 1000,
+        temperature: 0.1,
+      }),
+    });
+    clearTimeout(timeout);
+    if (!r.ok) throw new Error(`Perplexity ${r.status}: ${await r.text().then(t=>t.slice(0,100))}`);
+    const d = await r.json();
+    return d.choices?.[0]?.message?.content || '';
+  } catch (e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') throw new Error('Perplexity timeout (>40s)');
+    throw e;
+  }
 }
 
 async function researchWithAnthropic(prompt) {
@@ -105,10 +115,18 @@ Max 500 words. Be specific and data-dense.`;
     let source   = '';
 
     if (PERPLEXITY_KEY) {
-      research = await researchWithPerplexity(prompt);
-      source   = 'perplexity-sonar-pro';
-    } else {
-      // Fallback to Anthropic web_search if no Perplexity key
+      try {
+        research = await researchWithPerplexity(prompt);
+        source   = 'perplexity-sonar-pro';
+      } catch (perplexityErr) {
+        console.warn('[browser-research] Perplexity failed:', perplexityErr.message, '— falling back to Anthropic');
+        // Fallback to Anthropic web_search when Perplexity times out or errors
+        if (ANT_KEY) {
+          research = await researchWithAnthropic(prompt);
+          source   = 'anthropic-web_search-fallback';
+        }
+      }
+    } else if (ANT_KEY) {
       research = await researchWithAnthropic(prompt);
       source   = 'anthropic-web_search';
     }
