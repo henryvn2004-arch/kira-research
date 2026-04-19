@@ -59,29 +59,30 @@ function header(p,s,C,num,label,title){
   } else {
     s.addShape(p.shapes.RECTANGLE,{x:0,y:0,w:W,h:0.04,fill:{color:C.blue},line:{color:C.blue}});
   }
-  s.addText(`${String(num).padStart(2,"0")}  —  ${(label||'').toUpperCase()}`,{x:0.35,y:0.22,w:9,h:0.22,fontFace:"Arial",fontSize:8,bold:true,color:C.blue,charSpacing:2,margin:0});
-  const fs = title.length>90?14.5 : title.length>60?16 : 18;
-  const th = title.length>90?1.0 : 0.8;
-  s.addText(title,{x:0.35,y:0.5,w:9.3,h:th,fontFace:"Arial",fontSize:fs,bold:true,color:C.text,margin:0});
+  s.addText(`${String(num).padStart(2,"0")}  —  ${(label||'').toUpperCase()}`,{x:0.35,y:0.2,w:9,h:0.2,fontFace:"Arial",fontSize:7.5,bold:true,color:C.blue,charSpacing:2,margin:0});
+  // Smaller title fonts to prevent overflow
+  const fs = title.length>90?11 : title.length>60?13 : 15;
+  const th = title.length>90?0.9 : 0.7;
+  s.addText(title,{x:0.35,y:0.44,w:9.3,h:th,fontFace:"Arial",fontSize:fs,bold:true,color:C.text,margin:0});
   if(C.isDark){
-    s.addShape(p.shapes.LINE,{x:0.35,y:0.5+th+0.05,w:9.3,h:0,line:{color:C.border,width:0.75}});
+    s.addShape(p.shapes.LINE,{x:0.35,y:0.44+th+0.04,w:9.3,h:0,line:{color:C.border,width:0.75}});
   } else {
-    s.addShape(p.shapes.RECTANGLE,{x:0.35,y:0.5+th+0.05,w:0.55,h:0.025,fill:{color:C.blue},line:{color:C.blue}});
-    s.addShape(p.shapes.LINE,{x:0.9,y:0.5+th+0.065,w:8.75,h:0,line:{color:C.border,width:0.5}});
+    s.addShape(p.shapes.RECTANGLE,{x:0.35,y:0.44+th+0.04,w:0.45,h:0.02,fill:{color:C.blue},line:{color:C.blue}});
+    s.addShape(p.shapes.LINE,{x:0.8,y:0.44+th+0.05,w:8.85,h:0,line:{color:C.border,width:0.5}});
   }
-  return 0.5+th+0.22;
+  return 0.44+th+0.18;
 }
 
 function statCard(p,s,C,x,y,w,h,label,value,sub,ac){
   const color = ac || C.blue;
   const bg = C.isDark ? C.surface2 : "FFFFFF";
   s.addShape(p.shapes.RECTANGLE,{x,y,w,h,fill:{color:bg},line:{color:C.border,width:C.isDark?0.5:0.75}});
-  s.addShape(p.shapes.RECTANGLE,{x,y,w,h:0.03,fill:{color},line:{color}});
-  s.addText((label||'').toUpperCase(),{x:x+0.12,y:y+0.09,w:w-0.2,h:0.18,fontFace:"Arial",fontSize:7,color:C.textDim,charSpacing:1,margin:0});
-  // Shrink font for long values
-  const vfs = String(value||'').length > 8 ? 20 : 26;
-  s.addText(String(value||''),{x:x+0.12,y:y+0.26,w:w-0.2,h:0.42,fontFace:"Arial",fontSize:vfs,bold:true,color:C.text,margin:0});
-  if(sub) s.addText(String(sub),{x:x+0.12,y:y+0.65,w:w-0.2,h:0.16,fontFace:"Arial",fontSize:8,color,margin:0});
+  s.addShape(p.shapes.RECTANGLE,{x,y,w,h:0.025,fill:{color},line:{color}});
+  s.addText((label||'').toUpperCase(),{x:x+0.1,y:y+0.07,w:w-0.18,h:0.2,fontFace:"Arial",fontSize:6.5,color:C.textDim,charSpacing:1,margin:0});
+  // Shrink value font based on text length
+  const vfs = String(value||'').length > 10 ? 14 : String(value||'').length > 7 ? 17 : 20;
+  s.addText(String(value||''),{x:x+0.1,y:y+0.25,w:w-0.18,h:0.38,fontFace:"Arial",fontSize:vfs,bold:true,color:C.text,margin:0});
+  if(sub) s.addText(String(sub),{x:x+0.1,y:y+0.6,w:w-0.18,h:0.14,fontFace:"Arial",fontSize:7,color,margin:0});
 }
 
 function finding(p,s,C,y,text){
@@ -244,27 +245,56 @@ async function generate(meta, sections, theme){
       footer(pres,s,C,sec.source||'',globalSlideNum++,totalSlides);
     }
 
-    // ── B: Dashboard slide — stats + key points ──
+    // ── B: Dashboard slide — 3 layout variants cycling by section index ──
     if(sec.stats?.length) {
       const s = pres.addSlide();
       s.background = {color:C.surface};
-      let cy = header(pres,s,C,idx+1,sec.label||'',sec.title||sec.finding||'Key Metrics Overview');
+      const cy = header(pres,s,C,idx+1,sec.label||'',sec.title||sec.finding||'Key Metrics Overview');
+      const variant = idx % 3;
 
-      // Stats row — dynamic width
-      const stats = sec.stats.slice(0,4);
-      const n = stats.length;
-      const gap = 0.18, sw = (9.3-(n-1)*gap)/n, sh = 0.82;
-      stats.forEach((st,i) => statCard(pres,s,C,0.35+i*(sw+gap),cy,sw,sh,st.label||'',st.value||'',st.change||'',st.accentColor||C.blue));
-      cy += sh + 0.2;
-
-      // Key points below stats
-      if(keyPts.length) {
-        s.addText('KEY INSIGHTS',{x:0.35,y:cy,w:3,h:0.2,fontFace:"Arial",fontSize:7,bold:true,color:C.blue,charSpacing:2,margin:0});
-        cy += 0.22;
-        keyPts.slice(0,3).forEach((pt,i) => {
-          const yp = cy + i*0.48;
-          s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.08,w:0.03,h:0.28,fill:{color:C.border},line:{color:C.border}});
-          s.addText(pt,{x:0.5,y:yp,w:8.8,h:0.44,fontFace:"Arial",fontSize:9,color:C.textMid,wrap:true,valign:'top',margin:0});
+      if(variant === 0) {
+        // Variant A — Stats row + key points list below
+        const stats=sec.stats.slice(0,4), n=stats.length;
+        const gap=0.18, sw=(9.3-(n-1)*gap)/n, sh=0.75;
+        stats.forEach((st,i)=>statCard(pres,s,C,0.35+i*(sw+gap),cy,sw,sh,st.label||'',st.value||'','',st.accentColor||C.blue));
+        const kpY=cy+sh+0.18;
+        s.addText('KEY INSIGHTS',{x:0.35,y:kpY,w:3,h:0.16,fontFace:"Arial",fontSize:6.5,bold:true,color:C.blue,charSpacing:2,margin:0});
+        keyPts.slice(0,3).forEach((pt,i)=>{
+          const yp=kpY+0.2+i*0.44;
+          s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.07,w:0.025,h:0.26,fill:{color:C.border},line:{color:C.border}});
+          s.addText(pt,{x:0.48,y:yp,w:8.8,h:0.40,fontFace:"Arial",fontSize:8,color:C.textMid,wrap:true,valign:'top',margin:0});
+        });
+      }
+      else if(variant === 1) {
+        // Variant B — Large finding box left + 2×2 stat grid right
+        const lw=4.1, rX=4.65, rw=4.85;
+        if(sec.finding){
+          s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:cy,w:lw,h:3.3,fill:{color:C.isDark?C.surface2:'EEF4FF'},line:{color:C.isDark?C.borderLt:C.blue,width:0.5}});
+          s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:cy,w:0.025,h:3.3,fill:{color:C.blue},line:{color:C.blue}});
+          s.addText('KEY FINDING',{x:0.48,y:cy+0.1,w:lw-0.2,h:0.16,fontFace:"Arial",fontSize:6.5,bold:true,color:C.blue,charSpacing:2,margin:0});
+          s.addText(sec.finding,{x:0.48,y:cy+0.3,w:lw-0.2,h:0.75,fontFace:"Arial",fontSize:10,bold:true,color:C.text,wrap:true,valign:'top',margin:0});
+          if(keyPts[0]) s.addText(keyPts[0],{x:0.48,y:cy+1.12,w:lw-0.2,h:1.9,fontFace:"Arial",fontSize:7.5,color:C.textMid,wrap:true,valign:'top',margin:0});
+        }
+        const stats=sec.stats.slice(0,4), sw2=(rw-0.1)/2, sh2=1.55;
+        stats.forEach((st,i)=>{
+          const col=i%2, row=Math.floor(i/2);
+          statCard(pres,s,C,rX+col*(sw2+0.1),cy+row*(sh2+0.1),sw2,sh2,st.label||'',st.value||'','',st.accentColor||C.blue);
+        });
+      }
+      else {
+        // Variant C — Hero stat large + 3 smaller beside + key points below
+        const stats=sec.stats.slice(0,4);
+        if(stats[0]) statCard(pres,s,C,0.35,cy,3.5,1.35,stats[0].label||'',stats[0].value||'','',stats[0].accentColor||C.blue);
+        const smW=1.83, smGap=0.09;
+        stats.slice(1,4).forEach((st,i)=>{
+          statCard(pres,s,C,4.05+i*(smW+smGap),cy,smW,1.35,st.label||'',st.value||'','',st.accentColor||[C.accent,C.gold,C.blue][i]||C.blue);
+        });
+        const kpY=cy+1.5;
+        s.addText('KEY INSIGHTS',{x:0.35,y:kpY,w:3,h:0.16,fontFace:"Arial",fontSize:6.5,bold:true,color:C.blue,charSpacing:2,margin:0});
+        keyPts.slice(0,2).forEach((pt,i)=>{
+          const yp=kpY+0.2+i*0.44;
+          s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.07,w:0.025,h:0.26,fill:{color:C.border},line:{color:C.border}});
+          s.addText(pt,{x:0.48,y:yp,w:8.8,h:0.40,fontFace:"Arial",fontSize:8,color:C.textMid,wrap:true,valign:'top',margin:0});
         });
       }
       footer(pres,s,C,sec.source||'',globalSlideNum++,totalSlides);
@@ -282,17 +312,17 @@ async function generate(meta, sections, theme){
       s.addShape(pres.shapes.LINE,{x:divX,y:1.2,w:0,h:H-1.55,line:{color:C.border,width:0.5}});
 
       // LEFT: key points
-      s.addText('ANALYSIS',{x:0.35,y:1.25,w:3,h:0.18,fontFace:"Arial",fontSize:7,bold:true,color:C.blue,charSpacing:2,margin:0});
+      s.addText('ANALYSIS',{x:0.35,y:1.22,w:3,h:0.16,fontFace:"Arial",fontSize:6.5,bold:true,color:C.blue,charSpacing:2,margin:0});
       if(sec.finding){
-        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:1.5,w:0.03,h:0.68,fill:{color:C.blue},line:{color:C.blue}});
-        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:1.5,w:3.1,h:0.68,fill:{color:cBg},line:{color:C.borderLt,width:0.5}});
-        s.addText(sec.finding,{x:0.5,y:1.52,w:2.9,h:0.62,fontFace:"Arial",fontSize:8.5,bold:true,color:C.text,wrap:true,valign:'top',margin:0});
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:1.44,w:0.025,h:0.62,fill:{color:C.blue},line:{color:C.blue}});
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:1.44,w:3.1,h:0.62,fill:{color:cBg},line:{color:C.borderLt,width:0.5}});
+        s.addText(sec.finding,{x:0.48,y:1.46,w:2.9,h:0.56,fontFace:"Arial",fontSize:7.5,bold:true,color:C.text,wrap:true,valign:'top',margin:0});
       }
-      const kpY = sec.finding ? 2.28 : 1.5;
+      const kpY = sec.finding ? 2.14 : 1.44;
       keyPts.slice(0,3).forEach((pt,i) => {
-        const yp = kpY + i*0.56;
-        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.1,w:0.03,h:0.32,fill:{color:C.border},line:{color:C.border}});
-        s.addText(pt,{x:0.5,y:yp,w:2.9,h:0.52,fontFace:"Arial",fontSize:8.5,color:C.textMid,wrap:true,valign:'top',margin:0});
+        const yp = kpY + i*0.52;
+        s.addShape(pres.shapes.RECTANGLE,{x:0.35,y:yp+0.08,w:0.025,h:0.30,fill:{color:C.border},line:{color:C.border}});
+        s.addText(pt,{x:0.48,y:yp,w:2.88,h:0.48,fontFace:"Arial",fontSize:7.5,color:C.textMid,wrap:true,valign:'top',margin:0});
       });
 
       // RIGHT: chart
