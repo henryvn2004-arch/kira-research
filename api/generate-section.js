@@ -660,6 +660,10 @@ Available blocks (NO prose blocks — prose is shown separately):
 stats   → {"type":"stats","items":[{"value":"$2.3B","label":"Market 2025"}]}
 chart   → {"type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers]}],"horizontal":true}
 diagram → {"type":"diagram","code":"mermaid syntax","title":"..."}
+  CRITICAL MERMAID RULES — ASCII only in node labels (Vietnamese/Unicode breaks rendering):
+  ✓ flowchart LR\n  A[Market Analysis] -->|drives| B[Strategy]\n  B --> C[Execution]
+  ✗ flowchart LR\n  A[Phân tích thị trường] --> B[Chiến lược]  ← BREAKS
+  Use English labels or abbreviations inside nodes. Title/description can be in any language.
 table   → {"type":"table","title":"...","headers":[...],"rows":[[...]]}
 callout → {"type":"callout","text":"Strategic implication...","style":"insight|action|warning"}
 
