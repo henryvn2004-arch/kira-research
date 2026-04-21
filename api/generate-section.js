@@ -633,74 +633,56 @@ APPROACH:
       ? `\nIMPORTANT: All text (headline, stat labels, chart title, chart labels, table headers) must be in ${language}.`
       : '';
 
-    const extractPrompt = `You wrote this market research section titled "${sectionTitle}":
+    const extractPrompt = `You wrote this section titled "${sectionTitle}":
 ${langNote}
 
 ${fullCommentary}
 
-Extract structured data. Return ONLY valid JSON with this exact structure:
+Design the best visual presentation for this section. Return ONLY valid JSON with a "blocks" array.
+
+Claude freely chooses which blocks to include and in what order based on what the content needs.
+
+BLOCK TYPES available:
+
+headline    → { "type":"headline", "text":"Key insight 1-2 sentences with specific data" }
+stats       → { "type":"stats", "items":[{"value":"$2.3B","label":"Market size 2024"},{"value":"18%","label":"CAGR"}] }
+             → 2-4 stats. value: number + unit. label: short descriptor. Max 4.
+chart       → { "type":"chart", "title":"...", "chartType":"line|bar|doughnut|radar", "labels":[...], "datasets":[{"label":"...","data":[numbers]}], "horizontal":true/false }
+             → Use for QUANTITATIVE data: time series, rankings, composition %. Data must be numbers.
+diagram     → { "type":"diagram", "title":"...", "code":"mermaid syntax" }
+             → Use for PROCESS/FLOW (flowchart LR), POSITIONING (quadrantChart), TIMELINE (timeline).
+             → Use diagram OR chart — not both.
+table       → { "type":"table", "title":"...", "headers":[...], "rows":[[...],[...]] }
+             → Best for multi-entity comparisons. Max 8 rows.
+callout     → { "type":"callout", "text":"Strategic implication or key action point", "style":"insight|action|warning" }
+             → 1 per section max. Use for the single most important strategic implication.
+prose       → { "type":"prose", "text":"Full analysis text from the commentary above" }
+             → Always include as last content block (before sources). Use the full commentary.
+sources     → { "type":"sources", "items":["Source 1","Source 2"] }
+             → Always last block if sources exist.
+
+SELECTION RULES:
+- Executive Summary / Recommendations / narrative sections → headline + prose (no forced chart)
+- Data-heavy sections (market size, financials) → headline + stats + chart + prose
+- Competitive / comparison sections → headline + table + prose (callout optional)
+- Process / flow sections → headline + diagram + prose
+- Always include prose with the full commentary text
+- callout only when there is a genuinely critical strategic implication
+- stats only when you have 2+ strong specific metrics
+
+EXAMPLE:
 {
-  "headline": "Key strategic finding in 1-2 sentences, specific and data-driven",
-  "stats": [
-    {"value": "~$2.4B", "label": "Market size 2024", "icon": "globe"},
-    {"value": "18%", "label": "CAGR 2024-2029", "icon": "growth"},
-    {"value": "3", "label": "Dominant players", "icon": "users"}
-  ],
-  "chart": {
-    "type": "line",
-    "title": "Market Size (USD Billion), 2022-2027",
-    "labels": ["2022", "2023", "2024", "2025", "2026", "2027"],
-    "datasets": [{"label": "Market Size ($B)", "data": [1.2, 1.5, 1.9, 2.3, 2.8, 3.4]}]
-  },
-  "diagram": null,
-  "table": {
-    "title": "Competitive Landscape Overview",
-    "headers": ["Player", "Est. Share", "Strengths", "Price Tier"],
-    "rows": [
-      ["Company A", "~35%", "Strong distribution", "Premium"],
-      ["Company B", "~22%", "Price leader", "Mid-range"]
-    ]
-  },
-  "sources": ["Industry report 2024", "Analyst estimate"]
+  "blocks": [
+    {"type":"headline","text":"Vietnam EV market reaches $1.2B in 2024, growing 34% YoY driven by VinFast dominance"},
+    {"type":"stats","items":[{"value":"$1.2B","label":"Market 2024"},{"value":"34%","label":"YoY growth"},{"value":"67%","label":"VinFast share"}]},
+    {"type":"chart","title":"EV Market Growth 2021-2026","chartType":"line","labels":["2021","2022","2023","2024","2025","2026"],"datasets":[{"label":"Market Size ($B)","data":[0.3,0.5,0.9,1.2,1.8,2.6]}]},
+    {"type":"prose","text":"Full analysis text here..."},
+    {"type":"callout","text":"Strategic implication: VinFast's 67% share creates a near-monopoly dynamic requiring differentiated positioning to compete.","style":"insight"},
+    {"type":"sources","items":["VinFast Annual Report 2024","Industry estimate"]}
+  ]
 }
 
-RULES — read carefully:
-
-headline: 1-2 sentences, specific numbers, strategic insight.
-
-stats: exactly 2-4 metrics. icon options: pie|growth|trend|users|channel|price|globe|check
-
-chart: ${isNarrativeSection ? 'set to null.' : `Choose chart OR diagram — NOT both. Use chart for QUANTITATIVE data with numbers:
-- Numbers over time → "line"
-- Market share / composition → "doughnut" (add "Others" to reach ~100%)  
-- Rankings or comparisons → "bar" (horizontal, sorted desc)
-- Multi-attribute comparison → "radar"
-${chartHint}
-datasets[].data MUST be plain numbers. labels.length MUST equal datasets[0].data.length. Max 8 labels.`}
-
-diagram: ${isNarrativeSection ? 'set to null.' : `Use diagram INSTEAD of chart (set chart to null) when section describes:
-- A PROCESS, WORKFLOW, or VALUE CHAIN → flowchart LR
-- COMPETITIVE POSITIONING or 2x2 MATRIX → quadrantChart
-- A TIMELINE, ROADMAP, or MILESTONES → timeline
-
-flowchart: { "type":"flowchart","title":"Value Chain","code":"flowchart LR\\n  A[Manufacturer] -->|30%| B[Distributor]\\n  B -->|15%| C[Retailer]" }
-quadrantChart: { "type":"quadrantChart","title":"Positioning","code":"quadrantChart\\n  title Competitive Map\\n  x-axis Low Price --> High Price\\n  y-axis Low Quality --> High Quality\\n  Brand A: [0.3, 0.8]\\n  Brand B: [0.7, 0.6]" }
-timeline: { "type":"timeline","title":"Evolution","code":"timeline\\n  title Market History\\n  2020 : Launch\\n  2022 : Growth\\n  2024 : Maturity" }
-
-If section is purely quantitative data, use chart and set diagram to null.`}
-
-table: ${isNarrativeSection ? 'set to null for this narrative section.' : `REQUIRED — must NOT be null. Most useful table for this section type:
-- Competitive section → players × share/strengths/price/distribution
-- Channel section → channels × share/growth/dominant players/margin
-- Consumer section → segments × size/needs/willingness to pay/channel
-- Pricing section → tiers × price range/key brands/target buyer
-- Regulatory section → requirements × details/timeline/impact
-- Default → 3-col key facts table (Metric | Value | Source)
-Max 8 rows. All values as short strings.`}
-
-sources: 1-3 sources referenced in text, or "Industry estimate" / "Analyst projection".
-
-CRITICAL: Return ONLY the JSON object. No explanation. No markdown fences.`;
+Return ONLY the JSON object. No markdown. No explanation.`;
 
     const raw = await callClaude(extractPrompt, 1100); // 1100 sufficient for chart+table JSON
 
@@ -726,25 +708,44 @@ CRITICAL: Return ONLY the JSON object. No explanation. No markdown fences.`;
     }
 
     if (parsed) {
-      // Sanitize diagram code — remove any unsafe content
-      if (parsed.diagram?.code) {
-        parsed.diagram.code = parsed.diagram.code.replace(/</g, '').replace(/>/g, '');
-      }
-      // Sanitize chart: ensure data arrays are numbers
-      if (parsed.chart?.datasets) {
-        parsed.chart.datasets = parsed.chart.datasets.map(ds => ({
-          ...ds,
-          data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
-        }));
-        // Normalize type names
-        if (parsed.chart.type === 'donut') parsed.chart.type = 'doughnut';
-        if (parsed.chart.type === 'pie')   parsed.chart.type = 'doughnut';
-        if (parsed.chart.type === 'horizontal_bar' || parsed.chart.type === 'bar_horizontal') {
-          parsed.chart.type = 'bar';
-          parsed.chart.horizontal = true;
+      // ── New blocks format ──
+      if (parsed.blocks?.length) {
+        // Sanitize blocks: fix chart data types, sanitize diagram code
+        parsed.blocks = parsed.blocks.map(b => {
+          if (b.type === 'chart' && b.datasets) {
+            b.datasets = b.datasets.map(ds => ({
+              ...ds,
+              data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
+            }));
+            if (b.chartType === 'donut') b.chartType = 'doughnut';
+            if (b.chartType === 'pie')   b.chartType = 'doughnut';
+            if (b.chartType === 'horizontal_bar') { b.chartType = 'bar'; b.horizontal = true; }
+          }
+          if (b.type === 'diagram' && b.code) {
+            b.code = b.code.replace(/</g,'').replace(/>/g,'');
+          }
+          return b;
+        });
+        meta = { ...meta, blocks: parsed.blocks };
+
+      // ── Legacy format fallback ──
+      } else {
+        if (parsed.diagram?.code) {
+          parsed.diagram.code = parsed.diagram.code.replace(/</g, '').replace(/>/g, '');
         }
+        if (parsed.chart?.datasets) {
+          parsed.chart.datasets = parsed.chart.datasets.map(ds => ({
+            ...ds,
+            data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
+          }));
+          if (parsed.chart.type === 'donut') parsed.chart.type = 'doughnut';
+          if (parsed.chart.type === 'pie')   parsed.chart.type = 'doughnut';
+          if (parsed.chart.type === 'horizontal_bar' || parsed.chart.type === 'bar_horizontal') {
+            parsed.chart.type = 'bar'; parsed.chart.horizontal = true;
+          }
+        }
+        meta = { ...meta, ...parsed };
       }
-      meta = { ...meta, ...parsed };
     } else {
       console.warn(`[generate-section] JSON parse failed for section "${sectionTitle}". Raw (first 200): ${raw.slice(0,200)}`);
     }
