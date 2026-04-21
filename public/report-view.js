@@ -1368,8 +1368,11 @@ function expBgClose(e) { if (e.target === document.getElementById('expOv')) clos
 
 function setExpFmt(f) {
   _expFmt = f;
-  document.getElementById('efmt-pptx').classList.toggle('on', f === 'pptx');
-  document.getElementById('efmt-pdf').classList.toggle('on', f === 'pdf');
+  document.getElementById('efmt-pptx')?.classList.toggle('on', f === 'pptx');
+  document.getElementById('efmt-pdf')?.classList.toggle('on', f === 'pdf');
+  // Legacy IDs (docreport.html, older pages)
+  document.getElementById('expFmtPptx')?.classList.toggle('active', f === 'pptx');
+  document.getElementById('expFmtPdf')?.classList.toggle('active', f === 'pdf');
   const themesBlock = document.getElementById('exp-themes-block');
   const headSub = document.getElementById('exp-head-sub');
   if (f === 'pdf') {
@@ -1388,10 +1391,14 @@ function setExpFmt(f) {
 function setExpTheme(t) {
   _expTheme = t;
   ['dark','light'].forEach(th => {
-    document.getElementById('etc-' + th).classList.toggle('sel', th === t);
+    document.getElementById('etc-' + th)?.classList.toggle('sel', th === t);
     const ck = document.getElementById('etck-' + th);
-    ck.classList.toggle('on', th === t);
-    ck.innerHTML = th === t ? '<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>' : '';
+    if (ck) {
+      ck.classList.toggle('on', th === t);
+      ck.innerHTML = th === t ? '<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>' : '';
+    }
+    // Legacy IDs
+    document.getElementById('expTheme' + th.charAt(0).toUpperCase() + th.slice(1))?.classList.toggle('active', th === t);
   });
   updateExpFname();
 }
@@ -1411,25 +1418,40 @@ async function doExpDownload() {
 
   try {
     const rawSections = window._completedSections || [];
+    const cp = window.currentParams || currentParams || {};
+
     const sections = rawSections.map(sec => {
       let p = {};
       try { p = JSON.parse(sec.content || '{}'); } catch {}
+
+      // Phase 3 format: flatten sub_sections into charts/tables for PPTX
+      let chart = p.chart, tableHeaders = p.table?.headers, tableRows = p.table?.rows, stats = p.stats || [];
+      if (p.sub_sections?.length) {
+        // Use first chart found across sub-sections
+        for (const ss of p.sub_sections) {
+          const chartBlk = (ss.blocks||[]).find(b => b.type === 'chart');
+          const tableBlk = (ss.blocks||[]).find(b => b.type === 'table');
+          const statsBlk = (ss.blocks||[]).find(b => b.type === 'stats');
+          if (!chart && chartBlk) chart = { type: chartBlk.chartType, title: chartBlk.title, labels: chartBlk.labels, datasets: chartBlk.datasets, horizontal: chartBlk.horizontal };
+          if (!tableHeaders && tableBlk) { tableHeaders = tableBlk.headers; tableRows = tableBlk.rows; }
+          if (!stats.length && statsBlk) stats = statsBlk.items || [];
+        }
+      }
+
       return {
         label:   sec.title || '',
         title:   p.headline || sec.title || '',
         source:  (p.sources || []).slice(0,3).join('; '),
         finding: p.headline || '',
-        stats:   (p.stats || []).slice(0, 6).map(s => ({
-          label:       s.label || '',
-          value:       s.value || '',
-          change:      '',
+        stats:   (stats).slice(0, 6).map(s => ({
+          label: s.label || '', value: s.value || '', change: '',
           accentColor: s.icon === 'growth' || s.icon === 'trend' ? '00C9A7'
                      : s.icon === 'price'  || s.icon === 'channel' ? 'C9A84C' : '1E6FFF',
         })),
-        chart: p.chart ? buildExpChart(p.chart) : undefined,
-        tableHeaders: p.table?.headers,
-        tableRows:    (p.table?.rows || []).slice(0, 20), // limit rows
-        commentary:   (p.commentary || '').slice(0, 800), // limit per section
+        chart:        chart ? buildExpChart(chart) : undefined,
+        tableHeaders: tableHeaders,
+        tableRows:    (tableRows || []).slice(0, 20),
+        commentary:   (p.commentary || '').slice(0, 800),
       };
     });
 
@@ -1439,9 +1461,9 @@ async function doExpDownload() {
       body: JSON.stringify({
         slug:      reportSlug || 'report',
         title:     document.getElementById('report-title')?.textContent || '',
-        country:   currentParams?.country    || '',
-        industry:  currentParams?.industry   || '',
-        type:      currentParams?.reportType || '',
+        country:   cp.country    || '',
+        industry:  cp.industry   || '',
+        type:      cp.reportType || '',
         generated: new Date().getFullYear().toString(),
         theme:     _expTheme,
         sections,
@@ -2106,6 +2128,7 @@ function renderPresChart(chartId, chartDef) {
 
 function openPresentation() {
   const sections = window._completedSections || [];
+  if (!sections.length) { console.warn('No sections to present'); return; }
   if (!sections.length) return alert('Report is still generating. Please wait.');
   presSlides = buildPresentationSlides(sections);
   presIdx = 0;
