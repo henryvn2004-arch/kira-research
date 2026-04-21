@@ -144,7 +144,7 @@
     <div class="doc-hero">
       <div class="doc-hero-badge">Document Intelligence</div>
       <h1>Turn your documents into<br/><span>consulting-grade reports</span></h1>
-      <p>Upload documents for analysis — or simply describe what you need and get a consulting-grade report instantly. No documents required.</p>
+      <p>Upload documents for analysis — or simply describe what you need and get a consulting-grade report. No documents required.</p>
       <div class="hero-features">
         <div class="hero-feat">Supports PDF, DOCX, XLSX, PPTX, images</div>
         <div class="hero-feat">Optional web research via Perplexity</div>
@@ -438,6 +438,7 @@ let planTitle      = '';
 let planDocSummary = '';
 let planNeedsWeb   = false;
 let planSearchFocus = '';
+let planHasDocs    = false; // whether user uploaded any documents
 // Use window.reportId so sendChat() in report-view.js can access it
 window.reportId = null;
 window.chatHistory = window.chatHistory || [];
@@ -653,12 +654,12 @@ async function startDocFlow() {
   const language = document.getElementById('f-language').value;
   const err      = document.getElementById('upload-error');
 
-  // Documents are optional — proceed even with no files
+  // Documents are optional — no file required
   if (!request)              { showUploadError('Please enter your request'); return; }
   if (uploadedFiles.some(f => f.status === 'extracting')) {
     showUploadError('Files are still being extracted, please wait'); return;
   }
-  // No-doc mode is valid — skip file check
+  // No-doc mode is valid
 
   err.style.display = 'none';
 
@@ -670,12 +671,13 @@ async function startDocFlow() {
     pages: f.pages || null,
   }));
   const hasDocs = docs.length > 0;
+  planHasDocs = hasDocs;
 
   showView('progress');
   setStatus(hasDocs ? 'Reading documents...' : 'Planning your report...', 5);
 
   try {
-    // Phase 1: Clarify (skipped automatically by API if no docs)
+    // Phase 1: Clarify
     const clarifyRes = await fetch('/api/doc-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -752,10 +754,8 @@ async function runPlanPhase(docs, request, language, answers, docInsight, sugges
     reportSlug      = `doc-report-${Date.now()}`;
     // currentParams includes title/type for PPTX cover slide
     currentParams   = { ...currentParams,
-      industry: hasDocs
-        ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60)
-        : request.slice(0, 60),
-      country:  language !== 'English' ? language : (hasDocs ? 'Document Analysis' : 'AI Research'),
+      industry: planHasDocs ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60) : request.slice(0, 60),
+      country:  language !== 'English' ? language : (planHasDocs ? 'Document Analysis' : 'AI Research'),
       reportType: 'Document Intelligence',
     };
     planTitle       = plan.reportTitle || request;
@@ -880,7 +880,7 @@ async function startGeneration() {
 
     // Set report title
     document.getElementById('report-title').textContent   = planTitle;
-    document.getElementById('report-meta-sub').textContent = `${hasDocs ? 'Document Intelligence' : 'AI Research'} · ${planSections.length} sections`;
+    document.getElementById('report-meta-sub').textContent = `${planHasDocs ? 'Document Intelligence' : 'AI Research'} · ${planSections.length} sections`;
     buildToc(planSections);
     showView('report');
 
