@@ -168,7 +168,7 @@ OR {"clear":false,"needsWebSearch":true,"docInsight":"...","question":"One quest
 
       try {
         const gapRaw = await callClaude([{ role: 'user', content: [
-          ...gapContent.slice(-2), // just last parts to keep fast
+          ...gapContent, // full doc context for accurate gap analysis
           { type: 'text', text: `
 Identify SPECIFIC data gaps requiring current web data to fulfill this request.
 Only include gaps for:
