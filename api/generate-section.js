@@ -483,6 +483,26 @@ function trimResearchForSection(research, sectionTitle, sectionAngle) {
   return result || research.slice(0, 2500);
 }
 
+
+// ── Block sanitizer — normalize chart types, clean diagram code ──
+function sanitizeBlock(b) {
+  if (!b?.type) return b;
+  if (b.type === 'chart' && b.datasets) {
+    b.datasets = b.datasets.map(ds => ({
+      ...ds,
+      data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
+    }));
+    if (b.chartType === 'donut')            b.chartType = 'doughnut';
+    if (b.chartType === 'pie')              b.chartType = 'doughnut';
+    if (b.chartType === 'horizontal_bar')   { b.chartType = 'bar'; b.horizontal = true; }
+    if (b.chartType === 'bar_horizontal')   { b.chartType = 'bar'; b.horizontal = true; }
+  }
+  if (b.type === 'diagram' && b.code) {
+    b.code = b.code.replace(/</g,'').replace(/>/g,'');
+  }
+  return b;
+}
+
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -603,99 +623,101 @@ APPROACH:
     send('token', { text: '\n\n*Generation error: ' + e.message + '*' });
   }
 
-  // ── Phase 2: Extract meta + visuals from commentary ────
-  let meta = { headline: '', stats: [], chart: null, table: null, sources: [] };
+  // ── Phase 3: Segment + Anchor + Visualize ────────────────
+  // Segments prose into 2-4 sub-sections, extracts anchor data,
+  // builds complete datasets, assigns best visual per sub-section.
+  let meta = { headline: '', sub_sections: [], sources: [] };
   try {
-    const isNarrativeSection = /executive summary|recommendation|strategic outlook|conclusion/i.test(sectionTitle);
-
-    // Section-title-based chart hints
-    const secLower = sectionTitle.toLowerCase();
-    let chartHint = '';
-    if (/market size|market.*value|revenue.*forecast|growth.*projection/.test(secLower)) {
-      chartHint = 'This is a MARKET SIZE section → use "line" chart with years as labels and projected values as data. Extrapolate to 5-year series using CAGR if mentioned.';
-    } else if (/market share|competitive landscape|player.*share/.test(secLower)) {
-      chartHint = 'This is a MARKET SHARE section → use "doughnut" chart with each player as a label and their share % as data. Add "Others" to reach 100%.';
-    } else if (/competitor|competitive|player.*profile|company.*comparison/.test(secLower)) {
-      chartHint = 'This is a COMPETITOR COMPARISON section → use "radar" chart: labels = 4-6 attributes (Price Competitiveness, Distribution, Brand Strength, Innovation, etc.), datasets = one per competitor with scores 1-10.';
-    } else if (/channel|distribution|retail.*channel/.test(secLower)) {
-      chartHint = 'This is a CHANNEL section → use "bar" (horizontal) with channel names as labels and share % or index as data.';
-    } else if (/pric|price|pricing/.test(secLower)) {
-      chartHint = 'This is a PRICING section → use "bar" (horizontal) sorted by price, showing price points for key brands/segments.';
-    } else if (/segment|segmentation|consumer.*type/.test(secLower)) {
-      chartHint = 'This is a SEGMENTATION section → use "doughnut" chart showing segment sizes, OR "bar" showing segment characteristics.';
-    } else if (/driver|trend|factor/.test(secLower)) {
-      chartHint = 'This is a DRIVERS section → use "bar" (horizontal) with drivers/factors as labels and importance scores 1-10 as data.';
-    } else if (/consumer|customer|buyer|shopper/.test(secLower)) {
-      chartHint = 'This is a CONSUMER section → use "bar" (horizontal) for preferences/attributes or "radar" for comparing consumer segments across needs.';
-    }
-
     const langNote = (language && language !== 'English')
-      ? `\nIMPORTANT: All text (headline, stat labels, chart title, chart labels, table headers) must be in ${language}.`
+      ? `\nIMPORTANT: All text (subtitle, headline, labels, headers) must be in ${language}.`
       : '';
 
-    const extractPrompt = `You wrote this section titled "${sectionTitle}":
+    const isNarrative = /executive summary|recommendation|conclusion|strategic outlook/i.test(sectionTitle);
+
+    const segmentPrompt = `You wrote this consulting section titled "${sectionTitle}":
 ${langNote}
 
 ${fullCommentary}
 
-Design the best visual presentation for this section. Return ONLY valid JSON with a "blocks" array.
+TASK: Segment this into 2-4 focused sub-sections and design rich visuals for each.
 
-Claude freely chooses which blocks to include and in what order based on what the content needs.
+STEP 1 — SEGMENT: Identify 2-4 distinct analytical angles in the text.
+Each sub-section covers ONE angle with a short descriptive subtitle.
 
-BLOCK TYPES available:
+STEP 2 — EXTRACT ANCHOR DATA: Find every quantitative data point.
+Apply these patterns to BUILD COMPLETE DATASETS:
 
-headline    → { "type":"headline", "text":"Key insight 1-2 sentences with specific data" }
-stats       → { "type":"stats", "items":[{"value":"$2.3B","label":"Market size 2024"},{"value":"18%","label":"CAGR"}] }
-             → 2-4 stats. value: number + unit. label: short descriptor. Max 4.
-chart       → { "type":"chart", "title":"...", "chartType":"line|bar|doughnut|radar", "labels":[...], "datasets":[{"label":"...","data":[numbers]}], "horizontal":true/false }
-             → Use for QUANTITATIVE data: time series, rankings, composition %. Data must be numbers.
-diagram     → { "type":"diagram", "title":"...", "code":"mermaid syntax" }
-             → Use for PROCESS/FLOW (flowchart LR), POSITIONING (quadrantChart), TIMELINE (timeline).
-             → Use diagram OR chart — not both.
-table       → { "type":"table", "title":"...", "headers":[...], "rows":[[...],[...]] }
-             → Best for multi-entity comparisons. Max 8 rows.
-callout     → { "type":"callout", "text":"Strategic implication or key action point", "style":"insight|action|warning" }
-             → 1 per section max. Use for the single most important strategic implication.
-prose       → { "type":"prose", "text":"Full analysis text from the commentary above" }
-             → Always include as last content block (before sources). Use the full commentary.
-sources     → { "type":"sources", "items":["Source 1","Source 2"] }
-             → Always last block if sources exist.
+• "$XB market" + "Y% CAGR" → build 6-year time series
+  labels: [currentYear-2, -1, 0, +1, +2, +3]
+  data: back-calculate ÷(1+CAGR), forward-project ×(1+CAGR) per year
+  → line chart titled "Market Size Forecast"
 
-SELECTION RULES:
-- Executive Summary / Recommendations / narrative sections → headline + prose (no forced chart)
-- Data-heavy sections (market size, financials) → headline + stats + chart + prose
-- Competitive / comparison sections → headline + table + prose (callout optional)
-- Process / flow sections → headline + diagram + prose
-- Always include prose with the full commentary text
-- callout only when there is a genuinely critical strategic implication
-- stats only when you have 2+ strong specific metrics
+• "Company X: Y% share" → build full competitor table
+  Fill remaining players as estimates, always sum to 100% with "Others"
+  → doughnut chart + table (Company | Share% | Tier)
 
-EXAMPLE:
+• "Segment A, B, C" with proportions → build breakdown to 100%
+  → doughnut chart
+
+• Multiple channels/regions with % → build mix table
+  → horizontal bar chart
+
+• "Top players: A, B, C" (no %) → rank them, estimate shares
+  → table (Rank | Company | Est. Share | Strength)
+
+• Comparing companies on multiple attributes → scores 1-10
+  → radar chart
+
+• Price tiers/ranges → price positioning
+  → horizontal bar (sorted by price)
+
+• Process, value chain, workflow → flowchart LR
+• Strategic 2×2 positioning → quadrantChart
+• Timeline, history, roadmap → timeline
+
+STEP 3 — ASSIGN VISUALS: Every sub-section needs AT LEAST 1 visual.
+For analytical sub-sections: chart OR diagram OR table (REQUIRED).
+For implications/strategy: callout + prose is ok if no data.
+
+BLOCKS available per sub-section:
+stats    → { "type":"stats", "items":[{"value":"$2.3B","label":"Market 2025"},{"value":"18%","label":"CAGR"}] }
+chart    → { "type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers]}],"horizontal":true/false }
+diagram  → { "type":"diagram","code":"mermaid syntax","title":"..." }
+table    → { "type":"table","title":"...","headers":[...],"rows":[[...]] }
+callout  → { "type":"callout","text":"Strategic implication...","style":"insight|action|warning" }
+prose    → { "type":"prose","text":"relevant excerpt from commentary" }
+
+RULES:
+- chart OR diagram per sub-section (not both)  
+- 1 table per sub-section max
+- prose is always last content block in each sub-section
+- Mark estimates: "est. 34%" or "(est.)"
+- Max 8 data points per chart, max 8 rows per table
+- chart datasets[].data MUST be plain numbers only
+${isNarrative ? '- This is a narrative section: use table or callout instead of chart where possible' : ''}
+
+Return ONLY valid JSON:
 {
-  "blocks": [
-    {"type":"headline","text":"Vietnam EV market reaches $1.2B in 2024, growing 34% YoY driven by VinFast dominance"},
-    {"type":"stats","items":[{"value":"$1.2B","label":"Market 2024"},{"value":"34%","label":"YoY growth"},{"value":"67%","label":"VinFast share"}]},
-    {"type":"chart","title":"EV Market Growth 2021-2026","chartType":"line","labels":["2021","2022","2023","2024","2025","2026"],"datasets":[{"label":"Market Size ($B)","data":[0.3,0.5,0.9,1.2,1.8,2.6]}]},
-    {"type":"prose","text":"Full analysis text here..."},
-    {"type":"callout","text":"Strategic implication: VinFast's 67% share creates a near-monopoly dynamic requiring differentiated positioning to compete.","style":"insight"},
-    {"type":"sources","items":["VinFast Annual Report 2024","Industry estimate"]}
-  ]
-}
+  "headline": "Key finding for the full section (1-2 sentences, specific data)",
+  "sub_sections": [
+    {
+      "subtitle": "Short descriptive subtitle",
+      "blocks": [ ...blocks... ]
+    }
+  ],
+  "sources": ["Source 1", "Source 2"]
+}`;
 
-Return ONLY the JSON object. No markdown. No explanation.`;
+    const raw = await callClaude(segmentPrompt, 2800);
 
-    const raw = await callClaude(extractPrompt, 1100); // 1100 sufficient for chart+table JSON
-
-    // Robust JSON parsing — handle truncated or fence-wrapped responses
+    // Robust JSON parsing
     let parsed = null;
     const clean = raw.replace(/```json\s*/g,'').replace(/```/g,'').trim();
     try {
       parsed = JSON.parse(clean);
     } catch {
-      // Try to find a complete JSON object even if response was truncated
       const objStart = clean.indexOf('{');
       if (objStart >= 0) {
-        // Walk backwards to find the outermost closing brace
         let depth = 0, lastClose = -1;
         for (let ci = objStart; ci < clean.length; ci++) {
           if (clean[ci] === '{' || clean[ci] === '[') depth++;
@@ -708,49 +730,32 @@ Return ONLY the JSON object. No markdown. No explanation.`;
     }
 
     if (parsed) {
-      // ── New blocks format ──
-      if (parsed.blocks?.length) {
-        // Sanitize blocks: fix chart data types, sanitize diagram code
-        parsed.blocks = parsed.blocks.map(b => {
-          if (b.type === 'chart' && b.datasets) {
-            b.datasets = b.datasets.map(ds => ({
-              ...ds,
-              data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
-            }));
-            if (b.chartType === 'donut') b.chartType = 'doughnut';
-            if (b.chartType === 'pie')   b.chartType = 'doughnut';
-            if (b.chartType === 'horizontal_bar') { b.chartType = 'bar'; b.horizontal = true; }
-          }
-          if (b.type === 'diagram' && b.code) {
-            b.code = b.code.replace(/</g,'').replace(/>/g,'');
-          }
-          return b;
-        });
-        meta = { ...meta, blocks: parsed.blocks };
-
-      // ── Legacy format fallback ──
+      // Sanitize sub_sections
+      if (parsed.sub_sections?.length) {
+        parsed.sub_sections = parsed.sub_sections.map(ss => ({
+          ...ss,
+          blocks: (ss.blocks || []).map(b => sanitizeBlock(b)),
+        }));
+        meta = {
+          headline:     parsed.headline || '',
+          sub_sections: parsed.sub_sections,
+          sources:      parsed.sources || [],
+        };
+      } else if (parsed.blocks?.length) {
+        // Fallback: old blocks format — wrap as single sub-section
+        meta = {
+          headline: parsed.headline || '',
+          sub_sections: [{ subtitle: '', blocks: parsed.blocks.map(b => sanitizeBlock(b)) }],
+          sources: parsed.sources || [],
+        };
       } else {
-        if (parsed.diagram?.code) {
-          parsed.diagram.code = parsed.diagram.code.replace(/</g, '').replace(/>/g, '');
-        }
-        if (parsed.chart?.datasets) {
-          parsed.chart.datasets = parsed.chart.datasets.map(ds => ({
-            ...ds,
-            data: (ds.data||[]).map(v => typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.-]/g,''))||0),
-          }));
-          if (parsed.chart.type === 'donut') parsed.chart.type = 'doughnut';
-          if (parsed.chart.type === 'pie')   parsed.chart.type = 'doughnut';
-          if (parsed.chart.type === 'horizontal_bar' || parsed.chart.type === 'bar_horizontal') {
-            parsed.chart.type = 'bar'; parsed.chart.horizontal = true;
-          }
-        }
-        meta = { ...meta, ...parsed };
+        console.warn('[generate-section] Unexpected JSON shape, falling back');
       }
     } else {
-      console.warn(`[generate-section] JSON parse failed for section "${sectionTitle}". Raw (first 200): ${raw.slice(0,200)}`);
+      console.warn(`[generate-section] Phase 3 parse failed for "${sectionTitle}". Raw: ${raw.slice(0,300)}`);
     }
   } catch (e) {
-    console.warn('Meta extraction failed:', e.message);
+    console.warn('Phase 3 failed:', e.message);
   }
 
   send('meta', meta);
