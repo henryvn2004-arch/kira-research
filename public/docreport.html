@@ -135,10 +135,10 @@
 }
 </style>
 </head>
-<body>
+<body style="overflow-x:hidden">
 <div id="nav-placeholder"></div>
 
-<div class="container page">
+<div class="container page" style="max-width:1200px;margin:0 auto;width:100%;box-sizing:border-box;padding:0 16px">
 
   <!-- ── VIEW: UPLOAD + REQUEST ── -->
   <div id="view-upload">
@@ -377,7 +377,7 @@
       <button class="exp-close" onclick="closeExpModal()">✕</button>
     </div>
     <div class="exp-body">
-      <div id="exp-head-sub" style="font-size:12px;color:#A3A9B6;margin-bottom:16px">Choose format and visual style</div>
+      <div id="exp-head-sub" style="font-size:12px;color:#A3A9B6;margin:0 22px 12px;padding-top:14px">Choose format and visual style</div>
       <div class="exp-fmt-row">
         <div class="exp-fmt-btn active" id="efmt-pptx" onclick="setExpFmt('pptx')">
           <div style="font-size:20px;margin-bottom:6px">📊</div>
@@ -1047,11 +1047,29 @@ function showCreditModal(balance, cost, isError) {
   const inner = isError
     ? `<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">There was an error processing credits. Please try again.</p>`
     : `<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">This report costs <strong style="color:#fff">${cost} credits</strong> but your balance is only <strong style="color:#FC8181">${balance}</strong>.</p>`;
+  // Save all state to sessionStorage before redirect so it can be restored
+  const saveStateForReturn = () => {
+    if (window._pendingDocFlow) {
+      try {
+        // Save docs text only (base64 images too large for sessionStorage)
+        const saveable = {
+          request: window._pendingDocFlow.request,
+          language: window._pendingDocFlow.language,
+          reportLength: window._pendingDocFlow.reportLength,
+          docInsight: window._pendingDocFlow.docInsight,
+          needsWebSearch: window._pendingDocFlow.needsWebSearch,
+          docNames: (window._pendingDocFlow.docs||[]).map(d=>d.name),
+        };
+        sessionStorage.setItem('kira_doc_pending_state', JSON.stringify(saveable));
+        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      } catch(e) {}
+    }
+  };
   m.innerHTML = `<div style="background:#11151C;border:1px solid #242A35;border-radius:16px;padding:40px 36px;max-width:400px;width:100%;text-align:center">
     <div style="font-size:36px;margin-bottom:16px">${isError?'⚠️':'💳'}</div>
     <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:#fff">${isError?'Error processing credits':'Insufficient credits'}</h3>
     ${inner}
-    <a href="/pricing.html" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>
+    <a href="/pricing.html" onclick="saveStateForReturn()" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>
     <button onclick="document.getElementById('credit-gate-modal').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>
   </div>`;
   document.body.appendChild(m);

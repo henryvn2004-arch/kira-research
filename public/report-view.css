@@ -800,3 +800,12 @@
     /* tool-doc: slightly larger subtitle */
     .tool-doc .sub-section-title { font-size: 11px; padding: 20px 28px 10px; }
     .tool-doc .sub-section-sep   { margin: 8px 28px; }
+
+    /* Print / PDF export */
+    @media print {
+      .block-visual, .chart-wrap, .vis-box { width: 100% !important; max-width: 600px !important; }
+      canvas { width: 100% !important; height: auto !important; min-height: 240px !important; }
+      .block-stats { page-break-inside: avoid; }
+      .slide-block { page-break-inside: avoid; page-break-after: auto; }
+      .sub-section { page-break-inside: avoid; }
+    }

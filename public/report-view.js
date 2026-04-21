@@ -116,6 +116,19 @@ let pollInterval = null;
 })();
 
 // ── Mermaid.js initialization (diagrams for doc intelligence + all tools) ──
+// Strip diacritics/Unicode from mermaid node labels to prevent parse errors
+function sanitizeMermaidCode(code) {
+  if (!code) return '';
+  try {
+    const norm = code.normalize('NFD').replace(/\u0300-\u036f/g, '');
+    return norm
+      .replace(/\[([^\]]*)\]/g, function(_, t) { return '[' + t.replace(/[^\x20-\x7E]/g, '').trim() + ']'; })
+      .replace(/\(([^)]*)\)/g, function(_, t) { return '(' + t.replace(/[^\x20-\x7E]/g, '').trim() + ')'; })
+      .replace(/"([^"]*)"/g, function(_, t) { return '"' + t.replace(/[^\x20-\x7E]/g, '').trim() + '"'; })
+      .trim();
+  } catch(e) { return code; }
+}
+
 (function initMermaid() {
   if (typeof mermaid === 'undefined') return;
   mermaid.initialize({
@@ -499,6 +512,215 @@ async function streamSection(payload, sectionIndex) {
               <div class="slide-commentary"></div>`;
             commentaryEl = block.querySelector('.slide-commentary');
           }
+          commentary += evt.text;
+          if (commentaryEl) {
+            commentaryEl.innerHTML = formatCommentary(commentary) + '<span class="stream-cursor">|</span>';
+          }
+        }
+
+        // Phase 3: meta arrives after stream — add headline, sub-sections, visuals
+        if (evt.type === 'meta') {
+          headlineData = evt;
+          metaSucceeded = true;
+
+          setStatus(`📊 <strong>Building visuals</strong>...`, null);
+
+          // Wrap streaming commentary in collapsible (keep it at bottom)
+          if (commentaryEl) {
+            commentaryEl.innerHTML = formatCommentary(commentary);
+            const secIdx = sectionIndex;
+            const existingComm = block?.querySelector('.slide-commentary');
+            if (existingComm) {
+              const commHtml = existingComm.innerHTML;
+              existingComm.outerHTML = `
+                <div class="slide-commentary">
+                  <div class="commentary-preview collapsed" id="cp-${secIdx}">${commHtml}</div>
+                </div>
+                <div class="commentary-toggle" id="ct-${secIdx}" onclick="toggleCommentary(${secIdx})">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  <span>Read full analysis</span>
+                </div>`;
+              commentaryEl = null;
+            }
+          }
+
+          if (!block) return;
+          const header = block.querySelector('.slide-header');
+          const commEl = block.querySelector('.slide-commentary');
+
+          // ── Phase 3: sub_sections format ──
+          if (evt.sub_sections?.length) {
+            // Insert headline after header
+            if (evt.headline && header) {
+              header.insertAdjacentHTML('afterend', `
+                <div class="block-headline">
+                  <div class="block-headline-label">Key Finding</div>
+                  <div class="block-headline-text">${evt.headline}</div>
+                </div>`);
+            }
+            // Insert each sub-section's visuals BEFORE the commentary
+            const insertBefore = block.querySelector('.block-headline')?.nextElementSibling || commEl || null;
+            evt.sub_sections.forEach((ss, si) => {
+              if (si > 0) {
+                const sep = document.createElement('div');
+                sep.className = 'sub-section-sep';
+                block.insertBefore(sep, insertBefore);
+              }
+              const ssDiv = document.createElement('div');
+              ssDiv.className = 'sub-section';
+              if (ss.subtitle) {
+                const t = document.createElement('div');
+                t.className = 'sub-section-title';
+                t.textContent = ss.subtitle;
+                ssDiv.appendChild(t);
+              }
+              (ss.blocks || []).forEach(b => {
+                const el = renderBlock(b, sectionIndex * 100 + si);
+                if (el) ssDiv.appendChild(el);
+              });
+              block.insertBefore(ssDiv, insertBefore);
+            });
+            if (evt.sources?.length) appendSources(block, evt.sources);
+
+          // ── Legacy flat format ──
+          } else {
+            const statsHtml = (evt.stats?.length)
+              ? `<div class="slide-stats">${evt.stats.map(s => `
+                  <div class="stat-pill">
+                    <div class="stat-value">${s.value}</div>
+                    <div class="stat-label">${s.label}</div>
+                  </div>`).join('')}</div>` : '';
+            if (header) header.insertAdjacentHTML('afterend',
+              (evt.headline ? `<div class="block-headline"><div class="block-headline-label">Key Finding</div><div class="block-headline-text">${evt.headline}</div></div>` : '') + statsHtml);
+
+            const hasChart = evt.chart && (evt.chart.labels?.length || evt.chart.datasets?.length);
+            const hasTable = evt.table?.headers?.length;
+            if (hasChart || hasTable) {
+              const anchor = block.querySelector('.commentary-toggle') || commEl || null;
+              appendVisualsAt(block, sectionIndex, hasChart ? evt.chart : null, hasTable ? evt.table : null, anchor, evt.diagram);
+            }
+            if (evt.sources?.length) appendSources(block, evt.sources);
+          }
+        }
+
+        if (evt.type === 'done') {
+          if (commentaryEl) {
+            // commentary never got collapsed (no meta event) — wrap now
+            commentaryEl.innerHTML = formatCommentary(commentary);
+            const secIdx = sectionIndex;
+            const existingComm = block?.querySelector('.slide-commentary');
+            if (existingComm && commentary.length > 60) {
+              const commHtml = existingComm.innerHTML;
+              existingComm.outerHTML = `
+                <div class="slide-commentary">
+                  <div class="commentary-preview collapsed" id="cp-${secIdx}">${commHtml}</div>
+                </div>
+                <div class="commentary-toggle" id="ct-${secIdx}" onclick="toggleCommentary(${secIdx})">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  <span>Read full analysis</span>
+                </div>`;
+            }
+          }
+
+          // ── Post-process: extract visuals only when Phase 2 failed entirely ──
+          // metaSucceeded = Phase 2 ran and returned (chart may be null by design for
+          // narrative sections like Executive Summary — that's intentional, not a failure).
+          // Only call extract-visuals when meta never fired at all (network error, timeout).
+          const hasVisuals = block?.querySelector('.slide-visuals');
+          if (!hasVisuals && !metaSucceeded && commentary.length > 120) {
+            console.log(`[Section] Phase 2 never fired — calling extract-visuals fallback`);
+            extractVisualsFromCommentary(commentary, payload.sectionTitle, sectionIndex, block);
+          }
+        }
+      } catch {}
+    }
+  }
+
+  return JSON.stringify({
+    headline:  headlineData?.headline || '',
+    stats:     headlineData?.stats    || [],
+    chart:     headlineData?.chart    || null,
+    table:     headlineData?.table    || null,
+    sources:   headlineData?.sources  || [],
+    commentary
+  });
+}
+
+// Render headline + stats immediately (no chart yet)
+
+// ════════════════════════════════════════════════
+// BLOCKS RENDERER — Claude-driven flexible layout
+// ════════════════════════════════════════════════
+
+const CALLOUT_ICONS = { insight: '💡', action: '🎯', warning: '⚠️', default: '✦' };
+
+function renderBlock(block, sectionIndex) {
+  const div = document.createElement('div');
+
+  switch (block.type) {
+
+    case 'headline': {
+      div.className = 'block-headline';
+      div.innerHTML = `
+        <div class="block-headline-label">Key Finding</div>
+        <div class="block-headline-text">${block.text || ''}</div>`;
+      break;
+    }
+
+    case 'stats': {
+      div.className = 'block-stats';
+      div.innerHTML = (block.items || []).map(s => `
+        <div class="stat-pill">
+          <div class="stat-value">${s.value || ''}</div>
+          <div class="stat-label">${s.label || ''}</div>
+        </div>`).join('');
+      break;
+    }
+
+    case 'chart': {
+      const chartId = `chart-${sectionIndex}-${Date.now()}`;
+      div.className = 'block-visual';
+      div.innerHTML = `
+        ${block.title ? `<div class="visual-title">${block.title}</div>` : ''}
+        <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>`;
+      // Render chart after DOM insert
+      requestAnimationFrame(() => {
+        const chartData = {
+          type: block.chartType || block.type_hint || 'bar',
+          title: block.title || '',
+          labels: block.labels || [],
+          datasets: block.datasets || [],
+          horizontal: block.horizontal,
+        };
+        if (chartData.labels.length) renderChart(chartId, chartData);
+      });
+      break;
+    }
+
+    case 'diagram': {
+      const diagId = `diagram-${sectionIndex}-${Date.now()}`;
+      div.className = 'block-visual block-diagram';
+      div.innerHTML = `
+        ${block.title ? `<div class="visual-title">${block.title}</div>` : ''}
+        <div class="block-visual block-diagram">
+          <div class="diagram-wrap" id="${diagId}">
+            <div style="color:#5A6278;font-size:12px;padding:16px;text-align:center">Rendering diagram...</div>
+          </div>
+        </div>`;
+      if (block.code && typeof mermaid !== 'undefined') {
+        setTimeout(async () => {
+          const el = document.getElementById(diagId);
+          if (!el) return;
+          try {
+            // Sanitize mermaid code: strip diacritics from node labels to prevent syntax errors
+            const sanitizedCode = sanitizeMermaidCode(block.code);
+            const { svg } = await mermaid.render('svg-' + diagId, sanitizedCode);
+            el.innerHTML = svg;
+            const svgEl = el.querySelector('svg');
+            if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto'; svgEl.style.maxHeight = '260px'; }
+          } catch(err) {
+            el.innerHTML = '<div style="color:#8896A8;font-size:12px;padding:20px;text-align:center">Diagram rendering unavailable</div>';
+          }        }
           commentary += evt.text;
           if (commentaryEl) {
             commentaryEl.innerHTML = formatCommentary(commentary) + '<span class="stream-cursor">|</span>';
@@ -1458,6 +1680,27 @@ async function doExpDownload() {
         }
       }
 
+      // Collect prose from sub_sections for commentary
+      let commentary = p.commentary || '';
+      if (!commentary && p.sub_sections?.length) {
+        commentary = p.sub_sections.flatMap(ss =>
+          (ss.blocks||[]).filter(b => b.type === 'prose').map(b => b.text||'')
+        ).join(' ').slice(0, 800);
+      }
+
+      // Collect ALL charts/tables from all sub_sections (not just first)
+      const allCharts = [], allTables = [];
+      if (p.sub_sections?.length) {
+        for (const ss of p.sub_sections) {
+          for (const b of (ss.blocks||[])) {
+            if (b.type === 'chart') allCharts.push({ type: b.chartType, title: b.title, labels: b.labels, datasets: b.datasets, horizontal: b.horizontal });
+            if (b.type === 'table') allTables.push(b);
+          }
+        }
+      }
+      if (!chart && allCharts[0]) chart = allCharts[0];
+      if (!tableHeaders && allTables[0]) { tableHeaders = allTables[0].headers; tableRows = allTables[0].rows; }
+
       return {
         label:   sec.title || '',
         title:   p.headline || sec.title || '',
@@ -1471,7 +1714,7 @@ async function doExpDownload() {
         chart:        chart ? buildExpChart(chart) : undefined,
         tableHeaders: tableHeaders,
         tableRows:    (tableRows || []).slice(0, 20),
-        commentary:   (p.commentary || '').slice(0, 800),
+        commentary:   commentary.slice(0, 800),
       };
     });
 
@@ -1886,7 +2129,7 @@ function renderPresentSlide(idx) {
         </div>
         <div class="mc-div-foot">
           <div class="mc-div-foot-src">Source: ${src}</div>
-          <div class="mc-div-foot-pg">${pageLabel}</div>
+          <div class="mc-div-foot-pg">${pageLabel} &nbsp;|&nbsp; Press ESC to exit</div>
         </div>
       </div>`;
     return;
