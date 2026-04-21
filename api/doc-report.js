@@ -174,9 +174,18 @@ Return ONLY valid JSON:
         }
       ];
 
-      const raw    = await callClaude([{ role: 'user', content: planPrompt }], 700);
-      const clean  = raw.replace(/```json|```/g, '').trim();
-      const plan   = JSON.parse(clean);
+      const raw    = await callClaude([{ role: 'user', content: planPrompt }], 1500);
+
+      // Robust JSON extraction — handle extra text before/after JSON
+      let plan;
+      try {
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('No JSON found in response');
+        plan = JSON.parse(match[0]);
+      } catch (jsonErr) {
+        console.error('[doc-report plan] JSON parse failed:', jsonErr.message, '\nRaw:', raw.slice(0, 500));
+        throw new Error('Plan parse failed: ' + jsonErr.message);
+      }
 
       if (!plan.sections?.length) throw new Error('No sections returned');
 
@@ -205,6 +214,7 @@ Return ONLY valid JSON:
       });
 
     } catch (e) {
+      console.error('[doc-report plan] Error:', e.message);
       return res.status(500).json({ error: 'Planning failed: ' + e.message });
     }
   }
