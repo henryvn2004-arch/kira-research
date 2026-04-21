@@ -652,6 +652,7 @@ Extract structured data. Return ONLY valid JSON with this exact structure:
     "labels": ["2022", "2023", "2024", "2025", "2026", "2027"],
     "datasets": [{"label": "Market Size ($B)", "data": [1.2, 1.5, 1.9, 2.3, 2.8, 3.4]}]
   },
+  "diagram": null,
   "table": {
     "title": "Competitive Landscape Overview",
     "headers": ["Player", "Est. Share", "Strengths", "Price Tier"],
@@ -669,19 +670,24 @@ headline: 1-2 sentences, specific numbers, strategic insight.
 
 stats: exactly 2-4 metrics. icon options: pie|growth|trend|users|channel|price|globe|check
 
-chart: ${isNarrativeSection ? 'set to null for this narrative section.' : `REQUIRED — must NOT be null. ${chartHint}
+chart: ${isNarrativeSection ? 'set to null.' : `Choose chart OR diagram — NOT both. Use chart for QUANTITATIVE data with numbers:
+- Numbers over time → "line"
+- Market share / composition → "doughnut" (add "Others" to reach ~100%)  
+- Rankings or comparisons → "bar" (horizontal, sorted desc)
+- Multi-attribute comparison → "radar"
+${chartHint}
+datasets[].data MUST be plain numbers. labels.length MUST equal datasets[0].data.length. Max 8 labels.`}
 
-Chart type decision:
-- Market size over time → "line" with year labels
-- Market share / composition → "doughnut" (add "Others" to reach 100%)
-- Competitor rankings → "bar" (horizontal, sorted by value)
-- Multi-attribute competitor comparison → "radar"
-- Growth rates or segment volumes → "bar" (vertical)
-- Price positioning → "bar" (horizontal, sorted by price)
+diagram: ${isNarrativeSection ? 'set to null.' : `Use diagram INSTEAD of chart (set chart to null) when section describes:
+- A PROCESS, WORKFLOW, or VALUE CHAIN → flowchart LR
+- COMPETITIVE POSITIONING or 2x2 MATRIX → quadrantChart
+- A TIMELINE, ROADMAP, or MILESTONES → timeline
 
-datasets[].data values MUST be numbers (no strings, no currency symbols).
-labels length MUST equal datasets[0].data length.
-Max 8 labels. For multi-series bar/line, include all series in datasets array.`}
+flowchart: { "type":"flowchart","title":"Value Chain","code":"flowchart LR\\n  A[Manufacturer] -->|30%| B[Distributor]\\n  B -->|15%| C[Retailer]" }
+quadrantChart: { "type":"quadrantChart","title":"Positioning","code":"quadrantChart\\n  title Competitive Map\\n  x-axis Low Price --> High Price\\n  y-axis Low Quality --> High Quality\\n  Brand A: [0.3, 0.8]\\n  Brand B: [0.7, 0.6]" }
+timeline: { "type":"timeline","title":"Evolution","code":"timeline\\n  title Market History\\n  2020 : Launch\\n  2022 : Growth\\n  2024 : Maturity" }
+
+If section is purely quantitative data, use chart and set diagram to null.`}
 
 table: ${isNarrativeSection ? 'set to null for this narrative section.' : `REQUIRED — must NOT be null. Most useful table for this section type:
 - Competitive section → players × share/strengths/price/distribution
@@ -720,6 +726,10 @@ CRITICAL: Return ONLY the JSON object. No explanation. No markdown fences.`;
     }
 
     if (parsed) {
+      // Sanitize diagram code — remove any unsafe content
+      if (parsed.diagram?.code) {
+        parsed.diagram.code = parsed.diagram.code.replace(/</g, '').replace(/>/g, '');
+      }
       // Sanitize chart: ensure data arrays are numbers
       if (parsed.chart?.datasets) {
         parsed.chart.datasets = parsed.chart.datasets.map(ds => ({
