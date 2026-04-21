@@ -97,6 +97,17 @@ let chatHistory  = window.chatHistory;
 let pollInterval = null;
 
 
+
+// ── Tool detection — adds body class for per-tool CSS theming ──
+(function detectTool() {
+  const path = window.location.pathname;
+  let cls = 'tool-market'; // default
+  if (path.includes('docreport'))        cls = 'tool-doc';
+  else if (path.includes('strategy'))    cls = 'tool-strategy';
+  document.body.classList.add(cls);
+  document.body.dataset.tool = cls.replace('tool-', '');
+})();
+
 // ── Diagram CSS injection ──
 (function(){
   const s = document.createElement('style');
@@ -603,25 +614,188 @@ async function streamSection(payload, sectionIndex) {
 }
 
 // Render headline + stats immediately (no chart yet)
-function renderSectionHeadline(block, i, title, data) {
-  const statsHtml = (data.stats?.length)
-    ? `<div class="slide-stats">${data.stats.map(s => `
-        <div class="stat-pill">
-          <div class="stat-icon">${getStatIcon(s.icon)}</div>
-          <div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>
-        </div>`).join('')}</div>`
-    : '';
 
+// ════════════════════════════════════════════════
+// BLOCKS RENDERER — Claude-driven flexible layout
+// ════════════════════════════════════════════════
+
+const CALLOUT_ICONS = { insight: '💡', action: '🎯', warning: '⚠️', default: '✦' };
+
+function renderBlock(block, sectionIndex) {
+  const div = document.createElement('div');
+
+  switch (block.type) {
+
+    case 'headline': {
+      div.className = 'block-headline';
+      div.innerHTML = `
+        <div class="block-headline-label">Key Finding</div>
+        <div class="block-headline-text">${block.text || ''}</div>`;
+      break;
+    }
+
+    case 'stats': {
+      div.className = 'block-stats';
+      div.innerHTML = (block.items || []).map(s => `
+        <div class="stat-pill">
+          <div class="stat-value">${s.value || ''}</div>
+          <div class="stat-label">${s.label || ''}</div>
+        </div>`).join('');
+      break;
+    }
+
+    case 'chart': {
+      const chartId = `chart-${sectionIndex}-${Date.now()}`;
+      div.className = 'block-visual';
+      div.innerHTML = `
+        ${block.title ? `<div class="visual-title">${block.title}</div>` : ''}
+        <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>`;
+      // Render chart after DOM insert
+      requestAnimationFrame(() => {
+        const chartData = {
+          type: block.chartType || block.type_hint || 'bar',
+          title: block.title || '',
+          labels: block.labels || [],
+          datasets: block.datasets || [],
+          horizontal: block.horizontal,
+        };
+        if (chartData.labels.length) renderChart(chartId, chartData);
+      });
+      break;
+    }
+
+    case 'diagram': {
+      const diagId = `diagram-${sectionIndex}-${Date.now()}`;
+      div.className = 'block-visual block-diagram';
+      div.innerHTML = `
+        ${block.title ? `<div class="visual-title">${block.title}</div>` : ''}
+        <div class="block-visual block-diagram">
+          <div class="diagram-wrap" id="${diagId}">
+            <div style="color:#5A6278;font-size:12px;padding:16px;text-align:center">Rendering diagram...</div>
+          </div>
+        </div>`;
+      if (block.code && typeof mermaid !== 'undefined') {
+        setTimeout(async () => {
+          const el = document.getElementById(diagId);
+          if (!el) return;
+          try {
+            const { svg } = await mermaid.render('svg-' + diagId, block.code);
+            el.innerHTML = svg;
+            const svgEl = el.querySelector('svg');
+            if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto'; }
+          } catch(e) {
+            el.innerHTML = '<div style="color:#FC8181;font-size:11px;padding:8px">Diagram unavailable</div>';
+          }
+        }, 150);
+      }
+      break;
+    }
+
+    case 'table': {
+      div.className = 'block-visual';
+      const headers = (block.headers || []).map(h => `<th>${h}</th>`).join('');
+      const rows    = (block.rows || []).map(r =>
+        `<tr>${(Array.isArray(r) ? r : [r]).map(c => `<td>${c}</td>`).join('')}</tr>`
+      ).join('');
+      div.innerHTML = `
+        ${block.title ? `<div class="visual-title">${block.title}</div>` : ''}
+        <div style="overflow-x:auto">
+          <table class="slide-table">
+            <thead><tr>${headers}</tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      break;
+    }
+
+    case 'callout': {
+      const style = block.style || 'insight';
+      const icon  = CALLOUT_ICONS[style] || CALLOUT_ICONS.default;
+      div.className = `block-callout callout-${style}`;
+      div.innerHTML = `
+        <div class="callout-icon">${icon}</div>
+        <div class="callout-text">${formatCommentary(block.text || '')}</div>`;
+      break;
+    }
+
+    case 'prose': {
+      const html = formatCommentary(block.text || '');
+      const id   = `cp-${sectionIndex}`;
+      const tid  = `ct-${sectionIndex}`;
+      div.className = 'block-prose';
+      div.innerHTML = `
+        <div class="block-prose-text commentary-preview collapsed" id="${id}">${html}</div>`;
+      // Add toggle if prose is long
+      if ((block.text || '').length > 300) {
+        const toggle = document.createElement('div');
+        toggle.className = 'commentary-toggle';
+        toggle.id = tid;
+        toggle.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg><span>Read full analysis</span>`;
+        toggle.onclick = () => toggleCommentary(sectionIndex);
+        div.appendChild(toggle);
+      } else {
+        // Short prose — expand immediately
+        const el = div.querySelector('.commentary-preview');
+        if (el) { el.classList.remove('collapsed'); el.style.maxHeight = 'none'; el.style.maskImage = 'none'; el.style.webkitMaskImage = 'none'; }
+      }
+      break;
+    }
+
+    case 'sources': {
+      div.className = 'block-sources';
+      const tags = (block.items || []).map(s => `<span class="source-tag">${s}</span>`).join('');
+      div.innerHTML = `<span class="sources-label">Sources</span>${tags}`;
+      break;
+    }
+
+    default:
+      return null;
+  }
+
+  return div;
+}
+
+function renderBlocks(blocksData, sectionIndex, container) {
+  const blocks = Array.isArray(blocksData) ? blocksData : [];
+  blocks.forEach(block => {
+    const el = renderBlock(block, sectionIndex);
+    if (el) container.appendChild(el);
+  });
+}
+
+function renderSectionHeadline(block, i, title, data) {
   block.classList.remove('generating');
+
+  // ── Header (always present) ──
   block.innerHTML = `
     <div class="slide-header" data-num="${String(i+1).padStart(2,'0')}">
       <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
       <span class="slide-title">${title}</span>
     </div>
+    <div class="section-body"></div>`;
+
+  const body = block.querySelector('.section-body');
+
+  // ── Blocks mode: Claude-driven flexible layout ──
+  if (data.blocks?.length) {
+    renderBlocks(data.blocks, i, body);
+    return;
+  }
+
+  // ── Legacy mode: backward compat with old {headline,stats,chart,table,commentary} format ──
+  const statsHtml = (data.stats?.length)
+    ? `<div class="block-stats">${data.stats.map(s => `
+        <div class="stat-pill">
+          <div class="stat-value">${s.value}</div>
+          <div class="stat-label">${s.label}</div>
+        </div>`).join('')}</div>`
+    : '';
+
+  body.innerHTML = `
     ${data.headline ? `
-    <div class="slide-headline">
-      <div class="slide-headline-label">Key Finding</div>
-      <div class="slide-headline-text">${data.headline}</div>
+    <div class="block-headline">
+      <div class="block-headline-label">Key Finding</div>
+      <div class="block-headline-text">${data.headline}</div>
     </div>` : ''}
     ${statsHtml}
     <div class="slide-commentary"></div>`;
