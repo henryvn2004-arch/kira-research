@@ -693,6 +693,14 @@ select option{background:var(--bg2);}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+    /* Hide stray Mermaid error SVGs appended to body */
+    body > svg { display: none !important; }
+    @media print {
+      body > svg { display: none !important; }
+      .pres-ov { display: none !important; }
+      .exp-ov  { display: none !important; }
+    }
 </style>
 </head>
 <body>
@@ -1030,6 +1038,7 @@ let planLiveResearch = ''; // web research fetched before planning (no-doc mode)
 window.reportId = null;
 window.chatHistory = window.chatHistory || [];
 let completedSections = [];
+window._completedSections = [];  // shared with report-view.js for Present + Export
 // currentParams intentionally NOT declared with let — uses global so report-view.js can access it
 window.currentParams = null;
 
