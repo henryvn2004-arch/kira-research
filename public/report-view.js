@@ -2148,7 +2148,6 @@ function renderPresChart(chartId, chartDef) {
 
 function openPresentation() {
   const sections = window._completedSections || [];
-  if (!sections.length) { console.warn('No sections to present'); return; }
   if (!sections.length) return alert('Report is still generating. Please wait.');
   presSlides = buildPresentationSlides(sections);
   presIdx = 0;

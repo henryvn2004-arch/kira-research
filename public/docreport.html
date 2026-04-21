@@ -346,22 +346,27 @@
 
 <!-- Presentation Overlay (identical to report.html) -->
 <div class="pres-ov" id="presOv">
+  <!-- Hidden: stores report title for slide headers -->
+  <div id="pres-report-title" style="display:none"></div>
   <div class="pres-nav">
     <button class="btn btn-ghost" onclick="closePresentation()" style="gap:6px;font-size:13px">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       Back to Report
     </button>
-    <div class="pres-counter"><span id="pres-current">1</span> / <span id="pres-total">1</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div class="pres-counter"><span id="pres-cur">1</span> / <span id="pres-tot">1</span></div>
+      <div id="pres-section-hint" class="pres-section-hint"></div>
+      <div id="pres-dots" class="pres-dots"></div>
+    </div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-outline" onclick="navPresent(-1)">←</button>
-      <button class="btn btn-outline" onclick="navPresent(1)">→</button>
+      <button class="btn btn-outline" id="pres-prev" onclick="navPresent(-1)">←</button>
+      <button class="btn btn-outline" id="pres-next" onclick="navPresent(1)">→</button>
       <button class="btn" style="background:rgba(30,111,255,.15);color:#1E6FFF;border:1px solid rgba(30,111,255,.3)" onclick="openExpModal('pptx')">↓ PPTX</button>
     </div>
   </div>
   <div class="pres-slide-wrap">
-    <div class="pres-slide" id="presSlide"></div>
+    <div class="pres-slide" id="pres-slide"></div>
   </div>
-  <div class="pres-progress"><div class="pres-progress-fill" id="presProgress"></div></div>
 </div>
 
 <!-- Export Modal (identical to report.html) -->
@@ -372,23 +377,32 @@
       <button class="exp-close" onclick="closeExpModal()">✕</button>
     </div>
     <div class="exp-body">
+      <div id="exp-head-sub" style="font-size:12px;color:#A3A9B6;margin-bottom:16px">Choose format and visual style</div>
       <div class="exp-fmt-row">
-        <div class="exp-fmt-btn active" id="expFmtPptx" onclick="setExpFmt('pptx')">
+        <div class="exp-fmt-btn active" id="efmt-pptx" onclick="setExpFmt('pptx')">
           <div style="font-size:20px;margin-bottom:6px">📊</div>
           <div style="font-size:13px;font-weight:700">PowerPoint</div>
           <div style="font-size:10px;color:#5A6278;margin-top:3px">Consulting layout</div>
         </div>
-        <div class="exp-fmt-btn" id="expFmtPdf" onclick="setExpFmt('pdf')">
+        <div class="exp-fmt-btn" id="efmt-pdf" onclick="setExpFmt('pdf')">
           <div style="font-size:20px;margin-bottom:6px">📄</div>
           <div style="font-size:13px;font-weight:700">PDF</div>
           <div style="font-size:10px;color:#5A6278;margin-top:3px">Print-ready</div>
         </div>
       </div>
-      <div id="exp-pptx-opts">
+      <div id="exp-themes-block">
         <div style="font-size:12px;color:#A3A9B6;font-weight:700;margin-bottom:12px">THEME</div>
-        <div class="exp-theme-row">
-          <div class="exp-theme-btn active" id="expThemeDark" onclick="setExpTheme('dark')"><div style="width:24px;height:24px;background:#0B0D10;border-radius:4px;border:1px solid #333"></div><span>Dark</span></div>
-          <div class="exp-theme-btn" id="expThemeLight" onclick="setExpTheme('light')"><div style="width:24px;height:24px;background:#fff;border-radius:4px;border:1px solid #ddd"></div><span>Light</span></div>
+        <div class="exp-theme-row" style="display:flex;gap:12px">
+          <div class="exp-theme-btn" id="etc-dark" onclick="setExpTheme('dark')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #242A35;border-radius:8px;cursor:pointer">
+            <div style="width:20px;height:20px;background:#0B0D10;border-radius:3px;border:1px solid #333;flex-shrink:0"></div>
+            <span style="font-size:13px">Dark</span>
+            <div id="etck-dark" style="width:14px;height:14px;border-radius:3px;background:#1E6FFF;display:flex;align-items:center;justify-content:center;margin-left:auto"></div>
+          </div>
+          <div class="exp-theme-btn" id="etc-light" onclick="setExpTheme('light')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #242A35;border-radius:8px;cursor:pointer">
+            <div style="width:20px;height:20px;background:#fff;border-radius:3px;border:1px solid #ddd;flex-shrink:0"></div>
+            <span style="font-size:13px">Light</span>
+            <div id="etck-light" style="width:14px;height:14px;border-radius:3px;background:#242A35;display:flex;align-items:center;justify-content:center;margin-left:auto"></div>
+          </div>
         </div>
       </div>
     </div>
