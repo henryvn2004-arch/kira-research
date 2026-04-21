@@ -108,25 +108,47 @@ export default async function handler(req, res) {
 
   // ── Phase: CLARIFY ─────────────────────────────────────────
   if (phase === 'clarify') {
-    // No docs → skip clarification entirely
+    // No docs → Claude evaluates if current/live data is needed for this request
     if (!hasDocs) {
-      return res.json({ clear: true, docInsight: '', suggestedTitle: request });
+      try {
+        const evalPrompt = `User wants a consulting report on: "${request}"${langNote}
+
+Does this request require CURRENT or RECENT data (post-2023) that would benefit from live web search?
+Examples that need search: current market share, recent regulations, latest company financials, 2024-2025 trends.
+Examples that don't: strategic frameworks, historical analysis, methodology, process flows.
+
+Return ONLY JSON: { "needsWebSearch": true/false, "reason": "one sentence" }`;
+
+        const raw = await callClaude([{ role: 'user', content: evalPrompt }], 200);
+        const eval_ = extractJson(raw);
+        return res.json({ clear: true, needsWebSearch: eval_.needsWebSearch !== false, docInsight: '', suggestedTitle: request });
+      } catch {
+        return res.json({ clear: true, needsWebSearch: true, docInsight: '', suggestedTitle: request });
+      }
     }
     try {
       const prompt = [
-        ...buildClarifyMessages(docs),  // truncated 3K/doc — fast
+        ...buildClarifyMessages(docs),
         { type: 'text', text: `\nUser request: "${request}"${langNote}
 
-Briefly scan the documents. Is the request clear enough to generate a high-quality report, or do you need ONE clarifying question?
+Analyze the documents and the user's request. Do two things:
+
+1. ASSESS CLARITY: Is the request clear enough to proceed, or do you need ONE clarifying question?
+
+2. ASSESS DATA SUFFICIENCY: Do the documents contain enough data to fulfill the request without web search?
+   - If documents have the key data needed → needsWebSearch: false
+   - If documents are missing current market data, competitor info, benchmarks, or recent trends needed for the request → needsWebSearch: true
 
 Return ONLY valid JSON:
-{ "clear": true, "docInsight": "1-2 sentence summary of what the documents contain", "suggestedTitle": "Proposed report title" }
-OR:
-{ "clear": false, "docInsight": "1-2 sentence summary", "question": "One focused question", "options": ["Option A", "Option B", "Option C"] }
+{ "clear": true, "needsWebSearch": false, "docInsight": "1-2 sentence summary of documents", "suggestedTitle": "Proposed title" }
+OR if needs web search:
+{ "clear": true, "needsWebSearch": true, "docInsight": "...", "suggestedTitle": "..." }
+OR if needs clarification:
+{ "clear": false, "needsWebSearch": false, "docInsight": "...", "question": "One focused question", "options": ["A","B","C"] }
 
 Return ONLY the JSON object.` }
       ];
-      const raw    = await callClaude([{ role: 'user', content: prompt }], 400);
+      const raw    = await callClaude([{ role: 'user', content: prompt }], 500);
       const parsed = extractJson(raw);
       return res.json(parsed);
     } catch (e) {
