@@ -990,6 +990,27 @@ function buildToc(sections) {
 // We set reportId in window scope above
 
 // ── Init ────────────────────────────────────────────────
+// Restore request if returning from pricing page after credit top-up
+(function() {
+  const saved = sessionStorage.getItem('kira_doc_pending_state');
+  if (!saved) return;
+  try {
+    const state = JSON.parse(saved);
+    sessionStorage.removeItem('kira_doc_pending_state');
+    setTimeout(() => {
+      const el = document.getElementById('f-request');
+      if (el && state.request) {
+        el.value = state.request;
+        const note = document.createElement('div');
+        note.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1E6FFF;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;max-width:380px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.4)';
+        note.textContent = '✓ Request restored. Top-up successful — click Analyze to continue.';
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), 5000);
+      }
+    }, 500);
+  } catch(e) {}
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // Make file input work via click on zone
   const fileInput = document.getElementById('file-input');
@@ -1041,38 +1062,40 @@ async function refundCredits(gate, reportId) {
 }
 function showCreditModal(balance, cost, isError) {
   const ex = document.getElementById('credit-gate-modal'); if (ex) ex.remove();
+
+  // Save state to sessionStorage so it can be restored after credit top-up
+  function saveStateForReturn() {
+    try {
+      if (window._pendingDocFlow) {
+        const s = {
+          request: window._pendingDocFlow.request,
+          language: window._pendingDocFlow.language,
+          reportLength: window._pendingDocFlow.reportLength,
+        };
+        sessionStorage.setItem('kira_doc_pending_state', JSON.stringify(s));
+      }
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+    } catch(e) {}
+  }
+
   const m = document.createElement('div');
   m.id = 'credit-gate-modal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px';
   const inner = isError
-    ? `<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">There was an error processing credits. Please try again.</p>`
-    : `<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">This report costs <strong style="color:#fff">${cost} credits</strong> but your balance is only <strong style="color:#FC8181">${balance}</strong>.</p>`;
-  // Save all state to sessionStorage before redirect so it can be restored
-  const saveStateForReturn = () => {
-    if (window._pendingDocFlow) {
-      try {
-        // Save docs text only (base64 images too large for sessionStorage)
-        const saveable = {
-          request: window._pendingDocFlow.request,
-          language: window._pendingDocFlow.language,
-          reportLength: window._pendingDocFlow.reportLength,
-          docInsight: window._pendingDocFlow.docInsight,
-          needsWebSearch: window._pendingDocFlow.needsWebSearch,
-          docNames: (window._pendingDocFlow.docs||[]).map(d=>d.name),
-        };
-        sessionStorage.setItem('kira_doc_pending_state', JSON.stringify(saveable));
-        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
-      } catch(e) {}
-    }
-  };
-  m.innerHTML = `<div style="background:#11151C;border:1px solid #242A35;border-radius:16px;padding:40px 36px;max-width:400px;width:100%;text-align:center">
-    <div style="font-size:36px;margin-bottom:16px">${isError?'⚠️':'💳'}</div>
-    <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:#fff">${isError?'Error processing credits':'Insufficient credits'}</h3>
-    ${inner}
-    <a href="/pricing.html" onclick="saveStateForReturn()" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>
-    <button onclick="document.getElementById('credit-gate-modal').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>
-  </div>`;
+    ? '<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">There was an error processing credits. Please try again.</p>'
+    : '<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">This report costs <strong style="color:#fff">' + cost + ' credits</strong> but your balance is only <strong style="color:#FC8181">' + balance + '</strong>.</p>';
+  m.innerHTML = '<div style="background:#11151C;border:1px solid #242A35;border-radius:16px;padding:40px 36px;max-width:400px;width:100%;text-align:center">'
+    + '<div style="font-size:36px;margin-bottom:16px">' + (isError ? '⚠️' : '💳') + '</div>'
+    + '<h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:#fff">' + (isError ? 'Error processing credits' : 'Insufficient credits') + '</h3>'
+    + inner
+    + '<a href="/pricing.html" id="credit-topup-btn" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>'
+    + '<button onclick="document.getElementById('credit-gate-modal').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>'
+    + '</div>';
   document.body.appendChild(m);
+
+  // Attach click handler after DOM insertion
+  const btn = document.getElementById('credit-topup-btn');
+  if (btn) btn.addEventListener('click', saveStateForReturn);
 }
 // ── END CREDIT GATE ───────────────────────────────────────
 
