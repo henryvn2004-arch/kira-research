@@ -896,7 +896,7 @@ select option{background:var(--bg2);}
         <div class="toc-list" id="toc-list"></div>
       </div>
     </aside>
-    <div id="report-content" class="report-sections"></div>
+    <div id="sections-container" class="report-sections"></div>
   </div>
 </div>
 
@@ -1391,11 +1391,11 @@ function renderPlanSections() {
   const el = document.getElementById('plan-sections-list');
   if (!el) return;
   el.innerHTML = planSections.map((s, i) => `
-    <div class="plan-sec-item" id="psec-${i}">
+    <div class="plan-sec-row" id="psec-${i}">
       <div class="plan-sec-num">${String(i+1).padStart(2,'0')}</div>
       <input class="plan-sec-input" value="${s}" placeholder="Section title"
         onchange="planSections[${i}] = this.value; updatePlanMeta()"/>
-      <button class="sec-remove" onclick="removePlanSection(${i})" title="Remove">×</button>
+      <button class="plan-sec-del" onclick="removePlanSection(${i})" title="Remove">×</button>
     </div>`).join('');
   updatePlanMeta();
 }
@@ -1476,7 +1476,7 @@ async function startGeneration() {
     document.getElementById('report-meta-sub').textContent = `${planHasDocs ? 'Document Intelligence' : 'AI Research'} · ${totalSections} sections`;
     // Clear before generating — prevents TOC/section duplication on re-runs
     const tocListEl = document.getElementById('toc-list');
-    const secCont   = document.getElementById('report-content');
+    const secCont   = document.getElementById('sections-container');
     if (tocListEl) tocListEl.innerHTML = '';
     if (secCont)   secCont.innerHTML  = '';
 
