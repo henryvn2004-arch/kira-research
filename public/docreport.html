@@ -446,6 +446,7 @@ let planDocSummary = '';
 let planNeedsWeb   = false;
 let planSearchFocus = '';
 let planHasDocs    = false;
+let planLiveResearch = ''; // web research fetched before planning (no-doc mode)
 // Use window.reportId so sendChat() in report-view.js can access it
 window.reportId = null;
 window.chatHistory = window.chatHistory || [];
@@ -656,6 +657,33 @@ if (zone) {
   });
 }
 
+
+// ── Web search for planning (no-doc mode only) ────────────
+// Runs BEFORE plan so Claude knows what data exists when choosing sections
+async function runWebSearchForPlan(request, language) {
+  try {
+    setStatus('🔍 Searching live data to inform report plan...', 12);
+    document.getElementById('prog-subtitle').textContent = 'Gathering live data before planning...';
+    const res = await fetch('/api/browser-research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        industry:   request.slice(0, 120),
+        country:    'global',
+        reportType: 'document_intelligence',
+        questions:  request,
+      }),
+    });
+    const d = await res.json();
+    const research = d.research || '';
+    setStatus('✓ Live data collected — planning sections...', 18);
+    return research;
+  } catch {
+    setStatus('Planning sections...', 18);
+    return '';
+  }
+}
+
 // ── Start flow ─────────────────────────────────────────────
 async function startDocFlow() {
   const request  = document.getElementById('f-request').value.trim();
@@ -713,8 +741,14 @@ async function startDocFlow() {
       window._pendingDocFlow = { docs, request, language, reportLength, docInsight: clarify.docInsight };
       showView('clarify');
     } else {
-      // Proceed directly to plan
-      await runPlanPhase(docs, request, language, reportLength, [], clarify.docInsight, clarify.suggestedTitle);
+      // For no-doc mode: search web FIRST so Claude plans sections based on real data
+      // For doc mode: skip (docs are the primary source, web supplements at generation)
+      let preSearchResearch = '';
+      if (!hasDocs) {
+        preSearchResearch = await runWebSearchForPlan(request, language);
+        planLiveResearch = preSearchResearch;
+      }
+      await runPlanPhase(docs, request, language, reportLength, [], clarify.docInsight, clarify.suggestedTitle, preSearchResearch);
     }
   } catch (e) {
     setStatus('✗ Error: ' + e.message, null);
@@ -733,24 +767,34 @@ function selectClarifyOpt(el) {
 async function submitClarification() {
   const state = window._pendingDocFlow;
   if (!state) return;
-  window._pendingDocFlow = null; // clear stale state
+  window._pendingDocFlow = null;
   const answers = clarifyAnswer ? [clarifyAnswer] : [];
   showView('progress');
   setStatus('Planning report structure...', 15);
-  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null);
+  let preSearchResearch = '';
+  if (!planHasDocs) {
+    preSearchResearch = await runWebSearchForPlan(state.request, state.language);
+    planLiveResearch = preSearchResearch;
+  }
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null, preSearchResearch);
 }
 
-function skipClarification() {
+async function skipClarification() {
   const state = window._pendingDocFlow;
   if (!state) return;
-  window._pendingDocFlow = null; // clear stale state
+  window._pendingDocFlow = null;
   showView('progress');
   setStatus('Planning report structure...', 15);
-  runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null);
+  let preSearchResearch = '';
+  if (!planHasDocs) {
+    preSearchResearch = await runWebSearchForPlan(state.request, state.language);
+    planLiveResearch = preSearchResearch;
+  }
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null, preSearchResearch);
 }
 
 // ── Plan phase ─────────────────────────────────────────────
-async function runPlanPhase(docs, request, language, reportLength, answers, docInsight, suggestedTitle) {
+async function runPlanPhase(docs, request, language, reportLength, answers, docInsight, suggestedTitle, webResearch = '') {
   setStatus('Planning report structure...', 20);
   try {
     const res = await fetch('/api/doc-report', {
@@ -758,6 +802,7 @@ async function runPlanPhase(docs, request, language, reportLength, answers, docI
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phase: 'plan', docs, request, answers, language, reportLength,
+        webResearch: webResearch || '',
         slug: 'doc-' + Date.now(),
       }),
     });
@@ -863,11 +908,18 @@ async function startGeneration() {
   setStatus('Starting...', 5);
 
   try {
-    // Step 1: Web research if needed
+    // Step 1: Web research
+    // No-doc mode: already fetched during plan phase — reuse planLiveResearch
+    // Doc mode: fetch now as supplement to document content
     let liveResearch = '';
-    if (planNeedsWeb) {
-      setStatus('🔍 Searching live data...', 10);
-      document.getElementById('prog-subtitle').textContent = 'Searching live external data...';
+    if (!planHasDocs && planLiveResearch) {
+      // Reuse research from plan phase — no need to re-fetch
+      liveResearch = planLiveResearch;
+      setStatus('✓ Live data ready (fetched during planning)', 18);
+    } else if (planNeedsWeb && planHasDocs) {
+      // Doc mode supplementary search
+      setStatus('🔍 Supplementing with live data...', 10);
+      document.getElementById('prog-subtitle').textContent = 'Fetching supplementary live data...';
       try {
         const res = await fetch('/api/browser-research', {
           method: 'POST',
@@ -881,7 +933,7 @@ async function startGeneration() {
         });
         const d = await res.json();
         liveResearch = d.research || '';
-        setStatus('✓ External data collected', 18);
+        setStatus('✓ Supplementary data collected', 18);
       } catch { /* non-fatal */ }
     }
 
