@@ -1,14 +1,15 @@
 // KIRA RESEARCH — api/doc-report.js
-// Document Intelligence: analyze uploaded files + user request → plan report sections
-// Documents are OPTIONAL — if none, runs as pure AI report generator via web research.
+// Phase "clarify": Claude reads docs → asks clarifying question if needed + evaluates data sufficiency
+// Phase "plan":    Claude identifies data gaps → targeted Perplexity search → plans sections with full context
 
 export const config = { maxDuration: 55, runtime: 'nodejs' };
 
-const ANT_URL = 'https://api.anthropic.com/v1/messages';
-const ANT_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL   = 'claude-sonnet-4-20250514';
-const SB_URL  = process.env.SUPABASE_URL;
-const SB_KEY  = process.env.SUPABASE_SERVICE_KEY;
+const ANT_URL        = 'https://api.anthropic.com/v1/messages';
+const ANT_KEY        = process.env.ANTHROPIC_API_KEY;
+const PERPLEXITY_KEY = process.env.PERPLEXITY_API_KEY;
+const MODEL          = 'claude-sonnet-4-20250514';
+const SB_URL         = process.env.SUPABASE_URL;
+const SB_KEY         = process.env.SUPABASE_SERVICE_KEY;
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,13 +28,11 @@ async function sbPost(table, body) {
   return Array.isArray(d) ? d[0] : d;
 }
 
-async function callClaude(messages, maxTokens, system) {
-  const body = { model: MODEL, max_tokens: maxTokens, messages };
-  if (system) body.system = system;
+async function callClaude(messages, maxTokens) {
   const r = await fetch(ANT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': ANT_KEY, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, messages })
   });
   if (!r.ok) throw new Error(`Claude API ${r.status}: ${await r.text().then(t=>t.slice(0,200))}`);
   const d = await r.json();
@@ -41,53 +40,66 @@ async function callClaude(messages, maxTokens, system) {
   return d.content?.[0]?.text || '';
 }
 
-// Robust JSON extraction — handles markdown fences or extra text around JSON
+// Targeted Perplexity search for a specific query
+async function searchPerplexity(query) {
+  if (!PERPLEXITY_KEY) return '';
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const r = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${PERPLEXITY_KEY}` },
+      body: JSON.stringify({
+        model: 'sonar-pro',
+        messages: [
+          { role: 'system', content: 'Provide specific data with numbers, percentages, company names. Recent data only. Max 200 words.' },
+          { role: 'user', content: query }
+        ],
+        max_tokens: 400,
+        temperature: 0.1,
+      })
+    });
+    clearTimeout(timeout);
+    if (!r.ok) return '';
+    const d = await r.json();
+    return d.choices?.[0]?.message?.content || '';
+  } catch { return ''; }
+}
+
 function extractJson(raw) {
   const match = raw.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error('No JSON object found in response');
+  if (!match) throw new Error('No JSON found');
   return JSON.parse(match[0]);
 }
 
-// Build message content array from docs for clarify phase
-// Truncated to 3K chars/doc — clarify only needs a quick read
 function buildClarifyMessages(docs) {
-  const content = [];
-  (docs || []).forEach((doc, i) => {
-    content.push({ type: 'text', text: `\n--- FILE ${i+1}: ${doc.name} ---\n` });
-    if (doc.imageBase64) {
-      content.push({ type: 'image', source: { type: 'base64', media_type: doc.mimeType || 'image/png', data: doc.imageBase64 } });
-    } else {
-      // Truncate heavily for clarify — just need document gist
-      content.push({ type: 'text', text: (doc.text || '(empty)').slice(0, 3000) });
-    }
+  return (docs || []).flatMap((doc, i) => {
+    const items = [{ type: 'text', text: `\n--- FILE ${i+1}: ${doc.name} ---\n` }];
+    if (doc.imageBase64) items.push({ type: 'image', source: { type: 'base64', media_type: doc.mimeType || 'image/png', data: doc.imageBase64 } });
+    else items.push({ type: 'text', text: (doc.text || '(empty)').slice(0, 3000) });
+    return items;
   });
-  return content;
 }
 
-// Build full message content for plan phase — needs complete context
 function buildPlanMessages(docs) {
-  const content = [];
-  (docs || []).forEach((doc, i) => {
-    content.push({ type: 'text', text: `\n--- FILE ${i+1}: ${doc.name} (${doc.type}) ---\n` });
-    if (doc.imageBase64) {
-      content.push({ type: 'image', source: { type: 'base64', media_type: doc.mimeType || 'image/png', data: doc.imageBase64 } });
-    } else {
-      content.push({ type: 'text', text: doc.text || '(empty file)' });
-    }
+  return (docs || []).flatMap((doc, i) => {
+    const items = [{ type: 'text', text: `\n--- FILE ${i+1}: ${doc.name} (${doc.type}) ---\n` }];
+    if (doc.imageBase64) items.push({ type: 'image', source: { type: 'base64', media_type: doc.mimeType || 'image/png', data: doc.imageBase64 } });
+    else items.push({ type: 'text', text: doc.text || '(empty file)' });
+    return items;
   });
-  return content;
 }
 
-// Map reportLength value → section count guidance for plan prompt
 const LENGTH_CONFIG = {
-  concise:       { min: 4, max: 5, label: 'EXACTLY 4 sections. No more, no less.' },
-  standard:      { min: 6, max: 8, label: '6 to 8 sections.' },
-  comprehensive: { min: 9, max: 12, label: '9 to 12 sections.' },
+  concise:       { min: 4, max: 5 },
+  standard:      { min: 6, max: 8 },
+  comprehensive: { min: 9, max: 12 },
 };
 const LENGTH_GUIDANCE = {
-  concise:       'CRITICAL: Output EXACTLY 4 sections in the "sections" array. Count: 4. No more.',
-  standard:      'Output 6-8 sections in the "sections" array.',
-  comprehensive: 'Output 9-12 sections in the "sections" array.',
+  concise:       'EXACTLY 4 sections. No more.',
+  standard:      '6-8 sections.',
+  comprehensive: '9-12 sections.',
 };
 
 export default async function handler(req, res) {
@@ -95,65 +107,48 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')    return res.status(405).json({ error: 'Method not allowed' });
 
-  const { phase, docs, request, answers, language, reportLength, webResearch, slug, userId } = req.body;
-
+  const { phase, docs, request, answers, language, reportLength, slug, userId } = req.body;
   if (!request) return res.status(400).json({ error: 'Missing request' });
 
   const hasDocs  = Array.isArray(docs) && docs.length > 0;
   const langNote = language && language !== 'English'
-    ? `\nIMPORTANT: Respond entirely in ${language}. All content must be in ${language}.`
+    ? `\nIMPORTANT: Respond entirely in ${language}.`
     : '';
-  const sectionCountGuide = LENGTH_GUIDANCE[reportLength] || LENGTH_GUIDANCE.standard;
-  const docSummary = hasDocs ? docs.map(d => `• ${d.name} (${d.pages||'?'} pages)`).join('\n') : '';
+  const sectionGuide = LENGTH_GUIDANCE[reportLength] || LENGTH_GUIDANCE.standard;
+  const docSummary   = hasDocs ? docs.map(d => `• ${d.name} (${d.pages||'?'} pages)`).join('\n') : '';
 
   // ── Phase: CLARIFY ─────────────────────────────────────────
   if (phase === 'clarify') {
-    // No docs → Claude evaluates if current/live data is needed for this request
     if (!hasDocs) {
+      // No docs: Claude evaluates if current data is needed
       try {
-        const evalPrompt = `User wants a consulting report on: "${request}"${langNote}
-
-Does this request require CURRENT or RECENT data (post-2023) that would benefit from live web search?
-Examples that need search: current market share, recent regulations, latest company financials, 2024-2025 trends.
-Examples that don't: strategic frameworks, historical analysis, methodology, process flows.
-
-Return ONLY JSON: { "needsWebSearch": true/false, "reason": "one sentence" }`;
-
-        const raw = await callClaude([{ role: 'user', content: evalPrompt }], 200);
-        const eval_ = extractJson(raw);
-        return res.json({ clear: true, needsWebSearch: eval_.needsWebSearch !== false, docInsight: '', suggestedTitle: request });
+        const raw = await callClaude([{ role: 'user', content:
+          `Request: "${request}"${langNote}
+Does this require CURRENT data (post-2023) that benefits from live web search?
+Return ONLY JSON: {"needsWebSearch": true/false, "suggestedTitle": "short title"}` }], 150);
+        const r = extractJson(raw);
+        return res.json({ clear: true, needsWebSearch: r.needsWebSearch !== false, docInsight: '', suggestedTitle: r.suggestedTitle || request });
       } catch {
         return res.json({ clear: true, needsWebSearch: true, docInsight: '', suggestedTitle: request });
       }
     }
+
     try {
       const prompt = [
         ...buildClarifyMessages(docs),
         { type: 'text', text: `\nUser request: "${request}"${langNote}
 
-Analyze the documents and the user's request. Do two things:
+1. CLARITY: Is the request clear enough, or do you need ONE clarifying question?
+2. DATA SUFFICIENCY: Do the documents contain enough data, or is web search needed?
 
-1. ASSESS CLARITY: Is the request clear enough to proceed, or do you need ONE clarifying question?
-
-2. ASSESS DATA SUFFICIENCY: Do the documents contain enough data to fulfill the request without web search?
-   - If documents have the key data needed → needsWebSearch: false
-   - If documents are missing current market data, competitor info, benchmarks, or recent trends needed for the request → needsWebSearch: true
-
-Return ONLY valid JSON:
-{ "clear": true, "needsWebSearch": false, "docInsight": "1-2 sentence summary of documents", "suggestedTitle": "Proposed title" }
-OR if needs web search:
-{ "clear": true, "needsWebSearch": true, "docInsight": "...", "suggestedTitle": "..." }
-OR if needs clarification:
-{ "clear": false, "needsWebSearch": false, "docInsight": "...", "question": "One focused question", "options": ["A","B","C"] }
-
-Return ONLY the JSON object.` }
+Return ONLY JSON:
+{"clear":true,"needsWebSearch":false,"docInsight":"1-2 sentence doc summary","suggestedTitle":"title"}
+OR {"clear":false,"needsWebSearch":true,"docInsight":"...","question":"One question","options":["A","B","C"]}` }
       ];
-      const raw    = await callClaude([{ role: 'user', content: prompt }], 500);
-      const parsed = extractJson(raw);
-      return res.json(parsed);
-    } catch (e) {
-      // Non-fatal: just proceed as clear
-      return res.json({ clear: true, docInsight: '', suggestedTitle: request });
+      const raw = await callClaude([{ role: 'user', content: prompt }], 500);
+      return res.json(extractJson(raw));
+    } catch {
+      return res.json({ clear: true, needsWebSearch: false, docInsight: '', suggestedTitle: request });
     }
   }
 
@@ -161,82 +156,108 @@ Return ONLY the JSON object.` }
   if (phase === 'plan') {
     try {
       const answersText = answers?.length ? `\nUser clarification: ${answers.join('; ')}` : '';
-      let messages;
 
-      if (hasDocs) {
-        messages = [{
-          role: 'user',
-          content: [
-            ...buildPlanMessages(docs),  // full content
-            { type: 'text', text: `\nUser request: "${request}"${answersText}${langNote}
+      // ── Step 1: Gap Analysis ──────────────────────────────
+      // Claude reads request + docs (if any) → identifies SPECIFIC data gaps for web search
+      let webResearch = '';
 
-You are a senior strategy consultant. Based on these documents and the user's request:
+      // Auto-detect URLs/domains in request → always search those first
+      const autoUrlMatches = request.match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?)/g) || [];
+      const autoQueries = autoUrlMatches
+        .filter(u => !u.includes('kiraresearch') && !u.includes('localhost') && u.includes('.'))
+        .slice(0, 2)
+        .map(url => {
+          const domain = url.replace(/https?:\/\/|www\./g, '').split('/')[0];
+          return `${domain} company profile products services revenue 2024 2025`;
+        });
+      let gapQueries = [...autoQueries]; // start with auto-detected, Claude adds more
 
-1. Summarize key insights from the documents (2-3 sentences, specific data points)
-2. Determine if web research is needed for current external data not in the documents
-3. ${sectionCountGuide} Structure: start with the core analysis sections, end with "Recommendations". Do NOT include "Executive Summary" as a section — it wastes the first section when content isn't written yet.
-${language && language !== 'English' ? '   Section titles in ' + language + '.' : ''}
+      const gapContent = hasDocs
+        ? [...buildClarifyMessages(docs), { type: 'text', text: `\nRequest: "${request}"${answersText}` }]
+        : [{ type: 'text', text: `Request: "${request}"${answersText}` }];
 
-Return ONLY valid JSON:
-{
-  "reportTitle": "Specific report title",
-  "docSummary": "2-3 sentence summary of key findings",
-  "needsWebSearch": true,
-  "searchFocus": "What to research externally",
-  "sections": ["Executive Summary", "...", "Recommendations"]
-}` }
-          ]
-        }];
-      } else {
-        // No-doc mode: plan from request + web research
-        const webContext = webResearch
-          ? `\n\nLIVE DATA AVAILABLE:\n${webResearch.slice(0, 3000)}\n\nPlan sections that leverage this data.`
-          : '\n\nNo live data pre-fetched — plan sections based on the request.';
+      try {
+        const gapRaw = await callClaude([{ role: 'user', content: [
+          ...gapContent, // full doc context for accurate gap analysis
+          { type: 'text', text: `
+Analyze this request and identify SPECIFIC web search queries needed.
 
-        messages = [{
-          role: 'user',
-          content: `You are a senior strategy consultant. Plan a consulting-grade report.
+ALWAYS search for:
+- Any URL or website mentioned (e.g. "gtel.vn" → search "GTEL Vietnam company profile business")
+- Any specific company mentioned → search their profile, recent news, financials
+- Any specific product/service → search current market data
+- Current market sizes, growth rates, market share (post-2023)
+- Recent regulations, policies, competitor data
 
-User request: "${request}"${answersText}${langNote}${webContext}
+DO NOT search for: generic frameworks, methodology concepts, historical analysis without specific companies.
 
-${sectionCountGuide} Structure: start with contextual analysis, end with "Recommendations". Do not include an Executive Summary section.
-Base your section plan on what the live data actually covers — plan sections that fit the available data.
-${language && language !== 'English' ? 'Section titles in ' + language + '.' : ''}
+Max 3 queries. Be very specific:
+- "gtel.vn presentation" → query: "GTEL Vietnam telecom company gtel.vn services revenue"
+- "OKR implementation GTEL" → query: "GTEL Vietnam company size structure employees 2024"
+- "EV market Vietnam" → query: "Vietnam electric vehicle market size 2025 growth"
 
-Return ONLY valid JSON:
-{
-  "reportTitle": "Specific report title based on the request and data",
-  "docSummary": "",
-  "needsWebSearch": false,
-  "searchFocus": "",
-  "sections": ["Executive Summary", "...", "Recommendations"]
-}`
-        }];
+Return ONLY JSON:
+{"needsSearch":true,"queries":["specific query 1","specific query 2"]}
+OR {"needsSearch":false,"queries":[]}` }
+        ]}], 300);
+        const gap = extractJson(gapRaw);
+        if (gap.needsSearch && gap.queries?.length) {
+          gapQueries = gap.queries.slice(0, 3);
+        }
+      } catch { /* non-fatal */ }
+
+      // ── Step 2: Targeted Search (parallel) ────────────────
+      if (gapQueries.length > 0) {
+        const results = await Promise.all(gapQueries.map(q => searchPerplexity(q)));
+        const combined = results.filter(Boolean);
+        if (combined.length) {
+          webResearch = gapQueries.map((q, i) => combined[i] ? `[${q}]\n${combined[i]}` : '').filter(Boolean).join('\n\n');
+        }
       }
 
-      const raw = await callClaude(messages, 1500);
+      // ── Step 3: Plan Sections ────────────────────────────
+      let messages;
+      const webBlock = webResearch
+        ? `\n\nCURRENT DATA FROM WEB SEARCH:\n${webResearch.slice(0, 3000)}`
+        : '';
 
+      if (hasDocs) {
+        messages = [{ role: 'user', content: [
+          ...buildPlanMessages(docs),
+          { type: 'text', text: `\nRequest: "${request}"${answersText}${langNote}${webBlock}
+
+Plan a consulting report: ${sectionGuide}
+Start with "Executive Summary", end with "Recommendations".
+${language && language !== 'English' ? 'Section titles in ' + language + '.' : ''}
+
+Return ONLY JSON:
+{"reportTitle":"...","docSummary":"2-3 sentence summary","sections":["..."],"searchFocus":""}` }
+        ]}];
+      } else {
+        messages = [{ role: 'user', content:
+          `Request: "${request}"${answersText}${langNote}${webBlock}
+
+Plan a consulting report: ${sectionGuide}
+Start with "Executive Summary", end with "Recommendations".
+${language && language !== 'English' ? 'Section titles in ' + language + '.' : ''}
+
+Return ONLY JSON:
+{"reportTitle":"...","docSummary":"","sections":["..."],"searchFocus":""}` }];
+      }
+
+      const raw  = await callClaude(messages, 1500);
       let plan;
-      try {
-        plan = extractJson(raw);
-      } catch (jsonErr) {
-        console.error('[doc-report plan] JSON parse failed:', jsonErr.message, '\nRaw:', raw.slice(0, 500));
-        throw new Error('Plan parse failed: ' + jsonErr.message);
+      try { plan = extractJson(raw); }
+      catch (e) {
+        console.error('[doc-report plan] JSON parse failed:', e.message, raw.slice(0, 300));
+        throw new Error('Plan parse failed');
       }
 
       if (!plan.sections?.length) throw new Error('No sections in plan');
 
-      // If web research was already done in planning phase, don't re-search at generation
-      if (webResearch && !hasDocs) plan.needsWebSearch = false;
-      // Enforce section count from reportLength setting
+      // Enforce section count
       const lenCfg = LENGTH_CONFIG[reportLength];
-      if (lenCfg && plan.sections.length > lenCfg.max) {
-        plan.sections = plan.sections.slice(0, lenCfg.max);
-      } else if (lenCfg && plan.sections.length < lenCfg.min) {
-        // too few — just proceed, don't add fake sections
-      }
-
-      if (!hasDocs) plan.needsWebSearch = true;
+      if (lenCfg && plan.sections.length > lenCfg.max) plan.sections = plan.sections.slice(0, lenCfg.max);
 
       // Save to DB
       let reportId = null;
@@ -257,9 +278,11 @@ Return ONLY valid JSON:
         reportTitle:    plan.reportTitle || request,
         docSummary:     plan.docSummary  || '',
         sections:       plan.sections,
-        needsWebSearch: plan.needsWebSearch !== false,
-        searchFocus:    plan.searchFocus  || request,
-        researchSummary: plan.docSummary  || '',
+        needsWebSearch: false,  // search already done here
+        searchFocus:    plan.searchFocus || '',
+        researchSummary: [plan.docSummary, webResearch ? '=== WEB RESEARCH ===\n' + webResearch : ''].filter(Boolean).join('\n\n'),
+        webResearch,
+        hasWebResearch: !!webResearch,
       });
 
     } catch (e) {
