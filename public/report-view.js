@@ -103,12 +103,13 @@ let pollInterval = null;
 function setStep(n) {
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('step-' + i);
+    if (!el) continue;
     el.classList.remove('active', 'done');
     if (i < n) el.classList.add('done');
     else if (i === n) el.classList.add('active');
     if (i < 4) {
       const line = document.getElementById('line-' + i);
-      line.classList.toggle('done', i < n);
+      if (line) line.classList.toggle('done', i < n);
     }
   }
 }
