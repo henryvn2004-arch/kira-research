@@ -791,6 +791,12 @@ function renderBlock(block, sectionIndex) {
       break;
     }
 
+    case 'annotation': {
+      div.className = 'block-annotation';
+      div.innerHTML = `<p class="annotation-text">${formatCommentary(block.text || '')}</p>`;
+      break;
+    }
+
     default:
       return null;
   }
