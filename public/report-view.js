@@ -103,13 +103,12 @@ let pollInterval = null;
 function setStep(n) {
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('step-' + i);
-    if (!el) continue;
     el.classList.remove('active', 'done');
     if (i < n) el.classList.add('done');
     else if (i === n) el.classList.add('active');
     if (i < 4) {
       const line = document.getElementById('line-' + i);
-      if (line) line.classList.toggle('done', i < n);
+      line.classList.toggle('done', i < n);
     }
   }
 }
@@ -1312,7 +1311,8 @@ function addChatMessage(role, text) {
 // ── View helpers ─────────────────────────────────────────
 function showView(name) {
   ['form','progress','report'].forEach(v => {
-    document.getElementById('view-' + v).style.display = v === name ? 'block' : 'none';
+    const el = document.getElementById('view-' + v);
+    if (el) el.style.display = v === name ? 'block' : 'none';
   });
 }
 
@@ -1331,7 +1331,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (params.get('unlocked') === '1') {
     setStep(2);
     // Mark step 2 done, move to 3
-    document.getElementById('step-2').classList.add('done');
+    const step2 = document.getElementById('step-2');
+    if (step2) step2.classList.add('done');
     await startGeneration();
     return;
   }
@@ -1352,9 +1353,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Default: show form
-  showView('form');
-  setStep(1);
+  // Default: show form (only for pages that have view-form)
+  if (document.getElementById('view-form')) {
+    showView('form');
+    setStep(1);
+  }
 });
 
 // ── PRESENTATION MODE ─────────────────────────────────────
