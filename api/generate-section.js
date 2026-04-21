@@ -655,10 +655,14 @@ Available blocks (NO prose blocks — prose is shown separately):
 stats   → {"type":"stats","items":[{"value":"$2.3B","label":"Market 2025"}]}
 chart   → {"type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers]}],"horizontal":true}
 diagram → {"type":"diagram","code":"mermaid syntax","title":"..."}
-  CRITICAL MERMAID RULES — ASCII only in node labels (Vietnamese/Unicode breaks rendering):
-  ✓ flowchart LR\n  A[Market Analysis] -->|drives| B[Strategy]\n  B --> C[Execution]
-  ✗ flowchart LR\n  A[Phân tích thị trường] --> B[Chiến lược]  ← BREAKS
-  Use English labels or abbreviations inside nodes. Title/description can be in any language.
+  ⚠️ DIAGRAM LABELS MUST BE ENGLISH/ASCII — EVEN IF OUTPUT LANGUAGE IS VIETNAMESE/THAI/ETC:
+  ✓ flowchart LR\n  A[Goal Setting] --> B[Execution] --> C[Review]
+  ✓ flowchart LR\n  A[GTEL HQ] --> B[Dept OKR] --> C[Individual OKR]
+  ✗ flowchart LR\n  A[Thiết lập mục tiêu] --> B[Thực thi]  ← PARSER BREAKS
+  ✗ flowchart LR\n  A[Định hướng] -->|thực hiện| B[Kết quả]  ← PIPE LABELS BREAK
+  Node labels: English words or short abbreviations ONLY (e.g. "OKR Cascade", "Q1 Goals")
+  Title field (shown above diagram): CAN be in target language
+  Arrow labels after | |: MUST be English or omit entirely
 table   → {"type":"table","title":"...","headers":[...],"rows":[[...]]}
 callout → {"type":"callout","text":"Strategic implication...","style":"insight|action|warning"}
 
