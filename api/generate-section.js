@@ -1,14 +1,5 @@
 // KIRA RESEARCH — api/generate-section.js
-// v20260421-1526 cache-bust
-// 2-phase per section:
-//   Phase 1: stream commentary (~15s)
-//   Phase 2: extract headline + stats + chart + table from text (~3s)
-// SSE events: token | meta | done
-//
-// CHANGES:
-// 4. Anti-overlap: full headline summary of ALL completed sections (was slice(-2))
-// 5. Competency template section guidance injected per section
-
+// v20260421-fix cache-bust
 export const config = { maxDuration: 55, runtime: 'nodejs' };
 
 const ANT_URL = 'https://api.anthropic.com/v1/messages';
@@ -505,9 +496,8 @@ function sanitizeBlock(b) {
 }
 
 export default async function handler(req, res) {
-  // Startup guard — surfaces missing env vars immediately
-  if (!ANT_KEY) {
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
   }
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -639,71 +629,127 @@ APPROACH:
 
     const isNarrative = /executive summary|recommendation|conclusion|strategic outlook/i.test(sectionTitle);
 
-    const currentYear = 2026;
-    const prevYear = currentYear - 1;
     const segmentPrompt = `You wrote this section titled "${sectionTitle}":
 ${langNote}
 
 ${fullCommentary}
 
-TASK: Segment into 2-4 sub-sections, each with a visual AND a short explanation.
-Current year: ${currentYear}.
+TASK: Segment this into 2-4 sub-sections and create rich visuals for each.
+The prose text will be shown separately — do NOT include prose in your JSON.
 
 STEP 1 — SEGMENT: Find 2-4 distinct analytical angles. Each gets a short subtitle.
 
-STEP 2 — ANCHOR DATA → DATASETS (use ${currentYear} as base year):
-• "$XB market" + "Y% CAGR" → 6-year line chart: labels=[${currentYear-3},${currentYear-2},${currentYear-1},${currentYear},${currentYear+1},${currentYear+2}], back-calc ÷(1+CAGR), forward ×(1+CAGR)
-• "Company X: Y% share" → doughnut + table (all players sum to 100%, add "Others")
-• Multiple segments/channels with % → doughnut or horizontal bar
-• Rankings/comparisons → table (Rank|Company|Value)
-• Companies on multiple attributes → radar (scores 1-10)
-• Process/flow/value chain → flowchart LR (ONLY this diagram type)
-• Mark missing numbers as "(est.)" but ALWAYS include a visual
+STEP 2 — EXTRACT ANCHOR DATA → BUILD COMPLETE DATASETS:
+• "$XB market" + "Y% CAGR" → 6-year time series (back-calc ÷(1+CAGR), forward ×(1+CAGR)) → line chart
+• "Company X: Y% share" → build ALL players to sum 100% (add "Others" for remainder) → doughnut + table
+• Multiple segments/channels with % → breakdown → doughnut or bar
+• Rankings/comparisons → table (Rank|Company|Share|Strength)
+• Companies on multiple attributes → radar scores 0-10
+• Process/flow/value chain → flowchart LR diagram
+• Strategic 2×2 → quadrantChart
+• Timeline/history → timeline diagram
+• Mark missing data as "est." — always estimate rather than skip
 
-STEP 3 — BLOCKS PER SUB-SECTION:
-Each sub-section needs: 1 visual (chart OR diagram OR table) + annotation (1-2 sentences explaining the visual).
-
-stats      → {"type":"stats","items":[{"value":"$2.3B","label":"Market ${currentYear}"}]}
-chart      → {"type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers only]}],"horizontal":false}
-diagram    → {"type":"diagram","code":"flowchart LR\n  A[Step1] --> B[Step2] --> C[Step3]","title":"..."}
-             DIAGRAM RULES — ONLY use when content language is English:
-             - ONLY flowchart LR syntax (never timeline, never quadrantChart)
-             - Node labels: English/ASCII ONLY — "OKR Cascade" not "Tầng mục tiêu"
-             - Max 5 nodes, simple: A[Label] --> B[Label] --> C[Label]
-             - If content is Vietnamese/non-English: use a table with arrow column instead of diagram
-table      → {"type":"table","title":"...","headers":[...],"rows":[[...]]}
-callout    → {"type":"callout","text":"Key strategic implication...","style":"insight|action|warning"}
-annotation → {"type":"annotation","text":"1-2 sentence explanation of what the visual shows and why it matters"}
+STEP 3 — ASSIGN VISUALS: Every sub-section needs AT LEAST 1 visual block.
+Available blocks (NO prose blocks — prose is shown separately):
+stats   → {"type":"stats","items":[{"value":"$2.3B","label":"Market 2025"}]}
+chart   → {"type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers]}],"horizontal":true}
+diagram → {"type":"diagram","code":"mermaid syntax","title":"..."}
+  CRITICAL MERMAID RULES — ASCII only in node labels (Vietnamese/Unicode breaks rendering):
+  ✓ flowchart LR\n  A[Market Analysis] -->|drives| B[Strategy]\n  B --> C[Execution]
+  ✗ flowchart LR\n  A[Phân tích thị trường] --> B[Chiến lược]  ← BREAKS
+  Use English labels or abbreviations inside nodes. Title/description can be in any language.
+table   → {"type":"table","title":"...","headers":[...],"rows":[[...]]}
+callout → {"type":"callout","text":"Strategic implication...","style":"insight|action|warning"}
 
 RULES:
-- Each sub-section: 1 primary visual (chart/diagram/table) + 1 annotation right after it
-- annotation comes immediately AFTER its visual (not at the end)
-- Max 8 data points per chart, max 8 table rows
-- doughnut: datasets must sum ~100%
-- No more than 1 diagram per section total
-${isNarrative ? '- Narrative section: use table or callout, no charts required' : '- Analytical section: chart or table is mandatory in at least one sub-section'}
+- chart OR diagram per sub-section (not both), table is always ok to add
+- data arrays = plain numbers only, max 8 data points, max 8 rows
+- doughnut datasets must sum to ~100%
+${isNarrative ? '- Narrative section: use table/callout, skip charts' : '- Analytical section: chart or diagram is mandatory in at least one sub-section'}
 
-Return ONLY valid JSON:
+Return ONLY valid JSON (no prose, no markdown):
 {
-  "headline": "Key finding 1-2 sentences with specific data and year",
+  "headline": "Key finding 1-2 sentences with specific data",
   "sub_sections": [
     {
-      "subtitle": "Short subtitle",
-      "blocks": [
-        {"type":"stats","items":[...]},
-        {"type":"chart",...},
-        {"type":"annotation","text":"This chart shows... indicating that..."},
-        {"type":"callout","text":"...","style":"insight"}
-      ]
+      "subtitle": "Short descriptive subtitle",
+      "blocks": [{"type":"stats",...}, {"type":"chart",...}, {"type":"table",...}]
     }
   ],
   "sources": ["Source 1"]
-}// KIRA RESEARCH — api/generate-section.js
-// 2-phase per section:
-//   Phase 1: stream commentary (~15s)
-//   Phase 2: extract headline + stats + chart + table from text (~3s)
-// SSE events: token | meta | done
-//
-// CHANGES:
-// 4. Anti-overlap: full headline summary of ALL completed sections (was slice(-2))
-// 5. Competency template section guidance injected per section
+}`;
+
+    const raw = await callClaude(segmentPrompt, 4000);
+
+    // Robust JSON parsing
+    let parsed = null;
+    const clean = raw.replace(/```json\s*/g,'').replace(/```/g,'').trim();
+    try {
+      parsed = JSON.parse(clean);
+    } catch {
+      const objStart = clean.indexOf('{');
+      if (objStart >= 0) {
+        let depth = 0, lastClose = -1;
+        for (let ci = objStart; ci < clean.length; ci++) {
+          if (clean[ci] === '{' || clean[ci] === '[') depth++;
+          if (clean[ci] === '}' || clean[ci] === ']') { depth--; if (depth === 0) lastClose = ci; }
+        }
+        if (lastClose > objStart) {
+          try { parsed = JSON.parse(clean.slice(objStart, lastClose + 1)); } catch {}
+        }
+      }
+    }
+
+    if (parsed) {
+      // Sanitize sub_sections
+      if (parsed.sub_sections?.length) {
+        parsed.sub_sections = parsed.sub_sections.map(ss => ({
+          ...ss,
+          blocks: (ss.blocks || []).map(b => sanitizeBlock(b)),
+        }));
+        meta = {
+          headline:     parsed.headline || '',
+          sub_sections: parsed.sub_sections,
+          sources:      parsed.sources || [],
+        };
+      } else if (parsed.blocks?.length) {
+        // Fallback: old blocks format — wrap as single sub-section
+        meta = {
+          headline: parsed.headline || '',
+          sub_sections: [{ subtitle: '', blocks: parsed.blocks.map(b => sanitizeBlock(b)) }],
+          sources: parsed.sources || [],
+        };
+      } else {
+        console.warn('[generate-section] Unexpected JSON shape, falling back');
+      }
+    } else {
+      console.warn(`[generate-section] Phase 3 parse failed for "${sectionTitle}". Raw: ${raw.slice(0,300)}`);
+    }
+  } catch (e) {
+    console.warn('Phase 3 failed:', e.message);
+  }
+
+  send('meta', meta);
+
+  // ── Save to DB ─────────────────────────────────────────
+  if (reportId) {
+    try {
+      const report = await sbGet('custom_reports', reportId);
+      if (report) {
+        const content = JSON.stringify({ ...meta, commentary: fullCommentary });
+        const updatedSections = (report.sections || []).map((s, i) =>
+          i === sectionIndex ? { ...s, content, status: 'completed' } : s
+        );
+        await sbPatch('custom_reports', reportId, {
+          sections:   updatedSections,
+          status:     updatedSections.every(s => s.status === 'completed') ? 'completed' : 'generating',
+          updated_at: new Date().toISOString()
+        });
+      }
+    } catch (e) { console.warn('DB save failed:', e.message); }
+  }
+
+  send('done', { sectionIndex });
+  res.end();
+}
