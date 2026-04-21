@@ -766,7 +766,6 @@ function renderBlocks(blocksData, sectionIndex, container) {
 function renderSectionHeadline(block, i, title, data) {
   block.classList.remove('generating');
 
-  // ── Header (always present) ──
   block.innerHTML = `
     <div class="slide-header" data-num="${String(i+1).padStart(2,'0')}">
       <span class="slide-num">Section ${String(i+1).padStart(2,'0')}</span>
@@ -776,27 +775,56 @@ function renderSectionHeadline(block, i, title, data) {
 
   const body = block.querySelector('.section-body');
 
-  // ── Blocks mode: Claude-driven flexible layout ──
+  // ── Phase 3: sub_sections layout ──
+  if (data.sub_sections?.length) {
+    // Section key finding
+    if (data.headline) {
+      const hDiv = document.createElement('div');
+      hDiv.className = 'block-headline';
+      hDiv.innerHTML = `<div class="block-headline-label">Key Finding</div><div class="block-headline-text">${data.headline}</div>`;
+      body.appendChild(hDiv);
+    }
+    // Render each sub-section
+    data.sub_sections.forEach((ss, si) => {
+      if (si > 0) {
+        const sep = document.createElement('div');
+        sep.className = 'sub-section-sep';
+        body.appendChild(sep);
+      }
+      const ssDiv = document.createElement('div');
+      ssDiv.className = 'sub-section';
+      if (ss.subtitle) {
+        const subHdr = document.createElement('div');
+        subHdr.className = 'sub-section-title';
+        subHdr.textContent = ss.subtitle;
+        ssDiv.appendChild(subHdr);
+      }
+      renderBlocks(ss.blocks || [], i * 100 + si, ssDiv);
+      body.appendChild(ssDiv);
+    });
+    // Sources
+    if (data.sources?.length) {
+      const srcDiv = document.createElement('div');
+      srcDiv.className = 'block-sources';
+      srcDiv.innerHTML = `<span class="sources-label">Sources</span>${data.sources.map(s=>`<span class="source-tag">${s}</span>`).join('')}`;
+      body.appendChild(srcDiv);
+    }
+    return;
+  }
+
+  // ── Legacy blocks mode ──
   if (data.blocks?.length) {
     renderBlocks(data.blocks, i, body);
     return;
   }
 
-  // ── Legacy mode: backward compat with old {headline,stats,chart,table,commentary} format ──
+  // ── Legacy flat format (backward compat) ──
   const statsHtml = (data.stats?.length)
     ? `<div class="block-stats">${data.stats.map(s => `
-        <div class="stat-pill">
-          <div class="stat-value">${s.value}</div>
-          <div class="stat-label">${s.label}</div>
-        </div>`).join('')}</div>`
+        <div class="stat-pill"><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>`).join('')}</div>`
     : '';
-
   body.innerHTML = `
-    ${data.headline ? `
-    <div class="block-headline">
-      <div class="block-headline-label">Key Finding</div>
-      <div class="block-headline-text">${data.headline}</div>
-    </div>` : ''}
+    ${data.headline ? `<div class="block-headline"><div class="block-headline-label">Key Finding</div><div class="block-headline-text">${data.headline}</div></div>` : ''}
     ${statsHtml}
     <div class="slide-commentary"></div>`;
 }
@@ -1643,65 +1671,91 @@ function buildPresentationSlides(sections) {
   sections.forEach((sec, si) => {
     let p = {};
     try { p = JSON.parse(sec.content || '{}'); } catch {}
-    const sectionNum = String(si + 1).padStart(2, '0');
+    const sectionNum   = String(si + 1).padStart(2, '0');
     const sectionTitle = sec.title || '';
-    const commentary   = p.commentary || '';
-    const headline     = p.headline   || '';
-    const stats        = p.stats      || [];
-    const keyPoints    = extractKeyPoints(commentary, 4);
-    const sources      = (p.sources   || []).slice(0, 2).join('; ') || '';
+    const headline     = p.headline || '';
+    const sources      = (p.sources || []).slice(0, 2).join('; ') || '';
 
-    // ── Slide A: DIVIDER (dark navy section opener) ──────────
-    slides.push({
-      type: 'divider',
-      sectionNum, sectionTitle, headline, sources,
-    });
+    // ── Divider: section opener ──────────────────────────────
+    slides.push({ type: 'divider', sectionNum, sectionTitle, headline, sources });
 
-    // ── Slide B: DASHBOARD — stats + key finding + insight bullets ──
-    if (stats.length || headline) {
-      slides.push({
-        type: 'dashboard',
-        variant: si % 3,
-        sectionNum, sectionTitle, headline, stats, sources,
-        subtitle: headline || sectionTitle,
-        keyPoints: keyPoints.slice(0, 2),
+    // ── Phase 3: sub_sections → each becomes a content slide ─
+    if (p.sub_sections?.length) {
+      p.sub_sections.forEach((ss, ssi) => {
+        const ssBlocks  = ss.blocks || [];
+        const subtitle  = ss.subtitle || sectionTitle;
+        const chart     = ssBlocks.find(b => b.type === 'chart');
+        const diagram   = ssBlocks.find(b => b.type === 'diagram');
+        const table     = ssBlocks.find(b => b.type === 'table');
+        const statsBlk  = ssBlocks.find(b => b.type === 'stats');
+        const callout   = ssBlocks.find(b => b.type === 'callout');
+        const proseBlks = ssBlocks.filter(b => b.type === 'prose');
+        const keyPoints = extractKeyPoints(proseBlks.map(b => b.text||'').join('\n'), 3);
+
+        if (chart) {
+          slides.push({
+            type: 'analysis', sectionNum, sectionTitle, headline, sources,
+            subtitle, chart, keyPoints,
+            stats: statsBlk?.items || [],
+          });
+        } else if (diagram) {
+          slides.push({
+            type: 'diagram_slide', sectionNum, sectionTitle, headline, sources,
+            subtitle, diagram, keyPoints,
+          });
+        } else if (table) {
+          slides.push({
+            type: 'data', sectionNum, sectionTitle, headline, sources,
+            subtitle, table,
+            keyPoints,
+          });
+        } else if (statsBlk || callout || keyPoints.length) {
+          slides.push({
+            type: 'insight', sectionNum, sectionTitle, headline, sources,
+            subtitle: callout ? callout.text.slice(0,80) : subtitle,
+            keyPoints,
+            stats: statsBlk?.items || [],
+          });
+        }
       });
-    }
 
-    // ── Slide C: ANALYSIS — 2-col: commentary LEFT | chart RIGHT ──
-    const hasChart = p.chart?.labels?.length && p.chart?.datasets?.length;
-    if (hasChart) {
-      const chartTitle = p.chart.title || sectionTitle;
-      slides.push({
-        type: 'analysis',
-        sectionNum, sectionTitle, headline, sources,
-        subtitle: chartTitle,
-        chart: p.chart,
-        keyPoints: keyPoints.slice(0, 3),
-      });
-    }
+    // ── Legacy fallback: old flat format ─────────────────────
+    } else {
+      const commentary = p.commentary || '';
+      const stats      = p.stats || [];
+      const keyPoints  = extractKeyPoints(commentary, 4);
+      const hasChart   = p.chart?.labels?.length && p.chart?.datasets?.length;
+      const hasTable   = p.table?.headers?.length && p.table?.rows?.length;
 
-    // ── Slide D: DATA — 2-col: commentary LEFT | table RIGHT ──
-    const hasTable = p.table?.headers?.length && p.table?.rows?.length;
-    if (hasTable) {
-      const tableTitle = p.table.title || sectionTitle;
-      slides.push({
-        type: 'data',
-        sectionNum, sectionTitle, headline, sources,
-        subtitle: tableTitle,
-        table: p.table,
-        keyPoints: keyPoints.slice(hasChart ? 2 : 0, hasChart ? 4 : 3),
-      });
-    }
-
-    // ── Fallback: if no stats/chart/table, just a text insight slide ──
-    if (!stats.length && !hasChart && !hasTable && keyPoints.length) {
-      slides.push({
-        type: 'insight',
-        sectionNum, sectionTitle, headline, sources,
-        subtitle: headline || sectionTitle,
-        keyPoints,
-      });
+      if (stats.length || headline) {
+        slides.push({
+          type: 'dashboard', variant: si % 3,
+          sectionNum, sectionTitle, headline, stats, sources,
+          subtitle: headline || sectionTitle,
+          keyPoints: keyPoints.slice(0, 2),
+        });
+      }
+      if (hasChart) {
+        slides.push({
+          type: 'analysis', sectionNum, sectionTitle, headline, sources,
+          subtitle: p.chart.title || sectionTitle,
+          chart: p.chart, keyPoints: keyPoints.slice(0, 3),
+        });
+      }
+      if (hasTable) {
+        slides.push({
+          type: 'data', sectionNum, sectionTitle, headline, sources,
+          subtitle: p.table.title || sectionTitle,
+          table: p.table,
+          keyPoints: keyPoints.slice(hasChart ? 2 : 0, hasChart ? 4 : 3),
+        });
+      }
+      if (!stats.length && !hasChart && !hasTable && keyPoints.length) {
+        slides.push({
+          type: 'insight', sectionNum, sectionTitle, headline, sources,
+          subtitle: headline || sectionTitle, keyPoints,
+        });
+      }
     }
   });
 
@@ -1888,6 +1942,47 @@ function renderPresentSlide(idx) {
       if (!canvas || !slide.chart) return;
       renderPresChart(chartId, slide.chart);
     }, 60);
+    return;
+  }
+
+  // ─────────────────────────────────────────────────────
+  // DIAGRAM slide — full-width Mermaid diagram
+  // ─────────────────────────────────────────────────────
+  if (slide.type === 'diagram_slide') {
+    const diagId = `pd-${idx}`;
+    el.innerHTML = `
+      <div class="mc-slide">
+        ${slideHead(slide.sectionNum, slide.sectionTitle)}
+        ${msgBar(slide.subtitle)}
+        <div class="mc-2col">
+          <div class="mc-2col-left">
+            <div class="mc-col-tag">Analysis</div>
+            ${findingBox(slide.headline)}
+            ${keyPointsHtml(slide.keyPoints)}
+          </div>
+          <div class="mc-2col-right" style="display:flex;flex-direction:column;justify-content:center;padding:16px">
+            <div class="mc-col-vis-title">${slide.diagram?.title || ''}</div>
+            <div id="${diagId}" style="flex:1;min-height:120px;display:flex;align-items:center;justify-content:center">
+              <div style="color:#8896A8;font-size:11px">Rendering diagram...</div>
+            </div>
+          </div>
+        </div>
+        ${slideFoot()}
+      </div>`;
+    if (slide.diagram?.code && typeof mermaid !== 'undefined') {
+      setTimeout(async () => {
+        const container = document.getElementById(diagId);
+        if (!container) return;
+        try {
+          const { svg } = await mermaid.render('svg-pres-' + idx, slide.diagram.code);
+          container.innerHTML = svg;
+          const svgEl = container.querySelector('svg');
+          if (svgEl) { svgEl.style.maxWidth='100%'; svgEl.style.maxHeight='220px'; svgEl.style.height='auto'; }
+        } catch(e) {
+          container.innerHTML = '<div style="color:#FC8181;font-size:11px">Diagram unavailable</div>';
+        }
+      }, 100);
+    }
     return;
   }
 
