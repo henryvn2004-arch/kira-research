@@ -1,11 +1,6 @@
 // KIRA RESEARCH — api/doc-report.js
 // Document Intelligence: analyze uploaded files + user request → plan report sections
-//
-// Phase "clarify": Claude reads docs + request → returns clarifying question if needed
-// Phase "plan":    Claude plans sections + determines if web search needed
-//
-// File content is extracted browser-side (PDF.js, mammoth, SheetJS) and sent as text.
-// Claude never receives raw binary — only extracted text + optional base64 images.
+// Documents are OPTIONAL — if none uploaded, runs as pure AI report generator via web research.
 
 export const config = { maxDuration: 55, runtime: 'nodejs' };
 
@@ -46,20 +41,24 @@ async function callClaude(messages, maxTokens, system) {
   return d.content?.[0]?.text || '';
 }
 
-// Build Claude message content from file docs
-// Supports: text content, and base64 images
+// Robust JSON extraction — handles markdown fences or extra text around JSON
+function extractJson(raw) {
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('No JSON object found in response');
+  return JSON.parse(match[0]);
+}
+
+// Build Claude message content array from uploaded docs
 function buildDocMessages(docs) {
   const content = [];
   (docs || []).forEach((doc, i) => {
     content.push({ type: 'text', text: `\n--- FILE ${i+1}: ${doc.name} (${doc.type}) ---\n` });
     if (doc.imageBase64) {
-      // Image file — send natively for Claude vision
       content.push({
         type: 'image',
         source: { type: 'base64', media_type: doc.mimeType || 'image/png', data: doc.imageBase64 }
       });
     } else {
-      // Text content from extraction
       content.push({ type: 'text', text: doc.text || '(empty file)' });
     }
   });
@@ -73,130 +72,130 @@ export default async function handler(req, res) {
 
   const { phase, docs, request, answers, language, slug, userId } = req.body;
 
-  if (!docs?.length || !request) {
-    return res.status(400).json({ error: 'Missing docs or request' });
-  }
+  if (!request) return res.status(400).json({ error: 'Missing request' });
 
+  const hasDocs  = Array.isArray(docs) && docs.length > 0;
   const langNote = language && language !== 'English'
-    ? `\nIMPORTANT: Respond entirely in ${language}. All section titles, questions, and content must be in ${language}.`
+    ? `\nIMPORTANT: Respond entirely in ${language}. All content must be in ${language}.`
     : '';
 
-  const docContent = buildDocMessages(docs);
-  const docSummary = docs.map(d => `• ${d.name} (${d.pages || '?'} pages, ${d.type})`).join('\n');
+  const docContent = hasDocs ? buildDocMessages(docs) : [];
+  const docSummary = hasDocs ? docs.map(d => `• ${d.name} (${d.pages||'?'} pages)`).join('\n') : '';
 
-  // ── Phase: CLARIFY ────────────────────────────────────────
-  // Claude reads docs + request → determines if clarification needed
+  // ── Phase: CLARIFY ─────────────────────────────────────────
   if (phase === 'clarify') {
+
+    // No documents uploaded — skip clarification, go straight to plan
+    if (!hasDocs) {
+      return res.json({ clear: true, docInsight: '', suggestedTitle: request });
+    }
+
     try {
-      const clarifyPrompt = [
+      const prompt = [
         ...docContent,
-        {
-          type: 'text',
-          text: `\nUser request: "${request}"${langNote}
+        { type: 'text', text: `\nUser request: "${request}"${langNote}
 
-Analyze the documents above and the user's request.
-
-Determine: is the request clear enough to generate a high-quality consulting report, or do you need ONE clarifying question first?
+Analyze the documents and the user's request. Is the request clear enough to generate a high-quality report, or do you need ONE clarifying question?
 
 Return ONLY valid JSON:
-{
-  "clear": true,
-  "docInsight": "1-2 sentences summarizing what the documents contain",
-  "suggestedTitle": "Proposed report title"
-}
+{ "clear": true, "docInsight": "1-2 sentence summary of documents", "suggestedTitle": "Proposed title" }
+OR:
+{ "clear": false, "docInsight": "1-2 sentence summary", "question": "One focused question", "options": ["A","B","C"] }
 
-OR if clarification needed:
-{
-  "clear": false,
-  "docInsight": "1-2 sentences summarizing what the documents contain",
-  "question": "One focused clarifying question",
-  "options": ["Option A", "Option B", "Option C", "Other (specify)"]
-}
-
-Rules:
-- Ask at MOST one question — choose the most important ambiguity
-- If request is reasonably clear, set clear: true and proceed
-- options: 3-4 short choices covering main scenarios
-- Return ONLY the JSON object`
-        }
+Return ONLY the JSON object.` }
       ];
 
-      const raw  = await callClaude([{ role: 'user', content: clarifyPrompt }], 400);
-      const clean = raw.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(clean);
+      const raw    = await callClaude([{ role: 'user', content: prompt }], 400);
+      const parsed = extractJson(raw);
       return res.json(parsed);
 
     } catch (e) {
-      // If clarification fails, just proceed as clear
       return res.json({ clear: true, docInsight: 'Documents analyzed.', suggestedTitle: request });
     }
   }
 
   // ── Phase: PLAN ────────────────────────────────────────────
-  // Claude analyzes docs + request + any answers → plans sections
   if (phase === 'plan') {
     try {
-      const answersText = answers?.length
-        ? `\nUser clarification answers: ${answers.join('; ')}`
-        : '';
+      const answersText = answers?.length ? `\nUser clarification: ${answers.join('; ')}` : '';
 
-      const planPrompt = [
-        ...docContent,
-        {
-          type: 'text',
-          text: `\nUser request: "${request}"${answersText}${langNote}
+      let messages;
 
-You are a senior strategy consultant. Based on the documents above and the user's request:
+      if (hasDocs) {
+        // Doc-based: analyze documents + plan sections
+        messages = [{
+          role: 'user',
+          content: [
+            ...docContent,
+            { type: 'text', text: `\nUser request: "${request}"${answersText}${langNote}
 
-STEP 1 — EXTRACT KEY INSIGHTS
-Summarize the most important data, findings, and facts from the documents that are relevant to the user's request. Be specific: numbers, company names, strategies, performance data.
+You are a senior strategy consultant. Based on these documents and the user's request:
 
-STEP 2 — ASSESS WEB SEARCH NEED
-Does this request require current external data NOT in the documents? 
-(e.g. market trends, competitor data, industry benchmarks, regulatory changes)
-
-STEP 3 — PLAN SECTIONS
-Design 6-9 sections for a consulting-grade report addressing the request.
-- Start with "Executive Summary"
-- End with "Recommendations" or "Strategic Roadmap"
-- Sections should directly address the request
-- Use RAG frameworks if available: draw on consulting best practices
-${language && language !== 'English' ? `- Section titles in ${language}` : ''}
+1. Summarize the key insights from the documents (2-3 sentences, specific data points)
+2. Determine if web research is needed for current external data
+3. Design 6-9 report sections starting with "Executive Summary", ending with "Recommendations"
+${language && language !== 'English' ? '- Section titles in ' + language : ''}
 
 Return ONLY valid JSON:
 {
-  "reportTitle": "Specific title for this report",
-  "docSummary": "2-3 paragraph summary of key findings from the documents",
+  "reportTitle": "Specific report title",
+  "docSummary": "2-3 sentence summary of key findings",
   "needsWebSearch": true,
-  "searchFocus": "What external data is needed (if needsWebSearch is true)",
-  "sections": ["Section 1 title", "Section 2 title", ...]
+  "searchFocus": "What to research externally",
+  "sections": ["Executive Summary", "Section 2", ..., "Recommendations"]
+}` }
+          ]
+        }];
+      } else {
+        // No-doc mode: pure AI report from user request + web research
+        messages = [{
+          role: 'user',
+          content: `You are a senior strategy consultant. The user wants a consulting-grade report.
+
+User request: "${request}"${answersText}${langNote}
+
+Design a comprehensive report structure. Web research will be conducted to gather current data.
+
+Plan 6-9 sections:
+- Start with "Executive Summary"
+- End with "Recommendations" or "Strategic Roadmap"
+- Cover the topic thoroughly with consulting-style analysis
+${language && language !== 'English' ? '- Section titles in ' + language : ''}
+
+Return ONLY valid JSON:
+{
+  "reportTitle": "Specific report title",
+  "docSummary": "",
+  "needsWebSearch": true,
+  "searchFocus": "Key topics to research for this report",
+  "sections": ["Executive Summary", "Section 2", ..., "Recommendations"]
 }`
-        }
-      ];
+        }];
+      }
 
-      const raw    = await callClaude([{ role: 'user', content: planPrompt }], 1500);
+      const raw = await callClaude(messages, 1500);
 
-      // Robust JSON extraction — handle extra text before/after JSON
       let plan;
       try {
-        const match = raw.match(/\{[\s\S]*\}/);
-        if (!match) throw new Error('No JSON found in response');
-        plan = JSON.parse(match[0]);
+        plan = extractJson(raw);
       } catch (jsonErr) {
         console.error('[doc-report plan] JSON parse failed:', jsonErr.message, '\nRaw:', raw.slice(0, 500));
         throw new Error('Plan parse failed: ' + jsonErr.message);
       }
 
-      if (!plan.sections?.length) throw new Error('No sections returned');
+      if (!plan.sections?.length) throw new Error('No sections in plan');
 
-      // Create DB record
+      // No-doc mode always needs web search
+      if (!hasDocs) plan.needsWebSearch = true;
+
+      // Save to DB
       let reportId = null;
       try {
         const job = await sbPost('custom_reports', {
           user_id:      userId || null,
           slug:         slug || `doc-report-${Date.now()}`,
           report_type:  'document_intelligence',
-          input_params: { request, language, docSummary, docNames: docs.map(d=>d.name) },
+          input_params: { request, language, docSummary, docNames: (docs||[]).map(d=>d.name) },
           sections:     plan.sections.map(t => ({ title: t, content: '', status: 'pending' })),
           status:       'generating',
         });
@@ -205,12 +204,12 @@ Return ONLY valid JSON:
 
       return res.json({
         reportId,
-        reportTitle:   plan.reportTitle || request,
-        docSummary:    plan.docSummary || '',
-        sections:      plan.sections,
-        needsWebSearch: plan.needsWebSearch || false,
-        searchFocus:   plan.searchFocus || '',
-        researchSummary: plan.docSummary || '', // used as base research
+        reportTitle:    plan.reportTitle || request,
+        docSummary:     plan.docSummary  || '',
+        sections:       plan.sections,
+        needsWebSearch: plan.needsWebSearch !== false,
+        searchFocus:    plan.searchFocus  || request,
+        researchSummary: plan.docSummary  || '',
       });
 
     } catch (e) {
