@@ -449,7 +449,8 @@ let planHasDocs    = false;
 window.reportId = null;
 window.chatHistory = window.chatHistory || [];
 let completedSections = [];
-let currentParams;
+// currentParams intentionally NOT declared with let — uses global so report-view.js can access it
+window.currentParams = null;
 
 // ── View management ────────────────────────────────────────
 function showView(v) {
@@ -777,7 +778,7 @@ async function runPlanPhase(docs, request, language, reportLength, answers, docI
     planSearchFocus = plan.searchFocus || request;
 
     // Store params for generate-section
-    currentParams = {
+    window.currentParams = {
       request, language, docSummary: planDocSummary, docs,
       industry: planHasDocs
         ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60)
@@ -874,7 +875,7 @@ async function startGeneration() {
             industry:   planSearchFocus,
             country:    'global',
             reportType: 'document_intelligence',
-            questions:  currentParams.request,
+            questions:  window.currentParams?.request || '',
           }),
         });
         const d = await res.json();
@@ -903,10 +904,14 @@ async function startGeneration() {
     const ragContext     = { chunkText: '', patternText: '' };
     const sectionQueries = {};
 
-    // Pre-set report header (visible once we switch to report view)
+    // Pre-set report header + clear containers (handles re-runs)
     document.getElementById('report-title').textContent    = planTitle;
     document.getElementById('report-meta-sub').textContent = `${planHasDocs ? 'Document Intelligence' : 'AI Research'} · ${totalSections} sections`;
-    buildToc(planSections);
+    // Clear before generating — prevents TOC/section duplication on re-runs
+    const tocListEl = document.getElementById('toc-list');
+    const secCont   = document.getElementById('sections-container');
+    if (tocListEl) tocListEl.innerHTML = '';
+    if (secCont)   secCont.innerHTML  = '';
 
     // Step 3: Generate sections — same pattern as report.html
     const prevDone = [];
@@ -935,10 +940,10 @@ async function startGeneration() {
           sectionIndex:  i,
           sectionTitle:  title,
           totalSections,
-          industry:      currentParams.request.slice(0, 100),
+          industry:      window.currentParams?.request?.slice(0, 100) || '',
           country:       planHasDocs ? 'Document Analysis' : 'AI Research',
           reportType:    'document_intelligence',
-          questions:     currentParams.request,
+          questions:     window.currentParams?.request || '',
           language,
           researchSummary,
           ragContext,
