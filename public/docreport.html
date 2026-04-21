@@ -200,15 +200,6 @@
             </select>
           </div>
         </div>
-
-        <div>
-          <label style="margin-bottom:8px;display:block">WEB RESEARCH</label>
-          <div class="web-search-toggle" id="ws-toggle" onclick="toggleWebSearch()">
-            <div class="toggle-switch" id="ws-switch"></div>
-            <div>
-              <div style="font-size:13px;color:#A3A9B6;font-weight:600">Supplement with live web search</div>
-              <div style="font-size:11px;color:#5A6278">AI decides if external data is needed</div>
-            </div>
           </div>
         </div>
 
@@ -438,7 +429,6 @@ const MAX_MB    = 20;
 const MAX_CHARS = 40000; // per file after extraction
 
 let uploadedFiles  = [];  // { name, type, text, imageBase64, mimeType, pages, size, status }
-let webSearchOn    = false;
 let clarifyAnswer  = null;
 let planSections   = [];  // confirmed section list
 let planTitle      = '';
@@ -469,11 +459,6 @@ function setStatus(text, pct, visible = true) {
   if (bar && pct != null) bar.style.width = pct + '%';
 }
 
-// ── Web search toggle ──────────────────────────────────────
-function toggleWebSearch() {
-  webSearchOn = !webSearchOn;
-  document.getElementById('ws-switch').classList.toggle('on', webSearchOn);
-}
 
 // ── Example chips ──────────────────────────────────────────
 function setExample(el) {
@@ -738,15 +723,14 @@ async function startDocFlow() {
         </div>`
       ).join('');
       // Stash state for after clarification
-      window._pendingDocFlow = { docs, request, language, reportLength, docInsight: clarify.docInsight };
+      window._pendingDocFlow = { docs, request, language, reportLength, docInsight: clarify.docInsight, needsWebSearch: clarify.needsWebSearch || false };
       showView('clarify');
     } else {
       // For no-doc mode: search web FIRST so Claude plans sections based on real data
       // For doc mode: skip (docs are the primary source, web supplements at generation)
       let preSearchResearch = '';
-      if (!hasDocs || webSearchOn) {
-        // No-doc: web search IS the data source
-        // Doc + toggle ON: supplement docs with live data before planning
+      if (!hasDocs || clarify.needsWebSearch) {
+        // No-doc: always search; Doc: search if Claude says docs are insufficient
         preSearchResearch = await runWebSearchForPlan(request, language);
         planLiveResearch = preSearchResearch;
       }
@@ -774,7 +758,7 @@ async function submitClarification() {
   showView('progress');
   setStatus('Planning report structure...', 15);
   let preSearchResearch = '';
-  if (!planHasDocs || webSearchOn) {
+  if (!planHasDocs || state.needsWebSearch) {
     preSearchResearch = await runWebSearchForPlan(state.request, state.language);
     planLiveResearch = preSearchResearch;
   }
@@ -788,7 +772,7 @@ async function skipClarification() {
   showView('progress');
   setStatus('Planning report structure...', 15);
   let preSearchResearch = '';
-  if (!planHasDocs || webSearchOn) {
+  if (!planHasDocs || state.needsWebSearch) {
     preSearchResearch = await runWebSearchForPlan(state.request, state.language);
     planLiveResearch = preSearchResearch;
   }
@@ -822,7 +806,7 @@ async function runPlanPhase(docs, request, language, reportLength, answers, docI
     planTitle       = plan.reportTitle || request;
     planDocSummary  = plan.docSummary  || docInsight || '';
     planSections    = [...plan.sections];
-    planNeedsWeb    = webSearchOn || plan.needsWebSearch;
+    planNeedsWeb    = plan.needsWebSearch;
     planSearchFocus = plan.searchFocus || request;
 
     // Store params for generate-section
