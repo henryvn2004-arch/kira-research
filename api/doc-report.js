@@ -182,27 +182,35 @@ OR {"clear":false,"needsWebSearch":true,"docInsight":"...","question":"One quest
           { type: 'text', text: `
 Analyze this request and identify SPECIFIC web search queries needed.
 
+LANGUAGE RULE — CRITICAL:
+- Detect the target country/market from the request
+- Write queries in the LOCAL LANGUAGE of that market for better results:
+  - Vietnam → Vietnamese (e.g. "doanh thu GTEL 2025", "thị phần viễn thông Việt Nam")
+  - Thailand → Thai script
+  - Indonesia → Bahasa Indonesia
+  - Global/unclear → English
+- Mix local-language queries (for local data) + 1 English query (for global context)
+
 ALWAYS search for:
-- Any URL or website mentioned (e.g. "gtel.vn" → search "GTEL Vietnam company profile business")
-- Any specific company mentioned → search their profile, recent news, financials
-- Any specific product/service → search current market data
+- Any URL/website mentioned (e.g. "gtel.vn" → "GTEL doanh thu dịch vụ 2024 2025" in Vietnamese)
+- Any specific company → profile, recent news, financials in local language
 - Current market sizes, growth rates, market share (post-2023)
 - Recent regulations, policies, competitor data
 
-DO NOT search for: generic frameworks, methodology concepts, historical analysis without specific companies.
+DO NOT search for: generic frameworks, methodology without specific companies.
 
-Max 3 queries. Be very specific:
-- "gtel.vn presentation" → query: "GTEL Vietnam telecom company gtel.vn services revenue"
-- "OKR implementation GTEL" → query: "GTEL Vietnam company size structure employees 2024"
-- "EV market Vietnam" → query: "Vietnam electric vehicle market size 2025 growth"
+Max 4 queries. Examples:
+- "gtel.vn Vietnam" → ["doanh thu GTEL vietnamobile 2024 2025", "GTEL gtel.vn dịch vụ doanh nghiệp", "thị phần viễn thông Việt Nam 2025", "GTEL Vietnam telecom revenue 2024"]
+- "EV market Vietnam" → ["thị trường xe điện Việt Nam 2025 tăng trưởng", "VinFast thị phần 2024", "Vietnam EV market size 2025"]
+- "Singapore fintech" → ["Singapore fintech market size 2025", "MAS fintech regulations 2024"]
 
 Return ONLY JSON:
-{"needsSearch":true,"queries":["specific query 1","specific query 2"]}
+{"needsSearch":true,"queries":["query 1","query 2","query 3","query 4"]}
 OR {"needsSearch":false,"queries":[]}` }
         ]}], 300);
         const gap = extractJson(gapRaw);
         if (gap.needsSearch && gap.queries?.length) {
-          gapQueries = gap.queries.slice(0, 3);
+          gapQueries = gap.queries.slice(0, 4);
         }
       } catch { /* non-fatal */ }
 
