@@ -193,6 +193,16 @@ function getBlueprint(sectionTitle) {
   return null;
 }
 
+// Map section title → SECTION_BLUEPRINTS key (used for chunk_type lookup in RAG)
+function detectSectionType(sectionTitle) {
+  const blueprint = getBlueprint(sectionTitle);
+  if (!blueprint) return null;
+  for (const [key, bp] of Object.entries(SECTION_BLUEPRINTS)) {
+    if (bp === blueprint) return key;
+  }
+  return null;
+}
+
 // Inject blueprint as analytical lenses — guided authorship, not checkbox
 function getSectionGuidance(competencyTemplate, sectionTitle) {
   const blueprint = getBlueprint(sectionTitle);
@@ -298,13 +308,17 @@ const SECTION_CHUNK_TYPE = {
 //   1. Semantic similarity on section-specific query → relevant DATA chunks
 //   2. chunk_type filter → HOW-TO-WRITE examples from similar reports in library
 async function sectionRagSearch(query, sectionType) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000); // 8s hard cap for RAG
   try {
     const embRes = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
+      signal: controller.signal,
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OAI_KEY}` },
       body: JSON.stringify({ model: 'text-embedding-3-large', input: query, dimensions: 1536 })
     });
     const embData = await embRes.json();
+    clearTimeout(timeout);
     if (embData.error) return null;
     const vec = embData.data[0].embedding;
 
@@ -342,7 +356,7 @@ async function sectionRagSearch(query, sectionType) {
       chunkText:   allChunks.map(x => `[${x.chunk_type}] ${x.content}`).join('\n\n'),
       patternText: (patterns || []).map(x => `[${x.pattern_type}] ${x.description}`).join('\n\n'),
     };
-  } catch { return null; }
+  } catch { clearTimeout(timeout); return null; }
 }
 
 function buildAntiOverlapContext(prevSections) {
