@@ -235,7 +235,7 @@ OR {"needsSearch":false,"queries":[]}` }
           { type: 'text', text: `\nRequest: "${request}"${answersText}${langNote}${webBlock}
 
 Plan a consulting report: ${sectionGuide}
-Start with "Executive Summary", end with "Recommendations".
+Do NOT start with "Executive Summary". Begin directly with substantive content sections. End with "Recommendations" or "Kết Luận & Khuyến Nghị" depending on language.
 ${language && language !== 'English' ? 'Section titles in ' + language + '.' : ''}
 
 Return ONLY JSON:
@@ -246,7 +246,7 @@ Return ONLY JSON:
           `Request: "${request}"${answersText}${langNote}${webBlock}
 
 Plan a consulting report: ${sectionGuide}
-Start with "Executive Summary", end with "Recommendations".
+Do NOT start with "Executive Summary". Begin directly with substantive content sections. End with "Recommendations" or "Kết Luận & Khuyến Nghị" depending on language.
 ${language && language !== 'English' ? 'Section titles in ' + language + '.' : ''}
 
 Return ONLY JSON:
