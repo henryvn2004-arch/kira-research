@@ -1,4 +1,5 @@
 // KIRA RESEARCH — api/generate-section.js
+// v20260421-1526 cache-bust
 // 2-phase per section:
 //   Phase 1: stream commentary (~15s)
 //   Phase 2: extract headline + stats + chart + table from text (~3s)
@@ -504,6 +505,10 @@ function sanitizeBlock(b) {
 }
 
 export default async function handler(req, res) {
+  // Startup guard — surfaces missing env vars immediately
+  if (!ANT_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
+  }
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
