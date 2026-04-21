@@ -1458,11 +1458,11 @@ async function startGeneration() {
     buildSectionProgressList(planSections);
     const totalSections = planSections.length;
     document.getElementById('time-total').textContent =
-      `Est. total: ~${Math.ceil(totalSections * 12 / 60)} min`;
+      `Est. total: ~${Math.ceil(totalSections * 18 / 60)} min (~18s/section)`;
     document.getElementById('time-remaining').textContent =
-      `~${Math.ceil(totalSections * 12 / 60)} min remaining`;
+      `~${Math.ceil(totalSections * 18 / 60)} min remaining`;
     document.getElementById('prog-subtitle').textContent =
-      `${totalSections} sections · ~12s each`;
+      `${totalSections} sections · ~18s each · generating sequentially`;
     setStatus('📋 Sections planned', 20);
 
     // Combined research context: doc summary + live research
@@ -1483,24 +1483,28 @@ async function startGeneration() {
     if (tocListEl) tocListEl.innerHTML = '';
     if (secCont)   secCont.innerHTML  = '';
 
-    // Step 3: Generate sections — same pattern as report.html
+    // Step 3: Generate sections — SEQUENTIAL (each waits for previous to finish)
+    // Sequential is intentional: each section sees prevDone for context
     const prevDone = [];
+    const SEC_EST_S = 18; // estimated seconds per section
     for (let i = 0; i < planSections.length; i++) {
-      const title = planSections[i];
-      const pct   = 20 + Math.round((i / totalSections) * 75);
+      const title    = planSections[i];
+      const pct      = 20 + Math.round((i / totalSections) * 75);
+      const remSec   = (totalSections - i) * SEC_EST_S;
+      const remStr   = remSec >= 60 ? `~${Math.ceil(remSec/60)} min` : `~${remSec}s`;
       setSectionStatus(i, 'active');
       setStatus(`✍️ <strong>Writing section ${i+1}/${totalSections}</strong> — ${title}`, pct);
+      document.getElementById('time-remaining').textContent = `${remStr} remaining`;
 
-      // Switch to report view on first section — show streaming immediately
+      // Switch to report view on FIRST section so user sees streaming immediately
       if (i === 0) {
         showView('report');
-        // Show export buttons right away
         document.getElementById('btn-export-pptx').style.display = 'inline-flex';
         document.getElementById('btn-export-pdf').style.display  = 'inline-flex';
         document.getElementById('btn-present').style.display     = 'inline-flex';
       }
 
-      // Render skeleton first so streamSection has a container to fill
+      // Render skeleton FIRST so streamSection has a container to fill with streaming tokens
       renderSection({ title, content: null, status: 'generating' }, i, totalSections);
 
       let sectionContent;
