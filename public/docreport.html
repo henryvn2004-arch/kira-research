@@ -856,11 +856,14 @@ select option{background:var(--bg2);}
     <div class="prog-bar-wrap">
       <div class="prog-bar-fill" id="progress-bar"></div>
     </div>
-    <div class="status-line">
+    <div id="status-bar" class="status-line">
       <div class="status-dot"></div>
       <div id="status-text">Starting...</div>
+      <span id="status-pct" style="font-size:11px;color:var(--muted);margin-left:auto;font-family:var(--font-mono)"></span>
     </div>
-    <div id="sec-progress-list" class="sec-progress-list"></div>
+    <!-- alias: report-view.js uses status-pbar-fill, docreport uses progress-bar fill -->
+    <div style="display:none"><div id="status-pbar-fill"></div></div>
+    <div id="section-progress-list" class="sec-progress-list"></div>
   </div>
 </div>
 
@@ -1677,6 +1680,19 @@ function showCreditModal(balance, cost, isError) {
 // ── END CREDIT GATE ───────────────────────────────────────
 
 
+
+// ── Sync status-pbar-fill → progress-bar (docreport compat) ──────────────────
+// report-view.js writes to status-pbar-fill; docreport's visible bar is progress-bar
+const _origSetStatus = typeof setStatus === 'function' ? setStatus : null;
+(function syncProgressBar() {
+  const fill = document.getElementById('status-pbar-fill');
+  const bar  = document.getElementById('progress-bar');
+  if (!fill || !bar) return;
+  const obs = new MutationObserver(() => {
+    if (fill.style.width) bar.style.width = fill.style.width;
+  });
+  obs.observe(fill, { attributes: true, attributeFilter: ['style'] });
+})();
 </script>
 
 <script>
