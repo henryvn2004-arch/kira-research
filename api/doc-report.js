@@ -95,7 +95,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')    return res.status(405).json({ error: 'Method not allowed' });
 
-  const { phase, docs, request, answers, language, reportLength, slug, userId } = req.body;
+  const { phase, docs, request, answers, language, reportLength, webResearch, slug, userId } = req.body;
 
   if (!request) return res.status(400).json({ error: 'Missing request' });
 
@@ -167,21 +167,26 @@ Return ONLY valid JSON:
         }];
       } else {
         // No-doc mode: plan from request + web research
+        const webContext = webResearch
+          ? `\n\nLIVE DATA AVAILABLE:\n${webResearch.slice(0, 3000)}\n\nPlan sections that leverage this data.`
+          : '\n\nNo live data pre-fetched — plan sections based on the request.';
+
         messages = [{
           role: 'user',
           content: `You are a senior strategy consultant. Plan a consulting-grade report.
 
-User request: "${request}"${answersText}${langNote}
+User request: "${request}"${answersText}${langNote}${webContext}
 
-${sectionCountGuide} Start with "Executive Summary", end with "Recommendations" or "Strategic Roadmap". Web research will be conducted.
+${sectionCountGuide} Start with "Executive Summary", end with "Recommendations" or "Strategic Roadmap".
+Base your section plan on what the live data actually covers — plan sections that fit the available data.
 ${language && language !== 'English' ? 'Section titles in ' + language + '.' : ''}
 
 Return ONLY valid JSON:
 {
-  "reportTitle": "Specific report title",
+  "reportTitle": "Specific report title based on the request and data",
   "docSummary": "",
-  "needsWebSearch": true,
-  "searchFocus": "Key topics to research for this report",
+  "needsWebSearch": false,
+  "searchFocus": "",
   "sections": ["Executive Summary", "...", "Recommendations"]
 }`
         }];
@@ -199,6 +204,8 @@ Return ONLY valid JSON:
 
       if (!plan.sections?.length) throw new Error('No sections in plan');
 
+      // If web research was already done in planning phase, don't re-search at generation
+      if (webResearch && !hasDocs) plan.needsWebSearch = false;
       // Enforce section count from reportLength setting
       const lenCfg = LENGTH_CONFIG[reportLength];
       if (lenCfg && plan.sections.length > lenCfg.max) {
