@@ -442,7 +442,7 @@ let planSearchFocus = '';
 window.reportId = null;
 window.chatHistory = window.chatHistory || [];
 let completedSections = [];
-let startTime, elapsedTimer, currentParams;
+let currentParams;
 
 // ── View management ────────────────────────────────────────
 function showView(v) {
@@ -830,8 +830,8 @@ async function startGeneration() {
 
   showView('progress');
 
-  startTime = Date.now();
-  elapsedTimer = setInterval(() => {
+  let startTime = Date.now();
+  let elapsedTimer = setInterval(() => {
     const s = Math.floor((Date.now() - startTime) / 1000);
     document.getElementById('time-elapsed').textContent = `${s}s elapsed`;
   }, 1000);
