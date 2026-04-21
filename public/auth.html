@@ -176,9 +176,13 @@
       }
     }
 
-    // If already logged in, redirect home
+    // If already logged in, redirect to stored path (or home)
     window.kiraAuth.getUser().then(user => {
-      if (user) window.location.href = '/';
+      if (user) {
+        const redirect = sessionStorage.getItem('kira_redirect_after_login') || '/';
+        sessionStorage.removeItem('kira_redirect_after_login');
+        window.location.href = redirect;
+      }
     });
 
     // Enter key support
