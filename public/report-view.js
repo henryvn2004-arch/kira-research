@@ -96,6 +96,39 @@ let reportSlug   = window.reportSlug;
 let chatHistory  = window.chatHistory;
 let pollInterval = null;
 
+
+// ── Diagram CSS injection ──
+(function(){
+  const s = document.createElement('style');
+  s.textContent = '.visual-box-diagram{min-height:80px}.diagram-wrap{background:#0A0D13;border-radius:8px;padding:12px;overflow:auto;text-align:center}.diagram-wrap svg{max-width:100%;height:auto}';
+  document.head.appendChild(s);
+})();
+
+// ── Mermaid.js initialization (diagrams for doc intelligence + all tools) ──
+(function initMermaid() {
+  if (typeof mermaid === 'undefined') return;
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1E6FFF',
+      primaryTextColor: '#E8EDF5',
+      primaryBorderColor: '#242A35',
+      lineColor: '#5A6278',
+      background: '#0B0D10',
+      mainBkg: '#11151C',
+      nodeBorder: '#242A35',
+      clusterBkg: '#0A0D13',
+      titleColor: '#E8EDF5',
+      edgeLabelBackground: '#11151C',
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '13px',
+    },
+    flowchart: { curve: 'basis', padding: 16, htmlLabels: true },
+    quadrantChart: { chartWidth: 400, chartHeight: 300, pointRadius: 5 },
+  });
+})();
+
 // ── Type selection ───────────────────────────────────────
 // (handled by selectModule above)
 
@@ -103,12 +136,13 @@ let pollInterval = null;
 function setStep(n) {
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('step-' + i);
+    if (!el) continue;
     el.classList.remove('active', 'done');
     if (i < n) el.classList.add('done');
     else if (i === n) el.classList.add('active');
     if (i < 4) {
       const line = document.getElementById('line-' + i);
-      line.classList.toggle('done', i < n);
+      if (line) line.classList.toggle('done', i < n);
     }
   }
 }
@@ -594,7 +628,7 @@ function renderSectionHeadline(block, i, title, data) {
 }
 
 // Append visuals before a specific anchor element (e.g. before commentary)
-function appendVisualsAt(block, i, chart, table, anchor) {
+function appendVisualsAt(block, i, chart, table, anchor, diagram = null) {
   const chartId  = `chart-${i}`;
 
   // Normalize chart: backend may return {data:[...]} or {labels, datasets:[...]}
@@ -627,13 +661,23 @@ function appendVisualsAt(block, i, chart, table, anchor) {
     }
   }
 
-  const hasChart = !!(normalizedChart?.labels?.length && normalizedChart?.datasets?.length);
-  const hasTable = table?.headers?.length;
+  const hasChart   = !!(normalizedChart?.labels?.length && normalizedChart?.datasets?.length);
+  const hasTable   = table?.headers?.length;
+  const hasDiagram = !!(diagram?.code && !hasChart); // diagram only if no chart
 
+  const diagramId = `diagram-${i}-${Date.now()}`;
   const chartHtml = hasChart ? `
     <div class="visual-box">
       <div class="visual-title">${normalizedChart.title || ''}</div>
       <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
+    </div>` : '';
+
+  const diagramHtml = hasDiagram ? `
+    <div class="visual-box visual-box-diagram">
+      ${diagram.title ? `<div class="visual-title">${diagram.title}</div>` : ''}
+      <div class="diagram-wrap" id="${diagramId}">
+        <div style="color:#5A6278;font-size:12px;padding:16px 0;text-align:center">Rendering diagram...</div>
+      </div>
     </div>` : '';
 
   const tableHtml = hasTable ? `
@@ -647,11 +691,11 @@ function appendVisualsAt(block, i, chart, table, anchor) {
       </div>
     </div>` : '';
 
-  if (!chartHtml && !tableHtml) return;
+  if (!chartHtml && !diagramHtml && !tableHtml) return;
 
   const div = document.createElement('div');
   div.className = 'slide-visuals';
-  div.innerHTML = chartHtml + tableHtml;
+  div.innerHTML = chartHtml + diagramHtml + tableHtml;
 
   if (anchor) {
     block.insertBefore(div, anchor);
@@ -660,10 +704,29 @@ function appendVisualsAt(block, i, chart, table, anchor) {
   }
 
   if (hasChart) setTimeout(() => renderChart(chartId, normalizedChart), 50);
+
+  // Mermaid diagram rendering (async)
+  if (hasDiagram && typeof mermaid !== 'undefined') {
+    const svgId = 'svg-' + diagramId;
+    setTimeout(async () => {
+      const container = document.getElementById(diagramId);
+      if (!container) return;
+      try {
+        const { svg } = await mermaid.render(svgId, diagram.code);
+        container.innerHTML = svg;
+        // Make SVG responsive
+        const svgEl = container.querySelector('svg');
+        if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto'; }
+      } catch(e) {
+        container.innerHTML = `<div style="color:#FC8181;font-size:11px;padding:8px 0">Diagram unavailable</div>`;
+        console.warn('[Mermaid]', e.message, '\nCode:', diagram.code?.slice(0, 100));
+      }
+    }, 150);
+  }
 }
 
-function appendVisuals(block, i, chart, table) {
-  appendVisualsAt(block, i, chart, table, null);
+function appendVisuals(block, i, chart, table, diagram = null) {
+  appendVisualsAt(block, i, chart, table, null, diagram);
 }
 
 // ── Post-process: Claude extracts best visual from commentary ─────────────
@@ -687,7 +750,7 @@ async function extractVisualsFromCommentary(commentary, sectionTitle, sectionInd
       const toggle = block.querySelector('.commentary-toggle');
       const comm   = block.querySelector('.slide-commentary');
       const anchor = toggle || comm || null;
-      appendVisualsAt(block, sectionIndex, hasChart ? data.chart : null, hasTable ? data.table : null, anchor);
+      appendVisualsAt(block, sectionIndex, hasChart ? data.chart : null, hasTable ? data.table : null, anchor, data.diagram || null);
       setStatus(`✓ <strong>Visual extracted</strong>`, null);
     }
   } catch(e) {
@@ -885,16 +948,25 @@ function renderSection(sec, i, total) {
         </div>`).join('')}</div>`
     : '';
 
-  // ── Chart + Table — rendered BEFORE commentary ──
-  const hasChart = parsed.chart?.labels?.length;
-  const hasTable = parsed.table?.headers?.length;
-  const chartId  = `chart-${i}`;
+  // ── Chart + Diagram + Table — rendered BEFORE commentary ──
+  const hasChart   = parsed.chart?.labels?.length;
+  const hasTable   = parsed.table?.headers?.length;
+  const hasDiagram = !!(parsed.diagram?.code && !hasChart);
+  const chartId    = `chart-${i}`;
+  const diagramId  = `diagram-${i}`;
   let visualsHtml = '';
-  if (hasChart || hasTable) {
+  if (hasChart || hasTable || hasDiagram) {
     const chartHtml = hasChart ? `
       <div class="visual-box">
         <div class="visual-title">${parsed.chart.title || ''}</div>
         <div class="chart-wrap"><canvas id="${chartId}"></canvas></div>
+      </div>` : '';
+    const diagramHtml = hasDiagram ? `
+      <div class="visual-box visual-box-diagram">
+        ${parsed.diagram.title ? `<div class="visual-title">${parsed.diagram.title}</div>` : ''}
+        <div class="diagram-wrap" id="${diagramId}">
+          <div style="color:#5A6278;font-size:12px;padding:16px 0;text-align:center">Rendering diagram...</div>
+        </div>
       </div>` : '';
     const tableHtml = hasTable ? `
       <div class="visual-box">
@@ -906,7 +978,7 @@ function renderSection(sec, i, total) {
           </table>
         </div>
       </div>` : '';
-    visualsHtml = `<div class="slide-visuals">${chartHtml}${tableHtml}</div>`;
+    visualsHtml = `<div class="slide-visuals">${chartHtml}${diagramHtml}${tableHtml}</div>`;
   }
 
   // ── Commentary — collapsible, visual-first ──
@@ -951,6 +1023,21 @@ function renderSection(sec, i, total) {
   setTimeout(() => {
     block.classList.add('visible');
     if (hasChart) renderChart(chartId, parsed.chart);
+    // Mermaid diagram rendering
+    if (hasDiagram && typeof mermaid !== 'undefined') {
+      const svgId = 'svg-' + diagramId + '-' + Date.now();
+      const container2 = document.getElementById(diagramId);
+      if (container2) {
+        mermaid.render(svgId, parsed.diagram.code).then(({ svg }) => {
+          container2.innerHTML = svg;
+          const svgEl = container2.querySelector('svg');
+          if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto'; }
+        }).catch(e => {
+          container2.innerHTML = '<div style="color:#FC8181;font-size:11px;padding:8px 0">Diagram unavailable</div>';
+          console.warn('[Mermaid]', e.message);
+        });
+      }
+    }
   }, 80);
 }
 
