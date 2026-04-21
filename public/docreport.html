@@ -288,20 +288,25 @@
     </div>
   </div>
 
-  <!-- ── VIEW: PROGRESS ── (identical to report.html) -->
+  <!-- ── VIEW: PROGRESS ── -->
   <div id="view-progress" style="display:none;padding-top:32px">
+    <p class="page-eyebrow" style="text-align:center;margin-bottom:8px">Generating</p>
+    <h2 class="page-title" style="text-align:center;margin-bottom:8px" id="prog-title">Building your report...</h2>
+    <p class="page-sub" style="text-align:center;margin-bottom:40px" id="prog-subtitle">AI is writing each section</p>
     <div class="progress-card">
-      <div class="progress-header">
-        <div class="progress-title" id="prog-title">Analyzing documents...</div>
-        <div class="progress-subtitle" id="prog-subtitle">Reading and analyzing your files</div>
-      </div>
       <div class="progress-body">
-        <div id="section-progress-list" class="phase-list"></div>
-        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
-        <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <div class="progress-pct" id="status-text">Starting...</div>
-          <div class="progress-pct" id="time-elapsed">0s</div>
+        <div class="time-bar" style="display:flex;justify-content:space-between;margin-bottom:16px">
+          <div class="time-elapsed" id="time-elapsed" style="font-size:12px;color:#5A6278">Elapsed: 0s</div>
+          <div style="text-align:right">
+            <div class="time-remaining" id="time-remaining" style="font-size:12px;color:#5A6278">Estimating...</div>
+            <div id="time-total" style="font-size:11px;color:#3A4560"></div>
+          </div>
         </div>
+        <div id="section-progress-list" style="margin-bottom:16px"></div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+        </div>
+        <div id="status-text" style="font-size:12px;color:#5A6278;margin-top:8px">Starting...</div>
       </div>
     </div>
   </div>
@@ -848,7 +853,7 @@ async function startGeneration() {
   let startTime = Date.now();
   let elapsedTimer = setInterval(() => {
     const s = Math.floor((Date.now() - startTime) / 1000);
-    document.getElementById('time-elapsed').textContent = `${s}s elapsed`;
+    document.getElementById('time-elapsed').textContent = `Elapsed: ${s}s`;
   }, 1000);
 
   document.getElementById('prog-title').textContent    = 'Building your report...';
@@ -880,6 +885,13 @@ async function startGeneration() {
 
     // Step 2: Build section list + progress list
     buildSectionProgressList(planSections);
+    const totalSections = planSections.length;
+    document.getElementById('time-total').textContent =
+      `Est. total: ~${Math.ceil(totalSections * 12 / 60)} min`;
+    document.getElementById('time-remaining').textContent =
+      `~${Math.ceil(totalSections * 12 / 60)} min remaining`;
+    document.getElementById('prog-subtitle').textContent =
+      `${totalSections} sections · ~12s each`;
     setStatus('📋 Sections planned', 20);
 
     // Combined research context: doc summary + live research
@@ -890,41 +902,51 @@ async function startGeneration() {
 
     const ragContext     = { chunkText: '', patternText: '' };
     const sectionQueries = {};
-    const totalSections  = planSections.length;
 
-    // Set report title
-    document.getElementById('report-title').textContent   = planTitle;
-    document.getElementById('report-meta-sub').textContent = `${planHasDocs ? 'Document Intelligence' : 'AI Research'} · ${planSections.length} sections`;
+    // Pre-set report header (visible once we switch to report view)
+    document.getElementById('report-title').textContent    = planTitle;
+    document.getElementById('report-meta-sub').textContent = `${planHasDocs ? 'Document Intelligence' : 'AI Research'} · ${totalSections} sections`;
     buildToc(planSections);
-    showView('report');
 
-    // Step 3: Generate sections (reuse generate-section.js exactly like report.html)
+    // Step 3: Generate sections — same pattern as report.html
     const prevDone = [];
     for (let i = 0; i < planSections.length; i++) {
       const title = planSections[i];
       const pct   = 20 + Math.round((i / totalSections) * 75);
-      setStatus(`✍ Writing <strong>${title}</strong>`, pct);
-      document.getElementById('prog-title').textContent = title;
+      setSectionStatus(i, 'active');
+      setStatus(`✍️ <strong>Writing section ${i+1}/${totalSections}</strong> — ${title}`, pct);
+
+      // Switch to report view on first section — show streaming immediately
+      if (i === 0) {
+        showView('report');
+        // Show export buttons right away
+        document.getElementById('btn-export-pptx').style.display = 'inline-flex';
+        document.getElementById('btn-export-pdf').style.display  = 'inline-flex';
+        document.getElementById('btn-present').style.display     = 'inline-flex';
+      }
+
+      // Render skeleton first so streamSection has a container to fill
+      renderSection({ title, content: null, status: 'generating' }, i, totalSections);
 
       let sectionContent;
       try {
         sectionContent = await streamSection({
-          reportId: window.reportId,
+          reportId:      window.reportId,
           sectionIndex:  i,
           sectionTitle:  title,
           totalSections,
-          // Pass doc context as industry/country/reportType for generate-section compatibility
           industry:      currentParams.request.slice(0, 100),
-          country:       'Document Analysis',
+          country:       planHasDocs ? 'Document Analysis' : 'AI Research',
           reportType:    'document_intelligence',
           questions:     currentParams.request,
           language,
           researchSummary,
           ragContext,
           prevSections:  prevDone,
-          sectionQuery:  sectionQueries[title] || null,
+          sectionQuery:  null,
         }, i);
       } catch (err) {
+        console.error(`[Section ${i+1}] Error:`, err);
         sectionContent = JSON.stringify({
           headline: '', stats: [], chart: null, table: null,
           commentary: `Section generation failed: ${err.message}`, sources: []
@@ -935,16 +957,19 @@ async function startGeneration() {
       window._completedSections = completedSections.filter(Boolean);
       prevDone.push({ title, content: sectionContent, status: 'completed' });
       setSectionStatus(i, 'done');
+
+      // Update time-remaining
+      const remaining = totalSections - i - 1;
+      if (remaining > 0) {
+        document.getElementById('time-remaining').textContent = `~${remaining * 12}s remaining`;
+      }
     }
 
     // Done
     clearInterval(elapsedTimer);
     document.getElementById('progress-bar').style.width = '100%';
     setStatus('✓ <strong>Report complete</strong>', 100);
-    document.getElementById('btn-present').style.display = 'flex';
-    document.getElementById('btn-export-pdf').style.display = 'flex';
-    document.getElementById('btn-export-pptx').style.display = 'flex';
-    document.getElementById('chatbox').style.display = 'block';
+    setTimeout(() => document.getElementById('chatbox').style.display = 'block', 500);
 
   } catch (e) {
     clearInterval(elapsedTimer);
