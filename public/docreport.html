@@ -4,412 +4,965 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Document Intelligence — KIRA RESEARCH</title>
-<meta name="description" content="Upload your documents and generate consulting-grade reports with consulting-style presentation."/>
+<meta name="description" content="Upload documents and generate consulting-grade reports with AI analysis, charts and strategic insights."/>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"/>
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"/>
-<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
 <link rel="stylesheet" href="/report-view.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
 <style>
-/* ── DOC REPORT SPECIFIC STYLES ── */
-
-/* Hero intro */
-.doc-hero{padding:80px 0 48px;border-bottom:1px solid #1A1D24;margin-bottom:48px}
-.doc-hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);border-radius:20px;padding:6px 14px;font-size:11px;color:#7EB3FF;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
-.doc-hero-badge::before{content:'';width:6px;height:6px;background:#1E6FFF;border-radius:50%;box-shadow:0 0 8px #1E6FFF}
-.doc-hero h1{font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.8px;line-height:1.1;margin-bottom:16px}
-.doc-hero h1 span{color:#1E6FFF}
-.doc-hero p{font-size:16px;color:#5A6278;max-width:580px;line-height:1.7;margin-bottom:28px}
-.hero-features{display:flex;gap:24px;flex-wrap:wrap}
-.hero-feat{display:flex;align-items:center;gap:8px;font-size:12px;color:#3A4560}
-.hero-feat::before{content:'✓';color:#1E6FFF;font-weight:700}
-
-/* Upload zone */
-#view-upload{display:block}
-.upload-section{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
-.upload-zone{border:1.5px dashed #242A35;border-radius:16px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;background:#0A0D13;position:relative}
-.upload-zone:hover,.upload-zone.drag-over{border-color:#1E6FFF;background:rgba(30,111,255,.04)}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
-.upload-icon{width:48px;height:48px;background:rgba(30,111,255,.1);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid rgba(30,111,255,.2)}
-.upload-icon svg{width:22px;height:22px;stroke:#1E6FFF;fill:none}
-.upload-title{font-size:15px;font-weight:700;margin-bottom:6px}
-.upload-sub{font-size:12px;color:#5A6278;line-height:1.6}
-.upload-limit{margin-top:16px;font-size:10px;color:#2E3547;letter-spacing:.04em}
-.file-cards{display:flex;flex-direction:column;gap:8px;margin-top:16px;min-height:0}
-.file-card{background:#11151C;border:1px solid #1A1D24;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:border-color .2s}
-.file-card.processing{border-color:rgba(30,111,255,.3)}
-.file-card.done{border-color:rgba(0,201,167,.2)}
-.file-card.error{border-color:rgba(252,129,129,.2)}
-.file-type-badge{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:.04em;flex-shrink:0}
-.badge-pdf{background:rgba(252,129,129,.1);color:#FC8181;border:1px solid rgba(252,129,129,.2)}
-.badge-docx{background:rgba(30,111,255,.1);color:#7EB3FF;border:1px solid rgba(30,111,255,.2)}
-.badge-xlsx{background:rgba(0,201,167,.1);color:#00C9A7;border:1px solid rgba(0,201,167,.2)}
-.badge-pptx{background:rgba(246,173,85,.1);color:#F6AD55;border:1px solid rgba(246,173,85,.2)}
-.badge-img{background:rgba(159,122,234,.1);color:#9F7AEA;border:1px solid rgba(159,122,234,.2)}
-.badge-txt{background:rgba(255,255,255,.06);color:#A3A9B6;border:1px solid rgba(255,255,255,.1)}
-.file-info{flex:1;min-width:0}
-.file-name{font-size:12px;font-weight:600;color:#E8EDF5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.file-meta{font-size:10px;color:#5A6278;margin-top:2px}
-.file-status{font-size:10px;font-weight:700;flex-shrink:0}
-.file-status.extracting{color:#F6AD55}
-.file-status.ready{color:#00C9A7}
-.file-status.error{color:#FC8181}
-.file-remove{width:20px;height:20px;background:rgba(255,255,255,.06);border:none;border-radius:4px;color:#5A6278;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .15s}
-.file-remove:hover{background:rgba(252,129,129,.15);color:#FC8181}
-
-/* Request panel */
-.request-panel{display:flex;flex-direction:column;gap:20px}
-.request-panel label{font-size:12px;color:#A3A9B6;letter-spacing:.02em;font-weight:700}
-.request-panel textarea{background:#0D1018;border:1px solid #1A1D24;border-radius:10px;padding:14px;font-size:14px;color:#fff;font-family:Arial,sans-serif;resize:vertical;min-height:130px;line-height:1.7;outline:none;transition:border-color .2s}
-.request-panel textarea:focus{border-color:#1E6FFF}
-.request-panel select{background:#0D1018;border:1px solid #1A1D24;border-radius:10px;padding:11px 14px;font-size:14px;color:#fff;font-family:Arial,sans-serif;outline:none;cursor:pointer}
-.web-search-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0D1018;border:1px solid #1A1D24;border-radius:10px;cursor:pointer;transition:border-color .2s}
-.web-search-toggle:hover{border-color:#242A35}
-.toggle-switch{width:36px;height:20px;background:#1A1D24;border-radius:10px;position:relative;transition:background .2s;flex-shrink:0}
-.toggle-switch.on{background:#1E6FFF}
-.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
-.toggle-switch.on::after{transform:translateX(16px)}
-.examples-list{display:flex;flex-direction:column;gap:6px}
-.example-chip{padding:8px 12px;background:#0A0D13;border:1px solid #1A1D24;border-radius:8px;font-size:11px;color:#5A6278;cursor:pointer;transition:all .15s;line-height:1.5}
-.example-chip:hover{border-color:#1E6FFF;color:#A3A9B6;background:#0D1018}
-
-/* Clarify view */
-#view-clarify{display:none}
-.clarify-card{max-width:600px;margin:0 auto;background:#11151C;border:1px solid #242A35;border-radius:16px;overflow:hidden}
-.clarify-header{padding:28px 32px 24px;border-bottom:1px solid #1A1D24}
-.clarify-doc-insight{font-size:13px;color:#8896A8;line-height:1.7;padding:20px 32px;border-bottom:1px solid #1A1D24;background:#0D1018}
-.clarify-doc-insight strong{color:#C8D0DE}
-.clarify-body{padding:28px 32px}
-.clarify-question{font-size:16px;font-weight:700;color:#fff;margin-bottom:20px;line-height:1.5}
-.clarify-options{display:flex;flex-direction:column;gap:8px}
-.clarify-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#0A0D13;border:1.5px solid #1A1D24;border-radius:10px;cursor:pointer;transition:all .2s;font-size:13px;color:#A3A9B6}
-.clarify-opt:hover{border-color:#1E6FFF;color:#fff;background:#0D1018}
-.clarify-opt.selected{border-color:#1E6FFF;background:rgba(30,111,255,.08);color:#fff}
-.clarify-opt-radio{width:16px;height:16px;border-radius:50%;border:2px solid #2E3547;flex-shrink:0;transition:all .2s}
-.clarify-opt.selected .clarify-opt-radio{border-color:#1E6FFF;background:#1E6FFF;box-shadow:inset 0 0 0 3px #0D1018}
-.clarify-footer{padding:0 32px 28px;display:flex;gap:12px}
-
-/* Plan view */
-#view-plan{display:none}
-.plan-card{max-width:720px;margin:0 auto}
-.plan-header{background:#11151C;border:1px solid #242A35;border-radius:16px 16px 0 0;padding:28px 32px;border-bottom:1px solid #1A1D24}
-.plan-insight{background:#0D1018;border:1px solid #1A1D24;padding:16px 20px;border-radius:10px;font-size:13px;color:#8896A8;line-height:1.7;margin-bottom:4px}
-.plan-insight strong{color:#C8D0DE}
-.plan-title-row{display:flex;align-items:center;gap:12px;margin-top:16px}
-.plan-title-input{flex:1;background:#0D1018;border:1px solid #1A1D24;border-radius:8px;padding:10px 14px;font-size:15px;font-weight:700;color:#fff;font-family:Arial,sans-serif;outline:none;transition:border-color .2s}
-.plan-title-input:focus{border-color:#1E6FFF}
-.plan-sections-wrap{background:#11151C;border:1px solid #242A35;border-top:none;border-bottom:none;padding:0}
-.plan-sec-item{display:flex;align-items:center;gap:12px;padding:13px 24px;border-bottom:1px solid #1A1D24;transition:background .15s}
-.plan-sec-item:last-child{border-bottom:none}
-.plan-sec-item:hover{background:#0D1018}
-.plan-sec-item:hover .sec-remove{opacity:1}
-.plan-sec-num{font-size:9px;font-weight:700;color:#1E6FFF;width:24px;flex-shrink:0;letter-spacing:.1em}
-.plan-sec-input{flex:1;background:transparent;border:none;color:#E8EDF5;font-size:13px;font-family:Arial,sans-serif;outline:none;padding:4px 0}
-.plan-sec-input:focus{color:#fff}
-.plan-sec-input::placeholder{color:#3A4560}
-.sec-remove{opacity:0;background:none;border:none;color:#5A6278;cursor:pointer;font-size:16px;padding:4px;transition:all .15s;flex-shrink:0}
-.sec-remove:hover{color:#FC8181}
-.plan-add-sec{width:100%;padding:12px 24px;background:#0A0D13;border:none;border-top:1px dashed #1A1D24;color:#5A6278;font-size:12px;cursor:pointer;transition:all .15s;font-family:Arial,sans-serif;text-align:left}
-.plan-add-sec:hover{background:#0D1018;color:#A3A9B6}
-.plan-footer{background:#11151C;border:1px solid #242A35;border-top:none;border-radius:0 0 16px 16px;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.plan-meta{font-size:12px;color:#5A6278}
-.plan-meta strong{color:#A3A9B6}
-.web-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;background:rgba(30,111,255,.1);color:#7EB3FF;border:1px solid rgba(30,111,255,.2);border-radius:10px;padding:2px 8px;margin-left:8px}
-
-/* Generating pulse for sec-prog-item */
-.sec-prog-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1E6FFF;animation:pulse-dot 1.2s ease-in-out infinite}
-.sec-prog-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;font-size:12px;color:#5A6278;margin-bottom:2px}
-.sec-prog-item.done{color:#A3A9B6}
-.sec-prog-item.active{color:#fff;background:rgba(30,111,255,.06)}
-
-@media(max-width:768px){
-  .upload-section{grid-template-columns:1fr}
-  .plan-footer{flex-direction:column;align-items:stretch}
-  .hero-features{flex-direction:column;gap:12px}
+/* ── KIRA Design Tokens ── */
+:root {
+  --bg:        #0A0C10;
+  --bg2:       #0F1117;
+  --bg3:       #161B24;
+  --border:    rgba(255,255,255,.07);
+  --border2:   rgba(255,255,255,.12);
+  --blue:      #1E6FFF;
+  --blue-dim:  rgba(30,111,255,.12);
+  --teal:      #00C9A7;
+  --teal-dim:  rgba(0,201,167,.1);
+  --text:      #E8EDF5;
+  --muted:     #7A8599;
+  --muted2:    #4A5468;
+  --red:       #FC8181;
+  --gold:      #D4A843;
+  --radius:    12px;
+  --radius-sm: 8px;
+  --font:      'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --nav-h:     60px;
 }
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  padding-top:var(--nav-h);
+}
+
+/* ── Page Wrapper ── */
+.page-wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 24px 80px;
+}
+
+/* ═══════════════════════════════════════
+   VIEW: UPLOAD
+══════════════════════════════════════ */
+#view-upload{ padding-top:48px; }
+
+/* Hero */
+.hero{
+  text-align:center;
+  max-width:620px;
+  margin:0 auto 48px;
+}
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:var(--blue-dim);
+  border:1px solid rgba(30,111,255,.25);
+  color:var(--blue);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:5px 12px;
+  border-radius:20px;
+  margin-bottom:20px;
+}
+.hero h1{
+  font-size:clamp(28px,4vw,42px);
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:-.02em;
+  margin-bottom:14px;
+}
+.hero h1 span{color:var(--blue);}
+.hero p{
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.7;
+  max-width:480px;
+  margin:0 auto 24px;
+}
+.hero-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+}
+.hero-pill{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:20px;
+}
+
+/* Upload Grid */
+.upload-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  align-items:start;
+}
+@media(max-width:768px){.upload-grid{grid-template-columns:1fr;}}
+
+/* Card */
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+}
+.card-label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted2);
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.card-label .optional{
+  font-size:10px;
+  font-weight:400;
+  letter-spacing:0;
+  text-transform:none;
+  color:var(--muted2);
+}
+
+/* Drop Zone */
+.drop-zone{
+  border:1.5px dashed var(--border2);
+  border-radius:var(--radius-sm);
+  padding:28px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .18s ease;
+  background:var(--bg3);
+}
+.drop-zone:hover{
+  border-color:var(--blue);
+  background:var(--blue-dim);
+}
+.drop-zone.drag-over{
+  border-color:var(--blue);
+  background:var(--blue-dim);
+  transform:scale(1.01);
+}
+.drop-icon{
+  width:36px;height:36px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 10px;
+  color:var(--muted);
+}
+.drop-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;}
+.drop-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.drop-sub{font-size:12px;color:var(--muted);}
+
+/* File Cards */
+.file-cards{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.file-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  animation:slideIn .15s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.file-type{
+  font-size:9px;font-weight:700;letter-spacing:.05em;
+  padding:3px 6px;border-radius:4px;
+  background:var(--blue-dim);color:var(--blue);
+  flex-shrink:0;
+}
+.file-info{flex:1;min-width:0;}
+.file-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-meta{font-size:11px;color:var(--muted);}
+.file-remove{
+  background:none;border:none;color:var(--muted2);cursor:pointer;
+  padding:2px;line-height:1;font-size:16px;flex-shrink:0;
+  transition:color .15s;
+}
+.file-remove:hover{color:var(--red);}
+
+/* Request Panel */
+.req-label{
+  font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted2);
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.req-label .req-req{color:var(--blue);}
+.req-hint{font-size:11px;color:var(--muted2);margin-bottom:10px;}
+textarea#f-request{
+  width:100%;
+  min-height:110px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:14px;
+  line-height:1.6;
+  padding:12px 14px;
+  resize:vertical;
+  transition:border-color .15s;
+  outline:none;
+}
+textarea#f-request:focus{border-color:var(--blue);}
+textarea#f-request::placeholder{color:var(--muted2);}
+
+/* Settings Row */
+.settings-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:14px;
+}
+.field-group label{
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted2);display:block;margin-bottom:6px;
+}
+select{
+  width:100%;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:13px;
+  padding:9px 12px;
+  outline:none;
+  cursor:pointer;
+  transition:border-color .15s;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A8599' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
+select:focus{border-color:var(--blue);}
+select option{background:var(--bg2);}
+
+/* Examples */
+.examples-wrap{margin-top:14px;}
+.examples-label{font-size:11px;color:var(--muted2);margin-bottom:8px;}
+.examples-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.ex-chip{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:12px;
+  padding:5px 10px;
+  border-radius:20px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.ex-chip:hover{border-color:var(--blue);color:var(--blue);}
+
+/* Primary Button */
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--blue);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-family:var(--font);
+  font-size:15px;
+  font-weight:600;
+  padding:13px 28px;
+  cursor:pointer;
+  transition:all .18s ease;
+  letter-spacing:-.01em;
+}
+.btn-primary:hover{background:#1557d4;transform:translateY(-1px);box-shadow:0 8px 24px rgba(30,111,255,.35);}
+.btn-primary:active{transform:translateY(0);}
+.btn-primary svg{width:18px;height:18px;stroke:currentColor;fill:none;}
+.btn-primary.btn-lg{font-size:16px;padding:15px 36px;}
+
+/* Analyze Row */
+.analyze-row{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:12px;
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.upload-err{
+  font-size:12px;color:var(--red);
+  display:none;
+  flex:1;
+}
+
+/* ═══════════════════════════════════════
+   VIEW: CLARIFY
+══════════════════════════════════════ */
+#view-clarify{display:none;padding-top:48px;}
+.clarify-wrap{max-width:560px;margin:0 auto;}
+.step-label{
+  font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted2);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.step-label:before{
+  content:'';width:20px;height:1px;background:var(--border2);
+}
+.step-label:after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+.clarify-q{
+  font-size:17px;font-weight:600;margin-bottom:20px;line-height:1.4;
+}
+.clarify-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.clarify-opt{
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  cursor:pointer;
+  font-size:14px;
+  color:var(--text);
+  transition:all .15s;
+  text-align:left;
+  width:100%;
+  font-family:var(--font);
+}
+.clarify-opt:hover{border-color:var(--blue);background:var(--blue-dim);}
+.clarify-opt.selected{border-color:var(--blue);background:var(--blue-dim);color:var(--blue);}
+.clarify-actions{display:flex;gap:10px;}
+.btn-ghost{
+  background:none;
+  border:1px solid var(--border2);
+  color:var(--muted);
+  font-family:var(--font);
+  font-size:13px;
+  padding:10px 16px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+
+/* ═══════════════════════════════════════
+   VIEW: PLAN
+══════════════════════════════════════ */
+#view-plan{display:none;padding-top:48px;}
+.plan-wrap{max-width:680px;margin:0 auto;}
+.plan-header{margin-bottom:28px;}
+.plan-title{font-size:20px;font-weight:700;margin-bottom:6px;}
+.plan-meta{font-size:13px;color:var(--muted);}
+.plan-sections{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.plan-sec-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 12px;
+  transition:border-color .15s;
+}
+.plan-sec-row:hover{border-color:var(--border2);}
+.plan-sec-num{
+  font-size:11px;font-weight:700;font-family:var(--font-mono);
+  color:var(--muted2);width:24px;flex-shrink:0;
+}
+.plan-sec-input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-family:var(--font);font-size:14px;
+}
+.plan-sec-del{
+  background:none;border:none;color:var(--muted2);cursor:pointer;
+  padding:2px;line-height:1;font-size:16px;transition:color .15s;flex-shrink:0;
+}
+.plan-sec-del:hover{color:var(--red);}
+.plan-add{
+  background:none;border:1px dashed var(--border2);
+  border-radius:8px;padding:10px;width:100%;
+  color:var(--muted);font-size:13px;cursor:pointer;
+  font-family:var(--font);transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.plan-add:hover{border-color:var(--blue);color:var(--blue);}
+.plan-actions{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:16px;border-top:1px solid var(--border);
+}
+
+/* Research badge */
+.research-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--teal-dim);border:1px solid rgba(0,201,167,.25);
+  color:var(--teal);font-size:11px;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;padding:4px 10px;border-radius:20px;
+  margin-bottom:16px;
+}
+
+/* ═══════════════════════════════════════
+   VIEW: PROGRESS
+══════════════════════════════════════ */
+#view-progress{display:none;padding-top:48px;}
+.progress-wrap{max-width:600px;margin:0 auto;}
+.progress-head{text-align:center;margin-bottom:40px;}
+.progress-title{
+  font-size:22px;font-weight:700;margin-bottom:6px;
+}
+.progress-sub{font-size:14px;color:var(--muted);}
+
+/* Progress bar */
+.prog-bar-wrap{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  height:6px;
+  margin-bottom:28px;
+}
+.prog-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--teal));
+  border-radius:6px;
+  transition:width .6s ease;
+  width:0%;
+}
+
+/* Status line */
+.status-line{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--muted);
+  margin-bottom:28px;
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--blue);
+  animation:pulse 1.4s ease-in-out infinite;
+  flex-shrink:0;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+#status-text b,#status-text strong{color:var(--text);}
+
+/* Section progress list */
+.sec-progress-list{
+  display:flex;flex-direction:column;gap:8px;
+}
+.sec-prog-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  transition:border-color .2s;
+}
+.sec-prog-row.active{border-color:var(--blue);}
+.sec-prog-row.done{border-color:rgba(0,201,167,.3);}
+.sec-prog-icon{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:11px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--muted2);
+}
+.sec-prog-row.active .sec-prog-icon{
+  background:var(--blue-dim);border-color:rgba(30,111,255,.4);
+  color:var(--blue);
+  animation:pulse 1.2s infinite;
+}
+.sec-prog-row.done .sec-prog-icon{
+  background:var(--teal-dim);border-color:rgba(0,201,167,.3);
+  color:var(--teal);
+}
+.sec-prog-name{font-size:13px;font-weight:500;flex:1;}
+.sec-prog-time{font-size:11px;color:var(--muted);font-family:var(--font-mono);}
+
+/* Time info */
+.time-info{
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--muted);
+  margin-bottom:16px;
+}
+
+/* ═══════════════════════════════════════
+   VIEW: REPORT
+══════════════════════════════════════ */
+#view-report{display:none;}
+.report-layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  gap:28px;
+  align-items:start;
+  padding-top:24px;
+}
+@media(max-width:900px){.report-layout{grid-template-columns:1fr;}}
+.report-toc{
+  position:sticky;top:calc(var(--nav-h) + 16px);
+}
+.toc-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.toc-head{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted2);
+}
+.toc-list{padding:8px;}
+.toc-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 8px;border-radius:6px;
+  font-size:12px;color:var(--muted);
+  cursor:pointer;transition:all .15s;
+  text-decoration:none;
+}
+.toc-item:hover,.toc-item.active{background:var(--blue-dim);color:var(--blue);}
+.toc-item-num{
+  font-family:var(--font-mono);font-size:10px;
+  color:var(--muted2);width:18px;flex-shrink:0;
+}
+
+/* Report header */
+.report-header{
+  padding:20px 0 24px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:8px;
+}
+#report-title{
+  font-size:clamp(18px,2.5vw,26px);
+  font-weight:700;
+  line-height:1.3;
+  letter-spacing:-.01em;
+  margin-bottom:10px;
+}
+.report-meta-bar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.report-badge{
+  font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;
+  background:var(--blue-dim);color:var(--blue);border:1px solid rgba(30,111,255,.2);
+}
+#report-meta-sub{font-size:12px;color:var(--muted);}
+.report-actions{
+  display:flex;gap:8px;margin-left:auto;
+}
+.btn-action{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:600;padding:7px 14px;
+  border-radius:6px;cursor:pointer;transition:all .15s;
+  font-family:var(--font);
+  border:1px solid var(--border2);
+  background:var(--bg2);
+  color:var(--muted);
+}
+.btn-action:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-dim);}
+.btn-action.blue{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-action.blue:hover{background:#1557d4;}
+.btn-action svg{width:13px;height:13px;stroke:currentColor;fill:none;}
+
+/* Sections */
+.report-sections{display:flex;flex-direction:column;gap:0;}
+
+/* ═══════════════════════════════════════
+   MODALS — Export + Present
+══════════════════════════════════════ */
+.pres-ov{
+  position:fixed;inset:0;background:#0A0C10;
+  z-index:500;display:none;flex-direction:column;
+}
+.pres-ov.open{display:flex;}
+.pres-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.pres-nav-left{display:flex;align-items:center;gap:12px;}
+.pres-counter{font-size:13px;color:var(--muted);font-family:var(--font-mono);}
+.pres-section-hint{font-size:11px;color:var(--muted2);}
+.pres-dots{display:flex;gap:4px;flex-wrap:wrap;max-width:200px;}
+.pres-dot{width:6px;height:6px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);transition:all .15s;}
+.pres-dot.active{background:var(--blue);}
+.pres-dot.done{background:var(--teal);}
+.pres-nav-right{display:flex;gap:8px;align-items:center;}
+.pres-slide-wrap{flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:20px;}
+#pres-slide{width:100%;max-width:960px;height:100%;max-height:560px;}
+#pres-report-title{display:none;}
+
+/* Export overlay */
+.exp-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+  z-index:400;display:none;align-items:center;justify-content:center;
+}
+.exp-ov.open{display:flex;}
+.exp-modal{
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:16px;
+  width:440px;max-width:92vw;
+  overflow:hidden;
+  animation:popIn .18s ease;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.exp-header{
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.exp-header h3{font-size:15px;font-weight:700;}
+.exp-close{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:18px;line-height:1;transition:color .15s;
+}
+.exp-close:hover{color:var(--text);}
+.exp-body{padding:20px;}
+.exp-fmt-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.exp-fmt-btn{
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:10px;padding:16px 14px;text-align:center;
+  cursor:pointer;transition:all .15s;
+}
+.exp-fmt-btn:hover,.exp-fmt-btn.on{border-color:var(--blue);background:var(--blue-dim);}
+.exp-fmt-btn .fmt-icon{font-size:22px;margin-bottom:6px;}
+.exp-fmt-btn .fmt-name{font-size:13px;font-weight:700;}
+.exp-fmt-btn .fmt-desc{font-size:10px;color:var(--muted);}
+#exp-head-sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
+#exp-themes-block .themes-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
+.exp-theme-row{display:flex;gap:10px;}
+.exp-theme-card{
+  flex:1;display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border:1.5px solid var(--border);
+  border-radius:8px;cursor:pointer;transition:all .15s;
+}
+.exp-theme-card:hover,.exp-theme-card.sel{border-color:var(--blue);}
+.exp-theme-swatch{width:22px;height:22px;border-radius:4px;flex-shrink:0;}
+.exp-theme-name{font-size:13px;}
+.exp-theme-check{
+  width:16px;height:16px;border-radius:4px;
+  background:var(--bg);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  margin-left:auto;flex-shrink:0;
+}
+.exp-theme-check.on{background:var(--blue);border-color:var(--blue);}
+.exp-foot{
+  padding:14px 20px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+.exp-fname{font-size:11px;color:var(--muted2);font-family:var(--font-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;}
+.btn-dl{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--blue);color:#fff;border:none;
+  border-radius:8px;padding:10px 20px;
+  font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;
+  transition:all .18s;flex-shrink:0;
+}
+.btn-dl:hover{background:#1557d4;}
+.btn-dl:disabled{opacity:.6;cursor:not-allowed;}
+.btn-dl svg{width:14px;height:14px;stroke:currentColor;fill:none;}
+
+/* ── Error ── */
+.err-msg{font-size:12px;color:var(--red);margin-top:8px;display:none;}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 </style>
 </head>
-<body style="overflow-x:hidden">
+<body>
 <div id="nav-placeholder"></div>
 
-<div class="container page" style="max-width:1200px;margin:0 auto;width:100%;box-sizing:border-box;padding:0 16px">
+<div class="page-wrap">
 
-  <!-- ── VIEW: UPLOAD + REQUEST ── -->
-  <div id="view-upload">
-    <div class="doc-hero">
-      <div class="doc-hero-badge">Document Intelligence</div>
-      <h1>Turn your documents into<br/><span>consulting-grade reports</span></h1>
-      <p>Upload annual reports, financial statements, strategy decks or any business documents. Add your request and get a consulting-grade report with charts, data tables and strategic analysis.</p>
-      <div class="hero-features">
-        <div class="hero-feat">Supports PDF, DOCX, XLSX, PPTX, images</div>
-        <div class="hero-feat">Optional web research via Perplexity</div>
-        <div class="hero-feat">Streaming Consulting-style output</div>
-        <div class="hero-feat">Export to PPTX or PDF</div>
+<!-- ═══════════════════════════════════
+     VIEW: UPLOAD
+════════════════════════════════════ -->
+<div id="view-upload">
+  <div class="hero">
+    <div class="hero-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Document Intelligence
+    </div>
+    <h1>Turn documents into<br/><span>consulting-grade reports</span></h1>
+    <p>Upload PDFs, spreadsheets or decks. Describe what you need. Get a data-rich report with charts, tables and strategic analysis.</p>
+    <div class="hero-pills">
+      <span class="hero-pill">PDF · Word · Excel · PowerPoint</span>
+      <span class="hero-pill">Live web research</span>
+      <span class="hero-pill">Export to PPTX & PDF</span>
+    </div>
+  </div>
+
+  <div class="upload-grid">
+    <!-- LEFT: File Upload -->
+    <div class="card">
+      <div class="card-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documents
+        <span class="optional">(optional)</span>
       </div>
+      <div class="drop-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+           ondragover="event.preventDefault();this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="event.preventDefault();this.classList.remove('drag-over');handleFileSelect(event.dataTransfer.files)">
+        <input type="file" id="file-input" multiple
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.md,.png,.jpg,.jpeg,.gif,.webp"
+          style="display:none" onchange="handleFileSelect(this.files)"/>
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+        </div>
+        <div class="drop-title">Drop files here or click to browse</div>
+        <div class="drop-sub">PDF, Word, Excel, PowerPoint, images · up to 20MB each</div>
+      </div>
+      <div id="file-cards" class="file-cards"></div>
     </div>
 
-    <div class="upload-section">
-      <!-- Left: file upload -->
-      <div>
-        <label style="font-size:12px;color:#A3A9B6;font-weight:700;letter-spacing:.02em;display:block;margin-bottom:12px">UPLOAD DOCUMENTS <span style="color:#5A6278;font-weight:400;font-size:10px">(optional)</span></label>
-        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
-          <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.md,.png,.jpg,.jpeg,.gif,.webp" style="display:none" onchange="handleFileSelect(this.files)"/>
-          <div class="upload-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
-          </div>
-          <div class="upload-title">Drop files here or click to browse</div>
-          <div class="upload-sub">PDF, Word, Excel, PowerPoint, images</div>
-          <div class="upload-limit">Up to 5 files · 20MB each · Leave empty to generate from request only</div>
+    <!-- RIGHT: Request + Settings -->
+    <div class="card">
+      <div class="req-label">
+        Your Request <span class="req-req">*</span>
+      </div>
+      <div class="req-hint">What should the AI analyze or generate?</div>
+      <textarea id="f-request" placeholder="e.g. Analyze the competitive landscape of GTEL and build a strategic growth plan for 2026–2028 with market expansion priorities"></textarea>
+
+      <div class="settings-row">
+        <div class="field-group">
+          <label>Language</label>
+          <select id="f-language">
+            <option value="English">English</option>
+            <option value="Vietnamese">Tiếng Việt</option>
+            <option value="Thai">ภาษาไทย</option>
+            <option value="Indonesian">Bahasa Indonesia</option>
+            <option value="Chinese (Simplified)">中文 (简体)</option>
+            <option value="Japanese">日本語</option>
+            <option value="Korean">한국어</option>
+          </select>
         </div>
-        <div id="file-cards" class="file-cards"></div>
+        <div class="field-group">
+          <label>Report Length</label>
+          <select id="f-length">
+            <option value="standard">Standard (6–8 sections)</option>
+            <option value="concise">Concise (4–5 sections)</option>
+            <option value="comprehensive">Comprehensive (9–12 sections)</option>
+          </select>
+        </div>
       </div>
 
-      <!-- Right: request + settings -->
-      <div class="request-panel">
-        <div>
-          <label>YOUR REQUEST <span style="color:#1E6FFF">*</span></label>
-          <div style="font-size:11px;color:#5A6278;margin-bottom:8px">What do you want the AI to analyze or generate?</div>
-          <textarea id="f-request" placeholder="e.g. Based on the annual reports, generate a 5-year growth strategy for 2026–2030 with market expansion priorities and risk analysis"></textarea>
+      <div class="examples-wrap">
+        <div class="examples-label">Try an example:</div>
+        <div class="examples-chips">
+          <span class="ex-chip" onclick="setExample(this)">Competitive analysis for gtel.vn in Vietnam telecom</span>
+          <span class="ex-chip" onclick="setExample(this)">5-year growth strategy from this annual report</span>
+          <span class="ex-chip" onclick="setExample(this)">Market entry brief for Vietnam fintech sector</span>
+          <span class="ex-chip" onclick="setExample(this)">OKR implementation plan for mid-size enterprise</span>
         </div>
+      </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div>
-            <label style="margin-bottom:8px;display:block">LANGUAGE</label>
-            <select id="f-language">
-              <option value="English">English</option>
-              <option value="Vietnamese">Tiếng Việt</option>
-              <option value="Thai">ภาษาไทย</option>
-              <option value="Indonesian">Bahasa Indonesia</option>
-              <option value="Chinese (Simplified)">中文 (简体)</option>
-              <option value="Japanese">日本語</option>
-              <option value="Korean">한국어</option>
-            </select>
-          </div>
-          <div>
-            <label style="margin-bottom:8px;display:block">REPORT LENGTH</label>
-            <select id="f-length">
-              <option value="standard">Standard (6–8 sections)</option>
-              <option value="concise">Concise (4–5 sections)</option>
-              <option value="comprehensive">Comprehensive (9–12 sections)</option>
-            </select>
-          </div>
-        </div>
-          </div>
-        </div>
-
-        <div>
-          <label style="margin-bottom:8px;display:block">EXAMPLES</label>
-          <div class="examples-list">
-            <div class="example-chip" onclick="setExample(this)">Build a competitive strategy 2026–2028 based on these market reports</div>
-            <div class="example-chip" onclick="setExample(this)">Analyze revenue trends and forecast performance for the next 3 years</div>
-            <div class="example-chip" onclick="setExample(this)">Identify growth opportunities and risks based on this annual report</div>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" style="padding:14px 28px;font-size:15px;border-radius:10px" onclick="startDocFlow()">
-          Analyze Documents →
+      <div class="analyze-row">
+        <div class="upload-err" id="upload-error">Please enter a request</div>
+        <button class="btn-primary btn-lg" onclick="startDocFlow()">
+          <svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+          Analyze
         </button>
-        <div id="upload-error" style="display:none;font-size:12px;color:#FC8181;padding:10px 14px;background:rgba(252,129,129,.08);border:1px solid rgba(252,129,129,.15);border-radius:8px"></div>
       </div>
     </div>
   </div>
+</div><!-- /view-upload -->
 
-  <!-- ── VIEW: CLARIFY ── -->
-  <div id="view-clarify">
-    <div style="max-width:600px;margin:0 auto">
-      <div class="page-eyebrow" style="margin-top:32px">Step 2 of 4</div>
-      <div class="page-title" style="margin-bottom:8px">One quick question</div>
-      <div class="page-sub" style="margin-bottom:32px">AI analyzed your documents and has one clarifying question before building the report plan.</div>
-      <div class="clarify-card">
-        <div class="clarify-header">
-          <div style="font-size:9px;color:#1E6FFF;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:8px">What AI found in your documents</div>
-          <div id="clarify-insight" style="font-size:13px;color:#A3A9B6;line-height:1.6"></div>
-        </div>
-        <div class="clarify-body">
-          <div class="clarify-question" id="clarify-question"></div>
-          <div class="clarify-options" id="clarify-options"></div>
-        </div>
-        <div class="clarify-footer">
-          <button class="btn btn-primary" style="flex:1;padding:13px" onclick="submitClarification()">Proceed with selection →</button>
-          <button class="btn btn-outline" onclick="skipClarification()">Skip</button>
-        </div>
-      </div>
+<!-- ═══════════════════════════════════
+     VIEW: CLARIFY
+════════════════════════════════════ -->
+<div id="view-clarify">
+  <div class="clarify-wrap">
+    <div class="step-label">Step 2 — Clarify</div>
+    <div class="clarify-q" id="clarify-question">One quick question before we start...</div>
+    <div class="clarify-opts" id="clarify-options"></div>
+    <div class="clarify-actions">
+      <button class="btn-ghost" onclick="skipClarification()">Skip, use defaults</button>
+      <button class="btn-primary" onclick="submitClarification()" id="clarify-submit" disabled>Continue →</button>
     </div>
-  </div>
-
-  <!-- ── VIEW: PLAN CONFIRM ── -->
-  <div id="view-plan">
-    <div style="max-width:720px;margin:0 auto">
-      <div class="page-eyebrow" style="margin-top:32px">Step 3 of 4</div>
-      <div class="page-title" style="margin-bottom:8px">Your report plan</div>
-      <div class="page-sub" style="margin-bottom:32px">AI analyzed your documents and proposed this structure. Edit sections if needed, then generate.</div>
-
-      <div class="plan-card">
-        <div class="plan-header">
-          <div id="plan-insight" class="plan-insight"></div>
-          <div class="plan-title-row">
-            <div style="font-size:10px;color:#5A6278;font-weight:700;letter-spacing:.1em;white-space:nowrap">TITLE</div>
-            <input class="plan-title-input" id="plan-title" placeholder="Report title"/>
-          </div>
-        </div>
-
-        <div class="plan-sections-wrap" id="plan-sections"></div>
-
-        <button class="plan-add-sec" onclick="addPlanSection()">+ Add section</button>
-
-        <div class="plan-footer">
-          <div class="plan-meta">
-            <span id="plan-section-count">8 sections</span>
-            <span id="plan-web-badge" class="web-badge" style="display:none">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
-              Web search included
-            </span>
-          </div>
-          <div style="display:flex;gap:12px">
-            <button class="btn btn-outline" onclick="showView('upload')">← Back</button>
-            <button class="btn btn-primary" style="padding:13px 28px;font-size:14px" onclick="startGeneration()">Generate Report →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── VIEW: PROGRESS ── -->
-  <div id="view-progress" style="display:none;padding-top:16px">
-    <p class="page-eyebrow" style="text-align:center;margin-bottom:8px">Generating</p>
-    <h2 class="page-title" style="text-align:center;margin-bottom:8px" id="prog-title">Building your report...</h2>
-    <p class="page-sub" style="text-align:center;margin-bottom:40px" id="prog-subtitle">AI is writing each section</p>
-    <div class="progress-card">
-      <div class="progress-body">
-        <div class="time-bar" style="display:flex;justify-content:space-between;margin-bottom:16px">
-          <div class="time-elapsed" id="time-elapsed" style="font-size:12px;color:#5A6278">Elapsed: 0s</div>
-          <div style="text-align:right">
-            <div class="time-remaining" id="time-remaining" style="font-size:12px;color:#5A6278">Estimating...</div>
-            <div id="time-total" style="font-size:11px;color:#3A4560"></div>
-          </div>
-        </div>
-        <div id="section-progress-list" style="margin-bottom:16px"></div>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
-        </div>
-        <div id="status-text" style="font-size:12px;color:#5A6278;margin-top:8px">Starting...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── VIEW: REPORT ── (identical to report.html) -->
-  <div id="view-report" style="display:none">
-    <div class="report-layout">
-      <div class="report-toc">
-        <div class="toc-card">
-          <div class="toc-title">Contents</div>
-          <div id="toc-list"></div>
-        </div>
-      </div>
-      <div class="report-content">
-        <div class="report-meta">
-          <div class="report-meta-left">
-            <div class="report-meta-title" id="report-title">—</div>
-            <div class="report-meta-sub" id="report-meta-sub">—</div>
-          </div>
-          <div class="report-meta-right" id="report-badges">
-            <button class="btn" id="btn-present" style="background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.15);display:none" onclick="openPresentation()">▶ Present</button>
-            <button class="btn" id="btn-export-pdf" style="background:rgba(0,201,167,.1);color:#00C9A7;border:1px solid rgba(0,201,167,.3);display:none" onclick="openExpModal('pdf')">↓ PDF</button>
-            <button class="btn" id="btn-export-pptx" style="background:rgba(30,111,255,.1);color:#1E6FFF;border:1px solid rgba(30,111,255,.3);display:none" onclick="openExpModal('pptx')">↓ PPTX</button>
-          </div>
-        </div>
-        <div id="sections-container"></div>
-        <div class="chatbox-wrap" id="chatbox" style="display:none">
-          <div class="chat-header">
-            <div class="chat-header-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-            <div><div class="chat-title">Ask follow-up questions</div><div class="chat-sub">AI analyst with full report context</div></div>
-          </div>
-          <div class="chat-messages" id="chat-messages">
-            <div class="msg ai">Hi! I've analyzed your documents and generated this report. Ask me anything.</div>
-          </div>
-          <div class="chat-input-row">
-            <input class="chat-input" id="chat-input" placeholder="Ask about the analysis..." onkeydown="if(event.key==='Enter')sendChat()"/>
-            <button class="chat-send" id="chat-send" onclick="sendChat()">Send</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /container -->
-
-<!-- Presentation Overlay (identical to report.html) -->
-<div class="pres-ov" id="presOv">
-  <!-- Hidden: stores report title for slide headers -->
-  <div id="pres-report-title" style="display:none"></div>
-  <div class="pres-nav">
-    <button class="btn btn-ghost" onclick="closePresentation()" style="gap:6px;font-size:13px">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to Report
-    </button>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div class="pres-counter"><span id="pres-cur">1</span> / <span id="pres-tot">1</span></div>
-      <div id="pres-section-hint" class="pres-section-hint"></div>
-      <div id="pres-dots" class="pres-dots"></div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-outline" id="pres-prev" onclick="navPresent(-1)">←</button>
-      <button class="btn btn-outline" id="pres-next" onclick="navPresent(1)">→</button>
-      <button class="btn" style="background:rgba(30,111,255,.15);color:#1E6FFF;border:1px solid rgba(30,111,255,.3)" onclick="openExpModal('pptx')">↓ PPTX</button>
-    </div>
-  </div>
-  <div class="pres-slide-wrap">
-    <div class="pres-slide" id="pres-slide"></div>
   </div>
 </div>
 
-<!-- Export Modal (identical to report.html) -->
+<!-- ═══════════════════════════════════
+     VIEW: PLAN
+════════════════════════════════════ -->
+<div id="view-plan">
+  <div class="plan-wrap">
+    <div class="step-label">Step 3 — Confirm Plan</div>
+    <div id="research-badge-wrap"></div>
+    <div class="plan-header">
+      <div class="plan-title" id="plan-title">Report Plan</div>
+      <div class="plan-meta" id="plan-meta">6 sections · ~5 min</div>
+    </div>
+    <div class="plan-sections" id="plan-sections-list"></div>
+    <button class="plan-add" onclick="addPlanSection()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add section
+    </button>
+    <div class="plan-actions">
+      <button class="btn-ghost" onclick="showView('upload')">← Back</button>
+      <button class="btn-primary" onclick="startGeneration()">
+        Generate Report
+        <svg viewBox="0 0 24 24" stroke-width="2.5" style="width:16px;height:16px"><path stroke-linecap="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     VIEW: PROGRESS
+════════════════════════════════════ -->
+<div id="view-progress">
+  <div class="progress-wrap">
+    <div class="progress-head">
+      <div id="prog-title" class="progress-title">Building your report...</div>
+      <div id="prog-subtitle" class="progress-sub">AI is writing each section</div>
+    </div>
+    <div class="time-info">
+      <span id="time-elapsed">Elapsed: 0s</span>
+      <span id="time-total"></span>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-fill" id="progress-bar"></div>
+    </div>
+    <div class="status-line">
+      <div class="status-dot"></div>
+      <div id="status-text">Starting...</div>
+    </div>
+    <div id="sec-progress-list" class="sec-progress-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     VIEW: REPORT
+════════════════════════════════════ -->
+<div id="view-report">
+  <div class="report-header">
+    <h1 id="report-title">Report</h1>
+    <div class="report-meta-bar">
+      <span class="report-badge" id="report-type-badge">Document Intelligence</span>
+      <span id="report-meta-sub">AI Research</span>
+      <div class="report-actions">
+        <button class="btn-action" onclick="openPresentation()">
+          <svg viewBox="0 0 24 24"><path d="M15 8h.01M3 6l9 6 9-6M3 6v12a2 2 0 002 2h14a2 2 0 002-2V6"/></svg>
+          Present
+        </button>
+        <button class="btn-action" onclick="openExpModal('pdf')">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </button>
+        <button class="btn-action blue" onclick="openExpModal('pptx')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PPTX
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="report-layout">
+    <aside class="report-toc">
+      <div class="toc-card">
+        <div class="toc-head">Contents</div>
+        <div class="toc-list" id="toc-list"></div>
+      </div>
+    </aside>
+    <div id="report-content" class="report-sections"></div>
+  </div>
+</div>
+
+</div><!-- /page-wrap -->
+
+<!-- Present Overlay -->
+<div class="pres-ov" id="presOv">
+  <div id="pres-report-title" style="display:none"></div>
+  <div class="pres-nav">
+    <div class="pres-nav-left">
+      <button class="btn-ghost" onclick="closePresentation()" style="font-size:13px;padding:8px 14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><polyline points="15 18 9 12 15 6"/></svg>
+        Exit
+      </button>
+      <div>
+        <div class="pres-counter"><span id="pres-cur">1</span> / <span id="pres-tot">1</span></div>
+        <div id="pres-section-hint" class="pres-section-hint"></div>
+      </div>
+      <div id="pres-dots" class="pres-dots"></div>
+    </div>
+    <div class="pres-nav-right">
+      <button class="btn-ghost" id="pres-prev" onclick="navPresent(-1)" style="padding:8px 14px">←</button>
+      <button class="btn-ghost" id="pres-next" onclick="navPresent(1)" style="padding:8px 14px">→</button>
+      <button class="btn-action blue" onclick="openExpModal('pptx')" style="font-size:12px">↓ PPTX</button>
+    </div>
+  </div>
+  <div class="pres-slide-wrap">
+    <div id="pres-slide"></div>
+  </div>
+</div>
+
+<!-- Export Modal -->
 <div class="exp-ov" id="expOv" onclick="expBgClose(event)">
   <div class="exp-modal">
     <div class="exp-header">
-      <div class="exp-title">Export Report</div>
+      <h3>Export Report</h3>
       <button class="exp-close" onclick="closeExpModal()">✕</button>
     </div>
     <div class="exp-body">
-      <div id="exp-head-sub" style="font-size:12px;color:#A3A9B6;margin:0 22px 12px;padding-top:14px">Choose format and visual style</div>
+      <div id="exp-head-sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Choose format and visual style</div>
       <div class="exp-fmt-row">
-        <div class="exp-fmt-btn active" id="efmt-pptx" onclick="setExpFmt('pptx')">
-          <div style="font-size:20px;margin-bottom:6px">📊</div>
-          <div style="font-size:13px;font-weight:700">PowerPoint</div>
-          <div style="font-size:10px;color:#5A6278;margin-top:3px">Consulting layout</div>
+        <div class="exp-fmt-btn" id="efmt-pptx" onclick="setExpFmt('pptx')">
+          <div class="fmt-icon">📊</div>
+          <div class="fmt-name">PowerPoint</div>
+          <div class="fmt-desc">Consulting layout</div>
         </div>
         <div class="exp-fmt-btn" id="efmt-pdf" onclick="setExpFmt('pdf')">
-          <div style="font-size:20px;margin-bottom:6px">📄</div>
-          <div style="font-size:13px;font-weight:700">PDF</div>
-          <div style="font-size:10px;color:#5A6278;margin-top:3px">Print-ready</div>
+          <div class="fmt-icon">📄</div>
+          <div class="fmt-name">PDF</div>
+          <div class="fmt-desc">Print-ready</div>
         </div>
       </div>
       <div id="exp-themes-block">
-        <div style="font-size:12px;color:#A3A9B6;font-weight:700;margin-bottom:12px">THEME</div>
-        <div class="exp-theme-row" style="display:flex;gap:12px">
-          <div class="exp-theme-btn" id="etc-dark" onclick="setExpTheme('dark')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #242A35;border-radius:8px;cursor:pointer">
-            <div style="width:20px;height:20px;background:#0B0D10;border-radius:3px;border:1px solid #333;flex-shrink:0"></div>
-            <span style="font-size:13px">Dark</span>
-            <div id="etck-dark" style="width:14px;height:14px;border-radius:3px;background:#1E6FFF;display:flex;align-items:center;justify-content:center;margin-left:auto"></div>
+        <div class="themes-label">Theme</div>
+        <div class="exp-theme-row">
+          <div class="exp-theme-card" id="etc-dark" onclick="setExpTheme('dark')">
+            <div class="exp-theme-swatch" style="background:#0B0D10;border:1px solid #333"></div>
+            <span class="exp-theme-name">Dark</span>
+            <div class="exp-theme-check" id="etck-dark"></div>
           </div>
-          <div class="exp-theme-btn" id="etc-light" onclick="setExpTheme('light')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #242A35;border-radius:8px;cursor:pointer">
-            <div style="width:20px;height:20px;background:#fff;border-radius:3px;border:1px solid #ddd;flex-shrink:0"></div>
-            <span style="font-size:13px">Light</span>
-            <div id="etck-light" style="width:14px;height:14px;border-radius:3px;background:#242A35;display:flex;align-items:center;justify-content:center;margin-left:auto"></div>
+          <div class="exp-theme-card" id="etc-light" onclick="setExpTheme('light')">
+            <div class="exp-theme-swatch" style="background:#fff;border:1px solid #ddd"></div>
+            <span class="exp-theme-name">Light</span>
+            <div class="exp-theme-check" id="etck-light"></div>
           </div>
         </div>
       </div>
     </div>
     <div class="exp-foot">
       <span class="exp-fname" id="expFname">report-dark.pptx</span>
-      <button class="exp-dl" id="expDlBtn" onclick="doExpDownload()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <button class="btn-dl" id="expDlBtn" onclick="doExpDownload()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download
       </button>
     </div>
@@ -419,6 +972,691 @@
 <script src="/auth.js"></script>
 <script src="/nav.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/libs/pptxgen.bundle.js"></script>
+<script src="/report-view.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DOC REPORT — Logic (shared rendering via report-view.js)
+// ═══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════
+// DOC REPORT — new logic only
+// Shared functions (streamSection etc.) come from report-view.js
+// ══════════════════════════════════════════════════════════
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── State ──────────────────────────────────────────────────
+const MAX_FILES = 5;
+const MAX_MB    = 20;
+const MAX_CHARS = 40000; // per file after extraction
+
+let uploadedFiles  = [];  // { name, type, text, imageBase64, mimeType, pages, size, status }
+let clarifyAnswer  = null;
+let planSections   = [];  // confirmed section list
+let planTitle      = '';
+let planDocSummary = '';
+let planNeedsWeb   = false;
+let planSearchFocus = '';
+let planHasDocs    = false;
+let planLiveResearch = ''; // web research fetched before planning (no-doc mode)
+// Use window.reportId so sendChat() in report-view.js can access it
+window.reportId = null;
+window.chatHistory = window.chatHistory || [];
+let completedSections = [];
+// currentParams intentionally NOT declared with let — uses global so report-view.js can access it
+window.currentParams = null;
+
+// ── View management ────────────────────────────────────────
+function showView(v) {
+  ['upload','clarify','plan','progress','report'].forEach(id => {
+    const el = document.getElementById('view-' + id);
+    if (el) el.style.display = id === v ? 'block' : 'none';
+  });
+}
+
+function setStatus(text, pct, visible = true) {
+  const el = document.getElementById('status-text');
+  if (el) el.innerHTML = text || '';
+  const bar = document.getElementById('progress-bar');
+  if (bar && pct != null) bar.style.width = pct + '%';
+}
+
+
+// ── Example chips ──────────────────────────────────────────
+function setExample(el) {
+  document.getElementById('f-request').value = el.textContent;
+}
+
+// ── File type badge ────────────────────────────────────────
+function getFileBadge(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  if (['pdf'].includes(ext))              return {cls:'badge-pdf', label:'PDF'};
+  if (['doc','docx'].includes(ext))       return {cls:'badge-docx', label:'DOCX'};
+  if (['xls','xlsx','csv'].includes(ext)) return {cls:'badge-xlsx', label:'XLSX'};
+  if (['ppt','pptx'].includes(ext))       return {cls:'badge-pptx', label:'PPTX'};
+  if (['png','jpg','jpeg','gif','webp'].includes(ext)) return {cls:'badge-img', label:'IMG'};
+  return {cls:'badge-txt', label:'TXT'};
+}
+
+function fmtSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(0) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+
+// ── Render file cards ──────────────────────────────────────
+function renderFileCards() {
+  const el = document.getElementById('file-cards');
+  if (!el) return;
+  el.innerHTML = uploadedFiles.map((f, i) => {
+    const badge = getFileBadge(f.name);
+    const statusMap = {
+      extracting: '<span class="file-status extracting">Extracting...</span>',
+      ready:      '<span class="file-status ready">✓ Ready</span>',
+      error:      '<span class="file-status error">✗ Error</span>',
+    };
+    return `<div class="file-card ${f.status}" id="fc-${i}">
+      <div class="file-type-badge ${badge.cls}">${badge.label}</div>
+      <div class="file-info">
+        <div class="file-name">${f.name}</div>
+        <div class="file-meta">${fmtSize(f.rawSize)}${f.pages ? ' · ' + f.pages + ' pages' : ''}</div>
+      </div>
+      ${statusMap[f.status] || ''}
+      <button class="file-remove" onclick="removeFile(${i})" title="Remove">×</button>
+    </div>`;
+  }).join('');
+}
+
+function removeFile(i) {
+  uploadedFiles.splice(i, 1);
+  renderFileCards();
+}
+
+function updateFileStatus(i, status) {
+  uploadedFiles[i].status = status;
+  const card = document.getElementById('fc-' + i);
+  if (!card) return;
+  card.className = 'file-card ' + status;
+  const statusEl = card.querySelector('.file-status');
+  if (statusEl) {
+    statusEl.className = 'file-status ' + status;
+    statusEl.textContent = status === 'ready' ? '✓ Ready'
+                         : status === 'extracting' ? 'Extracting...' : '✗ Error';
+  }
+}
+
+// ── File extraction ────────────────────────────────────────
+async function extractPdf(file) {
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  let text = '';
+  for (let i = 1; i <= Math.min(pdf.numPages, 80); i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(s => s.str).join(' ') + '\n';
+  }
+  return { text: text.slice(0, MAX_CHARS), pages: pdf.numPages };
+}
+
+async function extractDocx(file) {
+  const buf = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer: buf });
+  return { text: result.value.slice(0, MAX_CHARS), pages: null };
+}
+
+async function extractXlsx(file) {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: 'array' });
+  let text = '';
+  wb.SheetNames.forEach(name => {
+    text += `[Sheet: ${name}]\n`;
+    const rows = XLSX.utils.sheet_to_csv(wb.Sheets[name]);
+    text += rows + '\n\n';
+  });
+  return { text: text.slice(0, MAX_CHARS), pages: wb.SheetNames.length };
+}
+
+async function extractImage(file) {
+  return new Promise(res => {
+    const reader = new FileReader();
+    reader.onload = e => res({
+      text: null,
+      imageBase64: e.target.result.split(',')[1],
+      mimeType: file.type,
+      pages: 1,
+    });
+    reader.readAsDataURL(file);
+  });
+}
+
+async function extractText(file) {
+  return new Promise(res => {
+    const reader = new FileReader();
+    reader.onload = e => res({ text: e.target.result.slice(0, MAX_CHARS), pages: null });
+    reader.readAsText(file);
+  });
+}
+
+async function extractFile(file, idx) {
+  updateFileStatus(idx, 'extracting');
+  const ext = file.name.split('.').pop().toLowerCase();
+  try {
+    let result;
+    if (ext === 'pdf')                             result = await extractPdf(file);
+    else if (['doc','docx'].includes(ext))         result = await extractDocx(file);
+    else if (['xls','xlsx','csv'].includes(ext))   result = await extractXlsx(file);
+    else if (['png','jpg','jpeg','gif','webp'].includes(ext)) result = await extractImage(file);
+    else                                            result = await extractText(file);
+
+    uploadedFiles[idx] = { ...uploadedFiles[idx], ...result, status: 'ready' };
+    updateFileStatus(idx, 'ready');
+  } catch (e) {
+    uploadedFiles[idx].status = 'error';
+    uploadedFiles[idx].text = '';
+    updateFileStatus(idx, 'error');
+    console.error('Extract error:', file.name, e);
+  }
+}
+
+// ── Handle file select ─────────────────────────────────────
+async function handleFileSelect(files) {
+  const err = document.getElementById('upload-error');
+  err.style.display = 'none';
+
+  const newFiles = Array.from(files).filter(f => {
+    if (f.size > MAX_MB * 1024 * 1024) {
+      showUploadError(`${f.name} exceeds ${MAX_MB}MB limit`);
+      return false;
+    }
+    return true;
+  });
+
+  const remaining = MAX_FILES - uploadedFiles.length;
+  if (newFiles.length > remaining) {
+    showUploadError(`Maximum ${MAX_FILES} files allowed`);
+    newFiles.splice(remaining);
+  }
+
+  for (const f of newFiles) {
+    const idx = uploadedFiles.length;
+    uploadedFiles.push({ name: f.name, rawSize: f.size, type: f.type, status: 'extracting' });
+    renderFileCards();
+    await extractFile(f, idx);
+  }
+  renderFileCards();
+}
+
+function showUploadError(msg) {
+  const el = document.getElementById('upload-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// Drag & drop
+const zone = document.getElementById('upload-zone');
+if (zone) {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    handleFileSelect(e.dataTransfer.files);
+  });
+}
+
+
+// ── Start flow ─────────────────────────────────────────────
+async function startDocFlow() {
+  const request  = document.getElementById('f-request').value.trim();
+  const language = document.getElementById('f-language').value;
+  const err      = document.getElementById('upload-error');
+
+  // Documents are optional
+  if (!request)              { showUploadError('Please enter your request'); return; }
+  if (uploadedFiles.some(f => f.status === 'extracting')) {
+    showUploadError('Files are still being extracted, please wait'); return;
+  }
+  // No-doc mode is valid
+
+  err.style.display = 'none';
+
+  // Step 0: Show analyzing status immediately
+  showView('progress');
+  setStatus('🔍 <strong>Analyzing your request</strong>...', 5);
+  document.getElementById('prog-title').textContent = 'Analyzing Request';
+  document.getElementById('prog-subtitle').textContent = 'Understanding context and requirements...';
+
+  const reportLength = document.getElementById('f-length')?.value || 'standard';
+  const docs = uploadedFiles.filter(f => f.status === 'ready').map(f => ({
+    name: f.name, type: f.type,
+    text: f.text || null,
+    imageBase64: f.imageBase64 || null,
+    mimeType: f.mimeType || null,
+    pages: f.pages || null,
+  }));
+  const hasDocs = docs.length > 0;
+  planHasDocs = hasDocs;
+
+  showView('progress');
+  setStatus(hasDocs ? 'Reading documents...' : 'Planning your report...', 5);
+
+  try {
+    // Phase 1: Clarify
+    const clarifyRes = await fetch('/api/doc-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phase: 'clarify', docs, request, language, reportLength }),
+    });
+    if (!clarifyRes.ok) {
+      const errData = await clarifyRes.json().catch(() => ({}));
+      throw new Error(errData.error || `Clarify error ${clarifyRes.status}`);
+    }
+    const clarify = await clarifyRes.json();
+
+    if (!clarify.clear) {
+      // Show clarification view
+      document.getElementById('clarify-insight').textContent  = clarify.docInsight || '';
+      document.getElementById('clarify-question').textContent = clarify.question   || '';
+      const optEl = document.getElementById('clarify-options');
+      optEl.innerHTML = (clarify.options || []).map((opt, i) =>
+        `<div class="clarify-opt" data-val="${opt}" onclick="selectClarifyOpt(this)">
+          <div class="clarify-opt-radio"></div>
+          <div>${opt}</div>
+        </div>`
+      ).join('');
+      // Stash state for after clarification
+      window._pendingDocFlow = { docs, request, language, reportLength, docInsight: clarify.docInsight, needsWebSearch: clarify.needsWebSearch || false };
+      showView('clarify');
+    } else {
+      // For no-doc mode: search web FIRST so Claude plans sections based on real data
+      // For doc mode: skip (docs are the primary source, web supplements at generation)
+      // Web search now handled server-side in doc-report.js plan phase
+      await runPlanPhase(docs, request, language, reportLength, [], clarify.docInsight, clarify.suggestedTitle);
+    }
+  } catch (e) {
+    setStatus('✗ Error: ' + e.message, null);
+    showView('upload');
+    showUploadError('Error: ' + e.message);
+  }
+}
+
+// ── Clarification ──────────────────────────────────────────
+function selectClarifyOpt(el) {
+  document.querySelectorAll('.clarify-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  clarifyAnswer = el.dataset.val;
+}
+
+async function submitClarification() {
+  const state = window._pendingDocFlow;
+  if (!state) return;
+  window._pendingDocFlow = null;
+  const answers = clarifyAnswer ? [clarifyAnswer] : [];
+  showView('progress');
+  setStatus('📋 <strong>Planning report structure</strong> — identifying key analytical sections...', 15);
+  // Web search now handled server-side in doc-report.js plan phase
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null);
+}
+
+async function skipClarification() {
+  const state = window._pendingDocFlow;
+  if (!state) return;
+  window._pendingDocFlow = null;
+  showView('progress');
+  setStatus('📋 <strong>Planning report structure</strong> — identifying key analytical sections...', 15);
+  // Web search now handled server-side in doc-report.js plan phase
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null);
+}
+
+// ── Plan phase ─────────────────────────────────────────────
+async function runPlanPhase(docs, request, language, reportLength, answers, docInsight, suggestedTitle) {
+  setStatus('Planning report structure...', 20);
+  try {
+    const res = await fetch('/api/doc-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phase: 'plan', docs, request, answers, language, reportLength,
+        slug: 'doc-' + Date.now(),
+      }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `API error ${res.status}`);
+    }
+    const plan = await res.json();
+    if (!plan.sections?.length) throw new Error(plan.error || 'Planning failed');
+
+    // Populate plan view
+    window.reportId = plan.reportId;
+    reportSlug      = `doc-report-${Date.now()}`;
+    // currentParams includes title/type for PPTX cover slide
+    planTitle       = plan.reportTitle || request;
+    planDocSummary  = plan.docSummary  || docInsight || '';
+    planSections    = [...plan.sections];
+    planNeedsWeb    = false;
+    planSearchFocus = plan.searchFocus || request;
+    planLiveResearch = plan.webResearch || ''; // from server-side search
+
+    // Store params for generate-section
+    window.currentParams = {
+      request, language, docSummary: planDocSummary, docs,
+      industry: planHasDocs
+        ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60)
+        : request.slice(0, 60),
+      country:  language !== 'English' ? language : (planHasDocs ? 'Document Analysis' : 'AI Research'),
+      reportType: 'Document Intelligence',
+    };
+
+    document.getElementById('plan-title').value      = planTitle;
+    document.getElementById('plan-insight').innerHTML = planDocSummary.replace(/\n/g, '<br/>');
+    renderPlanSections();
+
+    const webBadge = document.getElementById('plan-web-badge');
+    if (webBadge) webBadge.style.display = planNeedsWeb ? 'inline-flex' : 'none';
+
+    showView('plan');
+
+  } catch (e) {
+    setStatus('✗ Planning failed: ' + e.message, null);
+    setTimeout(() => showView('upload'), 2000);
+  }
+}
+
+// ── Plan section list (editable) ───────────────────────────
+function renderPlanSections() {
+  const el = document.getElementById('plan-sections-list');
+  if (!el) return;
+  el.innerHTML = planSections.map((s, i) => `
+    <div class="plan-sec-item" id="psec-${i}">
+      <div class="plan-sec-num">${String(i+1).padStart(2,'0')}</div>
+      <input class="plan-sec-input" value="${s}" placeholder="Section title"
+        onchange="planSections[${i}] = this.value; updatePlanMeta()"/>
+      <button class="sec-remove" onclick="removePlanSection(${i})" title="Remove">×</button>
+    </div>`).join('');
+  updatePlanMeta();
+}
+
+function removePlanSection(i) {
+  planSections.splice(i, 1);
+  renderPlanSections();
+}
+
+function addPlanSection() {
+  planSections.push('New section');
+  renderPlanSections();
+  // Focus the new input
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.plan-sec-input');
+    const last = inputs[inputs.length - 1];
+    if (last) { last.focus(); last.select(); }
+  }, 50);
+}
+
+function updatePlanMeta() {
+  const el = document.getElementById('plan-section-count');
+  if (el) el.textContent = `${planSections.length} sections · ~${Math.round(planSections.length * 0.7 + 1)} min`;
+}
+
+// ── Main generation ────────────────────────────────────────
+async function startGeneration() {
+  // Read current plan state from inputs
+  planTitle    = document.getElementById('plan-title').value.trim() || planTitle;
+  planSections = Array.from(document.querySelectorAll('.plan-sec-input')).map(i => i.value.trim()).filter(Boolean);
+  const language = document.getElementById('f-language')?.value || 'English';
+
+  // ── Credit gate ──────────────────────────────────────
+  const gate = await creditGate('doc_intelligence');
+  if (!gate) return;
+  // ────────────────────────────────────────────────────
+
+  showView('progress');
+
+  let startTime = Date.now();
+  let elapsedTimer = setInterval(() => {
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('time-elapsed').textContent = `Elapsed: ${s}s`;
+  }, 1000);
+
+  document.getElementById('prog-title').textContent    = 'Building your report...';
+  document.getElementById('prog-subtitle').textContent = planTitle;
+  setStatus('Starting...', 5);
+
+  try {
+    // Step 1: Web research done server-side during planning
+    // planLiveResearch has targeted search results from gap analysis
+    const liveResearch = planLiveResearch || '';
+    if (liveResearch) setStatus('✓ Live data ready', 18);
+
+    // Step 2: Build section list + progress list
+    buildSectionProgressList(planSections);
+    const totalSections = planSections.length;
+    document.getElementById('time-total').textContent =
+      `Est. total: ~${Math.ceil(totalSections * 12 / 60)} min`;
+    document.getElementById('time-remaining').textContent =
+      `~${Math.ceil(totalSections * 12 / 60)} min remaining`;
+    document.getElementById('prog-subtitle').textContent =
+      `${totalSections} sections · ~12s each`;
+    setStatus('📋 Sections planned', 20);
+
+    // Combined research context: doc summary + live research
+    const researchSummary = [
+      planDocSummary,
+      liveResearch ? `\n\n=== WEB RESEARCH ===\n${liveResearch}` : ''
+    ].filter(Boolean).join('');
+
+    const ragContext     = { chunkText: '', patternText: '' };
+    const sectionQueries = {};
+
+    // Pre-set report header + clear containers (handles re-runs)
+    document.getElementById('report-title').textContent    = planTitle;
+    document.getElementById('report-meta-sub').textContent = `${planHasDocs ? 'Document Intelligence' : 'AI Research'} · ${totalSections} sections`;
+    // Clear before generating — prevents TOC/section duplication on re-runs
+    const tocListEl = document.getElementById('toc-list');
+    const secCont   = document.getElementById('report-content');
+    if (tocListEl) tocListEl.innerHTML = '';
+    if (secCont)   secCont.innerHTML  = '';
+
+    // Step 3: Generate sections — same pattern as report.html
+    const prevDone = [];
+    for (let i = 0; i < planSections.length; i++) {
+      const title = planSections[i];
+      const pct   = 20 + Math.round((i / totalSections) * 75);
+      setSectionStatus(i, 'active');
+      setStatus(`✍️ <strong>Writing section ${i+1}/${totalSections}</strong> — ${title}`, pct);
+
+      // Switch to report view on first section — show streaming immediately
+      if (i === 0) {
+        showView('report');
+        // Show export buttons right away
+        document.getElementById('btn-export-pptx').style.display = 'inline-flex';
+        document.getElementById('btn-export-pdf').style.display  = 'inline-flex';
+        document.getElementById('btn-present').style.display     = 'inline-flex';
+      }
+
+      // Render skeleton first so streamSection has a container to fill
+      renderSection({ title, content: null, status: 'generating' }, i, totalSections);
+
+      let sectionContent;
+      try {
+        sectionContent = await streamSection({
+          reportId:      window.reportId,
+          sectionIndex:  i,
+          sectionTitle:  title,
+          totalSections,
+          industry:      window.currentParams?.request?.slice(0, 100) || '',
+          country:       planHasDocs ? 'Document Analysis' : 'AI Research',
+          reportType:    'document_intelligence',
+          questions:     window.currentParams?.request || '',
+          language,
+          researchSummary,
+          ragContext,
+          prevSections:  prevDone,
+          sectionQuery:  null,
+        }, i);
+      } catch (err) {
+        console.error(`[Section ${i+1}] Error:`, err);
+        sectionContent = JSON.stringify({
+          headline: '', stats: [], chart: null, table: null,
+          commentary: `Section generation failed: ${err.message}`, sources: []
+        });
+      }
+
+      completedSections[i] = { title, content: sectionContent, status: 'completed' };
+      window._completedSections = completedSections.filter(Boolean);
+      prevDone.push({ title, content: sectionContent, status: 'completed' });
+      setSectionStatus(i, 'done');
+
+      // Update time-remaining
+      const remaining = totalSections - i - 1;
+      if (remaining > 0) {
+        document.getElementById('time-remaining').textContent = `~${remaining * 12}s remaining`;
+      }
+    }
+
+    // Done
+    clearInterval(elapsedTimer);
+    document.getElementById('progress-bar').style.width = '100%';
+    setStatus('✓ <strong>Report complete</strong>', 100);
+    setTimeout(() => document.getElementById('chatbox').style.display = 'block', 500);
+
+  } catch (e) {
+    clearInterval(elapsedTimer);
+    await refundCredits(gate, null);
+    setStatus(`✗ Error: ${e.message}`, null);
+  }
+}
+
+// Build TOC
+function buildToc(sections) {
+  const toc = document.getElementById('toc-list');
+  if (!toc) return;
+  toc.innerHTML = sections.map((t, i) => `
+    <div class="toc-item" id="toc-${i}" onclick="document.getElementById('sec-${i}')?.scrollIntoView({behavior:'smooth'})">
+      <span class="toc-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="toc-dot"></div>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t}</span>
+    </div>`).join('');
+}
+
+// ── Chat (reuse from report-view.js) ─────────────────────
+// sendChat() is defined in report-view.js — it reads reportId from window scope
+// We set reportId in window scope above
+
+// ── Init ────────────────────────────────────────────────
+// Restore request if returning from pricing page after credit top-up
+(function() {
+  const saved = sessionStorage.getItem('kira_doc_pending_state');
+  if (!saved) return;
+  try {
+    const state = JSON.parse(saved);
+    sessionStorage.removeItem('kira_doc_pending_state');
+    setTimeout(() => {
+      const el = document.getElementById('f-request');
+      if (el && state.request) {
+        el.value = state.request;
+        const note = document.createElement('div');
+        note.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1E6FFF;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;max-width:380px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.4)';
+        note.textContent = '✓ Request restored. Top-up successful — click Analyze to continue.';
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), 5000);
+      }
+    }, 500);
+  } catch(e) {}
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Make file input work via click on zone
+  const fileInput = document.getElementById('file-input');
+  if (fileInput) {
+    fileInput.addEventListener('change', e => handleFileSelect(e.target.files));
+  }
+});
+
+// ── CREDIT GATE ───────────────────────────────────────────
+const CREDIT_COSTS = {
+  market_overview:19, competitive_analysis:19, customer_intelligence:19,
+  value_chain:19, go_to_market:19, partner_search:19, proposition_development:19,
+  industry_deep_dive:19, strategy_builder:29, gtm_strategy:29,
+  doc_intelligence:9, document_analysis:9,
+};
+async function creditGate(reportType) {
+  const user = await window.kiraAuth?.getUser();
+  if (!user) {
+    sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+    window.location.href = '/auth.html';
+    return null;
+  }
+  const cost = CREDIT_COSTS[reportType] ?? 19;
+  let balance = 0;
+  try {
+    const r = await fetch(`/api/credits?action=balance&userId=${user.id}`);
+    const d = await r.json();
+    balance = d.balance ?? 0;
+  } catch { balance = 0; }
+  if (balance < cost) { showCreditModal(balance, cost, false); return null; }
+  try {
+    const r = await fetch('/api/credits?action=spend', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: user.id, reportType }),
+    });
+    const d = await r.json();
+    if (!d.success) { showCreditModal(d.balance ?? balance, cost, false); return null; }
+    return { userId: user.id, reportType, balance: d.balance };
+  } catch { showCreditModal(balance, cost, true); return null; }
+}
+async function refundCredits(gate, reportId) {
+  if (!gate?.userId) return;
+  try {
+    await fetch('/api/credits?action=refund', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId:gate.userId, reportType:gate.reportType, reportId:reportId||null, reason:'generation failed' }),
+    });
+  } catch {}
+}
+function showCreditModal(balance, cost, isError) {
+  const ex = document.getElementById('credit-gate-modal'); if (ex) ex.remove();
+
+  // Save state to sessionStorage so it can be restored after credit top-up
+  function saveStateForReturn() {
+    try {
+      if (window._pendingDocFlow) {
+        const s = {
+          request: window._pendingDocFlow.request,
+          language: window._pendingDocFlow.language,
+          reportLength: window._pendingDocFlow.reportLength,
+        };
+        sessionStorage.setItem('kira_doc_pending_state', JSON.stringify(s));
+      }
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+    } catch(e) {}
+  }
+
+  const m = document.createElement('div');
+  m.id = 'credit-gate-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px';
+  const inner = isError
+    ? '<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">There was an error processing credits. Please try again.</p>'
+    : '<p style="font-size:14px;color:#A3A9B6;margin-bottom:24px;line-height:1.6">This report costs <strong style="color:#fff">' + cost + ' credits</strong> but your balance is only <strong style="color:#FC8181">' + balance + '</strong>.</p>';
+  m.innerHTML = '<div style="background:#11151C;border:1px solid #242A35;border-radius:16px;padding:40px 36px;max-width:400px;width:100%;text-align:center">'
+    + '<div style="font-size:36px;margin-bottom:16px">' + (isError ? '⚠️' : '💳') + '</div>'
+    + '<h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:#fff">' + (isError ? 'Error processing credits' : 'Insufficient credits') + '</h3>'
+    + inner
+    + '<a href="/pricing.html" id="credit-topup-btn" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>'
+    + '<button onclick="document.getElementById(\'credit-gate-modal\').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>'
+    + '</div>';
+  document.body.appendChild(m);
+
+  // Attach click handler after DOM insertion
+  const btn = document.getElementById('credit-topup-btn');
+  if (btn) btn.addEventListener('click', saveStateForReturn);
+}
+// ── END CREDIT GATE ───────────────────────────────────────
+
+
+</script>
 
 <script>
 // ── Load shared report-view functions ─────────────────────
@@ -677,6 +1915,12 @@ async function startDocFlow() {
 
   err.style.display = 'none';
 
+  // Step 0: Show analyzing status immediately
+  showView('progress');
+  setStatus('🔍 <strong>Analyzing your request</strong>...', 5);
+  document.getElementById('prog-title').textContent = 'Analyzing Request';
+  document.getElementById('prog-subtitle').textContent = 'Understanding context and requirements...';
+
   const reportLength = document.getElementById('f-length')?.value || 'standard';
   const docs = uploadedFiles.filter(f => f.status === 'ready').map(f => ({
     name: f.name, type: f.type,
@@ -744,7 +1988,7 @@ async function submitClarification() {
   window._pendingDocFlow = null;
   const answers = clarifyAnswer ? [clarifyAnswer] : [];
   showView('progress');
-  setStatus('Planning report structure...', 15);
+  setStatus('📋 <strong>Planning report structure</strong> — identifying key analytical sections...', 15);
   // Web search now handled server-side in doc-report.js plan phase
   await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null);
 }
@@ -754,7 +1998,7 @@ async function skipClarification() {
   if (!state) return;
   window._pendingDocFlow = null;
   showView('progress');
-  setStatus('Planning report structure...', 15);
+  setStatus('📋 <strong>Planning report structure</strong> — identifying key analytical sections...', 15);
   // Web search now handled server-side in doc-report.js plan phase
   await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null);
 }
