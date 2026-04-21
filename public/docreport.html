@@ -281,7 +281,7 @@
   </div>
 
   <!-- ── VIEW: PROGRESS ── -->
-  <div id="view-progress" style="display:none;padding-top:32px">
+  <div id="view-progress" style="display:none;padding-top:16px">
     <p class="page-eyebrow" style="text-align:center;margin-bottom:8px">Generating</p>
     <h2 class="page-title" style="text-align:center;margin-bottom:8px" id="prog-title">Building your report...</h2>
     <p class="page-sub" style="text-align:center;margin-bottom:40px" id="prog-subtitle">AI is writing each section</p>
@@ -462,8 +462,13 @@ window.currentParams = null;
 function showView(v) {
   ['upload','clarify','plan','progress','report'].forEach(id => {
     const el = document.getElementById('view-' + id);
-    if (el) el.style.display = id === v ? (id === 'report' ? 'block' : 'block') : 'none';
+    if (el) el.style.display = id === v ? 'block' : 'none';
   });
+  // Remove min-height when showing progress/report so content sits at top
+  const container = document.querySelector('.container.page');
+  if (container) {
+    container.style.minHeight = (v === 'progress' || v === 'report') ? '0' : '';
+  }
 }
 
 function setStatus(text, pct, visible = true) {
@@ -1089,7 +1094,7 @@ function showCreditModal(balance, cost, isError) {
     + '<h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:#fff">' + (isError ? 'Error processing credits' : 'Insufficient credits') + '</h3>'
     + inner
     + '<a href="/pricing.html" id="credit-topup-btn" style="display:block;padding:12px;background:#1E6FFF;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:10px">Top Up Credits →</a>'
-    + '<button onclick="document.getElementById('credit-gate-modal').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>'
+    + '<button onclick="document.getElementById(\'credit-gate-modal\').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid #242A35;border-radius:8px;color:#A3A9B6;font-size:13px;cursor:pointer;font-family:Arial,sans-serif">Cancel</button>'
     + '</div>';
   document.body.appendChild(m);
 
