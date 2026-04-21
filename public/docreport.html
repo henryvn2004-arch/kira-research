@@ -744,7 +744,9 @@ async function startDocFlow() {
       // For no-doc mode: search web FIRST so Claude plans sections based on real data
       // For doc mode: skip (docs are the primary source, web supplements at generation)
       let preSearchResearch = '';
-      if (!hasDocs) {
+      if (!hasDocs || webSearchOn) {
+        // No-doc: web search IS the data source
+        // Doc + toggle ON: supplement docs with live data before planning
         preSearchResearch = await runWebSearchForPlan(request, language);
         planLiveResearch = preSearchResearch;
       }
@@ -772,7 +774,7 @@ async function submitClarification() {
   showView('progress');
   setStatus('Planning report structure...', 15);
   let preSearchResearch = '';
-  if (!planHasDocs) {
+  if (!planHasDocs || webSearchOn) {
     preSearchResearch = await runWebSearchForPlan(state.request, state.language);
     planLiveResearch = preSearchResearch;
   }
@@ -786,7 +788,7 @@ async function skipClarification() {
   showView('progress');
   setStatus('Planning report structure...', 15);
   let preSearchResearch = '';
-  if (!planHasDocs) {
+  if (!planHasDocs || webSearchOn) {
     preSearchResearch = await runWebSearchForPlan(state.request, state.language);
     planLiveResearch = preSearchResearch;
   }
@@ -916,8 +918,8 @@ async function startGeneration() {
       // Reuse research from plan phase — no need to re-fetch
       liveResearch = planLiveResearch;
       setStatus('✓ Live data ready (fetched during planning)', 18);
-    } else if (planNeedsWeb && planHasDocs) {
-      // Doc mode supplementary search
+    } else if (planNeedsWeb && planHasDocs && !planLiveResearch) {
+      // Doc mode supplementary search (only if not already done before planning)
       setStatus('🔍 Supplementing with live data...', 10);
       document.getElementById('prog-subtitle').textContent = 'Fetching supplementary live data...';
       try {
