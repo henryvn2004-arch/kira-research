@@ -144,7 +144,7 @@
     <div class="doc-hero">
       <div class="doc-hero-badge">Document Intelligence</div>
       <h1>Turn your documents into<br/><span>consulting-grade reports</span></h1>
-      <p>Upload documents for analysis — or simply describe what you need and get a consulting-grade report. No documents required.</p>
+      <p>Upload annual reports, financial statements, strategy decks or any business documents. Add your request and get a consulting-grade report with charts, data tables and strategic analysis.</p>
       <div class="hero-features">
         <div class="hero-feat">Supports PDF, DOCX, XLSX, PPTX, images</div>
         <div class="hero-feat">Optional web research via Perplexity</div>
@@ -156,15 +156,15 @@
     <div class="upload-section">
       <!-- Left: file upload -->
       <div>
-        <label style="font-size:12px;color:#A3A9B6;font-weight:700;letter-spacing:.02em;display:block;margin-bottom:12px">UPLOAD DOCUMENTS <span style="color:#1E6FFF">*</span></label>
+        <label style="font-size:12px;color:#A3A9B6;font-weight:700;letter-spacing:.02em;display:block;margin-bottom:12px">UPLOAD DOCUMENTS <span style="color:#5A6278;font-weight:400;font-size:10px">(optional)</span></label>
         <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
           <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.md,.png,.jpg,.jpeg,.gif,.webp" style="display:none" onchange="handleFileSelect(this.files)"/>
           <div class="upload-icon">
             <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
           </div>
           <div class="upload-title">Drop files here or click to browse</div>
-          <div class="upload-sub">PDF, Word, Excel, PowerPoint, images — optional</div>
-          <div class="upload-limit">Up to 5 files · 20MB each · Leave empty to generate from your request only</div>
+          <div class="upload-sub">PDF, Word, Excel, PowerPoint, images</div>
+          <div class="upload-limit">Up to 5 files · 20MB each · Leave empty to generate from request only</div>
         </div>
         <div id="file-cards" class="file-cards"></div>
       </div>
@@ -438,7 +438,7 @@ let planTitle      = '';
 let planDocSummary = '';
 let planNeedsWeb   = false;
 let planSearchFocus = '';
-let planHasDocs    = false; // whether user uploaded any documents
+let planHasDocs    = false;
 // Use window.reportId so sendChat() in report-view.js can access it
 window.reportId = null;
 window.chatHistory = window.chatHistory || [];
@@ -654,7 +654,7 @@ async function startDocFlow() {
   const language = document.getElementById('f-language').value;
   const err      = document.getElementById('upload-error');
 
-  // Documents are optional — no file required
+  // Documents are optional
   if (!request)              { showUploadError('Please enter your request'); return; }
   if (uploadedFiles.some(f => f.status === 'extracting')) {
     showUploadError('Files are still being extracted, please wait'); return;
@@ -663,6 +663,7 @@ async function startDocFlow() {
 
   err.style.display = 'none';
 
+  const reportLength = document.getElementById('f-length')?.value || 'standard';
   const docs = uploadedFiles.filter(f => f.status === 'ready').map(f => ({
     name: f.name, type: f.type,
     text: f.text || null,
@@ -681,8 +682,12 @@ async function startDocFlow() {
     const clarifyRes = await fetch('/api/doc-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phase: 'clarify', docs, request, language }),
+      body: JSON.stringify({ phase: 'clarify', docs, request, language, reportLength }),
     });
+    if (!clarifyRes.ok) {
+      const errData = await clarifyRes.json().catch(() => ({}));
+      throw new Error(errData.error || `Clarify error ${clarifyRes.status}`);
+    }
     const clarify = await clarifyRes.json();
 
     if (!clarify.clear) {
@@ -697,11 +702,11 @@ async function startDocFlow() {
         </div>`
       ).join('');
       // Stash state for after clarification
-      window._pendingDocFlow = { docs, request, language, docInsight: clarify.docInsight };
+      window._pendingDocFlow = { docs, request, language, reportLength, docInsight: clarify.docInsight };
       showView('clarify');
     } else {
       // Proceed directly to plan
-      await runPlanPhase(docs, request, language, [], clarify.docInsight, clarify.suggestedTitle);
+      await runPlanPhase(docs, request, language, reportLength, [], clarify.docInsight, clarify.suggestedTitle);
     }
   } catch (e) {
     setStatus('✗ Error: ' + e.message, null);
@@ -720,32 +725,38 @@ function selectClarifyOpt(el) {
 async function submitClarification() {
   const state = window._pendingDocFlow;
   if (!state) return;
+  window._pendingDocFlow = null; // clear stale state
   const answers = clarifyAnswer ? [clarifyAnswer] : [];
   showView('progress');
   setStatus('Planning report structure...', 15);
-  await runPlanPhase(state.docs, state.request, state.language, answers, state.docInsight, null);
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null);
 }
 
 function skipClarification() {
   const state = window._pendingDocFlow;
   if (!state) return;
+  window._pendingDocFlow = null; // clear stale state
   showView('progress');
   setStatus('Planning report structure...', 15);
-  runPlanPhase(state.docs, state.request, state.language, [], state.docInsight, null);
+  runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null);
 }
 
 // ── Plan phase ─────────────────────────────────────────────
-async function runPlanPhase(docs, request, language, answers, docInsight, suggestedTitle) {
+async function runPlanPhase(docs, request, language, reportLength, answers, docInsight, suggestedTitle) {
   setStatus('Planning report structure...', 20);
   try {
     const res = await fetch('/api/doc-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        phase: 'plan', docs, request, answers, language,
+        phase: 'plan', docs, request, answers, language, reportLength,
         slug: 'doc-' + Date.now(),
       }),
     });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `API error ${res.status}`);
+    }
     const plan = await res.json();
     if (!plan.sections?.length) throw new Error(plan.error || 'Planning failed');
 
@@ -753,11 +764,6 @@ async function runPlanPhase(docs, request, language, answers, docInsight, sugges
     window.reportId = plan.reportId;
     reportSlug      = `doc-report-${Date.now()}`;
     // currentParams includes title/type for PPTX cover slide
-    currentParams   = { ...currentParams,
-      industry: planHasDocs ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60) : request.slice(0, 60),
-      country:  language !== 'English' ? language : (planHasDocs ? 'Document Analysis' : 'AI Research'),
-      reportType: 'Document Intelligence',
-    };
     planTitle       = plan.reportTitle || request;
     planDocSummary  = plan.docSummary  || docInsight || '';
     planSections    = [...plan.sections];
@@ -765,7 +771,14 @@ async function runPlanPhase(docs, request, language, answers, docInsight, sugges
     planSearchFocus = plan.searchFocus || request;
 
     // Store params for generate-section
-    currentParams = { request, language, docSummary: planDocSummary, docs };
+    currentParams = {
+      request, language, docSummary: planDocSummary, docs,
+      industry: planHasDocs
+        ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60)
+        : request.slice(0, 60),
+      country:  language !== 'English' ? language : (planHasDocs ? 'Document Analysis' : 'AI Research'),
+      reportType: 'Document Intelligence',
+    };
 
     document.getElementById('plan-title').value      = planTitle;
     document.getElementById('plan-insight').innerHTML = planDocSummary.replace(/\n/g, '<br/>');
