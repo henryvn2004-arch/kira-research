@@ -634,81 +634,54 @@ APPROACH:
 
     const isNarrative = /executive summary|recommendation|conclusion|strategic outlook/i.test(sectionTitle);
 
-    const segmentPrompt = `You wrote this consulting section titled "${sectionTitle}":
+    const segmentPrompt = `You wrote this section titled "${sectionTitle}":
 ${langNote}
 
 ${fullCommentary}
 
-TASK: Segment this into 2-4 focused sub-sections and design rich visuals for each.
+TASK: Segment this into 2-4 sub-sections and create rich visuals for each.
+The prose text will be shown separately — do NOT include prose in your JSON.
 
-STEP 1 — SEGMENT: Identify 2-4 distinct analytical angles in the text.
-Each sub-section covers ONE angle with a short descriptive subtitle.
+STEP 1 — SEGMENT: Find 2-4 distinct analytical angles. Each gets a short subtitle.
 
-STEP 2 — EXTRACT ANCHOR DATA: Find every quantitative data point.
-Apply these patterns to BUILD COMPLETE DATASETS:
+STEP 2 — EXTRACT ANCHOR DATA → BUILD COMPLETE DATASETS:
+• "$XB market" + "Y% CAGR" → 6-year time series (back-calc ÷(1+CAGR), forward ×(1+CAGR)) → line chart
+• "Company X: Y% share" → build ALL players to sum 100% (add "Others" for remainder) → doughnut + table
+• Multiple segments/channels with % → breakdown → doughnut or bar
+• Rankings/comparisons → table (Rank|Company|Share|Strength)
+• Companies on multiple attributes → radar scores 0-10
+• Process/flow/value chain → flowchart LR diagram
+• Strategic 2×2 → quadrantChart
+• Timeline/history → timeline diagram
+• Mark missing data as "est." — always estimate rather than skip
 
-• "$XB market" + "Y% CAGR" → build 6-year time series
-  labels: [currentYear-2, -1, 0, +1, +2, +3]
-  data: back-calculate ÷(1+CAGR), forward-project ×(1+CAGR) per year
-  → line chart titled "Market Size Forecast"
-
-• "Company X: Y% share" → build full competitor table
-  Fill remaining players as estimates, always sum to 100% with "Others"
-  → doughnut chart + table (Company | Share% | Tier)
-
-• "Segment A, B, C" with proportions → build breakdown to 100%
-  → doughnut chart
-
-• Multiple channels/regions with % → build mix table
-  → horizontal bar chart
-
-• "Top players: A, B, C" (no %) → rank them, estimate shares
-  → table (Rank | Company | Est. Share | Strength)
-
-• Comparing companies on multiple attributes → scores 1-10
-  → radar chart
-
-• Price tiers/ranges → price positioning
-  → horizontal bar (sorted by price)
-
-• Process, value chain, workflow → flowchart LR
-• Strategic 2×2 positioning → quadrantChart
-• Timeline, history, roadmap → timeline
-
-STEP 3 — ASSIGN VISUALS: Every sub-section needs AT LEAST 1 visual.
-For analytical sub-sections: chart OR diagram OR table (REQUIRED).
-For implications/strategy: callout + prose is ok if no data.
-
-BLOCKS available per sub-section:
-stats    → { "type":"stats", "items":[{"value":"$2.3B","label":"Market 2025"},{"value":"18%","label":"CAGR"}] }
-chart    → { "type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers]}],"horizontal":true/false }
-diagram  → { "type":"diagram","code":"mermaid syntax","title":"..." }
-table    → { "type":"table","title":"...","headers":[...],"rows":[[...]] }
-callout  → { "type":"callout","text":"Strategic implication...","style":"insight|action|warning" }
-prose    → { "type":"prose","text":"relevant excerpt from commentary" }
+STEP 3 — ASSIGN VISUALS: Every sub-section needs AT LEAST 1 visual block.
+Available blocks (NO prose blocks — prose is shown separately):
+stats   → {"type":"stats","items":[{"value":"$2.3B","label":"Market 2025"}]}
+chart   → {"type":"chart","chartType":"line|bar|doughnut|radar","title":"...","labels":[...],"datasets":[{"label":"...","data":[numbers]}],"horizontal":true}
+diagram → {"type":"diagram","code":"mermaid syntax","title":"..."}
+table   → {"type":"table","title":"...","headers":[...],"rows":[[...]]}
+callout → {"type":"callout","text":"Strategic implication...","style":"insight|action|warning"}
 
 RULES:
-- chart OR diagram per sub-section (not both)  
-- 1 table per sub-section max
-- prose is always last content block in each sub-section
-- Mark estimates: "est. 34%" or "(est.)"
-- Max 8 data points per chart, max 8 rows per table
-- chart datasets[].data MUST be plain numbers only
-${isNarrative ? '- This is a narrative section: use table or callout instead of chart where possible' : ''}
+- chart OR diagram per sub-section (not both), table is always ok to add
+- data arrays = plain numbers only, max 8 data points, max 8 rows
+- doughnut datasets must sum to ~100%
+${isNarrative ? '- Narrative section: use table/callout, skip charts' : '- Analytical section: chart or diagram is mandatory in at least one sub-section'}
 
-Return ONLY valid JSON:
+Return ONLY valid JSON (no prose, no markdown):
 {
-  "headline": "Key finding for the full section (1-2 sentences, specific data)",
+  "headline": "Key finding 1-2 sentences with specific data",
   "sub_sections": [
     {
       "subtitle": "Short descriptive subtitle",
-      "blocks": [ ...blocks... ]
+      "blocks": [{"type":"stats",...}, {"type":"chart",...}, {"type":"table",...}]
     }
   ],
-  "sources": ["Source 1", "Source 2"]
+  "sources": ["Source 1"]
 }`;
 
-    const raw = await callClaude(segmentPrompt, 2800);
+    const raw = await callClaude(segmentPrompt, 4000);
 
     // Robust JSON parsing
     let parsed = null;
