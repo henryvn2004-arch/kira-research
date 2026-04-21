@@ -505,19 +505,14 @@ async function streamSection(payload, sectionIndex) {
           }
         }
 
-        // Phase 2: meta arrives after stream — add headline, stats, visuals
+        // Phase 3: meta arrives after stream — add headline, sub-sections, visuals
         if (evt.type === 'meta') {
           headlineData = evt;
-          metaSucceeded = true; // Phase 2 ran — don't call extract-visuals as fallback
+          metaSucceeded = true;
 
-          // Debug logging — visible in browser console
-          const hasChart = !!(evt.chart?.labels?.length || evt.chart?.datasets?.length);
-          const hasTable = !!(evt.table?.headers?.length);
-          console.log(`[Section ${sectionIndex+1} "${payload.sectionTitle}"] meta: chart=${hasChart}, table=${hasTable}, stats=${evt.stats?.length||0}`);
+          setStatus(`📊 <strong>Building visuals</strong>...`, null);
 
-          setStatus(`📊 <strong>Extracting data visuals</strong> — building charts & tables...`, null);
-
-          // Wrap existing commentary in collapsible preview
+          // Wrap streaming commentary in collapsible (keep it at bottom)
           if (commentaryEl) {
             commentaryEl.innerHTML = formatCommentary(commentary);
             const secIdx = sectionIndex;
@@ -536,35 +531,60 @@ async function streamSection(payload, sectionIndex) {
             }
           }
 
-          if (block) {
+          if (!block) return;
+          const header = block.querySelector('.slide-header');
+          const commEl = block.querySelector('.slide-commentary');
+
+          // ── Phase 3: sub_sections format ──
+          if (evt.sub_sections?.length) {
+            // Insert headline after header
+            if (evt.headline && header) {
+              header.insertAdjacentHTML('afterend', `
+                <div class="block-headline">
+                  <div class="block-headline-label">Key Finding</div>
+                  <div class="block-headline-text">${evt.headline}</div>
+                </div>`);
+            }
+            // Insert each sub-section's visuals BEFORE the commentary
+            const insertBefore = block.querySelector('.block-headline')?.nextElementSibling || commEl || null;
+            evt.sub_sections.forEach((ss, si) => {
+              if (si > 0) {
+                const sep = document.createElement('div');
+                sep.className = 'sub-section-sep';
+                block.insertBefore(sep, insertBefore);
+              }
+              const ssDiv = document.createElement('div');
+              ssDiv.className = 'sub-section';
+              if (ss.subtitle) {
+                const t = document.createElement('div');
+                t.className = 'sub-section-title';
+                t.textContent = ss.subtitle;
+                ssDiv.appendChild(t);
+              }
+              (ss.blocks || []).forEach(b => {
+                const el = renderBlock(b, sectionIndex * 100 + si);
+                if (el) ssDiv.appendChild(el);
+              });
+              block.insertBefore(ssDiv, insertBefore);
+            });
+            if (evt.sources?.length) appendSources(block, evt.sources);
+
+          // ── Legacy flat format ──
+          } else {
             const statsHtml = (evt.stats?.length)
               ? `<div class="slide-stats">${evt.stats.map(s => `
                   <div class="stat-pill">
-                    <div class="stat-icon">${getStatIcon(s.icon)}</div>
-                    <div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>
-                  </div>`).join('')}</div>`
-              : '';
-            const headlineEl = evt.headline ? `
-              <div class="slide-headline">
-                <div class="slide-headline-label">Key Finding</div>
-                <div class="slide-headline-text">${evt.headline}</div>
-              </div>` : '';
+                    <div class="stat-value">${s.value}</div>
+                    <div class="stat-label">${s.label}</div>
+                  </div>`).join('')}</div>` : '';
+            if (header) header.insertAdjacentHTML('afterend',
+              (evt.headline ? `<div class="block-headline"><div class="block-headline-label">Key Finding</div><div class="block-headline-text">${evt.headline}</div></div>` : '') + statsHtml);
 
-            const header = block.querySelector('.slide-header');
-            if (header) header.insertAdjacentHTML('afterend', headlineEl + statsHtml);
-
-            // ── Resilient chart detection ──
-            // Accept chart if it has labels OR datasets (backend format may vary)
-            const hasChart = evt.chart &&
-              (evt.chart.labels?.length || evt.chart.datasets?.length ||
-               (Array.isArray(evt.chart.data) && evt.chart.data.length));
+            const hasChart = evt.chart && (evt.chart.labels?.length || evt.chart.datasets?.length);
             const hasTable = evt.table?.headers?.length;
-
             if (hasChart || hasTable) {
-              const toggle = block.querySelector('.commentary-toggle');
-              const comm   = block.querySelector('.slide-commentary');
-              const anchor = toggle || comm || null;
-              appendVisualsAt(block, sectionIndex, hasChart ? evt.chart : null, hasTable ? evt.table : null, anchor);
+              const anchor = block.querySelector('.commentary-toggle') || commEl || null;
+              appendVisualsAt(block, sectionIndex, hasChart ? evt.chart : null, hasTable ? evt.table : null, anchor, evt.diagram);
             }
             if (evt.sources?.length) appendSources(block, evt.sources);
           }

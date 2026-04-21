@@ -138,7 +138,7 @@
 <body>
 <div id="nav-placeholder"></div>
 
-<div class="container page" style="padding-top:80px">
+<div class="container page">
 
   <!-- ── VIEW: UPLOAD + REQUEST ── -->
   <div id="view-upload">
@@ -653,7 +653,8 @@ async function runWebSearchForPlan(request, language) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        industry:   request.slice(0, 120),
+        // Extract short topic (first clause) — prevents Perplexity treating full request as an industry name
+        industry:   request.replace(/[:\-–—]/g,' ').split(/[,;?!\n]/)[0].trim().slice(0, 80),
         country:    'global',
         reportType: 'document_intelligence',
         questions:  request,
