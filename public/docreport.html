@@ -144,7 +144,7 @@
     <div class="doc-hero">
       <div class="doc-hero-badge">Document Intelligence</div>
       <h1>Turn your documents into<br/><span>consulting-grade reports</span></h1>
-      <p>Upload annual reports, financial statements, strategy decks or any business documents. Add your request and get a consulting-grade report with charts, data tables and strategic analysis.</p>
+      <p>Upload documents for analysis — or simply describe what you need and get a consulting-grade report instantly. No documents required.</p>
       <div class="hero-features">
         <div class="hero-feat">Supports PDF, DOCX, XLSX, PPTX, images</div>
         <div class="hero-feat">Optional web research via Perplexity</div>
@@ -163,8 +163,8 @@
             <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
           </div>
           <div class="upload-title">Drop files here or click to browse</div>
-          <div class="upload-sub">PDF, Word, Excel, PowerPoint, images</div>
-          <div class="upload-limit">Up to 5 files · 20MB each · Text extracted in browser</div>
+          <div class="upload-sub">PDF, Word, Excel, PowerPoint, images — optional</div>
+          <div class="upload-limit">Up to 5 files · 20MB each · Leave empty to generate from your request only</div>
         </div>
         <div id="file-cards" class="file-cards"></div>
       </div>
@@ -653,14 +653,12 @@ async function startDocFlow() {
   const language = document.getElementById('f-language').value;
   const err      = document.getElementById('upload-error');
 
-  if (!uploadedFiles.length) { showUploadError('Please upload at least one file'); return; }
+  // Documents are optional — proceed even with no files
   if (!request)              { showUploadError('Please enter your request'); return; }
   if (uploadedFiles.some(f => f.status === 'extracting')) {
     showUploadError('Files are still being extracted, please wait'); return;
   }
-  if (!uploadedFiles.some(f => f.status === 'ready')) {
-    showUploadError('No files extracted successfully'); return;
-  }
+  // No-doc mode is valid — skip file check
 
   err.style.display = 'none';
 
@@ -671,12 +669,13 @@ async function startDocFlow() {
     mimeType: f.mimeType || null,
     pages: f.pages || null,
   }));
+  const hasDocs = docs.length > 0;
 
   showView('progress');
-  setStatus('Reading documents...', 5);
+  setStatus(hasDocs ? 'Reading documents...' : 'Planning your report...', 5);
 
   try {
-    // Phase 1: Clarify
+    // Phase 1: Clarify (skipped automatically by API if no docs)
     const clarifyRes = await fetch('/api/doc-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -753,8 +752,10 @@ async function runPlanPhase(docs, request, language, answers, docInsight, sugges
     reportSlug      = `doc-report-${Date.now()}`;
     // currentParams includes title/type for PPTX cover slide
     currentParams   = { ...currentParams,
-      industry: docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60),
-      country:  language !== 'English' ? language : 'Document Analysis',
+      industry: hasDocs
+        ? docs.map(d => d.name.replace(/\.[^.]+$/,'')).join(', ').slice(0, 60)
+        : request.slice(0, 60),
+      country:  language !== 'English' ? language : (hasDocs ? 'Document Analysis' : 'AI Research'),
       reportType: 'Document Intelligence',
     };
     planTitle       = plan.reportTitle || request;
@@ -879,7 +880,7 @@ async function startGeneration() {
 
     // Set report title
     document.getElementById('report-title').textContent   = planTitle;
-    document.getElementById('report-meta-sub').textContent = `Document Intelligence · ${planSections.length} sections`;
+    document.getElementById('report-meta-sub').textContent = `${hasDocs ? 'Document Intelligence' : 'AI Research'} · ${planSections.length} sections`;
     buildToc(planSections);
     showView('report');
 
