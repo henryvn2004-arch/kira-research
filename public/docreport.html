@@ -643,33 +643,6 @@ if (zone) {
 }
 
 
-// ── Web search for planning (no-doc mode only) ────────────
-// Runs BEFORE plan so Claude knows what data exists when choosing sections
-async function runWebSearchForPlan(request, language) {
-  try {
-    setStatus('🔍 Searching live data to inform report plan...', 12);
-    document.getElementById('prog-subtitle').textContent = 'Gathering live data before planning...';
-    const res = await fetch('/api/browser-research', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        // Extract short topic (first clause) — prevents Perplexity treating full request as an industry name
-        industry:   request.replace(/[:\-–—]/g,' ').split(/[,;?!\n]/)[0].trim().slice(0, 80),
-        country:    'global',
-        reportType: 'document_intelligence',
-        questions:  request,
-      }),
-    });
-    const d = await res.json();
-    const research = d.research || '';
-    setStatus('✓ Live data collected — planning sections...', 18);
-    return research;
-  } catch {
-    setStatus('Planning sections...', 18);
-    return '';
-  }
-}
-
 // ── Start flow ─────────────────────────────────────────────
 async function startDocFlow() {
   const request  = document.getElementById('f-request').value.trim();
@@ -729,13 +702,8 @@ async function startDocFlow() {
     } else {
       // For no-doc mode: search web FIRST so Claude plans sections based on real data
       // For doc mode: skip (docs are the primary source, web supplements at generation)
-      let preSearchResearch = '';
-      if (!hasDocs || clarify.needsWebSearch) {
-        // No-doc: always search; Doc: search if Claude says docs are insufficient
-        preSearchResearch = await runWebSearchForPlan(request, language);
-        planLiveResearch = preSearchResearch;
-      }
-      await runPlanPhase(docs, request, language, reportLength, [], clarify.docInsight, clarify.suggestedTitle, preSearchResearch);
+      // Web search now handled server-side in doc-report.js plan phase
+      await runPlanPhase(docs, request, language, reportLength, [], clarify.docInsight, clarify.suggestedTitle);
     }
   } catch (e) {
     setStatus('✗ Error: ' + e.message, null);
@@ -758,12 +726,8 @@ async function submitClarification() {
   const answers = clarifyAnswer ? [clarifyAnswer] : [];
   showView('progress');
   setStatus('Planning report structure...', 15);
-  let preSearchResearch = '';
-  if (!planHasDocs || state.needsWebSearch) {
-    preSearchResearch = await runWebSearchForPlan(state.request, state.language);
-    planLiveResearch = preSearchResearch;
-  }
-  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null, preSearchResearch);
+  // Web search now handled server-side in doc-report.js plan phase
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', answers, state.docInsight, null);
 }
 
 async function skipClarification() {
@@ -772,16 +736,12 @@ async function skipClarification() {
   window._pendingDocFlow = null;
   showView('progress');
   setStatus('Planning report structure...', 15);
-  let preSearchResearch = '';
-  if (!planHasDocs || state.needsWebSearch) {
-    preSearchResearch = await runWebSearchForPlan(state.request, state.language);
-    planLiveResearch = preSearchResearch;
-  }
-  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null, preSearchResearch);
+  // Web search now handled server-side in doc-report.js plan phase
+  await runPlanPhase(state.docs, state.request, state.language, state.reportLength || 'standard', [], state.docInsight, null);
 }
 
 // ── Plan phase ─────────────────────────────────────────────
-async function runPlanPhase(docs, request, language, reportLength, answers, docInsight, suggestedTitle, webResearch = '') {
+async function runPlanPhase(docs, request, language, reportLength, answers, docInsight, suggestedTitle) {
   setStatus('Planning report structure...', 20);
   try {
     const res = await fetch('/api/doc-report', {
@@ -789,7 +749,6 @@ async function runPlanPhase(docs, request, language, reportLength, answers, docI
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phase: 'plan', docs, request, answers, language, reportLength,
-        webResearch: webResearch || '',
         slug: 'doc-' + Date.now(),
       }),
     });
@@ -807,8 +766,9 @@ async function runPlanPhase(docs, request, language, reportLength, answers, docI
     planTitle       = plan.reportTitle || request;
     planDocSummary  = plan.docSummary  || docInsight || '';
     planSections    = [...plan.sections];
-    planNeedsWeb    = plan.needsWebSearch;
+    planNeedsWeb    = false;
     planSearchFocus = plan.searchFocus || request;
+    planLiveResearch = plan.webResearch || ''; // from server-side search
 
     // Store params for generate-section
     window.currentParams = {
@@ -895,34 +855,10 @@ async function startGeneration() {
   setStatus('Starting...', 5);
 
   try {
-    // Step 1: Web research
-    // No-doc mode: already fetched during plan phase — reuse planLiveResearch
-    // Doc mode: fetch now as supplement to document content
-    let liveResearch = '';
-    if (!planHasDocs && planLiveResearch) {
-      // Reuse research from plan phase — no need to re-fetch
-      liveResearch = planLiveResearch;
-      setStatus('✓ Live data ready (fetched during planning)', 18);
-    } else if (planNeedsWeb && planHasDocs && !planLiveResearch) {
-      // Doc mode supplementary search (only if not already done before planning)
-      setStatus('🔍 Supplementing with live data...', 10);
-      document.getElementById('prog-subtitle').textContent = 'Fetching supplementary live data...';
-      try {
-        const res = await fetch('/api/browser-research', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            industry:   planSearchFocus,
-            country:    'global',
-            reportType: 'document_intelligence',
-            questions:  window.currentParams?.request || '',
-          }),
-        });
-        const d = await res.json();
-        liveResearch = d.research || '';
-        setStatus('✓ Supplementary data collected', 18);
-      } catch { /* non-fatal */ }
-    }
+    // Step 1: Web research done server-side during planning
+    // planLiveResearch has targeted search results from gap analysis
+    const liveResearch = planLiveResearch || '';
+    if (liveResearch) setStatus('✓ Live data ready', 18);
 
     // Step 2: Build section list + progress list
     buildSectionProgressList(planSections);
