@@ -79,10 +79,15 @@ function buildPlanMessages(docs) {
 }
 
 // Map reportLength value → section count guidance for plan prompt
+const LENGTH_CONFIG = {
+  concise:       { min: 4, max: 5, label: 'EXACTLY 4 sections. No more, no less.' },
+  standard:      { min: 6, max: 8, label: '6 to 8 sections.' },
+  comprehensive: { min: 9, max: 12, label: '9 to 12 sections.' },
+};
 const LENGTH_GUIDANCE = {
-  concise:       'Design exactly 4-5 sections. Be focused — only the most essential sections.',
-  standard:      'Design 6-8 sections. Balanced coverage of the key topics.',
-  comprehensive: 'Design 9-12 sections. Thorough — include all relevant analytical angles.',
+  concise:       'CRITICAL: Output EXACTLY 4 sections in the "sections" array. Count: 4. No more.',
+  standard:      'Output 6-8 sections in the "sections" array.',
+  comprehensive: 'Output 9-12 sections in the "sections" array.',
 };
 
 export default async function handler(req, res) {
@@ -193,6 +198,15 @@ Return ONLY valid JSON:
       }
 
       if (!plan.sections?.length) throw new Error('No sections in plan');
+
+      // Enforce section count from reportLength setting
+      const lenCfg = LENGTH_CONFIG[reportLength];
+      if (lenCfg && plan.sections.length > lenCfg.max) {
+        plan.sections = plan.sections.slice(0, lenCfg.max);
+      } else if (lenCfg && plan.sections.length < lenCfg.min) {
+        // too few — just proceed, don't add fake sections
+      }
+
       if (!hasDocs) plan.needsWebSearch = true;
 
       // Save to DB

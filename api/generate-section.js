@@ -309,7 +309,7 @@ const SECTION_CHUNK_TYPE = {
 //   2. chunk_type filter → HOW-TO-WRITE examples from similar reports in library
 async function sectionRagSearch(query, sectionType) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000); // 8s hard cap for RAG
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
     const embRes = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
@@ -375,6 +375,30 @@ function buildAntiOverlapContext(prevSections) {
 ${completed.join('\n')}
 
 Rules: introduce UNIQUE data/angles; briefly cross-reference previous sections when needed ("as noted in [X]...") rather than repeating.`;
+}
+
+
+// ── Doc Intelligence context builder ─────────────────────
+// Presentation-focused context — wildcard tool for any doc type or pure AI request.
+function buildDocContext(params, researchSummary, prevSections, sectionTitle) {
+  const { questions, language } = params;
+
+  const langInstruction = (language && language !== 'English')
+    ? `\nOUTPUT LANGUAGE: Write ALL content in ${language}. Section titles, headers, all text.`
+    : '';
+
+  const antiOverlap = buildAntiOverlapContext(prevSections);
+
+  // Use most relevant content for this specific section
+  const content = researchSummary
+    ? researchSummary.slice(0, 3500)
+    : 'No source material provided — draw on your expertise.';
+
+  return `Original request: "${questions}"${langInstruction}
+
+SOURCE MATERIAL:
+${content}
+${antiOverlap ? `\n${antiOverlap}` : ''}`;
 }
 
 function buildContext(params, ragContext, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery) {
@@ -475,21 +499,28 @@ export default async function handler(req, res) {
 
   if (!sectionTitle) return res.status(400).json({ error: 'Missing sectionTitle' });
 
-  // Per-section targeted RAG search — more relevant than generic report-level RAG
-  // Runs in parallel with nothing (fast, ~0.3s) before Phase 1
-  const sectionRagQuery = getSectionRagQuery(sectionTitle, industry, country);
-  const sectionType     = detectSectionType(sectionTitle);
-  const sectionRag      = await sectionRagSearch(sectionRagQuery, sectionType).catch(() => null);
+  const isDocIntelligence = reportType === 'document_intelligence';
 
-  // Merge: section-specific RAG first (more relevant), fallback to shared ragContext
-  const effectiveRag = sectionRag?.chunkText
-    ? sectionRag
-    : { chunkText: ragContext?.chunkText || '', patternText: ragContext?.patternText || '' };
-
-  const context = buildContext(
-    { industry, country, reportType, questions, companies, language },
-    effectiveRag, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery
-  );
+  // Doc Intelligence: skip RAG entirely (docs are already in researchSummary)
+  // Market Research: run per-section RAG search
+  let context;
+  if (isDocIntelligence) {
+    context = buildDocContext(
+      { questions, language },
+      researchSummary, prevSections, sectionTitle
+    );
+  } else {
+    const sectionRagQuery = getSectionRagQuery(sectionTitle, industry, country);
+    const sectionType     = detectSectionType(sectionTitle);
+    const sectionRag      = await sectionRagSearch(sectionRagQuery, sectionType).catch(() => null);
+    const effectiveRag    = sectionRag?.chunkText
+      ? sectionRag
+      : { chunkText: ragContext?.chunkText || '', patternText: ragContext?.patternText || '' };
+    context = buildContext(
+      { industry, country, reportType, questions, companies, language },
+      effectiveRag, researchSummary, prevSections, competencyTemplate, sectionTitle, sectionQuery
+    );
+  }
 
   // SSE setup
   res.setHeader('Content-Type', 'text/event-stream');
@@ -504,7 +535,23 @@ export default async function handler(req, res) {
   // ── Phase 1: Stream commentary ─────────────────────────
   let fullCommentary = '';
   try {
-    const prompt = `You are a senior market research analyst at a top consulting firm. Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}) of a market research report.
+    const prompt = isDocIntelligence
+      ? `You are a senior consultant building a consulting presentation. Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}).
+
+${context}
+
+Write 250-350 words of crisp, presentation-ready consulting prose.
+
+APPROACH:
+- Lead with the single most important insight, finding, or recommendation for this section
+- Ground every claim in the source material or your expertise — be specific (numbers, names, dates)
+- This section will become a slide: write for clarity, impact, and decision-making
+- Use **bold** for key metrics, findings, named entities, and strategic points
+- Build toward a clear implication or action the reader should take
+- If source material is available, extract and interpret it; if not, apply your expertise directly
+- Write with confidence and authority — no disclaimers, no hedging
+- Flowing paragraphs only. No bullet lists.`
+      : `You are a senior market research analyst at a top consulting firm. Write section "${sectionTitle}" (${sectionIndex + 1} of ${totalSections}) of a market research report.
 
 ${context}
 
