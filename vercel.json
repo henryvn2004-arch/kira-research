@@ -1,12 +1,16 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "studio.kiraresearch.com" }],
-      "destination": "/studio/$1"
-    },
-    { "source": "/api/:path*", "destination": "/api/:path*" }
-  ],
+  "rewrites": {
+    "beforeFiles": [
+      {
+        "source": "/(.*)",
+        "has": [{ "type": "host", "value": "studio.kiraresearch.com" }],
+        "destination": "/studio/$1"
+      }
+    ],
+    "afterFiles": [
+      { "source": "/api/:path*", "destination": "/api/:path*" }
+    ]
+  },
   "functions": {
     "api/*.js": {
       "maxDuration": 60
