@@ -17,11 +17,10 @@
     <ul class="nav-links" id="nav-links">
       <li class="nav-dropdown">
         <a href="#" class="nav-drop-trigger">
-          Reports
+          Research
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <div class="nav-dropdown-menu">
-          <div class="ddm-section-label">Research</div>
           <a href="/report.html" class="ddm-item">
             <div class="ddm-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17h6M9 13h6M9 9h3m-6 13h12a2 2 0 002-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v15a2 2 0 002 2z"/></svg>
@@ -40,24 +39,39 @@
               <span class="ddm-desc">10 modules · Upload docs · AI builds your strategic report</span>
             </div>
           </a>
-          <div class="ddm-divider"></div>
-          <div class="ddm-section-label">Studio</div>
+        </div>
+      </li>
+      <li class="nav-dropdown">
+        <a href="#" class="nav-drop-trigger">
+          Studio
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <div class="nav-dropdown-menu">
           <a href="/docreport.html" class="ddm-item">
             <div class="ddm-icon" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             </div>
             <div class="ddm-text">
-              <span class="ddm-label">Document Intelligence</span>
-              <span class="ddm-desc">Upload files · AI analyzes · consulting-style output</span>
+              <span class="ddm-label">Presentation Maker</span>
+              <span class="ddm-desc">Upload any doc · AI builds a polished PPTX deck</span>
             </div>
           </a>
-          <a href="/studio/" class="ddm-item">
-            <div class="ddm-icon" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <a href="/studio/" class="ddm-item" style="opacity:.5;pointer-events:none">
+            <div class="ddm-icon" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5A6278" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
             <div class="ddm-text">
-              <span class="ddm-label">All Studio Tools →</span>
-              <span class="ddm-desc">Presentation Builder, Report Writer & more coming soon</span>
+              <span class="ddm-label" style="color:#5A6278">Report Writer <span style="font-size:9px;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:3px;margin-left:4px">Soon</span></span>
+              <span class="ddm-desc">Generate polished Word documents</span>
+            </div>
+          </a>
+          <a href="/studio/" class="ddm-item" style="opacity:.5;pointer-events:none">
+            <div class="ddm-icon" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5A6278" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            </div>
+            <div class="ddm-text">
+              <span class="ddm-label" style="color:#5A6278">Data Workbook <span style="font-size:9px;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:3px;margin-left:4px">Soon</span></span>
+              <span class="ddm-desc">Turn data into structured Excel workbooks</span>
             </div>
           </a>
         </div>
@@ -110,10 +124,12 @@
 <!-- Mobile nav overlay -->
 <div class="mobile-nav" id="mobile-nav">
   <div class="mobile-nav-inner">
-    <div class="mobile-section-label">Reports</div>
+    <div class="mobile-section-label">Research</div>
     <a href="/report.html"            class="mobile-link">Market Analysis</a>
     <a href="/strategy-builder.html"  class="mobile-link">Strategy Builder</a>
-    <a href="/docreport.html"         class="mobile-link">Document Intelligence</a>
+    <div class="mobile-divider"></div>
+    <div class="mobile-section-label">Studio</div>
+    <a href="/docreport.html"         class="mobile-link">Presentation Maker</a>
     <div class="mobile-divider"></div>
     <a href="/library.html"  class="mobile-link">Library</a>
     <a href="/insights.html" class="mobile-link">Insights</a>
@@ -143,11 +159,15 @@
     </div>
     <div class="footer-cols">
       <div class="footer-col">
-        <div class="footer-col-title">Reports</div>
+        <div class="footer-col-title">Research</div>
         <a href="/report.html">Market Analysis</a>
         <a href="/strategy-builder.html">Strategy Builder</a>
-        <a href="/docreport.html">Document Intelligence</a>
         <a href="/library.html">Living Library</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Studio</div>
+        <a href="/docreport.html">Presentation Maker</a>
+        <a href="/studio/">All Studio Tools</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Resources</div>
@@ -238,8 +258,6 @@
 .ddm-text { display: flex; flex-direction: column; gap: 2px; }
 .ddm-label { font-size: 13px; font-weight: 600; color: #fff; }
 .ddm-desc { font-size: 11px; color: #5A6278; }
-.ddm-section-label { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #5A6278; padding: 4px 12px 2px; }
-.ddm-divider { height: 1px; background: #1A1D24; margin: 6px 0; }
 
 /* ── Account widget ── */
 .nav-account { position: relative; }
