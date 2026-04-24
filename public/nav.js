@@ -21,6 +21,7 @@
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <div class="nav-dropdown-menu">
+          <div class="ddm-section-label">Research</div>
           <a href="/report.html" class="ddm-item">
             <div class="ddm-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17h6M9 13h6M9 9h3m-6 13h12a2 2 0 002-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v15a2 2 0 002 2z"/></svg>
@@ -39,6 +40,8 @@
               <span class="ddm-desc">10 modules · Upload docs · AI builds your strategic report</span>
             </div>
           </a>
+          <div class="ddm-divider"></div>
+          <div class="ddm-section-label">Studio</div>
           <a href="/docreport.html" class="ddm-item">
             <div class="ddm-icon" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2)">
               <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -46,6 +49,15 @@
             <div class="ddm-text">
               <span class="ddm-label">Document Intelligence</span>
               <span class="ddm-desc">Upload files · AI analyzes · consulting-style output</span>
+            </div>
+          </a>
+          <a href="/studio/" class="ddm-item">
+            <div class="ddm-icon" style="background:rgba(0,201,167,.1);border-color:rgba(0,201,167,.2)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <div class="ddm-text">
+              <span class="ddm-label">All Studio Tools →</span>
+              <span class="ddm-desc">Presentation Builder, Report Writer & more coming soon</span>
             </div>
           </a>
         </div>
@@ -226,6 +238,8 @@
 .ddm-text { display: flex; flex-direction: column; gap: 2px; }
 .ddm-label { font-size: 13px; font-weight: 600; color: #fff; }
 .ddm-desc { font-size: 11px; color: #5A6278; }
+.ddm-section-label { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #5A6278; padding: 4px 12px 2px; }
+.ddm-divider { height: 1px; background: #1A1D24; margin: 6px 0; }
 
 /* ── Account widget ── */
 .nav-account { position: relative; }
