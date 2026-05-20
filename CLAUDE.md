@@ -26,11 +26,11 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `87cd168` — fix(vercel): drop .html from slug rewrite destinations
-- **Production:** live, latest Vercel deploy from `87cd168`
+- **Latest commit on `main`:** `a4c2761` — docs(progress): smoke CI fully green
+- **Production:** live, last functional deploy from `87cd168` (docs-only commits since then don't change behaviour)
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 35 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs
-- **Latest CI run (`87cd168`):** ✅ 35 passed / 0 failed. Site is green end-to-end.
+- **Latest CI run (`87cd168`):** ✅ 35 passed / 0 failed in 10.3s. Site is green end-to-end. Verified production URLs include `/en/reports/vietnam-fintech-2026`, `/en/insights/vietnam-sme-lending-shift`, all 21 static pages × 3 locales, all 4 legacy redirects.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
 ---
@@ -95,18 +95,25 @@ supabase/migrations/                # idempotent schema
 ├── 003_insights.sql                # insights + insight_translations + seed
 └── 004_purchases.sql               # purchases + downloads + RLS
 
-tests/smoke.spec.js                 # 30 Playwright tests
+tests/smoke.spec.js                 # 35 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
 playwright.config.js                # chromium-only, github reporter
-vercel.json                         # cleanUrls + 13 redirects + 7 rewrites
+vercel.json                         # cleanUrls + 13 redirects + 7 rewrites (all sources/destinations no-extension form)
 ```
 
-Key Vercel rewrite pattern (was fragile, now stable):
+Key Vercel rewrite pattern (final, stable):
 ```
-/<locale>/reports/:slug((?!_view$|template$).+) → /en/reports/_view.html
+/<locale>/reports/:slug  → /en/reports/_view
+/<locale>/insights/:slug → /en/insights/_view
 ```
-The negative-lookahead avoids the path-to-regexp parser quirk that broke
-hyphenated slugs in earlier iterations.
+Two things matter here:
+- `:slug` is plain (no inline regex). Vercel's path-to-regexp silently
+  drops complex patterns; filesystem check runs before rewrites so
+  concrete files (`_view.html`, `template.html`) still serve directly.
+- Destination uses **no-extension form**. `cleanUrls` strips `.html`
+  from rewrite destinations internally, so writing `_view.html` makes
+  Vercel look for a file literally named `_view` (no extension) → 404.
+  Writing `_view` lets cleanUrls forward-map to `_view.html` correctly.
 
 ---
 
@@ -127,8 +134,15 @@ These are tasks only the owner can do (involve dashboards, not git):
    - `PAYPAL_CLIENT_SECRET`
    - `PAYPAL_MODE` (= `sandbox` or `live`)
    - `APP_URL` (= `https://kiraresearch.com`)
-4. ☐ **Verify** `https://kiraresearch.com/en/reports/vietnam-fintech-2026` renders preview (no 404) — confirms last rewrite fix
-5. ☐ **Confirm first smoke workflow run passes** — Actions tab → post-deploy smoke
+
+### Done (no further action needed)
+
+- ✅ Repo is public, GitHub Actions running free
+- ✅ Smoke CI workflow live and green (35/35 pass)
+- ✅ `/en/reports/<slug>` + `/en/insights/<slug>` rewrites verified by CI
+- ✅ Legacy URL redirects (`/library.html`, `/report.html`, etc.) verified by CI
+- ✅ Admin auth gate on `/en/admin/*` verified — unauthenticated users redirected
+- ✅ Public API endpoints respond with JSON, leads endpoint rejects GET, admin-leads rejects unauth
 
 ---
 
@@ -187,9 +201,7 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 
 2. **Vercel `cleanUrls: true` is required** or `/en/library` (file: `library.html`) 404s.
 
-3. **Path-to-regexp slug constraints with hyphens are fragile.**
-   - Use Vercel docs pattern: `:slug((?!_view$|template$).+)`
-   - Do NOT use `:slug([a-z0-9][a-z0-9-]+)` — the inner hyphen-char class breaks slugs containing hyphens (e.g. `vietnam-fintech-2026`).
+3. **Vercel rewrite slug patterns: keep them plain.** See gotchas #11 and #13 below — `:slug` (no inline regex) + no-extension destination is the only combination that reliably works with cleanUrls. The negative-lookahead pattern `:slug((?!_view$|template$).+)` that worked in earlier Vercel docs is silently dropped by their current parser.
 
 4. **`npm install` not `npm ci` in CI workflow** — no `package-lock.json` committed yet. When/if one is added, switch to `npm ci`.
 
@@ -240,4 +252,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (Sprint 20 complete — smoke CI fully green: 35/35 pass, site verified end-to-end)*
+*Last updated: 2026-05-20 (Sprint 20 + memory refresh — smoke CI fully green: 35/35 pass, owner items #4-5 verified by CI and retired from blocking list)*
