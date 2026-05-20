@@ -16,7 +16,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 | 1 | Report unit foundation | ⏸️ | Henry's Claude-chat workflow; outside repo build |
 | 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5`. Removal cleanup finalized in `a8a9206` (29 legacy files gone). |
 | 3 | Library infrastructure | ✅ | 3.1 + 3.2 + 3.3 all done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`, `8bcb6d4`). Sitemap + hreflang shipped. |
-| 4 | Admin backend | 🟡 | 4.1 auth ✅ (`714375a`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 KPI dashboard + audit log, 4.3 transactions+users, 4.4 aggregator tracking — all pending** |
+| 4 | Admin backend | 🟡 | 4.1 auth + dashboard ✅ (`714375a`, `eb05464`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 audit log deferred, 4.3 transactions+users pending, 4.4 aggregator tracking pending** |
 | 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206` (legacy gone, library uses direct PayPal). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not rebuilt — currently just redirect to landing.** |
 | 6 | Report population | ⏸️ | 0 reports seeded beyond migration samples — Henry's content production |
 | 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`). **7.2 auto-insights cron + 7.3 schema markup/OG + GSC submission pending.** |
@@ -137,8 +137,8 @@ Week 10-12 →  Phase 10: Polish & Launch
 
 ### Sprint 4.1 — Admin auth + dashboard
 - [x] Email whitelist middleware (env var `ADMIN_EMAILS`)
-- [ ] `/admin` dashboard với KPI cards — **NOT STARTED**
-- [ ] Audit log table — **NOT STARTED**
+- [x] `/admin` dashboard với KPI cards — shipped in `eb05464`. `/en/admin/` shows 4 KPI cards (leads / reports / insights / revenue) + recent leads + recent purchases. Powered by `api/admin-stats.js` aggregator.
+- [ ] Audit log table — **deferred** (no concurrent admin activity yet to monitor; revisit when there's signal worth tracking)
 
 ### Sprint 4.2 — Reports management
 - [x] `/admin/reports` list view với filter/search/sort
@@ -401,4 +401,4 @@ Cross-cutting work that wasn't in the original 10-phase plan but had to ship to 
 
 ---
 
-*Last updated: 2026-05-20 (Sprint 3.3 closed via item C; Sprint 2.3 + 5.3 closed via item F — 29 legacy files + 11k lines removed in `a8a9206`. Through commit `a8a9206`.)*
+*Last updated: 2026-05-20 (Sprints 2.3, 3.3, 4.1-dashboard, 5.3 all closed today via items C, F, H. Through commit `eb05464`.)*

@@ -26,8 +26,9 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `a8a9206` — chore(legacy): remove 29 platform-era files
-- **Production:** live, latest Vercel deploy from `a8a9206` (✅ CI green)
+- **Latest commit on `main`:** `eb05464` — feat(admin): KPI dashboard at /en/admin/
+- **Production:** live, Vercel auto-deploys on every push to main
+- **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` was pushed at end-of-session — CI poll showed in_progress when this file was last touched; verify in Actions tab if doing follow-up work.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 41 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` injection)**.
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅.
@@ -50,7 +51,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **3.1** | `library.html` page | ✅ | `c953fb4` |
 | **3.2** | Individual report page (`_view.html` rewrite) | ✅ | `c953fb4`, `1a46491`, `87cd168` |
 | **3.3** | Backend integration (DB + PayPal + slug routing + sitemap) | ✅ | `ffde22e`, `60b00bb`, `87cd168`, `8bcb6d4` · sitemap + hreflang shipped, per-report OG/JSON-LD → 7.3 |
-| **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth only · **KPI dashboard + audit log pending** |
+| **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth + `eb05464` dashboard · **audit log deferred** |
 | **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` · stats/featured pending |
 | **4.3** | Transactions + Users admin | 🔴 | **not started** |
 | **4.4** | Leads + Aggregators admin | 🟡 | `714375a` leads only · **aggregator tracking pending** |
@@ -97,13 +98,14 @@ public/
 ├── index.html                      # root: locale auto-redirect
 └── robots.txt                      # crawler directives
 
-api/                                # 12 Vercel serverless functions (all active)
+api/                                # 13 Vercel serverless functions (all active)
 ├── leads.js                        # public POST — form submissions
 ├── library-list.js  insights-list.js  insight.js  library-report.js  # public reads
 ├── library-buy.js                  # PayPal create + capture
 ├── library-verify.js               # check purchase state
 ├── library-content.js              # JWT-gated full content + PDF URL
 ├── admin-leads.js  admin-reports.js  admin-insights.js  # JWT + ADMIN_EMAILS whitelist
+├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
 └── sitemap.js                      # dynamic sitemap (index + per-locale)
 
 supabase/migrations/                # idempotent schema
@@ -181,11 +183,14 @@ more pending sprints in `project des/workplan.md`. Recommended order:
   Wire `library-content.js` to return real signed URL from Storage bucket. Add admin upload UI. ~1 day.
 - **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
   Pick provider (Resend recommended). Year 1 = simple sends only. ~half-day.
+- **7.3-remainder — Per-report schema markup + Open Graph + JSON-LD** → boosts SEO once content lands.
+  Sitemap already shipped (item C); now wire `_view.html` to inject per-report OG tags + Product/Article schema. ~half-day.
+- **4.3 — Transactions + Users admin** → revenue tracking UX.
+  `/en/admin/transactions` list view + detail + manual refund button. Reuses `purchases` table. ~1 day.
 - ~~**F — Legacy file cleanup**~~ ✅ **DONE** (`a8a9206`). 29 files / 11,138 lines removed. Closed Sprints 2.3 + 5.3.
+- ~~**H — KPI dashboard + audit log**~~ ✅ **DONE — dashboard shipped** (`eb05464`). Closed Sprint 4.1 dashboard half. Audit log deferred.
 - **G — Native reviewer QA pass on JA/KO copy** → fills Sprint **8.1** + **9.1** native reviewer items.
   Ship JA/KO drafts to a native Upwork reviewer ($50-100/locale), fold fixes back in. First 10-20 reports per locale per `project des/CLAUDE.md`.
-- **H — KPI dashboard + audit log** → fills Sprint **4.1** dashboard gap.
-  Admin landing page with: leads count, recent purchases, top reports, audit-log table. ~1 day.
 
 ---
 
@@ -268,4 +273,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (item C + F shipped — sitemap surface live; 29 legacy files removed. Sprints 2.3, 3.3, 5.3 closed. Latest commit `a8a9206`.)*
+*Last updated: 2026-05-20 (items C + F + H shipped — sitemap, legacy cleanup, admin dashboard. Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed. Latest commit `eb05464`.)*
