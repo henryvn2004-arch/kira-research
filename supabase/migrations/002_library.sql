@@ -163,10 +163,10 @@ select
   'Vietnam Fintech Landscape: Payments, Lending & Competitive Dynamics',
   'VIETNAM · FINTECH · MARKET ANALYSIS',
   jsonb_build_object(
-    'lede',  'Vietnam''s fintech sector entered 2026 with 72% smartphone penetration, a maturing regulatory framework under State Bank of Vietnam (SBV), and rising competition between domestic super-apps and regional challengers. Payments remain the dominant segment, but lending and embedded finance are growing fastest as banks open APIs and quick-commerce platforms add credit products.',
+    'lede',  $lede$Vietnam's fintech sector entered 2026 with 72% smartphone penetration, a maturing regulatory framework under State Bank of Vietnam (SBV), and rising competition between domestic super-apps and regional challengers. Payments remain the dominant segment, but lending and embedded finance are growing fastest as banks open APIs and quick-commerce platforms add credit products.$lede$,
     'paragraphs', jsonb_build_array(
-      'This report covers the competitive landscape across MoMo, ZaloPay, VNPay, and emerging neobank entrants; channel structures across QR-based and account-to-account payments; the regulatory environment under Decree 13/2023 and subsequent amendments; and the increasing role of AI in credit scoring, fraud detection, and customer operations across Vietnamese fintech operators.',
-      'The 2026 AI impact on Vietnamese fintech is structural rather than peripheral. Major operators have integrated LLM-powered customer service (reducing support cost ~30%), AI-driven underwriting (expanding the addressable lending market by ~18%), and fraud-detection improvements that have measurably reduced chargebacks across the leading payment rails.'
+      $p1$This report covers the competitive landscape across MoMo, ZaloPay, VNPay, and emerging neobank entrants; channel structures across QR-based and account-to-account payments; the regulatory environment under Decree 13/2023 and subsequent amendments; and the increasing role of AI in credit scoring, fraud detection, and customer operations across Vietnamese fintech operators.$p1$,
+      $p2$The 2026 AI impact on Vietnamese fintech is structural rather than peripheral. Major operators have integrated LLM-powered customer service (reducing support cost ~30%), AI-driven underwriting (expanding the addressable lending market by ~18%), and fraud-detection improvements that have measurably reduced chargebacks across the leading payment rails.$p2$
     ),
     'chart', jsonb_build_object(
       'title',    'Vietnam Digital Payment Transaction Volume (USD bn)',
