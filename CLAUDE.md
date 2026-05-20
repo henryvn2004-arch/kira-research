@@ -26,11 +26,12 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `659b81d` — fix(smoke): scope selectors to avoid strict-mode collisions
-- **Production:** live, latest Vercel deploy from `659b81d`
+- **Latest commit on `main`:** `87cd168` — fix(vercel): drop .html from slug rewrite destinations
+- **Production:** live, latest Vercel deploy from `87cd168`
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 30 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs
-- **First CI run (commit `7e4e0de`):** 30 failed / 5 passed — all 30 failures were over-broad selectors in the test suite, not site bugs. Fixed in `659b81d`. Awaiting next run for confirmation.
+- **Smoke tests:** 35 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs
+- **Latest CI run (`87cd168`):** ✅ 35 passed / 0 failed. Site is green end-to-end.
+- **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
 ---
 
@@ -59,6 +60,8 @@ link execution back to git log.
 | 16 | Security cleanup: remove leaked secrets, repo→public | ✅ | `09dbc30` |
 | 17 | Cross-machine pickup guide (CLAUDE.md at root) | ✅ | `9fde035` |
 | 18 | Smoke selector fixes (logo-mark + title + auth + redirects) | ✅ | `659b81d` |
+| 19 | Real site fixes (4 legacy files + redirect sources + slug rewrite pattern) | ✅ | `74c21c0` |
+| 20 | cleanUrls + rewrite quirk: no-extension destinations | ✅ | `87cd168` |
 
 ---
 
@@ -200,6 +203,14 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 
 9. **`cleanUrls: true` strips `.html` from URLs** — admin JS redirects to `/auth.html` but the browser lands on `/auth`. Any URL assertion involving HTML files must accept both forms: `/\/auth(\.html)?(\?|$|\/)/`.
 
+10. **`cleanUrls` BREAKS redirects whose source ends in `.html`** — Vercel normalizes `.html` requests FIRST (308 to no-extension), then matches redirects against the normalized path. So `{ "source": "/library.html", ... }` never fires because by the time the redirect runs, the path is already `/library`. Always write redirect sources in the no-extension form (`/library`, `/about`, etc.).
+
+11. **`cleanUrls` ALSO breaks rewrites whose `destination` ends in `.html`** — when the destination is `/foo/_view.html`, Vercel applies cleanUrls to the rewrite destination and looks for a file at `/foo/_view` (no extension), which doesn't literally exist on disk → 404. Write rewrite destinations in the no-extension form too (`/foo/_view`). The cleanUrls forward map handles serving `_view.html` from there.
+
+12. **Legacy root HTML files SHADOW redirects** — `public/library.html`, `report.html`, etc. (from the platform era) make their corresponding redirects no-op because filesystem lookup wins. When adding a redirect for a path, ALSO delete the file at that path if it exists.
+
+13. **Rewrite slug patterns: keep them simple.** Vercel's path-to-regexp silently rejects complex inline patterns like `:slug((?!_view$|template$).+)` — the rule loads but never matches. Use plain `:slug` (single segment). Filesystem check runs before rewrites, so concrete files like `_view.html` and `template.html` still serve directly.
+
 ---
 
 ## Pickup checklist for new Claude session
@@ -229,4 +240,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (Sprint 18 complete — smoke selector fixes pushed, awaiting CI re-run)*
+*Last updated: 2026-05-20 (Sprint 20 complete — smoke CI fully green: 35/35 pass, site verified end-to-end)*
