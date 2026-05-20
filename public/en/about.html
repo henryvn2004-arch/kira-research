@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — KIRA Research</title>
+  <meta name="description" content="KIRA Research is a specialist Southeast Asia research firm. Two decades of regional fieldwork, senior analysts, modern delivery.">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/about">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/about">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/about">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/about">
+
+  <meta property="og:title"       content="About — KIRA Research">
+  <meta property="og:description" content="Specialist Southeast Asia research firm. Senior analysts, modern delivery.">
+  <meta property="og:type"        content="website">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    .page-hero {
+      padding: 80px 0 56px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 880px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      padding: 96px 0 24px;
+      align-items: start;
+    }
+    .story-grid .label-col {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .story-grid h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .story-grid p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 680px;
+    }
+    .story-grid p strong { color: var(--text); font-weight: 600; }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 64px 0;
+    }
+    .pillar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      position: relative;
+    }
+    .pillar::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 40px; height: 1px;
+      background: var(--primary);
+    }
+    .pillar .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+    }
+    .pillar h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.015em;
+      margin-bottom: 12px;
+    }
+    .pillar p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .stance {
+      padding: 96px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+    .stance-col h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stance-col h3::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      background: var(--primary);
+    }
+    .stance-col ul {
+      list-style: none;
+      padding: 0;
+    }
+    .stance-col li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .stance-col li:last-child { border-bottom: none; }
+    .stance-col li .lede { font-weight: 600; display: block; margin-bottom: 4px; }
+    .stance-col li .body { color: var(--muted); font-size: 14px; }
+
+    .team {
+      padding: 96px 0 0;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .team h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .team .lead {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .team-facts {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .team-fact {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .team-fact:last-child { border-bottom: none; }
+    .team-fact .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding-top: 2px;
+    }
+    .team-fact .val { font-size: 15px; line-height: 1.6; color: var(--text); }
+
+    .closing-cta {
+      margin: 96px 0 0;
+      padding: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .closing-cta::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 1px;
+      background: var(--primary);
+    }
+    .closing-cta h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .closing-cta p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+    .closing-cta .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 968px) {
+      .story-grid, .team-grid { grid-template-columns: 1fr; gap: 32px; }
+      .pillars { grid-template-columns: 1fr; }
+      .stance-grid { grid-template-columns: 1fr; gap: 48px; }
+      .closing-cta { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow" data-i18n="about.eyebrow">ABOUT</div>
+    <h1 data-i18n="about.title">
+      Specialist research for <span class="accent">Southeast Asia.</span>
+    </h1>
+    <p class="lead" data-i18n="about.lead">
+      KIRA Research is built on two decades of regional fieldwork. We publish accessible market intelligence for the businesses, investors, and operators making decisions in Southeast Asia.
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="story-grid">
+      <div class="label-col" data-i18n="about.storyLabel">— What we're built on</div>
+      <div>
+        <h2 data-i18n="about.storyHeading">Two decades of primary fieldwork.</h2>
+        <p data-i18n="about.storyP1">
+          <strong>Our research history started in the field</strong> — interviews, channel audits, consumer studies, distributor mappings across Vietnam, Indonesia, Thailand, the Philippines, Malaysia, and the rest of the region.
+        </p>
+        <p data-i18n="about.storyP2">
+          That work is the foundation our analysts return to when they write each report. It's why we can explain <strong>why</strong> a channel behaves the way it does, why a price tier exists, why a regulatory shift will or won't land the way it reads on paper.
+        </p>
+        <p data-i18n="about.storyP3">
+          The reports we publish today are built on that structural understanding — refreshed with current data, augmented by modern tools, and reviewed by a senior analyst before they reach our customers.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="pillars">
+      <div class="pillar">
+        <div class="num">01</div>
+        <h3 data-i18n="about.pillar1Title">Specialized, not generic.</h3>
+        <p data-i18n="about.pillar1Body">
+          We cover Southeast Asia in depth. We don't sell the same global template repackaged by country — every report is grounded in how the specific market actually works.
+        </p>
+      </div>
+      <div class="pillar">
+        <div class="num">02</div>
+        <h3 data-i18n="about.pillar2Title">Senior analysts, not data scrapers.</h3>
+        <p data-i18n="about.pillar2Body">
+          Our analysts have consulting backgrounds and have spent years doing primary research in the region. The structural insight is what you're paying for.
+        </p>
+      </div>
+      <div class="pillar">
+        <div class="num">03</div>
+        <h3 data-i18n="about.pillar3Title">Accessible pricing, faster refresh.</h3>
+        <p data-i18n="about.pillar3Body">
+          Modern delivery means we can publish at a fraction of traditional pricing and refresh more often. Same depth, lower friction.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stance">
+    <div class="container">
+      <div class="stance-grid">
+        <div class="stance-col">
+          <h3 data-i18n="about.weAreLabel">What we are</h3>
+          <ul>
+            <li>
+              <span class="lede" data-i18n="about.weAre1Title">A specialist research firm.</span>
+              <span class="body"   data-i18n="about.weAre1Body">Senior analysts publishing market intelligence reports on Southeast Asia.</span>
+            </li>
+            <li>
+              <span class="lede" data-i18n="about.weAre2Title">A multi-locale publisher.</span>
+              <span class="body"   data-i18n="about.weAre2Body">We publish in English, Japanese, and Korean — built for SEA-focused enterprise buyers in Tokyo, Seoul, Singapore, and beyond.</span>
+            </li>
+            <li>
+              <span class="lede" data-i18n="about.weAre3Title">A pre-built library plus custom work.</span>
+              <span class="body"   data-i18n="about.weAre3Body">Pre-published reports at accessible pricing for fast self-serve. Commissioned research for buyers who need tailored work.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="stance-col">
+          <h3 data-i18n="about.weAreNotLabel">What we are not</h3>
+          <ul>
+            <li>
+              <span class="lede" data-i18n="about.weAreNot1Title">Not a SaaS app.</span>
+              <span class="body"   data-i18n="about.weAreNot1Body">We're a research firm. Our customers buy reports, not seats.</span>
+            </li>
+            <li>
+              <span class="lede" data-i18n="about.weAreNot2Title">Not a generic database.</span>
+              <span class="body"   data-i18n="about.weAreNot2Body">We don't aggregate global templates. We publish what our analysts can stand behind.</span>
+            </li>
+            <li>
+              <span class="lede" data-i18n="about.weAreNot3Title">Not a volume play.</span>
+              <span class="body"   data-i18n="about.weAreNot3Body">We publish at the pace our quality bar allows. Power-law beats breadth when buyers are deciding millions on the back of a single report.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container team">
+    <div class="team-grid">
+      <div>
+        <h2 data-i18n="about.teamHeading">The team.</h2>
+        <p class="lead" data-i18n="about.teamLead">
+          Senior analysts based in Ho Chi Minh City and Singapore. Consulting background, decades of regional research history.
+        </p>
+        <a href="/en/custom-research/" class="btn btn-secondary">
+          <span data-i18n="about.teamCta">Work with our team</span>
+          <span class="btn-arrow">→</span>
+        </a>
+      </div>
+      <div class="team-facts">
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factHQ">Headquarters</div>
+          <div class="val" data-i18n="about.factHQVal">Ho Chi Minh City · Singapore</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factCoverage">Coverage</div>
+          <div class="val" data-i18n="about.factCoverageVal">Vietnam, Indonesia, Thailand, the Philippines, Malaysia, Singapore, Myanmar, Cambodia, Laos, India, Bangladesh</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factLanguages">Languages</div>
+          <div class="val" data-i18n="about.factLanguagesVal">English · 日本語 · 한국어 — native review on every JA/KO publication</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factDistribution">Distribution</div>
+          <div class="val" data-i18n="about.factDistributionVal">Direct on kiraresearch.com plus ResearchAndMarkets, MarketResearch.com, GIIResearch, ASDReports</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factContact">Contact</div>
+          <div class="val">hello@kiraresearch.com</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="closing-cta">
+      <h3 data-i18n="about.closingHeading">See the work.</h3>
+      <p data-i18n="about.closingBody">
+        Browse the library, read our methodology in detail, or talk to our analysts about a commissioned study.
+      </p>
+      <div class="actions">
+        <a href="/en/library" class="btn btn-primary">
+          <span data-i18n="about.closingCta1">Browse Library</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/en/methodology" class="btn btn-secondary" data-i18n="about.closingCta2">Read Methodology</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+</body>
+</html>

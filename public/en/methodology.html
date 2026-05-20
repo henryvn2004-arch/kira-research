@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology — KIRA Research</title>
+  <meta name="description" content="How we research, write, and review every report. Primary research foundation, current data refresh, AI-augmented analysis, analyst curation.">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/methodology">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/methodology">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/methodology">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/methodology">
+
+  <meta property="og:title"       content="Methodology — KIRA Research">
+  <meta property="og:description" content="Primary research, current data, AI-augmented analysis, analyst curation.">
+  <meta property="og:type"        content="website">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    .page-hero {
+      padding: 80px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 680px;
+    }
+
+    /* Principles strip */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .principle {
+      padding: 40px 32px;
+      border-right: 1px solid var(--border);
+    }
+    .principle:last-child { border-right: none; }
+    .principle .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .principle .body {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Step blocks */
+    .step-block {
+      padding: 96px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-block:last-child { border-bottom: none; }
+    .step-grid {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .step-num-large {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      padding-top: 8px;
+    }
+    .step-num-large::after {
+      content: "";
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--primary);
+      margin-top: 12px;
+    }
+    .step-content h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .step-content p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 720px;
+    }
+    .step-content p strong { color: var(--text); font-weight: 600; }
+    .step-detail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-top: 32px;
+      max-width: 720px;
+    }
+    .step-detail h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .step-detail ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step-detail li {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .step-detail li::before {
+      content: "→";
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Transparency block */
+    .transparency {
+      padding: 96px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .transparency h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+    .transparency .lead {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 48px;
+      line-height: 1.65;
+    }
+    .trans-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .trans-col {
+      padding: 32px;
+      border-right: 1px solid var(--border);
+    }
+    .trans-col:last-child { border-right: none; }
+    .trans-col h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trans-col h3::before {
+      content: "";
+      width: 20px;
+      height: 1px;
+      background: var(--primary);
+    }
+    .trans-col ul { list-style: none; padding: 0; }
+    .trans-col li {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .trans-col li:last-child { border-bottom: none; }
+
+    /* QA flow */
+    .qa-flow {
+      padding: 96px 0;
+    }
+    .qa-flow h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 48px;
+    }
+    .qa-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .qa-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      position: relative;
+    }
+    .qa-step::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 40px; height: 1px;
+      background: var(--primary);
+    }
+    .qa-step .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .qa-step h4 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .qa-step p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Closing CTA */
+    .closing-cta {
+      margin: 64px 0 0;
+      padding: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .closing-cta::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 1px;
+      background: var(--primary);
+    }
+    .closing-cta h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .closing-cta p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 28px;
+    }
+    .closing-cta .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 968px) {
+      .principles  { grid-template-columns: 1fr; }
+      .principle   { border-right: none; border-bottom: 1px solid var(--border); }
+      .step-grid   { grid-template-columns: 1fr; gap: 24px; }
+      .step-content h2 { font-size: 32px; }
+      .trans-grid  { grid-template-columns: 1fr; }
+      .trans-col   { border-right: none; border-bottom: 1px solid var(--border); }
+      .qa-steps    { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .qa-steps { grid-template-columns: 1fr; }
+      .closing-cta { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow" data-i18n="meth.eyebrow">METHODOLOGY</div>
+    <h1 data-i18n="meth.title">
+      How every report<br>is researched, written,<br>and <span class="accent">reviewed.</span>
+    </h1>
+    <p class="lead" data-i18n="meth.lead">
+      We publish accessible market intelligence at a fraction of traditional pricing. The work behind each report is what makes that economics possible — and what makes us willing to put our name on it.
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="principles">
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle1Key">— Foundation</div>
+        <div class="body" data-i18n="meth.principle1Body">
+          Two decades of primary fieldwork across Southeast Asia. Structural understanding, not just secondary aggregation.
+        </div>
+      </div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle2Key">— Transparency</div>
+        <div class="body" data-i18n="meth.principle2Body">
+          We're explicit about where data comes from, where we estimate, and where uncertainty exists.
+        </div>
+      </div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle3Key">— Human review</div>
+        <div class="body" data-i18n="meth.principle3Body">
+          Every report — including translations — is reviewed by a senior analyst before publication. No exceptions.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 01 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">01</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step1Title">Primary research foundation.</h2>
+        <p data-i18n="meth.step1P1">
+          Our analysts have spent two decades doing primary market research across the region — interviews, channel audits, consumer studies, distributor mappings, retail visits. That fieldwork is the foundation we return to when we write each report.
+        </p>
+        <p data-i18n="meth.step1P2">
+          Why it matters: structural insights — <strong>how a channel actually behaves, why a price tier exists, who really holds the margin</strong> — don't change every quarter. They take years of fieldwork to build, and they're what separates a useful report from a list of statistics.
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step1DetailLabel">What we draw on</h4>
+          <ul>
+            <li data-i18n="meth.step1Detail1">Trade and consumer interviews conducted across SEA markets</li>
+            <li data-i18n="meth.step1Detail2">Channel mappings and distributor relationships built over multiple research cycles</li>
+            <li data-i18n="meth.step1Detail3">Industry frameworks refined through repeated client engagements</li>
+            <li data-i18n="meth.step1Detail4">Local-language source familiarity (news, regulatory filings, industry associations)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 02 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">02</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step2Title">Current data refresh.</h2>
+        <p data-i18n="meth.step2P1">
+          Structural insight is the foundation. <strong>Current data</strong> is what makes a report useful today. For every publication, we refresh market sizes, competitive positions, regulatory updates, and recent moves before the report goes out.
+        </p>
+        <p data-i18n="meth.step2P2">
+          We use a mix of secondary sources, local-language media, government statistics, industry association data, and verified public filings. Where data is contested, we say so. Where we estimate, we say so.
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step2DetailLabel">Sourcing standards</h4>
+          <ul>
+            <li data-i18n="meth.step2Detail1">Primary attribution for every reported number where the source allows it</li>
+            <li data-i18n="meth.step2Detail2">Local-language sources prioritized for in-country data (Vietnamese, Thai, Indonesian, Filipino, Malay, plus Japanese and Korean)</li>
+            <li data-i18n="meth.step2Detail3">Cross-checks across at least two independent sources for material figures</li>
+            <li data-i18n="meth.step2Detail4">Explicit "est." labelling on analyst-modeled numbers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 03 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">03</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step3Title">AI-augmented analysis.</h2>
+        <p data-i18n="meth.step3P1">
+          We use modern AI tools to accelerate our work — synthesizing source material, drafting initial sections, structuring data tables, and translating between English, Japanese, and Korean. This is how we publish at accessible pricing without compromising depth.
+        </p>
+        <p data-i18n="meth.step3P2">
+          What AI does <strong>well</strong> for us: summarizing large volumes of source material consistently, identifying patterns across documents, structuring information, and producing first drafts that an analyst can then sharpen.
+        </p>
+        <p data-i18n="meth.step3P3">
+          What AI does <strong>not</strong> do: replace judgment, invent insights, or sign off on numbers. Every AI-generated section is reviewed, edited, and verified by a senior analyst before publication.
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step3DetailLabel">Where AI is used</h4>
+          <ul>
+            <li data-i18n="meth.step3Detail1">Synthesis of source materials into structured analytical sections</li>
+            <li data-i18n="meth.step3Detail2">First-draft writing under an analyst-defined framework</li>
+            <li data-i18n="meth.step3Detail3">Cross-referencing and pattern recognition across our research library</li>
+            <li data-i18n="meth.step3Detail4">Translation between English, Japanese, and Korean (followed by native-speaker review)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 04 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">04</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step4Title">Analyst curation.</h2>
+        <p data-i18n="meth.step4P1">
+          Every report is reviewed by a senior analyst before it goes out. They catch errors AI misses, add strategic context, sharpen the framing, and make the call on what to remove. <strong>Nothing publishes without human sign-off.</strong>
+        </p>
+        <p data-i18n="meth.step4P2">
+          For Japanese and Korean editions, a native-language reviewer additionally checks for cultural nuance, terminology accuracy, and tone. The bar is whether a senior buyer in Tokyo or Seoul would read it and think it was written by someone who understands the market.
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step4DetailLabel">Analyst review checklist</h4>
+          <ul>
+            <li data-i18n="meth.step4Detail1">Fact-check every reported figure against source</li>
+            <li data-i18n="meth.step4Detail2">Verify competitive positioning claims against analyst knowledge</li>
+            <li data-i18n="meth.step4Detail3">Confirm regulatory and channel claims with current-state context</li>
+            <li data-i18n="meth.step4Detail4">Native-speaker review on JA and KO editions before publication</li>
+            <li data-i18n="meth.step4Detail5">Final read for tone, framing, and strategic clarity</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transparency -->
+  <section class="transparency">
+    <div class="container">
+      <h2 data-i18n="meth.transHeading">What we're transparent about.</h2>
+      <p class="lead" data-i18n="meth.transLead">
+        We don't claim AI-driven precision we can't deliver. Here's the honest split on what each part of our process is good for — and where the limits are.
+      </p>
+      <div class="trans-grid">
+        <div class="trans-col">
+          <h3 data-i18n="meth.transStrongLabel">Where we're strong</h3>
+          <ul>
+            <li data-i18n="meth.transStrong1">Structural understanding of SEA markets — channels, value chain, regulatory environment</li>
+            <li data-i18n="meth.transStrong2">Competitive landscape mapping for major industries in covered countries</li>
+            <li data-i18n="meth.transStrong3">Consumer behavior patterns informed by primary research history</li>
+            <li data-i18n="meth.transStrong4">Cross-market comparisons that require analyst judgment, not just data lookup</li>
+          </ul>
+        </div>
+        <div class="trans-col">
+          <h3 data-i18n="meth.transLimitLabel">Where we acknowledge limits</h3>
+          <ul>
+            <li data-i18n="meth.transLimit1">Forward-looking forecasts are estimates — directional, not precise to a percentage point</li>
+            <li data-i18n="meth.transLimit2">Private company financials may not be fully visible — we mark estimates clearly</li>
+            <li data-i18n="meth.transLimit3">Highly fragmented sectors carry wider uncertainty bands than concentrated ones</li>
+            <li data-i18n="meth.transLimit4">Real-time events post-publication require a refresh — we note last-refresh dates explicitly</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QA Flow -->
+  <section class="container qa-flow">
+    <h2 data-i18n="meth.qaHeading">End-to-end QA on every report.</h2>
+    <div class="qa-steps">
+      <div class="qa-step">
+        <div class="key">QA · 01</div>
+        <h4 data-i18n="meth.qa1Title">Source verification</h4>
+        <p data-i18n="meth.qa1Body">Every reported number traced back to source. Inconsistencies flagged before drafting.</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 02</div>
+        <h4 data-i18n="meth.qa2Title">Analyst review</h4>
+        <p data-i18n="meth.qa2Body">Senior analyst reads the full report. Strategic claims sharpened or removed.</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 03</div>
+        <h4 data-i18n="meth.qa3Title">Native-language review</h4>
+        <p data-i18n="meth.qa3Body">JA and KO editions reviewed by native speakers for accuracy and tone.</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 04</div>
+        <h4 data-i18n="meth.qa4Title">Refresh cycle</h4>
+        <p data-i18n="meth.qa4Body">Published reports receive free updates within 12 months of purchase as the market moves.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="closing-cta">
+      <h3 data-i18n="meth.closingHeading">Read the work.</h3>
+      <p data-i18n="meth.closingBody">
+        The methodology only matters if the reports stand up to it. Browse the library, or commission a custom study built to the same standard.
+      </p>
+      <div class="actions">
+        <a href="/en/library" class="btn btn-primary">
+          <span data-i18n="meth.closingCta1">Browse Library</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/en/custom-research/" class="btn btn-secondary" data-i18n="meth.closingCta2">Commission Research</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+</body>
+</html>
