@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>調査手法 — KIRA Research</title>
+  <meta name="description" content="レポートの調査・執筆・レビューの方法。一次調査の基盤、最新データ更新、AI活用分析、アナリストのキュレーション。">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/methodology">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/methodology">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/methodology">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/methodology">
+  <link rel="canonical" href="https://kiraresearch.com/ja/methodology">
+
+  <meta property="og:title"       content="調査手法 — KIRA Research">
+  <meta property="og:description" content="一次調査、最新データ、AI活用分析、アナリストキュレーション。">
+  <meta property="og:type"        content="website">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    body, h1, h2, h3, h4 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; }
+    .page-hero { padding: 80px 0 56px; border-bottom: 1px solid var(--border); }
+    .page-hero h1 { font-weight: 900; font-size: clamp(38px, 5vw, 56px); line-height: 1.1; letter-spacing: -0.025em; max-width: 900px; margin-bottom: 24px; }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead { font-size: 18px; line-height: 1.85; color: var(--muted); max-width: 680px; }
+    .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 1px solid var(--border); }
+    .principle { padding: 40px 32px; border-right: 1px solid var(--border); }
+    .principle:last-child { border-right: none; }
+    .principle .key { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+    .principle .body { font-size: 15px; color: var(--text); line-height: 1.7; }
+    .step-block { padding: 96px 0; border-bottom: 1px solid var(--border); }
+    .step-block:last-child { border-bottom: none; }
+    .step-grid { display: grid; grid-template-columns: 160px 1fr; gap: 64px; align-items: start; }
+    .step-num-large { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px; color: var(--primary); letter-spacing: 0.2em; padding-top: 8px; }
+    .step-num-large::after { content: ""; display: block; width: 32px; height: 1px; background: var(--primary); margin-top: 12px; }
+    .step-content h2 { font-weight: 900; font-size: 36px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .step-content p { font-size: 16px; line-height: 1.85; color: var(--muted); margin-bottom: 20px; max-width: 720px; }
+    .step-content p strong { color: var(--text); font-weight: 600; }
+    .step-detail { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px 32px; margin-top: 32px; max-width: 720px; }
+    .step-detail h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .step-detail ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+    .step-detail li { display: grid; grid-template-columns: 24px 1fr; gap: 12px; font-size: 14px; color: var(--text); line-height: 1.6; }
+    .step-detail li::before { content: "→"; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+    .transparency { padding: 96px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .transparency h2 { font-weight: 900; font-size: 34px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .transparency .lead { font-size: 16px; color: var(--muted); max-width: 640px; margin-bottom: 48px; line-height: 1.85; }
+    .trans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--bg); }
+    .trans-col { padding: 32px; border-right: 1px solid var(--border); }
+    .trans-col:last-child { border-right: none; }
+    .trans-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .trans-col h3::before { content: ""; width: 20px; height: 1px; background: var(--primary); }
+    .trans-col ul { list-style: none; padding: 0; }
+    .trans-col li { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.7; color: var(--text); }
+    .trans-col li:last-child { border-bottom: none; }
+    .qa-flow { padding: 96px 0; }
+    .qa-flow h2 { font-weight: 900; font-size: 34px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 48px; }
+    .qa-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .qa-step { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px; position: relative; }
+    .qa-step::before { content: ""; position: absolute; top: 0; left: 0; width: 40px; height: 1px; background: var(--primary); }
+    .qa-step .key { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--primary); margin-bottom: 12px; }
+    .qa-step h4 { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; margin-bottom: 8px; }
+    .qa-step p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .closing-cta { margin: 64px 0 0; padding: 56px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; text-align: center; position: relative; overflow: hidden; }
+    .closing-cta::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: var(--primary); }
+    .closing-cta h3 { font-weight: 900; font-size: 28px; letter-spacing: -0.015em; margin-bottom: 16px; }
+    .closing-cta p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 28px; line-height: 1.75; }
+    .closing-cta .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    @media (max-width: 968px) {
+      .principles { grid-template-columns: 1fr; }
+      .principle { border-right: none; border-bottom: 1px solid var(--border); }
+      .step-grid { grid-template-columns: 1fr; gap: 24px; }
+      .step-content h2 { font-size: 28px; }
+      .trans-grid { grid-template-columns: 1fr; }
+      .trans-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .qa-steps { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .qa-steps { grid-template-columns: 1fr; }
+      .closing-cta { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow">調査手法</div>
+    <h1>すべてのレポートが、どのように<br>調査・執筆・<span class="accent">レビュー</span>されるか。</h1>
+    <p class="lead">
+      私たちは、従来価格の数分の一で手の届くマーケットインテリジェンスを公開しています。各レポートの背後にある作業こそが、その経済性を可能にし、私たちが自社の名を冠する根拠となっています。
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="principles">
+      <div class="principle">
+        <div class="key">— 基盤</div>
+        <div class="body">東南アジアでの20年にわたる一次フィールドワーク。二次集計ではなく、構造的理解。</div>
+      </div>
+      <div class="principle">
+        <div class="key">— 透明性</div>
+        <div class="body">データの出所、推定箇所、不確実性の所在を明示します。</div>
+      </div>
+      <div class="principle">
+        <div class="key">— 人間によるレビュー</div>
+        <div class="body">翻訳版を含むすべてのレポートは、公開前にシニアアナリストがレビューします。例外なし。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">01</div>
+      <div class="step-content">
+        <h2>一次調査の基盤。</h2>
+        <p>アナリストは20年にわたり地域で一次マーケットリサーチを行ってきました — インタビュー、チャネル監査、消費者調査、ディストリビューターマッピング、店舗訪問。各レポートを書く際に立ち返るのは、この現場の蓄積です。</p>
+        <p>重要な理由:構造的洞察 — <strong>チャネルが実際にどう動くか、なぜ特定の価格帯が存在するか、誰が本当にマージンを握っているか</strong> — は四半期ごとに変わるものではありません。何年もの現場経験が必要であり、有用なレポートと統計のリストを分ける核心です。</p>
+        <div class="step-detail">
+          <h4>活用するもの</h4>
+          <ul>
+            <li>東南アジア各市場で実施した業界・消費者インタビュー</li>
+            <li>複数の調査サイクルで構築したチャネルマッピングとディストリビューター関係</li>
+            <li>繰り返しのクライアント案件で精緻化した業界フレームワーク</li>
+            <li>現地言語ソースへの精通(ニュース、規制文書、業界団体)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">02</div>
+      <div class="step-content">
+        <h2>最新データへの更新。</h2>
+        <p>構造的洞察は基盤です。<strong>最新データ</strong>こそが、レポートを今日有用にするものです。各公開時に、市場規模、競合ポジション、規制更新、最近の動きを更新します。</p>
+        <p>二次ソース、現地言語メディア、政府統計、業界団体データ、検証済み公開ファイリングの組み合わせを使用します。データに議論がある箇所、推定の箇所は明示します。</p>
+        <div class="step-detail">
+          <h4>ソーシング基準</h4>
+          <ul>
+            <li>ソースが許す限り、報告される全ての数字に一次帰属</li>
+            <li>国内データは現地言語ソース優先(ベトナム語、タイ語、インドネシア語、フィリピン語、マレー語、加えて日本語と韓国語)</li>
+            <li>重要な数字は最低2つの独立ソースでクロスチェック</li>
+            <li>アナリストモデル化された数字には明示的に「推定」表記</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">03</div>
+      <div class="step-content">
+        <h2>AI活用の分析。</h2>
+        <p>モダンなAIツールを使用して作業を加速します — ソース素材の統合、初稿セクションの作成、データ表の構造化、英日韓間の翻訳。これにより、深さを損なうことなく手の届く価格で公開できます。</p>
+        <p>AIが<strong>得意なこと</strong>:大量のソース素材を一貫して要約、文書全体のパターン特定、情報の構造化、アナリストが精緻化できる初稿の作成。</p>
+        <p>AIが<strong>しないこと</strong>:判断の代替、洞察の創出、数字へのサインオフ。AI生成セクションは公開前に必ずシニアアナリストがレビュー・編集・検証します。</p>
+        <div class="step-detail">
+          <h4>AI活用箇所</h4>
+          <ul>
+            <li>ソース素材を構造化された分析セクションに統合</li>
+            <li>アナリストが定義したフレームワーク下での初稿執筆</li>
+            <li>リサーチライブラリ全体でのクロスリファレンスとパターン認識</li>
+            <li>英語・日本語・韓国語間の翻訳(ネイティブ話者レビューが続く)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">04</div>
+      <div class="step-content">
+        <h2>アナリストキュレーション。</h2>
+        <p>すべてのレポートは、公開前にシニアアナリストがレビューします。AIが見落とすエラーを捕捉し、戦略的文脈を加え、フレーミングを鋭くし、削除判断を下します。<strong>人間のサインオフなしに公開されるものはありません。</strong></p>
+        <p>日本語・韓国語版については、ネイティブ言語レビューワーが文化的ニュアンス、用語の正確性、トーンを追加チェックします。基準は、東京やソウルのシニアバイヤーが読んで、市場を理解している人が書いたと思えるかどうかです。</p>
+        <div class="step-detail">
+          <h4>アナリストレビューチェックリスト</h4>
+          <ul>
+            <li>報告された全ての数字をソースに対してファクトチェック</li>
+            <li>競合ポジションの主張をアナリストの知見と照合</li>
+            <li>規制とチャネルの主張を現状文脈で確認</li>
+            <li>JA・KO版は公開前にネイティブ話者レビュー</li>
+            <li>トーン、フレーミング、戦略的明瞭性の最終読み合わせ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="transparency">
+    <div class="container">
+      <h2>私たちが透明性を保つこと。</h2>
+      <p class="lead">提供できないAI駆動の精度は主張しません。プロセスの各部分が何に向いているか、限界がどこにあるかを正直にお伝えします。</p>
+      <div class="trans-grid">
+        <div class="trans-col">
+          <h3>強みの領域</h3>
+          <ul>
+            <li>東南アジア市場の構造的理解 — チャネル、バリューチェーン、規制環境</li>
+            <li>カバー国の主要業界における競合環境マッピング</li>
+            <li>一次調査経験に基づく消費者行動パターン</li>
+            <li>データ参照だけでなくアナリスト判断を要するクロスマーケット比較</li>
+          </ul>
+        </div>
+        <div class="trans-col">
+          <h3>限界を認める領域</h3>
+          <ul>
+            <li>将来予測は推定 — 方向性であり、パーセントポイント精度ではない</li>
+            <li>非公開企業の財務は完全には見えない場合がある — 推定は明示</li>
+            <li>分散したセクターは集中セクターより不確実性の幅が広い</li>
+            <li>公開後のリアルタイム事象は更新が必要 — 最終更新日を明記</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container qa-flow">
+    <h2>全レポートのエンドツーエンドQA。</h2>
+    <div class="qa-steps">
+      <div class="qa-step">
+        <div class="key">QA · 01</div>
+        <h4>ソース検証</h4>
+        <p>報告される全ての数字をソースまで遡る。不整合は執筆前にフラグ付け。</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 02</div>
+        <h4>アナリストレビュー</h4>
+        <p>シニアアナリストが全レポートを読む。戦略的主張は鋭くするか削除。</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 03</div>
+        <h4>ネイティブ言語レビュー</h4>
+        <p>JA・KO版はネイティブ話者が正確性とトーンをレビュー。</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 04</div>
+        <h4>更新サイクル</h4>
+        <p>市場の変化に応じ、購入後12ヶ月以内は無料アップデートを公開レポートに提供。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="closing-cta">
+      <h3>仕事を読む。</h3>
+      <p>調査手法はレポートが基準を満たして初めて意味があります。ライブラリを閲覧するか、同じ基準で構築されたカスタム調査を依頼してください。</p>
+      <div class="actions">
+        <a href="/ja/library" class="btn btn-primary">
+          <span>ライブラリを見る</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/ja/custom-research/" class="btn btn-secondary">カスタム調査を依頼</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+</body>
+</html>
