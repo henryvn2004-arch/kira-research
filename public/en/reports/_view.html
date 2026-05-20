@@ -6,7 +6,6 @@
   <title>Report — KIRA RESEARCH</title>
   <meta name="description" content="Market intelligence report from KIRA RESEARCH." />
 
-  <!-- Default canonical (overwritten by JS once slug is known) -->
   <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/" />
 
   <!-- Fonts -->
@@ -18,29 +17,124 @@
 
   <link rel="stylesheet" href="/css/kira.css" />
 
+  <!-- Supabase client + kiraAuth (for purchase state) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
   <style>
-    .rpt-loading, .rpt-404 {
-      padding: 96px 0;
-      text-align: center;
-      color: var(--muted);
-    }
+    .rpt-loading, .rpt-404 { padding: 96px 0; text-align: center; color: var(--muted); }
     .rpt-404 h2 {
       font-family: 'Satoshi', sans-serif;
-      font-weight: 800;
-      font-size: 28px;
-      color: var(--text);
-      margin-bottom: 14px;
+      font-weight: 800; font-size: 28px;
+      color: var(--text); margin-bottom: 14px;
     }
+
     .rpt-fallback-banner {
       background: rgba(30,111,255,0.08);
       border: 1px solid rgba(30,111,255,0.25);
       border-radius: 6px;
       padding: 12px 16px;
-      font-size: 13px;
-      color: var(--muted);
+      font-size: 13px; color: var(--muted);
       margin-bottom: 32px;
     }
     .rpt-fallback-banner strong { color: var(--text); }
+
+    .rpt-cancel-banner {
+      background: rgba(180, 100, 50, 0.1);
+      border: 1px solid rgba(180, 100, 50, 0.3);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 13px; color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .rpt-capturing {
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    /* Owned state — full content section + download */
+    .rpt-owned-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(30,111,255,0.12);
+      color: var(--primary);
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .rpt-owned-tag::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .rpt-full-body {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .rpt-full-body h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin: 40px 0 16px;
+    }
+    .rpt-full-body h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text);
+      margin: 32px 0 12px;
+    }
+    .rpt-full-body p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .rpt-full-body p strong { color: var(--text); }
+    .pdf-download-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 18px;
+      text-align: center;
+      background: var(--surface-2);
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .pdf-download-btn:hover { background: var(--primary); }
+    .pdf-pending {
+      padding: 14px;
+      background: var(--surface-2);
+      border: 1px dashed var(--border-strong);
+      border-radius: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .buy-btn:disabled { opacity: 0.5; cursor: wait; }
   </style>
 </head>
 <body>
@@ -55,11 +149,13 @@
   <script src="/js/i18n.js" defer></script>
 
   <script type="module">
-    // ── 1) Parse slug + locale from URL ──────────────────
-    // URL shape: /<locale>/reports/<slug>  (slug may have trailing slash)
+    // ── 1) URL parsing ───────────────────────────────────
     const parts  = window.location.pathname.split('/').filter(Boolean);
     const locale = ['en','ja','ko'].includes(parts[0]) ? parts[0] : 'en';
     const slug   = parts[2] ? parts[2].replace(/\/$/, '') : '';
+    const qs     = new URLSearchParams(window.location.search);
+    const paypalReturn = qs.get('paypal');     // 'success' or 'cancel'
+    const paypalToken  = qs.get('token');      // PayPal order id when returning
 
     document.documentElement.setAttribute('lang', locale);
 
@@ -67,10 +163,26 @@
 
     if (!slug) {
       root.innerHTML = '<div class="rpt-404"><h2>No report selected</h2><p><a href="/' + locale + '/library" style="color:var(--primary)">Back to library →</a></p></div>';
-      return;
+      // Stop module execution.
+      throw new Error('halt');
     }
 
-    // ── 2) Fetch from API ────────────────────────────────
+    // Wait for kiraAuth (auth.js is a classic <script>).
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    // ── 2) Capture PayPal return BEFORE anything else ────
+    // Doing this first means the user lands on the unlocked view directly
+    // instead of seeing the preview flash, then a swap.
+    let captureResult = null;
+    if (paypalReturn === 'success' && paypalToken) {
+      root.innerHTML = '<div class="rpt-capturing"><strong style="color:var(--text);">Finalising your purchase…</strong><br/>Please don\'t close this tab.</div>';
+      captureResult = await capturePurchase(paypalToken);
+      // Strip query string from URL so refresh doesn't re-capture.
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+
+    // ── 3) Fetch report base + (if logged in) verify purchase ───
     let data;
     try {
       const r = await fetch('/api/library-report?slug=' + encodeURIComponent(slug) + '&locale=' + locale);
@@ -86,50 +198,143 @@
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
     } catch (err) {
-      root.innerHTML =
-        '<div class="rpt-404"><h2>Couldn\'t load report</h2>' +
-        '<p>Please retry or browse the <a href="/' + locale + '/library" style="color:var(--primary)">library</a>.</p></div>';
+      root.innerHTML = '<div class="rpt-404"><h2>Couldn\'t load report</h2><p>Please retry or browse the <a href="/' + locale + '/library" style="color:var(--primary)">library</a>.</p></div>';
       return;
     }
 
-    // ── 3) Update meta + hreflang now that we know the slug ──
-    const base = 'https://kiraresearch.com';
-    document.title = (data.title || 'Report') + ' — KIRA RESEARCH';
-    document.getElementById('meta-canonical').href = base + '/' + locale + '/reports/' + data.slug;
-
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc && data.preview && data.preview.lede) {
-      metaDesc.setAttribute('content', data.preview.lede.slice(0, 200));
+    // ── 4) Check purchase state + fetch full content if owned ──
+    let purchaseState = { purchased: false, anyLocale: false };
+    let fullContent   = null;
+    const user = await window.kiraAuth.getUser();
+    if (user) {
+      purchaseState = await verifyPurchase(data.slug, locale);
+      if (purchaseState.purchased) {
+        fullContent = await fetchFullContent(data.slug, locale);
+      }
     }
 
-    // Inject hreflang siblings only for locales that are actually published.
-    const head = document.head;
-    ['en','ja','ko'].forEach(loc => {
-      if (data.availableLocales.includes(loc)) {
-        const link = document.createElement('link');
-        link.rel  = 'alternate';
-        link.hreflang = loc;
-        link.href = base + '/' + loc + '/reports/' + data.slug;
-        head.appendChild(link);
-      }
-    });
-    const xdef = document.createElement('link');
-    xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
-    xdef.href = base + '/en/reports/' + data.slug;
-    head.appendChild(xdef);
+    // ── 5) Meta + hreflang ───────────────────────────────
+    updateHead(data);
 
-    // ── 4) Render the page ───────────────────────────────
-    render(data);
+    // ── 6) Render ────────────────────────────────────────
+    render(data, purchaseState, fullContent, captureResult);
 
-    // After render: re-apply i18n to the new DOM (nav.js + i18n.js are injected
-    // separately; this just makes sure any data-i18n attributes in our template
-    // get picked up).
     if (window.kira && window.kira.i18n) window.kira.i18n.apply();
 
-    // ── helpers ──────────────────────────────────────────
+    // ══════════════════════════════════════════════════════
+    //  Auth / purchase helpers
+    // ══════════════════════════════════════════════════════
+    async function bearerHeaders() {
+      const session = (await window.db.auth.getSession()).data.session;
+      return session ? { 'Authorization': 'Bearer ' + session.access_token } : {};
+    }
+
+    async function verifyPurchase(slug, locale) {
+      try {
+        const r = await fetch('/api/library-verify?slug=' + encodeURIComponent(slug) + '&locale=' + locale, {
+          headers: await bearerHeaders()
+        });
+        if (!r.ok) return { purchased: false, anyLocale: false };
+        return await r.json();
+      } catch (_) {
+        return { purchased: false, anyLocale: false };
+      }
+    }
+
+    async function fetchFullContent(slug, locale) {
+      try {
+        const r = await fetch('/api/library-content?slug=' + encodeURIComponent(slug) + '&locale=' + locale, {
+          headers: await bearerHeaders()
+        });
+        if (!r.ok) return null;
+        return await r.json();
+      } catch (_) { return null; }
+    }
+
+    async function capturePurchase(orderId) {
+      // Capture REQUIRES the user to be signed in. If they aren't, prompt
+      // login first and pass the order through sessionStorage so we can
+      // resume the capture once they're back.
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) {
+        sessionStorage.setItem('kira_pending_capture', orderId);
+        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+        window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to finalise your purchase');
+        throw new Error('redirecting_to_login');
+      }
+      try {
+        const r = await fetch('/api/library-buy?action=capture', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+          body:    JSON.stringify({ orderId })
+        });
+        const body = await r.json();
+        return { ok: r.ok, ...body };
+      } catch (err) {
+        return { ok: false, error: 'network' };
+      }
+    }
+
+    async function startCheckout(slug, locale) {
+      // Require login first — capture step needs auth anyway.
+      const user = await window.kiraAuth.getUser();
+      if (!user) {
+        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+        window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to purchase this report');
+        return;
+      }
+      try {
+        const r = await fetch('/api/library-buy?action=create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:   JSON.stringify({ slug, locale })
+        });
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          alert('Could not start checkout (' + (body.error || r.status) + ').');
+          return;
+        }
+        const body = await r.json();
+        if (body.approveUrl) {
+          window.location.href = body.approveUrl;
+        } else {
+          alert('Checkout error: no approval URL returned.');
+        }
+      } catch (err) {
+        alert('Network error starting checkout. Please retry.');
+      }
+    }
+
+    // ══════════════════════════════════════════════════════
+    //  Render helpers
+    // ══════════════════════════════════════════════════════
     function escapeHtml(s) {
       return String(s == null ? '' : s)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function updateHead(d) {
+      const base = 'https://kiraresearch.com';
+      document.title = (d.title || 'Report') + ' — KIRA RESEARCH';
+      document.getElementById('meta-canonical').href = base + '/' + locale + '/reports/' + d.slug;
+
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc && d.preview && d.preview.lede) {
+        metaDesc.setAttribute('content', d.preview.lede.slice(0, 200));
+      }
+
+      ['en','ja','ko'].forEach(loc => {
+        if (d.availableLocales.includes(loc)) {
+          const link = document.createElement('link');
+          link.rel = 'alternate'; link.hreflang = loc;
+          link.href = base + '/' + loc + '/reports/' + d.slug;
+          document.head.appendChild(link);
+        }
+      });
+      const xdef = document.createElement('link');
+      xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
+      xdef.href = base + '/en/reports/' + d.slug;
+      document.head.appendChild(xdef);
     }
 
     function renderChart(c) {
@@ -151,11 +356,13 @@
       );
     }
 
-    function renderToc(toc) {
+    function renderToc(toc, ownsContent) {
       if (!Array.isArray(toc) || !toc.length) return '';
       const items = toc.map(t => {
-        const cls = (t.locked === false) ? ' preview' : '';
-        const lock = (t.locked === false) ? 'PREVIEW' : 'LOCKED';
+        const cls = (t.locked === false || ownsContent) ? ' preview' : '';
+        const lock = ownsContent
+          ? 'UNLOCKED'
+          : (t.locked === false ? 'PREVIEW' : 'LOCKED');
         return '<div class="toc-item' + cls + '">' +
                  '<span class="num">' + escapeHtml(t.num) + '</span>' +
                  '<span class="name">' + escapeHtml(t.name) + '</span>' +
@@ -189,7 +396,83 @@
       return '<span class="label">Lang</span>' + links;
     }
 
-    function render(d) {
+    function renderFullBody(full) {
+      if (!full) return '';
+
+      // full_content is JSONB. Shape: { sections: [{ heading, body_html }, ...] }
+      // OR a single HTML blob. Be defensive against both.
+      if (typeof full === 'string') {
+        return '<section class="rpt-full-body">' + full + '</section>';
+      }
+      const sections = Array.isArray(full.sections) ? full.sections : [];
+      if (!sections.length) {
+        return '<section class="rpt-full-body"><p style="color:var(--muted-dim);font-style:italic;">' +
+               'Full content is being prepared. The PDF download (if available) contains the complete report.' +
+               '</p></section>';
+      }
+      const blocks = sections.map(s => {
+        const heading = s.heading ? '<h2>' + escapeHtml(s.heading) + '</h2>' : '';
+        // body_html is admin-trusted (writable only via service-key).
+        const body = s.body_html || '';
+        return '<section>' + heading + body + '</section>';
+      }).join('');
+      return '<div class="rpt-full-body">' + blocks + '</div>';
+    }
+
+    function renderBuyBox(d, state) {
+      const pages = d.pages || 78;
+      const aggregators = (d.aggregators || []).slice(0, 5);
+
+      // State variants:
+      //   purchased            → green tag, PDF download (if pdf_url), no buy button
+      //   anyLocale (not this) → "switch language" notice + buy locale button
+      //   default (anon/new)   → normal buy button
+      let mainCta;
+      if (state.purchased) {
+        mainCta =
+          (state.pdfUrl
+            ? '<a class="pdf-download-btn" href="' + escapeHtml(state.pdfUrl) + '" download>Download PDF →</a>'
+            : '<div class="pdf-pending">PDF is being prepared.<br/>You\'ll see a download link here once it\'s ready — your online access is active now.</div>'
+          );
+      } else if (state.anyLocale) {
+        mainCta =
+          '<div class="pdf-pending" style="margin-bottom:12px;">You already own this report in <strong style="color:var(--primary);text-transform:uppercase;">' + escapeHtml(state.ownedLocale || 'EN') + '</strong>.</div>' +
+          '<button class="buy-btn" id="buy-btn">Add ' + locale.toUpperCase() + ' version — $' + (d.price || 39) + ' →</button>';
+      } else {
+        mainCta = '<button class="buy-btn" id="buy-btn">Purchase report →</button>';
+      }
+
+      const tag = state.purchased
+        ? '<div class="rpt-owned-tag">You own this report</div>'
+        : '<div class="buy-tag">Single report · PDF + online access</div>';
+
+      return (
+        '<aside class="buy-box">' +
+          tag +
+          '<div class="buy-price"><span class="currency">$</span>' + (d.price || 39) + '</div>' +
+          '<div class="buy-lang-select" aria-label="Report language">' +
+            renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
+          '</div>' +
+          mainCta +
+          (state.purchased ? '' : '<button class="buy-btn-secondary">Add to library bundle</button>') +
+          '<div class="buy-includes">' +
+            '<h6>What\'s included</h6>' +
+            '<div class="include-item">' + pages + '-page PDF download</div>' +
+            '<div class="include-item">Online reader access</div>' +
+            '<div class="include-item">All charts &amp; data tables</div>' +
+            '<div class="include-item">Free updates for 12 months</div>' +
+            '<div class="include-item">Single-user license</div>' +
+          '</div>' +
+          (aggregators.length
+            ? '<div class="buy-includes"><h6>Also available on</h6><div class="buy-aggregators">' +
+                aggregators.map(escapeHtml).join('<br />') +
+              '</div></div>'
+            : '') +
+        '</aside>'
+      );
+    }
+
+    function render(d, purchaseState, fullContent, captureResult) {
       const baseCountry = (d.country || '').toUpperCase();
       const breadcrumb = (
         '<div class="rpt-breadcrumb">' +
@@ -204,18 +487,39 @@
         [baseCountry, (d.industry || '').toUpperCase(), 'MARKET ANALYSIS']
           .filter(Boolean).join(' · ');
 
-      const fallbackBanner = d.isFallback
-        ? '<div class="rpt-fallback-banner">This report isn\'t published in your selected language yet — showing the <strong>English version</strong>. Other languages will appear here as they become available.</div>'
-        : '';
+      // ── Banners ──
+      let banners = '';
+      if (captureResult) {
+        if (captureResult.ok) {
+          banners += '<div class="rpt-fallback-banner" style="background:rgba(30,111,255,0.12);border-color:rgba(30,111,255,0.4);">' +
+                       '<strong>Purchase complete.</strong> Your full report is unlocked below.' +
+                     '</div>';
+        } else {
+          banners += '<div class="rpt-cancel-banner">' +
+                       '<strong style="color:var(--text);">We couldn\'t finalise your purchase.</strong> ' +
+                       'Please retry from the buy box on the right, or email <a href="mailto:hello@kiraresearch.com" style="color:var(--primary);">hello@kiraresearch.com</a> with your PayPal receipt.' +
+                     '</div>';
+        }
+      } else if (paypalReturn === 'cancel') {
+        banners += '<div class="rpt-cancel-banner">Checkout cancelled — your card was not charged.</div>';
+      }
+      if (d.isFallback) {
+        banners += '<div class="rpt-fallback-banner">This report isn\'t published in your selected language yet — showing the <strong>English version</strong>.</div>';
+      }
+      if (purchaseState.anyLocale && !purchaseState.purchased) {
+        // Already owned in another locale message lives in the buy box; nothing here.
+      }
 
+      // ── Preview body ──
       const lede   = d.preview?.lede ? '<p><strong>' + escapeHtml(d.preview.lede) + '</strong></p>' : '';
       const paras  = Array.isArray(d.preview?.paragraphs)
         ? d.preview.paragraphs.map(p => '<p>' + escapeHtml(p) + '</p>').join('')
         : '';
       const chart  = renderChart(d.preview?.chart);
-      const toc    = renderToc(d.toc);
+      const toc    = renderToc(d.toc, !!purchaseState.purchased);
 
-      const aggregators = (d.aggregators || []).slice(0, 5);
+      // Full body (only if purchased)
+      const fullBody = purchaseState.purchased ? renderFullBody(fullContent && fullContent.full_content) : '';
 
       const pages    = d.pages || 78;
       const sections = (d.toc && d.toc.length) || 12;
@@ -230,7 +534,7 @@
         breadcrumb +
         '<div class="rpt-grid">' +
           '<article class="rpt-main">' +
-            fallbackBanner +
+            banners +
             '<div class="hero-eyebrow" style="margin-bottom:20px;">' + escapeHtml(eyebrow) + '</div>' +
             '<h1>' + escapeHtml(d.title || d.slug) + '</h1>' +
             '<div class="rpt-meta">' +
@@ -244,44 +548,31 @@
 
             '<section class="rpt-section">' +
               '<h3>Section 01 · Executive Summary</h3>' +
-              '<h2>Preview</h2>' +
+              '<h2>' + (purchaseState.purchased ? 'Overview' : 'Preview') + '</h2>' +
               lede + paras + chart +
             '</section>' +
 
             toc +
+
+            fullBody +
           '</article>' +
 
-          '<aside class="buy-box">' +
-            '<div class="buy-tag">Single report · PDF + online access</div>' +
-            '<div class="buy-price"><span class="currency">$</span>' + (d.price || 39) + '</div>' +
-            '<div class="buy-lang-select" aria-label="Report language">' +
-              renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
-            '</div>' +
-            '<button class="buy-btn" id="buy-btn">Purchase report →</button>' +
-            '<button class="buy-btn-secondary">Add to library bundle</button>' +
-            '<div class="buy-includes">' +
-              '<h6>What\'s included</h6>' +
-              '<div class="include-item">' + pages + '-page PDF download</div>' +
-              '<div class="include-item">Online reader access</div>' +
-              '<div class="include-item">All charts &amp; data tables</div>' +
-              '<div class="include-item">Free updates for 12 months</div>' +
-              '<div class="include-item">Single-user license</div>' +
-            '</div>' +
-            (aggregators.length
-              ? '<div class="buy-includes"><h6>Also available on</h6><div class="buy-aggregators">' +
-                  aggregators.map(escapeHtml).join('<br />') +
-                '</div></div>'
-              : '') +
-          '</aside>' +
+          renderBuyBox(d, {
+            purchased:   purchaseState.purchased,
+            anyLocale:   purchaseState.anyLocale,
+            ownedLocale: purchaseState.ownedLocale,
+            pdfUrl:      fullContent && fullContent.pdf_url
+          }) +
         '</div>'
       );
 
-      // Wire purchase button (placeholder — payment flow exists in api/payment.js).
+      // Wire purchase button (only if not already owned).
       const buyBtn = document.getElementById('buy-btn');
       if (buyBtn) {
         buyBtn.addEventListener('click', () => {
-          window.location.href = '/api/payment?action=create&slug=' +
-            encodeURIComponent(d.slug) + '&locale=' + locale;
+          buyBtn.disabled = true;
+          buyBtn.textContent = 'Opening checkout…';
+          startCheckout(d.slug, locale);
         });
       }
     }
