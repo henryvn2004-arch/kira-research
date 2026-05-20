@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reports — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <!-- Admin sub-nav -->
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports" class="active">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    // Wait for auth helper.
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    // ── Auth gate ────────────────────────────────────────
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname + window.location.hash);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    const meEl = document.getElementById('admin-me');
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.kiraAuth.signOut();
+    });
+
+    async function bearer() {
+      const session = (await window.db.auth.getSession()).data.session;
+      return session ? { 'Authorization': 'Bearer ' + session.access_token } : {};
+    }
+    async function api(path, init = {}) {
+      const headers = { 'Content-Type': 'application/json', ...await bearer(), ...(init.headers || {}) };
+      const r = await fetch(path, { ...init, headers });
+      const txt = await r.text();
+      let body = {};
+      try { body = txt ? JSON.parse(txt) : {}; } catch (_) {}
+      if (!r.ok) {
+        const err = new Error(body.error || ('http_' + r.status));
+        err.status = r.status; err.body = body;
+        throw err;
+      }
+      return body;
+    }
+
+    const root = document.getElementById('admin-root');
+    const LOCALES = ['en', 'ja', 'ko'];
+
+    // ── Hash router ──────────────────────────────────────
+    async function route() {
+      const hash = window.location.hash || '';
+      try {
+        if (hash === '#new')                       return await renderEditor(null);
+        const m = hash.match(/^#edit\/([0-9a-f-]{20,})$/);
+        if (m)                                     return await renderEditor(m[1]);
+        return await renderList();
+      } catch (err) {
+        renderFatal(err);
+      }
+    }
+    window.addEventListener('hashchange', route);
+    route();
+
+    // ════════════════════════════════════════════════════════
+    //  LIST VIEW
+    // ════════════════════════════════════════════════════════
+    async function renderList() {
+      root.innerHTML = '<div class="admin-empty">Loading reports…</div>';
+      const { reports } = await api('/api/admin-reports');
+      const total = reports.length;
+      const head = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+          <div>
+            <h1 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:28px;letter-spacing:-0.015em;">Library reports</h1>
+            <p style="color:var(--muted);font-size:13px;margin-top:6px;">${total} ROW${total === 1 ? '' : 'S'} · drafts + published + retired</p>
+          </div>
+          <a href="#new" class="adm-actions" style="text-decoration:none;">
+            <button class="primary" style="padding:10px 18px;">+ New report</button>
+          </a>
+        </div>`;
+
+      if (!reports.length) {
+        root.innerHTML = head + '<div class="admin-empty">No reports yet. <a href="#new" style="color:var(--primary)">Create the first one →</a></div>';
+        return;
+      }
+
+      const rows = reports.map(r => {
+        const when = new Date(r.updated_at).toLocaleString('en-GB', {
+          year: 'numeric', month: 'short', day: '2-digit',
+          hour: '2-digit', minute: '2-digit'
+        });
+        const dots = LOCALES.map(l => {
+          const s = r.translations[l];
+          if (!s) return `<span title="not created">${l.toUpperCase()}</span>`;
+          return `<span class="${escape(s)}" title="${escape(s)}">${l.toUpperCase()}</span>`;
+        }).join('');
+        return `
+          <tr>
+            <td class="when-cell">${escape(when)}</td>
+            <td>
+              <div class="slug-cell">${escape(r.slug)}</div>
+              <div style="color:var(--muted);font-size:11px;margin-top:3px;">${escape(r.country || '')} · ${escape(r.industry || '')} · ${escape(r.year || '')}</div>
+            </td>
+            <td><span class="status-pill ${escape(r.status)}">${escape(r.status)}</span></td>
+            <td><div class="locale-dots">${dots}</div></td>
+            <td style="text-align:right;">
+              <a class="row-action" href="#edit/${escape(r.id)}">Edit →</a>
+            </td>
+          </tr>`;
+      }).join('');
+
+      root.innerHTML = head + `
+        <table class="admin-table">
+          <thead><tr>
+            <th>Updated</th>
+            <th>Slug · Coverage</th>
+            <th>Status</th>
+            <th>Translations</th>
+            <th></th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  EDITOR VIEW
+    // ════════════════════════════════════════════════════════
+    async function renderEditor(id) {
+      const isNew = !id;
+      let report = {
+        slug: '', country: '', industry: '', year: 2026, pages: null,
+        price: 39, currency: 'USD', aggregators: [], status: 'draft'
+      };
+      let translations = [];
+      if (!isNew) {
+        const data = await api('/api/admin-reports?id=' + id);
+        report = data.report;
+        translations = data.translations || [];
+      }
+      const trByLocale = Object.fromEntries(translations.map(t => [t.locale, t]));
+
+      const header = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+          <div>
+            <a href="#" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;">← BACK TO LIST</a>
+            <h1 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.015em;margin-top:6px;">
+              ${isNew ? 'New report' : escape(report.slug)}
+            </h1>
+            ${isNew ? '' : `<p style="color:var(--muted);font-size:13px;margin-top:6px;font-family:'JetBrains Mono',monospace;">ID ${escape(report.id)}</p>`}
+          </div>
+        </div>`;
+
+      root.innerHTML = header + `
+        <div class="admin-editor">
+          <!-- BASE -->
+          <div class="admin-card" id="card-base">
+            <h3>Base report <span class="muted">living_reports</span></h3>
+
+            <div class="adm-field">
+              <label>Slug <span class="hint">lowercase, hyphens — e.g. vietnam-fintech-2026</span></label>
+              <input type="text" id="f-slug" value="${escape(report.slug || '')}" placeholder="vietnam-fintech-2026" />
+            </div>
+
+            <div class="adm-grid-2">
+              <div class="adm-field"><label>Country</label><input type="text" id="f-country" value="${escape(report.country || '')}" placeholder="Vietnam" /></div>
+              <div class="adm-field"><label>Industry</label><input type="text" id="f-industry" value="${escape(report.industry || '')}" placeholder="Fintech" /></div>
+            </div>
+
+            <div class="adm-grid-2">
+              <div class="adm-field"><label>Year</label><input type="number" id="f-year" value="${escape(report.year || 2026)}" min="2000" max="2100" /></div>
+              <div class="adm-field"><label>Pages</label><input type="number" id="f-pages" value="${escape(report.pages != null ? report.pages : '')}" min="0" max="2000" placeholder="78" /></div>
+            </div>
+
+            <div class="adm-grid-2">
+              <div class="adm-field"><label>Price (USD)</label><input type="number" id="f-price" value="${escape(report.price != null ? report.price : 39)}" min="0" max="99999" step="1" /></div>
+              <div class="adm-field"><label>Currency</label>
+                <select id="f-currency">
+                  ${['USD','JPY','KRW','EUR','SGD'].map(c => `<option value="${c}"${(report.currency || 'USD') === c ? ' selected' : ''}>${c}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+
+            <div class="adm-field">
+              <label>Aggregators <span class="hint">comma-separated</span></label>
+              <input type="text" id="f-aggregators" value="${escape((report.aggregators || []).join(', '))}" placeholder="ResearchAndMarkets, MarketResearch.com, GIIResearch" />
+            </div>
+
+            <div class="adm-field">
+              <label>Status</label>
+              <select id="f-status">
+                ${['draft','published','retired'].map(s => `<option value="${s}"${(report.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+
+            <div class="adm-actions">
+              <button class="primary" id="save-base">${isNew ? 'Create report →' : 'Save changes'}</button>
+              <span class="adm-saved-flash" id="flash-base">SAVED</span>
+              ${isNew ? '' : '<button class="danger" id="del-base" style="margin-left:auto;">Retire</button>'}
+            </div>
+          </div>
+
+          <!-- TRANSLATIONS -->
+          <div class="admin-card" id="card-trans">
+            <h3>Translations <span class="muted">report_translations</span></h3>
+            ${isNew
+              ? '<div class="admin-empty" style="padding:32px 16px;">Save the base report first, then add per-locale content here.</div>'
+              : renderTransTabs(id, trByLocale)
+            }
+          </div>
+        </div>`;
+
+      if (isNew) {
+        document.getElementById('save-base').addEventListener('click', () => saveBase(null));
+      } else {
+        document.getElementById('save-base').addEventListener('click', () => saveBase(id));
+        document.getElementById('del-base').addEventListener('click', () => deleteBase(id));
+        wireTransTabs(id, trByLocale);
+      }
+    }
+
+    function renderTransTabs(id, trByLocale) {
+      const tabs = LOCALES.map(l => {
+        const t = trByLocale[l];
+        const badge = t ? `<span class="badge ${escape(t.status)}">${escape(t.status)}</span>` : '<span class="badge draft">none</span>';
+        return `<button data-loc="${l}">${l.toUpperCase()} ${badge}</button>`;
+      }).join('');
+
+      return `
+        <div class="admin-tabs" id="trans-tabs">${tabs}</div>
+        <div id="trans-pane"></div>`;
+    }
+
+    function wireTransTabs(id, trByLocale) {
+      const tabs = document.querySelectorAll('#trans-tabs button');
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderTransPane(id, btn.dataset.loc, trByLocale);
+        });
+      });
+      // Default to EN
+      tabs[0].click();
+    }
+
+    function renderTransPane(id, locale, trByLocale) {
+      const t = trByLocale[locale] || { locale, status: 'draft' };
+      const pane = document.getElementById('trans-pane');
+
+      pane.innerHTML = `
+        <div class="adm-field">
+          <label>Title <span class="hint">required</span></label>
+          <input type="text" id="t-title" value="${escape(t.title || '')}" placeholder="Vietnam Fintech Landscape: …" />
+        </div>
+
+        <div class="adm-field">
+          <label>Eyebrow <span class="hint">e.g. VIETNAM · FINTECH · MARKET ANALYSIS</span></label>
+          <input type="text" id="t-eyebrow" value="${escape(t.eyebrow || '')}" />
+        </div>
+
+        <div class="adm-field">
+          <label>Preview <span class="hint">JSONB · { lede, paragraphs[], chart {} }</span></label>
+          <textarea id="t-preview" rows="6" placeholder='{\n  "lede": "...",\n  "paragraphs": ["..."],\n  "chart": { ... }\n}'>${escape(jsonString(t.preview))}</textarea>
+        </div>
+
+        <div class="adm-field">
+          <label>Table of contents <span class="hint">JSON array of {num,name,pages,locked}</span></label>
+          <textarea id="t-toc" rows="6" placeholder='[ { "num": "01", "name": "Executive Summary", "pages": "PG 03", "locked": false } ]'>${escape(jsonString(t.toc))}</textarea>
+        </div>
+
+        <div class="adm-field">
+          <label>Full content <span class="hint">JSONB · { sections: [{ heading, body_html }] } — served only to buyers</span></label>
+          <textarea id="t-full" rows="10" placeholder='{ "sections": [ { "heading": "Market sizing", "body_html": "&lt;p&gt;...&lt;/p&gt;" } ] }'>${escape(jsonString(t.full_content))}</textarea>
+        </div>
+
+        <div class="adm-grid-2">
+          <div class="adm-field">
+            <label>PDF URL</label>
+            <input type="text" id="t-pdf" value="${escape(t.pdf_url || '')}" placeholder="https://…supabase…/storage/v1/object/public/reports/…pdf" />
+          </div>
+          <div class="adm-field">
+            <label>Status</label>
+            <select id="t-status">
+              ${['draft','review','published','retired'].map(s => `<option value="${s}"${(t.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="adm-actions">
+          <button class="primary" id="save-trans">Save ${locale.toUpperCase()}</button>
+          <span class="adm-saved-flash" id="flash-trans">SAVED</span>
+          ${trByLocale[locale] ? `<button class="danger" id="del-trans" style="margin-left:auto;">Delete ${locale.toUpperCase()}</button>` : ''}
+        </div>`;
+
+      document.getElementById('save-trans').addEventListener('click', () => saveTranslation(id, locale, trByLocale));
+      const del = document.getElementById('del-trans');
+      if (del) del.addEventListener('click', () => deleteTranslation(id, locale, trByLocale));
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  Save / delete
+    // ════════════════════════════════════════════════════════
+    async function saveBase(id) {
+      const btn   = document.getElementById('save-base');
+      const flash = document.getElementById('flash-base');
+      const patch = {
+        slug:        document.getElementById('f-slug').value.trim().toLowerCase(),
+        country:     document.getElementById('f-country').value.trim(),
+        industry:    document.getElementById('f-industry').value.trim(),
+        year:        parseInt(document.getElementById('f-year').value, 10),
+        pages:       document.getElementById('f-pages').value ? parseInt(document.getElementById('f-pages').value, 10) : null,
+        price:       Number(document.getElementById('f-price').value),
+        currency:    document.getElementById('f-currency').value,
+        aggregators: document.getElementById('f-aggregators').value.split(',').map(s => s.trim()).filter(Boolean),
+        status:      document.getElementById('f-status').value
+      };
+      btn.disabled = true;
+      try {
+        if (id) {
+          await api('/api/admin-reports?id=' + id, { method: 'PATCH', body: JSON.stringify(patch) });
+          flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500);
+        } else {
+          const { report } = await api('/api/admin-reports', { method: 'POST', body: JSON.stringify(patch) });
+          window.location.hash = '#edit/' + report.id;
+        }
+      } catch (err) {
+        alert('Save failed: ' + (err.body?.error || err.message));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteBase(id) {
+      if (!confirm('Retire this report? (Soft delete — purchases are preserved.)')) return;
+      try {
+        await api('/api/admin-reports?id=' + id, { method: 'DELETE' });
+        window.location.hash = '';
+      } catch (err) {
+        alert('Delete failed: ' + (err.body?.error || err.message));
+      }
+    }
+
+    async function saveTranslation(id, locale, trByLocale) {
+      const btn   = document.getElementById('save-trans');
+      const flash = document.getElementById('flash-trans');
+      const parseField = (txt, name) => {
+        const v = txt.trim();
+        if (!v) return null;
+        try { return JSON.parse(v); }
+        catch (_) { throw new Error(name + ' is not valid JSON'); }
+      };
+      let preview, toc, fullContent;
+      try {
+        preview     = parseField(document.getElementById('t-preview').value, 'Preview');
+        toc         = parseField(document.getElementById('t-toc').value,     'TOC') || [];
+        fullContent = parseField(document.getElementById('t-full').value,    'Full content');
+      } catch (err) {
+        alert(err.message);
+        return;
+      }
+      const patch = {
+        title:        document.getElementById('t-title').value.trim(),
+        eyebrow:      document.getElementById('t-eyebrow').value.trim() || null,
+        preview,
+        toc,
+        full_content: fullContent,
+        pdf_url:      document.getElementById('t-pdf').value.trim() || null,
+        status:       document.getElementById('t-status').value
+      };
+      btn.disabled = true;
+      try {
+        // POST is upsert via on_conflict — works for both new and existing.
+        const { translation } = await api(
+          '/api/admin-reports?id=' + id + '&locale=' + locale,
+          { method: 'POST', body: JSON.stringify(patch) }
+        );
+        trByLocale[locale] = translation;
+        flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500);
+        // Update tab badge.
+        const tabBtn = document.querySelector(`#trans-tabs button[data-loc="${locale}"]`);
+        if (tabBtn) tabBtn.innerHTML = `${locale.toUpperCase()} <span class="badge ${translation.status}">${translation.status}</span>`;
+      } catch (err) {
+        alert('Save failed: ' + (err.body?.error || err.message));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteTranslation(id, locale, trByLocale) {
+      if (!confirm('Delete the ' + locale.toUpperCase() + ' translation?')) return;
+      try {
+        await api('/api/admin-reports?id=' + id + '&locale=' + locale, { method: 'DELETE' });
+        delete trByLocale[locale];
+        // Re-render this pane (now "none") and refresh tab badge.
+        const tabBtn = document.querySelector(`#trans-tabs button[data-loc="${locale}"]`);
+        if (tabBtn) tabBtn.innerHTML = `${locale.toUpperCase()} <span class="badge draft">none</span>`;
+        renderTransPane(id, locale, trByLocale);
+      } catch (err) {
+        alert('Delete failed: ' + (err.body?.error || err.message));
+      }
+    }
+
+    // ── helpers ──────────────────────────────────────────
+    function escape(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+    function jsonString(v) {
+      if (v == null) return '';
+      if (typeof v === 'string') return v;
+      try { return JSON.stringify(v, null, 2); } catch (_) { return String(v); }
+    }
+    function renderFatal(err) {
+      const msg = err.status === 401 ? 'Session expired — please <a href="/auth.html" style="color:var(--primary)">sign in</a>.'
+                : err.status === 403 ? `Your account (<code>${user.email}</code>) isn't on the admin allowlist.`
+                : err.status === 500 && err.body?.error === 'admin_not_configured' ? 'Server has no <code>ADMIN_EMAILS</code> set.'
+                : 'Error: ' + (err.body?.error || err.message);
+      root.innerHTML = '<div class="admin-empty">' + msg + '</div>';
+    }
+  </script>
+</body>
+</html>

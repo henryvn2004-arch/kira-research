@@ -1278,3 +1278,286 @@ footer.kira-footer {
   .related-grid { grid-template-columns: 1fr; }
 }
 
+/* ============================================================
+   ADMIN — shared chrome (sub-nav, list, editor, forms)
+   ============================================================ */
+.admin-sub-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.admin-sub-nav .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.admin-sub-nav a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+}
+.admin-sub-nav a:hover  { color: var(--text); }
+.admin-sub-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+.admin-sub-nav .spacer  { flex: 1; }
+.admin-sub-nav .me {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+.admin-sub-nav .me a { color: var(--primary); margin-left: 12px; }
+
+/* ── Admin tables (lists) ────────────────────────────────── */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.admin-table th, .admin-table td {
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.admin-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.admin-table tbody tr { transition: background 0.1s; }
+.admin-table tbody tr:hover { background: var(--surface); }
+.admin-table .slug-cell {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+}
+.admin-table .when-cell {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.admin-table .row-action {
+  color: var(--primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+.admin-table .row-action:hover { text-decoration: underline; }
+
+/* Status pills */
+.status-pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.status-pill.draft     { color: var(--muted);   background: var(--surface-2); }
+.status-pill.review    { color: #C9A84C;        background: rgba(201,168,76,0.1); }
+.status-pill.published { color: var(--primary); background: rgba(30,111,255,0.12); }
+.status-pill.retired   { color: var(--muted-dim); background: var(--surface-2); }
+
+/* Locale dots */
+.locale-dots { display: inline-flex; gap: 6px; }
+.locale-dots span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  color: var(--muted-dim);
+  border: 1px solid var(--border);
+}
+.locale-dots span.published { color: var(--primary); border-color: rgba(30,111,255,0.3); }
+.locale-dots span.draft     { color: #C9A84C;        border-color: rgba(201,168,76,0.3); }
+.locale-dots span.review    { color: #C9A84C;        border-color: rgba(201,168,76,0.3); }
+
+/* ── Editor layout ───────────────────────────────────────── */
+.admin-editor {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 32px;
+  margin-bottom: 96px;
+}
+.admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+}
+.admin-card h3 {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+.admin-card h3 .muted {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Locale tabs */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+.admin-tabs button {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: -5px;
+}
+.admin-tabs button:hover    { color: var(--text); }
+.admin-tabs button.active   { color: var(--primary); border-bottom-color: var(--primary); }
+.admin-tabs button .badge   {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+}
+.admin-tabs button .badge.published { color: var(--primary); background: rgba(30,111,255,0.15); }
+.admin-tabs button .badge.draft     { color: var(--muted);   background: var(--surface-2); }
+
+/* Form fields */
+.adm-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.adm-field.row { flex-direction: row; align-items: center; gap: 14px; }
+.adm-field label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.adm-field label .hint { color: var(--muted-dim); margin-left: 6px; text-transform: none; letter-spacing: 0; font-family: inherit; }
+.adm-field input[type="text"],
+.adm-field input[type="number"],
+.adm-field select,
+.adm-field textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  width: 100%;
+}
+.adm-field textarea {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+.adm-field input:focus,
+.adm-field select:focus,
+.adm-field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.adm-field input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--primary);
+}
+.adm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.adm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.adm-actions button {
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.adm-actions .primary {
+  background: var(--primary);
+  color: #fff;
+  border: 1px solid var(--primary);
+}
+.adm-actions .primary:hover     { background: var(--primary-dim); }
+.adm-actions .primary:disabled  { opacity: 0.5; cursor: wait; }
+.adm-actions .secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+.adm-actions .secondary:hover { border-color: var(--primary); color: var(--primary); }
+.adm-actions .danger {
+  background: transparent;
+  color: #E05252;
+  border: 1px solid rgba(224,82,82,0.3);
+}
+.adm-actions .danger:hover { background: rgba(224,82,82,0.1); }
+.adm-saved-flash {
+  color: var(--primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  align-self: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.adm-saved-flash.show { opacity: 1; }
+
+.admin-empty {
+  padding: 96px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 960px) {
+  .admin-editor { grid-template-columns: 1fr; }
+  .adm-grid-2   { grid-template-columns: 1fr; }
+}
+

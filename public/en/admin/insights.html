@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Insights — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights" class="active">Insights</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname + window.location.hash);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    const meEl = document.getElementById('admin-me');
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault(); window.kiraAuth.signOut();
+    });
+
+    async function bearer() {
+      const session = (await window.db.auth.getSession()).data.session;
+      return session ? { 'Authorization': 'Bearer ' + session.access_token } : {};
+    }
+    async function api(path, init = {}) {
+      const headers = { 'Content-Type': 'application/json', ...await bearer(), ...(init.headers || {}) };
+      const r = await fetch(path, { ...init, headers });
+      const txt = await r.text();
+      let body = {};
+      try { body = txt ? JSON.parse(txt) : {}; } catch (_) {}
+      if (!r.ok) {
+        const err = new Error(body.error || ('http_' + r.status));
+        err.status = r.status; err.body = body;
+        throw err;
+      }
+      return body;
+    }
+
+    const root = document.getElementById('admin-root');
+    const LOCALES = ['en','ja','ko'];
+
+    async function route() {
+      const hash = window.location.hash || '';
+      try {
+        if (hash === '#new')                       return await renderEditor(null);
+        const m = hash.match(/^#edit\/([0-9a-f-]{20,})$/);
+        if (m)                                     return await renderEditor(m[1]);
+        return await renderList();
+      } catch (err) { renderFatal(err); }
+    }
+    window.addEventListener('hashchange', route);
+    route();
+
+    // ════════════════════════════════════════════════════════
+    //  LIST
+    // ════════════════════════════════════════════════════════
+    async function renderList() {
+      root.innerHTML = '<div class="admin-empty">Loading insights…</div>';
+      const { insights } = await api('/api/admin-insights');
+      const total = insights.length;
+
+      const head = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+          <div>
+            <h1 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:28px;letter-spacing:-0.015em;">Insights</h1>
+            <p style="color:var(--muted);font-size:13px;margin-top:6px;">${total} ROW${total === 1 ? '' : 'S'} · free blog content + SEO funnel</p>
+          </div>
+          <a href="#new" style="text-decoration:none;"><button class="adm-actions primary" style="padding:10px 18px;">+ New insight</button></a>
+        </div>`;
+
+      if (!insights.length) {
+        root.innerHTML = head + '<div class="admin-empty">No insights yet. <a href="#new" style="color:var(--primary)">Create the first one →</a></div>';
+        return;
+      }
+
+      const rows = insights.map(i => {
+        const when = new Date(i.updated_at).toLocaleString('en-GB', {
+          year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'
+        });
+        const dots = LOCALES.map(l => {
+          const s = i.translations[l];
+          if (!s) return `<span title="not created">${l.toUpperCase()}</span>`;
+          return `<span class="${escape(s)}" title="${escape(s)}">${l.toUpperCase()}</span>`;
+        }).join('');
+        const cat = [i.category, i.country, i.industry].filter(Boolean).join(' · ');
+        return `
+          <tr>
+            <td class="when-cell">${escape(when)}</td>
+            <td>
+              <div class="slug-cell">${escape(i.slug)}</div>
+              <div style="color:var(--muted);font-size:11px;margin-top:3px;">${escape(cat || '—')}${i.featured ? ' · <span style="color:var(--primary);">FEATURED</span>' : ''}</div>
+            </td>
+            <td><span class="status-pill ${escape(i.status)}">${escape(i.status)}</span></td>
+            <td><div class="locale-dots">${dots}</div></td>
+            <td style="text-align:right;"><a class="row-action" href="#edit/${escape(i.id)}">Edit →</a></td>
+          </tr>`;
+      }).join('');
+
+      root.innerHTML = head + `
+        <table class="admin-table">
+          <thead><tr><th>Updated</th><th>Slug · Tags</th><th>Status</th><th>Translations</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  EDITOR
+    // ════════════════════════════════════════════════════════
+    async function renderEditor(id) {
+      const isNew = !id;
+      let insight = {
+        slug: '', category: 'field-note', country: '', industry: '',
+        featured: false, related_report_slugs: [], status: 'draft'
+      };
+      let translations = [];
+      if (!isNew) {
+        const data = await api('/api/admin-insights?id=' + id);
+        insight = data.insight; translations = data.translations || [];
+      }
+      const trByLocale = Object.fromEntries(translations.map(t => [t.locale, t]));
+
+      const header = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+          <div>
+            <a href="#" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;">← BACK TO LIST</a>
+            <h1 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.015em;margin-top:6px;">
+              ${isNew ? 'New insight' : escape(insight.slug)}
+            </h1>
+            ${isNew ? '' : `<p style="color:var(--muted);font-size:13px;margin-top:6px;font-family:'JetBrains Mono',monospace;">ID ${escape(insight.id)}</p>`}
+          </div>
+        </div>`;
+
+      root.innerHTML = header + `
+        <div class="admin-editor">
+          <!-- BASE -->
+          <div class="admin-card">
+            <h3>Base insight <span class="muted">insights</span></h3>
+
+            <div class="adm-field">
+              <label>Slug <span class="hint">lowercase, hyphens</span></label>
+              <input type="text" id="f-slug" value="${escape(insight.slug || '')}" placeholder="vietnam-sme-lending-shift" />
+            </div>
+
+            <div class="adm-grid-2">
+              <div class="adm-field">
+                <label>Category</label>
+                <select id="f-category">
+                  ${['field-note','methodology','data-explainer','market-update','opinion'].map(c =>
+                    `<option value="${c}"${(insight.category || 'field-note') === c ? ' selected' : ''}>${c}</option>`).join('')}
+                </select>
+              </div>
+              <div class="adm-field row" style="justify-content:flex-start;">
+                <input type="checkbox" id="f-featured"${insight.featured ? ' checked' : ''} />
+                <label for="f-featured" style="margin:0;">Featured</label>
+              </div>
+            </div>
+
+            <div class="adm-grid-2">
+              <div class="adm-field"><label>Country <span class="hint">optional · lowercase</span></label><input type="text" id="f-country" value="${escape(insight.country || '')}" placeholder="vietnam" /></div>
+              <div class="adm-field"><label>Industry <span class="hint">optional · lowercase</span></label><input type="text" id="f-industry" value="${escape(insight.industry || '')}" placeholder="fintech" /></div>
+            </div>
+
+            <div class="adm-field">
+              <label>Related report slugs <span class="hint">comma-separated — drives the bottom-of-article CTA</span></label>
+              <input type="text" id="f-related" value="${escape((insight.related_report_slugs || []).join(', '))}" placeholder="vietnam-fintech-2026, indonesia-fmcg-2026" />
+            </div>
+
+            <div class="adm-field">
+              <label>Status</label>
+              <select id="f-status">
+                ${['draft','review','published','retired'].map(s =>
+                  `<option value="${s}"${(insight.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+
+            <div class="adm-actions">
+              <button class="primary" id="save-base">${isNew ? 'Create insight →' : 'Save changes'}</button>
+              <span class="adm-saved-flash" id="flash-base">SAVED</span>
+              ${isNew ? '' : '<button class="danger" id="del-base" style="margin-left:auto;">Retire</button>'}
+            </div>
+          </div>
+
+          <!-- TRANSLATIONS -->
+          <div class="admin-card">
+            <h3>Translations <span class="muted">insight_translations</span></h3>
+            ${isNew
+              ? '<div class="admin-empty" style="padding:32px 16px;">Save the base insight first, then add per-locale content here.</div>'
+              : renderTransTabs(id, trByLocale)
+            }
+          </div>
+        </div>`;
+
+      if (isNew) {
+        document.getElementById('save-base').addEventListener('click', () => saveBase(null));
+      } else {
+        document.getElementById('save-base').addEventListener('click', () => saveBase(id));
+        document.getElementById('del-base').addEventListener('click', () => deleteBase(id));
+        wireTransTabs(id, trByLocale);
+      }
+    }
+
+    function renderTransTabs(id, trByLocale) {
+      const tabs = LOCALES.map(l => {
+        const t = trByLocale[l];
+        const badge = t ? `<span class="badge ${escape(t.status)}">${escape(t.status)}</span>` : '<span class="badge draft">none</span>';
+        return `<button data-loc="${l}">${l.toUpperCase()} ${badge}</button>`;
+      }).join('');
+      return `<div class="admin-tabs" id="trans-tabs">${tabs}</div><div id="trans-pane"></div>`;
+    }
+
+    function wireTransTabs(id, trByLocale) {
+      const tabs = document.querySelectorAll('#trans-tabs button');
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderTransPane(id, btn.dataset.loc, trByLocale);
+        });
+      });
+      tabs[0].click();
+    }
+
+    function renderTransPane(id, locale, trByLocale) {
+      const t = trByLocale[locale] || { locale, status: 'draft' };
+      const pane = document.getElementById('trans-pane');
+
+      pane.innerHTML = `
+        <div class="adm-field">
+          <label>Title <span class="hint">required</span></label>
+          <input type="text" id="t-title" value="${escape(t.title || '')}" placeholder="How Vietnam's super-apps quietly rewrote SME lending…" />
+        </div>
+
+        <div class="adm-field">
+          <label>Excerpt <span class="hint">card blurb · ~280 chars</span></label>
+          <textarea id="t-excerpt" rows="3" maxlength="500">${escape(t.excerpt || '')}</textarea>
+        </div>
+
+        <div class="adm-field">
+          <label>Lede <span class="hint">opening paragraph, rendered larger</span></label>
+          <textarea id="t-lede" rows="3">${escape(t.lede || '')}</textarea>
+        </div>
+
+        <div class="adm-field">
+          <label>Body <span class="hint">HTML — &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;ul&gt; supported</span></label>
+          <textarea id="t-body" rows="14" placeholder="&lt;p&gt;The conventional story is...&lt;/p&gt;&#10;&lt;h2&gt;What we've heard&lt;/h2&gt;...">${escape(t.body || '')}</textarea>
+        </div>
+
+        <div class="adm-grid-2">
+          <div class="adm-field"><label>Read time</label><input type="text" id="t-read" value="${escape(t.read_time || '')}" placeholder="6 min read" /></div>
+          <div class="adm-field">
+            <label>Status</label>
+            <select id="t-status">
+              ${['draft','review','published','retired'].map(s => `<option value="${s}"${(t.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="adm-actions">
+          <button class="primary" id="save-trans">Save ${locale.toUpperCase()}</button>
+          <span class="adm-saved-flash" id="flash-trans">SAVED</span>
+          ${trByLocale[locale] ? `<button class="danger" id="del-trans" style="margin-left:auto;">Delete ${locale.toUpperCase()}</button>` : ''}
+        </div>`;
+
+      document.getElementById('save-trans').addEventListener('click', () => saveTranslation(id, locale, trByLocale));
+      const del = document.getElementById('del-trans');
+      if (del) del.addEventListener('click', () => deleteTranslation(id, locale, trByLocale));
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  Save / delete
+    // ════════════════════════════════════════════════════════
+    async function saveBase(id) {
+      const btn   = document.getElementById('save-base');
+      const flash = document.getElementById('flash-base');
+      const patch = {
+        slug:                 document.getElementById('f-slug').value.trim().toLowerCase(),
+        category:             document.getElementById('f-category').value,
+        country:              document.getElementById('f-country').value.trim().toLowerCase() || null,
+        industry:             document.getElementById('f-industry').value.trim().toLowerCase() || null,
+        featured:             document.getElementById('f-featured').checked,
+        related_report_slugs: document.getElementById('f-related').value.split(',').map(s => s.trim()).filter(Boolean),
+        status:               document.getElementById('f-status').value
+      };
+      btn.disabled = true;
+      try {
+        if (id) {
+          await api('/api/admin-insights?id=' + id, { method: 'PATCH', body: JSON.stringify(patch) });
+          flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500);
+        } else {
+          const { insight } = await api('/api/admin-insights', { method: 'POST', body: JSON.stringify(patch) });
+          window.location.hash = '#edit/' + insight.id;
+        }
+      } catch (err) {
+        alert('Save failed: ' + (err.body?.error || err.message));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteBase(id) {
+      if (!confirm('Retire this insight?')) return;
+      try {
+        await api('/api/admin-insights?id=' + id, { method: 'DELETE' });
+        window.location.hash = '';
+      } catch (err) {
+        alert('Delete failed: ' + (err.body?.error || err.message));
+      }
+    }
+
+    async function saveTranslation(id, locale, trByLocale) {
+      const btn   = document.getElementById('save-trans');
+      const flash = document.getElementById('flash-trans');
+      const patch = {
+        title:     document.getElementById('t-title').value.trim(),
+        excerpt:   document.getElementById('t-excerpt').value.trim() || null,
+        lede:      document.getElementById('t-lede').value.trim() || null,
+        body:      document.getElementById('t-body').value.trim() || null,
+        read_time: document.getElementById('t-read').value.trim() || null,
+        status:    document.getElementById('t-status').value
+      };
+      btn.disabled = true;
+      try {
+        const { translation } = await api(
+          '/api/admin-insights?id=' + id + '&locale=' + locale,
+          { method: 'POST', body: JSON.stringify(patch) }
+        );
+        trByLocale[locale] = translation;
+        flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500);
+        const tabBtn = document.querySelector(`#trans-tabs button[data-loc="${locale}"]`);
+        if (tabBtn) tabBtn.innerHTML = `${locale.toUpperCase()} <span class="badge ${translation.status}">${translation.status}</span>`;
+      } catch (err) {
+        alert('Save failed: ' + (err.body?.error || err.message));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteTranslation(id, locale, trByLocale) {
+      if (!confirm('Delete the ' + locale.toUpperCase() + ' translation?')) return;
+      try {
+        await api('/api/admin-insights?id=' + id + '&locale=' + locale, { method: 'DELETE' });
+        delete trByLocale[locale];
+        const tabBtn = document.querySelector(`#trans-tabs button[data-loc="${locale}"]`);
+        if (tabBtn) tabBtn.innerHTML = `${locale.toUpperCase()} <span class="badge draft">none</span>`;
+        renderTransPane(id, locale, trByLocale);
+      } catch (err) {
+        alert('Delete failed: ' + (err.body?.error || err.message));
+      }
+    }
+
+    function escape(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+    function renderFatal(err) {
+      const msg = err.status === 401 ? 'Session expired — please <a href="/auth.html" style="color:var(--primary)">sign in</a>.'
+                : err.status === 403 ? `Your account (<code>${user.email}</code>) isn't on the admin allowlist.`
+                : err.status === 500 && err.body?.error === 'admin_not_configured' ? 'Server has no <code>ADMIN_EMAILS</code> set.'
+                : 'Error: ' + (err.body?.error || err.message);
+      root.innerHTML = '<div class="admin-empty">' + msg + '</div>';
+    }
+  </script>
+</body>
+</html>
