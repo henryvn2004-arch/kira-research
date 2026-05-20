@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>カスタム調査 — KIRA RESEARCH</title>
+  <meta name="description" content="シニアアナリスト主導の東南アジア向けカスタム調査プロジェクトを依頼。意思決定に合わせて、2〜6週間で納品。" />
+
+  <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/custom-research/" />
+  <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/custom-research/" />
+  <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/custom-research/" />
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/custom-research/" />
+  <link rel="canonical" href="https://kiraresearch.com/ja/custom-research/" />
+
+  <meta property="og:title" content="カスタム調査 — KIRA RESEARCH" />
+  <meta property="og:description" content="シニアアナリストによる東南アジア向けカスタム調査。意思決定に合わせて。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kiraresearch.com/ja/custom-research/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    body, h1, h2, h3, h4 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; }
+    .cr-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 48px 0 96px; }
+    .cr-tier { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+    .cr-tier-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .cr-tier-price { font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -0.015em; color: var(--text); }
+    .cr-tier-price small { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; font-weight: 500; margin-left: 4px; vertical-align: top; }
+    .cr-tier-desc { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .cr-tier ul { list-style: none; padding: 0; margin: 0; }
+    .cr-tier li { padding: 6px 0; font-size: 13px; color: var(--muted); display: flex; gap: 10px; line-height: 1.6; }
+    .cr-tier li::before { content: "→"; color: var(--primary); flex-shrink: 0; }
+    .cr-process { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 48px 0 96px; }
+    .cr-step { padding: 28px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+    .cr-step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; margin-bottom: 16px; }
+    .cr-step-title { font-weight: 700; font-size: 16px; margin-bottom: 10px; color: var(--text); }
+    .cr-step-desc { color: var(--muted); font-size: 13px; line-height: 1.75; }
+    .cr-form-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 48px; margin-bottom: 96px; }
+    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cr-field { display: flex; flex-direction: column; gap: 8px; }
+    .cr-field.full { grid-column: 1 / -1; }
+    .cr-field label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .cr-field input, .cr-field textarea, .cr-field select { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 14px; }
+    .cr-field input:focus, .cr-field textarea:focus, .cr-field select:focus { outline: none; border-color: var(--primary); }
+    .cr-field textarea { min-height: 140px; resize: vertical; }
+    .cr-submit { margin-top: 16px; }
+    .cr-success { display: none; background: rgba(30,111,255,0.08); border: 1px solid rgba(30,111,255,0.3); border-radius: 8px; padding: 24px; margin-top: 24px; color: var(--text); }
+    .cr-success.show { display: block; }
+    @media (max-width: 960px) {
+      .cr-tiers { grid-template-columns: 1fr; }
+      .cr-process { grid-template-columns: repeat(2, 1fr); }
+      .cr-form { grid-template-columns: 1fr; }
+      .cr-form-wrap { padding: 32px; }
+    }
+    @media (max-width: 560px) { .cr-process { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <section class="section-head" style="padding:96px 0 32px;text-align:center;">
+      <div class="hero-eyebrow">カスタム調査</div>
+      <h1 style="font-weight:900;font-size:clamp(34px,5vw,52px);line-height:1.15;letter-spacing:-0.02em;margin:18px auto 24px;max-width:780px;">
+        <span>ライブラリで答えが</span><br />
+        <span style="color:var(--primary);">見つからないとき。</span>
+      </h1>
+      <p style="color:var(--muted);font-size:17px;line-height:1.7;max-width:620px;margin:0 auto;">
+        シニアアナリスト主導のプロジェクトを依頼してください。市場参入、競合深掘り、パートナー調査、規制環境 — 通常2〜6週間で納品。
+      </p>
+    </section>
+
+    <section style="padding:32px 0 0;">
+      <div class="cr-tiers">
+        <div class="cr-tier">
+          <div class="cr-tier-name">ブリーフィングメモ</div>
+          <div class="cr-tier-price">$499<small>〜</small></div>
+          <p class="cr-tier-desc">焦点を絞った質問への的確な回答。8〜15ページ、1〜2週間納期。特定の意思決定に最適。</p>
+          <ul>
+            <li>スコーピングコール + 書面ブリーフ</li>
+            <li>デスク + 軽い一次調査</li>
+            <li>シニアアナリストのサインオフ</li>
+            <li>フォローアップQ&amp;A 1回</li>
+          </ul>
+          <a href="#cr-form" class="btn btn-secondary" style="margin-top:16px;">ブリーフィングを開始 →</a>
+        </div>
+
+        <div class="cr-tier" style="border-color:var(--primary);">
+          <div class="cr-tier-name" style="color:var(--primary);">カスタムレポート</div>
+          <div class="cr-tier-price">$1,499<small>〜</small></div>
+          <p class="cr-tier-desc">本格的なカスタム市場分析。一次調査、専門家インタビュー、競合分析、シナリオ。3〜6週間。</p>
+          <ul>
+            <li>ディスカバリー + スコーピングワークショップ</li>
+            <li>一次調査と専門家インタビュー</li>
+            <li>フルレポート(40〜80ページ)</li>
+            <li>プレゼン + ワーキングセッション</li>
+            <li>改訂1回</li>
+          </ul>
+          <a href="#cr-form" class="btn btn-primary" style="margin-top:16px;">リサーチチームに相談 →</a>
+        </div>
+
+        <div class="cr-tier">
+          <div class="cr-tier-name">リテイナー</div>
+          <div class="cr-tier-price">個別見積もり</div>
+          <p class="cr-tier-desc">東南アジアをカバーする戦略チーム向け継続アナリスト容量。月次ブリーフィング、オンコール時間、カスタム成果物。</p>
+          <ul>
+            <li>専任シニアアナリスト</li>
+            <li>月次ブリーフィングメモ</li>
+            <li>アドホック対応72時間以内</li>
+            <li>四半期戦略セッション</li>
+          </ul>
+          <a href="#cr-form" class="btn btn-secondary" style="margin-top:16px;">リテイナーを相談 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div style="max-width:680px;">
+        <div class="hero-eyebrow">エンゲージメントモデル</div>
+        <h2 style="font-weight:800;font-size:clamp(26px,3vw,36px);line-height:1.2;letter-spacing:-0.015em;margin:14px 0 18px;color:var(--text);">ブリーフから納品まで、4ステップ。</h2>
+        <p style="color:var(--muted);font-size:16px;line-height:1.85;">
+          すべてのカスタム案件は、同じレビュー主導のプロセスで進行します。外注アナリストプールなし、ゴーストライターなし — シニアアナリストが最初から最後まで担当。
+        </p>
+      </div>
+
+      <div class="cr-process">
+        <div class="cr-step"><div class="cr-step-num">01 · ディスカバリー</div><div class="cr-step-title">スコーピングコール</div><div class="cr-step-desc">30分の通話で、ブリーフの背景にある意思決定、現在のエビデンス、答えが最も重要となるポイントを把握。</div></div>
+        <div class="cr-step"><div class="cr-step-num">02 · 設計</div><div class="cr-step-title">調査計画</div><div class="cr-step-desc">書面スコープ:調査課題、方法論、ソース、専門家インタビュー対象、成果物形態、スケジュール。フィールドワーク前に承認。</div></div>
+        <div class="cr-step"><div class="cr-step-num">03 · 実査</div><div class="cr-step-title">一次調査</div><div class="cr-step-desc">現地インタビュー、デスク調査、データ分析。AIによる統合を含むモダンツールが作業を加速し、判断はシニアアナリストが担う。</div></div>
+        <div class="cr-step"><div class="cr-step-num">04 · 納品</div><div class="cr-step-title">レポート + セッション</div><div class="cr-step-desc">最終レポート、構造化された発見、含意を議論するワーキングセッション。改訂1回含む。</div></div>
+      </div>
+    </section>
+
+    <section id="cr-form">
+      <div style="max-width:680px;">
+        <div class="hero-eyebrow">お問い合わせ</div>
+        <h2 style="font-weight:800;font-size:clamp(26px,3vw,36px);line-height:1.2;letter-spacing:-0.015em;margin:14px 0 18px;color:var(--text);">プロジェクトについてお聞かせください。</h2>
+        <p style="color:var(--muted);font-size:16px;line-height:1.85;margin-bottom:32px;">
+          シニアアナリストが1営業日以内に返信します。お急ぎの場合はその旨ご記入ください。優先対応します。
+        </p>
+      </div>
+
+      <div class="cr-form-wrap">
+        <form class="cr-form" id="cr-lead-form" novalidate>
+          <div class="cr-field"><label for="cr-name">お名前</label><input type="text" id="cr-name" name="name" required autocomplete="name" /></div>
+          <div class="cr-field"><label for="cr-email">業務用メール</label><input type="email" id="cr-email" name="email" required autocomplete="email" /></div>
+          <div class="cr-field"><label for="cr-company">会社名</label><input type="text" id="cr-company" name="company" autocomplete="organization" /></div>
+          <div class="cr-field"><label for="cr-role">役職</label><input type="text" id="cr-role" name="role" autocomplete="organization-title" /></div>
+          <div class="cr-field">
+            <label for="cr-tier">エンゲージメントタイプ</label>
+            <select id="cr-tier" name="tier">
+              <option value="briefing">ブリーフィングメモ($499〜)</option>
+              <option value="custom" selected>カスタムレポート($1,499〜)</option>
+              <option value="retainer">リテイナー(個別)</option>
+              <option value="not-sure">未定</option>
+            </select>
+          </div>
+          <div class="cr-field">
+            <label for="cr-deadline">希望納期</label>
+            <select id="cr-deadline" name="deadline">
+              <option value="2w">2週間以内</option>
+              <option value="month" selected>1ヶ月以内</option>
+              <option value="quarter">四半期以内</option>
+              <option value="flex">柔軟</option>
+            </select>
+          </div>
+          <div class="cr-field full">
+            <label for="cr-brief">プロジェクト概要</label>
+            <textarea id="cr-brief" name="brief" required minlength="10" placeholder="この調査の背景にある意思決定は何ですか?対象市場、セグメント、注目している企業など。文脈や制約があればご記入ください。"></textarea>
+          </div>
+          <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="cr-hp">Leave this empty</label>
+            <input type="text" id="cr-hp" name="hp" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="cr-field full">
+            <button type="submit" class="btn btn-primary cr-submit">リサーチチームに送信 →</button>
+            <div class="cr-error" id="cr-error" style="display:none;margin-top:14px;color:#FF7B7B;font-size:13px;"></div>
+          </div>
+        </form>
+
+        <div class="cr-success" id="cr-success">
+          <strong>ありがとうございます — メッセージを受信しました。</strong>
+          <p style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.75;">
+            シニアアナリストがブリーフを読み、1営業日以内に返信します。追加の文脈を共有したい場合は、<a href="mailto:hello@kiraresearch.com" style="color:var(--primary);">hello@kiraresearch.com</a> までメールしてください。
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form    = document.getElementById('cr-lead-form');
+      const success = document.getElementById('cr-success');
+      const errBox  = document.getElementById('cr-error');
+      const submit  = form && form.querySelector('button[type="submit"]');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errBox.style.display = 'none';
+        errBox.textContent   = '';
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.locale = (window.kira && window.kira.locale) || 'ja';
+        data.source = 'custom-research';
+
+        const originalLabel = submit.textContent;
+        submit.disabled = true;
+        submit.textContent = '送信中…';
+
+        try {
+          const res = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            const msg = ({
+              name_required:   'お名前を入力してください。',
+              email_invalid:   '有効なメールアドレスを入力してください。',
+              brief_too_short: 'プロジェクトの詳細をもう少しご記入ください。',
+              insert_failed:   '弊社側で問題が発生しました。hello@kiraresearch.com までメールしてください。',
+              invalid_json:    'フォーム送信に失敗しました — 再試行してください。'
+            })[body.error] || '送信に失敗しました — 再試行するか、hello@kiraresearch.com までご連絡ください。';
+            errBox.textContent = msg;
+            errBox.style.display = 'block';
+            submit.disabled = false;
+            submit.textContent = originalLabel;
+            return;
+          }
+          form.style.display = 'none';
+          success.classList.add('show');
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          errBox.textContent = 'ネットワークエラー — 再試行するか、hello@kiraresearch.com までご連絡ください。';
+          errBox.style.display = 'block';
+          submit.disabled = false;
+          submit.textContent = originalLabel;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
