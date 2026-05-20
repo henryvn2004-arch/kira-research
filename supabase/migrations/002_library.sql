@@ -4,6 +4,20 @@
 -- Run once in Supabase SQL editor after 001_leads.sql.
 -- ============================================================
 
+-- ── Reset legacy schema (safe on fresh installs) ──────────
+-- The original Supabase project has platform-era `living_reports` and
+-- `report_translations` tables predating this model. They keep NOT NULL
+-- columns (title, etc.) bundled into the base table that don't fit the
+-- base + per-locale-translation split below, so the seed inserts at the
+-- bottom of this file fail against them. Year 1 has no useful data in
+-- those legacy rows, so we drop and recreate cleanly.
+--
+-- CASCADE removes any dependent foreign keys — notably purchases.report_id
+-- if migration 004 already ran. The end-of-file block re-attaches that FK.
+-- DROP IF EXISTS is a no-op on fresh installs, so this is idempotent.
+drop table if exists public.report_translations cascade;
+drop table if exists public.living_reports      cascade;
+
 -- ── living_reports ────────────────────────────────────────
 -- Base metadata for each report. One row per report (regardless of locale).
 --
@@ -36,30 +50,6 @@ create table if not exists public.living_reports (
   status          text not null default 'draft'
                    check (status in ('draft', 'published', 'retired'))
 );
-
--- Defensive backfill for legacy installations. ADD COLUMN IF NOT EXISTS
--- is a no-op when the column is already present, so this is safe on
--- both fresh-create and legacy-extend paths. NOT NULL constraints are
--- best-effort (Postgres can't add NOT NULL to columns that already exist
--- without a column-set scan; we skip that step rather than fail loudly).
-alter table public.living_reports
-  add column if not exists created_at   timestamptz not null default now(),
-  add column if not exists updated_at   timestamptz not null default now(),
-  add column if not exists published_at timestamptz,
-  add column if not exists slug         text,
-  add column if not exists country      text,
-  add column if not exists industry     text,
-  add column if not exists year         integer,
-  add column if not exists pages        integer,
-  add column if not exists price        integer default 39,
-  add column if not exists currency     text default 'USD',
-  add column if not exists aggregators  text[] default '{}',
-  add column if not exists status       text default 'draft';
-
--- Slug uniqueness (idempotent — replaces any inline UNIQUE that didn't
--- get added when the legacy table pre-existed).
-create unique index if not exists living_reports_slug_key
-  on public.living_reports (slug);
 
 create index if not exists living_reports_country_year_idx
   on public.living_reports (country, year desc);
@@ -100,24 +90,6 @@ create table if not exists public.report_translations (
 
   unique (report_id, locale)
 );
-
--- Defensive backfill for legacy installations.
-alter table public.report_translations
-  add column if not exists created_at   timestamptz not null default now(),
-  add column if not exists updated_at   timestamptz not null default now(),
-  add column if not exists published_at timestamptz,
-  add column if not exists report_id    uuid,
-  add column if not exists locale       text,
-  add column if not exists title        text,
-  add column if not exists eyebrow      text,
-  add column if not exists preview      jsonb,
-  add column if not exists toc          jsonb default '[]',
-  add column if not exists full_content jsonb,
-  add column if not exists pdf_url      text,
-  add column if not exists status       text default 'draft';
-
-create unique index if not exists report_translations_report_locale_key
-  on public.report_translations (report_id, locale);
 
 create index if not exists report_translations_lookup_idx
   on public.report_translations (report_id, locale, status);
@@ -228,3 +200,27 @@ select
 from public.living_reports r
 where r.slug = 'vietnam-fintech-2026'
 on conflict (report_id, locale) do nothing;
+
+
+-- ── Re-attach purchases.report_id → living_reports(id) FK ─
+-- The CASCADE drop at the top of this file removed the FK if migration
+-- 004_purchases.sql had already run. Re-attach it now that living_reports
+-- exists again. Defensive guards: only run if both purchases.report_id
+-- column exists and the FK constraint does NOT yet exist.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'purchases' and column_name = 'report_id'
+  )
+  and not exists (
+    select 1 from information_schema.table_constraints
+    where table_schema = 'public' and table_name = 'purchases'
+      and constraint_type = 'FOREIGN KEY' and constraint_name = 'purchases_report_id_fkey'
+  )
+  then
+    alter table public.purchases
+      add constraint purchases_report_id_fkey
+      foreign key (report_id) references public.living_reports(id);
+  end if;
+end $$;

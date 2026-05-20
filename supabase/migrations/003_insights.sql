@@ -5,6 +5,15 @@
 -- Run once in Supabase SQL editor after 002_library.sql.
 -- ============================================================
 
+-- ── Reset legacy schema (safe on fresh installs) ──────────
+-- See same note in 002_library.sql. The platform-era `insights` table
+-- bundles title into the base row, which is incompatible with our base +
+-- per-locale-translation split. Drop and recreate cleanly. No useful Year-1
+-- data lives in these tables yet, so the cascade is safe. DROP IF EXISTS
+-- is a no-op on fresh installs.
+drop table if exists public.insight_translations cascade;
+drop table if exists public.insights             cascade;
+
 -- ── insights ──────────────────────────────────────────────
 -- Base metadata (locale-independent).
 --
@@ -30,21 +39,6 @@ create table if not exists public.insights (
   status                text not null default 'draft'
                          check (status in ('draft','review','published','retired'))
 );
-
--- Defensive backfill for legacy installations.
-alter table public.insights
-  add column if not exists created_at           timestamptz not null default now(),
-  add column if not exists updated_at           timestamptz not null default now(),
-  add column if not exists published_at         timestamptz,
-  add column if not exists slug                 text,
-  add column if not exists category             text,
-  add column if not exists country              text,
-  add column if not exists industry             text,
-  add column if not exists featured             boolean default false,
-  add column if not exists related_report_slugs text[] default '{}',
-  add column if not exists status               text default 'draft';
-
-create unique index if not exists insights_slug_key on public.insights (slug);
 
 create index if not exists insights_status_published_at_idx
   on public.insights (status, published_at desc);
@@ -76,23 +70,6 @@ create table if not exists public.insight_translations (
 
   unique (insight_id, locale)
 );
-
--- Defensive backfill for legacy installations.
-alter table public.insight_translations
-  add column if not exists created_at   timestamptz not null default now(),
-  add column if not exists updated_at   timestamptz not null default now(),
-  add column if not exists published_at timestamptz,
-  add column if not exists insight_id   uuid,
-  add column if not exists locale       text,
-  add column if not exists title        text,
-  add column if not exists excerpt      text,
-  add column if not exists lede         text,
-  add column if not exists body         text,
-  add column if not exists read_time    text,
-  add column if not exists status       text default 'draft';
-
-create unique index if not exists insight_translations_insight_locale_key
-  on public.insight_translations (insight_id, locale);
 
 create index if not exists insight_translations_lookup_idx
   on public.insight_translations (insight_id, locale, status);
