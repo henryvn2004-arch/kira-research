@@ -175,6 +175,19 @@ test.describe('public APIs', () => {
     const r = await request.get('/api/admin-leads');
     expect(r.status()).toBe(401);
   });
+
+  test('/api/admin-upload-pdf rejects unauthenticated', async ({ request }) => {
+    // POST so the method gate doesn't fire first.
+    const r = await request.post('/api/admin-upload-pdf', {
+      data: { report_id: '00000000-0000-0000-0000-000000000000', locale: 'en', fileBase64: '' }
+    });
+    expect(r.status()).toBe(401);
+  });
+
+  test('/api/admin-upload-pdf rejects GET', async ({ request }) => {
+    const r = await request.get('/api/admin-upload-pdf');
+    expect(r.status()).toBe(405);
+  });
 });
 
 // ── 7) SEO surface: sitemaps + robots.txt + hreflang ──

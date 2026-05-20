@@ -14,6 +14,9 @@
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
+const PDF_BUCKET           = 'reports-pdfs';
+const PDF_SIGNED_TTL_SEC   = 3600;  // 1-hour signed URLs — long enough to download, short enough that leaks are short-lived.
+
 async function sb(path, method = 'GET', body = null) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     method,
@@ -27,6 +30,40 @@ async function sb(path, method = 'GET', body = null) {
   });
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
   return res.status === 204 ? null : res.json();
+}
+
+// pdf_url can be:
+//   • a full http(s) URL — used for aggregator-hosted PDFs, returned as-is.
+//   • a storage path (e.g. "<uuid>/en.pdf") — resolved to a fresh signed URL.
+//   • null/empty — returned as null so the UI shows "PDF is being prepared".
+async function resolvePdfUrl(pdfUrl) {
+  if (!pdfUrl) return null;
+  if (/^https?:\/\//i.test(pdfUrl)) return pdfUrl;
+
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/sign/${PDF_BUCKET}/${pdfUrl}`,
+      {
+        method: 'POST',
+        headers: {
+          'apikey':        SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type':  'application/json'
+        },
+        body: JSON.stringify({ expiresIn: PDF_SIGNED_TTL_SEC })
+      }
+    );
+    if (!r.ok) {
+      console.error('[library-content] sign url failed:', r.status, await r.text());
+      return null;
+    }
+    const { signedURL } = await r.json();
+    // signedURL is a relative path like "/object/sign/...?token=..." — prepend host.
+    return signedURL ? `${SUPABASE_URL}/storage/v1${signedURL}` : null;
+  } catch (err) {
+    console.error('[library-content] sign url error:', err.message);
+    return null;
+  }
 }
 
 async function verifyBearer(req) {
@@ -125,6 +162,11 @@ export default async function handler(req, res) {
       // Swallow — downloads table is optional infrastructure.
     }
 
+    // Generate a short-lived signed URL when pdf_url is a storage path.
+    // External URLs pass through. Best-effort: null on failure so the UI
+    // shows the "PDF is being prepared" pending state instead of breaking.
+    const signedPdfUrl = await resolvePdfUrl(translation.pdf_url);
+
     res.status(200).json({
       slug:           base.slug,
       country:        base.country,
@@ -141,7 +183,7 @@ export default async function handler(req, res) {
       preview:        translation.preview,
       toc:            translation.toc,
       full_content:   translation.full_content,
-      pdf_url:        translation.pdf_url,
+      pdf_url:        signedPdfUrl,
 
       ownedLocale:    purchases[0].locale,
       purchasedAt:    purchases[0].created_at

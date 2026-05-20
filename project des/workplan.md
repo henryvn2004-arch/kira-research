@@ -18,7 +18,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 | 3 | Library infrastructure | ✅ | 3.1 + 3.2 + 3.3 all done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`, `8bcb6d4`). Sitemap + hreflang shipped. |
 | 4 | Admin backend | 🟡 | 4.1 auth + dashboard ✅ (`714375a`, `eb05464`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 audit log deferred, 4.3 transactions+users pending, 4.4 aggregator tracking pending** |
 | 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206` (legacy gone, library uses direct PayPal). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not rebuilt — currently just redirect to landing.** |
-| 6 | Report population | ⏸️ | 0 reports seeded beyond migration samples — Henry's content production |
+| 6 | Report population | 🟡 | 6.2 PDF upload + Storage delivery shipped (item D, this session); content production still owner-blocked. |
 | 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`), per-page schema/OG ✅ (this commit). **7.2 auto-insights cron + 7.3 internal linking + GSC submission pending.** |
 | 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`) + hreflang/sitemap-ja.xml ✅ (`8bcb6d4`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
 | 9 | KO layer | 🟡 | 9.1 infra ✅ (same commit range) + sitemap-ko.xml ✅. **9.2 KO translations + 9.3 KO aggregator pending.** |
@@ -200,7 +200,8 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [ ] QA each report
 
 ### Sprint 6.2 — PDF export pipeline
-- [ ] Implement PDF export (Puppeteer or pdfkit)
+- [x] **PDF upload + Storage delivery pipeline (item D)** — admin uploads PDF via `/en/admin/reports` → `/api/admin-upload-pdf` writes to private bucket `reports-pdfs/{report_id}/{locale}.pdf` and stores the path in `report_translations.pdf_url`. `/api/library-content` resolves storage paths into 1-hour signed URLs at delivery time; external URLs pass through for aggregator-hosted reports.
+- [ ] Implement PDF export (Puppeteer or pdfkit) — owner produces PDFs from Claude chat output for Year 1; in-platform generation deferred
 - [ ] Brand template applied (KIRA dark cover, light body)
 - [ ] Locale-specific PDF (font, date format)
 - [ ] Test PDFs validated end-to-end

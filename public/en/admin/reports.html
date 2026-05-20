@@ -313,17 +313,21 @@
           <textarea id="t-full" rows="10" placeholder='{ "sections": [ { "heading": "Market sizing", "body_html": "&lt;p&gt;...&lt;/p&gt;" } ] }'>${escape(jsonString(t.full_content))}</textarea>
         </div>
 
-        <div class="adm-grid-2">
-          <div class="adm-field">
-            <label>PDF URL</label>
-            <input type="text" id="t-pdf" value="${escape(t.pdf_url || '')}" placeholder="https://…supabase…/storage/v1/object/public/reports/…pdf" />
+        <div class="adm-field">
+          <label>PDF file <span class="hint">Upload to Supabase Storage · max 30MB · overwrites any prior version for this locale</span></label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+            <input type="file" id="t-pdf-file" accept="application/pdf" style="flex:1;min-width:240px;" />
+            <button type="button" id="t-pdf-upload" class="secondary" style="white-space:nowrap;">Upload PDF</button>
+            <span class="adm-saved-flash" id="flash-pdf">UPLOADED</span>
           </div>
-          <div class="adm-field">
-            <label>Status</label>
-            <select id="t-status">
-              ${['draft','review','published','retired'].map(s => `<option value="${s}"${(t.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
-            </select>
-          </div>
+          <input type="text" id="t-pdf" value="${escape(t.pdf_url || '')}" placeholder="Storage path will appear here after upload, e.g. {id}/en.pdf — or paste an external URL for aggregator-hosted PDFs" style="font-family:'JetBrains Mono',monospace;font-size:12px;" />
+        </div>
+
+        <div class="adm-field">
+          <label>Status</label>
+          <select id="t-status">
+            ${['draft','review','published','retired'].map(s => `<option value="${s}"${(t.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
+          </select>
         </div>
 
         <div class="adm-actions">
@@ -333,6 +337,7 @@
         </div>`;
 
       document.getElementById('save-trans').addEventListener('click', () => saveTranslation(id, locale, trByLocale));
+      document.getElementById('t-pdf-upload').addEventListener('click', () => uploadPdf(id, locale, trByLocale));
       const del = document.getElementById('del-trans');
       if (del) del.addEventListener('click', () => deleteTranslation(id, locale, trByLocale));
 
@@ -501,6 +506,59 @@
         alert('Save failed: ' + (err.body?.error || err.message));
       } finally {
         btn.disabled = false;
+      }
+    }
+
+    async function uploadPdf(id, locale, trByLocale) {
+      const fileInput = document.getElementById('t-pdf-file');
+      const pathInput = document.getElementById('t-pdf');
+      const btn       = document.getElementById('t-pdf-upload');
+      const flash     = document.getElementById('flash-pdf');
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) { alert('Pick a PDF first.'); return; }
+      if (file.type && file.type !== 'application/pdf') {
+        if (!confirm('That file isn\'t reported as application/pdf. Upload anyway?')) return;
+      }
+      if (file.size > 30 * 1024 * 1024) {
+        alert('File is larger than 30 MB. Trim it or host externally and paste the URL.');
+        return;
+      }
+
+      btn.disabled = true;
+      const originalLabel = btn.textContent;
+      btn.textContent = 'Uploading…';
+      try {
+        // FileReader → base64 (strip "data:application/pdf;base64," prefix).
+        const fileBase64 = await new Promise((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onload  = () => resolve(String(fr.result).replace(/^data:[^,]+,/, ''));
+          fr.onerror = () => reject(fr.error || new Error('read_failed'));
+          fr.readAsDataURL(file);
+        });
+
+        const { path, pdf_url, translation, warning } = await api('/api/admin-upload-pdf', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            report_id: id,
+            locale,
+            filename:  file.name,
+            fileBase64
+          })
+        });
+
+        pathInput.value = pdf_url || path;
+        if (translation) trByLocale[locale] = translation;
+        flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1800);
+        if (warning === 'translation_row_missing') {
+          alert('PDF uploaded, but no translation row exists for ' + locale.toUpperCase() +
+                ' yet. Fill the title + save the translation first — the PDF is stored and will link up once the row exists.');
+        }
+      } catch (err) {
+        alert('Upload failed: ' + (err.body?.error || err.message));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalLabel;
       }
     }
 

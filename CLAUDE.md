@@ -52,7 +52,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **3.2** | Individual report page (`_view.html` rewrite) | ✅ | `c953fb4`, `1a46491`, `87cd168` |
 | **3.3** | Backend integration (DB + PayPal + slug routing + sitemap) | ✅ | `ffde22e`, `60b00bb`, `87cd168`, `8bcb6d4` · sitemap + hreflang shipped, per-report OG/JSON-LD → 7.3 |
 | **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth + `eb05464` dashboard · **audit log deferred** |
-| **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` · stats/featured pending |
+| **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` + PDF upload UI (item D) · stats/featured pending |
 | **4.3** | Transactions + Users admin | 🔴 | **not started** |
 | **4.4** | Leads + Aggregators admin | 🟡 | `714375a` leads only · **aggregator tracking pending** |
 | **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt — deferred** |
@@ -98,7 +98,7 @@ public/
 ├── index.html                      # root: locale auto-redirect
 └── robots.txt                      # crawler directives
 
-api/                                # 13 Vercel serverless functions (all active)
+api/                                # 14 Vercel serverless functions (all active)
 ├── leads.js                        # public POST — form submissions
 ├── library-list.js  insights-list.js  insight.js  library-report.js  # public reads
 ├── library-buy.js                  # PayPal create + capture
@@ -106,13 +106,15 @@ api/                                # 13 Vercel serverless functions (all active
 ├── library-content.js              # JWT-gated full content + PDF URL
 ├── admin-leads.js  admin-reports.js  admin-insights.js  # JWT + ADMIN_EMAILS whitelist
 ├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
+├── admin-upload-pdf.js             # admin PDF upload to Supabase Storage (item D)
 └── sitemap.js                      # dynamic sitemap (index + per-locale)
 
 supabase/migrations/                # idempotent schema
 ├── 001_leads.sql                   # leads table + RLS
 ├── 002_library.sql                 # reports + report_translations + seed
 ├── 003_insights.sql                # insights + insight_translations + seed
-└── 004_purchases.sql               # purchases + downloads + RLS
+├── 004_purchases.sql               # purchases + downloads + RLS
+└── 005_storage.sql                 # private bucket reports-pdfs + RLS (item D)
 
 tests/smoke.spec.js                 # 41 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
@@ -140,11 +142,12 @@ Two things matter here:
 
 These are tasks only the owner can do (involve dashboards, not git):
 
-1. ☐ **Run 4 Supabase migrations** in dashboard SQL Editor, in order:
+1. ☐ **Run 5 Supabase migrations** in dashboard SQL Editor, in order:
    - `supabase/migrations/001_leads.sql`
    - `supabase/migrations/002_library.sql`
    - `supabase/migrations/003_insights.sql`
    - `supabase/migrations/004_purchases.sql`
+   - `supabase/migrations/005_storage.sql` — creates private `reports-pdfs` bucket for PDF uploads. Alternative: Dashboard → Storage → New bucket → name `reports-pdfs`, **uncheck Public**, MIME `application/pdf`, size 32MB.
 2. ☐ **Set Vercel env var** `ADMIN_EMAILS=henryvn2004@gmail.com`
 3. ☐ **Verify Vercel env vars exist** (Settings → Environment Variables):
    - `SUPABASE_URL`
@@ -179,8 +182,7 @@ Aligned with the workplan phase/sprint structure. Each item maps to one or
 more pending sprints in `project des/workplan.md`. Recommended order:
 
 - ~~**C — Sitemap.xml + robots.txt + full hreflang**~~ ✅ **DONE** (`6bb331f`…`8bcb6d4`). Closed Sprint 3.3, ~70% of 8.1+9.1; 7.3 partial.
-- **D — PDF upload via Supabase Storage** → unblocks Sprint **6.2** (PDF export pipeline) + **8.2** JA PDFs.
-  Wire `library-content.js` to return real signed URL from Storage bucket. Add admin upload UI. ~1 day.
+- ~~**D — PDF upload via Supabase Storage**~~ ✅ **DONE** (this session). New `api/admin-upload-pdf.js` accepts base64 PDF + report_id + locale, writes to private bucket `reports-pdfs/{id}/{locale}.pdf`, patches `report_translations.pdf_url` to the path. `api/library-content.js` resolves paths → 1-hour signed URLs; external URLs pass through. Admin UI on `/en/admin/reports` edit pane has file picker + Upload button. Migration `005_storage.sql` creates the bucket. Closes 6.2 upload/delivery half.
 - **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
   Pick provider (Resend recommended). Year 1 = simple sends only. ~half-day.
 - ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅ **DONE** (this session). `_view.html` for reports + insights inject per-page OG/Twitter Card + Product/Article JSON-LD + BreadcrumbList. `nav.js` injects Organization JSON-LD globally. 4 new smoke tests cover it (45 total now).
