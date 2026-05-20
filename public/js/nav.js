@@ -133,8 +133,45 @@
   </div>
 </footer>`;
 
+  // ── hreflang injection ─────────────────────────────────────
+  // Add <link rel="alternate" hreflang="..."> tags into <head> for each
+  // supported locale + an x-default pointer. Lets Google's crawler discover
+  // sibling-locale URLs even before the per-page sitemap-based hreflang
+  // (in api/sitemap.js) is crawled. Belt-and-suspenders SEO.
+  //
+  // Idempotent: skips if a kira-hreflang link is already present (e.g.
+  // from a server-side render in the future).
+  function injectHreflang() {
+    if (document.querySelector('link[data-kira-hreflang]')) return;
+    const origin = window.location.origin;
+    const sub    = subPath.join('/');                // preserves trailing-slash-less form
+    const hasTrailingSlash = window.location.pathname.endsWith('/');
+    const suffix = hasTrailingSlash && sub ? '/' : '';
+
+    SUPPORTED_LOCALES.forEach(loc => {
+      const link = document.createElement('link');
+      link.rel = 'alternate';
+      link.hreflang = loc;
+      link.href = `${origin}/${loc}/${sub}${suffix}`;
+      link.setAttribute('data-kira-hreflang', '1');
+      document.head.appendChild(link);
+    });
+
+    // x-default → EN. Convention for "no locale match" buckets (anonymous,
+    // unknown Accept-Language, search engines without a regional bias).
+    const xd = document.createElement('link');
+    xd.rel = 'alternate';
+    xd.hreflang = 'x-default';
+    xd.href = `${origin}/en/${sub}${suffix}`;
+    xd.setAttribute('data-kira-hreflang', '1');
+    document.head.appendChild(xd);
+  }
+
   // ── Inject ─────────────────────────────────────────────────
   function inject() {
+    // hreflang first so it's in <head> before <body> work begins.
+    injectHreflang();
+
     // Atmosphere div (decorative background) goes first if not already present.
     if (!document.querySelector('.atmosphere')) {
       const atmo = document.createElement('div');

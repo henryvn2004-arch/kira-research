@@ -176,3 +176,52 @@ test.describe('public APIs', () => {
     expect(r.status()).toBe(401);
   });
 });
+
+// ── 7) SEO surface: sitemaps + robots.txt + hreflang ──
+//
+// These check the SEO entry points crawlers hit on every site discovery.
+// If any of them silently breaks, organic traffic collapses without a peep.
+test.describe('SEO surface', () => {
+  test('/robots.txt is served and points to sitemap', async ({ request }) => {
+    const r = await request.get('/robots.txt');
+    expect(r.status()).toBe(200);
+    const body = await r.text();
+    expect(body).toMatch(/User-agent:\s*\*/i);
+    expect(body).toMatch(/Sitemap:\s*https?:\/\/[^\s]*sitemap/i);
+  });
+
+  test('/sitemap.xml returns a sitemap index', async ({ request }) => {
+    const r = await request.get('/sitemap.xml');
+    expect(r.status()).toBe(200);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toMatch(/xml/i);
+    const body = await r.text();
+    expect(body).toContain('<sitemapindex');
+    // Must reference all 3 per-locale sitemaps.
+    expect(body).toContain('sitemap-en.xml');
+    expect(body).toContain('sitemap-ja.xml');
+    expect(body).toContain('sitemap-ko.xml');
+  });
+
+  for (const locale of ['en', 'ja', 'ko']) {
+    test(`/sitemap-${locale}.xml returns a urlset with hreflang annotations`, async ({ request }) => {
+      const r = await request.get(`/sitemap-${locale}.xml`);
+      expect(r.status()).toBe(200);
+      const body = await r.text();
+      expect(body).toContain('<urlset');
+      // Static pages always present even when DB is empty/unmigrated.
+      expect(body).toContain(`/${locale}/library`);
+      // hreflang alternates must be declared inline for every URL.
+      expect(body).toMatch(/xhtml:link[^>]*hreflang=/);
+    });
+  }
+
+  test('/en/ has hreflang <link> tags injected by nav.js', async ({ page }) => {
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    // Wait briefly for nav.js to run (it injects on DOMContentLoaded).
+    await page.waitForSelector('link[data-kira-hreflang][hreflang="x-default"]', { timeout: 5_000 });
+    const count = await page.locator('link[data-kira-hreflang]').count();
+    // 3 locales + 1 x-default = 4 minimum.
+    expect(count).toBeGreaterThanOrEqual(4);
+  });
+});
