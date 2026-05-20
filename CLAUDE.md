@@ -35,33 +35,45 @@
 
 ---
 
-## Sprint history
+## Workplan progress by phase
 
-Each sprint = a coherent chunk of work shipped to production. Commit hashes
-link execution back to git log.
+Source of truth for phase/sprint structure is `project des/workplan.md`
+(10 phases × multiple sprints per phase). Below is a status matrix mapped
+to that structure, with commits as evidence.
 
-| # | Sprint | Status | Range |
+Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/manual work
+
+| Phase | Title | Status | Key commits |
 |---|---|---|---|
-| 1 | Foundation: shared assets + EN brand pages | ✅ | `b9e28fd` |
-| 2 | i18n scaffold + root redirect | ✅ | `4dba4b5` |
-| 3 | Library + Report template | ✅ | `c953fb4` |
-| 4 | Custom Research + 13 legacy redirects | ✅ | `692d907` |
-| 5 | `/api/leads` + Insights + form hardening | ✅ | `15e94f2` |
-| 6 | Admin leads page + secure API + migrations | ✅ | `714375a` |
-| 7 | Dynamic report page via Supabase rewrites | ✅ | `1a46491` |
-| 8 | Library + Insights wired to DB | ✅ | `ffde22e` |
-| 9 | Purchase flow (PayPal create + capture + verify) | ✅ | `60b00bb` |
-| 10 | Admin CRUD for reports + insights | ✅ | `b2174fe` |
-| 11 | Sample content templates + Load example UX | ✅ | `fc9b83b` |
-| 12 | JA + KO locale page mirrors (14 files) | ✅ | `9147ea2`…`4bea633` |
-| 13 | Vercel Clean URLs (fix /en/library 404) | ✅ | `7cfd980` |
-| 14 | Rewrite pattern fix (slug 404) | ✅ | `3895ad4` |
-| 15 | Playwright smoke tests + GH Actions workflow | ✅ | `7e4e0de` |
-| 16 | Security cleanup: remove leaked secrets, repo→public | ✅ | `09dbc30` |
-| 17 | Cross-machine pickup guide (CLAUDE.md at root) | ✅ | `9fde035` |
-| 18 | Smoke selector fixes (logo-mark + title + auth + redirects) | ✅ | `659b81d` |
-| 19 | Real site fixes (4 legacy files + redirect sources + slug rewrite pattern) | ✅ | `74c21c0` |
-| 20 | cleanUrls + rewrite quirk: no-extension destinations | ✅ | `87cd168` |
+| **1** | Report unit foundation (template + playbook) | ⏸️ | Henry's Claude-chat workflow; outside repo |
+| **2** | Brand & copy rewrite (EN) — 4 sprints | ✅ | `b9e28fd`, `4dba4b5` |
+| **3.1** | `library.html` page | ✅ | `c953fb4` |
+| **3.2** | Individual report page (`_view.html` rewrite) | ✅ | `c953fb4`, `1a46491`, `87cd168` |
+| **3.3** | Backend integration (DB + PayPal + slug routing) | 🟡 | `ffde22e`, `60b00bb` · **sitemap.xml + full SEO meta pending** |
+| **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth only · **KPI dashboard + audit log pending** |
+| **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` · stats/featured pending |
+| **4.3** | Transactions + Users admin | 🔴 | **not started** |
+| **4.4** | Leads + Aggregators admin | 🟡 | `714375a` leads only · **aggregator tracking pending** |
+| **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt** |
+| **5.2** | Kill /studio/ | ✅ | `692d907` |
+| **5.3** | Credit system scoping | 🔴 | **not done — `api/credits.js` still exists from platform era, needs scoping decision** |
+| **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
+| **7.1** | Insights blog + article templates | 🟡 | `15e94f2` · UI pagination pending |
+| **7.2** | Auto-insights cron + SEO articles | 🔴 | `api/cron-insights.js` legacy, needs re-design |
+| **7.3** | Schema markup + OG + sitemap + GSC | 🔴 | **not started** |
+| **8.1** | JA infrastructure | 🟡 | `9147ea2`…`4bea633` · sitemap + native QA pending |
+| **8.2** | JA report translations | ⏸️ | Henry content work |
+| **8.3** | JA aggregator distribution (GIIResearch) | ⏸️ | Henry outreach work |
+| **8.4** | JA copy rewrites (About/Methodology/Hero) | ✅ | `9147ea2`…`4bea633` |
+| **9.1** | KO infrastructure | 🟡 | same commit range · sitemap pending |
+| **9.2** | KO report translations | ⏸️ | Henry content work |
+| **9.3** | KO aggregator distribution | ⏸️ | Henry outreach work |
+| **10** | Polish & launch | 🔴 | Mobile QA + perf audit + GSC + soft launch pending |
+| **∞** | **Infra & quality (unplanned)** | ✅ | Smoke CI `7e4e0de`+`87cd168`, security `09dbc30`, memory `9fde035`+`4d9456a` |
+
+**Detail per checkbox:** `project des/workplan.md` has the full
+sprint-by-sprint task list with [x] ticked for completed items and
+inline notes for partials.
 
 ---
 
@@ -148,28 +160,29 @@ These are tasks only the owner can do (involve dashboards, not git):
 
 ## Next queue (pick one)
 
-When picking up, ask Henry which to do next. Recommended order:
+Aligned with the workplan phase/sprint structure. Each item maps to one or
+more pending sprints in `project des/workplan.md`. Recommended order:
 
-- **C — sitemap.xml + robots.txt + hreflang headers**
-  SEO foundation. 3 sitemaps per locale + index sitemap + hreflang per page.
-- **D — PDF upload via Supabase Storage**
-  Wire `library-content.js` to return real signed URL from Storage bucket
-  instead of the current placeholder. Add admin upload UI.
-- **E — Transactional email** (purchase receipt + lead notify)
-  Pick provider (Resend recommended). Year 1 = simple sends only.
-- **F — Legacy file cleanup**
+- **C — Sitemap.xml + robots.txt + full hreflang** → unblocks Sprint **3.3** (programmatic SEO) + **7.3** (sitemap to GSC) + **8.1/9.1** (per-locale sitemaps).
+  3 sitemaps per locale + index sitemap + hreflang per page + robots.txt. ~half-day.
+- **D — PDF upload via Supabase Storage** → unblocks Sprint **6.2** (PDF export pipeline) + **8.2** JA PDFs.
+  Wire `library-content.js` to return real signed URL from Storage bucket. Add admin upload UI. ~1 day.
+- **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
+  Pick provider (Resend recommended). Year 1 = simple sends only. ~half-day.
+- **F — Legacy file cleanup** → resolves Sprint **5.3** scoping + Sprint **2.3** removal completeness.
   Files still in repo from "AI platform" era — candidates for removal:
-  - `public/pdf-to-md.html`
+  - `public/pdf-to-md.html`, `public/profile.html`, `public/payment-success.html`, `public/tracker.html`, `public/about.html`, `public/pricing.html`, `public/compare.html`, `public/contact.html`, `public/docreport.html`
   - `api/ingest-save.js`, `api/browser-research.js`, `api/chat.js`,
     `api/claude-proxy.js`, `api/credits.js`, `api/cron-insights.js`,
     `api/doc-report.js`, `api/embed.js`, `api/extract-visuals.js`,
     `api/export-pptx.js`, `api/generate-report.js`, `api/generate-section.js`,
     `api/get-report.js`, `api/payment.js`, `api/research.js`,
     `api/strategy-builder.js`
-  - Verify nothing references these before deleting.
-- **G — Native reviewer QA pass on JA/KO copy**
-  Ship JA/KO drafts to a native Upwork reviewer ($50-100/locale), fold
-  fixes back in. First 10-20 reports per locale per `project des/CLAUDE.md`.
+  - Verify nothing references each before deleting. ~half-day.
+- **G — Native reviewer QA pass on JA/KO copy** → fills Sprint **8.1** + **9.1** native reviewer items.
+  Ship JA/KO drafts to a native Upwork reviewer ($50-100/locale), fold fixes back in. First 10-20 reports per locale per `project des/CLAUDE.md`.
+- **H — KPI dashboard + audit log** → fills Sprint **4.1** dashboard gap.
+  Admin landing page with: leads count, recent purchases, top reports, audit-log table. ~1 day.
 
 ---
 
@@ -248,8 +261,8 @@ When this conversation continues on a different machine:
 - Owner is non-technical: explain **why** + **click-through how**, never CLI to owner
 - Be honest about tradeoffs and risks; flag blockers explicitly
 - Use TaskCreate/TaskUpdate for multi-step work; one-off small tasks can skip
-- After completing a sprint: append a row to the Sprint history table above + bump "Current state" date
+- After completing a workplan sprint: tick its checkbox in `project des/workplan.md`, update the Workplan-progress matrix in this file, and bump "Current state" date
 
 ---
 
-*Last updated: 2026-05-20 (Sprint 20 + memory refresh — smoke CI fully green: 35/35 pass, owner items #4-5 verified by CI and retired from blocking list)*
+*Last updated: 2026-05-20 (progress refactored onto workplan's phase/sprint structure — workplan.md is source of truth for sprint detail, this file is the pickup matrix)*

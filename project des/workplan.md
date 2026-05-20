@@ -7,6 +7,29 @@
 
 ---
 
+## Status snapshot (2026-05-20)
+
+Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
+
+| Phase | Title | Status | Notes |
+|---|---|---|---|
+| 1 | Report unit foundation | ⏸️ | Henry's Claude-chat workflow; outside repo build |
+| 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5` |
+| 3 | Library infrastructure | 🟡 | 3.1 + 3.2 ✅. 3.3 backend integration mostly done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`); **sitemap.xml + hreflang completeness pending** |
+| 4 | Admin backend | 🟡 | 4.1 auth ✅ (`714375a`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 KPI dashboard + audit log, 4.3 transactions+users, 4.4 aggregator tracking — all pending** |
+| 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not yet built — they just redirect to landing for now.** 5.3 credit-system scoping pending. |
+| 6 | Report population | ⏸️ | 0 reports seeded beyond migration samples — Henry's content production |
+| 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). **7.2 auto-insights cron not wired. 7.3 schema markup + OG + sitemap + GSC pending.** |
+| 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
+| 9 | KO layer | 🟡 | 9.1 infra ✅ (same commit range). **9.2 KO translations + 9.3 KO aggregator pending.** |
+| 10 | Polish & launch | 🔴 | Not started — depends on Phases 6/8/9 having content |
+| ∞ | Infra & quality (unplanned) | ✅ | Smoke CI `7e4e0de`+`87cd168`, security cleanup `09dbc30`, memory `9fde035`+`4d9456a` |
+
+Detailed checkboxes per sprint below. CLAUDE.md at repo root has the
+commit-by-commit log if you want to trace what changed when.
+
+---
+
 ## Build sequence overview
 
 ```
@@ -45,85 +68,85 @@ Week 10-12 →  Phase 10: Polish & Launch
 
 ---
 
-## 🔵 Phase 2: Brand & Copy Rewrite (Week 2-3) — P0
+## 🔵 Phase 2: Brand & Copy Rewrite (Week 2-3) — P0 — ✅ DONE
 
 **Goal:** Rewrite all brand copy in research house voice (EN first, JA/KO later phases)
 
 ### Sprint 2.1 — Hero & landing copy
-- [ ] Hero H1, subhead, primary CTA, secondary CTA
-- [ ] Featured reports section copy
-- [ ] Industries covered grid (icons + labels)
-- [ ] Trust signals (years experience, countries covered)
-- [ ] Methodology summary block
+- [x] Hero H1, subhead, primary CTA, secondary CTA
+- [x] Featured reports section copy
+- [x] Industries covered grid (icons + labels)
+- [x] Trust signals (years experience, countries covered)
+- [x] Methodology summary block
 
 ### Sprint 2.2 — About + Methodology pages
-- [ ] Rewrite About — research firm narrative
-- [ ] NEW Methodology page — primary research + AI augmentation + analyst curation
-- [ ] Update Contact copy — "Talk to our research team"
+- [x] Rewrite About — research firm narrative
+- [x] NEW Methodology page — primary research + AI augmentation + analyst curation
+- [x] Update Contact copy — "Talk to our research team" (lives at `/en/custom-research/` now, no standalone contact page)
 
 ### Sprint 2.3 — Removal cleanup
-- [ ] Remove all "AI-powered" / "AI platform" mentions from non-methodology pages
-- [ ] Remove all volume claims (1000+ studies, etc.)
-- [ ] Remove competitor mentions
+- [x] Remove all "AI-powered" / "AI platform" mentions from non-methodology pages
+- [x] Remove all volume claims (1000+ studies, etc.)
+- [x] Remove competitor mentions
 
 ### Sprint 2.4 — UI string extraction
-- [ ] Extract all UI strings into `/locales/en.json`
-- [ ] Set up i18n loader script for client-side text replacement
-- [ ] Set up locale switcher component in nav
+- [x] Extract all UI strings into `/locales/en.json`
+- [x] Set up i18n loader script for client-side text replacement
+- [x] Set up locale switcher component in nav
 
-**Deliverable:** All public copy rewritten (EN) + i18n infrastructure ready for JA/KO
+**Deliverable:** ✅ All public copy rewritten (EN) + i18n infrastructure ready for JA/KO. Commits: `b9e28fd`, `4dba4b5`.
 
 ---
 
-## 🔵 Phase 3: Library Infrastructure (Week 3-5) — P0
+## 🔵 Phase 3: Library Infrastructure (Week 3-5) — P0 — 🟡 PARTIAL
 
 **Goal:** Build customer-facing library UX + individual report pages
 
 ### Sprint 3.1 — `library.html` page
-- [ ] Filter sidebar (industry, country, year, type, price)
-- [ ] Search bar with debounced query
-- [ ] Report grid with cards
-- [ ] Empty state, loading state, pagination
-- [ ] Locale-aware routing (`/en/library`)
+- [x] Filter sidebar (industry, country, year, type, price)
+- [x] Search bar with debounced query
+- [x] Report grid with cards
+- [x] Empty state, loading state, pagination
+- [x] Locale-aware routing (`/en/library`)
 
 ### Sprint 3.2 — Individual report page
-- [ ] Template page at `/[locale]/reports/[slug]`
-- [ ] Hero + meta (industry, country, year, last updated)
-- [ ] Sticky buy box right side với PayPal trigger
-- [ ] Preview section (exec summary + 1 chart sample)
-- [ ] Full TOC display
-- [ ] Related reports footer
-- [ ] hreflang tags pointing to JA/KO (when those locale versions exist)
+- [x] Template page at `/[locale]/reports/[slug]` (via `_view.html` rewrite)
+- [x] Hero + meta (industry, country, year, last updated)
+- [x] Sticky buy box right side với PayPal trigger
+- [x] Preview section (exec summary + 1 chart sample)
+- [x] Full TOC display
+- [x] Related reports footer
+- [ ] hreflang tags pointing to JA/KO (when those locale versions exist) — **partial; on dynamic templates only**
 
 ### Sprint 3.3 — Backend integration
-- [ ] Activate `living_reports` table
-- [ ] Create `report_translations` table
-- [ ] PayPal direct purchase flow (separate from credit system)
-- [ ] Slug routing với locale awareness
-- [ ] Programmatic SEO meta tags per report per locale
-- [ ] Sitemap.xml auto-generation (multi-locale)
+- [x] Activate `living_reports` table (named `reports` in code)
+- [x] Create `report_translations` table
+- [x] PayPal direct purchase flow (separate from credit system)
+- [x] Slug routing với locale awareness
+- [ ] Programmatic SEO meta tags per report per locale — **partial; title/desc done, OG/Twitter/JSON-LD pending**
+- [ ] Sitemap.xml auto-generation (multi-locale) — **NOT STARTED — Next-queue item C**
 
-**Deliverable:** Library + report pages functional with 5-10 sample EN reports
+**Deliverable:** 🟡 Library + report pages functional. Commits: `c953fb4`, `ffde22e`, `1a46491`, `60b00bb`, `87cd168`. Pending: sitemap + full SEO meta.
 
 ---
 
-## 🔵 Phase 4: Admin Backend Build (Week 3-5, parallel với P3) — P0
+## 🔵 Phase 4: Admin Backend Build (Week 3-5, parallel với P3) — P0 — 🟡 PARTIAL
 
 **Goal:** Build admin pages so Henry can manage everything qua UI
 
 ### Sprint 4.1 — Admin auth + dashboard
-- [ ] Email whitelist middleware (env var `ADMIN_EMAILS`)
-- [ ] `/admin` dashboard với KPI cards
-- [ ] Audit log table
+- [x] Email whitelist middleware (env var `ADMIN_EMAILS`)
+- [ ] `/admin` dashboard với KPI cards — **NOT STARTED**
+- [ ] Audit log table — **NOT STARTED**
 
 ### Sprint 4.2 — Reports management
-- [ ] `/admin/reports` list view với filter/search/sort
-- [ ] `/admin/reports/new` — upload form (PDF + metadata)
-- [ ] `/admin/reports/[id]/edit` — edit form với locale tabs
-- [ ] `/admin/reports/[id]/stats` — sales + traffic
-- [ ] `/admin/reports/featured` — featured reports drag-drop reorder
+- [x] `/admin/reports` list view với filter/search/sort
+- [x] `/admin/reports/new` — upload form (PDF + metadata)
+- [x] `/admin/reports/[id]/edit` — edit form với locale tabs
+- [ ] `/admin/reports/[id]/stats` — sales + traffic — **pending**
+- [ ] `/admin/reports/featured` — featured reports drag-drop reorder — **pending**
 
-### Sprint 4.3 — Transactions + Users
+### Sprint 4.3 — Transactions + Users — 🔴 NOT STARTED
 - [ ] `/admin/transactions` list với filter by status
 - [ ] `/admin/transactions/[id]` detail + manual refund action
 - [ ] `/admin/revenue` dashboard với charts
@@ -131,37 +154,37 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [ ] `/admin/users/[id]` detail
 
 ### Sprint 4.4 — Leads + Aggregators
-- [ ] `/admin/leads` Custom Research inquiries
-- [ ] `/admin/aggregators` submission tracking
-- [ ] `/admin/aggregators/revenue` manual commission entry
+- [x] `/admin/leads` Custom Research inquiries
+- [ ] `/admin/aggregators` submission tracking — **pending**
+- [ ] `/admin/aggregators/revenue` manual commission entry — **pending**
 
-**Deliverable:** Full admin backend usable by Henry to manage all data
+**Deliverable:** 🟡 Core admin CRUD usable for reports/insights/leads. Commits: `714375a`, `b2174fe`, `fc9b83b`. Pending: dashboard, audit log, transactions, users, aggregator tracking, report stats/featured.
 
 ---
 
-## 🟡 Phase 5: Tool Demotion + Studio Kill (Week 4-5) — P1
+## 🟡 Phase 5: Tool Demotion + Studio Kill (Week 4-5) — P1 — 🟡 PARTIAL
 
 **Goal:** Clean up site IA, demote tools, kill Studio products
 
 ### Sprint 5.1 — Demote 3 generation tools
-- [ ] Move `report.html` → `/custom-research/market-analysis`
-- [ ] Move `strategy-builder.html` → `/custom-research/strategy-builder`
-- [ ] Update nav: tools no longer in main nav, only under Custom Research dropdown
-- [ ] Create `/custom-research` landing explaining when to use custom vs library
-- [ ] Add "Talk to our team" lead capture form
+- [ ] Move `report.html` → `/custom-research/market-analysis` — **legacy file DELETED (`74c21c0`); page itself NOT rebuilt at new path. Redirect points to landing.**
+- [ ] Move `strategy-builder.html` → `/custom-research/strategy-builder` — **same as above**
+- [x] Update nav: tools no longer in main nav, only under Custom Research dropdown
+- [x] Create `/custom-research` landing explaining when to use custom vs library
+- [x] Add "Talk to our team" lead capture form (`/api/leads` POST)
 
 ### Sprint 5.2 — Kill /studio/
-- [ ] Remove all `/studio/` pages from nav
-- [ ] Delete `/studio/*` files từ public folder
-- [ ] 301 redirects từ `/studio/*` → `/custom-research/`
-- [ ] Remove or merge `docreport.html` into Custom Research
+- [x] Remove all `/studio/` pages from nav
+- [x] Delete `/studio/*` files từ public folder (already gone pre-Order 1; only `studio/index.html` was deleted in `b1ad781`)
+- [x] 301 redirects từ `/studio/*` → `/custom-research/`
+- [x] Remove or merge `docreport.html` into Custom Research (redirect-only at `/docreport`)
 
 ### Sprint 5.3 — Credit system scoping
-- [ ] Keep credit system functional for `/custom-research/*` only
-- [ ] Library purchases use direct PayPal flow (no credit deduction)
-- [ ] Update `profile.html`: show library purchases + remaining credits separately
+- [ ] Keep credit system functional for `/custom-research/*` only — **status unclear; credit-system code still in `api/credits.js` but not wired into the new IA. Verify or strip.**
+- [x] Library purchases use direct PayPal flow (no credit deduction) — confirmed
+- [ ] Update `profile.html`: show library purchases + remaining credits separately — **NOT DONE; profile.html is legacy file**
 
-**Deliverable:** Clean site IA, tools demoted, Studio removed entirely
+**Deliverable:** 🟡 Site IA cleaned + Studio gone. Pending: actual tool pages at `/custom-research/{market-analysis,strategy-builder}`, credit-system scoping, profile.html refresh.
 
 ---
 
@@ -197,98 +220,111 @@ Week 10-12 →  Phase 10: Polish & Launch
 
 ---
 
-## 🟢 Phase 7: SEO + Insights Engine (Week 6-10) — P2
+## 🟢 Phase 7: SEO + Insights Engine (Week 6-10) — P2 — 🟡 PARTIAL
 
 **Goal:** Drive organic traffic to library (EN first)
 
 ### Sprint 7.1 — Insights page
-- [ ] Build `/en/insights` blog list page
-- [ ] Article template page `/en/insights/[slug]`
-- [ ] Auto-pagination
+- [x] Build `/en/insights` blog list page
+- [x] Article template page `/en/insights/[slug]`
+- [ ] Auto-pagination — **basic limit param works; UI pagination control NOT built**
 
 ### Sprint 7.2 — Auto-insights generation
-- [ ] Daily cron generating SEO articles (`/api/cron/insights`)
+- [ ] Daily cron generating SEO articles (`/api/cron/insights`) — **`api/cron-insights.js` exists from platform era; not wired to new model. Needs re-design.**
 - [ ] Each article = teaser for a related library report
 - [ ] CTA at end: "Get the full report"
 
 ### Sprint 7.3 — SEO optimization
-- [ ] Schema markup (Article, Product) on every report
-- [ ] Open Graph + Twitter Card per report
-- [ ] Internal linking strategy
-- [ ] Submit sitemap to Google Search Console + Bing
+- [ ] Schema markup (Article, Product) on every report — **NOT STARTED**
+- [ ] Open Graph + Twitter Card per report — **partial; static pages have OG, dynamic _view doesn't inject per-report OG yet**
+- [ ] Internal linking strategy — **NOT STARTED**
+- [ ] Submit sitemap to Google Search Console + Bing — **requires sitemap.xml first (Sprint 3.3)**
 
-**Deliverable:** Insights engine running EN, SEO traffic begins ramping
+**Deliverable:** 🟡 Insights index + article shells live (`15e94f2`). Pending: pagination UI, cron, schema markup, full OG, sitemap submission.
 
 ---
 
-## 🟢 Phase 8: JA Layer (Week 8-10) — P2 (after EN stable)
+## 🟢 Phase 8: JA Layer (Week 8-10) — P2 (after EN stable) — 🟡 PARTIAL
 
 **Goal:** Add Japanese locale + first 10 JA reports + GIIResearch submission
 
 ### Sprint 8.1 — JA infrastructure
-- [ ] Translate `/locales/en.json` → `/locales/ja.json` via Claude chat
-- [ ] Native reviewer reviews UI strings (critical for trust)
-- [ ] Add Noto Sans JP font loading conditional on locale
-- [ ] Set up `/ja/*` route handling
-- [ ] hreflang tags activated bidirectionally
-- [ ] `/sitemap-ja.xml` generation
-- [ ] Set up GSC property for ja.kiraresearch.com sitemap
+- [x] Translate `/locales/en.json` → `/locales/ja.json` via Claude chat
+- [ ] Native reviewer reviews UI strings (critical for trust) — **pending — next-queue item G**
+- [x] Add Noto Sans JP font loading conditional on locale
+- [x] Set up `/ja/*` route handling
+- [ ] hreflang tags activated bidirectionally — **partial — on dynamic templates; static pages incomplete**
+- [ ] `/sitemap-ja.xml` generation — **NOT STARTED**
+- [ ] Set up GSC property for ja.kiraresearch.com sitemap — **owner task, blocked by sitemap**
 
 ### Sprint 8.2 — JA report translations
-- [ ] Translate first 10 reports EN → JA via Claude chat
+- [ ] Translate first 10 reports EN → JA via Claude chat — **owner task**
 - [ ] Native reviewer QA (cultural nuance, tech terms)
 - [ ] Upload JA versions to `report_translations` (locale='ja', status='published')
-- [ ] JA PDF export with Noto Sans JP
+- [ ] JA PDF export with Noto Sans JP — **blocked by PDF pipeline (next-queue item D)**
 
 ### Sprint 8.3 — JA aggregator distribution
-- [ ] Contact GIIResearch publisher program (priority — Tokyo-based)
+- [ ] Contact GIIResearch publisher program (priority — Tokyo-based) — **owner task**
 - [ ] Submit first 5 JA reports
 - [ ] Contact Yano Research / Fuji Keizai if applicable
 - [ ] Update aggregator_submissions tracking with locale='ja'
 
 ### Sprint 8.4 — JA copy rewrites (Henry)
-- [ ] About page JA version (manual write, not just translate)
-- [ ] Methodology page JA version
-- [ ] Hero copy JA version (cultural adaptation)
+- [x] About page JA version (manual write, not just translate)
+- [x] Methodology page JA version
+- [x] Hero copy JA version (cultural adaptation)
 
-**Deliverable:** JA locale live with 10 reports + GIIResearch submission
+**Deliverable:** 🟡 JA shell live. Commits: `9147ea2`…`4bea633`. Pending: native QA, sitemap/hreflang, content, aggregator submission.
 
 ---
 
-## 🟢 Phase 9: KO Layer (Week 10-12) — P2 (after JA validated)
+## 🟢 Phase 9: KO Layer (Week 10-12) — P2 (after JA validated) — 🟡 PARTIAL
 
 **Goal:** Add Korean locale + first 10 KO reports
 
 ### Sprint 9.1 — KO infrastructure
-- [ ] Same as Phase 8.1 but for Korean
-- [ ] Noto Sans KR font setup
-- [ ] `/ko/*` route handling
-- [ ] hreflang tags + sitemap + GSC
+- [x] Same as Phase 8.1 but for Korean (locale json, routing, copy rewrites)
+- [x] Noto Sans KR font setup
+- [x] `/ko/*` route handling
+- [ ] hreflang tags + sitemap + GSC — **same blockers as JA**
 
 ### Sprint 9.2 — KO report translations
-- [ ] Translate first 10 reports EN → KO
+- [ ] Translate first 10 reports EN → KO — **owner task**
 - [ ] Native reviewer QA
 - [ ] Upload + publish
 
 ### Sprint 9.3 — KO aggregator distribution
-- [ ] Contact Mordor Korea operations
+- [ ] Contact Mordor Korea operations — **owner task**
 - [ ] Contact dataintelo
 - [ ] Submit first 5 KO reports
 
-**Deliverable:** KO locale live with 10 reports
+**Deliverable:** 🟡 KO shell live. Same commit range as JA. Pending: same as 8.
 
 ---
 
-## 🟢 Phase 10: Polish & Launch (Week 10-12) — P2
+## 🟢 Phase 10: Polish & Launch (Week 10-12) — P2 — 🔴 NOT STARTED
 
 - [ ] Mobile responsive QA on all pages (3 locales)
 - [ ] Performance audit (Lighthouse score targets: 90+ on all)
-- [ ] Bug fixes from internal QA
+- [x] Bug fixes from internal QA (via smoke CI: legacy redirects, slug rewrites, selectors — `659b81d`, `74c21c0`, `87cd168`)
 - [ ] Set up Vercel Analytics + Google Search Console (3 properties)
 - [ ] Soft launch announcement (LinkedIn, communities, country-specific)
 - [ ] Monitor first 30 days metrics: traffic, conversion %, refund rate, aggregator sales per locale
 
 **Deliverable:** Launched v1.0 (EN + JA + KO) with monitoring
+
+---
+
+## ∞ Infra & Quality (unplanned in original workplan — shipped during build) — ✅ DONE
+
+Cross-cutting work that wasn't in the original 10-phase plan but had to ship to keep the build sustainable:
+
+- [x] **Playwright smoke test suite** — 35 shallow checks across all locales, slug rewrites, redirects, admin gate, public APIs. `tests/smoke.spec.js`. Commits: `7e4e0de`, `659b81d`.
+- [x] **GitHub Actions CI workflow** — runs after every push to `main`, waits for Vercel deploy, runs smoke, uploads HTML report + traces on failure. `.github/workflows/post-deploy-smoke.yml`. Commit: `7e4e0de`.
+- [x] **Security cleanup** — removed legacy `public/admin.html` with leaked Anthropic API key + admin password. Repo flipped public. Commits: `09dbc30` + Anthropic key revoked by owner.
+- [x] **Vercel deploy unblocking** — rewrote all 18 commit authors to match GitHub email (`henryvn2004@gmail.com`) so Vercel auto-deploys instead of blocking.
+- [x] **Cross-machine pickup memory** — `CLAUDE.md` at repo root captures sprint progress + gotchas + pickup checklist so a new Claude session continues seamlessly. Commits: `9fde035`, `4d9456a`.
+- [x] **vercel.json hardening** — discovered cleanUrls quirks (redirect source `.html` shadowed, rewrite destination `.html` 404s, path-to-regexp negative-lookahead silently dropped). Fixed in `74c21c0` + `87cd168`. Documented in CLAUDE.md gotchas 9-13.
 
 ---
 
@@ -362,4 +398,4 @@ Week 10-12 →  Phase 10: Polish & Launch
 
 ---
 
-*Last updated: 2026-05-20*
+*Last updated: 2026-05-20 (status snapshot added; checkboxes ticked through commit `4d9456a`)*
