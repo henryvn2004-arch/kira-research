@@ -80,6 +80,29 @@ test.describe('dynamic report page (rewrite)', () => {
     expect(res.status()).toBeLessThan(400);
     await expect(page.locator('.article-breadcrumb, .art-404, .art-loading').first()).toBeVisible();
   });
+
+  // Dynamic templates use <script type="module"> + top-level await. A latent
+  // bug shipped earlier with top-level `return;` (illegal in ES modules) that
+  // initial-DOM-only checks couldn't catch — the loading shell renders, the
+  // script then SyntaxErrors at parse, and updateHead/JSON-LD never run.
+  // Listen for pageerror so this regression class can't sneak back in. Filter
+  // by message substring so unrelated errors (e.g. third-party scripts) don't
+  // break the test.
+  test('/en/reports/<slug> has no fatal module parse error', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (e) => errors.push(e.message || String(e)));
+    await page.goto('/en/reports/vietnam-fintech-2026', { waitUntil: 'networkidle' });
+    const fatal = errors.filter(m => /Illegal return|SyntaxError|Unexpected token/i.test(m));
+    expect(fatal, fatal.join(' / ')).toEqual([]);
+  });
+
+  test('/en/insights/<slug> has no fatal module parse error', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (e) => errors.push(e.message || String(e)));
+    await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
+    const fatal = errors.filter(m => /Illegal return|SyntaxError|Unexpected token/i.test(m));
+    expect(fatal, fatal.join(' / ')).toEqual([]);
+  });
 });
 
 // ── 3) Root redirect respects user language ──

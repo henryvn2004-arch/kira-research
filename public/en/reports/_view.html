@@ -206,13 +206,14 @@
             '<p>The report <code style="color:var(--primary)">' + escapeHtml(slug) + '</code> isn\'t in the library yet.</p>' +
             '<p style="margin-top:18px;"><a href="/' + locale + '/library" style="color:var(--primary)">Back to library →</a></p>' +
           '</div>';
-        return;
+        throw new Error('halt');
       }
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
     } catch (err) {
+      if (err && err.message === 'halt') throw err;
       root.innerHTML = '<div class="rpt-404"><h2>Couldn\'t load report</h2><p>Please retry or browse the <a href="/' + locale + '/library" style="color:var(--primary)">library</a>.</p></div>';
-      return;
+      throw new Error('halt');
     }
 
     // ── 4) Check purchase state + fetch full content if owned ──

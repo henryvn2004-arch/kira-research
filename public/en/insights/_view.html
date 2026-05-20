@@ -76,7 +76,7 @@
 
     if (!slug) {
       root.innerHTML = '<div class="art-404"><h2>No insight selected</h2><p><a href="/' + locale + '/insights/" style="color:var(--primary)">Back to insights →</a></p></div>';
-      return;
+      throw new Error('halt');
     }
 
     // ── 2) Fetch from API ────────────────────────────────
@@ -93,13 +93,14 @@
           '<p>' + msg + '</p>' +
           '<p style="margin-top:18px;"><a href="/' + locale + '/insights/" style="color:var(--primary)">Back to insights →</a></p>' +
           '</div>';
-        return;
+        throw new Error('halt');
       }
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
     } catch (err) {
+      if (err && err.message === 'halt') throw err;
       root.innerHTML = '<div class="art-404"><h2>Couldn\'t load article</h2><p>Please retry or browse the <a href="/' + locale + '/insights/" style="color:var(--primary)">insights index</a>.</p></div>';
-      return;
+      throw new Error('halt');
     }
 
     // ── 3) Update meta + hreflang ────────────────────────
