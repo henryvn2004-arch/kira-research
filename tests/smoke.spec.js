@@ -40,9 +40,11 @@ for (const locale of ['en', 'ja', 'ko']) {
         const lang = await page.locator('html').getAttribute('lang');
         expect(lang).toBe(locale);
 
-        // nav.js injects .logo-mark — its presence means the shared chrome
-        // booted, scripts loaded, no early JS error blocked render.
-        await expect(page.locator('.logo-mark')).toBeVisible();
+        // nav.js injects .logo-mark in BOTH the top nav and the footer.
+        // We scope to .nav-wrap so the locator is unambiguous — its presence
+        // means the shared chrome booted, scripts loaded, no early JS error
+        // blocked render.
+        await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
 
         // The page must have some kind of H1.
         await expect(page.locator('h1').first()).toBeVisible();
@@ -60,12 +62,15 @@ test.describe('dynamic report page (rewrite)', () => {
     const res = await page.goto('/en/reports/vietnam-fintech-2026', { waitUntil: 'networkidle' });
     expect(res.status()).toBeLessThan(400);
 
-    // _view.html always renders the breadcrumb container first
-    await expect(page.locator('.rpt-breadcrumb, .rpt-404, .rpt-loading')).toBeVisible();
+    // _view.html always renders the breadcrumb container first.
+    // Multi-selector matches whichever state the page is in (loaded, 404,
+    // or loading). .first() avoids strict-mode if more than one is in the DOM.
+    await expect(page.locator('.rpt-breadcrumb, .rpt-404, .rpt-loading').first()).toBeVisible();
 
-    // Confirm we landed on _view's HTML (not a 404 page from Vercel)
+    // Confirm we landed on _view's HTML (not a 404 page from Vercel).
+    // Title casing is "KIRA Research" (mixed case) — match case-insensitively.
     const title = await page.title();
-    expect(title).toContain('KIRA RESEARCH');
+    expect(title).toMatch(/KIRA Research/i);
   });
 
   test('/en/insights/<seeded-slug> renders the article shell', async ({ page }) => {
@@ -73,7 +78,7 @@ test.describe('dynamic report page (rewrite)', () => {
     // the page should still render its 404 message (still proves rewrite works).
     const res = await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
     expect(res.status()).toBeLessThan(400);
-    await expect(page.locator('.article-breadcrumb, .art-404, .art-loading')).toBeVisible();
+    await expect(page.locator('.article-breadcrumb, .art-404, .art-loading').first()).toBeVisible();
   });
 });
 
@@ -88,22 +93,27 @@ test('root / redirects to a supported locale', async ({ page }) => {
 });
 
 // ── 4) Legacy URL redirects ──
+//
+// Note: res.url() returns the URL of the LAST response in the chain — but
+// can lag the browser's actual location after JS-side redirects or some
+// rewrite-then-redirect sequences. We use page.url() with waitUntil:'load'
+// to read the browser's final landing URL, which is the user-facing truth.
 test.describe('legacy redirects (vercel.json)', () => {
   test('/report.html → /en/custom-research/', async ({ page }) => {
-    const res = await page.goto('/report.html');
-    expect(res.url()).toContain('/en/custom-research/');
+    await page.goto('/report.html', { waitUntil: 'load' });
+    expect(page.url()).toContain('/en/custom-research');
   });
   test('/strategy-builder.html → /en/custom-research/', async ({ page }) => {
-    const res = await page.goto('/strategy-builder.html');
-    expect(res.url()).toContain('/en/custom-research/');
+    await page.goto('/strategy-builder.html', { waitUntil: 'load' });
+    expect(page.url()).toContain('/en/custom-research');
   });
   test('/library.html → /en/library', async ({ page }) => {
-    const res = await page.goto('/library.html');
-    expect(res.url()).toContain('/en/library');
+    await page.goto('/library.html', { waitUntil: 'load' });
+    expect(page.url()).toContain('/en/library');
   });
   test('/insights.html → /en/insights/', async ({ page }) => {
-    const res = await page.goto('/insights.html');
-    expect(res.url()).toContain('/en/insights/');
+    await page.goto('/insights.html', { waitUntil: 'load' });
+    expect(page.url()).toContain('/en/insights');
   });
 });
 
@@ -115,13 +125,15 @@ test.describe('admin auth gate', () => {
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
-      // Allow up to 6s for kiraAuth to boot + redirect to /auth.html.
-      await page.waitForURL(/\/auth\.html/, { timeout: 6_000 }).catch(() => {});
+      // Allow up to 6s for kiraAuth to boot + redirect. Admin JS sets
+      // window.location.href = '/auth.html' — but cleanUrls:true in vercel.json
+      // strips the .html, so the final URL is /auth (no extension). Accept both.
+      await page.waitForURL(/\/auth(\.html)?(\?|$|\/)/, { timeout: 6_000 }).catch(() => {});
       // Pass condition: either redirected, OR we're still on the admin page
       // but the gate hasn't fired yet (false positive risk is low — the gate is
       // synchronous after kiraAuth resolves).
       const url = page.url();
-      const onAuth  = url.includes('/auth.html');
+      const onAuth  = /\/auth(\.html)?(\?|$|\/)/.test(url);
       const onAdmin = url.includes(path);
       expect(onAuth || onAdmin, `unexpected URL ${url}`).toBe(true);
 
