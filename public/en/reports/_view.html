@@ -8,6 +8,19 @@
 
   <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/" />
 
+  <!-- Open Graph + Twitter Card defaults; overridden per-report by updateHead() once data loads. -->
+  <meta property="og:type"        content="article" />
+  <meta property="og:site_name"   content="KIRA RESEARCH" />
+  <meta property="og:title"       id="meta-og-title"       content="Report — KIRA RESEARCH" />
+  <meta property="og:description" id="meta-og-description" content="Market intelligence report from KIRA RESEARCH." />
+  <meta property="og:url"         id="meta-og-url"         content="https://kiraresearch.com/" />
+  <meta property="og:image"       id="meta-og-image"       content="https://kiraresearch.com/logo.png" />
+  <meta property="og:locale"      id="meta-og-locale"      content="en_US" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       id="meta-tw-title"       content="Report — KIRA RESEARCH" />
+  <meta name="twitter:description" id="meta-tw-description" content="Market intelligence report from KIRA RESEARCH." />
+  <meta name="twitter:image"       id="meta-tw-image"       content="https://kiraresearch.com/logo.png" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -315,14 +328,29 @@
 
     function updateHead(d) {
       const base = 'https://kiraresearch.com';
-      document.title = (d.title || 'Report') + ' — KIRA RESEARCH';
-      document.getElementById('meta-canonical').href = base + '/' + locale + '/reports/' + d.slug;
+      const url  = base + '/' + locale + '/reports/' + d.slug;
+      const fullTitle = (d.title || 'Report') + ' — KIRA RESEARCH';
+      const description = (d.preview && d.preview.lede)
+        ? d.preview.lede.slice(0, 200)
+        : 'Market intelligence report from KIRA RESEARCH.';
+      // og:locale uses underscore region format. x-default reports → en_US.
+      const ogLocale = { en: 'en_US', ja: 'ja_JP', ko: 'ko_KR' }[locale] || 'en_US';
+
+      document.title = fullTitle;
+      document.getElementById('meta-canonical').href = url;
 
       const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc && d.preview && d.preview.lede) {
-        metaDesc.setAttribute('content', d.preview.lede.slice(0, 200));
-      }
+      if (metaDesc) metaDesc.setAttribute('content', description);
 
+      // ── OG + Twitter ────────────────────────────────────
+      setMetaContent('meta-og-title',       fullTitle);
+      setMetaContent('meta-og-description', description);
+      setMetaContent('meta-og-url',         url);
+      setMetaContent('meta-og-locale',      ogLocale);
+      setMetaContent('meta-tw-title',       fullTitle);
+      setMetaContent('meta-tw-description', description);
+
+      // ── hreflang ────────────────────────────────────────
       ['en','ja','ko'].forEach(loc => {
         if (d.availableLocales.includes(loc)) {
           const link = document.createElement('link');
@@ -335,6 +363,64 @@
       xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
       xdef.href = base + '/en/reports/' + d.slug;
       document.head.appendChild(xdef);
+
+      // ── JSON-LD: Product + BreadcrumbList ───────────────
+      injectJsonLd('ld-product', {
+        '@context':    'https://schema.org',
+        '@type':       'Product',
+        name:          d.title || d.slug,
+        description,
+        url,
+        sku:           d.slug,
+        category:      [d.industry, d.country].filter(Boolean).join(' · ') || 'Market Research',
+        brand: {
+          '@type': 'Organization',
+          name:    'KIRA RESEARCH'
+        },
+        offers: {
+          '@type':         'Offer',
+          price:           String(d.price || 39),
+          priceCurrency:   'USD',
+          availability:    'https://schema.org/InStock',
+          url
+        }
+      });
+
+      const crumbs = [
+        { name: 'KIRA RESEARCH',   item: base + '/' + locale + '/' },
+        { name: 'Library',         item: base + '/' + locale + '/library' }
+      ];
+      if (d.country)  crumbs.push({ name: d.country,  item: base + '/' + locale + '/library?country='  + d.country.toLowerCase() });
+      if (d.industry) crumbs.push({ name: d.industry, item: base + '/' + locale + '/library?industry=' + d.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-') });
+      crumbs.push({ name: d.title || d.slug, item: url });
+
+      injectJsonLd('ld-breadcrumb', {
+        '@context':        'https://schema.org',
+        '@type':           'BreadcrumbList',
+        itemListElement:   crumbs.map((c, i) => ({
+          '@type':    'ListItem',
+          position:   i + 1,
+          name:       c.name,
+          item:       c.item
+        }))
+      });
+    }
+
+    function setMetaContent(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('content', value || '');
+    }
+
+    function injectJsonLd(id, payload) {
+      // Idempotent: replace if already present (re-render after locale fallback).
+      let el = document.getElementById(id);
+      if (!el) {
+        el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.id   = id;
+        document.head.appendChild(el);
+      }
+      el.textContent = JSON.stringify(payload);
     }
 
     function renderChart(c) {

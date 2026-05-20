@@ -19,7 +19,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 | 4 | Admin backend | 🟡 | 4.1 auth + dashboard ✅ (`714375a`, `eb05464`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 audit log deferred, 4.3 transactions+users pending, 4.4 aggregator tracking pending** |
 | 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206` (legacy gone, library uses direct PayPal). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not rebuilt — currently just redirect to landing.** |
 | 6 | Report population | ⏸️ | 0 reports seeded beyond migration samples — Henry's content production |
-| 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`). **7.2 auto-insights cron + 7.3 schema markup/OG + GSC submission pending.** |
+| 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`), per-page schema/OG ✅ (this commit). **7.2 auto-insights cron + 7.3 internal linking + GSC submission pending.** |
 | 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`) + hreflang/sitemap-ja.xml ✅ (`8bcb6d4`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
 | 9 | KO layer | 🟡 | 9.1 infra ✅ (same commit range) + sitemap-ko.xml ✅. **9.2 KO translations + 9.3 KO aggregator pending.** |
 | 10 | Polish & launch | 🔴 | Not started — depends on Phases 6/8/9 having content |
@@ -236,13 +236,13 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [ ] CTA at end: "Get the full report"
 
 ### Sprint 7.3 — SEO optimization
-- [ ] Schema markup (Article, Product) on every report — **NOT STARTED**
-- [ ] Open Graph + Twitter Card per report — **partial; static pages have OG, dynamic _view doesn't inject per-report OG yet**
+- [x] Schema markup (Article, Product) on every report — Product + BreadcrumbList JSON-LD injected on `/[locale]/reports/[slug]`; Article + BreadcrumbList injected on `/[locale]/insights/[slug]`; Organization JSON-LD injected globally by `nav.js`. Item 7.3-remainder.
+- [x] Open Graph + Twitter Card per report — dynamic `_view.html` templates now fill OG (title/description/url/locale/site_name/image) + Twitter Card (summary_large_image) per-report on data load; static pages had OG already.
 - [ ] Internal linking strategy — **NOT STARTED**
 - [x] Multi-locale sitemap.xml generated dynamically (`6bb331f`, `8bcb6d4`) — sitemap index + per-locale + sitemap-embedded hreflang + per-page hreflang via nav.js. Ready for GSC submission.
 - [ ] Submit sitemap to Google Search Console + Bing — **owner task — needs domain ownership verification per locale (`google-site-verification` meta or DNS TXT)**
 
-**Deliverable:** 🟡 Insights index + article shells live (`15e94f2`) + sitemap discovery foundation ready. Pending: pagination UI, cron, schema markup, full per-report OG, GSC submission (owner).
+**Deliverable:** 🟢 Insights index + article shells live (`15e94f2`) + sitemap discovery foundation ready + per-report/article schema markup live. Pending: pagination UI, cron (7.2), internal linking, GSC submission (owner).
 
 ---
 
@@ -401,4 +401,4 @@ Cross-cutting work that wasn't in the original 10-phase plan but had to ship to 
 
 ---
 
-*Last updated: 2026-05-20 (Sprints 2.3, 3.3, 4.1-dashboard, 5.3 all closed today via items C, F, H. Through commit `eb05464`.)*
+*Last updated: 2026-05-20 (Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed earlier today via items C, F, H. Item 7.3-remainder shipped this evening — per-report/article schema markup + OG/Twitter + Organization JSON-LD.)*

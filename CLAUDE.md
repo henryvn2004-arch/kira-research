@@ -26,12 +26,12 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `eb05464` — feat(admin): KPI dashboard at /en/admin/
+- **Latest commit on `main`:** to be set by this session's commit — feat(seo): per-report/article schema + OG/Twitter + Organization JSON-LD (item 7.3-remainder)
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` was pushed at end-of-session — CI poll showed in_progress when this file was last touched; verify in Actions tab if doing follow-up work.
+- **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` and this session's 7.3-remainder commit go out together — verify in Actions tab.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 41 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` injection)**.
-- **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅.
+- **Smoke tests:** 45 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**.
+- **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
 ---
@@ -61,7 +61,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
 | **7.1** | Insights blog + article templates | 🟡 | `15e94f2` · UI pagination pending |
 | **7.2** | Auto-insights cron + SEO articles | 🔴 | `api/cron-insights.js` legacy, needs re-design |
-| **7.3** | Schema markup + OG + sitemap + GSC | 🟡 | sitemap ✅ (`6bb331f`+`8bcb6d4`) · schema/OG/GSC submission pending |
+| **7.3** | Schema markup + OG + sitemap + GSC | 🟡 | sitemap ✅ (`6bb331f`+`8bcb6d4`) · per-report/article schema + OG/Twitter ✅ (item 7.3-remainder) · GSC submission + internal linking pending |
 | **8.1** | JA infrastructure | ✅ | `9147ea2`…`4bea633`, `8bcb6d4` · sitemap-ja.xml live; native QA + GSC = next-queue item G + owner |
 | **8.2** | JA report translations | ⏸️ | Henry content work |
 | **8.3** | JA aggregator distribution (GIIResearch) | ⏸️ | Henry outreach work |
@@ -183,8 +183,7 @@ more pending sprints in `project des/workplan.md`. Recommended order:
   Wire `library-content.js` to return real signed URL from Storage bucket. Add admin upload UI. ~1 day.
 - **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
   Pick provider (Resend recommended). Year 1 = simple sends only. ~half-day.
-- **7.3-remainder — Per-report schema markup + Open Graph + JSON-LD** → boosts SEO once content lands.
-  Sitemap already shipped (item C); now wire `_view.html` to inject per-report OG tags + Product/Article schema. ~half-day.
+- ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅ **DONE** (this session). `_view.html` for reports + insights inject per-page OG/Twitter Card + Product/Article JSON-LD + BreadcrumbList. `nav.js` injects Organization JSON-LD globally. 4 new smoke tests cover it (45 total now).
 - **4.3 — Transactions + Users admin** → revenue tracking UX.
   `/en/admin/transactions` list view + detail + manual refund button. Reuses `purchases` table. ~1 day.
 - ~~**F — Legacy file cleanup**~~ ✅ **DONE** (`a8a9206`). 29 files / 11,138 lines removed. Closed Sprints 2.3 + 5.3.
@@ -273,4 +272,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (items C + F + H shipped — sitemap, legacy cleanup, admin dashboard. Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed. Latest commit `eb05464`.)*
+*Last updated: 2026-05-20 (items C + F + H + 7.3-remainder shipped — sitemap, legacy cleanup, admin dashboard, per-page schema/OG. Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed; 7.3 advanced to mostly-done.)*

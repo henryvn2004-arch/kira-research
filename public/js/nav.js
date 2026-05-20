@@ -133,6 +133,34 @@
   </div>
 </footer>`;
 
+  // ── Organization JSON-LD ───────────────────────────────────
+  // Single global entity block, identifies the publisher to crawlers across
+  // every page. Idempotent: skipped if a #ld-organization tag already exists
+  // (e.g. dynamic templates may inject their own richer entity).
+  function injectOrganizationJsonLd() {
+    if (document.getElementById('ld-organization')) return;
+    const origin = window.location.origin;
+    const payload = {
+      '@context': 'https://schema.org',
+      '@type':    'Organization',
+      name:       'KIRA RESEARCH',
+      alternateName: 'KIRA Research',
+      url:        origin + '/',
+      logo:       origin + '/logo.png',
+      description: 'Southeast Asia market intelligence firm. Senior analysts, modern delivery.',
+      foundingLocation: {
+        '@type': 'Place',
+        address: { '@type': 'PostalAddress', addressLocality: 'Ho Chi Minh City', addressCountry: 'VN' }
+      },
+      sameAs: []
+    };
+    const el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.id   = 'ld-organization';
+    el.textContent = JSON.stringify(payload);
+    document.head.appendChild(el);
+  }
+
   // ── hreflang injection ─────────────────────────────────────
   // Add <link rel="alternate" hreflang="..."> tags into <head> for each
   // supported locale + an x-default pointer. Lets Google's crawler discover
@@ -171,6 +199,7 @@
   function inject() {
     // hreflang first so it's in <head> before <body> work begins.
     injectHreflang();
+    injectOrganizationJsonLd();
 
     // Atmosphere div (decorative background) goes first if not already present.
     if (!document.querySelector('.atmosphere')) {

@@ -8,6 +8,19 @@
 
   <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/insights/" />
 
+  <!-- Open Graph + Twitter Card defaults; filled per-article when data loads. -->
+  <meta property="og:type"        content="article" />
+  <meta property="og:site_name"   content="KIRA RESEARCH" />
+  <meta property="og:title"       id="meta-og-title"       content="Insight — KIRA RESEARCH" />
+  <meta property="og:description" id="meta-og-description" content="Field notes and analyst commentary from KIRA RESEARCH." />
+  <meta property="og:url"         id="meta-og-url"         content="https://kiraresearch.com/" />
+  <meta property="og:image"       id="meta-og-image"       content="https://kiraresearch.com/logo.png" />
+  <meta property="og:locale"      id="meta-og-locale"      content="en_US" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       id="meta-tw-title"       content="Insight — KIRA RESEARCH" />
+  <meta name="twitter:description" id="meta-tw-description" content="Field notes and analyst commentary from KIRA RESEARCH." />
+  <meta name="twitter:image"       id="meta-tw-image"       content="https://kiraresearch.com/logo.png" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -91,10 +104,15 @@
 
     // ── 3) Update meta + hreflang ────────────────────────
     const base = 'https://kiraresearch.com';
-    document.title = (data.title || 'Insight') + ' — KIRA RESEARCH';
-    document.getElementById('meta-canonical').href = base + '/' + locale + '/insights/' + data.slug;
+    const url  = base + '/' + locale + '/insights/' + data.slug;
+    const fullTitle   = (data.title || 'Insight') + ' — KIRA RESEARCH';
+    const description = (data.excerpt || data.lede || 'Field notes from KIRA RESEARCH.').slice(0, 200);
+    const ogLocale    = { en: 'en_US', ja: 'ja_JP', ko: 'ko_KR' }[locale] || 'en_US';
+
+    document.title = fullTitle;
+    document.getElementById('meta-canonical').href = url;
     const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc && data.excerpt) metaDesc.setAttribute('content', data.excerpt.slice(0, 200));
+    if (metaDesc) metaDesc.setAttribute('content', description);
 
     const head = document.head;
     ['en','ja','ko'].forEach(loc => {
@@ -111,12 +129,63 @@
     xdef.href = base + '/en/insights/' + data.slug;
     head.appendChild(xdef);
 
-    // OG tags for sharing
-    setMeta('property', 'og:title',       data.title || 'Insight');
-    setMeta('property', 'og:description', (data.excerpt || '').slice(0, 200));
-    setMeta('property', 'og:type',        'article');
-    setMeta('property', 'og:url',         base + '/' + locale + '/insights/' + data.slug);
+    // ── OG + Twitter (fill placeholders, then add article-specific) ──
+    setMetaContent('meta-og-title',       fullTitle);
+    setMetaContent('meta-og-description', description);
+    setMetaContent('meta-og-url',         url);
+    setMetaContent('meta-og-locale',      ogLocale);
+    setMetaContent('meta-tw-title',       fullTitle);
+    setMetaContent('meta-tw-description', description);
     if (data.published_at) setMeta('property', 'article:published_time', data.published_at);
+
+    // ── JSON-LD: Article + BreadcrumbList ──
+    injectJsonLd('ld-article', {
+      '@context':       'https://schema.org',
+      '@type':          'Article',
+      headline:         data.title || data.slug,
+      description,
+      url,
+      datePublished:    data.published_at || undefined,
+      dateModified:     data.published_at || undefined,
+      inLanguage:       locale,
+      author: {
+        '@type': 'Organization',
+        name:    'KIRA RESEARCH'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name:    'KIRA RESEARCH',
+        logo: {
+          '@type': 'ImageObject',
+          url:     base + '/logo.png'
+        }
+      },
+      image:           base + '/logo.png',
+      mainEntityOfPage: url
+    });
+
+    const crumbs = [
+      { name: 'KIRA RESEARCH', item: base + '/' + locale + '/' },
+      { name: 'Insights',      item: base + '/' + locale + '/insights/' }
+    ];
+    if (data.country) {
+      const c = data.country;
+      crumbs.push({
+        name: c.charAt(0).toUpperCase() + c.slice(1),
+        item: base + '/' + locale + '/insights/?cat=' + encodeURIComponent(c)
+      });
+    }
+    crumbs.push({ name: data.title || data.slug, item: url });
+    injectJsonLd('ld-breadcrumb', {
+      '@context':      'https://schema.org',
+      '@type':         'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({
+        '@type':   'ListItem',
+        position:  i + 1,
+        name:      c.name,
+        item:      c.item
+      }))
+    });
 
     // ── 4) Render ────────────────────────────────────────
     render(data);
@@ -132,6 +201,22 @@
       let el = document.querySelector('meta[' + attr + '="' + name + '"]');
       if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
       el.setAttribute('content', content || '');
+    }
+    function setMetaContent(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('content', value || '');
+    }
+    function injectJsonLd(id, payload) {
+      // Strip undefined keys so JSON.stringify doesn't emit `"key":undefined`.
+      const clean = JSON.parse(JSON.stringify(payload));
+      let el = document.getElementById(id);
+      if (!el) {
+        el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.id   = id;
+        document.head.appendChild(el);
+      }
+      el.textContent = JSON.stringify(clean);
     }
     function formatDate(iso) {
       if (!iso) return '—';

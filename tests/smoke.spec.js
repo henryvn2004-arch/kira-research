@@ -230,4 +230,56 @@ test.describe('SEO surface', () => {
     // 3 locales + 1 x-default = 4 minimum.
     expect(count).toBeGreaterThanOrEqual(4);
   });
+
+  test('/en/ has Organization JSON-LD injected by nav.js', async ({ page }) => {
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('script#ld-organization', { state: 'attached', timeout: 5_000 });
+    const text = await page.locator('script#ld-organization').textContent();
+    expect(text).toBeTruthy();
+    const data = JSON.parse(text);
+    expect(data['@type']).toBe('Organization');
+    expect(data.name).toMatch(/KIRA/i);
+  });
+
+  test('/en/reports/<slug> injects OG + Product JSON-LD when data loads', async ({ page }) => {
+    // Seeded slug from 002_library.sql. If DB is empty the API 404s and the
+    // page enters the 404 branch — in that case the schema injection never
+    // runs, so we condition the assertions on the loaded-state breadcrumb.
+    await page.goto('/en/reports/vietnam-fintech-2026', { waitUntil: 'networkidle' });
+    const loaded = await page.locator('.rpt-breadcrumb').count();
+    test.skip(loaded === 0, 'report data not available in this environment');
+
+    // OG tags filled by updateHead()
+    const ogUrl = await page.locator('meta[property="og:url"]').getAttribute('content');
+    expect(ogUrl).toContain('/en/reports/vietnam-fintech-2026');
+
+    // Product JSON-LD
+    await page.waitForSelector('script#ld-product', { state: 'attached', timeout: 5_000 });
+    const productText = await page.locator('script#ld-product').textContent();
+    const product = JSON.parse(productText);
+    expect(product['@type']).toBe('Product');
+    expect(product.offers.priceCurrency).toBe('USD');
+
+    // BreadcrumbList JSON-LD
+    await page.waitForSelector('script#ld-breadcrumb', { state: 'attached', timeout: 5_000 });
+    const crumbText = await page.locator('script#ld-breadcrumb').textContent();
+    const crumb = JSON.parse(crumbText);
+    expect(crumb['@type']).toBe('BreadcrumbList');
+    expect(Array.isArray(crumb.itemListElement)).toBe(true);
+  });
+
+  test('/en/insights/<slug> injects OG + Article JSON-LD when data loads', async ({ page }) => {
+    await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
+    const loaded = await page.locator('.article-breadcrumb').count();
+    test.skip(loaded === 0, 'insight data not available in this environment');
+
+    const ogType = await page.locator('meta[property="og:type"]').getAttribute('content');
+    expect(ogType).toBe('article');
+
+    await page.waitForSelector('script#ld-article', { state: 'attached', timeout: 5_000 });
+    const articleText = await page.locator('script#ld-article').textContent();
+    const article = JSON.parse(articleText);
+    expect(article['@type']).toBe('Article');
+    expect(article.headline).toBeTruthy();
+  });
 });
