@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase JS (loaded for kiraAuth) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    /* Admin-only styles — kept inline so kira.css stays public-facing. */
+    .admin-wrap { padding: 60px 0 96px; }
+    .admin-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .admin-head h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: -0.015em;
+    }
+    .admin-head .me {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .admin-head .me a { color: var(--primary); text-decoration: none; margin-left: 12px; }
+
+    /* KPI grid — 4 cards across desktop, 2x2 tablet, 1-col mobile */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .kpi-grid { grid-template-columns: 1fr; } }
+
+    .kpi-card {
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .kpi-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+    .kpi-value {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-top: 8px;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .kpi-sub strong { color: var(--text); font-weight: 600; }
+    .kpi-card a {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+
+    /* Two-column recent activity grid */
+    .recent-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 800px) { .recent-grid { grid-template-columns: 1fr; } }
+
+    .recent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .recent-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .recent-card h3 a {
+      font-size: 11px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .recent-row {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .recent-row:last-child { border-bottom: none; }
+    .recent-row .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .recent-row .title { font-weight: 500; }
+    .recent-row .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .recent-empty {
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .status-pill.new       { background: rgba(30,111,255,0.15);  color: var(--primary); }
+    .status-pill.contacted { background: rgba(180,140,40,0.15);  color: #b48c28; }
+    .status-pill.qualified { background: rgba(40,160,90,0.15);   color: #28a05a; }
+    .status-pill.closed    { background: rgba(80,80,80,0.15);    color: var(--muted); }
+    .status-pill.rejected  { background: rgba(200,60,60,0.15);   color: #c83c3c; }
+    .status-pill.published { background: rgba(40,160,90,0.15);   color: #28a05a; }
+    .status-pill.draft     { background: rgba(180,140,40,0.15);  color: #b48c28; }
+
+    .admin-error {
+      max-width: 600px;
+      margin: 96px auto;
+      padding: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .admin-error h2 { font-size: 18px; margin-bottom: 12px; }
+    .admin-error p  { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .admin-error code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container admin-wrap" id="admin-wrap">
+
+    <!-- Admin sub-nav (shared chrome) -->
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/" class="active">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div class="admin-head">
+      <div>
+        <h1>Dashboard</h1>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;">
+          Snapshot of pipeline + content + revenue. Numbers refresh on page load.
+        </p>
+      </div>
+    </div>
+
+    <div id="admin-content">
+      <div style="text-align:center;color:var(--muted);padding:48px 0;font-size:14px;">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    // Wait for kiraAuth (loaded by /auth.js as a classic script).
+    async function ready() {
+      while (!window.kiraAuth) await new Promise(r => setTimeout(r, 30));
+    }
+    await ready();
+
+    const wrap = document.getElementById('admin-content');
+    const meEl = document.getElementById('admin-me');
+
+    // ── 1) Require auth (redirect to /auth.html if missing) ──
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+    }
+    const session = (await window.db.auth.getSession()).data.session;
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.kiraAuth.signOut();
+    });
+
+    // ── 2) Fetch aggregated stats ──
+    let stats;
+    try {
+      const r = await fetch('/api/admin-stats', {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 403) {
+        wrap.innerHTML = `
+          <div class="admin-error">
+            <h2>Not authorized</h2>
+            <p>Your account isn't on the admin whitelist. Ask the owner to add
+            <code>${user.email}</code> to the <code>ADMIN_EMAILS</code> env var in Vercel.</p>
+          </div>`;
+        throw new Error('forbidden');
+      }
+      if (!r.ok) throw new Error(`stats ${r.status}`);
+      stats = await r.json();
+    } catch (err) {
+      if (err.message !== 'forbidden') {
+        wrap.innerHTML = `
+          <div class="admin-error">
+            <h2>Couldn't load stats</h2>
+            <p>Server error. ${err.status === 401
+              ? 'Session expired — please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.'
+              : 'Try refreshing in a moment.'}</p>
+          </div>`;
+      }
+      throw err;
+    }
+
+    // ── 3) Render KPI cards + recent activity ──
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function fmtDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      const today = new Date();
+      const sameDay = d.toDateString() === today.toDateString();
+      if (sameDay) {
+        return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+      }
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    function fmtMoney(n) {
+      return '$' + (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    const leadsNew = stats.leads.by_status.new || 0;
+    const reportsPublished = stats.reports.by_status.published || 0;
+    const insightsPublished = stats.insights.by_status.published || 0;
+
+    const kpiHtml = `
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">LEADS</span>
+          <div class="kpi-value">${stats.leads.total}</div>
+          <div class="kpi-sub">
+            <strong>${leadsNew}</strong> new ·
+            <strong>${stats.leads.by_status.qualified || 0}</strong> qualified
+          </div>
+          <a href="/en/admin/leads">View all →</a>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">REPORTS</span>
+          <div class="kpi-value">${stats.reports.total}</div>
+          <div class="kpi-sub">
+            <strong>${reportsPublished}</strong> published ·
+            <strong>${stats.reports.by_status.draft || 0}</strong> draft
+          </div>
+          <a href="/en/admin/reports">Manage →</a>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">INSIGHTS</span>
+          <div class="kpi-value">${stats.insights.total}</div>
+          <div class="kpi-sub">
+            <strong>${insightsPublished}</strong> published ·
+            <strong>${stats.insights.by_status.draft || 0}</strong> draft
+          </div>
+          <a href="/en/admin/insights">Manage →</a>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">REVENUE</span>
+          <div class="kpi-value">${fmtMoney(stats.purchases.revenue_usd)}</div>
+          <div class="kpi-sub">
+            <strong>${stats.purchases.count}</strong> purchase${stats.purchases.count === 1 ? '' : 's'}
+          </div>
+        </div>
+      </div>`;
+
+    const leadsRows = (stats.recent_leads || []).map(l => `
+      <div class="recent-row">
+        <div>
+          <div class="title">${esc(l.name || '(no name)')}<span class="status-pill ${esc(l.status)}">${esc(l.status)}</span></div>
+          <div class="sub">${esc(l.company || '—')} · ${esc(l.locale || 'en')}</div>
+        </div>
+        <span class="meta">${fmtDate(l.created_at)}</span>
+      </div>`).join('') || '<div class="recent-empty">No leads yet.</div>';
+
+    const purchasesRows = (stats.recent_purchases || []).map(p => `
+      <div class="recent-row">
+        <div>
+          <div class="title">${esc(p.report_slug || '(no slug)')}</div>
+          <div class="sub">${esc(p.locale || 'en')} · ${fmtMoney(p.amount_usd || 0)}</div>
+        </div>
+        <span class="meta">${fmtDate(p.created_at)}</span>
+      </div>`).join('') || '<div class="recent-empty">No purchases yet.</div>';
+
+    wrap.innerHTML = kpiHtml + `
+      <div class="recent-grid">
+        <div class="recent-card">
+          <h3>Recent leads <a href="/en/admin/leads">All leads →</a></h3>
+          ${leadsRows}
+        </div>
+        <div class="recent-card">
+          <h3>Recent purchases <a href="/en/admin/reports">All reports →</a></h3>
+          ${purchasesRows}
+        </div>
+      </div>`;
+  </script>
+
+</body>
+</html>
