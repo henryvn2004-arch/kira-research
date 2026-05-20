@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Research — KIRA RESEARCH</title>
+  <meta name="description" content="Commission a senior analyst-led research project on Southeast Asia. Tailored to your decision, delivered in 2–6 weeks." />
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/custom-research/" />
+  <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/custom-research/" />
+  <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/custom-research/" />
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/custom-research/" />
+  <link rel="canonical" href="https://kiraresearch.com/en/custom-research/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Custom Research — KIRA RESEARCH" />
+  <meta property="og:description" content="Senior analyst-led custom research on Southeast Asia. Tailored to your decision." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kiraresearch.com/en/custom-research/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    /* Custom-research-only styles. Promote to kira.css later if reused. */
+    .cr-tiers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 48px 0 96px;
+    }
+    .cr-tier {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cr-tier-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cr-tier-price {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .cr-tier-price small {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      margin-left: 4px;
+      vertical-align: top;
+    }
+    .cr-tier-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .cr-tier ul { list-style: none; padding: 0; margin: 0; }
+    .cr-tier li {
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+    }
+    .cr-tier li::before { content: "→"; color: var(--primary); flex-shrink: 0; }
+
+    .cr-process {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin: 48px 0 96px;
+    }
+    .cr-step {
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .cr-step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+    }
+    .cr-step-title {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .cr-step-desc { color: var(--muted); font-size: 13px; line-height: 1.65; }
+
+    .cr-form-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 48px;
+      margin-bottom: 96px;
+    }
+    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cr-field { display: flex; flex-direction: column; gap: 8px; }
+    .cr-field.full { grid-column: 1 / -1; }
+    .cr-field label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cr-field input,
+    .cr-field textarea,
+    .cr-field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .cr-field input:focus,
+    .cr-field textarea:focus,
+    .cr-field select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .cr-field textarea { min-height: 140px; resize: vertical; }
+    .cr-submit { margin-top: 16px; }
+
+    .cr-success {
+      display: none;
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.3);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 24px;
+      color: var(--text);
+    }
+    .cr-success.show { display: block; }
+
+    @media (max-width: 960px) {
+      .cr-tiers { grid-template-columns: 1fr; }
+      .cr-process { grid-template-columns: repeat(2, 1fr); }
+      .cr-form { grid-template-columns: 1fr; }
+      .cr-form-wrap { padding: 32px; }
+    }
+    @media (max-width: 560px) {
+      .cr-process { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container">
+    <!-- ── PAGE HERO ───────────────────────────────────── -->
+    <section class="section-head" style="padding:96px 0 32px;text-align:center;">
+      <div class="hero-eyebrow" data-i18n="custom.eyebrow">CUSTOM RESEARCH</div>
+      <h1 style="font-family:'Satoshi',sans-serif;font-weight:900;font-size:clamp(36px,5vw,56px);line-height:1.04;letter-spacing:-0.03em;margin:18px auto 24px;max-width:780px;">
+        <span data-i18n="custom.heroLine1">When the library</span><br />
+        <span style="color:var(--primary);" data-i18n="custom.heroLine2">doesn't cover your question.</span>
+      </h1>
+      <p style="color:var(--muted);font-size:17px;line-height:1.65;max-width:620px;margin:0 auto;" data-i18n="custom.heroSub">
+        Commission a senior analyst-led project tailored to your decision. Market entry, competitive deep-dives, partner landscapes, regulatory reads — typically delivered in 2–6 weeks.
+      </p>
+    </section>
+
+    <!-- ── TIERS ───────────────────────────────────────── -->
+    <section style="padding:32px 0 0;">
+      <div class="cr-tiers">
+        <div class="cr-tier">
+          <div class="cr-tier-name" data-i18n="custom.tierBriefingName">Briefing memo</div>
+          <div class="cr-tier-price">$499<small data-i18n="custom.fromLabel">from</small></div>
+          <p class="cr-tier-desc" data-i18n="custom.tierBriefingDesc">Targeted answer to a focused question. 8–15 pages, 1–2 week turnaround. Sized for a specific decision.</p>
+          <ul>
+            <li data-i18n="custom.tierBriefingItem1">One scoping call + written brief</li>
+            <li data-i18n="custom.tierBriefingItem2">Desk + light primary research</li>
+            <li data-i18n="custom.tierBriefingItem3">Senior analyst sign-off</li>
+            <li data-i18n="custom.tierBriefingItem4">One round of follow-up Q&amp;A</li>
+          </ul>
+          <a href="#cr-form" class="btn btn-secondary" style="margin-top:16px;" data-i18n="custom.tierBriefingCta">Start a briefing →</a>
+        </div>
+
+        <div class="cr-tier" style="border-color:var(--primary);">
+          <div class="cr-tier-name" style="color:var(--primary);" data-i18n="custom.tierStandardName">Custom report</div>
+          <div class="cr-tier-price">$1,499<small data-i18n="custom.fromLabel">from</small></div>
+          <p class="cr-tier-desc" data-i18n="custom.tierStandardDesc">Full custom market analysis. Primary research, expert interviews, competitive landscape, scenarios. 3–6 weeks.</p>
+          <ul>
+            <li data-i18n="custom.tierStandardItem1">Discovery + scoping workshop</li>
+            <li data-i18n="custom.tierStandardItem2">Primary &amp; expert-interview research</li>
+            <li data-i18n="custom.tierStandardItem3">Full report (40–80 pages)</li>
+            <li data-i18n="custom.tierStandardItem4">Presentation + working session</li>
+            <li data-i18n="custom.tierStandardItem5">One revision round</li>
+          </ul>
+          <a href="#cr-form" class="btn btn-primary" style="margin-top:16px;" data-i18n="custom.tierStandardCta">Talk to our research team →</a>
+        </div>
+
+        <div class="cr-tier">
+          <div class="cr-tier-name" data-i18n="custom.tierRetainerName">Retainer</div>
+          <div class="cr-tier-price" data-i18n="custom.tierRetainerPrice">Custom</div>
+          <p class="cr-tier-desc" data-i18n="custom.tierRetainerDesc">Ongoing analyst capacity for strategy teams covering SEA. Monthly briefings, on-call analyst time, custom deliverables.</p>
+          <ul>
+            <li data-i18n="custom.tierRetainerItem1">Dedicated senior analyst</li>
+            <li data-i18n="custom.tierRetainerItem2">Monthly briefing memo</li>
+            <li data-i18n="custom.tierRetainerItem3">Ad-hoc question turnaround &lt; 72h</li>
+            <li data-i18n="custom.tierRetainerItem4">Quarterly strategy session</li>
+          </ul>
+          <a href="#cr-form" class="btn btn-secondary" style="margin-top:16px;" data-i18n="custom.tierRetainerCta">Discuss a retainer →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROCESS ─────────────────────────────────────── -->
+    <section>
+      <div style="max-width:680px;">
+        <div class="hero-eyebrow" data-i18n="custom.processEyebrow">ENGAGEMENT MODEL</div>
+        <h2 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:clamp(28px,3vw,40px);line-height:1.12;letter-spacing:-0.02em;margin:14px 0 18px;color:var(--text);" data-i18n="custom.processTitle">
+          From brief to delivery in four steps.
+        </h2>
+        <p style="color:var(--muted);font-size:16px;line-height:1.7;" data-i18n="custom.processSub">
+          Every custom engagement runs through the same review-led process. No outsourced analyst pools, no ghost authors — your project is led end-to-end by a senior analyst on our team.
+        </p>
+      </div>
+
+      <div class="cr-process">
+        <div class="cr-step">
+          <div class="cr-step-num">01 · DISCOVERY</div>
+          <div class="cr-step-title" data-i18n="custom.step1Title">Scoping call</div>
+          <div class="cr-step-desc" data-i18n="custom.step1Desc">30-minute call to understand the decision behind the brief, current evidence base, and where the answer matters most.</div>
+        </div>
+        <div class="cr-step">
+          <div class="cr-step-num">02 · DESIGN</div>
+          <div class="cr-step-title" data-i18n="custom.step2Title">Research plan</div>
+          <div class="cr-step-desc" data-i18n="custom.step2Desc">Written scope: research questions, methodology, sources, expert-interview targets, deliverable shape, timeline. Sign-off before fieldwork.</div>
+        </div>
+        <div class="cr-step">
+          <div class="cr-step-num">03 · FIELDWORK</div>
+          <div class="cr-step-title" data-i18n="custom.step3Title">Primary research</div>
+          <div class="cr-step-desc" data-i18n="custom.step3Desc">In-region interviews, desk research, data analysis. Modern tools (including AI for synthesis) accelerate the work; senior analysts own the judgment.</div>
+        </div>
+        <div class="cr-step">
+          <div class="cr-step-num">04 · DELIVERY</div>
+          <div class="cr-step-title" data-i18n="custom.step4Title">Report &amp; working session</div>
+          <div class="cr-step-desc" data-i18n="custom.step4Desc">Final report, structured findings, and a working session to walk through implications. One revision round included.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── LEAD CAPTURE ────────────────────────────────── -->
+    <section id="cr-form">
+      <div style="max-width:680px;">
+        <div class="hero-eyebrow" data-i18n="custom.formEyebrow">GET IN TOUCH</div>
+        <h2 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:clamp(28px,3vw,40px);line-height:1.12;letter-spacing:-0.02em;margin:14px 0 18px;color:var(--text);" data-i18n="custom.formTitle">
+          Tell us about your project.
+        </h2>
+        <p style="color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:32px;" data-i18n="custom.formSub">
+          A senior analyst will reply within one business day. If your question is urgent, mention it below and we'll prioritise.
+        </p>
+      </div>
+
+      <div class="cr-form-wrap">
+        <form class="cr-form" id="cr-lead-form" novalidate>
+          <div class="cr-field">
+            <label for="cr-name" data-i18n="custom.fieldName">Name</label>
+            <input type="text" id="cr-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-email" data-i18n="custom.fieldEmail">Work email</label>
+            <input type="email" id="cr-email" name="email" required autocomplete="email" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-company" data-i18n="custom.fieldCompany">Company</label>
+            <input type="text" id="cr-company" name="company" autocomplete="organization" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-role" data-i18n="custom.fieldRole">Role</label>
+            <input type="text" id="cr-role" name="role" autocomplete="organization-title" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-tier" data-i18n="custom.fieldTier">Engagement type</label>
+            <select id="cr-tier" name="tier">
+              <option value="briefing" data-i18n="custom.fieldTierBriefing">Briefing memo ($499+)</option>
+              <option value="custom" selected data-i18n="custom.fieldTierCustom">Custom report ($1,499+)</option>
+              <option value="retainer" data-i18n="custom.fieldTierRetainer">Retainer (custom)</option>
+              <option value="not-sure" data-i18n="custom.fieldTierUnsure">Not sure yet</option>
+            </select>
+          </div>
+          <div class="cr-field">
+            <label for="cr-deadline" data-i18n="custom.fieldDeadline">Timeline</label>
+            <select id="cr-deadline" name="deadline">
+              <option value="2w" data-i18n="custom.deadline2w">Under 2 weeks</option>
+              <option value="month" selected data-i18n="custom.deadlineMonth">Within a month</option>
+              <option value="quarter" data-i18n="custom.deadlineQuarter">Within a quarter</option>
+              <option value="flex" data-i18n="custom.deadlineFlex">Flexible</option>
+            </select>
+          </div>
+          <div class="cr-field full">
+            <label for="cr-brief" data-i18n="custom.fieldBrief">Project brief</label>
+            <textarea id="cr-brief" name="brief" required
+              data-i18n-attr="placeholder:custom.briefPlaceholder"
+              placeholder="What's the decision behind this research? Markets, segments, players you're focused on. Anything we should know about context or constraints."></textarea>
+          </div>
+          <div class="cr-field full">
+            <button type="submit" class="btn btn-primary cr-submit" data-i18n="custom.submitCta">Send to our research team →</button>
+          </div>
+        </form>
+
+        <div class="cr-success" id="cr-success">
+          <strong data-i18n="custom.successTitle">Thanks — message received.</strong>
+          <p style="margin:8px 0 0;color:var(--muted);font-size:14px;" data-i18n="custom.successBody">
+            A senior analyst will read your brief and reply within one business day. If you need to share more context, email
+            <a href="mailto:hello@kiraresearch.com" style="color:var(--primary);">hello@kiraresearch.com</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script defer>
+    // Lead form submit — POSTs to /api/leads (to be implemented).
+    // For now, captures and shows success state for UX testing.
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('cr-lead-form');
+      const success = document.getElementById('cr-success');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.locale = (window.kira && window.kira.locale) || 'en';
+        data.source = 'custom-research';
+        try {
+          // Endpoint to be wired in a later phase; tolerate 404 for now.
+          await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        } catch (_) {
+          // Network error doesn't block the UX confirmation.
+        }
+        form.style.display = 'none';
+        success.classList.add('show');
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  </script>
+</body>
+</html>
