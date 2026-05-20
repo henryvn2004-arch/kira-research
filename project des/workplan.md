@@ -15,13 +15,13 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 |---|---|---|---|
 | 1 | Report unit foundation | ⏸️ | Henry's Claude-chat workflow; outside repo build |
 | 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5` |
-| 3 | Library infrastructure | 🟡 | 3.1 + 3.2 ✅. 3.3 backend integration mostly done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`); **sitemap.xml + hreflang completeness pending** |
+| 3 | Library infrastructure | ✅ | 3.1 + 3.2 + 3.3 all done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`, `8bcb6d4`). Sitemap + hreflang shipped. |
 | 4 | Admin backend | 🟡 | 4.1 auth ✅ (`714375a`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 KPI dashboard + audit log, 4.3 transactions+users, 4.4 aggregator tracking — all pending** |
 | 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not yet built — they just redirect to landing for now.** 5.3 credit-system scoping pending. |
 | 6 | Report population | ⏸️ | 0 reports seeded beyond migration samples — Henry's content production |
-| 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). **7.2 auto-insights cron not wired. 7.3 schema markup + OG + sitemap + GSC pending.** |
-| 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
-| 9 | KO layer | 🟡 | 9.1 infra ✅ (same commit range). **9.2 KO translations + 9.3 KO aggregator pending.** |
+| 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`). **7.2 auto-insights cron + 7.3 schema markup/OG + GSC submission pending.** |
+| 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`) + hreflang/sitemap-ja.xml ✅ (`8bcb6d4`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
+| 9 | KO layer | 🟡 | 9.1 infra ✅ (same commit range) + sitemap-ko.xml ✅. **9.2 KO translations + 9.3 KO aggregator pending.** |
 | 10 | Polish & launch | 🔴 | Not started — depends on Phases 6/8/9 having content |
 | ∞ | Infra & quality (unplanned) | ✅ | Smoke CI `7e4e0de`+`87cd168`, security cleanup `09dbc30`, memory `9fde035`+`4d9456a` |
 
@@ -123,10 +123,10 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] Create `report_translations` table
 - [x] PayPal direct purchase flow (separate from credit system)
 - [x] Slug routing với locale awareness
-- [ ] Programmatic SEO meta tags per report per locale — **partial; title/desc done, OG/Twitter/JSON-LD pending**
-- [ ] Sitemap.xml auto-generation (multi-locale) — **NOT STARTED — Next-queue item C**
+- [ ] Programmatic SEO meta tags per report per locale — **partial; title/desc done, OG/Twitter/JSON-LD pending** (Sprint 7.3 work)
+- [x] Sitemap.xml auto-generation (multi-locale) — sitemap index + 3 per-locale sitemaps via `/api/sitemap`, with sitemap-embedded hreflang. robots.txt published. Commits: `6bb331f`, `2ae51a5`, `8bcb6d4`.
 
-**Deliverable:** 🟡 Library + report pages functional. Commits: `c953fb4`, `ffde22e`, `1a46491`, `60b00bb`, `87cd168`. Pending: sitemap + full SEO meta.
+**Deliverable:** ✅ Library + report pages functional with sitemap discovery. Commits: `c953fb4`, `ffde22e`, `1a46491`, `60b00bb`, `87cd168`, `8bcb6d4`. Schema/OG meta tags remaining → Sprint 7.3.
 
 ---
 
@@ -238,9 +238,10 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [ ] Schema markup (Article, Product) on every report — **NOT STARTED**
 - [ ] Open Graph + Twitter Card per report — **partial; static pages have OG, dynamic _view doesn't inject per-report OG yet**
 - [ ] Internal linking strategy — **NOT STARTED**
-- [ ] Submit sitemap to Google Search Console + Bing — **requires sitemap.xml first (Sprint 3.3)**
+- [x] Multi-locale sitemap.xml generated dynamically (`6bb331f`, `8bcb6d4`) — sitemap index + per-locale + sitemap-embedded hreflang + per-page hreflang via nav.js. Ready for GSC submission.
+- [ ] Submit sitemap to Google Search Console + Bing — **owner task — needs domain ownership verification per locale (`google-site-verification` meta or DNS TXT)**
 
-**Deliverable:** 🟡 Insights index + article shells live (`15e94f2`). Pending: pagination UI, cron, schema markup, full OG, sitemap submission.
+**Deliverable:** 🟡 Insights index + article shells live (`15e94f2`) + sitemap discovery foundation ready. Pending: pagination UI, cron, schema markup, full per-report OG, GSC submission (owner).
 
 ---
 
@@ -253,9 +254,9 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [ ] Native reviewer reviews UI strings (critical for trust) — **pending — next-queue item G**
 - [x] Add Noto Sans JP font loading conditional on locale
 - [x] Set up `/ja/*` route handling
-- [ ] hreflang tags activated bidirectionally — **partial — on dynamic templates; static pages incomplete**
-- [ ] `/sitemap-ja.xml` generation — **NOT STARTED**
-- [ ] Set up GSC property for ja.kiraresearch.com sitemap — **owner task, blocked by sitemap**
+- [x] hreflang tags activated bidirectionally — `nav.js` injects `<link rel="alternate">` for all 3 locales + x-default on every page (`6bb331f`). Sitemap-embedded `xhtml:link` annotations same.
+- [x] `/sitemap-ja.xml` generation — dynamic via `/api/sitemap?locale=ja`, includes all published JA reports + insights + 7 static pages (`6bb331f`).
+- [ ] Set up GSC property for ja.kiraresearch.com sitemap — **owner task, sitemap now ready to submit**
 
 ### Sprint 8.2 — JA report translations
 - [ ] Translate first 10 reports EN → JA via Claude chat — **owner task**
@@ -286,7 +287,8 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] Same as Phase 8.1 but for Korean (locale json, routing, copy rewrites)
 - [x] Noto Sans KR font setup
 - [x] `/ko/*` route handling
-- [ ] hreflang tags + sitemap + GSC — **same blockers as JA**
+- [x] hreflang tags + sitemap — same mechanism as JA (`6bb331f`, `8bcb6d4`). `/sitemap-ko.xml` live.
+- [ ] GSC property — **owner task, sitemap ready**
 
 ### Sprint 9.2 — KO report translations
 - [ ] Translate first 10 reports EN → KO — **owner task**
@@ -398,4 +400,4 @@ Cross-cutting work that wasn't in the original 10-phase plan but had to ship to 
 
 ---
 
-*Last updated: 2026-05-20 (status snapshot added; checkboxes ticked through commit `4d9456a`)*
+*Last updated: 2026-05-20 (Sprint 3.3 fully closed via item C — sitemap index + per-locale + hreflang shipped. Through commit `8bcb6d4`.)*

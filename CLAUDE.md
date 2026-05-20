@@ -26,11 +26,11 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `a4c2761` — docs(progress): smoke CI fully green
-- **Production:** live, last functional deploy from `87cd168` (docs-only commits since then don't change behaviour)
+- **Latest commit on `main`:** `8bcb6d4` — fix(smoke): waitForSelector on `<link>` tag needs state:attached
+- **Production:** live, latest Vercel deploy from `8bcb6d4`
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 35 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs
-- **Latest CI run (`87cd168`):** ✅ 35 passed / 0 failed in 10.3s. Site is green end-to-end. Verified production URLs include `/en/reports/vietnam-fintech-2026`, `/en/insights/vietnam-sme-lending-shift`, all 21 static pages × 3 locales, all 4 legacy redirects.
+- **Smoke tests:** 41 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` injection)**.
+- **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
 ---
@@ -49,7 +49,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **2** | Brand & copy rewrite (EN) — 4 sprints | ✅ | `b9e28fd`, `4dba4b5` |
 | **3.1** | `library.html` page | ✅ | `c953fb4` |
 | **3.2** | Individual report page (`_view.html` rewrite) | ✅ | `c953fb4`, `1a46491`, `87cd168` |
-| **3.3** | Backend integration (DB + PayPal + slug routing) | 🟡 | `ffde22e`, `60b00bb` · **sitemap.xml + full SEO meta pending** |
+| **3.3** | Backend integration (DB + PayPal + slug routing + sitemap) | ✅ | `ffde22e`, `60b00bb`, `87cd168`, `8bcb6d4` · sitemap + hreflang shipped, per-report OG/JSON-LD → 7.3 |
 | **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth only · **KPI dashboard + audit log pending** |
 | **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` · stats/featured pending |
 | **4.3** | Transactions + Users admin | 🔴 | **not started** |
@@ -60,12 +60,12 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
 | **7.1** | Insights blog + article templates | 🟡 | `15e94f2` · UI pagination pending |
 | **7.2** | Auto-insights cron + SEO articles | 🔴 | `api/cron-insights.js` legacy, needs re-design |
-| **7.3** | Schema markup + OG + sitemap + GSC | 🔴 | **not started** |
-| **8.1** | JA infrastructure | 🟡 | `9147ea2`…`4bea633` · sitemap + native QA pending |
+| **7.3** | Schema markup + OG + sitemap + GSC | 🟡 | sitemap ✅ (`6bb331f`+`8bcb6d4`) · schema/OG/GSC submission pending |
+| **8.1** | JA infrastructure | ✅ | `9147ea2`…`4bea633`, `8bcb6d4` · sitemap-ja.xml live; native QA + GSC = next-queue item G + owner |
 | **8.2** | JA report translations | ⏸️ | Henry content work |
 | **8.3** | JA aggregator distribution (GIIResearch) | ⏸️ | Henry outreach work |
 | **8.4** | JA copy rewrites (About/Methodology/Hero) | ✅ | `9147ea2`…`4bea633` |
-| **9.1** | KO infrastructure | 🟡 | same commit range · sitemap pending |
+| **9.1** | KO infrastructure | ✅ | same commit range + `8bcb6d4` · sitemap-ko.xml live; native QA + GSC = next-queue item G + owner |
 | **9.2** | KO report translations | ⏸️ | Henry content work |
 | **9.3** | KO aggregator distribution | ⏸️ | Henry outreach work |
 | **10** | Polish & launch | 🔴 | Mobile QA + perf audit + GSC + soft launch pending |
@@ -150,11 +150,19 @@ These are tasks only the owner can do (involve dashboards, not git):
 ### Done (no further action needed)
 
 - ✅ Repo is public, GitHub Actions running free
-- ✅ Smoke CI workflow live and green (35/35 pass)
+- ✅ Smoke CI workflow live and green (41 checks)
 - ✅ `/en/reports/<slug>` + `/en/insights/<slug>` rewrites verified by CI
 - ✅ Legacy URL redirects (`/library.html`, `/report.html`, etc.) verified by CI
 - ✅ Admin auth gate on `/en/admin/*` verified — unauthenticated users redirected
 - ✅ Public API endpoints respond with JSON, leads endpoint rejects GET, admin-leads rejects unauth
+- ✅ SEO surface live: `/robots.txt`, `/sitemap.xml` (index), `/sitemap-{en,ja,ko}.xml` (per-locale with embedded hreflang). Per-page `<link rel="alternate">` injected by nav.js on every page load.
+
+### New owner action (unblocked by SEO sprint)
+
+4. ☐ **Submit sitemap to Google Search Console** — once per locale property:
+   - GSC → Property → Sitemaps → add `https://kiraresearch.com/sitemap-en.xml`, same for `ja` and `ko`
+   - Requires domain ownership verification first (DNS TXT or `google-site-verification` meta tag on `index.html`)
+   - Optional: submit `https://kiraresearch.com/sitemap.xml` (the index) once for any property
 
 ---
 
@@ -163,8 +171,7 @@ These are tasks only the owner can do (involve dashboards, not git):
 Aligned with the workplan phase/sprint structure. Each item maps to one or
 more pending sprints in `project des/workplan.md`. Recommended order:
 
-- **C — Sitemap.xml + robots.txt + full hreflang** → unblocks Sprint **3.3** (programmatic SEO) + **7.3** (sitemap to GSC) + **8.1/9.1** (per-locale sitemaps).
-  3 sitemaps per locale + index sitemap + hreflang per page + robots.txt. ~half-day.
+- ~~**C — Sitemap.xml + robots.txt + full hreflang**~~ ✅ **DONE** (`6bb331f`…`8bcb6d4`). Closed Sprint 3.3, ~70% of 8.1+9.1; 7.3 partial.
 - **D — PDF upload via Supabase Storage** → unblocks Sprint **6.2** (PDF export pipeline) + **8.2** JA PDFs.
   Wire `library-content.js` to return real signed URL from Storage bucket. Add admin upload UI. ~1 day.
 - **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
@@ -265,4 +272,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (progress refactored onto workplan's phase/sprint structure — workplan.md is source of truth for sprint detail, this file is the pickup matrix)*
+*Last updated: 2026-05-20 (item C shipped — sitemap index + 3 per-locale sitemaps + hreflang + robots.txt. Sprint 3.3 closed. Latest commit `8bcb6d4`.)*
