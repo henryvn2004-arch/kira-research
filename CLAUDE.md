@@ -26,11 +26,11 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `2649a9b` — feat(seo): per-report/article schema + OG/Twitter + Organization JSON-LD (item 7.3-remainder)
+- **Latest commit on `main`:** `5050c00` — feat(storage): PDF upload pipeline via Supabase Storage (item D)
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` and this session's 7.3-remainder commit go out together — verify in Actions tab.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 45 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**.
+- **Smoke tests:** 47 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**.
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
