@@ -26,10 +26,11 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `09dbc30` — chore: remove leaked secrets
-- **Production:** live, last successful Vercel deploy from `09dbc30`
+- **Latest commit on `main`:** `659b81d` — fix(smoke): scope selectors to avoid strict-mode collisions
+- **Production:** live, latest Vercel deploy from `659b81d`
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 30 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs
+- **First CI run (commit `7e4e0de`):** 30 failed / 5 passed — all 30 failures were over-broad selectors in the test suite, not site bugs. Fixed in `659b81d`. Awaiting next run for confirmation.
 
 ---
 
@@ -56,6 +57,8 @@ link execution back to git log.
 | 14 | Rewrite pattern fix (slug 404) | ✅ | `3895ad4` |
 | 15 | Playwright smoke tests + GH Actions workflow | ✅ | `7e4e0de` |
 | 16 | Security cleanup: remove leaked secrets, repo→public | ✅ | `09dbc30` |
+| 17 | Cross-machine pickup guide (CLAUDE.md at root) | ✅ | `9fde035` |
+| 18 | Smoke selector fixes (logo-mark + title + auth + redirects) | ✅ | `659b81d` |
 
 ---
 
@@ -191,6 +194,12 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 
 6. **Reading file from wrong shell cwd** — after `cd kira-research && ...`, the shell stays inside `kira-research/`. Subsequent `cd kira-research` errors. Always `pwd` first or use absolute paths.
 
+7. **`.logo-mark` exists in TWO places** — `nav.js` injects it in the top nav AND in the footer. Playwright strict-mode (default) errors when a `locator('.logo-mark')` matches both. Always scope to `.nav-wrap .logo-mark` (or `.kira-footer .logo-mark` for the footer check) — or use `.first()` for quick triage.
+
+8. **Page titles use mixed case `"KIRA Research"`**, not all-caps `"KIRA RESEARCH"`. Brand mark in nav is rendered all-caps via the CSS class `.logo-mark`, but `<title>` text is mixed case. Test with `/KIRA Research/i` or just `/KIRA/i`.
+
+9. **`cleanUrls: true` strips `.html` from URLs** — admin JS redirects to `/auth.html` but the browser lands on `/auth`. Any URL assertion involving HTML files must accept both forms: `/\/auth(\.html)?(\?|$|\/)/`.
+
 ---
 
 ## Pickup checklist for new Claude session
@@ -220,4 +229,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (Sprint 16 complete — security cleanup + repo public)*
+*Last updated: 2026-05-20 (Sprint 18 complete — smoke selector fixes pushed, awaiting CI re-run)*
