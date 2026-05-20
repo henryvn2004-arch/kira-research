@@ -26,7 +26,7 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** to be set by this session's commit — feat(seo): per-report/article schema + OG/Twitter + Organization JSON-LD (item 7.3-remainder)
+- **Latest commit on `main`:** `2649a9b` — feat(seo): per-report/article schema + OG/Twitter + Organization JSON-LD (item 7.3-remainder)
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` and this session's 7.3-remainder commit go out together — verify in Actions tab.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
