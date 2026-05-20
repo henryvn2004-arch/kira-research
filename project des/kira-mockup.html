@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIRA RESEARCH — Mockup v3 (clean)</title>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+  :root {
+    --bg: #0B0D10;
+    --surface: #11151C;
+    --surface-2: #161B23;
+    --primary: #1E6FFF;
+    --primary-dim: #1850BF;
+    --text: #FFFFFF;
+    --muted: #A3A9B6;
+    --muted-dim: #6B7280;
+    --border: #1A1D24;
+    --border-strong: #252A33;
+    --glow: rgba(30,111,255,0.15);
+    --glow-strong: rgba(30,111,255,0.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Satoshi', 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  .mock-divider {
+    background: var(--primary);
+    color: var(--text);
+    padding: 8px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .mock-divider::before { content: "▾ MOCKUP PAGE: "; opacity: 0.7; margin-right: 4px; }
+
+  .atmosphere {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(ellipse 60% 50% at 20% 0%, var(--glow) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 30%, rgba(30,111,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.4;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === NAV === */
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11,13,16,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    gap: 24px;
+  }
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .logo-mark {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+  }
+  .logo-mark .a-accent {
+    position: relative;
+    display: inline-block;
+  }
+  .logo-mark .a-accent::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    right: -2px;
+    width: 9px;
+    height: 5px;
+    background: var(--primary);
+    transform: skewX(-15deg);
+  }
+  .logo-sub {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: var(--primary);
+    text-transform: uppercase;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--text); }
+  .nav-cta {
+    background: var(--primary);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--primary-dim); color: var(--text) !important; }
+  .nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .nav-dropdown::after {
+    content: "▾";
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* Locale switcher — minimal, inline with nav */
+  .locale-switcher {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-right: 14px;
+    border-right: 1px solid var(--border);
+  }
+  .locale-switcher a {
+    color: var(--muted-dim);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .locale-switcher a:hover { color: var(--text); }
+  .locale-switcher a.active { color: var(--text); }
+  .locale-switcher a.lang-ja { font-family: 'Noto Sans JP', sans-serif; }
+  .locale-switcher a.lang-ko { font-family: 'Noto Sans KR', sans-serif; }
+
+  /* === HERO === */
+  .hero { position: relative; padding: 100px 0 120px; overflow: hidden; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--primary);
+  }
+  .hero h1 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: clamp(48px, 6vw, 76px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin-bottom: 32px;
+  }
+  .hero h1 .accent { color: var(--primary); }
+  .hero-sub {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-bottom: 44px;
+    max-width: 540px;
+  }
+  .hero-actions { display: flex; gap: 14px; margin-bottom: 56px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--primary); color: var(--text); }
+  .btn-primary:hover { background: var(--primary-dim); box-shadow: 0 0 24px var(--glow-strong); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover { border-color: var(--primary); }
+  .btn-arrow { font-family: 'JetBrains Mono', monospace; }
+
+  .hero-trust {
+    display: flex;
+    gap: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .trust-item .num {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .trust-item .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .hero-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-panel::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 60px; height: 1px;
+    background: var(--primary);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .panel-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--primary);
+  }
+  .panel-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-row:last-child { border-bottom: none; }
+  .panel-label { font-size: 13px; color: var(--text); font-weight: 500; }
+  .panel-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .panel-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    padding-top: 100px;
+  }
+  .section-head .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-head .label::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--primary);
+  }
+  .section-head h2 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  .section-head .more {
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-head .more:hover { color: var(--primary); }
+
+  .reports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .report-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+  .report-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--primary);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .report-card:hover::before { opacity: 1; }
+  .report-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .report-meta .country { color: var(--primary); }
+  .report-card h3 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .report-desc { color: var(--muted); font-size: 14px; line-height: 1.5; flex: 1; }
+  .report-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .report-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .report-cta {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .industries { padding-top: 100px; }
+  .industries-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .ind-cell {
+    background: var(--surface);
+    padding: 28px 20px;
+    text-align: center;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .ind-cell:hover { background: var(--surface-2); }
+  .ind-icon { width: 32px; height: 32px; margin: 0 auto 12px; color: var(--primary); }
+  .ind-label { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .ind-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  .methodology { padding: 100px 0 0; }
+  .meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .meth-left h2 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .meth-left p { color: var(--muted); font-size: 17px; line-height: 1.6; margin-bottom: 32px; }
+  .meth-steps { display: flex; flex-direction: column; gap: 0; }
+  .meth-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 20px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .meth-step:last-child { border-bottom: none; }
+  .meth-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--primary);
+    letter-spacing: 0.1em;
+  }
+  .meth-step h4 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .meth-step p { font-size: 14px; color: var(--muted); line-height: 1.55; margin: 0; }
+
+  .distrib { padding: 80px 0 0; }
+  .distrib-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+  }
+  .distrib-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .distrib-channels { display: flex; gap: 32px; flex-wrap: wrap; }
+  .distrib-channel { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+  footer { margin-top: 120px; padding: 64px 0 32px; border-top: 1px solid var(--border); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-col h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .footer-col a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 0;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--primary); }
+  .footer-tag { color: var(--muted); font-size: 14px; line-height: 1.6; margin-top: 16px; max-width: 340px; }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* Library */
+  .lib-header { padding: 80px 0 48px; }
+  .lib-header h1 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .lib-header p { color: var(--muted); font-size: 18px; max-width: 600px; }
+  .lib-controls {
+    display: flex;
+    gap: 16px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    align-items: center;
+  }
+  .lib-search {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .lib-search:focus { outline: none; border-color: var(--primary); }
+  .lib-count { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+  .lib-sort {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .lib-grid { display: grid; grid-template-columns: 240px 1fr; gap: 48px; }
+  .filters { position: sticky; top: 100px; align-self: start; }
+  .filter-group { margin-bottom: 32px; }
+  .filter-group h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .filter-option {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .filter-option:hover { color: var(--primary); }
+  .filter-option.active { color: var(--primary); }
+  .filter-option .count { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 12px; }
+  .lib-results { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  /* Individual report */
+  .rpt-page { padding: 60px 0 100px; }
+  .rpt-breadcrumb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.05em;
+  }
+  .rpt-breadcrumb a { color: var(--muted); text-decoration: none; }
+  .rpt-breadcrumb a:hover { color: var(--primary); }
+  .rpt-grid { display: grid; grid-template-columns: 1fr 360px; gap: 64px; align-items: start; }
+  .rpt-main h1 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: 44px;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .rpt-meta {
+    display: flex;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .rpt-meta-item .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .rpt-meta-item .val { font-size: 14px; color: var(--text); font-weight: 500; }
+  .rpt-section { margin-bottom: 56px; }
+  .rpt-section h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rpt-section h3::before {
+    content: "";
+    width: 20px;
+    height: 1px;
+    background: var(--primary);
+  }
+  .rpt-section h2 {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .rpt-section p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 16px; }
+  .rpt-section p strong { color: var(--text); font-weight: 600; }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 32px 0;
+  }
+  .chart-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chart-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .chart-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .chart-bars { display: flex; align-items: end; gap: 12px; height: 180px; padding: 16px 0; }
+  .chart-bar {
+    flex: 1;
+    background: linear-gradient(to top, var(--primary) 0%, rgba(30,111,255,0.3) 100%);
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    min-height: 8px;
+  }
+  .chart-bar::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .chart-bar::before {
+    content: attr(data-value);
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin: 40px 0;
+  }
+  .toc h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .toc-item:last-child { border-bottom: none; }
+  .toc-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 12px;
+    width: 32px;
+  }
+  .toc-item .name { flex: 1; }
+  .toc-item .pages {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .toc-item .lock { color: var(--muted-dim); font-size: 11px; margin-left: 12px; }
+  .toc-item.preview .lock { color: var(--primary); }
+
+  .buy-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    position: sticky;
+    top: 100px;
+  }
+  .buy-price {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 900;
+    font-size: 48px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .buy-price .currency {
+    font-size: 24px;
+    color: var(--muted);
+    vertical-align: top;
+    margin-right: 4px;
+  }
+  .buy-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .buy-lang-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .buy-lang-select .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .buy-lang-select a {
+    padding: 5px 11px;
+    color: var(--muted-dim);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+  .buy-lang-select a:hover { color: var(--text); border-color: var(--border-strong); }
+  .buy-lang-select a.active {
+    color: var(--text);
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .buy-lang-select a.lang-ja { font-family: 'Noto Sans JP', sans-serif; }
+  .buy-lang-select a.lang-ko { font-family: 'Noto Sans KR', sans-serif; }
+  .buy-btn {
+    width: 100%;
+    background: var(--primary);
+    color: var(--text);
+    padding: 16px;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .buy-btn:hover { background: var(--primary-dim); box-shadow: 0 0 24px var(--glow-strong); }
+  .buy-btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--text);
+    padding: 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .buy-btn-secondary:hover { border-color: var(--primary); }
+  .buy-includes { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .buy-includes h6 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .include-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .include-item::before {
+    content: "→";
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+  }
+
+  @media (max-width: 968px) {
+    .hero-grid, .lib-grid, .rpt-grid, .meth-grid { grid-template-columns: 1fr; gap: 48px; }
+    .reports-grid, .lib-results { grid-template-columns: 1fr; }
+    .industries-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .hero h1 { font-size: 44px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="atmosphere"></div>
+
+<!-- ========================================================= -->
+<!-- ============== MOCKUP PAGE 1: HOMEPAGE ================== -->
+<!-- ========================================================= -->
+<div class="mock-divider">01 — Homepage (/en/)</div>
+
+<div class="nav-wrap">
+  <div class="container">
+    <nav class="nav">
+      <a class="logo" href="#">
+        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+        <span class="logo-sub">Research</span>
+      </a>
+      <div class="nav-right">
+        <div class="locale-switcher">
+          <a href="#" class="active">EN</a>
+          <a href="#" class="lang-ja">日本語</a>
+          <a href="#" class="lang-ko">한국어</a>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="active">Library</a>
+          <a href="#">Insights</a>
+          <a href="#">About</a>
+          <a href="#">Methodology</a>
+          <a href="#">Pricing</a>
+          <a href="#" class="nav-dropdown">Custom Research</a>
+          <a href="#" class="nav-cta">Browse Library →</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="grid-pattern"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">SOUTHEAST ASIA · MARKET INTELLIGENCE</div>
+        <h1>
+          Deep research<br>
+          for the markets<br>
+          <span class="accent">we live in.</span>
+        </h1>
+        <p class="hero-sub">
+          KIRA Research is a specialized research firm covering Southeast Asia. Our analysts combine two decades of regional fieldwork with modern delivery — published reports, refreshed continuously.
+        </p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-primary">Browse Library <span class="btn-arrow">→</span></a>
+          <a href="#" class="btn btn-secondary">Commission Research</a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-item">
+            <div class="num">20+</div>
+            <div class="label">Years in SEA</div>
+          </div>
+          <div class="trust-item">
+            <div class="num">11</div>
+            <div class="label">Countries Covered</div>
+          </div>
+          <div class="trust-item">
+            <div class="num">38</div>
+            <div class="label">Industries Tracked</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <div class="panel-header">
+          <span class="panel-title">Latest Research</span>
+          <span class="panel-status"><span class="status-dot"></span>LIVE</span>
+        </div>
+        <div class="panel-row">
+          <div>
+            <div class="panel-label">Vietnam Fintech 2026</div>
+            <div class="panel-meta">VN · BANKING · 78 PG</div>
+          </div>
+          <div class="panel-value">$39</div>
+        </div>
+        <div class="panel-row">
+          <div>
+            <div class="panel-label">Indonesia FMCG Distribution</div>
+            <div class="panel-meta">ID · CONSUMER · 92 PG</div>
+          </div>
+          <div class="panel-value">$39</div>
+        </div>
+        <div class="panel-row">
+          <div>
+            <div class="panel-label">Thailand E-Commerce Logistics</div>
+            <div class="panel-meta">TH · LOGISTICS · 68 PG</div>
+          </div>
+          <div class="panel-value">$39</div>
+        </div>
+        <div class="panel-row">
+          <div>
+            <div class="panel-label">Philippines Healthtech Landscape</div>
+            <div class="panel-meta">PH · HEALTH · 84 PG</div>
+          </div>
+          <div class="panel-value">$39</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="section-head">
+    <div>
+      <div class="label">Featured Reports</div>
+      <h2>Recently refreshed</h2>
+    </div>
+    <a href="#" class="more">View Library →</a>
+  </div>
+
+  <div class="reports-grid">
+    <a href="#" class="report-card">
+      <div class="report-meta">
+        <span class="country">VIETNAM</span>
+        <span>FINTECH · 2026</span>
+      </div>
+      <h3>Vietnam Fintech Landscape: Payments, Lending & AI Disruption</h3>
+      <p class="report-desc">12-section deep dive on Vietnam's digital banking, BNPL adoption, regulatory shifts under SBV, and how AI is reshaping credit underwriting across MoMo, ZaloPay, and emerging neobanks.</p>
+      <div class="report-footer">
+        <span class="report-price">$39</span>
+        <span class="report-cta">Preview →</span>
+      </div>
+    </a>
+
+    <a href="#" class="report-card">
+      <div class="report-meta">
+        <span class="country">INDONESIA</span>
+        <span>CONSUMER · 2026</span>
+      </div>
+      <h3>Indonesia FMCG Distribution: Channels, Margins & E-commerce Shift</h3>
+      <p class="report-desc">How modern trade, traditional warungs, and quick-commerce are restructuring Indonesia's consumer goods market. Channel margins, retailer dynamics, and AI-driven category management.</p>
+      <div class="report-footer">
+        <span class="report-price">$39</span>
+        <span class="report-cta">Preview →</span>
+      </div>
+    </a>
+
+    <a href="#" class="report-card">
+      <div class="report-meta">
+        <span class="country">THAILAND</span>
+        <span>LOGISTICS · 2026</span>
+      </div>
+      <h3>Thailand E-Commerce Logistics: Last-Mile, Cross-Border & Automation</h3>
+      <p class="report-desc">Thailand's last-mile delivery market, fulfillment centers in EEC, Flash vs Kerry vs J&T market share, and how AI route optimization is changing unit economics.</p>
+      <div class="report-footer">
+        <span class="report-price">$39</span>
+        <span class="report-cta">Preview →</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="container industries">
+  <div class="section-head" style="padding-top: 0;">
+    <div>
+      <div class="label">Coverage</div>
+      <h2>Industries we track</h2>
+    </div>
+    <a href="#" class="more">All industries →</a>
+  </div>
+
+  <div class="industries-grid">
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <div class="ind-label">Fintech</div>
+      <div class="ind-count">14 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <div class="ind-label">FMCG</div>
+      <div class="ind-count">22 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 23a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9 14l8-3"/><path d="M9 14l8 3"/></svg>
+      <div class="ind-label">Logistics</div>
+      <div class="ind-count">8 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <div class="ind-label">Healthtech</div>
+      <div class="ind-count">11 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <div class="ind-label">Energy & EV</div>
+      <div class="ind-count">9 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      <div class="ind-label">Media</div>
+      <div class="ind-count">7 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="ind-label">Real Estate</div>
+      <div class="ind-count">6 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <div class="ind-label">Telecom</div>
+      <div class="ind-count">5 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <div class="ind-label">Hospitality</div>
+      <div class="ind-count">8 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+      <div class="ind-label">Retail</div>
+      <div class="ind-count">12 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <div class="ind-label">Manufacturing</div>
+      <div class="ind-count">10 reports</div>
+    </div>
+    <div class="ind-cell">
+      <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <div class="ind-label">F&B</div>
+      <div class="ind-count">16 reports</div>
+    </div>
+  </div>
+</section>
+
+<section class="container methodology">
+  <div class="meth-grid">
+    <div class="meth-left">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+        <span style="display: inline-block; width: 24px; height: 1px; background: var(--primary);"></span>
+        Methodology
+      </div>
+      <h2>Senior analysts, modern delivery.</h2>
+      <p>
+        Our team has spent two decades doing primary market research across Southeast Asia. We bring consulting-grade methodology — and use modern tools, including AI, to keep our work current and accessible.
+      </p>
+      <p>
+        Every report we publish goes through analyst review. We're transparent about our process.
+      </p>
+      <a href="#" class="btn btn-secondary" style="margin-top: 8px;">Read full methodology <span class="btn-arrow">→</span></a>
+    </div>
+
+    <div class="meth-steps">
+      <div class="meth-step">
+        <div class="meth-num">01</div>
+        <div>
+          <h4>Primary research foundation</h4>
+          <p>Two decades of fieldwork across SEA forms our baseline understanding — channel structures, consumer patterns, regulatory environments.</p>
+        </div>
+      </div>
+      <div class="meth-step">
+        <div class="meth-num">02</div>
+        <div>
+          <h4>Current data refresh</h4>
+          <p>Market sizes, players, and recent shifts are refreshed via secondary research and verified sources before each publication.</p>
+        </div>
+      </div>
+      <div class="meth-step">
+        <div class="meth-num">03</div>
+        <div>
+          <h4>AI-augmented analysis</h4>
+          <p>We use modern AI tools to synthesize, structure, and identify patterns — accelerating analyst work without replacing judgment.</p>
+        </div>
+      </div>
+      <div class="meth-step">
+        <div class="meth-num">04</div>
+        <div>
+          <h4>Analyst curation</h4>
+          <p>Every report is reviewed by a senior analyst before publication. We catch errors AI misses and add the strategic context that matters.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container distrib">
+  <div class="distrib-bar">
+    <div class="distrib-label">Also Available On</div>
+    <div class="distrib-channels">
+      <div class="distrib-channel">ResearchAndMarkets</div>
+      <div class="distrib-channel">MarketResearch.com</div>
+      <div class="distrib-channel">GIIResearch</div>
+      <div class="distrib-channel">ASDReports</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a class="logo" href="#">
+          <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+          <span class="logo-sub">Research</span>
+        </a>
+        <p class="footer-tag">Southeast Asia's specialized market research firm. Senior analysts, modern delivery.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Library</h5>
+        <a href="#">Browse All</a>
+        <a href="#">By Country</a>
+        <a href="#">By Industry</a>
+        <a href="#">Latest</a>
+      </div>
+      <div class="footer-col">
+        <h5>Firm</h5>
+        <a href="#">About</a>
+        <a href="#">Methodology</a>
+        <a href="#">Custom Research</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <a href="#">Insights</a>
+        <a href="#">Pricing</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 KIRA RESEARCH</span>
+      <span>HO CHI MINH CITY · SINGAPORE</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ========================================================= -->
+<!-- ============== MOCKUP PAGE 2: LIBRARY =================== -->
+<!-- ========================================================= -->
+<div class="mock-divider">02 — Library Page (/en/library)</div>
+
+<div class="nav-wrap">
+  <div class="container">
+    <nav class="nav">
+      <a class="logo" href="#">
+        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+        <span class="logo-sub">Research</span>
+      </a>
+      <div class="nav-right">
+        <div class="locale-switcher">
+          <a href="#" class="active">EN</a>
+          <a href="#" class="lang-ja">日本語</a>
+          <a href="#" class="lang-ko">한국어</a>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="active">Library</a>
+          <a href="#">Insights</a>
+          <a href="#">About</a>
+          <a href="#">Methodology</a>
+          <a href="#">Pricing</a>
+          <a href="#" class="nav-dropdown">Custom Research</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<div class="container">
+  <div class="lib-header">
+    <div class="hero-eyebrow">RESEARCH LIBRARY</div>
+    <h1>Southeast Asia, by the market.</h1>
+    <p>Browse market intelligence reports covering 11 countries and 38 industries. Refreshed continuously.</p>
+  </div>
+
+  <div class="lib-controls">
+    <input type="text" class="lib-search" placeholder="Search reports — industry, country, keyword..." value="">
+    <span class="lib-count">128 REPORTS</span>
+    <select class="lib-sort">
+      <option>Most recent</option>
+      <option>Most popular</option>
+      <option>Price: Low to High</option>
+      <option>Price: High to Low</option>
+    </select>
+  </div>
+
+  <div class="lib-grid">
+    <aside class="filters">
+      <div class="filter-group">
+        <h5>Country</h5>
+        <div class="filter-option active"><span>All</span><span class="count">128</span></div>
+        <div class="filter-option"><span>Vietnam</span><span class="count">28</span></div>
+        <div class="filter-option"><span>Indonesia</span><span class="count">26</span></div>
+        <div class="filter-option"><span>Thailand</span><span class="count">22</span></div>
+        <div class="filter-option"><span>Philippines</span><span class="count">19</span></div>
+        <div class="filter-option"><span>Malaysia</span><span class="count">15</span></div>
+        <div class="filter-option"><span>Singapore</span><span class="count">12</span></div>
+      </div>
+
+      <div class="filter-group">
+        <h5>Industry</h5>
+        <div class="filter-option"><span>Fintech</span><span class="count">14</span></div>
+        <div class="filter-option"><span>FMCG</span><span class="count">22</span></div>
+        <div class="filter-option"><span>Logistics</span><span class="count">8</span></div>
+        <div class="filter-option"><span>Healthtech</span><span class="count">11</span></div>
+        <div class="filter-option"><span>Real Estate</span><span class="count">6</span></div>
+        <div class="filter-option"><span>F&B</span><span class="count">16</span></div>
+      </div>
+
+      <div class="filter-group">
+        <h5>Year</h5>
+        <div class="filter-option active"><span>2026</span><span class="count">94</span></div>
+        <div class="filter-option"><span>2025</span><span class="count">34</span></div>
+      </div>
+
+      <div class="filter-group">
+        <h5>Price</h5>
+        <div class="filter-option"><span>Under $30</span><span class="count">42</span></div>
+        <div class="filter-option"><span>$30 – $49</span><span class="count">68</span></div>
+        <div class="filter-option"><span>$50+</span><span class="count">18</span></div>
+      </div>
+    </aside>
+
+    <div class="lib-results">
+      <a href="#" class="report-card">
+        <div class="report-meta">
+          <span class="country">VIETNAM</span>
+          <span>FINTECH · 2026</span>
+        </div>
+        <h3>Vietnam Fintech Landscape</h3>
+        <p class="report-desc">Payments, lending, neobank competitive dynamics, and how AI is reshaping credit underwriting.</p>
+        <div class="report-footer">
+          <span class="report-price">$39</span>
+          <span class="report-cta">Preview →</span>
+        </div>
+      </a>
+
+      <a href="#" class="report-card">
+        <div class="report-meta">
+          <span class="country">INDONESIA</span>
+          <span>CONSUMER · 2026</span>
+        </div>
+        <h3>Indonesia FMCG Distribution</h3>
+        <p class="report-desc">Modern trade vs warungs vs quick-commerce. Margin dynamics, category economics, and AI category management.</p>
+        <div class="report-footer">
+          <span class="report-price">$39</span>
+          <span class="report-cta">Preview →</span>
+        </div>
+      </a>
+
+      <a href="#" class="report-card">
+        <div class="report-meta">
+          <span class="country">THAILAND</span>
+          <span>LOGISTICS · 2026</span>
+        </div>
+        <h3>Thailand E-Commerce Logistics</h3>
+        <p class="report-desc">Last-mile competitive dynamics, EEC fulfillment, AI route optimization economic impact.</p>
+        <div class="report-footer">
+          <span class="report-price">$39</span>
+          <span class="report-cta">Preview →</span>
+        </div>
+      </a>
+
+      <a href="#" class="report-card">
+        <div class="report-meta">
+          <span class="country">PHILIPPINES</span>
+          <span>HEALTHTECH · 2026</span>
+        </div>
+        <h3>Philippines Healthtech Landscape</h3>
+        <p class="report-desc">Telemedicine adoption post-pandemic, PhilHealth digitization, AI diagnostics market entry.</p>
+        <div class="report-footer">
+          <span class="report-price">$39</span>
+          <span class="report-cta">Preview →</span>
+        </div>
+      </a>
+
+      <a href="#" class="report-card">
+        <div class="report-meta">
+          <span class="country">MALAYSIA</span>
+          <span>F&B · 2026</span>
+        </div>
+        <h3>Malaysia QSR & Café Market</h3>
+        <p class="report-desc">Chain expansion economics, cloud kitchens, halal certification, AI demand forecasting in F&B.</p>
+        <div class="report-footer">
+          <span class="report-price">$39</span>
+          <span class="report-cta">Preview →</span>
+        </div>
+      </a>
+
+      <a href="#" class="report-card">
+        <div class="report-meta">
+          <span class="country">VIETNAM</span>
+          <span>REAL ESTATE · 2026</span>
+        </div>
+        <h3>Vietnam Industrial Real Estate</h3>
+        <p class="report-desc">FDI-driven industrial park growth, manufacturing relocation, AI-led logistics planning impact.</p>
+        <div class="report-footer">
+          <span class="report-price">$39</span>
+          <span class="report-cta">Preview →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="border-top: none; padding-top: 32px;">
+      <span>© 2026 KIRA RESEARCH</span>
+      <span>HO CHI MINH CITY · SINGAPORE</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ========================================================= -->
+<!-- ============ MOCKUP PAGE 3: INDIVIDUAL REPORT =========== -->
+<!-- ========================================================= -->
+<div class="mock-divider">03 — Individual Report (/en/reports/vietnam-fintech-2026)</div>
+
+<div class="nav-wrap">
+  <div class="container">
+    <nav class="nav">
+      <a class="logo" href="#">
+        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+        <span class="logo-sub">Research</span>
+      </a>
+      <div class="nav-right">
+        <div class="locale-switcher">
+          <a href="#" class="active">EN</a>
+          <a href="#" class="lang-ja">日本語</a>
+          <a href="#" class="lang-ko">한국어</a>
+        </div>
+        <div class="nav-links">
+          <a href="#">Library</a>
+          <a href="#">Insights</a>
+          <a href="#">About</a>
+          <a href="#">Methodology</a>
+          <a href="#">Pricing</a>
+          <a href="#" class="nav-dropdown">Custom Research</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<div class="container rpt-page">
+  <div class="rpt-breadcrumb">
+    <a href="#">Library</a> → <a href="#">Vietnam</a> → <a href="#">Fintech</a> → <span>Vietnam Fintech Landscape 2026</span>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-main">
+      <div class="hero-eyebrow" style="margin-bottom: 20px;">VIETNAM · FINTECH · MARKET ANALYSIS</div>
+      <h1>Vietnam Fintech Landscape: Payments, Lending & AI Disruption</h1>
+
+      <div class="rpt-meta">
+        <div class="rpt-meta-item"><div class="label">Published</div><div class="val">May 2026</div></div>
+        <div class="rpt-meta-item"><div class="label">Pages</div><div class="val">78</div></div>
+        <div class="rpt-meta-item"><div class="label">Format</div><div class="val">PDF</div></div>
+        <div class="rpt-meta-item"><div class="label">Section Count</div><div class="val">12</div></div>
+        <div class="rpt-meta-item"><div class="label">Last Refresh</div><div class="val">2 days ago</div></div>
+      </div>
+
+      <div class="rpt-section">
+        <h3>Section 01 · Executive Summary</h3>
+        <h2>A market at inflection.</h2>
+        <p>
+          Vietnam's fintech sector entered 2026 with <strong>72% smartphone penetration</strong>, a maturing regulatory framework under State Bank of Vietnam (SBV), and rising competition between domestic super-apps and regional challengers. Payments remain the dominant segment, but <strong>lending and embedded finance</strong> are growing fastest as banks open APIs and quick-commerce platforms add credit products.
+        </p>
+        <p>
+          This report covers the competitive landscape across MoMo, ZaloPay, VNPay, and emerging neobank entrants, channel structures across QR-based and account-to-account payments, regulatory environment under Decree 13/2023 and amendments, and the increasing role of AI in credit scoring, fraud detection, and customer service across Vietnamese fintech operators.
+        </p>
+
+        <div class="chart-card">
+          <div class="chart-head">
+            <span class="chart-title">Vietnam Digital Payment Transaction Volume (USD bn)</span>
+            <span class="chart-subtitle">2021 → 2026E</span>
+          </div>
+          <div class="chart-bars">
+            <div class="chart-bar" data-label="2021" data-value="12" style="height: 22%;"></div>
+            <div class="chart-bar" data-label="2022" data-value="19" style="height: 35%;"></div>
+            <div class="chart-bar" data-label="2023" data-value="28" style="height: 51%;"></div>
+            <div class="chart-bar" data-label="2024" data-value="41" style="height: 75%;"></div>
+            <div class="chart-bar" data-label="2025" data-value="52" style="height: 90%;"></div>
+            <div class="chart-bar" data-label="2026E" data-value="63" style="height: 100%;"></div>
+          </div>
+        </div>
+
+        <p>
+          The <strong>2026 AI impact</strong> on Vietnamese fintech is structural rather than peripheral. Major operators have integrated LLM-powered customer service (reducing support cost ~30%), AI-driven underwriting (expanding addressable lending market by ~18%), and fraud detection improvements that have measurably reduced chargebacks across the leading payment rails.
+        </p>
+      </div>
+
+      <div class="toc">
+        <h4>Table of Contents · 12 Sections</h4>
+        <div class="toc-item preview"><span class="num">01</span><span class="name">Executive Summary</span><span class="pages">PG 03</span><span class="lock">PREVIEW</span></div>
+        <div class="toc-item"><span class="num">02</span><span class="name">Market Overview & Sizing</span><span class="pages">PG 07</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">03</span><span class="name">Segmentation: Payments, Lending, Wealth, Insurance</span><span class="pages">PG 14</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">04</span><span class="name">Industry Structure & Value Chain</span><span class="pages">PG 22</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">05</span><span class="name">Competitive Landscape — Top Operators</span><span class="pages">PG 28</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">06</span><span class="name">Consumer & SME Insights</span><span class="pages">PG 38</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">07</span><span class="name">Channel & Distribution</span><span class="pages">PG 45</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">08</span><span class="name">Pricing & Unit Economics</span><span class="pages">PG 52</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">09</span><span class="name">Regulatory Environment (SBV, Decree 13)</span><span class="pages">PG 58</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">10</span><span class="name">AI Impact on Vietnam Fintech — 2026</span><span class="pages">PG 64</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">11</span><span class="name">Outlook & Forecast 2026-2030</span><span class="pages">PG 70</span><span class="lock">🔒</span></div>
+        <div class="toc-item"><span class="num">12</span><span class="name">Strategic Implications</span><span class="pages">PG 76</span><span class="lock">🔒</span></div>
+      </div>
+
+      <div class="rpt-section">
+        <h3>Section 10 · Preview</h3>
+        <h2>AI is restructuring the unit economics.</h2>
+        <p>
+          The most significant 2026 development isn't a new product — it's the cost structure shift across operators who've fully integrated AI into operations. Leading operators report cost-per-transaction declines of 22-38% over the past 18 months, driven primarily by automated customer service, smart routing, and reduced manual review on lending decisions.
+        </p>
+        <p style="color: var(--muted-dim); font-style: italic;">→ Full section unlocks with purchase</p>
+      </div>
+    </div>
+
+    <aside class="buy-box">
+      <div class="buy-tag">SINGLE REPORT · PDF + ONLINE ACCESS</div>
+      <div class="buy-price"><span class="currency">$</span>39</div>
+
+      <div class="buy-lang-select">
+        <span class="label">Lang</span>
+        <a href="#" class="active">EN</a>
+        <a href="#" class="lang-ja">日本語</a>
+        <a href="#" class="lang-ko">한국어</a>
+      </div>
+
+      <button class="buy-btn">Purchase report →</button>
+      <button class="buy-btn-secondary">Add to library bundle</button>
+
+      <div class="buy-includes">
+        <h6>What's included</h6>
+        <div class="include-item">78-page PDF download</div>
+        <div class="include-item">Online reader access</div>
+        <div class="include-item">All charts & data tables</div>
+        <div class="include-item">Free updates for 12 months</div>
+        <div class="include-item">Single-user license</div>
+      </div>
+
+      <div class="buy-includes">
+        <h6>Also available on</h6>
+        <div style="color: var(--muted); font-size: 13px; line-height: 1.7;">
+          ResearchAndMarkets<br>
+          MarketResearch.com<br>
+          GIIResearch
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="border-top: none; padding-top: 32px;">
+      <span>© 2026 KIRA RESEARCH</span>
+      <span>HO CHI MINH CITY · SINGAPORE</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
