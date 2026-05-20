@@ -103,6 +103,22 @@ test.describe('dynamic report page (rewrite)', () => {
     const fatal = errors.filter(m => /Illegal return|SyntaxError|Unexpected token/i.test(m));
     expect(fatal, fatal.join(' / ')).toEqual([]);
   });
+
+  // /auth.html ships at root (not /en/, not via cleanUrls until requested).
+  // It previously referenced /nav.js instead of /js/nav.js — 404 in prod,
+  // broken nav. Catch any further script path drift on the auth page by
+  // requiring no failed sub-resource requests.
+  test('/auth loads all sub-resources (no 404s on scripts/css)', async ({ page }) => {
+    const failures = [];
+    page.on('response', (r) => {
+      const url = r.url();
+      if (r.status() >= 400 && /\.(js|css|png|svg)(\?|$)/.test(url) && new URL(url).origin === new URL(page.url() || 'http://x').origin) {
+        failures.push(`${r.status()} ${url}`);
+      }
+    });
+    await page.goto('/auth', { waitUntil: 'networkidle' });
+    expect(failures, failures.join('\n')).toEqual([]);
+  });
 });
 
 // ── 3) Root redirect respects user language ──
