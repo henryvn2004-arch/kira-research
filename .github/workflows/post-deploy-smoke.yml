@@ -1,0 +1,112 @@
+# ============================================================
+# KIRA RESEARCH — post-deploy smoke tests
+#
+# After each push to main, wait for Vercel to deploy, then run a
+# shallow Playwright suite against the live URL. ~25 checks across
+# all 3 locales, plus rewrite + redirect + admin-gate verification.
+#
+# Triggers:
+#   - push to main (runs after the Vercel webhook fires the build)
+#   - manual via GitHub UI "Run workflow"
+#
+# Outputs:
+#   - Pass/fail summary in the Actions tab
+#   - On failure, uploads playwright-report/ for inspection
+# ============================================================
+
+name: post-deploy smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Override SMOKE_BASE_URL (e.g. a preview URL)'
+        required: false
+        default: 'https://kiraresearch.com'
+
+permissions:
+  contents: read
+
+concurrency:
+  # Newer push supersedes in-flight runs — no point smoke-testing stale code.
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        # No package-lock.json yet — using `npm install` instead of `npm ci`.
+        # If/when a lock file is committed, switch to `npm ci` for reproducibility.
+        run: npm install --no-audit --no-fund
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json', 'package.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (when browser was cached)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Wait for Vercel deployment to settle
+        # Vercel typically completes a build in 30-90s after the push webhook.
+        # We give it 60s head start, then poll until the site returns 200.
+        run: |
+          BASE="${{ github.event.inputs.base_url || 'https://kiraresearch.com' }}"
+          echo "Target: $BASE"
+          sleep 60
+          for i in $(seq 1 18); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/en/" || echo "000")
+            if [ "$code" = "200" ]; then
+              echo "Site responded 200 after $((60 + i*10))s — proceeding."
+              exit 0
+            fi
+            echo "Attempt $i/18: HTTP $code, retrying in 10s..."
+            sleep 10
+          done
+          echo "Site never returned 200 within budget. Failing."
+          exit 1
+
+      - name: Run smoke tests
+        run: npx playwright test
+        env:
+          SMOKE_BASE_URL: ${{ github.event.inputs.base_url || 'https://kiraresearch.com' }}
+          CI: true
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ github.run_id }}
+          path: test-results/
+          retention-days: 7
