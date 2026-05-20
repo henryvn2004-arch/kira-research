@@ -276,7 +276,9 @@
         </div>
 
         <div class="adm-field">
-          <label>Body <span class="hint">HTML — &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;ul&gt; supported</span></label>
+          <label>Body <span class="hint">HTML — &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;ul&gt; supported</span>
+            <a href="#" class="load-example-body" style="float:right;font-family:inherit;font-size:11px;color:var(--primary);text-transform:none;letter-spacing:0;text-decoration:none;">↻ Load example</a>
+          </label>
           <textarea id="t-body" rows="14" placeholder="&lt;p&gt;The conventional story is...&lt;/p&gt;&#10;&lt;h2&gt;What we've heard&lt;/h2&gt;...">${escape(t.body || '')}</textarea>
         </div>
 
@@ -295,6 +297,19 @@
           <span class="adm-saved-flash" id="flash-trans">SAVED</span>
           ${trByLocale[locale] ? `<button class="danger" id="del-trans" style="margin-left:auto;">Delete ${locale.toUpperCase()}</button>` : ''}
         </div>`;
+
+      // "Load example" — populate body textarea with a sample field-note.
+      const exa = pane.querySelector('.load-example-body');
+      if (exa) {
+        exa.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById('t-body');
+          if (target.value.trim() && !confirm('Overwrite the current value with the example?')) return;
+          target.value = EXAMPLE_BODY;
+          exa.textContent = '✓ Loaded';
+          setTimeout(() => { exa.textContent = '↻ Load example'; }, 1500);
+        });
+      }
 
       document.getElementById('save-trans').addEventListener('click', () => saveTranslation(id, locale, trByLocale));
       const del = document.getElementById('del-trans');
@@ -382,6 +397,23 @@
         alert('Delete failed: ' + (err.body?.error || err.message));
       }
     }
+
+    // ════════════════════════════════════════════════════════
+    //  Example body — mirrored in /supabase/templates/insight-body.html
+    // ════════════════════════════════════════════════════════
+    const EXAMPLE_BODY =
+'<p>The conventional story is that fintech disrupted lending by replacing human credit officers with machine-learning models. That framing matches the press releases, but it doesn\'t match what we\'re seeing in the field. The Vietnamese case is a useful counter-example because the technology under the hood is — frankly — not very interesting. What\'s interesting is who has the data.</p>\n\n' +
+'<p>Eighteen months ago, the leading domestic super-apps started bundling working-capital credit products into their merchant-payments tools. The product looked nearly identical to commercial-bank SME lines on paper: rolling line, monthly review, similar pricing. The difference was the underwriting input: instead of relying on tax returns and bank statements (the inputs banks have always used), the super-apps underwrote against <strong>14 months of in-product cash flow</strong> — every settlement, every refund, every chargeback, every dispute, captured natively.</p>\n\n' +
+'<blockquote>The competitive moat isn\'t the model. It\'s the data the model is fed.</blockquote>\n\n' +
+'<h2>What we\'ve heard in the field</h2>\n\n' +
+'<p>We spoke with merchants across HCMC and Hanoi who use multiple payment rails. The consistent pattern: <strong>approval rates 2–3× higher</strong> on super-app lines vs their primary bank, despite the bank holding deeper relationship history. Decision turnaround was the second consistent signal — 24–72 hours on super-app lines vs 2–4 weeks for the equivalent bank product.</p>\n\n' +
+'<p>Both numbers point in the same direction: the super-apps aren\'t taking on dramatically worse credit; they\'re seeing the borrower more accurately. The data they hold is higher-fidelity than what the SME would normally submit to a bank, and it\'s live. Once you have a clean read on a borrower\'s cash flow, the underwriting model becomes almost commodity.</p>\n\n' +
+'<h2>Why this matters for incumbents</h2>\n\n' +
+'<p>The standard incumbent response — "we\'ll just build the AI model too" — doesn\'t solve the actual problem. The problem isn\'t model quality. It\'s data possession. Banks looking at this market structure now have two real options:</p>\n\n' +
+'<ul>\n  <li>Acquire the data layer (partnerships with payment platforms; data-sharing rights)</li>\n  <li>Compete on segments where the super-apps don\'t have the data yet (cross-border, project finance, secured)</li>\n</ul>\n\n' +
+'<p>The thing that doesn\'t work is pretending the gap is technological. We\'ve seen at least three banks make that mistake in the last 12 months and shed market share through it.</p>\n\n' +
+'<h3>Methodology note</h3>\n\n' +
+'<p style="font-size:14px;color:var(--muted);font-style:italic;">This field note is drawn from analyst interviews conducted across Vietnamese SME operators between February and April 2026, supplemented by our 2026 Vietnam Fintech Landscape report. Full sourcing, charts, and operator-level cost analysis are in the paid report.</p>';
 
     function escape(s) {
       return String(s == null ? '' : s)

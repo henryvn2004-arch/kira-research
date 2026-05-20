@@ -292,17 +292,23 @@
         </div>
 
         <div class="adm-field">
-          <label>Preview <span class="hint">JSONB · { lede, paragraphs[], chart {} }</span></label>
+          <label>Preview <span class="hint">JSONB · { lede, paragraphs[], chart {} }</span>
+            <a href="#" class="load-example" data-target="t-preview" data-kind="preview" style="float:right;font-family:inherit;font-size:11px;color:var(--primary);text-transform:none;letter-spacing:0;text-decoration:none;">↻ Load example</a>
+          </label>
           <textarea id="t-preview" rows="6" placeholder='{\n  "lede": "...",\n  "paragraphs": ["..."],\n  "chart": { ... }\n}'>${escape(jsonString(t.preview))}</textarea>
         </div>
 
         <div class="adm-field">
-          <label>Table of contents <span class="hint">JSON array of {num,name,pages,locked}</span></label>
+          <label>Table of contents <span class="hint">JSON array of {num,name,pages,locked}</span>
+            <a href="#" class="load-example" data-target="t-toc" data-kind="toc" style="float:right;font-family:inherit;font-size:11px;color:var(--primary);text-transform:none;letter-spacing:0;text-decoration:none;">↻ Load example</a>
+          </label>
           <textarea id="t-toc" rows="6" placeholder='[ { "num": "01", "name": "Executive Summary", "pages": "PG 03", "locked": false } ]'>${escape(jsonString(t.toc))}</textarea>
         </div>
 
         <div class="adm-field">
-          <label>Full content <span class="hint">JSONB · { sections: [{ heading, body_html }] } — served only to buyers</span></label>
+          <label>Full content <span class="hint">JSONB · { sections: [{ heading, body_html }] } — served only to buyers</span>
+            <a href="#" class="load-example" data-target="t-full" data-kind="full" style="float:right;font-family:inherit;font-size:11px;color:var(--primary);text-transform:none;letter-spacing:0;text-decoration:none;">↻ Load example</a>
+          </label>
           <textarea id="t-full" rows="10" placeholder='{ "sections": [ { "heading": "Market sizing", "body_html": "&lt;p&gt;...&lt;/p&gt;" } ] }'>${escape(jsonString(t.full_content))}</textarea>
         </div>
 
@@ -328,7 +334,85 @@
       document.getElementById('save-trans').addEventListener('click', () => saveTranslation(id, locale, trByLocale));
       const del = document.getElementById('del-trans');
       if (del) del.addEventListener('click', () => deleteTranslation(id, locale, trByLocale));
+
+      // "Load example" links — drop a pretty-printed example into the textarea.
+      pane.querySelectorAll('.load-example').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById(a.dataset.target);
+          const kind   = a.dataset.kind;
+          if (target.value.trim() && !confirm('Overwrite the current value with the example?')) return;
+          const obj = EXAMPLES[kind];
+          if (!obj) return;
+          target.value = JSON.stringify(obj, null, 2);
+          a.textContent = '✓ Loaded';
+          setTimeout(() => { a.textContent = '↻ Load example'; }, 1500);
+        });
+      });
     }
+
+    // ════════════════════════════════════════════════════════
+    //  Example payloads — mirrored in /supabase/templates/ for reference
+    // ════════════════════════════════════════════════════════
+    const EXAMPLES = {
+      preview: {
+        lede: "Vietnam's fintech sector entered 2026 with 72% smartphone penetration, a maturing regulatory framework under the State Bank of Vietnam, and rising competition between domestic super-apps and regional challengers. Payments remain the dominant segment, but lending and embedded finance are growing fastest as banks open APIs and quick-commerce platforms add credit products.",
+        paragraphs: [
+          "This report covers the competitive landscape across MoMo, ZaloPay, VNPay, and emerging neobank entrants; channel structures across QR-based and account-to-account payments; the regulatory environment under Decree 13/2023 and subsequent amendments; and the increasing role of AI in credit scoring, fraud detection, and customer operations across Vietnamese fintech operators.",
+          "The 2026 AI impact on Vietnamese fintech is structural rather than peripheral. Major operators have integrated LLM-powered customer service (reducing support cost ~30%), AI-driven underwriting (expanding the addressable lending market by ~18%), and fraud-detection improvements that have measurably reduced chargebacks across the leading payment rails."
+        ],
+        chart: {
+          title: "Vietnam Digital Payment Transaction Volume (USD bn)",
+          subtitle: "2021 → 2026E",
+          bars: [
+            { label: "2021",  value: 12, pct: 22 },
+            { label: "2022",  value: 19, pct: 35 },
+            { label: "2023",  value: 28, pct: 51 },
+            { label: "2024",  value: 41, pct: 75 },
+            { label: "2025",  value: 52, pct: 90 },
+            { label: "2026E", value: 63, pct: 100 }
+          ]
+        }
+      },
+      toc: [
+        { num: "01", name: "Executive Summary",                                 pages: "PG 03", locked: false },
+        { num: "02", name: "Market Overview & Sizing",                          pages: "PG 07", locked: true  },
+        { num: "03", name: "Segmentation: Payments, Lending, Wealth, Insurance",pages: "PG 14", locked: true  },
+        { num: "04", name: "Industry Structure & Value Chain",                  pages: "PG 22", locked: true  },
+        { num: "05", name: "Competitive Landscape — Top Operators",             pages: "PG 28", locked: true  },
+        { num: "06", name: "Consumer & SME Insights",                           pages: "PG 38", locked: true  },
+        { num: "07", name: "Channel & Distribution",                            pages: "PG 45", locked: true  },
+        { num: "08", name: "Pricing & Unit Economics",                          pages: "PG 52", locked: true  },
+        { num: "09", name: "Regulatory Environment",                            pages: "PG 58", locked: true  },
+        { num: "10", name: "AI Impact on the Sector — 2026",                    pages: "PG 64", locked: true  },
+        { num: "11", name: "Outlook & Forecast 2026-2030",                      pages: "PG 70", locked: true  },
+        { num: "12", name: "Strategic Implications",                            pages: "PG 76", locked: true  }
+      ],
+      full: {
+        sections: [
+          {
+            heading: "Market sizing and segmentation",
+            body_html: "<p>The Vietnamese fintech market reached an estimated <strong>USD 52 bn</strong> in digital payment transaction volume in 2025, representing a 27% year-on-year increase from 2024. Five segments make up the addressable opportunity: <strong>payments</strong> (the dominant segment at ~68% of revenue), <strong>lending</strong>, <strong>wealth management</strong>, <strong>insurance distribution</strong>, and <strong>infrastructure / B2B fintech</strong>.</p><p>Forecasts for 2026 vary across operators we interviewed, but a consensus band of USD 60-65 bn transaction volume is reasonable given current run-rates, with lending the fastest-growing segment in revenue terms.</p>"
+          },
+          {
+            heading: "Competitive landscape",
+            body_html: "<p>Three operators currently dominate the consumer-facing payments layer: <strong>MoMo</strong>, <strong>ZaloPay</strong>, and <strong>VNPay</strong>. MoMo holds the largest active user base (~31M monthly transacting users as of Q1 2026), while ZaloPay's strength lies in its Zalo integration moat and VNPay leads in merchant acceptance breadth.</p><p>Beyond the consumer trio, we tracked notable activity from <strong>Cake by VPBank</strong> (digital-first banking), <strong>Timo</strong> (acquired by Phenikaa), and three emerging neobank entrants with regulatory progress in 2025-26. Cross-border players (Wise, Remitly) remain marginal in the consumer flow but meaningful in SME corridors.</p>"
+          },
+          {
+            heading: "Channel and distribution dynamics",
+            body_html: "<p>The channel story has bifurcated. QR-based payments now account for <strong>~58%</strong> of consumer transactions (up from 41% in 2023), while account-to-account (A2A) via NAPAS rails has stabilised around 28%. Card-present transactions continue their secular decline.</p><p>For merchants, the unit economics of acquiring shifted meaningfully in 2025: blended merchant discount rates compressed by ~14 bps on average as competitive pressure from QR providers forced traditional acquirers to match. We expect further compression in 2026 as super-app operators bundle payments with credit and loyalty.</p>"
+          },
+          {
+            heading: "AI impact on the sector",
+            body_html: "<p>The most significant 2026 development is not a new product, it's the cost-structure shift among operators who have fully integrated AI into operations. Leading operators report:</p><ul><li><strong>22-38% cost-per-transaction declines</strong> driven by automated customer service, smart routing, and reduced manual review on lending decisions</li><li><strong>~18% expansion in addressable lending market</strong> from AI-augmented underwriting that incorporates non-traditional cash-flow signals</li><li><strong>Measurable chargeback reduction</strong> across the top three payment rails from improved fraud detection</li></ul><p>Banks pursuing the same playbook face a structural disadvantage: they lack the in-product cash-flow data the super-apps capture natively. The competitive moat isn't the model — it's the data the model is fed.</p>"
+          },
+          {
+            heading: "Strategic implications",
+            body_html: "<p>For incumbents — both Vietnamese commercial banks and regional fintech challengers — three strategic responses are credible in 2026:</p><ol><li><strong>Acquire the data layer</strong>: partner with payment platforms, negotiate data-sharing rights, or move into payment acceptance to capture the same signals</li><li><strong>Compete on segments super-apps don't cover</strong>: cross-border flows, project finance, secured lending, and the larger ticket sizes (above VND 500M) remain available</li><li><strong>Verticalise into specific industries</strong>: F&B, logistics, and SME services each present opportunities where dedicated fintech wrapping a vertical software stack can outcompete the horizontal super-apps</li></ol><p>The strategy that doesn't work is pretending the gap is technological. Several incumbent retail banks made that mistake in 2024-25 and shed measurable market share through it.</p>"
+          }
+        ]
+      }
+    };
 
     // ════════════════════════════════════════════════════════
     //  Save / delete
