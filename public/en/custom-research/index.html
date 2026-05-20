@@ -315,12 +315,20 @@
           </div>
           <div class="cr-field full">
             <label for="cr-brief" data-i18n="custom.fieldBrief">Project brief</label>
-            <textarea id="cr-brief" name="brief" required
+            <textarea id="cr-brief" name="brief" required minlength="10"
               data-i18n-attr="placeholder:custom.briefPlaceholder"
               placeholder="What's the decision behind this research? Markets, segments, players you're focused on. Anything we should know about context or constraints."></textarea>
           </div>
+
+          <!-- Honeypot: hidden from humans, bots fill it. -->
+          <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="cr-hp">Leave this empty</label>
+            <input type="text" id="cr-hp" name="hp" tabindex="-1" autocomplete="off" />
+          </div>
+
           <div class="cr-field full">
             <button type="submit" class="btn btn-primary cr-submit" data-i18n="custom.submitCta">Send to our research team →</button>
+            <div class="cr-error" id="cr-error" style="display:none;margin-top:14px;color:#FF7B7B;font-size:13px;"></div>
           </div>
         </form>
 
@@ -338,30 +346,57 @@
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script defer>
-    // Lead form submit — POSTs to /api/leads (to be implemented).
-    // For now, captures and shows success state for UX testing.
+    // Lead form submit → POST /api/leads.
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('cr-lead-form');
+      const form    = document.getElementById('cr-lead-form');
       const success = document.getElementById('cr-success');
+      const errBox  = document.getElementById('cr-error');
+      const submit  = form && form.querySelector('button[type="submit"]');
       if (!form) return;
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        errBox.style.display = 'none';
+        errBox.textContent   = '';
+
         const data = Object.fromEntries(new FormData(form).entries());
         data.locale = (window.kira && window.kira.locale) || 'en';
         data.source = 'custom-research';
+
+        const originalLabel = submit.textContent;
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+
         try {
-          // Endpoint to be wired in a later phase; tolerate 404 for now.
-          await fetch('/api/leads', {
+          const res = await fetch('/api/leads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
           });
-        } catch (_) {
-          // Network error doesn't block the UX confirmation.
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            const msg = ({
+              name_required:   'Please enter your name.',
+              email_invalid:   'Please enter a valid email.',
+              brief_too_short: 'Please add a bit more detail about your project.',
+              insert_failed:   'Something went wrong on our end. Please email hello@kiraresearch.com.',
+              invalid_json:    'Form submission failed — please retry.'
+            })[body.error] || 'Submission failed — please retry or email hello@kiraresearch.com.';
+            errBox.textContent = msg;
+            errBox.style.display = 'block';
+            submit.disabled = false;
+            submit.textContent = originalLabel;
+            return;
+          }
+          form.style.display = 'none';
+          success.classList.add('show');
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          errBox.textContent = 'Network error — please retry or email hello@kiraresearch.com.';
+          errBox.style.display = 'block';
+          submit.disabled = false;
+          submit.textContent = originalLabel;
         }
-        form.style.display = 'none';
-        success.classList.add('show');
-        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     });
   </script>
