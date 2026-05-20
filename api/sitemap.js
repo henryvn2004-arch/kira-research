@@ -190,7 +190,10 @@ async function buildLocale(locale) {
 
 // ── Handler ──
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
+  // Accept GET and HEAD — Vercel's CDN probes and many crawlers issue HEAD
+  // before GETting, and 405 on HEAD breaks both. For HEAD we just need to
+  // set the right headers; the framework drops the body automatically.
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.status(405).json({ error: 'method_not_allowed' });
     return;
   }
