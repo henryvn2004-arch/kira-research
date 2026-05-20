@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leads — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase JS (loaded for kiraAuth) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    /* Admin-only styles — kept inline so kira.css stays public-facing. */
+    .admin-wrap { padding: 60px 0 96px; }
+    .admin-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .admin-head h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: -0.015em;
+    }
+    .admin-head .me {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .admin-head .me a { color: var(--primary); text-decoration: none; margin-left: 12px; }
+
+    .admin-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .admin-filters button {
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: all 0.15s;
+    }
+    .admin-filters button:hover { color: var(--text); border-color: var(--border-strong); }
+    .admin-filters button.active {
+      color: #fff;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .admin-filters .spacer { flex: 1; }
+    .admin-filters .count {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      font-size: 12px;
+      align-self: center;
+    }
+
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .leads-table th, .leads-table td {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .leads-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .leads-table tbody tr { transition: background 0.1s; }
+    .leads-table tbody tr:hover { background: var(--surface); }
+
+    .lead-when { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .lead-name { font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .lead-email { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; }
+    .lead-company { color: var(--text); }
+    .lead-role { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .lead-tier, .lead-deadline {
+      display: inline-block;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .lead-brief {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      max-width: 380px;
+      cursor: pointer;
+    }
+    .lead-brief.expanded { white-space: pre-wrap; }
+    .lead-brief:not(.expanded) {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .lead-status select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .lead-status select:focus { outline: none; border-color: var(--primary); }
+    .lead-status .saved {
+      display: inline-block;
+      margin-left: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--primary);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .lead-status .saved.show { opacity: 1; }
+
+    .admin-empty {
+      padding: 96px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .admin-gate {
+      max-width: 480px;
+      margin: 96px auto;
+      padding: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .admin-gate h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .admin-gate p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .admin-gate code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container admin-wrap" id="admin-wrap">
+    <div class="admin-head">
+      <div>
+        <h1>Custom Research leads</h1>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;">Pipeline from /custom-research/ form.</p>
+      </div>
+      <div class="me" id="admin-me"></div>
+    </div>
+
+    <div class="admin-filters" id="admin-filters">
+      <button data-status=""          class="active">All</button>
+      <button data-status="new">New</button>
+      <button data-status="contacted">Contacted</button>
+      <button data-status="qualified">Qualified</button>
+      <button data-status="closed">Closed</button>
+      <button data-status="rejected">Rejected</button>
+      <div class="spacer"></div>
+      <span class="count" id="admin-count"></span>
+    </div>
+
+    <div id="admin-content">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    // Wait for kiraAuth (loaded by /auth.js as a classic script).
+    async function ready() {
+      while (!window.kiraAuth) await new Promise(r => setTimeout(r, 30));
+    }
+    await ready();
+
+    const wrap     = document.getElementById('admin-content');
+    const countEl  = document.getElementById('admin-count');
+    const meEl     = document.getElementById('admin-me');
+    const filters  = document.getElementById('admin-filters');
+    let currentStatus = '';
+    let session = null;
+
+    // 1) Require auth.
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+    }
+    session = (await window.db.auth.getSession()).data.session;
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.kiraAuth.signOut();
+    });
+
+    // 2) Fetch leads via secure API.
+    async function fetchLeads() {
+      wrap.innerHTML = '<div class="admin-empty">Loading…</div>';
+      const qs = currentStatus ? `?status=${currentStatus}` : '';
+      const r = await fetch('/api/admin-leads' + qs, {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 401) {
+        wrap.innerHTML = `<div class="admin-gate">
+          <h1>Session expired</h1>
+          <p>Please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.</p>
+        </div>`;
+        return;
+      }
+      if (r.status === 403) {
+        wrap.innerHTML = `<div class="admin-gate">
+          <h1>Not an admin</h1>
+          <p>Your email <code>${user.email}</code> is not on the admin allowlist. Ask the platform owner to add it to <code>ADMIN_EMAILS</code>.</p>
+        </div>`;
+        return;
+      }
+      if (r.status === 500) {
+        const body = await r.json().catch(() => ({}));
+        if (body.error === 'admin_not_configured') {
+          wrap.innerHTML = `<div class="admin-gate">
+            <h1>Admin not configured</h1>
+            <p>The server has no <code>ADMIN_EMAILS</code> set. Add a comma-separated list to your Vercel env vars and redeploy.</p>
+          </div>`;
+          return;
+        }
+      }
+      if (!r.ok) {
+        wrap.innerHTML = `<div class="admin-empty">Failed to load (${r.status}).</div>`;
+        return;
+      }
+      const { leads } = await r.json();
+      renderLeads(leads || []);
+    }
+
+    function renderLeads(leads) {
+      countEl.textContent = leads.length + (currentStatus ? ` ${currentStatus.toUpperCase()}` : '') + ' · MAX 200';
+      if (!leads.length) {
+        wrap.innerHTML = '<div class="admin-empty">No leads yet.</div>';
+        return;
+      }
+      const rows = leads.map(l => {
+        const when = new Date(l.created_at).toLocaleString('en-GB', {
+          year: 'numeric', month: 'short', day: '2-digit',
+          hour: '2-digit', minute: '2-digit'
+        });
+        const tier = (l.tier || 'not-sure').replace('not-sure', 'unsure');
+        const deadline = (l.deadline || 'flex');
+        const briefEsc = (l.brief || '').replace(/</g, '&lt;');
+        return `
+          <tr data-id="${l.id}">
+            <td class="lead-when">${when}<div style="margin-top:6px;"><span class="lead-tier">${tier}</span></div></td>
+            <td>
+              <div class="lead-name">${(l.name || '').replace(/</g,'&lt;')}</div>
+              <div class="lead-email">${(l.email || '').replace(/</g,'&lt;')}</div>
+            </td>
+            <td>
+              <div class="lead-company">${(l.company || '—').replace(/</g,'&lt;')}</div>
+              <div class="lead-role">${(l.role || '').replace(/</g,'&lt;')}</div>
+            </td>
+            <td><span class="lead-deadline">${deadline}</span><div style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">${(l.locale || 'en').toUpperCase()} · ${(l.source || '').replace(/</g,'&lt;')}</div></td>
+            <td><div class="lead-brief" onclick="this.classList.toggle('expanded')">${briefEsc}</div></td>
+            <td class="lead-status">
+              <select data-id="${l.id}">
+                ${['new','contacted','qualified','closed','rejected'].map(s =>
+                  `<option value="${s}"${s===l.status?' selected':''}>${s}</option>`
+                ).join('')}
+              </select>
+              <span class="saved">SAVED</span>
+            </td>
+          </tr>`;
+      }).join('');
+
+      wrap.innerHTML = `
+        <table class="leads-table">
+          <thead><tr>
+            <th>When · Tier</th>
+            <th>Contact</th>
+            <th>Company · Role</th>
+            <th>Deadline · Origin</th>
+            <th>Brief</th>
+            <th>Status</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+
+      // Wire status selects.
+      wrap.querySelectorAll('.lead-status select').forEach(sel => {
+        sel.addEventListener('change', async () => {
+          const id     = sel.dataset.id;
+          const status = sel.value;
+          const savedSpan = sel.parentElement.querySelector('.saved');
+          sel.disabled = true;
+          try {
+            const r = await fetch('/api/admin-leads?id=' + encodeURIComponent(id), {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + session.access_token
+              },
+              body: JSON.stringify({ status })
+            });
+            if (r.ok) {
+              savedSpan.classList.add('show');
+              setTimeout(() => savedSpan.classList.remove('show'), 1400);
+            } else {
+              alert('Update failed (' + r.status + ')');
+            }
+          } finally {
+            sel.disabled = false;
+          }
+        });
+      });
+    }
+
+    // 3) Filter chip wiring.
+    filters.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStatus = btn.dataset.status;
+        fetchLeads();
+      });
+    });
+
+    fetchLeads();
+  </script>
+</body>
+</html>
