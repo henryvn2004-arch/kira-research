@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Insight — KIRA RESEARCH</title>
+  <meta name="description" content="Field notes and analyst commentary from KIRA RESEARCH." />
+
+  <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/insights/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .art-loading, .art-404 { padding: 96px 0; text-align: center; color: var(--muted); }
+    .art-404 h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .art-fallback-banner {
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.25);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .art-fallback-banner strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container">
+    <article class="article-page" id="art-root">
+      <div class="art-loading">Loading article…</div>
+    </article>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+
+  <script type="module">
+    // ── 1) Parse slug + locale from URL ──────────────────
+    const parts  = window.location.pathname.split('/').filter(Boolean);
+    const locale = ['en','ja','ko'].includes(parts[0]) ? parts[0] : 'en';
+    const slug   = parts[2] ? parts[2].replace(/\/$/, '') : '';
+
+    document.documentElement.setAttribute('lang', locale);
+
+    const root = document.getElementById('art-root');
+
+    if (!slug) {
+      root.innerHTML = '<div class="art-404"><h2>No insight selected</h2><p><a href="/' + locale + '/insights/" style="color:var(--primary)">Back to insights →</a></p></div>';
+      return;
+    }
+
+    // ── 2) Fetch from API ────────────────────────────────
+    let data;
+    try {
+      const r = await fetch('/api/insight?slug=' + encodeURIComponent(slug) + '&locale=' + locale);
+      if (r.status === 404) {
+        const body = await r.json().catch(() => ({}));
+        const msg = body.error === 'translation_missing'
+          ? 'This article is still being translated. It will appear here once it\'s ready.'
+          : 'The article <code style="color:var(--primary)">' + escapeHtml(slug) + '</code> isn\'t published yet.';
+        root.innerHTML =
+          '<div class="art-404"><h2>Not available</h2>' +
+          '<p>' + msg + '</p>' +
+          '<p style="margin-top:18px;"><a href="/' + locale + '/insights/" style="color:var(--primary)">Back to insights →</a></p>' +
+          '</div>';
+        return;
+      }
+      if (!r.ok) throw new Error('http ' + r.status);
+      data = await r.json();
+    } catch (err) {
+      root.innerHTML = '<div class="art-404"><h2>Couldn\'t load article</h2><p>Please retry or browse the <a href="/' + locale + '/insights/" style="color:var(--primary)">insights index</a>.</p></div>';
+      return;
+    }
+
+    // ── 3) Update meta + hreflang ────────────────────────
+    const base = 'https://kiraresearch.com';
+    document.title = (data.title || 'Insight') + ' — KIRA RESEARCH';
+    document.getElementById('meta-canonical').href = base + '/' + locale + '/insights/' + data.slug;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc && data.excerpt) metaDesc.setAttribute('content', data.excerpt.slice(0, 200));
+
+    const head = document.head;
+    ['en','ja','ko'].forEach(loc => {
+      if (data.availableLocales.includes(loc)) {
+        const link = document.createElement('link');
+        link.rel  = 'alternate';
+        link.hreflang = loc;
+        link.href = base + '/' + loc + '/insights/' + data.slug;
+        head.appendChild(link);
+      }
+    });
+    const xdef = document.createElement('link');
+    xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
+    xdef.href = base + '/en/insights/' + data.slug;
+    head.appendChild(xdef);
+
+    // OG tags for sharing
+    setMeta('property', 'og:title',       data.title || 'Insight');
+    setMeta('property', 'og:description', (data.excerpt || '').slice(0, 200));
+    setMeta('property', 'og:type',        'article');
+    setMeta('property', 'og:url',         base + '/' + locale + '/insights/' + data.slug);
+    if (data.published_at) setMeta('property', 'article:published_time', data.published_at);
+
+    // ── 4) Render ────────────────────────────────────────
+    render(data);
+
+    if (window.kira && window.kira.i18n) window.kira.i18n.apply();
+
+    // ── helpers ──────────────────────────────────────────
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function setMeta(attr, name, content) {
+      let el = document.querySelector('meta[' + attr + '="' + name + '"]');
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+      el.setAttribute('content', content || '');
+    }
+    function formatDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+    function buildCatLabel(d) {
+      const parts = [];
+      if (d.category) parts.push(d.category.toUpperCase().replace(/-/g, ' '));
+      if (d.country)  parts.push(d.country.toUpperCase());
+      if (d.industry) parts.push(d.industry.toUpperCase());
+      return parts.join(' · ');
+    }
+    function renderRelated(items) {
+      if (!Array.isArray(items) || !items.length) return '';
+      const cards = items.map(it => {
+        const country  = (it.country  || '').toUpperCase();
+        const industry = (it.industry || '').toUpperCase();
+        const meta     = [industry, it.year].filter(Boolean).join(' · ');
+        return (
+          '<a href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '" class="report-card">' +
+            '<div class="report-meta">' +
+              '<span class="country">' + escapeHtml(country) + '</span>' +
+              '<span>' + escapeHtml(meta) + '</span>' +
+            '</div>' +
+            '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
+            (it.excerpt ? '<p class="report-desc">' + escapeHtml(it.excerpt) + '</p>' : '') +
+            '<div class="report-footer">' +
+              '<span class="report-price">$' + (it.price || 39) + '</span>' +
+              '<span class="report-cta">View →</span>' +
+            '</div>' +
+          '</a>'
+        );
+      }).join('');
+      return (
+        '<div class="related-reports">' +
+          '<h4>Reports referenced</h4>' +
+          '<div class="related-grid">' + cards + '</div>' +
+        '</div>'
+      );
+    }
+    function render(d) {
+      const cat = buildCatLabel(d);
+      const date = formatDate(d.published_at);
+      const fallbackBanner = d.isFallback
+        ? '<div class="art-fallback-banner">This article isn\'t published in your selected language yet — showing the <strong>English version</strong>.</div>'
+        : '';
+
+      // body is HTML stored in DB (admin-trusted source).
+      // We do NOT sanitize here because the DB column is only writable via
+      // the service-key (admin tooling). If you ever expose body writes to
+      // anon clients, sanitize.
+      const body = d.body || '<p style="color:var(--muted-dim);font-style:italic;">Full article body is being written. The excerpt above summarises the key idea.</p>';
+
+      root.innerHTML = (
+        '<div class="article-breadcrumb">' +
+          '<a href="/' + locale + '/insights/">Insights</a> → ' +
+          (d.country ? '<a href="/' + locale + '/insights/?cat=' + encodeURIComponent(d.country) + '">' + escapeHtml(d.country.charAt(0).toUpperCase() + d.country.slice(1)) + '</a> → ' : '') +
+          '<span>' + escapeHtml(d.title || d.slug) + '</span>' +
+        '</div>' +
+
+        fallbackBanner +
+
+        '<div class="article-eyebrow">' +
+          '<span class="cat">' + escapeHtml(cat || 'INSIGHT') + '</span>' +
+          '<span>' + escapeHtml(date) + (d.read_time ? ' · ' + escapeHtml(d.read_time.toUpperCase()) : '') + '</span>' +
+        '</div>' +
+
+        '<h1>' + escapeHtml(d.title || d.slug) + '</h1>' +
+        (d.lede ? '<p class="article-lede">' + escapeHtml(d.lede) + '</p>' : '') +
+
+        '<div class="article-body">' + body + '</div>' +
+
+        renderRelated(d.relatedReports)
+      );
+    }
+  </script>
+</body>
+</html>

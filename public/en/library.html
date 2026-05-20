@@ -89,112 +89,8 @@
         </div>
       </aside>
 
-      <div class="lib-results">
-
-        <a href="/en/reports/vietnam-fintech-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">VIETNAM</span>
-            <span>FINTECH · 2026</span>
-          </div>
-          <h3>Vietnam Fintech Landscape</h3>
-          <p class="report-desc">Payments, lending, neobank competition, and how AI is reshaping credit underwriting across the market.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/indonesia-fmcg-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">INDONESIA</span>
-            <span>FMCG · 2026</span>
-          </div>
-          <h3>Indonesia FMCG Distribution</h3>
-          <p class="report-desc">Modern trade vs warungs vs quick-commerce — margin dynamics, category economics, channel shift.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/thailand-ecommerce-logistics-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">THAILAND</span>
-            <span>LOGISTICS · 2026</span>
-          </div>
-          <h3>Thailand E-Commerce Logistics</h3>
-          <p class="report-desc">Last-mile competitive dynamics, EEC fulfillment infrastructure, cross-border flows.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/philippines-healthtech-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">PHILIPPINES</span>
-            <span>HEALTHTECH · 2026</span>
-          </div>
-          <h3>Philippines Healthtech Landscape</h3>
-          <p class="report-desc">Telemedicine adoption post-pandemic, PhilHealth digitization, diagnostics market entry.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/malaysia-qsr-cafe-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">MALAYSIA</span>
-            <span>F&amp;B · 2026</span>
-          </div>
-          <h3>Malaysia QSR &amp; Café Market</h3>
-          <p class="report-desc">Chain expansion economics, cloud kitchens, halal certification, demand-side dynamics.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/vietnam-industrial-real-estate-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">VIETNAM</span>
-            <span>REAL ESTATE · 2026</span>
-          </div>
-          <h3>Vietnam Industrial Real Estate</h3>
-          <p class="report-desc">FDI-driven industrial park growth, manufacturing relocation, logistics infrastructure impact.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/singapore-private-banking-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">SINGAPORE</span>
-            <span>FINANCIAL · 2026</span>
-          </div>
-          <h3>Singapore Private Banking &amp; Wealth</h3>
-          <p class="report-desc">HNWI flows, family-office formation, regulatory environment under MAS.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
-        <a href="/en/reports/indonesia-ev-2026" class="report-card">
-          <div class="report-meta">
-            <span class="country">INDONESIA</span>
-            <span>ENERGY &amp; EV · 2026</span>
-          </div>
-          <h3>Indonesia EV &amp; Battery Ecosystem</h3>
-          <p class="report-desc">Nickel-based battery supply chain, OEM commitments, charging infrastructure rollout.</p>
-          <div class="report-footer">
-            <span class="report-price">$39</span>
-            <span class="report-cta">Preview →</span>
-          </div>
-        </a>
-
+      <div class="lib-results" id="lib-results">
+        <div class="lib-empty">Loading library…</div>
       </div>
     </div>
   </div>
@@ -202,16 +98,160 @@
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script defer>
-    // Client-side filter toggle — visual only until Supabase is wired in.
+    // ── Library page: filter UI + dynamic fetch ──────────────
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.filter-option').forEach(opt => {
+      const root      = document.getElementById('lib-results');
+      const countEl   = document.getElementById('lib-count');
+      const searchEl  = document.getElementById('lib-search');
+      const sortEl    = document.getElementById('lib-sort');
+      const filterEls = document.querySelectorAll('.filter-option');
+      const locale    = (window.kira && window.kira.locale) || 'en';
+
+      // Active filter state — one value per group (clicking re-selects).
+      const state = { country: '', industry: '', year: '', price: '', q: '', sort: 'recent' };
+
+      // ── Pre-populate from URL (?country=foo&industry=bar) ──
+      const initParams = new URLSearchParams(window.location.search);
+      ['country','industry','year'].forEach(k => {
+        const v = initParams.get(k);
+        if (v) {
+          state[k] = v.toLowerCase();
+          // Reflect into sidebar UI
+          document.querySelectorAll(`[data-filter="${k}"]`).forEach(el => {
+            el.classList.toggle('active', el.dataset.value.toLowerCase() === state[k]);
+          });
+        }
+      });
+
+      // ── Filter chip clicks ──
+      filterEls.forEach(opt => {
         opt.addEventListener('click', () => {
-          const group = opt.closest('.filter-group');
-          group.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
+          const group = opt.dataset.filter;
+          const value = (opt.dataset.value || '').toLowerCase();
+          // Mutual-exclusive within a group
+          document.querySelectorAll(`[data-filter="${group}"]`).forEach(o => o.classList.remove('active'));
           opt.classList.add('active');
+          state[group] = value;
+          fetchAndRender();
         });
       });
+
+      // ── Search + sort ──
+      let searchTimer = null;
+      if (searchEl) {
+        searchEl.addEventListener('input', () => {
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => {
+            state.q = searchEl.value.trim().toLowerCase();
+            fetchAndRender();
+          }, 220);
+        });
+      }
+      if (sortEl) {
+        sortEl.addEventListener('change', () => {
+          state.sort = sortEl.value || 'recent';
+          fetchAndRender();
+        });
+      }
+
+      // ── Fetch + render ──
+      async function fetchAndRender() {
+        root.innerHTML = '<div class="lib-empty">Loading…</div>';
+        const qs = new URLSearchParams();
+        qs.set('locale', locale);
+        qs.set('sort',   state.sort);
+        qs.set('limit',  '48');
+        if (state.country)  qs.set('country',  state.country);
+        if (state.industry) qs.set('industry', state.industry);
+        if (state.year)     qs.set('year',     state.year);
+
+        try {
+          const r = await fetch('/api/library-list?' + qs.toString());
+          if (!r.ok) throw new Error('http ' + r.status);
+          const data = await r.json();
+          render(data);
+        } catch (err) {
+          root.innerHTML = '<div class="lib-empty">Couldn\'t load library. Please retry.</div>';
+        }
+      }
+
+      function render(data) {
+        // Client-side filter for search + price (server handles country/industry/year)
+        let items = data.items || [];
+        if (state.q) {
+          const q = state.q;
+          items = items.filter(it => {
+            return (it.title || '').toLowerCase().includes(q)
+                || (it.country || '').toLowerCase().includes(q)
+                || (it.industry || '').toLowerCase().includes(q)
+                || (it.excerpt || '').toLowerCase().includes(q);
+          });
+        }
+        if (state.price) {
+          items = items.filter(it => {
+            const p = it.price || 0;
+            if (state.price === 'lt30')   return p < 30;
+            if (state.price === '30-49')  return p >= 30 && p <= 49;
+            if (state.price === 'gt50')   return p >= 50;
+            return true;
+          });
+        }
+
+        if (countEl) {
+          countEl.textContent = (items.length || 0) + ' / ' + (data.total || 0) + ' REPORTS';
+        }
+
+        if (!items.length) {
+          root.innerHTML = '<div class="lib-empty">No reports match these filters yet. <a href="?" style="color:var(--primary)">Clear filters →</a></div>';
+          return;
+        }
+
+        root.innerHTML = items.map(it => {
+          const country  = (it.country  || '').toUpperCase();
+          const industry = (it.industry || '').toUpperCase();
+          const meta     = [industry, it.year].filter(Boolean).join(' · ');
+          const title    = it.title || (humanize(it.slug));
+          const excerpt  = it.excerpt || '';
+          return (
+            '<a href="/' + locale + '/reports/' + escapeAttr(it.slug) + '" class="report-card">' +
+              '<div class="report-meta">' +
+                '<span class="country">' + escapeHtml(country) + '</span>' +
+                '<span>' + escapeHtml(meta) + '</span>' +
+              '</div>' +
+              '<h3>' + escapeHtml(title) + '</h3>' +
+              (excerpt ? '<p class="report-desc">' + escapeHtml(excerpt.slice(0, 180)) + (excerpt.length > 180 ? '…' : '') + '</p>' : '') +
+              '<div class="report-footer">' +
+                '<span class="report-price">$' + (it.price || 39) + '</span>' +
+                '<span class="report-cta">Preview →</span>' +
+              '</div>' +
+            '</a>'
+          );
+        }).join('');
+      }
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+      function escapeAttr(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+      function humanize(slug) {
+        return String(slug || '')
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase());
+      }
+
+      fetchAndRender();
     });
   </script>
+
+  <style>
+    .lib-empty {
+      grid-column: 1 / -1;
+      padding: 96px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
 </body>
 </html>

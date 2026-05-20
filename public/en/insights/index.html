@@ -54,122 +54,176 @@
       <a href="#" data-cat="methodology" data-i18n="insights.catMethod">Methodology</a>
     </nav>
 
-    <!-- ── FEATURED INSIGHT ────────────────────────────── -->
-    <a href="/en/insights/template" class="insight-featured">
-      <div class="insight-featured-img">
-        <span class="ifi-tag">VIETNAM · FINTECH</span>
-      </div>
-      <div class="insight-featured-body">
-        <div class="insight-meta">
-          <span class="cat">FIELD NOTE</span>
-          <span>MAY 2026 · 6 MIN READ</span>
-        </div>
-        <h2>How Vietnam's super-apps quietly rewrote SME lending in 18 months.</h2>
-        <p class="insight-excerpt">Three operators now originate more SME credit than any commercial bank under VND 500M ticket size. The shift isn't about AI underwriting — it's about who controls the cash-flow data.</p>
-        <div class="insight-footer">
-          <span>BY OUR RESEARCH TEAM</span>
-          <span class="read">READ →</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- ── INSIGHTS GRID ───────────────────────────────── -->
-    <div class="insights-grid">
-
-      <a href="/en/insights/template" class="insight-card">
-        <div class="insight-meta">
-          <span class="cat">INDONESIA · FMCG</span>
-          <span>MAY 2026</span>
-        </div>
-        <h3>Warungs aren't dying — they're being instrumented.</h3>
-        <p class="insight-excerpt">Quick-commerce hasn't replaced the corner store. It's wrapped it in a logistics layer, and the margin story is more interesting than the channel-shift narrative suggests.</p>
-        <div class="insight-footer">
-          <span>4 MIN READ</span>
-          <span class="read">READ →</span>
-        </div>
-      </a>
-
-      <a href="/en/insights/template" class="insight-card">
-        <div class="insight-meta">
-          <span class="cat">THAILAND · LOGISTICS</span>
-          <span>APR 2026</span>
-        </div>
-        <h3>The EEC fulfillment build-out nobody is pricing in.</h3>
-        <p class="insight-excerpt">Thailand's Eastern Economic Corridor added 1.4M sqm of modern warehousing in 24 months. Most of it isn't on the official maps yet.</p>
-        <div class="insight-footer">
-          <span>5 MIN READ</span>
-          <span class="read">READ →</span>
-        </div>
-      </a>
-
-      <a href="/en/insights/template" class="insight-card">
-        <div class="insight-meta">
-          <span class="cat">PHILIPPINES · HEALTHTECH</span>
-          <span>APR 2026</span>
-        </div>
-        <h3>Why telemedicine retention is harder in PH than in ID.</h3>
-        <p class="insight-excerpt">Same regional sponsor, similar UX, very different cohort curves. The structural difference is doctor density per province, not app design.</p>
-        <div class="insight-footer">
-          <span>5 MIN READ</span>
-          <span class="read">READ →</span>
-        </div>
-      </a>
-
-      <a href="/en/insights/template" class="insight-card">
-        <div class="insight-meta">
-          <span class="cat">METHODOLOGY</span>
-          <span>APR 2026</span>
-        </div>
-        <h3>What we mean when we say "primary research" in 2026.</h3>
-        <p class="insight-excerpt">The phrase has been so flattened it's nearly meaningless. Here's what stays in our definition, what doesn't, and where AI fits in.</p>
-        <div class="insight-footer">
-          <span>4 MIN READ</span>
-          <span class="read">READ →</span>
-        </div>
-      </a>
-
-      <a href="/en/insights/template" class="insight-card">
-        <div class="insight-meta">
-          <span class="cat">MALAYSIA · F&amp;B</span>
-          <span>MAR 2026</span>
-        </div>
-        <h3>The cloud-kitchen story Malaysia rarely tells correctly.</h3>
-        <p class="insight-excerpt">Headline GMV looks healthy. The interesting number is the share of operators who closed within 18 months of opening — and what that says about unit economics.</p>
-        <div class="insight-footer">
-          <span>6 MIN READ</span>
-          <span class="read">READ →</span>
-        </div>
-      </a>
-
-      <a href="/en/insights/template" class="insight-card">
-        <div class="insight-meta">
-          <span class="cat">SINGAPORE · WEALTH</span>
-          <span>MAR 2026</span>
-        </div>
-        <h3>Family-office formation: the slowdown is structural, not cyclical.</h3>
-        <p class="insight-excerpt">2025 new-formation rates dropped sharply. Most explanations cite rate differentials. The harder explanation involves MAS Section 13O changes nobody talks about.</p>
-        <div class="insight-footer">
-          <span>7 MIN READ</span>
-          <span class="read">READ →</span>
-        </div>
-      </a>
-
+    <!-- ── FEATURED + GRID (rendered dynamically) ──────── -->
+    <div id="insights-root">
+      <div class="insight-empty">Loading insights…</div>
     </div>
 
   </div>
 
+  <style>
+    .insight-empty {
+      padding: 96px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .insight-card.disabled, .insight-featured.disabled {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .insight-card .badge-cs {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+  </style>
+
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script defer>
-    // Category chip toggle — visual only until DB is wired.
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.insights-cats a').forEach(a => {
+      const root   = document.getElementById('insights-root');
+      const cats   = document.querySelectorAll('.insights-cats a');
+      const locale = (window.kira && window.kira.locale) || 'en';
+      let activeCat = '';
+
+      // ── Hydrate active category from URL (?cat=foo) ──
+      const initCat = new URLSearchParams(window.location.search).get('cat');
+      if (initCat) {
+        activeCat = initCat.toLowerCase();
+        cats.forEach(a => {
+          a.classList.toggle('active',
+            (a.dataset.cat || '').toLowerCase() === activeCat ||
+            (!a.dataset.cat && !activeCat));
+        });
+      }
+
+      // ── Chip clicks ──
+      cats.forEach(a => {
         a.addEventListener('click', (e) => {
           e.preventDefault();
-          document.querySelectorAll('.insights-cats a').forEach(o => o.classList.remove('active'));
+          cats.forEach(o => o.classList.remove('active'));
           a.classList.add('active');
+          activeCat = (a.dataset.cat || '').toLowerCase();
+          fetchAndRender();
         });
       });
+
+      async function fetchAndRender() {
+        root.innerHTML = '<div class="insight-empty">Loading…</div>';
+        const qs = new URLSearchParams();
+        qs.set('locale', locale);
+        qs.set('limit',  '24');
+        if (activeCat) qs.set('category', activeCat);
+
+        try {
+          const r = await fetch('/api/insights-list?' + qs.toString());
+          if (!r.ok) throw new Error('http ' + r.status);
+          const data = await r.json();
+          render(data.items || []);
+        } catch (err) {
+          root.innerHTML = '<div class="insight-empty">Couldn\'t load insights. Please retry.</div>';
+        }
+      }
+
+      function render(items) {
+        if (!items.length) {
+          root.innerHTML = '<div class="insight-empty">No insights match this filter yet.</div>';
+          return;
+        }
+
+        // Pick featured: explicit featured=true, else first.
+        const featured = items.find(it => it.featured) || items[0];
+        const rest     = items.filter(it => it.slug !== featured.slug);
+
+        const html = [];
+        if (featured) html.push(renderFeatured(featured));
+        if (rest.length) {
+          html.push('<div class="insights-grid">');
+          rest.forEach(it => html.push(renderCard(it)));
+          html.push('</div>');
+        }
+        root.innerHTML = html.join('');
+      }
+
+      function renderFeatured(it) {
+        const cat = buildCatLabel(it);
+        const meta = [formatDate(it.published_at), it.read_time].filter(Boolean).join(' · ');
+        const title = it.title || humanize(it.slug);
+        const excerpt = it.excerpt || '';
+        return (
+          '<a href="' + articleHref(it.slug) + '" class="insight-featured' + (it.hasTranslation ? '' : ' disabled') + '">' +
+            '<div class="insight-featured-img">' +
+              '<span class="ifi-tag">' + escapeHtml(cat || 'INSIGHT') + '</span>' +
+            '</div>' +
+            '<div class="insight-featured-body">' +
+              '<div class="insight-meta">' +
+                '<span class="cat">FEATURED</span>' +
+                '<span>' + escapeHtml(meta || '—') + '</span>' +
+              '</div>' +
+              '<h2>' + escapeHtml(title) + '</h2>' +
+              (excerpt ? '<p class="insight-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
+              '<div class="insight-footer">' +
+                '<span>BY OUR RESEARCH TEAM</span>' +
+                '<span class="read">' + (it.hasTranslation ? 'READ →' : 'TRANSLATING…') + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</a>'
+        );
+      }
+
+      function renderCard(it) {
+        const cat = buildCatLabel(it);
+        const date = formatDate(it.published_at);
+        const title = it.title || humanize(it.slug);
+        const excerpt = it.excerpt || '';
+        const readTime = it.read_time || '';
+        return (
+          '<a href="' + articleHref(it.slug) + '" class="insight-card' + (it.hasTranslation ? '' : ' disabled') + '">' +
+            '<div class="insight-meta">' +
+              '<span class="cat">' + escapeHtml(cat || 'INSIGHT') + '</span>' +
+              '<span>' + escapeHtml(date) + '</span>' +
+            '</div>' +
+            '<h3>' + escapeHtml(title) + '</h3>' +
+            (excerpt ? '<p class="insight-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
+            '<div class="insight-footer">' +
+              '<span>' + escapeHtml(readTime || '—') + '</span>' +
+              '<span class="read">' + (it.hasTranslation ? 'READ →' : 'TRANSLATING…') + '</span>' +
+            '</div>' +
+          '</a>'
+        );
+      }
+
+      function articleHref(slug) {
+        return '/' + locale + '/insights/' + encodeURIComponent(slug);
+      }
+
+      function buildCatLabel(it) {
+        const parts = [];
+        if (it.country)  parts.push(it.country.toUpperCase());
+        if (it.industry) parts.push(it.industry.toUpperCase());
+        if (!parts.length && it.category) parts.push(it.category.toUpperCase());
+        return parts.join(' · ');
+      }
+
+      function formatDate(iso) {
+        if (!iso) return '';
+        return new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+      }
+
+      function humanize(slug) {
+        return String(slug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      }
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      fetchAndRender();
     });
   </script>
 </body>
