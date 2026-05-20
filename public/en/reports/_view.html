@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Report — KIRA RESEARCH</title>
+  <meta name="description" content="Market intelligence report from KIRA RESEARCH." />
+
+  <!-- Default canonical (overwritten by JS once slug is known) -->
+  <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .rpt-loading, .rpt-404 {
+      padding: 96px 0;
+      text-align: center;
+      color: var(--muted);
+    }
+    .rpt-404 h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .rpt-fallback-banner {
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.25);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .rpt-fallback-banner strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container rpt-page" id="rpt-root">
+    <div class="rpt-loading">Loading report…</div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+
+  <script type="module">
+    // ── 1) Parse slug + locale from URL ──────────────────
+    // URL shape: /<locale>/reports/<slug>  (slug may have trailing slash)
+    const parts  = window.location.pathname.split('/').filter(Boolean);
+    const locale = ['en','ja','ko'].includes(parts[0]) ? parts[0] : 'en';
+    const slug   = parts[2] ? parts[2].replace(/\/$/, '') : '';
+
+    document.documentElement.setAttribute('lang', locale);
+
+    const root = document.getElementById('rpt-root');
+
+    if (!slug) {
+      root.innerHTML = '<div class="rpt-404"><h2>No report selected</h2><p><a href="/' + locale + '/library" style="color:var(--primary)">Back to library →</a></p></div>';
+      return;
+    }
+
+    // ── 2) Fetch from API ────────────────────────────────
+    let data;
+    try {
+      const r = await fetch('/api/library-report?slug=' + encodeURIComponent(slug) + '&locale=' + locale);
+      if (r.status === 404) {
+        root.innerHTML =
+          '<div class="rpt-404">' +
+            '<h2>Report not found</h2>' +
+            '<p>The report <code style="color:var(--primary)">' + escapeHtml(slug) + '</code> isn\'t in the library yet.</p>' +
+            '<p style="margin-top:18px;"><a href="/' + locale + '/library" style="color:var(--primary)">Back to library →</a></p>' +
+          '</div>';
+        return;
+      }
+      if (!r.ok) throw new Error('http ' + r.status);
+      data = await r.json();
+    } catch (err) {
+      root.innerHTML =
+        '<div class="rpt-404"><h2>Couldn\'t load report</h2>' +
+        '<p>Please retry or browse the <a href="/' + locale + '/library" style="color:var(--primary)">library</a>.</p></div>';
+      return;
+    }
+
+    // ── 3) Update meta + hreflang now that we know the slug ──
+    const base = 'https://kiraresearch.com';
+    document.title = (data.title || 'Report') + ' — KIRA RESEARCH';
+    document.getElementById('meta-canonical').href = base + '/' + locale + '/reports/' + data.slug;
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc && data.preview && data.preview.lede) {
+      metaDesc.setAttribute('content', data.preview.lede.slice(0, 200));
+    }
+
+    // Inject hreflang siblings only for locales that are actually published.
+    const head = document.head;
+    ['en','ja','ko'].forEach(loc => {
+      if (data.availableLocales.includes(loc)) {
+        const link = document.createElement('link');
+        link.rel  = 'alternate';
+        link.hreflang = loc;
+        link.href = base + '/' + loc + '/reports/' + data.slug;
+        head.appendChild(link);
+      }
+    });
+    const xdef = document.createElement('link');
+    xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
+    xdef.href = base + '/en/reports/' + data.slug;
+    head.appendChild(xdef);
+
+    // ── 4) Render the page ───────────────────────────────
+    render(data);
+
+    // After render: re-apply i18n to the new DOM (nav.js + i18n.js are injected
+    // separately; this just makes sure any data-i18n attributes in our template
+    // get picked up).
+    if (window.kira && window.kira.i18n) window.kira.i18n.apply();
+
+    // ── helpers ──────────────────────────────────────────
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderChart(c) {
+      if (!c || !Array.isArray(c.bars) || !c.bars.length) return '';
+      const bars = c.bars.map(b => {
+        const pct = Math.max(0, Math.min(100, Number(b.pct) || 0));
+        return '<div class="chart-bar" data-label="' + escapeHtml(b.label) +
+               '" data-value="' + escapeHtml(b.value) +
+               '" style="height:' + pct + '%;"></div>';
+      }).join('');
+      return (
+        '<div class="chart-card">' +
+          '<div class="chart-head">' +
+            '<span class="chart-title">' + escapeHtml(c.title || '') + '</span>' +
+            (c.subtitle ? '<span class="chart-subtitle">' + escapeHtml(c.subtitle) + '</span>' : '') +
+          '</div>' +
+          '<div class="chart-bars">' + bars + '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderToc(toc) {
+      if (!Array.isArray(toc) || !toc.length) return '';
+      const items = toc.map(t => {
+        const cls = (t.locked === false) ? ' preview' : '';
+        const lock = (t.locked === false) ? 'PREVIEW' : 'LOCKED';
+        return '<div class="toc-item' + cls + '">' +
+                 '<span class="num">' + escapeHtml(t.num) + '</span>' +
+                 '<span class="name">' + escapeHtml(t.name) + '</span>' +
+                 '<span class="pages">' + escapeHtml(t.pages || '') + '</span>' +
+                 '<span class="lock">' + lock + '</span>' +
+               '</div>';
+      }).join('');
+      return (
+        '<div class="toc">' +
+          '<h4>Table of Contents · ' + toc.length + ' Sections</h4>' +
+          items +
+        '</div>'
+      );
+    }
+
+    function renderLangSwitcher(slug, currentLocale, available) {
+      const labels = { en: 'EN', ja: '日本語', ko: '한국어' };
+      const links = ['en','ja','ko'].map(loc => {
+        const isActive = loc === currentLocale;
+        const isPublished = available.includes(loc);
+        const cls =
+          (loc === 'ja' ? 'lang-ja' : loc === 'ko' ? 'lang-ko' : '') +
+          (isActive ? ' active' : '') +
+          (!isPublished ? ' disabled' : '');
+        const href = isPublished ? ('/' + loc + '/reports/' + slug) : '#';
+        const titleAttr = isPublished ? '' : ' title="Not yet available in this language"';
+        return '<a href="' + href + '" class="' + cls.trim() + '"' +
+               (isPublished ? '' : ' aria-disabled="true" onclick="return false"') +
+               titleAttr + '>' + labels[loc] + '</a>';
+      }).join('');
+      return '<span class="label">Lang</span>' + links;
+    }
+
+    function render(d) {
+      const baseCountry = (d.country || '').toUpperCase();
+      const breadcrumb = (
+        '<div class="rpt-breadcrumb">' +
+          '<a href="/' + locale + '/library">Library</a> → ' +
+          (d.country ? '<a href="/' + locale + '/library?country=' + d.country.toLowerCase() + '">' + escapeHtml(d.country) + '</a> → ' : '') +
+          (d.industry ? '<a href="/' + locale + '/library?industry=' + d.industry.toLowerCase().replace(/[^a-z0-9]+/g,'-') + '">' + escapeHtml(d.industry) + '</a> → ' : '') +
+          '<span>' + escapeHtml(d.title || d.slug) + '</span>' +
+        '</div>'
+      );
+
+      const eyebrow = d.eyebrow ||
+        [baseCountry, (d.industry || '').toUpperCase(), 'MARKET ANALYSIS']
+          .filter(Boolean).join(' · ');
+
+      const fallbackBanner = d.isFallback
+        ? '<div class="rpt-fallback-banner">This report isn\'t published in your selected language yet — showing the <strong>English version</strong>. Other languages will appear here as they become available.</div>'
+        : '';
+
+      const lede   = d.preview?.lede ? '<p><strong>' + escapeHtml(d.preview.lede) + '</strong></p>' : '';
+      const paras  = Array.isArray(d.preview?.paragraphs)
+        ? d.preview.paragraphs.map(p => '<p>' + escapeHtml(p) + '</p>').join('')
+        : '';
+      const chart  = renderChart(d.preview?.chart);
+      const toc    = renderToc(d.toc);
+
+      const aggregators = (d.aggregators || []).slice(0, 5);
+
+      const pages    = d.pages || 78;
+      const sections = (d.toc && d.toc.length) || 12;
+      const refresh  = d.last_refresh
+        ? new Date(d.last_refresh).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+        : '—';
+      const published = d.published_at
+        ? new Date(d.published_at).toLocaleDateString('en-GB', { month:'long', year:'numeric' })
+        : '—';
+
+      root.innerHTML = (
+        breadcrumb +
+        '<div class="rpt-grid">' +
+          '<article class="rpt-main">' +
+            fallbackBanner +
+            '<div class="hero-eyebrow" style="margin-bottom:20px;">' + escapeHtml(eyebrow) + '</div>' +
+            '<h1>' + escapeHtml(d.title || d.slug) + '</h1>' +
+            '<div class="rpt-meta">' +
+              '<div class="rpt-meta-item"><div class="label">Published</div><div class="val">' + escapeHtml(published) + '</div></div>' +
+              '<div class="rpt-meta-item"><div class="label">Pages</div><div class="val">' + pages + '</div></div>' +
+              '<div class="rpt-meta-item"><div class="label">Format</div><div class="val">PDF</div></div>' +
+              '<div class="rpt-meta-item"><div class="label">Sections</div><div class="val">' + sections + '</div></div>' +
+              '<div class="rpt-meta-item"><div class="label">Last Refresh</div><div class="val">' + escapeHtml(refresh) + '</div></div>' +
+              '<div class="rpt-meta-item"><div class="label">Analyst</div><div class="val">Our research team</div></div>' +
+            '</div>' +
+
+            '<section class="rpt-section">' +
+              '<h3>Section 01 · Executive Summary</h3>' +
+              '<h2>Preview</h2>' +
+              lede + paras + chart +
+            '</section>' +
+
+            toc +
+          '</article>' +
+
+          '<aside class="buy-box">' +
+            '<div class="buy-tag">Single report · PDF + online access</div>' +
+            '<div class="buy-price"><span class="currency">$</span>' + (d.price || 39) + '</div>' +
+            '<div class="buy-lang-select" aria-label="Report language">' +
+              renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
+            '</div>' +
+            '<button class="buy-btn" id="buy-btn">Purchase report →</button>' +
+            '<button class="buy-btn-secondary">Add to library bundle</button>' +
+            '<div class="buy-includes">' +
+              '<h6>What\'s included</h6>' +
+              '<div class="include-item">' + pages + '-page PDF download</div>' +
+              '<div class="include-item">Online reader access</div>' +
+              '<div class="include-item">All charts &amp; data tables</div>' +
+              '<div class="include-item">Free updates for 12 months</div>' +
+              '<div class="include-item">Single-user license</div>' +
+            '</div>' +
+            (aggregators.length
+              ? '<div class="buy-includes"><h6>Also available on</h6><div class="buy-aggregators">' +
+                  aggregators.map(escapeHtml).join('<br />') +
+                '</div></div>'
+              : '') +
+          '</aside>' +
+        '</div>'
+      );
+
+      // Wire purchase button (placeholder — payment flow exists in api/payment.js).
+      const buyBtn = document.getElementById('buy-btn');
+      if (buyBtn) {
+        buyBtn.addEventListener('click', () => {
+          window.location.href = '/api/payment?action=create&slug=' +
+            encodeURIComponent(d.slug) + '&locale=' + locale;
+        });
+      }
+    }
+  </script>
+</body>
+</html>

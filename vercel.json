@@ -67,7 +67,11 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" }
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+
+    { "source": "/en/reports/:slug([a-z0-9][a-z0-9-]+)", "destination": "/en/reports/_view.html" },
+    { "source": "/ja/reports/:slug([a-z0-9][a-z0-9-]+)", "destination": "/en/reports/_view.html" },
+    { "source": "/ko/reports/:slug([a-z0-9][a-z0-9-]+)", "destination": "/en/reports/_view.html" }
   ],
   "functions": {
     "api/*.js": {
