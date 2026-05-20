@@ -6,6 +6,12 @@
 
 -- ── living_reports ────────────────────────────────────────
 -- Base metadata for each report. One row per report (regardless of locale).
+--
+-- This migration was rerun against an existing project that already had a
+-- legacy `living_reports` table from the platform era (different column set).
+-- The CREATE TABLE below is greenfield-only; the ALTER TABLE block right
+-- after backfills any missing columns into a legacy table. Both paths
+-- converge on the same final schema.
 create table if not exists public.living_reports (
   id              uuid primary key default gen_random_uuid(),
   created_at      timestamptz not null default now(),
@@ -30,6 +36,30 @@ create table if not exists public.living_reports (
   status          text not null default 'draft'
                    check (status in ('draft', 'published', 'retired'))
 );
+
+-- Defensive backfill for legacy installations. ADD COLUMN IF NOT EXISTS
+-- is a no-op when the column is already present, so this is safe on
+-- both fresh-create and legacy-extend paths. NOT NULL constraints are
+-- best-effort (Postgres can't add NOT NULL to columns that already exist
+-- without a column-set scan; we skip that step rather than fail loudly).
+alter table public.living_reports
+  add column if not exists created_at   timestamptz not null default now(),
+  add column if not exists updated_at   timestamptz not null default now(),
+  add column if not exists published_at timestamptz,
+  add column if not exists slug         text,
+  add column if not exists country      text,
+  add column if not exists industry     text,
+  add column if not exists year         integer,
+  add column if not exists pages        integer,
+  add column if not exists price        integer default 39,
+  add column if not exists currency     text default 'USD',
+  add column if not exists aggregators  text[] default '{}',
+  add column if not exists status       text default 'draft';
+
+-- Slug uniqueness (idempotent — replaces any inline UNIQUE that didn't
+-- get added when the legacy table pre-existed).
+create unique index if not exists living_reports_slug_key
+  on public.living_reports (slug);
 
 create index if not exists living_reports_country_year_idx
   on public.living_reports (country, year desc);
@@ -70,6 +100,24 @@ create table if not exists public.report_translations (
 
   unique (report_id, locale)
 );
+
+-- Defensive backfill for legacy installations.
+alter table public.report_translations
+  add column if not exists created_at   timestamptz not null default now(),
+  add column if not exists updated_at   timestamptz not null default now(),
+  add column if not exists published_at timestamptz,
+  add column if not exists report_id    uuid,
+  add column if not exists locale       text,
+  add column if not exists title        text,
+  add column if not exists eyebrow      text,
+  add column if not exists preview      jsonb,
+  add column if not exists toc          jsonb default '[]',
+  add column if not exists full_content jsonb,
+  add column if not exists pdf_url      text,
+  add column if not exists status       text default 'draft';
+
+create unique index if not exists report_translations_report_locale_key
+  on public.report_translations (report_id, locale);
 
 create index if not exists report_translations_lookup_idx
   on public.report_translations (report_id, locale, status);
