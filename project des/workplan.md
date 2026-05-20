@@ -14,10 +14,10 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 | Phase | Title | Status | Notes |
 |---|---|---|---|
 | 1 | Report unit foundation | ⏸️ | Henry's Claude-chat workflow; outside repo build |
-| 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5` |
+| 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5`. Removal cleanup finalized in `a8a9206` (29 legacy files gone). |
 | 3 | Library infrastructure | ✅ | 3.1 + 3.2 + 3.3 all done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`, `8bcb6d4`). Sitemap + hreflang shipped. |
 | 4 | Admin backend | 🟡 | 4.1 auth ✅ (`714375a`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 KPI dashboard + audit log, 4.3 transactions+users, 4.4 aggregator tracking — all pending** |
-| 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not yet built — they just redirect to landing for now.** 5.3 credit-system scoping pending. |
+| 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206` (legacy gone, library uses direct PayPal). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not rebuilt — currently just redirect to landing.** |
 | 6 | Report population | ⏸️ | 0 reports seeded beyond migration samples — Henry's content production |
 | 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`). **7.2 auto-insights cron + 7.3 schema markup/OG + GSC submission pending.** |
 | 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`) + hreflang/sitemap-ja.xml ✅ (`8bcb6d4`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
@@ -88,6 +88,7 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] Remove all "AI-powered" / "AI platform" mentions from non-methodology pages
 - [x] Remove all volume claims (1000+ studies, etc.)
 - [x] Remove competitor mentions
+- [x] Remove ALL platform-era legacy files at repo root (29 files / 11k+ lines removed in `a8a9206` — see Phase 5 deliverable for full inventory)
 
 ### Sprint 2.4 — UI string extraction
 - [x] Extract all UI strings into `/locales/en.json`
@@ -180,11 +181,11 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] Remove or merge `docreport.html` into Custom Research (redirect-only at `/docreport`)
 
 ### Sprint 5.3 — Credit system scoping
-- [ ] Keep credit system functional for `/custom-research/*` only — **status unclear; credit-system code still in `api/credits.js` but not wired into the new IA. Verify or strip.**
+- [x] Decision made: drop credit system entirely Year 1. `api/credits.js` + `public/profile.html` + 14 other platform-era API endpoints deleted in `a8a9206`.
 - [x] Library purchases use direct PayPal flow (no credit deduction) — confirmed
-- [ ] Update `profile.html`: show library purchases + remaining credits separately — **NOT DONE; profile.html is legacy file**
+- [x] `profile.html` removed — Year 1 has no user-facing profile UI. Library buyers get the report via session-bound state in `_view.html` after PayPal capture. If a profile page is wanted later it gets a fresh build, not a port.
 
-**Deliverable:** 🟡 Site IA cleaned + Studio gone. Pending: actual tool pages at `/custom-research/{market-analysis,strategy-builder}`, credit-system scoping, profile.html refresh.
+**Deliverable:** ✅ Site IA cleaned + Studio gone + credit system fully retired. Commits: `692d907`, `74c21c0`, `a8a9206`. Pending: actual tool pages at `/custom-research/{market-analysis,strategy-builder}` — currently those URLs land on the Custom Research landing page; rebuilding the tools is a deferred decision (workplan defers heavy AI-tool builds to later).
 
 ---
 
@@ -400,4 +401,4 @@ Cross-cutting work that wasn't in the original 10-phase plan but had to ship to 
 
 ---
 
-*Last updated: 2026-05-20 (Sprint 3.3 fully closed via item C — sitemap index + per-locale + hreflang shipped. Through commit `8bcb6d4`.)*
+*Last updated: 2026-05-20 (Sprint 3.3 closed via item C; Sprint 2.3 + 5.3 closed via item F — 29 legacy files + 11k lines removed in `a8a9206`. Through commit `a8a9206`.)*

@@ -26,8 +26,8 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `8bcb6d4` — fix(smoke): waitForSelector on `<link>` tag needs state:attached
-- **Production:** live, latest Vercel deploy from `8bcb6d4`
+- **Latest commit on `main`:** `a8a9206` — chore(legacy): remove 29 platform-era files
+- **Production:** live, latest Vercel deploy from `a8a9206` (✅ CI green)
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 41 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates, public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` injection)**.
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅.
@@ -54,9 +54,9 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` · stats/featured pending |
 | **4.3** | Transactions + Users admin | 🔴 | **not started** |
 | **4.4** | Leads + Aggregators admin | 🟡 | `714375a` leads only · **aggregator tracking pending** |
-| **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt** |
+| **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt — deferred** |
 | **5.2** | Kill /studio/ | ✅ | `692d907` |
-| **5.3** | Credit system scoping | 🔴 | **not done — `api/credits.js` still exists from platform era, needs scoping decision** |
+| **5.3** | Credit system scoping | ✅ | `a8a9206` · credit system retired entirely Year 1, all platform-era APIs + profile.html removed |
 | **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
 | **7.1** | Insights blog + article templates | 🟡 | `15e94f2` · UI pagination pending |
 | **7.2** | Auto-insights cron + SEO articles | 🔴 | `api/cron-insights.js` legacy, needs re-design |
@@ -90,16 +90,21 @@ public/
 │   ├── custom-research/index.html  # contact + research-on-demand
 │   └── admin/                      # EN-only admin (auth-gated)
 │       ├── leads.html  reports.html  insights.html
-├── assets/                         # kira.css, fonts, images
-└── js/                             # nav.js, auth.js, i18n loader
+├── css/                            # kira.css
+├── js/                             # nav.js + i18n
+├── locales/                        # en.json, ja.json, ko.json
+├── auth.html  auth.js              # Supabase Auth sign-in
+├── index.html                      # root: locale auto-redirect
+└── robots.txt                      # crawler directives
 
-api/                                # Vercel serverless functions
+api/                                # 12 Vercel serverless functions (all active)
 ├── leads.js                        # public POST — form submissions
 ├── library-list.js  insights-list.js  insight.js  library-report.js  # public reads
 ├── library-buy.js                  # PayPal create + capture
 ├── library-verify.js               # check purchase state
 ├── library-content.js              # JWT-gated full content + PDF URL
 ├── admin-leads.js  admin-reports.js  admin-insights.js  # JWT + ADMIN_EMAILS whitelist
+└── sitemap.js                      # dynamic sitemap (index + per-locale)
 
 supabase/migrations/                # idempotent schema
 ├── 001_leads.sql                   # leads table + RLS
@@ -107,10 +112,10 @@ supabase/migrations/                # idempotent schema
 ├── 003_insights.sql                # insights + insight_translations + seed
 └── 004_purchases.sql               # purchases + downloads + RLS
 
-tests/smoke.spec.js                 # 35 Playwright tests (CI green)
+tests/smoke.spec.js                 # 41 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
 playwright.config.js                # chromium-only, github reporter
-vercel.json                         # cleanUrls + 13 redirects + 7 rewrites (all sources/destinations no-extension form)
+vercel.json                         # cleanUrls + 13 redirects + 11 rewrites (all sources/destinations no-extension form)
 ```
 
 Key Vercel rewrite pattern (final, stable):
@@ -176,16 +181,7 @@ more pending sprints in `project des/workplan.md`. Recommended order:
   Wire `library-content.js` to return real signed URL from Storage bucket. Add admin upload UI. ~1 day.
 - **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
   Pick provider (Resend recommended). Year 1 = simple sends only. ~half-day.
-- **F — Legacy file cleanup** → resolves Sprint **5.3** scoping + Sprint **2.3** removal completeness.
-  Files still in repo from "AI platform" era — candidates for removal:
-  - `public/pdf-to-md.html`, `public/profile.html`, `public/payment-success.html`, `public/tracker.html`, `public/about.html`, `public/pricing.html`, `public/compare.html`, `public/contact.html`, `public/docreport.html`
-  - `api/ingest-save.js`, `api/browser-research.js`, `api/chat.js`,
-    `api/claude-proxy.js`, `api/credits.js`, `api/cron-insights.js`,
-    `api/doc-report.js`, `api/embed.js`, `api/extract-visuals.js`,
-    `api/export-pptx.js`, `api/generate-report.js`, `api/generate-section.js`,
-    `api/get-report.js`, `api/payment.js`, `api/research.js`,
-    `api/strategy-builder.js`
-  - Verify nothing references each before deleting. ~half-day.
+- ~~**F — Legacy file cleanup**~~ ✅ **DONE** (`a8a9206`). 29 files / 11,138 lines removed. Closed Sprints 2.3 + 5.3.
 - **G — Native reviewer QA pass on JA/KO copy** → fills Sprint **8.1** + **9.1** native reviewer items.
   Ship JA/KO drafts to a native Upwork reviewer ($50-100/locale), fold fixes back in. First 10-20 reports per locale per `project des/CLAUDE.md`.
 - **H — KPI dashboard + audit log** → fills Sprint **4.1** dashboard gap.
@@ -272,4 +268,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (item C shipped — sitemap index + 3 per-locale sitemaps + hreflang + robots.txt. Sprint 3.3 closed. Latest commit `8bcb6d4`.)*
+*Last updated: 2026-05-20 (item C + F shipped — sitemap surface live; 29 legacy files removed. Sprints 2.3, 3.3, 5.3 closed. Latest commit `a8a9206`.)*
