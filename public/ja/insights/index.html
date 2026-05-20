@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>インサイト — KIRA RESEARCH</title>
+  <meta name="description" content="東南アジア各市場に関するアナリストのフィールドノートと解説 — フィンテック、FMCG、物流、ヘルステック、エネルギー。" />
+
+  <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/insights/" />
+  <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/insights/" />
+  <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/insights/" />
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/insights/" />
+  <link rel="canonical" href="https://kiraresearch.com/ja/insights/" />
+
+  <meta property="og:title" content="インサイト — KIRA RESEARCH" />
+  <meta property="og:description" content="東南アジア市場をカバーするシニアアナリストのフィールドノート。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kiraresearch.com/ja/insights/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+  <style>
+    body, h1, h2, h3, h4 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="lib-header">
+      <div class="hero-eyebrow" data-i18n="insights.eyebrow">インサイト</div>
+      <h1 data-i18n="insights.title">アナリストデスクからのフィールドノート。</h1>
+      <p data-i18n="insights.sub">東南アジアで起きている変化に関する短い読み物 — 私たちがカバーする市場、追っているシグナル、使用する手法。無料公開。</p>
+    </header>
+
+    <nav class="insights-cats" aria-label="カテゴリー">
+      <a href="#" class="active" data-i18n="insights.catAll">すべて</a>
+      <a href="#" data-cat="vietnam">ベトナム</a>
+      <a href="#" data-cat="indonesia">インドネシア</a>
+      <a href="#" data-cat="thailand">タイ</a>
+      <a href="#" data-cat="philippines">フィリピン</a>
+      <a href="#" data-cat="fintech">フィンテック</a>
+      <a href="#" data-cat="fmcg">FMCG</a>
+      <a href="#" data-cat="logistics">物流</a>
+      <a href="#" data-cat="methodology" data-i18n="insights.catMethod">調査手法</a>
+    </nav>
+
+    <div id="insights-root">
+      <div class="insight-empty">読み込み中…</div>
+    </div>
+  </div>
+
+  <style>
+    .insight-empty { padding: 96px 24px; text-align: center; color: var(--muted); font-size: 14px; }
+    .insight-card.disabled, .insight-featured.disabled { pointer-events: none; opacity: 0.6; }
+  </style>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = document.getElementById('insights-root');
+      const cats = document.querySelectorAll('.insights-cats a');
+      const locale = (window.kira && window.kira.locale) || 'ja';
+      let activeCat = '';
+
+      const initCat = new URLSearchParams(window.location.search).get('cat');
+      if (initCat) {
+        activeCat = initCat.toLowerCase();
+        cats.forEach(a => {
+          a.classList.toggle('active',
+            (a.dataset.cat || '').toLowerCase() === activeCat ||
+            (!a.dataset.cat && !activeCat));
+        });
+      }
+
+      cats.forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          cats.forEach(o => o.classList.remove('active'));
+          a.classList.add('active');
+          activeCat = (a.dataset.cat || '').toLowerCase();
+          fetchAndRender();
+        });
+      });
+
+      async function fetchAndRender() {
+        root.innerHTML = '<div class="insight-empty">読み込み中…</div>';
+        const qs = new URLSearchParams();
+        qs.set('locale', locale);
+        qs.set('limit',  '24');
+        if (activeCat) qs.set('category', activeCat);
+        try {
+          const r = await fetch('/api/insights-list?' + qs.toString());
+          if (!r.ok) throw new Error('http ' + r.status);
+          const data = await r.json();
+          render(data.items || []);
+        } catch (err) {
+          root.innerHTML = '<div class="insight-empty">インサイトを読み込めませんでした。再試行してください。</div>';
+        }
+      }
+
+      function render(items) {
+        if (!items.length) {
+          root.innerHTML = '<div class="insight-empty">このフィルターに該当するインサイトがありません。</div>';
+          return;
+        }
+        const featured = items.find(it => it.featured) || items[0];
+        const rest     = items.filter(it => it.slug !== featured.slug);
+        const html = [];
+        if (featured) html.push(renderFeatured(featured));
+        if (rest.length) {
+          html.push('<div class="insights-grid">');
+          rest.forEach(it => html.push(renderCard(it)));
+          html.push('</div>');
+        }
+        root.innerHTML = html.join('');
+      }
+
+      function renderFeatured(it) {
+        const cat = buildCatLabel(it);
+        const meta = [formatDate(it.published_at), it.read_time].filter(Boolean).join(' · ');
+        const title = it.title || humanize(it.slug);
+        const excerpt = it.excerpt || '';
+        return (
+          '<a href="' + articleHref(it.slug) + '" class="insight-featured' + (it.hasTranslation ? '' : ' disabled') + '">' +
+            '<div class="insight-featured-img"><span class="ifi-tag">' + escapeHtml(cat || 'INSIGHT') + '</span></div>' +
+            '<div class="insight-featured-body">' +
+              '<div class="insight-meta">' +
+                '<span class="cat">注目</span>' +
+                '<span>' + escapeHtml(meta || '—') + '</span>' +
+              '</div>' +
+              '<h2>' + escapeHtml(title) + '</h2>' +
+              (excerpt ? '<p class="insight-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
+              '<div class="insight-footer">' +
+                '<span>リサーチチーム</span>' +
+                '<span class="read">' + (it.hasTranslation ? '読む →' : '翻訳中…') + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</a>'
+        );
+      }
+
+      function renderCard(it) {
+        const cat = buildCatLabel(it);
+        const date = formatDate(it.published_at);
+        const title = it.title || humanize(it.slug);
+        const excerpt = it.excerpt || '';
+        const readTime = it.read_time || '';
+        return (
+          '<a href="' + articleHref(it.slug) + '" class="insight-card' + (it.hasTranslation ? '' : ' disabled') + '">' +
+            '<div class="insight-meta">' +
+              '<span class="cat">' + escapeHtml(cat || 'INSIGHT') + '</span>' +
+              '<span>' + escapeHtml(date) + '</span>' +
+            '</div>' +
+            '<h3>' + escapeHtml(title) + '</h3>' +
+            (excerpt ? '<p class="insight-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
+            '<div class="insight-footer">' +
+              '<span>' + escapeHtml(readTime || '—') + '</span>' +
+              '<span class="read">' + (it.hasTranslation ? '読む →' : '翻訳中…') + '</span>' +
+            '</div>' +
+          '</a>'
+        );
+      }
+
+      function articleHref(slug) { return '/' + locale + '/insights/' + encodeURIComponent(slug); }
+      function buildCatLabel(it) {
+        const parts = [];
+        if (it.country)  parts.push(it.country.toUpperCase());
+        if (it.industry) parts.push(it.industry.toUpperCase());
+        if (!parts.length && it.category) parts.push(it.category.toUpperCase());
+        return parts.join(' · ');
+      }
+      function formatDate(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        return `${d.getFullYear()}年${d.getMonth() + 1}月`;
+      }
+      function humanize(slug) { return String(slug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+      fetchAndRender();
+    });
+  </script>
+</body>
+</html>
