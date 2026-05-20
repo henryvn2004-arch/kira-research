@@ -218,8 +218,14 @@ test.describe('SEO surface', () => {
 
   test('/en/ has hreflang <link> tags injected by nav.js', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    // Wait briefly for nav.js to run (it injects on DOMContentLoaded).
-    await page.waitForSelector('link[data-kira-hreflang][hreflang="x-default"]', { timeout: 5_000 });
+    // <link> tags in <head> are never "visible" (zero rendered size), so
+    // wait for 'attached' state instead of the default 'visible'. nav.js
+    // injects on DOMContentLoaded, so the element appears in the DOM
+    // within a few hundred ms of navigation.
+    await page.waitForSelector(
+      'link[data-kira-hreflang][hreflang="x-default"]',
+      { state: 'attached', timeout: 5_000 }
+    );
     const count = await page.locator('link[data-kira-hreflang]').count();
     // 3 locales + 1 x-default = 4 minimum.
     expect(count).toBeGreaterThanOrEqual(4);
