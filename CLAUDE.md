@@ -26,7 +26,7 @@
 
 ## Current state (2026-05-21)
 
-- **Latest commit on `main`:** `e7d5372` — feat(admin): Sprint 4.4 (Aggregator submissions + sales tracking). Closes Phase 4 admin backend (audit log + report stats/featured + revenue charts still deferred). Owner still needs to wire Resend env var + run migration 007.
+- **Latest commit on `main`:** `e7d5372` — feat(admin): Sprint 4.4 (Aggregator submissions + sales tracking). Closes Phase 4 admin backend (audit log + report stats/featured + revenue charts still deferred). **Owner ran migrations 001-007, deleted legacy Storage buckets, set Resend + all Vercel env vars, submitted GSC sitemaps (2026-05-21).** Only owner item remaining: run migration `008_security_hardening.sql` + toggle Leaked Password Protection in Auth settings.
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 58 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
@@ -120,7 +120,8 @@ supabase/migrations/                # idempotent schema
 ├── 004_purchases.sql               # purchases + downloads + RLS
 ├── 005_storage.sql                 # private bucket reports-pdfs + RLS (item D)
 ├── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
-└── 007_aggregators.sql             # aggregator_submissions + aggregator_sales tables (Sprint 4.4)
+├── 007_aggregators.sql             # aggregator_submissions + aggregator_sales tables (Sprint 4.4)
+└── 008_security_hardening.sql      # close advisor flags: RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path
 
 tests/smoke.spec.js                 # 41 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
@@ -148,47 +149,27 @@ Two things matter here:
 
 These are tasks only the owner can do (involve dashboards, not git):
 
-1. ☐ **Run 7 Supabase migrations** in dashboard SQL Editor, in order:
-   - `supabase/migrations/001_leads.sql`
-   - `supabase/migrations/002_library.sql`
-   - `supabase/migrations/003_insights.sql`
-   - `supabase/migrations/004_purchases.sql`
-   - `supabase/migrations/005_storage.sql` — creates private `reports-pdfs` bucket for PDF uploads. Alternative: Dashboard → Storage → New bucket → name `reports-pdfs`, **uncheck Public**, MIME `application/pdf`, size 32MB.
-   - `supabase/migrations/006_drop_legacy.sql` — **destructive, two-step.** SQL step drops 6 unambiguously-deprecated tables (`source_reports`, `report_chunks`, `industry_patterns`, `competency_templates`, `chat_history`, `contacts`) + 2 RAG/search functions. Storage buckets (`frameworks` 23 obj, `reports` 132 obj ~38MB) must be removed separately via Dashboard → Storage UI (Supabase's `storage.protect_delete()` trigger blocks direct SQL deletes from `storage.objects`/`storage.buckets`). **Intentionally keeps** `user_credits`, `credit_transactions`, `credit_costs`, `custom_reports` + paired `spend_credits`/`add_credits` functions per `project des/CLAUDE.md` Custom Research backend earmark. Run only after 001-005 are confirmed applied.
-   - `supabase/migrations/007_aggregators.sql` — adds `aggregator_submissions` + `aggregator_sales` tables backing `/en/admin/aggregators` (Sprint 4.4). RLS-enabled, service-key-only writes. Idempotent. Run only after 001-006 are confirmed applied.
-2. ☐ **Set Vercel env var** `ADMIN_EMAILS=henryvn2004@gmail.com`
-3. ☐ **Verify Vercel env vars exist** (Settings → Environment Variables):
-   - `SUPABASE_URL`
-   - `SUPABASE_SERVICE_KEY` (server-only — never expose to client)
-   - `PAYPAL_CLIENT_ID`
-   - `PAYPAL_CLIENT_SECRET`
-   - `PAYPAL_MODE` (= `sandbox` or `live`)
-   - `APP_URL` (= `https://kiraresearch.com`)
-5. ☐ **Set up Resend for transactional email** (Sprint E, shipped 2026-05-21):
-   - Create account at https://resend.com — sign up with `henryvn2004@gmail.com`, free tier (3K emails/month) is plenty for Year 1
-   - Resend dashboard → Domains → "Add Domain" → `kiraresearch.com`
-   - Resend shows 3 DNS records (MX, SPF TXT, DKIM TXT). Open a 2nd tab → Vercel → kira-research → Settings → Domains → click `kiraresearch.com` → DNS Records → add the 3 records exactly as shown by Resend. Wait a few minutes, then click "Verify" in Resend.
-   - Resend → API Keys → "Create API Key" → name "kira-prod" → permission "Full access" → copy the `re_...` key
-   - Vercel → kira-research → Settings → Environment Variables → add **`RESEND_API_KEY`** = `re_...` to all 3 scopes (Production, Preview, Development), then go to Deployments → latest → ⋯ → Redeploy
-   - (Optional) Override the From address by setting **`RESEND_FROM`** = `"KIRA RESEARCH <noreply@kiraresearch.com>"` — defaults to that string if unset.
-   - **Until domain is verified**, the `RESEND_API_KEY` can still be set but live sends will fail; receipts + lead notifications no-op silently. The site still works — emails just don't go out.
+1. ☐ **Run `supabase/migrations/008_security_hardening.sql`** in dashboard SQL Editor — closes 3 Supabase advisor findings left over after 001-007:
+   - (a) ERROR: `credit_costs` had RLS disabled (anon could read 12 rows). Migration enables RLS with no policies → deny-all for anon/authenticated, service-key bypasses (so the deferred Custom Research rebuild can still query).
+   - (b) WARN: `add_credits` + `spend_credits` SECURITY DEFINER functions were callable by anon/authenticated via `/rest/v1/rpc/*`. Migration revokes EXECUTE from public/anon/authenticated. Functions remain in the DB for the deferred rebuild.
+   - (c) WARN: 3 functions (`add_credits`, `spend_credits`, `set_updated_at`) had mutable search_path. Migration pins to empty.
+   - Idempotent. Run after confirming 001-007 are all applied (they are, per 2026-05-21 verification).
+2. ☐ **Enable Leaked Password Protection** — Supabase dashboard → Authentication → Settings → toggle "Leaked password protection" ON. Auth feature, no SQL path.
 
 ### Done (no further action needed)
 
+- ✅ **Migrations 001-007 applied** (verified via MCP 2026-05-21): leads, living_reports + report_translations, insights + insight_translations, purchases + downloads tables present; 6 legacy tables dropped; `aggregator_submissions` + `aggregator_sales` exist with RLS enabled.
+- ✅ **Legacy Storage buckets deleted** (owner confirmed 2026-05-21): `frameworks` (23 obj) + `reports` (132 obj, ~38MB) removed via Dashboard → Storage UI. Active bucket `reports-pdfs` (private, 32MB cap, application/pdf) remains for PDF uploads.
+- ✅ **Vercel env vars set**: `ADMIN_EMAILS`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_MODE`, `APP_URL`, `RESEND_API_KEY` (+ optional `RESEND_FROM`).
+- ✅ **Resend domain verified + API key live** — purchase receipts + lead notifications go out for real (no longer no-op).
+- ✅ **GSC sitemaps submitted** — `sitemap-{en,ja,ko}.xml` added per locale property.
 - ✅ Repo is public, GitHub Actions running free
-- ✅ Smoke CI workflow live and green (41 checks)
+- ✅ Smoke CI workflow live and green (58 checks)
 - ✅ `/en/reports/<slug>` + `/en/insights/<slug>` rewrites verified by CI
 - ✅ Legacy URL redirects (`/library.html`, `/report.html`, etc.) verified by CI
 - ✅ Admin auth gate on `/en/admin/*` verified — unauthenticated users redirected
 - ✅ Public API endpoints respond with JSON, leads endpoint rejects GET, admin-leads rejects unauth
 - ✅ SEO surface live: `/robots.txt`, `/sitemap.xml` (index), `/sitemap-{en,ja,ko}.xml` (per-locale with embedded hreflang). Per-page `<link rel="alternate">` injected by nav.js on every page load.
-
-### New owner action (unblocked by SEO sprint)
-
-4. ☐ **Submit sitemap to Google Search Console** — once per locale property:
-   - GSC → Property → Sitemaps → add `https://kiraresearch.com/sitemap-en.xml`, same for `ja` and `ko`
-   - Requires domain ownership verification first (DNS TXT or `google-site-verification` meta tag on `index.html`)
-   - Optional: submit `https://kiraresearch.com/sitemap.xml` (the index) once for any property
 
 ---
 
@@ -206,20 +187,31 @@ Status as of 2026-05-21:
 
 **Newly surfaced + addressed (2026-05-21 session):** Supabase advisor flagged 5 platform-era tables with RLS disabled and 0 code refs (`source_reports` 204 rows, `report_chunks` 2436, `competency_templates` 10, `industry_patterns` 925, `credit_costs` 12) plus 4 more dead tables (`custom_reports` 39, `user_credits` 1, `credit_transactions` 28, `chat_history` 0, `contacts` 0) + 2 dead storage buckets (`reports` 132 objects ~38MB, `frameworks` 23 objects ~650KB) + 5 dead functions. **Cleanup migration `006_drop_legacy.sql` written + pushed this session** — scoped to drop 6 unambiguously-deprecated tables + 2 buckets + 2 RAG functions. The 4 credit/`custom_reports` tables + their paired functions are kept per `project des/CLAUDE.md` Custom Research backend earmark. Owner runs migration 006 via Supabase SQL Editor (item 6 above). After applied, re-check Supabase advisor — RLS-disabled count should drop from 5 to 1 (only `credit_costs` remaining; addressable separately with a `enable row level security` + deny-all policy if it stays unused).
 
-## Next queue (pick one)
+## Next queue (recommended order)
 
 Aligned with the workplan phase/sprint structure. Each item maps to one or
-more pending sprints in `project des/workplan.md`. Recommended order:
+more pending sprints in `project des/workplan.md`. Working through these
+sequentially per owner request (2026-05-21):
 
-- ~~**C — Sitemap.xml + robots.txt + full hreflang**~~ ✅ **DONE** (`6bb331f`…`8bcb6d4`). Closed Sprint 3.3, ~70% of 8.1+9.1; 7.3 partial.
-- ~~**D — PDF upload via Supabase Storage**~~ ✅ **DONE** (this session). New `api/admin-upload-pdf.js` accepts base64 PDF + report_id + locale, writes to private bucket `reports-pdfs/{id}/{locale}.pdf`, patches `report_translations.pdf_url` to the path. `api/library-content.js` resolves paths → 1-hour signed URLs; external URLs pass through. Admin UI on `/en/admin/reports` edit pane has file picker + Upload button. Migration `005_storage.sql` creates the bucket. Closes 6.2 upload/delivery half.
-- ~~**E — Transactional email**~~ ✅ **DONE** (this session). `api/_lib/email.js` exposes `sendPurchaseReceipt` + `sendLeadNotification`, posts to Resend. Wired into `library-buy.js` (capture step) and `leads.js` (post-insert) as fire-and-forget — never blocks the API response, no-ops silently when `RESEND_API_KEY` is unset. Owner runs Resend domain-verify + adds env var (action item 5). 2 new smoke tests.
-- ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅ **DONE** (this session). `_view.html` for reports + insights inject per-page OG/Twitter Card + Product/Article JSON-LD + BreadcrumbList. `nav.js` injects Organization JSON-LD globally. 4 new smoke tests cover it (45 total now).
-- ~~**4.3 — Transactions + Users admin**~~ ✅ **DONE** (this session). `/en/admin/transactions` (list + click-to-expand detail + "Mark as refunded" button — Year 1 flips DB status only, actual PayPal refund still manual). `/en/admin/users` (read-only roll-up of buyers with total_spend, completed/refunded counts, locales bought, first/last purchase). 2 new API endpoints, 2 new pages, 4 new smoke checks. Also fixed pre-existing `admin-stats.js` column-name bug — dashboard revenue card was reading non-existent `amount_usd`/`report_slug` fields and silently showing $0.
-- ~~**F — Legacy file cleanup**~~ ✅ **DONE** (`a8a9206`). 29 files / 11,138 lines removed. Closed Sprints 2.3 + 5.3.
-- ~~**H — KPI dashboard + audit log**~~ ✅ **DONE — dashboard shipped** (`eb05464`). Closed Sprint 4.1 dashboard half. Audit log deferred.
-- **G — Native reviewer QA pass on JA/KO copy** → fills Sprint **8.1** + **9.1** native reviewer items.
-  Ship JA/KO drafts to a native Upwork reviewer ($50-100/locale), fold fixes back in. First 10-20 reports per locale per `project des/CLAUDE.md`.
+1. **Migration 008 security hardening** (this session) — code shipped, owner runs SQL + toggles leaked-pwd setting (action items above).
+2. **Sprint 7.1 — Insights blog UI pagination** → `/en/insights` shows all rows; add page param to `insights-list` API + Prev/Next UI on list page across 3 locales.
+3. **Phase 10.1 — Mobile QA + Lighthouse perf audit** → exercise viewport ≤375px on key pages; run Lighthouse on prod (perf/SEO/a11y/best-practices), fix regressions before soft launch.
+4. **Sprint 5.1 — Rebuild 3 custom-research tool pages** → `/custom-research/{...}` currently redirect-only. Rebuild as research-on-demand landing pages per workplan.
+5. **Sprint 7.2 — Auto-insights cron + SEO articles re-design** → legacy `api/cron-insights.js` needs scoping discussion before code: source, trigger, guardrails.
+
+**Owner-side (parallel):**
+- **G — Native reviewer QA pass on JA/KO copy** → Sprint 8.1 + 9.1. Ship JA/KO drafts to native Upwork reviewer ($50-100/locale), fold fixes back. First 10-20 reports per locale per `project des/CLAUDE.md`.
+
+### Done backlog (reference)
+
+- ~~**C — Sitemap.xml + robots.txt + full hreflang**~~ ✅ (`6bb331f`…`8bcb6d4`)
+- ~~**D — PDF upload via Supabase Storage**~~ ✅ (Sprint 2026-05-20)
+- ~~**E — Transactional email**~~ ✅ (Sprint 2026-05-20) — Resend wired, owner verified domain 2026-05-21
+- ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅
+- ~~**4.3 — Transactions + Users admin**~~ ✅ — also fixed `admin-stats.js` revenue $0 bug
+- ~~**4.4 — Aggregators admin**~~ ✅ (`e7d5372` + migration 007)
+- ~~**F — Legacy file cleanup**~~ ✅ (`a8a9206`)
+- ~~**H — KPI dashboard**~~ ✅ (`eb05464`) — audit log deferred
 
 ---
 
@@ -302,4 +294,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 evening (items C + F + H + 7.3-remainder + D shipped — sitemap, legacy cleanup, admin dashboard, per-page schema/OG, PDF Storage upload pipeline. Also: 4 migration robustness fixes for legacy schema collision, 2 production bug fixes (module parse error + nav.js 404 on /auth). Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed; 7.3 + 6.2 advanced to mostly-done. Latest commit `7c2112b`. Owner switched machines at end of session — see "Open verification items" above for handover.)*
+*Last updated: 2026-05-21 (owner ran migrations 001-007 + deleted legacy Storage buckets + set Resend + all Vercel env vars + submitted GSC sitemaps. Phase 4 admin backend wired end-to-end on prod. New: migration 008_security_hardening.sql written to close 3 Supabase advisor flags (RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path) — owner runs SQL + toggles Leaked Password Protection in Auth UI. Next queue locked sequential per owner request: 7.1 → 10.1 → 5.1 → 7.2.)*
