@@ -24,13 +24,18 @@
 
 ---
 
-## Current state (2026-05-21 — late session)
+## Current state (2026-05-21 — QC infra session)
 
-- **Latest commit on `main`:** `3f250e5` — feat(admin): Sprint 4.1 admin audit log (close last Phase 4 deferred item). Session shipped 10 sprints: migration 008 security hardening · Sprint 7.1 insights pagination · Phase 10.1 mobile smoke + Lighthouse runbook · Sprint 5.1 custom-research subpages (EN/JA/KO × market-analysis + strategy-builder) · Sprint 7.2 content production admin (re-scoped from auto-gen) · Vercel Analytics wiring · Sprint 4.2 report stats · internal linking (related insights on report pages) · branded 404 EN/JA/KO · Sprint 4.1 audit log.
+- **Latest commit on `main`:** `ee6498d` — ci(smoke): trigger on deployment_status. QC infra session shipped 5 commits: Dependabot + CodeQL · ESLint flat config + 5 real-bug fixes caught by it · `<link rel=canonical>` injection · Lighthouse CI workflow · smoke trigger switched from push+sleep to deployment_status. Plus 2 fixes earlier in day: auth.html nav layout + Speed Insights drop. Migration 009 audit log applied via Supabase SQL Editor; admin sign-in + audit viewer + KPI dashboard verified live.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** verify `3f250e5` in Actions tab. 78 smoke checks should pass on prod (was 58 at session start).
-- **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 78 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales (incl. 2 new custom-research subpages = 6 routes), slug rewrites, root redirect, legacy redirects (now retargeted to specific subpages), admin auth gates (incl. new `/en/admin/audit`), public APIs (incl. relatedInsights field on library-report), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD + 2 new custom-research subpages in sitemap)**, **dynamic templates have no fatal module parse error**, **/auth has no sub-resource 404s**, **/api/_lib/email is not a public route**, **lead honeypot path returns 200 JSON**, **insights pagination (`?page=2` survives)**, **mobile viewport 375×667 has no horizontal scroll across 6 key pages + nav burger visible**, **branded 404 returns status 404 + locale-swapped title for /ja/missing-path**.
+- **Last fully-verified green CI run:** verify `ee6498d` (or latest) in Actions tab. 79 smoke checks should pass on prod.
+- **CI workflows:**
+  - `post-deploy-smoke.yml` — Playwright 79 checks against prod, **triggered on `deployment_status` (state=success, env=Production)** — no longer push+sleep
+  - `quality.yml` — ESLint on push + PR (rules: `no-undef`, `no-unused-vars`)
+  - `codeql.yml` — security-extended JS scanning on push + PR + weekly
+  - `lighthouse.yml` — LHCI 3-run audit on 6 prod URLs, manual + weekly (not per-push)
+  - `dependabot.yml` config — weekly npm + GH-actions updates, grouped minor/patch
+- **Smoke tests:** 79 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales (incl. 2 new custom-research subpages = 6 routes), slug rewrites, root redirect, legacy redirects (now retargeted to specific subpages), admin auth gates (incl. `/en/admin/audit`), public APIs (incl. relatedInsights field on library-report), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD + canonical link with utm-strip)**, **dynamic templates have no fatal module parse error**, **/auth has no sub-resource 404s**, **/api/_lib/email is not a public route**, **lead honeypot path returns 200 JSON**, **insights pagination (`?page=2` survives)**, **mobile viewport 375×667 has no horizontal scroll across 6 key pages + nav burger visible**, **branded 404 returns status 404 + locale-swapped title for /ja/missing-path**.
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
@@ -202,7 +207,9 @@ Status as of 2026-05-21 late session:
 
 ## Next queue
 
-All sprints with a code-side deliverable are now SHIPPED. Phase status:
+All sprints with a code-side deliverable are now SHIPPED. QC baseline
+(lint, code scanning, deps updates, perf budget) also shipped this
+session — see "Done backlog (QC infra session)" below.
 
 **Code blocker = 0.** What's left is either owner-side (content + outreach)
 or polish that can wait for actual signal from production traffic.
@@ -214,14 +221,27 @@ or polish that can wait for actual signal from production traffic.
 - **Sprint 8.3 — JA aggregator distribution (GIIResearch)** — Henry's outreach work, fully manual Year 1.
 - **Sprint 9.3 — KO aggregator distribution** — same pattern as JA.
 - **G — Native reviewer QA pass on JA/KO** — first 10-20 reports per locale, $50-100/locale on Upwork.
-- **Phase 10 — Polish & launch** — Lighthouse audit (runbook in CLAUDE.md owner action 4), mobile visual QA on real iOS/Android, soft launch announcement, 30-day metrics monitoring.
+- **Phase 10 — Polish & launch** — Lighthouse CI is now wired (`lighthouse.yml`, manual + weekly); owner can trigger via Actions tab before soft launch. Mobile visual QA on real iOS/Android still owner-side. Soft launch announcement + 30-day metrics monitoring next.
 
 **Possible future code work (only when signal justifies):**
+- **Sentry error tracking** — deferred from QC session, needs owner to create Sentry account + add `SENTRY_DSN` env var. Wire frontend (browser SDK injected via nav.js) + serverless (per-function init). MCP server already configured.
 - **Sprint 4.2 — featured ranking drag-drop** — needs `featured` + `featured_rank` columns on `living_reports`. Build when Henry wants manual library curation.
 - **Phase 7.3 — internal linking expansion** — Sprint 8 shipped insights-on-report. Could extend to insights-cross-link-insights, or reports-cross-link-reports. Defer until content corpus grows.
-- **Vercel Analytics → admin dashboard** — once owner enables Analytics + Speed Insights, the API exposes per-page view counts. Could surface in `/en/admin/reports` Stats column. Defer until there's data.
+- **Vercel Analytics → admin dashboard** — Web Analytics is enabled; once Year 1 traffic is non-trivial, the API exposes per-page view counts. Could surface in `/en/admin/reports` Stats column. Defer until there's data.
+- **Re-add sign-out to public nav** — currently only available on admin pages. Users who buy a report can't sign out from any public page; would need nav.js to render an auth control when `kiraAuth.getUser()` returns a user.
 
-### Done backlog (this 2026-05-21 session — 10 sprints)
+### Done backlog (QC infra session — 2026-05-21 evening)
+
+- ✅ **Dependabot** (`a87fa77`) — weekly npm + GH-actions updates, minor/patch grouped per ecosystem, majors get their own PR. Daily security advisories still fire instantly.
+- ✅ **CodeQL** (`a87fa77`) — security-extended JS scanning on push + PR + weekly cron. Findings show up in repo Security tab.
+- ✅ **ESLint flat config** (`b8ca9e3`) — `no-undef` + `no-unused-vars` only, globals partitioned per folder. `quality.yml` CI gate. Initial pass surfaced 5 real bugs in `api/admin-*`: undeclared `user` in admin-aggregators (was `me`), `const row` redeclared in admin-reports + admin-insights translation upsert, unused `catch (e)` in leads + library-content.
+- ✅ **Canonical tag** (`2091e7c`) — `<link rel="canonical">` injected by nav.js on every page, hardcoded to `https://kiraresearch.com` + pathname. Strips utm_*/fbclid/etc. — important for FB Ads attribution + indexing hygiene. 1 new smoke test.
+- ✅ **Lighthouse CI** (`ade8208`) — `.lighthouserc.json` + `lighthouse.yml`. 3-run audit against 6 prod URLs (3 locales × key pages). Budgets: Perf ≥ 0.85, A11y ≥ 0.90, Best Practices ≥ 0.90, SEO ≥ 0.95. Manual + weekly cron — not per-push.
+- ✅ **Smoke trigger fix** (`ee6498d` + `3b39c54`) — switched from `push` + sleep(60) + curl-200 to `deployment_status` (state=success, env=Production). Eliminates the race where smoke could pass on stale cached prod code. Concurrency block dropped after first run got killed mid-step by overlapping preview deploys.
+- ✅ **auth.html layout fix** (`243bde5`) — dropped `/js/nav.js` from the chromeless sign-in page; nav was injecting unstyled header/footer that flex-aligned into a visual mess.
+- ✅ **Speed Insights drop** (`d1a4b1d`) — owner opted out (paid product). Removed script injection from nav.js to avoid 404 on every page.
+
+### Done backlog (prior 2026-05-21 session — 10 sprints)
 
 - ✅ **Migration 008 — security hardening** (`714b9f0`) — RLS credit_costs + REVOKE add/spend_credits + pin search_path. Verified live via MCP.
 - ✅ **Sprint 7.1 — Insights pagination** (`8aa3b82`) — PAGE_SIZE=12, `?page=N`, pushState, EN/JA/KO localized.
@@ -277,7 +297,7 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 
 3. **Vercel rewrite slug patterns: keep them plain.** See gotchas #11 and #13 below — `:slug` (no inline regex) + no-extension destination is the only combination that reliably works with cleanUrls. The negative-lookahead pattern `:slug((?!_view$|template$).+)` that worked in earlier Vercel docs is silently dropped by their current parser.
 
-4. **`npm install` not `npm ci` in CI workflow** — no `package-lock.json` committed yet. When/if one is added, switch to `npm ci`.
+4. **`package-lock.json` committed; CI uses `npm ci`.** ESLint + LHCI session added the lock file; all 3 workflows (smoke, quality, lighthouse) use `npm ci --no-audit --no-fund` for reproducibility. Don't downgrade to `npm install`.
 
 5. **No hardcoded secrets in `public/`** — that folder is publicly served. Anon Supabase keys are OK (they're meant to be public, protected by RLS). Anything else = leak.
 
@@ -296,6 +316,10 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 12. **Legacy root HTML files SHADOW redirects** — `public/library.html`, `report.html`, etc. (from the platform era) make their corresponding redirects no-op because filesystem lookup wins. When adding a redirect for a path, ALSO delete the file at that path if it exists.
 
 13. **Rewrite slug patterns: keep them simple.** Vercel's path-to-regexp silently rejects complex inline patterns like `:slug((?!_view$|template$).+)` — the rule loads but never matches. Use plain `:slug` (single segment). Filesystem check runs before rewrites, so concrete files like `_view.html` and `template.html` still serve directly.
+
+14. **`auth.html` is intentionally chromeless** — it has its own inline CSS (centered card) and does NOT link `/css/kira.css`. Don't add `/js/nav.js` to it; nav.js injects the public header + footer into `<body>`, which then renders as unstyled text and gets flex-aligned by the body's centering rules into a visual mess. Sign-out from public nav is intentionally absent (auth UI lives on admin pages); future fix would re-add it to nav.js.
+
+15. **ESLint flat config + 2 rules** — `eslint.config.js` enforces `no-undef` + `no-unused-vars` only. Globals are partitioned per-folder: `public/**/*.js` gets browser globals + `supabase`/`kiraAuth`/`db`/`kira`; `api/**/*.js` + `tests/**/*.js` get Node globals; `tests/**` additionally allows `document`/`window` for `page.evaluate()` callbacks. Don't add stylistic rules — the goal is bug-catching, not formatting. CI gate at `quality.yml`. Bugs the initial pass surfaced: undeclared `user` in `admin-aggregators.js` (actor was named `me`), `const row` redeclared in `admin-{reports,insights}.js` translation upsert.
 
 ---
 
@@ -326,4 +350,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-21 late session — owner switching machines. Big batch shipped: 10 sprints sequential per owner request. Migration 008 (security hardening) confirmed applied via MCP — credit_costs RLS enabled, REVOKE EXECUTE confirmed, search_path pinned. Migration 009 (audit log) **NOT YET RUN** — owner action remaining. Leaked Password Protection toggled ON in Auth (verified via advisor — flag cleared). Vercel Analytics + Speed Insights scripts wired in nav.js — owner needs to flip Enable toggles in Vercel dashboard. Phase 4 admin backend now fully closed (audit log was last deferred item). Phase 5 done (custom-research subpages live). Phase 7.2 re-scoped (no LLM auto-gen, content-production admin instead). Branded 404 + internal linking shipped. Latest commit `3f250e5`. **Code blocker = 0** — only owner-side content production (Phases 1, 6, 8.2, 8.3, 9.2, 9.3) + outreach (G) remaining for full launch.)*
+*Last updated: 2026-05-21 evening — QC infra session. Dependabot + CodeQL + ESLint + Lighthouse CI + canonical tag injection + smoke trigger swap (push+sleep → deployment_status). ESLint surfaced 5 real bugs in admin endpoints (undeclared `user` reference + duplicate `const row` declarations) — all fixed. Owner clicked through: migration 009 applied (audit_log table live), Vercel Analytics enabled, Speed Insights declined as paid (script removed). Admin sign-in + audit viewer + KPI dashboard verified live by owner. PDF upload + sandbox purchase E2E deferred. Latest commit `3b39c54`. **Code blocker = 0** — only owner-side content production (Phases 1, 6, 8.2, 8.3, 9.2, 9.3) + outreach (G) + soft-launch polish (Phase 10, with LHCI now wired) remaining for full launch.)*
