@@ -28,7 +28,7 @@
 
 - **Latest commit on `main`:** `e7d5372` — feat(admin): Sprint 4.4 (Aggregator submissions + sales tracking). Closes Phase 4 admin backend (audit log + report stats/featured + revenue charts still deferred). **Owner ran migrations 001-007, deleted legacy Storage buckets, set Resend + all Vercel env vars, submitted GSC sitemaps (2026-05-21).** Only owner item remaining: run migration `008_security_hardening.sql` + toggle Leaked Password Protection in Auth settings.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 67 smoke checks should pass on prod.
+- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 73 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 60 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users, aggregators), public APIs (incl. admin-transactions + admin-users + admin-aggregators), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
@@ -55,7 +55,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` + PDF upload UI (item D) · stats/featured pending |
 | **4.3** | Transactions + Users admin | ✅ | this session · `/api/admin-transactions` (list/detail/refund PATCH), `/api/admin-users` (aggregates), `/en/admin/transactions.html` + `/en/admin/users.html`, also fixed pre-existing `admin-stats.js` column-name bug (revenue was always 0) |
 | **4.4** | Leads + Aggregators admin | ✅ | `714375a` leads · this session aggregators (`/api/admin-aggregators` + `/en/admin/aggregators` covers submissions + sales + summary; migration 007 adds the 2 tables) |
-| **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt — deferred** |
+| **5.1** | Demote 3 generation tools | ✅ | `692d907`, `74c21c0` redirects + this session: 6 service-line landings (EN/JA/KO × market-analysis, strategy-builder) rebuilt as analyst-led service pages |
 | **5.2** | Kill /studio/ | ✅ | `692d907` |
 | **5.3** | Credit system scoping | ✅ | `a8a9206` · credit system retired entirely Year 1, all platform-era APIs + profile.html removed |
 | **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
@@ -206,7 +206,7 @@ sequentially per owner request (2026-05-21):
 1. ~~**Migration 008 security hardening**~~ ✅ shipped (`714b9f0`). Code closes 3 advisor flags (RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path). Owner runs SQL + toggles leaked-pwd setting (action items above).
 2. ~~**Sprint 7.1 — Insights blog UI pagination**~~ ✅ shipped (`8aa3b82`). PAGE_SIZE=12, `?page=N` URL param, pushState/popstate wired, EN/JA/KO inline-localized. Pager renders only when total > PAGE_SIZE. 2 new smoke tests.
 3. **Phase 10.1 — Mobile QA + Lighthouse perf audit** (in progress) → code-side slice: mobile-viewport smoke tests at 375×667 across 6 key pages + Lighthouse runbook for owner.
-4. **Sprint 5.1 — Rebuild 3 custom-research tool pages** → `/custom-research/{...}` currently redirect-only. Rebuild as research-on-demand landing pages per workplan.
+4. ~~**Sprint 5.1 — Rebuild custom-research service-line pages**~~ ✅ shipped (this session). 6 new pages: `/{en,ja,ko}/custom-research/{market-analysis,strategy-builder}/`. Each is an analyst-led service landing — hero + when-to-commission + what-we-cover + deliverable + CTA → parent form. Sitemap + legacy redirect retargeting included. 6 new smoke tests (73 total).
 5. **Sprint 7.2 — Auto-insights cron + SEO articles re-design** → legacy `api/cron-insights.js` needs scoping discussion before code: source, trigger, guardrails.
 
 **Owner-side (parallel):**

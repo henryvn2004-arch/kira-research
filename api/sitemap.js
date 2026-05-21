@@ -34,13 +34,15 @@ const X_DEFAULT  = 'en';
 // Static pages present in every locale. Path is relative to /<locale>.
 // changefreq/priority are advisory; we set them once here per page type.
 const STATIC_PAGES = [
-  { path: '',                    changefreq: 'weekly',  priority: '1.0' },  // homepage
-  { path: 'library',             changefreq: 'daily',   priority: '0.9' },
-  { path: 'insights/',           changefreq: 'daily',   priority: '0.8' },
-  { path: 'about',               changefreq: 'monthly', priority: '0.6' },
-  { path: 'methodology',         changefreq: 'monthly', priority: '0.6' },
-  { path: 'pricing',             changefreq: 'monthly', priority: '0.6' },
-  { path: 'custom-research/',    changefreq: 'monthly', priority: '0.7' }
+  { path: '',                                     changefreq: 'weekly',  priority: '1.0' },  // homepage
+  { path: 'library',                              changefreq: 'daily',   priority: '0.9' },
+  { path: 'insights/',                            changefreq: 'daily',   priority: '0.8' },
+  { path: 'about',                                changefreq: 'monthly', priority: '0.6' },
+  { path: 'methodology',                          changefreq: 'monthly', priority: '0.6' },
+  { path: 'pricing',                              changefreq: 'monthly', priority: '0.6' },
+  { path: 'custom-research/',                     changefreq: 'monthly', priority: '0.7' },
+  { path: 'custom-research/market-analysis/',     changefreq: 'monthly', priority: '0.7' },
+  { path: 'custom-research/strategy-builder/',    changefreq: 'monthly', priority: '0.7' }
 ];
 
 // ── Supabase helper (read-only, anon-safe with service key) ──

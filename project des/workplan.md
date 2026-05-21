@@ -17,7 +17,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 | 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5`. Removal cleanup finalized in `a8a9206` (29 legacy files gone). |
 | 3 | Library infrastructure | ✅ | 3.1 + 3.2 + 3.3 all done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`, `8bcb6d4`). Sitemap + hreflang shipped. |
 | 4 | Admin backend | 🟡 | 4.1 auth + dashboard ✅ (`714375a`, `eb05464`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 audit log deferred, 4.3 transactions+users pending, 4.4 aggregator tracking pending** |
-| 5 | Tool demotion + Studio kill | 🟡 | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206` (legacy gone, library uses direct PayPal). **Tool pages at `/custom-research/{market-analysis,strategy-builder}` not rebuilt — currently just redirect to landing.** |
+| 5 | Tool demotion + Studio kill | ✅ | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206`. Sprint 5.1 service-line subpages rebuilt EN/JA/KO this session — `/custom-research/{market-analysis,strategy-builder}` now live as senior-analyst-led service landings (no functional AI tool). |
 | 6 | Report population | 🟡 | 6.2 PDF upload + Storage delivery shipped (item D, this session); content production still owner-blocked. |
 | 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`), per-page schema/OG ✅ (this commit). **7.2 auto-insights cron + 7.3 internal linking + GSC submission pending.** |
 | 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`) + hreflang/sitemap-ja.xml ✅ (`8bcb6d4`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
@@ -170,8 +170,8 @@ Week 10-12 →  Phase 10: Polish & Launch
 **Goal:** Clean up site IA, demote tools, kill Studio products
 
 ### Sprint 5.1 — Demote 3 generation tools
-- [ ] Move `report.html` → `/custom-research/market-analysis` — **legacy file DELETED (`74c21c0`); page itself NOT rebuilt at new path. Redirect points to landing.**
-- [ ] Move `strategy-builder.html` → `/custom-research/strategy-builder` — **same as above**
+- [x] Move `report.html` → `/custom-research/market-analysis` — service-line landing page rebuilt across EN/JA/KO. 6 new files at `public/{en,ja,ko}/custom-research/market-analysis/index.html`. Hero + when-to-commission + what-we-cover + typical deliverable + CTA → parent form anchor. Sitemap entries added. Legacy `/report` redirect retargeted from landing → this subpage.
+- [x] Move `strategy-builder.html` → `/custom-research/strategy-builder` — same treatment. 6 new files. Legacy `/strategy-builder` redirect retargeted.
 - [x] Update nav: tools no longer in main nav, only under Custom Research dropdown
 - [x] Create `/custom-research` landing explaining when to use custom vs library
 - [x] Add "Talk to our team" lead capture form (`/api/leads` POST)

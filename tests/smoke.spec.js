@@ -18,13 +18,15 @@ import { test, expect } from '@playwright/test';
 //   • The shared <nav> got injected by /js/nav.js (logo mark visible)
 //   • <html lang> is the locale we requested
 const STATIC_PAGES = [
-  '/',                            // homepage
+  '/',                                          // homepage
   '/library',
   '/about',
   '/methodology',
   '/pricing',
-  '/custom-research/',            // folder route
-  '/insights/'                    // folder route
+  '/custom-research/',                          // landing
+  '/custom-research/market-analysis/',          // Sprint 5.1 service line
+  '/custom-research/strategy-builder/',         // Sprint 5.1 service line
+  '/insights/'                                  // folder route
 ];
 
 for (const locale of ['en', 'ja', 'ko']) {
@@ -138,13 +140,15 @@ test('root / redirects to a supported locale', async ({ page }) => {
 // rewrite-then-redirect sequences. We use page.url() with waitUntil:'load'
 // to read the browser's final landing URL, which is the user-facing truth.
 test.describe('legacy redirects (vercel.json)', () => {
-  test('/report.html → /en/custom-research/', async ({ page }) => {
+  test('/report.html → /en/custom-research/market-analysis/', async ({ page }) => {
+    // Sprint 5.1: legacy /report now lands on the dedicated service-line page,
+    // not the parent. More relevant context for the user, slightly better SEO.
     await page.goto('/report.html', { waitUntil: 'load' });
-    expect(page.url()).toContain('/en/custom-research');
+    expect(page.url()).toContain('/en/custom-research/market-analysis');
   });
-  test('/strategy-builder.html → /en/custom-research/', async ({ page }) => {
+  test('/strategy-builder.html → /en/custom-research/strategy-builder/', async ({ page }) => {
     await page.goto('/strategy-builder.html', { waitUntil: 'load' });
-    expect(page.url()).toContain('/en/custom-research');
+    expect(page.url()).toContain('/en/custom-research/strategy-builder');
   });
   test('/library.html → /en/library', async ({ page }) => {
     await page.goto('/library.html', { waitUntil: 'load' });
@@ -339,6 +343,9 @@ test.describe('SEO surface', () => {
       expect(body).toContain('<urlset');
       // Static pages always present even when DB is empty/unmigrated.
       expect(body).toContain(`/${locale}/library`);
+      // Sprint 5.1 service-line landings — must surface for SEO.
+      expect(body).toContain(`/${locale}/custom-research/market-analysis/`);
+      expect(body).toContain(`/${locale}/custom-research/strategy-builder/`);
       // hreflang alternates must be declared inline for every URL.
       expect(body).toMatch(/xhtml:link[^>]*hreflang=/);
     });
