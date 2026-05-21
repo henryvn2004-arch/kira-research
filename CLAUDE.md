@@ -24,13 +24,13 @@
 
 ---
 
-## Current state (2026-05-21)
+## Current state (2026-05-21 — late session)
 
-- **Latest commit on `main`:** `e7d5372` — feat(admin): Sprint 4.4 (Aggregator submissions + sales tracking). Closes Phase 4 admin backend (audit log + report stats/featured + revenue charts still deferred). **Owner ran migrations 001-007, deleted legacy Storage buckets, set Resend + all Vercel env vars, submitted GSC sitemaps (2026-05-21).** Only owner item remaining: run migration `008_security_hardening.sql` + toggle Leaked Password Protection in Auth settings.
+- **Latest commit on `main`:** `3f250e5` — feat(admin): Sprint 4.1 admin audit log (close last Phase 4 deferred item). Session shipped 10 sprints: migration 008 security hardening · Sprint 7.1 insights pagination · Phase 10.1 mobile smoke + Lighthouse runbook · Sprint 5.1 custom-research subpages (EN/JA/KO × market-analysis + strategy-builder) · Sprint 7.2 content production admin (re-scoped from auto-gen) · Vercel Analytics wiring · Sprint 4.2 report stats · internal linking (related insights on report pages) · branded 404 EN/JA/KO · Sprint 4.1 audit log.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 78 smoke checks should pass on prod.
+- **Last fully-verified green CI run:** verify `3f250e5` in Actions tab. 78 smoke checks should pass on prod (was 58 at session start).
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 60 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users, aggregators), public APIs (incl. admin-transactions + admin-users + admin-aggregators), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
+- **Smoke tests:** 78 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales (incl. 2 new custom-research subpages = 6 routes), slug rewrites, root redirect, legacy redirects (now retargeted to specific subpages), admin auth gates (incl. new `/en/admin/audit`), public APIs (incl. relatedInsights field on library-report), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD + 2 new custom-research subpages in sitemap)**, **dynamic templates have no fatal module parse error**, **/auth has no sub-resource 404s**, **/api/_lib/email is not a public route**, **lead honeypot path returns 200 JSON**, **insights pagination (`?page=2` survives)**, **mobile viewport 375×667 has no horizontal scroll across 6 key pages + nav burger visible**, **branded 404 returns status 404 + locale-swapped title for /ja/missing-path**.
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
@@ -190,41 +190,60 @@ These are tasks only the owner can do (involve dashboards, not git):
 
 End of 2026-05-20 session: code is shipped, owner has owner-blocker items still in progress. New session should confirm these are green before starting any new sprint, since several next-queue items depend on this infra being live.
 
-Status as of 2026-05-21:
+Status as of 2026-05-21 late session:
 
-1. ✅ **CI green on `2914317`** — last 5 GitHub Actions runs all success (per API check). All 50 smoke checks pass on prod.
-2. ✅ **Supabase tables + storage bucket verified via MCP** — `living_reports` (8 rows), `report_translations` (1), `insights` (7), `insight_translations` (7), `purchases` (1), `downloads` (0), `leads` (0). Storage bucket `reports-pdfs` exists (private, 32MB cap, `application/pdf` only).
-3. ☐ **Bug #1 admin redirect** — still owner-side. Henry must sign in properly at `/auth` (email+password, not just email-verify), then visit `/en/admin/`. Confirm KPI dashboard renders. If still bounced, check `ADMIN_EMAILS` Vercel env value matches his account email and Vercel redeployed after adding the var.
-4. ✅ **Bug #2 + #4 verified by CI** — smoke tests on commit `2914317` exercise the exact `script#ld-product`, `#ld-breadcrumb`, `#ld-article`, `#ld-organization` selectors AND `pageerror` SyntaxError filter on `/en/reports/vietnam-fintech-2026` and `/en/insights/vietnam-sme-lending-shift`. Both API endpoints confirmed serving seed data (8 reports, 7 insights), so the data-conditional tests in the suite actually ran the assertions rather than skipping. Optional Rich Results "Test live URL" can re-confirm in Google's eyes.
-5. ☐ **End-to-end PDF upload + purchase** — still owner-side. Once admin works (item 3), upload test PDF via `/en/admin/reports` → buy in incognito with non-admin PayPal sandbox account → download via post-purchase link.
+1. ✅ **CI green** — verify on commit `3f250e5`. 78 smoke checks should all pass.
+2. ✅ **Supabase tables + storage buckets verified via MCP** — all 7 migrations 001-007 applied. Migration 008 verified (credit_costs RLS=true, EXECUTE grants=0, search_path pinned). Legacy buckets (`frameworks`, `reports`) deleted. `reports-pdfs` private bucket remains.
+3. ☐ **Bug #1 admin redirect (Year 1 test)** — owner-side smoke. Henry must sign in at `/auth` (email+password, not just email-verify), then visit `/en/admin/`. Confirm KPI dashboard renders. If still bounced, check `ADMIN_EMAILS` Vercel env value matches account email. Note: Henry confirmed ADMIN_EMAILS is set, so should work on next attempt.
+4. ✅ **Schema markup / Article JSON-LD verified by CI** — smoke tests cover `script#ld-product`, `#ld-breadcrumb`, `#ld-article`, `#ld-organization` selectors + `pageerror` filter on `/en/reports/vietnam-fintech-2026` and `/en/insights/vietnam-sme-lending-shift`.
+5. ☐ **End-to-end PDF upload + purchase (Year 1 test)** — owner-side. Once admin works (item 3), upload test PDF via `/en/admin/reports` → buy in incognito with non-admin PayPal sandbox account → download via post-purchase link.
+6. ☐ **Migration 009 run** — owner runs `supabase/migrations/009_audit_log.sql` to create `audit_log` table. Until then, `/en/admin/audit` viewer shows empty + all `logAudit()` calls in admin endpoints fail silently (no functional impact, but no audit trail captured).
+7. ☐ **Vercel Analytics + Speed Insights enabled** — owner toggles both in Vercel dashboard. Scripts already injected by nav.js, just need the products turned on to receive data.
 
-**Newly surfaced + addressed (2026-05-21 session):** Supabase advisor flagged 5 platform-era tables with RLS disabled and 0 code refs (`source_reports` 204 rows, `report_chunks` 2436, `competency_templates` 10, `industry_patterns` 925, `credit_costs` 12) plus 4 more dead tables (`custom_reports` 39, `user_credits` 1, `credit_transactions` 28, `chat_history` 0, `contacts` 0) + 2 dead storage buckets (`reports` 132 objects ~38MB, `frameworks` 23 objects ~650KB) + 5 dead functions. **Cleanup migration `006_drop_legacy.sql` written + pushed this session** — scoped to drop 6 unambiguously-deprecated tables + 2 buckets + 2 RAG functions. The 4 credit/`custom_reports` tables + their paired functions are kept per `project des/CLAUDE.md` Custom Research backend earmark. Owner runs migration 006 via Supabase SQL Editor (item 6 above). After applied, re-check Supabase advisor — RLS-disabled count should drop from 5 to 1 (only `credit_costs` remaining; addressable separately with a `enable row level security` + deny-all policy if it stays unused).
+## Next queue
 
-## Next queue (recommended order)
+All sprints with a code-side deliverable are now SHIPPED. Phase status:
 
-Aligned with the workplan phase/sprint structure. Each item maps to one or
-more pending sprints in `project des/workplan.md`. Working through these
-sequentially per owner request (2026-05-21):
+**Code blocker = 0.** What's left is either owner-side (content + outreach)
+or polish that can wait for actual signal from production traffic.
 
-1. ~~**Migration 008 security hardening**~~ ✅ shipped (`714b9f0`). Code closes 3 advisor flags (RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path). Owner runs SQL + toggles leaked-pwd setting (action items above).
-2. ~~**Sprint 7.1 — Insights blog UI pagination**~~ ✅ shipped (`8aa3b82`). PAGE_SIZE=12, `?page=N` URL param, pushState/popstate wired, EN/JA/KO inline-localized. Pager renders only when total > PAGE_SIZE. 2 new smoke tests.
-3. **Phase 10.1 — Mobile QA + Lighthouse perf audit** (in progress) → code-side slice: mobile-viewport smoke tests at 375×667 across 6 key pages + Lighthouse runbook for owner.
-4. ~~**Sprint 5.1 — Rebuild custom-research service-line pages**~~ ✅ shipped (this session). 6 new pages: `/{en,ja,ko}/custom-research/{market-analysis,strategy-builder}/`. Each is an analyst-led service landing — hero + when-to-commission + what-we-cover + deliverable + CTA → parent form. Sitemap + legacy redirect retargeting included. 6 new smoke tests (73 total).
-5. ~~**Sprint 7.2 — Auto-insights cron + SEO articles re-design**~~ ✅ shipped (this session). Re-scoped 2026-05-21 after owner discussion: **no LLM auto-generation** (brand-voice conflict with "research house, never lead with AI"). Built content-production admin instead — `published_at` datetime input drives schedule gating, public APIs filter `published_at <= now()` so future-dated rows stay hidden until publish-time (no cron). Related-report CTA copy upgraded to "Get the full report" headline + per-card CTA.
+**Owner-side (does NOT need Claude):**
+- **Content production (Phases 1 + 6)** — produce 50+ EN reports via Henry's Claude-chat workflow (Max sub). Each report: pick from 1000-report archive → Claude refresh → translate to JA + KO → native reviewer QA → upload via `/en/admin/reports`.
+- **Sprint 8.2 — JA report translations** — same workflow, paste EN into Claude chat → JA.
+- **Sprint 9.2 — KO report translations** — same workflow, KO.
+- **Sprint 8.3 — JA aggregator distribution (GIIResearch)** — Henry's outreach work, fully manual Year 1.
+- **Sprint 9.3 — KO aggregator distribution** — same pattern as JA.
+- **G — Native reviewer QA pass on JA/KO** — first 10-20 reports per locale, $50-100/locale on Upwork.
+- **Phase 10 — Polish & launch** — Lighthouse audit (runbook in CLAUDE.md owner action 4), mobile visual QA on real iOS/Android, soft launch announcement, 30-day metrics monitoring.
 
-**Owner-side (parallel):**
-- **G — Native reviewer QA pass on JA/KO copy** → Sprint 8.1 + 9.1. Ship JA/KO drafts to native Upwork reviewer ($50-100/locale), fold fixes back. First 10-20 reports per locale per `project des/CLAUDE.md`.
+**Possible future code work (only when signal justifies):**
+- **Sprint 4.2 — featured ranking drag-drop** — needs `featured` + `featured_rank` columns on `living_reports`. Build when Henry wants manual library curation.
+- **Phase 7.3 — internal linking expansion** — Sprint 8 shipped insights-on-report. Could extend to insights-cross-link-insights, or reports-cross-link-reports. Defer until content corpus grows.
+- **Vercel Analytics → admin dashboard** — once owner enables Analytics + Speed Insights, the API exposes per-page view counts. Could surface in `/en/admin/reports` Stats column. Defer until there's data.
 
-### Done backlog (reference)
+### Done backlog (this 2026-05-21 session — 10 sprints)
+
+- ✅ **Migration 008 — security hardening** (`714b9f0`) — RLS credit_costs + REVOKE add/spend_credits + pin search_path. Verified live via MCP.
+- ✅ **Sprint 7.1 — Insights pagination** (`8aa3b82`) — PAGE_SIZE=12, `?page=N`, pushState, EN/JA/KO localized.
+- ✅ **Phase 10.1 — Mobile smoke + Lighthouse runbook** (`e416629`) — 7 new smoke tests at 375×667; PageSpeed Insights runbook for owner.
+- ✅ **Sprint 5.1 — Custom-research subpages** (`1185709`) — 6 new pages EN/JA/KO × market-analysis/strategy-builder. Legacy /report + /strategy-builder redirects retargeted.
+- ✅ **Sprint 7.2 — Content production admin** (`07d0af8`) — re-scoped: no LLM auto-gen. `published_at` schedule gate. "Get the full report" CTA upgrade.
+- ✅ **Vercel Analytics + Speed Insights** (`b7f0441`) — script injection via nav.js. Owner enables in dashboard.
+- ✅ **Sprint 4.2 — Report sales stats** (`c601213`) — per-report completed/refunded/revenue in admin list + summary strip.
+- ✅ **Internal linking — related insights on reports** (`49fa73a`) — scored match by country/industry/explicit_related. Up to 3 cards at bottom of report page.
+- ✅ **Branded 404** (`8c96ed1`) — single file, locale auto-detect from URL path. EN/JA/KO copy + 3 action cards.
+- ✅ **Sprint 4.1 — Admin audit log** (`3f250e5`) — migration 009 + `_lib/audit.js` helper + 5 admin endpoints wired + `/en/admin/audit` viewer with filter chips + per-row diff toggle.
+
+### Done backlog (prior sessions)
 
 - ~~**C — Sitemap.xml + robots.txt + full hreflang**~~ ✅ (`6bb331f`…`8bcb6d4`)
-- ~~**D — PDF upload via Supabase Storage**~~ ✅ (Sprint 2026-05-20)
-- ~~**E — Transactional email**~~ ✅ (Sprint 2026-05-20) — Resend wired, owner verified domain 2026-05-21
-- ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅
+- ~~**D — PDF upload via Supabase Storage**~~ ✅
+- ~~**E — Transactional email**~~ ✅ — Resend wired, domain verified
+- ~~**7.3-remainder — Per-report schema markup + OG + JSON-LD**~~ ✅
 - ~~**4.3 — Transactions + Users admin**~~ ✅ — also fixed `admin-stats.js` revenue $0 bug
 - ~~**4.4 — Aggregators admin**~~ ✅ (`e7d5372` + migration 007)
 - ~~**F — Legacy file cleanup**~~ ✅ (`a8a9206`)
-- ~~**H — KPI dashboard**~~ ✅ (`eb05464`) — audit log deferred
+- ~~**H — KPI dashboard**~~ ✅ (`eb05464`)
 
 ---
 
@@ -307,4 +326,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-21 (owner ran migrations 001-007 + deleted legacy Storage buckets + set Resend + all Vercel env vars + submitted GSC sitemaps. Phase 4 admin backend wired end-to-end on prod. New: migration 008_security_hardening.sql written to close 3 Supabase advisor flags (RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path) — owner runs SQL + toggles Leaked Password Protection in Auth UI. Next queue locked sequential per owner request: 7.1 → 10.1 → 5.1 → 7.2.)*
+*Last updated: 2026-05-21 late session — owner switching machines. Big batch shipped: 10 sprints sequential per owner request. Migration 008 (security hardening) confirmed applied via MCP — credit_costs RLS enabled, REVOKE EXECUTE confirmed, search_path pinned. Migration 009 (audit log) **NOT YET RUN** — owner action remaining. Leaked Password Protection toggled ON in Auth (verified via advisor — flag cleared). Vercel Analytics + Speed Insights scripts wired in nav.js — owner needs to flip Enable toggles in Vercel dashboard. Phase 4 admin backend now fully closed (audit log was last deferred item). Phase 5 done (custom-research subpages live). Phase 7.2 re-scoped (no LLM auto-gen, content-production admin instead). Branded 404 + internal linking shipped. Latest commit `3f250e5`. **Code blocker = 0** — only owner-side content production (Phases 1, 6, 8.2, 8.3, 9.2, 9.3) + outreach (G) remaining for full launch.)*
