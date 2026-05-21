@@ -12,7 +12,7 @@
 //     insights:    { total, by_status: { draft, published } },
 //     purchases:   { count, revenue_usd },
 //     recent_leads:     [ { id, name, company, status, created_at }, ... up to 5 ],
-//     recent_purchases: [ { id, report_slug, locale, amount_usd, created_at }, ... up to 5 ]
+//     recent_purchases: [ { id, slug, locale, amount, currency, created_at }, ... up to 5 ]
 //   }
 //
 // Every section gracefully degrades to zero if its table isn't migrated
@@ -103,13 +103,15 @@ export default async function handler(req, res) {
       sb('leads?select=status&limit=10000'),
       sb('living_reports?select=status&limit=10000'),
       sb('insights?select=status&limit=10000'),
-      sb('purchases?select=amount_usd,status&status=eq.completed&limit=10000'),
+      sb('purchases?select=amount,currency,status&status=eq.completed&limit=10000'),
       sb('leads?select=id,name,company,status,created_at,locale&order=created_at.desc&limit=5'),
-      sb('purchases?select=id,report_slug,locale,amount_usd,created_at,status&status=eq.completed&order=created_at.desc&limit=5')
+      sb('purchases?select=id,slug,locale,amount,currency,created_at,status&status=eq.completed&order=created_at.desc&limit=5')
     ]);
 
-    // Aggregate revenue (sum amount_usd of completed purchases).
-    const revenue = purchasesAll.rows.reduce((sum, p) => sum + (parseFloat(p.amount_usd) || 0), 0);
+    // Aggregate revenue (sum amount of completed purchases). All Year 1 prices
+    // are USD so we report a single revenue_usd number; if currency mixing
+    // ever happens this aggregate would need per-currency split.
+    const revenue = purchasesAll.rows.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
 
     res.status(200).json({
       leads: {

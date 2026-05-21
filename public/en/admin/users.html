@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Users — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase JS + auth shim -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .admin-wrap { padding: 60px 0 96px; }
+    .admin-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .admin-head h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: -0.015em;
+    }
+    .admin-head .me {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .admin-head .me a { color: var(--primary); text-decoration: none; margin-left: 12px; }
+
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .users-table th, .users-table td {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .users-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .users-table tbody tr:hover { background: var(--surface); }
+
+    .u-email { font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 600; word-break: break-all; }
+    .u-id    { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .u-when  { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .u-spend { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; }
+    .u-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-right: 4px;
+    }
+    .u-tag.refund { color: #b46400; border-color: rgba(180, 100, 0, 0.4); }
+
+    .admin-empty {
+      padding: 96px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .admin-gate {
+      max-width: 480px;
+      margin: 96px auto;
+      padding: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .admin-gate h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .admin-gate p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .admin-gate code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container admin-wrap" id="admin-wrap">
+
+    <!-- Admin sub-nav (shared chrome) -->
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users" class="active">Users</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div class="admin-head">
+      <div>
+        <h1>Users</h1>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;">People who've bought at least one report. Sorted by most recent purchase.</p>
+      </div>
+      <div style="text-align:right;">
+        <span id="admin-count" style="font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:12px;"></span>
+      </div>
+    </div>
+
+    <div id="admin-content">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    async function ready() {
+      while (!window.kiraAuth) await new Promise(r => setTimeout(r, 30));
+    }
+    await ready();
+
+    const wrap    = document.getElementById('admin-content');
+    const countEl = document.getElementById('admin-count');
+    const meEl    = document.getElementById('admin-me');
+    let session = null;
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    session = (await window.db.auth.getSession()).data.session;
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.kiraAuth.signOut();
+    });
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function fmtMoney(n, ccy) {
+      const x = Number(n) || 0;
+      return (ccy || 'USD') + ' ' + x.toFixed(2);
+    }
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString('en-GB', {
+        year: 'numeric', month: 'short', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    async function fetchUsers() {
+      const r = await fetch('/api/admin-users', {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 401) {
+        wrap.innerHTML = `<div class="admin-gate">
+          <h1>Session expired</h1>
+          <p>Please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.</p>
+        </div>`;
+        return;
+      }
+      if (r.status === 403) {
+        wrap.innerHTML = `<div class="admin-gate">
+          <h1>Not an admin</h1>
+          <p>Your email <code>${esc(user.email)}</code> is not on the admin allowlist.</p>
+        </div>`;
+        return;
+      }
+      if (r.status === 500) {
+        const body = await r.json().catch(() => ({}));
+        if (body.error === 'admin_not_configured') {
+          wrap.innerHTML = `<div class="admin-gate">
+            <h1>Admin not configured</h1>
+            <p>The server has no <code>ADMIN_EMAILS</code> set.</p>
+          </div>`;
+          return;
+        }
+      }
+      if (!r.ok) {
+        wrap.innerHTML = `<div class="admin-empty">Failed to load (${r.status}).</div>`;
+        return;
+      }
+      const { users } = await r.json();
+      render(users || []);
+    }
+
+    function render(users) {
+      countEl.textContent = users.length + ' BUYER' + (users.length === 1 ? '' : 'S');
+      if (!users.length) {
+        wrap.innerHTML = '<div class="admin-empty">No buyers yet.</div>';
+        return;
+      }
+      const rows = users.map(u => {
+        const locales = (u.locales_bought || []).map(l => `<span class="u-tag">${esc(l.toUpperCase())}</span>`).join('');
+        const refundChip = u.refunded_count > 0
+          ? `<span class="u-tag refund">${esc(u.refunded_count)} refund${u.refunded_count === 1 ? '' : 's'}</span>`
+          : '';
+        return `
+          <tr>
+            <td>
+              <div class="u-email">${esc(u.email || '(unknown)')}</div>
+              <div class="u-id">${esc(u.id || '')}</div>
+            </td>
+            <td class="u-spend">${esc(fmtMoney(u.total_spend, u.currency))}</td>
+            <td>
+              <span class="u-tag">${esc(u.completed_count || 0)} purchase${u.completed_count === 1 ? '' : 's'}</span>
+              ${refundChip}
+              <div style="margin-top:4px;">${locales}</div>
+            </td>
+            <td class="u-when">${fmtDate(u.first_purchase_at)}</td>
+            <td class="u-when">${fmtDate(u.last_purchase_at)}</td>
+          </tr>`;
+      }).join('');
+
+      wrap.innerHTML = `
+        <table class="users-table">
+          <thead><tr>
+            <th>Email · ID</th>
+            <th>Total spend</th>
+            <th>Activity</th>
+            <th>First purchase</th>
+            <th>Last purchase</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    fetchUsers();
+  </script>
+</body>
+</html>

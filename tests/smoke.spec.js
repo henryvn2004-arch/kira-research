@@ -160,7 +160,7 @@ test.describe('legacy redirects (vercel.json)', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -226,6 +226,16 @@ test.describe('public APIs', () => {
   test('/api/admin-upload-pdf rejects GET', async ({ request }) => {
     const r = await request.get('/api/admin-upload-pdf');
     expect(r.status()).toBe(405);
+  });
+
+  test('/api/admin-transactions rejects unauthenticated', async ({ request }) => {
+    const r = await request.get('/api/admin-transactions');
+    expect(r.status()).toBe(401);
+  });
+
+  test('/api/admin-users rejects unauthenticated', async ({ request }) => {
+    const r = await request.get('/api/admin-users');
+    expect(r.status()).toBe(401);
   });
 
   // Email helper lives in /api/_lib/. Vercel excludes underscore-prefixed

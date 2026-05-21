@@ -148,19 +148,20 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [ ] `/admin/reports/[id]/stats` — sales + traffic — **pending**
 - [ ] `/admin/reports/featured` — featured reports drag-drop reorder — **pending**
 
-### Sprint 4.3 — Transactions + Users — 🔴 NOT STARTED
-- [ ] `/admin/transactions` list với filter by status
-- [ ] `/admin/transactions/[id]` detail + manual refund action
-- [ ] `/admin/revenue` dashboard với charts
-- [ ] `/admin/users` list
-- [ ] `/admin/users/[id]` detail
+### Sprint 4.3 — Transactions + Users — ✅ DONE (2026-05-21 session)
+- [x] `/en/admin/transactions` list với filter chips by status (all/completed/refunded/pending/failed) + locale + slug query params
+- [x] `/en/admin/transactions` click-to-expand detail (buyer email, report title, PayPal order id, captured timestamp, download history)
+- [x] Manual refund action — Year 1 flips DB status to `refunded` (actual PayPal money refund still manual via PayPal dashboard; UI labels this caveat explicitly)
+- [x] `/en/admin/users` list (read-only roll-up: email, total_spend, completed/refunded counts, locales_bought, first/last purchase)
+- [ ] `/admin/revenue` dashboard với charts — **deferred**, partly covered by Sprint 4.1 dashboard KPI cards
+- [ ] `/admin/users/[id]` per-user detail — **deferred**, low Year 1 value
 
 ### Sprint 4.4 — Leads + Aggregators
 - [x] `/admin/leads` Custom Research inquiries
 - [ ] `/admin/aggregators` submission tracking — **pending**
 - [ ] `/admin/aggregators/revenue` manual commission entry — **pending**
 
-**Deliverable:** 🟡 Core admin CRUD usable for reports/insights/leads. Commits: `714375a`, `b2174fe`, `fc9b83b`. Pending: dashboard, audit log, transactions, users, aggregator tracking, report stats/featured.
+**Deliverable:** 🟢 Core admin CRUD usable for reports/insights/leads/transactions/users. Commits: `714375a`, `b2174fe`, `fc9b83b`, Sprint 4.3 (this session). Pending: audit log, aggregator tracking, report stats/featured, revenue charts.
 
 ---
 

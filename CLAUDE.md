@@ -30,7 +30,7 @@
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** verify `e179154` in Actions tab. 52 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 52 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
+- **Smoke tests:** 56 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users), public APIs (incl. admin-transactions + admin-users), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
@@ -53,7 +53,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **3.3** | Backend integration (DB + PayPal + slug routing + sitemap) | ✅ | `ffde22e`, `60b00bb`, `87cd168`, `8bcb6d4` · sitemap + hreflang shipped, per-report OG/JSON-LD → 7.3 |
 | **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth + `eb05464` dashboard · **audit log deferred** |
 | **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` + PDF upload UI (item D) · stats/featured pending |
-| **4.3** | Transactions + Users admin | 🔴 | **not started** |
+| **4.3** | Transactions + Users admin | ✅ | this session · `/api/admin-transactions` (list/detail/refund PATCH), `/api/admin-users` (aggregates), `/en/admin/transactions.html` + `/en/admin/users.html`, also fixed pre-existing `admin-stats.js` column-name bug (revenue was always 0) |
 | **4.4** | Leads + Aggregators admin | 🟡 | `714375a` leads only · **aggregator tracking pending** |
 | **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt — deferred** |
 | **5.2** | Kill /studio/ | ✅ | `692d907` |
@@ -98,13 +98,15 @@ public/
 ├── index.html                      # root: locale auto-redirect
 └── robots.txt                      # crawler directives
 
-api/                                # 14 Vercel serverless functions (all active)
+api/                                # 16 Vercel serverless functions (all active)
 ├── leads.js                        # public POST — form submissions (+ admin notify email via _lib/email)
 ├── library-list.js  insights-list.js  insight.js  library-report.js  # public reads
 ├── library-buy.js                  # PayPal create + capture (+ receipt email via _lib/email)
 ├── library-verify.js               # check purchase state
 ├── library-content.js              # JWT-gated full content + PDF URL
 ├── admin-leads.js  admin-reports.js  admin-insights.js  # JWT + ADMIN_EMAILS whitelist
+├── admin-transactions.js           # admin purchase ledger + manual refund flag (Sprint 4.3)
+├── admin-users.js                  # admin buyer roll-up — email/spend/count/locales (Sprint 4.3)
 ├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
 ├── admin-upload-pdf.js             # admin PDF upload to Supabase Storage (item D)
 ├── sitemap.js                      # dynamic sitemap (index + per-locale)
@@ -210,8 +212,7 @@ more pending sprints in `project des/workplan.md`. Recommended order:
 - ~~**D — PDF upload via Supabase Storage**~~ ✅ **DONE** (this session). New `api/admin-upload-pdf.js` accepts base64 PDF + report_id + locale, writes to private bucket `reports-pdfs/{id}/{locale}.pdf`, patches `report_translations.pdf_url` to the path. `api/library-content.js` resolves paths → 1-hour signed URLs; external URLs pass through. Admin UI on `/en/admin/reports` edit pane has file picker + Upload button. Migration `005_storage.sql` creates the bucket. Closes 6.2 upload/delivery half.
 - ~~**E — Transactional email**~~ ✅ **DONE** (this session). `api/_lib/email.js` exposes `sendPurchaseReceipt` + `sendLeadNotification`, posts to Resend. Wired into `library-buy.js` (capture step) and `leads.js` (post-insert) as fire-and-forget — never blocks the API response, no-ops silently when `RESEND_API_KEY` is unset. Owner runs Resend domain-verify + adds env var (action item 5). 2 new smoke tests.
 - ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅ **DONE** (this session). `_view.html` for reports + insights inject per-page OG/Twitter Card + Product/Article JSON-LD + BreadcrumbList. `nav.js` injects Organization JSON-LD globally. 4 new smoke tests cover it (45 total now).
-- **4.3 — Transactions + Users admin** → revenue tracking UX.
-  `/en/admin/transactions` list view + detail + manual refund button. Reuses `purchases` table. ~1 day.
+- ~~**4.3 — Transactions + Users admin**~~ ✅ **DONE** (this session). `/en/admin/transactions` (list + click-to-expand detail + "Mark as refunded" button — Year 1 flips DB status only, actual PayPal refund still manual). `/en/admin/users` (read-only roll-up of buyers with total_spend, completed/refunded counts, locales bought, first/last purchase). 2 new API endpoints, 2 new pages, 4 new smoke checks. Also fixed pre-existing `admin-stats.js` column-name bug — dashboard revenue card was reading non-existent `amount_usd`/`report_slug` fields and silently showing $0.
 - ~~**F — Legacy file cleanup**~~ ✅ **DONE** (`a8a9206`). 29 files / 11,138 lines removed. Closed Sprints 2.3 + 5.3.
 - ~~**H — KPI dashboard + audit log**~~ ✅ **DONE — dashboard shipped** (`eb05464`). Closed Sprint 4.1 dashboard half. Audit log deferred.
 - **G — Native reviewer QA pass on JA/KO copy** → fills Sprint **8.1** + **9.1** native reviewer items.

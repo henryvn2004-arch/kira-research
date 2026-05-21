@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transactions — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase JS + auth shim -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    /* Admin-only styles — kept inline so kira.css stays public-facing. */
+    .admin-wrap { padding: 60px 0 96px; }
+    .admin-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .admin-head h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: -0.015em;
+    }
+    .admin-head .me {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .admin-head .me a { color: var(--primary); text-decoration: none; margin-left: 12px; }
+
+    .admin-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .admin-filters button {
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: all 0.15s;
+    }
+    .admin-filters button:hover { color: var(--text); border-color: var(--border-strong); }
+    .admin-filters button.active {
+      color: #fff;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .admin-filters .spacer { flex: 1; }
+    .admin-filters .count {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      font-size: 12px;
+      align-self: center;
+    }
+
+    .tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .tx-table th, .tx-table td {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .tx-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .tx-table tbody tr.tx-row { cursor: pointer; transition: background 0.1s; }
+    .tx-table tbody tr.tx-row:hover { background: var(--surface); }
+
+    .tx-when { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .tx-title { font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .tx-slug  { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; }
+    .tx-buyer { font-family: 'JetBrains Mono', monospace; color: var(--text); font-size: 12px; }
+    .tx-amount { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .tx-locale, .tx-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .tx-status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .tx-status.completed { background: rgba(28, 144, 88, 0.15); color: #1c9058; border: 1px solid rgba(28, 144, 88, 0.35); }
+    .tx-status.refunded  { background: rgba(180, 100, 0, 0.15); color: #b46400; border: 1px solid rgba(180, 100, 0, 0.35); }
+    .tx-status.pending   { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+    .tx-status.failed    { background: rgba(200, 50, 50, 0.15); color: #c83232; border: 1px solid rgba(200, 50, 50, 0.35); }
+
+    .tx-detail {
+      background: var(--surface);
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tx-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px 28px;
+      margin-bottom: 20px;
+    }
+    .tx-detail-grid .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .tx-detail-grid .val { font-size: 14px; color: var(--text); word-break: break-all; }
+    .tx-detail-grid .val.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+    .tx-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .tx-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .tx-btn:hover { border-color: var(--text); }
+    .tx-btn.danger { color: #b46400; border-color: rgba(180, 100, 0, 0.4); }
+    .tx-btn.danger:hover { background: rgba(180, 100, 0, 0.08); }
+    .tx-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .tx-note {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      max-width: 540px;
+    }
+
+    .downloads-list {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .downloads-list h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .downloads-list .empty { font-size: 12px; color: var(--muted); }
+    .downloads-list ul { list-style: none; padding: 0; margin: 0; }
+    .downloads-list li {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 4px 0;
+    }
+
+    .admin-empty {
+      padding: 96px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .admin-gate {
+      max-width: 480px;
+      margin: 96px auto;
+      padding: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .admin-gate h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .admin-gate p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .admin-gate code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container admin-wrap" id="admin-wrap">
+
+    <!-- Admin sub-nav (shared chrome) -->
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions" class="active">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div class="admin-head">
+      <div>
+        <h1>Transactions</h1>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;">PayPal-captured library purchases. Click a row to expand.</p>
+      </div>
+    </div>
+
+    <div class="admin-filters" id="admin-filters">
+      <button data-status=""          class="active">All</button>
+      <button data-status="completed">Completed</button>
+      <button data-status="refunded">Refunded</button>
+      <button data-status="pending">Pending</button>
+      <button data-status="failed">Failed</button>
+      <div class="spacer"></div>
+      <span class="count" id="admin-count"></span>
+    </div>
+
+    <div id="admin-content">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    // Wait for kiraAuth (loaded by /auth.js as a classic script).
+    async function ready() {
+      while (!window.kiraAuth) await new Promise(r => setTimeout(r, 30));
+    }
+    await ready();
+
+    const wrap     = document.getElementById('admin-content');
+    const countEl  = document.getElementById('admin-count');
+    const meEl     = document.getElementById('admin-me');
+    const filters  = document.getElementById('admin-filters');
+    let currentStatus = '';
+    let session = null;
+    let expandedId = null;
+
+    // 1) Require auth.
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    session = (await window.db.auth.getSession()).data.session;
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.kiraAuth.signOut();
+    });
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function fmtMoney(n, ccy) {
+      const x = Number(n) || 0;
+      return (ccy || 'USD') + ' ' + x.toFixed(2);
+    }
+    function fmtDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleString('en-GB', {
+        year: 'numeric', month: 'short', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    // 2) Fetch list via secure API.
+    async function fetchList() {
+      wrap.innerHTML = '<div class="admin-empty">Loading…</div>';
+      const qs = currentStatus ? `?status=${currentStatus}` : '';
+      const r = await fetch('/api/admin-transactions' + qs, {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 401) {
+        wrap.innerHTML = `<div class="admin-gate">
+          <h1>Session expired</h1>
+          <p>Please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.</p>
+        </div>`;
+        return;
+      }
+      if (r.status === 403) {
+        wrap.innerHTML = `<div class="admin-gate">
+          <h1>Not an admin</h1>
+          <p>Your email <code>${esc(user.email)}</code> is not on the admin allowlist. Ask the platform owner to add it to <code>ADMIN_EMAILS</code>.</p>
+        </div>`;
+        return;
+      }
+      if (r.status === 500) {
+        const body = await r.json().catch(() => ({}));
+        if (body.error === 'admin_not_configured') {
+          wrap.innerHTML = `<div class="admin-gate">
+            <h1>Admin not configured</h1>
+            <p>The server has no <code>ADMIN_EMAILS</code> set. Add a comma-separated list to your Vercel env vars and redeploy.</p>
+          </div>`;
+          return;
+        }
+      }
+      if (!r.ok) {
+        wrap.innerHTML = `<div class="admin-empty">Failed to load (${r.status}).</div>`;
+        return;
+      }
+      const { transactions } = await r.json();
+      renderList(transactions || []);
+    }
+
+    function renderList(items) {
+      countEl.textContent = items.length + (currentStatus ? ` ${currentStatus.toUpperCase()}` : '') + ' · MAX 200';
+      if (!items.length) {
+        wrap.innerHTML = '<div class="admin-empty">No transactions yet.</div>';
+        return;
+      }
+      const rows = items.map(p => {
+        const status = (p.status || 'pending').toLowerCase();
+        const title  = p.report_title || p.slug || '(unknown)';
+        const buyer  = p.user_email || '(no user)';
+        return `
+          <tr class="tx-row" data-id="${esc(p.id)}">
+            <td class="tx-when">${fmtDate(p.created_at)}</td>
+            <td>
+              <div class="tx-title">${esc(title)}</div>
+              <div class="tx-slug">${esc(p.slug || '')} · <span class="tx-locale">${esc((p.locale || 'en').toUpperCase())}</span></div>
+            </td>
+            <td class="tx-buyer">${esc(buyer)}</td>
+            <td class="tx-amount">${esc(fmtMoney(p.amount, p.currency))}</td>
+            <td><span class="tx-status ${status}">${esc(status)}</span></td>
+          </tr>
+          <tr class="tx-detail-row" data-detail-for="${esc(p.id)}" style="display:none;">
+            <td colspan="5" class="tx-detail" id="detail-${esc(p.id)}">
+              <div class="admin-empty" style="padding:24px 0;">Loading detail…</div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      wrap.innerHTML = `
+        <table class="tx-table">
+          <thead><tr>
+            <th>When</th>
+            <th>Report</th>
+            <th>Buyer</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+
+      // Click-to-expand wiring.
+      wrap.querySelectorAll('.tx-row').forEach(row => {
+        row.addEventListener('click', () => toggleDetail(row.dataset.id));
+      });
+    }
+
+    async function toggleDetail(id) {
+      const detailRow = wrap.querySelector(`tr.tx-detail-row[data-detail-for="${CSS.escape(id)}"]`);
+      if (!detailRow) return;
+
+      // Close any other expanded row first — keep the table tight.
+      if (expandedId && expandedId !== id) {
+        const prev = wrap.querySelector(`tr.tx-detail-row[data-detail-for="${CSS.escape(expandedId)}"]`);
+        if (prev) prev.style.display = 'none';
+      }
+
+      if (expandedId === id) {
+        detailRow.style.display = 'none';
+        expandedId = null;
+        return;
+      }
+      detailRow.style.display = 'table-row';
+      expandedId = id;
+      await loadDetail(id);
+    }
+
+    async function loadDetail(id) {
+      const cell = document.getElementById('detail-' + id);
+      if (!cell) return;
+      cell.innerHTML = '<div class="admin-empty" style="padding:24px 0;">Loading detail…</div>';
+
+      const r = await fetch('/api/admin-transactions?id=' + encodeURIComponent(id), {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (!r.ok) {
+        cell.innerHTML = `<div class="admin-empty" style="padding:24px 0;">Detail failed (${r.status}).</div>`;
+        return;
+      }
+      const data = await r.json();
+      renderDetail(cell, data);
+    }
+
+    function renderDetail(cell, data) {
+      const tx = data.transaction || {};
+      const dl = data.downloads || [];
+      const status = (tx.status || 'pending').toLowerCase();
+
+      const refundDisabled = status === 'refunded';
+
+      cell.innerHTML = `
+        <div class="tx-detail-grid">
+          <div>
+            <div class="lbl">Buyer</div>
+            <div class="val mono">${esc(tx.user_email || '—')}</div>
+          </div>
+          <div>
+            <div class="lbl">Report</div>
+            <div class="val">${esc(tx.report_title || tx.slug || '—')}</div>
+          </div>
+          <div>
+            <div class="lbl">Locale</div>
+            <div class="val mono">${esc((tx.locale || 'en').toUpperCase())}</div>
+          </div>
+          <div>
+            <div class="lbl">Amount</div>
+            <div class="val mono">${esc(fmtMoney(tx.amount, tx.currency))}</div>
+          </div>
+          <div>
+            <div class="lbl">PayPal order</div>
+            <div class="val mono">${esc(tx.paypal_order_id || '—')}</div>
+          </div>
+          <div>
+            <div class="lbl">Captured</div>
+            <div class="val mono">${esc(fmtDate(tx.captured_at) || fmtDate(tx.created_at))}</div>
+          </div>
+          <div>
+            <div class="lbl">Status</div>
+            <div class="val"><span class="tx-status ${status}">${esc(status)}</span></div>
+          </div>
+          <div>
+            <div class="lbl">Transaction ID</div>
+            <div class="val mono">${esc(tx.id || '')}</div>
+          </div>
+        </div>
+
+        <div class="tx-actions">
+          <button class="tx-btn danger" data-action="refund" data-id="${esc(tx.id)}"${refundDisabled ? ' disabled' : ''}>
+            ${refundDisabled ? 'Already refunded' : 'Mark as refunded'}
+          </button>
+        </div>
+        <div class="tx-note">
+          Year 1: marking as refunded only flips the DB status. The actual money refund must be issued manually in the PayPal dashboard against order <code>${esc(tx.paypal_order_id || '—')}</code>.
+        </div>
+
+        <div class="downloads-list">
+          <h3>Download history</h3>
+          ${dl.length ? `<ul>${
+            dl.map(d => `<li>${esc(fmtDate(d.delivered_at))} · ${esc((d.locale || 'en').toUpperCase())} · ${esc((d.ua || '').slice(0, 80))}</li>`).join('')
+          }</ul>` : '<div class="empty">No downloads recorded yet.</div>'}
+        </div>
+      `;
+
+      const btn = cell.querySelector('button[data-action="refund"]');
+      if (btn && !btn.disabled) {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Mark this transaction as refunded?\n\nThis only updates the DB flag — issue the actual money refund in PayPal separately.')) return;
+          btn.disabled = true;
+          btn.textContent = 'Updating…';
+          const r = await fetch('/api/admin-transactions?id=' + encodeURIComponent(tx.id), {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + session.access_token
+            },
+            body: JSON.stringify({ status: 'refunded' })
+          });
+          if (r.ok) {
+            // Refresh the row by re-fetching the list, keeping this row expanded.
+            await fetchList();
+            const ref = wrap.querySelector(`tr.tx-detail-row[data-detail-for="${CSS.escape(tx.id)}"]`);
+            if (ref) {
+              ref.style.display = 'table-row';
+              expandedId = tx.id;
+              await loadDetail(tx.id);
+            }
+          } else {
+            alert('Update failed (' + r.status + ')');
+            btn.disabled = false;
+            btn.textContent = 'Mark as refunded';
+          }
+        });
+      }
+    }
+
+    // 3) Filter chips.
+    filters.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStatus = btn.dataset.status;
+        expandedId = null;
+        fetchList();
+      });
+    });
+
+    fetchList();
+  </script>
+</body>
+</html>

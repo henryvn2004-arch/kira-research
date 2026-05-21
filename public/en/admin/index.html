@@ -204,6 +204,8 @@
       <a href="/en/admin/leads">Leads</a>
       <a href="/en/admin/reports">Reports</a>
       <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
       <span class="spacer"></span>
       <span class="me" id="admin-me"></span>
     </nav>
@@ -351,8 +353,8 @@
     const purchasesRows = (stats.recent_purchases || []).map(p => `
       <div class="recent-row">
         <div>
-          <div class="title">${esc(p.report_slug || '(no slug)')}</div>
-          <div class="sub">${esc(p.locale || 'en')} · ${fmtMoney(p.amount_usd || 0)}</div>
+          <div class="title">${esc(p.slug || '(no slug)')}</div>
+          <div class="sub">${esc(p.locale || 'en')} · ${fmtMoney(p.amount || 0)}</div>
         </div>
         <span class="meta">${fmtDate(p.created_at)}</span>
       </div>`).join('') || '<div class="recent-empty">No purchases yet.</div>';
