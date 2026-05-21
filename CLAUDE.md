@@ -26,9 +26,9 @@
 
 ## Current state (2026-05-21)
 
-- **Latest commit on `main`:** Sprint E (Resend transactional email — receipts + lead notifications). Owner runs domain verify + adds `RESEND_API_KEY` env var to enable live sends; until then sends no-op silently.
+- **Latest commit on `main`:** `e179154` — feat(email): Sprint E (Resend purchase receipts + lead notifications). Owner runs domain verify + adds `RESEND_API_KEY` env var to enable live sends; until then sends no-op silently.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** commit `0a6e878` (migration 006 fix). 52 smoke checks pass.
+- **Last fully-verified green CI run:** verify `e179154` in Actions tab. 52 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 52 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
