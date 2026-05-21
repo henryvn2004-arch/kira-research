@@ -1,0 +1,30 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "https://kiraresearch.com/en/",
+        "https://kiraresearch.com/en/library",
+        "https://kiraresearch.com/en/insights/",
+        "https://kiraresearch.com/en/methodology",
+        "https://kiraresearch.com/ja/",
+        "https://kiraresearch.com/ko/"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "skipAudits": ["uses-http2"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance":     ["error", { "minScore": 0.85 }],
+        "categories:accessibility":   ["error", { "minScore": 0.90 }],
+        "categories:best-practices":  ["error", { "minScore": 0.90 }],
+        "categories:seo":             ["error", { "minScore": 0.95 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+# ============================================================
+# KIRA RESEARCH — Lighthouse CI
+#
+# Runs Lighthouse against 6 representative production URLs and asserts
+# category thresholds. Conversion on FB-Ads landings depends directly
+# on speed — Performance regressions need to break CI, not silently
+# bleed CVR.
+#
+# Triggered:
+#   - workflow_dispatch       → manual run before any soft launch / push
+#   - schedule (weekly)       → catch drift from CDN/edge changes
+#
+# Not on every push: a 3-run Lighthouse over 6 URLs costs ~5 min of
+# Actions minutes per commit. The smoke workflow already gates each
+# push. Perf trends move at days/weeks scale, not per-PR.
+#
+# Config: .lighthouserc.json
+# ============================================================
+
+name: lighthouse
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 14 * * 1"  # Monday 14:47 UTC ~ Monday 21:47 ICT
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run Lighthouse CI
+        run: npm run lhci
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports-${{ github.run_id }}
+          path: .lighthouseci/
+          retention-days: 14
