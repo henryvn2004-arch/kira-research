@@ -32,10 +32,12 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  # Newer deploy supersedes in-flight runs — no point smoke-testing stale code.
-  group: smoke-${{ github.ref }}
-  cancel-in-progress: true
+# No concurrency block on purpose. github.ref for deployment_status
+# events doesn't cleanly partition across deployments (Vercel preview
+# deploys from Dependabot PRs ended up sharing groups with prod and
+# cancel-in-progress was killing the prod smoke mid-step). Vercel
+# already dedupes rapid pushes into a single prod deploy, so we don't
+# need GH-side cancellation; just let each event run to completion.
 
 jobs:
   smoke:
