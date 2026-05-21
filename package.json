@@ -2,18 +2,24 @@
   "name": "kira-research",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "engines": {
     "node": "20.x"
   },
   "scripts": {
     "test:smoke": "playwright test",
-    "test:smoke:local": "SMOKE_BASE_URL=http://localhost:3000 playwright test"
+    "test:smoke:local": "SMOKE_BASE_URL=http://localhost:3000 playwright test",
+    "lint": "eslint .",
+    "lhci": "lhci autorun"
   },
   "dependencies": {
     "pptxgenjs": "^4.0.1",
     "@supabase/supabase-js": "^2.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.0"
+    "@playwright/test": "^1.49.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "@lhci/cli": "^0.14.0"
   }
 }

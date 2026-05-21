@@ -231,7 +231,7 @@ export default async function handler(req, res) {
           patch.published_at = new Date().toISOString();
         }
 
-        const row = {
+        const payload = {
           report_id: id,
           locale,
           ...patch
@@ -247,7 +247,7 @@ export default async function handler(req, res) {
               'Content-Type':  'application/json',
               'Prefer':        'resolution=merge-duplicates,return=representation'
             },
-            body: JSON.stringify(row)
+            body: JSON.stringify(payload)
           }
         );
         if (!inserted.ok) {

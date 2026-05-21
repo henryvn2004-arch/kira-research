@@ -159,7 +159,7 @@ export default async function handler(req, res) {
         if (patch.status === 'published' && !patch.published_at) {
           patch.published_at = new Date().toISOString();
         }
-        const row = { insight_id: id, locale, ...patch };
+        const payload = { insight_id: id, locale, ...patch };
         const inserted = await fetch(
           `${SUPABASE_URL}/rest/v1/insight_translations?on_conflict=insight_id,locale`,
           {
@@ -170,7 +170,7 @@ export default async function handler(req, res) {
               'Content-Type':  'application/json',
               'Prefer':        'resolution=merge-duplicates,return=representation'
             },
-            body: JSON.stringify(row)
+            body: JSON.stringify(payload)
           }
         );
         if (!inserted.ok) {

@@ -1,0 +1,51 @@
+# ============================================================
+# KIRA RESEARCH — code quality gate
+#
+# Pre-deploy static analysis. Catches typos, dead code, redeclared
+# identifiers, undefined globals — the class of bugs that compile but
+# blow up at runtime in production paths.
+#
+# Triggers:
+#   - push to main        → record baseline + warn on regressions
+#   - pull_request        → block merges that introduce new lint errors
+#   - workflow_dispatch   → manual re-run
+#
+# Sister workflows: post-deploy-smoke.yml (E2E), codeql.yml (SAST),
+# lighthouse.yml (perf).
+# ============================================================
+
+name: code quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run ESLint
+        run: npm run lint

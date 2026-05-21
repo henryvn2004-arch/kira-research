@@ -281,7 +281,7 @@ export default async function handler(req, res) {
       const item = Array.isArray(inserted) && inserted[0] ? inserted[0] : null;
       const enriched = (await enrichWithReports([item]))[0] || item;
       logAudit({
-        actor: user.email, action: 'create',
+        actor: me.email, action: 'create',
         resourceType: kind === 'submissions' ? 'aggregator_submission' : 'aggregator_sale',
         resourceId: item && item.id,
         resourceLabel: `${aggregator}/${body.locale}`, diff: { after: item }, req
@@ -327,7 +327,7 @@ export default async function handler(req, res) {
       if (!item) { res.status(404).json({ error: 'not_found' }); return; }
       const enriched = (await enrichWithReports([item]))[0] || item;
       logAudit({
-        actor: user.email, action: 'update',
+        actor: me.email, action: 'update',
         resourceType: kind === 'submissions' ? 'aggregator_submission' : 'aggregator_sale',
         resourceId: id, diff: { patch, after: item }, req
       });
@@ -340,7 +340,7 @@ export default async function handler(req, res) {
       if (!isUuid(id)) { res.status(400).json({ error: 'bad_id' }); return; }
       await supabase(`${table}?id=eq.${id}`, 'DELETE');
       logAudit({
-        actor: user.email, action: 'delete',
+        actor: me.email, action: 'delete',
         resourceType: kind === 'submissions' ? 'aggregator_submission' : 'aggregator_sale',
         resourceId: id, req
       });

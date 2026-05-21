@@ -158,7 +158,7 @@ export default async function handler(req, res) {
         delivered_at:   new Date().toISOString(),
         ua:             (req.headers['user-agent'] || '').slice(0, 500)
       });
-    } catch (e) {
+    } catch {
       // Swallow — downloads table is optional infrastructure.
     }
 

@@ -63,7 +63,7 @@ export default async function handler(req, res) {
   let body;
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-  } catch (e) {
+  } catch {
     res.status(400).json({ error: 'invalid_json' });
     return;
   }
