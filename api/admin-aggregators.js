@@ -30,6 +30,8 @@
 //   DELETE /api/admin-aggregators?kind=sales&id=<uuid>        → { ok }
 // ============================================================
 
+import { logAudit } from './_lib/audit.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
@@ -278,6 +280,12 @@ export default async function handler(req, res) {
       const inserted = await supabase(table, 'POST', row);
       const item = Array.isArray(inserted) && inserted[0] ? inserted[0] : null;
       const enriched = (await enrichWithReports([item]))[0] || item;
+      logAudit({
+        actor: user.email, action: 'create',
+        resourceType: kind === 'submissions' ? 'aggregator_submission' : 'aggregator_sale',
+        resourceId: item && item.id,
+        resourceLabel: `${aggregator}/${body.locale}`, diff: { after: item }, req
+      });
       res.status(200).json({ item: enriched });
       return;
     }
@@ -318,6 +326,11 @@ export default async function handler(req, res) {
       const item = Array.isArray(updated) && updated[0] ? updated[0] : null;
       if (!item) { res.status(404).json({ error: 'not_found' }); return; }
       const enriched = (await enrichWithReports([item]))[0] || item;
+      logAudit({
+        actor: user.email, action: 'update',
+        resourceType: kind === 'submissions' ? 'aggregator_submission' : 'aggregator_sale',
+        resourceId: id, diff: { patch, after: item }, req
+      });
       res.status(200).json({ item: enriched });
       return;
     }
@@ -326,6 +339,11 @@ export default async function handler(req, res) {
     if (req.method === 'DELETE') {
       if (!isUuid(id)) { res.status(400).json({ error: 'bad_id' }); return; }
       await supabase(`${table}?id=eq.${id}`, 'DELETE');
+      logAudit({
+        actor: user.email, action: 'delete',
+        resourceType: kind === 'submissions' ? 'aggregator_submission' : 'aggregator_sale',
+        resourceId: id, req
+      });
       res.status(200).json({ ok: true });
       return;
     }

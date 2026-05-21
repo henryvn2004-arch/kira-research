@@ -28,7 +28,7 @@
 
 - **Latest commit on `main`:** `e7d5372` — feat(admin): Sprint 4.4 (Aggregator submissions + sales tracking). Closes Phase 4 admin backend (audit log + report stats/featured + revenue charts still deferred). **Owner ran migrations 001-007, deleted legacy Storage buckets, set Resend + all Vercel env vars, submitted GSC sitemaps (2026-05-21).** Only owner item remaining: run migration `008_security_hardening.sql` + toggle Leaked Password Protection in Auth settings.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 76 smoke checks should pass on prod.
+- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 78 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 60 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users, aggregators), public APIs (incl. admin-transactions + admin-users + admin-aggregators), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
@@ -51,7 +51,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **3.1** | `library.html` page | ✅ | `c953fb4` |
 | **3.2** | Individual report page (`_view.html` rewrite) | ✅ | `c953fb4`, `1a46491`, `87cd168` |
 | **3.3** | Backend integration (DB + PayPal + slug routing + sitemap) | ✅ | `ffde22e`, `60b00bb`, `87cd168`, `8bcb6d4` · sitemap + hreflang shipped, per-report OG/JSON-LD → 7.3 |
-| **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth + `eb05464` dashboard · **audit log deferred** |
+| **4.1** | Admin auth + dashboard + audit | ✅ | `714375a` auth + `eb05464` dashboard + this session audit log (migration 009 + `_lib/audit.js` helper + `/en/admin/audit` viewer; wired into reports/insights/transactions/aggregators/upload-pdf) |
 | **4.2** | Reports management CRUD + stats | ✅ | `b2174fe`, `fc9b83b` + PDF upload (item D) + per-report sales/revenue/refund stats (this session) · featured drag-drop deferred |
 | **4.3** | Transactions + Users admin | ✅ | this session · `/api/admin-transactions` (list/detail/refund PATCH), `/api/admin-users` (aggregates), `/en/admin/transactions.html` + `/en/admin/users.html`, also fixed pre-existing `admin-stats.js` column-name bug (revenue was always 0) |
 | **4.4** | Leads + Aggregators admin | ✅ | `714375a` leads · this session aggregators (`/api/admin-aggregators` + `/en/admin/aggregators` covers submissions + sales + summary; migration 007 adds the 2 tables) |
@@ -121,7 +121,8 @@ supabase/migrations/                # idempotent schema
 ├── 005_storage.sql                 # private bucket reports-pdfs + RLS (item D)
 ├── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
 ├── 007_aggregators.sql             # aggregator_submissions + aggregator_sales tables (Sprint 4.4)
-└── 008_security_hardening.sql      # close advisor flags: RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path
+├── 008_security_hardening.sql      # close advisor flags: RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path
+└── 009_audit_log.sql               # audit_log table — append-only record of admin write actions (Sprint 4.1 close)
 
 tests/smoke.spec.js                 # 41 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
@@ -155,6 +156,7 @@ These are tasks only the owner can do (involve dashboards, not git):
    - (c) WARN: 3 functions (`add_credits`, `spend_credits`, `set_updated_at`) had mutable search_path. Migration pins to empty.
    - Idempotent. Run after confirming 001-007 are all applied (they are, per 2026-05-21 verification).
 2. ☐ **Enable Leaked Password Protection** — Supabase dashboard → Authentication → Settings → toggle "Leaked password protection" ON. Auth feature, no SQL path.
+2b. ☐ **Run `supabase/migrations/009_audit_log.sql`** — adds the `audit_log` table that backs `/en/admin/audit`. All admin write paths (`admin-reports`, `admin-insights`, `admin-transactions`, `admin-aggregators`, `admin-upload-pdf`) now `logAudit()` to this table fire-and-forget. Without the table, those logAudit calls 404 silently — no functional impact, but the audit viewer stays empty. Run after 001-008.
 3. ☐ **Enable Vercel Analytics + Speed Insights** — Vercel dashboard → kira-research → **Analytics** tab → click "Enable". Same for **Speed Insights** tab. Free tier: 2,500 events/month (plenty for Year 1). `nav.js` already injects `/_vercel/insights/script.js` + `/_vercel/speed-insights/script.js` on every public page; scripts 404 silently until owner flips the toggle. After enabling, real-user data shows up in the dashboard within ~30 min.
 4. ☐ **Lighthouse perf audit on prod** (Phase 10.1) — run before soft launch. Two paths:
    - **Quick path (recommended):** PageSpeed Insights — go to https://pagespeed.web.dev/, paste each of the 6 URLs below, screenshot scores. Target ≥90 on all 4 categories (Performance / Accessibility / Best Practices / SEO):

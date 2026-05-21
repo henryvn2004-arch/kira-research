@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audit log — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .audit-filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .audit-filters select, .audit-filters input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .audit-filters .reset {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .audit-filters .reset:hover { color: var(--primary); }
+    .audit-row td { vertical-align: top; }
+    .audit-action {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .audit-action.create { background: rgba(40, 200, 100, 0.15); color: #45c87a; }
+    .audit-action.update { background: rgba(30, 111, 255, 0.15); color: #4d8eff; }
+    .audit-action.delete { background: rgba(255, 100, 100, 0.15); color: #ff7b7b; }
+    .audit-action.upload { background: rgba(180, 100, 250, 0.15); color: #c47bff; }
+    .audit-action.refund { background: rgba(220, 140, 50, 0.15); color: #e0a85a; }
+    .audit-action.other  { background: rgba(120, 120, 120, 0.15); color: var(--muted); }
+
+    .audit-diff {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px;
+      margin-top: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--muted);
+      max-height: 240px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+    }
+    .audit-row.expanded .audit-diff { display: block; }
+    .audit-toggle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--primary);
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/audit" class="active">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname + window.location.hash);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    const meEl = document.getElementById('admin-me');
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault(); window.kiraAuth.signOut();
+    });
+
+    async function bearer() {
+      const session = (await window.db.auth.getSession()).data.session;
+      return session ? { 'Authorization': 'Bearer ' + session.access_token } : {};
+    }
+    async function api(path) {
+      const headers = { 'Content-Type': 'application/json', ...await bearer() };
+      const r = await fetch(path, { headers });
+      const txt = await r.text();
+      let body = {};
+      try { body = txt ? JSON.parse(txt) : {}; } catch (_) {}
+      if (!r.ok) {
+        const err = new Error(body.error || ('http_' + r.status));
+        err.status = r.status; err.body = body;
+        throw err;
+      }
+      return body;
+    }
+
+    const root = document.getElementById('admin-root');
+
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    let filter = {
+      action:        params.get('action')        || '',
+      resource_type: params.get('resource_type') || '',
+      actor:         params.get('actor')         || ''
+    };
+
+    function escape(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function updateHash() {
+      const p = new URLSearchParams();
+      if (filter.action)        p.set('action', filter.action);
+      if (filter.resource_type) p.set('resource_type', filter.resource_type);
+      if (filter.actor)         p.set('actor', filter.actor);
+      const qs = p.toString();
+      window.history.replaceState({}, '', window.location.pathname + (qs ? '#' + qs : ''));
+    }
+
+    async function render() {
+      root.innerHTML = '<div class="admin-empty">Loading audit log…</div>';
+      const qs = new URLSearchParams();
+      if (filter.action)        qs.set('action', filter.action);
+      if (filter.resource_type) qs.set('resource_type', filter.resource_type);
+      if (filter.actor)         qs.set('actor', filter.actor);
+      qs.set('limit', '200');
+
+      let data;
+      try {
+        data = await api('/api/admin-audit?' + qs.toString());
+      } catch (err) {
+        root.innerHTML = `<div class="admin-empty">Failed to load: ${escape(err.body?.error || err.message)}</div>`;
+        return;
+      }
+      const entries = data.entries || [];
+
+      const filters = `
+        <div class="audit-filters">
+          <select id="f-action">
+            <option value="">all actions</option>
+            ${['create','update','delete','upload','refund','other'].map(a =>
+              `<option value="${a}"${filter.action === a ? ' selected' : ''}>${a}</option>`).join('')}
+          </select>
+          <select id="f-rtype">
+            <option value="">all resource types</option>
+            ${['report','report_translation','insight','insight_translation','transaction','pdf','aggregator_submission','aggregator_sale'].map(t =>
+              `<option value="${t}"${filter.resource_type === t ? ' selected' : ''}>${t}</option>`).join('')}
+          </select>
+          <input type="email" id="f-actor" placeholder="actor email" value="${escape(filter.actor)}" />
+          <a class="reset" id="f-reset">↻ reset</a>
+          <span style="margin-left:auto;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">
+            ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'} · most recent first
+          </span>
+        </div>
+      `;
+
+      const header = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+          <div>
+            <h1 style="font-family:'Satoshi',sans-serif;font-weight:800;font-size:28px;letter-spacing:-0.015em;">Audit log</h1>
+            <p style="color:var(--muted);font-size:13px;margin-top:6px;">Append-only record of admin write actions · max 200 rows</p>
+          </div>
+        </div>
+      `;
+
+      if (!entries.length) {
+        root.innerHTML = header + filters + '<div class="admin-empty">No entries match these filters.</div>';
+        wireFilters();
+        return;
+      }
+
+      const rows = entries.map((e, idx) => {
+        const when = new Date(e.created_at).toLocaleString('en-GB', {
+          year:'numeric', month:'short', day:'2-digit',
+          hour:'2-digit', minute:'2-digit', second:'2-digit'
+        });
+        const diffPretty = e.diff ? JSON.stringify(e.diff, null, 2) : '';
+        const hasDiff = !!diffPretty;
+        return `
+          <tr class="audit-row" data-idx="${idx}">
+            <td class="when-cell" style="white-space:nowrap;">${escape(when)}</td>
+            <td><span class="audit-action ${escape(e.action)}">${escape(e.action)}</span></td>
+            <td>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);">${escape(e.resource_type)}</div>
+              <div style="font-size:13px;margin-top:3px;">${escape(e.resource_label || e.resource_id || '—')}</div>
+            </td>
+            <td style="font-size:12px;color:var(--muted);">${escape(e.actor_email)}</td>
+            <td style="text-align:right;">
+              ${hasDiff ? `<span class="audit-toggle" data-idx="${idx}">View diff →</span>` : '<span style="color:var(--muted-dim);font-size:11px;">—</span>'}
+            </td>
+          </tr>
+          ${hasDiff ? `
+            <tr class="audit-row" data-idx="${idx}">
+              <td colspan="5" style="padding-top:0;border-top:none;">
+                <div class="audit-diff">${escape(diffPretty)}</div>
+              </td>
+            </tr>
+          ` : ''}`;
+      }).join('');
+
+      root.innerHTML = header + filters + `
+        <table class="admin-table">
+          <thead><tr>
+            <th>When</th>
+            <th>Action</th>
+            <th>Resource</th>
+            <th>Actor</th>
+            <th></th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      wireFilters();
+      wireToggles();
+    }
+
+    function wireFilters() {
+      document.getElementById('f-action').addEventListener('change', (e) => {
+        filter.action = e.target.value; updateHash(); render();
+      });
+      document.getElementById('f-rtype').addEventListener('change', (e) => {
+        filter.resource_type = e.target.value; updateHash(); render();
+      });
+      let t;
+      document.getElementById('f-actor').addEventListener('input', (e) => {
+        clearTimeout(t);
+        t = setTimeout(() => { filter.actor = e.target.value.trim(); updateHash(); render(); }, 350);
+      });
+      document.getElementById('f-reset').addEventListener('click', (e) => {
+        e.preventDefault();
+        filter = { action: '', resource_type: '', actor: '' };
+        updateHash(); render();
+      });
+    }
+
+    function wireToggles() {
+      document.querySelectorAll('.audit-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = btn.dataset.idx;
+          document.querySelectorAll(`.audit-row[data-idx="${idx}"]`).forEach(r => r.classList.toggle('expanded'));
+          btn.textContent = btn.textContent.includes('View') ? 'Hide diff ↑' : 'View diff →';
+        });
+      });
+    }
+
+    render();
+    window.addEventListener('hashchange', () => render());
+  </script>
+</body>
+</html>

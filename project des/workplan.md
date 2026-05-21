@@ -139,7 +139,7 @@ Week 10-12 →  Phase 10: Polish & Launch
 ### Sprint 4.1 — Admin auth + dashboard
 - [x] Email whitelist middleware (env var `ADMIN_EMAILS`)
 - [x] `/admin` dashboard với KPI cards — shipped in `eb05464`. `/en/admin/` shows 4 KPI cards (leads / reports / insights / revenue) + recent leads + recent purchases. Powered by `api/admin-stats.js` aggregator.
-- [ ] Audit log table — **deferred** (no concurrent admin activity yet to monitor; revisit when there's signal worth tracking)
+- [x] Audit log table — shipped this session. Migration `009_audit_log.sql` creates `audit_log` (actor_email + action + resource_type + resource_id + diff jsonb + request_path/method, indexed by created_at/actor/resource). `api/_lib/audit.js` exposes `logAudit()` — fire-and-forget, never blocks the response, diff truncated past 8KB. Wired into `admin-reports`, `admin-insights`, `admin-transactions`, `admin-aggregators`, `admin-upload-pdf`. `/en/admin/audit` viewer at `api/admin-audit.js` — filters by actor/resource_type/action, expandable per-row diff, append-only by design. Audit sub-nav link added to all 7 admin pages.
 
 ### Sprint 4.2 — Reports management
 - [x] `/admin/reports` list view với filter/search/sort

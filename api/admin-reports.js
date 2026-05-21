@@ -18,6 +18,8 @@
 //   DELETE /api/admin-reports?id=<uuid>&locale=en  → delete a single translation
 // ============================================================
 
+import { logAudit } from './_lib/audit.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
@@ -253,7 +255,13 @@ export default async function handler(req, res) {
           throw new Error(`upsert ${inserted.status}: ${txt}`);
         }
         const data = await inserted.json();
-        res.status(200).json({ ok: true, translation: Array.isArray(data) ? data[0] : data });
+        const row = Array.isArray(data) ? data[0] : data;
+        logAudit({
+          actor: user.email, action: 'update',
+          resourceType: 'report_translation', resourceId: id, resourceLabel: locale,
+          diff: { after: row }, req
+        });
+        res.status(200).json({ ok: true, translation: row });
         return;
       }
 
@@ -268,7 +276,13 @@ export default async function handler(req, res) {
         patch.published_at = new Date().toISOString();
       }
       const inserted = await sb('living_reports', 'POST', patch);
-      res.status(200).json({ ok: true, report: Array.isArray(inserted) ? inserted[0] : inserted });
+      const row = Array.isArray(inserted) ? inserted[0] : inserted;
+      logAudit({
+        actor: user.email, action: 'create',
+        resourceType: 'report', resourceId: row && row.id,
+        resourceLabel: patch.slug, diff: { after: row }, req
+      });
+      res.status(200).json({ ok: true, report: row });
       return;
     }
 
@@ -290,7 +304,13 @@ export default async function handler(req, res) {
           `report_translations?report_id=eq.${id}&locale=eq.${locale}`,
           'PATCH', patch
         );
-        res.status(200).json({ ok: true, translation: Array.isArray(updated) ? updated[0] : updated });
+        const row = Array.isArray(updated) ? updated[0] : updated;
+        logAudit({
+          actor: user.email, action: 'update',
+          resourceType: 'report_translation', resourceId: id, resourceLabel: locale,
+          diff: { patch, after: row }, req
+        });
+        res.status(200).json({ ok: true, translation: row });
         return;
       }
 
@@ -301,7 +321,13 @@ export default async function handler(req, res) {
         patch.published_at = new Date().toISOString();
       }
       const updated = await sb(`living_reports?id=eq.${id}`, 'PATCH', patch);
-      res.status(200).json({ ok: true, report: Array.isArray(updated) ? updated[0] : updated });
+      const row = Array.isArray(updated) ? updated[0] : updated;
+      logAudit({
+        actor: user.email, action: 'update',
+        resourceType: 'report', resourceId: id,
+        resourceLabel: row && row.slug, diff: { patch, after: row }, req
+      });
+      res.status(200).json({ ok: true, report: row });
       return;
     }
 
@@ -313,12 +339,22 @@ export default async function handler(req, res) {
       if (locale) {
         if (!LOCALES.has(locale)) { res.status(400).json({ error: 'invalid_locale' }); return; }
         await sb(`report_translations?report_id=eq.${id}&locale=eq.${locale}`, 'DELETE');
+        logAudit({
+          actor: user.email, action: 'delete',
+          resourceType: 'report_translation', resourceId: id, resourceLabel: locale, req
+        });
         res.status(200).json({ ok: true });
         return;
       }
       // Soft-delete base — never hard-delete (would orphan purchases).
       const updated = await sb(`living_reports?id=eq.${id}`, 'PATCH', { status: 'retired' });
-      res.status(200).json({ ok: true, report: Array.isArray(updated) ? updated[0] : updated });
+      const row = Array.isArray(updated) ? updated[0] : updated;
+      logAudit({
+        actor: user.email, action: 'delete',
+        resourceType: 'report', resourceId: id,
+        resourceLabel: row && row.slug, req
+      });
+      res.status(200).json({ ok: true, report: row });
       return;
     }
 

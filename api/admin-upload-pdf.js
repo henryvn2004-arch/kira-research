@@ -22,6 +22,8 @@
 // /api/library-content.js generates a fresh signed URL at delivery time.
 // ============================================================
 
+import { logAudit } from './_lib/audit.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
@@ -153,6 +155,12 @@ export default async function handler(req, res) {
       return;
     }
     const updated = await patchRes.json();
+    logAudit({
+      actor: user.email, action: 'upload',
+      resourceType: 'pdf', resourceId: report_id,
+      resourceLabel: `${report_id}/${locale}.pdf`,
+      diff: { path, bytes: bytes.length, locale }, req
+    });
     if (!Array.isArray(updated) || !updated.length) {
       // Storage holds the file but no translation row to point at it. That's
       // fine — admin can create the row and re-upload (idempotent). Still 200
