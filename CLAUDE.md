@@ -30,7 +30,7 @@
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** verify `a793035` in Actions tab. 56 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 56 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users), public APIs (incl. admin-transactions + admin-users), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
+- **Smoke tests:** 58 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users, aggregators), public APIs (incl. admin-transactions + admin-users + admin-aggregators), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
@@ -54,7 +54,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **4.1** | Admin auth + dashboard | 🟡 | `714375a` auth + `eb05464` dashboard · **audit log deferred** |
 | **4.2** | Reports management CRUD | ✅ | `b2174fe`, `fc9b83b` + PDF upload UI (item D) · stats/featured pending |
 | **4.3** | Transactions + Users admin | ✅ | this session · `/api/admin-transactions` (list/detail/refund PATCH), `/api/admin-users` (aggregates), `/en/admin/transactions.html` + `/en/admin/users.html`, also fixed pre-existing `admin-stats.js` column-name bug (revenue was always 0) |
-| **4.4** | Leads + Aggregators admin | 🟡 | `714375a` leads only · **aggregator tracking pending** |
+| **4.4** | Leads + Aggregators admin | ✅ | `714375a` leads · this session aggregators (`/api/admin-aggregators` + `/en/admin/aggregators` covers submissions + sales + summary; migration 007 adds the 2 tables) |
 | **5.1** | Demote 3 generation tools | 🟡 | `692d907`, `74c21c0` redirects only · **tool pages at /custom-research/{...} not rebuilt — deferred** |
 | **5.2** | Kill /studio/ | ✅ | `692d907` |
 | **5.3** | Credit system scoping | ✅ | `a8a9206` · credit system retired entirely Year 1, all platform-era APIs + profile.html removed |
@@ -107,6 +107,7 @@ api/                                # 16 Vercel serverless functions (all active
 ├── admin-leads.js  admin-reports.js  admin-insights.js  # JWT + ADMIN_EMAILS whitelist
 ├── admin-transactions.js           # admin purchase ledger + manual refund flag (Sprint 4.3)
 ├── admin-users.js                  # admin buyer roll-up — email/spend/count/locales (Sprint 4.3)
+├── admin-aggregators.js            # admin CRUD for aggregator_submissions + aggregator_sales (Sprint 4.4)
 ├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
 ├── admin-upload-pdf.js             # admin PDF upload to Supabase Storage (item D)
 ├── sitemap.js                      # dynamic sitemap (index + per-locale)
@@ -118,7 +119,8 @@ supabase/migrations/                # idempotent schema
 ├── 003_insights.sql                # insights + insight_translations + seed
 ├── 004_purchases.sql               # purchases + downloads + RLS
 ├── 005_storage.sql                 # private bucket reports-pdfs + RLS (item D)
-└── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
+├── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
+└── 007_aggregators.sql             # aggregator_submissions + aggregator_sales tables (Sprint 4.4)
 
 tests/smoke.spec.js                 # 41 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
@@ -146,13 +148,14 @@ Two things matter here:
 
 These are tasks only the owner can do (involve dashboards, not git):
 
-1. ☐ **Run 6 Supabase migrations** in dashboard SQL Editor, in order:
+1. ☐ **Run 7 Supabase migrations** in dashboard SQL Editor, in order:
    - `supabase/migrations/001_leads.sql`
    - `supabase/migrations/002_library.sql`
    - `supabase/migrations/003_insights.sql`
    - `supabase/migrations/004_purchases.sql`
    - `supabase/migrations/005_storage.sql` — creates private `reports-pdfs` bucket for PDF uploads. Alternative: Dashboard → Storage → New bucket → name `reports-pdfs`, **uncheck Public**, MIME `application/pdf`, size 32MB.
    - `supabase/migrations/006_drop_legacy.sql` — **destructive, two-step.** SQL step drops 6 unambiguously-deprecated tables (`source_reports`, `report_chunks`, `industry_patterns`, `competency_templates`, `chat_history`, `contacts`) + 2 RAG/search functions. Storage buckets (`frameworks` 23 obj, `reports` 132 obj ~38MB) must be removed separately via Dashboard → Storage UI (Supabase's `storage.protect_delete()` trigger blocks direct SQL deletes from `storage.objects`/`storage.buckets`). **Intentionally keeps** `user_credits`, `credit_transactions`, `credit_costs`, `custom_reports` + paired `spend_credits`/`add_credits` functions per `project des/CLAUDE.md` Custom Research backend earmark. Run only after 001-005 are confirmed applied.
+   - `supabase/migrations/007_aggregators.sql` — adds `aggregator_submissions` + `aggregator_sales` tables backing `/en/admin/aggregators` (Sprint 4.4). RLS-enabled, service-key-only writes. Idempotent. Run only after 001-006 are confirmed applied.
 2. ☐ **Set Vercel env var** `ADMIN_EMAILS=henryvn2004@gmail.com`
 3. ☐ **Verify Vercel env vars exist** (Settings → Environment Variables):
    - `SUPABASE_URL`

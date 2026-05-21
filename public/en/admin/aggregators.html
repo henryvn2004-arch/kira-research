@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aggregators — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .admin-wrap { padding: 60px 0 96px; }
+    .admin-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .admin-head h1 { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -0.015em; }
+    .admin-head .me { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+    .admin-head .me a { color: var(--primary); text-decoration: none; margin-left: 12px; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+    .summary-card .lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .summary-card .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }
+    .summary-card .sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .kind-tabs {
+      display: flex; gap: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .kind-tabs button {
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      padding: 10px 16px; font-family: inherit; font-size: 13px;
+      color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
+    }
+    .kind-tabs button.active { color: var(--text); border-bottom-color: var(--primary); }
+
+    .toolbar {
+      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+    }
+    .toolbar input, .toolbar select {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+      padding: 7px 10px; border-radius: 4px; font-family: inherit; font-size: 12px;
+    }
+    .toolbar .spacer { flex: 1; }
+    .toolbar .count { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 12px; }
+
+    .add-form {
+      background: var(--surface);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 18px 20px; margin-bottom: 24px;
+    }
+    .add-form h3 {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+      margin: 0 0 14px;
+    }
+    .add-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px 16px;
+    }
+    .add-grid label {
+      display: flex; flex-direction: column; gap: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.1em; color: var(--muted);
+    }
+    .add-grid input, .add-grid select, .add-grid textarea {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 10px; border-radius: 3px; font-family: inherit; font-size: 13px;
+    }
+    .add-grid textarea { min-height: 44px; resize: vertical; font-family: inherit; }
+    .add-actions { margin-top: 14px; display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 8px 16px; border-radius: 4px; font-family: inherit; font-size: 13px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
+    }
+    .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn:hover { border-color: var(--text); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .add-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+    .add-status.ok { color: #1c9058; }
+    .add-status.err { color: #c83232; }
+
+    .ag-table {
+      width: 100%; border-collapse: collapse; font-size: 12px;
+    }
+    .ag-table th, .ag-table td {
+      text-align: left; padding: 12px 14px;
+      border-bottom: 1px solid var(--border); vertical-align: top;
+    }
+    .ag-table th {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+      background: var(--surface); border-top: 1px solid var(--border);
+    }
+    .ag-table tbody tr:hover { background: var(--surface); }
+    .ag-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+    .ag-amount { font-family: 'JetBrains Mono', monospace; font-weight: 600; white-space: nowrap; }
+    .ag-tag {
+      display: inline-block; padding: 2px 7px;
+      border: 1px solid var(--border); border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .ag-status {
+      display: inline-block; padding: 2px 10px; border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .ag-status.pending  { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+    .ag-status.approved { background: rgba(28, 144, 88, 0.15); color: #1c9058; border: 1px solid rgba(28, 144, 88, 0.35); }
+    .ag-status.rejected { background: rgba(200, 50, 50, 0.15); color: #c83232; border: 1px solid rgba(200, 50, 50, 0.35); }
+    .ag-status.live     { background: rgba(28, 90, 200, 0.15); color: #1c5ac8; border: 1px solid rgba(28, 90, 200, 0.35); }
+    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .row-actions select, .row-actions button {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 5px 9px; border-radius: 3px; font-size: 11px; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .row-actions button.danger { color: #c83232; border-color: rgba(200, 50, 50, 0.3); }
+
+    .admin-empty { padding: 64px 0; text-align: center; color: var(--muted); font-size: 14px; }
+    .admin-gate {
+      max-width: 480px; margin: 96px auto; padding: 48px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px; text-align: center;
+    }
+    .admin-gate h1 { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 12px; }
+    .admin-gate p  { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .admin-gate code {
+      font-family: 'JetBrains Mono', monospace; background: var(--bg);
+      padding: 2px 8px; border-radius: 3px; font-size: 12px; color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container admin-wrap" id="admin-wrap">
+
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators" class="active">Aggregators</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div class="admin-head">
+      <div>
+        <h1>Aggregator distribution</h1>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;">Manual tracking of report submissions + sales from third-party channels (ResearchAndMarkets, GIIResearch, Mordor Korea, etc.).</p>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="summary-grid" id="summary-grid"></div>
+
+    <!-- Tabs -->
+    <div class="kind-tabs" id="kind-tabs">
+      <button data-kind="submissions" class="active">Submissions</button>
+      <button data-kind="sales">Sales</button>
+    </div>
+
+    <!-- Add-row form (re-rendered when tab changes) -->
+    <div class="add-form" id="add-form-wrap"></div>
+
+    <!-- Filter toolbar -->
+    <div class="toolbar">
+      <input id="filter-aggregator" type="text" placeholder="aggregator slug (e.g. gii-research)" style="min-width:220px;" />
+      <select id="filter-status" style="min-width:140px;">
+        <option value="">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="live">Live</option>
+      </select>
+      <button class="btn" id="filter-apply">Apply</button>
+      <button class="btn" id="filter-clear">Clear</button>
+      <div class="spacer"></div>
+      <span class="count" id="ag-count"></span>
+    </div>
+
+    <div id="ag-content">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    async function ready() { while (!window.kiraAuth) await new Promise(r => setTimeout(r, 30)); }
+    await ready();
+
+    const wrap        = document.getElementById('ag-content');
+    const summaryWrap = document.getElementById('summary-grid');
+    const formWrap    = document.getElementById('add-form-wrap');
+    const meEl        = document.getElementById('admin-me');
+    const countEl     = document.getElementById('ag-count');
+    const tabs        = document.getElementById('kind-tabs');
+    const filterAggregator = document.getElementById('filter-aggregator');
+    const filterStatus     = document.getElementById('filter-status');
+
+    let session = null;
+    let kind = 'submissions';
+    let reports = []; // [{ id, slug }]
+    let translationsBySlug = new Map(); // slug → { en: title, ja: title, ko: title }
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    session = (await window.db.auth.getSession()).data.session;
+    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.kiraAuth.signOut();
+    });
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+    }
+    function fmtMoney(n, ccy) {
+      const x = Number(n);
+      if (!Number.isFinite(x)) return '—';
+      return (ccy || 'USD') + ' ' + x.toFixed(2);
+    }
+    function authHeaders(extra = {}) {
+      return { 'Authorization': 'Bearer ' + session.access_token, ...extra };
+    }
+
+    async function loadReports() {
+      try {
+        const r = await fetch('/api/admin-reports', { headers: authHeaders() });
+        if (!r.ok) return;
+        const data = await r.json();
+        const list = data.reports || data.items || data || [];
+        reports = (Array.isArray(list) ? list : [])
+          .filter(rep => rep && rep.id && rep.slug)
+          .sort((a, b) => (a.slug || '').localeCompare(b.slug || ''));
+      } catch (_) {
+        // Non-fatal — owner can still see/edit existing rows even if dropdown is empty.
+      }
+    }
+
+    async function loadSummary() {
+      try {
+        const r = await fetch('/api/admin-aggregators?kind=summary', { headers: authHeaders() });
+        if (!r.ok) return;
+        const s = await r.json();
+        summaryWrap.innerHTML = `
+          <div class="summary-card">
+            <div class="lbl">Submissions</div>
+            <div class="val">${esc(s.submissions_total || 0)}</div>
+            <div class="sub">
+              <strong>${esc(s.submissions_by_status?.live || 0)}</strong> live ·
+              <strong>${esc(s.submissions_by_status?.approved || 0)}</strong> approved
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="lbl">Pending review</div>
+            <div class="val">${esc(s.submissions_by_status?.pending || 0)}</div>
+            <div class="sub">waiting on aggregator</div>
+          </div>
+          <div class="summary-card">
+            <div class="lbl">Sales recorded</div>
+            <div class="val">${esc(s.sales_total_count || 0)}</div>
+            <div class="sub">all-time</div>
+          </div>
+          <div class="summary-card">
+            <div class="lbl">Net revenue (aggregators)</div>
+            <div class="val">${esc('$' + (s.sales_net_usd || 0).toFixed(2))}</div>
+            <div class="sub">USD, owner-entered</div>
+          </div>`;
+      } catch (_) {}
+    }
+
+    function renderForm() {
+      const reportOpts = reports.map(r => `<option value="${esc(r.id)}">${esc(r.slug)}</option>`).join('');
+      if (kind === 'submissions') {
+        formWrap.innerHTML = `
+          <h3>Record a submission</h3>
+          <form id="add-form">
+            <div class="add-grid">
+              <label>Report
+                <select name="report_id" required>
+                  <option value="">— pick —</option>${reportOpts}
+                </select>
+              </label>
+              <label>Locale
+                <select name="locale" required>
+                  <option value="en">EN</option><option value="ja">JA</option><option value="ko">KO</option>
+                </select>
+              </label>
+              <label>Aggregator slug
+                <input name="aggregator" placeholder="gii-research" required pattern="[a-z0-9][a-z0-9-]{1,40}" />
+              </label>
+              <label>Status
+                <select name="status">
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="live">Live</option>
+                </select>
+              </label>
+              <label>Submitted at (optional)
+                <input name="submitted_at" type="date" />
+              </label>
+              <label>Aggregator URL (when live)
+                <input name="aggregator_url" type="url" placeholder="https://…" />
+              </label>
+              <label>Commission %
+                <input name="commission_pct" type="number" step="0.01" min="0" max="100" placeholder="35.00" />
+              </label>
+              <label>Contact name
+                <input name="contact_name" />
+              </label>
+              <label>Contact email
+                <input name="contact_email" type="email" />
+              </label>
+              <label style="grid-column:1/-1;">Notes
+                <textarea name="notes" rows="2" placeholder="optional — internal only"></textarea>
+              </label>
+            </div>
+            <div class="add-actions">
+              <button type="submit" class="btn primary">Add submission</button>
+              <span class="add-status" id="add-status"></span>
+            </div>
+          </form>`;
+      } else {
+        formWrap.innerHTML = `
+          <h3>Record a sale</h3>
+          <form id="add-form">
+            <div class="add-grid">
+              <label>Report
+                <select name="report_id" required>
+                  <option value="">— pick —</option>${reportOpts}
+                </select>
+              </label>
+              <label>Locale
+                <select name="locale" required>
+                  <option value="en">EN</option><option value="ja">JA</option><option value="ko">KO</option>
+                </select>
+              </label>
+              <label>Aggregator slug
+                <input name="aggregator" placeholder="gii-research" required pattern="[a-z0-9][a-z0-9-]{1,40}" />
+              </label>
+              <label>Sold at
+                <input name="sold_at" type="date" />
+              </label>
+              <label>Gross amount
+                <input name="gross_amount" type="number" step="0.01" min="0" required placeholder="99.00" />
+              </label>
+              <label>Currency
+                <input name="currency" value="USD" maxlength="4" />
+              </label>
+              <label>Commission %
+                <input name="commission_pct" type="number" step="0.01" min="0" max="100" placeholder="35.00" />
+              </label>
+              <label>Net amount (your share)
+                <input name="net_amount" type="number" step="0.01" min="0" placeholder="64.35" />
+              </label>
+              <label>Buyer country
+                <input name="buyer_country" placeholder="Japan" />
+              </label>
+              <label style="grid-column:1/-1;">Notes
+                <textarea name="notes" rows="2" placeholder="optional"></textarea>
+              </label>
+            </div>
+            <div class="add-actions">
+              <button type="submit" class="btn primary">Add sale</button>
+              <span class="add-status" id="add-status"></span>
+            </div>
+          </form>`;
+      }
+
+      const form     = formWrap.querySelector('#add-form');
+      const statusEl = formWrap.querySelector('#add-status');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const body = {};
+        for (const [k, v] of fd.entries()) {
+          if (v === '' || v == null) continue;
+          if (k === 'aggregator') body[k] = String(v).trim().toLowerCase();
+          else body[k] = v;
+        }
+        // The date input gives YYYY-MM-DD; coerce to ISO timestamp at start of day UTC.
+        if (body.submitted_at && /^\d{4}-\d{2}-\d{2}$/.test(body.submitted_at)) {
+          body.submitted_at = new Date(body.submitted_at + 'T00:00:00Z').toISOString();
+        }
+        if (body.sold_at && /^\d{4}-\d{2}-\d{2}$/.test(body.sold_at)) {
+          body.sold_at = new Date(body.sold_at + 'T00:00:00Z').toISOString();
+        }
+
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        statusEl.textContent = 'Saving…';
+        statusEl.className   = 'add-status';
+
+        try {
+          const r = await fetch('/api/admin-aggregators?kind=' + kind, {
+            method: 'POST',
+            headers: authHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(body)
+          });
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({}));
+            statusEl.textContent = 'Failed: ' + (err.error || r.status);
+            statusEl.className   = 'add-status err';
+            return;
+          }
+          statusEl.textContent = 'Added ✓';
+          statusEl.className   = 'add-status ok';
+          form.reset();
+          await Promise.all([loadList(), loadSummary()]);
+        } finally {
+          btn.disabled = false;
+          setTimeout(() => { statusEl.textContent = ''; }, 2400);
+        }
+      });
+    }
+
+    async function loadList() {
+      wrap.innerHTML = '<div class="admin-empty">Loading…</div>';
+
+      const params = new URLSearchParams({ kind });
+      const aggregator = filterAggregator.value.trim().toLowerCase();
+      const status     = filterStatus.value;
+      if (aggregator && /^[a-z0-9][a-z0-9-]{1,40}$/.test(aggregator)) params.set('aggregator', aggregator);
+      if (status && kind === 'submissions')                           params.set('status', status);
+
+      const r = await fetch('/api/admin-aggregators?' + params, { headers: authHeaders() });
+      if (r.status === 401) {
+        wrap.innerHTML = `<div class="admin-gate"><h1>Session expired</h1><p>Please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.</p></div>`;
+        return;
+      }
+      if (r.status === 403) {
+        wrap.innerHTML = `<div class="admin-gate"><h1>Not an admin</h1><p>Your email <code>${esc(user.email)}</code> is not on the admin allowlist.</p></div>`;
+        return;
+      }
+      if (r.status === 500) {
+        const body = await r.json().catch(() => ({}));
+        if (body.error === 'admin_not_configured') {
+          wrap.innerHTML = `<div class="admin-gate"><h1>Admin not configured</h1><p>The server has no <code>ADMIN_EMAILS</code> set.</p></div>`;
+          return;
+        }
+      }
+      if (!r.ok) { wrap.innerHTML = `<div class="admin-empty">Failed to load (${r.status}).</div>`; return; }
+
+      const { items } = await r.json();
+      render(items || []);
+    }
+
+    function render(items) {
+      countEl.textContent = items.length + (kind === 'submissions' ? ' SUBMISSION' : ' SALE') + (items.length === 1 ? '' : 'S');
+      if (!items.length) {
+        wrap.innerHTML = `<div class="admin-empty">No ${kind} recorded yet.</div>`;
+        return;
+      }
+
+      let html;
+      if (kind === 'submissions') {
+        html = renderSubmissions(items);
+      } else {
+        html = renderSales(items);
+      }
+      wrap.innerHTML = html;
+
+      wrap.querySelectorAll('select[data-status]').forEach(sel => {
+        sel.addEventListener('change', () => updateRow(sel.dataset.id, { status: sel.value }));
+      });
+      wrap.querySelectorAll('button[data-delete]').forEach(btn => {
+        btn.addEventListener('click', () => deleteRow(btn.dataset.delete));
+      });
+    }
+
+    function renderSubmissions(items) {
+      const rows = items.map(s => `
+        <tr>
+          <td class="ag-mono">${esc(fmtDate(s.submitted_at || s.created_at))}</td>
+          <td><div>${esc(s.report_title || '—')}</div><div class="ag-mono">${esc(s.report_slug || '')} · ${esc((s.locale || 'en').toUpperCase())}</div></td>
+          <td><span class="ag-tag">${esc(s.aggregator || '')}</span></td>
+          <td>
+            <select data-status data-id="${esc(s.id)}">
+              ${['pending','approved','rejected','live'].map(st =>
+                `<option value="${st}"${st===s.status?' selected':''}>${st}</option>`).join('')}
+            </select>
+          </td>
+          <td>${s.aggregator_url ? `<a href="${esc(s.aggregator_url)}" target="_blank" rel="noopener" style="color:var(--primary);font-size:11px;">open ↗</a>` : '<span class="ag-mono">—</span>'}</td>
+          <td class="ag-mono">${s.commission_pct != null ? esc(Number(s.commission_pct).toFixed(2)) + '%' : '—'}</td>
+          <td>
+            <div class="row-actions">
+              <button data-delete="${esc(s.id)}" class="danger">delete</button>
+            </div>
+          </td>
+        </tr>`).join('');
+      return `<table class="ag-table">
+        <thead><tr>
+          <th>Submitted</th>
+          <th>Report</th>
+          <th>Aggregator</th>
+          <th>Status</th>
+          <th>URL</th>
+          <th>Commission</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    function renderSales(items) {
+      const rows = items.map(s => `
+        <tr>
+          <td class="ag-mono">${esc(fmtDate(s.sold_at))}</td>
+          <td><div>${esc(s.report_title || '—')}</div><div class="ag-mono">${esc(s.report_slug || '')} · ${esc((s.locale || 'en').toUpperCase())}</div></td>
+          <td><span class="ag-tag">${esc(s.aggregator || '')}</span></td>
+          <td class="ag-amount">${esc(fmtMoney(s.gross_amount, s.currency))}</td>
+          <td class="ag-mono">${s.commission_pct != null ? esc(Number(s.commission_pct).toFixed(2)) + '%' : '—'}</td>
+          <td class="ag-amount">${esc(fmtMoney(s.net_amount, s.currency))}</td>
+          <td class="ag-mono">${esc(s.buyer_country || '—')}</td>
+          <td>
+            <div class="row-actions">
+              <button data-delete="${esc(s.id)}" class="danger">delete</button>
+            </div>
+          </td>
+        </tr>`).join('');
+      return `<table class="ag-table">
+        <thead><tr>
+          <th>Sold</th>
+          <th>Report</th>
+          <th>Aggregator</th>
+          <th>Gross</th>
+          <th>Comm.</th>
+          <th>Net</th>
+          <th>Buyer country</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    async function updateRow(id, patch) {
+      const r = await fetch('/api/admin-aggregators?kind=' + kind + '&id=' + encodeURIComponent(id), {
+        method: 'PATCH',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(patch)
+      });
+      if (!r.ok) {
+        alert('Update failed (' + r.status + ')');
+        return;
+      }
+      await loadSummary();
+    }
+
+    async function deleteRow(id) {
+      if (!confirm('Delete this row? Cannot be undone.')) return;
+      const r = await fetch('/api/admin-aggregators?kind=' + kind + '&id=' + encodeURIComponent(id), {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      if (!r.ok) {
+        alert('Delete failed (' + r.status + ')');
+        return;
+      }
+      await Promise.all([loadList(), loadSummary()]);
+    }
+
+    // Wire tabs
+    tabs.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.kind === kind) return;
+        tabs.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        kind = btn.dataset.kind;
+        renderForm();
+        loadList();
+      });
+    });
+
+    // Wire filters
+    document.getElementById('filter-apply').addEventListener('click', loadList);
+    document.getElementById('filter-clear').addEventListener('click', () => {
+      filterAggregator.value = '';
+      filterStatus.value = '';
+      loadList();
+    });
+
+    // Initial load
+    await loadReports();
+    renderForm();
+    await Promise.all([loadList(), loadSummary()]);
+  </script>
+</body>
+</html>

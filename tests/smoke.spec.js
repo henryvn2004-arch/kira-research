@@ -160,7 +160,7 @@ test.describe('legacy redirects (vercel.json)', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -235,6 +235,11 @@ test.describe('public APIs', () => {
 
   test('/api/admin-users rejects unauthenticated', async ({ request }) => {
     const r = await request.get('/api/admin-users');
+    expect(r.status()).toBe(401);
+  });
+
+  test('/api/admin-aggregators rejects unauthenticated', async ({ request }) => {
+    const r = await request.get('/api/admin-aggregators?kind=submissions');
     expect(r.status()).toBe(401);
   });
 

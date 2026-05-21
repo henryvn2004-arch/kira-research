@@ -158,10 +158,10 @@ Week 10-12 →  Phase 10: Polish & Launch
 
 ### Sprint 4.4 — Leads + Aggregators
 - [x] `/admin/leads` Custom Research inquiries
-- [ ] `/admin/aggregators` submission tracking — **pending**
-- [ ] `/admin/aggregators/revenue` manual commission entry — **pending**
+- [x] `/admin/aggregators` submission tracking — Sprint 4.4 (this session). `/en/admin/aggregators` has Submissions + Sales tabs with add-row forms, per-aggregator + per-status filters, KPI summary cards (submissions by status, sales count, net revenue), inline status edit + delete. Backed by `aggregator_submissions` + `aggregator_sales` tables (migration 007).
+- [x] `/admin/aggregators/revenue` manual commission entry — merged into the Sales tab above (gross + commission% + net fields per sale, currency, buyer country, notes). Per-aggregator net revenue surfaced in the summary cards. No dedicated revenue charts page (deferred — Year 1 doesn't need viz yet).
 
-**Deliverable:** 🟢 Core admin CRUD usable for reports/insights/leads/transactions/users. Commits: `714375a`, `b2174fe`, `fc9b83b`, Sprint 4.3 (this session). Pending: audit log, aggregator tracking, report stats/featured, revenue charts.
+**Deliverable:** 🟢 Core admin CRUD usable for reports/insights/leads/transactions/users/aggregators. Commits: `714375a`, `b2174fe`, `fc9b83b`, Sprint 4.3 + 4.4 (this session). Pending: audit log, report stats/featured, revenue charts.
 
 ---
 
