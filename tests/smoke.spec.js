@@ -160,6 +160,27 @@ test.describe('legacy redirects (vercel.json)', () => {
   });
 });
 
+// ── 4b) Branded 404 page — Sprint 9 ──
+//
+// Vercel serves /404.html when no route matches. We assert:
+//  • HTTP status is 404 (not 200 — important so SEO crawlers don't index)
+//  • Branded chrome (nav.js logo) renders — proves the page isn't generic
+//  • Locale auto-detect swaps the title for the path's prefix
+test.describe('branded 404', () => {
+  test('/some-page-that-does-not-exist returns 404 with branded chrome', async ({ page }) => {
+    const res = await page.goto('/some-page-that-does-not-exist', { waitUntil: 'load' });
+    expect(res.status()).toBe(404);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    // EN copy is the default when no locale prefix in path.
+    await expect(page.locator('#err-title')).toHaveText("This page doesn't exist.");
+  });
+
+  test('/ja/missing-page swaps title to Japanese', async ({ page }) => {
+    await page.goto('/ja/missing-page', { waitUntil: 'load' });
+    await expect(page.locator('#err-title')).toHaveText('ページが見つかりません。');
+  });
+});
+
 // ── 5) Admin pages require auth ──
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html

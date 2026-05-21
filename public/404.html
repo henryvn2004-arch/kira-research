@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found — KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,follow" />
+  <meta name="description" content="The page you're looking for can't be found. Browse our research library or insights instead." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .err-hero {
+      padding: 96px 0 72px;
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .err-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .err-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 22px;
+      color: var(--text);
+    }
+    .err-hero p {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+      margin: 0 auto 40px;
+      max-width: 560px;
+    }
+    .err-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 720px;
+      margin: 0 auto 96px;
+    }
+    .err-link {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .err-link:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .err-link .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+    .err-link h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0;
+    }
+    .err-link p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 0;
+    }
+    @media (max-width: 720px) {
+      .err-links { grid-template-columns: 1fr; }
+      .err-hero { padding: 64px 20px 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container">
+    <section class="err-hero">
+      <div class="err-code">404 · NOT FOUND</div>
+      <h1 id="err-title">This page doesn't exist.</h1>
+      <p id="err-sub">
+        The URL you followed might be outdated, mistyped, or moved. Try one of the entry points below — they're the most useful destinations on the site.
+      </p>
+    </section>
+
+    <div class="err-links" id="err-links">
+      <!-- Filled by JS based on detected locale -->
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+  <script defer>
+    (function () {
+      // Detect the locale the visitor was trying to reach. Vercel serves this
+      // 404.html for any unmatched route, so window.location.pathname still
+      // holds the original URL the user typed/clicked.
+      const path = window.location.pathname || '';
+      const seg  = path.split('/').filter(Boolean)[0];
+      const locale = ['en', 'ja', 'ko'].includes(seg) ? seg : 'en';
+
+      // <html lang> for screen readers + SEO.
+      document.documentElement.setAttribute('lang', locale);
+
+      // Locale-specific copy. Kept inline since this page must render
+      // standalone — i18n.js may load slower than the user re-clicking.
+      const COPY = {
+        en: {
+          title: "This page doesn't exist.",
+          sub:   "The URL you followed might be outdated, mistyped, or moved. Try one of the entry points below — they're the most useful destinations on the site.",
+          links: [
+            { href: '/en/library',         meta: 'RESEARCH LIBRARY', name: 'Browse the library',   body: 'Market intelligence reports across 11 SEA countries and 38 industries.' },
+            { href: '/en/insights/',       meta: 'FIELD NOTES',      name: 'Read insights',         body: 'Analyst commentary on what is changing across Southeast Asia — free.' },
+            { href: '/en/custom-research/',meta: 'CUSTOM RESEARCH',  name: 'Commission research',   body: 'Senior-analyst-led project on a question the library doesn’t answer.' }
+          ]
+        },
+        ja: {
+          title: "ページが見つかりません。",
+          sub:   "リンクが古い、入力に誤り、または移動した可能性があります。下記の主要ページからお探しください。",
+          links: [
+            { href: '/ja/library',         meta: 'リサーチライブラリ', name: 'ライブラリを見る',   body: '東南アジア11カ国・38業種を網羅する市場調査レポート。' },
+            { href: '/ja/insights/',       meta: 'フィールドノート',   name: 'インサイトを読む',   body: '東南アジアの動向に関するアナリスト解説 — 無料公開。' },
+            { href: '/ja/custom-research/',meta: 'カスタム調査',       name: '調査を依頼する',     body: 'ライブラリでカバーされない問いに、シニアアナリストが応えます。' }
+          ]
+        },
+        ko: {
+          title: "페이지를 찾을 수 없습니다.",
+          sub:   "링크가 오래되었거나, 잘못 입력되었거나, 이동되었을 수 있습니다. 아래의 주요 진입점에서 다시 시도해주세요.",
+          links: [
+            { href: '/ko/library',         meta: '리서치 라이브러리', name: '라이브러리 둘러보기',  body: '동남아 11개국・38개 산업의 시장 조사 보고서.' },
+            { href: '/ko/insights/',       meta: '필드 노트',         name: '인사이트 읽기',         body: '동남아 변화에 대한 분석가의 해설 — 무료.' },
+            { href: '/ko/custom-research/',meta: '맞춤 조사',         name: '조사 의뢰',             body: '라이브러리에서 다루지 않는 질문, 시니어 분석가가 답합니다.' }
+          ]
+        }
+      };
+
+      const c = COPY[locale];
+      document.getElementById('err-title').textContent = c.title;
+      document.getElementById('err-sub').textContent   = c.sub;
+      const fontFamily = locale === 'ja' ? "'Satoshi', 'Noto Sans JP', sans-serif"
+                       : locale === 'ko' ? "'Satoshi', 'Noto Sans KR', sans-serif"
+                       : "'Satoshi', sans-serif";
+      document.body.style.fontFamily = fontFamily;
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      const cards = c.links.map(L => (
+        '<a href="' + L.href + '" class="err-link">' +
+          '<div class="meta">' + escapeHtml(L.meta) + '</div>' +
+          '<h3>' + escapeHtml(L.name) + '</h3>' +
+          '<p>' + escapeHtml(L.body) + '</p>' +
+        '</a>'
+      )).join('');
+      document.getElementById('err-links').innerHTML = cards;
+    })();
+  </script>
+</body>
+</html>
