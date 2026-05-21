@@ -161,6 +161,26 @@
     document.head.appendChild(el);
   }
 
+  // ── Canonical injection ────────────────────────────────────
+  // Tell crawlers which URL is the "real" address of this page. Pins
+  // ranking signals to the prod domain even when the page is served
+  // from a Vercel preview URL or hit with tracking params (?utm_*).
+  //
+  // Skips if a canonical link already exists on the page (e.g. a future
+  // SSR build, or admin pages that explicitly set their own).
+  function injectCanonical() {
+    if (document.querySelector('link[rel="canonical"]')) return;
+
+    const PROD_ORIGIN = 'https://kiraresearch.com';
+    // Strip query + hash; keep the locale-aware pathname exactly as is
+    // so trailing-slash + cleanUrls quirks aren't re-normalized.
+    const link = document.createElement('link');
+    link.rel = 'canonical';
+    link.href = PROD_ORIGIN + window.location.pathname;
+    link.setAttribute('data-kira-canonical', '1');
+    document.head.appendChild(link);
+  }
+
   // ── hreflang injection ─────────────────────────────────────
   // Add <link rel="alternate" hreflang="..."> tags into <head> for each
   // supported locale + an x-default pointer. Lets Google's crawler discover
@@ -197,7 +217,8 @@
 
   // ── Inject ─────────────────────────────────────────────────
   function inject() {
-    // hreflang first so it's in <head> before <body> work begins.
+    // canonical + hreflang first so they're in <head> before <body> work begins.
+    injectCanonical();
     injectHreflang();
     injectOrganizationJsonLd();
 

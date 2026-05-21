@@ -405,6 +405,16 @@ test.describe('SEO surface', () => {
     expect(count).toBeGreaterThanOrEqual(4);
   });
 
+  test('/en/ has canonical <link> pointing to prod origin', async ({ page }) => {
+    // Tracking params should NOT bleed into canonical — that's the whole
+    // point of having one. Hit the page with a utm_source query and
+    // assert the canonical strips it.
+    await page.goto('/en/?utm_source=smoke-test', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('link[rel="canonical"]', { state: 'attached', timeout: 5_000 });
+    const href = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(href).toBe('https://kiraresearch.com/en/');
+  });
+
   test('/en/ has Organization JSON-LD injected by nav.js', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('script#ld-organization', { state: 'attached', timeout: 5_000 });
