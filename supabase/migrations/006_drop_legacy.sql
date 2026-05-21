@@ -21,14 +21,22 @@
 -- Run AFTER 001-005 in the Supabase SQL editor. Idempotent (uses
 -- `if exists`/`cascade`/`where in (...)`) so re-runs are no-ops.
 --
+-- TWO-STEP CLEANUP (SQL + Dashboard UI):
+--   Step A — SQL Editor (this file): drops tables + functions only.
+--   Step B — Dashboard → Storage: empty + delete `frameworks` and
+--            `reports` buckets manually. Supabase blocks direct SQL
+--            delete from storage.objects/buckets via the
+--            `storage.protect_delete()` trigger; the supported delete
+--            path is the Storage API / Dashboard UI.
+--
 -- THIS IS DESTRUCTIVE. Expected impact on this owner's project:
 --   • 6 tables removed (~3,800 rows total — mostly source_reports
 --     204 + report_chunks 2436 + industry_patterns 925 +
 --     competency_templates 10 + chat_history 0 + contacts 0)
 --   • 3+ function overloads removed (search_report_chunks,
 --     search_industry_patterns)
---   • 2 buckets removed (frameworks 23 objects ~650 KB, reports
---     132 objects ~38 MB) — recovered storage quota.
+--   • 2 buckets removed via Dashboard UI (frameworks 23 objects
+--     ~650 KB, reports 132 objects ~38 MB) — recovered storage quota.
 -- The 7 tables created by migrations 001-005 are untouched:
 --   leads, living_reports, report_translations, insights,
 --   insight_translations, purchases, downloads — plus the
@@ -68,19 +76,21 @@ drop table if exists public.competency_templates cascade;
 drop table if exists public.chat_history        cascade;
 drop table if exists public.contacts            cascade;
 
--- 3) Delete legacy storage objects, then the buckets themselves.
---    Storage object rows in storage.objects MUST go first — bucket
---    deletion errors out if any objects remain. The buckets are
---    `frameworks` (consulting framework JSON extracts, ~650 KB) and
---    `reports` (full PDFs of scraped reports, ~38 MB). Both are
---    unreferenced by the current Year-1 app. The active PDF bucket
---    is `reports-pdfs` from migration 005 — that one stays.
-delete from storage.objects where bucket_id in ('frameworks', 'reports');
-delete from storage.buckets where id in ('frameworks', 'reports');
+-- 3) Storage buckets — DELETED VIA DASHBOARD UI, NOT SQL.
+--    Supabase enforces `storage.protect_delete()` trigger which blocks
+--    direct `delete from storage.objects` / `storage.buckets`. The
+--    intended path is Storage API → bucket manager. Two buckets to
+--    remove via Dashboard → Storage:
+--      • `frameworks` (23 objects, ~650 KB)
+--      • `reports`    (132 objects, ~38 MB)
+--    For each: click bucket → "Empty bucket" → confirm → "Delete bucket".
+--    The active PDF bucket is `reports-pdfs` from migration 005 — DO
+--    NOT touch that one.
 
 -- 4) Sanity log — owner can read these final counts in the Supabase
---    SQL Editor "Messages" output pane to confirm cleanup. All zeros
---    means the migration applied cleanly.
+--    SQL Editor "Messages" output pane to confirm cleanup. Tables
+--    remaining should be 0. Bucket count reflects current state; it
+--    will only be 0 after the owner does the Dashboard UI delete above.
 do $$
 declare
   remaining_tables int;
@@ -97,6 +107,6 @@ begin
   select count(*) into remaining_buckets
   from storage.buckets where id in ('frameworks', 'reports');
 
-  raise notice 'Migration 006 done. Legacy tables remaining: % (should be 0). Legacy buckets remaining: % (should be 0).',
+  raise notice 'Migration 006 SQL done. Legacy tables remaining: % (must be 0). Legacy buckets still pending Dashboard delete: % (must be 0 after owner empties + deletes via Storage UI).',
     remaining_tables, remaining_buckets;
 end $$;
