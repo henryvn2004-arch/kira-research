@@ -24,11 +24,11 @@
 
 ---
 
-## Current state (2026-05-20)
+## Current state (2026-05-21)
 
-- **Latest commit on `main`:** `7c2112b` — fix(auth): correct nav.js path on /auth page (was /nav.js, 404'd)
+- **Latest commit on `main`:** `233e0b3` — docs(progress): mark verification items 1+2+4 done after 2026-05-21 audit. Will be superseded by the migration 006 commit landing this session.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` and this session's 7.3-remainder commit go out together — verify in Actions tab.
+- **Last fully-verified green CI run:** commit `2914317` (latest). All 5 latest GitHub Actions runs success.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 50 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
@@ -114,7 +114,8 @@ supabase/migrations/                # idempotent schema
 ├── 002_library.sql                 # reports + report_translations + seed
 ├── 003_insights.sql                # insights + insight_translations + seed
 ├── 004_purchases.sql               # purchases + downloads + RLS
-└── 005_storage.sql                 # private bucket reports-pdfs + RLS (item D)
+├── 005_storage.sql                 # private bucket reports-pdfs + RLS (item D)
+└── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
 
 tests/smoke.spec.js                 # 41 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
@@ -142,12 +143,13 @@ Two things matter here:
 
 These are tasks only the owner can do (involve dashboards, not git):
 
-1. ☐ **Run 5 Supabase migrations** in dashboard SQL Editor, in order:
+1. ☐ **Run 6 Supabase migrations** in dashboard SQL Editor, in order:
    - `supabase/migrations/001_leads.sql`
    - `supabase/migrations/002_library.sql`
    - `supabase/migrations/003_insights.sql`
    - `supabase/migrations/004_purchases.sql`
    - `supabase/migrations/005_storage.sql` — creates private `reports-pdfs` bucket for PDF uploads. Alternative: Dashboard → Storage → New bucket → name `reports-pdfs`, **uncheck Public**, MIME `application/pdf`, size 32MB.
+   - `supabase/migrations/006_drop_legacy.sql` — **destructive**. Drops 6 unambiguously-deprecated tables (`source_reports`, `report_chunks`, `industry_patterns`, `competency_templates`, `chat_history`, `contacts`), 2 RAG/search functions, 2 dead storage buckets (`frameworks` 23 obj, `reports` 132 obj ~38MB). **Intentionally keeps** `user_credits`, `credit_transactions`, `credit_costs`, `custom_reports` + paired `spend_credits`/`add_credits` functions — `project des/CLAUDE.md` earmarks these for the deferred `/custom-research/*` tool rebuild. Run only after 001-005 are confirmed applied.
 2. ☐ **Set Vercel env var** `ADMIN_EMAILS=henryvn2004@gmail.com`
 3. ☐ **Verify Vercel env vars exist** (Settings → Environment Variables):
    - `SUPABASE_URL`
@@ -188,7 +190,7 @@ Status as of 2026-05-21:
 4. ✅ **Bug #2 + #4 verified by CI** — smoke tests on commit `2914317` exercise the exact `script#ld-product`, `#ld-breadcrumb`, `#ld-article`, `#ld-organization` selectors AND `pageerror` SyntaxError filter on `/en/reports/vietnam-fintech-2026` and `/en/insights/vietnam-sme-lending-shift`. Both API endpoints confirmed serving seed data (8 reports, 7 insights), so the data-conditional tests in the suite actually ran the assertions rather than skipping. Optional Rich Results "Test live URL" can re-confirm in Google's eyes.
 5. ☐ **End-to-end PDF upload + purchase** — still owner-side. Once admin works (item 3), upload test PDF via `/en/admin/reports` → buy in incognito with non-admin PayPal sandbox account → download via post-purchase link.
 
-**Newly surfaced (2026-05-21 session):** Supabase advisor flags 5 platform-era tables with RLS disabled and 0 code refs: `source_reports` (204 rows of scraped report bodies), `report_chunks` (2436), `competency_templates` (10), `industry_patterns` (925), `credit_costs` (12). Plus 4 more dead tables (`custom_reports` 39, `user_credits` 1, `credit_transactions` 28, `chat_history` 0) and 2 dead storage buckets (`reports`, `frameworks`) all unused. Sprint F removed the app references but didn't drop the DB objects. Recommend a small migration `006_drop_legacy.sql` that drops these — closes the RLS-leak surface and reclaims storage. ~30 min including owner SQL Editor run.
+**Newly surfaced + addressed (2026-05-21 session):** Supabase advisor flagged 5 platform-era tables with RLS disabled and 0 code refs (`source_reports` 204 rows, `report_chunks` 2436, `competency_templates` 10, `industry_patterns` 925, `credit_costs` 12) plus 4 more dead tables (`custom_reports` 39, `user_credits` 1, `credit_transactions` 28, `chat_history` 0, `contacts` 0) + 2 dead storage buckets (`reports` 132 objects ~38MB, `frameworks` 23 objects ~650KB) + 5 dead functions. **Cleanup migration `006_drop_legacy.sql` written + pushed this session** — scoped to drop 6 unambiguously-deprecated tables + 2 buckets + 2 RAG functions. The 4 credit/`custom_reports` tables + their paired functions are kept per `project des/CLAUDE.md` Custom Research backend earmark. Owner runs migration 006 via Supabase SQL Editor (item 6 above). After applied, re-check Supabase advisor — RLS-disabled count should drop from 5 to 1 (only `credit_costs` remaining; addressable separately with a `enable row level security` + deny-all policy if it stays unused).
 
 ## Next queue (pick one)
 

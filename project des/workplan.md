@@ -89,6 +89,7 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] Remove all volume claims (1000+ studies, etc.)
 - [x] Remove competitor mentions
 - [x] Remove ALL platform-era legacy files at repo root (29 files / 11k+ lines removed in `a8a9206` — see Phase 5 deliverable for full inventory)
+- [x] Remove platform-era DB tables + buckets + RAG functions (Supabase advisor RLS-leak cleanup) — migration `006_drop_legacy.sql` written 2026-05-21, drops 6 tables + 2 functions + 2 storage buckets (~155 objects / ~38 MB). Keeps `user_credits`/`credit_transactions`/`credit_costs`/`custom_reports` per Custom Research backend earmark in `project des/CLAUDE.md`.
 
 ### Sprint 2.4 — UI string extraction
 - [x] Extract all UI strings into `/locales/en.json`
