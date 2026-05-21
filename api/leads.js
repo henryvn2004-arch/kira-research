@@ -10,6 +10,8 @@
 // Inserts into Supabase `leads` table (schema described in claude.md).
 // ============================================================
 
+import { sendLeadNotification } from './_lib/email.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -111,6 +113,14 @@ export default async function handler(req, res) {
   try {
     const inserted = await supabase('leads', 'POST', row);
     const id = Array.isArray(inserted) && inserted[0] ? inserted[0].id : null;
+
+    // Fire-and-forget admin notification — never block the API response on it
+    // and never propagate its failure. The helper itself absorbs errors, but
+    // wrap defensively anyway.
+    sendLeadNotification({ leadId: id, ...row }).catch(e =>
+      console.error('[leads] notify threw despite absorber:', e.message)
+    );
+
     res.status(200).json({ ok: true, id });
   } catch (err) {
     // Never leak Supabase error detail to the client — log server-side, return generic.

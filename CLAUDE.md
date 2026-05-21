@@ -26,11 +26,11 @@
 
 ## Current state (2026-05-21)
 
-- **Latest commit on `main`:** `233e0b3` — docs(progress): mark verification items 1+2+4 done after 2026-05-21 audit. Will be superseded by the migration 006 commit landing this session.
+- **Latest commit on `main`:** Sprint E (Resend transactional email — receipts + lead notifications). Owner runs domain verify + adds `RESEND_API_KEY` env var to enable live sends; until then sends no-op silently.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** commit `2914317` (latest). All 5 latest GitHub Actions runs success.
+- **Last fully-verified green CI run:** commit `0a6e878` (migration 006 fix). 52 smoke checks pass.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 50 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift).
+- **Smoke tests:** 52 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
@@ -99,15 +99,16 @@ public/
 └── robots.txt                      # crawler directives
 
 api/                                # 14 Vercel serverless functions (all active)
-├── leads.js                        # public POST — form submissions
+├── leads.js                        # public POST — form submissions (+ admin notify email via _lib/email)
 ├── library-list.js  insights-list.js  insight.js  library-report.js  # public reads
-├── library-buy.js                  # PayPal create + capture
+├── library-buy.js                  # PayPal create + capture (+ receipt email via _lib/email)
 ├── library-verify.js               # check purchase state
 ├── library-content.js              # JWT-gated full content + PDF URL
 ├── admin-leads.js  admin-reports.js  admin-insights.js  # JWT + ADMIN_EMAILS whitelist
 ├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
 ├── admin-upload-pdf.js             # admin PDF upload to Supabase Storage (item D)
-└── sitemap.js                      # dynamic sitemap (index + per-locale)
+├── sitemap.js                      # dynamic sitemap (index + per-locale)
+└── _lib/email.js                   # shared Resend send helper — purchase receipts + lead notifications (Sprint E). NOT a route (Vercel skips `_` dirs).
 
 supabase/migrations/                # idempotent schema
 ├── 001_leads.sql                   # leads table + RLS
@@ -158,6 +159,14 @@ These are tasks only the owner can do (involve dashboards, not git):
    - `PAYPAL_CLIENT_SECRET`
    - `PAYPAL_MODE` (= `sandbox` or `live`)
    - `APP_URL` (= `https://kiraresearch.com`)
+5. ☐ **Set up Resend for transactional email** (Sprint E, shipped 2026-05-21):
+   - Create account at https://resend.com — sign up with `henryvn2004@gmail.com`, free tier (3K emails/month) is plenty for Year 1
+   - Resend dashboard → Domains → "Add Domain" → `kiraresearch.com`
+   - Resend shows 3 DNS records (MX, SPF TXT, DKIM TXT). Open a 2nd tab → Vercel → kira-research → Settings → Domains → click `kiraresearch.com` → DNS Records → add the 3 records exactly as shown by Resend. Wait a few minutes, then click "Verify" in Resend.
+   - Resend → API Keys → "Create API Key" → name "kira-prod" → permission "Full access" → copy the `re_...` key
+   - Vercel → kira-research → Settings → Environment Variables → add **`RESEND_API_KEY`** = `re_...` to all 3 scopes (Production, Preview, Development), then go to Deployments → latest → ⋯ → Redeploy
+   - (Optional) Override the From address by setting **`RESEND_FROM`** = `"KIRA RESEARCH <noreply@kiraresearch.com>"` — defaults to that string if unset.
+   - **Until domain is verified**, the `RESEND_API_KEY` can still be set but live sends will fail; receipts + lead notifications no-op silently. The site still works — emails just don't go out.
 
 ### Done (no further action needed)
 
@@ -199,8 +208,7 @@ more pending sprints in `project des/workplan.md`. Recommended order:
 
 - ~~**C — Sitemap.xml + robots.txt + full hreflang**~~ ✅ **DONE** (`6bb331f`…`8bcb6d4`). Closed Sprint 3.3, ~70% of 8.1+9.1; 7.3 partial.
 - ~~**D — PDF upload via Supabase Storage**~~ ✅ **DONE** (this session). New `api/admin-upload-pdf.js` accepts base64 PDF + report_id + locale, writes to private bucket `reports-pdfs/{id}/{locale}.pdf`, patches `report_translations.pdf_url` to the path. `api/library-content.js` resolves paths → 1-hour signed URLs; external URLs pass through. Admin UI on `/en/admin/reports` edit pane has file picker + Upload button. Migration `005_storage.sql` creates the bucket. Closes 6.2 upload/delivery half.
-- **E — Transactional email** (purchase receipt + lead notify) → fills Phase **6** ops gap (out of original workplan, but blocks healthy revenue UX).
-  Pick provider (Resend recommended). Year 1 = simple sends only. ~half-day.
+- ~~**E — Transactional email**~~ ✅ **DONE** (this session). `api/_lib/email.js` exposes `sendPurchaseReceipt` + `sendLeadNotification`, posts to Resend. Wired into `library-buy.js` (capture step) and `leads.js` (post-insert) as fire-and-forget — never blocks the API response, no-ops silently when `RESEND_API_KEY` is unset. Owner runs Resend domain-verify + adds env var (action item 5). 2 new smoke tests.
 - ~~**7.3-remainder — Per-report schema markup + Open Graph + JSON-LD**~~ ✅ **DONE** (this session). `_view.html` for reports + insights inject per-page OG/Twitter Card + Product/Article JSON-LD + BreadcrumbList. `nav.js` injects Organization JSON-LD globally. 4 new smoke tests cover it (45 total now).
 - **4.3 — Transactions + Users admin** → revenue tracking UX.
   `/en/admin/transactions` list view + detail + manual refund button. Reuses `purchases` table. ~1 day.

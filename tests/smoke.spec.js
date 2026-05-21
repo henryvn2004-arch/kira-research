@@ -227,6 +227,37 @@ test.describe('public APIs', () => {
     const r = await request.get('/api/admin-upload-pdf');
     expect(r.status()).toBe(405);
   });
+
+  // Email helper lives in /api/_lib/. Vercel excludes underscore-prefixed
+  // dirs from routing — verify it stays non-public so the import path can
+  // never be hit from outside.
+  test('/api/_lib/email is NOT a public route', async ({ request }) => {
+    const r = await request.get('/api/_lib/email');
+    expect(r.status()).toBe(404);
+  });
+
+  // /api/leads handles the email side-effect as fire-and-forget — verify the
+  // honeypot path (which bots/CI hit) still returns 200 JSON. Using the
+  // honeypot field avoids polluting the leads table with CI-generated rows.
+  // This also exercises the lead handler's full code path before the insert
+  // branch, catching import-time errors in the email helper.
+  test('/api/leads POST honeypot path returns 200 JSON', async ({ request }) => {
+    const r = await request.post('/api/leads', {
+      data: {
+        name:  'CI smoke',
+        email: 'ci@example.com',
+        brief: 'Honeypot — bot filling, not a real lead.',
+        hp:    'bot'
+      },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    const body = await r.json();
+    expect(body.ok).toBe(true);
+    expect(body.id).toBeNull();
+  });
 });
 
 // ── 7) SEO surface: sitemaps + robots.txt + hreflang ──

@@ -219,7 +219,15 @@ Week 10-12 →  Phase 10: Polish & Launch
 - Target: 50-100 EN reports by Week 12
 - Track sales data → identify top performers → double down
 
-**Deliverable:** 50-100 EN reports live by Week 12, all on aggregators
+### Sprint 6.E — Transactional email (added 2026-05-21, out of original workplan)
+- [x] Resend integration via `api/_lib/email.js` (`sendPurchaseReceipt` + `sendLeadNotification`)
+- [x] Purchase receipt sent after PayPal capture (fire-and-forget, never blocks the 200 response)
+- [x] Admin lead notification sent after `/api/leads` insert (fire-and-forget, reply-to = lead's email)
+- [x] Silent no-op when `RESEND_API_KEY` is unset (lets the site run pre-config)
+- [x] Smoke tests guard email-import errors + `/api/_lib/` route exclusion
+- [ ] Owner: create Resend account + verify `kiraresearch.com` domain via Vercel DNS + add `RESEND_API_KEY` env var (CLAUDE.md owner action 5)
+
+**Deliverable:** 50-100 EN reports live by Week 12, all on aggregators. Receipts + lead notifications flowing once Resend is wired in.
 
 ---
 

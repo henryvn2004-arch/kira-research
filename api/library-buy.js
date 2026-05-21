@@ -13,6 +13,8 @@
 // rebuild context without trusting the client.
 // ============================================================
 
+import { sendPurchaseReceipt } from './_lib/email.js';
+
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
   ? 'https://api-m.paypal.com'
   : 'https://api-m.sandbox.paypal.com';
@@ -243,6 +245,33 @@ export default async function handler(req, res) {
         purchase = Array.isArray(existing) ? existing[0] : null;
         if (!purchase) throw err;
       }
+
+      // Fire-and-forget receipt email — never block the success response or
+      // propagate failures. The helper itself absorbs errors; the .catch() is
+      // belt-and-suspenders. Best-effort title fetch — falls back to slug if
+      // the translation row is missing or the lookup errors out.
+      (async () => {
+        let reportTitle = null;
+        try {
+          const t = await sb(
+            `report_translations?report_id=eq.${report.id}` +
+            `&locale=eq.${locale}&select=title&limit=1`
+          );
+          reportTitle = Array.isArray(t) && t[0] ? t[0].title : null;
+        } catch (e) {
+          console.warn('[library-buy] title fetch for receipt failed', e.message);
+        }
+        return sendPurchaseReceipt({
+          buyerEmail:  user.email,
+          slug:        purchase.slug,
+          locale:      purchase.locale,
+          amount:      purchase.amount,
+          currency:    purchase.currency,
+          reportTitle
+        });
+      })().catch(e =>
+        console.error('[library-buy] receipt threw despite absorber:', e.message)
+      );
 
       res.status(200).json({
         ok: true,
