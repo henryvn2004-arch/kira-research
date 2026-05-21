@@ -88,10 +88,13 @@
       const root   = document.getElementById('insights-root');
       const cats   = document.querySelectorAll('.insights-cats a');
       const locale = (window.kira && window.kira.locale) || 'en';
+      const PAGE_SIZE = 12;
       let activeCat = '';
+      let page      = 1;
 
-      // ── Hydrate active category from URL (?cat=foo) ──
-      const initCat = new URLSearchParams(window.location.search).get('cat');
+      // ── Hydrate active category + page from URL (?cat=foo&page=N) ──
+      const params = new URLSearchParams(window.location.search);
+      const initCat = params.get('cat');
       if (initCat) {
         activeCat = initCat.toLowerCase();
         cats.forEach(a => {
@@ -100,53 +103,118 @@
             (!a.dataset.cat && !activeCat));
         });
       }
+      const initPage = parseInt(params.get('page'), 10);
+      if (initPage && initPage > 0) page = initPage;
 
-      // ── Chip clicks ──
+      // ── Chip clicks (reset to page 1) ──
       cats.forEach(a => {
         a.addEventListener('click', (e) => {
           e.preventDefault();
           cats.forEach(o => o.classList.remove('active'));
           a.classList.add('active');
           activeCat = (a.dataset.cat || '').toLowerCase();
+          page = 1;
+          syncUrl();
           fetchAndRender();
         });
       });
+
+      // ── Back/forward navigation ──
+      window.addEventListener('popstate', () => {
+        const p = new URLSearchParams(window.location.search);
+        activeCat = (p.get('cat') || '').toLowerCase();
+        page = Math.max(1, parseInt(p.get('page'), 10) || 1);
+        cats.forEach(a => {
+          a.classList.toggle('active',
+            (a.dataset.cat || '').toLowerCase() === activeCat ||
+            (!a.dataset.cat && !activeCat));
+        });
+        fetchAndRender();
+      });
+
+      function syncUrl() {
+        const p = new URLSearchParams();
+        if (activeCat) p.set('cat', activeCat);
+        if (page > 1)  p.set('page', String(page));
+        const qs = p.toString();
+        const url = window.location.pathname + (qs ? '?' + qs : '');
+        window.history.pushState({}, '', url);
+      }
 
       async function fetchAndRender() {
         root.innerHTML = '<div class="insight-empty">Loading…</div>';
         const qs = new URLSearchParams();
         qs.set('locale', locale);
-        qs.set('limit',  '24');
+        qs.set('limit',  String(PAGE_SIZE));
+        qs.set('offset', String((page - 1) * PAGE_SIZE));
         if (activeCat) qs.set('category', activeCat);
 
         try {
           const r = await fetch('/api/insights-list?' + qs.toString());
           if (!r.ok) throw new Error('http ' + r.status);
           const data = await r.json();
-          render(data.items || []);
+          render(data.items || [], data.total || 0);
         } catch (err) {
           root.innerHTML = '<div class="insight-empty">Couldn\'t load insights. Please retry.</div>';
         }
       }
 
-      function render(items) {
+      function render(items, total) {
         if (!items.length) {
           root.innerHTML = '<div class="insight-empty">No insights match this filter yet.</div>';
           return;
         }
 
-        // Pick featured: explicit featured=true, else first.
-        const featured = items.find(it => it.featured) || items[0];
-        const rest     = items.filter(it => it.slug !== featured.slug);
-
         const html = [];
-        if (featured) html.push(renderFeatured(featured));
-        if (rest.length) {
+
+        if (page === 1) {
+          // Page 1: featured + rest as grid.
+          const featured = items.find(it => it.featured) || items[0];
+          const rest     = items.filter(it => it.slug !== featured.slug);
+          html.push(renderFeatured(featured));
+          if (rest.length) {
+            html.push('<div class="insights-grid">');
+            rest.forEach(it => html.push(renderCard(it)));
+            html.push('</div>');
+          }
+        } else {
+          // Page 2+: plain grid, no featured.
           html.push('<div class="insights-grid">');
-          rest.forEach(it => html.push(renderCard(it)));
+          items.forEach(it => html.push(renderCard(it)));
           html.push('</div>');
         }
+
+        const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (totalPages > 1) html.push(renderPager(totalPages));
+
         root.innerHTML = html.join('');
+
+        // Wire pager buttons.
+        const prev = root.querySelector('.insights-pager .pager-prev');
+        const next = root.querySelector('.insights-pager .pager-next');
+        if (prev) prev.addEventListener('click', (e) => { e.preventDefault(); goTo(page - 1); });
+        if (next) next.addEventListener('click', (e) => { e.preventDefault(); goTo(page + 1); });
+      }
+
+      function goTo(n) {
+        page = Math.max(1, n);
+        syncUrl();
+        fetchAndRender();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function renderPager(totalPages) {
+        const prevDisabled = page <= 1 ? ' disabled' : '';
+        const nextDisabled = page >= totalPages ? ' disabled' : '';
+        return (
+          '<nav class="insights-pager" aria-label="Pagination">' +
+            '<a href="#" class="pager-prev' + prevDisabled + '"' +
+              (prevDisabled ? ' aria-disabled="true"' : '') + '>← Previous</a>' +
+            '<span class="pager-status">Page ' + page + ' of ' + totalPages + '</span>' +
+            '<a href="#" class="pager-next' + nextDisabled + '"' +
+              (nextDisabled ? ' aria-disabled="true"' : '') + '>Next →</a>' +
+          '</nav>'
+        );
       }
 
       function renderFeatured(it) {

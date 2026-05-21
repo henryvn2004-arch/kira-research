@@ -239,7 +239,7 @@ Week 10-12 →  Phase 10: Polish & Launch
 ### Sprint 7.1 — Insights page
 - [x] Build `/en/insights` blog list page
 - [x] Article template page `/en/insights/[slug]`
-- [ ] Auto-pagination — **basic limit param works; UI pagination control NOT built**
+- [x] Auto-pagination — PAGE_SIZE=12, `?page=N` URL param, Prev/Next pager (disabled-edge states), pushState + popstate wired so back/forward works, category change resets to page 1. Pager only renders when total > PAGE_SIZE. EN/JA/KO inline-localized labels. 2 new smoke tests.
 
 ### Sprint 7.2 — Auto-insights generation
 - [ ] Daily cron generating SEO articles (`/api/cron/insights`) — **`api/cron-insights.js` exists from platform era; not wired to new model. Needs re-design.**

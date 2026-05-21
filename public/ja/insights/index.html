@@ -66,9 +66,12 @@
       const root = document.getElementById('insights-root');
       const cats = document.querySelectorAll('.insights-cats a');
       const locale = (window.kira && window.kira.locale) || 'ja';
+      const PAGE_SIZE = 12;
       let activeCat = '';
+      let page      = 1;
 
-      const initCat = new URLSearchParams(window.location.search).get('cat');
+      const params = new URLSearchParams(window.location.search);
+      const initCat = params.get('cat');
       if (initCat) {
         activeCat = initCat.toLowerCase();
         cats.forEach(a => {
@@ -77,6 +80,8 @@
             (!a.dataset.cat && !activeCat));
         });
       }
+      const initPage = parseInt(params.get('page'), 10);
+      if (initPage && initPage > 0) page = initPage;
 
       cats.forEach(a => {
         a.addEventListener('click', (e) => {
@@ -84,41 +89,98 @@
           cats.forEach(o => o.classList.remove('active'));
           a.classList.add('active');
           activeCat = (a.dataset.cat || '').toLowerCase();
+          page = 1;
+          syncUrl();
           fetchAndRender();
         });
       });
+
+      window.addEventListener('popstate', () => {
+        const p = new URLSearchParams(window.location.search);
+        activeCat = (p.get('cat') || '').toLowerCase();
+        page = Math.max(1, parseInt(p.get('page'), 10) || 1);
+        cats.forEach(a => {
+          a.classList.toggle('active',
+            (a.dataset.cat || '').toLowerCase() === activeCat ||
+            (!a.dataset.cat && !activeCat));
+        });
+        fetchAndRender();
+      });
+
+      function syncUrl() {
+        const p = new URLSearchParams();
+        if (activeCat) p.set('cat', activeCat);
+        if (page > 1)  p.set('page', String(page));
+        const qs = p.toString();
+        window.history.pushState({}, '', window.location.pathname + (qs ? '?' + qs : ''));
+      }
 
       async function fetchAndRender() {
         root.innerHTML = '<div class="insight-empty">読み込み中…</div>';
         const qs = new URLSearchParams();
         qs.set('locale', locale);
-        qs.set('limit',  '24');
+        qs.set('limit',  String(PAGE_SIZE));
+        qs.set('offset', String((page - 1) * PAGE_SIZE));
         if (activeCat) qs.set('category', activeCat);
         try {
           const r = await fetch('/api/insights-list?' + qs.toString());
           if (!r.ok) throw new Error('http ' + r.status);
           const data = await r.json();
-          render(data.items || []);
+          render(data.items || [], data.total || 0);
         } catch (err) {
           root.innerHTML = '<div class="insight-empty">インサイトを読み込めませんでした。再試行してください。</div>';
         }
       }
 
-      function render(items) {
+      function render(items, total) {
         if (!items.length) {
           root.innerHTML = '<div class="insight-empty">このフィルターに該当するインサイトがありません。</div>';
           return;
         }
-        const featured = items.find(it => it.featured) || items[0];
-        const rest     = items.filter(it => it.slug !== featured.slug);
         const html = [];
-        if (featured) html.push(renderFeatured(featured));
-        if (rest.length) {
+        if (page === 1) {
+          const featured = items.find(it => it.featured) || items[0];
+          const rest     = items.filter(it => it.slug !== featured.slug);
+          html.push(renderFeatured(featured));
+          if (rest.length) {
+            html.push('<div class="insights-grid">');
+            rest.forEach(it => html.push(renderCard(it)));
+            html.push('</div>');
+          }
+        } else {
           html.push('<div class="insights-grid">');
-          rest.forEach(it => html.push(renderCard(it)));
+          items.forEach(it => html.push(renderCard(it)));
           html.push('</div>');
         }
+        const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (totalPages > 1) html.push(renderPager(totalPages));
         root.innerHTML = html.join('');
+
+        const prev = root.querySelector('.insights-pager .pager-prev');
+        const next = root.querySelector('.insights-pager .pager-next');
+        if (prev) prev.addEventListener('click', (e) => { e.preventDefault(); goTo(page - 1); });
+        if (next) next.addEventListener('click', (e) => { e.preventDefault(); goTo(page + 1); });
+      }
+
+      function goTo(n) {
+        page = Math.max(1, n);
+        syncUrl();
+        fetchAndRender();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function renderPager(totalPages) {
+        const prevDisabled = page <= 1 ? ' disabled' : '';
+        const nextDisabled = page >= totalPages ? ' disabled' : '';
+        return (
+          '<nav class="insights-pager" aria-label="ページネーション">' +
+            '<a href="#" class="pager-prev' + prevDisabled + '"' +
+              (prevDisabled ? ' aria-disabled="true"' : '') + '>← 前へ</a>' +
+            '<span class="pager-status">' + page + ' / ' + totalPages + ' ページ</span>' +
+            '<a href="#" class="pager-next' + nextDisabled + '"' +
+              (nextDisabled ? ' aria-disabled="true"' : '') + '>次へ →</a>' +
+          '</nav>'
+        );
       }
 
       function renderFeatured(it) {

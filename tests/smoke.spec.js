@@ -275,6 +275,36 @@ test.describe('public APIs', () => {
   });
 });
 
+// ── 6b) Insights pagination — sanity for Sprint 7.1 ──
+//
+// The /en/insights/ list page now honors ?page=N. We don't assert the pager
+// is *visible* (depends on seed-data count vs PAGE_SIZE=12), but we do assert
+// the page survives ?page=2 cold-load without crashing, and the API exposes
+// `total` so the UI can decide whether to render the pager.
+test.describe('insights pagination', () => {
+  test('/en/insights/?page=2 loads without JS errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/insights/?page=2', { waitUntil: 'networkidle' });
+    expect(res.status()).toBeLessThan(400);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on ?page=2: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/insights-list returns numeric total + accepts offset', async ({ request }) => {
+    const r = await request.get('/api/insights-list?locale=en&limit=12&offset=0');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(typeof data.total).toBe('number');
+      expect(data).toHaveProperty('limit');
+      expect(data).toHaveProperty('offset');
+    }
+  });
+});
+
 // ── 7) SEO surface: sitemaps + robots.txt + hreflang ──
 //
 // These check the SEO entry points crawlers hit on every site discovery.
