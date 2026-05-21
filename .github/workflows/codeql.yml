@@ -1,0 +1,57 @@
+# ============================================================
+# KIRA RESEARCH — CodeQL security scanning
+#
+# GitHub-hosted SAST. Catches common JS issues that ESLint doesn't:
+# prototype pollution, taint-flow XSS, insecure regex, etc.
+#
+# Free for public repos (kira-research is public). Findings show up
+# in the repo "Security" tab → "Code scanning alerts".
+#
+# Triggers:
+#   - push to main      → fresh baseline after each merge
+#   - pull_request      → block PRs that introduce alerts
+#   - weekly schedule   → re-scan against updated query rules
+# ============================================================
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "23 14 * * 1"  # Monday 14:23 UTC ~ Monday 21:23 ICT
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  analyze:
+    name: Analyze JavaScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript-typescript"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # `security-extended` adds queries beyond the default set —
+          # still all CodeQL-stock, no custom packs. Reasonable noise.
+          queries: security-extended
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

@@ -1,0 +1,55 @@
+# ============================================================
+# KIRA RESEARCH — Dependabot config
+#
+# Auto-PRs for security + version updates.
+#   - npm: tracks runtime + devDependencies in package.json
+#   - github-actions: tracks `uses:` versions in workflows
+#
+# Weekly cadence — Year 1 has a single maintainer (Henry + Claude),
+# noisy daily PRs would crowd out feature work. Security advisories
+# from GitHub still fire instantly regardless of schedule.
+# ============================================================
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Ho_Chi_Minh
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: chore(deps)
+      include: scope
+    groups:
+      # Batch minor/patch updates into one PR per ecosystem so review
+      # stays cheap. Majors get their own PR so breaking changes are
+      # never bundled.
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Ho_Chi_Minh
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: chore(actions)
+      include: scope
+    groups:
+      actions-minor-patch:
+        update-types:
+          - minor
+          - patch
