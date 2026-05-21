@@ -247,6 +247,36 @@
   window.kira.localPath = localPath;
   window.kira.localeHref = localeHref;
 
+  // ── Vercel Analytics + Speed Insights ─────────────────────
+  // Owner must enable Analytics + Speed Insights in the Vercel dashboard
+  // for these endpoints to exist. Until then the scripts 404 silently
+  // (Vercel never serves them, the browser just logs a quiet network
+  // error) — no functional impact on the page.
+  //
+  // We skip both on localhost so dev consoles aren't polluted with 404s
+  // from `/_vercel/*` paths that only exist on Vercel's edge.
+  // Also skip on /en/admin/* — admin traffic isn't meaningful product
+  // data and these pages are robots-noindexed anyway.
+  function injectVercelScripts() {
+    const host = window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local');
+    if (isLocal) return;
+    const isAdmin = window.location.pathname.startsWith('/en/admin/');
+    if (isAdmin) return;
+
+    [
+      '/_vercel/insights/script.js',
+      '/_vercel/speed-insights/script.js'
+    ].forEach(src => {
+      if (document.querySelector(`script[src="${src}"]`)) return;
+      const s = document.createElement('script');
+      s.defer = true;
+      s.src = src;
+      document.head.appendChild(s);
+    });
+  }
+  injectVercelScripts();
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', inject);
   } else {

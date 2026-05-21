@@ -155,7 +155,8 @@ These are tasks only the owner can do (involve dashboards, not git):
    - (c) WARN: 3 functions (`add_credits`, `spend_credits`, `set_updated_at`) had mutable search_path. Migration pins to empty.
    - Idempotent. Run after confirming 001-007 are all applied (they are, per 2026-05-21 verification).
 2. ☐ **Enable Leaked Password Protection** — Supabase dashboard → Authentication → Settings → toggle "Leaked password protection" ON. Auth feature, no SQL path.
-3. ☐ **Lighthouse perf audit on prod** (Phase 10.1) — run before soft launch. Two paths:
+3. ☐ **Enable Vercel Analytics + Speed Insights** — Vercel dashboard → kira-research → **Analytics** tab → click "Enable". Same for **Speed Insights** tab. Free tier: 2,500 events/month (plenty for Year 1). `nav.js` already injects `/_vercel/insights/script.js` + `/_vercel/speed-insights/script.js` on every public page; scripts 404 silently until owner flips the toggle. After enabling, real-user data shows up in the dashboard within ~30 min.
+4. ☐ **Lighthouse perf audit on prod** (Phase 10.1) — run before soft launch. Two paths:
    - **Quick path (recommended):** PageSpeed Insights — go to https://pagespeed.web.dev/, paste each of the 6 URLs below, screenshot scores. Target ≥90 on all 4 categories (Performance / Accessibility / Best Practices / SEO):
      - `https://kiraresearch.com/en/`
      - `https://kiraresearch.com/en/library`
