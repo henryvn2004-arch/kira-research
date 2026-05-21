@@ -247,6 +247,19 @@ test.describe('public APIs', () => {
     expect(r.status()).toBe(401);
   });
 
+  // Sprint 8 — internal linking: API must echo relatedInsights[] so the
+  // report _view template can render the bottom block.
+  test('/api/library-report returns relatedInsights array', async ({ request }) => {
+    const r = await request.get('/api/library-report?slug=vietnam-fintech-2026&locale=en');
+    expect(r.status()).toBeLessThan(600);
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.relatedInsights),
+        `relatedInsights should be an array, got ${typeof data.relatedInsights}`
+      ).toBe(true);
+    }
+  });
+
   // Email helper lives in /api/_lib/. Vercel excludes underscore-prefixed
   // dirs from routing — verify it stays non-public so the import path can
   // never be hit from outside.

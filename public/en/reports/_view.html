@@ -443,6 +443,38 @@
       );
     }
 
+    // Sprint 8 — internal linking. Show up to 3 related insights at the bottom of
+    // the report. Drives discovery + extra organic surface area. Cards link to
+    // /<locale>/insights/<slug> via the same path users get from /insights/.
+    function renderRelatedInsights(items) {
+      if (!Array.isArray(items) || !items.length) return '';
+      const cards = items.map(it => {
+        const tagLabel = [it.country, it.industry].filter(Boolean)
+          .map(s => s.toUpperCase()).join(' · ');
+        return (
+          '<a href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '" class="rpt-insight-card">' +
+            '<div class="rpt-insight-meta">' +
+              '<span class="cat">' + escapeHtml(tagLabel || 'FIELD NOTE') + '</span>' +
+              (it.read_time ? '<span>' + escapeHtml(it.read_time.toUpperCase()) + '</span>' : '') +
+            '</div>' +
+            '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
+            (it.excerpt ? '<p>' + escapeHtml(it.excerpt) + '</p>' : '') +
+            '<div class="rpt-insight-cta">Read field note →</div>' +
+          '</a>'
+        );
+      }).join('');
+      const intro = items.length > 1
+        ? "Short reads from our analyst desk on the topics this report covers — sourced field signals, not generated content."
+        : "A short read from our analyst desk on a topic this report covers.";
+      return (
+        '<section class="rpt-related-insights">' +
+          '<h4>Field notes from this market</h4>' +
+          '<p class="rpt-related-intro">' + intro + '</p>' +
+          '<div class="rpt-related-grid">' + cards + '</div>' +
+        '</section>'
+      );
+    }
+
     function renderToc(toc, ownsContent) {
       if (!Array.isArray(toc) || !toc.length) return '';
       const items = toc.map(t => {
@@ -642,6 +674,8 @@
             toc +
 
             fullBody +
+
+            renderRelatedInsights(d.relatedInsights) +
           '</article>' +
 
           renderBuyBox(d, {

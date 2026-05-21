@@ -100,6 +100,77 @@ export default async function handler(req, res) {
       ? Array.from(new Set(allRows.map(r => r.locale)))
       : [];
 
+    // 5) Related insights — Sprint 8 (internal linking).
+    //    Match strategy, scored highest-to-lowest:
+    //      • Insight explicitly lists this report in related_report_slugs[] (+100)
+    //      • Same country as the report (+25)
+    //      • Same industry as the report (+25)
+    //    Filter: status=published AND published_at has arrived. Limit 3.
+    //    Costs one extra query (insights) plus one for translations.
+    //    Failures degrade gracefully to an empty array — never blocks the
+    //    report render.
+    let relatedInsights = [];
+    try {
+      const orParts = [];
+      if (base.country)  orParts.push(`country.eq.${base.country}`);
+      if (base.industry) orParts.push(`industry.eq.${base.industry}`);
+      orParts.push(`related_report_slugs.cs.{${slug}}`);
+      const nowIso = new Date().toISOString();
+      const candidates = await sb(
+        `insights?or=(${orParts.join(',')})` +
+        `&status=eq.published` +
+        `&published_at=lte.${encodeURIComponent(nowIso)}` +
+        `&order=published_at.desc&limit=12` +
+        `&select=id,slug,country,industry,published_at,related_report_slugs`
+      );
+
+      const scored = (candidates || []).map(i => {
+        let s = 0;
+        if (Array.isArray(i.related_report_slugs) && i.related_report_slugs.includes(slug)) s += 100;
+        if (base.country  && i.country  === base.country)  s += 25;
+        if (base.industry && i.industry === base.industry) s += 25;
+        return { i, s };
+      });
+      scored.sort((a, b) =>
+        b.s - a.s ||
+        new Date(b.i.published_at) - new Date(a.i.published_at)
+      );
+      const top = scored.slice(0, 3).map(x => x.i);
+
+      if (top.length) {
+        const topIds = top.map(x => x.id);
+        const titleRows = await sb(
+          `insight_translations?insight_id=in.(${topIds.join(',')})` +
+          `&status=eq.published&locale=in.(${effectiveLocale},en)` +
+          `&select=insight_id,locale,title,excerpt,read_time`
+        );
+        // Prefer requested locale, fall back to EN per insight.
+        const byInsight = new Map();
+        (titleRows || []).forEach(t => {
+          const cur = byInsight.get(t.insight_id);
+          if (!cur || (t.locale === effectiveLocale && cur.locale !== effectiveLocale)) {
+            byInsight.set(t.insight_id, t);
+          }
+        });
+        relatedInsights = top.map(i => {
+          const t = byInsight.get(i.id);
+          if (!t) return null;
+          return {
+            slug:      i.slug,
+            country:   i.country,
+            industry:  i.industry,
+            title:     t.title,
+            excerpt:   t.excerpt,
+            read_time: t.read_time,
+            locale:    t.locale
+          };
+        }).filter(Boolean);
+      }
+    } catch (relErr) {
+      console.warn('[library-report] related insights lookup failed:', relErr.message);
+      // Swallow — non-critical for the report render.
+    }
+
     res.status(200).json({
       slug:           base.slug,
       country:        base.country || '',
@@ -121,7 +192,9 @@ export default async function handler(req, res) {
       toc:            translation?.toc      || [],    // [{num,name,pages,locked}]
       full_content:   null,                            // never served on this endpoint;
                                                        // post-purchase only via /api/get-purchased-report
-      aggregators:    base.aggregators || []
+      aggregators:    base.aggregators || [],
+
+      relatedInsights  // [{slug,title,excerpt,read_time,country,industry,locale}, ...] up to 3
     });
   } catch (err) {
     console.error('[library-report] error:', err.message);
