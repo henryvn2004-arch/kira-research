@@ -52,11 +52,11 @@ jobs:
     steps:
       - name: Checkout (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout (deployment_status — deployed SHA)
         if: github.event_name == 'deployment_status'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Run smoke against the exact code Vercel just shipped, not
           # whatever main happens to be at the moment the runner spins up.
