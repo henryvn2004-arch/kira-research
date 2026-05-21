@@ -52,9 +52,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1) Base insight
+    // 1) Base insight (status=published AND published_at has arrived).
+    //    Scheduled-future rows stay hidden — see api/insights-list.js for the
+    //    same gate.
+    const nowIso = new Date().toISOString();
     const baseRows = await sb(
-      `insights?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=*&limit=1`
+      `insights?slug=eq.${encodeURIComponent(slug)}` +
+      `&status=eq.published` +
+      `&published_at=lte.${encodeURIComponent(nowIso)}` +
+      `&select=*&limit=1`
     );
     const base = Array.isArray(baseRows) ? baseRows[0] : null;
     if (!base) {

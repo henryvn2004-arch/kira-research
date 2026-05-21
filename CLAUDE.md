@@ -60,7 +60,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **5.3** | Credit system scoping | ✅ | `a8a9206` · credit system retired entirely Year 1, all platform-era APIs + profile.html removed |
 | **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
 | **7.1** | Insights blog + article templates | 🟡 | `15e94f2` · UI pagination pending |
-| **7.2** | Auto-insights cron + SEO articles | 🔴 | `api/cron-insights.js` legacy, needs re-design |
+| **7.2** | Content production admin (re-scoped) | ✅ | Year 1 decision: skip LLM auto-gen (brand voice conflict). Built scheduling (published_at gate) + status flow + related-report CTA in admin + improved "Get the full report" copy on `_view.html` |
 | **7.3** | Schema markup + OG + sitemap + GSC | 🟡 | sitemap ✅ (`6bb331f`+`8bcb6d4`) · per-report/article schema + OG/Twitter ✅ (item 7.3-remainder) · GSC submission + internal linking pending |
 | **8.1** | JA infrastructure | ✅ | `9147ea2`…`4bea633`, `8bcb6d4` · sitemap-ja.xml live; native QA + GSC = next-queue item G + owner |
 | **8.2** | JA report translations | ⏸️ | Henry content work |
@@ -207,7 +207,7 @@ sequentially per owner request (2026-05-21):
 2. ~~**Sprint 7.1 — Insights blog UI pagination**~~ ✅ shipped (`8aa3b82`). PAGE_SIZE=12, `?page=N` URL param, pushState/popstate wired, EN/JA/KO inline-localized. Pager renders only when total > PAGE_SIZE. 2 new smoke tests.
 3. **Phase 10.1 — Mobile QA + Lighthouse perf audit** (in progress) → code-side slice: mobile-viewport smoke tests at 375×667 across 6 key pages + Lighthouse runbook for owner.
 4. ~~**Sprint 5.1 — Rebuild custom-research service-line pages**~~ ✅ shipped (this session). 6 new pages: `/{en,ja,ko}/custom-research/{market-analysis,strategy-builder}/`. Each is an analyst-led service landing — hero + when-to-commission + what-we-cover + deliverable + CTA → parent form. Sitemap + legacy redirect retargeting included. 6 new smoke tests (73 total).
-5. **Sprint 7.2 — Auto-insights cron + SEO articles re-design** → legacy `api/cron-insights.js` needs scoping discussion before code: source, trigger, guardrails.
+5. ~~**Sprint 7.2 — Auto-insights cron + SEO articles re-design**~~ ✅ shipped (this session). Re-scoped 2026-05-21 after owner discussion: **no LLM auto-generation** (brand-voice conflict with "research house, never lead with AI"). Built content-production admin instead — `published_at` datetime input drives schedule gating, public APIs filter `published_at <= now()` so future-dated rows stay hidden until publish-time (no cron). Related-report CTA copy upgraded to "Get the full report" headline + per-card CTA.
 
 **Owner-side (parallel):**
 - **G — Native reviewer QA pass on JA/KO copy** → Sprint 8.1 + 9.1. Ship JA/KO drafts to native Upwork reviewer ($50-100/locale), fold fixes back. First 10-20 reports per locale per `project des/CLAUDE.md`.

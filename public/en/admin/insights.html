@@ -112,6 +112,7 @@
         return;
       }
 
+      const nowMs = Date.now();
       const rows = insights.map(i => {
         const when = new Date(i.updated_at).toLocaleString('en-GB', {
           year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'
@@ -122,6 +123,15 @@
           return `<span class="${escape(s)}" title="${escape(s)}">${l.toUpperCase()}</span>`;
         }).join('');
         const cat = [i.category, i.country, i.industry].filter(Boolean).join(' · ');
+
+        // Surface scheduling state: status='published' + future published_at = scheduled (not yet live).
+        const pubMs = i.published_at ? new Date(i.published_at).getTime() : null;
+        const isScheduled = i.status === 'published' && pubMs && pubMs > nowMs;
+        const statusCell = isScheduled
+          ? `<span class="status-pill review" title="status=published but published_at is in the future">scheduled</span>
+             <div style="color:var(--muted);font-size:10px;margin-top:3px;font-family:'JetBrains Mono',monospace;">→ ${escape(new Date(pubMs).toLocaleString('en-GB', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' }))}</div>`
+          : `<span class="status-pill ${escape(i.status)}">${escape(i.status)}</span>`;
+
         return `
           <tr>
             <td class="when-cell">${escape(when)}</td>
@@ -129,7 +139,7 @@
               <div class="slug-cell">${escape(i.slug)}</div>
               <div style="color:var(--muted);font-size:11px;margin-top:3px;">${escape(cat || '—')}${i.featured ? ' · <span style="color:var(--primary);">FEATURED</span>' : ''}</div>
             </td>
-            <td><span class="status-pill ${escape(i.status)}">${escape(i.status)}</span></td>
+            <td>${statusCell}</td>
             <td><div class="locale-dots">${dots}</div></td>
             <td style="text-align:right;"><a class="row-action" href="#edit/${escape(i.id)}">Edit →</a></td>
           </tr>`;
@@ -204,12 +214,18 @@
               <input type="text" id="f-related" value="${escape((insight.related_report_slugs || []).join(', '))}" placeholder="vietnam-fintech-2026, indonesia-fmcg-2026" />
             </div>
 
-            <div class="adm-field">
-              <label>Status</label>
-              <select id="f-status">
-                ${['draft','review','published','retired'].map(s =>
-                  `<option value="${s}"${(insight.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
-              </select>
+            <div class="adm-grid-2">
+              <div class="adm-field">
+                <label>Status</label>
+                <select id="f-status">
+                  ${['draft','review','published','retired'].map(s =>
+                    `<option value="${s}"${(insight.status || 'draft') === s ? ' selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </div>
+              <div class="adm-field">
+                <label>Publish at <span class="hint">future date = scheduled · blank = now on publish</span></label>
+                <input type="datetime-local" id="f-published-at" value="${insight.published_at ? new Date(insight.published_at).toISOString().slice(0, 16) : ''}" />
+              </div>
             </div>
 
             <div class="adm-actions">
@@ -326,6 +342,11 @@
     async function saveBase(id) {
       const btn   = document.getElementById('save-base');
       const flash = document.getElementById('flash-base');
+      // datetime-local emits 'YYYY-MM-DDTHH:mm' in user's local tz — convert to
+      // a proper ISO string so the DB stores the absolute timestamp correctly.
+      // Empty → null, lets the API auto-set to now() when status flips to published.
+      const pubLocal = document.getElementById('f-published-at').value;
+      const pubIso   = pubLocal ? new Date(pubLocal).toISOString() : null;
       const patch = {
         slug:                 document.getElementById('f-slug').value.trim().toLowerCase(),
         category:             document.getElementById('f-category').value,
@@ -333,7 +354,8 @@
         industry:             document.getElementById('f-industry').value.trim().toLowerCase() || null,
         featured:             document.getElementById('f-featured').checked,
         related_report_slugs: document.getElementById('f-related').value.split(',').map(s => s.trim()).filter(Boolean),
-        status:               document.getElementById('f-status').value
+        status:               document.getElementById('f-status').value,
+        published_at:         pubIso
       };
       btn.disabled = true;
       try {

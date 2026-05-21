@@ -246,14 +246,18 @@
             (it.excerpt ? '<p class="report-desc">' + escapeHtml(it.excerpt) + '</p>' : '') +
             '<div class="report-footer">' +
               '<span class="report-price">$' + (it.price || 39) + '</span>' +
-              '<span class="report-cta">View →</span>' +
+              '<span class="report-cta">Get the full report →</span>' +
             '</div>' +
           '</a>'
         );
       }).join('');
+      const intro = items.length > 1
+        ? "This field note draws on reports our analysts have published. Each one expands the picture with sourced data, segment-by-segment view, and the analyst's read."
+        : "This field note draws on a published research report. It expands the picture with sourced data, segment-by-segment view, and the analyst's read.";
       return (
         '<div class="related-reports">' +
-          '<h4>Reports referenced</h4>' +
+          '<h4>Get the full report</h4>' +
+          '<p class="related-intro">' + intro + '</p>' +
           '<div class="related-grid">' + cards + '</div>' +
         '</div>'
       );

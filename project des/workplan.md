@@ -241,10 +241,12 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] Article template page `/en/insights/[slug]`
 - [x] Auto-pagination — PAGE_SIZE=12, `?page=N` URL param, Prev/Next pager (disabled-edge states), pushState + popstate wired so back/forward works, category change resets to page 1. Pager only renders when total > PAGE_SIZE. EN/JA/KO inline-localized labels. 2 new smoke tests.
 
-### Sprint 7.2 — Auto-insights generation
-- [ ] Daily cron generating SEO articles (`/api/cron/insights`) — **`api/cron-insights.js` exists from platform era; not wired to new model. Needs re-design.**
-- [ ] Each article = teaser for a related library report
-- [ ] CTA at end: "Get the full report"
+### Sprint 7.2 — Content production admin (re-scoped 2026-05-21)
+- [x] **Decision: no auto-generation Year 1.** Owner's Claude-chat workflow already produces analyst-voiced content; cron LLM-generation conflicts with "research house, no AI-platform" brand voice. Re-scoped to a content-production admin instead.
+- [x] Schedule publish-date — `published_at` datetime input in `/en/admin/insights` editor; future date = scheduled (stays hidden from public until clock catches up). No cron needed: public API filters `published_at <= now()`.
+- [x] Draft mode — `status='draft'/'review'/'published'/'retired'` already in schema; admin UI exposes all four. Schedule badge in list view shows "scheduled" + future date when status='published' + published_at > now.
+- [x] Each article = teaser for a related library report — `related_report_slugs[]` already in schema + admin UI. Insight `_view.html` renders related-report cards at bottom.
+- [x] CTA at end: "Get the full report" — copy upgrade in `_view.html` (was "Reports referenced" + "View →"; now "Get the full report" headline + intro paragraph + per-card "Get the full report →" CTA).
 
 ### Sprint 7.3 — SEO optimization
 - [x] Schema markup (Article, Product) on every report — Product + BreadcrumbList JSON-LD injected on `/[locale]/reports/[slug]`; Article + BreadcrumbList injected on `/[locale]/insights/[slug]`; Organization JSON-LD injected globally by `nav.js`. Item 7.3-remainder.

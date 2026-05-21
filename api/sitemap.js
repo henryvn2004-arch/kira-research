@@ -159,9 +159,12 @@ async function buildLocale(locale) {
     }));
   }
 
-  // 3) Insights — same join pattern.
+  // 3) Insights — same join pattern, but also gate published_at <= now() so
+  //    a scheduled-future insight doesn't leak into search engines early.
+  const nowIso = new Date().toISOString();
   const insightQs =
     'status=eq.published' +
+    `&published_at=lte.${encodeURIComponent(nowIso)}` +
     `&select=slug,updated_at,insight_translations!inner(locale,status,updated_at)` +
     `&insight_translations.locale=eq.${locale}` +
     `&insight_translations.status=eq.published` +

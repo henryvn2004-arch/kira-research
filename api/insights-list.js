@@ -58,8 +58,15 @@ export default async function handler(req, res) {
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
 
   try {
-    // 1) Base insights (status=published).
-    const where = ['status=eq.published'];
+    // 1) Base insights (status=published AND published_at has arrived).
+    //    The published_at gate lets the admin schedule a future publish-date —
+    //    set status='published' + published_at=<future-iso>, and the row stays
+    //    hidden until the wall-clock catches up. No cron needed.
+    const nowIso = new Date().toISOString();
+    const where = [
+      'status=eq.published',
+      `published_at=lte.${encodeURIComponent(nowIso)}`
+    ];
     if (category) {
       // category matches either an explicit category column OR a country/industry tag.
       where.push(
