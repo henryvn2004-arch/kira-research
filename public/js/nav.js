@@ -264,16 +264,13 @@
     const isAdmin = window.location.pathname.startsWith('/en/admin/');
     if (isAdmin) return;
 
-    [
-      '/_vercel/insights/script.js',
-      '/_vercel/speed-insights/script.js'
-    ].forEach(src => {
-      if (document.querySelector(`script[src="${src}"]`)) return;
-      const s = document.createElement('script');
-      s.defer = true;
-      s.src = src;
-      document.head.appendChild(s);
-    });
+    // Speed Insights skipped — paid product, owner opted out Year 1.
+    const src = '/_vercel/insights/script.js';
+    if (document.querySelector(`script[src="${src}"]`)) return;
+    const s = document.createElement('script');
+    s.defer = true;
+    s.src = src;
+    document.head.appendChild(s);
   }
   injectVercelScripts();
 
