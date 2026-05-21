@@ -26,11 +26,11 @@
 
 ## Current state (2026-05-20)
 
-- **Latest commit on `main`:** `5050c00` — feat(storage): PDF upload pipeline via Supabase Storage (item D)
+- **Latest commit on `main`:** `7c2112b` — fix(auth): correct nav.js path on /auth page (was /nav.js, 404'd)
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** commit `a8a9206` (legacy cleanup). Dashboard commit `eb05464` and this session's 7.3-remainder commit go out together — verify in Actions tab.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
-- **Smoke tests:** 47 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**.
+- **Smoke tests:** 50 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf), public APIs, **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
 - **Open warning:** GitHub Actions Node.js 20 deprecation. Forced migration to Node 24 by 2026-06-02. Non-blocking — action authors will update before then.
 
@@ -176,6 +176,16 @@ These are tasks only the owner can do (involve dashboards, not git):
 
 ---
 
+## Open verification items (do these BEFORE picking next sprint)
+
+End of 2026-05-20 session: code is shipped, owner has owner-blocker items still in progress. New session should confirm these are green before starting any new sprint, since several next-queue items depend on this infra being live.
+
+1. ☐ **CI green on `7c2112b`** — check https://github.com/henryvn2004-arch/kira-research/actions. 5 new commits this evening (7.3 SEO, Sprint D PDF, 4× migration fixes, 2× bug fixes). All 50 smoke checks should pass on prod.
+2. ☐ **All 5 Supabase migrations confirmed run** (Henry confirmed). Verify visually: Supabase → Tables shows `leads`, `living_reports`, `report_translations`, `insights`, `insight_translations`, `purchases`, `downloads`. Storage shows private bucket `reports-pdfs`.
+3. ☐ **Bug #1 admin redirect** — owner reported `/en/admin/` redirecting to "homepage" but DevTools showed final URL was `/auth` (with broken nav due to nav.js 404). Hypothesis: Henry wasn't actually logged-in after email-verify (Supabase email confirm doesn't auto-sign-in), so admin gate correctly bounced him to /auth. Nav.js 404 (now fixed in `7c2112b`) made /auth look disconnected enough to read as "homepage". Next session: ask Henry to sign in properly at `/auth`, then visit `/en/admin/`. Confirm KPI dashboard renders. If still bounced, check `ADMIN_EMAILS` Vercel env value exactly matches his account email and Vercel was redeployed after the var was added.
+4. ☐ **Bug #2 + #4** (report page Illegal return + Rich Results no items) — fixed via `66a59ed`. Verify by visiting `/en/reports/vietnam-fintech-2026` in browser (DevTools Console clean of "Illegal return") + Rich Results test ("Test live URL") should detect Product/BreadcrumbList/Organization.
+5. ☐ **End-to-end PDF upload + purchase** — once admin works, owner uploads a test PDF via `/en/admin/reports` → buys the report in an incognito tab with a non-admin account via PayPal sandbox → downloads PDF via the post-purchase link. This validates the full Sprint D pipeline.
+
 ## Next queue (pick one)
 
 Aligned with the workplan phase/sprint structure. Each item maps to one or
@@ -274,4 +284,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-20 (items C + F + H + 7.3-remainder shipped — sitemap, legacy cleanup, admin dashboard, per-page schema/OG. Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed; 7.3 advanced to mostly-done.)*
+*Last updated: 2026-05-20 evening (items C + F + H + 7.3-remainder + D shipped — sitemap, legacy cleanup, admin dashboard, per-page schema/OG, PDF Storage upload pipeline. Also: 4 migration robustness fixes for legacy schema collision, 2 production bug fixes (module parse error + nav.js 404 on /auth). Sprints 2.3, 3.3, 4.1-dashboard, 5.3 closed; 7.3 + 6.2 advanced to mostly-done. Latest commit `7c2112b`. Owner switched machines at end of session — see "Open verification items" above for handover.)*
