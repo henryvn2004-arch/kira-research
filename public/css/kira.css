@@ -92,22 +92,34 @@ button { font-family: inherit; cursor: pointer; }
 }
 .logo {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 10px;
   text-decoration: none;
   color: var(--text);
   flex-shrink: 0;
 }
 .logo-mark {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.02em;
   display: inline-flex;
   align-items: center;
-  height: 22px;
-  color: var(--text);
+  gap: 1px;
 }
-.logo-mark svg {
-  height: 100%;
-  width: auto;
-  display: block;
+.logo-mark .a-accent {
+  position: relative;
+  display: inline-block;
+}
+.logo-mark .a-accent::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  right: -2px;
+  width: 9px;
+  height: 5px;
+  background: var(--primary);
+  transform: skewX(-15deg);
 }
 .logo-sub {
   font-family: 'Satoshi', sans-serif;

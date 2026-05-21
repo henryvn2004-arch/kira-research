@@ -45,19 +45,12 @@
   // active class is added to the link matching pageKey.
   function activeIf(key) { return key === pageKey ? ' active' : ''; }
 
-  // KIRA wordmark + blue accent — inline SVG so brand glyphs render
-  // identically regardless of available webfonts. Letters use
-  // `fill="currentColor"` so the CSS color on .logo-mark controls them
-  // (white in nav, inherited elsewhere). Accent is the brand blue
-  // (#1E6FFF) hardcoded. ViewBox 0 0 130 32 → aspect ~4.06:1.
-  const LOGO_MARK_SVG = '<svg viewBox="0 0 130 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0 H6 V13 L18 0 H26 L12 16 L26 32 H18 L6 19 V32 H0 Z"/><path fill="currentColor" d="M30 0 H36 V32 H30 Z"/><path fill="currentColor" fill-rule="evenodd" d="M40 0 H58 L64 6 V12 L58 18 H50 L64 32 H56 L46 21 V32 H40 Z M46 6 V13 H56 L58 11 V9 L56 6 Z"/><path fill="currentColor" fill-rule="evenodd" d="M74 32 L84 0 H94 L104 32 H98 L96 24 H82 L80 32 Z M85 8 L83 18 H95 L93 8 Z"/><path fill="#1E6FFF" d="M107 22 H123 L119 30 H103 Z"/></svg>';
-
   const NAV_HTML = `
 <div class="nav-wrap">
   <div class="container">
     <nav class="nav">
       <a class="logo" href="${localPath('/')}" aria-label="KIRA RESEARCH home">
-        <span class="logo-mark">${LOGO_MARK_SVG}</span>
+        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
         <span class="logo-sub">Research</span>
       </a>
       <div class="nav-right">
@@ -106,7 +99,7 @@
     <div class="footer-grid">
       <div class="footer-col">
         <a class="logo" href="${localPath('/')}">
-          <span class="logo-mark">${LOGO_MARK_SVG}</span>
+          <span class="logo-mark">KIR<span class="a-accent">A</span></span>
           <span class="logo-sub">Research</span>
         </a>
         <p class="footer-tag" data-i18n="footer.tagline">Southeast Asia's specialized market research firm. Senior analysts, modern delivery.</p>
