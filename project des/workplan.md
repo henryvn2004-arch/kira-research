@@ -318,8 +318,8 @@ Week 10-12 →  Phase 10: Polish & Launch
 
 ## 🟢 Phase 10: Polish & Launch (Week 10-12) — P2 — 🔴 NOT STARTED
 
-- [ ] Mobile responsive QA on all pages (3 locales)
-- [ ] Performance audit (Lighthouse score targets: 90+ on all)
+- [x] Mobile responsive QA on all pages (3 locales) — **code-side:** 7 new mobile-viewport smoke tests at 375×667 (no-horizontal-scroll across `/en/` `/en/library` `/en/insights/` `/en/about` `/en/methodology` `/en/pricing` + nav-burger presence). CI catches regressions on every push. **Owner manual QA** (visual review across iOS/Android Safari/Chrome) still recommended pre-launch.
+- [ ] Performance audit (Lighthouse score targets: 90+ on all) — **runbook in CLAUDE.md owner action item 3**: PageSpeed Insights pass on 6 prod URLs.
 - [x] Bug fixes from internal QA (via smoke CI: legacy redirects, slug rewrites, selectors — `659b81d`, `74c21c0`, `87cd168`)
 - [ ] Set up Vercel Analytics + Google Search Console (3 properties)
 - [ ] Soft launch announcement (LinkedIn, communities, country-specific)

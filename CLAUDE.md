@@ -28,7 +28,7 @@
 
 - **Latest commit on `main`:** `e7d5372` — feat(admin): Sprint 4.4 (Aggregator submissions + sales tracking). Closes Phase 4 admin backend (audit log + report stats/featured + revenue charts still deferred). **Owner ran migrations 001-007, deleted legacy Storage buckets, set Resend + all Vercel env vars, submitted GSC sitemaps (2026-05-21).** Only owner item remaining: run migration `008_security_hardening.sql` + toggle Leaked Password Protection in Auth settings.
 - **Production:** live, Vercel auto-deploys on every push to main
-- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 60 smoke checks should pass on prod.
+- **Last fully-verified green CI run:** verify `e7d5372` in Actions tab. 67 smoke checks should pass on prod.
 - **CI:** smoke test workflow at `.github/workflows/post-deploy-smoke.yml` — runs on every push to main + manual via Actions UI
 - **Smoke tests:** 60 shallow checks at `tests/smoke.spec.js` covering static pages × 3 locales, slug rewrites, root redirect, legacy redirects, admin auth gates (incl. upload-pdf, transactions, users, aggregators), public APIs (incl. admin-transactions + admin-users + admin-aggregators), **SEO surface (robots.txt + sitemap.xml + sitemap-{locale}.xml + hreflang `<link>` + Organization JSON-LD + per-report Product JSON-LD + per-article Article JSON-LD)**, **dynamic templates have no fatal module parse error** (catches top-level-return / SyntaxError regressions that initial-DOM checks miss), **/auth has no sub-resource 404s** (catches nav.js path drift), **/api/_lib/email is not a public route** (catches Vercel routing-leak regressions), **lead honeypot path returns 200 JSON** (catches email-import errors in leads handler).
 - **SEO surface verified in prod** (curl ground truth): `/robots.txt` ✅, `/sitemap.xml` returns sitemap index ✅, `/sitemap-{en,ja,ko}.xml` return urlsets with hreflang annotations ✅. Schema markup verification by post-deploy smoke.
@@ -155,6 +155,16 @@ These are tasks only the owner can do (involve dashboards, not git):
    - (c) WARN: 3 functions (`add_credits`, `spend_credits`, `set_updated_at`) had mutable search_path. Migration pins to empty.
    - Idempotent. Run after confirming 001-007 are all applied (they are, per 2026-05-21 verification).
 2. ☐ **Enable Leaked Password Protection** — Supabase dashboard → Authentication → Settings → toggle "Leaked password protection" ON. Auth feature, no SQL path.
+3. ☐ **Lighthouse perf audit on prod** (Phase 10.1) — run before soft launch. Two paths:
+   - **Quick path (recommended):** PageSpeed Insights — go to https://pagespeed.web.dev/, paste each of the 6 URLs below, screenshot scores. Target ≥90 on all 4 categories (Performance / Accessibility / Best Practices / SEO):
+     - `https://kiraresearch.com/en/`
+     - `https://kiraresearch.com/en/library`
+     - `https://kiraresearch.com/en/insights/`
+     - `https://kiraresearch.com/en/methodology`
+     - `https://kiraresearch.com/ja/`
+     - `https://kiraresearch.com/ko/`
+   - **Detailed path:** Chrome DevTools → Lighthouse panel → Mobile + Desktop runs per URL. Captures filmstrip + suggestions.
+   - Send any score < 90 back here — Claude can fix render-blocking resources / preload hints / image sizing / unused CSS in code; perf hits from external services (Supabase, Fontshare) are mostly unfixable from our side and acceptable.
 
 ### Done (no further action needed)
 
@@ -193,9 +203,9 @@ Aligned with the workplan phase/sprint structure. Each item maps to one or
 more pending sprints in `project des/workplan.md`. Working through these
 sequentially per owner request (2026-05-21):
 
-1. **Migration 008 security hardening** (this session) — code shipped, owner runs SQL + toggles leaked-pwd setting (action items above).
-2. **Sprint 7.1 — Insights blog UI pagination** → `/en/insights` shows all rows; add page param to `insights-list` API + Prev/Next UI on list page across 3 locales.
-3. **Phase 10.1 — Mobile QA + Lighthouse perf audit** → exercise viewport ≤375px on key pages; run Lighthouse on prod (perf/SEO/a11y/best-practices), fix regressions before soft launch.
+1. ~~**Migration 008 security hardening**~~ ✅ shipped (`714b9f0`). Code closes 3 advisor flags (RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path). Owner runs SQL + toggles leaked-pwd setting (action items above).
+2. ~~**Sprint 7.1 — Insights blog UI pagination**~~ ✅ shipped (`8aa3b82`). PAGE_SIZE=12, `?page=N` URL param, pushState/popstate wired, EN/JA/KO inline-localized. Pager renders only when total > PAGE_SIZE. 2 new smoke tests.
+3. **Phase 10.1 — Mobile QA + Lighthouse perf audit** (in progress) → code-side slice: mobile-viewport smoke tests at 375×667 across 6 key pages + Lighthouse runbook for owner.
 4. **Sprint 5.1 — Rebuild 3 custom-research tool pages** → `/custom-research/{...}` currently redirect-only. Rebuild as research-on-demand landing pages per workplan.
 5. **Sprint 7.2 — Auto-insights cron + SEO articles re-design** → legacy `api/cron-insights.js` needs scoping discussion before code: source, trigger, guardrails.
 

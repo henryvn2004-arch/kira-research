@@ -411,3 +411,46 @@ test.describe('SEO surface', () => {
     expect(article.headline).toBeTruthy();
   });
 });
+
+// ── 9) Mobile viewport sanity — Phase 10.1 ──
+//
+// We don't replace Lighthouse here — that's an owner-run audit step. These
+// tests catch regressions that ONLY surface at narrow viewports: horizontal
+// scroll bleed-through, mobile nav not booting, key elements clipped off.
+// Width 375px = iPhone 12 mini / iPhone SE2 = the standard "small modern
+// phone" baseline we target.
+test.describe('mobile viewport sanity (375×667)', () => {
+  test.use({ viewport: { width: 375, height: 667 } });
+
+  const MOBILE_PAGES = [
+    '/en/',
+    '/en/library',
+    '/en/insights/',
+    '/en/about',
+    '/en/methodology',
+    '/en/pricing',
+  ];
+
+  for (const url of MOBILE_PAGES) {
+    test(`${url} has no horizontal scroll at 375px`, async ({ page }) => {
+      await page.goto(url, { waitUntil: 'domcontentloaded' });
+      // Allow a tiny rounding tolerance — sub-pixel reflow can lie by 1-2px.
+      const overflow = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }));
+      expect(
+        overflow.scrollWidth - overflow.clientWidth,
+        `horizontal overflow on ${url}: scrollWidth=${overflow.scrollWidth} > clientWidth=${overflow.clientWidth}`
+      ).toBeLessThanOrEqual(2);
+    });
+  }
+
+  test('mobile burger menu appears at 375px on /en/', async ({ page }) => {
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    // .nav-burger is display:flex at ≤968px per kira.css.
+    await expect(page.locator('.nav-burger')).toBeVisible();
+    // Desktop .nav-links is display:none at this width.
+    await expect(page.locator('.nav-wrap .nav-links')).toBeHidden();
+  });
+});
