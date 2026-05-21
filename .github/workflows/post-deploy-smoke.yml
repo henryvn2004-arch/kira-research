@@ -1,24 +1,27 @@
 # ============================================================
 # KIRA RESEARCH — post-deploy smoke tests
 #
-# After each push to main, wait for Vercel to deploy, then run a
-# shallow Playwright suite against the live URL. ~25 checks across
-# all 3 locales, plus rewrite + redirect + admin-gate verification.
+# Fires after Vercel finishes deploying a production build. We get
+# the GitHub `deployment_status` webhook from Vercel's integration,
+# filter for state=success + Production, and run Playwright against
+# the prod URL.
+#
+# Why the trigger change (was: `push` + sleep+poll):
+#   On push we had no signal that Vercel was done with THIS commit.
+#   The 60s sleep + curl-200 loop returned green even if the previous
+#   deploy was still being served (cached edge). Smoke could pass
+#   against stale code. `deployment_status` is the authoritative
+#   "the new build is live" event.
 #
 # Triggers:
-#   - push to main (runs after the Vercel webhook fires the build)
-#   - manual via GitHub UI "Run workflow"
-#
-# Outputs:
-#   - Pass/fail summary in the Actions tab
-#   - On failure, uploads playwright-report/ for inspection
+#   - deployment_status   → Vercel build success
+#   - workflow_dispatch   → manual rerun via Actions UI
 # ============================================================
 
 name: post-deploy smoke
 
 on:
-  push:
-    branches: [main]
+  deployment_status:
   workflow_dispatch:
     inputs:
       base_url:
@@ -30,7 +33,7 @@ permissions:
   contents: read
 
 concurrency:
-  # Newer push supersedes in-flight runs — no point smoke-testing stale code.
+  # Newer deploy supersedes in-flight runs — no point smoke-testing stale code.
   group: smoke-${{ github.ref }}
   cancel-in-progress: true
 
@@ -38,10 +41,26 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    # Only run on Production success or manual dispatch. deployment_status
+    # fires for every state transition (queued/in_progress/error/failure/
+    # success) and every environment (Preview included) — filter explicitly.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
 
     steps:
-      - name: Checkout
+      - name: Checkout (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/checkout@v4
+
+      - name: Checkout (deployment_status — deployed SHA)
+        if: github.event_name == 'deployment_status'
+        uses: actions/checkout@v4
+        with:
+          # Run smoke against the exact code Vercel just shipped, not
+          # whatever main happens to be at the moment the runner spins up.
+          ref: ${{ github.event.deployment.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -49,9 +68,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        # No package-lock.json yet — using `npm install` instead of `npm ci`.
-        # If/when a lock file is committed, switch to `npm ci` for reproducibility.
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -70,28 +87,15 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      - name: Wait for Vercel deployment to settle
-        # Vercel typically completes a build in 30-90s after the push webhook.
-        # We give it 60s head start, then poll until the site returns 200.
-        run: |
-          BASE="${{ github.event.inputs.base_url || 'https://kiraresearch.com' }}"
-          echo "Target: $BASE"
-          sleep 60
-          for i in $(seq 1 18); do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/en/" || echo "000")
-            if [ "$code" = "200" ]; then
-              echo "Site responded 200 after $((60 + i*10))s — proceeding."
-              exit 0
-            fi
-            echo "Attempt $i/18: HTTP $code, retrying in 10s..."
-            sleep 10
-          done
-          echo "Site never returned 200 within budget. Failing."
-          exit 1
-
       - name: Run smoke tests
         run: npx playwright test
         env:
+          # Always target kiraresearch.com on deployment_status — Vercel
+          # atomic-swaps the prod alias on success, so by the time this
+          # webhook fires, kiraresearch.com IS the new code. The per-deploy
+          # vercel.app URL isn't reachable through the canonical domain so
+          # tests that assert against `https://kiraresearch.com/...` would
+          # false-fail there.
           SMOKE_BASE_URL: ${{ github.event.inputs.base_url || 'https://kiraresearch.com' }}
           CI: true
 
