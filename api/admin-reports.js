@@ -174,17 +174,40 @@ export default async function handler(req, res) {
       );
       // Pull translation counts so the table can show "EN ✓ JA — KO —"
       let trMap = new Map();
+      let statsMap = new Map();
       if (rows.length) {
         const ids = rows.map(r => r.id);
-        const trs = await sb(
-          `report_translations?report_id=in.(${ids.join(',')})&select=report_id,locale,status`
-        );
+        const idList = ids.join(',');
+        // Translations + purchases in parallel — both are independent reads.
+        const [trs, purchases] = await Promise.all([
+          sb(`report_translations?report_id=in.(${idList})&select=report_id,locale,status`),
+          // Sprint 4.2: aggregate purchases per report. We pull all rows
+          // (completed + refunded + pending) so the JS aggregator can split
+          // them. PostgREST doesn't support GROUP BY in REST API, so we
+          // tally client-side. With Year 1 volume this is fine (<1k rows).
+          sb(`purchases?report_id=in.(${idList})&select=report_id,status,amount&limit=5000`)
+        ]);
         (trs || []).forEach(t => {
           if (!trMap.has(t.report_id)) trMap.set(t.report_id, {});
           trMap.get(t.report_id)[t.locale] = t.status;
         });
+        (purchases || []).forEach(p => {
+          if (!p.report_id) return;
+          const cur = statsMap.get(p.report_id) || { completed: 0, refunded: 0, revenue: 0 };
+          if (p.status === 'completed') {
+            cur.completed += 1;
+            cur.revenue += parseFloat(p.amount) || 0;
+          } else if (p.status === 'refunded') {
+            cur.refunded += 1;
+          }
+          statsMap.set(p.report_id, cur);
+        });
       }
-      const enriched = rows.map(r => ({ ...r, translations: trMap.get(r.id) || {} }));
+      const enriched = rows.map(r => ({
+        ...r,
+        translations: trMap.get(r.id) || {},
+        stats: statsMap.get(r.id) || { completed: 0, refunded: 0, revenue: 0 }
+      }));
       res.status(200).json({ reports: enriched });
       return;
     }

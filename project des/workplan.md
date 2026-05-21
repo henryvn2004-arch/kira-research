@@ -145,8 +145,8 @@ Week 10-12 →  Phase 10: Polish & Launch
 - [x] `/admin/reports` list view với filter/search/sort
 - [x] `/admin/reports/new` — upload form (PDF + metadata)
 - [x] `/admin/reports/[id]/edit` — edit form với locale tabs
-- [ ] `/admin/reports/[id]/stats` — sales + traffic — **pending**
-- [ ] `/admin/reports/featured` — featured reports drag-drop reorder — **pending**
+- [x] Per-report sales stats — `/api/admin-reports` GET list now joins purchases and returns `stats: { completed, refunded, revenue }` per report. List view shows Sales · Revenue column + summary strip (total sold / gross / refunded). Traffic (page views) deferred until Vercel Analytics has data.
+- [ ] `/admin/reports/featured` — featured reports drag-drop reorder — **deferred** (needs `featured` + `featured_rank` columns on living_reports; revisit when Henry wants to manually curate the library landing)
 
 ### Sprint 4.3 — Transactions + Users — ✅ DONE (2026-05-21 session)
 - [x] `/en/admin/transactions` list với filter chips by status (all/completed/refunded/pending/failed) + locale + slug query params

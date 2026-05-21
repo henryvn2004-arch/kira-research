@@ -121,6 +121,22 @@
         return;
       }
 
+      // Sprint 4.2: build totals across all reports for the "summary" strip.
+      const summary = reports.reduce((acc, r) => {
+        const s = r.stats || {};
+        acc.completed += s.completed || 0;
+        acc.refunded  += s.refunded  || 0;
+        acc.revenue   += s.revenue   || 0;
+        return acc;
+      }, { completed: 0, refunded: 0, revenue: 0 });
+
+      const summaryStrip = `
+        <div style="display:flex;gap:32px;padding:18px 24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">
+          <div><span style="color:var(--text);font-family:'Satoshi',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.01em;text-transform:none;margin-right:6px;">${summary.completed}</span>sales</div>
+          <div><span style="color:var(--text);font-family:'Satoshi',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.01em;text-transform:none;margin-right:6px;">$${summary.revenue.toFixed(2)}</span>gross revenue</div>
+          <div><span style="color:var(--muted);font-family:'Satoshi',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.01em;text-transform:none;margin-right:6px;">${summary.refunded}</span>refunded</div>
+        </div>`;
+
       const rows = reports.map(r => {
         const when = new Date(r.updated_at).toLocaleString('en-GB', {
           year: 'numeric', month: 'short', day: '2-digit',
@@ -131,6 +147,15 @@
           if (!s) return `<span title="not created">${l.toUpperCase()}</span>`;
           return `<span class="${escape(s)}" title="${escape(s)}">${l.toUpperCase()}</span>`;
         }).join('');
+        // Sprint 4.2: per-report sales + revenue.
+        const st = r.stats || { completed: 0, refunded: 0, revenue: 0 };
+        const statsCell = st.completed === 0 && st.refunded === 0
+          ? '<span style="color:var(--muted-dim);font-size:12px;">—</span>'
+          : `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4;">
+               <div><strong style="color:var(--text);">${st.completed}</strong> <span style="color:var(--muted);">sold</span></div>
+               <div style="color:var(--primary);">$${st.revenue.toFixed(2)}</div>
+               ${st.refunded ? `<div style="color:#FF7B7B;font-size:10px;margin-top:2px;">${st.refunded} refunded</div>` : ''}
+             </div>`;
         return `
           <tr>
             <td class="when-cell">${escape(when)}</td>
@@ -139,6 +164,7 @@
               <div style="color:var(--muted);font-size:11px;margin-top:3px;">${escape(r.country || '')} · ${escape(r.industry || '')} · ${escape(r.year || '')}</div>
             </td>
             <td><span class="status-pill ${escape(r.status)}">${escape(r.status)}</span></td>
+            <td>${statsCell}</td>
             <td><div class="locale-dots">${dots}</div></td>
             <td style="text-align:right;">
               <a class="row-action" href="#edit/${escape(r.id)}">Edit →</a>
@@ -146,12 +172,13 @@
           </tr>`;
       }).join('');
 
-      root.innerHTML = head + `
+      root.innerHTML = head + summaryStrip + `
         <table class="admin-table">
           <thead><tr>
             <th>Updated</th>
             <th>Slug · Coverage</th>
             <th>Status</th>
+            <th>Sales · Revenue</th>
             <th>Translations</th>
             <th></th>
           </tr></thead>
