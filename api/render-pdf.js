@@ -10,18 +10,25 @@
 //   Body:    { html: string, filename?: string }
 //   Returns: { success, filename, pdf_base64, pdf_size_bytes, page_count,
 //              overflow_detected, overflow_pages, rendered_at }
-//
-// Vercel runs serverless functions on AWS Lambda compute, but does NOT set
-// AWS_EXECUTION_ENV the way native Lambda does. @sparticuz/chromium-min
-// uses that env var to decide whether to extract the AL2023 runtime libs
-// (libnss3, libdrm, etc.) from chromium-pack into /tmp/lib. Without that
-// extraction, chromium itself launches but immediately fails with
-// `libnss3.so: cannot open shared object file`. We spoof AWS_EXECUTION_ENV
-// before calling executablePath() so the package extracts libs correctly.
 // ============================================================
 
-import chromium from '@sparticuz/chromium-min';
-import puppeteer from 'puppeteer-core';
+// CRITICAL: @sparticuz/chromium-min runs Lambda-environment detection at
+// MODULE LOAD time — its index.js body calls setupLambdaEnvironment() which
+// prepends /tmp/al2023/lib to LD_LIBRARY_PATH. Vercel's runtime is
+// Lambda-compatible but doesn't set AWS_EXECUTION_ENV the way native Lambda
+// does, so without spoofing, that detection fails and LD_LIBRARY_PATH never
+// includes the lib directory — chromium then launches but immediately fails
+// with `libnss3.so: cannot open shared object file`.
+//
+// Setting the env var before a static `import` doesn't work in ESM because
+// imports are hoisted above all top-level statements. Setting it before a
+// dynamic `import()` (or `await import()`) DOES work because evaluation is
+// strictly top-down. So we set the env var, then dynamically import.
+if (!process.env.AWS_EXECUTION_ENV) {
+  process.env.AWS_EXECUTION_ENV = 'AWS_Lambda_nodejs20.x';
+}
+const chromium = (await import('@sparticuz/chromium-min')).default;
+const puppeteer = (await import('puppeteer-core')).default;
 
 export const config = {
   maxDuration: 60,
@@ -30,7 +37,7 @@ export const config = {
 const CHROMIUM_PACK_URL =
   'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
 
-const RENDER_VERSION = 'render-pdf-v4-env-spoof';
+const RENDER_VERSION = 'render-pdf-v5-dynamic-import';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -53,17 +60,6 @@ export default async function handler(req, res) {
   }
   if (html.length > 5_000_000) {
     return res.status(413).json({ error: 'HTML too large (max 5MB)' });
-  }
-
-  // @sparticuz/chromium-min checks process.env.AWS_EXECUTION_ENV at
-  // executablePath() call time (not at import time) to decide whether to
-  // extract the AL2023 runtime libs (libnss3 etc.) from the pack tarball.
-  // Vercel's serverless functions run on Lambda-compatible compute but
-  // don't set this env var, so we spoof it here, immediately before the
-  // executablePath call. Setting it at module top-level would be too late
-  // because ESM hoists imports above all top-level statements.
-  if (!process.env.AWS_EXECUTION_ENV) {
-    process.env.AWS_EXECUTION_ENV = 'AWS_Lambda_nodejs20.x';
   }
 
   let browser = null;
@@ -135,6 +131,7 @@ export default async function handler(req, res) {
       success: false,
       error: error.message,
       render_version: RENDER_VERSION,
+      ld_library_path: process.env.LD_LIBRARY_PATH || null,
     });
   }
 }
