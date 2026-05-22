@@ -37,7 +37,7 @@ export const config = {
 const CHROMIUM_PACK_URL =
   'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
 
-const RENDER_VERSION = 'render-pdf-v5-dynamic-import';
+const RENDER_VERSION = 'render-pdf-v6';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -82,14 +82,17 @@ export default async function handler(req, res) {
     });
     await page.evaluateHandle('document.fonts.ready');
 
-    const pdfBuffer = await page.pdf({
+    // puppeteer-core 23+ returns a Uint8Array, not a Node Buffer. Wrap so
+    // .toString('base64') actually base64-encodes instead of returning the
+    // decimal-byte CSV that Uint8Array.toString() produces by default.
+    const pdfBuffer = Buffer.from(await page.pdf({
       width: '1280px',
       height: '720px',
       printBackground: true,
       preferCSSPageSize: false,
       margin: { top: 0, right: 0, bottom: 0, left: 0 },
       displayHeaderFooter: false,
-    });
+    }));
 
     const overflowReport = await page.evaluate(() => {
       const pages = document.querySelectorAll('.page');
