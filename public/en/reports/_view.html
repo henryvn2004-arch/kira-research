@@ -283,17 +283,8 @@
           body:    JSON.stringify({ orderId })
         });
         const body = await r.json();
-        if (!r.ok) {
-          // Surface the actual PayPal / API error for debugging — visible in
-          // browser console so we can diagnose capture failures without
-          // shipping a server-side log viewer.
-          console.error('[kira:capture] FAILED', { status: r.status, body, orderId });
-        } else {
-          console.log('[kira:capture] OK', body);
-        }
         return { ok: r.ok, ...body };
       } catch (err) {
-        console.error('[kira:capture] threw', err);
         return { ok: false, error: 'network' };
       }
     }

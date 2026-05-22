@@ -77,6 +77,39 @@
     }
     .prof-account button:hover { border-color: var(--primary); color: var(--primary); }
 
+    .prof-stats {
+      display: flex;
+      gap: 48px;
+      padding: 20px 0 28px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .prof-stat .label {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .prof-stat .val {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .prof-stat .val .currency {
+      font-size: 14px;
+      color: var(--muted);
+      vertical-align: top;
+      margin-right: 2px;
+      font-weight: 600;
+    }
+
     .prof-list {
       display: grid;
       grid-template-columns: 1fr;
@@ -130,12 +163,31 @@
     }
     .prof-card-foot {
       display: flex;
-      gap: 16px;
+      gap: 14px;
+      align-items: center;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       color: var(--muted);
       letter-spacing: 0.05em;
+      flex-wrap: wrap;
     }
+    .prof-card-foot .sep {
+      color: var(--muted-dim);
+    }
+    .prof-card-foot .resend {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .prof-card-foot .resend:hover { text-decoration: underline; }
+    .prof-card-foot .resend:disabled { color: var(--muted-dim); cursor: wait; text-decoration: none; }
+    .prof-card-foot .resend.success { color: #1F7A4F; }
     .prof-card-actions {
       display: flex;
       flex-direction: column;
@@ -297,6 +349,13 @@
         download:    'Download PDF ↓',
         downloading: 'Preparing…',
         noPdf:       'PDF preparing',
+        resend:      'Resend receipt',
+        resending:   'Sending…',
+        resendOk:    'Receipt sent ✓',
+        resendErr:   "Couldn't send. Please retry.",
+        statsReports:  'Reports owned',
+        statsSpent:    'Total spent',
+        statsMember:   'Member since',
         emptyTitle:  "You haven't purchased any reports yet.",
         emptySub:    "Browse the library — every report is delivered as a polished PDF plus the full web edition.",
         emptyCta:    'Browse the library',
@@ -315,6 +374,13 @@
         download:    'PDFをダウンロード ↓',
         downloading: '準備中…',
         noPdf:       'PDF準備中',
+        resend:      '領収書を再送信',
+        resending:   '送信中…',
+        resendOk:    '領収書を送信しました ✓',
+        resendErr:   '送信できませんでした。再度お試しください。',
+        statsReports:  '所有レポート',
+        statsSpent:    '購入金額合計',
+        statsMember:   '登録日',
         emptyTitle:  'まだレポートを購入していません。',
         emptySub:    'ライブラリをご覧ください。すべてのレポートはPDFと完全なWeb版でお届けします。',
         emptyCta:    'ライブラリを見る',
@@ -333,6 +399,13 @@
         download:    'PDF 다운로드 ↓',
         downloading: '준비 중…',
         noPdf:       'PDF 준비 중',
+        resend:      '영수증 재전송',
+        resending:   '전송 중…',
+        resendOk:    '영수증을 보냈습니다 ✓',
+        resendErr:   '전송할 수 없습니다. 다시 시도해주세요.',
+        statsReports:  '보유 보고서',
+        statsSpent:    '총 구매 금액',
+        statsMember:   '가입일',
         emptyTitle:  '아직 구매한 보고서가 없습니다.',
         emptySub:    '라이브러리를 둘러보세요. 모든 보고서는 PDF와 전체 웹 버전으로 제공됩니다.',
         emptyCta:    '라이브러리 둘러보기',
@@ -374,10 +447,11 @@
 
     // 3) Render. Use if/else (not early-return) because top-level `return`
     // is a syntax error in <script type="module">.
+    const memberSince = user.created_at || user.confirmed_at || null;
     if (!data.items || data.items.length === 0) {
       renderEmpty(data.email || user.email);
     } else {
-      renderList(data.items, data.email || user.email);
+      renderList(data.items, data.email || user.email, memberSince);
     }
 
     // ── Render helpers ───────────────────────────────────────
@@ -399,6 +473,61 @@
         );
       } catch { return iso.slice(0, 10); }
     }
+    function fmtMonth(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return '—';
+      try {
+        return d.toLocaleDateString(
+          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : 'en-US',
+          { year: 'numeric', month: 'long' }
+        );
+      } catch { return iso.slice(0, 7); }
+    }
+    function fmtMoney(n) {
+      const v = Number(n || 0);
+      // No localized currency — Year 1 USD only, kept consistent across locales.
+      return v.toFixed(2).replace(/\.00$/, '');
+    }
+
+    function statsBar(items, memberSince) {
+      const count = items.length;
+      // Sum amounts; if any item has a non-USD currency, group it separately.
+      const byCcy = {};
+      items.forEach(it => {
+        const ccy = (it.currency || 'USD').toUpperCase();
+        byCcy[ccy] = (byCcy[ccy] || 0) + Number(it.amount || 0);
+      });
+      const ccyList = Object.keys(byCcy);
+      let spentHtml;
+      if (ccyList.length === 0) {
+        spentHtml = '<span class="val"><span class="currency">$</span>0</span>';
+      } else if (ccyList.length === 1 && ccyList[0] === 'USD') {
+        spentHtml = '<span class="val"><span class="currency">$</span>' + escHtml(fmtMoney(byCcy.USD)) + '</span>';
+      } else {
+        // Multi-currency edge case — list each. Year 1 shouldn't hit this but
+        // future-proof so the page never lies about a single-currency total.
+        spentHtml = '<span class="val" style="font-size:16px;">' +
+          ccyList.map(k => escHtml(fmtMoney(byCcy[k])) + ' ' + escHtml(k)).join(' · ') +
+          '</span>';
+      }
+      return (
+        '<div class="prof-stats">' +
+          '<div class="prof-stat">' +
+            '<div class="label">' + escHtml(c.statsReports) + '</div>' +
+            '<div class="val">' + count + '</div>' +
+          '</div>' +
+          '<div class="prof-stat">' +
+            '<div class="label">' + escHtml(c.statsSpent) + '</div>' +
+            spentHtml +
+          '</div>' +
+          '<div class="prof-stat">' +
+            '<div class="label">' + escHtml(c.statsMember) + '</div>' +
+            '<div class="val" style="font-size:16px;">' + escHtml(fmtMonth(memberSince)) + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
 
     function header(email, count) {
       const countText = c.countLabel(count || 0);
@@ -417,7 +546,7 @@
       );
     }
 
-    function renderList(items, email) {
+    function renderList(items, email, memberSince) {
       const cardsHtml = items.map(it => {
         const meta = [it.industry, it.year].filter(Boolean).join(' · ').toUpperCase();
         const country = (it.country || '').toUpperCase();
@@ -437,6 +566,8 @@
               '<h3>' + escHtml(it.title) + '</h3>' +
               '<div class="prof-card-foot">' +
                 '<span>' + escHtml(c.purchasedOn(fmtDate(it.purchasedAt))) + '</span>' +
+                '<span class="sep">·</span>' +
+                '<button class="resend" data-action="resend" data-slug="' + escHtml(it.slug) + '" data-locale="' + escHtml(it.locale) + '">' + escHtml(c.resend) + '</button>' +
               '</div>' +
             '</div>' +
             '<div class="prof-card-actions">' +
@@ -447,7 +578,10 @@
         );
       }).join('');
 
-      root.innerHTML = header(email, items.length) + '<div class="prof-list">' + cardsHtml + '</div>';
+      root.innerHTML =
+        header(email, items.length) +
+        statsBar(items, memberSince) +
+        '<div class="prof-list">' + cardsHtml + '</div>';
 
       // Wire sign-out button.
       const signOut = document.getElementById('prof-signout');
@@ -491,6 +625,42 @@
             btn.disabled = false;
             btn.textContent = orig;
             alert('Could not prepare PDF. Please retry.');
+          }
+        });
+      });
+
+      // Wire resend-receipt buttons — POSTs to library-resend-receipt which
+      // re-uses the existing Resend email helper. Recipient is always the
+      // JWT's user.email — never trusts a client-supplied address.
+      root.querySelectorAll('[data-action="resend"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const slug = btn.dataset.slug;
+          const loc  = btn.dataset.locale;
+          const orig = btn.textContent;
+          btn.disabled = true;
+          btn.classList.remove('success');
+          btn.textContent = c.resending;
+          try {
+            const session = (await window.db.auth.getSession()).data.session;
+            if (!session) throw new Error('no_session');
+            const r = await fetch('/api/library-resend-receipt', {
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+              body:    JSON.stringify({ slug, locale: loc })
+            });
+            if (!r.ok) throw new Error('http ' + r.status);
+            btn.classList.add('success');
+            btn.textContent = c.resendOk;
+            // After 4s reset to original so user could resend again if needed.
+            setTimeout(() => {
+              btn.classList.remove('success');
+              btn.disabled = false;
+              btn.textContent = orig;
+            }, 4000);
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = orig;
+            alert(c.resendErr);
           }
         });
       });
