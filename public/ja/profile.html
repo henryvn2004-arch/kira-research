@@ -358,7 +358,7 @@
     // 2) Fetch purchases.
     let data;
     try {
-      const session = await window.kiraAuth.getSession();
+      const session = (await window.db.auth.getSession()).data.session;
       if (!session) { renderGate(); throw new Error('halt'); }
       const r = await fetch('/api/library-my-purchases', {
         headers: { 'Authorization': 'Bearer ' + session.access_token }
@@ -472,7 +472,7 @@
           btn.disabled = true;
           btn.textContent = c.downloading;
           try {
-            const session = await window.kiraAuth.getSession();
+            const session = (await window.db.auth.getSession()).data.session;
             if (!session) throw new Error('no_session');
             const r = await fetch(
               '/api/library-content?slug=' + escAttr(slug) + '&locale=' + escAttr(loc),
