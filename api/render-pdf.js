@@ -119,7 +119,7 @@ export default async function handler(req, res) {
       filename,
       pdf_base64: pdfBuffer.toString('base64'),
       pdf_size_bytes: pdfBuffer.length,
-      page_count: (html.match(/<div class="page/g) || []).length,
+      page_count: (html.match(/<div class="page(?=["\s])(?:[^"]*)?"/g) || []).length,
       overflow_detected: overflowReport.length > 0,
       overflow_pages: overflowReport,
       rendered_at: new Date().toISOString(),
