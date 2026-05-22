@@ -274,9 +274,13 @@
 
   function isLikelyAuthenticated() {
     try {
+      // auth.js configures the Supabase client with a custom `storageKey: 'kira-auth'`,
+      // so the session lives at localStorage['kira-auth']. Fallback to the
+      // default `sb-<projectref>-auth-token` pattern in case that ever changes.
+      const direct = localStorage.getItem('kira-auth');
+      if (direct && direct.length > 20) return true;
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        // Supabase JS v2 stores the session under `sb-<projectref>-auth-token`.
         if (k && /^sb-.+-auth-token$/.test(k)) {
           const v = localStorage.getItem(k);
           if (v && v.length > 20) return true;
