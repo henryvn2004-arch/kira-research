@@ -192,7 +192,14 @@ export default async function handler(req, res) {
       }
 
       const unit = purchaseUnits[0] || {};
-      const customId = unit.custom_id || '';
+      // PayPal places custom_id at different paths depending on response type:
+      //   • GET /v2/checkout/orders/{id}      → purchase_units[0].custom_id
+      //   • POST /v2/checkout/orders/{id}/capture (fresh) → purchase_units[0].payments.captures[0].custom_id
+      // Try both before bailing.
+      const customId =
+        unit.custom_id ||
+        unit.payments?.captures?.[0]?.custom_id ||
+        '';
       const [slugFromPayPal, localeFromPayPal] = String(customId).split('|');
 
       const slug   = isSlug(slugFromPayPal) ? slugFromPayPal : null;
