@@ -1,0 +1,68 @@
+# ============================================================
+# KIRA Research — Template Registry
+#
+# Catalog of UC1 blueprints. The orchestrator scores each topic
+# against every entry and routes to the best match if its score
+# clears match_threshold; otherwise routes to UC2 (Design Mode).
+#
+# Phase 1 ships ONE entry. Additional blueprints get added here
+# as patterns emerge organically from UC2 Design Mode usage.
+# ============================================================
+
+registry_version: 1
+match_threshold: 0.7         # min score for UC1 routing (else fallback to UC2)
+naming_convention: "<report_type>_<domain>"   # e.g. market_analysis_consumer; Phase 1 omits suffix since only one blueprint exists
+
+blueprints:
+
+  - id: market_analysis
+    path: templates/blueprints/market_analysis/
+    name: "Market Analysis (SEA, manufacturing / consumer / construction)"
+    short_description: >
+      19-section consulting-grade analysis of a country × industry combination.
+      Covers macro context, market sizing, segment breakdown, competitive
+      structure, channel & distribution, regulatory landscape, AI impact,
+      and 5-year forecast with strategic implications.
+    pattern_origin: "R0152-style baseline (Indonesia roofing/exterior/insulation 2026)"
+    section_count: 19
+    estimated_pages: 18-22
+    estimated_runtime_min: 35-55
+
+    # Topic-fit signals — orchestrator combines keyword overlap with these
+    # gates to compute a match score. ≥0.7 → use this blueprint.
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore", "Myanmar", "Cambodia", "Laos"]
+      industry_domains:
+        # Topic matches IF it falls into one of these domains
+        manufacturing:
+          keywords: ["materials", "construction", "building", "cement", "steel", "chemicals", "packaging", "automotive components", "industrial"]
+        consumer:
+          keywords: ["consumer goods", "food", "beverage", "FMCG", "personal care", "household", "retail goods", "apparel"]
+        construction:
+          keywords: ["construction", "real estate", "infrastructure", "roofing", "insulation", "cladding", "concrete", "cement", "housing"]
+      year_scope:
+        required: true
+        format: "single year (current or +1) with 5-year forecast horizon"
+
+    # Output mode for this blueprint
+    default_output_mode: publish
+    requires_confirm_step: false   # template is validated; skip the confirm gate
+
+    # Domains the blueprint does NOT cover well — orchestrator should
+    # deprioritize this blueprint and prefer UC2 for these
+    poor_fit_signals:
+      - "B2B SaaS / pure software"
+      - "Pure services industries (consulting, legal, accounting)"
+      - "Capital-markets / financial-instrument focus"
+      - "Pharma / biotech (different evidentiary regime)"
+      - "Non-SEA geographies (drift; UC2 produces better structure)"
+
+  # Phase 1 ends here. Future blueprints land below as new patterns
+  # solidify from UC2 Design Mode usage:
+  #   - competitive_comparison_*
+  #   - regulatory_landscape_*
+  #   - tech_adoption_*
+  #   - channel_distribution_*

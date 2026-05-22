@@ -1,0 +1,107 @@
+{
+  "blueprint_id": "market_analysis",
+  "version": 1,
+  "query_count_target": 25,
+  "query_strategy_description": "25 web-search queries grouped into 6 buckets that map to the report's 19 sections. Use WebSearch (native Claude tool). Avoid named-firm aggregator results; prefer government bodies, listed-company filings, trade associations, and primary research firms with cited methodology.",
+
+  "query_buckets": [
+    {
+      "bucket": "01_macro",
+      "purpose": "Macro context, GDP, policy, urbanization → drives 06_macro_pages",
+      "queries": [
+        "{{country}} GDP growth {{year}} latest quarterly {{country_stats_bureau}}",
+        "{{country}} inflation rate {{year}} central bank report",
+        "{{country}} urbanization population growth {{year}}",
+        "{{country}} key economic policies {{year}} housing infrastructure"
+      ],
+      "expected_sources": ["national statistics bureau", "central bank", "World Bank", "ADB", "IMF country reports"],
+      "expected_tag_mix": "secondary 80% / estimate 20%"
+    },
+    {
+      "bucket": "02_sector_overview",
+      "purpose": "Industry total size, CAGR, segment splits → drives 08_sector_sizing + 09_segments",
+      "queries": [
+        "{{country}} {{industry}} market size {{year}} USD",
+        "{{country}} {{industry}} CAGR forecast 2030",
+        "APAC {{industry}} market 2024 2025 segment breakdown",
+        "{{country}} {{industry}} historical market value {{year-3}} to {{year}}",
+        "{{country}} {{industry}} sub-segment {{sub_industry_1}} size"
+      ],
+      "expected_sources": ["industry trade associations", "listed-company annual reports", "named research firms with methodology disclosed", "government industry surveys"],
+      "expected_tag_mix": "secondary 60% / estimate 40% (segment breakdowns often need KIRA triangulation)"
+    },
+    {
+      "bucket": "03_competitive",
+      "purpose": "Players, market shares, HHI → drives 11_competitive_structure + 12_player_profiles",
+      "queries": [
+        "{{country}} {{industry}} top players market share {{year}}",
+        "{{country}} {{industry}} largest companies revenue ranking",
+        "{{country}} {{industry}} HHI concentration index OR Herfindahl",
+        "{{leading_player_candidate}} {{country}} revenue segment {{industry}}",
+        "{{country}} {{industry}} M&A consolidation {{year-2}} to {{year}}"
+      ],
+      "expected_sources": ["listed company filings (IDX/SET/SGX/HoSE/etc.)", "company press releases", "industry trade reports", "competition authority filings"],
+      "expected_tag_mix": "secondary 75% / estimate 20% / primary 5%"
+    },
+    {
+      "bucket": "04_demand_channels_regulatory",
+      "purpose": "Distribution mix, demand drivers, regulatory landscape → drives 14_demand_channels + 15_regulatory",
+      "queries": [
+        "{{country}} {{industry}} distribution channels e-commerce modern trade",
+        "{{country}} {{industry}} demand drivers {{year}} households consumer",
+        "{{country}} {{industry}} regulation policy tariffs {{year}}",
+        "{{country}} {{industry}} import export trade data"
+      ],
+      "expected_sources": ["customs statistics", "ministry of trade/industry filings", "industry trade press", "logistics-sector reports"],
+      "expected_tag_mix": "secondary 70% / estimate 30%"
+    },
+    {
+      "bucket": "05_ai_impact",
+      "purpose": "AI market sizing in industry, named use cases → drives 17_ai_overview_and_use_cases",
+      "queries": [
+        "AI in {{industry}} {{country}} market size adoption {{year}}",
+        "{{industry}} AI use cases companies deploying {{year}}",
+        "generative AI {{industry}} Southeast Asia adoption survey",
+        "AI productivity gains {{industry}} efficiency cost reduction"
+      ],
+      "expected_sources": ["McKinsey Global Institute style horizons reports", "BCG / Accenture industry AI surveys (read but never cite by name)", "company press releases on AI deployments", "academic papers on AI in industry"],
+      "expected_tag_mix": "secondary 55% / estimate 35% / primary 10% (KIRA synthesizes from multi-source)",
+      "note": "Voice rule: AI section can describe AI prominently. Brand rule still applies elsewhere — never lead with AI in headlines outside this section."
+    },
+    {
+      "bucket": "06_forecast_outlook",
+      "purpose": "5-year forecast, scenario sensitivities → drives 18_forecast_outlook",
+      "queries": [
+        "{{country}} {{industry}} forecast 2030 outlook",
+        "{{country}} {{industry}} growth scenarios base bull bear",
+        "{{country}} {{industry}} key risks downside catalysts {{year}}"
+      ],
+      "expected_sources": ["central bank forecasts", "industry trade associations multi-year projections", "investment bank country/industry outlooks", "ADB/World Bank growth outlooks"],
+      "expected_tag_mix": "secondary 50% / estimate 50% (KIRA synthesizes scenarios from base-case external data)"
+    }
+  ],
+
+  "query_execution_rules": {
+    "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings.",
+    "result_filtering": [
+      "Discard results from named-firm aggregators (Mordor, Frost, Euromonitor, IMARC, etc.) — anti-positioning rule",
+      "Prefer results with citeable methodology disclosure",
+      "If a number appears in 3+ independent sources within ±10%, treat as well-anchored secondary",
+      "If a number appears in only 1 source, either find corroboration or downgrade to KIRA estimate with anchor commentary"
+    ],
+    "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} × {{ratio}} = {{output}}. E.g. 'APAC USD {{X}}bn × {{country}}'s construction GDP share ~6-7% → {{country}} estimate USD {{Y}}bn'.",
+    "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json — top-level keys for each major data bucket, each value tagged with source URL + access date + extraction method."
+  },
+
+  "template_variable_resolution": {
+    "{{country}}": "From topic parser output",
+    "{{country_iso}}": "ISO 3166-1 alpha-2",
+    "{{country_stats_bureau}}": "Mapped via lookup: ID→BPS, VN→GSO, TH→NSO, PH→PSA, MY→DOSM, SG→SingStat, etc.",
+    "{{industry}}": "From topic parser, normalized",
+    "{{sub_industry_1}}": "First sub_industry from parser (if multi-segment topic)",
+    "{{year}}": "Topic year (parser output, default current year)",
+    "{{year-2}}": "Year - 2",
+    "{{year-3}}": "Year - 3",
+    "{{leading_player_candidate}}": "Filled iteratively as competitive bucket runs — pre-known players or top-result company names"
+  }
+}

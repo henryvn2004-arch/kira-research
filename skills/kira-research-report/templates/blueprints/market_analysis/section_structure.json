@@ -1,0 +1,186 @@
+{
+  "blueprint_id": "market_analysis",
+  "version": 1,
+  "section_count": 19,
+  "structure_description": "19-section R0152-style market analysis. Front matter (cover/methodology/TOC) → executive summary → 5 thematic sections each opened by a dark divider → AI impact → forecast → strategic implications → methodology endnote.",
+
+  "sections": [
+    {
+      "id": "01_cover",
+      "section_num": "00",
+      "title_pattern": "{{report_title}}",
+      "page_type": "cover",
+      "page_count": 1,
+      "purpose": "Report cover — title, country/industry/year, KIRA branding, report ID, confidential tag",
+      "skip_if": null,
+      "notes": "No content generation needed — pure template fill from parsed topic metadata."
+    },
+    {
+      "id": "02_methodology_inline",
+      "section_num": "01",
+      "title_pattern": "Methodology",
+      "page_type": "methodology_inline",
+      "page_count": 1,
+      "purpose": "Two-column overview of research approach: primary sources, secondary sources, AI-augmented synthesis, source tagging conventions",
+      "skip_if": null
+    },
+    {
+      "id": "03_toc",
+      "section_num": "02",
+      "title_pattern": "Contents",
+      "page_type": "toc",
+      "page_count": 1,
+      "purpose": "Table of contents — generated from this structure plus page counter",
+      "skip_if": null,
+      "notes": "Generated at assembly time, not content-gen time."
+    },
+    {
+      "id": "04_exec_summary",
+      "section_num": "03",
+      "title_pattern": "{{country}}'s {{industry}} market — {{year}} inflection",
+      "page_type": "exec_summary_p1 + exec_summary_p2_implications",
+      "page_count": 2,
+      "purpose": "Two-page executive summary: page 1 = 4 callouts (market size, growth, concentration, AI uplift) + 2-col narrative + 1 chart; page 2 = 5 strategic implications grid",
+      "skip_if": null,
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each"
+    },
+    {
+      "id": "05_macro_divider",
+      "section_num": "04",
+      "title_pattern": "Macro context: {{country}} {{year}}",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Dark-mode chapter break — single thesis statement about the macro backdrop"
+    },
+    {
+      "id": "06_macro_pages",
+      "section_num": "04",
+      "title_pattern": "Macro indicators driving demand",
+      "page_type": "market_data_chart",
+      "page_count": 2,
+      "purpose": "GDP growth, inflation, urbanization, key policy moves (e.g. housing program, VAT exemption, sovereign wealth fund). One chart per page: macro indicators over time + policy timeline.",
+      "skip_if": null
+    },
+    {
+      "id": "07_sector_divider",
+      "section_num": "05",
+      "title_pattern": "Sector overview & sizing",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Chapter break — thesis on sector size + recent trajectory"
+    },
+    {
+      "id": "08_sector_sizing",
+      "section_num": "05",
+      "title_pattern": "Market size & growth: {{industry}} {{country}}",
+      "page_type": "market_data_chart",
+      "page_count": 2,
+      "purpose": "Total market size (USD bn), historical CAGR, forecast CAGR, segment splits (sub-industries from topic). Chart: bar series or stacked bar showing size + segment breakdown.",
+      "skip_if": null
+    },
+    {
+      "id": "09_segments",
+      "section_num": "06",
+      "title_pattern": "Segment economics",
+      "page_type": "market_data_chart",
+      "page_count": 2,
+      "purpose": "Per-sub-segment deep dive — economics, margin profile, growth drivers. Typically 2-4 sub-segments × half-page each.",
+      "skip_if": "topic has only one segment (collapse into 08_sector_sizing instead)"
+    },
+    {
+      "id": "10_competitive_divider",
+      "section_num": "07",
+      "title_pattern": "Competitive landscape",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Chapter break — thesis on market structure (consolidating / fragmenting / contested)"
+    },
+    {
+      "id": "11_competitive_structure",
+      "section_num": "07",
+      "title_pattern": "Market structure: {{concentration_descriptor}}",
+      "page_type": "competitive_structure",
+      "page_count": 1,
+      "purpose": "HHI concentration chart, top-5 player share, structural commentary, 4-card mini-grid of player headlines",
+      "char_budget_hint": "HHI viz + sidebar narrative + 4 player mini-cards"
+    },
+    {
+      "id": "12_player_profiles",
+      "section_num": "07",
+      "title_pattern": "Player profiles",
+      "page_type": "competitive_profile_deep",
+      "page_count": 4,
+      "purpose": "Deep profile per leading player — revenue, share, segment focus, recent moves, strategic implication. 1 player per page.",
+      "skip_if": "fewer than 3 named players identifiable from research"
+    },
+    {
+      "id": "13_demand_divider",
+      "section_num": "08",
+      "title_pattern": "Demand drivers & channels",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Chapter break — thesis on what's pulling demand"
+    },
+    {
+      "id": "14_demand_channels",
+      "section_num": "08",
+      "title_pattern": "Channel & distribution structure",
+      "page_type": "market_data_chart",
+      "page_count": 2,
+      "purpose": "Distribution mix (modern trade / GT / e-commerce / direct), channel economics, demand pull factors",
+      "skip_if": null
+    },
+    {
+      "id": "15_regulatory",
+      "section_num": "09",
+      "title_pattern": "Regulatory & policy landscape",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Recent regulatory actions, planned policy moves, compliance burden, tariffs/standards/incentives",
+      "skip_if": "topic has minimal regulatory dimension (B2C non-regulated goods)"
+    },
+    {
+      "id": "16_ai_divider",
+      "section_num": "10",
+      "title_pattern": "AI impact on {{industry}}",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Dark chapter break — thesis on AI's role in this industry's near-term economics"
+    },
+    {
+      "id": "17_ai_overview_and_use_cases",
+      "section_num": "10",
+      "title_pattern": "AI in {{country}} {{industry}}: market sizing + use cases",
+      "page_type": "ai_overview",
+      "page_count": 2,
+      "purpose": "Page 1: AI market sizing + adoption trajectory for the industry in-country. Page 2: 4-6 industry-specific AI use cases with effort/impact framing.",
+      "char_budget_hint": "Use cases as a 2x3 or 3x2 grid; each ~200 chars body"
+    },
+    {
+      "id": "18_forecast_outlook",
+      "section_num": "11",
+      "title_pattern": "5-year outlook & forecast",
+      "page_type": "forecast_outlook",
+      "page_count": 2,
+      "purpose": "Forecast chart (USD bn or volume) to year+5, S-curve adoption overlay, base/bull/bear scenario commentary, key sensitivities",
+      "skip_if": null
+    },
+    {
+      "id": "19_methodology_endnote",
+      "section_num": "12",
+      "title_pattern": "Methodology endnote & source mix",
+      "page_type": "methodology_endnote",
+      "page_count": 1,
+      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages), key data anchors, KIRA estimate methodologies disclosed, contact & next research footer",
+      "skip_if": null,
+      "notes": "Required — buyers value transparent methodology. Auto-generated from source-tag census of the report."
+    }
+  ],
+
+  "assembly_rules": {
+    "page_numbering": "Continuous, format '012 / NN' in page-header counter slot — total NN computed at assembly",
+    "section_numbering": "section_num shared across all pages of a section (e.g. all Macro pages tagged 'Section 04 · Macro Context')",
+    "divider_placement": "Each major chapter opens with a dark divider page (5 dividers in default structure)",
+    "skip_condition_handling": "If skip_if condition triggers, omit the section AND recompute page counter for all subsequent sections"
+  }
+}
