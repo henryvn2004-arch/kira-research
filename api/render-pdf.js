@@ -18,12 +18,19 @@
 // if env var is unset or header mismatches, returns 401.
 // ============================================================
 
-import chromium from '@sparticuz/chromium';
+import chromium from '@sparticuz/chromium-min';
 import puppeteer from 'puppeteer-core';
 
 export const config = {
   maxDuration: 60,
 };
+
+// Chromium binary lives in GitHub Releases (@sparticuz/chromium-min ships
+// without the binary, which is what makes the function bundle fit Vercel's
+// size limits). First cold-start downloads it to /tmp and caches it for
+// subsequent invocations on the same function instance.
+const CHROMIUM_PACK_URL =
+  'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -58,7 +65,7 @@ export default async function handler(req, res) {
         '--disable-web-security',
       ],
       defaultViewport: { width: 1280, height: 720, deviceScaleFactor: 2 },
-      executablePath: await chromium.executablePath(),
+      executablePath: await chromium.executablePath(CHROMIUM_PACK_URL),
       headless: chromium.headless,
     });
 
