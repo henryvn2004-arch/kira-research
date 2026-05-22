@@ -20,10 +20,6 @@
 // before calling executablePath() so the package extracts libs correctly.
 // ============================================================
 
-if (!process.env.AWS_EXECUTION_ENV) {
-  process.env.AWS_EXECUTION_ENV = 'AWS_Lambda_nodejs20.x';
-}
-
 import chromium from '@sparticuz/chromium-min';
 import puppeteer from 'puppeteer-core';
 
@@ -33,6 +29,8 @@ export const config = {
 
 const CHROMIUM_PACK_URL =
   'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
+
+const RENDER_VERSION = 'render-pdf-v4-env-spoof';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -55,6 +53,17 @@ export default async function handler(req, res) {
   }
   if (html.length > 5_000_000) {
     return res.status(413).json({ error: 'HTML too large (max 5MB)' });
+  }
+
+  // @sparticuz/chromium-min checks process.env.AWS_EXECUTION_ENV at
+  // executablePath() call time (not at import time) to decide whether to
+  // extract the AL2023 runtime libs (libnss3 etc.) from the pack tarball.
+  // Vercel's serverless functions run on Lambda-compatible compute but
+  // don't set this env var, so we spoof it here, immediately before the
+  // executablePath call. Setting it at module top-level would be too late
+  // because ESM hoists imports above all top-level statements.
+  if (!process.env.AWS_EXECUTION_ENV) {
+    process.env.AWS_EXECUTION_ENV = 'AWS_Lambda_nodejs20.x';
   }
 
   let browser = null;
@@ -115,6 +124,7 @@ export default async function handler(req, res) {
       overflow_detected: overflowReport.length > 0,
       overflow_pages: overflowReport,
       rendered_at: new Date().toISOString(),
+      render_version: RENDER_VERSION,
     });
   } catch (error) {
     console.error('PDF render failed:', error);
@@ -124,6 +134,7 @@ export default async function handler(req, res) {
     return res.status(500).json({
       success: false,
       error: error.message,
+      render_version: RENDER_VERSION,
     });
   }
 }
