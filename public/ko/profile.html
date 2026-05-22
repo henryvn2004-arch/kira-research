@@ -372,12 +372,13 @@
       throw err;
     }
 
-    // 3) Render.
+    // 3) Render. Use if/else (not early-return) because top-level `return`
+    // is a syntax error in <script type="module">.
     if (!data.items || data.items.length === 0) {
       renderEmpty(data.email || user.email);
-      return;
+    } else {
+      renderList(data.items, data.email || user.email);
     }
-    renderList(data.items, data.email || user.email);
 
     // ── Render helpers ───────────────────────────────────────
     function escHtml(s) {
