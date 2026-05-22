@@ -24,9 +24,10 @@
 
 ---
 
-## Current state (2026-05-21 — QC infra session)
+## Current state (2026-05-22 — light theme flip session)
 
-- **Latest commit on `main`:** `ee6498d` — ci(smoke): trigger on deployment_status. QC infra session shipped 5 commits: Dependabot + CodeQL · ESLint flat config + 5 real-bug fixes caught by it · `<link rel=canonical>` injection · Lighthouse CI workflow · smoke trigger switched from push+sleep to deployment_status. Plus 2 fixes earlier in day: auth.html nav layout + Speed Insights drop. Migration 009 audit log applied via Supabase SQL Editor; admin sign-in + audit viewer + KPI dashboard verified live.
+- **Latest commit on `main`:** `5733c80` — Merge `feat/theme-light-touch` (theme flip squash commit `067e805`). Light editorial theme shipped: white bg + deep slate-navy ink (`#0F172A`) + KIRA blue as restrained accent. Reasoning: research-house pivot + middle-aged enterprise readers found dark/tech aesthetic off-brand. Took Mức 2 of 3 (token flip + softened weights + JetBrains Mono restricted to numbers only); skipped Mức 3 full McKinsey redesign as over-engineering for the actual pain. 25 files, +305/−250. Functional surface unchanged (nav.js / auth.js / API / Supabase / PayPal untouched). Reversible via `git revert 067e805`.
+- **Previous session state:** `ee6498d` — QC infra (Dependabot + CodeQL + ESLint + canonical injection + Lighthouse CI + smoke trigger switch).
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** verify `ee6498d` (or latest) in Actions tab. 79 smoke checks should pass on prod.
 - **CI workflows:**
