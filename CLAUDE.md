@@ -24,9 +24,12 @@
 
 ---
 
-## Current state (2026-05-22 — light theme flip session)
+## Current state (2026-05-22 — light theme + profile page session)
 
-- **Latest commit on `main`:** `5733c80` — Merge `feat/theme-light-touch` (theme flip squash commit `067e805`). Light editorial theme shipped: white bg + deep slate-navy ink (`#0F172A`) + KIRA blue as restrained accent. Reasoning: research-house pivot + middle-aged enterprise readers found dark/tech aesthetic off-brand. Took Mức 2 of 3 (token flip + softened weights + JetBrains Mono restricted to numbers only); skipped Mức 3 full McKinsey redesign as over-engineering for the actual pain. 25 files, +305/−250. Functional surface unchanged (nav.js / auth.js / API / Supabase / PayPal untouched). Reversible via `git revert 067e805`.
+- **Latest changes:**
+  - **Profile / "My Library" page** added: `/[locale]/profile` lists user's purchased reports with title/locale chip/country/industry/year/purchase date + "Open" + "Download PDF" actions. New `api/library-my-purchases.js` (auth-gated GET) joins `purchases × living_reports × report_translations`. PDF download reuses existing `library-content.js` for signed URLs (1h TTL). `/profile` → `/en/profile` redirect in `vercel.json`. nav.js shows "My Library" link only when localStorage has a `sb-*-auth-token` (cheap heuristic; profile page itself does proper auth check). i18n keys `nav.myLibrary` added to all 3 locales. 3 profile.html files (EN/JA/KO) all identical — copy is in-page JS keyed by URL locale, so a single template handles all locales.
+  - **Email purchase receipts** are ACTIVE in prod (RESEND_API_KEY set). `api/_lib/email.js` `sendPurchaseReceipt` fires after every successful PayPal capture. `project des/CLAUDE.md` note about "Manual transactional Year 1" is now stale.
+  - **Light editorial theme** shipped via `feat/theme-light-touch` → merge `5733c80`. White bg + deep slate-navy ink (`#0F172A`) + KIRA blue accent. Mức 2 (token flip + softened) — skipped Mức 3 full McKinsey redesign as over-engineering. Library card stretch bug fixed (`ed2813e` — `align-items: start` on `.lib-grid`). Reversible via `git revert 067e805`.
 - **Previous session state:** `ee6498d` — QC infra (Dependabot + CodeQL + ESLint + canonical injection + Lighthouse CI + smoke trigger switch).
 - **Production:** live, Vercel auto-deploys on every push to main
 - **Last fully-verified green CI run:** verify `ee6498d` (or latest) in Actions tab. 79 smoke checks should pass on prod.

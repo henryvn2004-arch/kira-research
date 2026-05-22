@@ -64,6 +64,7 @@
           <a href="${localPath('/methodology')}"      class="${('methodology'    + activeIf('methodology')).trim()}"    data-i18n="nav.methodology">Methodology</a>
           <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
           <a href="${localPath('/custom-research/')}" class="${('nav-dropdown'   + activeIf('custom-research')).trim()}" data-i18n="nav.customResearch">Custom Research</a>
+          <a href="${localPath('/profile')}" class="${('kira-my-library'   + activeIf('profile')).trim()}" data-i18n="nav.myLibrary" style="display:none">My Library</a>
           <a href="${localPath('/library')}" class="nav-cta" data-i18n="nav.browseCta">Browse Library →</a>
         </div>
         <button class="nav-burger" id="kira-nav-burger" aria-label="Toggle menu">
@@ -89,6 +90,7 @@
     <a href="${localPath('/methodology')}"      data-i18n="nav.methodology">Methodology</a>
     <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
     <a href="${localPath('/custom-research/')}" data-i18n="nav.customResearch">Custom Research</a>
+    <a href="${localPath('/profile')}" class="kira-my-library" data-i18n="nav.myLibrary" style="display:none">My Library</a>
   </div>
 </div>`;
 
@@ -258,8 +260,30 @@
       });
     }
 
+    // Reveal auth-gated nav links if a Supabase session marker is present in
+    // localStorage. Cheap heuristic — avoids loading the Supabase SDK on every
+    // page just for the nav. If the token is stale, the /profile page itself
+    // gates the user to sign in.
+    if (isLikelyAuthenticated()) {
+      document.querySelectorAll('.kira-my-library').forEach(el => { el.style.display = ''; });
+    }
+
     // Notify i18n.js (if loaded) that nav DOM is ready
     document.dispatchEvent(new CustomEvent('kira:nav-ready', { detail: { locale } }));
+  }
+
+  function isLikelyAuthenticated() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        // Supabase JS v2 stores the session under `sb-<projectref>-auth-token`.
+        if (k && /^sb-.+-auth-token$/.test(k)) {
+          const v = localStorage.getItem(k);
+          if (v && v.length > 20) return true;
+        }
+      }
+    } catch (e) { /* localStorage blocked → assume signed out */ }
+    return false;
   }
 
   // Expose locale + helpers for other scripts
