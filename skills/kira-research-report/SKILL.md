@@ -55,15 +55,17 @@ Follow the stages in order. Each stage has a dedicated prompt file in `prompts/`
 - Prompt: [`prompts/confirm_step.md`](prompts/confirm_step.md)
 - Show user the section plan, estimated pages, source-tag distribution, data-integration plan (UC3). Wait for `APPROVE / EDIT [edits] / REJECT`.
 
-### Stage 4 — Research (dual-language since Phase M.1)
+### Stage 4 — Research (dual-language since M.1, LLM-inferred since M.4)
 - Use the native WebSearch tool. Don't fabricate citations.
-- **Dual-language pattern:** Fire English queries (from `query_strategy.json` etc.) AND local-language queries (constructed via `references/local_lang_query_glossary.md`) in parallel, then merge.
-  - Read `local_language_code` + `local_search_priority` from topic_parser output.
-  - `tier-1` countries (VN/ID/TH/JP/KR): always fire ~8-10 local queries on top of the EN baseline. Priority buckets: macro, sector overview, demand/regulatory.
-  - `tier-2` (MY/PH/TW): fire local pass only when EN pass returns < 6 high-quality sources per bucket.
-  - `skip` (SG/HK/EN-default): EN-only.
+- **Dual-language pattern:** Fire English queries (from `query_strategy.json` etc.) AND local-language queries in parallel, then merge.
+  - Topic parser LLM-infers `local_language_code` from country (any ISO 639-1 / BCP-47 — not a fixed list). Multi-lingual countries get `local_language_secondary_code`.
+  - Read also `local_search_priority` (tier-1 / tier-2 / skip) and `use_curated_glossary` (true for vi/id/th/ja/ko, false for the rest).
+  - `tier-1` (KIRA strategic markets): always fire ~8-10 local queries on top of EN baseline. Priority buckets: macro, sector overview, demand/regulatory.
+  - `tier-2` (everything else with local press): fire local pass only when EN baseline returns < 6 high-quality sources per HIGH-priority bucket.
+  - `skip` (English-dominant markets — SG, HK, IN, default): EN-only.
+  - For curated languages, substitute terms from `references/local_lang_query_glossary.md` 24-term tables. For inline languages, subagent LLM-translates terms on the fly.
 - Dedupe merged results by source URL. Local-language sources cited via English aliases per L.3 (e.g. `[GSO 2024]` not `[Tổng cục Thống kê 2024]`); page-bottom SOURCE KEY may include the original local-language source name for traceability.
-- UC1: run the ~25 EN queries from `query_strategy.json` + ~8-10 localized queries
+- UC1: run the ~25 EN queries from `query_strategy.json` + ~8-10 localized queries (tier-1)
 - UC2: run the ~20-30 EN queries the planner produced + ~6-8 localized
 - UC3: run the ~10-15 EN gap-filling queries + ~4-6 localized as needed
 

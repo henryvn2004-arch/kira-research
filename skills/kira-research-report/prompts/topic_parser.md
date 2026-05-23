@@ -36,9 +36,12 @@ Extract metadata. Don't fabricate — if a field can't be confidently inferred, 
   "output_mode": "default",
   "locale": "en",
   "local_language_code": "id",
+  "local_language_name": "Indonesian (Bahasa Indonesia)",
+  "local_language_secondary_code": null,
   "local_search_priority": "tier-1",
+  "use_curated_glossary": true,
   "confidence": 0.92,
-  "parse_notes": "Topic falls squarely in SEA construction-materials domain; year explicit; sub-industries enumerated in topic string. Local search code 'id' for Indonesia — Stage 4 will dual-fire EN + Indonesian queries."
+  "parse_notes": "Topic falls squarely in SEA construction-materials domain; year explicit; sub-industries enumerated. Indonesia → Bahasa Indonesia primary business language (ISO 639-1: id). KIRA tier-1 strategic market with curated glossary."
 }
 ```
 
@@ -63,10 +66,13 @@ Extract metadata. Don't fabricate — if a field can't be confidently inferred, 
 | `forced_template` | string \| null | Set if `--template <id>` was passed |
 | `output_mode` | "default" \| "draft" \| "publish" | Default = let orchestrator decide. Override with `--draft` or `--publish` flags |
 | `locale` | "en" \| "ja" \| "ko" | Phase 1 always "en". Hint extraction only; do not actually localize. |
-| `local_language_code` | "vi" \| "id" \| "th" \| "ja" \| "ko" \| "ms" \| "tl" \| "zh-TW" \| "en" | Phase M.1: maps `country_iso` to the local search language for Stage 4 dual-language WebSearch. See `references/local_lang_query_glossary.md` for the canonical country → code map. `en` for English-primary markets (SG, HK, default for unmapped). |
-| `local_search_priority` | "tier-1" \| "tier-2" \| "skip" | `tier-1` = always fire local pass (VN, ID, TH, JP, KR). `tier-2` = fire only if EN pass yields < 6 high-quality sources/bucket (MY, PH, TW). `skip` = EN-only (SG, HK, default). Stage 4 reads this to budget WebSearch quota. |
+| `local_language_code` | ISO 639-1 (2-letter) or BCP-47 (`zh-TW`-style) | Phase M.4: **LLM-infer** the primary business research language for the topic's country. See "Language inference rules" below. Constraint: must be a valid ISO 639-1 code or recognized BCP-47 tag — never free-form. `en` when the country's business press is English-dominant (SG, HK, IN). |
+| `local_language_name` | string | Full English name of the inferred language for human readability and downstream debugging. Examples: `"Korean"`, `"Vietnamese"`, `"Portuguese (Brazil)"`, `"Arabic (Egyptian dialect)"`. |
+| `local_language_secondary_code` | ISO 639-1 \| null | Phase M.4: optional second language for **multi-lingual countries** where business press splits across multiple languages (Switzerland, Belgium, Canada). Stage 4 fires queries in both. `null` if monolingual or no significant second business language. |
+| `local_search_priority` | "tier-1" \| "tier-2" \| "skip" | KIRA strategic-market tier (business decision, not language inference). See "Tier override table" below. |
+| `use_curated_glossary` | boolean | Phase M.4: `true` if `local_language_code` ∈ {vi, id, th, ja, ko} — those 5 have curated term tables in `references/local_lang_query_glossary.md`. `false` for all others — Stage 4 subagent translates query terms inline using LLM knowledge. |
 | `confidence` | float 0-1 | Your overall confidence in this parse |
-| `parse_notes` | string | One-sentence rationale, especially noting ambiguities |
+| `parse_notes` | string | One-sentence rationale, especially noting ambiguities. **Always surface the language inference reasoning** (e.g. "South Korea → Korean primary business press → ko, tier-1, curated glossary"). |
 
 ### Flag handling
 
@@ -90,31 +96,69 @@ Extract metadata. Don't fabricate — if a field can't be confidently inferred, 
 | `"refresh R0152"` | **Refuse**. R-numbers are internal archive; explain we never reference them externally and ask for a topic name instead |
 | Empty topic / single word | Ask the user a clarifying question before producing JSON. Don't guess. |
 
-### Country → local_language_code mapping (Phase M.1)
+### Language inference rules (Phase M.4 — replaces M.1 hardcoded table)
 
-Mechanical lookup — apply after determining `country_iso`:
+You (the parser LLM) **infer** the local language from the country instead of looking it up in a static table. This handles any country in the world, including ones we haven't yet processed.
 
-| `country_iso` | `local_language_code` | `local_search_priority` |
-|---|---|---|
-| VN | vi | tier-1 |
-| ID | id | tier-1 |
-| TH | th | tier-1 |
-| JP | ja | tier-1 |
-| KR | ko | tier-1 |
-| MY | ms | tier-2 |
-| PH | tl | tier-2 |
-| TW | zh-TW | tier-2 |
-| SG | en | skip |
-| HK | en | skip |
-| *(anything else / null)* | en | skip |
+#### Inference procedure
 
-Cross-checked against `references/local_lang_query_glossary.md` (source of truth). If the canonical glossary disagrees, the glossary wins — update this table.
+1. **Identify country** from topic → set `country_iso` first.
+2. **Reason about business press language** for that country (not "official language" — they often differ):
+   - South Korea → Korean (`ko`)
+   - Vietnam → Vietnamese (`vi`)
+   - Indonesia → Bahasa Indonesia (`id`)
+   - Brazil → Portuguese, ISO 639-1 `pt`. Specify `Portuguese (Brazil)` in `local_language_name` to distinguish from Iberian Portuguese.
+   - Egypt → Modern Standard Arabic for press, `ar`. Note dialect (Egyptian) in `local_language_name`.
+   - Mexico → Spanish, `es`. Specify `Spanish (Mexico)` for clarity.
+3. **English-dominant business markets** — emit `en` even if the country has a different official language:
+   - Singapore, Hong Kong, India, Philippines (business press leads in English), Malaysia (business press is bilingual EN+MS but EN dominates), South Africa, UAE (business press EN-dominant)
+4. **Multi-lingual countries** — emit primary + secondary:
+   - Switzerland → primary `de`, secondary `fr` (skip `it` and `rm` — too thin for business)
+   - Belgium → primary `nl` (Dutch/Flemish), secondary `fr`
+   - Canada → primary `en`, secondary `fr` (treat as English-dominant)
+   - Indonesia (regional sub-topics like Sumatra/Java) → still `id` only — Javanese/Sundanese business press is negligible
+5. **Constraint** — `local_language_code` MUST be a valid ISO 639-1 (2-letter) code or a recognized BCP-47 tag like `zh-TW` / `zh-CN` / `pt-BR` / `pt-PT`. Never invent codes. If unsure between two, pick the one with stronger business press footprint.
+6. **Surface reasoning** in `parse_notes` so the next stage (and Henry) can see why you picked what you did.
+
+#### Tier override table (KIRA business priorities — NOT language inference)
+
+This is the *only* hardcoded list. It captures KIRA's strategic-market focus + which 5 languages have curated term glossaries. Update this table when KIRA expands to a new strategic market.
+
+| `local_language_code` | `local_search_priority` | `use_curated_glossary` | Rationale |
+|---|---|---|---|
+| `vi` | tier-1 | true | KIRA strategic SEA market |
+| `id` | tier-1 | true | KIRA strategic SEA market |
+| `th` | tier-1 | true | KIRA strategic SEA market |
+| `ja` | tier-1 | true | KIRA Phase 8 expansion market |
+| `ko` | tier-1 | true | KIRA Phase 9 expansion market |
+| `ms` | tier-2 | false | Malaysia has bilingual EN+MS business press |
+| `tl` | tier-2 | false | Philippines EN-dominant; Tagalog niche |
+| `zh-TW` | tier-2 | false | Taiwan |
+| `en` | skip | false | English-primary markets — EN baseline covers |
+| *(other code, KIRA not strategic here)* | tier-2 | false | Default: fire inline-translated queries if EN baseline sparse |
+
+#### Worked examples
+
+| Topic | Inference path |
+|---|---|
+| `"EV market in South Korea"` | KR → Korean business press → `ko`. tier-1 (KIRA strategic). curated_glossary=true. notes: "South Korea → Korean primary business press; KIRA tier-1 strategic market." |
+| `"Coffee market Brazil 2027"` | BR → Portuguese (Brazilian) → `pt`, name `"Portuguese (Brazil)"`. Tier-2 (not in KIRA table). curated_glossary=false → inline translation. |
+| `"Banking in Switzerland"` | CH → multilingual; primary `de` (German), secondary `fr` (French). Tier-2. inline translation. notes: "Switzerland multilingual; business press split DE+FR; Italian + Romansh too thin to fire." |
+| `"SaaS in India"` | IN → English-dominant business press (Economic Times, Mint, LiveMint) → `en`, name `"English"`. tier-skip. notes: "India officially multilingual (22 languages) but business press is English-dominant — Hindi business coverage thinner than EN. Local pass skipped." |
+| `"Fintech Singapore"` | SG → `en`, skip. notes: "Singapore EN-primary business market." |
+| `"Logistics Hong Kong"` | HK → primary `en`, secondary `yue` (Cantonese) — but `en` dominates business; emit `en`, skip local pass. (Reserve Cantonese for cultural/consumer topics, not business research.) |
+| `"Roofing Indonesia 2026"` | ID → `id`, name `"Indonesian (Bahasa Indonesia)"`, tier-1, curated_glossary=true. |
+| `"Solar power Egypt 2027"` | EG → `ar`, name `"Arabic (Egyptian dialect for press)"`, tier-2, inline translation. notes: "Egypt → Modern Standard Arabic for industry press; Egyptian Arabic for consumer media. Use MSA for business search." |
 
 ## Self-check before returning
 
 - [ ] Did I default `year` to the current year if not specified?
 - [ ] Is `country_iso` correct for the country?
-- [ ] Is `local_language_code` consistent with the country_iso mapping above?
+- [ ] Is `local_language_code` a valid ISO 639-1 or BCP-47 code (not a free-form invention)?
+- [ ] Did I reason about *business press* language, not just official language (e.g. India → `en`, not `hi`)?
+- [ ] Did I check the tier override table for `local_search_priority` + `use_curated_glossary`?
+- [ ] Did I surface the language inference reasoning in `parse_notes`?
+- [ ] For multi-lingual countries, did I set `local_language_secondary_code` if a second language has meaningful business press?
 - [ ] If `has_uploaded_files: true`, did I list filenames?
 - [ ] Did flag overrides set `forced_mode` / `output_mode`?
 - [ ] Is `confidence` honest (lower for ambiguous topics)?

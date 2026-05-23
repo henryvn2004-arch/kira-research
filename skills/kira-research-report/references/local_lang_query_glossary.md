@@ -1,34 +1,49 @@
 # Local-language query glossary
 
-Canonical translations of common KIRA research query terms into each supported local language. Used by `content_per_section.md` Stage 4 to construct dual-language WebSearch queries (EN pass + local-language pass) for richer source coverage.
+Canonical translations of common KIRA research query terms into 5 priority languages. Used by Stage 4 to construct local-language WebSearch queries alongside the EN baseline pass.
 
-## When to use
+## Phase M.4 — curated vs LLM-inline split
 
-Stage 4 runs an **English query pass** (from each blueprint's `query_strategy.json`) for every report. If the report's `local_language_code` ∈ {`vi`, `id`, `th`, `ja`, `ko`}, Stage 4 ALSO runs a **local-language query pass** using the term substitutions below. Findings from both passes are deduped by source URL and merged into a single `research_data` payload.
+Topic parser (`prompts/topic_parser.md`) **infers** the local language from the country using LLM reasoning. It emits:
+- `local_language_code` — any ISO 639-1 / BCP-47 code (not constrained to a fixed list)
+- `local_language_name` — full English name
+- `use_curated_glossary: true | false`
 
-- English-speaking primary: `local_language_code = en` → skip the local pass (Singapore default, Malaysia primary, Philippines primary).
-- Hybrid markets (MY / PH): tier-2 priority — fire local pass only when EN pass yields < 6 high-quality sources per bucket. Local codes: MY → `ms`, PH → `tl`.
+This glossary's 24-term × 5-language tables (vi/id/th/ja/ko) are the **curated set**. When `use_curated_glossary: true`, Stage 4 substitutes terms from these tables — high quality, KIRA-vetted translations.
 
-## Country → local_language_code mapping
+When `use_curated_glossary: false` (any other language — `pt`, `de`, `fr`, `ar`, `es`, `hi`, etc.), Stage 4 subagent translates query terms **inline** using LLM knowledge. Lower precision than curated, but covers any language without code changes.
 
-| ISO | Country | Code | Pass behavior |
+## When Stage 4 fires the local pass
+
+Decision tree:
+1. `local_search_priority == "skip"` (English-dominant markets: SG, HK, IN, default for unmapped) → EN-only, no local pass
+2. `local_search_priority == "tier-1"` (KIRA strategic: VN, ID, TH, JP, KR) → fire ~8-10 curated-glossary local queries alongside EN baseline
+3. `local_search_priority == "tier-2"` (everything else with meaningful local press) → fire ~4-6 local queries only when EN baseline returns < 6 high-quality sources per HIGH-priority bucket. Translation: inline if `use_curated_glossary: false`, curated if true.
+
+Multi-lingual countries: if `local_language_secondary_code` is set (e.g. Switzerland: primary `de`, secondary `fr`), fire queries in BOTH local languages. Same priority tier applies.
+
+## Tier override table (M.4)
+
+The **only** static lookup. Captures KIRA's business priority — which languages are strategic markets, which have curated glossaries below. Topic parser uses this AFTER inferring the language from the country.
+
+| `local_language_code` | `local_search_priority` | `use_curated_glossary` | Note |
 |---|---|---|---|
-| VN | Vietnam | `vi` | Always fire local pass |
-| ID | Indonesia | `id` | Always fire local pass |
-| TH | Thailand | `th` | Always fire local pass |
-| JP | Japan | `ja` | Always fire local pass |
-| KR | Korea (South) | `ko` | Always fire local pass |
-| MY | Malaysia | `ms` | Tier-2 (fire if EN sparse) |
-| PH | Philippines | `tl` | Tier-2 (fire if EN sparse) |
-| SG | Singapore | `en` | Skip local pass |
-| HK | Hong Kong | `en` | Skip local pass (zh-HK optional tier-2) |
-| TW | Taiwan | `zh-TW` | Tier-2 (fire if EN sparse) |
+| `vi` | tier-1 | true | KIRA strategic SEA market |
+| `id` | tier-1 | true | KIRA strategic SEA market |
+| `th` | tier-1 | true | KIRA strategic SEA market |
+| `ja` | tier-1 | true | KIRA Phase 8 expansion market |
+| `ko` | tier-1 | true | KIRA Phase 9 expansion market |
+| `ms` | tier-2 | false | MY business press bilingual EN+MS |
+| `tl` | tier-2 | false | PH EN-dominant; TL niche |
+| `zh-TW` | tier-2 | false | Taiwan |
+| `en` | skip | false | English-dominant business markets — EN baseline covers |
+| *(any other ISO 639-1 / BCP-47)* | tier-2 default | false | LLM-inline translation; topic_parser surfaces in `parse_notes` |
 
-Topic parser emits `local_language_code` based on `country_iso`. Default `en` for unmapped or English-primary countries.
+To add a new strategic market: add a row here + add a column in the term-glossary tables below. No other file changes needed (topic_parser already infers any language).
 
-## Country name translations
+## Country name translations (curated set — 5 priority languages)
 
-Used in the `{{country}}` placeholder of localized queries.
+Used in the `{{country}}` placeholder of localized queries when `use_curated_glossary: true`. For LLM-inline languages, subagent translates the country name on the fly using LLM knowledge — no need to enumerate here.
 
 | Code | Country in local language |
 |---|---|
@@ -37,9 +52,17 @@ Used in the `{{country}}` placeholder of localized queries.
 | `th` | ประเทศไทย (or "ไทย" for shorter queries) |
 | `ja` | 日本 |
 | `ko` | 한국 |
-| `ms` | Malaysia |
-| `tl` | Pilipinas |
-| `zh-TW` | 台灣 |
+
+**For non-curated languages**, subagent inline-translates. Examples it should handle:
+- `pt` (Brazil) → "Brasil"
+- `de` (Switzerland) → "Schweiz"
+- `fr` (Switzerland / France / Belgium) → "Suisse" / "France" / "Belgique"
+- `ar` (Egypt) → "مصر"
+- `es` (Mexico) → "México"
+- `hi` (India) → "भारत"
+- `nl` (Belgium / Netherlands) → "België" / "Nederland"
+
+If subagent is unsure of the country name translation, keeping the English country name in the local-lang query is acceptable (search engines tolerate code-switching: `"Brasil EV market" or "Brazil veículos elétricos"` both work).
 
 ## Term glossary (top 24 query terms)
 

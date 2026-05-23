@@ -19,3 +19,4 @@
 - [KIRA L.3 source tag system](project_l3_source_tag_system.md) — `[Kira estimates]` + named-source aliases inline + page-bottom source key; replaces deprecated `[primary]/[secondary]/[estimate]` trio
 - [KIRA M.1 dual-language web search](project_m1_dual_language_search.md) — Stage 4 fires EN + local-lang queries (vi/id/th/ja/ko tier-1) to capture in-country sources; aliases stay English per L.3
 - [KIRA M.3 soft-delete + regen workflow](project_m3_soft_delete_regen.md) — Admin "Retire" = `status='retired'`; batch re-run auto-unretires via UPSERT; buyers retain access; no DB migration needed
+- [KIRA M.4 LLM-inferred language](project_m4_llm_inferred_language.md) — topic parser LLM-infers `local_language_code` from country (any ISO 639-1, not hardcoded); only static table is KIRA's business tier override (5 priority curated languages + tier-2 default for rest)
