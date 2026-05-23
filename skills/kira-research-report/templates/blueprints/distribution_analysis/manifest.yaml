@@ -1,0 +1,141 @@
+# ============================================================
+# KIRA Research — Blueprint: distribution_analysis
+#
+# Channel + path-to-shelf deep-dive on a single country x industry,
+# scoped to physical goods (FMCG, durables, B2B industrial supplies,
+# building materials, hardware). Center of gravity is the channel
+# mix evolution + margin distribution across the value chain —
+# unlike market_analysis (sizing-led) or competitive_landscape
+# (player-led), this blueprint maps WHO controls volume and WHO
+# keeps margin at each link of the distribution chain.
+# Best fit: CPG, FMCG, building materials, hardware, B2B supplies
+# with a visible distributor / wholesaler / retailer cascade.
+# ============================================================
+#
+# ------------------------------------------------------------
+# NEW PAGE TYPE — channel_waterfall (proposed, to be added to
+# schemas/page_schemas.json before this blueprint runs in prod)
+# ------------------------------------------------------------
+# Purpose: visualize gross-margin retention at each link of the
+# distribution chain. Reads as a left-to-right waterfall where
+# every bar represents one channel layer's margin take, and the
+# residual to the right shows what reaches the next layer.
+#
+# Shape (one row per link, brand -> consumer):
+#   - brand_ex_factory         (anchor — 100% of factory price)
+#   - importer_or_principal    (optional — drops for domestic mfg)
+#   - master_distributor       (regional / national wholesaler)
+#   - sub_distributor          (provincial / category wholesaler)
+#   - modern_trade_retailer    (super/hyper/CVS — if applicable)
+#   - traditional_trade        (sari-sari / warung / mom-and-pop)
+#   - e_commerce_platform_take (marketplace fee + payments fee)
+#   - last_mile_logistics      (instant delivery / 3PL slice)
+#   - consumer_shelf_price     (terminal — 100% benchmark)
+#
+# Slots per row (char caps):
+#   - layer_label       <= 24 chars   "Master distributor"
+#   - margin_pct        <= 8  chars   "8-12%"     (range allowed)
+#   - margin_pct_unit   <= 4  chars   "pts" / "%"
+#   - take_note         <= 60 chars   "Exclusive territory, 60d terms"
+#   - source_tag        — required    [primary|secondary|estimate]
+#
+# Visual: horizontal stacked bar (sum = 100%), each segment
+# colored per the master_styles.css channel palette, with a
+# secondary "drop-line" callout for the largest margin pool.
+# Recommended layout: chart top 55% of page, 2-col commentary
+# bottom 45% — one column reads the structural takeaway, the
+# other lists 3 anomalies (compression points, fat layers,
+# disintermediation risk).
+#
+# Use within this blueprint: 1 page, Section 06.
+# May also be re-used by future blueprints (channel_economics,
+# value_chain_dissection) once schema lands in page_schemas.json.
+# ------------------------------------------------------------
+
+blueprint_id: distribution_analysis
+version: 1
+origin: "Phase H1 — channel-first companion to market_analysis. Scoped to physical-goods path-to-shelf."
+
+# Report shape
+shape:
+  total_sections: 14
+  estimated_pages: 13-16
+  estimated_render_time_min: 28-42
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from
+# (all defined in schemas/page_schemas.json, except channel_waterfall
+# which must be added — see comment block above)
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - divider
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - market_data_chart
+  - channel_waterfall        # NEW — see proposed shape above
+  - competitive_structure    # repurposed for distributor matrix
+  - methodology_endnote
+
+# Research budget
+research:
+  query_count_target: 22
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 25       # KIRA synthesis — margin triangulation, channel-share splits
+    secondary_pct: 55     # cited external — Nielsen-style anchors, customs, trade press
+    estimate_pct: 20      # KIRA estimate with anchor — margin %, sub-channel shares
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 17000-22000
+  callouts_target: 10-14
+  charts_target: 6-9
+  distributor_matrix_rows: 6-8     # named distributors with category coverage
+  waterfall_layers: 6-9            # links in the channel cascade
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages <= 720px rendered height"
+  - source_coverage: "Every quantitative claim has [primary|secondary|estimate|user-input] tag"
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
+  - char_budgets: "All slot char counts <= schema cap; callout label <= 30 chars; change-line <= 38 chars"
+  - channel_coverage: "Modern trade, traditional trade, e-commerce, direct, instant delivery all referenced with share data or explicit 'not material' note"
+  - margin_chain_completeness: "Channel waterfall has >= 5 layers populated with margin % + source tag"
+  - distributor_matrix_completeness: "6-8 named distributors with category coverage + payment terms or MOQ where available"
+
+# Output mode
+output:
+  default_mode: publish              # auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # template validated; skip user confirmation
+
+# Orchestrator match threshold
+match_threshold: 0.7
+
+# Best-fit signals (orchestrator hints — non-binding)
+best_fit_signals:
+  - "Topic phrasing leads with 'distribution', 'channel', 'path-to-shelf', 'go-to-market', 'distributor landscape', 'route-to-market'"
+  - "Industry is physical goods: FMCG, CPG, building materials, hardware, durables, B2B industrial supplies"
+  - "Country scope is single (channel structure is country-specific; APAC roll-ups dilute the analysis)"
+  - "Buyer is a sales / channel / GTM / commercial team, not a sizing-only buyer"
+  - "Topic implies a visible distributor / wholesaler / retailer cascade rather than pure digital or services delivery"
+
+# Anti-fit signals (orchestrator should de-rank if these dominate)
+anti_fit_signals:
+  - "Pure digital / SaaS / services topics with no physical SKU"
+  - "Regional / APAC sizing requests — channel mix is too heterogeneous"
+  - "Topics where the buyer wants forecast / sizing as the centerpiece (route to market_analysis instead)"

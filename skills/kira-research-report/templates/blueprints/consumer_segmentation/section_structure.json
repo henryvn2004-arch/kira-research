@@ -1,0 +1,178 @@
+{
+  "blueprint_id": "consumer_segmentation",
+  "version": 1,
+  "section_count": 16,
+  "structure_description": "16-section consumer segmentation report. Front matter (cover/methodology/TOC) → executive summary → dark divider → three analytical segmentation cuts (demographic, behavioral, psychographic) → three single-page persona_profile pages → channel preference → willingness-to-pay → brand affinity → methodology endnote. Persona pages use a new page_type (persona_profile) — see manifest.yaml for slot spec.",
+
+  "sections": [
+    {
+      "id": "01_cover",
+      "section_num": "00",
+      "title_pattern": "{{report_title}}",
+      "page_type": "cover",
+      "page_count": 1,
+      "purpose": "Report cover — title, country/industry/year, KIRA branding, report ID, confidential tag",
+      "skip_if": null,
+      "notes": "No content generation needed — pure template fill from parsed topic metadata. Title pattern often: '{{country}}'s {{industry}} consumer — segmentation {{year}}'."
+    },
+    {
+      "id": "02_methodology_inline",
+      "section_num": "01",
+      "title_pattern": "Methodology",
+      "page_type": "methodology_inline",
+      "page_count": 1,
+      "purpose": "Two-column overview of research approach: panel surveys, statistics bureau anchors, in-depth interviews, NPS / brand-affinity panels, AI-augmented synthesis, source tagging conventions. Call out triangulation for WTP figures specifically.",
+      "skip_if": null
+    },
+    {
+      "id": "03_toc",
+      "section_num": "02",
+      "title_pattern": "Contents",
+      "page_type": "toc",
+      "page_count": 1,
+      "purpose": "Table of contents — generated from this structure plus page counter",
+      "skip_if": null,
+      "notes": "Generated at assembly time, not content-gen time."
+    },
+    {
+      "id": "04_segmentation_divider",
+      "section_num": "03",
+      "title_pattern": "Consumer segmentation",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Dark-mode chapter break — single thesis statement that frames the segmentation lens. Example: 'Three axes, three personas, one decision tree.'",
+      "skip_if": null
+    },
+    {
+      "id": "05_exec_summary",
+      "section_num": "04",
+      "title_pattern": "{{country}}'s {{industry}} consumer — {{year}} snapshot",
+      "page_type": "exec_summary_p1 + exec_summary_p2_implications",
+      "page_count": 2,
+      "purpose": "Two-page executive summary. Page 1: 4 callouts (TAM consumers in millions, dominant segment share of value, biggest behavioral shift, NPS leader or affinity index) + 2-col narrative + 1 chart (segment value share). Page 2: 5 strategic implications grid — what each segment shift means for market participants.",
+      "skip_if": null,
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each"
+    },
+    {
+      "id": "06_demographic",
+      "section_num": "05",
+      "title_pattern": "Demographic segmentation: age × income × geography",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Demographic dissection — stacked chart of consumer population by age band × income tier × urban/peri-urban/rural geography. Sidebar narrative on which demographic cells command outsize share of category value. Identifies the 'who' axis.",
+      "skip_if": null,
+      "char_budget_hint": "Chart = 3-axis stacked bar or heatmap (age × income with geo as small-multiples). Narrative = 2 paragraphs flagging the top 2 cells by value contribution."
+    },
+    {
+      "id": "07_behavioral",
+      "section_num": "06",
+      "title_pattern": "Behavioral segmentation: frequency × spend × loyalty",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Behavioral dissection — 2×2 or 3×3 matrix of purchase frequency × basket size, overlaid with loyalty index (NPS / repeat-rate / switching probability). Sidebar narrative on which behavioral cell drives category profit pool.",
+      "skip_if": null,
+      "char_budget_hint": "Chart = bubble matrix (X=frequency, Y=basket, size=loyalty). 4 quadrant callouts naming each cell."
+    },
+    {
+      "id": "08_psychographic",
+      "section_num": "07",
+      "title_pattern": "Psychographic segmentation: values × lifestyle clustering",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Psychographic dissection — clustering on values (status / utility / sustainability / community / convenience) × lifestyle (digital-native, family-anchored, career-first, etc.). Charts cluster centroids. This page sets up the three persona pages that follow.",
+      "skip_if": "topic has no available consumer values data (e.g. ultra-niche B2C with no panel coverage) — collapse psychographic commentary into behavioral page instead, drop this section, and route one extra persona page in.",
+      "char_budget_hint": "Chart = 2D cluster scatter with 3 highlighted clusters labeled to match the personas in 09/10/11. Narrative bridges into persona pages."
+    },
+    {
+      "id": "09_persona_1",
+      "section_num": "08",
+      "title_pattern": "Persona 01 — {{persona_1_codename}}",
+      "page_type": "persona_profile",
+      "page_count": 1,
+      "purpose": "Single-page deep profile of the largest-value persona. Combines demo stats grid (4 stats), behavior grid (4 cards), one quote callout, channel preference horizontal bar, and a WTP anchor figure. See manifest.yaml for the full persona_profile slot spec.",
+      "skip_if": null,
+      "char_budget_hint": "label cap 30, headline cap 70, demo stats 4× (num 12 / unit 8 / label 30), behavior cards 4× (metric 14 / label 30 / change-line 38), quote 180 + attribution 40, channel_pref_caption 110, WTP num 12 + unit 8 + change-line 38."
+    },
+    {
+      "id": "10_persona_2",
+      "section_num": "08",
+      "title_pattern": "Persona 02 — {{persona_2_codename}}",
+      "page_type": "persona_profile",
+      "page_count": 1,
+      "purpose": "Single-page deep profile of the highest-growth persona — the segment expanding fastest in share or in absolute spend.",
+      "skip_if": null,
+      "char_budget_hint": "Same as persona_1."
+    },
+    {
+      "id": "11_persona_3",
+      "section_num": "08",
+      "title_pattern": "Persona 03 — {{persona_3_codename}}",
+      "page_type": "persona_profile",
+      "page_count": 1,
+      "purpose": "Single-page deep profile of the highest-WTP-or-most-strategic persona — premium tier, niche-defender, or a contested segment with structural switching exposure.",
+      "skip_if": null,
+      "char_budget_hint": "Same as persona_1."
+    },
+    {
+      "id": "12_channel_preferences",
+      "section_num": "09",
+      "title_pattern": "Channel preferences by segment",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Cross-segment channel mix — stacked bar showing % spend across modern trade / traditional / e-commerce / social commerce / direct, broken out per persona (3 bars). Sidebar narrative on where channel-shift catalysts are concentrated.",
+      "skip_if": null,
+      "char_budget_hint": "Chart = 3 stacked horizontal bars (one per persona). 2-paragraph narrative on the directional shift (typically social commerce vs. modern trade)."
+    },
+    {
+      "id": "13_wtp",
+      "section_num": "10",
+      "title_pattern": "Willingness-to-pay + price sensitivity",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Price-sensitivity curves per persona — Van Westendorp or simple demand-curve sketch. Anchored WTP figures (USD or local currency) per persona with elasticity commentary. Includes a callout grid flagging which persona is the price-anchor versus the premium-payer.",
+      "skip_if": null,
+      "char_budget_hint": "Chart = 3 demand-curve traces or a clustered bar of WTP bands. 4 callouts (one per persona + one category-wide anchor)."
+    },
+    {
+      "id": "14_brand_affinity",
+      "section_num": "11",
+      "title_pattern": "Brand affinity + switching behavior",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "NPS / brand-affinity index per persona, switching probability matrix (which brand loses share to which), and a short list of the 3-5 brands with disproportionate persona pull. No deep player profiles — this is segment-side analysis, not competitive landscape.",
+      "skip_if": null,
+      "char_budget_hint": "Chart = NPS bars per persona + a 3×3 switching-flow Sankey OR a top-5 brands affinity table. Narrative anchors which persona is most/least loyal."
+    },
+    {
+      "id": "15_implications_recap",
+      "section_num": "12",
+      "title_pattern": "Five implications across the three personas",
+      "page_type": "exec_summary_p2_implications",
+      "page_count": 1,
+      "purpose": "Closing 5-card implications grid — one per major persona-anchored move (e.g. 'Price-anchor Persona 01 via {{format}}', 'Defend Persona 03 against social-commerce leakage', etc.). Reuses the exec_summary_p2_implications page type so we don't invent a third closing format.",
+      "skip_if": null,
+      "char_budget_hint": "Cards body_max=360 chars each. Lead each card with an imperative verb addressed to market participants."
+    },
+    {
+      "id": "16_methodology_endnote",
+      "section_num": "13",
+      "title_pattern": "Methodology endnote & source mix",
+      "page_type": "methodology_endnote",
+      "page_count": 1,
+      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages), panel composition disclosure (n=, geography, recruitment method), KIRA estimate methodologies disclosed (especially for WTP triangulation), persona-clustering note, contact & next research footer.",
+      "skip_if": null,
+      "notes": "Required — buyers value transparent methodology, doubly so on persona-led work where the panel disclosure is the credibility anchor. Auto-generated from source-tag census of the report."
+    }
+  ],
+
+  "assembly_rules": {
+    "page_numbering": "Continuous, format '012 / NN' in page-header counter slot — total NN computed at assembly",
+    "section_numbering": "section_num shared across all pages of a section (e.g. all three persona pages tagged 'Section 08 · Personas')",
+    "divider_placement": "One dark divider only — opens the segmentation chapter. Persona pages do NOT each get a divider (would push page count over budget).",
+    "skip_condition_handling": "If skip_if triggers (only on 08_psychographic in default config), omit the section AND recompute page counter. If psychographic drops, consider promoting a 4th persona page using the freed slot — orchestrator decision."
+  },
+
+  "page_type_notes": {
+    "persona_profile": "NEW page type introduced by this blueprint. Slot spec lives in manifest.yaml under 'persona_profile page type — slot spec'. When the persona_profile schema is formalized into schemas/page_schemas.json, port the caps from manifest into that file and remove this inline doc. Until then, the manifest comment is authoritative."
+  }
+}

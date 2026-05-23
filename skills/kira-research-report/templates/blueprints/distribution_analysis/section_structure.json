@@ -1,0 +1,154 @@
+{
+  "blueprint_id": "distribution_analysis",
+  "version": 1,
+  "section_count": 14,
+  "structure_description": "14-section channel + distribution deep-dive for a single country x physical-goods industry. Front matter (cover/methodology/TOC) -> dark divider -> 2-page executive summary -> channel landscape pages (mix today + 5-year evolution) -> channel margin waterfall (centerpiece) -> geography + named distributors -> distributor economics -> disruption signals -> e-commerce subsegment penetration -> methodology endnote.",
+
+  "sections": [
+    {
+      "id": "01_cover",
+      "section_num": "00",
+      "title_pattern": "{{report_title}}",
+      "page_type": "cover",
+      "page_count": 1,
+      "purpose": "Report cover — title, country/industry/year, KIRA branding, report ID, confidential tag",
+      "skip_if": null,
+      "notes": "No content generation needed — pure template fill from parsed topic metadata."
+    },
+    {
+      "id": "02_methodology_inline",
+      "section_num": "01",
+      "title_pattern": "Methodology",
+      "page_type": "methodology_inline",
+      "page_count": 1,
+      "purpose": "Two-column overview of research approach: primary distributor interviews / portfolio scrape, secondary trade-press + customs + listed-company filings, KIRA margin triangulation, source tagging conventions",
+      "skip_if": null
+    },
+    {
+      "id": "03_toc",
+      "section_num": "02",
+      "title_pattern": "Contents",
+      "page_type": "toc",
+      "page_count": 1,
+      "purpose": "Table of contents — generated from this structure plus page counter",
+      "skip_if": null,
+      "notes": "Generated at assembly time, not content-gen time."
+    },
+    {
+      "id": "04_distribution_divider",
+      "section_num": "03",
+      "title_pattern": "Distribution analysis",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Dark-mode chapter break — single thesis statement on the dominant channel structure and the biggest channel shift underway"
+    },
+    {
+      "id": "05_exec_summary",
+      "section_num": "04",
+      "title_pattern": "{{country}}'s {{industry}} channel structure — {{year}}",
+      "page_type": "exec_summary_p1 + exec_summary_p2_implications",
+      "page_count": 2,
+      "purpose": "Two-page executive summary: page 1 = 4 callouts (dominant channel share, biggest channel shift, margin-compression signal, e-commerce penetration) + 2-col narrative + 1 chart (channel share donut or top-line mix); page 2 = 5 strategic implications cards focused on channel strategy (where to invest, where to retreat, where to disintermediate, where to defend, where to enter)",
+      "skip_if": null,
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each. Implication verbs: Reweight, Disintermediate, Defend, Enter, Sequence"
+    },
+    {
+      "id": "06_channel_landscape",
+      "section_num": "05",
+      "title_pattern": "Channel landscape: who moves volume today",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Channel mix snapshot across modern trade x traditional trade x e-commerce x direct (B2B / D2C) x instant delivery. Chart: stacked-area or grouped bar showing 3-year share trend per channel. Narrative anchors the dominant channel, the structural laggard, and the channel still pulling above-GDP growth.",
+      "skip_if": null,
+      "char_budget_hint": "stacked-area chart top 55% of page, narrative bottom 45% in 2 cols"
+    },
+    {
+      "id": "07_channel_mix_evolution",
+      "section_num": "06",
+      "title_pattern": "Channel mix evolution: {{year-5}} to {{year}}",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Centerpiece chart #1. 5-year channel-share evolution by % of total category value. Stacked area or 100% stacked bar with annotated inflection points (e.g. instant-delivery breakout, GT share decline, marketplace consolidation). Narrative reads what flipped, what compressed, what stayed sticky.",
+      "skip_if": null,
+      "char_budget_hint": "Chart dominates page; sidebar narrative max 600 chars + 3 annotated inflection callouts (each <=80 chars)"
+    },
+    {
+      "id": "08_channel_margin_waterfall",
+      "section_num": "07",
+      "title_pattern": "Channel margin distribution: who keeps the gross",
+      "page_type": "channel_waterfall",
+      "page_count": 1,
+      "purpose": "Centerpiece chart #2. Horizontal waterfall from brand ex-factory price (100%) to consumer shelf price (100%), with each link's margin take labeled with %, source tag, and a one-line take-note. 6-9 layers depending on category (importer optional, MT/GT split if both material). Sidebar lists 3 anomalies: the fattest layer, the compression point, the disintermediation risk.",
+      "skip_if": null,
+      "char_budget_hint": "Waterfall top 55%, commentary bottom 45%. Each layer: margin_pct <=8 chars, take_note <=60 chars. See manifest.yaml comment block for full channel_waterfall page-type shape."
+    },
+    {
+      "id": "09_geographic_coverage",
+      "section_num": "08",
+      "title_pattern": "Geographic distribution coverage",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Distribution depth across urban-dense (Tier 1) x Tier 2 cities x Tier 3 towns x rural. Map or stacked bar showing % outlets reached + % volume per geography tier. Narrative: where the country's distribution white-space is, which tiers are over-served, which players over-index in each tier.",
+      "skip_if": "topic is a fully urban category with no rural channel (e.g. luxury, B2B-enterprise-only)",
+      "char_budget_hint": "Map or 4-bar chart, 2-col narrative below. Each tier callout <=120 chars"
+    },
+    {
+      "id": "10_distributor_matrix",
+      "section_num": "09",
+      "title_pattern": "Top distributors & category portfolios",
+      "page_type": "competitive_structure",
+      "page_count": 1,
+      "purpose": "6-8 named distributors with category coverage matrix — columns: distributor name, ownership/parent, category portfolio (chips), geographic reach, exclusive principals, est. revenue or volume share. Repurposes competitive_structure page schema; rows are distributors, not brands.",
+      "skip_if": "fewer than 4 named distributors identifiable from research",
+      "char_budget_hint": "Matrix rows 6-8, category chips per row 3-6 chars each, max 4 chips/row. Sidebar header narrative <=400 chars."
+    },
+    {
+      "id": "11_distributor_economics",
+      "section_num": "10",
+      "title_pattern": "Distributor economics: margin, terms, exclusivity",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Benchmark page — margin %, standard payment terms (net 30/60/90), MOQ ranges, exclusivity norms (territorial vs category vs none), credit-line cycles. 4-card grid + 1 supporting bar chart on margin ranges by tier (master distributor vs sub-distributor vs retailer).",
+      "skip_if": null,
+      "char_budget_hint": "4 econ-cards (each label <=30, body <=240 chars) + bar chart bottom-half"
+    },
+    {
+      "id": "12_disruption_signals",
+      "section_num": "11",
+      "title_pattern": "Channel disruption signals",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Four-quadrant or 4-card breakdown of disruption vectors: (1) D2C brand penetration, (2) marketplace consolidation + take-rate, (3) social commerce (TikTok Shop / live commerce) volume, (4) instant delivery / quick-commerce category coverage. Each card carries a leading metric + 1-line directional read.",
+      "skip_if": null,
+      "char_budget_hint": "4-card grid, each card: metric <=12 chars, label <=30 chars, body <=200 chars"
+    },
+    {
+      "id": "13_ecom_subsegment_penetration",
+      "section_num": "12",
+      "title_pattern": "E-commerce penetration by sub-segment",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "E-commerce share by category sub-segment — bar chart ranking sub-segments by online %, with a YoY delta column. Narrative pulls out the 2 sub-segments crossing the 20% online threshold (structural shift) and the 2 sub-segments still under 5% (channel-defensible).",
+      "skip_if": "topic has no meaningful sub-segment differentiation (collapse into 12_disruption_signals)",
+      "char_budget_hint": "Horizontal bar chart 6-10 rows, 2-col narrative <=800 chars total"
+    },
+    {
+      "id": "14_methodology_endnote",
+      "section_num": "13",
+      "title_pattern": "Methodology endnote & source mix",
+      "page_type": "methodology_endnote",
+      "page_count": 1,
+      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages), key data anchors (Nielsen-style channel-share series, customs aggregates, listed-company distributor disclosures), KIRA margin-triangulation methodology disclosed, contact & next research footer",
+      "skip_if": null,
+      "notes": "Required — buyers value transparent methodology, especially for margin figures which lean estimate-heavy. Auto-generated from source-tag census of the report."
+    }
+  ],
+
+  "assembly_rules": {
+    "page_numbering": "Continuous, format '012 / NN' in page-header counter slot — total NN computed at assembly",
+    "section_numbering": "section_num shared across all pages of a section (e.g. exec summary p1 + p2 both tagged 'Section 04')",
+    "divider_placement": "One dark divider opens the distribution-analysis chapter (after front matter). No further dividers — the report is tight enough that additional dividers waste pages.",
+    "skip_condition_handling": "If skip_if condition triggers, omit the section AND recompute page counter for all subsequent sections. Minimum surviving section count: 11 (front matter 3 + divider 1 + exec summary 2 + channel landscape 1 + mix evolution 1 + margin waterfall 1 + disruption 1 + methodology endnote 1).",
+    "centerpiece_sections": "Sections 06 (channel mix evolution) and 07 (margin waterfall) are the report's two visual anchors. If either fails overflow or data-coverage gate, regenerate — do not skip."
+  }
+}

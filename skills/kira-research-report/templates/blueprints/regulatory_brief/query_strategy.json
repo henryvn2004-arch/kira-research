@@ -1,0 +1,111 @@
+{
+  "blueprint_id": "regulatory_brief",
+  "version": 1,
+  "query_count_target": 20,
+  "query_strategy_description": "20 web-search queries grouped into 6 buckets that map to the regulatory_brief's 14 sections. Use WebSearch (native Claude tool). Prefer national gazettes, ministry / agency websites, parliamentary records, official trade-body comment letters, and reputable trade press. Avoid named-firm aggregators (Mordor/Frost/etc.). Source-mix target is heavier secondary (70%) than market_analysis because policy briefs cite government documents verbatim.",
+
+  "query_buckets": [
+    {
+      "bucket": "01_statute_regulation_text",
+      "purpose": "Locate the actual statute / decree / circular text and codify the current framework → drives 07_framework_regulators + 08_policy_timeline",
+      "queries": [
+        "{{country}} {{policy_topic}} decree law gazette {{year}}",
+        "{{country}} {{policy_topic}} statute official text {{ministry_likely}}",
+        "{{country}} {{policy_topic}} regulation amendment {{year-2}} to {{year}}",
+        "{{country}} {{policy_topic}} implementing circular guidance notes"
+      ],
+      "expected_sources": ["national gazette / official journal", "ministry websites (e.g. moit.gov.vn, kemenperin.go.id, mof.gov.ph)", "parliamentary records / DPR / National Assembly", "legal-research databases with full-text statutes"],
+      "expected_tag_mix": "secondary 90% / primary 10% (KIRA synthesis when statute interpretation requires triangulation)"
+    },
+    {
+      "bucket": "02_enforcement_case_studies",
+      "purpose": "Find actual enforcement actions, fines, license suspensions, court rulings → drives 09_recent_changes_detail + the winner/loser side of 11_compliance_winners_losers",
+      "queries": [
+        "{{country}} {{policy_topic}} enforcement action fine {{year-1}} {{year}}",
+        "{{country}} {{policy_topic}} license suspension revocation case",
+        "{{country}} {{regulator_name}} crackdown investigation {{year}}",
+        "{{country}} {{policy_topic}} court ruling judicial review"
+      ],
+      "expected_sources": ["regulator press releases", "court / tribunal judgments", "national business press (e.g. The Jakarta Post, VnExpress, Bangkok Post, BusinessWorld)", "trade press specialising in the affected industry"],
+      "expected_tag_mix": "secondary 80% / estimate 20% (enforcement-action counts often need KIRA aggregation from multi-source)"
+    },
+    {
+      "bucket": "03_industry_comments_lobby",
+      "purpose": "Surface industry-association comment letters, position papers, public submissions → drives 10_pending_lobby",
+      "queries": [
+        "{{country}} {{industry}} association comment letter {{policy_topic}} {{year}}",
+        "{{country}} {{policy_topic}} public consultation submission industry response",
+        "{{country}} chamber of commerce {{policy_topic}} position paper",
+        "{{country}} {{industry}} coalition lobby {{policy_topic}}"
+      ],
+      "expected_sources": ["industry trade association websites (KADIN, JCCI, AmCham, EuroCham, FTA-of-Thai-Industries, VCCI, etc.)", "regulator consultation-response archives", "policy think tanks (CSIS Jakarta, ERIA, ISEAS Yusof Ishak)", "trade press covering policy debates"],
+      "expected_tag_mix": "secondary 70% / estimate 25% / primary 5%",
+      "note": "Coalition names use official short-form. NEVER cite individual firm-level lobbying — keep at association level (anti-positioning rule extends here)."
+    },
+    {
+      "bucket": "04_cross_border_comparison",
+      "purpose": "ASEAN peer policy approaches on the same domain → drives 12_cross_border_comparison",
+      "queries": [
+        "{{policy_topic}} ASEAN comparison country regulation overview",
+        "{{policy_topic}} regulation {{peer_country_1}} versus {{country}}",
+        "ASEAN harmonization {{policy_topic}} framework {{year}}",
+        "{{policy_topic}} regional policy convergence Southeast Asia"
+      ],
+      "expected_sources": ["ASEAN Secretariat publications", "ERIA policy briefs", "ADB / World Bank governance reports", "regional law-firm comparison memos (read but cite only if methodology is disclosed)"],
+      "expected_tag_mix": "secondary 75% / estimate 25%",
+      "note": "Peer selection prioritises ASEAN-6 economies (ID/VN/TH/PH/MY/SG). Avoid lumping CN/JP/KR — those are reference economies, not peers."
+    },
+    {
+      "bucket": "05_compliance_cost_benchmarks",
+      "purpose": "Compliance cost benchmarks, operator-level burden estimates → drives 11_compliance_winners_losers",
+      "queries": [
+        "{{country}} {{policy_topic}} compliance cost operator estimate",
+        "{{country}} {{policy_topic}} regulatory impact assessment RIA",
+        "{{policy_topic}} compliance burden per-firm cost benchmark ASEAN",
+        "{{country}} {{industry}} {{policy_topic}} cost of compliance survey"
+      ],
+      "expected_sources": ["regulator-published Regulatory Impact Assessments (RIAs)", "Big-4 advisory tax/legal practice publications (read but never cite by name — use 'industry advisors estimate' instead)", "OECD regulatory reform reports", "academic policy-economics papers"],
+      "expected_tag_mix": "secondary 50% / estimate 50% (RIAs are rare in SEA outside Singapore/Malaysia; most compliance-cost figures need KIRA triangulation)",
+      "note": "Triangulation method: anchor on a published number from one source × scale by operator count or industry size for {{country}}. Document method in chart source line: e.g. 'SOURCE: KIRA ESTIMATE — RIA ANCHOR × OPERATOR COUNT. ANCHOR: USD 12K/OPERATOR YR-1 [SECONDARY]'."
+    },
+    {
+      "bucket": "06_pending_news_tracking",
+      "purpose": "News tracking on pending or proposed changes → drives 10_pending_lobby + the 'pending' marker on 08_policy_timeline",
+      "queries": [
+        "{{country}} {{policy_topic}} draft bill pending {{year}}",
+        "{{country}} {{policy_topic}} proposed amendment consultation {{year}}",
+        "{{country}} {{ministry_likely}} announcement {{policy_topic}} {{year}}",
+        "{{country}} {{policy_topic}} parliament National Assembly debate"
+      ],
+      "expected_sources": ["regulator press releases + announcement archives", "parliamentary / DPR / National Assembly committee records", "national business press", "specialist policy newsletters (e.g. Tilleke & Gibbins / Baker McKenzie alerts — read but cite as 'specialist legal counsel' if used)"],
+      "expected_tag_mix": "secondary 85% / estimate 15%",
+      "note": "Pending changes must be flagged with a status descriptor: 'draft' (not yet introduced), 'proposed' (introduced, no vote), 'in-committee' (under review), 'pending royal assent' (Thailand/Malaysia), 'pending issuance' (decree signed but not yet gazetted)."
+    }
+  ],
+
+  "query_execution_rules": {
+    "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings (e.g. the framework bucket identifies regulators that the enforcement bucket then queries by name).",
+    "result_filtering": [
+      "Discard results from named-firm aggregators (Mordor, Frost, Euromonitor, IMARC, Synovate, Ipsos) — anti-positioning rule",
+      "PREFER results from the issuing body's own website over second-hand reporting — for statute text, gazette > trade press > Wikipedia",
+      "If a statute is referenced by multiple sources with conflicting effective dates, treat the gazette / official journal date as canonical and downgrade conflicting sources",
+      "For enforcement actions, prefer regulator press release > court ruling text > trade-press write-up",
+      "Lobby positions: only cite if attributable to a named association or coalition; rumour-mill reporting on 'industry sources' should NOT be cited"
+    ],
+    "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} × {{ratio}} = {{output}}. E.g. 'RIA from Malaysia USD 12K/operator yr-1 × {{country}} operator count 4,200 → annualised compliance burden USD 50m [estimate]'. Always disclose method in the chart source line or inline.",
+    "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json — top-level keys for each major data bucket. For regulatory_brief, additional top-level keys: `statute_table` (list of {{statute_id, name, year, status, scope}}), `timeline_markers` (list of {{date, label, body, winner_loser, source}}), `regulator_map` (list of {{ministry, enforcement_arm, scope}}), `lobby_positions` (list of {{coalition, position, source_letter_url}})."
+  },
+
+  "template_variable_resolution": {
+    "{{country}}": "From topic parser output",
+    "{{country_iso}}": "ISO 3166-1 alpha-2",
+    "{{policy_topic}}": "From topic parser, normalized (e.g. 'EV subsidy regime', 'halal certification', 'data localization', 'FX controls')",
+    "{{industry}}": "From topic parser — the industry the policy regulates (e.g. 'EVs', 'food & beverage', 'fintech', 'financial services'). May overlap with policy_topic for industry-specific regimes.",
+    "{{ministry_likely}}": "Pre-mapped lookup table based on country × policy domain. Examples — VN+EV: 'Ministry of Industry and Trade (MOIT)' + 'Ministry of Finance (MOF)'; ID+halal: 'BPJPH' + 'Ministry of Religious Affairs (Kemenag)'; TH+FX: 'Bank of Thailand (BOT)' + 'Securities and Exchange Commission (SEC)'; PH+data: 'National Privacy Commission (NPC)' + 'Department of Information and Communications Technology (DICT)'.",
+    "{{regulator_name}}": "Filled iteratively as 01_statute_regulation_text bucket runs — names extracted from statute text",
+    "{{peer_country_1}}": "First ASEAN peer country for comparison — selected based on economic comparability + topic relevance. Default selection logic: if {{country}} = VN/ID/PH → peer = TH; if {{country}} = TH → peer = MY; if {{country}} = MY/SG → peer = TH or ID. Override-able by topic parser if specific peers are economically relevant.",
+    "{{year}}": "Topic year (parser output, default current year)",
+    "{{year-1}}": "Year - 1",
+    "{{year-2}}": "Year - 2"
+  }
+}

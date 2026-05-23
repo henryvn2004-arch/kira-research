@@ -1,0 +1,166 @@
+{
+  "blueprint_id": "pricing_strategy",
+  "version": 1,
+  "section_count": 13,
+  "structure_description": "13-section pricing + positioning deep dive for one country x industry. Front matter (cover / methodology / TOC) -> 'Pricing strategy' dark divider -> 2-page executive summary (snapshot + 5 pricing-action implications) -> tier stack -> competitor price-points table -> price-quality matrix (centerpiece) -> elasticity by segment -> WTP by consumer segment -> pricing models -> promo norms -> premium-positioning case studies -> methodology endnote. Centerpieces are sections 09 (competitor price points table) and 10 (price-quality matrix).",
+
+  "sections": [
+    {
+      "id": "01_cover",
+      "section_num": "00",
+      "title_pattern": "{{report_title}}",
+      "page_type": "cover",
+      "page_count": 1,
+      "purpose": "Report cover — title, country/industry/year, KIRA branding, report ID, confidential tag. Title pattern lands on pricing: e.g. '{{country}} {{industry}} pricing strategy — {{year}}'.",
+      "skip_if": null,
+      "notes": "No content generation needed — pure template fill from parsed topic metadata."
+    },
+    {
+      "id": "02_methodology_inline",
+      "section_num": "01",
+      "title_pattern": "Methodology",
+      "page_type": "methodology_inline",
+      "page_count": 1,
+      "purpose": "Two-column overview of research approach — left col stresses primary price scraping (channels, SKU count, frequency); right col covers secondary sources (WTP surveys, regulator filings) + KIRA estimate methods + source-tag conventions.",
+      "skip_if": null,
+      "notes": "Voice: lead with primary moat — 'Per-SKU price observations collected weekly across modern trade, GT, and e-commerce.'"
+    },
+    {
+      "id": "03_toc",
+      "section_num": "02",
+      "title_pattern": "Contents",
+      "page_type": "toc",
+      "page_count": 1,
+      "purpose": "Table of contents — generated from this structure plus page counter",
+      "skip_if": null,
+      "notes": "Generated at assembly time, not content-gen time."
+    },
+    {
+      "id": "04_pricing_divider",
+      "section_num": "03",
+      "title_pattern": "Pricing strategy",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Dark-mode chapter break — single thesis statement on the pricing inflection (e.g. 'Premium is pulling away. Mass is fragmenting.').",
+      "skip_if": null,
+      "notes": "Mini-toc pills should preview the centerpieces: 'Tier stack', 'Competitor prices', 'Price-quality map', 'WTP by segment'."
+    },
+    {
+      "id": "05_exec_summary",
+      "section_num": "04",
+      "title_pattern": "{{country}} {{industry}} pricing — {{year}} snapshot",
+      "page_type": "exec_summary_p1 + exec_summary_p2_implications",
+      "page_count": 2,
+      "purpose": "Two-page executive summary. Page 1: 4 callouts (dominant tier share, biggest pricing move 2024-2026, premium opportunity signal, average promo depth) + 2-col narrative + tier-stack chart. Page 2: 5 strategic implications grid, each card framed as a pricing action — Hold / Discount / Premiumize / Fragment / Exit.",
+      "skip_if": null,
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each. Implication card tag_labels: 'HOLD', 'DISCOUNT', 'PREMIUMIZE', 'FRAGMENT', 'EXIT' (uppercase, <=18 chars).",
+      "notes": "Anchor each implication with a number from the body — premium share %, elasticity coefficient, WTP gap, promo depth — not generic advice."
+    },
+    {
+      "id": "06_tier_stack",
+      "section_num": "05",
+      "title_pattern": "Pricing landscape: 4-tier stack",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Four-tier stack chart (premium / mid / mass / value) with each tier's value share + volume share + 2-year growth. Narrative on left (3 sub-sections): where value is migrating, which tier is squeezed, where new entry is viable.",
+      "skip_if": null,
+      "char_budget_hint": "narrative sections_count_max=3, each body_max=350 chars",
+      "notes": "Chart is a stacked horizontal bar OR 4-row tier card stack. Tier definitions must be price-band anchored, not vibes ('Premium = USD 12+ per unit')."
+    },
+    {
+      "id": "07_competitor_price_points",
+      "section_num": "06",
+      "title_pattern": "Competitor price points: top 10 SKUs",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Top 10 SKUs by share — table with brand, SKU/pack-size, current price (current year), price 2 years ago, % change, channel anchor (where price was sampled). Sidebar narrative interprets the spread: who moved up, who held, who discounted.",
+      "skip_if": null,
+      "char_budget_hint": "Table replaces the chart slot. 10 rows x 6 columns. Each cell value <= 22 chars. Sidebar narrative body_max=350 chars.",
+      "notes": "CENTERPIECE 1. Every price must carry a source tag — most should be [primary] (KIRA scrape). Channel anchor matters: 'Modern trade, Jakarta avg' is more credible than just 'IDR 12,500'. Avoid named aggregator firms as channel — name retailers (Indomaret, Watsons, etc.) or 'KIRA scrape'."
+    },
+    {
+      "id": "08_price_quality_matrix",
+      "section_num": "07",
+      "title_pattern": "Price-quality positioning map",
+      "page_type": "price_quality_matrix",
+      "page_count": 1,
+      "purpose": "Perceptual map — 2x2 scatter of 6-12 brands placed on price (x-axis) x perceived quality (y-axis). Four quadrant labels framed for the category (e.g. 'Premium fortress' / 'Aspirational' / 'Mass-market core' / 'Value trap'). Sidebar narrative explains the structural insight — which quadrant is overcrowded, which has white space, who has migrated between quadrants.",
+      "skip_if": null,
+      "char_budget_hint": "Matrix chart 380px tall. Brand labels <=18 chars each. Quadrant labels <=24 chars each. Sidebar narrative body_max=380 chars (2-3 sentences).",
+      "notes": "CENTERPIECE 2. Uses NEW page type 'price_quality_matrix' (shape sketched in manifest.yaml comment). Y-axis quality score = KIRA composite (survey perception + functional attribute scoring) or single external survey index — disclose method in subhead. If category has >12 plottable brands, split into 2 matrix pages by segment and bump section_count to 14."
+    },
+    {
+      "id": "09_elasticity",
+      "section_num": "08",
+      "title_pattern": "Price elasticity by segment",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Price elasticity coefficients by consumer segment (urban / suburban / rural, OR mass / mid / aspirational, OR age cohort — pick category-appropriate cut). Chart: horizontal bar of elasticity coefficients with confidence ranges; OR table if coefficients come from disparate sources. Narrative explains where elasticity inverts (luxury inversion, status goods).",
+      "skip_if": "category has no published elasticity studies AND KIRA has no panel data — collapse into 06_tier_stack with elasticity as a narrative side-note",
+      "char_budget_hint": "Single chart with up to 6 segments. Confidence range as error bars. Narrative sections_count_max=3.",
+      "notes": "Elasticity coefficients are often [estimate] with an [secondary] anchor. Disclose the anchor explicitly in subhead — 'KIRA estimate calibrated to {{anchor_study}} 2024 [secondary]'."
+    },
+    {
+      "id": "10_wtp_by_segment",
+      "section_num": "09",
+      "title_pattern": "Willingness-to-pay by consumer segment",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "WTP bar chart with confidence ranges per segment — what each segment will pay for the category benchmark SKU vs current shelf price. Highlights the WTP gap (positive = pricing power untapped; negative = price exceeds WTP, churn risk).",
+      "skip_if": null,
+      "char_budget_hint": "Bar chart with 4-6 segments. Each bar: WTP midpoint + range whiskers + current shelf price reference line. Narrative sections_count_max=3.",
+      "notes": "WTP data should ideally be [primary] (KIRA panel) or [secondary] (named credible survey, never aggregator). If neither available, mark [estimate] and disclose the anchor in subhead."
+    },
+    {
+      "id": "11_pricing_models",
+      "section_num": "10",
+      "title_pattern": "Pricing models: subscription, one-time, freemium, tiered",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Table or matrix mapping pricing models (subscription / one-time / freemium / tiered / dynamic) to which consumer segments they work for, with adoption % and revenue contribution where data exists. Narrative covers which model is gaining share and why.",
+      "skip_if": "category has only one viable pricing model (commodity goods one-time only) — collapse insight into 06_tier_stack narrative",
+      "char_budget_hint": "Table with 4-5 model rows x 4 columns (segment fit / adoption % / typical price point / momentum). Sidebar narrative body_max=350 chars.",
+      "notes": "For services (telco, streaming, insurance) this is a load-bearing page. For pure consumer goods this section may collapse — orchestrator can skip if topic is shelf-good FMCG."
+    },
+    {
+      "id": "12_promo_norms",
+      "section_num": "11",
+      "title_pattern": "Promotional norms: depth and frequency by channel",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Two metrics by channel (modern trade / GT / e-commerce / direct): average discount depth % and promo frequency (weeks-on-promo per year). Chart: 2-axis or paired bars. Narrative covers channel asymmetry, e-commerce promo escalation, and tier-specific norms (premium rarely discounts > 15%; mass relies on 30%+ depth).",
+      "skip_if": "category has no promotional convention (utilities, regulated insurance) — skip and bump section_count to 12",
+      "char_budget_hint": "Paired bars across 4 channels. Narrative sections_count_max=3.",
+      "notes": "Promo data is the second-strongest [primary] source after price scraping — KIRA can observe promo weeks directly from e-commerce + flyer scrapes."
+    },
+    {
+      "id": "13_premium_case_studies",
+      "section_num": "12",
+      "title_pattern": "Premium positioning: case studies",
+      "page_type": "competitive_profile_deep",
+      "page_count": 1,
+      "purpose": "1-2 brands that moved up successfully + 1 brand that tried and failed — on a shared template page. Each case: brand, starting position, move attempted, outcome metric (share +/-, price realization +/-), one-line lesson. Format reuses competitive_profile_deep but compressed (2-3 cases on one page, not one case per page).",
+      "skip_if": "no clear premium-move case studies identified in research — collapse the lesson into 08_price_quality_matrix sidebar",
+      "char_budget_hint": "Reuse competitive_profile_deep shape but each case gets ~33-50% of the page. Per-case: name <=45 chars, summary body 300-380 chars, outcome stats 3-4 stat rows.",
+      "notes": "Failure case is non-negotiable when one exists in the data — premium-pricing reports that only show winners read as marketing copy, not analysis. Failure framing example: 'Tried premium SKU at +40% price; share fell from 8.2% to 3.1% in 18 months [secondary].'"
+    },
+    {
+      "id": "14_methodology_endnote",
+      "section_num": "13",
+      "title_pattern": "Methodology endnote & source mix",
+      "page_type": "methodology_endnote",
+      "page_count": 1,
+      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages — target 35/45/20 for this blueprint), price-scrape protocol disclosed (channels, SKU count, sampling window), WTP/elasticity estimate anchors disclosed, contact + next research footer.",
+      "skip_if": null,
+      "notes": "Required — pricing reports especially must show the price-scrape methodology to earn trust. Auto-generated from source-tag census of the report."
+    }
+  ],
+
+  "assembly_rules": {
+    "page_numbering": "Continuous, format '012 / NN' in page-header counter slot — total NN computed at assembly",
+    "section_numbering": "section_num shared across all pages of a section (e.g. both exec_summary pages tagged 'Section 04 - Executive summary')",
+    "divider_placement": "Single dark divider at section 04 ('Pricing strategy'). No further dividers — this blueprint is shorter and tighter than market_analysis; extra dividers would inflate page count without adding signal.",
+    "skip_condition_handling": "If skip_if condition triggers, omit the section AND recompute page counter for all subsequent sections. Floor: 11 sections (cover + methodology + toc + divider + exec_summary x2 + tier_stack + price_points + matrix + methodology_endnote). Ceiling: 14 (if matrix splits into 2 segment maps).",
+    "centerpiece_priority": "Sections 07 (competitor price points) and 08 (price-quality matrix) are load-bearing — if research can't populate either with credible data, halt and route to UC2 Design Mode rather than ship with placeholder visuals."
+  }
+}

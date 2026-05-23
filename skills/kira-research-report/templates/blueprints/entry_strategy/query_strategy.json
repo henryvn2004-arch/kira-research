@@ -1,0 +1,140 @@
+{
+  "blueprint_id": "entry_strategy",
+  "version": 1,
+  "query_count_target": 25,
+  "query_strategy_description": "25 web-search queries grouped into 9 buckets that map to the entry-strategy blueprint's decision spine. Use WebSearch (native Claude tool). Avoid named-firm aggregator results; prefer regulator filings, listed-company disclosures, trade associations, government investment promotion bodies, and primary-source compensation surveys. Compared with market_analysis, this strategy spends fewer queries on macro / sizing and more queries on mechanics: licensing path, capex/opex benchmarks, partner identification, FX/political risk.",
+
+  "query_buckets": [
+    {
+      "bucket": "01_opportunity_sizing_anchor",
+      "purpose": "One-page market opportunity context - just enough to anchor the addressable opportunity callout in the exec summary. Drives 07_market_opportunity_sizing.",
+      "queries": [
+        "{{country}} {{industry}} market size {{year}} USD addressable CAGR {{year+5}}",
+        "{{country}} {{industry}} historical market value {{year-3}} to {{year}}"
+      ],
+      "expected_sources": ["industry trade associations", "listed-company annual reports", "government industry surveys", "central bank sector reports"],
+      "expected_tag_mix": "secondary 70% / estimate 30%"
+    },
+    {
+      "bucket": "02_target_segment_sizing",
+      "purpose": "Identify and size the named target customer segment - who an entrant should chase first. Drives 08_target_customer_segment.",
+      "queries": [
+        "{{country}} {{industry}} {{candidate_segment}} segment size households OR firms",
+        "{{country}} {{industry}} customer demographics income bands {{year}}",
+        "{{country}} middle-class urban households purchasing power {{industry}}"
+      ],
+      "expected_sources": ["national statistics bureau (BPS / GSO / NSO / PSA / DOSM / SingStat)", "consumer panels with published methodology", "industry consumer surveys", "central bank household finance surveys"],
+      "expected_tag_mix": "secondary 55% / estimate 45% (segment definitions often need KIRA triangulation across multiple anchors)"
+    },
+    {
+      "bucket": "03_competitor_positioning",
+      "purpose": "Identify the top-5 competitors and their structural advantages an entrant must neutralize. Drives 09_competitors_landscape. Compressed vs market_analysis - one page only, no deep profiles.",
+      "queries": [
+        "{{country}} {{industry}} top 5 players market share {{year}} revenue ranking",
+        "{{leading_player_candidate}} {{country}} revenue segment {{industry}}",
+        "{{country}} {{industry}} new entrant foreign player launch {{year-2}} to {{year}}"
+      ],
+      "expected_sources": ["listed-company filings (IDX/SET/SGX/HoSE/Bursa/PSE/SGX)", "company press releases", "industry trade reports", "competition authority filings"],
+      "expected_tag_mix": "secondary 75% / estimate 20% / primary 5%"
+    },
+    {
+      "bucket": "04_regulatory_licensing",
+      "purpose": "Foreign ownership caps, sector licensing path, timeline-to-license, application cost. Drives 10_regulatory_licensing.",
+      "queries": [
+        "{{country}} {{industry}} foreign ownership cap FDI rules {{year}}",
+        "{{country}} {{industry}} regulator {{regulator_body}} licensing application timeline cost",
+        "{{country}} investment promotion {{industry}} incentives tax holiday"
+      ],
+      "expected_sources": ["country investment promotion body (BKPM Indonesia / MIC Vietnam / BOI Thailand / MIDA Malaysia / EDB Singapore / BOI Philippines)", "ministry of trade/industry filings", "law-firm sector guides with named partners", "trade association FAQs"],
+      "expected_tag_mix": "secondary 80% / estimate 20% (process timelines often quoted as ranges that need triangulation)"
+    },
+    {
+      "bucket": "05_distribution_gtm_channels",
+      "purpose": "Channel mix options + per-channel economics for entrants. Drives 11_distribution_gtm_channels.",
+      "queries": [
+        "{{country}} {{industry}} distribution channels modern trade e-commerce traditional",
+        "{{country}} {{industry}} channel margin distributor markup retailer markup"
+      ],
+      "expected_sources": ["industry trade press", "logistics-sector reports", "listed-retailer filings", "e-commerce platform investor presentations"],
+      "expected_tag_mix": "secondary 60% / estimate 40% (channel-margin data is often estimate-heavy)"
+    },
+    {
+      "bucket": "06_partner_identification",
+      "purpose": "Named JV / distributor / agent candidates. Drives 12_partnership_landscape. THIS BUCKET IS THE ONE THAT MOST DIFFERENTIATES THIS BLUEPRINT - prioritize organisation names with country footprint over generic 'partner landscape' content.",
+      "queries": [
+        "{{country}} {{industry}} largest distributors agents named list",
+        "{{country}} {{industry}} joint venture foreign partner local conglomerate",
+        "{{country}} conglomerates with {{industry}} subsidiary or JV partner",
+        "{{country}} family-owned business groups {{industry}} {{adjacent_industry}}"
+      ],
+      "expected_sources": ["country-specific business-group rankings (Indonesia's Top 50 Family Groups / Thai conglomerate league tables / Vietnam corporate league tables)", "listed-company filings disclosing partnership terms", "trade press M&A and JV coverage", "country chambers of commerce member directories"],
+      "expected_tag_mix": "secondary 65% / estimate 25% / primary 10% (KIRA shortlist scoring blends multiple anchors)",
+      "note": "Use {{adjacent_industry}} to surface conglomerates that span sectors - SEA conglomerates rarely sit in one industry. Examples: Salim Group (ID) spans F&B + cement + telecom; Charoen Pokphand (TH) spans agri + retail + telecom; San Miguel (PH) spans F&B + power + infrastructure."
+    },
+    {
+      "bucket": "07_capex_benchmarks",
+      "purpose": "Capex benchmarks for the relevant build (factory / retail rollout / fleet / platform / inventory). Drives 13_capex_requirements.",
+      "queries": [
+        "{{country}} {{industry}} factory build cost OR retail store opening capex {{year}}",
+        "{{country}} {{industry}} capex announcement listed company expansion",
+        "{{country}} industrial land cost {{country_industrial_zone}} {{year}}"
+      ],
+      "expected_sources": ["listed-company expansion announcements (capex disclosed in MD&A)", "industrial estate operators' fact sheets (Kawasan Industri JABABEKA / Amata / VSIP / Iskandar / Hemaraj)", "country FDI agency case studies", "central bank lending data on sector capex"],
+      "expected_tag_mix": "secondary 55% / estimate 45% (capex is the bucket most often KIRA-estimated by benchmarking from comparable disclosed projects)"
+    },
+    {
+      "bucket": "08_opex_staffing_benchmarks",
+      "purpose": "Per-headcount cost benchmarks for the country + key functional roles. Drives 14_opex_staffing_ramp.",
+      "queries": [
+        "{{country}} salary benchmark {{industry}} manager engineer fully loaded cost {{year}}",
+        "{{country}} office rental cost Jakarta Ho Chi Minh Bangkok Manila Kuala Lumpur Singapore {{year}}",
+        "{{country}} expat package cost foreign hire {{industry}}"
+      ],
+      "expected_sources": ["country compensation surveys with disclosed methodology (Mercer / Robert Walters / Michael Page - read for benchmarks but cite the underlying methodology, not the firm name)", "national statistics bureau wage data", "country chambers of commerce HR surveys", "listed-company filings disclosing local-employee cost"],
+      "expected_tag_mix": "secondary 50% / estimate 50% (compensation triangulation almost always needs KIRA synthesis across 2-3 anchors)",
+      "note": "Voice rule: when citing Mercer/Robert Walters/Michael Page data, attribute to 'compensation surveys published in {{year}}' or 'cross-firm industry compensation benchmarks' - do NOT name the publishing firm in the report. Same anti-positioning principle as Mordor/Frost."
+    },
+    {
+      "bucket": "09_risk_factors",
+      "purpose": "FX, political, regulatory, operational risks to populate the 5x5 matrix. Drives 16_risk_matrix.",
+      "queries": [
+        "{{country}} {{currency_code}} FX volatility forecast {{year}} central bank political risk",
+        "{{country}} {{industry}} foreign company exit failed entry case studies regulatory change"
+      ],
+      "expected_sources": ["central bank FX reports", "political risk consultancies' country notes (read for facts; do not cite by firm name)", "trade press on regulatory shifts", "court filings on foreign-investor disputes (BANI Indonesia / SIAC Singapore)"],
+      "expected_tag_mix": "secondary 60% / estimate 40% (risk severity scoring is KIRA synthesis)"
+    }
+  ],
+
+  "query_execution_rules": {
+    "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings - in particular bucket 06 (partners) benefits from knowing bucket 03 (competitors) results to avoid recommending a partner that IS a competitor.",
+    "result_filtering": [
+      "Discard results from named-firm aggregators (Mordor, Frost, Euromonitor, IMARC, etc.) - anti-positioning rule",
+      "Discard compensation-survey results that cannot be re-attributed to a methodology disclosure - anti-positioning extends to HR consultancies (Mercer / Robert Walters / Michael Page) in published copy",
+      "Prefer results with citeable methodology disclosure",
+      "If a number appears in 3+ independent sources within +/- 10%, treat as well-anchored secondary",
+      "If a number appears in only 1 source, either find corroboration or downgrade to KIRA estimate with anchor commentary",
+      "For partner identification: any organisation name making the shortlist must have a verifiable corporate website, country registration, and at least one third-party reference (trade press, M&A coverage, listed-parent disclosure). No anonymous distributors."
+    ],
+    "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} x {{ratio}} = {{output}}. Example: 'Indonesia disclosed retail capex USD 1.2M per store [secondary] x 25-store year-3 footprint = USD 30M store-rollout capex [estimate]'.",
+    "scenario_triangulation_template": "For the 3-year P&L scenarios on 15_pnl_scenario, each scenario should anchor to: (a) sizing data from bucket 01, (b) channel ramp curves from bucket 05, (c) opex envelope from bucket 08. Bull / base / bear differ on a single named driver (e.g. market share captured, channel mix, time-to-license).",
+    "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json, with these additional top-level keys: regulator_named, partner_shortlist, capex_benchmarks, opex_benchmarks, fx_assumptions. Each value tagged with source URL + access date + extraction method."
+  },
+
+  "template_variable_resolution": {
+    "{{country}}": "From topic parser output",
+    "{{country_iso}}": "ISO 3166-1 alpha-2",
+    "{{currency_code}}": "ISO 4217 (IDR / VND / THB / PHP / MYR / SGD)",
+    "{{regulator_body}}": "Mapped via lookup: ID->BKPM, VN->MPI/MIC, TH->BOI, PH->BOI Philippines, MY->MIDA, SG->EDB",
+    "{{country_industrial_zone}}": "Country-specific industrial estate operator names: ID->Kawasan Industri JABABEKA/Karawang, VN->VSIP/Amata Vietnam, TH->Hemaraj/Amata, PH->PEZA zones, MY->Iskandar",
+    "{{industry}}": "From topic parser, normalized",
+    "{{adjacent_industry}}": "One- or two-step adjacent industries for partner identification: e.g. for 'roofing' use 'cement OR steel OR retail-home-improvement'; for 'fintech' use 'banking OR telecom OR retail'. Used in bucket 06 to surface multi-sector conglomerates.",
+    "{{candidate_segment}}": "Filled iteratively as bucket 02 runs - first-pass segment hypotheses (urban middle-class / SMB manufacturers / etc.)",
+    "{{leading_player_candidate}}": "Filled iteratively as bucket 03 runs - pre-known players or top-result company names",
+    "{{year}}": "Topic year (parser output, default current year)",
+    "{{year-1}}": "Year - 1",
+    "{{year-2}}": "Year - 2",
+    "{{year-3}}": "Year - 3",
+    "{{year+5}}": "Year + 5"
+  }
+}

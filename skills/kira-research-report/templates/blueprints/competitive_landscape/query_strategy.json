@@ -1,0 +1,110 @@
+{
+  "blueprint_id": "competitive_landscape",
+  "version": 1,
+  "query_count_target": 22,
+  "query_strategy_description": "22 web-search queries grouped into 6 buckets that map to the report's 15 sections. Use WebSearch (native Claude tool). Avoid named-firm aggregator results; prefer listed-company filings, exchange disclosures, competition-authority records, trade-press deal coverage, and primary research firms with cited methodology. The competitive_landscape blueprint is more filing-and-press heavy than market_analysis — most of the lift is identifying the right 10 names and triangulating their share + recent moves.",
+
+  "query_buckets": [
+    {
+      "bucket": "01_industry_structure",
+      "purpose": "Industry shape, HHI, fragmentation index, segment split -> drives 07_industry_structure + 05_exec_summary_snapshot",
+      "queries": [
+        "{{country}} {{industry}} market structure concentration {{year}}",
+        "{{country}} {{industry}} HHI Herfindahl index OR market concentration ratio",
+        "{{country}} {{industry}} top 10 players combined market share {{year}}",
+        "{{country}} {{industry}} segment breakdown sub-category split {{year}}"
+      ],
+      "expected_sources": ["competition authority filings (KPPU/KFTC/JFTC/CCS/MyCC)", "industry trade associations", "listed-company filings", "government industry surveys"],
+      "expected_tag_mix": "secondary 65% / estimate 30% / primary 5%"
+    },
+    {
+      "bucket": "02_competitor_identification_and_financials",
+      "purpose": "Identify top 10 named players and pull revenue / share / ownership -> drives 08_competitor_matrix + 09_share_evolution + 11/12/13_player_profiles",
+      "queries": [
+        "{{country}} {{industry}} top companies ranking revenue {{year}}",
+        "{{country}} {{industry}} largest players market leaders {{year}}",
+        "{{leading_player_candidate}} {{country}} annual report revenue segment {{industry}}",
+        "{{leading_player_candidate}} {{country}} market share {{year}} press release",
+        "{{country}} {{industry}} parent company ownership conglomerate {{year}}",
+        "{{country}} {{industry}} market share evolution {{year-4}} {{year}}"
+      ],
+      "expected_sources": ["IDX/SET/SGX/HoSE/BurseMalaysia/PSE filings", "Tokyo Stock Exchange + KRX filings (for parent groups)", "company press releases", "industry trade press", "regulator disclosures (BI/SBV/BSP/BOT etc.)"],
+      "expected_tag_mix": "secondary 75% / estimate 20% / primary 5%",
+      "note": "Iterative bucket — first 2 queries surface the name set, then queries 3-4 are re-run per named player. Budget 6 queries here but expect to spend 8-10 in practice (replanned per player)."
+    },
+    {
+      "bucket": "03_strategic_groups_and_positioning",
+      "purpose": "Strategic group axes, positioning data -> drives 10_strategic_groups_map + 11/12/13_player_profiles",
+      "queries": [
+        "{{country}} {{industry}} distribution model integrated specialist {{year}}",
+        "{{country}} {{industry}} premium mass value segmentation positioning",
+        "{{country}} {{industry}} digital transformation maturity players {{year}}"
+      ],
+      "expected_sources": ["industry trade press positioning articles", "company investor day decks", "analyst-firm positioning notes (read but not cited by name)", "consumer research with named-brand cuts"],
+      "expected_tag_mix": "secondary 50% / estimate 40% / primary 10% (KIRA places players on the map)"
+    },
+    {
+      "bucket": "04_pricing_benchmarks",
+      "purpose": "Pricing tier data per player -> drives 14_pricing_positioning",
+      "queries": [
+        "{{country}} {{industry}} price range entry mid premium {{year}}",
+        "{{country}} {{industry}} pricing benchmark per unit OR per SKU {{year}}",
+        "{{country}} {{industry}} {{leading_player_candidate}} pricing strategy product tier"
+      ],
+      "expected_sources": ["e-commerce marketplace listings (Tokopedia/Shopee/Lazada/Rakuten/Coupang)", "company catalogs + price lists on product pages", "consumer protection agency price surveys", "retail trade press"],
+      "expected_tag_mix": "secondary 55% / estimate 40% / primary 5%",
+      "note": "B2B services often have opaque quoted pricing — if 3+ players have no public band data, swap 14_pricing_positioning to a buyer-segment positioning chart and reduce this bucket to 1 query."
+    },
+    {
+      "bucket": "05_ma_partnerships",
+      "purpose": "M&A deals + named partnerships in last 24-36 months -> drives 15_ma_timeline + the 'recent moves' field in player profiles",
+      "queries": [
+        "{{country}} {{industry}} M&A acquisitions {{year-2}} {{year}}",
+        "{{country}} {{industry}} partnership joint venture {{year-2}} {{year}}",
+        "{{country}} {{industry}} foreign investor stake {{year-2}} {{year}}",
+        "{{country}} {{industry}} divestment exit private equity {{year-2}} {{year}}"
+      ],
+      "expected_sources": ["competition authority merger filings", "exchange disclosure feeds", "Mergermarket / DealStreetAsia equivalents (cited only via primary deal docs)", "company press releases", "regional business press (Nikkei Asia, The Edge, VnExpress Business, KrAsia, etc.)"],
+      "expected_tag_mix": "secondary 80% / primary 15% / estimate 5%"
+    },
+    {
+      "bucket": "06_disruptors_and_adjacents",
+      "purpose": "New entrants, adjacent threats, foreign players entering -> drives 16_disruptor_watch",
+      "queries": [
+        "{{country}} {{industry}} new entrants startups {{year-2}} {{year}}",
+        "{{country}} {{industry}} foreign player market entry {{year}}",
+        "{{country}} {{industry}} adjacent disruption substitution threat {{year}}",
+        "{{country}} {{industry}} funding rounds Series A B startups {{year}}"
+      ],
+      "expected_sources": ["regional VC tracker press (Tech in Asia, e27, KrAsia, DealStreetAsia)", "startup funding databases (cited via primary press releases)", "incumbent company commentary on new competition", "trade-association new-member announcements"],
+      "expected_tag_mix": "primary 40% / secondary 50% / estimate 10%",
+      "note": "Disruptor scoring is a KIRA primary call. Use trade press to identify candidates, then triangulate threat-tier in the bucket-06 synthesis step. Most cards land as [primary] tagged."
+    }
+  ],
+
+  "query_execution_rules": {
+    "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets — bucket 02 must complete before buckets 03-06 can re-bind {{leading_player_candidate}}.",
+    "result_filtering": [
+      "Discard results from named-firm aggregators (Mordor, Frost, Euromonitor, IMARC, Synovate, Ipsos, etc.) — anti-positioning rule",
+      "Prefer results with citeable filing IDs (exchange tickers, regulator docket numbers, press release URLs)",
+      "If a player's revenue appears in 2+ independent sources within +/-15%, treat as well-anchored secondary",
+      "If only one source carries the number, either find corroboration or downgrade to KIRA estimate with explicit anchor commentary",
+      "For private players with no filings, build the revenue estimate from observable proxies (store count x avg revenue, employee count x revenue-per-FTE, share x total market size) and tag [estimate]"
+    ],
+    "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} x {{ratio}} = {{output}}. E.g. 'Total market USD {{X}}bn x player share {{Y}}% from regulator filing -> player revenue USD {{Z}}m'.",
+    "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json — top-level keys for: industry_structure, top_10_players (array of objects with revenue / share / parent / segment / recent_moves / pricing_band / positioning_xy), share_evolution, ma_events, disruptors. Each value tagged with source URL + access date + extraction method."
+  },
+
+  "template_variable_resolution": {
+    "{{country}}": "From topic parser output",
+    "{{country_iso}}": "ISO 3166-1 alpha-2",
+    "{{industry}}": "From topic parser, normalized",
+    "{{year}}": "Topic year (parser output, default current year)",
+    "{{year-2}}": "Year - 2",
+    "{{year-4}}": "Year - 4",
+    "{{leading_player_candidate}}": "Filled iteratively as bucket 02 runs — first two queries surface the name set; queries 3-6 re-bind per player. Player profile sections (11/12/13) pull from the resolved rank-1/2/3 names.",
+    "{{concentration_descriptor}}": "Derived after bucket 01: 'highly concentrated' (HHI > 2500), 'moderately concentrated' (1500-2500), 'unconcentrated' (<1500), 'fragmenting' (HHI down >300 over 5y), 'consolidating' (HHI up >300 over 5y)",
+    "{{x_axis}}": "Chosen by analyst from positioning data, e.g. 'price tier', 'distribution breadth', 'digital maturity'",
+    "{{y_axis}}": "Second strategic axis, paired with x_axis for the 2x2 — must produce real spread, not a diagonal"
+  }
+}

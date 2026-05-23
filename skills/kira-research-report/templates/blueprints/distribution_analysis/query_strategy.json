@@ -1,0 +1,123 @@
+{
+  "blueprint_id": "distribution_analysis",
+  "version": 1,
+  "query_count_target": 22,
+  "query_strategy_description": "22 web-search queries grouped into 7 buckets that map to the report's 14 sections. Channel-share + margin figures are the highest-difficulty data points — most aggregator firms hide them behind paywalls (which we never cite anyway). Prefer Nielsen retail audit excerpts that surface in trade press, listed FMCG annual reports (channel disclosures in MD&A), customs HS-code aggregates, ministry-of-trade modern-trade licensing data, distributor company filings, and quick-commerce platform press releases.",
+
+  "query_buckets": [
+    {
+      "bucket": "01_channel_share_anchor",
+      "purpose": "Channel mix share + 3-5 year trend across modern trade / traditional / e-commerce / direct / instant delivery -> drives 06_channel_landscape + 07_channel_mix_evolution",
+      "queries": [
+        "{{country}} {{industry}} modern trade share traditional trade {{year}}",
+        "{{country}} {{industry}} retail channel mix Nielsen scan track",
+        "{{country}} {{industry}} general trade share warung sari-sari mom and pop {{year}}",
+        "{{country}} {{industry}} channel share evolution {{year-5}} to {{year}}"
+      ],
+      "expected_sources": ["listed FMCG company annual reports (channel disclosures)", "trade press (CampaignAsia, Inside Retail Asia, Marketing Interactive)", "ministry of trade modern-trade licensing data", "industry trade associations"],
+      "expected_tag_mix": "secondary 60% / estimate 40% (channel splits are rarely fully disclosed; KIRA triangulates from multiple operator disclosures)"
+    },
+    {
+      "bucket": "02_ecommerce_penetration",
+      "purpose": "E-commerce share total + by sub-segment, marketplace concentration -> drives 13_ecom_subsegment_penetration + supports 06 + 12",
+      "queries": [
+        "{{country}} e-commerce penetration {{industry}} percent online {{year}}",
+        "{{country}} {{industry}} online sales share by category sub-segment",
+        "{{country}} marketplace share Shopee Lazada Tokopedia TikTok Shop {{year}}",
+        "{{country}} e-commerce GMV {{industry}} category breakdown"
+      ],
+      "expected_sources": ["e-Conomy SEA report (Google/Temasek/Bain) — read but cite the underlying data not the report name", "marketplace company filings (Sea Ltd, GoTo, Lazada parent disclosures)", "Momentum Works reports", "national e-commerce association data"],
+      "expected_tag_mix": "secondary 65% / estimate 35%"
+    },
+    {
+      "bucket": "03_distributor_landscape",
+      "purpose": "Named distributors, portfolios, ownership, geographic reach -> drives 10_distributor_matrix",
+      "queries": [
+        "{{country}} {{industry}} top distributors wholesalers list {{year}}",
+        "{{country}} largest FMCG distributors revenue ranking",
+        "{{country}} {{industry}} distributor portfolio principals brands carried",
+        "{{country}} {{industry}} master distributor sub-distributor structure"
+      ],
+      "expected_sources": ["distributor company websites + LinkedIn", "trade directories", "listed conglomerate disclosures (e.g. PT Enseval, DKSH, Li & Fung, Berli Jucker)", "industry trade associations + chambers of commerce"],
+      "expected_tag_mix": "secondary 70% / estimate 20% / primary 10% (KIRA assembles the matrix from multi-source scrape)"
+    },
+    {
+      "bucket": "04_margin_economics",
+      "purpose": "Margin take at each link of the channel cascade, payment terms, MOQ, exclusivity -> drives 08_channel_margin_waterfall + 11_distributor_economics",
+      "queries": [
+        "{{country}} {{industry}} distributor margin gross percent",
+        "{{country}} FMCG channel margin brand distributor retailer breakdown",
+        "{{country}} {{industry}} payment terms net 30 60 90 trade credit",
+        "{{country}} {{industry}} retailer markup modern trade traditional trade"
+      ],
+      "expected_sources": ["listed FMCG MD&A sections (gross margin disclosures by channel)", "academic papers on emerging-markets channel economics", "trade press distributor profiles", "competition authority filings (margin disclosures in price-fixing investigations)"],
+      "expected_tag_mix": "secondary 45% / estimate 55% (margin data is the hardest to source; KIRA triangulates aggressively with explicit anchor methodology)",
+      "note": "This bucket carries the heaviest estimate share. Every margin % needs an explicit anchor sentence in the methodology endnote."
+    },
+    {
+      "bucket": "05_instant_delivery_qcommerce",
+      "purpose": "Instant delivery / quick-commerce category coverage, AOV, growth -> drives 12_disruption_signals + supports 06",
+      "queries": [
+        "{{country}} quick commerce instant delivery {{industry}} GrabMart Foodpanda Shopee Now",
+        "{{country}} 15-minute delivery FMCG category coverage {{year}}",
+        "{{country}} instant grocery growth GMV order volume"
+      ],
+      "expected_sources": ["Grab / GoTo investor decks", "Momentum Works quick-commerce reports", "trade press (TechInAsia, e27, Rest of World)", "platform press releases"],
+      "expected_tag_mix": "secondary 60% / estimate 40%"
+    },
+    {
+      "bucket": "06_d2c_social_commerce",
+      "purpose": "D2C brand penetration + social commerce / live-commerce volume -> drives 12_disruption_signals",
+      "queries": [
+        "{{country}} D2C direct to consumer brands {{industry}} {{year}}",
+        "{{country}} social commerce TikTok Shop live commerce GMV {{year}}",
+        "{{country}} {{industry}} brand owned channel website app share"
+      ],
+      "expected_sources": ["TikTok Shop platform disclosures", "brand annual reports (D2C channel disclosures)", "social commerce industry surveys", "Cube Asia / Momentum Works platform research"],
+      "expected_tag_mix": "secondary 55% / estimate 45%"
+    },
+    {
+      "bucket": "07_geographic_coverage",
+      "purpose": "Distribution depth by city tier / rural reach -> drives 09_geographic_coverage",
+      "queries": [
+        "{{country}} {{industry}} distribution rural reach Tier 2 Tier 3 cities",
+        "{{country}} retail outlets count modern trade traditional trade by region",
+        "{{country}} {{industry}} last mile rural penetration challenge"
+      ],
+      "expected_sources": ["national statistics bureau retail census data ({{country_stats_bureau}})", "listed FMCG annual reports (distribution reach disclosures, e.g. 'we cover 500k outlets')", "ministry of trade outlet registrations"],
+      "expected_tag_mix": "secondary 60% / estimate 40%"
+    }
+  ],
+
+  "query_execution_rules": {
+    "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings (e.g. bucket 03 distributor names feed back into bucket 04 margin queries by name).",
+    "result_filtering": [
+      "Discard results from named-firm aggregators (Mordor, Frost, Euromonitor, IMARC, Synovate, Ipsos) — anti-positioning rule",
+      "Prefer results with citeable methodology disclosure (Nielsen retail audit notes, listed-company MD&A, customs aggregates)",
+      "If a channel-share number appears in 3+ independent sources within +-5pp, treat as well-anchored secondary",
+      "If a margin number appears in only 1 source, either find corroboration or downgrade to KIRA estimate with anchor commentary in the waterfall sidebar",
+      "Treat marketplace platform self-disclosures (Shopee/Lazada/TikTok Shop) as primary for their own GMV claims but secondary-with-skepticism for category-level claims"
+    ],
+    "estimate_methodology_template": "Anchored margin estimate: {{disclosed_anchor}} +- {{range}} = {{output}}. E.g. 'Listed FMCG operator A disclosed 18% gross margin to distributors in {{country}} [secondary]; sector convention places distributor markup 8-12pp on top -> retailer-side margin 22-28% [estimate]'.",
+    "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json — top-level keys: channel_share_history, channel_share_current, ecom_by_subsegment, distributor_directory, margin_chain_by_link, payment_terms_norms, geographic_coverage, instant_delivery_metrics, d2c_signals, social_commerce_metrics. Each value tagged with source URL + access date + extraction method."
+  },
+
+  "template_variable_resolution": {
+    "{{country}}": "From topic parser output",
+    "{{country_iso}}": "ISO 3166-1 alpha-2",
+    "{{country_stats_bureau}}": "Mapped via lookup: ID->BPS, VN->GSO, TH->NSO, PH->PSA, MY->DOSM, SG->SingStat, etc.",
+    "{{industry}}": "From topic parser, normalized",
+    "{{sub_industry_1}}": "First sub_industry from parser (if multi-segment topic)",
+    "{{year}}": "Topic year (parser output, default current year)",
+    "{{year-2}}": "Year - 2",
+    "{{year-3}}": "Year - 3",
+    "{{year-5}}": "Year - 5 (anchor for channel-mix evolution chart)"
+  },
+
+  "high_difficulty_data_flags": [
+    "Channel-share splits by % of category value — rarely fully disclosed; expect to triangulate from 4-6 disclosures",
+    "Margin take at each link of the channel cascade — almost always estimate; flag clearly in methodology endnote",
+    "Sub-channel splits within traditional trade (warung vs minimarket vs wet market) — usually requires named-operator extrapolation",
+    "Distributor revenue / volume share — private distributors often don't publish; rank-order is more defensible than absolute share"
+  ]
+}

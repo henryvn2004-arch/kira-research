@@ -1,0 +1,87 @@
+# ============================================================
+# KIRA Research — Blueprint: competitive_landscape
+#
+# Deep-dive on the top 10 named players in a single country × industry.
+# Unlike market_analysis (which leads with sizing + forecast), the center
+# of gravity here is the competitor matrix + strategic positioning.
+# Best fit: B2C consumer goods, B2B industrial mid-cap, or services
+# with a clearly named operator set in one SEA country.
+# ============================================================
+
+blueprint_id: competitive_landscape
+version: 1
+origin: "Phase H1 — competitor-first companion to market_analysis. Re-uses page schemas from market_analysis baseline."
+
+# Report shape
+shape:
+  total_sections: 15
+  estimated_pages: 14-17
+  estimated_render_time_min: 30-45
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from (all defined in schemas/page_schemas.json)
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - divider
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - competitive_structure
+  - competitive_profile_deep
+  - market_data_chart
+  - methodology_endnote
+
+# Research budget
+research:
+  query_count_target: 22
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 20       # KIRA synthesis — strategic group placement, disruptor scoring
+    secondary_pct: 60     # cited external — filings, press, trade press
+    estimate_pct: 20      # KIRA estimate with anchor — share splits, pricing tiers
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 18000-23000
+  callouts_target: 10-14
+  charts_target: 6-9
+  player_profiles_target: 3   # deep profile per top-3 player, 1 page each
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages <= 720px rendered height"
+  - source_coverage: "Every quantitative claim has [primary|secondary|estimate|user-input] tag"
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
+  - char_budgets: "All slot char counts <= schema cap; callout label <= 30 chars; change-line <= 38 chars"
+  - competitor_coverage: "Top 10 named players in the matrix; top 3 must each have a competitive_profile_deep page"
+  - matrix_completeness: "Matrix carries revenue, share, ownership, segment focus, recent move for every named player"
+
+# Output mode
+output:
+  default_mode: publish              # auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # template validated; skip user confirmation
+
+# Orchestrator match threshold
+match_threshold: 0.7
+
+# Best-fit signals (orchestrator hints — non-binding)
+best_fit_signals:
+  - "Topic phrasing leads with 'competitive landscape', 'top players', 'who are the leaders', 'competitor analysis'"
+  - "Industry has a clearly named operator set (5+ identifiable companies with public revenue or share data)"
+  - "Country scope is single (not regional/APAC roll-ups)"
+  - "B2C consumer goods, B2B industrial mid-cap, or named-player services"
+  - "Buyer is a strategy / corp-dev / market-entry team, not a sizing-only buyer"

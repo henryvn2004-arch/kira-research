@@ -1,0 +1,147 @@
+# ============================================================
+# KIRA Research — Blueprint: pricing_strategy
+#
+# Pricing + positioning deep dive for a single country x industry.
+# Centerpieces are the competitor price-points table and the
+# price-quality perceptual matrix. Best fit: B2C consumer goods,
+# services with discoverable shelf prices (insurance, telco,
+# subscription, streaming, food delivery, QSR, mass beauty).
+# AVOID: B2B negotiated pricing (opaque price discovery; the
+# scrape-and-matrix moat collapses there). Use market_analysis
+# or competitive_landscape instead for those topics.
+# ============================================================
+
+blueprint_id: pricing_strategy
+version: 1
+origin: "Phase H1 — pricing/positioning companion to market_analysis. Centerpieces are the competitor price-points table + price-quality matrix; remaining pages frame the tier stack, segment WTP, and promo norms."
+
+# Report shape
+shape:
+  total_sections: 13
+  estimated_pages: 13-15
+  estimated_render_time_min: 28-42
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from (all defined in schemas/page_schemas.json
+# EXCEPT price_quality_matrix, which is new — see schema sketch below).
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - divider
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - market_data_chart            # 4-tier stack chart, elasticity table, WTP bars, pricing-models table, promo norms
+  - competitive_profile_deep     # premium-positioning case studies (1 winner + 1 failure on a shared template)
+  - price_quality_matrix         # NEW page type — see schema sketch below
+  - methodology_endnote
+
+# -----------------------------------------------------------
+# NEW page type: price_quality_matrix
+# -----------------------------------------------------------
+# Shape (to be formalized in schemas/page_schemas.json by orchestrator owner):
+#
+#   "price_quality_matrix": {
+#     "description": "Perceptual map — 2x2 scatter of brands placed on price (x-axis) x perceived quality (y-axis). Quadrant labels frame strategic positioning. Used in pricing_strategy blueprint.",
+#     "slots": {
+#       "h1": {"max_chars": 80, "lines_max": 1},
+#       "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+#       "matrix_chart": {
+#         "row_height_px": 380,
+#         "x_axis_label_max_chars": 24,        # e.g. "Average shelf price (USD)"
+#         "y_axis_label_max_chars": 24,        # e.g. "Perceived quality index"
+#         "quadrant_labels": {
+#           "count": 4,
+#           "each_max_chars": 24,              # e.g. "Premium fortress", "Value trap", "Aspirational", "Mass-market core"
+#           "positions": ["top-right", "bottom-right", "top-left", "bottom-left"]
+#         },
+#         "brand_points": {
+#           "count_min": 6,
+#           "count_max": 12,
+#           "each": {
+#             "label_max_chars": 18,           # brand name on the dot
+#             "x_value_unit": "USD or local-currency price index",
+#             "y_value_unit": "quality score 0-100 (KIRA composite) OR survey perception index",
+#             "dot_size_meaning": "optional — encodes share or revenue",
+#             "source_tag": ["primary", "secondary", "estimate"]
+#           }
+#         }
+#       },
+#       "sidebar_narrative": {
+#         "heading_max_chars": 30,
+#         "body_max_chars": 380,               # 2-3 sentences interpreting the placement
+#         "paragraphs_max": 2,
+#         "allow_inline_bold": true
+#       },
+#       "footer_source_line": {"max_chars": 110}
+#     }
+#   }
+#
+# Composition note: 1 chart per page, 1 perceptual frame. If a topic
+# has > 12 brands worth plotting, split into 2 matrix pages (e.g. by
+# segment: prepaid vs postpaid, mass vs premium). Quadrant labels
+# should be specific to the category, not generic ("Premium fortress"
+# > "High price / high quality").
+# -----------------------------------------------------------
+
+# Research budget
+research:
+  query_count_target: 20
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 35       # higher — KIRA-collected price scrapes per SKU/channel are the moat here
+    secondary_pct: 45     # cited external — survey vendors, regulator filings, listed-company price lists
+    estimate_pct: 20      # KIRA estimate with anchor — elasticity inference, WTP segmentation, premium-tier sizing
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 16000-21000
+  callouts_target: 9-12
+  charts_target: 7-10                # incl. 1 price-quality matrix, 1 tier stack, 1 elasticity, 1 WTP, 1 promo norms
+  competitor_skus_in_table: 10       # top 10 by share — current price + 2yr change
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages <= 720px rendered height"
+  - source_coverage: "Every quantitative claim has [primary|secondary|estimate|user-input] tag"
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
+  - char_budgets: "All slot char counts <= schema cap; callout label <= 30 chars; change-line <= 38 chars"
+  - tier_coverage: "All 4 tiers (premium / mid / mass / value) sized with share + growth"
+  - matrix_brand_count: "Price-quality matrix carries 6-12 brand points, every point sourced"
+  - sku_table_completeness: "Competitor price table has 10 SKUs with current price, 2yr change %, channel anchor"
+  - b2b_guardrail: "If topic resolves to B2B negotiated pricing, halt and route to UC2 (Design Mode) — this blueprint is not appropriate"
+
+# Output mode
+output:
+  default_mode: publish              # auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # template validated; skip user confirmation
+
+# Orchestrator match threshold
+match_threshold: 0.7
+
+# Best-fit signals (orchestrator hints — non-binding)
+best_fit_signals:
+  - "Topic phrasing leads with 'pricing', 'price strategy', 'price points', 'price positioning', 'willingness to pay', 'premium positioning'"
+  - "Industry has discoverable shelf or rate-card prices (B2C consumer goods, telco, insurance, subscription, streaming, food delivery, QSR, mass beauty)"
+  - "Country scope is single (price levels are country-anchored; APAC roll-ups dilute the matrix)"
+  - "Buyer is a pricing / commercial / brand-positioning team, not a sizing-only buyer"
+
+# Poor-fit signals (orchestrator should deprioritize and prefer UC2 or another blueprint)
+poor_fit_signals:
+  - "B2B negotiated pricing (industrial, enterprise software contracts, project-based services) — price discovery opaque, scrape moat collapses"
+  - "Regulated single-price markets (utilities, basic pharma) — no real tier stack"
+  - "Multi-country regional roll-ups — price levels diverge too much for a single matrix"
+  - "Commodity inputs where the price IS the market (cement bulk, steel rebar) — use market_analysis instead"

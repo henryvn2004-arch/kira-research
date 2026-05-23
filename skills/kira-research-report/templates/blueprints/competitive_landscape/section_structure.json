@@ -1,0 +1,186 @@
+{
+  "blueprint_id": "competitive_landscape",
+  "version": 1,
+  "section_count": 15,
+  "structure_description": "15-section competitor-first deep dive. Front matter (cover/methodology/TOC) -> one chapter-divider opens the competitive landscape spine -> two-page executive summary anchored on market structure -> industry structure overview -> top-10 competitor matrix -> 5-year share evolution -> strategic groups map -> three deep-profile pages for the top 3 players -> pricing positioning -> M&A + partnership timeline -> disruptor watch -> methodology endnote.",
+
+  "sections": [
+    {
+      "id": "01_cover",
+      "section_num": "00",
+      "title_pattern": "{{report_title}}",
+      "page_type": "cover",
+      "page_count": 1,
+      "purpose": "Report cover — title, country/industry/year, KIRA branding, report ID, confidential tag",
+      "skip_if": null,
+      "notes": "Pure template fill from parsed topic metadata. Title shape: '{{country}} {{industry}} competitive landscape {{year}}'."
+    },
+    {
+      "id": "02_methodology_inline",
+      "section_num": "01",
+      "title_pattern": "Methodology",
+      "page_type": "methodology_inline",
+      "page_count": 1,
+      "purpose": "Two-column overview of research approach: filings + trade press primary set, secondary cross-checks, KIRA estimate methodology for share splits and pricing tiers, source-tag conventions",
+      "skip_if": null
+    },
+    {
+      "id": "03_toc",
+      "section_num": "02",
+      "title_pattern": "Contents",
+      "page_type": "toc",
+      "page_count": 1,
+      "purpose": "Table of contents — generated from this structure plus page counter",
+      "skip_if": null,
+      "notes": "Generated at assembly time, not content-gen time."
+    },
+    {
+      "id": "04_landscape_divider",
+      "section_num": "03",
+      "title_pattern": "Competitive landscape",
+      "page_type": "divider",
+      "page_count": 1,
+      "purpose": "Dark chapter break opening the report's spine — single thesis statement about the market structure (consolidating / fragmenting / contested / re-segmenting)",
+      "skip_if": null
+    },
+    {
+      "id": "05_exec_summary_snapshot",
+      "section_num": "03",
+      "title_pattern": "{{country}}'s {{industry}} competitive map — {{year}} snapshot",
+      "page_type": "exec_summary_p1",
+      "page_count": 1,
+      "purpose": "Snapshot of the competitive board: 4 callouts (market structure descriptor + HHI, top-3 combined share, biggest mover YoY, disruptor count). 2-col narrative anchored on the structural thesis. One chart: top-10 share bar.",
+      "char_budget_hint": "callout num_max=12 chars, label_max=30 chars, change-line_max=38 chars, narrative_left total_chars_max=1200"
+    },
+    {
+      "id": "06_exec_summary_implications",
+      "section_num": "03",
+      "title_pattern": "Five strategic implications for market participants",
+      "page_type": "exec_summary_p2_implications",
+      "page_count": 1,
+      "purpose": "Five implication cards keyed off the structure read — e.g. 'Position for consolidation', 'Anticipate the segment fracture', 'Hedge pricing exposure', 'Sequence entry behind the disruptor wave', 'Pace M&A windows'. Each anchored by a number from the body.",
+      "char_budget_hint": "implications cards body_max=360 chars each, anchor field references body data",
+      "notes": "This is the only de-cliented advisory voice in the report — keep it imperative-verb led."
+    },
+    {
+      "id": "07_industry_structure",
+      "section_num": "04",
+      "title_pattern": "Industry structure: {{concentration_descriptor}}",
+      "page_type": "competitive_structure",
+      "page_count": 1,
+      "purpose": "HHI index chart + fragmentation index + segment split sidebar. 4-card mini-row showing the top 4 player headlines (rank, parent, share, single recent move).",
+      "char_budget_hint": "sidebar body_max=280 chars, stat_lines_max=4 at 35 chars each, player mini-cards strengths_body_max=140 chars",
+      "skip_if": null
+    },
+    {
+      "id": "08_competitor_matrix",
+      "section_num": "05",
+      "title_pattern": "Top 10 competitor matrix",
+      "page_type": "competitive_structure",
+      "page_count": 1,
+      "purpose": "Table-heavy: top 10 named players with revenue (USD m or local-currency), share %, parent/ownership, segment focus, one-line recent move. Sidebar carries the methodology note for share computation.",
+      "char_budget_hint": "Use competitive_structure layout — 4-card row plus extended table treatment via player_cards_row scaled to two rows of 5 players each; sidebar = methodology + caveat (280 chars). Names <=45 chars, parent <=55 chars.",
+      "notes": "If the page renders over 720px at 10 rows, split into 08a (ranks 1-5) and 08b (ranks 6-10) — page count then becomes 16-18, still within envelope.",
+      "skip_if": "fewer than 6 named players identifiable from research — fall back to a 6-row matrix and flag low coverage"
+    },
+    {
+      "id": "09_share_evolution",
+      "section_num": "06",
+      "title_pattern": "Market share evolution: {{year-4}} to {{year}}",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "5-year stacked-area or grouped-bar chart of top-10 share movement. Narrative left column reads three structural deltas (the winner, the loser, the surprise).",
+      "char_budget_hint": "narrative sections_count_max=3, body_max=350 chars each. Chart data: 10 series x 5 years or top-5 split out + 'others' bucket.",
+      "skip_if": null
+    },
+    {
+      "id": "10_strategic_groups_map",
+      "section_num": "07",
+      "title_pattern": "Strategic groups: {{x_axis}} vs {{y_axis}}",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "2x2 perceptual map placing the top 10 players on two strategic axes (e.g. price tier vs distribution breadth, scale vs digital maturity, premium vs mass, integrated vs specialist). Bubble size = revenue. Narrative left identifies the four group clusters.",
+      "char_budget_hint": "Chart is the centerpiece — title <=60 chars, subtitle <=50 chars. Narrative names the 4 quadrants and the player count in each (sections_count_max=3, body_max=350 chars each).",
+      "skip_if": null,
+      "notes": "Axes chosen by the analyst from the structural read; voice_guide forbids generic 'high/low' framing — use specific strategic descriptors."
+    },
+    {
+      "id": "11_player_profile_rank_1",
+      "section_num": "08",
+      "title_pattern": "{{player_1_name}}",
+      "page_type": "competitive_profile_deep",
+      "page_count": 1,
+      "purpose": "Rank-1 player deep profile — hero block (name, tagline, 3 tags, 4 stats: revenue, share, growth, segment), 2-col body: left = positioning + recent moves; right = strengths list + watch-items.",
+      "char_budget_hint": "Hero stats value_max=8 chars, label_max=18 chars. Body sections body_max=380 chars each. Right col can be list (max 5 items x 90 chars) or prose.",
+      "skip_if": "rank-1 player has insufficient public data — substitute next player up and flag"
+    },
+    {
+      "id": "12_player_profile_rank_2",
+      "section_num": "08",
+      "title_pattern": "{{player_2_name}}",
+      "page_type": "competitive_profile_deep",
+      "page_count": 1,
+      "purpose": "Rank-2 player deep profile — same shape as 11. Voice rule: differentiate this profile from rank-1 by leading with the strategic contrast, not duplicating the rank-1 framing.",
+      "char_budget_hint": "Same as 11.",
+      "skip_if": "rank-2 player has insufficient public data"
+    },
+    {
+      "id": "13_player_profile_rank_3",
+      "section_num": "08",
+      "title_pattern": "{{player_3_name}}",
+      "page_type": "competitive_profile_deep",
+      "page_count": 1,
+      "purpose": "Rank-3 player deep profile — same shape. Often the most interesting profile (the challenger). Lead with the gap-to-#2 narrative.",
+      "char_budget_hint": "Same as 11.",
+      "skip_if": "rank-3 player has insufficient public data"
+    },
+    {
+      "id": "14_pricing_positioning",
+      "section_num": "09",
+      "title_pattern": "Pricing positioning across the top 10",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Pricing chart — typically a horizontal range bar showing each player's price band (entry/mid/premium) against a reference benchmark. Narrative reads the tier structure (e.g. 'three premium, four mid, three value') and the one or two outliers.",
+      "char_budget_hint": "Chart title <=60 chars, subtitle <=50 chars. Narrative sections_count_max=3, body_max=350 chars each.",
+      "skip_if": "industry has opaque pricing (B2B custom-quoted services) — substitute a 'positioning by buyer segment' chart instead"
+    },
+    {
+      "id": "15_ma_timeline",
+      "section_num": "10",
+      "title_pattern": "Recent M&A and partnership activity",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "Timeline chart of M&A deals and named partnerships in the last 24-36 months across the top 10. Narrative reads the dealmaking thesis (the consolidator, the divestor, the cross-border buyer).",
+      "char_budget_hint": "Chart: horizontal timeline with 8-15 events. Narrative sections_count_max=3, body_max=350 chars each.",
+      "skip_if": null
+    },
+    {
+      "id": "16_disruptor_watch",
+      "section_num": "11",
+      "title_pattern": "Disruptor watch: new entrants and adjacent threats",
+      "page_type": "market_data_chart",
+      "page_count": 1,
+      "purpose": "3-6 named disruptors profiled in compact form — new entrants (<3 years), adjacent-industry threats, foreign players entering the country. Each: name, model, funding/parent, share or rev signal, threat-tier. Narrative reads the two or three credible threats vs the noise.",
+      "char_budget_hint": "Chart slot doubles as a 6-card disruptor grid via use_case_grid-style treatment (each card ~200 chars body). Narrative sections_count_max=3, body_max=350 chars each.",
+      "skip_if": "no credible disruptors surfaced in research — replace with a 'demand-side substitution' read on the same page",
+      "notes": "Disruptor scoring is a KIRA primary call — most cards land as [primary] tagged."
+    },
+    {
+      "id": "17_methodology_endnote",
+      "section_num": "12",
+      "title_pattern": "Methodology endnote and source mix",
+      "page_type": "methodology_endnote",
+      "page_count": 1,
+      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages), key data anchors (filings drawn, trade press windows, KIRA estimate methodology for share splits and pricing tiers), contact + next research footer",
+      "skip_if": null,
+      "notes": "Required — buyers value transparent methodology. Auto-generated from source-tag census of the report."
+    }
+  ],
+
+  "assembly_rules": {
+    "page_numbering": "Continuous, format '012 / NN' in page-header counter slot — total NN computed at assembly",
+    "section_numbering": "section_num shared across all pages of a section (player profiles 11/12/13 all carry 'Section 08 · Player profiles')",
+    "divider_placement": "Single dark divider opens the spine after TOC (section 04). Unlike market_analysis, no per-chapter dividers — the competitor matrix is the through-line.",
+    "skip_condition_handling": "If skip_if condition triggers, omit the section AND recompute page counter for all subsequent sections. If 08_competitor_matrix splits to 08a/08b, both share section_num '05'."
+  }
+}

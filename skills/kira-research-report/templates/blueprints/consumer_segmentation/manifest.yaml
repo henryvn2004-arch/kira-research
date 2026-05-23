@@ -1,0 +1,125 @@
+# ============================================================
+# KIRA Research — Blueprint: consumer_segmentation
+#
+# B2C consumer market dissected by demographic + behavioral +
+# psychographic axes. Best fit: F&B, apparel, beauty, mobile,
+# OTT, fintech-consumer, auto-consumer. Output centers on 3
+# persona profiles plus channel / willingness-to-pay / brand
+# affinity dissection. SEA, JP, KR coverage.
+# ============================================================
+
+blueprint_id: consumer_segmentation
+version: 1
+origin: "Phase 2 blueprint — consumer-axes report. Diverges from market_analysis by replacing competitive-landscape spine with persona-led segmentation; no competitive_profile_deep pages, no forecast scenarios."
+
+# Report shape
+shape:
+  total_sections: 16
+  estimated_pages: 16-19
+  estimated_render_time_min: 30-45
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from
+# All defined in schemas/page_schemas.json EXCEPT persona_profile,
+# which is new for this blueprint — see persona_profile slot spec below.
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - divider
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - market_data_chart
+  - persona_profile        # NEW — see slot spec below
+  - methodology_endnote
+
+# --- persona_profile page type — slot spec ---
+# Single-page deep profile of one consumer persona. Layout: left rail
+# label strip + 4-block grid on the right. Repeated 3x in section_structure.
+#
+# Slots (caps in chars, all sentence-case copy unless noted):
+#   label            : mono uppercase persona codename       cap 30   e.g. "URBAN VALUE-SEEKER · 28-34"
+#   headline         : sentence-case persona thesis          cap 70   e.g. "Buys quality once, refuses subscription churn."
+#   demo_stats_grid  : 4-stat grid (age band / income / location / household)
+#                      each stat = { number cap 12, unit cap 8, label cap 30 (mono UC), source_tag }
+#   behavior_grid    : 4-card behavior grid (purchase frequency,
+#                      basket size, channel mix, decision driver)
+#                      each card = { metric cap 14, label cap 30, change_line cap 38, source_tag }
+#   quote_callout    : one verbatim or paraphrased consumer quote
+#                      body cap 180 chars + attribution cap 40 chars (e.g. "F, 31, Jakarta · IDI panel n=24")
+#   channel_pref_bar : horizontal stacked-bar SVG showing % spend across
+#                      5 channels (modern trade, traditional, e-comm, social-commerce, direct)
+#                      + channel_pref_caption cap 110 chars
+#   wtp_anchor       : single bold WTP figure (cap 12 num + cap 8 unit) +
+#                      WTP change_line cap 38 chars + source_tag
+#   source_strip     : compressed citation footer cap 110 chars mono UC
+#
+# Char-budget envelope per page (persona_profile): ~1400 body chars total.
+# All numerics carry inline source tags ([primary]/[secondary]/[estimate]).
+
+# Research budget
+research:
+  query_count_target: 22
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 30       # KIRA synthesis — persona archetypes triangulated from panel + survey data
+    secondary_pct: 50     # cited external — statistics bureaus, NPS panels, consumer surveys
+    estimate_pct: 20      # KIRA estimate with anchor — WTP and segment-size triangulation
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 19000-24000
+  callouts_target: 16-20         # heavier callout density — segmentation thrives on stat blocks
+  charts_target: 6-9             # fewer than market_analysis — persona pages carry small-multiples not big charts
+  persona_profiles_target: 3
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages ≤ 720px rendered height"
+  - source_coverage: "Every quantitative claim has [primary|secondary|estimate|user-input] tag"
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
+  - char_budgets: "All slot char counts ≤ schema cap (callout label ≤ 30, change-line ≤ 38)"
+  - persona_distinctness: "Each persona's demo_stats + behavior_grid must differ from the other two on ≥ 3 of 8 axes; if not, regen"
+  - quote_authenticity: "Quote callouts must reference a real panel / IDI / survey or carry [estimate] tag with anchor methodology"
+
+# Output mode
+output:
+  default_mode: publish              # auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # template validated; skip user confirmation
+
+# Orchestrator match threshold
+orchestrator:
+  match_threshold: 0.7
+  trigger_industry_hints:
+    - "F&B"
+    - "apparel"
+    - "beauty"
+    - "personal care"
+    - "mobile"
+    - "smartphone"
+    - "OTT"
+    - "streaming"
+    - "fintech consumer"
+    - "consumer fintech"
+    - "auto consumer"
+    - "passenger vehicle"
+  trigger_intent_hints:
+    - "segmentation"
+    - "persona"
+    - "consumer"
+    - "willingness to pay"
+    - "channel preference"
+    - "brand affinity"
