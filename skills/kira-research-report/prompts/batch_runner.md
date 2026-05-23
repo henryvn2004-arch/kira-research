@@ -112,11 +112,58 @@ If subagent fails → jump to Step 6 with error.
 
 ---
 
-## Step 6: Update queue + commit
+## Step 6: Auto-publish to Supabase + commit
 
 ### Success path (all 3 PDFs generated)
 
-Update the row:
+**Step 6a — Insert living_reports + 3 report_translations rows, status=published.**
+
+Owner policy (2026-05-23): batch fires auto-publish on success. The pipeline runs sequentially per section, so any failure aborts the whole report — a successful fire means all sections passed gen + render + anti-positioning grep. If a published report later proves wrong, delete + regen rather than gating on human review.
+
+Build the SQL via a Node script (see `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` for the template — copy + adapt per-topic). Key fields per locale:
+- `title` — extract from `<h1 class="cover-title">` text in each language's HTML
+- `eyebrow` — `<COUNTRY UPPER> · <INDUSTRY UPPER> · MARKET ANALYSIS` pattern (translate per locale)
+- `preview` JSONB:
+  - `lede` — 1-paragraph summary, ~400 chars, based on cover-subtitle + exec p1 intro
+  - `paragraphs` — 2 paragraphs (~300 chars each) summarizing scope + AI section
+  - `chart` — `{title, subtitle, bars[{pct, label, value}]}` derived from the exec-chart on page 4 (single bar series, pct relative to max)
+- `toc` JSONB array of 12 entries — extract from the `.toc-col li` elements
+- `pdf_url` — **GitHub raw URL pattern**: `https://raw.githubusercontent.com/henryvn2004-arch/kira-research/main/skills/kira-research-report/outputs/batch/<id>/<locale>.pdf`. The `library-content.js` `resolvePdfUrl()` passes external URLs straight through. (TODO: replace with Supabase Storage upload when `SUPABASE_SERVICE_KEY` is set on the batch machine — requires anonymous service key, which currently lives only in Vercel env.)
+
+Use dollar-quoted SQL literals (`$kbat$...$kbat$`) for all strings carrying apostrophes, accents, or JSON braces (see `[[feedback_seed_strings_dollar_quoted]]`). Execute via Supabase MCP:
+
+```
+mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__execute_sql
+  project_id: iygoynbnscednfzdsflc
+  query: <generated SQL>
+```
+
+SQL pattern (CTE + cross-join values, idempotent on slug):
+
+```sql
+WITH new_report AS (
+  INSERT INTO living_reports (slug, country, industry, year, pages, price, currency, status, published_at)
+  VALUES ($kbat$<slug>$kbat$, $kbat$<country>$kbat$, $kbat$<industry>$kbat$, <year>, <pages>, 39, 'USD', 'published', now())
+  ON CONFLICT (slug) DO UPDATE SET updated_at = now()
+  RETURNING id
+)
+INSERT INTO report_translations (report_id, locale, title, eyebrow, preview, toc, pdf_url, status, published_at)
+SELECT new_report.id, t.locale, t.title, t.eyebrow, t.preview::jsonb, t.toc::jsonb, t.pdf_url, 'published', now()
+FROM new_report
+CROSS JOIN (VALUES
+  ('en', ...), ('ja', ...), ('ko', ...)
+) AS t(locale, title, eyebrow, preview, toc, pdf_url)
+ON CONFLICT DO NOTHING
+RETURNING report_id, locale, title;
+```
+
+Verify with two cache-busted curls:
+1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` should contain the new slug with correct title/excerpt
+2. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all three return 200
+
+**Step 6b — Update queue + commit + push.**
+
+Update the queue row:
 - `status` → `done`
 - `output_paths` → `skills/kira-research-report/outputs/batch/<id>/en.pdf|skills/kira-research-report/outputs/batch/<id>/ja.pdf|skills/kira-research-report/outputs/batch/<id>/ko.pdf`
 - `date_completed` → today's ISO date (YYYY-MM-DD)
@@ -126,9 +173,11 @@ Commit + push:
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
-git commit -m "batch: complete ${id} (EN+JA+KO)"
+git commit -m "batch: complete ${id} (EN+JA+KO, published)"
 git push origin main
 ```
+
+The git commit must happen AFTER Step 6a's SQL insert succeeds. If the SQL insert fails, jump to the failure path — queue stays at in_progress + no orphan public page exists.
 
 ### Failure path (any subagent errored)
 
