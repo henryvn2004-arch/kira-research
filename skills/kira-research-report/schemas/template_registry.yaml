@@ -62,11 +62,11 @@ blueprints:
 
   # ------------------------------------------------------------
   # Phase 2 blueprints (added 2026-05-23). Each one differs from
-  # market_analysis on its center of gravity. Several depend on
-  # new page_types not yet in schemas/page_schemas.json — see the
-  # `pending_page_types` note in each manifest. Until those schemas
-  # land, the orchestrator should warn but allow rendering; the
-  # affected pages may fall back to design-mode SVG generation.
+  # market_analysis on its center of gravity. All 5 new page_types
+  # they reference (persona_profile, policy_timeline, risk_matrix,
+  # channel_waterfall, price_quality_matrix) are defined in
+  # schemas/page_schemas.json and templates/{master_styles.css,
+  # page_components.html}.
   # ------------------------------------------------------------
 
   - id: competitive_landscape
@@ -130,8 +130,6 @@ blueprints:
         required: true
         format: "current year snapshot with 3-year behavioral trend"
 
-    pending_page_types: ["persona_profile"]
-
     default_output_mode: publish
     requires_confirm_step: false
 
@@ -165,8 +163,6 @@ blueprints:
         required: true
         format: "current regime with historical timeline + pending changes"
 
-    pending_page_types: ["policy_timeline"]
-
     default_output_mode: publish
     requires_confirm_step: false
 
@@ -177,16 +173,18 @@ blueprints:
 
   - id: entry_strategy
     path: templates/blueprints/entry_strategy/
-    name: "Entry Strategy (company × target market × industry)"
+    name: "Entry Strategy (qualitative market briefing × country × industry)"
     short_description: >
-      17-section decision document for a multinational entering a SEA market.
-      Compresses macro/competitor context, expands on regulatory licensing,
-      partnership shortlist, capex/opex build, 3-year P&L scenario, 5x5 risk
-      matrix, and 36-month phased rollout.
-    pattern_origin: "Designed 2026-05-23; sample target = expansion committee briefing"
-    section_count: 17
-    estimated_pages: 17-20
-    estimated_runtime_min: 40-60
+      14-section qualitative market briefing for a company considering entry
+      into a SEA market. Directional reads on opportunity, competitive
+      intensity, operating environment (regulatory/cultural/infrastructure),
+      qualitative risk matrix (LOW/MED/HIGH, no numeric scores), and phased
+      rollout milestones. Does NOT include P&L, capex, opex modeling — those
+      are out of scope for the qualitative framing.
+    pattern_origin: "Designed 2026-05-23 v2 (qualitative pivot per owner directive)"
+    section_count: 14
+    estimated_pages: 13-15
+    estimated_runtime_min: 30-45
 
     topic_fit:
       country_scope:
@@ -195,20 +193,17 @@ blueprints:
         countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
       industry_domains:
         any:
-          keywords: ["enter", "entry strategy", "market entry", "expansion", "launch", "go-to-market", "GTM", "JV", "joint venture", "partnership", "subsidiary", "greenfield", "acquisition target"]
+          keywords: ["enter", "entry strategy", "market entry", "expansion", "launch", "go-to-market", "GTM", "JV", "joint venture", "partnership", "subsidiary", "greenfield"]
       year_scope:
         required: true
-        format: "current year baseline with 3-year forward P&L scenarios"
-
-    pending_page_types: ["pnl_scenario", "risk_matrix"]
+        format: "current year qualitative read with directional outlook"
 
     default_output_mode: publish
-    requires_confirm_step: true   # decision document; recommend confirm before final
-    confirm_step_reason: "Entry strategy includes capex + P&L commitments — recommend human review of scenario assumptions before publish"
+    requires_confirm_step: false   # qualitative briefing — no quantitative commitments to gate
 
     poor_fit_signals:
+      - "Topics that need P&L / capex / opex modeling (qualitative blueprint does not cover these)"
       - "Topics that aren't from a company POV (use market_analysis instead)"
-      - "Highly speculative entries (no comparable peer for capex anchor)"
       - "Single-channel entries that don't need full GTM scope"
 
   - id: distribution_analysis
@@ -238,8 +233,6 @@ blueprints:
         required: true
         format: "current year channel mix with 5-year historical trend"
 
-    pending_page_types: ["channel_waterfall"]
-
     default_output_mode: publish
     requires_confirm_step: false
 
@@ -250,14 +243,15 @@ blueprints:
 
   - id: pricing_strategy
     path: templates/blueprints/pricing_strategy/
-    name: "Pricing Strategy (price tiers × industry × country)"
+    name: "Pricing Strategy (market pricing overview × industry × country)"
     short_description: >
-      13-section pricing + positioning deep dive. Maps premium/mid/mass/value
-      tiers, competitor price points, price-quality perceptual matrix,
-      willingness-to-pay by segment, and promotional norms. Best for B2C
-      consumer goods + clear-priced services (telco, insurance, subscription).
-      Halts on B2B opaque-pricing topics.
-    pattern_origin: "Designed 2026-05-23; sample target = pricing committee briefing"
+      13-section market pricing overview. Maps premium/mid/mass/value tier
+      structure, indicative competitor price bands (not per-SKU detail),
+      price-quality perceptual matrix, qualitative WTP read by segment, and
+      directional promotional patterns. Proceeds on partial data with
+      coverage disclosure in methodology endnote — does NOT halt on B2B
+      opaque-pricing topics.
+    pattern_origin: "Designed 2026-05-23 v2 (general market view pivot per owner directive)"
     section_count: 13
     estimated_pages: 13-15
     estimated_runtime_min: 25-40
@@ -276,17 +270,15 @@ blueprints:
         keywords: ["pricing strategy", "price point", "premium positioning", "willingness-to-pay", "price elasticity", "discount", "promotional", "tiered pricing", "freemium", "subscription model"]
       year_scope:
         required: true
-        format: "current year price snapshot with 2-3 year change vector"
-
-    pending_page_types: ["price_quality_matrix"]
+        format: "current year price snapshot with directional change vector"
 
     default_output_mode: publish
     requires_confirm_step: false
 
     poor_fit_signals:
-      - "B2B negotiated-pricing markets (orchestrator halts and routes to UC2)"
+      - "Buyers who explicitly need per-SKU pricing committee detail (use design mode)"
       - "Commodity markets with thin price differentiation"
-      - "Markets where retail price scraping isn't feasible"
+      - "Markets where price discovery is fundamentally impossible (offline-only negotiated B2B)"
 
   # ------------------------------------------------------------
   # Future blueprints land below as new patterns solidify. Examples

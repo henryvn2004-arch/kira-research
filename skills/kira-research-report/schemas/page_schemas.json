@@ -350,6 +350,239 @@
         },
         "disclaimer": {"required": true, "max_chars": 240}
       }
+    },
+
+    "persona_profile": {
+      "description": "Phase H — consumer_segmentation: single-page deep profile of one consumer persona. Repeated 3x per report (one page per persona). Layout: header strip + 4-stat demo grid + 4-card behavior grid + quote callout + channel preference bar + WTP anchor + source line.",
+      "blueprint": "consumer_segmentation",
+      "slots": {
+        "h1": {"max_chars": 70, "lines_max": 1, "note": "Persona headline thesis, sentence-case (e.g. 'Buys quality once, refuses subscription churn.')"},
+        "subhead": {"max_chars": 180, "lines_max": 2, "allow_inline_bold": true},
+        "persona_label": {
+          "max_chars": 30,
+          "format": "MONO UPPERCASE",
+          "note": "Persona codename, e.g. 'URBAN VALUE-SEEKER · 28-34'"
+        },
+        "demo_stats_grid": {
+          "count": 4,
+          "row_height_px": 100,
+          "axes": ["age_band", "income", "location", "household"],
+          "each": {
+            "label_max_chars": 30,
+            "num_max_chars": 12,
+            "unit_max_chars": 8,
+            "source_tag": ["primary", "secondary", "estimate"]
+          }
+        },
+        "behavior_grid": {
+          "count": 4,
+          "row_height_px": 110,
+          "axes": ["purchase_frequency", "basket_size", "channel_mix", "decision_driver"],
+          "each": {
+            "metric_max_chars": 14,
+            "label_max_chars": 30,
+            "change_line_max_chars": 38,
+            "source_tag": ["primary", "secondary", "estimate"]
+          }
+        },
+        "quote_callout": {
+          "body_max_chars": 80,
+          "attribution_max_chars": 40,
+          "note": "Verbatim or [estimate]-tagged composite. Attribution example: 'F, 31, Jakarta · IDI panel n=24'"
+        },
+        "channel_pref_bar": {
+          "row_height_px": 70,
+          "channels_count_min": 5,
+          "channels_count_max": 6,
+          "channel_label_max_chars": 18,
+          "channel_pct_max_chars": 6,
+          "caption_max_chars": 110
+        },
+        "wtp_anchor": {
+          "num_max_chars": 12,
+          "unit_max_chars": 8,
+          "change_line_max_chars": 38,
+          "source_tag": ["primary", "secondary", "estimate"]
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1400
+    },
+
+    "policy_timeline": {
+      "description": "Phase H — regulatory_brief: horizontal SVG policy timeline spanning page width with 5-8 dated markers. Each marker carries date + label + brief body + winner/loser chip. Right-rail callouts anchor dominant winner / dominant loser / biggest pending change.",
+      "blueprint": "regulatory_brief",
+      "slots": {
+        "h1": {"max_chars": 60, "lines_max": 1, "note": "Sentence-case, e.g. 'Policy timeline: EV subsidy regime'"},
+        "subhead": {"max_chars": 180, "lines_max": 2, "allow_inline_bold": true},
+        "timeline_svg": {
+          "orientation": "horizontal",
+          "row_height_px": 280,
+          "markers_min": 5,
+          "markers_max": 8,
+          "each": {
+            "date_format": "YYYY-MM",
+            "date_max_chars": 10,
+            "label_max_chars": 16,
+            "body_max_chars": 40,
+            "winner_loser_indicator": ["winner", "loser", "neutral", "mixed", "pending"],
+            "chip_label_max_chars": 8,
+            "source_tag": ["primary", "secondary", "estimate"]
+          },
+          "note": "When labels would overlap horizontally, alternate body text above/below the axis line."
+        },
+        "right_rail_callouts": {
+          "count_min": 2,
+          "count_max": 3,
+          "anchors": ["dominant_winner", "dominant_loser", "biggest_pending"],
+          "each": {
+            "tag_label_max_chars": 18,
+            "title_max_chars": 30,
+            "body_max_chars": 140,
+            "source_tag": ["primary", "secondary", "estimate"]
+          }
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1500
+    },
+
+    "risk_matrix": {
+      "description": "Phase H — entry_strategy (QUALITATIVE variant): 5x5 likelihood-by-impact heatmap with LOW/MED/HIGH shading only. 8-12 named risks placed in cells; remaining cells empty. Right-rail 3-card sidebar expands the top likelihood risk, top impact risk, top combined risk. NO numeric scores.",
+      "blueprint": "entry_strategy",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+        "matrix_grid": {
+          "row_height_px": 380,
+          "axis_labels": {
+            "x_axis": "Likelihood",
+            "x_axis_bands": ["Rare", "Unlikely", "Possible", "Likely", "Almost certain"],
+            "y_axis": "Impact",
+            "y_axis_bands": ["Marginal", "Minor", "Moderate", "Major", "Severe"],
+            "band_label_max_chars": 14
+          },
+          "risk_cell_count_min": 8,
+          "risk_cell_count_max": 12,
+          "cell_label_max_chars": 22,
+          "severity_palette": {
+            "low": "#15803D",
+            "medium": "#D97706",
+            "high": "#B91C1C"
+          },
+          "severity_labels": {
+            "low": "LOW",
+            "medium": "MED",
+            "high": "HIGH"
+          },
+          "no_numeric_scores": true,
+          "note": "Severity is conveyed via cell fill + sidebar tag only — never a 1-5 score, never a composite number."
+        },
+        "key_risks_sidebar": {
+          "count": 3,
+          "anchors": ["top_likelihood", "top_impact", "top_combined"],
+          "each": {
+            "risk_name_max_chars": 30,
+            "risk_name_format": "MONO UPPERCASE",
+            "severity_tag_max_chars": 14,
+            "body_max_chars": 180,
+            "source_tag": ["primary", "secondary", "estimate"]
+          }
+        },
+        "legend_strip": {"max_chars": 90, "note": "e.g. 'Green: monitor — Amber: mitigate — Red: gate the launch'"},
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1400
+    },
+
+    "channel_waterfall": {
+      "description": "Phase H — distribution_analysis: horizontal stacked-bar showing 4-7 channel links from brand ex-factory to consumer shelf. Each segment = link name + margin % at that link with source tag. Subtitle anchors total gross margin and biggest margin keeper.",
+      "blueprint": "distribution_analysis",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true, "note": "Anchor the total brand→consumer gross margin and call out the biggest margin keeper inline."},
+        "waterfall_chart": {
+          "row_height_px": 280,
+          "layers_min": 4,
+          "layers_max": 7,
+          "canonical_layers": [
+            "brand_ex_factory",
+            "importer_or_principal",
+            "master_distributor",
+            "sub_distributor",
+            "modern_trade_retailer",
+            "traditional_trade",
+            "e_commerce_platform_take",
+            "last_mile_logistics",
+            "consumer_shelf_price"
+          ],
+          "each_segment": {
+            "layer_label_max_chars": 16,
+            "margin_pct_max_chars": 8,
+            "margin_pct_unit_max_chars": 4,
+            "take_note_max_chars": 40,
+            "source_tag": ["primary", "secondary", "estimate"]
+          },
+          "note": "Sum of margin segments should approximate 100% of consumer shelf price. Largest segment gets an emphasis stroke."
+        },
+        "bottom_commentary": {
+          "sections_count": 2,
+          "per_section": {
+            "heading_max_chars": 30,
+            "body_max_chars": 220,
+            "paragraphs_max": 1,
+            "allow_inline_bold": true
+          },
+          "note": "Left section reads the structural takeaway. Right section lists 2-3 anomalies (compression points, fat layers, disintermediation risks)."
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1400
+    },
+
+    "price_quality_matrix": {
+      "description": "Phase H — pricing_strategy: 2x2 perceptual scatter mapping brands on perceived quality (y-axis) by price (x-axis). 4 quadrant labels frame strategic positioning. 6-12 brand points plotted with optional dot-size encoding for share. Right-rail narrative interprets contested quadrant + opportunity gap.",
+      "blueprint": "pricing_strategy",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+        "matrix_chart": {
+          "row_height_px": 380,
+          "x_axis_label_max_chars": 24,
+          "y_axis_label_max_chars": 24,
+          "x_axis_unit": "indicative price band (low / mid / high) or local-currency band midpoint",
+          "y_axis_unit": "quality score 0-100 (KIRA composite) OR survey perception index",
+          "quadrant_labels": {
+            "count": 4,
+            "each_max_chars": 24,
+            "positions": {
+              "top-right": "premium fortress / NE",
+              "top-left": "overpriced / NW",
+              "bottom-right": "value sweet-spot / SE",
+              "bottom-left": "mass-market core / SW"
+            },
+            "note": "Labels should be category-specific, not generic. Each <= 24 chars."
+          },
+          "brand_points": {
+            "count_min": 6,
+            "count_max": 12,
+            "each": {
+              "label_max_chars": 18,
+              "dot_size_meaning": "optional — encodes share or revenue",
+              "source_tag": ["primary", "secondary", "estimate"]
+            }
+          }
+        },
+        "sidebar_narrative": {
+          "heading_max_chars": 30,
+          "body_max_chars": 380,
+          "paragraphs_max": 2,
+          "allow_inline_bold": true,
+          "note": "Identify the most contested quadrant + the key opportunity gap (empty quadrant or thin band)."
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1500
     }
 
   },

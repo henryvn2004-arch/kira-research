@@ -1,25 +1,28 @@
 # ============================================================
 # KIRA Research — Blueprint: pricing_strategy
 #
-# Pricing + positioning deep dive for a single country x industry.
-# Centerpieces are the competitor price-points table and the
-# price-quality perceptual matrix. Best fit: B2C consumer goods,
-# services with discoverable shelf prices (insurance, telco,
-# subscription, streaming, food delivery, QSR, mass beauty).
-# AVOID: B2B negotiated pricing (opaque price discovery; the
-# scrape-and-matrix moat collapses there). Use market_analysis
-# or competitive_landscape instead for those topics.
+# General market pricing + positioning overview for a single
+# country x industry. Centerpiece is the price-quality
+# perceptual matrix; supporting pages frame the tier stack,
+# indicative competitor price bands, segment WTP, pricing
+# models, and directional promo patterns. Best fit: B2C
+# consumer goods, services with visible market price tiers
+# (telco, subscription, streaming, food delivery, QSR, mass
+# beauty). Also workable for B2B categories — if per-SKU
+# price detail is sparse, proceed with tier-level indicative
+# bands and qualitative directional commentary instead of
+# routing the topic away.
 # ============================================================
 
 blueprint_id: pricing_strategy
-version: 1
-origin: "Phase H1 — pricing/positioning companion to market_analysis. Centerpieces are the competitor price-points table + price-quality matrix; remaining pages frame the tier stack, segment WTP, and promo norms."
+version: 2
+origin: "Phase H1 — pricing/positioning companion to market_analysis. Revised in Phase H1.1 toward a general market pricing overview: less per-SKU scraping, more tier-level indicative bands and qualitative direction."
 
 # Report shape
 shape:
   total_sections: 13
   estimated_pages: 13-15
-  estimated_render_time_min: 28-42
+  estimated_render_time_min: 26-40
   locale: en
   page_dim_px: { width: 1280, height: 720 }
 
@@ -32,8 +35,8 @@ page_types_used:
   - divider
   - exec_summary_p1
   - exec_summary_p2_implications
-  - market_data_chart            # 4-tier stack chart, elasticity table, WTP bars, pricing-models table, promo norms
-  - competitive_profile_deep     # premium-positioning case studies (1 winner + 1 failure on a shared template)
+  - market_data_chart            # 4-tier stack, indicative price bands, WTP bars, pricing-models table, promo pattern summary
+  - competitive_profile_deep     # premium-positioning case studies (2 successes; failure optional)
   - price_quality_matrix         # NEW page type — see schema sketch below
   - methodology_endnote
 
@@ -49,7 +52,7 @@ page_types_used:
 #       "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
 #       "matrix_chart": {
 #         "row_height_px": 380,
-#         "x_axis_label_max_chars": 24,        # e.g. "Average shelf price (USD)"
+#         "x_axis_label_max_chars": 24,        # e.g. "Indicative price band"
 #         "y_axis_label_max_chars": 24,        # e.g. "Perceived quality index"
 #         "quadrant_labels": {
 #           "count": 4,
@@ -61,7 +64,7 @@ page_types_used:
 #           "count_max": 12,
 #           "each": {
 #             "label_max_chars": 18,           # brand name on the dot
-#             "x_value_unit": "USD or local-currency price index",
+#             "x_value_unit": "indicative price band (low / mid / high) or local-currency band midpoint",
 #             "y_value_unit": "quality score 0-100 (KIRA composite) OR survey perception index",
 #             "dot_size_meaning": "optional — encodes share or revenue",
 #             "source_tag": ["primary", "secondary", "estimate"]
@@ -82,7 +85,8 @@ page_types_used:
 # has > 12 brands worth plotting, split into 2 matrix pages (e.g. by
 # segment: prepaid vs postpaid, mass vs premium). Quadrant labels
 # should be specific to the category, not generic ("Premium fortress"
-# > "High price / high quality").
+# > "High price / high quality"). Brand placement is qualitative —
+# a tier-level band is acceptable; per-SKU price points are not required.
 # -----------------------------------------------------------
 
 # Research budget
@@ -90,16 +94,16 @@ research:
   query_count_target: 20
   query_strategy_file: query_strategy.json
   source_mix_target:
-    primary_pct: 35       # higher — KIRA-collected price scrapes per SKU/channel are the moat here
-    secondary_pct: 45     # cited external — survey vendors, regulator filings, listed-company price lists
-    estimate_pct: 20      # KIRA estimate with anchor — elasticity inference, WTP segmentation, premium-tier sizing
+    primary_pct: 25       # KIRA synthesis — channel scans + tier-band observation, not exhaustive per-SKU scraping
+    secondary_pct: 55     # cited external — surveys, regulator filings, listed-company tier disclosure, trade press
+    estimate_pct: 20      # KIRA estimate with anchor — WTP segmentation, premium-tier sizing, promo direction
 
 # Char budget envelope (informational — strict per-slot caps in page_schemas.json)
 content_volume:
   total_body_chars_target: 16000-21000
   callouts_target: 9-12
-  charts_target: 7-10                # incl. 1 price-quality matrix, 1 tier stack, 1 elasticity, 1 WTP, 1 promo norms
-  competitor_skus_in_table: 10       # top 10 by share — current price + 2yr change
+  charts_target: 6-9                 # incl. 1 price-quality matrix, 1 tier stack, 1 indicative price bands, 1 WTP, 1 promo pattern
+  competitor_brands_in_band_table: 5-6   # 5-6 brands with tier label + indicative price band + directional change
 
 # Quality gates
 quality_gates:
@@ -108,10 +112,10 @@ quality_gates:
   - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
   - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
   - char_budgets: "All slot char counts <= schema cap; callout label <= 30 chars; change-line <= 38 chars"
-  - tier_coverage: "All 4 tiers (premium / mid / mass / value) sized with share + growth"
+  - tier_coverage: "All 4 tiers (premium / mid / mass / value) sized with share + directional growth (qualitative ranges OK)"
   - matrix_brand_count: "Price-quality matrix carries 6-12 brand points, every point sourced"
-  - sku_table_completeness: "Competitor price table has 10 SKUs with current price, 2yr change %, channel anchor"
-  - b2b_guardrail: "If topic resolves to B2B negotiated pricing, halt and route to UC2 (Design Mode) — this blueprint is not appropriate"
+  - price_band_completeness: "Indicative price-band table covers 5-6 brands with tier label, price band (low-high range), directional change (up/stable/down) — point-precision per-SKU prices not required"
+  - partial_data_policy: "If pricing data is sparse, proceed with what is available. Tier-level indicative bands + qualitative directional commentary are acceptable substitutes for per-SKU detail. Do NOT halt the pipeline; do flag thin coverage in the methodology endnote."
 
 # Output mode
 output:
@@ -134,14 +138,14 @@ match_threshold: 0.7
 
 # Best-fit signals (orchestrator hints — non-binding)
 best_fit_signals:
-  - "Topic phrasing leads with 'pricing', 'price strategy', 'price points', 'price positioning', 'willingness to pay', 'premium positioning'"
-  - "Industry has discoverable shelf or rate-card prices (B2C consumer goods, telco, insurance, subscription, streaming, food delivery, QSR, mass beauty)"
+  - "Topic phrasing leads with 'pricing', 'price strategy', 'price points', 'price positioning', 'willingness to pay', 'premium positioning', 'market pricing overview'"
+  - "Industry has visible market price tiers (B2C consumer goods, telco, insurance, subscription, streaming, food delivery, QSR, mass beauty)"
   - "Country scope is single (price levels are country-anchored; APAC roll-ups dilute the matrix)"
-  - "Buyer is a pricing / commercial / brand-positioning team, not a sizing-only buyer"
+  - "Buyer wants the pricing landscape framed, not a per-SKU pricing-committee deliverable"
 
-# Poor-fit signals (orchestrator should deprioritize and prefer UC2 or another blueprint)
+# Poor-fit signals (orchestrator should deprioritize and prefer another blueprint)
 poor_fit_signals:
-  - "B2B negotiated pricing (industrial, enterprise software contracts, project-based services) — price discovery opaque, scrape moat collapses"
   - "Regulated single-price markets (utilities, basic pharma) — no real tier stack"
   - "Multi-country regional roll-ups — price levels diverge too much for a single matrix"
   - "Commodity inputs where the price IS the market (cement bulk, steel rebar) — use market_analysis instead"
+  - "Buyer explicitly needs a per-SKU pricing-committee deep dive — this blueprint is now a general market overview, not a granular pricing audit"

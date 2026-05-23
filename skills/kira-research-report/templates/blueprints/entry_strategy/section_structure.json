@@ -1,8 +1,8 @@
 {
   "blueprint_id": "entry_strategy",
-  "version": 1,
-  "section_count": 17,
-  "structure_description": "17-section entry-strategy brief. Front matter (cover/methodology/TOC) -> single dark divider opening the entry-strategy spine -> 2-page exec summary that recommends one entry mode and a year-3 ambition -> compressed market and competitive context (3 pages total) -> regulatory and channel mechanics -> partner shortlist -> capex + opex build -> 3-line P&L scenario chart (centerpiece) -> 5x5 risk matrix -> phased entry plan timeline -> methodology endnote. Differs from market_analysis by collapsing 8+ sizing pages into 3 compressed pages and spending the rest on actionable entry mechanics.",
+  "version": 2,
+  "section_count": 14,
+  "structure_description": "14-section entry-strategy brief, qualitative-only variant. Front matter (cover/methodology/TOC) -> single dark divider opening the entry-strategy spine -> 2-page exec summary that recommends one entry mode framed qualitatively -> compressed market and competitive context (3 pages: market opportunity, target segment, competitive intensity) -> regulatory + channel + partner mechanics (3 pages) -> operating-environment qualitative read (1 page combining regulatory climate / cultural fit / infrastructure readiness as directional language) -> 5x5 qualitative risk matrix (LOW/MED/HIGH, no numeric scoring) -> phased entry plan timeline (qualitative milestones, not numeric) -> methodology endnote. v2 drops capex_requirements, opex_staffing_ramp, and pnl_scenario sections from v1 and replaces with qualitative market / competitive / operating-environment reads.",
 
   "sections": [
     {
@@ -21,7 +21,7 @@
       "title_pattern": "Methodology",
       "page_type": "methodology_inline",
       "page_count": 1,
-      "purpose": "Two-column overview of research approach: primary sources (operator interviews where available), secondary sources, KIRA scenario triangulation methodology, source-tagging conventions",
+      "purpose": "Two-column overview of research approach: primary sources (operator interviews where available), secondary sources, KIRA qualitative triangulation methodology, source-tagging conventions. Notes that this brief is qualitative-only — no P&L, no capex modeling, no opex ramp.",
       "skip_if": null
     },
     {
@@ -50,39 +50,39 @@
       "title_pattern": "{{country}}'s {{industry}} entry - {{year}} snapshot",
       "page_type": "exec_summary_p1 + exec_summary_p2_implications",
       "page_count": 2,
-      "purpose": "Two-page executive summary. Page 1 (exec_summary_p1): 4 callouts (addressable opportunity USD, recommended entry mode, year-3 revenue ambition, payback period) + 2-col narrative leading with the recommendation + 1 anchor chart (compressed opportunity sizing). Page 2 (exec_summary_p2_implications): 5-card grid framing the entry decision across the canonical pathways - Build / Partner / Acquire / License / Stay out. One card per pathway, even when one is clearly recommended; the report shows the option set, not just the chosen path.",
+      "purpose": "Two-page executive summary. Page 1 (exec_summary_p1): 4 callouts (addressable opportunity directional read, recommended entry mode, competitive intensity tag, operating-environment tag) + 2-col narrative leading with the recommendation + 1 anchor chart (compressed opportunity sizing). Page 2 (exec_summary_p2_implications): 5-card grid framing the entry decision across the canonical pathways - Build / Partner / Acquire / License / Stay out. One card per pathway, even when one is clearly recommended; the report shows the option set, not just the chosen path.",
       "skip_if": null,
-      "char_budget_hint": "Page 1 callouts: num_max=12, label_max=30 (mono UC), change_line_max=38; narrative_left total_chars_max=1200. Recommended entry mode MUST appear in one callout AND in narrative paragraph 1. Page 2 cards: verb-led headline cap 60, body cap 360, anchor number with source tag. Each pathway card explicitly recommends or rules out the path - no fence-sitting. Recommended pathway carries a visual marker (border accent or checkmark) at render time."
+      "char_budget_hint": "Page 1 callouts: num_max=12, label_max=30 (mono UC), change_line_max=38; narrative_left total_chars_max=1200. Recommended entry mode MUST appear in one callout AND in narrative paragraph 1. Year-3 ambition is qualitative (e.g. 'top-3 contender' / 'niche premium foothold') rather than a numeric revenue target. Page 2 cards: verb-led headline cap 60, body cap 360, anchor (qualitative or quantitative) with source tag. Each pathway card explicitly recommends or rules out the path - no fence-sitting. Recommended pathway carries a visual marker (border accent or checkmark) at render time."
     },
     {
-      "id": "06_market_opportunity_sizing",
+      "id": "06_market_opportunity_qualitative",
       "section_num": "05",
-      "title_pattern": "Market opportunity: {{industry}} {{country}} sizing",
+      "title_pattern": "Market opportunity: qualitative read on {{industry}} in {{country}}",
       "page_type": "market_data_chart",
       "page_count": 1,
-      "purpose": "Compressed market_analysis-style sizing: total market USD bn, historical + forecast CAGR, addressable subset for an entrant (not whole market). Single page only - the entry blueprint assumes sizing is context, not the centerpiece. Chart: addressable opportunity wedge inside total market.",
+      "purpose": "Qualitative read of the market opportunity for an entrant. Directional language: 'material and accelerating' / 'modest but steady' / 'contested and consolidating' / 'fragmenting and contested'. One anchor chart showing total market size + addressable wedge (sizing carries [secondary] or [estimate] tag but the page DOES NOT pretend to be a sizing report). Body argues why this market matters now (or doesn't) for an entrant, using calibrated language from the voice guide.",
       "skip_if": null,
-      "char_budget_hint": "If topic genuinely needs deeper sizing, orchestrator should suggest market_analysis blueprint instead. This page caps at 1; do not expand."
+      "char_budget_hint": "Body uses calibrated voice ('material', 'modest', 'directional', 'at inflection', 'consolidating'). 1-2 anchor numbers maximum per page with source tags. Avoid full sizing tables — single addressable-opportunity chart with a 1-paragraph qualitative interpretation."
     },
     {
       "id": "07_target_customer_segment",
       "section_num": "06",
-      "title_pattern": "Target customer segment: definition and sizing",
+      "title_pattern": "Target customer segment: definition and qualitative fit",
       "page_type": "market_data_chart",
       "page_count": 1,
-      "purpose": "Named target customer segment (e.g. urban middle-class households / mid-market manufacturers / mass-affluent retail banking customers / SMB logistics operators). Demographic + firmographic definition, segment size, growth rate, why this segment first. Chart: segment-size-vs-total + growth trajectory.",
+      "purpose": "Named target customer segment (e.g. urban middle-class households / mid-market manufacturers / mass-affluent retail banking customers / SMB logistics operators). Demographic + firmographic definition, segment growth direction, why this segment first. Chart: segment-size-vs-total + growth trajectory if anchorable; otherwise a qualitative segment-priority map.",
       "skip_if": null,
-      "char_budget_hint": "Body must answer three questions: who they are (definition cap 220), how many (sizing number with source tag), why first (1-paragraph rationale cap 600)."
+      "char_budget_hint": "Body must answer three questions: who they are (definition cap 220), how they're growing (directional read with at most 1 anchor number + source tag), why first (1-paragraph rationale cap 600). Sizing precision not required."
     },
     {
-      "id": "08_competitors_landscape",
+      "id": "08_competitive_intensity_qualitative",
       "section_num": "07",
-      "title_pattern": "Top 5 competitors to beat",
+      "title_pattern": "Competitive intensity: who an entrant has to outflank",
       "page_type": "competitive_structure",
       "page_count": 1,
-      "purpose": "Compressed competitive_landscape: HHI / concentration view + top-5 player mini-grid in one page. Each of the 5 players gets a quarter-card with revenue, share, segment focus, and the one structural advantage to neutralize. No deep profile pages - the entry blueprint cares about WHO TO BEAT, not deep biographies.",
+      "purpose": "Compressed competitive read: qualitative intensity label (fragmented / contested / consolidating / oligopoly) + top-5 player mini-grid in one page. Each of the 5 players gets a quarter-card with revenue (when available), share band, segment focus, and the one structural advantage to outflank. No deep profile pages. Replaces v1's quantitative HHI emphasis with a qualitative intensity read; HHI may appear as a single anchor number if cleanly sourced but is not the centerpiece.",
       "skip_if": "fewer than 3 named competitors identifiable from research (rare - escalate to orchestrator if so)",
-      "char_budget_hint": "5 mini-cards each: player_name cap 30, revenue+share line cap 60, segment_focus cap 60, structural_advantage cap 110. HHI viz + sidebar narrative <= 600 chars total."
+      "char_budget_hint": "5 mini-cards each: player_name cap 30, revenue+share line cap 60 (band is fine — 'high single digit share'), segment_focus cap 60, structural_advantage cap 110. Intensity tag + sidebar narrative <= 600 chars total."
     },
     {
       "id": "09_regulatory_licensing",
@@ -90,9 +90,9 @@
       "title_pattern": "Regulatory hurdles and licensing path",
       "page_type": "market_data_chart",
       "page_count": 1,
-      "purpose": "Foreign ownership caps, sector licensing requirements, timeline-to-license (weeks/months), one-off application cost, ongoing compliance burden, recent regulatory shifts that affect entry. Chart: license timeline + cost-stack visualization.",
+      "purpose": "Foreign ownership caps, sector licensing requirements, qualitative timeline-to-license (weeks/months/quarters as bands, not precise dates), ongoing compliance burden, recent regulatory shifts that affect entry. Chart: license timeline as a horizontal band visualization (qualitative phases, not a costed timeline).",
       "skip_if": null,
-      "char_budget_hint": "Must name the specific regulator (e.g. BKPM for Indonesia FDI, MIC for Vietnam, BOI for Thailand) and the specific license category. Generic 'regulatory environment' framing rejected at QC."
+      "char_budget_hint": "Must name the specific regulator (e.g. BKPM for Indonesia FDI, MIC for Vietnam, BOI for Thailand) and the specific license category. Generic 'regulatory environment' framing rejected at QC. Timelines expressed as bands (e.g. '3-6 months') with source tag — no false precision."
     },
     {
       "id": "10_distribution_gtm_channels",
@@ -100,9 +100,9 @@
       "title_pattern": "Distribution and go-to-market: channel options",
       "page_type": "market_data_chart",
       "page_count": 1,
-      "purpose": "Channel mix options for an entrant: own retail vs distributor vs e-commerce vs platform vs agent network. Per-channel: setup cost, ramp speed, unit economics, reach ceiling. Chart: 2x2 of cost-to-establish vs reach-ceiling with each channel plotted as a bubble sized by year-3 revenue contribution.",
+      "purpose": "Channel mix options for an entrant: own retail vs distributor vs e-commerce vs platform vs agent network. Per-channel: qualitative setup difficulty, ramp speed read, qualitative reach ceiling. Chart: 2x2 of effort-to-establish vs reach-ceiling with each channel plotted as a bubble (size band, not a precise revenue number).",
       "skip_if": null,
-      "char_budget_hint": "Must name 4-5 channel options specific to the country (e.g. Indonesia: traditional trade via Alfamart/Indomaret, modern trade via Hypermart, e-commerce via Tokopedia/Shopee, B2B via local distributors, direct via own boutique). Generic channel labels rejected at QC."
+      "char_budget_hint": "Must name 4-5 channel options specific to the country (e.g. Indonesia: traditional trade via Alfamart/Indomaret, modern trade via Hypermart, e-commerce via Tokopedia/Shopee, B2B via local distributors, direct via own boutique). Generic channel labels rejected at QC. Per-channel narrative is directional, not modeled."
     },
     {
       "id": "11_partnership_landscape",
@@ -110,69 +110,49 @@
       "title_pattern": "Local partnership candidates",
       "page_type": "market_data_chart",
       "page_count": 1,
-      "purpose": "Named shortlist of 6-9 candidate JV partners / distributors / agents. Each carries: organisation name, ownership group, segment footprint, revenue band, prior foreign-partner track record. Visualised as a grouped scoring matrix (rows = candidates, columns = fit/scale/track-record/ownership-flexibility scores).",
+      "purpose": "Named shortlist of 6-9 candidate JV partners / distributors / agents. Each carries: organisation name, ownership group, segment footprint, revenue band, prior foreign-partner track record. Visualised as a grouped scoring matrix (rows = candidates, columns = fit/scale/track-record/ownership-flexibility tags — qualitative labels not numeric scores).",
       "skip_if": "country + industry combination has too thin an identifiable partner set (rare - orchestrator escalation)",
-      "char_budget_hint": "Each candidate row: org_name cap 30, ownership_group cap 30, segment_footprint cap 60, revenue_band cap 20 (e.g. 'USD 200-400 mn'), score_strip cap 30. Anchor narrative beneath table <= 600 chars naming the top-2 recommended candidates."
+      "char_budget_hint": "Each candidate row: org_name cap 30, ownership_group cap 30, segment_footprint cap 60, revenue_band cap 20 (e.g. 'USD 200-400 mn'), score_strip cap 30 (use qualitative tags: 'strong fit' / 'good fit' / 'partial fit'). Anchor narrative beneath table <= 600 chars naming the top-2 recommended candidates."
     },
     {
-      "id": "12_capex_requirements",
+      "id": "12_operating_environment_qualitative",
       "section_num": "11",
-      "title_pattern": "Capex requirements: build versus partner economics",
+      "title_pattern": "Operating environment: regulatory climate, cultural fit, infrastructure readiness",
       "page_type": "market_data_chart",
       "page_count": 1,
-      "purpose": "Capex build: factory / retail rollout / fleet / platform / inventory - whichever applies to this industry. Side-by-side: full-build capex stack vs partner-route capex stack. Chart: stacked bar of capex categories per route + a USD total line above each.",
+      "purpose": "Single-page qualitative read of the operating environment for an entrant, combining three lenses: (a) regulatory climate beyond the license itself (stability, FX repatriation friction, tax predictability), (b) cultural fit (B2B vs B2C norms, decision-making cadence, working-language reality), (c) infrastructure readiness (logistics backbone, digital + payment rails, talent availability for the relevant function). Visualised as a 3-lens summary card (each lens gets a directional tag: 'tailwind' / 'neutral' / 'headwind') plus a short narrative.",
       "skip_if": null,
-      "char_budget_hint": "Capex categories named to the industry (e.g. 'land + factory build' for manufacturing, 'store fit-out + opening inventory' for retail, 'platform build + integration' for fintech). Generic 'fixed assets' rejected at QC."
+      "char_budget_hint": "Each lens card: lens_name cap 30 (e.g. 'Regulatory climate'), tag cap 12 ('tailwind' / 'neutral' / 'headwind'), body cap 240. Narrative beneath cards <= 700 chars. No quantitative scores. All claims tagged [secondary] or [estimate]."
     },
     {
-      "id": "13_opex_staffing_ramp",
+      "id": "13_risk_matrix",
       "section_num": "12",
-      "title_pattern": "Opex and staffing model: 36-month ramp",
-      "page_type": "market_data_chart",
-      "page_count": 1,
-      "purpose": "Staffing headcount ramp Y1->Y2->Y3 by function (commercial / ops / tech / G&A), all-in cost per headcount band (local market benchmarks), opex envelope per year. Chart: stacked area showing opex composition over 36 months + a headcount line overlay.",
-      "skip_if": null,
-      "char_budget_hint": "Local-market salary benchmarks must carry [secondary] or [estimate] tag with anchor (e.g. country compensation surveys). Sidebar narrative <= 500 chars explaining the ramp shape and key inflection (e.g. 'commercial doubles in Y2 as own-retail footprint expands')."
-    },
-    {
-      "id": "14_pnl_scenario",
-      "section_num": "13",
-      "title_pattern": "3-year P&L scenarios: base / bull / bear",
-      "page_type": "pnl_scenario",
-      "page_count": 1,
-      "purpose": "CENTERPIECE. 3-line chart projecting Y1/Y2/Y3 revenue (or contribution margin if the topic warrants) across base / bull / bear scenarios. Beneath the chart: 3 anchor cards naming the single key driver per scenario (e.g. base = own-channel ramp on plan / bull = early distributor exclusive / bear = regulatory delay + slow license).",
-      "skip_if": null,
-      "char_budget_hint": "Scenario y3 spread bull-to-bear >= 1.8x (QC gate). Each anchor card: scenario_name cap 14, year3_value cap 14, key_assumption cap 110, source_tag required. Chart unit must be named in y-axis label (USD mn or USD bn)."
-    },
-    {
-      "id": "15_risk_matrix",
-      "section_num": "14",
       "title_pattern": "Entry risk matrix",
       "page_type": "risk_matrix",
       "page_count": 1,
-      "purpose": "5x5 likelihood-x-impact heatmap. 8-12 named risks placed across cells, color-coded green/amber/red. Risks must tie back to specific findings from sections 10-14 (regulatory / channel / partner / capex / opex). Right rail: 3-card sidebar expanding the highest-severity risks with mitigation framing.",
+      "purpose": "5x5 likelihood-x-impact heatmap (qualitative). 8-12 named risks placed across cells, color-coded green/amber/red with LOW/MED/HIGH severity labels. NO numerical scores anywhere. Risks must tie back to specific qualitative findings from sections 06-11 (market opportunity / target segment / competitive intensity / regulatory / channel / partner / operating environment). Right rail: 3-card sidebar expanding the highest-severity risks with mitigation framing.",
       "skip_if": null,
-      "char_budget_hint": "Each placed cell: cell_label cap 22 chars. Sidebar cards: risk_name cap 30 (mono UC), severity_tag cap 14, body cap 180 (framing + mitigation). Risks must include at least one FX/macro risk, one regulatory risk, one operational risk, one competitive-response risk; rest are industry-specific."
+      "char_budget_hint": "Each placed cell: cell_label cap 22 chars + LOW/MED/HIGH color band only (no numeric score). Sidebar cards: risk_name cap 30 (mono UC), severity_tag cap 14 ('HIGH - LIKELY' etc.), body cap 180 (qualitative framing + mitigation). Risks must include at least one FX/macro risk, one regulatory risk, one operational risk, one competitive-response risk; rest are industry-specific. Every cell must trace to a finding in sections 06-11."
     },
     {
-      "id": "16_phasing_plan",
-      "section_num": "15",
+      "id": "14_phasing_plan",
+      "section_num": "13",
       "title_pattern": "Phased entry plan: 12 / 24 / 36-month milestones",
       "page_type": "forecast_outlook",
       "page_count": 1,
-      "purpose": "Timeline visualisation of the recommended entry path: 0-12 months (foundation - license, partner, first hires), 13-24 months (commercial launch + first revenue), 25-36 months (scale to year-3 ambition). Reused forecast_outlook schema - the 3 scenario cards become 3 phase cards instead.",
+      "purpose": "Timeline visualisation of the recommended entry path: 0-12 months (foundation - license, partner, first hires), 13-24 months (commercial launch + first revenue), 25-36 months (scale toward year-3 qualitative ambition). Reused forecast_outlook schema - the 3 scenario cards become 3 phase cards instead. Milestones are qualitative (e.g. 'license granted', 'first 10 customers live', 'two-region footprint') not numeric.",
       "skip_if": null,
-      "char_budget_hint": "Each phase card: phase_name cap 22 (e.g. 'Phase 1 - foundation'), milestone_anchor cap 18 (e.g. 'License granted'), body cap 200 listing 3-4 concrete deliverables. Chart slot becomes a horizontal Gantt-style timeline with workstream rows (license / hire / partner / build / launch)."
+      "char_budget_hint": "Each phase card: phase_name cap 22 (e.g. 'Phase 1 - foundation'), milestone_anchor cap 18 (e.g. 'License granted'), body cap 200 listing 3-4 concrete qualitative deliverables. Chart slot becomes a horizontal Gantt-style timeline with workstream rows (license / hire / partner / launch). No revenue numbers on the timeline — qualitative milestones only."
     },
     {
-      "id": "17_methodology_endnote",
-      "section_num": "16",
+      "id": "15_methodology_endnote",
+      "section_num": "14",
       "title_pattern": "Methodology endnote and source mix",
       "page_type": "methodology_endnote",
       "page_count": 1,
-      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages), key data anchors, KIRA estimate methodologies disclosed (especially around capex/opex benchmarks and P&L scenarios), contact & next research footer.",
+      "purpose": "Source mix breakdown ([primary]/[secondary]/[estimate] percentages), key data anchors, KIRA estimate methodologies disclosed (especially around segment sizing and qualitative severity calls), explicit note that this brief is qualitative-only (no P&L scenarios, no capex stacks, no opex ramp curves), contact & next research footer.",
       "skip_if": null,
-      "notes": "Required - decision-document buyers especially value transparent methodology because the P&L scenarios drive their go/no-go call. Auto-generated from source-tag census of the report."
+      "notes": "Required - decision-document buyers value transparent methodology, and the qualitative-only framing should be disclosed up front so the reader knows what they're getting. Auto-generated from source-tag census of the report."
     }
   ],
 
@@ -180,7 +160,8 @@
     "page_numbering": "Continuous, format '012 / NN' in page-header counter slot - total NN computed at assembly",
     "section_numbering": "section_num shared across all pages of a section. The exec_summary entry (id 05) is a single section with page_count 2 (p1 + p2_implications combined), matching the market_analysis convention.",
     "divider_placement": "Single dark divider opens the entry-strategy spine (id 04). No further dividers - the decision-document format reads as one continuous argument, not thematic chapters",
-    "skip_condition_handling": "If skip_if condition triggers, omit the section AND recompute page counter for all subsequent sections. For id 08 (competitors) and id 11 (partners), skipping should escalate to orchestrator since absence of competitors/partners signals the topic may not fit entry_strategy at all",
-    "page_type_reuse_note": "Id 16 (phasing plan) reuses the forecast_outlook page schema but substitutes 3 phase cards for the 3 scenario cards. The chart_main slot becomes a horizontal Gantt-style timeline instead of a multi-period projection. content_per_section prompt must be told this explicitly."
+    "skip_condition_handling": "If skip_if condition triggers, omit the section AND recompute page counter for all subsequent sections. For id 08 (competitive intensity) and id 11 (partners), skipping should escalate to orchestrator since absence of competitors/partners signals the topic may not fit entry_strategy at all",
+    "page_type_reuse_note": "Id 14 (phasing plan) reuses the forecast_outlook page schema but substitutes 3 phase cards for the 3 scenario cards. The chart_main slot becomes a horizontal Gantt-style timeline instead of a multi-period projection. content_per_section prompt must be told this explicitly.",
+    "qualitative_only_note": "v2 is qualitative-only. content_per_section prompt must enforce: no P&L scenarios anywhere, no capex stacks anywhere, no opex/staffing ramp curves anywhere, no numeric risk scores on the risk matrix (LOW/MED/HIGH labels only). Directional language from voice_guide.md sections 1-4 is the dominant register."
   }
 }

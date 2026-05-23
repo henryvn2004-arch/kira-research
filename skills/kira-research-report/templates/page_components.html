@@ -522,6 +522,329 @@
 
 
 <!-- ============================================================
-     END OF TEMPLATES — 10 page types defined.
+     === Phase H new page types (2026-05-23) ===
+     5 new page types: persona_profile, policy_timeline,
+     risk_matrix (qualitative), channel_waterfall,
+     price_quality_matrix. Slot specs in schemas/page_schemas.json.
+     ============================================================ -->
+
+
+<!-- ============================================================
+     TEMPLATE: persona_profile  (consumer_segmentation)
+     One full page per persona. 3 personas per report = 3 pages.
+     Layout: header (label + headline) + 2-col grid
+       (demo stats / behavior grid) + bottom row (quote + channel
+       pref + WTP anchor).
+     ============================================================ -->
+<!-- TEMPLATE_START: persona_profile -->
+<div class="page persona-profile-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+
+    <div class="persona-header">
+      <div>
+        <div class="persona-label">{{PERSONA_LABEL}}</div>
+        <div class="persona-headline">{{PERSONA_HEADLINE}}</div>
+      </div>
+    </div>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="persona-grid-row">
+      <div class="persona-block">
+        <h4>Demographics</h4>
+        <div class="persona-stats-grid">
+          <!-- LOOP: 4 demo stats (age / income / location / household) -->
+          <div class="persona-stat">
+            <div class="label">{{STAT_LABEL}}</div>
+            <div class="num">{{STAT_NUM}}<span class="unit">{{STAT_UNIT}}</span></div>
+            <div class="src">[{{STAT_SOURCE_TAG}}]</div>
+          </div>
+          <!-- END LOOP -->
+        </div>
+      </div>
+
+      <div class="persona-block">
+        <h4>Behavior</h4>
+        <div class="persona-behavior-grid">
+          <!-- LOOP: 4 behavior cards (frequency / basket / channel / driver) -->
+          <div class="persona-behavior">
+            <div class="label">{{BEHAVIOR_LABEL}}</div>
+            <div class="metric">{{BEHAVIOR_METRIC}}</div>
+            <div class="change">{{BEHAVIOR_CHANGE}}</div>
+          </div>
+          <!-- END LOOP -->
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-bottom-row">
+      <div class="persona-quote-block">
+        <div class="qmark">"</div>
+        <div class="body">{{QUOTE_BODY}}</div>
+        <div class="attribution">— {{QUOTE_ATTRIBUTION}}</div>
+      </div>
+
+      <div>
+        <div class="persona-channel-pref">
+          <div class="title">Channel preference (share of spend)</div>
+          <!-- LOOP: 5-6 channels -->
+          <div class="persona-channel-row">
+            <div class="ch-name">{{CHANNEL_NAME}}</div>
+            <div class="ch-bar"><div class="ch-bar-fill" style="width: {{CHANNEL_PCT}}%;"></div></div>
+            <div class="ch-pct">{{CHANNEL_PCT}}%</div>
+          </div>
+          <!-- END LOOP -->
+          <div class="persona-channel-caption">{{CHANNEL_CAPTION}}</div>
+        </div>
+
+        <div class="persona-wtp-anchor">
+          <div class="left">
+            <div class="label">Willingness to pay</div>
+            <div class="change">{{WTP_CHANGE}} <span class="data-tag {{WTP_SOURCE_TAG}}" style="font-size: 8px; padding: 2px 6px; margin-left: 4px;">[{{WTP_SOURCE_LABEL}}]</span></div>
+          </div>
+          <div class="num">{{WTP_NUM}}<span class="unit">{{WTP_UNIT}}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-source-strip">{{SOURCE_STRIP}}</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: persona_profile -->
+
+
+<!-- ============================================================
+     TEMPLATE: policy_timeline  (regulatory_brief)
+     Centerpiece horizontal SVG timeline + right-rail callouts.
+     5-8 dated markers along axis with winner/loser chips.
+     Right rail: dominant winner / dominant loser / biggest pending.
+     ============================================================ -->
+<!-- TEMPLATE_START: policy_timeline -->
+<div class="page policy-timeline-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">{{CHART_TITLE}}</div>
+        <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+        <div class="tl-svg">
+          <!-- Inline SVG timeline.
+               Example axis line at y=140, dots evenly spaced along x.
+               Pipeline emits actual <text> + <circle> nodes per marker.
+               Each marker has alternating top/bottom label placement to
+               avoid overlap. Winner/loser chips rendered as <rect>+<text>
+               beside the marker label. -->
+          {{TIMELINE_SVG}}
+        </div>
+        <div class="policy-source-strip">{{SOURCE_STRIP}}</div>
+      </div>
+
+      <div class="policy-rail">
+        <!-- LOOP: 2-3 anchor callouts (dominant_winner, dominant_loser, biggest_pending) -->
+        <div class="policy-rail-card">
+          <div class="tag">{{CALLOUT_TAG}} <span class="severity-chip {{CALLOUT_INDICATOR}}">{{CALLOUT_CHIP_LABEL}}</span></div>
+          <div class="title">{{CALLOUT_TITLE}}</div>
+          <div class="body">{{CALLOUT_BODY_HTML}}</div>
+          <div class="src">[{{CALLOUT_SOURCE_TAG}}]</div>
+        </div>
+        <!-- END LOOP -->
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: policy_timeline -->
+
+
+<!-- ============================================================
+     TEMPLATE: risk_matrix  (entry_strategy, QUALITATIVE)
+     5x5 heatmap (likelihood x impact) with LOW/MED/HIGH cell
+     shading only — NO numeric scores. 8-12 named risks placed
+     in cells. Right rail: 3 key-risk cards.
+     ============================================================ -->
+<!-- TEMPLATE_START: risk_matrix -->
+<div class="page risk-matrix-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="risk-matrix-wrap">
+      <div class="risk-matrix-chart">
+        <div class="chart-title">{{CHART_TITLE}}</div>
+        <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+        <div class="risk-grid-svg">
+          <!-- Inline SVG 5x5 heatmap.
+               Pipeline emits:
+                 - 25 <rect class="risk-cell-bg-{empty|low|med|high}">
+                 - axis_titles: x="Likelihood" bottom, y="Impact" left
+                 - axis_labels: 5 bands per axis (Rare..Almost certain;
+                                Marginal..Severe)
+                 - per-risk <text class="risk-cell-label"> inside
+                   appropriate cell (cap 22 chars).
+               NO numeric scores — severity conveyed via cell fill only. -->
+          {{RISK_GRID_SVG}}
+        </div>
+        <div class="risk-legend-strip">{{LEGEND_STRIP}}</div>
+      </div>
+
+      <div class="risk-rail">
+        <!-- LOOP: 3 key-risk cards (top_likelihood / top_impact / top_combined) -->
+        <div class="risk-rail-card">
+          <div class="name">{{RISK_NAME}}</div>
+          <span class="severity-chip {{RISK_SEVERITY_CLASS}}" style="align-self: flex-start; margin-bottom: 6px;">{{RISK_SEVERITY_TAG}}</span>
+          <div class="body">{{RISK_BODY_HTML}}</div>
+          <div class="footer-row">
+            <div class="src">[{{RISK_SOURCE_TAG}}]</div>
+          </div>
+        </div>
+        <!-- END LOOP -->
+      </div>
+    </div>
+
+    <div class="risk-source-strip">{{SOURCE_STRIP}}</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: risk_matrix -->
+
+
+<!-- ============================================================
+     TEMPLATE: channel_waterfall  (distribution_analysis)
+     Horizontal stacked-bar showing 4-7 channel link margins
+     from brand ex-factory to consumer shelf. Bottom: 2-col
+     commentary (structural takeaway + anomalies list).
+     ============================================================ -->
+<!-- TEMPLATE_START: channel_waterfall -->
+<div class="page channel-waterfall-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="waterfall-chart">
+      <div class="chart-title">{{CHART_TITLE}}</div>
+      <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+      <div class="waterfall-svg-wrap">
+        <!-- Inline SVG horizontal stacked bar (sum = 100%).
+             Pipeline emits per segment:
+               - <rect class="wf-segment-fill-N"> sized by margin %
+               - <text class="wf-segment-label"> for layer name above bar
+               - <text class="wf-segment-pct"> margin % inside / above bar
+               - <text class="wf-segment-note"> take_note below bar
+               - <text class="wf-segment-src"> source tag chip
+             Largest margin segment gets emphasis stroke (stroke-width 2). -->
+        {{WATERFALL_SVG}}
+      </div>
+    </div>
+
+    <div class="waterfall-commentary">
+      <div>
+        <h3>{{TAKEAWAY_HEADING}}</h3>
+        <p>{{TAKEAWAY_BODY_HTML}}</p>
+      </div>
+      <div>
+        <h3>{{ANOMALIES_HEADING}}</h3>
+        <ul>
+          <!-- LOOP: 2-3 anomalies (compression / fat layer / disintermediation) -->
+          <li>{{ANOMALY_HTML}}</li>
+          <!-- END LOOP -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="waterfall-source-strip">{{SOURCE_STRIP}}</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: channel_waterfall -->
+
+
+<!-- ============================================================
+     TEMPLATE: price_quality_matrix  (pricing_strategy)
+     2x2 perceptual scatter (perceived quality y x price x).
+     4 category-specific quadrant labels. 6-12 brand dots.
+     Right-rail narrative interprets contested quadrant + gap.
+     ============================================================ -->
+<!-- TEMPLATE_START: price_quality_matrix -->
+<div class="page price-quality-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="pq-matrix-wrap">
+      <div class="pq-matrix-chart">
+        <div class="chart-title">{{CHART_TITLE}}</div>
+        <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+        <div class="pq-svg-wrap">
+          <!-- Inline SVG 2x2 perceptual matrix.
+               Pipeline emits:
+                 - 4 <rect class="pq-quadrant-bg"> background quadrants
+                 - 1 horizontal + 1 vertical axis line at midpoints
+                 - <text class="pq-axis-label"> x-axis bottom: {{X_AXIS_LABEL}}
+                 - <text class="pq-axis-label"> y-axis left: {{Y_AXIS_LABEL}}
+                 - 4 <text class="pq-quadrant-label"> in each quadrant
+                   (positions: NE / NW / SE / SW)
+                 - 6-12 <circle class="pq-dot"> brand points
+                   (radius scales with optional share dot-size encoding)
+                 - <text class="pq-dot-label"> next to each dot -->
+          {{PQ_MATRIX_SVG}}
+        </div>
+      </div>
+
+      <div class="pq-sidebar">
+        <h3>{{SIDEBAR_HEADING}}</h3>
+        <p>{{SIDEBAR_BODY_HTML}}</p>
+        <div class="pq-source-strip">{{SOURCE_STRIP}}</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: price_quality_matrix -->
+
+
+<!-- ============================================================
+     END OF TEMPLATES — 15 page types defined (10 original + 5 Phase H).
      Pipeline reads this file, extracts by markers, fills placeholders.
      ============================================================ -->
