@@ -230,7 +230,7 @@ When generating each section, check:
 - Anti-positioning blacklist (Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC) preserved at all times — overlays cannot relax
 - Char caps in page_schemas.json preserved — expand_to_2_pages does NOT bypass char caps, it splits content across 2 pages
 - Section IDs remain stable — expand_to_2_pages adds a `<section_id>_p2` suffix to the second page, never renames the section
-- Source tags `[primary]` / `[secondary]` / `[estimate]` / `[user-input]` preserved on every number
+- Source tags preserved on every number — Phase L.3 system: `[Kira estimates]` (KIRA-derived) or `[<Source Alias> <Year>]` (named external) or `[user-input]` (UC3). Page-bottom source key resolves aliases to full citations. Old `[primary]/[secondary]/[estimate]` trio is deprecated.
 - 720px overflow detection still runs per rendered page (1280×720 hard constraint)
 - Brand consistency: even with overlays + expand + chart options, two reports of the same blueprint should look like siblings, not strangers. Section order + section identity + page chrome unchanged.
 

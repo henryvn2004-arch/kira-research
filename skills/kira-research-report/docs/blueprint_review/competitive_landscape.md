@@ -3,8 +3,18 @@
 > **For Henry to verify.** Mark each section ✏️ to change / ❌ to remove / ➕ to add / ✅ ok. Send back the list, I apply changes.
 >
 > **Profile:** 15 sections, **14-17 pages** (baseline 14-15 + 0-3 expand pages depending on data richness). Competitor-first companion to `market_analysis` — center of gravity is the **named operator set + matrix + 3 deep profiles**, not sizing.
-> **Source mix target:** 20% primary / 60% secondary / 20% estimate.
+> **Source mix target (Phase L.3 framing):** ~20-30% `[Kira estimates]` / ~70-80% named external sources (`[<Source Alias> <Year>]`). Exec summary skews more KIRA-heavy (synthesized callouts); body sections lean named-external. Methodology endnote lists every alias used.
 > **Total query count:** 22 across 6 buckets (note: bucket 02 is iterative — budgets 6 but spends 8-10 in practice).
+
+### Source tag system (Phase L.3 — applies to every content page)
+
+Two tag categories only. The deprecated `[primary]` / `[secondary]` / `[estimate]` trio is GONE.
+
+- `[Kira estimates]` — any KIRA-derived figure (in-house triangulation, share-split synthesis, HHI calc on top of disclosed revenue, model output). Replaces both old `[primary]` AND old `[estimate]`.
+- `[<Source Alias> <Year>]` — external citable source. Examples for competitive_landscape: `[IMPC AR 2025]`, `[Vinacafe AR 2025]`, `[Masan Q3 2025]`, `[BPS 2024]`, `[KPPU 2024]`, `[IDX Filings 2025]`, `[DealStreetAsia 2025]`, `[Nikkei Asia 2024]`.
+- `[user-input]` — UC3 only.
+
+**Source key footer (NEW, every content page):** every page using named-source tags MUST end with a one-line `SOURCE KEY · <alias> = <full citation> · ... · Kira estimates = KIRA in-house analyst triangulation` resolving every alias appearing on that page. Aliases sort alphabetically, `Kira estimates` last. ~280 char cap. Cross-page consistency: same real source = same alias on every page.
 
 ### A+ flex layer (Phase J)
 
@@ -95,7 +105,7 @@ Each section can have up to 3 customization layers:
 4. {country} {industry} segment breakdown sub-category split {year}
 ```
 **Expected sources:** competition authority filings (KPPU/KFTC/JFTC/CCS/MyCC) · industry trade associations · listed-company filings · government industry surveys
-**Tag mix:** 65% secondary / 30% estimate / 5% primary
+**Tag mix:** ~70% named externals (competition authority filings `[KPPU 2024]` / `[JFTC 2024]`, trade association reports, exchange filings) / ~30% `[Kira estimates]` (HHI computation + segment-split synthesis on top of disclosed numbers)
 
 **📄 Layout:**
 - **H1:** `Industry structure: {{concentration_descriptor}}` (`highly concentrated` HHI>2500 / `moderately concentrated` 1500-2500 / `unconcentrated` <1500 / `fragmenting` HHI down >300 over 5y / `consolidating` HHI up >300 over 5y)
@@ -135,7 +145,7 @@ Each section can have up to 3 customization layers:
 6. {country} {industry} market share evolution {year-4} {year}
 ```
 **Expected sources:** IDX/SET/SGX/HoSE/BurseMalaysia/PSE filings · TSE + KRX filings (parent groups) · company press releases · industry trade press · regulator disclosures (BI/SBV/BSP/BOT)
-**Tag mix:** 75% secondary / 20% estimate / 5% primary
+**Tag mix:** ~75% named externals (per-player annual reports `[IMPC AR 2025]` / `[Vinacafe AR 2025]` / `[Masan Q3 2025]`, exchange filings `[IDX Filings 2025]` / `[HoSE Filings 2025]`, press releases) / ~25% `[Kira estimates]` (share band synthesis where filings disclose revenue but not share)
 **Note:** Iterative bucket — first 2 queries surface the name set, then queries 3-4 re-run per named player. Budgets 6 but expects 8-10 in practice.
 
 **📄 Layout:**
@@ -205,7 +215,7 @@ Each section can have up to 3 customization layers:
 3. {country} {industry} digital transformation maturity players {year}
 ```
 **Expected sources:** industry trade press positioning articles · investor day decks · analyst-firm positioning notes (read but not cited) · consumer research with named-brand cuts
-**Tag mix:** 50% secondary / 40% estimate / 10% primary (KIRA places players on the map)
+**Tag mix:** ~60% named externals (trade press positioning coverage, investor decks, consumer research with named-brand cuts) / ~40% `[Kira estimates]` — KIRA places players on the 2×2 map; quadrant assignment itself is a KIRA call and tagged `[Kira estimates]`
 
 **📄 Layout:**
 - **H1:** `Strategic groups: {{x_axis}} vs {{y_axis}}` (axes chosen by analyst — e.g. price tier vs distribution breadth, scale vs digital maturity, premium vs mass, integrated vs specialist)
@@ -318,7 +328,7 @@ Each section can have up to 3 customization layers:
 3. {country} {industry} {leading_player_candidate} pricing strategy product tier
 ```
 **Expected sources:** e-commerce marketplace listings (Tokopedia/Shopee/Lazada/Rakuten/Coupang) · company catalogs + price lists · consumer protection agency price surveys · retail trade press
-**Tag mix:** 55% secondary / 40% estimate / 5% primary
+**Tag mix:** ~60% named externals (marketplace listings `[Shopee VN 2026]` / `[Tokopedia 2026]` / `[Rakuten 2025]`, company catalogs, consumer protection price surveys, trade press) / ~40% `[Kira estimates]` (price-band synthesis where only point prices are surfaced)
 **Note:** B2B services often have opaque quoted pricing — if 3+ players have no public band data, swap this page to a buyer-segment positioning chart and reduce bucket to 1 query.
 
 **📄 Layout:**
@@ -355,7 +365,7 @@ Each section can have up to 3 customization layers:
 4. {country} {industry} divestment exit private equity {year-2} {year}
 ```
 **Expected sources:** competition authority merger filings · exchange disclosure feeds · Mergermarket / DealStreetAsia (cited only via primary deal docs) · company press releases · regional business press (Nikkei Asia, The Edge, VnExpress Business, KrAsia)
-**Tag mix:** 80% secondary / 15% primary / 5% estimate
+**Tag mix:** ~80% named externals (merger filings, exchange disclosure feeds, deal-news outlets like `[DealStreetAsia 2025]` / `[Nikkei Asia 2025]` / `[The Edge 2024]`, company press releases) / ~20% `[Kira estimates]` (rationale framing + cross-deal pattern reads)
 
 **📄 Layout:**
 - **H1:** "Recent M&A and partnership activity"
@@ -393,8 +403,7 @@ Each section can have up to 3 customization layers:
 4. {country} {industry} funding rounds Series A B startups {year}
 ```
 **Expected sources:** regional VC tracker press (Tech in Asia, e27, KrAsia, DealStreetAsia) · startup funding databases (cited via primary press releases) · incumbent commentary on new competition · trade-association new-member announcements
-**Tag mix:** 40% primary / 50% secondary / 10% estimate
-**Note:** Disruptor scoring is a KIRA primary call. Most cards land [primary] tagged.
+**Tag mix:** ~50% named externals (regional VC press `[Tech in Asia 2025]` / `[e27 2025]` / `[KrAsia 2025]` / `[DealStreetAsia 2025]`, startup press releases) / ~50% `[Kira estimates]` — disruptor scoring + threat-tier is a KIRA synthesis call; most cards land `[Kira estimates]` tagged on the threat-tier figure
 
 **📄 Layout:**
 - **H1:** "Disruptor watch: new entrants and adjacent threats"
@@ -424,10 +433,11 @@ Each section can have up to 3 customization layers:
 ## §12 Methodology endnote — `methodology_endnote`
 
 **Layout:**
-- Source mix breakdown (`[primary]` / `[secondary]` / `[estimate]` %)
-- Key data anchors (filings drawn, trade press windows, KIRA estimate methodology for share splits and pricing tiers)
+- Source mix breakdown — `[Kira estimates]` share % vs named-external share % (target ~20-30% `[Kira estimates]`)
+- **Full alias registry** — every `[<Source Alias> <Year>]` used anywhere in the report resolved to its full citation, sorted alphabetically with `Kira estimates = KIRA in-house analyst triangulation` last
+- Key data anchors (filings drawn, trade press windows, KIRA share-split + pricing-tier triangulation methodology)
 - Contact + next research footer
-- Auto-generated from source-tag census of the report
+- Auto-generated from source-tag census of the report (alias registry built up as sections drafted)
 
 **No A+ flex** (boilerplate).
 

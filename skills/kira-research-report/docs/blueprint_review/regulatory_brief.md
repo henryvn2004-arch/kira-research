@@ -3,7 +3,7 @@
 > **For Henry to verify.** Mark each section ✏️ to change / ❌ to remove / ➕ to add / ✅ ok. Send back the list, I apply changes.
 >
 > **Profile:** 14 sections, **13-14 pages** (narrower flex than entry_strategy — baseline 13 + 0-1 expand pages from §07 timeline / §08 recent changes / §10 winner-loser depth). Policy + regulation deep dive on 1 country × 1 industry/topic.
-> **Source mix target:** 15% primary / 70% secondary / 15% estimate. **Heavier secondary** than other blueprints because policy text is cited verbatim.
+> **Source mix target (Phase L.3 framing):** ~15-20% `[Kira estimates]` / ~80-85% named externals (`[<Source Alias> <Year>]`). **Lightest `[Kira estimates]` share of any blueprint** because policy text is cited verbatim from gazette / ministry circulars / regulator statements. Methodology endnote lists every alias.
 > **Total query count:** 20 across 6 buckets.
 
 ### A+ flex layer (Phase J)
@@ -13,9 +13,19 @@ Each section can have up to 3 customization layers:
 - **Chart options** — 2-3 chart shapes the gen picks based on data. 8 sections have this.
 - **Overlay emphasis** — vertical-specific bias (fmcg / finserv / industrial / consumer_durables / services / commodity). Regulatory overlay is the dominant key on this blueprint.
 
+### Source tag system (Phase L.3 — applies to every content page)
+
+Two tag categories only. The deprecated `[primary]` / `[secondary]` / `[estimate]` trio is GONE.
+
+- `[Kira estimates]` — KIRA-derived synthesis only (e.g. compliance cost triangulation, winner/loser scoring). Replaces both old `[primary]` AND old `[estimate]`.
+- `[<Source Alias> <Year>]` — external citable source. For regulatory_brief, aliases are typically the **issuing body + statute ID** itself: `[MOIT Decree 100/2024]`, `[BNM Circular 2025]`, `[OJK Reg No. 12/2024]`, `[BPJPH Law 33/2014]`, `[BOT FX Circular 2025]`, `[BSP Circular 1144/2024]`, `[NPC Privacy Act 2012]`, `[MPOB Notice 2024]`, `[KPPU Decision 2024]`, `[World Bank DB 2024]`, `[IMF Article IV 2025]`.
+- `[user-input]` — UC3 only.
+
+**Source key footer (NEW, every content page):** every page using named-source tags MUST end with a one-line `SOURCE KEY · <alias> = <full citation> · ... · Kira estimates = KIRA in-house analyst triangulation` resolving every alias on that page. Aliases sort alphabetically, `Kira estimates` last. ~280 char cap. For this blueprint, the source key footer is doubly important — it's where readers fact-check the statute IDs.
+
 ### Strict source rule (blueprint-wide)
 
-Every policy citation must name the issuing body inline + statute ID (e.g. `Decree 100/2024/ND-CP [secondary]`, `Halal Product Assurance Law (Law 33/2014) [secondary]`). No floating "recently" / "recently passed" phrasing. Every policy reference includes effective date (or `pending` / `proposed [date]`).
+Every policy citation must name the issuing body inline + statute ID using the named-source format (e.g. `[MOIT Decree 100/2024]`, `[BPJPH Law 33/2014]`). No floating "recently" / "recently passed" phrasing. Every policy reference includes effective date (or `pending` / `proposed [date]`).
 
 ---
 
@@ -95,7 +105,7 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 2. {country} {policy_topic} statute official text {ministry_likely}
 3. {country} {policy_topic} regulation amendment {year-2} to {year}
 ```
-**Tag mix:** 90% secondary / 10% primary
+**Tag mix:** ~95% named externals (statute-ID aliases like `[MOIT Decree 100/2024]` / `[BNM Circular 2025]` / `[OJK Reg No. 12/2024]` / `[BPJPH Law 33/2014]`) / ~5% `[Kira estimates]` (only for synthesized "the regime traces to {anchor_event}" framing)
 
 **📄 Layout:**
 - **H1:** "Policy context & history"
@@ -125,7 +135,7 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 1. {country} {policy_topic} statute official text {ministry_likely}
 2. {country} {policy_topic} implementing circular guidance notes
 ```
-**Tag mix:** 90% secondary / 10% primary
+**Tag mix:** ~95% named externals (statute IDs + ministry circulars + regulator org charts) / ~5% `[Kira estimates]` (delegation-relationship synthesis only)
 
 **📄 Layout:**
 - **H1:** "Current framework & regulators"
@@ -133,7 +143,7 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 - **Bottom half:** regulator map — 4-6 boxes showing parent ministry → enforcement-arm relationships. Box label ≤ 30 chars.
 - **No narrative paragraphs** — table + diagram carry the page.
 
-**Voice rule:** Statute names use OFFICIAL short-form + numeric ID (e.g. "Decree 100/2024/ND-CP", "Halal Product Assurance Law (Law 33/2014)"). Never paraphrase statute names — readers fact-check these.
+**Voice rule:** Statute names use OFFICIAL short-form + numeric ID (e.g. "Decree 100/2024/ND-CP", "Halal Product Assurance Law (Law 33/2014)") with named-source tag `[MOIT Decree 100/2024]` / `[BPJPH Law 33/2014]`. Never paraphrase statute names — readers fact-check these via the source key footer.
 
 ### 🎨 A+ Flex
 
@@ -158,7 +168,7 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 2. {country} {policy_topic} draft bill pending {year}
 3. {country} {policy_topic} proposed amendment consultation {year}
 ```
-**Tag mix:** 85% secondary / 15% estimate
+**Tag mix:** ~85% named externals (statute-ID aliases per marker + draft-bill aliases like `[VN Draft EV Bill 2025]` / `[ID Halal Roadmap 2024]`) / ~15% `[Kira estimates]` (winner/loser indicator chip is a KIRA synthesis call on most markers)
 
 **📄 Layout (FULL-PAGE — this is the structural centerpiece):**
 - **H1:** "Policy timeline: {policy_topic}" (≤60 chars)
@@ -201,13 +211,13 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 3. {country} {regulator_name} crackdown investigation {year}
 4. {country} {policy_topic} court ruling judicial review
 ```
-**Tag mix:** 80% secondary / 20% estimate (enforcement-action counts often need KIRA aggregation from multi-source)
+**Tag mix:** ~80% named externals (enforcement-action press releases, named regulator decisions like `[KPPU Decision 2024]` / `[OJK Penalty Notice 2024]` / `[BOT Enforcement 2024]`, court rulings) / ~20% `[Kira estimates]` (enforcement-action counts often need KIRA aggregation across multi-source — tagged `[Kira estimates]`)
 
 **📄 Layout (BASELINE 2 PAGES):**
 - **H1:** "Recent changes in detail"
 - **Deep dive on 2-3 specific recent policy changes** (last 18-24 months)
 - **Per change:** what changed materially · effective date · scope of operators affected · transition timeline · immediate market response. Per-change narrative ≤ 900 chars.
-- Each change opens with **bolded effective date + statute ID** (e.g. "**Effective 2024-08, Decree 100/2024/ND-CP**...")
+- Each change opens with **bolded effective date + statute ID** (e.g. "**Effective 2024-08, Decree 100/2024/ND-CP** [MOIT Decree 100/2024]...")
 - **Light viz:** possibly 1 chart total across both pages (e.g. licence-applications volume pre/post change)
 
 **Voice rule:** Lead with what changed materially. NOT "On {date}, the government issued…". The date goes in the bolded opener; the analytical claim leads the sentence.
@@ -244,7 +254,7 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 3. {country} {policy_topic} draft bill pending {year}
 4. {country} {ministry_likely} announcement {policy_topic} {year}
 ```
-**Tag mix:** 70% secondary / 25% estimate / 5% primary
+**Tag mix:** ~75% named externals (association comment letters like `[KADIN Comment 2025]` / `[JCCI Submission 2025]` / `[VCCI Comment 2025]`, draft bills, public consultation submissions, ministry announcements) / ~25% `[Kira estimates]` (scenario probability + lobby-position intensity scoring)
 
 **📄 Layout:**
 - **H1:** "Pending changes & lobby positions"
@@ -283,16 +293,16 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 3. {policy_topic} compliance burden per-firm cost benchmark ASEAN
 4. {country} {industry} {policy_topic} cost of compliance survey
 ```
-**Tag mix:** 50% secondary / 50% estimate (RIAs are rare in SEA outside Singapore/Malaysia)
+**Tag mix:** ~50% named externals (regulator-published RIAs like `[MAS RIA 2024]` / `[BNM RIA 2024]` when they exist; industry association cost surveys) / ~50% `[Kira estimates]` — RIAs are rare in SEA outside SG/MY, so most compliance-cost figures land `[Kira estimates]` with anchor disclosure in source key footer
 
 **📄 Layout (BASELINE 1 PAGE):**
 - **H1:** "Compliance cost & winner/loser mapping"
 - **Top half:** compliance cost analysis. Cost-per-operator estimate · fixed vs variable split · year-1 vs steady-state. Narrative ≤ 600 chars.
 - **Bottom half:** winner/loser mapping — 2-column visual (winners left, losers right). 3-5 entries per side. Per entry: industry/segment + 1-line rationale (≤80) + magnitude chip (high/medium/low impact).
 
-**Voice rule:** Compliance costs tagged `[estimate]` unless a regulator-published RIA exists (then `[secondary]` with citation). Winner/loser entries name INDUSTRIES or operator types ("integrated EV OEMs with local assembly"), NEVER individual firm names.
+**Voice rule:** Compliance costs tagged `[Kira estimates]` unless a regulator-published RIA exists (then `[<Regulator> RIA <Year>]` with full citation in source key footer). Winner/loser entries name INDUSTRIES or operator types ("integrated EV OEMs with local assembly"), NEVER individual firm names.
 
-**Triangulation method:** Anchor on a published number from one source × scale by operator count or industry size for {country}. Document method in chart source line: e.g. "SOURCE: KIRA ESTIMATE — RIA ANCHOR × OPERATOR COUNT. ANCHOR: USD 12K/OPERATOR YR-1 [SECONDARY]".
+**Triangulation method:** Anchor on a published number from one named source × scale by operator count or industry size for {country}. Document method in source key footer: e.g. `SOURCE KEY · MAS RIA 2024 = MAS Regulatory Impact Assessment 2024 · Kira estimates = KIRA compliance cost triangulation anchored to USD 12K/operator yr-1 [MAS RIA 2024] × operator count`.
 
 ### 🎨 A+ Flex
 
@@ -322,7 +332,7 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 3. ASEAN harmonization {policy_topic} framework {year}
 4. {policy_topic} regional policy convergence Southeast Asia
 ```
-**Tag mix:** 75% secondary / 25% estimate
+**Tag mix:** ~75% named externals (peer-country statute aliases + cross-border policy comparison reports + `[ASEAN Sec 2024]` / `[World Bank DB 2024]`) / ~25% `[Kira estimates]` (convergence trajectory framing)
 
 **📄 Layout:**
 - **H1:** "Cross-border comparison: ASEAN peers"
@@ -352,13 +362,14 @@ Every policy citation must name the issuing body inline + statute ID (e.g. `Decr
 ## §12 Methodology endnote — `methodology_endnote`
 
 **Layout:**
-- Source mix breakdown — explicit `[primary] 15% / [secondary] 70% / [estimate] 15%`
+- Source mix breakdown — `[Kira estimates]` share % vs named-external share % (target ~15-20% `[Kira estimates]` — lowest of any blueprint because policy text is cited verbatim)
+- **Full alias registry** — every `[<Source Alias> <Year>]` used anywhere in the report resolved to its full citation, sorted alphabetically with `Kira estimates = KIRA in-house analyst triangulation` last. **Doubly heavy on this blueprint** — readers cross-check every statute ID against the registry.
 - Key anchors: which gazettes / ministry sources / trade associations were tracked
-- KIRA estimate methodologies disclosed — especially compliance-cost triangulation method (anchor metric × ratio = output)
-- **Explicit note: "No source-archive firms cited"** (transparent anti-positioning vs Mordor/Frost/Euromonitor)
+- KIRA estimate methodologies disclosed — especially compliance-cost triangulation method (anchor metric × ratio = output) with named anchor source disclosed
+- **Explicit note: "No source-archive firms cited"** (transparent anti-positioning)
 - Contact + next-research footer
 
-**Note:** Policy briefs are especially scrutinised for source provenance — this endnote runs heavier on source enumeration than other blueprints.
+**Note:** Policy briefs are especially scrutinised for source provenance — this endnote runs heavier on source enumeration than other blueprints. The alias registry is effectively the bibliography.
 
 **No A+ flex** (boilerplate).
 
@@ -402,7 +413,7 @@ For each numbered section, send back ONE of:
 Blueprint-level questions:
 - Section count target (14 base OK? 13-14 page flex range OK? Or should we widen by adding an §08.5 enforcement deep-dive that triggers on `enforcement_actions_in_last_2y >= 5`?)
 - Voice / register OK? (calibrated, directional, neutral-analytical; winner/loser language NEVER moralising)
-- 15/70/15 source mix OK? (heavier secondary than the 25/55/20 used elsewhere — reflects policy-text citation reality)
+- Source mix target OK? (~15-20% `[Kira estimates]` / ~80-85% named externals — lighter on `[Kira estimates]` than other blueprints because policy text gets cited verbatim with statute-ID aliases)
 - `policy_timeline` page_type new schema OK to author? (or fall back to repurposing `market_data_chart` with custom SVG?)
 - Overlay vertical assignment OK? (consumer_durables overlay didn't get worked examples here — does it apply to regulatory_brief at all, or is it primarily a §08 entry_strategy concept?)
 - Anything missing for "regulatory brief" that mày expect from KIRA's POV? (e.g. should §11 ASEAN peers add a "regulatory predictability" qualitative tag column?)

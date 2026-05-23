@@ -3,7 +3,7 @@
 > **For Henry to verify.** Mark each section ✏️ to change / ❌ to remove / ➕ to add / ✅ ok. Send back the list, I apply changes.
 >
 > **Profile:** 14 sections, **13-16 pages** (baseline 13-14 + 0-3 expand pages depending on data richness). **Physical goods only** — FMCG/CPG, building materials, hardware, durables, B2B industrial supplies with a visible distributor/wholesaler/retailer cascade. **No forecast section** (intentional — country-level channel forecasts too noisy).
-> **Source mix target:** 25% primary / 55% secondary / 20% estimate.
+> **Source mix target (Phase L.3 framing):** ~25-35% `[Kira estimates]` / ~65-75% named externals (`[<Source Alias> <Year>]`). §07 margin waterfall lands heavier on `[Kira estimates]` (margin scraping is hard); §05/06/08 channel-share lean named-external. Methodology endnote lists every alias.
 > **Total query count:** 22 across 7 buckets.
 >
 > **Center of gravity:** §06 channel mix evolution (5-year stacked) + §07 channel margin waterfall (NEW page type). These two are the report's visual anchors — if either fails the data-coverage gate, regenerate, do NOT skip.
@@ -13,6 +13,16 @@
 > - Direct-only brands with no channel cascade (route to entry_strategy or competitive_landscape instead)
 > - Regional / APAC roll-ups — channel mix too heterogeneous to triangulate
 > - Buyer wants sizing/forecast as the lead (route to market_analysis)
+
+### Source tag system (Phase L.3 — applies to every content page)
+
+Two tag categories only. The deprecated `[primary]` / `[secondary]` / `[estimate]` trio is GONE.
+
+- `[Kira estimates]` — any KIRA-derived figure: margin synthesis, channel-mix triangulation, distributor revenue band synthesis. Replaces both old `[primary]` AND old `[estimate]`.
+- `[<Source Alias> <Year>]` — external citable source. Examples for distribution_analysis: `[Unilever AR 2025]`, `[Indofood AR 2025]`, `[DKSH AR 2024]`, `[Berli Jucker AR 2024]`, `[BPS Retail Census 2024]`, `[GSO 2024]`, `[Sea Group 2025]`, `[Tokopedia 2025]`, `[Momentum Works 2025]`, `[Inside Retail Asia 2025]`, `[Grab Investor Day 2025]`, `[GoTo 2025]`.
+- `[user-input]` — UC3 only.
+
+**Source key footer (NEW, every content page):** every page using named-source tags MUST end with a one-line `SOURCE KEY · <alias> = <full citation> · ... · Kira estimates = KIRA in-house analyst triangulation` resolving every alias on that page. Aliases sort alphabetically, `Kira estimates` last. ~280 char cap. §07 waterfall: each margin layer's anchor source goes in the source key — readers will trace every % back.
 
 ### A+ flex layer (Phase J)
 
@@ -94,8 +104,8 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} retail channel mix Nielsen scan track
 3. {country} {industry} general trade share warung sari-sari mom and pop {year}
 ```
-**Tag mix:** 60% secondary / 40% estimate
-**Expected sources:** Listed FMCG annual reports (channel disclosures) · CampaignAsia / Inside Retail Asia · ministry of trade MT licensing data · industry trade associations
+**Tag mix:** ~60% named externals (listed FMCG ARs `[Unilever AR 2025]` / `[Indofood AR 2025]` / `[Vinamilk AR 2025]`, `[Inside Retail Asia 2025]`, ministry of trade MT licensing data, industry trade associations) / ~40% `[Kira estimates]` (per-channel share synthesis where multiple disclosures triangulate)
+**Expected sources:** Listed FMCG annual reports (channel disclosures) · industry trade press · ministry of trade MT licensing data · industry trade associations
 
 **📄 Layout:**
 - **H1:** "Channel landscape: who moves volume today"
@@ -126,7 +136,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} modern trade share traditional trade {year}
 3. {country} {industry} retail channel mix Nielsen scan track
 ```
-**Tag mix:** 60% secondary / 40% estimate
+**Tag mix:** ~60% named externals (listed FMCG ARs with 5-year channel disclosures + industry trade press historicals) / ~40% `[Kira estimates]` (per-year channel synthesis where disclosures don't span full 5-year window)
 
 **📄 Layout:**
 - **H1:** "Channel mix evolution: {year-5} to {year}"
@@ -157,7 +167,7 @@ Each section can have up to 3 customization layers:
 2. {country} FMCG channel margin brand distributor retailer breakdown
 3. {country} {industry} retailer markup modern trade traditional trade
 ```
-**Tag mix:** 45% secondary / 55% estimate (hardest data to source — every margin % needs an explicit anchor sentence in §13 endnote)
+**Tag mix:** ~45% named externals (listed FMCG MD&A `[Unilever AR 2025]` / `[Indofood AR 2025]`, academic papers, trade-press distributor profiles, competition authority filings) / ~55% `[Kira estimates]` (hardest data to source — most margin layers land `[Kira estimates]` with each layer's anchor source disclosed in §13 endnote AND the page source key footer)
 **Expected sources:** Listed FMCG MD&A · academic papers on emerging-markets channel economics · trade-press distributor profiles · competition authority filings
 
 **📄 Layout:**
@@ -168,7 +178,7 @@ Each section can have up to 3 customization layers:
   - `margin_pct` ≤8 ("8-12%")
   - `margin_pct_unit` ≤4 ("pts" / "%")
   - `take_note` ≤60 ("Exclusive territory, 60d terms")
-  - `source_tag` required — [primary|secondary|estimate]
+  - `source_tag` required — either `[Kira estimates]` or `[<Source Alias> <Year>]`; alias must resolve in the page source key footer
 - **Commentary (bottom 45%, 2 cols):** structural takeaway (col 1) + 3 anomalies — fattest layer, compression point, disintermediation risk (col 2)
 
 **Standard layer shape (one row per link, brand → consumer):**
@@ -209,8 +219,8 @@ Each section can have up to 3 customization layers:
 2. {country} retail outlets count modern trade traditional trade by region
 3. {country} {industry} last mile rural penetration challenge
 ```
-**Tag mix:** 60% secondary / 40% estimate
-**Expected sources:** National stats bureau retail census ({country_stats_bureau}: ID→BPS, VN→GSO, TH→NSO, PH→PSA) · listed FMCG distribution-reach disclosures ("we cover 500k outlets") · ministry of trade outlet registrations
+**Tag mix:** ~60% named externals (national stats bureau retail census aliases `[BPS Retail Census 2024]` / `[GSO Retail Census 2024]` / `[NSO Retail Census 2024]` / `[PSA Retail Census 2024]`, listed FMCG reach disclosures like `[Unilever AR 2025]` / `[Indofood AR 2025]`, ministry of trade outlet registrations) / ~40% `[Kira estimates]` (tier-level outlet coverage synthesis where census + reach disclosures triangulate)
+**Expected sources:** National stats bureau retail census · listed FMCG distribution-reach disclosures ("we cover 500k outlets") · ministry of trade outlet registrations
 
 **📄 Layout:**
 - **H1:** "Geographic distribution coverage"
@@ -244,8 +254,8 @@ Each section can have up to 3 customization layers:
 3. {country} {industry} distributor portfolio principals brands carried
 4. {country} {industry} master distributor sub-distributor structure
 ```
-**Tag mix:** 70% secondary / 20% estimate / 10% primary
-**Expected sources:** distributor company websites + LinkedIn · trade directories · listed conglomerate disclosures (PT Enseval, DKSH, Li & Fung, Berli Jucker) · chambers of commerce
+**Tag mix:** ~75% named externals (distributor company websites + LinkedIn, trade directories, listed conglomerate disclosures like `[DKSH AR 2024]` / `[Berli Jucker AR 2024]` / `[PT Enseval AR 2024]` / `[Li & Fung AR 2024]`, chambers of commerce directories) / ~25% `[Kira estimates]` (revenue-band estimates for non-listed distributors)
+**Expected sources:** distributor company websites + LinkedIn · trade directories · listed conglomerate disclosures · chambers of commerce
 
 **📄 Layout:**
 - **H1:** "Top distributors & category portfolios"
@@ -282,7 +292,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} distributor margin gross percent
 3. {country} FMCG channel margin brand distributor retailer breakdown
 ```
-**Tag mix:** 45% secondary / 55% estimate
+**Tag mix:** ~45% named externals (listed FMCG MD&A, payment-terms surveys, trade press distributor profiles) / ~55% `[Kira estimates]` (margin-band synthesis per tier is largely a KIRA call — anchor disclosed in §13 endnote)
 
 **📄 Layout:**
 - **H1:** "Distributor economics: margin, terms, exclusivity"
@@ -314,8 +324,8 @@ Each section can have up to 3 customization layers:
 3. {country} social commerce TikTok Shop live commerce GMV {year}
 4. {country} 15-minute delivery FMCG category coverage {year}
 ```
-**Tag mix:** 55-60% secondary / 40-45% estimate
-**Expected sources:** Grab / GoTo investor decks · Momentum Works quick-commerce reports · TechInAsia / e27 / Rest of World · TikTok Shop platform disclosures
+**Tag mix:** ~60% named externals (`[Grab Investor Day 2025]` / `[GoTo 2025]`, `[Momentum Works 2025]` quick-commerce reports, `[Tech in Asia 2025]` / `[e27 2025]` / `[Rest of World 2025]`, TikTok Shop platform disclosures) / ~40% `[Kira estimates]` (velocity-vs-impact scoring + per-mode category-coverage synthesis)
+**Expected sources:** ride-hailing/super-app investor decks · Momentum Works quick-commerce reports · regional tech press · TikTok Shop platform disclosures
 
 **📄 Layout:**
 - **H1:** "Channel disruption signals"
@@ -349,8 +359,8 @@ Each section can have up to 3 customization layers:
 3. {country} marketplace share Shopee Lazada Tokopedia TikTok Shop {year}
 4. {country} e-commerce GMV {industry} category breakdown
 ```
-**Tag mix:** 65% secondary / 35% estimate
-**Expected sources:** e-Conomy SEA report (cite underlying data, not the report name) · marketplace company filings (Sea Ltd, GoTo, Lazada parent) · Momentum Works · national e-commerce association data
+**Tag mix:** ~65% named externals (marketplace company filings `[Sea Group 2025]` / `[GoTo 2025]` / `[Lazada Parent 2025]`, `[Momentum Works 2025]`, national e-commerce association data, e-Conomy SEA underlying data sources cited directly) / ~35% `[Kira estimates]` (sub-segment online% synthesis where marketplace disclosures aggregate above sub-segment level)
+**Expected sources:** marketplace company filings · industry research with disclosed methodology · national e-commerce association data (avoid citing aggregator report names — cite underlying primary data)
 
 **📄 Layout:**
 - **H1:** "E-commerce penetration by sub-segment"
@@ -380,14 +390,15 @@ Each section can have up to 3 customization layers:
 ## §13 Methodology endnote — `methodology_endnote`
 
 **Layout:**
-- Source mix breakdown (`[primary]` / `[secondary]` / `[estimate]` %)
-- Key data anchors (Nielsen-style channel-share series, customs aggregates, listed-company distributor disclosures)
-- **KIRA margin-triangulation methodology disclosed** — every margin % in §07 waterfall traces to an anchor sentence per the template: *"Listed FMCG operator A disclosed 18% gross margin to distributors [secondary]; sector convention places distributor markup 8-12pp on top → retailer-side margin 22-28% [estimate]"*
+- Source mix breakdown — `[Kira estimates]` share % vs named-external share % (target ~25-35% `[Kira estimates]`)
+- **Full alias registry** — every `[<Source Alias> <Year>]` used anywhere in the report resolved to its full citation, sorted alphabetically with `Kira estimates = KIRA in-house analyst triangulation` last
+- Key data anchors (channel-share series, customs aggregates, listed-company distributor disclosures)
+- **KIRA margin-triangulation methodology disclosed** — every `[Kira estimates]` margin % in §07 waterfall traces to an anchor sentence per the template: *"`[Unilever AR 2025]` disclosed 18% gross margin to distributors; sector convention places distributor markup 8-12pp on top → retailer-side margin 22-28% [Kira estimates]"*
 - Contact + next research footer
 
 **No A+ flex** (boilerplate).
 
-**QC rule:** Source-tag census must reconcile to the source_mix_target (25% primary / 55% secondary / 20% estimate). Margin bucket carries the heaviest estimate share; flag explicitly.
+**QC rule:** Source-tag census must reconcile to the source mix target (~25-35% `[Kira estimates]` / ~65-75% named externals). §07 margin bucket carries the heaviest `[Kira estimates]` share; flag explicitly with per-layer anchor disclosure.
 
 ---
 

@@ -3,8 +3,18 @@
 > **For Henry to verify.** Mark each section ✏️ to change / ❌ to remove / ➕ to add / ✅ ok. Send back the list, I apply changes.
 >
 > **Profile:** 16 sections, **16-19 pages** (baseline 16-17 + 0-3 expand pages depending on data richness), B2C-only (F&B, apparel, beauty, mobile, OTT, fintech-consumer, auto-consumer). SEA + JP + KR coverage.
-> **Source mix target:** 30% primary / 50% secondary / 20% estimate (heavier primary weight — KIRA synthesizes persona archetypes from panel + survey triangulation).
+> **Source mix target (Phase L.3 framing):** ~25-35% `[Kira estimates]` / ~65-75% named externals (`[<Source Alias> <Year>]`) — heavier `[Kira estimates]` weight than other blueprints because KIRA synthesizes persona archetypes + WTP bands on top of panel + survey triangulation. Methodology endnote lists every alias.
 > **Total query count:** 22 across 6 buckets.
+
+### Source tag system (Phase L.3 — applies to every content page)
+
+Two tag categories only. The deprecated `[primary]` / `[secondary]` / `[estimate]` trio is GONE.
+
+- `[Kira estimates]` — any KIRA-derived figure: persona-cluster synthesis, WTP triangulation, panel cross-tabs the analyst built, model output. Replaces both old `[primary]` AND old `[estimate]`.
+- `[<Source Alias> <Year>]` — external citable source. Examples for consumer_segmentation: `[AC Nielsen 2026]`, `[Kantar 2025]`, `[GSO 2024]`, `[BPS 2024]`, `[Statistics Bureau JP 2024]`, `[Statistics Korea 2024]`, `[Sea Group 2025]`, `[Tokopedia 2025]`, `[World Bank HH Survey 2024]`.
+- `[user-input]` — UC3 only.
+
+**Source key footer (NEW, every content page):** every page using named-source tags MUST end with a one-line `SOURCE KEY · <alias> = <full citation> · ... · Kira estimates = KIRA in-house analyst triangulation` resolving every alias on that page. Aliases sort alphabetically, `Kira estimates` last. ~280 char cap. Persona pages especially: panel composition disclosure (`n=24 IDI Jakarta + Surabaya, 2025`) goes in the source key footer or methodology endnote, NOT in the page body.
 
 ### 3-persona design (NOT 5)
 
@@ -102,8 +112,8 @@ Each section can have up to 3 customization layers:
 2. {country} household income distribution {year} consumer expenditure survey
 3. {country} urban peri-urban rural population split {year}
 ```
-**Tag mix:** 80% secondary / 20% estimate
-**Expected sources:** national statistics bureau (BPS, GSO, NSO, PSA, DOSM, SingStat, Statistics Korea, Statistics Bureau Japan) · central bank household surveys · World Bank household consumption data · ADB inclusive-growth reports
+**Tag mix:** ~80% named externals (national stats bureau aliases — `[BPS 2024]`, `[GSO 2024]`, `[NSO 2024]`, `[PSA 2024]`, `[DOSM 2024]`, `[SingStat 2024]`, `[Statistics Korea 2024]`, `[Statistics Bureau JP 2024]`; `[World Bank HH Survey 2024]`; `[ADB Growth Report 2024]`) / ~20% `[Kira estimates]` (value-cell synthesis on top of raw demo + income cuts)
+**Expected sources:** national statistics bureau · central bank household surveys · World Bank household consumption data · ADB inclusive-growth reports
 
 **📄 Layout:**
 - **H1:** "Demographic segmentation: age × income × geography"
@@ -138,7 +148,7 @@ Each section can have up to 3 customization layers:
 2. {country} household {industry} share of wallet basket size
 3. {country} {industry} purchase frequency repeat rate panel
 ```
-**Tag mix:** 60% secondary / 40% estimate (frequency × basket cross-tabs often need KIRA triangulation)
+**Tag mix:** ~60% named externals (`[BPS HH Expenditure 2024]` / `[GSO HH Expenditure 2024]`, central bank consumer finance surveys, listed-company investor decks like `[Unilever Q4 2025]` / `[Vinamilk AR 2025]`, academic consumer-behavior papers with disclosed panel n) / ~40% `[Kira estimates]` (frequency × basket cross-tab synthesis typically requires KIRA triangulation)
 **Expected sources:** statistics bureau household expenditure survey · central bank consumer finance survey · listed-company quarterly investor decks (basket/frequency disclosures) · academic consumer-behavior papers with disclosed panel n
 
 **📄 Layout:**
@@ -171,8 +181,8 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} Gen Z millennial consumer behavior
 3. {country} sustainability ethical consumption {industry} {year}
 ```
-**Tag mix:** 50% secondary / 45% estimate / 5% primary
-**Note:** psychographic claims are the highest-risk for stereotype drift. Every values claim needs explicit anchor (survey n, year, geography) or gets downgraded to `[estimate]` with anchor disclosure.
+**Tag mix:** ~55% named externals (consumer values surveys like `[AC Nielsen 2026]` / `[Kantar 2025]`, lifestyle panels with disclosed panel n) / ~45% `[Kira estimates]` (psychographic-cluster placement is largely a KIRA synthesis call)
+**Note:** psychographic claims are the highest-risk for stereotype drift. Every values claim needs explicit anchor (named source + year + survey n) or gets tagged `[Kira estimates]` with anchor disclosure in the source key footer.
 
 **📄 Layout:**
 - **H1:** "Psychographic segmentation: values × lifestyle clustering"
@@ -291,8 +301,8 @@ Each section can have up to 3 customization layers:
 2. {country} modern trade traditional trade share {industry}
 3. {country} live commerce TikTok Shopee Lazada {industry} share
 ```
-**Tag mix:** 65% secondary / 30% estimate / 5% primary
-**Expected sources:** e-commerce platform investor decks (Sea Group, Tokopedia, Coupang) · logistics & last-mile sector reports · industry trade associations channel surveys · academic retail-channel papers
+**Tag mix:** ~70% named externals (e-commerce platform investor decks `[Sea Group 2025]` / `[Tokopedia 2025]` / `[Coupang 2025]` / `[GoTo 2025]`, logistics sector reports, industry channel surveys) / ~30% `[Kira estimates]` (per-persona channel-mix attribution typically requires KIRA cross-tab synthesis)
+**Expected sources:** e-commerce platform investor decks · logistics & last-mile sector reports · industry trade associations channel surveys · academic retail-channel papers
 
 **📄 Layout:**
 - **H1:** "Channel preferences by segment"
@@ -328,10 +338,10 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} premium mass tier price segmentation
 3. {country} {industry} Van Westendorp price sensitivity study
 ```
-**Tag mix:** 45% secondary / 50% estimate / 5% primary (WTP is the section most likely to require KIRA estimate with anchor methodology)
+**Tag mix:** ~50% named externals (academic price-elasticity studies, central bank inflation pass-through research, listed-company ASP disclosures like `[Vinamilk AR 2025]` / `[Masan Q3 2025]`) / ~50% `[Kira estimates]` — WTP is the section most likely to land `[Kira estimates]` because tier-band synthesis layers on top of a published anchor price + elasticity from a comparable category
 **Expected sources:** academic price-elasticity studies · central bank inflation pass-through research · industry pricing reports · listed-company ASP and tier-mix disclosures
 
-**WTP triangulation pattern:** anchor on a published median price point × elasticity from a comparable category to back-solve persona WTP bands. **Always disclose anchor in source line.**
+**WTP triangulation pattern:** anchor on a published median price point × elasticity from a comparable category to back-solve persona WTP bands. **Always disclose anchor in source key footer** (e.g. `SOURCE KEY · Vinamilk AR 2025 = Vinamilk Annual Report 2025 · Kira estimates = KIRA WTP triangulation anchored to Vinamilk gold-tier ASP × Kantar coffee elasticity 2025`).
 
 **📄 Layout:**
 - **H1:** "Willingness-to-pay + price sensitivity"
@@ -353,7 +363,7 @@ Each section can have up to 3 customization layers:
 
 **No expand condition** (always 1 page).
 
-**QC rule:** every WTP figure carries either secondary source OR `[estimate]` tag with disclosed anchor methodology.
+**QC rule:** every WTP figure carries either `[<Named Source> <Year>]` OR `[Kira estimates]` with disclosed anchor methodology in the page source key footer.
 
 ---
 
@@ -365,8 +375,8 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} brand switching consumer loyalty study
 3. {country} {industry} top brands consumer preference panel
 ```
-**Tag mix:** 55% secondary / 35% estimate / 10% primary
-**Expected sources:** consumer panel providers with methodology disclosure (read, do not cite by name) · brand-tracking academic studies · listed-company brand-health investor disclosures · industry trade press brand rankings
+**Tag mix:** ~65% named externals (`[AC Nielsen 2026]`, `[Kantar 2025]`, listed-company brand-health investor disclosures, industry trade press brand rankings) / ~35% `[Kira estimates]` (NPS / switching-flow synthesis where panel cuts overlap multiple sources)
+**Expected sources:** consumer panel providers with methodology disclosure · brand-tracking academic studies · listed-company brand-health investor disclosures · industry trade press brand rankings
 
 **📄 Layout:**
 - **H1:** "Brand affinity + switching behavior"
@@ -425,9 +435,10 @@ Each section can have up to 3 customization layers:
 ## §15 Methodology endnote — `methodology_endnote`
 
 **Layout:**
-- Source mix breakdown (`[primary]` / `[secondary]` / `[estimate]` %)
+- Source mix breakdown — `[Kira estimates]` share % vs named-external share % (target ~25-35% `[Kira estimates]` — heavier than other blueprints because persona archetypes are KIRA-synthesized)
+- **Full alias registry** — every `[<Source Alias> <Year>]` used anywhere in the report resolved to its full citation, sorted alphabetically with `Kira estimates = KIRA in-house analyst triangulation` last
 - **Panel composition disclosure:** n=, geography, recruitment method (especially critical — buyers value transparent methodology, doubly so on persona-led work)
-- KIRA estimate methodologies disclosed (especially WTP triangulation)
+- KIRA estimate methodologies disclosed (especially WTP triangulation anchor patterns)
 - **Persona-clustering note:** which 3 of 8 axes drove differentiation
 - Contact + next research footer
 
@@ -476,5 +487,5 @@ Blueprint-level questions:
 - B2C-only scope OK? (or should we ➕ thin B2B-consumer crossover for mobile carriers, banking, insurance?)
 - `persona_profile` page type slot spec OK? (demo×4 / behavior×4 / quote / channel-bar / WTP-anchor) — anything missing for a buyer to feel the persona is real?
 - Overlay vertical assignment OK? (fmcg / consumer_durables / services / finserv — any topic types missing?)
-- Quote authenticity rule OK? (must trace to real panel OR `[estimate]` composite with anchor — strict enough? too strict?)
+- Quote authenticity rule OK? (must trace to real panel via `[<Panel Alias> <Year>]` OR `[Kira estimates]` composite with anchor disclosed in source key footer — strict enough? too strict?)
 - Anything missing for "consumer segmentation" that mày expect from KIRA's POV? (e.g. occasion-based segmentation page? journey-mapping page? cohort-evolution page?)

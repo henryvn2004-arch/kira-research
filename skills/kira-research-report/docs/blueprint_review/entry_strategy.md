@@ -3,8 +3,18 @@
 > **For Henry to verify.** Mark each section ✏️ to change / ❌ to remove / ➕ to add / ✅ ok. Send back the list, I apply changes.
 >
 > **Profile:** 14 sections, **13-17 pages** (baseline 13-15 + 0-4 expand pages depending on data richness), qualitative-only (no P&L, no capex, no opex). Pivot from v1 happened 2026-05-23.
-> **Source mix target:** 20% primary / 60% secondary / 20% estimate.
+> **Source mix target (Phase L.3 framing):** ~20-30% `[Kira estimates]` / ~70-80% named external sources (`[<Source Alias> <Year>]`). Methodology endnote lists every alias used across the report.
 > **Total query count:** 25 across 8 buckets.
+
+### Source tag system (Phase L.3 — applies to every content page)
+
+Two tag categories only. The deprecated `[primary]` / `[secondary]` / `[estimate]` trio is GONE.
+
+- `[Kira estimates]` — any KIRA-derived figure (in-house triangulation, synthesis across multiple inputs, model output). Replaces both old `[primary]` AND old `[estimate]`.
+- `[<Source Alias> <Year>]` — external citable source named inline. Examples for entry_strategy topics: `[BPS 2024]`, `[GSO 2024]`, `[BNM Circular 2025]`, `[OJK Reg No. 12/2024]`, `[Vinacafe AR 2025]`, `[World Bank DB 2024]`, `[IMF Article IV 2025]`.
+- `[user-input]` — UC3 only.
+
+**Source key footer (NEW, every content page):** every page using named-source tags MUST end with a one-line `SOURCE KEY · <alias> = <full citation> · ... · Kira estimates = KIRA in-house analyst triangulation` resolving every alias appearing on that page. Aliases sort alphabetically, `Kira estimates` last. ~280 char cap.
 
 ### A+ flex layer (Phase J)
 
@@ -84,7 +94,7 @@ Each section can have up to 3 customization layers:
 1. {country} {industry} market size {year} USD addressable CAGR {year+5}
 2. {country} {industry} historical market value {year-3} to {year}
 ```
-**Tag mix:** 70% secondary / 30% estimate
+**Tag mix:** ~70% named externals (`[<Stats Bureau> <year>]`, `[<Central Bank> <year>]`, `[World Bank DB 2024]`) / ~30% `[Kira estimates]` for synthesized addressable wedge / CAGR triangulation
 
 **📄 Layout:**
 - **H1:** "Market opportunity: qualitative read on [industry] in [country]"
@@ -114,7 +124,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} customer demographics income bands {year}
 3. {country} middle-class urban households purchasing power {industry}
 ```
-**Tag mix:** 55% secondary / 45% estimate
+**Tag mix:** ~55% named externals (stats bureau, household income survey, central bank consumer finance) / ~45% `[Kira estimates]` (KIRA tends to do the segment-size math on top of raw demo + income tables)
 
 **📄 Layout:**
 - **H1:** "Target customer segment: definition and qualitative fit"
@@ -145,7 +155,7 @@ Each section can have up to 3 customization layers:
 2. {leading_player_candidate} {country} revenue segment {industry}
 3. {country} {industry} new entrant foreign player launch {year-2} to {year}
 ```
-**Tag mix:** 75% secondary / 20% estimate / 5% primary
+**Tag mix:** ~75% named externals (company AR aliases like `[Vinacafe AR 2025]`, exchange filings, competition authority filings) / ~25% `[Kira estimates]` for share-band synthesis
 
 **📄 Layout:**
 - **H1:** "Competitive intensity: who an entrant has to outflank"
@@ -181,7 +191,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} regulator {regulator_body} licensing application timeline cost
 3. {country} investment promotion {industry} incentives tax holiday
 ```
-**Tag mix:** 80% secondary / 20% estimate
+**Tag mix:** ~80% named externals (named regulator circulars + statute IDs, e.g. `[BNM Circular 2025]`, `[OJK Reg No. 12/2024]`, `[MOIT Decree 100/2024]`) / ~20% `[Kira estimates]` on timeline-band synthesis
 
 **📄 Layout:**
 - **H1:** "Regulatory hurdles and licensing path"
@@ -365,9 +375,10 @@ digital payment rails, talent availability per function)
 ## §14 Methodology endnote — `methodology_endnote`
 
 **Layout:**
-- Source mix breakdown (`[primary]` / `[secondary]` / `[estimate]` %)
-- Key data anchors
-- KIRA estimate methodologies disclosed
+- Source mix breakdown — `[Kira estimates]` share % vs named-external share % (target ~20-30% `[Kira estimates]`, rest named externals)
+- **Full alias registry** — every `[<Source Alias> <Year>]` used anywhere in the report resolved to its full citation, sorted alphabetically with `Kira estimates = KIRA in-house analyst triangulation` last
+- Key data anchors (which named sources carried the load per bucket)
+- KIRA estimate methodologies disclosed (triangulation patterns for synthesized figures)
 - **Explicit note: brief is qualitative-only — no P&L, no capex, no opex**
 - Contact + next research footer
 

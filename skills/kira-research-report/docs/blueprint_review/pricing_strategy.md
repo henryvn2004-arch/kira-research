@@ -5,7 +5,7 @@
 > **Henry's v2 brief (2026-05-23):** *"làm chung chung thông tin thị trường thôi, ko cần chi tiết quá."* — this blueprint is now a **general market pricing overview**, not a per-SKU pricing-committee deliverable. Tier-band indicative reads + qualitative directional commentary > exhaustive scraping.
 >
 > **Profile:** 13 sections, **13-15 pages** (baseline 13 + 0-3 expand pages depending on data richness), qualitative + tier-band only (no per-SKU price points, no full P&L). Pivot from v1 happened 2026-05-23.
-> **Source mix target:** 25% primary / 55% secondary / 20% estimate (v1 was 35/45/20 — shifted toward secondary because tier-band reads lean on listed-company disclosure + surveys, not exhaustive channel scraping).
+> **Source mix target (Phase L.3 framing):** ~20-30% `[Kira estimates]` / ~70-80% named externals (`[<Source Alias> <Year>]`). v1 / v2 framing had primary 25-35% — that bucket has been merged into `[Kira estimates]` since KIRA's channel-scan observations now read as KIRA-derived synthesis. Methodology endnote lists every alias used.
 > **Total query count:** 20 across 6 buckets (v1 was deeper per bucket).
 
 ### What changed v1 → v2 (call-outs)
@@ -14,8 +14,18 @@
 - **Per-SKU price-point table → indicative price bands** — §06 now 5-6 brands × tier label + low-high band + directional change. No per-SKU pack-size columns.
 - **Quantitative promo norms → qualitative directional matrix** — §11 promo patterns are now `rare / occasional / frequent / dominant` qualitative cells, not frequency × depth quant tables.
 - **Failure case study optional** — §12 ships with 2 successes + 1 failure if a credible failure surfaces; if not, 2 successes only. No invention.
-- **Source mix shifted 35/45/20 → 25/55/20** — less per-SKU scraping (primary down), more disclosure + survey lean (secondary up).
+- **Source mix shifted** — less per-SKU scraping, more disclosure + survey lean. In Phase L.3 framing: ~70-80% named externals (listed-company tier disclosures, WTP surveys, marketplace listings), ~20-30% `[Kira estimates]` (band synthesis on top of disclosed point prices). The old `[primary]` bucket is gone — KIRA-conducted channel scans now read as `[Kira estimates]`.
 - **NEW page type `price_quality_matrix`** — §07 is the centerpiece (was buried mid-deck in v1).
+
+### Source tag system (Phase L.3 — applies to every content page)
+
+Two tag categories only. The deprecated `[primary]` / `[secondary]` / `[estimate]` trio is GONE.
+
+- `[Kira estimates]` — any KIRA-derived figure: KIRA channel-scan tier-band observations, WTP triangulation, price-quality scoring composite, elasticity coefficients calibrated to anchor studies. Replaces both old `[primary]` AND old `[estimate]`.
+- `[<Source Alias> <Year>]` — external citable source. Examples for pricing_strategy: `[Shopee VN 2026]`, `[Tokopedia 2026]`, `[Lazada TH 2026]`, `[Rakuten JP 2025]`, `[Coupang KR 2026]`, `[Vinamilk AR 2025]`, `[Masan Q3 2025]`, `[Viettel AR 2025]`, `[AC Nielsen 2026]`, `[Kantar WTP Study 2025]`, `[BOT FX Pass-through 2024]`.
+- `[user-input]` — UC3 only.
+
+**Source key footer (NEW, every content page):** every page using named-source tags MUST end with a one-line `SOURCE KEY · <alias> = <full citation> · ... · Kira estimates = KIRA in-house analyst triangulation` resolving every alias on that page. Aliases sort alphabetically, `Kira estimates` last. ~280 char cap. WTP + elasticity pages especially: anchor study + triangulation method disclosed in the source key footer.
 
 ### A+ flex layer (Phase J)
 
@@ -101,7 +111,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} shelf price modern trade {year} tier comparison
 3. {country} {industry} pack size price tier premium mid mass {year}
 ```
-**Tag mix:** 45% primary / 45% secondary / 10% estimate
+**Tag mix:** ~50% named externals (marketplace listings `[Shopee VN 2026]` / `[Tokopedia 2026]` / `[Lazada TH 2026]`, listed-company tier disclosures like `[Vinamilk AR 2025]` / `[Masan Q3 2025]`) / ~50% `[Kira estimates]` — KIRA's own channel-scan observations + tier-band synthesis read as `[Kira estimates]` (the v1 `[primary]` bucket folded in)
 
 **📄 Layout:**
 - **H1:** "Pricing landscape: 4-tier stack"
@@ -133,7 +143,7 @@ Each section can have up to 3 customization layers:
 1. {country} {industry} {leading_player_candidate} price {ecommerce_anchor} {year}
 2. {country} {industry} price trend {year-2} {year} direction
 ```
-**Tag mix:** 45% primary / 45% secondary / 10% estimate
+**Tag mix:** ~50% named externals (per-brand marketplace listing aliases + company catalogs) / ~50% `[Kira estimates]` — indicative price bands per brand are largely KIRA synthesis on top of point-price observations
 
 **📄 Layout:**
 - **H1:** "Competitor price bands: indicative view"
@@ -171,7 +181,7 @@ Each section can have up to 3 customization layers:
 1. {country} {industry} brand premium index survey {year}
 2. {country} {industry} consumer price sensitivity segment {year}
 ```
-**Tag mix:** 55% secondary / 35% estimate / 10% primary
+**Tag mix:** ~55% named externals (brand premium index surveys `[AC Nielsen 2026]` / `[Kantar Brand Index 2025]`, consumer price-sensitivity studies) / ~45% `[Kira estimates]` — quality-score composite + brand placement on the 2×2 is a KIRA synthesis call
 
 **📄 Layout (NEW page_type):**
 - **H1:** "Price-quality positioning map" (≤ 80 chars, 1 line)
@@ -209,7 +219,7 @@ Each section can have up to 3 customization layers:
 2. {industry} price elasticity emerging market consumer study
 3. {country} {industry} VAT pass-through demand response
 ```
-**Tag mix:** 45% secondary / 50% estimate / 5% primary
+**Tag mix:** ~50% named externals (price-elasticity academic studies, central bank inflation pass-through research `[BOT FX Pass-through 2024]` / `[BSP Inflation Report 2025]`, listed-company ASP disclosures) / ~50% `[Kira estimates]` — elasticity coefficients are largely calibrated to anchor studies + scaled to segment, so most coefficients land `[Kira estimates]` with anchor disclosed in source key footer
 
 **📄 Layout:**
 - **H1:** "Price elasticity by segment"
@@ -234,7 +244,7 @@ Each section can have up to 3 customization layers:
 → finserv: rate sensitivity by income tier (mass-affluent BNPL elasticity vs HNW retail-banking flat)
 → services: ARPU sensitivity by tenure cohort (new subscriber elastic vs locked-in subscriber inelastic)
 
-**Anchor disclosure rule:** elasticity coefficients are often [estimate] with [secondary] anchor — disclose anchor in subhead (e.g. *"KIRA estimate calibrated to {anchor_study} 2024 [secondary]"*). Qualitative ranges acceptable at overview level.
+**Anchor disclosure rule:** elasticity coefficients are typically `[Kira estimates]` calibrated to a named anchor study — disclose anchor in subhead (e.g. *"KIRA estimate calibrated to `[Kantar Elasticity Study 2024]`"*) and resolve the alias in the page source key footer. Qualitative ranges acceptable at overview level.
 
 ---
 
@@ -246,7 +256,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} consumer price sensitivity segment {year}
 3. {country} {industry} premium consumer segment income tier {year}
 ```
-**Tag mix:** 55% secondary / 35% estimate / 10% primary
+**Tag mix:** ~55% named externals (WTP surveys `[Kantar WTP Study 2025]` / `[AC Nielsen 2026]`, income-tier studies from stats bureaus, premium-segment research) / ~45% `[Kira estimates]` (WTP midpoint synthesis per segment is largely a KIRA triangulation; anchor disclosed in source key footer)
 
 **📄 Layout:**
 - **H1:** "Willingness-to-pay by consumer segment"
@@ -267,7 +277,7 @@ Each section can have up to 3 customization layers:
 
 **No expand condition** (always 1 page).
 
-**Tag rule:** WTP data quality varies wildly — if only 1 source surfaces a figure, downgrade to [estimate] with source as anchor. Qualitative ranges OK. Anti-positioning still applies — never name-drop forbidden firms even if they published the survey.
+**Tag rule:** WTP data quality varies wildly — if only 1 source surfaces a figure, tag `[Kira estimates]` with that source as the disclosed anchor in the page source key footer. Qualitative ranges OK. Anti-positioning still applies — never name-drop forbidden firms even if they published the survey.
 
 ---
 
@@ -279,7 +289,7 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} freemium tier conversion rate {year}
 3. {country} {industry} dynamic pricing surge {year}
 ```
-**Tag mix:** 75% secondary / 20% estimate / 5% primary
+**Tag mix:** ~75% named externals (company press releases on subscription launches, listed-company investor decks like `[Viettel AR 2025]` / `[Sea Group 2025]`, trade-press coverage of pricing-model shifts) / ~25% `[Kira estimates]` (adoption % synthesis + momentum scoring)
 
 **📄 Layout:**
 - **H1:** "Pricing models: subscription, one-time, freemium, tiered"
@@ -312,14 +322,14 @@ Each section can have up to 3 customization layers:
 2. {country} {industry} sale frequency channel {year}
 3. {country} {industry} {ecommerce_anchor} flash sale tier
 ```
-**Tag mix:** 40% primary / 50% secondary / 10% estimate
+**Tag mix:** ~50% named externals (e-commerce flash-sale coverage `[Shopee VN 2026]` / `[Tokopedia 2026]`, trade-press promo coverage) / ~50% `[Kira estimates]` — KIRA's own channel-scan observations of promo cadence fold into `[Kira estimates]`, severity tags (`rare / occasional / frequent / dominant`) are KIRA synthesis calls
 
 **📄 Layout:**
 - **H1:** "Promotional patterns by tier and channel"
 - **Chart:** matrix of 4 tiers × 4 channels, each cell carries qualitative severity tag `rare / occasional / frequent / dominant`
 - **Narrative:** up to 3 sub-sections on channel asymmetry + tier-specific norms
 
-**v2 critical note:** **Directional read, NOT quantitative depth + frequency table** (this was v1's per-SKU promo audit; killed for v2). Source tags still required — [primary] for KIRA channel observation, [secondary] for trade-press promo coverage.
+**v2 critical note:** **Directional read, NOT quantitative depth + frequency table** (this was v1's per-SKU promo audit; killed for v2). Source tags still required — `[Kira estimates]` for KIRA channel observation, `[<Source Alias> <Year>]` for trade-press / marketplace promo coverage.
 
 **Skip rule:** if category has no promotional convention (utilities, regulated insurance) → skip and bump section_count to 12.
 
@@ -343,7 +353,7 @@ Each section can have up to 3 customization layers:
 1. {country} {industry} brand premium repositioning success {year-2} {year}
 2. ({country} {industry} brand premium repositioning failed OR discontinued — 1 query)
 ```
-**Tag mix:** 75% secondary / 20% estimate / 5% primary
+**Tag mix:** ~75% named externals (case-brand annual reports `[Vinamilk AR 2025]` / `[Masan Q3 2025]`, trade-press case coverage, investor day decks) / ~25% `[Kira estimates]` (outcome-stat synthesis + lesson framing on top of disclosed share/price moves)
 
 **📄 Layout (compressed competitive_profile_deep):**
 - **H1:** "Premium positioning: case studies"
@@ -374,9 +384,10 @@ Each section can have up to 3 customization layers:
 ## §13 Methodology endnote — `methodology_endnote`
 
 **Layout:**
-- Source mix breakdown (`[primary]` / `[secondary]` / `[estimate]` — **target 25/55/20**, disclose actual)
-- Channel-scan protocol disclosed (channels sampled, brand count, sampling window)
-- WTP / elasticity estimate anchors disclosed
+- Source mix breakdown — `[Kira estimates]` share % vs named-external share % (target ~20-30% `[Kira estimates]`, disclose actual)
+- **Full alias registry** — every `[<Source Alias> <Year>]` used anywhere in the report resolved to its full citation, sorted alphabetically with `Kira estimates = KIRA in-house analyst triangulation` last
+- Channel-scan protocol disclosed (channels sampled, brand count, sampling window) — channel-scan observations land as `[Kira estimates]` so the protocol is doubly important
+- WTP / elasticity anchor studies disclosed (named source + year + triangulation method)
 - **Partial-data acknowledgement** where coverage was thin (e.g. opaque B2B-style pricing, contact-sales-only listings) — required, not optional
 - **Explicit note: brief is general-market pricing overview — tier-band indicative, not per-SKU exhaustive**
 - Contact + next research footer
@@ -419,7 +430,7 @@ For each numbered section, send back ONE of:
 Blueprint-level questions:
 - Section count target (13 base OK? 11-15 page flex range OK?)
 - Voice / register OK? (general market overview, directional, qualitative-band)
-- Source mix 25/55/20 OK? (v1 was 35/45/20 — v2 leans more on secondary disclosure + surveys)
+- Source mix OK? (Phase L.3 framing: ~20-30% `[Kira estimates]` / ~70-80% named externals. v1 / v2 trichotomy collapsed — KIRA channel-scan now folds into `[Kira estimates]`.)
 - Centerpiece position OK? (§07 price-quality matrix as load-bearing — was buried mid-deck in v1)
 - Overlay vertical assignment OK? (fmcg / finserv / services lean — anything missing for pricing POV?)
 - v2 pivots OK? (B2B halt dropped, per-SKU table → indicative bands, promo qualitative, failure optional)
