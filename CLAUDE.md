@@ -5,6 +5,12 @@
 >
 > **For project context** (brand, positioning, IA, schema, decision log) →
 > read `project des/CLAUDE.md` after this one.
+>
+> **For accumulated session memory** (gotchas, build phases, owner profile) →
+> read `project des/memory/MEMORY.md` for the index, then specific notes as
+> needed. On a new machine, mirror those files back into the local Claude
+> memory dir (`~/.claude/projects/.../memory/`) for runtime pickup. See
+> `project des/memory/README.md` for the sync pattern.
 
 ---
 

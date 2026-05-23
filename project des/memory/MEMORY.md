@@ -1,0 +1,21 @@
+# Memory index
+
+- [Henry (owner profile)](user_henry.md) — non-technical Vietnamese+English owner of kira-research; switches machines mid-work
+- [Owner instructions = click-through, never CLI](feedback_clickthrough_not_cli.md) — Henry doesn't use terminals; UI steps only
+- [SQL seeds with apostrophes → dollar-quoted](feedback_seed_strings_dollar_quoted.md) — `''` escape gets mangled in Supabase Editor paste pipeline
+- [Module scripts: throw not return at top level](feedback_module_script_no_toplevel_return.md) — `<script type="module">` has no implicit function wrap
+- [Check project des/CLAUDE.md before destructive DB ops](feedback_check_project_des_before_destructive_db.md) — workplan + sprint history can disagree with project context; latter wins for "keep" annotations
+- [Supabase blocks SQL DELETE on storage.* tables](feedback_supabase_storage_protect_delete.md) — `protect_delete()` trigger; use Dashboard Storage UI or Storage REST API instead
+- [Vercel hides underscore-prefixed dirs from /api routing](feedback_vercel_underscore_private_dirs.md) — `api/_lib/foo.js` is import-only, not a public endpoint
+- [kira-research external resources](reference_kira_research.md) — prod URL, repo, Supabase, Vercel, GH Actions, raw URL pattern
+- [Year 1 = free-tier only, no paid SaaS](project_kira_paid_tools_year1.md) — owner declined Speed Insights; pattern: skip paid upgrades until revenue
+- [Don't hand-trace SVG glyphs](feedback_dont_hand_trace_svg_glyphs.md) — owner rejected hand-coded SVG as "xấu vãi"; ask for exported SVG or propose webfont swap instead
+- [Nav logo = text+CSS, logo.png ≠ nav](project_kira_logo_architecture.md) — `.logo-mark` is Satoshi 900 text + ::after parallelogram; logo.png only for og:image / JSON-LD / /auth
+- [@sparticuz/chromium on Vercel: 3 non-obvious tweaks](feedback_sparticuz_chromium_vercel.md) — AWS_EXECUTION_ENV spoof, dynamic import, Buffer.from() wrap for base64
+- ["tool gen report" = the kira-research-report skill](project_tool_gen_report.md) — Henry's internal shorthand
+- [KIRA batch cron system](project_batch_cron_system.md) — 4 daily scheduled tasks gen 1 topic × EN/JA/KO from `data/report_queue.csv`
+- [PowerShell 5.1 ConvertTo-Json wraps long strings](feedback_powershell_convertto_json_string_wrap.md) — use Node for JSON-API bodies with big string fields
+- [KIRA A+ blueprint flex layer](project_a_plus_flex.md) — 3 customization layers (expand_slots + chart_options + industry overlays) so reports adapt per topic while preserving brand consistency
+- [KIRA L.3 source tag system](project_l3_source_tag_system.md) — `[Kira estimates]` + named-source aliases inline + page-bottom source key; replaces deprecated `[primary]/[secondary]/[estimate]` trio
+- [KIRA M.1 dual-language web search](project_m1_dual_language_search.md) — Stage 4 fires EN + local-lang queries (vi/id/th/ja/ko tier-1) to capture in-country sources; aliases stay English per L.3
+- [KIRA M.3 soft-delete + regen workflow](project_m3_soft_delete_regen.md) — Admin "Retire" = `status='retired'`; batch re-run auto-unretires via UPSERT; buyers retain access; no DB migration needed
