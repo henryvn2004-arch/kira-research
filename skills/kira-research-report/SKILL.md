@@ -55,11 +55,17 @@ Follow the stages in order. Each stage has a dedicated prompt file in `prompts/`
 - Prompt: [`prompts/confirm_step.md`](prompts/confirm_step.md)
 - Show user the section plan, estimated pages, source-tag distribution, data-integration plan (UC3). Wait for `APPROVE / EDIT [edits] / REJECT`.
 
-### Stage 4 — Research
+### Stage 4 — Research (dual-language since Phase M.1)
 - Use the native WebSearch tool. Don't fabricate citations.
-- UC1: run the ~25 queries from `query_strategy.json` for the blueprint
-- UC2: run the ~20-30 queries the planner produced
-- UC3: run the ~10-15 gap-filling queries that the user's data didn't cover
+- **Dual-language pattern:** Fire English queries (from `query_strategy.json` etc.) AND local-language queries (constructed via `references/local_lang_query_glossary.md`) in parallel, then merge.
+  - Read `local_language_code` + `local_search_priority` from topic_parser output.
+  - `tier-1` countries (VN/ID/TH/JP/KR): always fire ~8-10 local queries on top of the EN baseline. Priority buckets: macro, sector overview, demand/regulatory.
+  - `tier-2` (MY/PH/TW): fire local pass only when EN pass returns < 6 high-quality sources per bucket.
+  - `skip` (SG/HK/EN-default): EN-only.
+- Dedupe merged results by source URL. Local-language sources cited via English aliases per L.3 (e.g. `[GSO 2024]` not `[Tổng cục Thống kê 2024]`); page-bottom SOURCE KEY may include the original local-language source name for traceability.
+- UC1: run the ~25 EN queries from `query_strategy.json` + ~8-10 localized queries
+- UC2: run the ~20-30 EN queries the planner produced + ~6-8 localized
+- UC3: run the ~10-15 EN gap-filling queries + ~4-6 localized as needed
 
 ### Stage 5 — Content generation (unified across modes)
 - Prompt: [`prompts/content_per_section.md`](prompts/content_per_section.md)

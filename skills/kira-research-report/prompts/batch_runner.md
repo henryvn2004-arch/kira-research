@@ -71,8 +71,9 @@ Spawn a general-purpose subagent for the EN gen (keeps the parent context lean).
 > - Sentence-case headlines
 > - **Section gen MUST be sequential per `content_per_section.md` "Execution pattern" section — no parallel sub-subagents per section.** Otherwise sections silently drop.
 > - **Pre-render validation gate is non-negotiable.** Before any PDF render, assert that every section ID from `section_plan` is present in `generated_sections`. Halt with error if any missing.
+> - **Stage 4 dual-language search (Phase M.1).** Read `local_language_code` + `local_search_priority` from topic_parser output. If priority = `tier-1` (VN/ID/TH/JP/KR), fire ~8-10 local-language queries in parallel with the EN baseline. Use `references/local_lang_query_glossary.md` for canonical term translations. Merge results dedupe-by-URL. Tag any local-source citation with English alias per L.3 (`[GSO 2024]` not `[Tổng cục Thống kê 2024]`); page-bottom SOURCE KEY may include the original local-language source name.
 >
-> Return the absolute paths to the generated en.html and en.pdf, AND the count of sections planned vs generated (e.g. "14 planned, 14 generated — gate passed").
+> Return the absolute paths to the generated en.html and en.pdf, AND the count of sections planned vs generated (e.g. "14 planned, 14 generated — gate passed"), AND the count of EN vs local-language queries fired (e.g. "27 EN + 10 VI queries, 142 unique URLs after dedupe").
 
 If the subagent fails (returns error or no PDF) → jump to Step 6 with error.
 

@@ -35,8 +35,10 @@ Extract metadata. Don't fabricate — if a field can't be confidently inferred, 
   "forced_template": null,
   "output_mode": "default",
   "locale": "en",
+  "local_language_code": "id",
+  "local_search_priority": "tier-1",
   "confidence": 0.92,
-  "parse_notes": "Topic falls squarely in SEA construction-materials domain; year explicit; sub-industries enumerated in topic string."
+  "parse_notes": "Topic falls squarely in SEA construction-materials domain; year explicit; sub-industries enumerated in topic string. Local search code 'id' for Indonesia — Stage 4 will dual-fire EN + Indonesian queries."
 }
 ```
 
@@ -61,6 +63,8 @@ Extract metadata. Don't fabricate — if a field can't be confidently inferred, 
 | `forced_template` | string \| null | Set if `--template <id>` was passed |
 | `output_mode` | "default" \| "draft" \| "publish" | Default = let orchestrator decide. Override with `--draft` or `--publish` flags |
 | `locale` | "en" \| "ja" \| "ko" | Phase 1 always "en". Hint extraction only; do not actually localize. |
+| `local_language_code` | "vi" \| "id" \| "th" \| "ja" \| "ko" \| "ms" \| "tl" \| "zh-TW" \| "en" | Phase M.1: maps `country_iso` to the local search language for Stage 4 dual-language WebSearch. See `references/local_lang_query_glossary.md` for the canonical country → code map. `en` for English-primary markets (SG, HK, default for unmapped). |
+| `local_search_priority` | "tier-1" \| "tier-2" \| "skip" | `tier-1` = always fire local pass (VN, ID, TH, JP, KR). `tier-2` = fire only if EN pass yields < 6 high-quality sources/bucket (MY, PH, TW). `skip` = EN-only (SG, HK, default). Stage 4 reads this to budget WebSearch quota. |
 | `confidence` | float 0-1 | Your overall confidence in this parse |
 | `parse_notes` | string | One-sentence rationale, especially noting ambiguities |
 
@@ -86,10 +90,31 @@ Extract metadata. Don't fabricate — if a field can't be confidently inferred, 
 | `"refresh R0152"` | **Refuse**. R-numbers are internal archive; explain we never reference them externally and ask for a topic name instead |
 | Empty topic / single word | Ask the user a clarifying question before producing JSON. Don't guess. |
 
+### Country → local_language_code mapping (Phase M.1)
+
+Mechanical lookup — apply after determining `country_iso`:
+
+| `country_iso` | `local_language_code` | `local_search_priority` |
+|---|---|---|
+| VN | vi | tier-1 |
+| ID | id | tier-1 |
+| TH | th | tier-1 |
+| JP | ja | tier-1 |
+| KR | ko | tier-1 |
+| MY | ms | tier-2 |
+| PH | tl | tier-2 |
+| TW | zh-TW | tier-2 |
+| SG | en | skip |
+| HK | en | skip |
+| *(anything else / null)* | en | skip |
+
+Cross-checked against `references/local_lang_query_glossary.md` (source of truth). If the canonical glossary disagrees, the glossary wins — update this table.
+
 ## Self-check before returning
 
 - [ ] Did I default `year` to the current year if not specified?
 - [ ] Is `country_iso` correct for the country?
+- [ ] Is `local_language_code` consistent with the country_iso mapping above?
 - [ ] If `has_uploaded_files: true`, did I list filenames?
 - [ ] Did flag overrides set `forced_mode` / `output_mode`?
 - [ ] Is `confidence` honest (lower for ambiguous topics)?

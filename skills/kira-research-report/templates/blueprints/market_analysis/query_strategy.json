@@ -3,7 +3,55 @@
   "version": 1,
   "query_count_target": 25,
   "query_strategy_description": "25 web-search queries grouped into 6 buckets that map to the report's 19 sections. Use WebSearch (native Claude tool). Avoid named-firm aggregator results; prefer government bodies, listed-company filings, trade associations, and primary research firms with cited methodology.",
-
+  "localized_search": {
+    "glossary_file": "references/local_lang_query_glossary.md",
+    "enabled_for_local_search_priority": [
+      "tier-1"
+    ],
+    "fire_if_en_sparse": {
+      "tier": "tier-2",
+      "threshold_sources_per_bucket": 6
+    },
+    "query_count_target_local": 10,
+    "priority_hint_by_bucket_purpose_keyword": {
+      "HIGH": [
+        "macro",
+        "overview",
+        "sizing",
+        "demand",
+        "regulatory",
+        "regulation",
+        "enforcement",
+        "statute",
+        "channel",
+        "distribution",
+        "distributor",
+        "ecommerce",
+        "price",
+        "pricing"
+      ],
+      "MEDIUM": [
+        "competitive",
+        "competitor",
+        "M&A",
+        "ma_",
+        "partner",
+        "forecast",
+        "outlook",
+        "spending",
+        "cultural",
+        "willingness"
+      ],
+      "LOW": [
+        "ai_impact",
+        "disruptor",
+        "d2c_social"
+      ]
+    },
+    "source_tagging": "English alias only (e.g. [GSO 2024]) per L.3. Page-bottom SOURCE KEY may include original local-language source name for traceability.",
+    "currency_hint": "Fire a parallel local-currency query for sizing buckets (e.g. VND/IDR/THB/JPY/KRW) since local stats rarely report in USD.",
+    "note": "Phase M.1: dual-language search. EN baseline still runs (existing query_buckets above); this block governs the additional local-language pass."
+  },
   "query_buckets": [
     {
       "bucket": "01_macro",
@@ -14,7 +62,13 @@
         "{{country}} urbanization population growth {{year}}",
         "{{country}} key economic policies {{year}} housing infrastructure"
       ],
-      "expected_sources": ["national statistics bureau", "central bank", "World Bank", "ADB", "IMF country reports"],
+      "expected_sources": [
+        "national statistics bureau",
+        "central bank",
+        "World Bank",
+        "ADB",
+        "IMF country reports"
+      ],
       "expected_tag_mix": "secondary 80% / estimate 20%"
     },
     {
@@ -27,7 +81,12 @@
         "{{country}} {{industry}} historical market value {{year-3}} to {{year}}",
         "{{country}} {{industry}} sub-segment {{sub_industry_1}} size"
       ],
-      "expected_sources": ["industry trade associations", "listed-company annual reports", "named research firms with methodology disclosed", "government industry surveys"],
+      "expected_sources": [
+        "industry trade associations",
+        "listed-company annual reports",
+        "named research firms with methodology disclosed",
+        "government industry surveys"
+      ],
       "expected_tag_mix": "secondary 60% / estimate 40% (segment breakdowns often need KIRA triangulation)"
     },
     {
@@ -40,7 +99,12 @@
         "{{leading_player_candidate}} {{country}} revenue segment {{industry}}",
         "{{country}} {{industry}} M&A consolidation {{year-2}} to {{year}}"
       ],
-      "expected_sources": ["listed company filings (IDX/SET/SGX/HoSE/etc.)", "company press releases", "industry trade reports", "competition authority filings"],
+      "expected_sources": [
+        "listed company filings (IDX/SET/SGX/HoSE/etc.)",
+        "company press releases",
+        "industry trade reports",
+        "competition authority filings"
+      ],
       "expected_tag_mix": "secondary 75% / estimate 20% / primary 5%"
     },
     {
@@ -52,7 +116,12 @@
         "{{country}} {{industry}} regulation policy tariffs {{year}}",
         "{{country}} {{industry}} import export trade data"
       ],
-      "expected_sources": ["customs statistics", "ministry of trade/industry filings", "industry trade press", "logistics-sector reports"],
+      "expected_sources": [
+        "customs statistics",
+        "ministry of trade/industry filings",
+        "industry trade press",
+        "logistics-sector reports"
+      ],
       "expected_tag_mix": "secondary 70% / estimate 30%"
     },
     {
@@ -64,7 +133,12 @@
         "generative AI {{industry}} Southeast Asia adoption survey",
         "AI productivity gains {{industry}} efficiency cost reduction"
       ],
-      "expected_sources": ["McKinsey Global Institute style horizons reports", "BCG / Accenture industry AI surveys (read but never cite by name)", "company press releases on AI deployments", "academic papers on AI in industry"],
+      "expected_sources": [
+        "McKinsey Global Institute style horizons reports",
+        "BCG / Accenture industry AI surveys (read but never cite by name)",
+        "company press releases on AI deployments",
+        "academic papers on AI in industry"
+      ],
       "expected_tag_mix": "secondary 55% / estimate 35% / primary 10% (KIRA synthesizes from multi-source)",
       "note": "Voice rule: AI section can describe AI prominently. Brand rule still applies elsewhere — never lead with AI in headlines outside this section."
     },
@@ -76,11 +150,15 @@
         "{{country}} {{industry}} growth scenarios base bull bear",
         "{{country}} {{industry}} key risks downside catalysts {{year}}"
       ],
-      "expected_sources": ["central bank forecasts", "industry trade associations multi-year projections", "investment bank country/industry outlooks", "ADB/World Bank growth outlooks"],
+      "expected_sources": [
+        "central bank forecasts",
+        "industry trade associations multi-year projections",
+        "investment bank country/industry outlooks",
+        "ADB/World Bank growth outlooks"
+      ],
       "expected_tag_mix": "secondary 50% / estimate 50% (KIRA synthesizes scenarios from base-case external data)"
     }
   ],
-
   "query_execution_rules": {
     "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings.",
     "result_filtering": [
@@ -92,7 +170,6 @@
     "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} × {{ratio}} = {{output}}. E.g. 'APAC USD {{X}}bn × {{country}}'s construction GDP share ~6-7% → {{country}} estimate USD {{Y}}bn'.",
     "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json — top-level keys for each major data bucket, each value tagged with source URL + access date + extraction method."
   },
-
   "template_variable_resolution": {
     "{{country}}": "From topic parser output",
     "{{country_iso}}": "ISO 3166-1 alpha-2",

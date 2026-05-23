@@ -3,7 +3,55 @@
   "version": 2,
   "query_count_target": 20,
   "query_strategy_description": "20 web-search queries grouped into 6 buckets that map to the 13-section pricing_strategy structure. Use WebSearch (native Claude tool). This is a general market pricing overview, not a per-SKU pricing-committee deep dive — bucket 01 samples tier-level price bands across channels rather than scraping per-SKU exhaustively. Avoid named-firm aggregator results; prefer retailer e-commerce sites (Shopee/Tokopedia/Lazada/Tiki for SEA), brand DTC sites, regulator price filings, listed-company tier disclosure, and credible survey vendors with disclosed methodology.",
-
+  "localized_search": {
+    "glossary_file": "references/local_lang_query_glossary.md",
+    "enabled_for_local_search_priority": [
+      "tier-1"
+    ],
+    "fire_if_en_sparse": {
+      "tier": "tier-2",
+      "threshold_sources_per_bucket": 6
+    },
+    "query_count_target_local": 10,
+    "priority_hint_by_bucket_purpose_keyword": {
+      "HIGH": [
+        "macro",
+        "overview",
+        "sizing",
+        "demand",
+        "regulatory",
+        "regulation",
+        "enforcement",
+        "statute",
+        "channel",
+        "distribution",
+        "distributor",
+        "ecommerce",
+        "price",
+        "pricing"
+      ],
+      "MEDIUM": [
+        "competitive",
+        "competitor",
+        "M&A",
+        "ma_",
+        "partner",
+        "forecast",
+        "outlook",
+        "spending",
+        "cultural",
+        "willingness"
+      ],
+      "LOW": [
+        "ai_impact",
+        "disruptor",
+        "d2c_social"
+      ]
+    },
+    "source_tagging": "English alias only (e.g. [GSO 2024]) per L.3. Page-bottom SOURCE KEY may include original local-language source name for traceability.",
+    "currency_hint": "Fire a parallel local-currency query for sizing buckets (e.g. VND/IDR/THB/JPY/KRW) since local stats rarely report in USD.",
+    "note": "Phase M.1: dual-language search. EN baseline still runs (existing query_buckets above); this block governs the additional local-language pass."
+  },
   "query_buckets": [
     {
       "bucket": "01_market_price_bands",
@@ -15,7 +63,13 @@
         "{{country}} {{industry}} price trend {{year-2}} {{year}} direction",
         "{{country}} {{industry}} pack size price tier premium mid mass {{year}}"
       ],
-      "expected_sources": ["retailer e-commerce listings (Shopee, Tokopedia, Lazada, Tiki, Watsons, Guardian, Indomaret online flyers)", "brand DTC websites", "modern trade weekly flyer archives", "trade press tier coverage", "listed-company earnings call tier disclosure"],
+      "expected_sources": [
+        "retailer e-commerce listings (Shopee, Tokopedia, Lazada, Tiki, Watsons, Guardian, Indomaret online flyers)",
+        "brand DTC websites",
+        "modern trade weekly flyer archives",
+        "trade press tier coverage",
+        "listed-company earnings call tier disclosure"
+      ],
       "expected_tag_mix": "primary 45% / secondary 45% / estimate 10%",
       "note": "Goal is a tier-level read, not a per-SKU census. For each leading brand, capture: tier label + indicative price band (low-high range) + qualitative direction (up / stable / down) over 2 years. When a query surfaces a live e-commerce listing or flyer, the resulting band datum is [primary] (KIRA-collected). When a query surfaces a trade-press or earnings-call tier summary, that's [secondary]. Channel anchor (retailer name + city) is required on every primary observation. 5-6 brands is sufficient — do not chase per-SKU exhaustiveness."
     },
@@ -28,7 +82,12 @@
         "{{country}} {{industry}} premium consumer segment income tier {{year}}",
         "{{country}} {{industry}} brand premium index survey {{year}}"
       ],
-      "expected_sources": ["named survey vendors with disclosed methodology (Nielsen, Kantar, Rakuten Insight, GfK — read but only cite by name if methodology is published)", "central bank household surveys", "trade association consumer panels", "academic consumer-behavior papers"],
+      "expected_sources": [
+        "named survey vendors with disclosed methodology (Nielsen, Kantar, Rakuten Insight, GfK — read but only cite by name if methodology is published)",
+        "central bank household surveys",
+        "trade association consumer panels",
+        "academic consumer-behavior papers"
+      ],
       "expected_tag_mix": "secondary 55% / estimate 35% / primary 10%",
       "note": "WTP data quality varies wildly. If only a single source surfaces a WTP figure, downgrade to [estimate] with the source as the anchor. Qualitative ranges are acceptable at the overview level. Anti-positioning rule still applies — never name-drop the forbidden firms in body copy even if they published the survey."
     },
@@ -41,7 +100,12 @@
         "{{country}} {{industry}} VAT pass-through demand response",
         "{{country}} consumer goods elasticity survey academic"
       ],
-      "expected_sources": ["academic economics papers", "central bank working papers on pass-through", "regulator filings citing demand response", "industry association elasticity studies"],
+      "expected_sources": [
+        "academic economics papers",
+        "central bank working papers on pass-through",
+        "regulator filings citing demand response",
+        "industry association elasticity studies"
+      ],
       "expected_tag_mix": "secondary 45% / estimate 50% / primary 5%",
       "note": "Elasticity coefficients almost always need KIRA triangulation — single-source [secondary] is rare. Estimate methodology: anchor to a published coefficient for an adjacent category or region, adjust for country income tier and category share-of-wallet. Disclose the anchor explicitly in chart subhead."
     },
@@ -54,7 +118,12 @@
         "{{country}} {{industry}} {{ecommerce_anchor}} flash sale tier",
         "{{country}} modern trade promo norm FMCG {{industry}} {{year}}"
       ],
-      "expected_sources": ["e-commerce platform promo archives", "modern trade weekly flyer scrapes", "trade press promo coverage", "brand earnings call promo commentary"],
+      "expected_sources": [
+        "e-commerce platform promo archives",
+        "modern trade weekly flyer scrapes",
+        "trade press promo coverage",
+        "brand earnings call promo commentary"
+      ],
       "expected_tag_mix": "primary 40% / secondary 50% / estimate 10%",
       "note": "Goal is a directional read by tier x channel ('rare' / 'occasional' / 'frequent' / 'dominant'), not a quantitative depth + frequency table. KIRA observes promo activity directly from e-commerce + flyer scrapes — that's [primary]. Trade-press summaries are [secondary]. Tier-specific norm to confirm: premium tier rarely discounts; mass tier flash-sales frequently."
     },
@@ -67,7 +136,12 @@
         "{{country}} luxury aspirational {{industry}} consumer rising middle class",
         "{{country}} {{industry}} premium brand launch entry {{year-2}} {{year}}"
       ],
-      "expected_sources": ["trade association segmentation reports", "listed-company earnings calls breaking out premium segment", "consumer-banking research on rising affluent", "brand press releases on premium launches"],
+      "expected_sources": [
+        "trade association segmentation reports",
+        "listed-company earnings calls breaking out premium segment",
+        "consumer-banking research on rising affluent",
+        "brand press releases on premium launches"
+      ],
       "expected_tag_mix": "secondary 60% / estimate 30% / primary 10%",
       "note": "Premium-tier numbers are often disclosed by listed FMCG players in earnings calls — high-quality [secondary]. Anti-positioning still applies; never name forbidden firms in body copy."
     },
@@ -80,12 +154,16 @@
         "{{country}} {{industry}} dynamic pricing surge {{year}}",
         "{{country}} {{industry}} brand premium repositioning success {{year-2}} {{year}}"
       ],
-      "expected_sources": ["listed-company press releases on pricing changes", "trade press case-study coverage", "founder/CEO interviews on pricing strategy", "regulator filings on tariff/rate changes (telco, insurance)"],
+      "expected_sources": [
+        "listed-company press releases on pricing changes",
+        "trade press case-study coverage",
+        "founder/CEO interviews on pricing strategy",
+        "regulator filings on tariff/rate changes (telco, insurance)"
+      ],
       "expected_tag_mix": "secondary 75% / estimate 20% / primary 5%",
       "note": "Failure cases are optional at this overview level. Run one query with 'failed' / 'discontinued' phrasing to see if a credible failure surfaces, but if it does not, ship 13_premium_case_studies with 2 successes only — do not invent or stretch a weak example."
     }
   ],
-
   "query_execution_rules": {
     "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets — bucket 01 results feed leading_player_candidate for buckets 04, 05, 06.",
     "result_filtering": [
@@ -99,7 +177,6 @@
     "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} x {{ratio}} = {{output}}. E.g. for elasticity: 'Indonesia FMCG personal-care elasticity -0.8 [secondary academic study] x category-specific adjustment 1.2 (share-of-wallet higher for {{industry}}) -> KIRA estimate -0.96 [estimate]'.",
     "research_data_output_format": "Aggregate findings into a single JSON file structured by query bucket. Top-level keys: price_bands_by_brand (per-brand array with tier label + band + direction + channel + timestamp), wtp_by_segment, elasticity_by_segment, promo_patterns_by_tier_channel, premium_tier_sizing, pricing_model_cases. Every value tagged with source URL + access date + extraction method."
   },
-
   "template_variable_resolution": {
     "{{country}}": "From topic parser output",
     "{{country_iso}}": "ISO 3166-1 alpha-2",

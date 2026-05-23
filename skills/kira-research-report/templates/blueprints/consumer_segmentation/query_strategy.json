@@ -3,7 +3,55 @@
   "version": 1,
   "query_count_target": 22,
   "query_strategy_description": "22 web-search queries grouped into 6 buckets that map to the 16-section consumer_segmentation structure. Use WebSearch (native Claude tool). Prefer national statistics bureaus, central-bank household surveys, consumer-panel providers with disclosed methodology (Kantar Worldpanel, NielsenIQ retail audit — read but never cite by name), listed-company investor decks with consumer KPIs, and academic consumer-behavior papers. Avoid named aggregators (anti-positioning rule).",
-
+  "localized_search": {
+    "glossary_file": "references/local_lang_query_glossary.md",
+    "enabled_for_local_search_priority": [
+      "tier-1"
+    ],
+    "fire_if_en_sparse": {
+      "tier": "tier-2",
+      "threshold_sources_per_bucket": 6
+    },
+    "query_count_target_local": 10,
+    "priority_hint_by_bucket_purpose_keyword": {
+      "HIGH": [
+        "macro",
+        "overview",
+        "sizing",
+        "demand",
+        "regulatory",
+        "regulation",
+        "enforcement",
+        "statute",
+        "channel",
+        "distribution",
+        "distributor",
+        "ecommerce",
+        "price",
+        "pricing"
+      ],
+      "MEDIUM": [
+        "competitive",
+        "competitor",
+        "M&A",
+        "ma_",
+        "partner",
+        "forecast",
+        "outlook",
+        "spending",
+        "cultural",
+        "willingness"
+      ],
+      "LOW": [
+        "ai_impact",
+        "disruptor",
+        "d2c_social"
+      ]
+    },
+    "source_tagging": "English alias only (e.g. [GSO 2024]) per L.3. Page-bottom SOURCE KEY may include original local-language source name for traceability.",
+    "currency_hint": "Fire a parallel local-currency query for sizing buckets (e.g. VND/IDR/THB/JPY/KRW) since local stats rarely report in USD.",
+    "note": "Phase M.1: dual-language search. EN baseline still runs (existing query_buckets above); this block governs the additional local-language pass."
+  },
   "query_buckets": [
     {
       "bucket": "01_demographic_anchor",
@@ -14,7 +62,12 @@
         "{{country}} urban peri-urban rural population split {{year}}",
         "{{country}} middle class size {{year}} household income tier"
       ],
-      "expected_sources": ["national statistics bureau (BPS, GSO, NSO, PSA, DOSM, SingStat, Statistics Korea, Statistics Bureau Japan)", "central bank household surveys", "World Bank household consumption data", "ADB inclusive-growth reports"],
+      "expected_sources": [
+        "national statistics bureau (BPS, GSO, NSO, PSA, DOSM, SingStat, Statistics Korea, Statistics Bureau Japan)",
+        "central bank household surveys",
+        "World Bank household consumption data",
+        "ADB inclusive-growth reports"
+      ],
       "expected_tag_mix": "secondary 80% / estimate 20%"
     },
     {
@@ -26,7 +79,12 @@
         "{{country}} {{industry}} consumer expenditure survey {{year}}",
         "{{country}} {{industry}} purchase frequency repeat rate panel"
       ],
-      "expected_sources": ["statistics bureau household expenditure survey", "central bank consumer finance survey", "listed-company quarterly investor decks (basket / frequency disclosures)", "academic consumer-behavior papers with disclosed panel n"],
+      "expected_sources": [
+        "statistics bureau household expenditure survey",
+        "central bank consumer finance survey",
+        "listed-company quarterly investor decks (basket / frequency disclosures)",
+        "academic consumer-behavior papers with disclosed panel n"
+      ],
       "expected_tag_mix": "secondary 60% / estimate 40% (frequency × basket cross-tabs often need KIRA triangulation)"
     },
     {
@@ -38,7 +96,12 @@
         "{{country}} {{industry}} omnichannel consumer journey research",
         "{{country}} live commerce TikTok Shopee Lazada {{industry}} share"
       ],
-      "expected_sources": ["e-commerce platform investor decks (Sea Group, Tokopedia, Coupang etc.)", "logistics & last-mile sector reports", "industry trade associations channel surveys", "academic retail-channel papers"],
+      "expected_sources": [
+        "e-commerce platform investor decks (Sea Group, Tokopedia, Coupang etc.)",
+        "logistics & last-mile sector reports",
+        "industry trade associations channel surveys",
+        "academic retail-channel papers"
+      ],
       "expected_tag_mix": "secondary 65% / estimate 30% / primary 5%"
     },
     {
@@ -50,7 +113,12 @@
         "{{country}} {{industry}} top brands consumer preference panel",
         "{{country}} {{industry}} customer satisfaction repeat purchase {{year}}"
       ],
-      "expected_sources": ["consumer panel providers with methodology disclosure (read, do not cite by name)", "brand-tracking academic studies", "listed-company brand-health investor disclosures", "industry trade press brand rankings"],
+      "expected_sources": [
+        "consumer panel providers with methodology disclosure (read, do not cite by name)",
+        "brand-tracking academic studies",
+        "listed-company brand-health investor disclosures",
+        "industry trade press brand rankings"
+      ],
       "expected_tag_mix": "secondary 55% / estimate 35% / primary 10% (KIRA triangulates NPS from multi-source where panel data isn't named)"
     },
     {
@@ -62,7 +130,12 @@
         "{{country}} {{industry}} price elasticity demand consumer",
         "{{country}} {{industry}} Van Westendorp price sensitivity study"
       ],
-      "expected_sources": ["academic price-elasticity studies", "central bank inflation pass-through research", "industry pricing reports", "listed-company ASP and tier-mix disclosures"],
+      "expected_sources": [
+        "academic price-elasticity studies",
+        "central bank inflation pass-through research",
+        "industry pricing reports",
+        "listed-company ASP and tier-mix disclosures"
+      ],
       "expected_tag_mix": "secondary 45% / estimate 50% / primary 5% (WTP is the section most likely to require KIRA estimate with anchor methodology)",
       "note": "WTP triangulation pattern: anchor on a published median price point × elasticity from a comparable category to back-solve persona WTP bands. Always disclose anchor in source line."
     },
@@ -75,12 +148,16 @@
         "{{country}} sustainability ethical consumption {{industry}} {{year}}",
         "{{country}} consumer trends report {{year}} cultural shift"
       ],
-      "expected_sources": ["national statistics bureau social-attitudes modules", "academic cultural-studies papers", "central bank household finance + sentiment surveys", "industry consumer-trend reports with disclosed methodology"],
+      "expected_sources": [
+        "national statistics bureau social-attitudes modules",
+        "academic cultural-studies papers",
+        "central bank household finance + sentiment surveys",
+        "industry consumer-trend reports with disclosed methodology"
+      ],
       "expected_tag_mix": "secondary 50% / estimate 45% / primary 5%",
       "note": "Voice rule: psychographic claims are the highest-risk for stereotype drift. Every values claim needs an explicit anchor (survey n, year, geography) or it gets downgraded to [estimate] with anchor disclosure."
     }
   ],
-
   "query_execution_rules": {
     "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings — especially: persona codenames + headlines depend on psychographic cluster outputs which depend on demographic + behavioral anchors.",
     "result_filtering": [
@@ -94,7 +171,6 @@
     "persona_clustering_rule": "Before drafting persona pages, run a clustering pass on demographic × behavioral × psychographic outputs to identify the 3 most-distinct, most-value-relevant clusters. Personas must differ on at least 3 of these 8 axes: age band, income tier, geography, frequency, basket size, channel mix, WTP band, dominant value. If two clusters collapse on too many axes, merge and pick a different third cluster.",
     "research_data_output_format": "Aggregate findings into a single JSON file shaped like references/research_data_R0152.json — top-level keys per bucket, each value tagged with source URL + access date + extraction method + panel composition where applicable."
   },
-
   "template_variable_resolution": {
     "{{country}}": "From topic parser output",
     "{{country_iso}}": "ISO 3166-1 alpha-2",
