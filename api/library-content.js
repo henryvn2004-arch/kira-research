@@ -107,9 +107,18 @@ export default async function handler(req, res) {
 
   try {
     // 3) Find the base report.
+    //
+    // Phase M.3: we do NOT filter by status here. Buyers who already paid
+    // should keep accessing their purchased content even if the report is
+    // later retired by an admin (delete-and-regen workflow, content takedown,
+    // etc.). The `purchases` check below is the actual access gate. New
+    // purchases ARE blocked at /api/library-buy by the published-status
+    // filter, and /api/library-list/library-report also hide retired rows,
+    // so retired reports become invisible to new buyers but still readable
+    // by existing ones.
     const baseRows = await sb(
       `living_reports?slug=eq.${encodeURIComponent(slug)}` +
-      `&status=eq.published&select=id,slug,country,industry,year,pages,price&limit=1`
+      `&select=id,slug,country,industry,year,pages,price,status&limit=1`
     );
     const base = Array.isArray(baseRows) ? baseRows[0] : null;
     if (!base) { res.status(404).json({ error: 'report_not_found' }); return; }
