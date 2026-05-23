@@ -1,0 +1,187 @@
+# batch_runner.md — self-contained prompt for scheduled batch report generation
+
+This prompt is fired by the daily 4-fire cron (1am / 5am / 12:15pm / 5pm ICT) configured via `mcp__scheduled-tasks`. Each fire starts a **fresh Claude session with no memory** of any prior conversation. Everything you need is in this prompt + the files it references.
+
+---
+
+## Mission
+
+Pick **1** pending row from `data/report_queue.csv`, generate a full KIRA market research report in 3 languages (EN → JA → KO), save outputs to `skills/kira-research-report/outputs/batch/<id>/`, update the queue, and commit.
+
+Hard cap: **1 topic per fire** to stay safely within Sonnet context budget on the Max 5x plan.
+
+---
+
+## Working directory
+
+Repository root: `C:\Users\vnc-f4\Rira Research\kira-research` (use forward slashes in bash, e.g. `/c/Users/vnc-f4/Rira Research/kira-research`).
+
+All paths in this prompt are relative to that root unless absolute.
+
+---
+
+## Step 1: Find work
+
+Read `data/report_queue.csv`. Find the FIRST row with `status=pending` (top-down).
+
+- If no pending row → output a one-line "No pending work in queue" message and EXIT cleanly. Do not commit anything. Do not error.
+- If there is a pending row → proceed.
+
+Extract these fields from the row:
+- `id` — output folder name
+- `topic` — the topic string to pass to the skill
+- `country`, `industry`, `year` — metadata
+- `target_languages` — should be `en,ja,ko` for standard runs
+
+---
+
+## Step 2: Claim the row
+
+Update the row in-place:
+- `status` → `in_progress`
+- Keep all other fields
+
+Write the modified CSV back. Then commit immediately:
+
+```bash
+git add data/report_queue.csv
+git commit -m "batch: claim ${id} for in_progress"
+git push origin main
+```
+
+This claim-then-commit pattern prevents a second cron fire (if one overlaps) from double-claiming the same row. If push fails due to remote ahead, run `git pull --rebase origin main` then re-push.
+
+---
+
+## Step 3: Generate EN report
+
+Spawn a general-purpose subagent for the EN gen (keeps the parent context lean). Subagent prompt template:
+
+> Generate a KIRA Research market analysis report. Load the skill at `skills/kira-research-report/SKILL.md` and follow its standard pipeline: topic_parser → orchestrator → content_per_section → chart_generator → render_and_output. Use UC1 (template) or UC2 (design mode) routing — whichever the orchestrator selects.
+>
+> Topic: `${topic}`
+> Country: `${country}` · Industry: `${industry}` · Year: `${year}`
+>
+> Write the final HTML to `skills/kira-research-report/outputs/batch/${id}/en.html` and the rendered PDF to `skills/kira-research-report/outputs/batch/${id}/en.pdf`. Render via the `/api/render-pdf` endpoint (PDF_RENDER_SECRET is in Vercel env).
+>
+> Hard rules (the skill enforces these; mentioning explicitly for safety):
+> - Never mention `Claude`, `McKinsey`, `Mordor`, `Frost`, `Euromonitor`, `Synovate`, `Ipsos`, `IMARC` in visible copy
+> - Never frame KIRA as "AI platform / SaaS / app"
+> - All numbers must carry source tags: `[primary]` / `[secondary]` / `[estimate]`
+> - Sentence-case headlines
+>
+> Return the absolute paths to the generated en.html and en.pdf.
+
+If the subagent fails (returns error or no PDF) → jump to Step 6 with error.
+
+---
+
+## Step 4: Translate to JA
+
+Spawn a separate general-purpose subagent for JA translation. Subagent prompt:
+
+> Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Japanese. Follow the canonical JP translation guide at `skills/kira-research-report/prompts/translator_jp.md` — register, vocabulary, character caps, source-tag preservation, anti-positioning, all defined there.
+>
+> Read en.html, translate every translatable text node (skip SVG geometry, class names, IDs, source tags `[primary]` etc.), write the result to `skills/kira-research-report/outputs/batch/${id}/ja.html`.
+>
+> After writing ja.html, render PDF via the same `/api/render-pdf` endpoint as the EN render. PDF path: `skills/kira-research-report/outputs/batch/${id}/ja.pdf`.
+>
+> Verify: no `Mordor` / `Frost` / `Euromonitor` / `Synovate` / `Ipsos` / `IMARC` / `Claude` / `McKinsey` in the JA HTML (grep). Return absolute paths.
+
+If subagent fails → jump to Step 6 with error.
+
+---
+
+## Step 5: Translate to KO
+
+Spawn a separate general-purpose subagent for KO translation. Subagent prompt:
+
+> Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Korean. Follow the canonical KO translation guide at `skills/kira-research-report/prompts/translator_ko.md` — register (합쇼체), vocabulary, character caps, source-tag preservation, anti-positioning, all defined there.
+>
+> Read en.html, translate every translatable text node (skip SVG geometry, class names, IDs, source tags `[primary]` etc.), write the result to `skills/kira-research-report/outputs/batch/${id}/ko.html`.
+>
+> After writing ko.html, render PDF via the same `/api/render-pdf` endpoint. PDF path: `skills/kira-research-report/outputs/batch/${id}/ko.pdf`.
+>
+> Verify: no forbidden firm names or `Claude` / `McKinsey` in the KO HTML. Return absolute paths.
+
+If subagent fails → jump to Step 6 with error.
+
+---
+
+## Step 6: Update queue + commit
+
+### Success path (all 3 PDFs generated)
+
+Update the row:
+- `status` → `done`
+- `output_paths` → `skills/kira-research-report/outputs/batch/<id>/en.pdf|skills/kira-research-report/outputs/batch/<id>/ja.pdf|skills/kira-research-report/outputs/batch/<id>/ko.pdf`
+- `date_completed` → today's ISO date (YYYY-MM-DD)
+- `error_log` → empty
+
+Commit + push:
+
+```bash
+git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
+git commit -m "batch: complete ${id} (EN+JA+KO)"
+git push origin main
+```
+
+### Failure path (any subagent errored)
+
+Update the row:
+- `status` → `error`
+- `output_paths` → any PDFs that DID get generated (partial)
+- `date_completed` → today's ISO date
+- `error_log` → one-line summary (e.g., `JA translation overflow, ko skipped` or `EN render-pdf returned HTTP 500`)
+
+Commit + push:
+
+```bash
+git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
+git commit -m "batch: error on ${id} — see queue.csv error_log"
+git push origin main
+```
+
+---
+
+## Step 7: Summary output
+
+Print a one-screen summary for telemetry/notification:
+
+```
+KIRA batch fire complete.
+  ID: ${id}
+  Status: done | error
+  Topic: ${topic}
+  Outputs: 3 PDFs (or partial count)
+  Next pending in queue: ${count} rows
+```
+
+Then exit. Do not start a second row in the same fire — that's by design (1 topic / fire ceiling).
+
+---
+
+## Failure-mode reference
+
+| What broke | What to do |
+|---|---|
+| Push rejected (remote ahead) | `git pull --rebase origin main` then re-push. If a conflict on `data/report_queue.csv`, prefer the version where status was further along (in_progress > pending; done > in_progress). |
+| `/api/render-pdf` returns 500 | Likely Vercel function timeout or chromium boot issue. Save HTML, set status=error, record the HTTP code in error_log. Don't retry within this fire. |
+| `/api/render-pdf` returns 401 | PDF_RENDER_SECRET env var missing or wrong. Set status=error with `error_log: render-pdf 401 (check env var)`. Notify Henry to fix. |
+| Skill fails at orchestrator (no blueprint match, no design mode trigger) | The topic is malformed — set status=error with `error_log: no route from orchestrator (topic ambiguity)`. |
+| Translation subagent overflows char caps on JA or KO | Translator subagent should retry with -15% compression (per the EN skill's overflow handling). If 3 retries still overflow, deliver what you have, log the overflow page count in error_log, set status=done (partial). |
+| Anti-positioning leak found in any language | Subagent should regex-sweep before returning. If a leak slips through to commit, set status=error and flag for manual review. |
+
+---
+
+## What this prompt is NOT
+
+- Not a place to add new features — keep it stable so the cron behavior is predictable
+- Not a place for chitchat or "let me think out loud" — every fire is a fresh session, the user (Henry) is NOT in this conversation
+- Not a place to ask clarifying questions — there is no human to answer. If the queue row is malformed, set status=error with details and exit.
+
+---
+
+## When this is run manually for testing
+
+If Henry runs this prompt manually outside the cron (Step 5 of the batch system build), the behavior is identical — pick 1 pending row, gen 3 langs, update queue, commit. The only difference is Henry is watching; he may interrupt if he sees something wrong.
