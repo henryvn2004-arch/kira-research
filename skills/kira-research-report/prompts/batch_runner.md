@@ -86,7 +86,7 @@ Spawn a separate general-purpose subagent for JA translation. Subagent prompt:
 
 > Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Japanese. Follow the canonical JP translation guide at `skills/kira-research-report/prompts/translator_jp.md` — register, vocabulary, character caps, source-tag preservation, anti-positioning, all defined there.
 >
-> Read en.html, translate every translatable text node (skip SVG geometry, class names, IDs, source tags `[primary]` etc.), write the result to `skills/kira-research-report/outputs/batch/${id}/ja.html`.
+> Read en.html, translate every translatable text node (skip SVG geometry, class names, IDs, source tags in any bracket form — `[Kira estimates]`, `[BPS 2024]`, `[Vinacafe AR 2025]`, etc. — keep them verbatim in English brackets), write the result to `skills/kira-research-report/outputs/batch/${id}/ja.html`.
 >
 > After writing ja.html, render PDF via the same `/api/render-pdf` endpoint as the EN render. PDF path: `skills/kira-research-report/outputs/batch/${id}/ja.pdf`.
 >
@@ -102,7 +102,7 @@ Spawn a separate general-purpose subagent for KO translation. Subagent prompt:
 
 > Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Korean. Follow the canonical KO translation guide at `skills/kira-research-report/prompts/translator_ko.md` — register (합쇼체), vocabulary, character caps, source-tag preservation, anti-positioning, all defined there.
 >
-> Read en.html, translate every translatable text node (skip SVG geometry, class names, IDs, source tags `[primary]` etc.), write the result to `skills/kira-research-report/outputs/batch/${id}/ko.html`.
+> Read en.html, translate every translatable text node (skip SVG geometry, class names, IDs, source tags in any bracket form — `[Kira estimates]`, `[BPS 2024]`, `[Vinacafe AR 2025]`, etc. — keep them verbatim in English brackets), write the result to `skills/kira-research-report/outputs/batch/${id}/ko.html`.
 >
 > After writing ko.html, render PDF via the same `/api/render-pdf` endpoint. PDF path: `skills/kira-research-report/outputs/batch/${id}/ko.pdf`.
 >
@@ -116,9 +116,11 @@ If subagent fails → jump to Step 6 with error.
 
 ### Success path (all 3 PDFs generated)
 
-**Step 6a — Insert living_reports + 3 report_translations rows, status=published.**
-
 Owner policy (2026-05-23): batch fires auto-publish on success. The pipeline runs sequentially per section, so any failure aborts the whole report — a successful fire means all sections passed gen + render + anti-positioning grep. If a published report later proves wrong, delete + regen rather than gating on human review.
+
+This step has 3 sub-steps. Run them in order; bail to the failure path if any fails.
+
+**Step 6a — Insert `living_reports` + 3 `report_translations` rows with status=published, pdf_url temporarily empty.**
 
 Build the SQL via a Node script (see `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` for the template — copy + adapt per-topic). Key fields per locale:
 - `title` — extract from `<h1 class="cover-title">` text in each language's HTML
@@ -128,7 +130,7 @@ Build the SQL via a Node script (see `skills/kira-research-report/scripts/_build
   - `paragraphs` — 2 paragraphs (~300 chars each) summarizing scope + AI section
   - `chart` — `{title, subtitle, bars[{pct, label, value}]}` derived from the exec-chart on page 4 (single bar series, pct relative to max)
 - `toc` JSONB array of 12 entries — extract from the `.toc-col li` elements
-- `pdf_url` — **GitHub raw URL pattern**: `https://raw.githubusercontent.com/henryvn2004-arch/kira-research/main/skills/kira-research-report/outputs/batch/<id>/<locale>.pdf`. The `library-content.js` `resolvePdfUrl()` passes external URLs straight through. (TODO: replace with Supabase Storage upload when `SUPABASE_SERVICE_KEY` is set on the batch machine — requires anonymous service key, which currently lives only in Vercel env.)
+- `pdf_url` — leave blank or set to the future storage path `<report_id>/<locale>.pdf`. Gets finalised in Step 6b after upload.
 
 Use dollar-quoted SQL literals (`$kbat$...$kbat$`) for all strings carrying apostrophes, accents, or JSON braces (see `[[feedback_seed_strings_dollar_quoted]]`). Execute via Supabase MCP:
 
@@ -138,7 +140,7 @@ mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__execute_sql
   query: <generated SQL>
 ```
 
-SQL pattern (CTE + cross-join values, idempotent on slug):
+SQL pattern (CTE + cross-join values, idempotent on slug, returns report_id):
 
 ```sql
 WITH new_report AS (
@@ -148,20 +150,51 @@ WITH new_report AS (
   RETURNING id
 )
 INSERT INTO report_translations (report_id, locale, title, eyebrow, preview, toc, pdf_url, status, published_at)
-SELECT new_report.id, t.locale, t.title, t.eyebrow, t.preview::jsonb, t.toc::jsonb, t.pdf_url, 'published', now()
+SELECT new_report.id, t.locale, t.title, t.eyebrow, t.preview::jsonb, t.toc::jsonb,
+       new_report.id::text || '/' || t.locale || '.pdf',
+       'published', now()
 FROM new_report
 CROSS JOIN (VALUES
   ('en', ...), ('ja', ...), ('ko', ...)
-) AS t(locale, title, eyebrow, preview, toc, pdf_url)
+) AS t(locale, title, eyebrow, preview, toc)
 ON CONFLICT DO NOTHING
 RETURNING report_id, locale, title;
 ```
 
-Verify with two cache-busted curls:
-1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` should contain the new slug with correct title/excerpt
-2. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all three return 200
+Capture the `report_id` UUID returned — needed for Step 6b.
 
-**Step 6b — Update queue + commit + push.**
+**Step 6b — Upload 3 PDFs to Supabase Storage bucket `reports-pdfs`.**
+
+Path inside bucket: `<report_id>/<locale>.pdf`. The `library-content.js` endpoint (`resolvePdfUrl`) generates a fresh 1-hour signed URL on each buyer call using this path. Requires `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` Windows User env vars (set on vnc-f4 on 2026-05-23 — see `[[reference_kira_research]]` for setup notes if running on a new machine).
+
+Use the helper script:
+
+```bash
+for loc in en ja ko; do
+  node skills/kira-research-report/scripts/upload-pdf.mjs \
+    "skills/kira-research-report/outputs/batch/${id}/${loc}.pdf" \
+    "${REPORT_ID}" \
+    "${loc}"
+done
+```
+
+Each call POSTs to `<SUPABASE_URL>/storage/v1/object/reports-pdfs/<report_id>/<locale>.pdf` with `x-upsert: true`. Expects HTTP 200 + body `{"Key": "reports-pdfs/<report_id>/<locale>.pdf", "Id": "<uuid>"}`. Any non-200 → bail.
+
+**Step 6c — Verify end-to-end (3 cache-busted curls).**
+
+1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` contains the new slug with correct title/excerpt
+2. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all three return 200
+3. (Optional sanity) Hit Supabase Storage sign endpoint with the service key to confirm each PDF returns a working signed URL with the expected content-length:
+   ```bash
+   node --input-type=module -e '
+     const path = "<report_id>/en.pdf";
+     const r = await fetch(`${process.env.SUPABASE_URL}/storage/v1/object/sign/reports-pdfs/${path}`,
+       { method:"POST", headers:{ apikey:process.env.SUPABASE_SERVICE_KEY, Authorization:`Bearer ${process.env.SUPABASE_SERVICE_KEY}`, "Content-Type":"application/json" }, body:JSON.stringify({expiresIn:3600}) });
+     console.log(await r.json());
+   '
+   ```
+
+**Step 6d — Update queue + commit + push.**
 
 Update the queue row:
 - `status` → `done`
