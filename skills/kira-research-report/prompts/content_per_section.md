@@ -108,6 +108,12 @@ Output: `"overlay_applied": "<id>"` (or `null` if no overlay or no matching keys
 ### Step 1 — Read the page-type schema
 Pull the schema for the assigned page type. Note: H1 max_chars, subhead max_chars, slot-by-slot caps, number of items required per slot (callouts × 4, implication cards × 5, etc.).
 
+**If the schema has `is_boilerplate: true`** (e.g. `methodology_inline`, `cover`, `toc`):
+- USE the `default_copy` block from the schema verbatim. Do NOT freelance subhead or column items.
+- Substitute any per-section overrides declared in the section_plan entry (e.g. `methodology_items_override` for a vertical with distinctive primary inputs — commodity blueprints might swap "Specialty & operator reads" for "Crop-year & weather reads").
+- The schema's `boilerplate_note` explains what may be customized vs what must stay fixed.
+- Skip Steps 2-5 for boilerplate pages; jump straight to Step 6 voice check on the resolved copy.
+
 ### Step 2 — Triage data for the section
 From `research_data`, pick the 3-8 data points most relevant to this section's purpose. Don't pull in everything — exec summary callouts use the 4 most "headline-worthy" numbers; demand-driver section uses urbanization/policy/credit data; competitive section uses share/HHI/players.
 

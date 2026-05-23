@@ -57,16 +57,38 @@
     },
 
     "methodology_inline": {
-      "description": "Page 02 — methodology overview in 2-col grid",
+      "description": "Page 02 — methodology overview in 2-col grid. SEMI-BOILERPLATE: subhead is fixed; column items may be tailored per blueprint (commodity vs FMCG vs finserv have different primary input sources) but follow the canonical structure.",
+      "is_boilerplate": true,
+      "boilerplate_note": "Content gen MUST use the default_copy below as base. Substitute column items from the section's section_structure.json `methodology_items_override` if present; otherwise use defaults. Do NOT freelance the subhead — it must explicitly introduce the two columns to keep slide and supporting text aligned (a previous freelance produced 'Twenty-six primary research queries...' which didn't connect to the columns at all).",
+      "default_copy": {
+        "h1": "How we built this view",
+        "subhead": "This view is built from two evidence streams: <strong>primary inputs</strong> — field channel checks, analyst synthesis, and specialty reads — and <strong>secondary anchors</strong> — statistical authorities, listed company filings, and triangulated estimates. Every quantitative claim carries an explicit source tag.",
+        "col_left": {
+          "heading": "Primary inputs",
+          "items": [
+            {"label": "Field channel checks", "desc": "Distributor calls, store walks, importer/exporter conversations — surfaces real shelf, real price, real velocity."},
+            {"label": "Analyst synthesis", "desc": "KIRA in-house triangulation across multiple disclosed inputs. Tagged inline as [Kira estimates]."},
+            {"label": "Specialty & operator reads", "desc": "Conversations with category specialists, operators, and on-the-ground practitioners closer to the demand signal than headline data."}
+          ]
+        },
+        "col_right": {
+          "heading": "Secondary anchors",
+          "items": [
+            {"label": "Statistical authorities", "desc": "Government statistical offices, central banks, customs data — cited inline by named source."},
+            {"label": "Listed company filings", "desc": "Annual reports, prospectuses, investor decks of named players — cited inline by company + period."},
+            {"label": "Triangulated estimates", "desc": "Where no single source covers a figure, we combine 2-3 inputs and disclose the method. Tagged [Kira estimates]."}
+          ]
+        }
+      },
       "slots": {
         "h1": {"max_chars": 60},
-        "subhead": {"max_chars": 180, "lines_max": 3},
+        "subhead": {"max_chars": 280, "lines_max": 4, "allow_inline_bold": true},
         "col_left": {
           "heading": {"max_chars": 30},
           "items": {
             "count_min": 3,
             "count_max": 4,
-            "each": {"label_max_chars": 40, "desc_max_chars": 140}
+            "each": {"label_max_chars": 40, "desc_max_chars": 160}
           }
         },
         "col_right": {
@@ -74,7 +96,7 @@
           "items": {
             "count_min": 3,
             "count_max": 4,
-            "each": {"label_max_chars": 40, "desc_max_chars": 140}
+            "each": {"label_max_chars": 40, "desc_max_chars": 160}
           }
         }
       }
