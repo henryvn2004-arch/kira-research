@@ -198,7 +198,7 @@ Each call POSTs to `<SUPABASE_URL>/storage/v1/object/reports-pdfs/<report_id>/<l
 
 Update the queue row:
 - `status` → `done`
-- `output_paths` → `skills/kira-research-report/outputs/batch/<id>/en.pdf|skills/kira-research-report/outputs/batch/<id>/ja.pdf|skills/kira-research-report/outputs/batch/<id>/ko.pdf`
+- `output_paths` → `reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf` (Supabase Storage paths, not local — local PDFs are .gitignored, Storage is canonical)
 - `date_completed` → today's ISO date (YYYY-MM-DD)
 - `error_log` → empty
 
@@ -209,6 +209,8 @@ git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
 git commit -m "batch: complete ${id} (EN+JA+KO, published)"
 git push origin main
 ```
+
+The `git add ${id}/` line silently skips the 3 PDFs because `.gitignore` excludes `skills/kira-research-report/outputs/batch/*/*.pdf` (PDFs live only in Supabase Storage — committing them to the public repo would bloat the repo and let URL-guessers grab paid content). HTML siblings stay tracked as searchable archival artifacts.
 
 The git commit must happen AFTER Step 6a's SQL insert succeeds. If the SQL insert fails, jump to the failure path — queue stays at in_progress + no orphan public page exists.
 
