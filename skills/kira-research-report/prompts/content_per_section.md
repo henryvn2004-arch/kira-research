@@ -10,8 +10,60 @@ For each section to generate:
 - For UC3: the relevant slice of `user_data_extracted.json`
 - The page-type schema from `schemas/page_schemas.json`
 - The voice rules from `prompts/voice_guide.md` (refresh in context if you've drifted)
+- **The active industry overlay** (if any), loaded from `overlays/<id>.yaml` per orchestrator output
 
 ## Process per section
+
+### Step 0 — Resolve A+ flex fields
+
+Before drafting content, inspect the section's three flex fields (added in Phase J):
+
+#### 0a. `expand_to_2_pages_if`
+
+If present, evaluate the `condition` predicate against the available data signals you have for this section:
+
+| Predicate | How to evaluate |
+|---|---|
+| `named_competitors_count >= N` | Count distinct named players in `research_data` for this section's bucket |
+| `named_distributors_count >= N` | Count distinct named distributors |
+| `personas_with_distinct_behavior >= N` | For consumer_seg only — distinct behavioral clusters |
+| `regulatory_changes_in_last_3y >= N` | Count dated policy events in last 3 years |
+| `regulatory_changes_in_last_5y >= N` | Same, 5-year window |
+| `material_segments_count >= N` | Count distinct segments with non-trivial size |
+| `channel_subtypes_count >= N` | Count distinct named channel subtypes |
+| `pricing_tiers_with_data >= N` | Count tiers with at least 1 anchor price |
+| `risks_above_med_severity >= N` | Count risks scored MED or HIGH |
+| `historical_data_years >= N` | Count years with anchorable historical data |
+| `data_richness_signal == "thick"` | Generic — orchestrator-scored data thick/thin/sparse |
+
+- **Condition true** → produce 2 pages. Use the `what_changes_on_expand` field as the design hint for page 2. Page 1 keeps the original section ID; page 2 gets `<section_id>_p2` suffix.
+- **Condition false** (or falls under `fallback_to_1_page_if`) → produce 1 page. Standard flow.
+
+Output the decision in the validation block: `"expanded_to_2_pages": true | false`.
+
+#### 0b. `chart_type_options`
+
+If present, pick ONE chart type from the array. Criteria:
+1. Check each option's `data_required` array — only consider options where every required field has surfaceable data in `research_data`
+2. Among viable options, pick the one whose `use_when` description best matches the data shape
+3. Apply industry overlay `chart_emphasis` (if any) for this page_type — overlay preferences are tie-breakers among viable options
+4. If multiple options remain equally viable, pick the first listed (it's the default)
+5. If NO option is viable (no required data), fall back to a narrative-only page with a small qualitative callout summary instead of a chart
+
+Output: `"chart_type_chosen": "<id>"`.
+
+#### 0c. `industry_overlay_emphasis_keys`
+
+If present AND an industry overlay was picked by orchestrator:
+1. Look up each key in `overlays/<active_overlay>.yaml > section_emphasis`
+2. If matching emphasis instructions exist, **apply them to your prose framing**:
+   - The instructions are plain-english directives ("Emphasize modern trade vs traditional split", "Anchor demand around shopper occasions")
+   - They steer WHICH numbers you lead with, WHICH frame you use, WHICH terminology you prefer
+   - They do NOT relax char caps, voice rules, or anti-positioning
+3. Also apply overlay's `voice_emphasis` items as drafting guides (vocabulary tweaks)
+4. Note any `additional_anti_positioning` items — preserve verbatim, add to your zero-tolerance check
+
+Output: `"overlay_applied": "<id>"` (or `null` if no overlay or no matching keys for this section).
 
 ### Step 1 — Read the page-type schema
 Pull the schema for the assigned page type. Note: H1 max_chars, subhead max_chars, slot-by-slot caps, number of items required per slot (callouts × 4, implication cards × 5, etc.).
@@ -124,7 +176,11 @@ Fix in place.
     "all_slots_within_budget": true,
     "all_numbers_tagged": true,
     "voice_check_passed": true,
-    "overflows_after_retry": []
+    "overflows_after_retry": [],
+    "expanded_to_2_pages": false,
+    "chart_type_chosen": "trend_line_5y",
+    "overlay_applied": "industrial",
+    "overlay_emphasis_keys_used": ["channel", "competitive_intensity"]
   }
 }
 ```

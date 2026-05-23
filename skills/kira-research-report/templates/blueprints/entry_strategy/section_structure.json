@@ -52,7 +52,28 @@
       "page_count": 2,
       "purpose": "Two-page executive summary. Page 1 (exec_summary_p1): 4 callouts (addressable opportunity directional read, recommended entry mode, competitive intensity tag, operating-environment tag) + 2-col narrative leading with the recommendation + 1 anchor chart (compressed opportunity sizing). Page 2 (exec_summary_p2_implications): 5-card grid framing the entry decision across the canonical pathways - Build / Partner / Acquire / License / Stay out. One card per pathway, even when one is clearly recommended; the report shows the option set, not just the chosen path.",
       "skip_if": null,
-      "char_budget_hint": "Page 1 callouts: num_max=12, label_max=30 (mono UC), change_line_max=38; narrative_left total_chars_max=1200. Recommended entry mode MUST appear in one callout AND in narrative paragraph 1. Year-3 ambition is qualitative (e.g. 'top-3 contender' / 'niche premium foothold') rather than a numeric revenue target. Page 2 cards: verb-led headline cap 60, body cap 360, anchor (qualitative or quantitative) with source tag. Each pathway card explicitly recommends or rules out the path - no fence-sitting. Recommended pathway carries a visual marker (border accent or checkmark) at render time."
+      "char_budget_hint": "Page 1 callouts: num_max=12, label_max=30 (mono UC), change_line_max=38; narrative_left total_chars_max=1200. Recommended entry mode MUST appear in one callout AND in narrative paragraph 1. Year-3 ambition is qualitative (e.g. 'top-3 contender' / 'niche premium foothold') rather than a numeric revenue target. Page 2 cards: verb-led headline cap 60, body cap 360, anchor (qualitative or quantitative) with source tag. Each pathway card explicitly recommends or rules out the path - no fence-sitting. Recommended pathway carries a visual marker (border accent or checkmark) at render time.",
+      "chart_type_options": [
+        {
+          "id": "addressable_wedge_donut",
+          "name": "Addressable opportunity wedge",
+          "use_when": "Total market sizing is anchorable and we want to compress TAM -> SAM -> SOM into a single visual for the entry callout",
+          "data_required": ["total_market", "addressable_pct", "serviceable_pct"]
+        },
+        {
+          "id": "trend_line_3y",
+          "name": "Compressed 3-year opportunity trend",
+          "use_when": "Sizing data thin or only directional, but a short trend line frames 'material and accelerating' vs 'modest but steady' more credibly than a wedge",
+          "data_required": ["series_label", "years[3]", "values[3]", "unit"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Top-segment ranking bar",
+          "use_when": "Opportunity story is segment-led (one or two segments carry the entry thesis); a ranked bar makes that immediately legible on page 1",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "competitive_intensity", "partnership", "risk_factors"]
     },
     {
       "id": "06_market_opportunity_qualitative",
@@ -62,7 +83,28 @@
       "page_count": 1,
       "purpose": "Qualitative read of the market opportunity for an entrant. Directional language: 'material and accelerating' / 'modest but steady' / 'contested and consolidating' / 'fragmenting and contested'. One anchor chart showing total market size + addressable wedge (sizing carries [secondary] or [estimate] tag but the page DOES NOT pretend to be a sizing report). Body argues why this market matters now (or doesn't) for an entrant, using calibrated language from the voice guide.",
       "skip_if": null,
-      "char_budget_hint": "Body uses calibrated voice ('material', 'modest', 'directional', 'at inflection', 'consolidating'). 1-2 anchor numbers maximum per page with source tags. Avoid full sizing tables — single addressable-opportunity chart with a 1-paragraph qualitative interpretation."
+      "char_budget_hint": "Body uses calibrated voice ('material', 'modest', 'directional', 'at inflection', 'consolidating'). 1-2 anchor numbers maximum per page with source tags. Avoid full sizing tables — single addressable-opportunity chart with a 1-paragraph qualitative interpretation.",
+      "chart_type_options": [
+        {
+          "id": "trend_line_5y",
+          "name": "5-year opportunity trend line",
+          "use_when": "5+ historical data points available; trend direction itself is the argument ('accelerating' vs 'flattening')",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        },
+        {
+          "id": "addressable_wedge_donut",
+          "name": "TAM -> SAM -> SOM addressable wedge",
+          "use_when": "Total market size is anchorable but trend data is sparse; addressable framing is what the entrant cares about",
+          "data_required": ["total_market", "addressable_pct", "serviceable_pct"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked segment bar within the market",
+          "use_when": "Opportunity is concentrated in 1-2 segments and the qualitative read is segment-led, not aggregate-led",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "forecast_drivers"]
     },
     {
       "id": "07_target_customer_segment",
@@ -72,7 +114,28 @@
       "page_count": 1,
       "purpose": "Named target customer segment (e.g. urban middle-class households / mid-market manufacturers / mass-affluent retail banking customers / SMB logistics operators). Demographic + firmographic definition, segment growth direction, why this segment first. Chart: segment-size-vs-total + growth trajectory if anchorable; otherwise a qualitative segment-priority map.",
       "skip_if": null,
-      "char_budget_hint": "Body must answer three questions: who they are (definition cap 220), how they're growing (directional read with at most 1 anchor number + source tag), why first (1-paragraph rationale cap 600). Sizing precision not required."
+      "char_budget_hint": "Body must answer three questions: who they are (definition cap 220), how they're growing (directional read with at most 1 anchor number + source tag), why first (1-paragraph rationale cap 600). Sizing precision not required.",
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Segment ranking bar",
+          "use_when": "Several named segments can be sized side-by-side and the target segment's relative scale is the argument",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "share_donut",
+          "name": "Target-vs-rest share donut",
+          "use_when": "Two-bucket framing reads cleanest (target segment vs everyone else) and a donut compresses the share into a single anchor",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Segment size + growth combo",
+          "use_when": "Both segment size today AND growth trajectory are anchorable; combo chart shows 'big and growing' or 'small but accelerating' in one frame",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "consumer_behavior", "forecast_drivers"]
     },
     {
       "id": "08_competitive_intensity_qualitative",
@@ -82,7 +145,33 @@
       "page_count": 1,
       "purpose": "Compressed competitive read: qualitative intensity label (fragmented / contested / consolidating / oligopoly) + top-5 player mini-grid in one page. Each of the 5 players gets a quarter-card with revenue (when available), share band, segment focus, and the one structural advantage to outflank. No deep profile pages. Replaces v1's quantitative HHI emphasis with a qualitative intensity read; HHI may appear as a single anchor number if cleanly sourced but is not the centerpiece.",
       "skip_if": "fewer than 3 named competitors identifiable from research (rare - escalate to orchestrator if so)",
-      "char_budget_hint": "5 mini-cards each: player_name cap 30, revenue+share line cap 60 (band is fine — 'high single digit share'), segment_focus cap 60, structural_advantage cap 110. Intensity tag + sidebar narrative <= 600 chars total."
+      "char_budget_hint": "5 mini-cards each: player_name cap 30, revenue+share line cap 60 (band is fine — 'high single digit share'), segment_focus cap 60, structural_advantage cap 110. Intensity tag + sidebar narrative <= 600 chars total.",
+      "expand_to_2_pages_if": {
+        "condition": "named_competitors_count >= 6",
+        "what_changes_on_expand": "Page 1 keeps the intensity tag + top-5 mini-grid; page 2 (id 08_competitive_intensity_qualitative_p2) adds a 'next tier' grid of 4-6 additional named players (challengers / niche specialists / recent entrants) with the same quarter-card schema, plus an extended sidebar that calls out 1-2 structural-group dynamics (e.g. premium incumbents vs value disruptors).",
+        "fallback_to_1_page_if": "named_competitors_count < 6"
+      },
+      "chart_type_options": [
+        {
+          "id": "share_donut",
+          "name": "Top-5 share split donut",
+          "use_when": "Top-5 share data is anchorable and the intensity story is 'concentration' (oligopoly / consolidating)",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "bubble_2x2",
+          "name": "Player position bubble 2x2",
+          "use_when": "Competitive read is structural (scale vs differentiation, premium vs value) rather than pure share; 2x2 plots each named player",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Top-5 ranked by share band",
+          "use_when": "Share bands are directional (not precise) and a horizontal bar with band labels reads more honestly than a donut",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "partnership"]
     },
     {
       "id": "09_regulatory_licensing",
@@ -92,7 +181,22 @@
       "page_count": 1,
       "purpose": "Foreign ownership caps, sector licensing requirements, qualitative timeline-to-license (weeks/months/quarters as bands, not precise dates), ongoing compliance burden, recent regulatory shifts that affect entry. Chart: license timeline as a horizontal band visualization (qualitative phases, not a costed timeline).",
       "skip_if": null,
-      "char_budget_hint": "Must name the specific regulator (e.g. BKPM for Indonesia FDI, MIC for Vietnam, BOI for Thailand) and the specific license category. Generic 'regulatory environment' framing rejected at QC. Timelines expressed as bands (e.g. '3-6 months') with source tag — no false precision."
+      "char_budget_hint": "Must name the specific regulator (e.g. BKPM for Indonesia FDI, MIC for Vietnam, BOI for Thailand) and the specific license category. Generic 'regulatory environment' framing rejected at QC. Timelines expressed as bands (e.g. '3-6 months') with source tag — no false precision.",
+      "chart_type_options": [
+        {
+          "id": "horizontal_timeline",
+          "name": "License-phase horizontal timeline",
+          "use_when": "Default for this section — qualitative band visualization of licensing phases (application -> approval -> commencement) with regulator-named anchors",
+          "data_required": ["dated_markers[]"]
+        },
+        {
+          "id": "gantt_horizontal",
+          "name": "License + compliance Gantt",
+          "use_when": "Multiple parallel regulatory tracks need to be shown (e.g. FDI approval AND sector license AND tax registration running concurrently)",
+          "data_required": ["workstream[]", "start_month[]", "end_month[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["regulatory", "risk_factors"]
     },
     {
       "id": "10_distribution_gtm_channels",
@@ -102,7 +206,28 @@
       "page_count": 1,
       "purpose": "Channel mix options for an entrant: own retail vs distributor vs e-commerce vs platform vs agent network. Per-channel: qualitative setup difficulty, ramp speed read, qualitative reach ceiling. Chart: 2x2 of effort-to-establish vs reach-ceiling with each channel plotted as a bubble (size band, not a precise revenue number).",
       "skip_if": null,
-      "char_budget_hint": "Must name 4-5 channel options specific to the country (e.g. Indonesia: traditional trade via Alfamart/Indomaret, modern trade via Hypermart, e-commerce via Tokopedia/Shopee, B2B via local distributors, direct via own boutique). Generic channel labels rejected at QC. Per-channel narrative is directional, not modeled."
+      "char_budget_hint": "Must name 4-5 channel options specific to the country (e.g. Indonesia: traditional trade via Alfamart/Indomaret, modern trade via Hypermart, e-commerce via Tokopedia/Shopee, B2B via local distributors, direct via own boutique). Generic channel labels rejected at QC. Per-channel narrative is directional, not modeled.",
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Effort vs reach channel 2x2",
+          "use_when": "Default — channels can be qualitatively scored on effort-to-establish (x) and reach-ceiling (y) with a size encoding for current channel share",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "network_diagram",
+          "name": "Distribution network diagram",
+          "use_when": "Channel topology is the story (e.g. brand -> master distributor -> sub-distributor -> traditional trade) and shape matters more than position",
+          "data_required": ["nodes[]", "edges[]"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Channel share stacked bar",
+          "use_when": "Current channel-mix shares are anchorable and the entry argument is 'which channel to lead with first' framed against the existing split",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "partnership"]
     },
     {
       "id": "11_partnership_landscape",
@@ -112,7 +237,33 @@
       "page_count": 1,
       "purpose": "Named shortlist of 6-9 candidate JV partners / distributors / agents. Each carries: organisation name, ownership group, segment footprint, revenue band, prior foreign-partner track record. Visualised as a grouped scoring matrix (rows = candidates, columns = fit/scale/track-record/ownership-flexibility tags — qualitative labels not numeric scores).",
       "skip_if": "country + industry combination has too thin an identifiable partner set (rare - orchestrator escalation)",
-      "char_budget_hint": "Each candidate row: org_name cap 30, ownership_group cap 30, segment_footprint cap 60, revenue_band cap 20 (e.g. 'USD 200-400 mn'), score_strip cap 30 (use qualitative tags: 'strong fit' / 'good fit' / 'partial fit'). Anchor narrative beneath table <= 600 chars naming the top-2 recommended candidates."
+      "char_budget_hint": "Each candidate row: org_name cap 30, ownership_group cap 30, segment_footprint cap 60, revenue_band cap 20 (e.g. 'USD 200-400 mn'), score_strip cap 30 (use qualitative tags: 'strong fit' / 'good fit' / 'partial fit'). Anchor narrative beneath table <= 600 chars naming the top-2 recommended candidates.",
+      "expand_to_2_pages_if": {
+        "condition": "candidate_partner_count >= 8",
+        "what_changes_on_expand": "Page 1 keeps the top-6 candidate scoring matrix + top-2 narrative; page 2 (id 11_partnership_landscape_p2) adds (a) 3-5 additional second-tier candidates in the same matrix schema and (b) a typology sidebar grouping all candidates by partner archetype (e.g. conglomerate trading arm / pure-play distributor / family-owned regional player / digital-native marketplace) so the buyer sees the option-space shape, not just a longer list.",
+        "fallback_to_1_page_if": "candidate_partner_count < 8"
+      },
+      "chart_type_options": [
+        {
+          "id": "network_diagram",
+          "name": "Partner-network relationship diagram",
+          "use_when": "Candidates have visible cross-holdings or shared parents (e.g. conglomerate trading arms) and the topology itself is informative",
+          "data_required": ["nodes[]", "edges[]"]
+        },
+        {
+          "id": "bubble_2x2",
+          "name": "Fit vs scale candidate 2x2",
+          "use_when": "Default fallback when the scoring matrix table is the primary visual but a 2x2 (strategic fit on x, scale band on y) helps separate the top-2 from the field",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Candidate revenue band bar",
+          "use_when": "Revenue bands are anchorable for most candidates and a ranked bar makes scale comparison immediate",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["partnership", "channel", "competitive_intensity"]
     },
     {
       "id": "12_operating_environment_qualitative",
@@ -122,7 +273,27 @@
       "page_count": 1,
       "purpose": "Single-page qualitative read of the operating environment for an entrant, combining three lenses: (a) regulatory climate beyond the license itself (stability, FX repatriation friction, tax predictability), (b) cultural fit (B2B vs B2C norms, decision-making cadence, working-language reality), (c) infrastructure readiness (logistics backbone, digital + payment rails, talent availability for the relevant function). Visualised as a 3-lens summary card (each lens gets a directional tag: 'tailwind' / 'neutral' / 'headwind') plus a short narrative.",
       "skip_if": null,
-      "char_budget_hint": "Each lens card: lens_name cap 30 (e.g. 'Regulatory climate'), tag cap 12 ('tailwind' / 'neutral' / 'headwind'), body cap 240. Narrative beneath cards <= 700 chars. No quantitative scores. All claims tagged [secondary] or [estimate]."
+      "char_budget_hint": "Each lens card: lens_name cap 30 (e.g. 'Regulatory climate'), tag cap 12 ('tailwind' / 'neutral' / 'headwind'), body cap 240. Narrative beneath cards <= 700 chars. No quantitative scores. All claims tagged [secondary] or [estimate].",
+      "expand_to_2_pages_if": {
+        "condition": "lenses_with_strong_signal >= 2",
+        "what_changes_on_expand": "Page 1 keeps the 3-lens summary cards + 1-paragraph synthesis; page 2 (id 12_operating_environment_qualitative_p2) drills into the 2+ lenses with the strongest entrant-relevant signal — one half-page per drilled lens with named anchors (specific regulators, specific corridor lanes, named universities/talent pools, named payment rails) and a 'what this means for the entry plan' callout per drilled lens. The third (weaker-signal) lens stays compressed on page 1.",
+        "fallback_to_1_page_if": "lenses_with_strong_signal < 2"
+      },
+      "chart_type_options": [
+        {
+          "id": "heatmap_5x5",
+          "name": "3-lens tailwind/neutral/headwind matrix",
+          "use_when": "Default — compressed 3-row visualisation (one row per lens) using the same heatmap rendering family as the risk matrix; cells are tailwind/neutral/headwind chips, not numeric",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Lens-strength ranked bar",
+          "use_when": "Bias signal across lenses is uneven enough that a ranked bar (strongest tailwind -> strongest headwind) reads more honestly than a flat 3-card grid",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["regulatory", "risk_factors", "consumer_behavior", "channel"]
     },
     {
       "id": "13_risk_matrix",
@@ -132,7 +303,21 @@
       "page_count": 1,
       "purpose": "5x5 likelihood-x-impact heatmap (qualitative). 8-12 named risks placed across cells, color-coded green/amber/red with LOW/MED/HIGH severity labels. NO numerical scores anywhere. Risks must tie back to specific qualitative findings from sections 06-11 (market opportunity / target segment / competitive intensity / regulatory / channel / partner / operating environment). Right rail: 3-card sidebar expanding the highest-severity risks with mitigation framing.",
       "skip_if": null,
-      "char_budget_hint": "Each placed cell: cell_label cap 22 chars + LOW/MED/HIGH color band only (no numeric score). Sidebar cards: risk_name cap 30 (mono UC), severity_tag cap 14 ('HIGH - LIKELY' etc.), body cap 180 (qualitative framing + mitigation). Risks must include at least one FX/macro risk, one regulatory risk, one operational risk, one competitive-response risk; rest are industry-specific. Every cell must trace to a finding in sections 06-11."
+      "char_budget_hint": "Each placed cell: cell_label cap 22 chars + LOW/MED/HIGH color band only (no numeric score). Sidebar cards: risk_name cap 30 (mono UC), severity_tag cap 14 ('HIGH - LIKELY' etc.), body cap 180 (qualitative framing + mitigation). Risks must include at least one FX/macro risk, one regulatory risk, one operational risk, one competitive-response risk; rest are industry-specific. Every cell must trace to a finding in sections 06-11.",
+      "expand_to_2_pages_if": {
+        "condition": "risks_above_med_severity >= 8",
+        "what_changes_on_expand": "Page 1 keeps the 5x5 heatmap + 3 highest-severity mitigation cards; page 2 (id 13_risk_matrix_p2) adds (a) the remaining HIGH/MED risks as a stacked mitigation card grid (5-6 additional cards in the same risk_name / severity_tag / body schema) and (b) a 'risk concentration' callout calling out whether the bulk of HIGH risks cluster in one finding-area (e.g. 'partner-dependency cluster' vs 'regulatory cluster vs FX cluster'). No new heatmap on page 2 — page 1's heatmap remains the single source of placement.",
+        "fallback_to_1_page_if": "risks_above_med_severity < 8"
+      },
+      "chart_type_options": [
+        {
+          "id": "heatmap_5x5",
+          "name": "Likelihood x impact qualitative heatmap",
+          "use_when": "Only option — page_type is risk_matrix and the 5x5 qualitative heatmap is the fixed visual",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["risk_factors", "regulatory", "competitive_intensity", "partnership"]
     },
     {
       "id": "14_phasing_plan",
@@ -142,7 +327,16 @@
       "page_count": 1,
       "purpose": "Timeline visualisation of the recommended entry path: 0-12 months (foundation - license, partner, first hires), 13-24 months (commercial launch + first revenue), 25-36 months (scale toward year-3 qualitative ambition). Reused forecast_outlook schema - the 3 scenario cards become 3 phase cards instead. Milestones are qualitative (e.g. 'license granted', 'first 10 customers live', 'two-region footprint') not numeric.",
       "skip_if": null,
-      "char_budget_hint": "Each phase card: phase_name cap 22 (e.g. 'Phase 1 - foundation'), milestone_anchor cap 18 (e.g. 'License granted'), body cap 200 listing 3-4 concrete qualitative deliverables. Chart slot becomes a horizontal Gantt-style timeline with workstream rows (license / hire / partner / launch). No revenue numbers on the timeline — qualitative milestones only."
+      "char_budget_hint": "Each phase card: phase_name cap 22 (e.g. 'Phase 1 - foundation'), milestone_anchor cap 18 (e.g. 'License granted'), body cap 200 listing 3-4 concrete qualitative deliverables. Chart slot becomes a horizontal Gantt-style timeline with workstream rows (license / hire / partner / launch). No revenue numbers on the timeline — qualitative milestones only.",
+      "chart_type_options": [
+        {
+          "id": "gantt_horizontal",
+          "name": "Phased entry Gantt timeline",
+          "use_when": "Only option — workstreams (license / hire / partner / launch / scale) plotted across 0-12 / 13-24 / 25-36 month phases with qualitative milestone markers",
+          "data_required": ["workstream[]", "start_month[]", "end_month[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["partnership", "channel", "regulatory", "forecast_drivers"]
     },
     {
       "id": "15_methodology_endnote",

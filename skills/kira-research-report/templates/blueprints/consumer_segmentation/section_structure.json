@@ -51,7 +51,28 @@
       "page_count": 2,
       "purpose": "Two-page executive summary. Page 1: 4 callouts (TAM consumers in millions, dominant segment share of value, biggest behavioral shift, NPS leader or affinity index) + 2-col narrative + 1 chart (segment value share). Page 2: 5 strategic implications grid — what each segment shift means for market participants.",
       "skip_if": null,
-      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each"
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each",
+      "chart_type_options": [
+        {
+          "id": "share_donut",
+          "name": "Segment value share donut",
+          "use_when": "Single-period snapshot of segment share-of-value is the headline read",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked segment value bars",
+          "use_when": "4+ segments and value-by-segment ranking is clearer than a donut",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Segment share split over 2-3 periods",
+          "use_when": "Year-over-year shift in segment composition is the key story (not just current snapshot)",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "consumer_behavior"]
     },
     {
       "id": "06_demographic",
@@ -61,7 +82,33 @@
       "page_count": 1,
       "purpose": "Demographic dissection — stacked chart of consumer population by age band × income tier × urban/peri-urban/rural geography. Sidebar narrative on which demographic cells command outsize share of category value. Identifies the 'who' axis.",
       "skip_if": null,
-      "char_budget_hint": "Chart = 3-axis stacked bar or heatmap (age × income with geo as small-multiples). Narrative = 2 paragraphs flagging the top 2 cells by value contribution."
+      "char_budget_hint": "Chart = 3-axis stacked bar or heatmap (age × income with geo as small-multiples). Narrative = 2 paragraphs flagging the top 2 cells by value contribution.",
+      "expand_to_2_pages_if": {
+        "condition": "distinct_demo_clusters >= 5",
+        "what_changes_on_expand": "Page 1 keeps the consolidated 3-axis chart + top-2-cell narrative. Page 2 adds per-cluster mini-cards (4-5 cards) profiling each distinct demographic cluster with age range, income tier, geography skew, and share-of-category-value — letting buyers see the full demo cube rather than just the top cells.",
+        "fallback_to_1_page_if": "distinct_demo_clusters < 5"
+      },
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Age × income stacked bars with geography small-multiples",
+          "use_when": "Three-axis demo cube is the default read and geography splits cleanly into 2-3 panels",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Age × income heatmap with geo facet",
+          "use_when": "Value concentration is uneven and a density grid telegraphs the 'hot cells' faster than stacked bars",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked demographic cluster bars",
+          "use_when": "5+ distinct demographic clusters surface and a ranked view (cluster name → value contribution) reads cleaner than a cube",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "market_opportunity"]
     },
     {
       "id": "07_behavioral",
@@ -71,7 +118,28 @@
       "page_count": 1,
       "purpose": "Behavioral dissection — 2×2 or 3×3 matrix of purchase frequency × basket size, overlaid with loyalty index (NPS / repeat-rate / switching probability). Sidebar narrative on which behavioral cell drives category profit pool.",
       "skip_if": null,
-      "char_budget_hint": "Chart = bubble matrix (X=frequency, Y=basket, size=loyalty). 4 quadrant callouts naming each cell."
+      "char_budget_hint": "Chart = bubble matrix (X=frequency, Y=basket, size=loyalty). 4 quadrant callouts naming each cell.",
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Frequency × basket bubble matrix with loyalty size",
+          "use_when": "Three-dimensional behavioral read (frequency, basket, loyalty) is well-supported by panel data",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Frequency × basket heatmap with loyalty overlay",
+          "use_when": "Behavioral cells are dense enough that a 5×5 grid telegraphs the profit-pool cell faster than bubbles",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked behavioral segment bars by profit-pool contribution",
+          "use_when": "Loyalty / NPS data is thin and a single-axis ranked view is the honest read",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "pricing"]
     },
     {
       "id": "08_psychographic",
@@ -81,7 +149,33 @@
       "page_count": 1,
       "purpose": "Psychographic dissection — clustering on values (status / utility / sustainability / community / convenience) × lifestyle (digital-native, family-anchored, career-first, etc.). Charts cluster centroids. This page sets up the three persona pages that follow.",
       "skip_if": "topic has no available consumer values data (e.g. ultra-niche B2C with no panel coverage) — collapse psychographic commentary into behavioral page instead, drop this section, and route one extra persona page in.",
-      "char_budget_hint": "Chart = 2D cluster scatter with 3 highlighted clusters labeled to match the personas in 09/10/11. Narrative bridges into persona pages."
+      "char_budget_hint": "Chart = 2D cluster scatter with 3 highlighted clusters labeled to match the personas in 09/10/11. Narrative bridges into persona pages.",
+      "expand_to_2_pages_if": {
+        "condition": "psychographic_axes >= 4",
+        "what_changes_on_expand": "Page 1 keeps the 2D values × lifestyle cluster scatter and the bridge narrative into the persona pages. Page 2 adds 4+ single-axis profile cards — one per distinct psychographic axis (e.g. status-vs-utility, sustainability-orientation, digital-vs-analog, community-anchoring) — each with a brief read on which persona indexes high/low and what that implies for messaging.",
+        "fallback_to_1_page_if": "psychographic_axes < 4"
+      },
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Values × lifestyle cluster scatter (size = cluster mass)",
+          "use_when": "Three highlighted clusters anchor the persona pages and cluster mass is the third dimension worth showing",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked psychographic cluster bars",
+          "use_when": "Two clean axes don't surface — fall back to a ranked cluster-by-size view with axis affinity in labels",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "share_donut",
+          "name": "Cluster mass donut",
+          "use_when": "Only 3 well-defined clusters surface and relative mass is the headline read",
+          "data_required": ["slices[]", "slice_pct[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior"]
     },
     {
       "id": "09_persona_1",
@@ -91,7 +185,16 @@
       "page_count": 1,
       "purpose": "Single-page deep profile of the largest-value persona. Combines demo stats grid (4 stats), behavior grid (4 cards), one quote callout, channel preference horizontal bar, and a WTP anchor figure. See manifest.yaml for the full persona_profile slot spec.",
       "skip_if": null,
-      "char_budget_hint": "label cap 30, headline cap 70, demo stats 4× (num 12 / unit 8 / label 30), behavior cards 4× (metric 14 / label 30 / change-line 38), quote 180 + attribution 40, channel_pref_caption 110, WTP num 12 + unit 8 + change-line 38."
+      "char_budget_hint": "label cap 30, headline cap 70, demo stats 4× (num 12 / unit 8 / label 30), behavior cards 4× (metric 14 / label 30 / change-line 38), quote 180 + attribution 40, channel_pref_caption 110, WTP num 12 + unit 8 + change-line 38.",
+      "chart_type_options": [
+        {
+          "id": "persona_profile_default",
+          "name": "Persona profile default layout",
+          "use_when": "Always — persona_profile has a fixed visual shape (demo stats grid + behavior grid + quote callout + channel bar + WTP anchor); page type's chrome is non-negotiable",
+          "data_required": ["demo_stats[4]", "behavior_cards[4]", "quote", "channel_pref_bar", "wtp_anchor"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "channel", "pricing"]
     },
     {
       "id": "10_persona_2",
@@ -101,7 +204,16 @@
       "page_count": 1,
       "purpose": "Single-page deep profile of the highest-growth persona — the segment expanding fastest in share or in absolute spend.",
       "skip_if": null,
-      "char_budget_hint": "Same as persona_1."
+      "char_budget_hint": "Same as persona_1.",
+      "chart_type_options": [
+        {
+          "id": "persona_profile_default",
+          "name": "Persona profile default layout",
+          "use_when": "Always — persona_profile has a fixed visual shape; page type's chrome is non-negotiable",
+          "data_required": ["demo_stats[4]", "behavior_cards[4]", "quote", "channel_pref_bar", "wtp_anchor"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "channel", "pricing"]
     },
     {
       "id": "11_persona_3",
@@ -111,7 +223,16 @@
       "page_count": 1,
       "purpose": "Single-page deep profile of the highest-WTP-or-most-strategic persona — premium tier, niche-defender, or a contested segment with structural switching exposure.",
       "skip_if": null,
-      "char_budget_hint": "Same as persona_1."
+      "char_budget_hint": "Same as persona_1.",
+      "chart_type_options": [
+        {
+          "id": "persona_profile_default",
+          "name": "Persona profile default layout",
+          "use_when": "Always — persona_profile has a fixed visual shape; page type's chrome is non-negotiable",
+          "data_required": ["demo_stats[4]", "behavior_cards[4]", "quote", "channel_pref_bar", "wtp_anchor"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "channel", "pricing"]
     },
     {
       "id": "12_channel_preferences",
@@ -121,7 +242,33 @@
       "page_count": 1,
       "purpose": "Cross-segment channel mix — stacked bar showing % spend across modern trade / traditional / e-commerce / social commerce / direct, broken out per persona (3 bars). Sidebar narrative on where channel-shift catalysts are concentrated.",
       "skip_if": null,
-      "char_budget_hint": "Chart = 3 stacked horizontal bars (one per persona). 2-paragraph narrative on the directional shift (typically social commerce vs. modern trade)."
+      "char_budget_hint": "Chart = 3 stacked horizontal bars (one per persona). 2-paragraph narrative on the directional shift (typically social commerce vs. modern trade).",
+      "expand_to_2_pages_if": {
+        "condition": "channel_subtypes_count >= 6",
+        "what_changes_on_expand": "Page 1 keeps the 3-persona stacked bar + 2-paragraph narrative on directional shift. Page 2 adds a channel-subtype detail view — either a network diagram of channel touchpoints per persona or a segment_bar_horizontal of the long-tail channels (livestream commerce, group buying, kiosk, etc.) with which-persona-uses-which annotation.",
+        "fallback_to_1_page_if": "channel_subtypes_count < 6"
+      },
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Per-persona channel-mix stacked bars",
+          "use_when": "Default — 3 personas × 4-5 channel categories is the canonical cross-segment channel read",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked channels by spend share, persona overlaid",
+          "use_when": "Channel ranking matters more than per-persona composition (e.g. category-wide channel shift story)",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "network_diagram",
+          "name": "Persona-to-channel touchpoint network",
+          "use_when": "6+ channel subtypes surface and the connections between persona and channel subtype are richer than a stacked bar can carry",
+          "data_required": ["nodes[]", "edges[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "consumer_behavior"]
     },
     {
       "id": "13_wtp",
@@ -131,7 +278,28 @@
       "page_count": 1,
       "purpose": "Price-sensitivity curves per persona — Van Westendorp or simple demand-curve sketch. Anchored WTP figures (USD or local currency) per persona with elasticity commentary. Includes a callout grid flagging which persona is the price-anchor versus the premium-payer.",
       "skip_if": null,
-      "char_budget_hint": "Chart = 3 demand-curve traces or a clustered bar of WTP bands. 4 callouts (one per persona + one category-wide anchor)."
+      "char_budget_hint": "Chart = 3 demand-curve traces or a clustered bar of WTP bands. 4 callouts (one per persona + one category-wide anchor).",
+      "chart_type_options": [
+        {
+          "id": "scatter_quality_price",
+          "name": "Persona quality-vs-price positioning scatter",
+          "use_when": "Quality-perception data is paired with WTP figures and a 2D price-vs-quality read clarifies premium-payer geometry",
+          "data_required": ["brand_name[]", "price[]", "quality_score[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Per-persona WTP band bars",
+          "use_when": "Default — 3 personas × WTP band (low/anchor/premium) is the cleanest comparative read when full demand curves aren't surfaced",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "trend_line_3y",
+          "name": "Van Westendorp-style demand traces per persona",
+          "use_when": "Panel data supplies enough price-acceptance points to plot 3 demand curves (one per persona) with intersect callouts",
+          "data_required": ["series_label", "years[3]", "values[3]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "consumer_behavior"]
     },
     {
       "id": "14_brand_affinity",
@@ -141,7 +309,28 @@
       "page_count": 1,
       "purpose": "NPS / brand-affinity index per persona, switching probability matrix (which brand loses share to which), and a short list of the 3-5 brands with disproportionate persona pull. No deep player profiles — this is segment-side analysis, not competitive landscape.",
       "skip_if": null,
-      "char_budget_hint": "Chart = NPS bars per persona + a 3×3 switching-flow Sankey OR a top-5 brands affinity table. Narrative anchors which persona is most/least loyal."
+      "char_budget_hint": "Chart = NPS bars per persona + a 3×3 switching-flow Sankey OR a top-5 brands affinity table. Narrative anchors which persona is most/least loyal.",
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "NPS / affinity bars per persona",
+          "use_when": "Default — NPS or affinity-index values per persona is the cleanest loyalty read",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Brand-to-brand switching probability heatmap",
+          "use_when": "Switching matrix data is dense enough for a grid view (4+ brands with measurable cross-flow)",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        },
+        {
+          "id": "network_diagram",
+          "name": "Switching-flow network (Sankey-style)",
+          "use_when": "Brand-to-brand flow is the headline (specific switching pathways named) and a directional graph telegraphs the leakage faster than a heatmap",
+          "data_required": ["nodes[]", "edges[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "competitive_intensity"]
     },
     {
       "id": "15_implications_recap",
@@ -151,7 +340,8 @@
       "page_count": 1,
       "purpose": "Closing 5-card implications grid — one per major persona-anchored move (e.g. 'Price-anchor Persona 01 via {{format}}', 'Defend Persona 03 against social-commerce leakage', etc.). Reuses the exec_summary_p2_implications page type so we don't invent a third closing format.",
       "skip_if": null,
-      "char_budget_hint": "Cards body_max=360 chars each. Lead each card with an imperative verb addressed to market participants."
+      "char_budget_hint": "Cards body_max=360 chars each. Lead each card with an imperative verb addressed to market participants.",
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "market_opportunity", "channel", "pricing"]
     },
     {
       "id": "16_methodology_endnote",

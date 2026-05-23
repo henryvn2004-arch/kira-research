@@ -54,7 +54,28 @@
       "purpose": "Two-page executive summary. Page 1: 4 callouts (dominant tier share, biggest pricing move 2024-2026, premium opportunity signal, prevailing promo direction) + 2-col narrative + tier-stack chart. Page 2: 5 strategic implications grid, each card framed as a pricing action — Hold / Discount / Premiumize / Fragment / Exit.",
       "skip_if": null,
       "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each. Implication card tag_labels: 'HOLD', 'DISCOUNT', 'PREMIUMIZE', 'FRAGMENT', 'EXIT' (uppercase, <=18 chars).",
-      "notes": "Anchor each implication with a number or directional read from the body — premium share %, WTP gap, promo direction, tier momentum — not generic advice. Numbers can be ranges; precision is not required at the overview level."
+      "notes": "Anchor each implication with a number or directional read from the body — premium share %, WTP gap, promo direction, tier momentum — not generic advice. Numbers can be ranges; precision is not required at the overview level.",
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Tier stack — stacked share bar",
+          "use_when": "All four tiers (premium / mid / mass / value) have value-share data and the visual goal is composition at a single point in time",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Tier stack — ranked horizontal bars",
+          "use_when": "Tiers have value share AND a directional growth read, and the page 1 callouts already cover composition",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "trend_line_3y",
+          "name": "Tier share over 3 years",
+          "use_when": "Historical share by tier exists for 2023-2026 and the snapshot story is migration between tiers",
+          "data_required": ["series_label", "years[3]", "values[3]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "pricing", "consumer_behavior"]
     },
     {
       "id": "06_tier_stack",
@@ -65,7 +86,28 @@
       "purpose": "Four-tier stack chart (premium / mid / mass / value) with each tier's value share + volume share + 2-year directional growth. Narrative on left (3 sub-sections): where value is migrating, which tier is squeezed, where new entry is viable.",
       "skip_if": null,
       "char_budget_hint": "narrative sections_count_max=3, each body_max=350 chars",
-      "notes": "Chart is a stacked horizontal bar OR 4-row tier card stack. Tier definitions should be price-band anchored ('Premium = USD 12+ per unit') — band ranges are fine, point precision not required."
+      "notes": "Chart is a stacked horizontal bar OR 4-row tier card stack. Tier definitions should be price-band anchored ('Premium = USD 12+ per unit') — band ranges are fine, point precision not required.",
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Stacked horizontal bar (value + volume composition)",
+          "use_when": "Both value share and volume share are populated across the four tiers — primary recommended shape",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "4-row tier card stack",
+          "use_when": "Only value share is available, or tiers need a band-anchored label per row rather than a percentage split",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Value share vs 2-year growth dual axis",
+          "use_when": "Directional growth signal is strong enough to plot as a second series — emphasizes which tier is migrating",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "market_opportunity", "consumer_behavior"]
     },
     {
       "id": "07_competitor_price_bands",
@@ -76,7 +118,27 @@
       "purpose": "5-6 leading brands placed on a tier label + indicative price band (low-high range in local currency or USD) + qualitative directional change ('up', 'stable', 'down') over the prior 2 years. Sidebar narrative interprets the spread: who is drifting upmarket, who is holding the band, who is discounting into a lower tier.",
       "skip_if": null,
       "char_budget_hint": "Table replaces the chart slot. 5-6 rows x 4 columns (brand, tier label, price band, directional change). Each cell value <= 22 chars. Sidebar narrative body_max=350 chars.",
-      "notes": "Supporting page, not a per-SKU pricing-committee table. Price bands are indicative ranges, not point prices; per-SKU pack-size detail is intentionally omitted. Directional change is qualitative ('up' / 'stable' / 'down'); no 2-year % change column. Source tags still required — most rows are [primary] (KIRA channel scan) or [secondary] (listed-company disclosure)."
+      "notes": "Supporting page, not a per-SKU pricing-committee table. Price bands are indicative ranges, not point prices; per-SKU pack-size detail is intentionally omitted. Directional change is qualitative ('up' / 'stable' / 'down'); no 2-year % change column. Source tags still required — most rows are [primary] (KIRA channel scan) or [secondary] (listed-company disclosure).",
+      "expand_to_2_pages_if": {
+        "condition": "brands_with_band_data >= 10",
+        "what_changes_on_expand": "Page 1 holds the top 5-6 brands in the table shape described above. Page 2 (id 07_competitor_price_bands_p2) extends the same table format to brands 7-10+, grouped by tier so the reader can scan within-tier spread; the sidebar narrative on p2 shifts from 'who is drifting' to 'within-tier dispersion and entry-band white space'.",
+        "fallback_to_1_page_if": "brands_with_band_data < 10 — render the canonical 5-6 row table on one page"
+      },
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Indicative price band bars (low-high range per brand)",
+          "use_when": "Brands have credible low-high band figures and the reader should see spread visually rather than as a table",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "scatter_quality_price",
+          "name": "Brand price scatter on a single x-axis",
+          "use_when": "Bands compress to midpoints and the page can preview the §07 matrix lens — only when quality scoring is NOT yet ready (otherwise leave the matrix for §07)",
+          "data_required": ["brand_name[]", "price[]", "quality_score[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "competitive_intensity"]
     },
     {
       "id": "08_price_quality_matrix",
@@ -87,7 +149,16 @@
       "purpose": "Perceptual map — 2x2 scatter of 6-12 brands placed on price (x-axis) x perceived quality (y-axis). Four quadrant labels framed for the category (e.g. 'Premium fortress' / 'Aspirational' / 'Mass-market core' / 'Value trap'). Sidebar narrative explains the structural insight — which quadrant is overcrowded, which has white space, who has migrated between quadrants.",
       "skip_if": null,
       "char_budget_hint": "Matrix chart 380px tall. Brand labels <=18 chars each. Quadrant labels <=24 chars each. Sidebar narrative body_max=380 chars (2-3 sentences).",
-      "notes": "CENTERPIECE. Uses NEW page type 'price_quality_matrix' (shape sketched in manifest.yaml comment). Brand placement is qualitative — a tier-level band on the x-axis is acceptable. Y-axis quality score = KIRA composite (survey perception + functional attribute scoring) or single external survey index — disclose method in subhead. If category has >12 plottable brands, split into 2 matrix pages by segment and bump section_count to 14."
+      "notes": "CENTERPIECE. Uses NEW page type 'price_quality_matrix' (shape sketched in manifest.yaml comment). Brand placement is qualitative — a tier-level band on the x-axis is acceptable. Y-axis quality score = KIRA composite (survey perception + functional attribute scoring) or single external survey index — disclose method in subhead. If category has >12 plottable brands, split into 2 matrix pages by segment and bump section_count to 14.",
+      "chart_type_options": [
+        {
+          "id": "scatter_quality_price",
+          "name": "Price-quality scatter (centerpiece)",
+          "use_when": "Always — this is the load-bearing shape for the price_quality_matrix page_type and the only option per A+ flex spec",
+          "data_required": ["brand_name[]", "price[]", "quality_score[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "competitive_intensity", "consumer_behavior"]
     },
     {
       "id": "09_elasticity",
@@ -98,7 +169,33 @@
       "purpose": "Directional read on price elasticity by consumer segment (urban / suburban / rural, OR mass / mid / aspirational, OR age cohort — pick category-appropriate cut). Chart: horizontal bar of elasticity coefficients with confidence ranges; OR table if coefficients come from disparate sources. Narrative explains where elasticity inverts (luxury inversion, status goods).",
       "skip_if": "category has no published elasticity studies AND KIRA has no panel data — collapse into 06_tier_stack with elasticity as a narrative side-note",
       "char_budget_hint": "Single chart with up to 6 segments. Confidence range as error bars. Narrative sections_count_max=3.",
-      "notes": "Elasticity coefficients are often [estimate] with a [secondary] anchor. Disclose the anchor explicitly in subhead — 'KIRA estimate calibrated to {{anchor_study}} 2024 [secondary]'. Qualitative ranges acceptable at the overview level."
+      "notes": "Elasticity coefficients are often [estimate] with a [secondary] anchor. Disclose the anchor explicitly in subhead — 'KIRA estimate calibrated to {{anchor_study}} 2024 [secondary]'. Qualitative ranges acceptable at the overview level.",
+      "expand_to_2_pages_if": {
+        "condition": "segments_with_elasticity_signal >= 4",
+        "what_changes_on_expand": "Page 1 keeps the headline elasticity-by-segment chart and the 'where elasticity inverts' narrative. Page 2 (id 09_elasticity_p2) adds a second cut — e.g. category-occasion or price-tier-within-segment — plus a table of confidence ranges and anchor studies per cell, so the reader sees both the segment view and the conditional view without crowding either.",
+        "fallback_to_1_page_if": "segments_with_elasticity_signal < 4 — render the canonical single-chart layout"
+      },
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Elasticity coefficient bars with error whiskers",
+          "use_when": "Coefficients have comparable error ranges and a single cut (segment) is the right lens",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Elasticity vs current price index dual axis",
+          "use_when": "Showing the relationship between current price level and elasticity adds an inversion read",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Segment x occasion elasticity grid",
+          "use_when": "Elasticity varies meaningfully across both segment and purchase occasion and the page should expose the conditional view",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "consumer_behavior", "forecast_drivers"]
     },
     {
       "id": "10_wtp_by_segment",
@@ -109,7 +206,28 @@
       "purpose": "WTP bar chart with qualitative ranges per segment — what each segment will pay for the category benchmark vs current market price. Highlights the WTP gap (positive = pricing power untapped; negative = price exceeds WTP, churn risk).",
       "skip_if": null,
       "char_budget_hint": "Bar chart with 4-6 segments. Each bar: WTP midpoint + range whiskers + current market price reference line. Narrative sections_count_max=3.",
-      "notes": "WTP data may be [primary] (KIRA panel), [secondary] (named credible survey, never aggregator), or [estimate] with anchor disclosed in subhead. Qualitative ranges acceptable — point precision is not required at the overview level."
+      "notes": "WTP data may be [primary] (KIRA panel), [secondary] (named credible survey, never aggregator), or [estimate] with anchor disclosed in subhead. Qualitative ranges acceptable — point precision is not required at the overview level.",
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "WTP bars vs current price reference line",
+          "use_when": "Each segment has a WTP midpoint + range and a single current-price reference is meaningful — default shape",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "WTP vs current price dual axis",
+          "use_when": "Both WTP and current price should be shown as comparable series rather than bar + reference line",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        },
+        {
+          "id": "bubble_2x2",
+          "name": "WTP gap vs segment size bubble",
+          "use_when": "Segment size encoding matters — large gap on a small segment is a different signal than the same gap on a large segment",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["consumer_behavior", "pricing", "market_opportunity"]
     },
     {
       "id": "11_pricing_models",
@@ -120,7 +238,28 @@
       "purpose": "Table or matrix mapping pricing models (subscription / one-time / freemium / tiered / dynamic) to which consumer segments they work for, with adoption % and revenue contribution where data exists. Narrative covers which model is gaining share and why.",
       "skip_if": "category has only one viable pricing model (commodity goods one-time only) — collapse insight into 06_tier_stack narrative",
       "char_budget_hint": "Table with 4-5 model rows x 4 columns (segment fit / adoption % / typical price point / momentum). Sidebar narrative body_max=350 chars.",
-      "notes": "For services (telco, streaming, insurance) this is a load-bearing page. For pure consumer goods this section may collapse — orchestrator can skip if topic is shelf-good FMCG."
+      "notes": "For services (telco, streaming, insurance) this is a load-bearing page. For pure consumer goods this section may collapse — orchestrator can skip if topic is shelf-good FMCG.",
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Model-by-segment adoption share stacked bar",
+          "use_when": "Adoption % is populated across at least 3 of the 4-5 models and the page should show composition by segment",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Model x segment fit heatmap",
+          "use_when": "Fit is qualitative (rare / occasional / frequent / dominant) and crosses more than 3 segments — better than a table when the asymmetry is the story",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Revenue contribution by model",
+          "use_when": "Revenue split by model is the lead read (services categories like telco / streaming) and per-segment fit is secondary",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "consumer_behavior", "channel"]
     },
     {
       "id": "12_promo_patterns",
@@ -131,7 +270,22 @@
       "purpose": "Directional summary of promo patterns by tier x channel — e.g. 'premium tier rarely discounts (occasional gift-with-purchase only); mass tier flash-sale weekly on e-commerce; mid tier discounts seasonally in modern trade'. Visual: matrix or paired qualitative bars (rare / occasional / frequent) per tier-channel pair. Narrative covers channel asymmetry and tier-specific norms.",
       "skip_if": "category has no promotional convention (utilities, regulated insurance) — skip and bump section_count to 12",
       "char_budget_hint": "Matrix of 4 tiers x 4 channels with qualitative cells (rare / occasional / frequent / dominant). Narrative sections_count_max=3.",
-      "notes": "Directional read, not quantitative depth + frequency table. Source tags still required on the qualitative reads — [primary] for KIRA channel observation, [secondary] for trade-press promo coverage."
+      "notes": "Directional read, not quantitative depth + frequency table. Source tags still required on the qualitative reads — [primary] for KIRA channel observation, [secondary] for trade-press promo coverage.",
+      "chart_type_options": [
+        {
+          "id": "heatmap_5x5",
+          "name": "Tier x channel qualitative heatmap",
+          "use_when": "Default shape — cells carry one of {rare / occasional / frequent / dominant} severity reads across tier x channel",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Promo share by channel within each tier",
+          "use_when": "Each tier has channel-mix data on promo intensity and the page wants to expose channel asymmetry as composition",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "pricing", "consumer_behavior"]
     },
     {
       "id": "13_premium_case_studies",
@@ -142,7 +296,27 @@
       "purpose": "2 brands that moved up successfully + 1 brand that tried and failed (if a credible failure case surfaces) — on a shared template page. Each case: brand, starting position, move attempted, outcome metric (share +/-, price realization +/-), one-line lesson. Format reuses competitive_profile_deep but compressed (2-3 cases on one page, not one case per page).",
       "skip_if": "no clear premium-move case studies identified in research — collapse the lesson into 08_price_quality_matrix sidebar",
       "char_budget_hint": "Reuse competitive_profile_deep shape but each case gets ~33-50% of the page. Per-case: name <=45 chars, summary body 300-380 chars, outcome stats 3-4 stat rows.",
-      "notes": "Failure case is optional. If a credible failure case surfaces in research, include it (premium-pricing coverage that only shows winners reads as marketing copy). If no failure case surfaces, ship with 2 successes — do not invent or stretch a weak example."
+      "notes": "Failure case is optional. If a credible failure case surfaces in research, include it (premium-pricing coverage that only shows winners reads as marketing copy). If no failure case surfaces, ship with 2 successes — do not invent or stretch a weak example.",
+      "expand_to_2_pages_if": {
+        "condition": "case_studies_available >= 4",
+        "what_changes_on_expand": "Page 1 holds the canonical 2 successes + 1 failure compressed layout. Page 2 (id 13_premium_case_studies_p2) adds 1-2 further cases — typically a contrasting geography or sub-segment — and a small comparison strip across all cases showing starting tier, move direction, and outcome metric so the reader can see the pattern, not just individual stories.",
+        "fallback_to_1_page_if": "case_studies_available < 4 — render the canonical 2-success + 1-failure (or 2-success only) page"
+      },
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Case comparison bubble — price move vs share move",
+          "use_when": "The expanded view (page 2) needs to compare 4+ cases on the same axes; size encodes pre-move revenue base",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Outcome metric bars per case",
+          "use_when": "Each case has a comparable outcome metric (share point change or price-realization change) and the page wants a single comparable read",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "pricing", "market_opportunity"]
     },
     {
       "id": "14_methodology_endnote",

@@ -50,7 +50,28 @@
       "page_type": "exec_summary_p1",
       "page_count": 1,
       "purpose": "Snapshot of the competitive board: 4 callouts (market structure descriptor + HHI, top-3 combined share, biggest mover YoY, disruptor count). 2-col narrative anchored on the structural thesis. One chart: top-10 share bar.",
-      "char_budget_hint": "callout num_max=12 chars, label_max=30 chars, change-line_max=38 chars, narrative_left total_chars_max=1200"
+      "char_budget_hint": "callout num_max=12 chars, label_max=30 chars, change-line_max=38 chars, narrative_left total_chars_max=1200",
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Top-10 share bar (horizontal)",
+          "use_when": "Clean share % available for top 10 players — the default snapshot read",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "share_donut",
+          "name": "Top-3 + rest donut",
+          "use_when": "Market is highly concentrated and top-3 narrative dominates the snapshot",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Top-3 vs mid-tier vs long-tail stack",
+          "use_when": "Tiered structure (oligopoly with fringe) is the headline read",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "market_opportunity"]
     },
     {
       "id": "06_exec_summary_implications",
@@ -60,7 +81,8 @@
       "page_count": 1,
       "purpose": "Five implication cards keyed off the structure read — e.g. 'Position for consolidation', 'Anticipate the segment fracture', 'Hedge pricing exposure', 'Sequence entry behind the disruptor wave', 'Pace M&A windows'. Each anchored by a number from the body.",
       "char_budget_hint": "implications cards body_max=360 chars each, anchor field references body data",
-      "notes": "This is the only de-cliented advisory voice in the report — keep it imperative-verb led."
+      "notes": "This is the only de-cliented advisory voice in the report — keep it imperative-verb led.",
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "risk_factors", "partnership"]
     },
     {
       "id": "07_industry_structure",
@@ -70,7 +92,33 @@
       "page_count": 1,
       "purpose": "HHI index chart + fragmentation index + segment split sidebar. 4-card mini-row showing the top 4 player headlines (rank, parent, share, single recent move).",
       "char_budget_hint": "sidebar body_max=280 chars, stat_lines_max=4 at 35 chars each, player mini-cards strengths_body_max=140 chars",
-      "skip_if": null
+      "skip_if": null,
+      "expand_to_2_pages_if": {
+        "condition": "named_competitors_count >= 12",
+        "what_changes_on_expand": "Page 1 keeps HHI + fragmentation chart + top 4 mini-cards. Page 2 (07_industry_structure_p2) adds a full top-12 player ranking strip with rank/parent/share/segment-focus + a deeper fragmentation commentary sidebar (mid-tier vs long-tail split).",
+        "fallback_to_1_page_if": "named_competitors_count < 12"
+      },
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "HHI build-up stacked bar",
+          "use_when": "Concentration ratio (CR4/CR8) is the core structural read",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Top-N share horizontal bar with HHI badge",
+          "use_when": "Default — clear share data exists for top players",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "share_donut",
+          "name": "CR4 vs rest donut",
+          "use_when": "Highly concentrated market where CR4 share itself is the headline",
+          "data_required": ["slices[]", "slice_pct[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "market_opportunity"]
     },
     {
       "id": "08_competitor_matrix",
@@ -81,7 +129,27 @@
       "purpose": "Table-heavy: top 10 named players with revenue (USD m or local-currency), share %, parent/ownership, segment focus, one-line recent move. Sidebar carries the methodology note for share computation.",
       "char_budget_hint": "Use competitive_structure layout — 4-card row plus extended table treatment via player_cards_row scaled to two rows of 5 players each; sidebar = methodology + caveat (280 chars). Names <=45 chars, parent <=55 chars.",
       "notes": "If the page renders over 720px at 10 rows, split into 08a (ranks 1-5) and 08b (ranks 6-10) — page count then becomes 16-18, still within envelope.",
-      "skip_if": "fewer than 6 named players identifiable from research — fall back to a 6-row matrix and flag low coverage"
+      "skip_if": "fewer than 6 named players identifiable from research — fall back to a 6-row matrix and flag low coverage",
+      "expand_to_2_pages_if": {
+        "condition": "named_competitors_count >= 10",
+        "what_changes_on_expand": "Page 1 (08_competitor_matrix) holds ranks 1-5 with full table + methodology sidebar. Page 2 (08_competitor_matrix_p2) holds ranks 6-10 with the same table shape + a 'mid-tier vs leaders' contrast sidebar instead of repeating the methodology note.",
+        "fallback_to_1_page_if": "named_competitors_count < 10"
+      },
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Top-10 revenue bar (inline mini)",
+          "use_when": "Revenue figures available for all 10 players — table-leading visual",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Share by ownership type stack",
+          "use_when": "Ownership mix (foreign / state / private domestic) is a structural lens",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "partnership", "pricing"]
     },
     {
       "id": "09_share_evolution",
@@ -91,7 +159,28 @@
       "page_count": 1,
       "purpose": "5-year stacked-area or grouped-bar chart of top-10 share movement. Narrative left column reads three structural deltas (the winner, the loser, the surprise).",
       "char_budget_hint": "narrative sections_count_max=3, body_max=350 chars each. Chart data: 10 series x 5 years or top-5 split out + 'others' bucket.",
-      "skip_if": null
+      "skip_if": null,
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "5-year share stack (top-5 + others)",
+          "use_when": "Default — clean share data across 5 years for top players",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "trend_line_5y",
+          "name": "5-year share trend lines",
+          "use_when": "Crossovers between specific players are the narrative — line crossings read clearer than stacks",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        },
+        {
+          "id": "trend_line_3y",
+          "name": "3-year share trend lines",
+          "use_when": "Only 3 years of clean share data available (short history or recent re-segmentation)",
+          "data_required": ["series_label", "years[3]", "values[3]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "forecast_drivers"]
     },
     {
       "id": "10_strategic_groups_map",
@@ -102,7 +191,27 @@
       "purpose": "2x2 perceptual map placing the top 10 players on two strategic axes (e.g. price tier vs distribution breadth, scale vs digital maturity, premium vs mass, integrated vs specialist). Bubble size = revenue. Narrative left identifies the four group clusters.",
       "char_budget_hint": "Chart is the centerpiece — title <=60 chars, subtitle <=50 chars. Narrative names the 4 quadrants and the player count in each (sections_count_max=3, body_max=350 chars each).",
       "skip_if": null,
-      "notes": "Axes chosen by the analyst from the structural read; voice_guide forbids generic 'high/low' framing — use specific strategic descriptors."
+      "notes": "Axes chosen by the analyst from the structural read; voice_guide forbids generic 'high/low' framing — use specific strategic descriptors.",
+      "expand_to_2_pages_if": {
+        "condition": "strategic_group_count >= 4",
+        "what_changes_on_expand": "Page 1 keeps the 2x2 bubble map + 3-section narrative naming the quadrants. Page 2 (10_strategic_groups_map_p2) adds per-group deep-dive cards (4 cards, one per group) covering shared strategy, representative players, and the group's structural trajectory (consolidating / fading / emerging).",
+        "fallback_to_1_page_if": "strategic_group_count < 4"
+      },
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "2x2 strategic groups bubble map",
+          "use_when": "Default — top players cluster cleanly on two strategic axes with revenue as size",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "scatter_quality_price",
+          "name": "Quality-price scatter",
+          "use_when": "Strategic differentiation collapses to price-quality positioning (mature consumer category)",
+          "data_required": ["brand_name[]", "price[]", "quality_score[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "pricing", "channel"]
     },
     {
       "id": "11_player_profile_rank_1",
@@ -112,7 +221,8 @@
       "page_count": 1,
       "purpose": "Rank-1 player deep profile — hero block (name, tagline, 3 tags, 4 stats: revenue, share, growth, segment), 2-col body: left = positioning + recent moves; right = strengths list + watch-items.",
       "char_budget_hint": "Hero stats value_max=8 chars, label_max=18 chars. Body sections body_max=380 chars each. Right col can be list (max 5 items x 90 chars) or prose.",
-      "skip_if": "rank-1 player has insufficient public data — substitute next player up and flag"
+      "skip_if": "rank-1 player has insufficient public data — substitute next player up and flag",
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "channel", "partnership"]
     },
     {
       "id": "12_player_profile_rank_2",
@@ -122,7 +232,8 @@
       "page_count": 1,
       "purpose": "Rank-2 player deep profile — same shape as 11. Voice rule: differentiate this profile from rank-1 by leading with the strategic contrast, not duplicating the rank-1 framing.",
       "char_budget_hint": "Same as 11.",
-      "skip_if": "rank-2 player has insufficient public data"
+      "skip_if": "rank-2 player has insufficient public data",
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "channel", "partnership"]
     },
     {
       "id": "13_player_profile_rank_3",
@@ -132,7 +243,8 @@
       "page_count": 1,
       "purpose": "Rank-3 player deep profile — same shape. Often the most interesting profile (the challenger). Lead with the gap-to-#2 narrative.",
       "char_budget_hint": "Same as 11.",
-      "skip_if": "rank-3 player has insufficient public data"
+      "skip_if": "rank-3 player has insufficient public data",
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "channel", "partnership", "risk_factors"]
     },
     {
       "id": "14_pricing_positioning",
@@ -142,7 +254,28 @@
       "page_count": 1,
       "purpose": "Pricing chart — typically a horizontal range bar showing each player's price band (entry/mid/premium) against a reference benchmark. Narrative reads the tier structure (e.g. 'three premium, four mid, three value') and the one or two outliers.",
       "char_budget_hint": "Chart title <=60 chars, subtitle <=50 chars. Narrative sections_count_max=3, body_max=350 chars each.",
-      "skip_if": "industry has opaque pricing (B2B custom-quoted services) — substitute a 'positioning by buyer segment' chart instead"
+      "skip_if": "industry has opaque pricing (B2B custom-quoted services) — substitute a 'positioning by buyer segment' chart instead",
+      "chart_type_options": [
+        {
+          "id": "scatter_quality_price",
+          "name": "Quality-price scatter",
+          "use_when": "Default — quality proxy (rating, build tier, brand premium) is defensible alongside price",
+          "data_required": ["brand_name[]", "price[]", "quality_score[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Price-band horizontal bar",
+          "use_when": "Tier banding (value / mid / premium) is the cleaner read than continuous quality score",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Per-player tier-mix stack",
+          "use_when": "Players span multiple price tiers each (SKU mix is the story, not single position)",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "competitive_intensity", "consumer_behavior"]
     },
     {
       "id": "15_ma_timeline",
@@ -152,7 +285,33 @@
       "page_count": 1,
       "purpose": "Timeline chart of M&A deals and named partnerships in the last 24-36 months across the top 10. Narrative reads the dealmaking thesis (the consolidator, the divestor, the cross-border buyer).",
       "char_budget_hint": "Chart: horizontal timeline with 8-15 events. Narrative sections_count_max=3, body_max=350 chars each.",
-      "skip_if": null
+      "skip_if": null,
+      "expand_to_2_pages_if": {
+        "condition": "m_and_a_events_last_3y >= 6",
+        "what_changes_on_expand": "Page 1 keeps the timeline chart + 3-section narrative (consolidator / divestor / cross-border thesis). Page 2 (15_ma_timeline_p2) adds a deal-by-deal table (acquirer, target, value, rationale, source-tag) for the 6+ events plus a sidebar reading the partnership wave separately from M&A.",
+        "fallback_to_1_page_if": "m_and_a_events_last_3y < 6"
+      },
+      "chart_type_options": [
+        {
+          "id": "horizontal_timeline",
+          "name": "Horizontal M&A + partnership timeline",
+          "use_when": "Default — discrete dated events across 24-36 months",
+          "data_required": ["dated_markers[]"]
+        },
+        {
+          "id": "network_diagram",
+          "name": "Acquirer-target network",
+          "use_when": "Cross-holdings or repeat-acquirer patterns dominate (one consolidator buying multiple targets)",
+          "data_required": ["nodes[]", "edges[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Deal value bar by acquirer",
+          "use_when": "Deal sizes vary widely and the narrative is who is spending — value is the read, not timing",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["partnership", "competitive_intensity", "regulatory"]
     },
     {
       "id": "16_disruptor_watch",
@@ -163,7 +322,28 @@
       "purpose": "3-6 named disruptors profiled in compact form — new entrants (<3 years), adjacent-industry threats, foreign players entering the country. Each: name, model, funding/parent, share or rev signal, threat-tier. Narrative reads the two or three credible threats vs the noise.",
       "char_budget_hint": "Chart slot doubles as a 6-card disruptor grid via use_case_grid-style treatment (each card ~200 chars body). Narrative sections_count_max=3, body_max=350 chars each.",
       "skip_if": "no credible disruptors surfaced in research — replace with a 'demand-side substitution' read on the same page",
-      "notes": "Disruptor scoring is a KIRA primary call — most cards land as [primary] tagged."
+      "notes": "Disruptor scoring is a KIRA primary call — most cards land as [primary] tagged.",
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Threat-tier vs traction bubble",
+          "use_when": "Default — disruptors plot cleanly by threat severity vs current traction signal",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Disruptor funding bar",
+          "use_when": "Funding/backing is the most defensible signal (VC-heavy verticals)",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Threat heatmap (likelihood x impact)",
+          "use_when": "Disruptors group into a risk-matrix read rather than individual cards",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["risk_factors", "competitive_intensity", "ai_use_cases"]
     },
     {
       "id": "17_methodology_endnote",

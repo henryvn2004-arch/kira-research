@@ -42,7 +42,8 @@
       "page_count": 2,
       "purpose": "Two-page executive summary: page 1 = 4 callouts (market size, growth, concentration, AI uplift) + 2-col narrative + 1 chart; page 2 = 5 strategic implications grid",
       "skip_if": null,
-      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each"
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each",
+      "industry_overlay_emphasis_keys": ["market_opportunity", "competitive_intensity", "forecast_drivers"]
     },
     {
       "id": "05_macro_divider",
@@ -59,7 +60,28 @@
       "page_type": "market_data_chart",
       "page_count": 2,
       "purpose": "GDP growth, inflation, urbanization, key policy moves (e.g. housing program, VAT exemption, sovereign wealth fund). One chart per page: macro indicators over time + policy timeline.",
-      "skip_if": null
+      "skip_if": null,
+      "chart_type_options": [
+        {
+          "id": "trend_line_5y",
+          "name": "5-year macro trend lines",
+          "use_when": "GDP / inflation / urbanization have 5+ years of comparable annual data points",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Dual-axis combo (GDP vs inflation, etc.)",
+          "use_when": "Two macro series with different units need joint display over time",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        },
+        {
+          "id": "horizontal_timeline",
+          "name": "Policy timeline",
+          "use_when": "Key policy actions cluster on a date axis (laws, programs, tariff moves)",
+          "data_required": ["dated_markers[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "regulatory", "forecast_drivers"]
     },
     {
       "id": "07_sector_divider",
@@ -76,7 +98,33 @@
       "page_type": "market_data_chart",
       "page_count": 2,
       "purpose": "Total market size (USD bn), historical CAGR, forecast CAGR, segment splits (sub-industries from topic). Chart: bar series or stacked bar showing size + segment breakdown.",
-      "skip_if": null
+      "skip_if": null,
+      "expand_to_2_pages_if": {
+        "condition": "material_segments_count >= 4",
+        "what_changes_on_expand": "Page 2 splits out each material sub-segment with its own size + CAGR row; page 1 keeps the top-line sizing and total trend chart.",
+        "fallback_to_1_page_if": "material_segments_count < 4"
+      },
+      "chart_type_options": [
+        {
+          "id": "trend_line_5y",
+          "name": "5-year market size trend",
+          "use_when": "Total market size has 5+ years of comparable annual data",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Segment size bar chart",
+          "use_when": "Sub-segments need to be ranked by size in a single period",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Stacked bar (size + segment composition)",
+          "use_when": "Total size needs to be shown alongside its sub-segment composition across years",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "forecast_drivers"]
     },
     {
       "id": "09_segments",
@@ -85,7 +133,28 @@
       "page_type": "market_data_chart",
       "page_count": 2,
       "purpose": "Per-sub-segment deep dive — economics, margin profile, growth drivers. Typically 2-4 sub-segments × half-page each.",
-      "skip_if": "topic has only one segment (collapse into 08_sector_sizing instead)"
+      "skip_if": "topic has only one segment (collapse into 08_sector_sizing instead)",
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Segment ranking bar",
+          "use_when": "Sub-segments need to be ranked by size or margin",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "share_donut",
+          "name": "Segment share donut",
+          "use_when": "Sub-segment composition needs a single-period share split",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Size vs margin dual-axis",
+          "use_when": "Per-segment size and margin both need to be compared over time",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["market_opportunity", "consumer_behavior", "pricing"]
     },
     {
       "id": "10_competitive_divider",
@@ -102,7 +171,33 @@
       "page_type": "competitive_structure",
       "page_count": 1,
       "purpose": "HHI concentration chart, top-5 player share, structural commentary, 4-card mini-grid of player headlines",
-      "char_budget_hint": "HHI viz + sidebar narrative + 4 player mini-cards"
+      "char_budget_hint": "HHI viz + sidebar narrative + 4 player mini-cards",
+      "expand_to_2_pages_if": {
+        "condition": "named_competitors_count >= 8",
+        "what_changes_on_expand": "Page 2 adds a top-8 to top-12 mini-matrix (share, segment focus, recent move) below the HHI page; page 1 keeps the HHI + top-5 share + 4-card mini-grid layout.",
+        "fallback_to_1_page_if": "named_competitors_count < 8"
+      },
+      "chart_type_options": [
+        {
+          "id": "share_donut",
+          "name": "Top-5 share donut",
+          "use_when": "Concentration story is best told as share split in the latest period",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "HHI / share ranking bar",
+          "use_when": "Named competitors need to be ranked by share in a clean horizontal bar",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "bubble_2x2",
+          "name": "Player positioning bubble",
+          "use_when": "Players differentiate on two axes (share × growth, breadth × depth) and size encoding adds revenue context",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["competitive_intensity"]
     },
     {
       "id": "12_player_profiles",
@@ -111,7 +206,8 @@
       "page_type": "competitive_profile_deep",
       "page_count": 4,
       "purpose": "Deep profile per leading player — revenue, share, segment focus, recent moves, strategic implication. 1 player per page.",
-      "skip_if": "fewer than 3 named players identifiable from research"
+      "skip_if": "fewer than 3 named players identifiable from research",
+      "industry_overlay_emphasis_keys": ["competitive_intensity", "partnership"]
     },
     {
       "id": "13_demand_divider",
@@ -128,7 +224,33 @@
       "page_type": "market_data_chart",
       "page_count": 2,
       "purpose": "Distribution mix (modern trade / GT / e-commerce / direct), channel economics, demand pull factors",
-      "skip_if": null
+      "skip_if": null,
+      "expand_to_2_pages_if": {
+        "condition": "channel_subtypes_count >= 5",
+        "what_changes_on_expand": "Page 2 adds per-channel economics rows (margin, lead time, working-capital profile) for each surfaced sub-channel; page 1 keeps the headline channel-mix chart and demand-pull narrative.",
+        "fallback_to_1_page_if": "channel_subtypes_count < 5"
+      },
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Channel mix stacked bar",
+          "use_when": "Channel composition needs to be shown across years or sub-segments",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "network_diagram",
+          "name": "Distribution network diagram",
+          "use_when": "Distribution involves multi-hop relationships (importer → distributor → retailer) worth visualizing",
+          "data_required": ["nodes[]", "edges[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Channel ranking bar",
+          "use_when": "Channels just need to be ranked by share or growth in a single period",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "consumer_behavior"]
     },
     {
       "id": "15_regulatory",
@@ -137,7 +259,28 @@
       "page_type": "market_data_chart",
       "page_count": 1,
       "purpose": "Recent regulatory actions, planned policy moves, compliance burden, tariffs/standards/incentives",
-      "skip_if": "topic has minimal regulatory dimension (B2C non-regulated goods)"
+      "skip_if": "topic has minimal regulatory dimension (B2C non-regulated goods)",
+      "chart_type_options": [
+        {
+          "id": "horizontal_timeline",
+          "name": "Regulatory timeline",
+          "use_when": "Policy actions cluster on a date axis and the story is sequence + density",
+          "data_required": ["dated_markers[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Compliance burden bar",
+          "use_when": "Compliance cost or rule density needs to be ranked across sub-areas",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "heatmap_5x5",
+          "name": "Regulatory impact heatmap",
+          "use_when": "Multiple rules × multiple affected sub-segments need an at-a-glance severity grid",
+          "data_required": ["cells[5][5]", "cell_label", "severity"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["regulatory", "risk_factors"]
     },
     {
       "id": "16_ai_divider",
@@ -154,7 +297,33 @@
       "page_type": "ai_overview",
       "page_count": 2,
       "purpose": "Page 1: AI market sizing + adoption trajectory for the industry in-country. Page 2: 4-6 industry-specific AI use cases with effort/impact framing.",
-      "char_budget_hint": "Use cases as a 2x3 or 3x2 grid; each ~200 chars body"
+      "char_budget_hint": "Use cases as a 2x3 or 3x2 grid; each ~200 chars body",
+      "expand_to_2_pages_if": {
+        "condition": "ai_use_cases_validated >= 5",
+        "what_changes_on_expand": "Page 2 expands from a 2x3 use-case grid to a 2x4 or 3x3 grid with deeper effort/impact callouts; page 1 keeps AI market sizing + adoption trajectory unchanged.",
+        "fallback_to_1_page_if": "ai_use_cases_validated < 5"
+      },
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Use-case effort vs impact bubble",
+          "use_when": "AI use cases can be placed on an effort × impact matrix with adoption-readiness as size",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "AI spend by use case",
+          "use_when": "Use cases mostly differ in spend share rather than effort/impact positioning",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "share_donut",
+          "name": "AI adoption share donut",
+          "use_when": "Adoption split (deployed / piloted / not started) is the cleanest read",
+          "data_required": ["slices[]", "slice_pct[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["ai_use_cases"]
     },
     {
       "id": "18_forecast_outlook",
@@ -163,7 +332,22 @@
       "page_type": "forecast_outlook",
       "page_count": 2,
       "purpose": "Forecast chart (USD bn or volume) to year+5, S-curve adoption overlay, base/bull/bear scenario commentary, key sensitivities",
-      "skip_if": null
+      "skip_if": null,
+      "chart_type_options": [
+        {
+          "id": "trend_line_5y",
+          "name": "5-year forecast trend line",
+          "use_when": "Forecast is a single headline series with base/bull/bear bands",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Forecast + adoption dual-axis",
+          "use_when": "Forecast pairs naturally with an adoption-rate or penetration series on a second axis",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["forecast_drivers", "risk_factors"]
     },
     {
       "id": "19_methodology_endnote",

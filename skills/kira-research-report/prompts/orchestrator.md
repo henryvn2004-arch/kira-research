@@ -71,6 +71,32 @@ Against blueprint `market_analysis`:
 
 Score = **0.30** → below threshold → route **UC2**.
 
+## Stage 2b — Industry overlay detection (after route is decided)
+
+After picking the route + blueprint (if UC1), check `overlays/` directory for industry-vertical-specific emphasis files. These tilt content gen toward how a topic's vertical typically presents (FMCG framing differs from finserv framing differs from commodity framing).
+
+### Process
+
+1. List YAML files in `skills/kira-research-report/overlays/`. Today: `fmcg.yaml`, `finserv.yaml`, `industrial.yaml`, `consumer_durables.yaml`, `services.yaml`, `commodity.yaml`.
+
+2. For each overlay file, score against the topic:
+   - Compare `applies_when_keywords` (case-insensitive substring match) against the parsed topic's `industry_normalized` + `sub_industries` + raw title
+   - Each keyword hit = 1 point
+   - Score = sum of hits
+
+3. Pick **max-scoring overlay**, but ONLY if its score ≥ 2 hits. Below 2 → no overlay (run vanilla).
+
+4. Tie-break rules:
+   - If two overlays tie ≥ 2: prefer the one with more specific keywords (longer phrase wins, e.g. "embedded finance" beats "finance")
+   - Coffee/tea/cocoa edge: "coffee" or "instant coffee" → `fmcg`; "coffee beans" or "coffee plantation" → `commodity`
+   - EV edge: "EV battery" / "EV component" → `industrial`; "passenger EV" / "EV consumer" → `consumer_durables`
+
+5. Log the choice with hits in `reasoning`. If no overlay applies (<2 hits anywhere), set `industry_overlay: null` and note "no vertical overlay matched — running vanilla".
+
+### Overlay does NOT change route or blueprint
+
+It only adds emphasis hints that downstream prompts (`content_per_section.md`, `chart_generator.md`) consume. The blueprint section structure is unchanged.
+
 ## Output
 
 ```json
@@ -79,10 +105,13 @@ Score = **0.30** → below threshold → route **UC2**.
   "blueprint_id": "market_analysis" | null,
   "blueprint_score": 0.95,
   "all_scores": { "market_analysis": 0.95 },
+  "industry_overlay": "fmcg" | "finserv" | "industrial" | "consumer_durables" | "services" | "commodity" | null,
+  "overlay_score": 5,
+  "all_overlay_scores": { "fmcg": 5, "commodity": 1, "industrial": 0 },
   "next_prompt": "templates/blueprints/market_analysis/manifest.yaml" | "prompts/design_mode_planner.md" | "prompts/data_ingestion.md",
   "default_output_mode": "publish" | "draft",
   "requires_confirm_step": false,
-  "reasoning": "Indonesia + construction-materials sub-industries + 2026 — clean match for market_analysis blueprint (1.00). Routing UC1, publish default, no confirm step.",
+  "reasoning": "Indonesia + construction-materials sub-industries + 2026 — clean match for market_analysis blueprint (1.00). Industry overlay: industrial (4 keyword hits — construction, building materials, cement, roofing). Routing UC1, publish default, no confirm step.",
   "warnings": []
 }
 ```
@@ -98,7 +127,10 @@ Score = **0.30** → below threshold → route **UC2**.
 | `next_prompt` | The file the next stage should read |
 | `default_output_mode` | From parsed `output_mode` if explicitly set; else from blueprint manifest (UC1 = `publish`) or `draft` for UC2/UC3 |
 | `requires_confirm_step` | UC1: false (unless blueprint manifest overrides). UC2 + UC3: true |
-| `reasoning` | 1-3 sentences explaining the routing decision |
+| `industry_overlay` | The overlay file ID to load (e.g. "fmcg") or null. UC2/UC3 may also use overlays for vertical framing. |
+| `overlay_score` | Keyword hit count of the winning overlay (or null) |
+| `all_overlay_scores` | Map of every overlay considered to its hit count — useful for telemetry |
+| `reasoning` | 1-3 sentences explaining the routing decision AND the overlay pick (if any) |
 | `warnings` | Any flags worth surfacing (e.g. "topic implies multi-locale but Phase 1 is EN only") |
 
 ## Edge cases

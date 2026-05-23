@@ -50,7 +50,28 @@
       "page_count": 2,
       "purpose": "Two-page executive summary: page 1 = 4 callouts (dominant channel share, biggest channel shift, margin-compression signal, e-commerce penetration) + 2-col narrative + 1 chart (channel share donut or top-line mix); page 2 = 5 strategic implications cards focused on channel strategy (where to invest, where to retreat, where to disintermediate, where to defend, where to enter)",
       "skip_if": null,
-      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each. Implication verbs: Reweight, Disintermediate, Defend, Enter, Sequence"
+      "char_budget_hint": "callout num_max=12 chars, narrative_left total_chars_max=1200, implications cards body_max=360 chars each. Implication verbs: Reweight, Disintermediate, Defend, Enter, Sequence",
+      "chart_type_options": [
+        {
+          "id": "share_donut",
+          "name": "Single-period channel share donut",
+          "use_when": "Current-year channel mix is the cleanest summary — modern trade vs traditional vs e-com vs direct slices are well-bounded",
+          "data_required": ["slices[]", "slice_pct[]"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Compact 3-year stacked share bar",
+          "use_when": "Channel shift over the last 3 years is the headline — directional movement more important than current absolute split",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked channel value bar",
+          "use_when": "Top 4-5 channels stack-rank cleanly by absolute value and beat percentage framing",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "market_opportunity"]
     },
     {
       "id": "06_channel_landscape",
@@ -60,7 +81,28 @@
       "page_count": 1,
       "purpose": "Channel mix snapshot across modern trade x traditional trade x e-commerce x direct (B2B / D2C) x instant delivery. Chart: stacked-area or grouped bar showing 3-year share trend per channel. Narrative anchors the dominant channel, the structural laggard, and the channel still pulling above-GDP growth.",
       "skip_if": null,
-      "char_budget_hint": "stacked-area chart top 55% of page, narrative bottom 45% in 2 cols"
+      "char_budget_hint": "stacked-area chart top 55% of page, narrative bottom 45% in 2 cols",
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "3-year stacked channel share",
+          "use_when": "Default — channel mix shift across the last 3 years is the cleanest read",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Current-year channel ranking",
+          "use_when": "Only current-year channel-share data is reliable; trend data is sparse or unreliable",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "trend_line_3y",
+          "name": "3-year per-channel trend lines",
+          "use_when": "Channels diverge sharply over the 3-year window and individual trajectories matter more than the stack",
+          "data_required": ["series_label", "years[3]", "values[3]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "consumer_behavior"]
     },
     {
       "id": "07_channel_mix_evolution",
@@ -70,7 +112,28 @@
       "page_count": 1,
       "purpose": "Centerpiece chart #1. 5-year channel-share evolution by % of total category value. Stacked area or 100% stacked bar with annotated inflection points (e.g. instant-delivery breakout, GT share decline, marketplace consolidation). Narrative reads what flipped, what compressed, what stayed sticky.",
       "skip_if": null,
-      "char_budget_hint": "Chart dominates page; sidebar narrative max 600 chars + 3 annotated inflection callouts (each <=80 chars)"
+      "char_budget_hint": "Chart dominates page; sidebar narrative max 600 chars + 3 annotated inflection callouts (each <=80 chars)",
+      "chart_type_options": [
+        {
+          "id": "stacked_bar_share_split",
+          "name": "100% stacked 5-year share evolution",
+          "use_when": "Default centerpiece — full 5-year window with clean per-channel share data; inflection annotations land on bar boundaries",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "trend_line_5y",
+          "name": "5-year per-channel trend lines",
+          "use_when": "Per-channel trajectories diverge dramatically and inflection points read better on lines than stacked bars",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Total category value + e-com share dual-axis",
+          "use_when": "Story is about absolute category growth pulling channel mix sideways, not pure share rotation",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "forecast_drivers"]
     },
     {
       "id": "08_channel_margin_waterfall",
@@ -80,7 +143,21 @@
       "page_count": 1,
       "purpose": "Centerpiece chart #2. Horizontal waterfall from brand ex-factory price (100%) to consumer shelf price (100%), with each link's margin take labeled with %, source tag, and a one-line take-note. 6-9 layers depending on category (importer optional, MT/GT split if both material). Sidebar lists 3 anomalies: the fattest layer, the compression point, the disintermediation risk.",
       "skip_if": null,
-      "char_budget_hint": "Waterfall top 55%, commentary bottom 45%. Each layer: margin_pct <=8 chars, take_note <=60 chars. See manifest.yaml comment block for full channel_waterfall page-type shape."
+      "char_budget_hint": "Waterfall top 55%, commentary bottom 45%. Each layer: margin_pct <=8 chars, take_note <=60 chars. See manifest.yaml comment block for full channel_waterfall page-type shape.",
+      "expand_to_2_pages_if": {
+        "condition": "channel_links_count >= 6",
+        "what_changes_on_expand": "Page 1 retains the headline waterfall (brand ex-factory -> shelf) with all 6-9 layers; page 2 carries a per-channel split waterfall variant (e.g. MT lane vs GT lane vs e-com lane side-by-side) plus an expanded anomaly + disintermediation-risk commentary block (3 anomalies -> 5-6, each with a one-line strategic read).",
+        "fallback_to_1_page_if": "channel_links_count < 6"
+      },
+      "chart_type_options": [
+        {
+          "id": "waterfall_horizontal",
+          "name": "Horizontal margin waterfall",
+          "use_when": "Page type is channel_waterfall — this is the only valid chart shape for this section",
+          "data_required": ["link_name[]", "margin_pct[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "pricing", "partnership"]
     },
     {
       "id": "09_geographic_coverage",
@@ -90,7 +167,28 @@
       "page_count": 1,
       "purpose": "Distribution depth across urban-dense (Tier 1) x Tier 2 cities x Tier 3 towns x rural. Map or stacked bar showing % outlets reached + % volume per geography tier. Narrative: where the country's distribution white-space is, which tiers are over-served, which players over-index in each tier.",
       "skip_if": "topic is a fully urban category with no rural channel (e.g. luxury, B2B-enterprise-only)",
-      "char_budget_hint": "Map or 4-bar chart, 2-col narrative below. Each tier callout <=120 chars"
+      "char_budget_hint": "Map or 4-bar chart, 2-col narrative below. Each tier callout <=120 chars",
+      "chart_type_options": [
+        {
+          "id": "geographic_choropleth",
+          "name": "Country choropleth map by tier coverage",
+          "use_when": "Coverage data is available per province/region and geographic concentration is the story",
+          "data_required": ["region[]", "value[]"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "4-tier stacked coverage bar",
+          "use_when": "Default — tier-by-tier % outlets vs % volume split reads cleanly as 4 grouped bars",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked tier coverage bar",
+          "use_when": "Single-metric ranking (e.g. outlet count by tier) is enough; volume-share overlay adds clutter",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "market_opportunity"]
     },
     {
       "id": "10_distributor_matrix",
@@ -100,7 +198,33 @@
       "page_count": 1,
       "purpose": "6-8 named distributors with category coverage matrix — columns: distributor name, ownership/parent, category portfolio (chips), geographic reach, exclusive principals, est. revenue or volume share. Repurposes competitive_structure page schema; rows are distributors, not brands.",
       "skip_if": "fewer than 4 named distributors identifiable from research",
-      "char_budget_hint": "Matrix rows 6-8, category chips per row 3-6 chars each, max 4 chips/row. Sidebar header narrative <=400 chars."
+      "char_budget_hint": "Matrix rows 6-8, category chips per row 3-6 chars each, max 4 chips/row. Sidebar header narrative <=400 chars.",
+      "expand_to_2_pages_if": {
+        "condition": "named_distributors_count >= 8",
+        "what_changes_on_expand": "Page 1 keeps the headline 6-8 distributor matrix. Page 2 carries: (a) full 9-12 distributor extended matrix, (b) a network_diagram sub-chart linking distributors to exclusive principals + geographic anchors, (c) a 200-char read on consolidation pressure (who is acquiring whom, who is losing principals).",
+        "fallback_to_1_page_if": "named_distributors_count < 8"
+      },
+      "chart_type_options": [
+        {
+          "id": "network_diagram",
+          "name": "Distributor-to-principal network",
+          "use_when": "Exclusive-principal relationships are well-documented and the network shape (who carries whom) is more telling than the matrix",
+          "data_required": ["nodes[]", "edges[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Distributor revenue/volume ranking",
+          "use_when": "Revenue or volume estimates exist for most named players and stack-rank cleanly",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "bubble_2x2",
+          "name": "Reach x portfolio breadth bubble",
+          "use_when": "Distributors split cleanly across geographic reach (x) vs category breadth (y) with revenue as bubble size",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["partnership", "channel", "competitive_intensity"]
     },
     {
       "id": "11_distributor_economics",
@@ -110,7 +234,28 @@
       "page_count": 1,
       "purpose": "Benchmark page — margin %, standard payment terms (net 30/60/90), MOQ ranges, exclusivity norms (territorial vs category vs none), credit-line cycles. 4-card grid + 1 supporting bar chart on margin ranges by tier (master distributor vs sub-distributor vs retailer).",
       "skip_if": null,
-      "char_budget_hint": "4 econ-cards (each label <=30, body <=240 chars) + bar chart bottom-half"
+      "char_budget_hint": "4 econ-cards (each label <=30, body <=240 chars) + bar chart bottom-half",
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Margin range bar by tier",
+          "use_when": "Default — margin % per distributor tier (master vs sub vs retailer) is the supporting visual under the 4 econ-cards",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "stacked_bar_share_split",
+          "name": "Margin + payment-term composition",
+          "use_when": "Margin and payment terms both have multi-band data and a composition view is more readable than two separate bars",
+          "data_required": ["categories[]", "series_breakdown[][]"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Margin vs payment-term days",
+          "use_when": "Margin pulls one way while payment-term days pull the other and the relationship is the story",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["pricing", "partnership", "channel"]
     },
     {
       "id": "12_disruption_signals",
@@ -120,7 +265,33 @@
       "page_count": 1,
       "purpose": "Four-quadrant or 4-card breakdown of disruption vectors: (1) D2C brand penetration, (2) marketplace consolidation + take-rate, (3) social commerce (TikTok Shop / live commerce) volume, (4) instant delivery / quick-commerce category coverage. Each card carries a leading metric + 1-line directional read.",
       "skip_if": null,
-      "char_budget_hint": "4-card grid, each card: metric <=12 chars, label <=30 chars, body <=200 chars"
+      "char_budget_hint": "4-card grid, each card: metric <=12 chars, label <=30 chars, body <=200 chars",
+      "expand_to_2_pages_if": {
+        "condition": "disruption_modes_with_evidence >= 4",
+        "what_changes_on_expand": "Page 1 keeps the 4-card disruption-vector grid (D2C, marketplace, social commerce, quick-commerce). Page 2 adds: (a) a bubble_2x2 mapping each disruption mode by velocity x impact, (b) deeper per-mode 250-char reads citing leading players and inflection evidence, (c) a 1-line forward signal per mode (12-month outlook).",
+        "fallback_to_1_page_if": "disruption_modes_with_evidence < 4"
+      },
+      "chart_type_options": [
+        {
+          "id": "bubble_2x2",
+          "name": "Velocity x impact disruption bubble",
+          "use_when": "Each disruption vector has both pace (velocity) and category-impact estimates — bubble plot reads better than 4 isolated cards",
+          "data_required": ["entity_name[]", "x[]", "y[]", "size[]"]
+        },
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Disruption-vector size ranking",
+          "use_when": "Default — each disruption mode has a single headline metric (% penetration, USD volume) that stack-ranks cleanly",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "trend_line_3y",
+          "name": "3-year disruption trajectory",
+          "use_when": "The story is rate of change, not current size — show 3 years per disruption vector",
+          "data_required": ["series_label", "years[3]", "values[3]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "consumer_behavior", "risk_factors"]
     },
     {
       "id": "13_ecom_subsegment_penetration",
@@ -130,7 +301,33 @@
       "page_count": 1,
       "purpose": "E-commerce share by category sub-segment — bar chart ranking sub-segments by online %, with a YoY delta column. Narrative pulls out the 2 sub-segments crossing the 20% online threshold (structural shift) and the 2 sub-segments still under 5% (channel-defensible).",
       "skip_if": "topic has no meaningful sub-segment differentiation (collapse into 12_disruption_signals)",
-      "char_budget_hint": "Horizontal bar chart 6-10 rows, 2-col narrative <=800 chars total"
+      "char_budget_hint": "Horizontal bar chart 6-10 rows, 2-col narrative <=800 chars total",
+      "expand_to_2_pages_if": {
+        "condition": "ecommerce_subsegments_count >= 5",
+        "what_changes_on_expand": "Page 1 retains the headline 6-10 sub-segment penetration bar with YoY delta column. Page 2 adds: (a) a dual_axis_combo overlaying penetration % vs absolute USD online value per sub-segment, (b) sub-segment cluster commentary grouping winners (>20% online), middlers (5-20%), and defensibles (<5%) with 200-char reads each, (c) a 3-year online-share trajectory mini-chart on the top 3 movers.",
+        "fallback_to_1_page_if": "ecommerce_subsegments_count < 5"
+      },
+      "chart_type_options": [
+        {
+          "id": "segment_bar_horizontal",
+          "name": "Ranked sub-segment online % bar",
+          "use_when": "Default — sub-segments stack-rank by online % with a YoY delta column, exactly as char-budget describes",
+          "data_required": ["segment_name[]", "value[]", "unit"]
+        },
+        {
+          "id": "dual_axis_combo",
+          "name": "Penetration % + absolute online value",
+          "use_when": "Mixing relative penetration with absolute USD online value tells a richer story (e.g. tiny sub-segment at 80% online vs large sub-segment at 12%)",
+          "data_required": ["years[]", "series_a[]", "series_b[]", "unit_a", "unit_b"]
+        },
+        {
+          "id": "trend_line_5y",
+          "name": "5-year online-share trajectory per sub-segment",
+          "use_when": "5+ years of per-sub-segment online-share data are available and the rate of crossing the 20% threshold matters more than current snapshot",
+          "data_required": ["series_label", "years[]", "values[]", "unit"]
+        }
+      ],
+      "industry_overlay_emphasis_keys": ["channel", "consumer_behavior", "forecast_drivers"]
     },
     {
       "id": "14_methodology_endnote",
