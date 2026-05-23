@@ -1,14 +1,23 @@
 // One-off helper: builds the SQL to insert living_reports + 3 report_translations
 // rows for 2026-vn-coffee. Run: `node skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs > /tmp/insert.sql`
 // then feed the file to Supabase MCP execute_sql.
+//
+// pdf_url emits a STORAGE PATH (e.g. "<report_id>/en.pdf"), NOT a full URL.
+// api/library-content.js resolvePdfUrl auto-detects: storage paths get a fresh
+// 1-hour signed URL per buyer call; full http(s) URLs pass through unchanged.
+// Storage upload happens AFTER this SQL (Step 6b in batch_runner.md) via
+// scripts/upload-pdf.mjs.
+//
+// Phase M.2 (2026-05-23): switched from `${RAW_BASE}/${locale}.pdf` (GitHub raw)
+// to storage path computed inside the SQL CTE from `new_report.id`. PDFs are
+// .gitignored in outputs/batch — Supabase Storage is canonical.
 
 const SLUG    = 'vietnam-coffee-2026';
 const COUNTRY = 'Vietnam';
 const INDUSTRY= 'Coffee';
 const YEAR    = 2026;
-const PAGES   = 118;
+const PAGES   = 22;   // ~22 pages per the TOC (methodology endnote = P22). Adjust per actual render.
 const PRICE   = 39;
-const RAW_BASE = 'https://raw.githubusercontent.com/henryvn2004-arch/kira-research/main/skills/kira-research-report/outputs/batch/2026-vn-coffee';
 
 // Chart bars — Vietnam coffee export value (USD bn). Max 6.1 → pct relative.
 const chartBars = [
@@ -47,7 +56,6 @@ const META = {
       { num: '11', name: 'Outlook & forecast 2026–2031',             pages: 'PG 21', locked: true  },
       { num: '12', name: 'Methodology endnote',                      pages: 'PG 22', locked: true  },
     ],
-    pdf_url: `${RAW_BASE}/en.pdf`,
   },
 
   ja: {
@@ -79,7 +87,6 @@ const META = {
       { num: '11', name: '展望 & 予測 2026-2031',                 pages: 'P 21', locked: true  },
       { num: '12', name: '調査手法巻末注',                        pages: 'P 22', locked: true  },
     ],
-    pdf_url: `${RAW_BASE}/ja.pdf`,
   },
 
   ko: {
@@ -111,7 +118,6 @@ const META = {
       { num: '11', name: '전망 & 예측 2026-2031',               pages: 'P 21', locked: true  },
       { num: '12', name: '방법론 권말주',                       pages: 'P 22', locked: true  },
     ],
-    pdf_url: `${RAW_BASE}/ko.pdf`,
   },
 };
 
@@ -126,23 +132,48 @@ const transValues = ['en', 'ja', 'ko'].map((loc) => {
   const m = META[loc];
   const previewJson = JSON.stringify(m.preview);
   const tocJson     = JSON.stringify(m.toc);
-  return `('${loc}', ${dq(m.title)}, ${dq(m.eyebrow)}, ${dq(previewJson)}, ${dq(tocJson)}, ${dq(m.pdf_url)})`;
+  // pdf_url omitted from VALUES — it's computed inside SELECT from new_report.id
+  // as `<report_id>::text || '/' || locale || '.pdf'` (Supabase Storage path).
+  return `('${loc}', ${dq(m.title)}, ${dq(m.eyebrow)}, ${dq(previewJson)}, ${dq(tocJson)})`;
 }).join(',\n      ');
 
+// SQL emits storage-path pdf_url so a re-run after PDF re-upload picks up new
+// signed URLs cleanly. ON CONFLICT clauses are also idempotent — re-runs refresh
+// updated_at, published_at, and pdf_url without errors.
 const sql = `
 WITH new_report AS (
   INSERT INTO living_reports (slug, country, industry, year, pages, price, currency, status, published_at)
   VALUES (${dq(SLUG)}, ${dq(COUNTRY)}, ${dq(INDUSTRY)}, ${YEAR}, ${PAGES}, ${PRICE}, 'USD', 'published', now())
-  ON CONFLICT (slug) DO UPDATE SET updated_at = now()
+  ON CONFLICT (slug) DO UPDATE SET
+    updated_at   = now(),
+    published_at = now(),
+    pages        = EXCLUDED.pages,
+    status       = 'published'
   RETURNING id
 )
 INSERT INTO report_translations (report_id, locale, title, eyebrow, preview, toc, pdf_url, status, published_at)
-SELECT new_report.id, t.locale, t.title, t.eyebrow, t.preview::jsonb, t.toc::jsonb, t.pdf_url, 'published', now()
+SELECT
+  new_report.id,
+  t.locale,
+  t.title,
+  t.eyebrow,
+  t.preview::jsonb,
+  t.toc::jsonb,
+  new_report.id::text || '/' || t.locale || '.pdf',  -- storage path: <uuid>/<locale>.pdf
+  'published',
+  now()
 FROM new_report
 CROSS JOIN (VALUES
       ${transValues}
-) AS t(locale, title, eyebrow, preview, toc, pdf_url)
-ON CONFLICT DO NOTHING
+) AS t(locale, title, eyebrow, preview, toc)
+ON CONFLICT (report_id, locale) DO UPDATE SET
+  title        = EXCLUDED.title,
+  eyebrow      = EXCLUDED.eyebrow,
+  preview      = EXCLUDED.preview,
+  toc          = EXCLUDED.toc,
+  pdf_url      = EXCLUDED.pdf_url,
+  status       = 'published',
+  published_at = now()
 RETURNING report_id, locale, title;
 `;
 

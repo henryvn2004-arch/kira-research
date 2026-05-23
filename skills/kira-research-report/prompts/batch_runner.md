@@ -120,17 +120,23 @@ Owner policy (2026-05-23): batch fires auto-publish on success. The pipeline run
 
 This step has 3 sub-steps. Run them in order; bail to the failure path if any fails.
 
-**Step 6a — Insert `living_reports` + 3 `report_translations` rows with status=published, pdf_url temporarily empty.**
+**Step 6a — Insert `living_reports` + 3 `report_translations` rows with status=published.**
 
-Build the SQL via a Node script (see `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` for the template — copy + adapt per-topic). Key fields per locale:
+Build the SQL via a per-topic Node script. The reference template is `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` — copy it to `_build_<id>_sql.mjs` and update the constants + META blocks. Key fields per locale, extracted from the rendered HTML:
+
 - `title` — extract from `<h1 class="cover-title">` text in each language's HTML
-- `eyebrow` — `<COUNTRY UPPER> · <INDUSTRY UPPER> · MARKET ANALYSIS` pattern (translate per locale)
+- `eyebrow` — extract from `<p class="cover-eyebrow">` (or rebuild as `<COUNTRY UPPER> · <INDUSTRY UPPER> · MARKET ANALYSIS` and translate per locale)
 - `preview` JSONB:
   - `lede` — 1-paragraph summary, ~400 chars, based on cover-subtitle + exec p1 intro
   - `paragraphs` — 2 paragraphs (~300 chars each) summarizing scope + AI section
   - `chart` — `{title, subtitle, bars[{pct, label, value}]}` derived from the exec-chart on page 4 (single bar series, pct relative to max)
-- `toc` JSONB array of 12 entries — extract from the `.toc-col li` elements
-- `pdf_url` — leave blank or set to the future storage path `<report_id>/<locale>.pdf`. Gets finalised in Step 6b after upload.
+- `toc` JSONB array of TOC entries — extract from the `.toc-col li` elements
+
+**Slug derivation rule:** `slug = <industry-lower>-<country-lower>-<year>`, dashes only, no abbreviations. Map queue `id=2026-vn-coffee` → `slug=vietnam-coffee-2026`. Country must be the full English country name, not the ISO code (vn → vietnam, id → indonesia, th → thailand).
+
+**Pages count:** Compute from the actual rendered HTML — count `.kira-page` divs. Don't hardcode.
+
+**`pdf_url` is computed INSIDE the SQL** as `new_report.id::text || '/' || t.locale || '.pdf'` (Supabase Storage path). DO NOT emit a full GitHub raw URL or any other URL form — `library-content.js` `resolvePdfUrl` will generate fresh 1-hour signed URLs on each buyer call from the storage path. Storage upload happens in Step 6b.
 
 Use dollar-quoted SQL literals (`$kbat$...$kbat$`) for all strings carrying apostrophes, accents, or JSON braces (see `[[feedback_seed_strings_dollar_quoted]]`). Execute via Supabase MCP:
 
@@ -140,28 +146,48 @@ mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__execute_sql
   query: <generated SQL>
 ```
 
-SQL pattern (CTE + cross-join values, idempotent on slug, returns report_id):
+SQL pattern (CTE + cross-join values, **idempotent UPSERT on both tables** so re-runs cleanly refresh stale pdf_url and metadata, returns report_id):
 
 ```sql
 WITH new_report AS (
   INSERT INTO living_reports (slug, country, industry, year, pages, price, currency, status, published_at)
   VALUES ($kbat$<slug>$kbat$, $kbat$<country>$kbat$, $kbat$<industry>$kbat$, <year>, <pages>, 39, 'USD', 'published', now())
-  ON CONFLICT (slug) DO UPDATE SET updated_at = now()
+  ON CONFLICT (slug) DO UPDATE SET
+    updated_at   = now(),
+    published_at = now(),
+    pages        = EXCLUDED.pages,
+    status       = 'published'
   RETURNING id
 )
 INSERT INTO report_translations (report_id, locale, title, eyebrow, preview, toc, pdf_url, status, published_at)
-SELECT new_report.id, t.locale, t.title, t.eyebrow, t.preview::jsonb, t.toc::jsonb,
-       new_report.id::text || '/' || t.locale || '.pdf',
-       'published', now()
+SELECT
+  new_report.id,
+  t.locale,
+  t.title,
+  t.eyebrow,
+  t.preview::jsonb,
+  t.toc::jsonb,
+  new_report.id::text || '/' || t.locale || '.pdf',  -- storage path: <uuid>/<locale>.pdf
+  'published',
+  now()
 FROM new_report
 CROSS JOIN (VALUES
   ('en', ...), ('ja', ...), ('ko', ...)
 ) AS t(locale, title, eyebrow, preview, toc)
-ON CONFLICT DO NOTHING
+ON CONFLICT (report_id, locale) DO UPDATE SET
+  title        = EXCLUDED.title,
+  eyebrow      = EXCLUDED.eyebrow,
+  preview      = EXCLUDED.preview,
+  toc          = EXCLUDED.toc,
+  pdf_url      = EXCLUDED.pdf_url,
+  status       = 'published',
+  published_at = now()
 RETURNING report_id, locale, title;
 ```
 
 Capture the `report_id` UUID returned — needed for Step 6b.
+
+**Soft-delete awareness (Phase M.3):** Admin "delete" sets `status='retired'` (preserves buyer history). Re-publishing a retired slug requires our UPSERT to flip `status` back to `published` — the SET clause above does that.
 
 **Step 6b — Upload 3 PDFs to Supabase Storage bucket `reports-pdfs`.**
 
