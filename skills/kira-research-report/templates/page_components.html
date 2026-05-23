@@ -1,11 +1,22 @@
 <!-- ==========================================================
      KIRA Research — Page Component Templates v1.0
-     
+
      Placeholder syntax: {{VARIABLE_NAME}} or {{#each items}}...{{/each}}
      Use simple Handlebars-style substitution. Loop syntax uses comments.
-     
+
      Each template = ONE page (1280×720px).
      Pipeline picks template by section_to_page_type_map from page_schemas.json.
+
+     PHASE L.3 — Source key footer:
+     Pages that cite named sources include a {{SOURCE_KEY_HTML}} placeholder
+     just above .page-footer (see exec_summary_p1, market_data_chart for the
+     canonical pattern). The placeholder resolves to "alias_1 = full citation
+     · alias_2 = full citation · ..." which the .source-key CSS class formats
+     with the "SOURCE KEY ·" prefix via ::before.
+     Render pipeline: if SOURCE_KEY_HTML is empty string, the div renders
+     blank (no border, no prefix shown — handled by CSS empty-check). If a
+     stub doesn't have the placeholder yet but content_per_section.md emitted
+     source_key data, the renderer should INJECT the div before .page-footer.
      ========================================================== -->
 
 
@@ -110,6 +121,9 @@
       </div>
     </div>
 
+    <!-- Phase L.3: source key resolving inline aliases to full citations. Omit if no named sources on this page. -->
+    <div class="source-key">{{SOURCE_KEY_HTML}}</div>
+
     <div class="page-footer">
       <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
       <div>{{FOOTER_TEXT}}</div>
@@ -187,6 +201,9 @@
         <div class="chart-source">{{CHART_SOURCE}}</div>
       </div>
     </div>
+
+    <!-- Phase L.3: source key resolving inline aliases to full citations. Omit if no named sources on this page. -->
+    <div class="source-key">{{SOURCE_KEY_HTML}}</div>
 
     <div class="page-footer">
       <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>

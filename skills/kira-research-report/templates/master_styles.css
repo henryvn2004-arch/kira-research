@@ -76,6 +76,34 @@ body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-u
 .chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
 .chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
 
+/* ============ SOURCE KEY (Phase L.3) ============
+   Per-page footer line resolving inline source aliases to full citations.
+   Renders just above .page-footer; pages may omit if all numbers are
+   [Kira estimates] only. Pattern: alias = full citation · alias = full citation · ... */
+.source-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--muted);
+  padding: 8px 0 6px;
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  max-height: 32px;
+  overflow: hidden;
+}
+.source-key::before {
+  content: "SOURCE KEY · ";
+  font-weight: 700;
+  color: var(--text-mid);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+/* Hide entirely when empty so layout doesn't show an orphan dotted line */
+.source-key:empty { display: none; }
+
 /* ============ IMPLICATIONS GRID ============ */
 .imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
 .imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }

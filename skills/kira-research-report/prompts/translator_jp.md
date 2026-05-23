@@ -8,13 +8,17 @@ This prompt is the canonical JP voice guide for this skill. Whenever you ship JP
 
 ## 0. Inputs and outputs
 
-**Input:** A fully rendered EN HTML report (12-22 pages, KIRA brand). Has all charts as inline SVG, source tags as `[primary]/[secondary]/[estimate]/[user-input]`, callout cards with char-capped labels and change-lines.
+**Input:** A fully rendered EN HTML report (12-22 pages, KIRA brand). Has all charts as inline SVG, source tags in NEW format (Phase L.3): `[Kira estimates]` for KIRA-derived figures and `[<Source Alias> <Year>]` for named externals (e.g. `[BPS 2024]`, `[Vinacafe AR 2025]`, `[AC Nielsen 2026]`). UC3 reports may also include `[user-input]`. Callout cards with char-capped labels and change-lines. Every content page ends with a `SOURCE KEY · alias = full citation · ...` line at the bottom (the alias→full mapping for that page).
 
 **Output:** Same HTML structure, every translatable text node replaced with JP equivalent. The PDF re-renders via the same `/api/render-pdf` endpoint after substitution.
 
 **What you DO NOT touch:**
 - SVG geometry (only `<text>` content inside SVGs)
-- Source tags: `[primary]`, `[secondary]`, `[estimate]`, `[user-input]` — keep as-is, do NOT translate to `[一次情報]` etc.
+- **Source tags — keep ALL bracketed citations verbatim in English brackets**:
+  - `[Kira estimates]` stays as `[Kira estimates]` — do NOT translate to `[KIRA推計]` or `[一次情報]`
+  - `[BPS 2024]`, `[Vinacafe AR 2025]`, etc. stay verbatim — do NOT translate the source name
+  - `[user-input]` stays as-is
+- **Source key footer line** (`SOURCE KEY · alias = ...`): translate only the LABEL `SOURCE KEY` → `出典凡例`; keep all aliases + full citations in their original English form. The full citations are proper nouns of source documents (e.g. "Badan Pusat Statistik Construction Materials Census 2024") — these are NOT translated, like company names.
 - Numbers and units: `USD 2.3 bn`, `5.03%`, `IDR 116 trn` — preserve verbatim (USD/IDR stay as ISO codes, "bn"/"%"/"pp" stay English; the JP reader recognizes them)
 - HTML tags, class names, IDs
 - Chart SOURCE lines: keep mono-uppercase format, only translate the descriptor part (`industry trade press` → `業界専門誌`); leave `KIRA RESEARCH 2026` and dataset names (`BPS`, `BANK INDONESIA`) as-is
@@ -87,9 +91,10 @@ One key insight per paragraph. Max 4 paragraphs per section. Lead with the claim
 
 ### Numbers and source tags
 
-Numbers stay in their EN form. Source tags stay in English brackets. Surrounding JP wraps them:
+Numbers stay in their EN form. Source tags stay in English brackets (whether `[Kira estimates]` or named-source aliases like `[BPS 2024]`). Surrounding JP wraps them:
 
-✅ `年間300万人が都市部に流入し[secondary]、住宅供給の積年の不足は990万〜1,100万戸に達しています[secondary]。`
+✅ `年間300万人が都市部に流入し[BPS 2024]、住宅供給の積年の不足は990万〜1,100万戸に達しています[Bappenas 2025]。`
+✅ `集約化は2017年以降進展し、HHIは4,171から8,737へと倍増しています[Kira estimates]。`
 
 ❌ `[一次情報]` / `[二次情報]` — tags are functional markers, not translatable copy
 
@@ -180,7 +185,7 @@ Lead each card with a verb in imperative-equivalent JP form, addressed to market
 
 Worked example:
 
-✅ `繊維セメント市場の集約化に向けてポジショニングを。HHIは2017年の4,171から2023年には8,737へと倍増しています[secondary]。流通スケールを持たない新規参入者は、シェア5%未満での防衛戦か、24ヶ月以内のスケール買収かの二者択一に直面する構造です。隣接セグメント(プレミアム金属、複合外装材)への再ポジショニングも有効な選択肢となります。`
+✅ `繊維セメント市場の集約化に向けてポジショニングを。HHIは2017年の4,171から2023年には8,737へと倍増しています[Kira estimates]。流通スケールを持たない新規参入者は、シェア5%未満での防衛戦か、24ヶ月以内のスケール買収かの二者択一に直面する構造です。隣接セグメント(プレミアム金属、複合外装材)への再ポジショニングも有効な選択肢となります。`
 
 ❌ `集約化のトレンドを踏まえた戦略を検討すべきでしょう。` (no specifics, no number, no actionable framing)
 
@@ -234,8 +239,10 @@ Common JP over-budget patterns to compress:
 | Headline ending in 「？」 | Convert to thesis statement |
 | 常体 used in body | Convert to 敬体 |
 | カタカナ-heavy passage | Replace with 漢語 equivalents per Section 4 table |
-| Source tags translated to 「[一次情報]」 etc. | Restore English bracket form |
-| `[primary]` placed inside `<strong>` | Move outside — tags are functional markers, not emphasized content |
+| Source tags translated to 「[KIRA推計]」 or 「[一次情報]」 etc. | Restore English bracket form (`[Kira estimates]`, `[BPS 2024]`, etc.) |
+| Source alias names translated (e.g. `[BPS 2024]` → `[インドネシア統計庁 2024]`) | Restore — aliases are proper nouns of source documents; they only appear in English |
+| `[Kira estimates]` placed inside `<strong>` | Move outside — tags are functional markers, not emphasized content |
+| `SOURCE KEY` line not localized | Translate the label to `出典凡例` but keep all alias = full citation mappings in English |
 | 「貴社」「お客様」 addressing reader | Replace with 「市場参加者」「事業者」 |
 | Competitor firm or `Claude` / `McKinsey` mentioned | Strip; rewrite around the data point |
 | 「弊社のプラットフォーム」「AI搭載」 framing of KIRA | Reframe as 「弊社のリサーチチーム」「当社の分析」 |
@@ -248,11 +255,11 @@ Common JP over-budget patterns to compress:
 
 EN source (from `docs/voice_examples.md` line 1):
 
-> **Demand is structural, not cyclical.** Urbanization adds 3 million city dwellers a year [secondary]; the formal housing backlog sits at 9.9-11 million units [secondary]; and the 3 Million Houses Program directs USD 7.4 bn of mandated VAT-exempt construction through 2027 [secondary]. Even a sharp slowdown in private credit would compress, not erase, the multi-year demand pull.
+> **Demand is structural, not cyclical.** Urbanization adds 3 million city dwellers a year [BPS 2024]; the formal housing backlog sits at 9.9-11 million units [Bappenas 2025]; and the 3 Million Houses Program directs USD 7.4 bn of mandated VAT-exempt construction through 2027 [MoF Stim Pkg 2025]. Even a sharp slowdown in private credit would compress, not erase, the multi-year demand pull.
 
 JP translation:
 
-> **需要は循環的ではなく構造的である。** 都市化により年間300万人が都市部へ流入し[secondary]、住宅供給の積年の不足は990万〜1,100万戸に達しています[secondary]。300万戸住宅計画はVAT免除付き建設投資をUSD 74億規模で2027年まで指示しています[secondary]。民間信用の急減速が起きたとしても、複数年にわたる需要の引きは縮小こそすれ消失することはありません。
+> **需要は循環的ではなく構造的である。** 都市化により年間300万人が都市部へ流入し[BPS 2024]、住宅供給の積年の不足は990万〜1,100万戸に達しています[Bappenas 2025]。300万戸住宅計画はVAT免除付き建設投資をUSD 74億規模で2027年まで指示しています[MoF Stim Pkg 2025]。民間信用の急減速が起きたとしても、複数年にわたる需要の引きは縮小こそすれ消失することはありません。
 
 ---
 
@@ -278,7 +285,7 @@ JP translation:
 
 EN source (strategic implication):
 
-> Position for fiber cement consolidation. HHI doubled from 4,171 to 8,737 in six years [secondary]. New entrants face structural cost-of-capital disadvantage versus the top three; reposition toward adjacent segments (premium metal, composite cladding) or scale-acquire within 24 months.
+> Position for fiber cement consolidation. HHI doubled from 4,171 to 8,737 in six years [Kira estimates]. New entrants face structural cost-of-capital disadvantage versus the top three; reposition toward adjacent segments (premium metal, composite cladding) or scale-acquire within 24 months.
 
 JP translation:
 

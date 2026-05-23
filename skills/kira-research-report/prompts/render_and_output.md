@@ -30,9 +30,21 @@ For each section in the report plan:
    - `{{chart_svg}}` — full chart svg_html blob from Stage 6
 3. For sections whose page_type doesn't appear in `page_components.html` (UC2 novel layouts), compose the layout using only CSS utility classes from `master_styles.css`. Don't introduce new classes.
 
-### Source-tag rendering
+### Source-tag rendering (UPDATED Phase L.3)
 
-Convert inline `[primary]` / `[secondary]` / `[estimate]` / `[user-input]` markers in narrative text into `<span class="data-tag primary">PRIMARY</span>` (etc.) ONLY if a section's design intent calls for visible tags. For body prose, leave the bracket markers in place — they're rendered as part of the sentence flow and the reader infers source by chart-source / methodology section. The visible chip tags are reserved for: callout source-tags, methodology endnote source mix.
+The old `[primary]` / `[secondary]` / `[estimate]` tag system is **deprecated**. Current reports use:
+- `[Kira estimates]` — for any KIRA-derived figure
+- `[<Source Alias> <Year>]` — for named externals (e.g. `[BPS 2024]`, `[Vinacafe AR 2025]`)
+- `[user-input]` — UC3 only
+
+Render rules:
+- Leave bracket markers in place inside body prose — they read as part of the sentence ("USD 2.0 bn market in 2025 [BPS 2024]"). No DOM transformation.
+- Do NOT wrap them in `<span class="data-tag">` chips for body prose — that visual treatment is reserved for callout cards' source line and the methodology endnote source mix.
+- For each section's `content_spec.source_key`, emit it as `<div class="source-key">…</div>` placed just above the `.page-footer` block. The `SOURCE KEY ·` prefix comes from CSS `::before`, so the `source_key` value itself starts at the first alias (e.g. `BPS 2024 = Badan Pusat Statistik Construction Materials Census 2024 · Vinacafe AR 2025 = …`).
+- If a page's `content_spec.source_key` is null or empty (e.g. pages that only use `[Kira estimates]`), still emit an empty `<div class="source-key"></div>` so layout grid heights stay consistent — the empty-state CSS hides the border line. Alternatively emit just `Kira estimates = KIRA in-house analyst triangulation` so the line still informs the reader.
+- For HTML stubs without a `{{SOURCE_KEY_HTML}}` placeholder yet (older stubs), INJECT the `<div class="source-key">` element before `<div class="page-footer">` at render time. The placeholder will be retrofitted into stubs progressively; the renderer should handle both forms.
+
+The `[user-input]` tag in UC3 may optionally be rendered as a small chip when it's important to highlight provenance (e.g. "buyer file" callout) — but this is design judgment per page, not default.
 
 ### Section numbering + page numbering
 

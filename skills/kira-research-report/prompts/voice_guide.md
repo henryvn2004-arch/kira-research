@@ -62,10 +62,14 @@ The reference target is `references/sample_R0152_baseline.html` and the 10 extra
 
 ### Numbers
 
-- **Always paired with a source tag** inline: `[primary]`, `[secondary]`, `[estimate]`, or `[user-input]`
+- **Always paired with a source tag** inline. As of Phase L.3 we use TWO tag categories:
+  - `[Kira estimates]` — KIRA-derived (synthesis, triangulation, model output). Replaces the old `[primary]` AND `[estimate]` tags.
+  - `[<Source Alias> <Year>]` — external citable source. E.g. `[BPS 2024]`, `[Vinacafe AR 2025]`, `[AC Nielsen 2026]`. Full citation goes in the page-bottom source key.
+  - `[user-input]` — UC3 only.
 - Format with units: `USD 2.3 bn`, `5.03%`, `IDR 116 trn`, `9.9-11 million homes`
-- Ranges OK when uncertainty is real: `0.5-0.8 USD bn [estimate]` is honest; `0.65 USD bn [estimate]` (a false-precision midpoint) is not
+- Ranges OK when uncertainty is real: `0.5-0.8 USD bn [Kira estimates]` is honest; `0.65 USD bn [Kira estimates]` (a false-precision midpoint) is not
 - Avoid trailing zeros: `USD 24 bn` not `USD 24.00 bn`
+- See `prompts/content_per_section.md` Step 5 for the full tagging spec including how to pick aliases.
 
 ---
 
@@ -108,7 +112,7 @@ Each card has: number, unit, label, change-line, source tag.
 | Unit (inline) | 8 chars | `bn` `%` `pp` `idx` |
 | Label (mono uppercase) | 30 chars | `MARKET SIZE 2025` `HHI INDEX FIBER CEMENT` |
 | Change-line | 38 chars | `+8% YoY, accelerating 2027+` |
-| Source tag | — | `[primary]` `[secondary]` `[estimate]` |
+| Source tag (inline in change-line, ≤ 30 chars) | — | `[Kira estimates]` · `[BPS 2024]` · `[Vinacafe AR 2025]` |
 
 The change-line is where voice matters — it should add interpretation, not just restate the number.
 
@@ -130,7 +134,7 @@ When writing the 5-card implications grid (Section 03 exec_summary_p2) or any "w
 - Anchor with a number from the body of the report (the "anchor" field on imp-cards)
 - 2-3 sentences max per card
 
-✅ `Position for fiber cement consolidation. HHI doubled from 4,171 to 8,737 in six years [secondary]. New entrants face structural cost-of-capital disadvantage versus the top three; reposition toward adjacent segments (premium metal, composite cladding) or scale-acquire within 24 months.`
+✅ `Position for fiber cement consolidation. HHI doubled from 4,171 to 8,737 in six years [Kira estimates]. New entrants face structural cost-of-capital disadvantage versus the top three; reposition toward adjacent segments (premium metal, composite cladding) or scale-acquire within 24 months.`
 
 ❌ `Companies should consider their strategy in light of recent market consolidation trends.` (no specifics, no number, no actionable framing)
 
@@ -154,7 +158,7 @@ SOURCE: BPS, BANK INDONESIA, INDUSTRY FILINGS · KIRA RESEARCH 2026
 ```
 
 ```
-SOURCE: KIRA ESTIMATE — APAC SIZE × CONSTRUCTION GDP SHARE · ANCHOR: USD 32.58 BN APAC 2025 [SECONDARY]
+SOURCE: KIRA TRIANGULATION — APAC SIZE × CONSTRUCTION GDP SHARE · ANCHOR: USD 32.58 BN APAC 2025 [BPS 2024]
 ```
 
 Never name aggregator firms (Mordor / Frost / Euromonitor) in source lines.
@@ -184,7 +188,7 @@ If a draft hits any of these, regenerate the offending passage:
 |---|---|
 | Headline in Title Case | Convert to sentence case |
 | "AI" in a headline outside Section 10 | Reframe around the structural insight; AI moves to body |
-| Numbers without source tags | Add `[primary]`, `[secondary]`, `[estimate]`, or `[user-input]` |
+| Numbers without source tags | Add `[Kira estimates]` (KIRA-derived) or `[<Source Alias> <Year>]` (external) or `[user-input]` (UC3) |
 | Three or more bolded phrases in one paragraph | Cut to 1-2 |
 | "Client" / "your team" / "you" addressing reader | Replace with "market participants" / "stakeholders" |
 | Competitor firm or "Claude" / "McKinsey" mentioned | Strip; rewrite around the data point |
@@ -198,10 +202,10 @@ If a draft hits any of these, regenerate the offending passage:
 
 These are the kinds of paragraphs the skill should produce. Don't copy verbatim — adapt the register.
 
-> **Demand is structural, not cyclical.** Urbanization adds 3 million city dwellers a year [secondary]; the formal housing backlog sits at 9.9-11 million units [secondary]; and the 3 Million Houses Program directs USD 7.4 bn of mandated VAT-exempt construction through 2027 [secondary]. Even a sharp slowdown in private credit would compress, not erase, the multi-year demand pull.
+> **Demand is structural, not cyclical.** Urbanization adds 3 million city dwellers a year [BPS 2024]; the formal housing backlog sits at 9.9-11 million units [Bappenas 2025]; and the 3 Million Houses Program directs USD 7.4 bn of mandated VAT-exempt construction through 2027 [MoF Stim Pkg 2025]. Even a sharp slowdown in private credit would compress, not erase, the multi-year demand pull.
 
-> Concentration in fiber cement has roughly doubled since 2017, with HHI climbing from 4,171 to 8,737 [secondary]. The top three operators now control <strong>71% of category value</strong>, leaving challengers in a structural cost-of-capital squeeze. New entrants without distribution scale should expect to defend a sub-5% share or exit within 24 months.
+> Concentration in fiber cement has roughly doubled since 2017, with HHI climbing from 4,171 to 8,737 [Kira estimates]. The top three operators now control <strong>71% of category value</strong> [Kira estimates based on IMPC, KIAS, Saint-Gobain filings], leaving challengers in a structural cost-of-capital squeeze. New entrants without distribution scale should expect to defend a sub-5% share or exit within 24 months.
 
-> AI deployment in {{country}}'s {{industry}} sits between adoption stages two and three on our maturity curve — past the pilot phase, before the integration phase. Six concrete use cases — demand sensing, predictive maintenance, defect detection, multilingual sales enablement, distributor-network optimization, and energy-cost reduction — collectively address 12-18% of operator opex [estimate]. We expect the first three to reach measurable share of operations within 18 months; the latter three follow at 24-36 months.
+> AI deployment in {{country}}'s {{industry}} sits between adoption stages two and three on our maturity curve — past the pilot phase, before the integration phase. Six concrete use cases — demand sensing, predictive maintenance, defect detection, multilingual sales enablement, distributor-network optimization, and energy-cost reduction — collectively address 12-18% of operator opex [Kira estimates]. We expect the first three to reach measurable share of operations within 18 months; the latter three follow at 24-36 months.
 
 The voice is calm, specific, anchored in numbers and source tags, and earns the reader's time at every sentence. That's the bar.

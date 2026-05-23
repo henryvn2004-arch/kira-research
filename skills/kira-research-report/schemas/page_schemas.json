@@ -25,9 +25,19 @@
   "global_rules": {
     "inline_bold_allowed": "<strong>x</strong> for key terms, used sparingly (McKinsey style: 1-2 bolded phrases per paragraph max)",
     "source_tags": {
-      "primary": "KIRA primary research data — green tag",
-      "secondary": "External published source — blue tag",
-      "estimate": "KIRA estimate with documented methodology — amber tag"
+      "_phase_l3_note": "As of Phase L.3, the [primary]/[secondary]/[estimate] trio is REPLACED. Use only:",
+      "kira_estimates": "[Kira estimates] — any KIRA-derived figure (synthesis, triangulation, model output). Replaces both old [primary] AND [estimate].",
+      "named_source": "[<Source Alias> <Year>] — external citable source, alias inline + full citation in page-bottom source_key. Examples: [BPS 2024], [Vinacafe AR 2025], [AC Nielsen 2026].",
+      "user_input": "[user-input] — UC3 only, data from buyer-uploaded file.",
+      "see_spec": "Full spec in prompts/content_per_section.md Step 5."
+    },
+    "source_key_footer": {
+      "required_on": "Every content page that uses any named-source tag. Optional on boilerplate (cover, toc, divider, methodology_inline) and on pages using only [Kira estimates].",
+      "format": "Single line at the bottom of the page body (above page-footer chrome). Pattern: 'SOURCE KEY · alias_1 = full citation 1 · alias_2 = full citation 2 · ... · Kira estimates = KIRA in-house analyst triangulation'",
+      "char_cap": 320,
+      "lines_max": 2,
+      "style": "11px monospace muted gray, italic prefix label",
+      "css_class": ".source-key (defined in master_styles.css)"
     },
     "no_brand_violations": [
       "Never mention source archive firm names",
@@ -362,13 +372,18 @@
     },
 
     "methodology_endnote": {
-      "description": "Final methodology + sources page (Section 19)",
+      "description": "Final methodology + sources page (last section). Two halves: (a) one-paragraph methodology summary referencing the Phase L.3 tag system; (b) consolidated source list — every UNIQUE alias used across the whole report, alphabetical, with full citation. This is the REPORT-LEVEL source roll-up; the per-page source_key footer remains on each content page.",
       "slots": {
         "h1": {"max_chars": 60},
-        "methodology_summary": {"max_chars": 600},
+        "methodology_summary": {
+          "max_chars": 700,
+          "note": "Explains the Kira estimates vs named-source system. Example boilerplate: 'This view triangulates two evidence streams. Where a figure carries a named source tag (e.g. [BPS 2024], [Vinacafe AR 2025]), the underlying data comes from that source; the full citation is given below. Where a figure carries [Kira estimates], KIRA analysts derived the number from a blend of disclosed inputs (filings, channel checks, government data) using methodology disclosed in the relevant section. Approximately X% of quantitative claims are KIRA-derived; Y% are externally cited.'",
+          "boilerplate_pattern": true
+        },
         "sources_list": {
-          "items_count_max": 25,
-          "each_max_chars": 100
+          "items_count_max": 30,
+          "each_max_chars": 120,
+          "note": "Format: '<Alias> — <Full citation>'. Sorted alphabetically. Includes every named source used anywhere in the report. Does NOT include 'Kira estimates' — that's described in methodology_summary above."
         },
         "disclaimer": {"required": true, "max_chars": 240}
       }

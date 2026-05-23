@@ -136,21 +136,63 @@ For every slot:
 - If over: regenerate the slot at -15% target. Max 3 retries.
 - If a slot consistently overflows even at -15% × 3, flag for orchestrator with `overflow_at_content_gen: true` and which slot
 
-### Step 5 — Apply source tags
+### Step 5 — Apply source tags (NEW SYSTEM as of Phase L.3)
 
-Every quantitative claim in body text needs an inline tag. Format:
+Every quantitative claim in body text needs an inline tag identifying provenance. We use TWO tag categories — no more `[primary]` / `[secondary]` / `[estimate]` trio. Henry's feedback: readers want to know WHO actually said this number, not an opaque label.
+
+#### Tag categories
+
+| Use this tag | When |
+|---|---|
+| `[Kira estimates]` | KIRA-derived figure — synthesis across multiple inputs, in-house triangulation, model output, or any place we did the math. Replaces both old `[primary]` AND old `[estimate]`. |
+| `[<Source Alias> <Year>]` | External citable source. Write the SHORT ALIAS inline; the full citation goes in the page-bottom source key. Example: `[AC Nielsen 2026]`, `[BPS 2024]`, `[Vinacafe AR 2025]`. |
+| `[user-input]` | UC3 only — data from a buyer-uploaded file. |
+
+#### Inline format examples
 
 ```
-... USD 2.0 bn market in 2025 [secondary], rising to USD 3.1 bn by 2030 [estimate].
+USD 2.0 bn market in 2025 [AC Nielsen 2026], rising to USD 3.1 bn by 2030 [Kira estimates].
+Fiber cement HHI 8,737 [BPS 2024]; the top three operators control 71% of category value [Kira estimates based on company filings].
+Arabica share of export volume reached 32% in 2025 [Vinacafe AR 2025] vs 27% in 2020 [GSO 2021].
 ```
 
-Tag rules:
-- Number lifted from a citeable external source → `[secondary]`
-- KIRA synthesis (combining several inputs into a primary claim) → `[primary]`
-- Triangulated estimate with methodology in chart_source or footnote → `[estimate]`
-- Data from a UC3-uploaded user file → `[user-input]`
+When a single number needs attribution to multiple sources or you triangulated from them, prefer `[Kira estimates]` over chaining (don't write `[Source A 2024 / Source B 2025]` — that's noisy).
 
-If a number can't be tagged, **cut it.** Vague numbers without provenance are worse than no numbers.
+#### The page-bottom source key (NEW)
+
+Every page that uses named-source tags MUST end with a one-line source key resolving every alias used on that page to its full citation. Format:
+
+```
+SOURCE KEY · AC Nielsen 2026 = AC Nielsen Vietnam Coffee Survey 2026 · BPS 2024 = Badan Pusat Statistik Construction Materials Census 2024 · Vinacafe AR 2025 = Vinacafe Annual Report 2025 · Kira estimates = KIRA in-house analyst triangulation
+```
+
+Rules for the source key:
+- Lists every UNIQUE alias appearing on the page (no duplicates)
+- `Kira estimates` appears once at the end if `[Kira estimates]` is used anywhere on the page
+- Aliases sort alphabetically, with `Kira estimates` last
+- Char cap: ~280 chars total (one line at 11px); if longer, drop the line break before "Kira estimates" and let it wrap to a second line
+- Renders into the `source_key` slot at page bottom (see page_schemas.json)
+
+#### Picking an alias
+
+Short alias = the recognizable shorthand readers will use. Patterns:
+- Government/stats agencies: their acronym + year. `BPS 2024`, `GSO 2021`, `BNM 2025`, `BSP 2026`.
+- Companies: company shorthand + 'AR' (annual report) or doc type + year. `Vinacafe AR 2025`, `Masan Q3 2025`, `BCA Investor Day 2024`.
+- Industry publications/datasets: publication shorthand + year. `Specialty Coffee Assoc 2025`, `JATA 2024`.
+- Multi-source government reports: agency + report type + year. `MOIT Coffee Report 2025`.
+
+Keep aliases to ≤ 30 chars — they appear in tight inline spots (callouts, chart legends).
+
+#### What never gets tagged
+
+- Section titles and h1s — these state the thesis, not numbers
+- Methodology page boilerplate — explains the tag system, isn't reporting numbers
+- Cover page — pure template
+- Mini-TOC pills on divider pages — thematic, not quantitative
+
+#### Hard cut
+
+If a number can't be tagged with either `[Kira estimates]` or a real named source — **cut it.** Vague numbers without provenance are worse than no numbers, and they will get flagged in voice check.
 
 ### Step 6 — Voice check
 
@@ -178,40 +220,41 @@ Fix in place.
         "label": "MARKET SIZE 2025",
         "num": "USD 2.0",
         "unit": "bn",
-        "change": "+8.3% YoY [secondary]",
-        "source_tag": "secondary"
+        "change": "+8.3% YoY [BPS 2024]",
+        "source_alias": "BPS 2024"
       },
       {
         "label": "FIBER CEMENT HHI 2023",
         "num": "8,737",
         "unit": "idx",
-        "change": "2x increase since 2017",
-        "source_tag": "secondary"
+        "change": "2x since 2017 [Kira estimates]",
+        "source_alias": "Kira estimates"
       },
       { "...": "..." }
     ],
     "narrative_left": [
       {
         "heading": "Structural demand",
-        "body": "Urbanization adds 3 million city dwellers a year [secondary]; the housing backlog sits at 9.9-11 million units [secondary]; <strong>the 3 Million Houses Program</strong> directs USD 7.4 bn of VAT-exempt construction through 2027 [secondary]. Even a credit-cycle slowdown would compress, not erase, the demand pull."
+        "body": "Urbanization adds 3 million city dwellers a year [BPS 2024]; the housing backlog sits at 9.9-11 million units [Bappenas 2025]; <strong>the 3 Million Houses Program</strong> directs USD 7.4 bn of VAT-exempt construction through 2027 [MoF Stim Pkg 2025]. Even a credit-cycle slowdown would compress, not erase, the demand pull."
       },
       {
         "heading": "Consolidating structure",
-        "body": "Fiber cement HHI doubled from 4,171 to 8,737 [secondary]. The top three operators control 71% of category value. New entrants face structural cost-of-capital disadvantage; reposition adjacent or acquire."
+        "body": "Fiber cement HHI doubled from 4,171 to 8,737 [Kira estimates]. The top three operators control 71% of category value [Kira estimates based on IMPC, KIAS, Saint-Gobain filings]. New entrants face structural cost-of-capital disadvantage; reposition adjacent or acquire."
       }
     ],
     "chart_right": {
       "title": "Roofing market trajectory",
       "subtitle": "Indonesia · USD bn · 2024-2030F",
       "unit": "USD BN",
-      "source": "SOURCE: BPS, BCI ASIA, INDUSTRY FILINGS · KIRA RESEARCH 2026",
+      "source": "SOURCE: BPS, BCI ASIA, KIRA TRIANGULATION · KIRA RESEARCH 2026",
       "data": {
         "series": [
-          { "label": "Roofing", "values": [1.6, 1.8, 2.0, 2.2, 2.5, 2.9, 3.1], "source_tag": "estimate" }
+          { "label": "Roofing", "values": [1.6, 1.8, 2.0, 2.2, 2.5, 2.9, 3.1], "source_alias": "Kira estimates" }
         ],
         "periods": ["2024", "2025", "2026", "2027", "2028", "2029", "2030F"]
       }
-    }
+    },
+    "source_key": "SOURCE KEY · Bappenas 2025 = Bappenas Housing Backlog Estimate 2025 · BPS 2024 = Badan Pusat Statistik Construction Materials Census 2024 · MoF Stim Pkg 2025 = Ministry of Finance 3 Million Houses Stimulus Package 2025 · Kira estimates = KIRA in-house analyst triangulation"
   },
   "char_counts": {
     "h1": 58,
@@ -221,12 +264,14 @@ Fix in place.
   "validation": {
     "all_slots_within_budget": true,
     "all_numbers_tagged": true,
+    "source_key_present_and_resolves_all_aliases": true,
     "voice_check_passed": true,
     "overflows_after_retry": [],
     "expanded_to_2_pages": false,
     "chart_type_chosen": "trend_line_5y",
     "overlay_applied": "industrial",
-    "overlay_emphasis_keys_used": ["channel", "competitive_intensity"]
+    "overlay_emphasis_keys_used": ["channel", "competitive_intensity"],
+    "aliases_used_on_page": ["BPS 2024", "Bappenas 2025", "MoF Stim Pkg 2025", "Kira estimates"]
   }
 }
 ```
@@ -247,7 +292,8 @@ When a slot's drafted content overshoots:
 After all sections are drafted, run a consistency pass:
 
 - Every callout number that appears in exec summary should also appear (with the same value and tag) somewhere in the body sections
-- Source-tag distribution should land near the target in blueprint `manifest.yaml > research.source_mix_target` (e.g. primary 25% / secondary 55% / estimate 20%)
+- **Source alias consistency** — the SAME real source must use the SAME alias across every page that cites it (e.g., always `BPS 2024`, never `BPS 2024` on one page and `Badan Pusat Statistik 2024` on another). Maintain a report-level alias registry as you draft.
+- **Kira estimates % target** — aim for `[Kira estimates]` to cover 20-30% of tagged numbers across the report. Below 15% → over-reliant on external sources (we lose the analyst-house voice). Above 40% → too speculative, readers will question our externals coverage. Source-mix targets in blueprint `manifest.yaml > research.source_mix_target` are the canonical reference.
 - Same company should be named consistently (e.g. always "PT Impack Pratama Industri (IMPC)", not sometimes "Impack" alone)
 - Same time periods used in different charts should be the same (don't have one chart on 2024-2030 and another on 2025-2031 without a reason)
 
