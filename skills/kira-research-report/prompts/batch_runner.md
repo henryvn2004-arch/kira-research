@@ -67,12 +67,16 @@ Spawn a general-purpose subagent for the EN gen (keeps the parent context lean).
 > Hard rules (the skill enforces these; mentioning explicitly for safety):
 > - Never mention `Claude`, `McKinsey`, `Mordor`, `Frost`, `Euromonitor`, `Synovate`, `Ipsos`, `IMARC` in visible copy
 > - Never frame KIRA as "AI platform / SaaS / app"
-> - All numbers must carry source tags: `[primary]` / `[secondary]` / `[estimate]`
+> - All numbers must carry source tags: `[Kira estimates]` for KIRA-derived figures, `[<Source Alias>]` for cited externals (full citation in the page-bottom source key)
 > - Sentence-case headlines
+> - **Section gen MUST be sequential per `content_per_section.md` "Execution pattern" section — no parallel sub-subagents per section.** Otherwise sections silently drop.
+> - **Pre-render validation gate is non-negotiable.** Before any PDF render, assert that every section ID from `section_plan` is present in `generated_sections`. Halt with error if any missing.
 >
-> Return the absolute paths to the generated en.html and en.pdf.
+> Return the absolute paths to the generated en.html and en.pdf, AND the count of sections planned vs generated (e.g. "14 planned, 14 generated — gate passed").
 
 If the subagent fails (returns error or no PDF) → jump to Step 6 with error.
+
+**Section-count guard (parent-side double-check):** After the EN subagent returns, parse its return message for the "X planned, Y generated" line. If `X != Y`, treat the run as failed — set status=error with `error_log: section count mismatch (X planned / Y generated) — see <id>/en.html`. Do not proceed to JA/KO translation if EN is incomplete (translating a broken report wastes 2 more subagent runs).
 
 ---
 
@@ -171,6 +175,7 @@ Then exit. Do not start a second row in the same fire — that's by design (1 to
 | Skill fails at orchestrator (no blueprint match, no design mode trigger) | The topic is malformed — set status=error with `error_log: no route from orchestrator (topic ambiguity)`. |
 | Translation subagent overflows char caps on JA or KO | Translator subagent should retry with -15% compression (per the EN skill's overflow handling). If 3 retries still overflow, deliver what you have, log the overflow page count in error_log, set status=done (partial). |
 | Anti-positioning leak found in any language | Subagent should regex-sweep before returning. If a leak slips through to commit, set status=error and flag for manual review. |
+| Section count mismatch (EN subagent returns fewer sections than planned) | The EN gen partially dropped sections (root cause: fired sub-subagents in parallel instead of sequential). Set status=error with `error_log: section count <Y>/<X> — fix sequential gen in content_per_section.md`. Do NOT translate. PDF (if any) is broken — leave it in outputs for inspection. |
 
 ---
 

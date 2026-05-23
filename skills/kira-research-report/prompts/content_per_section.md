@@ -12,6 +12,46 @@ For each section to generate:
 - The voice rules from `prompts/voice_guide.md` (refresh in context if you've drifted)
 - **The active industry overlay** (if any), loaded from `overlays/<id>.yaml` per orchestrator output
 
+## Execution pattern (CRITICAL — do not deviate)
+
+**Iterate through `section_plan` ONE SECTION AT A TIME, sequentially.** Do not fire multiple sections in parallel via sub-subagents — this caused silent section drops in early batch tests (sections 4/5/6 + 7.2/7.4 missing from one Vietnam coffee run because parallel sub-tasks overflowed context and were dropped without surfacing error).
+
+Why sequential matters:
+1. **No silent drops** — every section's output is captured back into the parent context immediately; a failure surfaces loudly instead of vanishing into a dropped subagent return
+2. **Cross-section memory** — when drafting Section 7, you remember what Section 4 already said (avoids repeated numbers, mismatched company name spellings, contradictory framing)
+3. **Source tag consistency** — the `[Kira estimates]` / `[<Source>]` tags accumulate into a single per-report source key; parallel sections would each maintain a separate fragment and reconciliation is fragile
+4. **Char budget retries are cheaper** — if a section overflows and needs regen at -15%, the retry is local; parallel runs would have already moved on
+
+### Per-section loop
+
+```
+for section in section_plan (in declared order):
+    1. Load section entry + schema + research_data slice + overlay (if any)
+    2. Execute Steps 0-6 below (full content gen + validation)
+    3. Append result to generated_sections[]
+    4. IF result has overflow_at_content_gen: true → log to retries_needed[]
+    5. IF result is missing (subagent error / no return) → log to missing_sections[]
+```
+
+### Validation gate (run AFTER the loop, BEFORE handing off to render)
+
+```
+assert len(generated_sections) == len(section_plan)
+  → IF mismatch:
+       identify missing section IDs
+       for each missing: re-run the per-section loop just for that ID (max 2 retries per section)
+       IF still missing after retries: HALT — do not render PDF.
+       Surface to batch_runner with status=error and missing_sections list.
+
+assert every chart-bearing section has chart_data populated
+  → IF any chart_data == null: same halt-and-surface treatment
+
+assert every section's char_counts within budget OR has overflow_at_content_gen flag set
+  → IF unflagged overflow: regen that section once more
+```
+
+The render stage (`chart_generator.md` + `render_and_output.md`) MUST NOT proceed if this gate fails. A partial report is worse than a failed batch — failed batches retry on the next cron fire; partial reports get committed and look broken to users.
+
 ## Process per section
 
 ### Step 0 — Resolve A+ flex fields
