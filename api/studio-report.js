@@ -63,9 +63,13 @@ export default async function handler(req, res) {
       const r = Array.isArray(rows) ? rows[0] : null;
       if (!r) { res.status(404).json({ error: 'not_found' }); return; }
 
-      const [htmlUrl, pdfUrl] = await Promise.all([
+      const [htmlUrl, pdfUrl, pptxUrl] = await Promise.all([
         signStorageUrl(STUDIO_REPORTS_BUCKET, r.html_path),
-        signStorageUrl(STUDIO_REPORTS_BUCKET, r.pdf_path)
+        signStorageUrl(STUDIO_REPORTS_BUCKET, r.pdf_path),
+        // pptx_path is nullable — only present for reports rendered
+        // after Phase N.27 deployed AND migration 012 was run. Older
+        // rows return null here, the viewer hides the button.
+        r.pptx_path ? signStorageUrl(STUDIO_REPORTS_BUCKET, r.pptx_path) : Promise.resolve(null)
       ]);
 
       res.status(200).json({
@@ -81,7 +85,8 @@ export default async function handler(req, res) {
         pages:        r.pages,
         created_at:   r.created_at,
         html_url:     htmlUrl,
-        pdf_url:      pdfUrl
+        pdf_url:      pdfUrl,
+        pptx_url:     pptxUrl
       });
       return;
     }

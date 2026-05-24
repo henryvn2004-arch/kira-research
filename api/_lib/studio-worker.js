@@ -51,6 +51,7 @@ import {
   applyPageNumbers,
   loadMasterWrapper
 } from './studio-templates.js';
+import { renderPptxBuffer } from './studio-pptx.js';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -1017,6 +1018,7 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
   const reportId  = reportRow.id;
   const htmlPath  = `${userId}/${reportId}/report.html`;
   const pdfPath   = `${userId}/${reportId}/report.pdf`;
+  const pptxPath  = `${userId}/${reportId}/report.pptx`;
 
   // Phase N.24: explicit charset=utf-8 so browsers don't misinterpret
   // the UTF-8 bytes as Latin-1 (which mangled em-dash to "â€"").
@@ -1029,11 +1031,52 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
     throw new Error(`storage_upload_failed:html=${htmlOk},pdf=${pdfOk}`);
   }
 
-  // Patch the storage paths back onto the row.
-  await sb(`studio_reports?id=eq.${reportId}`, 'PATCH', {
+  // ── Phase N.27: native editable PPTX render ─────────────────
+  // Built in-process via pptxgenjs from the SAME drafts + slots that
+  // produced the HTML. Native text shapes + PowerPoint charts — user
+  // can edit text + restyle charts inside PowerPoint.
+  // Best-effort: if pptx generation fails for any reason, we still
+  // ship the HTML + PDF. PPTX is the bonus output, not a blocker.
+  let pptxOk = false;
+  try {
+    const pptxBuf = await renderPptxBuffer({
+      drafts,
+      parsed,
+      plan,
+      extracted,
+      finalTitle,
+      subtitle
+    });
+    pptxOk = await uploadToBucket(
+      STUDIO_REPORTS_BUCKET, pptxPath, pptxBuf,
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      true
+    );
+  } catch (err) {
+    console.warn('[studio-worker] PPTX generation failed (non-fatal):', err.message);
+  }
+
+  // Patch the storage paths back onto the row. pptx_path is only
+  // PATCHed if PPTX upload succeeded — old rows + failure cases keep
+  // pptx_path = NULL, which the API reads to hide the PPTX button.
+  const pathPatch = {
     html_path: htmlPath,
     pdf_path:  pdfPath
-  }, false);
+  };
+  if (pptxOk) pathPatch.pptx_path = pptxPath;
+  try {
+    await sb(`studio_reports?id=eq.${reportId}`, 'PATCH', pathPatch, false);
+  } catch (err) {
+    // If pptx_path column doesn't exist yet (migration 011 not run),
+    // retry without it so html/pdf paths still land.
+    if (pathPatch.pptx_path) {
+      console.warn('[studio-worker] PATCH with pptx_path failed (migration 011 pending?), retrying without:', err.message);
+      delete pathPatch.pptx_path;
+      await sb(`studio_reports?id=eq.${reportId}`, 'PATCH', pathPatch, false);
+    } else {
+      throw err;
+    }
+  }
 
   return reportId;
 }
