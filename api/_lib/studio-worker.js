@@ -35,8 +35,10 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import {
+  STUDIO_INPUTS_BUCKET,
   STUDIO_REPORTS_BUCKET,
-  sb, uploadToBucket, updateJobProgress, logActivity, slugify
+  sb, uploadToBucket, downloadFromBucket,
+  updateJobProgress, logActivity, slugify
 } from './studio-shared.js';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -56,32 +58,25 @@ const SECTION_CONCURRENCY = 3;
 // blueprint so the gen fits comfortably inside the 800s function budget.
 const TARGET_SECTIONS     = 10;
 
-// ── Stage 4 (research) configuration — Phase N.17 ────────────
-// PREVIOUSLY: one monolithic Stage 4 message.create with
-// `max_uses: 18` letting the model autonomously plan + execute
-// all research in a single turn. This worked for well-anchored
-// industry topics but blew the 13.3-min Vercel budget on niche
-// or single-company queries (the model kept retrying searches
-// until it hit max_uses).
+// ── Phase N.20: upload-only architecture ────────────────────
+// Stage 4 (Anthropic web_search) was removed. The autonomous
+// web_search tool proved unreliable in Vercel serverless background
+// context — calls hung indefinitely with no abort mechanism (SDK
+// signal, Promise.race timeout, and SDK-level timeout option all
+// failed to interrupt in-flight tool use calls). Strategic pivot:
+// require users to upload their own research sources (which matches
+// KIRA's actual analyst workflow + the "for pro analysts" positioning).
 //
-// NOW: Stage 4 fans out to one research call PER SECTION, capped
-// at PER_SECTION_SEARCHES each. Calls run in parallel (RESEARCH_
-// CONCURRENCY at a time) and each is bounded by a hard timeout.
-// Mimics the per-section research pattern of the UC1 skill in
-// Claude Chat and gives the model a clear, focused scope per call
-// instead of a 10-section monolith.
-const PER_SECTION_SEARCHES   = 2;
-// Sequential research (Phase N.19). Parallel research (concurrency=3
-// in N.17/N.18) was unreliable: ~33% of the time, the SECOND and
-// THIRD parallel calls to messages.create with web_search would hang
-// indefinitely while the FIRST completed normally in ~20-30s. Strongly
-// suggests Anthropic rate-limits parallel web_search calls per API
-// key, with the throttled calls held server-side instead of failing
-// cleanly. Sequential trades wall-clock for reliability.
-const RESEARCH_CONCURRENCY   = 1;
-const STAGE4_SECTION_TIMEOUT = 75 * 1000;       // 75s per section (Promise.race safety net)
-const STAGE4_OVERALL_TIMEOUT = 6 * 60 * 1000;   // 6 min total budget (7 sections × ~50s)
-const ANTHROPIC_REQUEST_TIMEOUT_MS = 60 * 1000; // 60s — SDK-level fetch timeout
+// New Stage 2 (file extraction): downloads each uploaded file from
+// studio-inputs bucket, extracts text via format-specific parser,
+// caches in-memory for Stage 5.
+const MAX_CHARS_PER_FILE       = 100_000; // ~25K tokens — safety cap per file
+const MAX_TOTAL_EXTRACTED_CHARS = 400_000; // ~100K tokens — total source budget
+
+// SDK-level timeout still useful for the (no-tool) per-section
+// Claude calls. Each section is plain text in, text out, no
+// web_search tool — should reliably finish in <40s.
+const ANTHROPIC_REQUEST_TIMEOUT_MS = 90 * 1000;
 
 const SKILL_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -280,262 +275,134 @@ Return JSON only.`;
 }
 
 // ===============================================================
-// STAGE 4 — Web search (per-section parallel)
+// STAGE 2 — File extraction (Phase N.20, replaces former Stage 4)
 //
-// One Anthropic call per section that has needs_search=true. Calls
-// run RESEARCH_CONCURRENCY at a time. Each call is bounded by a
-// Promise.race timeout (STAGE4_SECTION_TIMEOUT) and the whole stage
-// is bounded by a wall-clock deadline (STAGE4_OVERALL_TIMEOUT).
+// Studio is now upload-only: the user provides the research sources
+// (PDF/DOCX/XLSX/CSV/TXT) and the worker writes the report directly
+// from them. This stage downloads each uploaded file from the
+// studio-inputs bucket and extracts text via a format-specific
+// parser. Text is capped per-file and globally so Stage 5 prompts
+// never blow Claude's context budget.
 //
-// Why Promise.race instead of AbortController: empirically, the
-// Anthropic SDK's `signal` parameter does NOT reliably interrupt
-// an in-flight web_search tool call — the server-side tool runs
-// to completion regardless. Promise.race resolves at the JS layer
-// without depending on SDK cooperation: when the timer fires we
-// just stop awaiting and move on. The pending Anthropic call may
-// still finish server-side (and will be billed) but the worker
-// loop progresses on schedule.
-//
-// Partial results are kept — a section whose research timed out
-// just contributes empty findings, and Stage 5 falls back gracefully.
+// Why not Anthropic web_search anymore: the autonomous tool proved
+// unreliable in Vercel serverless background context — calls hung
+// indefinitely with no working abort mechanism. The upload-only
+// architecture removes that failure mode entirely, matches KIRA's
+// actual analyst workflow (analysts curate sources first, then
+// write), and aligns with the "for pro analysts" positioning.
 // ===============================================================
-async function stage4Research({ jobId, parsed, plan, log }) {
-  const c = client();
-  const allSections     = Array.isArray(plan?.sections) ? plan.sections : [];
-  // Skip sections explicitly marked needs_search=false (methodology,
-  // source key, etc.) — they get empty findings entries via fallback.
-  const targetSections  = allSections
-    .filter(s => s && s.needs_search !== false)
-    .slice(0, TARGET_SECTIONS);
-
-  if (targetSections.length === 0) {
-    return { findings: { findings: [], source_key: [] }, queries: [], tokens_in: 0, tokens_out: 0 };
+async function stage2ExtractFiles({ jobId, userId, uploaded_file_paths, log }) {
+  const paths = Array.isArray(uploaded_file_paths) ? uploaded_file_paths : [];
+  if (paths.length === 0) {
+    return { extracted: [], total_chars: 0 };
   }
 
-  const system = `You are a research analyst at KIRA Research gathering source material for ONE section of a market report.
+  const extracted = [];
+  let totalChars = 0;
+  let fileIndex = 0;
 
-Cover BOTH English AND ${parsed.local_language_name || 'English'} (code ${parsed.local_language_code || 'en'}) — search in both languages for tier-1 KIRA markets (vi/id/th/ja/ko) or whenever the country is non-English-dominant.
+  for (const path of paths) {
+    fileIndex++;
+    const filename = String(path).split('/').pop() || `file_${fileIndex}`;
+    const ext = (filename.split('.').pop() || '').toLowerCase();
 
-Process:
-1. Fire 1-2 searches in English.
-2. Fire 1 search in the local language (translate query terms; keep proper nouns + acronyms in original form).
-3. Capture: source name, year, URL, the key quantitative claim or qualitative finding.
+    if (log) await log('info', 'extract', `Reading file ${fileIndex}/${paths.length}: ${filename}`);
+    await updateJobProgress(jobId, {
+      current_stage: `Extracting source files (${fileIndex}/${paths.length})…`,
+      progress: 28 + Math.floor(12 * (fileIndex / paths.length))   // 28→40
+    }).catch(() => {});
 
-Output ONE structured JSON object — NO prose preamble. Shape:
+    const buf = await downloadFromBucket(STUDIO_INPUTS_BUCKET, path);
+    if (!buf) {
+      if (log) await log('error', 'extract', `Could not download ${filename}`);
+      continue;
+    }
 
-{
-  "key_numbers": [{ "claim": "...", "value": "...", "source": "<short alias>", "year": <int>, "url": "..." }],
-  "qualitative": ["...","..."],
-  "source_key": [{ "alias": "GSO 2024", "full_name": "General Statistics Office of Vietnam — Statistical Yearbook 2024", "url": "..." }]
-}
-
-Hard rules:
-- NEVER cite Mordor / Frost / Euromonitor / IMARC / Synovate / Ipsos — discard those results.
-- Prefer stat-bureau / industry-association / central-bank / listed-co filings.
-- A number is "well-anchored" if it appears in 3+ independent sources within ±10%.
-- Source aliases stay English even when the original is local-language (e.g. [GSO 2024] not [Tổng cục Thống kê 2024]).
-- If you cannot find good sources after 2-3 searches, RETURN what you have. Do NOT keep trying — empty is fine.`;
-
-  const researchOne = async (section) => {
-    const userMsg = `Report context: ${JSON.stringify({
-      country: parsed.country, industry: parsed.industry, year: parsed.year,
-      local_language: parsed.local_language_name
-    })}
-
-Section to research:
-- Title: ${section.title}
-- Brief: ${section.brief || '(no brief — use the title)'}
-- Page type: ${section.page_type}
-
-Run your ${PER_SECTION_SEARCHES} searches, then return the JSON object. Empty fields are acceptable if data is thin.`;
-
-    const msg = await c.messages.create({
-      model: MODEL,
-      max_tokens: 3072,
-      system,
-      tools: [{
-        type: 'web_search_20250305',
-        name: 'web_search',
-        max_uses: PER_SECTION_SEARCHES
-      }],
-      messages: [{ role: 'user', content: userMsg }]
-    });
-
-    const text = textFromMessage(msg);
-    let parsedOut;
-    try { parsedOut = parseJsonLoose(text); }
-    catch { parsedOut = { key_numbers: [], qualitative: [], source_key: [] }; }
-
-    const queries = Array.isArray(msg?.content)
-      ? msg.content
-          .filter(b => b && b.type === 'server_tool_use' && b.name === 'web_search' && b.input && b.input.query)
-          .map(b => String(b.input.query))
-      : [];
-
-    return {
-      section_title: section.title,
-      page_type:     section.page_type,
-      key_numbers:   Array.isArray(parsedOut.key_numbers) ? parsedOut.key_numbers : [],
-      qualitative:   Array.isArray(parsedOut.qualitative) ? parsedOut.qualitative : [],
-      source_key:    Array.isArray(parsedOut.source_key)  ? parsedOut.source_key  : [],
-      queries,
-      tokens_in:     msg.usage?.input_tokens  || 0,
-      tokens_out:    msg.usage?.output_tokens || 0
-    };
-  };
-
-  // ── Concurrency cap + Promise.race timeout (Phase N.18) ────
-  //
-  // PREVIOUSLY relied on AbortController to interrupt in-flight
-  // Anthropic web_search calls. Empirical finding: the SDK's
-  // signal parameter does NOT reliably interrupt a hung tool call
-  // — the underlying server-side web_search runs to completion
-  // regardless. Result: setTimeout fired but `await researchOne`
-  // never returned, function ran to Vercel maxDuration kill.
-  //
-  // NEW design uses Promise.race against an in-process timeout
-  // promise. When the timer fires, we GIVE UP WAITING on the
-  // pending Anthropic call (it may still finish server-side and
-  // get billed; we just don't block on it). This guarantees the
-  // worker loop progresses on schedule regardless of SDK behavior.
-  //
-  // The overallDeadline is a wall-clock guard: once Stage 4 has
-  // burned its total budget, in-progress workers stop pulling new
-  // sections and we return whatever findings are already in.
-  const overallDeadline = Date.now() + STAGE4_OVERALL_TIMEOUT;
-
-  // Used as the right side of Promise.race. Resolves to a marker
-  // object so we can distinguish timeout vs. SDK error in the catch.
-  const TIMEOUT_MARKER = Symbol('stage4_section_timeout');
-  function withTimeout(promise, ms) {
-    let to;
-    const timeoutPromise = new Promise(resolve => {
-      to = setTimeout(() => resolve(TIMEOUT_MARKER), ms);
-    });
-    return Promise.race([
-      promise.finally(() => clearTimeout(to)),
-      timeoutPromise
-    ]);
-  }
-
-  const results = new Array(targetSections.length);
-  let cursor = 0;
-  let sectionsDone = 0;
-
-  async function worker() {
-    while (cursor < targetSections.length) {
-      if (Date.now() >= overallDeadline) {
-        // Overall budget exhausted — stop taking new work, but in-flight
-        // calls in other workers may still be racing their own timeouts.
-        return;
+    let text = '';
+    try {
+      if (ext === 'pdf') {
+        // pdf-parse has a known issue where the package entry-point
+        // tries to read a local test PDF in debug mode. Import the
+        // internal module directly to bypass.
+        const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
+        const res = await pdfParse(buf);
+        text = String(res?.text || '');
+      } else if (ext === 'docx') {
+        const mammoth = await import('mammoth');
+        const res = await mammoth.extractRawText({ buffer: buf });
+        text = String(res?.value || '');
+      } else if (ext === 'xlsx' || ext === 'xls') {
+        const xlsx = await import('xlsx');
+        const wb = xlsx.read(buf, { type: 'buffer' });
+        text = (wb.SheetNames || [])
+          .map(n => `--- Sheet: ${n} ---\n${xlsx.utils.sheet_to_csv(wb.Sheets[n])}`)
+          .join('\n\n');
+      } else if (ext === 'csv' || ext === 'tsv') {
+        text = buf.toString('utf8');
+      } else if (ext === 'txt' || ext === 'md') {
+        text = buf.toString('utf8');
+      } else {
+        if (log) await log('error', 'extract', `Unsupported format: ${filename} (.${ext})`);
+        continue;
       }
-      const idx = cursor++;
-      const section = targetSections[idx];
+    } catch (err) {
+      if (log) await log('error', 'extract', `Parse failed for ${filename}: ${String(err?.message || err).slice(0, 200)}`);
+      continue;
+    }
 
-      if (log) await log('info', 'search', `Researching: ${section.title}`);
+    // Per-file cap.
+    if (text.length > MAX_CHARS_PER_FILE) {
+      text = text.slice(0, MAX_CHARS_PER_FILE) + '\n\n[…truncated…]';
+    }
+    // Global cap — drop if we're already over budget.
+    if (totalChars + text.length > MAX_TOTAL_EXTRACTED_CHARS) {
+      const remaining = Math.max(0, MAX_TOTAL_EXTRACTED_CHARS - totalChars);
+      text = text.slice(0, remaining) + (remaining > 0 ? '\n\n[…truncated to fit context…]' : '');
+    }
 
-      // Per-section budget is the smaller of: (a) section timeout, or
-      // (b) remaining overall budget. Ensures we never wait longer than
-      // the overall deadline allows.
-      const remaining = overallDeadline - Date.now();
-      const sectionTimeoutMs = Math.max(15 * 1000, Math.min(STAGE4_SECTION_TIMEOUT, remaining));
+    if (text.length > 0) {
+      extracted.push({ filename, ext, text, char_count: text.length });
+      totalChars += text.length;
+      if (log) await log('done', 'extract', `Extracted ${filename} (${text.length.toLocaleString()} chars)`);
+    } else {
+      if (log) await log('error', 'extract', `${filename}: no extractable text`);
+    }
 
-      try {
-        const outcome = await withTimeout(researchOne(section), sectionTimeoutMs);
-
-        if (outcome === TIMEOUT_MARKER) {
-          // Hard timeout — Anthropic call still in flight server-side
-          // but we're done waiting. Record empty findings and move on.
-          if (log) await log('error', 'search',
-            `Section timed out: ${section.title} (${Math.round(sectionTimeoutMs/1000)}s · proceeding with empty findings)`);
-          results[idx] = {
-            section_title: section.title,
-            page_type:     section.page_type,
-            key_numbers: [], qualitative: [], source_key: [],
-            queries: [], tokens_in: 0, tokens_out: 0
-          };
-        } else {
-          // Real result.
-          results[idx] = outcome;
-          if (log) {
-            for (const q of outcome.queries) {
-              await log('search', 'search', `Searched: ${q}`);
-            }
-            const srcCount = outcome.source_key.length;
-            await log('done', 'search', `Section researched: ${section.title} · ${srcCount} source${srcCount === 1 ? '' : 's'}`);
-          }
-        }
-      } catch (err) {
-        // Transport error or model-side rejection. Record empty findings.
-        if (log) await log('error', 'search',
-          `Section research failed: ${section.title} — ${String(err?.message || err).slice(0, 200)}`);
-        results[idx] = {
-          section_title: section.title,
-          page_type:     section.page_type,
-          key_numbers: [], qualitative: [], source_key: [],
-          queries: [], tokens_in: 0, tokens_out: 0
-        };
-      } finally {
-        sectionsDone++;
-        // Update progress so the UI shows real movement during Stage 4.
-        // Map Stage 4 progress 30%→55% across section completions.
-        const pct = 30 + Math.floor(25 * (sectionsDone / Math.max(1, targetSections.length)));
-        await updateJobProgress(jobId, {
-          current_stage: `Researching sections (${sectionsDone}/${targetSections.length})…`,
-          progress: pct
-        }).catch(() => { /* best-effort */ });
-      }
+    if (totalChars >= MAX_TOTAL_EXTRACTED_CHARS) {
+      if (log) await log('info', 'extract',
+        `Total source budget reached (${MAX_TOTAL_EXTRACTED_CHARS.toLocaleString()} chars) — skipping remaining files`);
+      break;
     }
   }
 
-  await Promise.all(
-    Array.from(
-      { length: Math.min(RESEARCH_CONCURRENCY, targetSections.length) },
-      worker
-    )
-  );
-
-  // ── Aggregate per-section findings into the shape Stage 5 expects ──
-  const findingsArr = results.filter(Boolean).map(r => ({
-    section_title: r.section_title,
-    page_type:     r.page_type,
-    key_numbers:   r.key_numbers,
-    qualitative:   r.qualitative
-  }));
-
-  // Dedupe source_key entries by alias across all sections.
-  const sourceKeyMap = new Map();
-  for (const r of results) {
-    if (!r) continue;
-    for (const s of r.source_key) {
-      const alias = String(s?.alias || '').trim();
-      if (alias && !sourceKeyMap.has(alias)) sourceKeyMap.set(alias, s);
-    }
-  }
-  const sourceKey = [...sourceKeyMap.values()];
-
-  const allQueries  = results.filter(Boolean).flatMap(r => r.queries);
-  const tokens_in   = results.filter(Boolean).reduce((a, r) => a + r.tokens_in,  0);
-  const tokens_out  = results.filter(Boolean).reduce((a, r) => a + r.tokens_out, 0);
-
-  return {
-    findings: { findings: findingsArr, source_key: sourceKey },
-    queries:  allQueries,
-    tokens_in,
-    tokens_out
-  };
+  return { extracted, total_chars: totalChars };
 }
+
 
 // ===============================================================
 // STAGE 5 — Generate per-section HTML (parallel, capped)
+// Phase N.20: takes user-uploaded source material instead of
+// web_search findings. Source attribution tags reference filenames
+// (e.g. [annual-report.pdf]) instead of named external sources.
 // ===============================================================
-async function stage5Content({ parsed, plan, findings, onSectionStart, onSectionDone }) {
+async function stage5Content({ parsed, plan, extracted, onSectionStart, onSectionDone }) {
   const c = client();
   const sections = (plan?.sections || []).slice(0, TARGET_SECTIONS);
+
+  // Build the source-material block once — same context is passed
+  // to every section call so Claude can draw on any file for any
+  // section. Each file is tagged so inline citations can reference it.
+  const sourceBlock = (Array.isArray(extracted) ? extracted : [])
+    .map((f, i) => `### Source ${i + 1}: ${f.filename}\n${f.text}`)
+    .join('\n\n');
+  const sourceFilenames = (Array.isArray(extracted) ? extracted : []).map(f => f.filename);
 
   const system = `You are a senior consultant at KIRA Research writing a section of a market report.
 
 You write ONE section at a time and return HTML only — no preamble, no markdown, no commentary.
+
+SOURCE MATERIAL
+The user has uploaded research sources for this report. Draw facts, numbers, quotes, and qualitative observations PRIMARILY from these uploaded sources. You may add general industry context from your training knowledge, but quantitative claims should be anchored to the uploaded sources whenever possible.
 
 VOICE
 - "our analysts" / "our research team" / "we" — never "our platform" or "AI-powered".
@@ -543,9 +410,11 @@ VOICE
 - No filler ("It is worth noting", "In conclusion", "It goes without saying").
 - De-cliented voice: "Market participants face…" not "Client should…".
 
-SOURCE TAGS (L.3)
-- Every quantitative claim carries an inline tag: [<Alias> <year>] or [Kira estimates].
-- Use the source_key aliases provided. Keep aliases English even for local-language sources.
+SOURCE TAGS
+- Every quantitative claim carries an inline tag. Format: [filename] for figures pulled from a user-uploaded file, or [Kira estimates] for analyst inference.
+- Example: "Revenue grew 14% YoY [annual-report.pdf]."
+- Never fabricate filenames — only cite files that were actually uploaded (list provided below).
+- If no source supports a claim, either use [Kira estimates] or omit the number.
 
 FORMAT
 - Wrap section in <div class="page page-{page_type}">…</div> (use the page_type from the plan).
@@ -558,26 +427,22 @@ HARD RULES
 - Never mention: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
 - Never frame KIRA as an "AI platform / SaaS / app". KIRA is a research house.
 - Never lead with "AI" in headlines.
-- If user-uploaded files are flagged for this section, lean on them as the primary data source and tag [user-input] for direct quotes/data.
+- If the uploaded sources don't cover this section, write it more qualitatively — do NOT fabricate numbers to fill space.
 
 Output: HTML for this single section only.`;
 
   const runOne = async (section) => {
-    const relevantFindings = (findings?.findings || []).find(
-      f => f.section_title && section.title && f.section_title.toLowerCase().includes(section.title.toLowerCase().slice(0, 24))
-    ) || { key_numbers: [], qualitative: [] };
-
     const userMsg = `Report context:
-${JSON.stringify(parsed)}
+${JSON.stringify({ country: parsed.country, industry: parsed.industry, year: parsed.year, scope: parsed.scope })}
 
 This section:
-${JSON.stringify(section)}
+${JSON.stringify({ title: section.title, brief: section.brief, page_type: section.page_type })}
 
-Relevant research findings:
-${JSON.stringify(relevantFindings)}
+Available source files (for inline citations — tag as [filename]):
+${JSON.stringify(sourceFilenames)}
 
-Available source aliases (use these in inline tags):
-${JSON.stringify((findings?.source_key || []).slice(0, 30))}
+Uploaded source material (verbatim text extracted from the files):
+${sourceBlock || '(no source material was provided — write the section using general industry knowledge only, tagged as [Kira estimates] where appropriate)'}
 
 Write the HTML for this section now.`;
 
@@ -623,30 +488,33 @@ Write the HTML for this section now.`;
 
 // ===============================================================
 // STAGE 7 — Assemble + render PDF + upload + insert row
+// Phase N.20: source_key now lists user-uploaded files instead of
+// external web sources, since the report is built from user inputs.
 // ===============================================================
-async function stage7AssembleAndRender({ jobId, userId, parsed, plan, findings, sectionsOut }) {
+async function stage7AssembleAndRender({ jobId, userId, parsed, plan, extracted, sectionsOut }) {
   const css = await loadMasterCss();
 
-  // Build a SOURCE KEY block from findings.source_key (L.3 traceability).
-  const sourceKeyItems = (findings?.source_key || []).slice(0, 40).map(s => {
-    const alias = String(s?.alias || '').trim();
-    const full  = String(s?.full_name || '').trim();
-    const url   = String(s?.url || '').trim();
-    if (!alias) return null;
-    const left  = `<span class="alias">${alias}</span>`;
-    const right = full ? ` = ${full}` : '';
-    const link  = url ? ` <a href="${url}" target="_blank" rel="noopener">link</a>` : '';
-    return `<li>${left}${right}${link}</li>`;
-  }).filter(Boolean).join('\n');
+  // Source key now lists the uploaded files that contributed.
+  const sourceKeyItems = (Array.isArray(extracted) ? extracted : [])
+    .slice(0, 40)
+    .map(f => {
+      const name = String(f?.filename || '').trim();
+      if (!name) return null;
+      const chars = Number(f?.char_count || 0);
+      const sizeLabel = chars >= 1000 ? `~${Math.round(chars / 1000)}K chars` : `${chars} chars`;
+      return `<li><span class="alias">${name}</span> <span style="color:#94A3B8;">· ${sizeLabel}</span></li>`;
+    })
+    .filter(Boolean)
+    .join('\n');
 
   const sourceKeyHtml = `
     <div class="page page-source_key">
       <div class="eyebrow">Source key</div>
       <h2>Source key &amp; traceability</h2>
       <ul class="source-key-list">
-        ${sourceKeyItems || '<li>Sources cited inline. No additional aliases.</li>'}
+        ${sourceKeyItems || '<li>No source files uploaded — report drafted from analyst inference (tagged [Kira estimates]).</li>'}
       </ul>
-      <div class="source-key">All numeric claims carry inline tags of the form [&lt;Alias&gt; &lt;year&gt;] or [Kira estimates]. Aliases above resolve to the named primary sources.</div>
+      <div class="source-key">Inline tags of the form [&lt;filename&gt;] resolve to the user-uploaded sources above. Tags of the form [Kira estimates] indicate analyst inference not directly traceable to an uploaded source.</div>
     </div>
   `;
 
@@ -787,8 +655,7 @@ export async function processStudioJob({ jobId, userId }) {
   tokIn  += s1.tokens_in;
   tokOut += s1.tokens_out;
   await log('done', 'parse',
-    `Topic locked: ${s1.parsed.industry || '—'} in ${s1.parsed.country || '—'} ${s1.parsed.year || ''} · `
-    + `research languages: English + ${s1.parsed.local_language_name || 'English'}`);
+    `Topic locked: ${s1.parsed.industry || '—'} in ${s1.parsed.country || '—'} ${s1.parsed.year || ''}`);
   await updateJobProgress(jobId, {
     progress: 12,
     stages_completed: [...(job.stages_completed || []), 'parse']
@@ -815,42 +682,38 @@ export async function processStudioJob({ jobId, userId }) {
     stages_completed: [...(job.stages_completed || []), 'parse', 'plan']
   });
 
-  // --- Stage 4 --------------------------------------------------
+  // --- Stage 2 (file extraction) — Phase N.20 -----------------
   await updateJobProgress(jobId, {
-    current_stage: `Searching ${s1.parsed.local_language_name || 'English'} + English sources…`,
-    progress: 30
+    current_stage: 'Extracting source files…',
+    progress: 28
   });
-  // Per-section parallel research (Phase N.17). Stage 4 now logs
-  // each "Researching: <title>" + "Searched: <query>" + "Section
-  // researched: …" event itself in real-time, so don't replay
-  // queries here.
-  const searchableCount = (s3.plan?.sections || []).filter(s => s && s.needs_search !== false).length;
+  const uploadedPaths = job.uploaded_file_paths || [];
   await log('stage', 'search',
-    `Researching ${searchableCount} sections in parallel · ${PER_SECTION_SEARCHES} searches each · English + ${s1.parsed.local_language_name || 'English'}…`);
-  const s4 = await stage4Research({ jobId, parsed: s1.parsed, plan: s3.plan, log });
-  tokIn  += s4.tokens_in;
-  tokOut += s4.tokens_out;
-  const sourceCount  = Array.isArray(s4.findings?.source_key) ? s4.findings.source_key.length : 0;
-  const findingCount = Array.isArray(s4.findings?.findings)   ? s4.findings.findings.length   : 0;
+    `Extracting ${uploadedPaths.length} uploaded source file${uploadedPaths.length === 1 ? '' : 's'}…`);
+  const s2 = await stage2ExtractFiles({
+    jobId, userId,
+    uploaded_file_paths: uploadedPaths,
+    log
+  });
   await log('done', 'search',
-    `Research complete · ${s4.queries?.length || 0} searches · ${sourceCount} sources captured · ${findingCount} section bundles`);
+    `Source extraction complete · ${s2.extracted.length} file${s2.extracted.length === 1 ? '' : 's'} · ${s2.total_chars.toLocaleString()} total chars`);
   await updateJobProgress(jobId, {
     progress: 55,
     stages_completed: [...(job.stages_completed || []), 'parse', 'plan', 'search']
   });
 
-  // --- Stage 5 --------------------------------------------------
+  // --- Stage 5 (draft sections from uploads) ------------------
   await updateJobProgress(jobId, {
     current_stage: 'Drafting sections (0/—)…',
     progress: 58
   });
   const sectionsToDraft = Math.min(sectionTitles.length, TARGET_SECTIONS);
   await log('stage', 'content',
-    `Drafting ${sectionsToDraft} sections in parallel (concurrency ${SECTION_CONCURRENCY})…`);
+    `Drafting ${sectionsToDraft} sections in parallel (concurrency ${SECTION_CONCURRENCY}) using uploaded sources…`);
   const s5 = await stage5Content({
     parsed: s1.parsed,
     plan: s3.plan,
-    findings: s4.findings,
+    extracted: s2.extracted,
     onSectionStart: async (section) => {
       await log('info', 'content', `Drafting: ${section.title}`);
     },
@@ -882,7 +745,7 @@ export async function processStudioJob({ jobId, userId }) {
     jobId, userId,
     parsed: s1.parsed,
     plan: s3.plan,
-    findings: s4.findings,
+    extracted: s2.extracted,
     sectionsOut: s5
   });
   await log('done', 'render', 'PDF rendered and uploaded');

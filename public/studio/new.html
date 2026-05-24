@@ -239,12 +239,12 @@
       root.innerHTML = `
         <section class="studio-hero">
           <div class="eyebrow">New report · ${escHtml(user.email || '')}</div>
-          <h1>Describe the market.</h1>
-          <p class="lede">A sentence or two is enough. Include country, sector, year, and any specific angles you care about. Optionally attach reference documents to ground the research in your data.</p>
+          <h1>Bring the research. We write the deliverable.</h1>
+          <p class="lede">Upload your source dossier — analyst notes, primary data, transcripts, regulator filings, financial models. Tell us what to make. Studio drafts a consulting-grade report from your sources in 3–5 minutes.</p>
         </section>
 
         <div class="templates-row">
-          <div class="label">Try a starting point</div>
+          <div class="label">Example brief</div>
           <div class="templates-chips" id="tpl-chips"></div>
         </div>
 
@@ -252,23 +252,24 @@
           <div id="studio-err"></div>
 
           <div class="studio-field">
-            <label for="topic">Topic</label>
-            <textarea id="topic" placeholder="e.g. EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment" maxlength="600"></textarea>
-            <div class="hint">Country, sector, year, angle. Whatever matters. Max 600 characters.</div>
+            <label for="topic">Report brief</label>
+            <textarea id="topic" placeholder="e.g. Vietnam legal services market 2026 — synthesise the attached firm-level revenue data and regulator notes into an investor-ready overview. Focus on M&A demand drivers." maxlength="600"></textarea>
+            <div class="hint">What angle do you want? Country, sector, year, any specific lens. Max 600 characters.</div>
           </div>
 
           <div class="studio-field">
-            <label>Documents (optional)</label>
+            <label>Source documents <span style="color:#C0392B;">*</span></label>
             <label for="files" class="upload-zone" id="upload-zone">
               <div class="upload-cta">Drop files here or click to attach</div>
-              <div class="upload-sub">PDF, DOCX, XLSX, CSV, TXT · max 25 MB each · up to 5 files</div>
+              <div class="upload-sub">PDF, DOCX, XLSX, CSV, TXT · max 25 MB each · up to 10 files · at least 1 required</div>
               <input type="file" id="files" multiple accept=".pdf,.docx,.xlsx,.csv,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain" />
             </label>
             <div class="upload-list" id="upload-list"></div>
+            <div class="hint" style="margin-top:8px;">Studio writes from your sources — no autonomous web search. Inline citations reference each filename. Better sources in → better report out.</div>
           </div>
 
           <div class="studio-actions">
-            <div class="left">In-house preview phase. Generation typically takes 8-14 minutes — you'll see live progress on the next page.</div>
+            <div class="left">In-house preview phase. Generation typically takes 3–5 minutes — you'll see live progress on the next page.</div>
             <button class="primary" id="generate-btn">Generate report →</button>
           </div>
         </section>
@@ -322,7 +323,7 @@
       filesEl.addEventListener('change', () => handleFileList(filesEl.files));
 
       async function handleFileList(fileList) {
-        if (uploads.length + fileList.length > 5) { showErr('Maximum 5 files per report.'); return; }
+        if (uploads.length + fileList.length > 10) { showErr('Maximum 10 files per report.'); return; }
         showErr('');
         for (const f of fileList) {
           if (f.size > 25 * 1024 * 1024) { showErr(`${f.name} is over 25 MB.`); continue; }
@@ -360,8 +361,12 @@
 
       generate.addEventListener('click', async () => {
         const topic = topicEl.value.trim();
-        if (!topic) { showErr('Please describe the topic.'); return; }
-        if (topic.length > 600) { showErr('Topic is too long — keep it under 600 characters.'); return; }
+        if (!topic) { showErr('Please describe the report brief.'); return; }
+        if (topic.length > 600) { showErr('Brief is too long — keep it under 600 characters.'); return; }
+        if (uploads.length === 0) {
+          showErr('Please attach at least 1 source file. Studio writes from your uploads — autonomous web search is not enabled in this phase.');
+          return;
+        }
 
         showErr('');
         generate.disabled = true;

@@ -40,7 +40,8 @@ export const config = {
 
 // ── input validation ───────────────────────────────────────────
 const MAX_TOPIC_LEN  = 600;
-const MAX_FILES      = 5;
+const MAX_FILES      = 10;
+const MIN_FILES      = 1;
 
 function validatePayload(body) {
   if (!body || typeof body !== 'object') return 'invalid_body';
@@ -48,15 +49,18 @@ function validatePayload(body) {
   if (!topic) return 'topic_required';
   if (topic.length > MAX_TOPIC_LEN) return 'topic_too_long';
 
-  if (body.uploaded_file_paths !== undefined) {
-    if (!Array.isArray(body.uploaded_file_paths)) return 'invalid_uploaded_file_paths';
-    if (body.uploaded_file_paths.length > MAX_FILES) return 'too_many_files';
-    for (const p of body.uploaded_file_paths) {
-      if (typeof p !== 'string' || !p) return 'invalid_file_path';
-      // Defense-in-depth: enforce <user_id>/<...> shape so a logged-in
-      // user can't reference another user's uploaded files.
-      if (p.includes('..') || p.startsWith('/')) return 'invalid_file_path';
-    }
+  // Phase N.20: file upload is now REQUIRED. Studio drafts the
+  // report from user-curated sources only — autonomous web_search
+  // has been removed.
+  if (!Array.isArray(body.uploaded_file_paths) || body.uploaded_file_paths.length < MIN_FILES) {
+    return 'files_required';
+  }
+  if (body.uploaded_file_paths.length > MAX_FILES) return 'too_many_files';
+  for (const p of body.uploaded_file_paths) {
+    if (typeof p !== 'string' || !p) return 'invalid_file_path';
+    // Defense-in-depth: enforce <user_id>/<...> shape so a logged-in
+    // user can't reference another user's uploaded files.
+    if (p.includes('..') || p.startsWith('/')) return 'invalid_file_path';
   }
   if (body.flags !== undefined && (typeof body.flags !== 'object' || Array.isArray(body.flags))) {
     return 'invalid_flags';

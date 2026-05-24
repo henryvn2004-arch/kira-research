@@ -74,6 +74,35 @@ export async function signStorageUrl(bucket, path, ttlSec = SIGNED_URL_TTL_SEC) 
 }
 
 // ---------------------------------------------------------------
+// Download an object from a private bucket using service-role key.
+// Returns a Node Buffer or null on failure. Used by the upload-only
+// Studio worker (Phase N.20) to read user-uploaded sources from
+// studio-inputs before extracting text.
+// ---------------------------------------------------------------
+export async function downloadFromBucket(bucket, path) {
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/${bucket}/${path}`,
+      {
+        headers: {
+          'apikey':        SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`
+        }
+      }
+    );
+    if (!r.ok) {
+      console.error(`[studio-shared] download ${bucket}/${path} failed:`, r.status);
+      return null;
+    }
+    const ab = await r.arrayBuffer();
+    return Buffer.from(ab);
+  } catch (err) {
+    console.error(`[studio-shared] download ${bucket}/${path} error:`, err.message);
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------
 // Upload a Buffer / Uint8Array to a bucket. Overwrites by default.
 // Returns true on success, false on failure (logged).
 // ---------------------------------------------------------------
