@@ -185,6 +185,30 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+// Phase N.24: defensively strip markdown code fences from Stage 5
+// output. Despite the prompt saying "HTML only", models sometimes
+// wrap their response in ```html ... ``` — and when N sections each
+// have a stray ```html at the top and ``` at the end, the master HTML
+// body ends up with literal backtick markers in between sections,
+// which breaks the document.
+//
+// Strips:
+//   • Leading ```html / ```HTML / ``` on its own line at the start
+//   • Trailing ``` at the end
+//   • Any inline `````` -> '' (sloppy escape collapses)
+function stripCodeFences(text) {
+  if (!text) return text;
+  let t = String(text);
+  // Remove a leading fence (with or without lang tag).
+  t = t.replace(/^\s*```[a-zA-Z]*\s*\n?/, '');
+  // Remove a trailing fence.
+  t = t.replace(/\n?```\s*$/, '');
+  // Also remove any stray standalone fence lines anywhere in the body
+  // — common when model emits multiple sections in one go.
+  t = t.replace(/^\s*```[a-zA-Z]*\s*$/gm, '');
+  return t.trim();
+}
+
 // ---------------------------------------------------------------
 // Anti-positioning blacklist — system prompt enforces it; we also
 // scrub belt-and-braces on every text chunk before assembly.
@@ -575,7 +599,16 @@ function buildSectionSystemPrompt({ report_kind, tone }) {
   const tg = TONE_GUIDE[String(tone || '').toLowerCase()] || TONE_GUIDE.neutral;
   return `You are an expert document writer drafting ONE section of a "${report_kind || 'document'}" for KIRA Studio. The user uploaded source material and described what they want; another LLM has already structured the deliverable. Your job: write this one section.
 
-Return HTML only — no preamble, no markdown, no commentary.
+OUTPUT FORMAT — STRICT
+Return RAW HTML ONLY. Your entire response must start with the opening <div> tag of the section and end with the matching </div>.
+
+DO NOT WRAP IN MARKDOWN CODE FENCES.
+  • NOT \`\`\`html ... \`\`\`
+  • NOT \`\`\` ... \`\`\`
+  • NOT ANY backtick fence.
+The renderer concatenates your output directly into the document body — any leading or trailing backticks become literal text in the final PDF and break rendering. This is the single most important rule.
+
+NO preamble ("Here's the section...", "Below is the HTML..."). NO commentary after the closing </div>. NO markdown headings (#, ##). Just HTML.
 
 VOICE FOR THIS DELIVERABLE
 ${tg}
@@ -653,7 +686,12 @@ Write the HTML for this section now.`;
     messages: [{ role: 'user', content: userMsg }]
   });
 
-  const html = scrub(textFromMessage(msg)) || `<div class="page"><h2>${section.title}</h2><p>Content unavailable.</p></div>`;
+  // Phase N.24: strip markdown code fences before scrubbing — models
+  // sometimes wrap output in ```html ... ``` despite the strict prompt.
+  // Literal backticks in the master HTML body break rendering.
+  const raw   = textFromMessage(msg);
+  const naked = stripCodeFences(raw);
+  const html  = scrub(naked) || `<div class="page"><h2>${escapeHtml(section.title)}</h2><p>Content unavailable.</p></div>`;
   return {
     title:     section.title,
     page_type: section.page_type,
@@ -828,8 +866,12 @@ ${pagesHtml}
   const htmlPath  = `${userId}/${reportId}/report.html`;
   const pdfPath   = `${userId}/${reportId}/report.pdf`;
 
+  // Phase N.24: explicit charset=utf-8 so browsers don't misinterpret
+  // the UTF-8 bytes as Latin-1 (which mangled em-dash to "â€"").
+  // Supabase preserves whatever Content-Type we set at upload time and
+  // serves it back on signed URL fetches.
   const pdfBytes = Buffer.from(rpJson.pdf_base64, 'base64');
-  const htmlOk = await uploadToBucket(STUDIO_REPORTS_BUCKET, htmlPath, Buffer.from(masterHtml, 'utf8'), 'text/html', true);
+  const htmlOk = await uploadToBucket(STUDIO_REPORTS_BUCKET, htmlPath, Buffer.from(masterHtml, 'utf8'), 'text/html; charset=utf-8', true);
   const pdfOk  = await uploadToBucket(STUDIO_REPORTS_BUCKET, pdfPath,  pdfBytes,                       'application/pdf', true);
   if (!htmlOk || !pdfOk) {
     throw new Error(`storage_upload_failed:html=${htmlOk},pdf=${pdfOk}`);
