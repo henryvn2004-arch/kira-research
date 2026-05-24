@@ -165,9 +165,11 @@
         </div>
       </div>
       <div class="rpt-frame-wrap">
-        ${data.html_url
-          ? `<iframe class="rpt-frame" src="${escHtml(data.html_url)}" title="${escHtml(data.title)}"></iframe>`
-          : `<div class="rpt-status"><h2>HTML edition pending</h2><p>The HTML edition is still being prepared. The PDF download above is ready.</p></div>`
+        ${data.full_content
+          ? `<iframe class="rpt-frame" srcdoc="${escHtml(data.full_content)}" title="${escHtml(data.title)}"></iframe>`
+          : data.html_url
+            ? `<iframe class="rpt-frame" src="${escHtml(data.html_url)}" title="${escHtml(data.title)}"></iframe>`
+            : `<div class="rpt-status"><h2>HTML edition pending</h2><p>The HTML edition is still being prepared. The PDF download above is ready.</p></div>`
         }
       </div>
     `;

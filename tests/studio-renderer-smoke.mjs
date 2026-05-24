@@ -37,8 +37,8 @@ const MOCK_SLOTS = {
       { label: 'Coverage',    num: '63',   unit: 'cities',change: 'flat',     change_dir: '',     source_tag: 'estimate',source_label: '[Kira estimates]' }
     ],
     narrative: [
-      { heading: 'Growth held but quality slipped.',  body_html: 'Top-line expansion of 14% YoY [annual-report.pdf] outpaced the sector mean of 8% [Kira estimates], yet EBITDA margin compressed by 2pp on rising marketing spend.' },
-      { heading: 'Cohort behavior is the question.',  body_html: 'The 420K customer base [annual-report.pdf] hides a barbell — high-LTV enterprise plus low-LTV consumer trial. Q4 churn was concentrated in the latter.' }
+      { heading: 'Growth held but quality slipped.',  body_html: 'Top-line expansion of <strong>14% YoY</strong> [annual-report.pdf] outpaced the sector mean of 8% [Kira estimates], yet EBITDA margin compressed by 2pp on rising marketing spend.' },
+      { heading: 'Cohort behavior is the question.',  body_html: 'The 420K customer base [annual-report.pdf] hides a barbell — <em>high-LTV enterprise</em> plus <em>low-LTV consumer trial</em>. Q4 churn was concentrated in the latter.' }
     ],
     chart_title:    'Revenue trajectory',
     chart_subtitle: '2021 – 2024 (consolidated)',

@@ -299,9 +299,18 @@ function esc(s) {
 // `raw` keys (with & or triple-brace) are inserted unescaped — used
 // for slot values that are HTML fragments (narrative body, anchor html).
 // ============================================================
+// N.27.4: keys ending in _HTML or _SVG are RAW insertions (markup-bearing).
+// All other {{KEY}} substitutions are escaped to prevent injection of
+// unintended HTML from user-typed labels / titles / source citations.
+function _isRawKey(key) {
+  return /(_HTML|_SVG)$/i.test(key);
+}
+
 function applyPlaceholders(html, scope) {
   if (!html) return html;
   return html
+    // Explicit raw forms — also supported for forward compatibility:
+    //   {{{KEY}}}  or  {{&KEY}}  → never escape.
     .replace(/\{\{\{([A-Z0-9_]+)\}\}\}/g, (_, key) => {
       const v = scope[key] ?? scope[key.toLowerCase()];
       return v == null ? '' : String(v);
@@ -310,9 +319,14 @@ function applyPlaceholders(html, scope) {
       const v = scope[key] ?? scope[key.toLowerCase()];
       return v == null ? '' : String(v);
     })
+    // Default form: {{KEY}}. Raw if name signals markup (ends in
+    // _HTML / _SVG), escaped otherwise. This is the convention the
+    // KIRA page_components.html templates use — body_html, anchor_html,
+    // chart_svg, etc. carry raw markup that must not be escaped.
     .replace(/\{\{([A-Z0-9_]+)\}\}/g, (_, key) => {
       const v = scope[key] ?? scope[key.toLowerCase()];
-      return v == null ? '' : esc(v);
+      if (v == null) return '';
+      return _isRawKey(key) ? String(v) : esc(v);
     });
 }
 

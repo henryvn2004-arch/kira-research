@@ -889,12 +889,50 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
       slots.footer_text = footerText;
     }
 
+    // Defensive: detect when the LLM returned slots with all loop
+    // arrays empty (so the template would render as a near-blank page).
+    // Fall back to narrative_page, picking up whatever scalar text the
+    // LLM did fill (subhead, headings inside other slots, etc).
+    const meta = getTemplateMeta(tid);
+    let emptyLoops = false;
+    if (meta?.loops?.length) {
+      emptyLoops = meta.loops.every(loop => {
+        const arr = slots[loop.key];
+        return !Array.isArray(arr) || arr.length === 0;
+      });
+    }
+
+    if (emptyLoops && tid !== 'narrative_page') {
+      console.warn(`[studio-worker] section "${draft.title}" (${tid}) returned all-empty loops — falling back to narrative_page`);
+      // Build a paragraphs array from whatever the LLM gave us.
+      const paragraphs = [];
+      if (typeof slots.subhead_html === 'string' && slots.subhead_html) {
+        paragraphs.push({ heading: draft.title, body_html: slots.subhead_html });
+      }
+      if (Array.isArray(slots.narrative))   paragraphs.push(...slots.narrative);
+      if (Array.isArray(slots.paragraphs))  paragraphs.push(...slots.paragraphs);
+      if (paragraphs.length === 0) {
+        paragraphs.push({
+          heading: draft.title,
+          body_html: '<em>The drafter did not produce structured content for this section — the uploaded sources may not have covered this topic in enough depth.</em>'
+        });
+      }
+      const fallback = await renderTemplate('narrative_page', {
+        section_tag:  slots.section_tag || `Section · ${draft.title}`,
+        page_h1:      slots.page_h1 || draft.title,
+        subhead_html: '',
+        paragraphs,
+        footer_text:  footerText
+      });
+      sectionPagesHtml.push(fallback);
+      continue;
+    }
+
     try {
       const html = await renderTemplate(tid, slots);
       sectionPagesHtml.push(html);
     } catch (err) {
       console.warn(`[studio-worker] template render failed for section "${draft.title}" (${tid}):`, err.message);
-      // Fall back to narrative_page with the slots' textual content best-efforted.
       const fallback = await renderTemplate('narrative_page', {
         section_tag: slots.section_tag,
         page_h1:     slots.page_h1 || draft.title,
@@ -1005,7 +1043,12 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
     industry:     parsed.industry || null,
     year:         parsed.year     || null,
     toc:          (plan?.sections || []).map(s => ({ title: s.title, page_type: s.page_type, template_id: s.template_id })),
-    full_content: null,                  // full HTML lives in storage; row carries metadata only
+    // N.27.4: store the assembled HTML directly in the JSONB row so
+    // the viewer can render via iframe srcdoc — bypasses Supabase
+    // storage Content-Type quirks that were serving HTML as text/plain
+    // (raw source visible in browser, mojibake on non-ASCII). HTML
+    // still also goes to the bucket as a backup / for direct download.
+    full_content: masterHtml,
     pages:        rpJson.page_count || (sectionsOut?.sections?.length || 0) + 2
   });
   const reportRow = Array.isArray(insertedReport) ? insertedReport[0] : insertedReport;
