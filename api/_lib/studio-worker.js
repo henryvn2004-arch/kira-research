@@ -49,12 +49,13 @@ import {
   renderCoverPage,
   renderSourceKeyPage,
   applyPageNumbers,
-  loadMasterWrapper
+  loadMasterWrapper,
+  loadMasterCssRobust
 } from './studio-templates.js';
 import { renderPptxBuffer } from './studio-pptx.js';
-import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+// Note: fs/path imports removed in N.27.1 — file IO moved to
+// studio-templates.js loadMasterCssRobust() / findTemplateFile()
+// which handles bundling-fallback path candidates.
 
 // ---------------------------------------------------------------
 // Configuration knobs
@@ -99,25 +100,20 @@ const MAX_TOTAL_EXTRACTED_CHARS = 400_000; // ~100K tokens — total source budg
 // web_search tool — should reliably finish in <40s.
 const ANTHROPIC_REQUEST_TIMEOUT_MS = 90 * 1000;
 
-const SKILL_DIR = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '..', '..', 'skills', 'kira-research-report'
-);
-
 // ---------------------------------------------------------------
 // Lazy-loaded master CSS — keeps Studio outputs visually identical
 // to consulting reports (per Henry's no-watermark brief).
+// Uses the same robust path-candidate fallback as studio-templates.js
+// so bundling quirks don't silently drop the CSS.
 // ---------------------------------------------------------------
 let _cachedCss = null;
 async function loadMasterCss() {
   if (_cachedCss) return _cachedCss;
-  try {
-    _cachedCss = await readFile(
-      path.join(SKILL_DIR, 'templates', 'master_styles.css'),
-      'utf8'
-    );
-  } catch (err) {
-    console.warn('[studio-worker] master_styles.css unavailable, using minimal fallback:', err.message);
+  const found = await loadMasterCssRobust();
+  if (found) {
+    _cachedCss = found;
+  } else {
+    console.warn('[studio-worker] master_styles.css unavailable, using minimal fallback');
     _cachedCss = `
       body { font-family: 'Inter', system-ui, sans-serif; margin: 0; color: #0F172A; background:#fff; }
       .page { width: 1280px; min-height: 720px; padding: 72px; box-sizing: border-box; page-break-after: always; }

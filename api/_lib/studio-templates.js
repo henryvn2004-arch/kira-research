@@ -39,10 +39,44 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const SKILL_DIR = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '..', '..', 'skills', 'kira-research-report'
-);
+// ============================================================
+// Robust path resolution for the bundled templates.
+//
+// On Vercel, `import.meta.url` of a module imported from a function
+// can resolve to either:
+//   • file:///var/task/api/_lib/studio-templates.js  (separate files)
+//   • file:///var/task/api/inngest.js                (bundled, rare)
+// And `process.cwd()` is `/var/task` either way.
+//
+// We try several candidate base dirs in order and return the first
+// existing file. This survives ESM bundling quirks AND local dev
+// (where __dirname-equivalent works fine).
+// ============================================================
+const _moduleDir = path.dirname(fileURLToPath(import.meta.url));
+const CANDIDATE_SKILL_DIRS = [
+  path.join(_moduleDir, '..', '..', 'skills', 'kira-research-report'),
+  path.join(process.cwd(), 'skills', 'kira-research-report'),
+  '/var/task/skills/kira-research-report',
+  // last resort: assume we're somewhere with skills/ as sibling
+  path.resolve('skills', 'kira-research-report')
+];
+
+async function findTemplateFile(filename) {
+  let lastErr;
+  for (const base of CANDIDATE_SKILL_DIRS) {
+    const candidate = path.join(base, 'templates', filename);
+    try {
+      const data = await readFile(candidate, 'utf8');
+      return { data, path: candidate };
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  const tried = CANDIDATE_SKILL_DIRS.map(b => path.join(b, 'templates', filename)).join(' | ');
+  const msg = `templates_file_not_found:${filename} (tried: ${tried}) — last: ${lastErr?.message}`;
+  console.warn(`[studio-templates] ${msg}`);
+  throw new Error(msg);
+}
 
 // ============================================================
 // Template allowlist for Studio
@@ -222,10 +256,8 @@ let _cachedTemplates = null;
 
 async function loadRawTemplatesFile() {
   if (_cachedRawHtml) return _cachedRawHtml;
-  _cachedRawHtml = await readFile(
-    path.join(SKILL_DIR, 'templates', 'page_components.html'),
-    'utf8'
-  );
+  const { data } = await findTemplateFile('page_components.html');
+  _cachedRawHtml = data;
   return _cachedRawHtml;
 }
 
@@ -894,9 +926,24 @@ export function applyPageNumbers(allPagesHtml) {
 // ============================================================
 // MASTER WRAPPER — final document shell with embedded master CSS.
 // ============================================================
+let _cachedWrapper = null;
 export async function loadMasterWrapper() {
-  return readFile(
-    path.join(SKILL_DIR, 'templates', 'master_wrapper.html'),
-    'utf8'
-  );
+  if (_cachedWrapper) return _cachedWrapper;
+  const { data } = await findTemplateFile('master_wrapper.html');
+  _cachedWrapper = data;
+  return _cachedWrapper;
+}
+
+// Master CSS — also exposed here so studio-worker can use the same
+// candidate-paths fallback when bundling moves files around.
+let _cachedCssExternal = null;
+export async function loadMasterCssRobust() {
+  if (_cachedCssExternal) return _cachedCssExternal;
+  try {
+    const { data } = await findTemplateFile('master_styles.css');
+    _cachedCssExternal = data;
+  } catch (_err) {
+    _cachedCssExternal = null;
+  }
+  return _cachedCssExternal;
 }
