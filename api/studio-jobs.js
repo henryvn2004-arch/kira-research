@@ -6,7 +6,9 @@
 //   Authorization: Bearer <supabase-jwt>
 //   Body: { topic_input, uploaded_file_paths?, flags? }
 //   → 202 { job_id, status: 'pending' }
-//     ↳ kicks off background processing via @vercel/functions waitUntil
+//     ↳ fires `studio/job.created` event to Inngest cloud, which then
+//       webhooks back into /api/inngest to execute the workflow.
+//       See api/_lib/studio-workflow.js for the orchestration.
 //
 //   GET  /api/studio-jobs?id=<uuid>
 //   Authorization: Bearer <supabase-jwt>
@@ -15,27 +17,33 @@
 //   GET  /api/studio-jobs  (no id)
 //   → { jobs: [last 50] }   — user's own jobs only
 //
-// Worker timeout: 800s (configured per-route in vercel.json). If the
-// full gen overruns, the job is marked failed with error_code='timeout'
-// from inside the worker (best-effort) — caller should treat any job
-// stuck in 'running' for > 15min as effectively failed.
+// PHASE N.22 — INNGEST MIGRATION
+// ------------------------------
+// Previously we used Vercel's @vercel/functions `waitUntil()` to keep
+// this handler alive after returning 202, then ran the multi-stage
+// worker inline. That broke under load because Vercel's `waitUntil`
+// background context proved unreliable for sequential outbound
+// Anthropic API calls — calls hung indefinitely with no working
+// timeout/abort mechanism (see N.16-N.21 commit history).
+//
+// New model: this endpoint just publishes an event. Inngest cloud
+// fans the work out into many short-lived independent invocations,
+// each with its own platform-level retry/timeout budget. The webhook
+// endpoint lives at /api/inngest.
 // ============================================================
 
-import { waitUntil } from '@vercel/functions';
+import { inngest } from './_lib/inngest-client.js';
 import {
   sb, verifyBearer, cors, updateJobProgress, logActivity
 } from './_lib/studio-shared.js';
-import { processStudioJob } from './_lib/studio-worker.js';
 
-// Per-route override — the worker drives a multi-stage Anthropic SDK
-// orchestration that can take 8-14 minutes end-to-end. Vercel Pro
-// allows up to 900s; we leave headroom for the response to flush
-// after waitUntil() finishes. Configured here (matching the
-// api/render-pdf.js pattern) so it isn't double-declared in
-// vercel.json — overlapping function patterns are rejected by the
-// Vercel CLI as "unmatched function pattern".
+// Per-route override no longer needed for the long worker lifetime —
+// Inngest carries that load. We keep a small bump only because the
+// initial `inngest.send()` could be slow under cold-start network
+// jitter; default 60s is plenty but 30s is the documented Inngest
+// publish ceiling so we leave headroom.
 export const config = {
-  maxDuration: 800
+  maxDuration: 60
 };
 
 // ── input validation ───────────────────────────────────────────
@@ -146,44 +154,39 @@ export default async function handler(req, res) {
         return;
       }
 
-      // Respond immediately, then continue processing in background.
-      // waitUntil keeps the function alive up to maxDuration (800s).
+      // Publish event → Inngest cloud will webhook /api/inngest to
+      // run the workflow. The workflow itself updates job status,
+      // progress, activity_log, etc. — this handler just hands off
+      // and returns 202 immediately.
+      try {
+        await inngest.send({
+          name: 'studio/job.created',
+          data: { jobId: job.id, userId: user.id }
+        });
+      } catch (sendErr) {
+        // If event dispatch fails, the job is stuck in 'pending'.
+        // Mark it failed inline so the user sees an error instead of
+        // a hung progress bar.
+        const errMsg = String(sendErr && sendErr.message || sendErr).slice(0, 4000);
+        console.error('[studio-jobs] inngest.send failed:', sendErr);
+        await updateJobProgress(job.id, {
+          status:        'failed',
+          error_code:    'dispatch_failed',
+          error_log:     errMsg,
+          completed_at:  new Date().toISOString()
+        }).catch(() => {});
+        await logActivity(job.id, {
+          ts:     new Date().toISOString(),
+          type:   'error',
+          stage:  'parse',
+          msg:    'Could not dispatch the job to the worker queue',
+          detail: { error: errMsg.slice(0, 600) }
+        }).catch(() => {});
+        res.status(500).json({ error: 'dispatch_failed', job_id: job.id });
+        return;
+      }
+
       res.status(202).json({ job_id: job.id, status: 'pending' });
-
-      waitUntil((async () => {
-        try {
-          await updateJobProgress(job.id, {
-            status: 'running',
-            started_at: new Date().toISOString(),
-            current_stage: 'Starting…',
-            progress: 1
-          });
-          await logActivity(job.id, {
-            ts: new Date().toISOString(),
-            type: 'info',
-            stage: 'parse',
-            msg: 'Worker picked up the job — starting…'
-          });
-          await processStudioJob({ jobId: job.id, userId: user.id });
-        } catch (err) {
-          const errMsg = String(err && err.message || err).slice(0, 4000);
-          console.error('[studio-jobs] worker error:', err);
-          await updateJobProgress(job.id, {
-            status:        'failed',
-            error_code:    'worker_error',
-            error_log:     errMsg,
-            completed_at:  new Date().toISOString()
-          });
-          await logActivity(job.id, {
-            ts: new Date().toISOString(),
-            type: 'error',
-            stage: 'render',
-            msg: 'Job failed — see error log for details',
-            detail: { error: errMsg.slice(0, 600) }
-          });
-        }
-      })());
-
       return;
     }
 

@@ -65,6 +65,7 @@ const SECTION_CONCURRENCY = 1;
 // so a verbose plan can't blow Stage 5's wall-clock budget.
 const MIN_SECTIONS   = 3;
 const MAX_SECTIONS   = 12;
+export { MIN_SECTIONS, MAX_SECTIONS };
 
 // ── Phase N.20: upload-only architecture ────────────────────
 // Stage 4 (Anthropic web_search) was removed. The autonomous
@@ -187,7 +188,11 @@ function scrub(text) {
 // ===============================================================
 // STAGE 1 — Parse topic input
 // ===============================================================
-async function stage1ParseTopic({ topic_input, uploaded_file_paths }) {
+// Phase N.22: each stage fn is exported so api/_lib/studio-workflow.js
+// (Inngest function) can call them as independent step.run() bodies.
+// The legacy in-process orchestrator `processStudioJob` (below) still
+// works via waitUntil but is no longer the active execution path.
+export async function stage1ParseTopic({ topic_input, uploaded_file_paths }) {
   const c = client();
   const system = `You are the input parser for KIRA Research's Studio report generator.
 
@@ -247,7 +252,7 @@ Return JSON only.`;
 // invented titles like "Macroeconomic context" for files that had
 // no macro data, leaving Stage 5 to fabricate.
 // ===============================================================
-async function stage3PlanSections({ parsed, extracted, topic_input }) {
+export async function stage3PlanSections({ parsed, extracted, topic_input }) {
   const c = client();
   const files = Array.isArray(extracted) ? extracted : [];
   const filenames = files.map(f => f.filename);
@@ -359,7 +364,7 @@ Decide the section structure. Return JSON only.`;
 // actual analyst workflow (analysts curate sources first, then
 // write), and aligns with the "for pro analysts" positioning.
 // ===============================================================
-async function stage2ExtractFiles({ jobId, userId, uploaded_file_paths, log }) {
+export async function stage2ExtractFiles({ jobId, userId: _userId, uploaded_file_paths, log }) {
   const paths = Array.isArray(uploaded_file_paths) ? uploaded_file_paths : [];
   if (paths.length === 0) {
     return { extracted: [], total_chars: 0 };
@@ -448,24 +453,14 @@ async function stage2ExtractFiles({ jobId, userId, uploaded_file_paths, log }) {
 
 
 // ===============================================================
-// STAGE 5 — Generate per-section HTML (parallel, capped)
-// Phase N.20: takes user-uploaded source material instead of
-// web_search findings. Source attribution tags reference filenames
-// (e.g. [annual-report.pdf]) instead of named external sources.
+// STAGE 5 — Draft a single section
+// Phase N.22: refactored to a per-section function so the Inngest
+// workflow can wrap each section in its own step.run() — each one
+// becomes an independent Vercel function invocation with platform-
+// level timeout/retry. This is THE fix for the multi-section hang
+// bug that killed N.16-N.21.
 // ===============================================================
-async function stage5Content({ parsed, plan, extracted, onSectionStart, onSectionDone }) {
-  const c = client();
-  const sections = (plan?.sections || []).slice(0, MAX_SECTIONS);
-
-  // Build the source-material block once — same context is passed
-  // to every section call so Claude can draw on any file for any
-  // section. Each file is tagged so inline citations can reference it.
-  const sourceBlock = (Array.isArray(extracted) ? extracted : [])
-    .map((f, i) => `### Source ${i + 1}: ${f.filename}\n${f.text}`)
-    .join('\n\n');
-  const sourceFilenames = (Array.isArray(extracted) ? extracted : []).map(f => f.filename);
-
-  const system = `You are a senior consultant at KIRA Research writing a section of a market report.
+const SECTION_SYSTEM_PROMPT = `You are a senior consultant at KIRA Research writing a section of a market report.
 
 You write ONE section at a time and return HTML only — no preamble, no markdown, no commentary.
 
@@ -499,8 +494,14 @@ HARD RULES
 
 Output: HTML for this single section only.`;
 
-  const runOne = async (section) => {
-    const userMsg = `Report context:
+export async function stage5DraftSection({ section, parsed, extracted }) {
+  const c = client();
+  const sourceBlock = (Array.isArray(extracted) ? extracted : [])
+    .map((f, i) => `### Source ${i + 1}: ${f.filename}\n${f.text}`)
+    .join('\n\n');
+  const sourceFilenames = (Array.isArray(extracted) ? extracted : []).map(f => f.filename);
+
+  const userMsg = `Report context:
 ${JSON.stringify({ country: parsed.country, industry: parsed.industry, year: parsed.year, scope: parsed.scope })}
 
 This section:
@@ -514,24 +515,28 @@ ${sourceBlock || '(no source material was provided — write the section using g
 
 Write the HTML for this section now.`;
 
-    const msg = await c.messages.create({
-      model: MODEL,
-      max_tokens: 2048,
-      system,
-      messages: [{ role: 'user', content: userMsg }]
-    });
+  const msg = await c.messages.create({
+    model: MODEL,
+    max_tokens: 2048,
+    system: SECTION_SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userMsg }]
+  });
 
-    const html = scrub(textFromMessage(msg)) || `<div class="page"><h2>${section.title}</h2><p>Content unavailable.</p></div>`;
-    return {
-      title: section.title,
-      page_type: section.page_type,
-      html,
-      tokens_in:  msg.usage?.input_tokens  || 0,
-      tokens_out: msg.usage?.output_tokens || 0
-    };
+  const html = scrub(textFromMessage(msg)) || `<div class="page"><h2>${section.title}</h2><p>Content unavailable.</p></div>`;
+  return {
+    title: section.title,
+    page_type: section.page_type,
+    html,
+    tokens_in:  msg.usage?.input_tokens  || 0,
+    tokens_out: msg.usage?.output_tokens || 0
   };
+}
 
-  // Concurrency-capped Promise.all.
+// Legacy multi-section orchestrator — still used by `processStudioJob`
+// fallback path. The Inngest workflow uses `stage5DraftSection` directly
+// to split sections into independent step.run() invocations.
+async function stage5Content({ parsed, plan, extracted, onSectionStart, onSectionDone }) {
+  const sections = (plan?.sections || []).slice(0, MAX_SECTIONS);
   const results = new Array(sections.length);
   let cursor = 0;
   let completed = 0;
@@ -540,7 +545,7 @@ Write the HTML for this section now.`;
       const idx = cursor++;
       if (idx >= sections.length) return;
       if (onSectionStart) await onSectionStart(sections[idx], idx);
-      results[idx] = await runOne(sections[idx]);
+      results[idx] = await stage5DraftSection({ section: sections[idx], parsed, extracted });
       completed++;
       if (onSectionDone) await onSectionDone(completed, sections.length, sections[idx]);
     }
@@ -548,7 +553,6 @@ Write the HTML for this section now.`;
   await Promise.all(
     Array.from({ length: Math.min(SECTION_CONCURRENCY, sections.length) }, worker)
   );
-
   const tokens_in  = results.reduce((a, r) => a + (r?.tokens_in  || 0), 0);
   const tokens_out = results.reduce((a, r) => a + (r?.tokens_out || 0), 0);
   return { sections: results, tokens_in, tokens_out };
@@ -559,7 +563,7 @@ Write the HTML for this section now.`;
 // Phase N.20: source_key now lists user-uploaded files instead of
 // external web sources, since the report is built from user inputs.
 // ===============================================================
-async function stage7AssembleAndRender({ jobId, userId, parsed, plan, extracted, sectionsOut }) {
+export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, extracted, sectionsOut }) {
   const css = await loadMasterCss();
 
   // Source key now lists the uploaded files that contributed.
