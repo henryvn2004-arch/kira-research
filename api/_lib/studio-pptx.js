@@ -101,17 +101,10 @@ function addPageHeader(slide, { sectionTag, pageNum, totalPages }) {
 }
 
 function addPageFooter(slide, { footerText }) {
-  // KIRA. RESEARCH logo
-  slide.addText([
-    { text: 'KIRA',     options: { bold: true, color: C_INK,     fontSize: 9 } },
-    { text: '.',        options: { bold: true, color: C_PRIMARY, fontSize: 9 } },
-    { text: ' RESEARCH',options: { bold: false,color: C_MID,     fontSize: 9, charSpacing: 3 } }
-  ], {
-    x: 0.5, y: 7.15, w: 4, h: 0.25,
-    fontFace: 'Calibri'
-  });
+  // N.27.6: no KIRA branding — Studio output is the user's document.
+  // Footer keeps only the right-aligned deliverable subject text.
   slide.addText(String(footerText || ''), {
-    x: 6, y: 7.15, w: 6.83, h: 0.25,
+    x: 0.5, y: 7.15, w: 12.33, h: 0.25,
     fontFace: 'Calibri', fontSize: 8, color: C_MUTED, align: 'right'
   });
 }
@@ -139,15 +132,8 @@ function renderCoverSlide(pres, { finalTitle, subtitle, reportKind, primarySubje
   const slide = pres.addSlide();
   slide.background = { color: C_WHITE };
 
-  // Top brand mark
-  slide.addText([
-    { text: 'KIRA',     options: { bold: true, color: C_INK,     fontSize: 22 } },
-    { text: '.',        options: { bold: true, color: C_PRIMARY, fontSize: 22 } },
-    { text: ' RESEARCH',options: { color: C_PRIMARY, fontSize: 10, charSpacing: 5, bold: true } }
-  ], {
-    x: 0.6, y: 0.5, w: 8, h: 0.45,
-    fontFace: 'Calibri', valign: 'middle'
-  });
+  // N.27.6: no KIRA branding on the cover — Studio output is the
+  // user's document. Top of the cover stays blank.
 
   // Eyebrow line
   const eyebrowParts = [country, industry, year].filter(Boolean);
@@ -174,16 +160,15 @@ function renderCoverSlide(pres, { finalTitle, subtitle, reportKind, primarySubje
     });
   }
 
-  // Meta row at bottom
+  // Meta row at bottom — no Kira-attributed confidential cell.
   const today = new Date();
   const dateStr = today.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
   const metaCells = [
     { label: 'Subject',   value: primarySubject || reportKind || '—' },
     { label: 'Kind',      value: reportKind || 'Document' },
-    { label: 'Published', value: dateStr },
-    { label: 'Confidential', value: 'Single-user license' }
+    { label: 'Published', value: dateStr }
   ];
-  const cellW = 12.13 / 4;
+  const cellW = 12.13 / 3;
   metaCells.forEach((c, i) => {
     const x = 0.6 + i * cellW;
     slide.addText(c.label.toUpperCase(), {
@@ -562,15 +547,7 @@ function renderDivider(pres, slot, ctx) {
     });
   });
 
-  // Dark-mode logo
-  slide.addText([
-    { text: 'KIRA',     options: { bold: true, color: C_WHITE,   fontSize: 9 } },
-    { text: '.',        options: { bold: true, color: C_PRIMARY, fontSize: 9 } },
-    { text: ' RESEARCH',options: { color: 'CBD5E1', fontSize: 9, charSpacing: 3 } }
-  ], {
-    x: 0.6, y: 7.15, w: 4, h: 0.25,
-    fontFace: 'Calibri'
-  });
+  // N.27.6: no KIRA branding on divider — Studio output is the user's document.
 }
 
 // ============================================================
@@ -639,7 +616,7 @@ function renderSourceKeySlide(pres, { extracted, totalPages, footerText }) {
   });
 
   if (items.length === 0) {
-    slide.addText('No source files uploaded — deliverable drafted from analyst inference (tagged [Kira estimates]).', {
+    slide.addText('No source files uploaded — deliverable drafted from analyst inference (tagged [Estimate]).', {
       x: 0.5, y: startY, w: 12.33, h: 0.4,
       fontFace: 'Calibri', fontSize: 10, color: C_MID, italic: true
     });

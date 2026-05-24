@@ -447,6 +447,10 @@ export async function renderTemplate(templateId, slots) {
   //    left over from templates with conditional alternates.
   html = cleanupEmptyBlocks(html);
 
+  // 5) Strip all KIRA branding (logo footer, hardcoded section tags,
+  //    © attribution). Studio output is the user's document.
+  html = stripStudioBranding(html, enrichedSlots);
+
   return html;
 }
 
@@ -474,11 +478,56 @@ function renderNarrativePage(slots) {
       <div class="exec-narrative">${blocks}</div>
     </div>
     <div class="page-footer">
-      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div class="logo-foot"></div>
       <div>${esc(slots.footer_text || '')}</div>
     </div>
   </div>
 </div>`;
+}
+
+// ============================================================
+// stripStudioBranding — post-processor applied to every rendered
+// page so the Studio output has zero KIRA branding (the page
+// templates in page_components.html were authored for the paid
+// consulting reports and contain hardcoded KIRA marks/footers).
+//
+// Removes:
+//   • <div class="logo-foot">KIRA. RESEARCH</div> page footers
+//   • Hardcoded section tags ("Section 02 · Methodology" etc.)
+//     are replaced with the slot.section_tag value
+//   • Any © YEAR KIRA Research attribution
+// ============================================================
+function stripStudioBranding(html, slots = {}) {
+  let out = html;
+  // 1) Empty the KIRA logo footer.
+  out = out.replace(
+    /<div class="logo-foot">[\s\S]*?<\/div>/g,
+    '<div class="logo-foot"></div>'
+  );
+  // 2) Replace hardcoded section tags in templates with slot value.
+  if (slots.section_tag) {
+    out = out.replace(
+      /<div class="page-section-tag">Section \d+[^<]*?<\/div>/g,
+      `<div class="page-section-tag">${esc(slots.section_tag)}</div>`
+    );
+  } else {
+    out = out.replace(
+      /<div class="page-section-tag">Section \d+[^<]*?<\/div>/g,
+      `<div class="page-section-tag"></div>`
+    );
+  }
+  // 3) Strip © YEAR KIRA Research attribution lines anywhere in the doc.
+  out = out.replace(/©\s*\d{4}\s*KIRA Research/gi, '');
+  // 4) Strip any divider-page dark KIRA logo block (re-uses .logo-foot or inline).
+  out = out.replace(
+    /<div[^>]*class="[^"]*divider-logo[^"]*"[^>]*>[\s\S]*?<\/div>/gi,
+    ''
+  );
+  // 5) Defensive: rename any leftover "Kira estimates" source tag the
+  //    LLM produces (during prompt-update transition) to the neutral form.
+  out = out.replace(/\[Kira estimates\]/gi, '[Estimate]');
+  out = out.replace(/\bKira estimates\b/gi, 'Estimate');
+  return out;
 }
 
 // ============================================================
@@ -528,14 +577,13 @@ export function renderCoverPage({ finalTitle, subtitle, reportKind, primarySubje
 
   const reportId = (jobId ? String(jobId).replace(/[^a-z0-9]/gi, '').slice(-8).toUpperCase() : 'STUDIO');
 
+  // N.27.6: Studio output is the user's document. No KIRA branding
+  // on the cover — no logo mark, no "© KIRA Research" attribution.
   return `<div class="page cover">
   <div class="cover-grid"></div>
   <div class="cover-content">
     <div class="page-inner">
-      <div class="cover-top">
-        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
-        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
-      </div>
+      <div class="cover-top"></div>
       <div class="cover-main">
         <div class="cover-eyebrow">${esc(eyebrow)}</div>
         <h1>${esc(line1)}${line2 ? `<br>${esc(line2)}` : ''}${accent ? ` <span class="accent">${esc(accent)}</span>` : ''}</h1>
@@ -546,9 +594,8 @@ export function renderCoverPage({ finalTitle, subtitle, reportKind, primarySubje
           <div class="cover-meta-item"><div class="label">Subject</div><div class="val">${esc(primarySubject || reportKind || '—')}</div></div>
           <div class="cover-meta-item"><div class="label">Kind</div><div class="val">${esc(reportKind || 'Document')}</div></div>
           <div class="cover-meta-item"><div class="label">Published</div><div class="val">${esc(publishDate)}</div></div>
-          <div class="cover-meta-item"><div class="label">Report ID</div><div class="val"><span class="accent">${esc(reportId)}</span></div></div>
+          <div class="cover-meta-item"><div class="label">Ref</div><div class="val"><span class="accent">${esc(reportId)}</span></div></div>
         </div>
-        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · Single-user license · © ${yearStr} KIRA Research</div>
       </div>
     </div>
   </div>
@@ -583,16 +630,16 @@ export function renderSourceKeyPage({ extracted, totalPages }) {
       <div class="page-section-counter">${esc(totalPages)} / ${esc(totalPages)}</div>
     </div>
     <h1 class="page-h1">Source key.</h1>
-    <p class="page-subhead">Inline tags like <code>[filename]</code> in the body resolve to the user-uploaded sources listed below. Tags of the form <code>[Kira estimates]</code> mark analyst inference not directly traceable to an uploaded source.</p>
+    <p class="page-subhead">Inline tags like <code>[filename]</code> in the body resolve to the user-uploaded sources listed below. Tags of the form <code>[Estimate]</code> mark analyst inference not directly traceable to an uploaded source.</p>
     <div style="flex: 1; overflow: hidden; min-height: 0;">
       <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">Source index</h3>
       <div style="columns: 2; column-gap: 32px;">
-        ${items || '<div style="font-size:12px;color:var(--text-mid);">No source files uploaded — deliverable drafted from analyst inference (tagged [Kira estimates]).</div>'}
+        ${items || '<div style="font-size:12px;color:var(--text-mid);">No source files uploaded — deliverable drafted from analyst inference (tagged [Estimate]).</div>'}
       </div>
     </div>
     <div class="page-footer">
-      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
-      <div>Confidential · Single-user license</div>
+      <div class="logo-foot"></div>
+      <div></div>
     </div>
   </div>
 </div>`;

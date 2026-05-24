@@ -28,7 +28,7 @@
 //     in generated output (system prompt enforces this).
 //   • Never frames KIRA as an "AI platform / SaaS / app".
 //   • Source tags (L.3): every numeric claim carries
-//     [<alias> <year>] or [Kira estimates].
+//     [<alias> <year>] or [Estimate].
 //   • PDF visually indistinguishable from consulting-grade output
 //     per Henry's brief — no AI watermark.
 // ============================================================
@@ -394,6 +394,26 @@ SECTION DESIGN PRINCIPLES
   • If the deliverable is centered on ONE entity (a single company, a single product, a single person), at least one section SHOULD use "competitive_profile_deep".
   • Use "divider" sparingly — only for multi-chapter deliverables (8+ sections).
 
+DELIVERABLE FRAMING — IMPORTANT
+This output is the USER'S document. It is not an analyst report produced
+by a research firm, not a third-party analysis, not "presented by"
+anyone. The user authored the source material and is the implied author
+of the deliverable.
+
+Therefore, FORBIDDEN section types:
+  • Methodology / "How we built this" / "Research approach"
+  • "About this report" / "About the publisher" / "About our analysts"
+  • "Disclaimer" / "Copyright" / "Sources & methodology" (the renderer
+    auto-adds a Source key page at the end — do not duplicate it)
+  • Any section that refers to a third-party (an "analysis team",
+    a research firm, an AI tool, a platform) producing the document
+  • Any section that frames the work as authored by anyone other
+    than the user.
+
+ALL sections must focus on the SUBJECT of the deliverable (the company,
+product, market, project, idea the user is presenting), not on the
+process of creating the deliverable.
+
 Required fields per section (return JSON):
 - title: sentence-case headline for the section. E.g. "Company at a glance." not "Company At A Glance".
 - template_id: one of the allowlist IDs above.
@@ -456,12 +476,21 @@ Design the section structure. Return JSON only.`;
   // Defensive cleanup:
   if (Array.isArray(planObj?.sections)) {
     const allowedIds = new Set(TEMPLATE_ALLOWLIST.map(t => t.id));
+    // N.27.6: also drop methodology / about-report / disclaimer sections
+    // even if the planner ignores the prompt rule.
+    const FORBIDDEN_TITLE_TOKENS = /\b(methodolog|about (this|the) report|about our|about the publisher|about kira|disclaimer|copyright|sources?\s*(&|and)\s*methodolog)\b/i;
+    const FORBIDDEN_PAGE_TYPES = new Set(['methodology', 'methodology_inline', 'methodology_endnote', 'sources_methodology', 'about', 'about_us', 'disclaimer']);
     planObj.sections = planObj.sections
       .filter(s => {
         if (!s || typeof s !== 'object') return false;
         const pt = String(s.page_type || '').toLowerCase();
+        const title = String(s.title || '');
         // Drop renderer-owned page types.
         if (pt === 'cover' || pt === 'title_cover' || pt === 'source_key' || pt === 'sources') return false;
+        // Drop methodology-style sections — Studio output is user's
+        // document, not an analyst report about the user's document.
+        if (FORBIDDEN_PAGE_TYPES.has(pt)) return false;
+        if (FORBIDDEN_TITLE_TOKENS.test(title)) return false;
         return true;
       })
       .map(s => {
@@ -660,7 +689,7 @@ function buildSectionSystemPrompt({ report_kind, tone, templateId, templateLabel
 
 - Aim for 4-7 data points per series (bar/line) or 3-6 slices (donut).
 - All values from uploaded sources. If you cannot find real numbers, set chart_data to null and write a note in subhead_html that the chart was omitted.
-- Set chart_title, chart_subtitle, chart_unit ("USD bn", "%", "users", etc.), chart_source — chart_source is a short citation like "[annual-report.pdf]" or "[Kira estimates]".
+- Set chart_title, chart_subtitle, chart_unit ("USD bn", "%", "users", etc.), chart_source — chart_source is a short citation like "[annual-report.pdf]" or "[Estimate]".
 - Values can be raw numbers (the renderer auto-formats with K/M/B). If you want to display a pre-formatted string like "$1.2B", pass it as the value directly — the renderer preserves strings.\n`
     : '';
 
@@ -681,7 +710,7 @@ KEY NOTES
 - Keys without "_html" expect plain text (no HTML tags) — labels, headings, short captions.
 - Numeric/quantitative slots ("num", "value", "metric"): use the raw number or short string like "14%" or "$1.2B".
 - "change" / "change_dir" pairs: change is text like "+12% YoY"; change_dir is "up" or "down" or "" (used for CSS coloring).
-- "source_tag" + "source_label": source_tag is a class like "primary" / "secondary" / "estimate" for CSS styling; source_label is the visible citation like "[annual-report.pdf]" or "[Kira estimates]".
+- "source_tag" + "source_label": source_tag is a class like "primary" / "secondary" / "estimate" for CSS styling; source_label is the visible citation like "[annual-report.pdf]" or "[Estimate]".
 - Section tag (top of page): short, ~3-6 words. E.g. "Section 02 · Company at a glance".
 
 CONTENT RULES
@@ -696,9 +725,9 @@ Pull facts, numbers, quotes, and qualitative observations PRIMARILY from the upl
 
 SOURCE CITATIONS (inline, inside *_html fields)
 - Format: [filename] for figures pulled from a user-uploaded file. Example: "Revenue grew 14% YoY [annual-report.pdf]."
-- Use [Kira estimates] only if no source supports the number but the number is genuinely an analyst inference.
+- Use [Estimate] only if no source supports the number but the number is genuinely an analyst inference.
 - Never fabricate filenames — only cite files actually in the upload list provided below.
-- If no source supports a claim, either tag [Kira estimates] or simply omit the number.
+- If no source supports a claim, either tag [Estimate] or simply omit the number.
 
 HARD RULES
 - Never mention: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
@@ -767,7 +796,7 @@ Available source files (for inline citations — tag as [filename] inside *_html
 ${JSON.stringify(sourceFilenames)}
 
 Uploaded source material (verbatim text extracted from the files):
-${sourceBlock || '(no source material was provided — write the section using general knowledge only, tagged as [Kira estimates] where appropriate)'}
+${sourceBlock || '(no source material was provided — write the section using general knowledge only, tagged as [Estimate] where appropriate)'}
 
 Return the JSON object now.`;
 
@@ -1007,6 +1036,14 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
   // Final scrub pass — belt and braces in case a stray banned word
   // slipped through a slot the JSON path didn't scrub (e.g. nested key).
   pagesHtml = scrub(pagesHtml);
+
+  // N.27.6: final KIRA-branding strip applied AFTER assembly so it
+  // covers the cover + source-key pages too (they're rendered
+  // programmatically and bypass renderTemplate's strip pass).
+  pagesHtml = pagesHtml
+    .replace(/<div class="logo-foot">[\s\S]*?<\/div>/g, '<div class="logo-foot"></div>')
+    .replace(/©\s*\d{4}\s*KIRA Research/gi, '')
+    .replace(/\[Kira estimates\]/gi, '[Estimate]');
 
   // ── Wrap in master_wrapper.html ──────────────────────────────
   const wrapper = await loadMasterWrapper();
