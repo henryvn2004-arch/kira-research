@@ -701,39 +701,197 @@
     }
   </script>
 
-  <!-- Studio CTA — see public/en/profile.html for the canonical block. -->
+  <!-- KIRA Studio dashboard card — injected after main render.
+       Shows the user's credit balance, reports-left estimate, and
+       two CTAs: Top up (→ studio billing) + New report (→ studio /new).
+       Falls back to a static promo on fetch failure (no API key, network down).
+       Canonical block: edit here, then mirror to public/{ja,ko}/profile.html. -->
   <style>
-    .studio-cta-card { margin: 28px 0 0; padding: 22px 28px; background: linear-gradient(135deg, rgba(30,111,255,0.06) 0%, rgba(30,111,255,0.02) 100%); border: 1px solid rgba(30,111,255,0.18); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-    .studio-cta-card .copy { display: flex; flex-direction: column; gap: 4px; }
-    .studio-cta-card .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--primary); }
-    .studio-cta-card h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); margin: 0; line-height: 1.3; letter-spacing: -0.01em; }
-    .studio-cta-card p { font-size: 13px; color: var(--muted); margin: 4px 0 0; line-height: 1.5; }
-    .studio-cta-card a.cta { display: inline-flex; align-items: center; gap: 6px; background: var(--primary); color: #fff; padding: 10px 18px; border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; flex-shrink: 0; }
-    .studio-cta-card a.cta:hover { background: var(--primary-dim); }
+    .studio-cta-card {
+      margin: 28px 0 0;
+      padding: 22px 28px;
+      background: linear-gradient(135deg, rgba(30,111,255,0.06) 0%, rgba(30,111,255,0.02) 100%);
+      border: 1px solid rgba(30,111,255,0.18);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .studio-cta-card .copy { display: flex; flex-direction: column; gap: 6px; min-width: 240px; }
+    .studio-cta-card .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--primary);
+    }
+    .studio-cta-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin: 0;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    .studio-cta-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 4px 0 0;
+      line-height: 1.5;
+    }
+    .studio-cta-card .balance {
+      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    }
+    .studio-cta-card .balance .num {
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: 30px; line-height: 1; color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .studio-cta-card .balance .num.low { color: #C0392B; }
+    .studio-cta-card .balance .unit {
+      font-size: 14px; color: var(--muted); font-weight: 500;
+    }
+    .studio-cta-card .reports-left {
+      font-size: 12.5px; color: var(--muted); line-height: 1.5;
+    }
+    .studio-cta-card .reports-left.warn { color: #B45309; }
+    .studio-cta-card .actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+    .studio-cta-card a.cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 18px; border-radius: 4px;
+      font-size: 13px; font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .studio-cta-card a.cta.primary { background: var(--primary); color: #fff; }
+    .studio-cta-card a.cta.primary:hover { background: var(--primary-dim); }
+    .studio-cta-card a.cta.secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border-strong);
+    }
+    .studio-cta-card a.cta.secondary:hover { border-color: var(--primary); color: var(--primary); }
   </style>
   <script type="module">
+    // ── Localized copy ────────────────────────────────────
     const STUDIO_COPY = {
-      en: { eyebrow: 'KIRA Studio', title: 'Generate your own reports', sub: 'Describe any market, attach documents, get a polished PDF in your private studio library.', cta: 'Open Studio →' },
-      ja: { eyebrow: 'KIRA Studio', title: '自分専用のレポートを生成',  sub: '任意の市場を説明し、ドキュメントを添付するだけで、洗練されたPDFがあなたの専用ライブラリに保存されます。', cta: 'Studioを開く →' },
-      ko: { eyebrow: 'KIRA Studio', title: '나만의 보고서 생성',         sub: '시장을 설명하고 문서를 첨부하면 잘 다듬어진 PDF가 개인 라이브러리에 저장됩니다.',                cta: 'Studio 열기 →' }
+      en: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: 'credits',
+        reportsLeft: n => n === 1 ? '≈ 1 report left' : ('≈ ' + n + ' reports left'),
+        shortBy:     n => 'Need ' + n + ' more credits for 1 report',
+        topUp:       'Top up credits →',
+        newReport:   'New report →',
+        promoTitle:  'Generate your own reports',
+        promoSub:    'Describe any market, attach documents, get a polished PDF in your private studio library.',
+        openStudio:  'Open Studio →'
+      },
+      ja: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: 'クレジット',
+        reportsLeft: n => 'あと約' + n + '件のレポート',
+        shortBy:     n => '1件のレポートにあと' + n + 'クレジット必要',
+        topUp:       'クレジットを購入 →',
+        newReport:   '新規レポート →',
+        promoTitle:  '自分専用のレポートを生成',
+        promoSub:    '任意の市場を説明し、ドキュメントを添付するだけで、洗練されたPDFがあなたの専用ライブラリに保存されます。',
+        openStudio:  'Studioを開く →'
+      },
+      ko: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: '크레딧',
+        reportsLeft: n => '약 ' + n + '개 보고서 가능',
+        shortBy:     n => '1개 보고서당 ' + n + '크레딧 더 필요',
+        topUp:       '크레딧 충전 →',
+        newReport:   '새 보고서 →',
+        promoTitle:  '나만의 보고서 생성',
+        promoSub:    '시장을 설명하고 문서를 첨부하면 잘 다듬어진 PDF가 개인 라이브러리에 저장됩니다.',
+        openStudio:  'Studio 열기 →'
+      }
     };
     const _parts  = window.location.pathname.split('/').filter(Boolean);
     const _locale = ['en','ja','ko'].includes(_parts[0]) ? _parts[0] : 'en';
     const _c = STUDIO_COPY[_locale] || STUDIO_COPY.en;
-    function tryInject(attempts = 0) {
-      const root = document.getElementById('prof-root');
-      if (!root || !root.querySelector('.prof-header')) {
-        if (attempts < 60) return setTimeout(() => tryInject(attempts + 1), 150);
-        return;
-      }
-      if (root.querySelector('.studio-cta-card')) return;
+
+    const STUDIO_BASE   = 'https://studio.kiraresearch.com';
+    const BILLING_URL   = STUDIO_BASE + '/billing';
+    const NEW_REPORT_URL = STUDIO_BASE + '/new';
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    // Static promo (used when not signed in, or credits API errored).
+    function renderPromoCard(host) {
       const card = document.createElement('div');
       card.className = 'studio-cta-card';
       card.innerHTML =
-        `<div class="copy"><span class="eyebrow">${_c.eyebrow}</span><h3>${_c.title}</h3><p>${_c.sub}</p></div>` +
-        `<a class="cta" href="https://studio.kiraresearch.com/">${_c.cta}</a>`;
+        `<div class="copy">
+           <span class="eyebrow">${esc(_c.eyebrow)}</span>
+           <h3>${esc(_c.promoTitle)}</h3>
+           <p>${esc(_c.promoSub)}</p>
+         </div>
+         <div class="actions">
+           <a class="cta primary" href="${STUDIO_BASE}/">${esc(_c.openStudio)}</a>
+         </div>`;
+      host.insertAdjacentElement('afterend', card);
+    }
+
+    // Dynamic dashboard (signed-in user with a credit wallet).
+    function renderBalanceCard(host, balance, reportCost) {
+      const cost     = reportCost || 100;
+      const enough   = balance >= cost;
+      const reports  = Math.floor(balance / cost);
+      const shortBy  = cost - balance;
+      const subHtml  = enough
+        ? `<span class="reports-left">${esc(_c.reportsLeft(reports))}</span>`
+        : `<span class="reports-left warn">${esc(_c.shortBy(shortBy))}</span>`;
+      const card = document.createElement('div');
+      card.className = 'studio-cta-card';
+      card.innerHTML =
+        `<div class="copy">
+           <span class="eyebrow">${esc(_c.eyebrow)}</span>
+           <div class="balance">
+             <span class="num${enough ? '' : ' low'}">${balance.toLocaleString()}</span>
+             <span class="unit">${esc(_c.creditsUnit)}</span>
+           </div>
+           ${subHtml}
+         </div>
+         <div class="actions">
+           <a class="cta secondary" href="${BILLING_URL}">${esc(_c.topUp)}</a>
+           <a class="cta primary" href="${NEW_REPORT_URL}">${esc(_c.newReport)}</a>
+         </div>`;
+      host.insertAdjacentElement('afterend', card);
+    }
+
+    // Wait for main render, then fetch credits + inject card.
+    async function tryInject(attempts = 0) {
+      const root = document.getElementById('prof-root');
+      if (!root || !root.querySelector('.prof-header')) {
+        if (attempts < 60) return setTimeout(() => tryInject(attempts + 1), 150);
+        return; // user signed out / render errored — skip silently
+      }
+      if (root.querySelector('.studio-cta-card')) return;
       const header = root.querySelector('.prof-header');
-      header.insertAdjacentElement('afterend', card);
+
+      // Fetch credit state. Same Vercel project so /api/studio-credits
+      // is reachable from the main domain. Auth shared via the
+      // .kiraresearch.com cookie (Phase N.14) — sessions sync across
+      // subdomains automatically.
+      try {
+        const session = (await window.db.auth.getSession()).data.session;
+        if (!session) { renderPromoCard(header); return; }
+        const r = await fetch('/api/studio-credits', {
+          headers: { 'Authorization': 'Bearer ' + session.access_token }
+        });
+        if (!r.ok) { renderPromoCard(header); return; }
+        const data = await r.json();
+        renderBalanceCard(header, Number(data.balance || 0), Number(data.report_cost || 100));
+      } catch (e) {
+        renderPromoCard(header);
+      }
     }
     document.addEventListener('DOMContentLoaded', () => tryInject());
   </script>
