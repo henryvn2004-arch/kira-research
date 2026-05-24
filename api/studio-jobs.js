@@ -27,6 +27,17 @@ import {
 } from './_lib/studio-shared.js';
 import { processStudioJob } from './_lib/studio-worker.js';
 
+// Per-route override — the worker drives a multi-stage Anthropic SDK
+// orchestration that can take 8-14 minutes end-to-end. Vercel Pro
+// allows up to 900s; we leave headroom for the response to flush
+// after waitUntil() finishes. Configured here (matching the
+// api/render-pdf.js pattern) so it isn't double-declared in
+// vercel.json — overlapping function patterns are rejected by the
+// Vercel CLI as "unmatched function pattern".
+export const config = {
+  maxDuration: 800
+};
+
 // ── input validation ───────────────────────────────────────────
 const MAX_TOPIC_LEN  = 600;
 const MAX_FILES      = 5;
