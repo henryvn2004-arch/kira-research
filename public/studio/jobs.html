@@ -134,6 +134,94 @@
       flex-wrap: wrap;
     }
 
+    /* Live activity feed — Claude-chat-style streaming view of
+       what the worker is doing. Powered by studio_jobs.activity_log
+       (migration 011 + api/_lib/studio-worker logActivity calls). */
+    .activity-section {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .activity-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .activity-label .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 0 0 rgba(16,185,129,0.6);
+      animation: live-pulse 1.4s ease-in-out infinite;
+    }
+    .activity-label.idle .live-dot { background: var(--muted); animation: none; box-shadow: none; }
+    @keyframes live-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.55); }
+      50%      { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+    }
+    .activity-feed {
+      background: #0F172A;
+      color: #E2E8F0;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      max-height: 360px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+    .activity-feed::-webkit-scrollbar { width: 8px; }
+    .activity-feed::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+    .activity-feed::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    .activity-empty {
+      color: #64748B;
+      font-style: italic;
+    }
+    .activity-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 1px 0;
+    }
+    .activity-row .ts {
+      color: #64748B;
+      flex-shrink: 0;
+      width: 64px;
+    }
+    .activity-row .ic {
+      width: 12px;
+      text-align: center;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .activity-row .msg {
+      flex: 1;
+      word-break: break-word;
+    }
+    .activity-row.type-stage  .ic, .activity-row.type-stage  .msg { color: #93C5FD; }
+    .activity-row.type-stage  .ic { color: #60A5FA; }
+    .activity-row.type-info   .msg { color: #CBD5E1; }
+    .activity-row.type-search .ic, .activity-row.type-search .msg { color: #FCD34D; }
+    .activity-row.type-done   .ic, .activity-row.type-done   .msg { color: #6EE7B7; }
+    .activity-row.type-error  .ic, .activity-row.type-error  .msg { color: #FCA5A5; }
+    .activity-row .detail {
+      display: block;
+      margin-top: 4px;
+      margin-left: 86px;
+      padding-left: 12px;
+      border-left: 2px solid rgba(148,163,184,0.25);
+      color: #94A3B8;
+      font-size: 11px;
+      white-space: pre-wrap;
+    }
+
     .job-error {
       margin-top: 24px;
       padding: 16px 20px;
@@ -232,11 +320,102 @@
         .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
 
+    // Icon glyph per event type. Kept short so it renders cleanly
+    // in the monospaced feed.
+    const ACTIVITY_ICONS = {
+      stage:  '▸',
+      info:   '·',
+      search: '⚲',
+      done:   '✓',
+      error:  '✖'
+    };
+
+    function formatActivityTs(iso) {
+      try {
+        const d = new Date(iso);
+        const h = String(d.getHours()).padStart(2, '0');
+        const m = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${h}:${m}:${s}`;
+      } catch { return ''; }
+    }
+
+    function activityRowHtml(ev) {
+      const t    = formatActivityTs(ev.ts);
+      const type = ev.type || 'info';
+      const ic   = ACTIVITY_ICONS[type] || ACTIVITY_ICONS.info;
+      let detailHtml = '';
+      if (ev.detail && typeof ev.detail === 'object') {
+        if (Array.isArray(ev.detail.titles)) {
+          detailHtml = `<span class="detail">${ev.detail.titles.map((tt, i) => `${i + 1}. ${escHtml(tt)}`).join('\n')}</span>`;
+        } else if (ev.detail.error) {
+          detailHtml = `<span class="detail">${escHtml(String(ev.detail.error))}</span>`;
+        }
+      }
+      return `<div class="activity-row type-${escHtml(type)}">
+        <span class="ts">${escHtml(t)}</span>
+        <span class="ic">${ic}</span>
+        <span class="msg">${escHtml(ev.msg || '')}${detailHtml}</span>
+      </div>`;
+    }
+
+    // Renders the activity feed incrementally so the user's scroll
+    // position is preserved across poll ticks. The feed element is
+    // self-tracking via dataset attributes so a parent re-render
+    // (which replaces the feed DOM) is detected naturally — when
+    // dataset.count is missing it's a fresh element → full render.
+    function renderActivityFeed(activity) {
+      const feed = document.getElementById('activity-feed');
+      if (!feed) return;
+      const items = Array.isArray(activity) ? activity : [];
+
+      // Empty state — no events yet.
+      if (items.length === 0) {
+        if (feed.dataset.empty !== '1') {
+          feed.innerHTML = '<div class="activity-empty">Waiting for first event…</div>';
+          feed.dataset.empty = '1';
+          feed.dataset.count = '0';
+        }
+        return;
+      }
+
+      const renderedCount = Number(feed.dataset.count || 0);
+      const isFreshFeed   = feed.dataset.empty === undefined || feed.dataset.empty === '1' || renderedCount === 0;
+
+      // Full render path: fresh element (post card-rebuild) or
+      // activity got smaller (shouldn't happen, but defensive).
+      if (isFreshFeed || items.length < renderedCount) {
+        feed.innerHTML = items.map(activityRowHtml).join('');
+        feed.dataset.empty = '0';
+        feed.dataset.count = String(items.length);
+        feed.scrollTop = feed.scrollHeight;
+        return;
+      }
+
+      // Nothing new this tick.
+      if (items.length === renderedCount) return;
+
+      // Append-only path — preserves scroll position when the user
+      // has scrolled up to read history.
+      const wasPinned = (feed.scrollHeight - feed.scrollTop - feed.clientHeight) < 40;
+      const newRows = items.slice(renderedCount).map(activityRowHtml).join('');
+      feed.insertAdjacentHTML('beforeend', newRows);
+      feed.dataset.count = String(items.length);
+      if (wasPinned) feed.scrollTop = feed.scrollHeight;
+    }
+
+    // Card-level signature so we only rebuild the outer card when
+    // status / progress / stage actually change. Without this, the
+    // 2.5s poll tick resets the active-dot pulse animation each
+    // time and produces a subtle but distracting flash.
+    let lastCardSignature = '';
+
     function render(job) {
       const card = document.getElementById('job-card');
       const stagesDone = new Set(job.stages_completed || []);
       const isDone = job.status === 'completed';
       const isFailed = job.status === 'failed' || job.status === 'cancelled';
+      const isLive = !isDone && !isFailed;
 
       // Figure out which stage is active.
       let activeKey = null;
@@ -278,27 +457,57 @@
              </div>`
           : '';
 
-      card.innerHTML = `
-        <div class="job-eyebrow">KIRA Studio · job ${jobId.slice(0, 8)}</div>
-        <div class="job-topic">${escHtml(job.topic_input || '')}</div>
+      const activityLabelText = isLive
+        ? 'Live activity'
+        : (isDone ? 'Activity (complete)' : 'Activity (ended)');
 
-        <div class="progress-bar"><div class="progress-fill" style="width: ${job.progress || 0}%"></div></div>
-        <div class="progress-row">
-          ${headline}
-          <div class="progress-stage">${escHtml(stageLine)}</div>
-        </div>
+      // Card-rebuild signature — only the parts whose change should
+      // actually rebuild the card structure. activity_log is NOT in
+      // the signature; we update the feed incrementally below.
+      const sig = JSON.stringify({
+        s:  job.status,
+        p:  job.progress,
+        cs: job.current_stage,
+        st: (job.stages_completed || []).join(','),
+        ec: job.error_code,
+        rid: job.studio_report_id
+      });
 
-        <ul class="stage-list">${stagesHtml}</ul>
+      if (sig !== lastCardSignature) {
+        lastCardSignature = sig;
+        card.innerHTML = `
+          <div class="job-eyebrow">KIRA Studio · job ${jobId.slice(0, 8)}</div>
+          <div class="job-topic">${escHtml(job.topic_input || '')}</div>
 
-        <div class="job-meta">
-          <span>Status: <strong>${escHtml(job.status)}</strong></span>
-          ${job.started_at ? `<span>Started: ${escHtml(new Date(job.started_at).toLocaleTimeString())}</span>` : ''}
-          ${job.completed_at ? `<span>Completed: ${escHtml(new Date(job.completed_at).toLocaleTimeString())}</span>` : ''}
-        </div>
+          <div class="progress-bar"><div class="progress-fill" style="width: ${job.progress || 0}%"></div></div>
+          <div class="progress-row">
+            ${headline}
+            <div class="progress-stage">${escHtml(stageLine)}</div>
+          </div>
 
-        ${errBlock}
-        ${ctaHtml}
-      `;
+          <ul class="stage-list">${stagesHtml}</ul>
+
+          <div class="activity-section">
+            <div class="activity-label ${isLive ? '' : 'idle'}">
+              <span class="live-dot"></span>
+              <span>${escHtml(activityLabelText)}</span>
+            </div>
+            <div class="activity-feed" id="activity-feed"></div>
+          </div>
+
+          <div class="job-meta">
+            <span>Status: <strong>${escHtml(job.status)}</strong></span>
+            ${job.started_at ? `<span>Started: ${escHtml(new Date(job.started_at).toLocaleTimeString())}</span>` : ''}
+            ${job.completed_at ? `<span>Completed: ${escHtml(new Date(job.completed_at).toLocaleTimeString())}</span>` : ''}
+          </div>
+
+          ${errBlock}
+          ${ctaHtml}
+        `;
+      }
+
+      // Always update the feed — most ticks are activity-only updates.
+      renderActivityFeed(job.activity_log);
     }
 
     async function tick() {

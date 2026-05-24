@@ -36,7 +36,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import {
   STUDIO_REPORTS_BUCKET,
-  sb, uploadToBucket, updateJobProgress, slugify
+  sb, uploadToBucket, updateJobProgress, logActivity, slugify
 } from './studio-shared.js';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -302,8 +302,19 @@ Begin researching. After you've exhausted your search budget, return the JSON fi
     // wrapper so downstream stages can still produce something.
     findings = { findings: [], source_key: [], raw_text: text };
   }
+  // Collect every web_search query the model fired so the worker
+  // can stream them to the activity log (Phase N.16). Anthropic's
+  // server-side web_search tool surfaces queries as
+  //   { type: 'server_tool_use', name: 'web_search', input: { query } }
+  // blocks inside the assistant's content array.
+  const queries = Array.isArray(msg?.content)
+    ? msg.content
+        .filter(b => b && b.type === 'server_tool_use' && b.name === 'web_search' && b.input && b.input.query)
+        .map(b => String(b.input.query))
+    : [];
   return {
     findings,
+    queries,
     tokens_in:  msg.usage?.input_tokens  || 0,
     tokens_out: msg.usage?.output_tokens || 0
   };
@@ -312,7 +323,7 @@ Begin researching. After you've exhausted your search budget, return the JSON fi
 // ===============================================================
 // STAGE 5 — Generate per-section HTML (parallel, capped)
 // ===============================================================
-async function stage5Content({ parsed, plan, findings, onSectionDone }) {
+async function stage5Content({ parsed, plan, findings, onSectionStart, onSectionDone }) {
   const c = client();
   const sections = (plan?.sections || []).slice(0, TARGET_SECTIONS);
 
@@ -389,9 +400,10 @@ Write the HTML for this section now.`;
     while (true) {
       const idx = cursor++;
       if (idx >= sections.length) return;
+      if (onSectionStart) await onSectionStart(sections[idx], idx);
       results[idx] = await runOne(sections[idx]);
       completed++;
-      if (onSectionDone) await onSectionDone(completed, sections.length);
+      if (onSectionDone) await onSectionDone(completed, sections.length, sections[idx]);
     }
   }
   await Promise.all(
@@ -541,20 +553,36 @@ export async function processStudioJob({ jobId, userId }) {
   if (!job) throw new Error('job_not_found');
   if (job.status === 'cancelled') return;
 
+  // Activity-log streamer — Phase N.16. Powers the live feed on
+  // public/studio/jobs.html. Best-effort; never throws.
+  //   type:  'stage' | 'info' | 'search' | 'done' | 'error'
+  //   stage: 'parse' | 'plan' | 'search' | 'content' | 'render' | 'complete'
+  const log = (type, stage, msg, detail) => logActivity(jobId, {
+    ts: new Date().toISOString(),
+    type, stage, msg,
+    ...(detail !== undefined ? { detail } : {})
+  });
+
   let tokIn = 0;
   let tokOut = 0;
+
+  await log('info', 'parse', `Starting report: "${(job.topic_input || '').slice(0, 200)}"`);
 
   // --- Stage 1 --------------------------------------------------
   await updateJobProgress(jobId, {
     current_stage: 'Parsing topic…',
     progress: 5
   });
+  await log('stage', 'parse', 'Parsing topic — identifying country, industry, year, search languages…');
   const s1 = await stage1ParseTopic({
     topic_input:         job.topic_input,
     uploaded_file_paths: job.uploaded_file_paths || []
   });
   tokIn  += s1.tokens_in;
   tokOut += s1.tokens_out;
+  await log('done', 'parse',
+    `Topic locked: ${s1.parsed.industry || '—'} in ${s1.parsed.country || '—'} ${s1.parsed.year || ''} · `
+    + `research languages: English + ${s1.parsed.local_language_name || 'English'}`);
   await updateJobProgress(jobId, {
     progress: 12,
     stages_completed: [...(job.stages_completed || []), 'parse']
@@ -565,12 +593,17 @@ export async function processStudioJob({ jobId, userId }) {
     current_stage: 'Planning section structure…',
     progress: 18
   });
+  await log('stage', 'plan', `Planning report structure (~${TARGET_SECTIONS} sections)…`);
   const s3 = await stage3PlanSections({
     parsed: s1.parsed,
     uploaded_file_paths: job.uploaded_file_paths || []
   });
   tokIn  += s3.tokens_in;
   tokOut += s3.tokens_out;
+  const sectionTitles = (s3.plan?.sections || []).map(s => s.title);
+  await log('done', 'plan',
+    `Planned ${sectionTitles.length} sections`,
+    { titles: sectionTitles });
   await updateJobProgress(jobId, {
     progress: 25,
     stages_completed: [...(job.stages_completed || []), 'parse', 'plan']
@@ -581,9 +614,19 @@ export async function processStudioJob({ jobId, userId }) {
     current_stage: `Searching ${s1.parsed.local_language_name || 'English'} + English sources…`,
     progress: 30
   });
+  await log('stage', 'search',
+    `Web research starting (budget: ${SEARCH_MAX_USES} searches across English + ${s1.parsed.local_language_name || 'English'})…`);
   const s4 = await stage4Research({ parsed: s1.parsed, plan: s3.plan });
   tokIn  += s4.tokens_in;
   tokOut += s4.tokens_out;
+  // Replay each search the model ran, so the user sees what was actually queried.
+  for (const q of (s4.queries || [])) {
+    await log('search', 'search', `Searched: ${q}`);
+  }
+  const sourceCount = Array.isArray(s4.findings?.source_key) ? s4.findings.source_key.length : 0;
+  const findingCount = Array.isArray(s4.findings?.findings) ? s4.findings.findings.length : 0;
+  await log('done', 'search',
+    `Research complete · ${s4.queries?.length || 0} searches · ${sourceCount} sources captured · ${findingCount} section bundles`);
   await updateJobProgress(jobId, {
     progress: 55,
     stages_completed: [...(job.stages_completed || []), 'parse', 'plan', 'search']
@@ -594,21 +637,29 @@ export async function processStudioJob({ jobId, userId }) {
     current_stage: 'Drafting sections (0/—)…',
     progress: 58
   });
+  const sectionsToDraft = Math.min(sectionTitles.length, TARGET_SECTIONS);
+  await log('stage', 'content',
+    `Drafting ${sectionsToDraft} sections in parallel (concurrency ${SECTION_CONCURRENCY})…`);
   const s5 = await stage5Content({
     parsed: s1.parsed,
     plan: s3.plan,
     findings: s4.findings,
-    onSectionDone: async (done, total) => {
+    onSectionStart: async (section) => {
+      await log('info', 'content', `Drafting: ${section.title}`);
+    },
+    onSectionDone: async (done, total, section) => {
       // Map 58→88% across content gen.
       const pct = 58 + Math.floor(30 * (done / Math.max(1, total)));
       await updateJobProgress(jobId, {
         current_stage: `Drafting sections (${done}/${total})…`,
         progress: pct
       });
+      await log('done', 'content', `Finished: ${section.title} (${done}/${total})`);
     }
   });
   tokIn  += s5.tokens_in;
   tokOut += s5.tokens_out;
+  await log('done', 'content', `All ${sectionsToDraft} sections drafted`);
   await updateJobProgress(jobId, {
     progress: 90,
     stages_completed: [...(job.stages_completed || []), 'parse', 'plan', 'search', 'content']
@@ -619,6 +670,7 @@ export async function processStudioJob({ jobId, userId }) {
     current_stage: 'Rendering PDF + uploading…',
     progress: 93
   });
+  await log('stage', 'render', 'Assembling pages, rendering PDF, uploading to storage…');
   const reportId = await stage7AssembleAndRender({
     jobId, userId,
     parsed: s1.parsed,
@@ -626,6 +678,7 @@ export async function processStudioJob({ jobId, userId }) {
     findings: s4.findings,
     sectionsOut: s5
   });
+  await log('done', 'render', 'PDF rendered and uploaded');
 
   // --- Done -----------------------------------------------------
   // Best-effort cost estimate: ~$3/MTok in, $15/MTok out (Sonnet 4.5 ballpark).
@@ -641,4 +694,6 @@ export async function processStudioJob({ jobId, userId }) {
     stages_completed:   ['parse', 'plan', 'search', 'content', 'render'],
     completed_at:       new Date().toISOString()
   });
+  await log('done', 'complete',
+    `Report ready · ${tokIn.toLocaleString()} input + ${tokOut.toLocaleString()} output tokens · est $${cost.toFixed(2)}`);
 }

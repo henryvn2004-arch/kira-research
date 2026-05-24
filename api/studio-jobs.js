@@ -23,7 +23,7 @@
 
 import { waitUntil } from '@vercel/functions';
 import {
-  sb, verifyBearer, cors, updateJobProgress
+  sb, verifyBearer, cors, updateJobProgress, logActivity
 } from './_lib/studio-shared.js';
 import { processStudioJob } from './_lib/studio-worker.js';
 
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
           `studio_jobs?id=eq.${id}&user_id=eq.${user.id}` +
           `&select=id,topic_input,status,progress,current_stage,` +
           `stages_completed,error_code,error_log,studio_report_id,` +
-          `created_at,started_at,completed_at&limit=1`
+          `activity_log,created_at,started_at,completed_at&limit=1`
         );
         const job = Array.isArray(rows) ? rows[0] : null;
         if (!job) { res.status(404).json({ error: 'not_found' }); return; }
@@ -154,14 +154,28 @@ export default async function handler(req, res) {
             current_stage: 'Starting…',
             progress: 1
           });
+          await logActivity(job.id, {
+            ts: new Date().toISOString(),
+            type: 'info',
+            stage: 'parse',
+            msg: 'Worker picked up the job — starting…'
+          });
           await processStudioJob({ jobId: job.id, userId: user.id });
         } catch (err) {
+          const errMsg = String(err && err.message || err).slice(0, 4000);
           console.error('[studio-jobs] worker error:', err);
           await updateJobProgress(job.id, {
             status:        'failed',
             error_code:    'worker_error',
-            error_log:     String(err && err.message || err).slice(0, 4000),
+            error_log:     errMsg,
             completed_at:  new Date().toISOString()
+          });
+          await logActivity(job.id, {
+            ts: new Date().toISOString(),
+            type: 'error',
+            stage: 'render',
+            msg: 'Job failed — see error log for details',
+            detail: { error: errMsg.slice(0, 600) }
           });
         }
       })());

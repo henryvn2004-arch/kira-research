@@ -146,6 +146,40 @@ export async function updateJobProgress(jobId, patch) {
 }
 
 // ---------------------------------------------------------------
+// Append a single event to studio_jobs.activity_log. Used by the
+// worker to stream Claude-chat-style live progress to the polling
+// browser. Event shape: { ts, type, stage, msg, detail? }
+//   type:  'stage' | 'info' | 'search' | 'done' | 'error'
+//   stage: 'parse'|'plan'|'search'|'content'|'render'|'complete'
+//
+// Calls the SQL helper (migration 011) which appends atomically
+// via the `||` operator — safe under parallel writers like the
+// Stage 5 section workers (SECTION_CONCURRENCY=3).
+//
+// Best-effort: never throws. Activity logging is decorative; a
+// dropped event must NEVER fail the gen.
+// ---------------------------------------------------------------
+export async function logActivity(jobId, event) {
+  if (!jobId || !event) return;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/append_studio_activity`, {
+      method: 'POST',
+      headers: {
+        'apikey':        SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Content-Type':  'application/json'
+      },
+      body: JSON.stringify({ p_job_id: jobId, p_event: event })
+    });
+    if (!r.ok) {
+      console.error('[studio-shared] logActivity rpc failed:', r.status, await r.text().catch(()=> ''));
+    }
+  } catch (err) {
+    console.error('[studio-shared] logActivity error:', err.message);
+  }
+}
+
+// ---------------------------------------------------------------
 // Slug-ify a free-text topic for filenames + bucket paths.
 // ---------------------------------------------------------------
 export function slugify(s) {
