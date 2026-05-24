@@ -30,9 +30,12 @@
 import { rewrite, next } from '@vercel/edge';
 
 export const config = {
-  matcher: [
-    '/((?!api/|_vercel/|_next/|css/|js/|locales/|favicon\\..*|logo\\..*|robots\\.txt|sitemap.*\\.xml|auth(\\.html|\\.js)?$|404\\.html).*)'
-  ]
+  // Vercel middleware matchers go through path-to-regexp and CLI 54.x
+  // rejects any inline capturing group (e.g. `auth(\.html|\.js)`).
+  // Keep exclusions as plain prefixes — they catch `/auth`, `/auth.html`,
+  // `/auth.js`, etc. all in one. Defense-in-depth filtering for file
+  // extensions lives in the handler below.
+  matcher: ['/((?!api/|_vercel/|_next/|css/|js/|locales/|favicon|logo|robots|sitemap|auth|404).*)']
 };
 
 const STUDIO_HOST = 'studio.kiraresearch.com';
