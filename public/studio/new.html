@@ -196,6 +196,19 @@
   <script type="module">
     const root = document.getElementById('studio-root');
 
+    // Module-scope constants must be declared BEFORE any code path that
+    // reaches into them. `const` is hoisted but stays in the Temporal
+    // Dead Zone until this line runs, so previously placing the array
+    // below the renderForm() call site threw a ReferenceError before
+    // the form ever rendered.
+    const TEMPLATE_PROMPTS = [
+      'EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment',
+      'Coffee market Vietnam 2027 — supply, consumption, export dynamics',
+      'Fintech in Indonesia 2027 — segments, regulators, top players',
+      'Roofing materials Thailand 2027 — construction demand, distribution channels',
+      'Cold-chain logistics Philippines 2027 — capacity, demand drivers, M&A activity'
+    ];
+
     while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
 
     const user = await window.kiraAuth.getUser();
@@ -221,14 +234,6 @@
       `;
       try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch {}
     }
-
-    const TEMPLATE_PROMPTS = [
-      'EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment',
-      'Coffee market Vietnam 2027 — supply, consumption, export dynamics',
-      'Fintech in Indonesia 2027 — segments, regulators, top players',
-      'Roofing materials Thailand 2027 — construction demand, distribution channels',
-      'Cold-chain logistics Philippines 2027 — capacity, demand drivers, M&A activity'
-    ];
 
     function renderForm(user) {
       root.innerHTML = `
