@@ -71,9 +71,17 @@ const TARGET_SECTIONS     = 10;
 // Claude Chat and gives the model a clear, focused scope per call
 // instead of a 10-section monolith.
 const PER_SECTION_SEARCHES   = 2;
-const RESEARCH_CONCURRENCY   = 3;
-const STAGE4_SECTION_TIMEOUT = 75 * 1000;       // 75s per section (Promise.race based)
-const STAGE4_OVERALL_TIMEOUT = 5 * 60 * 1000;   // 5 min total budget
+// Sequential research (Phase N.19). Parallel research (concurrency=3
+// in N.17/N.18) was unreliable: ~33% of the time, the SECOND and
+// THIRD parallel calls to messages.create with web_search would hang
+// indefinitely while the FIRST completed normally in ~20-30s. Strongly
+// suggests Anthropic rate-limits parallel web_search calls per API
+// key, with the throttled calls held server-side instead of failing
+// cleanly. Sequential trades wall-clock for reliability.
+const RESEARCH_CONCURRENCY   = 1;
+const STAGE4_SECTION_TIMEOUT = 75 * 1000;       // 75s per section (Promise.race safety net)
+const STAGE4_OVERALL_TIMEOUT = 6 * 60 * 1000;   // 6 min total budget (7 sections × ~50s)
+const ANTHROPIC_REQUEST_TIMEOUT_MS = 60 * 1000; // 60s — SDK-level fetch timeout
 
 const SKILL_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -111,10 +119,25 @@ async function loadMasterCss() {
 
 // ---------------------------------------------------------------
 // Anthropic client
+//
+// timeout: SDK-level per-request fetch timeout. This is the
+// authoritative interrupt for hung requests — empirically more
+// reliable than userland Promise.race + setTimeout in Vercel
+// waitUntil context (setTimeout timers don't fire predictably
+// while the function is idle on I/O).
+//
+// maxRetries: 0 because we handle resilience at the worker level
+// (failed sections proceed with empty findings). Default of 2 with
+// exponential backoff stretches a hung request to ~37s minimum
+// before throwing, which steals budget from other sections.
 // ---------------------------------------------------------------
 function client() {
   if (!ANTHROPIC_API_KEY) throw new Error('missing_anthropic_api_key');
-  return new Anthropic({ apiKey: ANTHROPIC_API_KEY });
+  return new Anthropic({
+    apiKey:     ANTHROPIC_API_KEY,
+    timeout:    ANTHROPIC_REQUEST_TIMEOUT_MS,
+    maxRetries: 0
+  });
 }
 
 // Extract concatenated text from a non-streaming message response.
