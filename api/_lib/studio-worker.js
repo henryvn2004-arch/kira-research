@@ -40,6 +40,17 @@ import {
   sb, uploadToBucket, downloadFromBucket,
   updateJobProgress, logActivity, slugify
 } from './studio-shared.js';
+import {
+  TEMPLATE_ALLOWLIST,
+  getTemplateMeta,
+  getTemplateGuideForPlanner,
+  describeSlotShape,
+  renderTemplate,
+  renderCoverPage,
+  renderSourceKeyPage,
+  applyPageNumbers,
+  loadMasterWrapper
+} from './studio-templates.js';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -360,12 +371,18 @@ export async function stage3PlanSections({ parsed, extracted, topic_input }) {
        • Short formats (exec summary, brief, snapshot) → ${minSections}-5
        • Long formats (full report, deep dive, comprehensive) → 8-${maxSections}`;
 
+  const templateGuide = getTemplateGuideForPlanner();
+
   const system = `You are the structural planner for a KIRA Studio deliverable. The user has uploaded source documents and described what they want. Your job is to design the section structure of the final deliverable based on:
   (a) what the user asked for (Stage 1 already classified intent),
   (b) what's actually in the uploaded sources, and
   (c) the type of deliverable being produced.
 
-You have FULL freedom to choose section titles + page types that suit the deliverable. There is NO fixed enum. A company profile presentation has different sections than a market analysis; an investor brief has different sections than a training doc. Match the structure to the deliverable.
+You have FULL freedom over section TITLES and section ORDER. A company profile presentation has different sections than a market analysis; an investor brief has different sections than a training doc. Match the structure to the deliverable.
+
+BUT — each section MUST be assigned a TEMPLATE_ID from this fixed allowlist. The template controls the visual layout (number of cards, presence of a chart, two-column vs grid, etc.). Pick the template whose shape best matches what the section needs:
+
+${templateGuide}
 
 SECTION COUNT
 ${countGuidance}
@@ -375,23 +392,23 @@ SECTION DESIGN PRINCIPLES
   • Do NOT invent sections for data the files don't contain. If files lack a macro context, don't plan a "macro context" section.
   • If the user gave directives ("focus on X", "skip Y", "audience is investors"), honor them.
   • A cover page + source key page are ALWAYS added by the renderer — DO NOT include them in your sections list.
+  • template_id MUST be one of: ${TEMPLATE_ALLOWLIST.map(t => `"${t.id}"`).join(', ')}.
+  • Prefer the more visually-rich templates (exec_summary_p1, market_data_chart, use_case_grid_6, competitive_profile_deep) where the source content supports them. Use narrative_page only as a last resort when no structured template fits.
+  • If the deliverable is centered on ONE entity (a single company, a single product, a single person), at least one section SHOULD use "competitive_profile_deep".
+  • Use "divider" sparingly — only for multi-chapter deliverables (8+ sections).
 
 Required fields per section (return JSON):
 - title: sentence-case headline for the section. E.g. "Company at a glance." not "Company At A Glance".
-- page_type: a short snake_case string describing the section's role. Free-form — pick what fits.
-  Examples (NOT exhaustive — use whatever fits the deliverable):
-    "executive_summary", "company_overview", "service_portfolio", "leadership_team",
-    "financial_highlights", "case_studies", "client_logos", "product_features",
-    "market_sizing", "competitive_landscape", "regulatory_environment", "outlook",
-    "methodology", "appendix", "key_findings", "recommendations", "action_plan", "contact"
-- brief: 2-3 sentences telling the drafter EXACTLY what to cover, referencing which uploaded files this section draws from.
+- template_id: one of the allowlist IDs above.
+- page_type: a short snake_case string describing the section's role (used as a CSS tag). Free-form. Examples: "executive_summary", "company_overview", "service_portfolio", "leadership_team", "financial_highlights".
+- brief: 2-3 sentences telling the drafter EXACTLY what to cover, referencing which uploaded files this section draws from AND any data the section's chosen template needs (e.g. "extract 4 KPI numbers", "find 6 service categories", "produce a single-bar revenue chart 2021-2024").
 - primary_sources: array of filenames (from the upload list) this section will lean on. Empty array if section is general framing.
 
 Top-level return shape:
 {
   "final_title": "<refined working_title — what should appear on the cover>",
   "subtitle": "<optional subtitle, 1 short line; null if not natural>",
-  "sections": [ { title, page_type, brief, primary_sources }, ... ],
+  "sections": [ { title, template_id, page_type, brief, primary_sources }, ... ],
   "estimated_pages": <int>,
   "rationale": "1-sentence explanation of why you picked this structure based on Stage 1's intent + what's in the sources"
 }
@@ -399,6 +416,7 @@ Top-level return shape:
 Hard rules:
 - Every section title uses sentence case.
 - No filler titles like "Conclusion", "Final thoughts" — use a substantive title like "Outlook" or "What's next".
+- template_id MUST be from the allowlist. If you assign anything else, the section will be dropped.
 - Never mention: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
 - Never frame KIRA as a "platform / SaaS / app". KIRA Studio is invisible infrastructure — the deliverable is the user's, not KIRA's.`;
 
@@ -440,13 +458,32 @@ Design the section structure. Return JSON only.`;
 
   // Defensive cleanup:
   if (Array.isArray(planObj?.sections)) {
-    // Drop any sections the planner accidentally labeled as cover/source-key
-    // (the renderer always adds those at fixed positions).
-    planObj.sections = planObj.sections.filter(s => {
-      if (!s || typeof s !== 'object') return false;
-      const pt = String(s.page_type || '').toLowerCase();
-      return pt !== 'cover' && pt !== 'title_cover' && pt !== 'source_key' && pt !== 'sources';
-    });
+    const allowedIds = new Set(TEMPLATE_ALLOWLIST.map(t => t.id));
+    planObj.sections = planObj.sections
+      .filter(s => {
+        if (!s || typeof s !== 'object') return false;
+        const pt = String(s.page_type || '').toLowerCase();
+        // Drop renderer-owned page types.
+        if (pt === 'cover' || pt === 'title_cover' || pt === 'source_key' || pt === 'sources') return false;
+        return true;
+      })
+      .map(s => {
+        // Normalise template_id; fall back to narrative_page if missing / unknown.
+        const tid = String(s.template_id || '').trim();
+        if (!allowedIds.has(tid)) {
+          // Best-effort mapping from common free-form page_types to a template_id.
+          const pt = String(s.page_type || '').toLowerCase();
+          let guessed = 'narrative_page';
+          if (pt.includes('executive') || pt.includes('summary'))               guessed = 'exec_summary_p1';
+          else if (pt.includes('finding') || pt.includes('recommend') || pt.includes('implication') || pt.includes('action')) guessed = 'exec_summary_p2_implications';
+          else if (pt.includes('financial') || pt.includes('market') || pt.includes('size') || pt.includes('growth') || pt.includes('trend') || pt.includes('revenue')) guessed = 'market_data_chart';
+          else if (pt.includes('product') || pt.includes('service') || pt.includes('feature') || pt.includes('case') || pt.includes('use_case') || pt.includes('client')) guessed = 'use_case_grid_6';
+          else if (pt.includes('method') || pt.includes('team') || pt.includes('leadership') || pt.includes('faq') || pt.includes('process')) guessed = 'methodology_inline';
+          else if (pt.includes('company') || pt.includes('profile') || pt.includes('overview')) guessed = 'competitive_profile_deep';
+          s.template_id = guessed;
+        }
+        return s;
+      });
     if (planObj.sections.length > MAX_SECTIONS) {
       planObj.sections = planObj.sections.slice(0, MAX_SECTIONS);
     }
@@ -595,47 +632,75 @@ const TONE_GUIDE = {
   neutral: `Voice: neutral and professional. Adapt naturally to whatever the section demands — factual where reporting, analytical where interpreting, recommendatory where advising. Sentence-case headlines.`
 };
 
-function buildSectionSystemPrompt({ report_kind, tone }) {
+function buildSectionSystemPrompt({ report_kind, tone, templateId, templateLabel, slotShape }) {
   const tg = TONE_GUIDE[String(tone || '').toLowerCase()] || TONE_GUIDE.neutral;
-  return `You are an expert document writer drafting ONE section of a "${report_kind || 'document'}" for KIRA Studio. The user uploaded source material and described what they want; another LLM has already structured the deliverable. Your job: write this one section.
+  const meta = getTemplateMeta(templateId);
+  const chartHint = meta?.has_chart
+    ? `\nCHART (this template requires one):
+- "chart_data" must have:
+    "type":   "bar" | "line" | "donut"  (pick whichever best represents the data)
+    "series": array of { "label": "<x-axis label>", "value": <number> }
+- Aim for 4-7 data points (bar/line) or 3-6 slices (donut).
+- All values from uploaded sources. If you cannot find real numbers, set chart_data to null and write a note in subhead_html that the chart was omitted.
+- Set chart_title, chart_subtitle, chart_unit, chart_source — chart_source is a short citation like "[annual-report.pdf]" or "[Kira estimates]".\n`
+    : '';
 
-OUTPUT FORMAT — STRICT
-Return RAW HTML ONLY. Your entire response must start with the opening <div> tag of the section and end with the matching </div>.
+  return `You are an expert document writer drafting ONE section of a "${report_kind || 'document'}" for KIRA Studio. The user uploaded source material; another LLM has structured the deliverable and assigned this section a layout template. Your job: fill the template's slots with content drawn from the uploaded sources.
 
-DO NOT WRAP IN MARKDOWN CODE FENCES.
-  • NOT \`\`\`html ... \`\`\`
-  • NOT \`\`\` ... \`\`\`
-  • NOT ANY backtick fence.
-The renderer concatenates your output directly into the document body — any leading or trailing backticks become literal text in the final PDF and break rendering. This is the single most important rule.
+OUTPUT FORMAT — STRICT JSON
+Return a single valid JSON object matching the slot shape below. NO prose before or after. NO markdown code fences (no \`\`\`json, no \`\`\`). Your entire response must start with { and end with }.
 
-NO preamble ("Here's the section...", "Below is the HTML..."). NO commentary after the closing </div>. NO markdown headings (#, ##). Just HTML.
+TEMPLATE
+- template_id:    "${templateId}"
+- template_label: "${templateLabel}"
+
+SLOT SHAPE (your JSON must follow this exact key structure)
+${slotShape}
+${chartHint}
+KEY NOTES
+- Any key ending in "_html" expects INLINE HTML (e.g. "Revenue grew <strong>14%</strong> YoY [annual-report.pdf]"). Allowed tags: <strong>, <em>, <a href="…">, <code>, <br>, <ul>/<li>. Do NOT wrap in <div>, <p>, or block-level elements — the surrounding template provides those.
+- Keys without "_html" expect plain text (no HTML tags) — labels, headings, short captions.
+- Numeric/quantitative slots ("num", "value", "metric"): use the raw number or short string like "14%" or "$1.2B".
+- "change" / "change_dir" pairs: change is text like "+12% YoY"; change_dir is "up" or "down" or "" (used for CSS coloring).
+- "source_tag" + "source_label": source_tag is a class like "primary" / "secondary" / "estimate" for CSS styling; source_label is the visible citation like "[annual-report.pdf]" or "[Kira estimates]".
+- Section tag (top of page): short, ~3-6 words. E.g. "Section 02 · Company at a glance".
+
+CONTENT RULES
+- Fill every required slot. If a slot has no data, use an empty string "" — never null, never omit the key.
+- Loop arrays must have the recommended count of items. If you have fewer, repeat or merge gracefully. If you have more, pick the most important.
 
 VOICE FOR THIS DELIVERABLE
 ${tg}
 
 SOURCE MATERIAL
-The user uploaded source documents. Pull facts, numbers, quotes, and qualitative observations PRIMARILY from those uploaded sources. You may add general context from your training knowledge, but quantitative claims should be anchored to the uploaded sources whenever possible.
+Pull facts, numbers, quotes, and qualitative observations PRIMARILY from the uploaded source documents. You may add general context from your training knowledge, but quantitative claims should be anchored to the uploaded sources whenever possible.
 
-SOURCE CITATIONS (inline)
+SOURCE CITATIONS (inline, inside *_html fields)
 - Format: [filename] for figures pulled from a user-uploaded file. Example: "Revenue grew 14% YoY [annual-report.pdf]."
 - Use [Kira estimates] only if no source supports the number but the number is genuinely an analyst inference.
 - Never fabricate filenames — only cite files actually in the upload list provided below.
 - If no source supports a claim, either tag [Kira estimates] or simply omit the number.
 
-FORMAT
-- Wrap the section in <div class="page page-{page_type}">…</div> using the page_type passed in.
-- Start with <div class="eyebrow">{short framing tag}</div> then <h2>{title}</h2>.
-- 3-5 short paragraphs. ~250-450 words.
-- Use semantic HTML for structure: <ul>, <table>, <ol>, <blockquote> when material is naturally listy / tabular / quoted.
-- No "in summary" / "to conclude" paragraphs.
-
-HARD RULES (apply to every deliverable kind)
+HARD RULES
 - Never mention: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
-- Never frame KIRA Studio as an "AI platform / SaaS / app".
+- Never frame KIRA Studio as an "AI platform / SaaS / app". The deliverable is the user's, not KIRA's.
 - Never lead a headline with "AI".
 - If the uploaded sources don't cover this section's topic, write it more qualitatively — do NOT fabricate numbers, names, or facts to fill space.
 
-Output: HTML for this single section only.`;
+Output: ONE JSON object. Start with { and end with }.`;
+}
+
+// Scrub banned words from every string in a nested JSON structure.
+function scrubObj(v) {
+  if (v == null) return v;
+  if (typeof v === 'string') return scrub(v);
+  if (Array.isArray(v)) return v.map(scrubObj);
+  if (typeof v === 'object') {
+    const out = {};
+    for (const k of Object.keys(v)) out[k] = scrubObj(v[k]);
+    return out;
+  }
+  return v;
 }
 
 export async function stage5DraftSection({ section, parsed, extracted }) {
@@ -645,9 +710,17 @@ export async function stage5DraftSection({ section, parsed, extracted }) {
     .join('\n\n');
   const sourceFilenames = (Array.isArray(extracted) ? extracted : []).map(f => f.filename);
 
+  const templateId   = String(section.template_id || 'narrative_page');
+  const templateMeta = getTemplateMeta(templateId);
+  const templateLabel = templateMeta?.label || templateId;
+  const slotShape    = describeSlotShape(templateId);
+
   const system = buildSectionSystemPrompt({
-    report_kind: parsed.report_kind,
-    tone:        parsed.tone
+    report_kind:   parsed.report_kind,
+    tone:          parsed.tone,
+    templateId,
+    templateLabel,
+    slotShape
   });
 
   const userMsg = `Deliverable context:
@@ -657,7 +730,6 @@ ${JSON.stringify({
   audience:        parsed.audience,
   tone:            parsed.tone,
   user_directives: parsed.user_directives,
-  // Pass market-context fields only when relevant — null otherwise.
   country:  parsed.country  || null,
   industry: parsed.industry || null,
   year:     parsed.year     || null
@@ -668,36 +740,62 @@ ${JSON.stringify({
   title:           section.title,
   brief:           section.brief,
   page_type:       section.page_type,
+  template_id:     templateId,
   primary_sources: section.primary_sources || []
 })}
 
-Available source files (for inline citations — tag as [filename]):
+Available source files (for inline citations — tag as [filename] inside *_html fields):
 ${JSON.stringify(sourceFilenames)}
 
 Uploaded source material (verbatim text extracted from the files):
 ${sourceBlock || '(no source material was provided — write the section using general knowledge only, tagged as [Kira estimates] where appropriate)'}
 
-Write the HTML for this section now.`;
+Return the JSON object now.`;
 
   const msg = await c.messages.create({
     model: MODEL,
-    max_tokens: 2048,
+    max_tokens: 3072,
     system,
     messages: [{ role: 'user', content: userMsg }]
   });
 
-  // Phase N.24: strip markdown code fences before scrubbing — models
-  // sometimes wrap output in ```html ... ``` despite the strict prompt.
-  // Literal backticks in the master HTML body break rendering.
   const raw   = textFromMessage(msg);
   const naked = stripCodeFences(raw);
-  const html  = scrub(naked) || `<div class="page"><h2>${escapeHtml(section.title)}</h2><p>Content unavailable.</p></div>`;
+
+  // Best-effort JSON parse; fall back to a degraded narrative_page if it fails.
+  let slots;
+  try {
+    slots = parseJsonLoose(naked);
+  } catch (err) {
+    console.warn(`[studio-worker] stage5 JSON parse failed for "${section.title}":`, err.message);
+    slots = {
+      section_tag: section.title,
+      page_h1:    section.title,
+      subhead_html: 'Section content could not be fully structured. Source material may need a different layout.',
+      paragraphs: [{
+        heading: section.title,
+        body_html: escapeHtml(naked.slice(0, 1200))
+      }]
+    };
+    // Force fallback template so the slots shape matches.
+    return {
+      title:        section.title,
+      page_type:    section.page_type || 'narrative',
+      template_id:  'narrative_page',
+      slots:        scrubObj(slots),
+      tokens_in:    msg.usage?.input_tokens  || 0,
+      tokens_out:   msg.usage?.output_tokens || 0,
+      parse_failed: true
+    };
+  }
+
   return {
-    title:     section.title,
-    page_type: section.page_type,
-    html,
-    tokens_in:  msg.usage?.input_tokens  || 0,
-    tokens_out: msg.usage?.output_tokens || 0
+    title:       section.title,
+    page_type:   section.page_type || templateId,
+    template_id: templateId,
+    slots:       scrubObj(slots),
+    tokens_in:   msg.usage?.input_tokens  || 0,
+    tokens_out:  msg.usage?.output_tokens || 0
   };
 }
 
@@ -746,68 +844,88 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
   const reportKind   = String(parsed.report_kind   || 'document').trim();
   const finalTitle   = String(plan?.final_title    || parsed.working_title || 'Untitled deliverable').trim();
   const subtitle     = String(plan?.subtitle       || parsed.subtitle      || '').trim();
-  const rationale    = String(plan?.rationale      || '').trim();
   const primarySubj  = String(parsed.primary_subject || '').trim();
 
-  // Eyebrow on the cover surfaces the deliverable kind + (optional)
-  // subject — not "KIRA Studio · industry · year" which was wrong for
-  // company profiles etc.
-  const coverEyebrow = primarySubj
-    ? `${reportKind} · ${primarySubj}`
-    : reportKind;
+  // ── Phase N.25: render each section by filling its assigned template
+  //    with the JSON slots stage 5 returned. Each section is now a fully
+  //    consulting-grade KIRA page (callouts, charts, grid cards, etc.)
+  //    instead of an LLM-emitted <div> blob.
+  const drafts = Array.isArray(sectionsOut?.sections) ? sectionsOut.sections : [];
+  const footerText = `${reportKind} · ${primarySubj || finalTitle}`.slice(0, 80);
 
-  // ── Source key page (unchanged — lists uploaded files) ───────
-  const sourceKeyItems = (Array.isArray(extracted) ? extracted : [])
-    .slice(0, 40)
-    .map(f => {
-      const name = String(f?.filename || '').trim();
-      if (!name) return null;
-      const chars = Number(f?.char_count || 0);
-      const sizeLabel = chars >= 1000 ? `~${Math.round(chars / 1000)}K chars` : `${chars} chars`;
-      return `<li><span class="alias">${name}</span> <span style="color:#94A3B8;">· ${sizeLabel}</span></li>`;
-    })
-    .filter(Boolean)
-    .join('\n');
+  const sectionPagesHtml = [];
+  for (let i = 0; i < drafts.length; i++) {
+    const draft = drafts[i];
+    const tid = String(draft.template_id || 'narrative_page');
+    const slots = draft.slots || {};
 
-  const sourceKeyHtml = `
-    <div class="page page-source_key">
-      <div class="eyebrow">Source key</div>
-      <h2>Source key &amp; traceability</h2>
-      <ul class="source-key-list">
-        ${sourceKeyItems || '<li>No source files uploaded — deliverable drafted from analyst inference (tagged [Kira estimates]).</li>'}
-      </ul>
-      <div class="source-key">Inline tags of the form [&lt;filename&gt;] resolve to the user-uploaded sources above. Tags of the form [Kira estimates] indicate analyst inference not directly traceable to an uploaded source.</div>
-    </div>
-  `;
+    // Inject sensible defaults for slots the planner usually omits.
+    if (slots.section_tag == null || slots.section_tag === '') {
+      slots.section_tag = `Section ${String(i + 2).padStart(2, '0')} · ${draft.title || ''}`.trim();
+    }
+    if (slots.page_h1 == null || slots.page_h1 === '') {
+      slots.page_h1 = draft.title || '';
+    }
+    if (slots.footer_text == null) {
+      slots.footer_text = footerText;
+    }
 
-  // ── Cover page — built from free-form title / subtitle ──────
-  const coverHtml = `
-    <div class="page page-cover">
-      <div class="eyebrow">${escapeHtml(coverEyebrow)}</div>
-      <h1>${escapeHtml(finalTitle)}</h1>
-      ${subtitle ? `<p style="font-size:18px;color:#475569;margin-top:8px;">${escapeHtml(subtitle)}</p>` : ''}
-      ${rationale ? `<p style="margin-top:36px;font-size:14px;color:#64748B;line-height:1.6;max-width:680px;">${escapeHtml(rationale)}</p>` : ''}
-      <p style="margin-top:64px;font-size:11px;color:#94A3B8;letter-spacing:0.08em;text-transform:uppercase;">
-        Generated with KIRA Studio · ${new Date().toISOString().slice(0, 10)}
-      </p>
-    </div>
-  `;
+    try {
+      const html = await renderTemplate(tid, slots);
+      sectionPagesHtml.push(html);
+    } catch (err) {
+      console.warn(`[studio-worker] template render failed for section "${draft.title}" (${tid}):`, err.message);
+      // Fall back to narrative_page with the slots' textual content best-efforted.
+      const fallback = await renderTemplate('narrative_page', {
+        section_tag: slots.section_tag,
+        page_h1:     slots.page_h1 || draft.title,
+        subhead_html: typeof slots.subhead_html === 'string' ? slots.subhead_html : '',
+        paragraphs:  Array.isArray(slots.narrative) ? slots.narrative
+                  : Array.isArray(slots.paragraphs) ? slots.paragraphs
+                  : [{ heading: draft.title, body_html: `<em>Section render failed; raw content unavailable.</em>` }],
+        footer_text: footerText
+      });
+      sectionPagesHtml.push(fallback);
+    }
+  }
 
-  const sectionsHtml = (sectionsOut?.sections || []).map(s => s.html).join('\n');
-  const pagesHtml = `${coverHtml}\n${sectionsHtml}\n${sourceKeyHtml}`;
+  // ── Cover (programmatic — section 1) ─────────────────────────
+  const coverHtml = renderCoverPage({
+    finalTitle,
+    subtitle,
+    reportKind,
+    primarySubject: primarySubj,
+    country:        parsed.country,
+    industry:       parsed.industry,
+    year:           parsed.year,
+    jobId
+  });
 
-  const masterHtml = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>${escapeHtml(finalTitle)}</title>
-  <meta name="viewport" content="width=1280">
-  <style>${css}</style>
-</head>
-<body>
-${pagesHtml}
-</body>
-</html>`;
+  // ── Source-key page (final page — built later once we know total page count) ──
+  // We pre-compute it with a placeholder for the total; applyPageNumbers fills both.
+  const sourceKeyPlaceholder = renderSourceKeyPage({
+    extracted,
+    totalPages: '{{TOTAL_PAGES}}'
+  });
+
+  // Concat all pages.
+  let pagesHtml = [coverHtml, ...sectionPagesHtml, sourceKeyPlaceholder].join('\n');
+
+  // Apply {{PAGE_NUM}} / {{TOTAL_PAGES}} numbering across the document.
+  pagesHtml = applyPageNumbers(pagesHtml);
+
+  // Final scrub pass — belt and braces in case a stray banned word
+  // slipped through a slot the JSON path didn't scrub (e.g. nested key).
+  pagesHtml = scrub(pagesHtml);
+
+  // ── Wrap in master_wrapper.html ──────────────────────────────
+  const wrapper = await loadMasterWrapper();
+  const masterHtml = wrapper
+    .replace(/\{\{LOCALE\}\}/g, 'en')
+    .replace(/\{\{REPORT_TITLE\}\}/g, escapeHtml(finalTitle))
+    .replace(/\{\{REPORT_META_DESCRIPTION\}\}/g, escapeHtml(subtitle || `${reportKind}${primarySubj ? ` · ${primarySubj}` : ''}`))
+    .replace('{{MASTER_STYLES_CSS}}', css)   // raw CSS — no escape
+    .replace('{{PAGES_HTML}}', pagesHtml);   // raw HTML — no escape
 
   // Call the existing render-pdf endpoint.
   if (!PDF_RENDER_SECRET) {
@@ -833,16 +951,28 @@ ${pagesHtml}
     throw new Error('render_pdf_no_output');
   }
 
-  // Preview text — pick the first content section (exec_summary or
-  // whatever the planner put first), strip HTML.
-  const firstSection = (sectionsOut?.sections || [])[0];
+  // Preview text — pull from the first content section's slots, strip
+  // HTML tags. Tries subhead_html, then the first narrative/paragraph body.
+  const firstSection = drafts[0];
+  const previewSource =
+    firstSection?.slots?.subhead_html
+    || firstSection?.slots?.narrative?.[0]?.body_html
+    || firstSection?.slots?.paragraphs?.[0]?.body_html
+    || firstSection?.slots?.left_sections?.[0]?.body_html
+    || firstSection?.slots?.cards?.[0]?.body_html
+    || '';
   const previewText =
-    firstSection?.html
-      ?.replace(/<[^>]+>/g, ' ')
-      ?.replace(/\s+/g, ' ')
-      ?.trim()
-      ?.slice(0, 320) ||
-    (subtitle || `${reportKind}${primarySubj ? ` · ${primarySubj}` : ''} — generated by KIRA Studio.`);
+    String(previewSource || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 320) ||
+    subtitle ||
+    `${reportKind}${primarySubj ? ` · ${primarySubj}` : ''} — generated by KIRA Studio.`;
+
+  // Eyebrow for the studio_reports row metadata.
+  const coverEyebrow = [parsed.country, parsed.industry, parsed.year].filter(Boolean).join(' · ')
+    || (primarySubj ? `${reportKind} · ${primarySubj}` : reportKind);
 
   // Insert studio_reports row. country/industry/year are passed through
   // only if Stage 1 found them genuinely relevant (else null).
@@ -855,7 +985,7 @@ ${pagesHtml}
     country:      parsed.country  || null,
     industry:     parsed.industry || null,
     year:         parsed.year     || null,
-    toc:          (plan?.sections || []).map(s => ({ title: s.title, page_type: s.page_type })),
+    toc:          (plan?.sections || []).map(s => ({ title: s.title, page_type: s.page_type, template_id: s.template_id })),
     full_content: null,                  // full HTML lives in storage; row carries metadata only
     pages:        rpJson.page_count || (sectionsOut?.sections?.length || 0) + 2
   });
