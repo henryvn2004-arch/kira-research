@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KIRA Studio — Generate a market report</title>
-  <meta name="description" content="KIRA Studio — our analyst toolkit, available to logged-in users. Describe a market, optionally attach documents, and our research engine produces a polished report." />
+  <title>KIRA Studio — The research report generator our analysts use</title>
+  <meta name="description" content="The market-research report generator KIRA analysts use internally. Now available to professional analysts at strategy teams, consultancies, and BD groups." />
   <meta name="robots" content="noindex,nofollow" />
 
   <link rel="canonical" href="https://studio.kiraresearch.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="KIRA Studio — the research generator our analysts use" />
+  <meta property="og:description" content="The same engine that produces KIRA Research consulting reports. Now available to pro analysts." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://studio.kiraresearch.com/" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,423 +25,648 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="/css/kira.css" />
 
-  <!-- Supabase client + kiraAuth -->
+  <!-- Supabase + kiraAuth (used by the nav CTA to detect logged-in state) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js"></script>
 
   <style>
+    /* ── Studio-specific overrides — sit alongside kira.css ─── */
+    .studio-shell { background: #FAFAFA; }
+    body { background: #FAFAFA; }
+
+    /* HERO — dark, confident, single column */
     .studio-hero {
-      padding: 72px 0 32px;
-      max-width: 880px;
-      margin: 0 auto;
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 96px 0 112px;
+      position: relative;
+      overflow: hidden;
+    }
+    .studio-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -20%;
+      width: 70%; height: 200%;
+      background: radial-gradient(ellipse at center, rgba(30, 111, 255, 0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .studio-hero .container {
+      max-width: 980px;
+      position: relative;
     }
     .studio-hero .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 16px;
+      color: #93C5FD;
+      margin-bottom: 28px;
+      padding: 6px 12px;
+      background: rgba(30, 111, 255, 0.12);
+      border: 1px solid rgba(30, 111, 255, 0.25);
+      border-radius: 999px;
+    }
+    .studio-hero .eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #60A5FA;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
     }
     .studio-hero h1 {
       font-family: 'Satoshi', sans-serif;
       font-weight: 900;
-      font-size: clamp(36px, 6vw, 56px);
-      line-height: 1.04;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      margin: 0 0 24px;
+      font-size: clamp(38px, 6.5vw, 76px);
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      margin: 0 0 28px;
+      color: #FFFFFF;
+      max-width: 900px;
     }
-    .studio-hero p.lede {
-      font-size: 18px;
+    .studio-hero h1 .accent {
+      color: #60A5FA;
+      font-style: italic;
+      font-weight: 700;
+    }
+    .studio-hero .lede {
+      font-size: clamp(17px, 2vw, 22px);
+      line-height: 1.45;
+      color: #CBD5E1;
+      max-width: 720px;
+      margin: 0 0 40px;
+      font-weight: 400;
+    }
+    .studio-hero .lede strong {
+      color: #F8FAFC;
+      font-weight: 600;
+    }
+    .studio-cta-row {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+    .studio-cta-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #1E6FFF;
+      color: #FFFFFF !important;
+      padding: 16px 28px;
+      border-radius: 4px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .studio-cta-primary:hover { background: #2980F0; transform: translateY(-1px); }
+    .studio-cta-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      color: #E2E8F0 !important;
+      padding: 16px 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .studio-cta-secondary:hover { border-color: #60A5FA; color: #FFFFFF !important; }
+
+    .studio-hero-meta {
+      display: flex; gap: 32px; flex-wrap: wrap;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #94A3B8;
+      letter-spacing: 0.06em;
+    }
+    .studio-hero-meta strong { color: #F1F5F9; font-weight: 600; }
+
+    /* PEER SECTION — quiet, single sentence with a row of analogous tools */
+    .studio-peers {
+      background: #0F172A;
+      padding: 0 0 56px;
+      color: #94A3B8;
+    }
+    .studio-peers .container { max-width: 980px; }
+    .studio-peers .peers-row {
+      padding: 28px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .studio-peers .peers-row p {
+      font-family: 'Satoshi', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: #CBD5E1;
+      margin: 0;
+      line-height: 1.6;
+      max-width: 720px;
+    }
+    .studio-peers .peers-row p strong { color: #F1F5F9; font-weight: 600; }
+    .studio-peers .peer-marks {
+      display: flex; flex-wrap: wrap;
+      gap: 32px 48px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #64748B;
+      padding-top: 8px;
+    }
+
+    /* ── Value props (3 col) ─── */
+    .studio-value {
+      padding: 96px 0;
+      background: #FAFAFA;
+    }
+    .studio-value .container { max-width: 1080px; }
+    .studio-section-head {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 64px;
+    }
+    .studio-section-head .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #1E6FFF;
+      margin-bottom: 14px;
+    }
+    .studio-section-head h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: #0F172A;
+      margin: 0 0 16px;
+    }
+    .studio-section-head p {
+      font-size: 17px;
       line-height: 1.55;
-      color: var(--muted);
-      max-width: 640px;
+      color: #475569;
+      margin: 0;
+    }
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .value-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 32px 28px;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .value-card:hover { border-color: #1E6FFF; transform: translateY(-2px); }
+    .value-card .icon {
+      width: 36px; height: 36px;
+      background: rgba(30, 111, 255, 0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      color: #1E6FFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .value-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: -0.015em;
+      color: #0F172A;
+      margin: 0 0 12px;
+    }
+    .value-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #475569;
       margin: 0;
     }
 
-    .studio-form-card {
-      max-width: 880px;
-      margin: 0 auto 96px;
-      padding: 36px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: var(--elevation-md);
+    /* ── Built for ─── */
+    .studio-built {
+      background: #FFFFFF;
+      padding: 96px 0;
+      border-top: 1px solid #E2E8F0;
+      border-bottom: 1px solid #E2E8F0;
     }
-    .studio-form-card h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: -0.01em;
-      margin: 0 0 16px;
-      color: var(--text);
+    .studio-built .container { max-width: 1080px; }
+    .built-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
     }
-    .studio-field { margin-bottom: 20px; }
-    .studio-field label {
-      display: block;
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 600;
-      font-size: 11px;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
+    .built-card {
+      padding: 28px 0;
+      border-top: 2px solid #0F172A;
     }
-    .studio-field textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 14px 16px;
-      font-family: inherit;
-      font-size: 15px;
-      line-height: 1.5;
-      color: var(--text);
-      background: var(--bg);
-      border: 1px solid var(--border-strong);
-      border-radius: 4px;
-      resize: vertical;
-      min-height: 100px;
-    }
-    .studio-field textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(30, 111, 255, 0.12);
-    }
-    .studio-field .hint {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-
-    .upload-zone {
-      border: 1px dashed var(--border-strong);
-      border-radius: 6px;
-      padding: 18px;
-      background: var(--bg);
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .upload-zone:hover, .upload-zone.drag {
-      border-color: var(--primary);
-      background: rgba(30, 111, 255, 0.04);
-    }
-    .upload-zone input[type="file"] { display: none; }
-    .upload-zone .upload-cta {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--text);
-    }
-    .upload-zone .upload-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 4px;
-      line-height: 1.5;
-    }
-    .upload-list {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .upload-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-size: 13px;
+    .built-card .label {
       font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #64748B;
+      margin-bottom: 10px;
     }
-    .upload-item .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .upload-item .meta { color: var(--muted); font-size: 11px; margin-left: 12px; flex-shrink: 0; }
-    .upload-item button.remove {
-      background: transparent; border: none; color: var(--muted); cursor: pointer;
-      font-family: inherit; font-size: 16px; padding: 0 4px; margin-left: 12px;
-    }
-    .upload-item button.remove:hover { color: #C0392B; }
-
-    .studio-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 28px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-    }
-    .studio-actions .left {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-      max-width: 50%;
-    }
-    .studio-actions button.primary {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 14px 28px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .studio-actions button.primary:hover { background: var(--primary-dim); }
-    .studio-actions button.primary:disabled { opacity: 0.6; cursor: wait; }
-
-    .studio-err {
-      padding: 14px 18px;
-      background: rgba(192,57,43,0.06);
-      border: 1px solid rgba(192,57,43,0.25);
-      border-radius: 6px;
-      color: #C0392B;
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    .studio-gate {
-      max-width: 480px;
-      margin: 120px auto;
-      padding: 48px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      text-align: center;
-    }
-    .studio-gate h2 {
+    .built-card h3 {
       font-family: 'Satoshi', sans-serif;
       font-weight: 700;
       font-size: 22px;
-      color: var(--text);
-      margin-bottom: 12px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+      margin: 0 0 12px;
     }
-    .studio-gate p {
-      color: var(--muted);
+    .built-card p {
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    .studio-gate a.btn-primary {
-      display: inline-flex; align-items: center; background: var(--primary);
-      color: #fff; padding: 12px 22px; border-radius: 4px; font-size: 14px;
-      font-weight: 600; text-decoration: none;
+      color: #475569;
+      margin: 0;
     }
 
-    .studio-meta-row {
-      display: flex; gap: 24px; justify-content: center;
-      padding: 24px 0 48px; flex-wrap: wrap;
-      font-size: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--muted);
+    /* ── How it works ─── */
+    .studio-how {
+      background: #FAFAFA;
+      padding: 96px 0;
     }
-    .studio-meta-row a {
-      color: var(--primary); text-decoration: none; border-bottom: 1px solid currentColor;
+    .studio-how .container { max-width: 980px; }
+    .how-steps {
+      counter-reset: step;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .how-step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-top: 1px solid #E2E8F0;
+    }
+    .how-step:first-child { border-top: none; }
+    .how-step .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 36px;
+      font-weight: 600;
+      color: #1E6FFF;
+      line-height: 1;
+    }
+    .how-step .num::before {
+      content: counter(step, decimal-leading-zero);
+    }
+    .how-step .body h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 21px;
+      letter-spacing: -0.015em;
+      color: #0F172A;
+      margin: 0 0 10px;
+    }
+    .how-step .body p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #475569;
+      margin: 0;
+    }
+    .how-step .body .detail {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+    }
+
+    /* ── Final CTA ─── */
+    .studio-final {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 112px 0 128px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .studio-final::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(30,111,255,0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .studio-final .container { position: relative; max-width: 720px; }
+    .studio-final h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      margin: 0 0 20px;
+    }
+    .studio-final p {
+      font-size: 17px;
+      line-height: 1.5;
+      color: #CBD5E1;
+      margin: 0 0 36px;
+    }
+
+    .studio-footer {
+      padding: 32px 0;
+      background: #0F172A;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: #64748B;
+    }
+    .studio-footer a { color: #93C5FD; text-decoration: none; margin: 0 12px; }
+    .studio-footer a:hover { text-decoration: underline; }
+
+    .studio-nav {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 24px 0;
+      z-index: 10;
+    }
+    .studio-nav .container {
+      max-width: 1180px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .studio-nav .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      color: #F8FAFC;
+    }
+    .studio-nav .logo-mark {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0.08em;
+      color: #FFFFFF;
+    }
+    .studio-nav .logo-mark .a-accent {
+      color: #60A5FA;
+      display: inline-block;
+      transform: skewX(-12deg);
+    }
+    .studio-nav .logo-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #94A3B8;
+      padding: 4px 8px;
+      background: rgba(30, 111, 255, 0.12);
+      border-radius: 3px;
+    }
+    .studio-nav-links {
+      display: flex; gap: 28px; align-items: center;
+    }
+    .studio-nav-links a {
+      color: #CBD5E1;
+      text-decoration: none;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+    .studio-nav-links a:hover { color: #FFFFFF; }
+    .studio-nav-links a.kira-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: #64748B;
+    }
+
+    @media (max-width: 720px) {
+      .how-step { grid-template-columns: 60px 1fr; }
+      .how-step .num { font-size: 28px; }
+      .studio-nav-links { gap: 16px; }
+      .studio-nav-links a.kira-back { display: none; }
     }
   </style>
 </head>
-<body>
+<body class="studio-shell">
 
-  <!-- nav + footer injected by /js/nav.js -->
+  <!-- HERO -->
+  <section class="studio-hero">
+    <nav class="studio-nav">
+      <div class="container">
+        <a class="logo" href="/">
+          <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+          <span class="logo-sub">Studio</span>
+        </a>
+        <div class="studio-nav-links">
+          <a href="/library" id="nav-library" style="display:none;">My library</a>
+          <a href="https://kiraresearch.com" class="kira-back">KIRA Research home ↗</a>
+          <a href="#cta" id="nav-cta">Sign in</a>
+        </div>
+      </div>
+    </nav>
 
-  <div class="container" id="studio-root">
-    <div style="padding: 120px 0; text-align: center; color: var(--muted);">Loading…</div>
-  </div>
+    <div class="container">
+      <div class="eyebrow"><span class="dot"></span>The KIRA analyst toolkit</div>
+      <h1>The research report generator <span class="accent">our analysts use.</span></h1>
+      <p class="lede">
+        Same engine that produces our consulting-grade market reports. <strong>Now available to pro analysts</strong> at strategy teams, consultancies, and BD groups who want the output without the engagement timeline.
+      </p>
+      <div class="studio-cta-row">
+        <a href="/new" class="studio-cta-primary" id="hero-cta-primary">Generate your first report →</a>
+        <a href="#how-it-works" class="studio-cta-secondary">See how it works</a>
+      </div>
+      <div class="studio-hero-meta">
+        <span>Output: <strong>polished PDF + HTML</strong></span>
+        <span>Turnaround: <strong>~10 min</strong></span>
+        <span>Coverage: <strong>any country, any sector</strong></span>
+      </div>
+    </div>
+  </section>
 
-  <script src="/js/nav.js" defer></script>
+  <!-- PEERS — quiet positioning row -->
+  <section class="studio-peers">
+    <div class="container">
+      <div class="peers-row">
+        <p>In the tradition of <strong>tools that get released because the in-house team can no longer keep them to themselves</strong> — same DNA as Palantir Foundry, BCG GAMMA, S&P Capital IQ, Bloomberg Terminal. Built for analysts, by analysts.</p>
+        <div class="peer-marks">
+          <span>Palantir Foundry</span>
+          <span>BCG GAMMA</span>
+          <span>S&amp;P Capital IQ</span>
+          <span>Bloomberg Terminal</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE PROPS -->
+  <section class="studio-value">
+    <div class="container">
+      <div class="studio-section-head">
+        <div class="eyebrow">What you get</div>
+        <h2>Source-grounded. Consulting-grade. Yours.</h2>
+        <p>This isn't a chat wrapper. It's the same multi-stage research workflow we run internally — parsed topic, planned sections, dual-language web research, source-tagged drafting, paginated PDF render.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="icon">01</div>
+          <h3>Source-grounded research</h3>
+          <p>Every quantitative claim carries an inline source tag. Local-language press, stats bureaus, industry associations — searched in parallel with English baseline. No hallucinated numbers.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">02</div>
+          <h3>Consulting-grade output</h3>
+          <p>The PDF is visually identical to a KIRA Research consulting report. Same layout, same typography, same source key. No "generated by AI" watermark — it's analyst-quality work, formatted accordingly.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">03</div>
+          <h3>Private library, your control</h3>
+          <p>Your reports stay yours. Saved to a private library under your account — never surfaced in our public catalog, never shared, never indexed. Archive when done.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILT FOR -->
+  <section class="studio-built">
+    <div class="container">
+      <div class="studio-section-head">
+        <div class="eyebrow">Built for</div>
+        <h2>Analysts who'd rather brief their team than wait three weeks.</h2>
+        <p>You already know what a good market report looks like. You just need to generate one faster, on demand, without losing the rigor.</p>
+      </div>
+      <div class="built-grid">
+        <div class="built-card">
+          <div class="label">Strategy teams</div>
+          <h3>Corp-dev shops, in-house strategy</h3>
+          <p>Pre-deal landscape briefs. Quarterly category reviews. Country deep-dives ahead of an exec offsite. Reports you'd otherwise scope to a consulting firm.</p>
+        </div>
+        <div class="built-card">
+          <div class="label">Consultancies</div>
+          <h3>Boutique &amp; mid-tier firms</h3>
+          <p>Pitch desk research at zero marginal cost. Get a 22-page baseline before the engagement starts. Free your senior analysts for the framing, not the typing.</p>
+        </div>
+        <div class="built-card">
+          <div class="label">BD groups</div>
+          <h3>Sales engineering &amp; market dev</h3>
+          <p>Vertical briefs for new territories. Account-prep memos before quarterly business reviews. Customer-segment intel without a research-ops dependency.</p>
+        </div>
+        <div class="built-card">
+          <div class="label">In-house research</div>
+          <h3>Insight teams &amp; CI functions</h3>
+          <p>Baseline reports that free your team to focus on synthesis and recommendations. Use Studio for the breadth — keep your analysts on the depth that matters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="studio-how" id="how-it-works">
+    <div class="container">
+      <div class="studio-section-head">
+        <div class="eyebrow">How it works</div>
+        <h2>One topic in. A finished report out.</h2>
+        <p>No prompt engineering. No setup. Describe what you want; our engine handles the rest.</p>
+      </div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>Describe the topic.</h3>
+            <p>A sentence is enough. "EV market in South Korea 2027 — demand outlook, competitive landscape, policy environment." Country, sector, year, angle — whatever matters.</p>
+            <div class="detail">Optional: attach up to 5 docs (PDF, DOCX, XLSX, CSV) to ground the research in your data.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>Our engine plans the structure.</h3>
+            <p>Topic gets parsed — country, sector, language, intent. A section structure gets drafted (~10 sections: macro, sector overview, competitive landscape, demand, regulatory, outlook).</p>
+            <div class="detail">Uses the same 7-stage workflow as our internal consulting pipeline.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>Research runs in two languages.</h3>
+            <p>Web search fires queries in English plus the country's business-press language — Vietnamese for Vietnam, Korean for Korea, Portuguese for Brazil. Local stats bureaus, industry associations, central bank filings.</p>
+            <div class="detail">Source aliases stay English in the report; original-language source names captured in the page-bottom source key.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>You get a PDF + the web edition.</h3>
+            <p>Sections drafted, charts placed (where data warrants), pages rendered. ~10 minutes total. Saved to your private library — open in browser, download the PDF, or archive when done.</p>
+            <div class="detail">Visually identical to our published consulting reports. No watermarks, no "AI-generated" disclaimers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="studio-final" id="cta">
+    <div class="container">
+      <h2>Stop scoping desk research. Start generating it.</h2>
+      <p>Free during the in-house preview. Sign in with your KIRA Research account or create one to get started.</p>
+      <a href="/new" class="studio-cta-primary" id="final-cta">Generate your first report →</a>
+    </div>
+  </section>
+
+  <footer class="studio-footer">
+    <div class="container">
+      <a href="https://kiraresearch.com">KIRA Research home</a> ·
+      <a href="/library">My library</a> ·
+      <span>© 2026 KIRA Research</span>
+    </div>
+  </footer>
 
   <script type="module">
-    const root = document.getElementById('studio-root');
-
-    // Wait for kiraAuth (auth.js is classic script).
+    // ── Detect logged-in state to switch CTAs from "Sign in" to "Generate".
     while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
-
     const user = await window.kiraAuth.getUser();
-    if (!user) {
-      renderGate();
+    const navCta     = document.getElementById('nav-cta');
+    const navLibrary = document.getElementById('nav-library');
+    const heroCta    = document.getElementById('hero-cta-primary');
+    const finalCta   = document.getElementById('final-cta');
+
+    if (user) {
+      if (navCta)     { navCta.textContent = user.email?.split('@')[0] || 'Account'; navCta.setAttribute('href', '/library'); }
+      if (navLibrary) navLibrary.style.display = '';
+      // /new gate is itself auth-aware; CTAs already point there. Keep as-is.
     } else {
-      renderForm(user);
-    }
-
-    function escHtml(s) {
-      return String(s == null ? '' : s)
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    }
-
-    function renderGate() {
-      root.innerHTML = `
-        <div class="studio-gate">
-          <h2>Sign in to use KIRA Studio</h2>
-          <p>KIRA Studio is our analyst toolkit. Reports you generate are saved to your private library — only you can see them.</p>
-          <a href="/auth.html" class="btn-primary">Sign in / Create account</a>
-        </div>
-      `;
-      try { sessionStorage.setItem('kira_redirect_after_login', '/'); } catch {}
-    }
-
-    function renderForm(user) {
-      root.innerHTML = `
-        <section class="studio-hero">
-          <div class="eyebrow">KIRA Studio · ${escHtml(user.email || '')}</div>
-          <h1>Generate a market report.</h1>
-          <p class="lede">Describe the market. Attach documents if you have them. Our research engine plans the structure, runs source-grounded research, and delivers a polished PDF + the full web edition — saved to your private library.</p>
-        </section>
-
-        <section class="studio-form-card">
-          <div id="studio-err"></div>
-
-          <div class="studio-field">
-            <label for="topic">Topic</label>
-            <textarea id="topic" placeholder="e.g. EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment" maxlength="600"></textarea>
-            <div class="hint">A sentence or two is enough. Include country, industry, year, and any specific angles you care about.</div>
-          </div>
-
-          <div class="studio-field">
-            <label>Documents (optional)</label>
-            <label for="files" class="upload-zone" id="upload-zone">
-              <div class="upload-cta">Drop files here or click to attach</div>
-              <div class="upload-sub">PDF, DOCX, XLSX, CSV, TXT · max 25 MB each · up to 5 files</div>
-              <input type="file" id="files" multiple accept=".pdf,.docx,.xlsx,.csv,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain" />
-            </label>
-            <div class="upload-list" id="upload-list"></div>
-          </div>
-
-          <div class="studio-actions">
-            <div class="left">In-house testing phase. Generation typically takes 8-14 minutes — you'll see live progress on the next page.</div>
-            <button class="primary" id="generate-btn">Generate report →</button>
-          </div>
-        </section>
-
-        <div class="studio-meta-row">
-          <a href="/library">My Studio library</a>
-          <span>·</span>
-          <a href="https://kiraresearch.com" target="_blank" rel="noopener">KIRA Research home ↗</a>
-        </div>
-      `;
-
-      const topicEl    = document.getElementById('topic');
-      const filesEl    = document.getElementById('files');
-      const zoneEl     = document.getElementById('upload-zone');
-      const listEl     = document.getElementById('upload-list');
-      const generate   = document.getElementById('generate-btn');
-      const errEl      = document.getElementById('studio-err');
-
-      const uploads = []; // { path, name, size, mime }
-
-      function renderUploads() {
-        listEl.innerHTML = uploads.map((u, i) =>
-          `<div class="upload-item">
-             <span class="name">${escHtml(u.name)}</span>
-             <span class="meta">${(u.size / 1024).toFixed(0)} KB</span>
-             <button class="remove" data-idx="${i}" aria-label="Remove">×</button>
-           </div>`
-        ).join('');
-        listEl.querySelectorAll('.remove').forEach(b => {
-          b.addEventListener('click', () => {
-            uploads.splice(Number(b.dataset.idx), 1);
-            renderUploads();
-          });
+      // Make CTAs surface the auth flow before landing on /new — kiraAuth.requireAuth
+      // on /new would redirect anyway, but pre-staging the redirect makes the
+      // sign-in screen come back to /new instead of /.
+      function gateToNew(el) {
+        if (!el) return;
+        el.addEventListener('click', (e) => {
+          try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch (_) {}
         });
       }
-
-      function showErr(msg) {
-        errEl.innerHTML = msg ? `<div class="studio-err">${escHtml(msg)}</div>` : '';
+      gateToNew(heroCta);
+      gateToNew(finalCta);
+      if (navCta) {
+        navCta.addEventListener('click', (e) => {
+          e.preventDefault();
+          try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch (_) {}
+          window.location.href = '/auth.html';
+        });
       }
-
-      // ── File upload handling ───────────────────────────────
-      ['dragover'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.add('drag'); }));
-      ['dragleave', 'drop'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.remove('drag'); }));
-      zoneEl.addEventListener('drop', e => {
-        if (e.dataTransfer && e.dataTransfer.files) {
-          handleFileList(e.dataTransfer.files);
-        }
-      });
-      filesEl.addEventListener('change', () => handleFileList(filesEl.files));
-
-      async function handleFileList(fileList) {
-        if (uploads.length + fileList.length > 5) {
-          showErr('Maximum 5 files per report.');
-          return;
-        }
-        showErr('');
-        for (const f of fileList) {
-          if (f.size > 25 * 1024 * 1024) {
-            showErr(`${f.name} is over 25 MB.`);
-            continue;
-          }
-          await uploadOne(f);
-        }
-        filesEl.value = '';
-      }
-
-      async function uploadOne(file) {
-        const session = (await window.db.auth.getSession()).data.session;
-        if (!session) { showErr('Session expired. Please sign in again.'); return; }
-        try {
-          const r = await fetch('/api/studio-upload', {
-            method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + session.access_token,
-              'Content-Type':  file.type || 'application/octet-stream',
-              'X-File-Name':   file.name,
-              'X-File-Type':   file.type || 'application/octet-stream'
-            },
-            body: file
-          });
-          if (!r.ok) {
-            const body = await r.json().catch(() => ({}));
-            showErr(`Upload failed: ${body.error || r.status}`);
-            return;
-          }
-          const body = await r.json();
-          uploads.push({ path: body.path, name: body.name || file.name, size: body.size, mime: body.mime });
-          renderUploads();
-        } catch (err) {
-          showErr('Upload failed. Please retry.');
-        }
-      }
-
-      // ── Submit ─────────────────────────────────────────────
-      generate.addEventListener('click', async () => {
-        const topic = topicEl.value.trim();
-        if (!topic) { showErr('Please describe the topic.'); return; }
-        if (topic.length > 600) { showErr('Topic is too long — keep it under 600 characters.'); return; }
-
-        showErr('');
-        generate.disabled = true;
-        generate.textContent = 'Submitting…';
-
-        try {
-          const session = (await window.db.auth.getSession()).data.session;
-          if (!session) throw new Error('no_session');
-          const r = await fetch('/api/studio-jobs', {
-            method: 'POST',
-            headers: {
-              'Content-Type':  'application/json',
-              'Authorization': 'Bearer ' + session.access_token
-            },
-            body: JSON.stringify({
-              topic_input: topic,
-              uploaded_file_paths: uploads.map(u => u.path)
-            })
-          });
-          if (!r.ok) {
-            const body = await r.json().catch(() => ({}));
-            throw new Error(body.error || ('http_' + r.status));
-          }
-          const body = await r.json();
-          if (!body.job_id) throw new Error('no_job_id');
-          window.location.href = '/jobs?id=' + encodeURIComponent(body.job_id);
-        } catch (err) {
-          showErr('Could not start generation: ' + (err.message || err));
-          generate.disabled = false;
-          generate.textContent = 'Generate report →';
-        }
-      });
     }
   </script>
 </body>

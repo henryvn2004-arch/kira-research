@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New report — KIRA Studio</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="canonical" href="https://studio.kiraresearch.com/new" />
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    body { background: #FAFAFA; }
+    .new-nav {
+      padding: 22px 0;
+      border-bottom: 1px solid #E2E8F0;
+      background: #FFFFFF;
+    }
+    .new-nav .container { max-width: 1180px; display: flex; justify-content: space-between; align-items: center; }
+    .new-nav .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .new-nav .logo-mark {
+      font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 0.08em; color: #0F172A;
+    }
+    .new-nav .logo-mark .a-accent { color: #1E6FFF; display: inline-block; transform: skewX(-12deg); }
+    .new-nav .logo-sub {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #64748B; padding: 3px 7px; background: rgba(30,111,255,0.08); border-radius: 3px;
+    }
+    .new-nav-links { display: flex; gap: 22px; align-items: center; }
+    .new-nav-links a {
+      color: #475569; text-decoration: none; font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 13px;
+    }
+    .new-nav-links a:hover { color: #1E6FFF; }
+
+    .studio-hero {
+      padding: 56px 0 28px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .studio-hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: #1E6FFF; margin-bottom: 14px;
+    }
+    .studio-hero h1 {
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: clamp(28px, 4.5vw, 42px);
+      line-height: 1.05; letter-spacing: -0.025em;
+      color: #0F172A; margin: 0 0 18px;
+    }
+    .studio-hero p.lede {
+      font-size: 16px; line-height: 1.55; color: #475569;
+      max-width: 640px; margin: 0;
+    }
+
+    .studio-form-card {
+      max-width: 880px; margin: 0 auto 96px;
+      padding: 36px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0; border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.04);
+    }
+    .studio-field { margin-bottom: 20px; }
+    .studio-field label {
+      display: block;
+      font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 11px;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: #64748B; margin-bottom: 8px;
+    }
+    .studio-field textarea {
+      width: 100%; box-sizing: border-box;
+      padding: 14px 16px;
+      font-family: inherit; font-size: 15px; line-height: 1.5;
+      color: #0F172A; background: #FAFAFA;
+      border: 1px solid #CBD5E1; border-radius: 4px;
+      resize: vertical; min-height: 100px;
+    }
+    .studio-field textarea:focus {
+      outline: none; border-color: #1E6FFF;
+      box-shadow: 0 0 0 3px rgba(30,111,255,0.12);
+    }
+    .studio-field .hint {
+      font-size: 12px; color: #64748B; margin-top: 6px; line-height: 1.5;
+    }
+
+    .upload-zone {
+      border: 1px dashed #CBD5E1; border-radius: 6px;
+      padding: 18px; background: #FAFAFA;
+      cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: #1E6FFF; background: rgba(30,111,255,0.04);
+    }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-zone .upload-cta { font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 14px; color: #0F172A; }
+    .upload-zone .upload-sub { font-size: 12px; color: #64748B; margin-top: 4px; line-height: 1.5; }
+    .upload-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .upload-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; background: #FAFAFA;
+      border: 1px solid #E2E8F0; border-radius: 4px;
+      font-size: 13px; font-family: 'JetBrains Mono', monospace;
+    }
+    .upload-item .name { color: #0F172A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-item .meta { color: #64748B; font-size: 11px; margin-left: 12px; flex-shrink: 0; }
+    .upload-item button.remove {
+      background: transparent; border: none; color: #64748B; cursor: pointer;
+      font-family: inherit; font-size: 16px; padding: 0 4px; margin-left: 12px;
+    }
+    .upload-item button.remove:hover { color: #C0392B; }
+
+    .studio-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 28px; padding-top: 24px; border-top: 1px solid #E2E8F0;
+    }
+    .studio-actions .left {
+      font-size: 12px; color: #64748B; line-height: 1.5; max-width: 50%;
+    }
+    .studio-actions button.primary {
+      background: #1E6FFF; color: #FFFFFF; border: none;
+      padding: 14px 28px;
+      font-family: inherit; font-size: 15px; font-weight: 600;
+      border-radius: 4px; cursor: pointer; transition: background 0.2s;
+    }
+    .studio-actions button.primary:hover { background: #2980F0; }
+    .studio-actions button.primary:disabled { opacity: 0.6; cursor: wait; }
+
+    .studio-err {
+      padding: 14px 18px;
+      background: rgba(192,57,43,0.06);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 6px; color: #C0392B; font-size: 13px; margin-bottom: 20px;
+    }
+
+    .studio-gate {
+      max-width: 480px; margin: 120px auto;
+      padding: 48px;
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
+      text-align: center;
+    }
+    .studio-gate h2 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 22px; color: #0F172A; margin-bottom: 12px; }
+    .studio-gate p { color: #64748B; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .studio-gate a.btn-primary {
+      display: inline-flex; align-items: center;
+      background: #1E6FFF; color: #FFFFFF; padding: 12px 22px;
+      border-radius: 4px; font-size: 14px; font-weight: 600; text-decoration: none;
+    }
+
+    .templates-row {
+      max-width: 880px; margin: 0 auto 32px;
+      padding: 0 4px;
+    }
+    .templates-row .label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #64748B; margin-bottom: 10px;
+    }
+    .templates-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .templates-chips button {
+      font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 13px;
+      padding: 8px 14px; border-radius: 999px;
+      background: #FFFFFF; border: 1px solid #CBD5E1; color: #475569;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .templates-chips button:hover { border-color: #1E6FFF; color: #1E6FFF; background: rgba(30,111,255,0.04); }
+  </style>
+</head>
+<body>
+
+  <nav class="new-nav">
+    <div class="container">
+      <a class="logo" href="/">
+        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+        <span class="logo-sub">Studio</span>
+      </a>
+      <div class="new-nav-links">
+        <a href="/library">My library</a>
+        <a href="/">About</a>
+        <a href="https://kiraresearch.com">KIRA home ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" id="studio-root">
+    <div style="padding: 120px 0; text-align: center; color: #64748B;">Loading…</div>
+  </div>
+
+  <script type="module">
+    const root = document.getElementById('studio-root');
+
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      renderGate();
+    } else {
+      renderForm(user);
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function renderGate() {
+      root.innerHTML = `
+        <div class="studio-gate">
+          <h2>Sign in to use KIRA Studio</h2>
+          <p>Reports you generate are saved to your private library — only you can see them. Existing KIRA Research accounts work.</p>
+          <a href="/auth.html" class="btn-primary">Sign in / Create account</a>
+        </div>
+      `;
+      try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch {}
+    }
+
+    const TEMPLATE_PROMPTS = [
+      'EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment',
+      'Coffee market Vietnam 2027 — supply, consumption, export dynamics',
+      'Fintech in Indonesia 2027 — segments, regulators, top players',
+      'Roofing materials Thailand 2027 — construction demand, distribution channels',
+      'Cold-chain logistics Philippines 2027 — capacity, demand drivers, M&A activity'
+    ];
+
+    function renderForm(user) {
+      root.innerHTML = `
+        <section class="studio-hero">
+          <div class="eyebrow">New report · ${escHtml(user.email || '')}</div>
+          <h1>Describe the market.</h1>
+          <p class="lede">A sentence or two is enough. Include country, sector, year, and any specific angles you care about. Optionally attach reference documents to ground the research in your data.</p>
+        </section>
+
+        <div class="templates-row">
+          <div class="label">Try a starting point</div>
+          <div class="templates-chips" id="tpl-chips"></div>
+        </div>
+
+        <section class="studio-form-card">
+          <div id="studio-err"></div>
+
+          <div class="studio-field">
+            <label for="topic">Topic</label>
+            <textarea id="topic" placeholder="e.g. EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment" maxlength="600"></textarea>
+            <div class="hint">Country, sector, year, angle. Whatever matters. Max 600 characters.</div>
+          </div>
+
+          <div class="studio-field">
+            <label>Documents (optional)</label>
+            <label for="files" class="upload-zone" id="upload-zone">
+              <div class="upload-cta">Drop files here or click to attach</div>
+              <div class="upload-sub">PDF, DOCX, XLSX, CSV, TXT · max 25 MB each · up to 5 files</div>
+              <input type="file" id="files" multiple accept=".pdf,.docx,.xlsx,.csv,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain" />
+            </label>
+            <div class="upload-list" id="upload-list"></div>
+          </div>
+
+          <div class="studio-actions">
+            <div class="left">In-house preview phase. Generation typically takes 8-14 minutes — you'll see live progress on the next page.</div>
+            <button class="primary" id="generate-btn">Generate report →</button>
+          </div>
+        </section>
+      `;
+
+      const topicEl  = document.getElementById('topic');
+      const filesEl  = document.getElementById('files');
+      const zoneEl   = document.getElementById('upload-zone');
+      const listEl   = document.getElementById('upload-list');
+      const generate = document.getElementById('generate-btn');
+      const errEl    = document.getElementById('studio-err');
+      const tplEl    = document.getElementById('tpl-chips');
+
+      tplEl.innerHTML = TEMPLATE_PROMPTS.map((p, i) =>
+        `<button type="button" data-idx="${i}">${escHtml(p.split(' — ')[0])}</button>`
+      ).join('');
+      tplEl.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', () => {
+          topicEl.value = TEMPLATE_PROMPTS[Number(b.dataset.idx)];
+          topicEl.focus();
+        });
+      });
+
+      const uploads = [];
+
+      function renderUploads() {
+        listEl.innerHTML = uploads.map((u, i) =>
+          `<div class="upload-item">
+             <span class="name">${escHtml(u.name)}</span>
+             <span class="meta">${(u.size / 1024).toFixed(0)} KB</span>
+             <button class="remove" data-idx="${i}" aria-label="Remove">×</button>
+           </div>`
+        ).join('');
+        listEl.querySelectorAll('.remove').forEach(b => {
+          b.addEventListener('click', () => {
+            uploads.splice(Number(b.dataset.idx), 1);
+            renderUploads();
+          });
+        });
+      }
+
+      function showErr(msg) {
+        errEl.innerHTML = msg ? `<div class="studio-err">${escHtml(msg)}</div>` : '';
+      }
+
+      ['dragover'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.add('drag'); }));
+      ['dragleave', 'drop'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.remove('drag'); }));
+      zoneEl.addEventListener('drop', e => {
+        if (e.dataTransfer && e.dataTransfer.files) handleFileList(e.dataTransfer.files);
+      });
+      filesEl.addEventListener('change', () => handleFileList(filesEl.files));
+
+      async function handleFileList(fileList) {
+        if (uploads.length + fileList.length > 5) { showErr('Maximum 5 files per report.'); return; }
+        showErr('');
+        for (const f of fileList) {
+          if (f.size > 25 * 1024 * 1024) { showErr(`${f.name} is over 25 MB.`); continue; }
+          await uploadOne(f);
+        }
+        filesEl.value = '';
+      }
+
+      async function uploadOne(file) {
+        const session = (await window.db.auth.getSession()).data.session;
+        if (!session) { showErr('Session expired. Please sign in again.'); return; }
+        try {
+          const r = await fetch('/api/studio-upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + session.access_token,
+              'Content-Type':  file.type || 'application/octet-stream',
+              'X-File-Name':   file.name,
+              'X-File-Type':   file.type || 'application/octet-stream'
+            },
+            body: file
+          });
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            showErr(`Upload failed: ${body.error || r.status}`);
+            return;
+          }
+          const body = await r.json();
+          uploads.push({ path: body.path, name: body.name || file.name, size: body.size, mime: body.mime });
+          renderUploads();
+        } catch {
+          showErr('Upload failed. Please retry.');
+        }
+      }
+
+      generate.addEventListener('click', async () => {
+        const topic = topicEl.value.trim();
+        if (!topic) { showErr('Please describe the topic.'); return; }
+        if (topic.length > 600) { showErr('Topic is too long — keep it under 600 characters.'); return; }
+
+        showErr('');
+        generate.disabled = true;
+        generate.textContent = 'Submitting…';
+
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          if (!session) throw new Error('no_session');
+          const r = await fetch('/api/studio-jobs', {
+            method: 'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': 'Bearer ' + session.access_token
+            },
+            body: JSON.stringify({
+              topic_input: topic,
+              uploaded_file_paths: uploads.map(u => u.path)
+            })
+          });
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            throw new Error(body.error || ('http_' + r.status));
+          }
+          const body = await r.json();
+          if (!body.job_id) throw new Error('no_job_id');
+          window.location.href = '/jobs?id=' + encodeURIComponent(body.job_id);
+        } catch (err) {
+          showErr('Could not start generation: ' + (err.message || err));
+          generate.disabled = false;
+          generate.textContent = 'Generate report →';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

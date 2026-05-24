@@ -184,11 +184,7 @@ Do these 3 in order; after step 3, `studio.kiraresearch.com` should accept gen r
 1. ☐ **Run `supabase/migrations/010_studio.sql`** in Supabase dashboard → SQL editor.
    - Creates: `studio_jobs` + `studio_reports` tables, `studio-inputs` + `studio-reports` private storage buckets, RLS policies, FK back-references.
    - Idempotent. Safe to re-run if you re-paste the file. The final `RAISE NOTICE` line should print `studio_jobs:t studio_reports:t studio-inputs bucket:t studio-reports bucket:t` — if any are `f`, screenshot and ping back.
-2. ☐ **Add the `studio.kiraresearch.com` domain to the Vercel project.**
-   - Vercel dashboard → Project `kira-research` → **Settings** → **Domains** → **Add Domain** → enter `studio.kiraresearch.com` → **Add**.
-   - Vercel will show DNS instructions. In your DNS provider (wherever `kiraresearch.com` is hosted), add the CNAME / A record Vercel asks for. Usually one `CNAME` record: `studio` → `cname.vercel-dns.com`.
-   - Wait ~5 min for DNS propagation. Vercel domain status flips from `Invalid Configuration` to `Valid Configuration`.
-   - No need to change anything in `vercel.json` — the host-rewrite is already deployed (after step `git push`).
+2. ✅ **`studio.kiraresearch.com` domain already added to Vercel.** (Verified 2026-05-24 — CNAME → `vercel-dns-017.com`, HTTPS active, served by the `kira-research` Vercel project.) No DNS action needed. The host-rewrite in `vercel.json` (commit `2a0a809`) routes the subdomain to `public/studio/*` automatically.
 3. ☐ **Set the `ANTHROPIC_API_KEY` env var in Vercel.**
    - Get an API key from console.anthropic.com → Settings → API Keys → **Create Key**. Copy it (starts with `sk-ant-`).
    - Vercel dashboard → Project `kira-research` → **Settings** → **Environment Variables** → **Add New**.
