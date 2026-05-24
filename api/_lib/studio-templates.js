@@ -202,9 +202,13 @@ export function describeSlotShape(templateId) {
     obj[loop.key] = [Object.fromEntries(loop.schema.map(k => [k, '<string>']))];
   }
   if (t.has_chart) {
+    // Show both shapes — single-series (most common) and multi-series.
     obj.chart_data = {
       type: '<one of: bar | line | donut>',
-      series: [{ label: '<string>', value: '<number>' }]
+      'series  (use for single-series — most common)': [{ label: '<x-axis label>', value: '<number>' }],
+      'groups  (use INSTEAD of series for multi-series bar/line — e.g. "2023" vs "2024" by quarter; NOT for donut)': [
+        { name: '<series-1 label, e.g. "2023">', values: [{ label: '<x-axis label>', value: '<number>' }] }
+      ]
     };
   }
   return JSON.stringify(obj, null, 2);
@@ -536,101 +540,273 @@ export function renderSourceKeyPage({ extracted, totalPages }) {
 }
 
 // ============================================================
-// SVG CHART RENDERER — bar / line / donut.
+// SVG CHART RENDERER — bar / line / donut.  (Phase N.26)
 //
-// Slot signature:
+// Slot signature (single-series — matches N.25):
 //   chart_data = { type: 'bar' | 'line' | 'donut', series: [{label, value}, ...] }
 //
-// Designed to fill the 600×280-ish chart panel slot in the templates.
-// Uses KIRA blue (#1E6FFF) for primary fill + slate ink for labels.
+// Slot signature (multi-series — added N.26):
+//   chart_data = {
+//     type: 'bar' | 'line',
+//     groups: [
+//       { name: '<series 1 label>', values: [{label, value}, ...] },
+//       { name: '<series 2 label>', values: [{label, value}, ...] }
+//     ]
+//   }
 //
-// N.26 will replace with richer / multi-series charts; for N.25 this
-// is "good enough to look intentional".
+// Donut stays single-series only (multi-series donut isn't meaningful).
+//
+// N.26 polish: Y-axis gridlines + nice-scale ticks, donut center total,
+// auto K/M/B value formatting, multi-series palette, top-aligned legend.
 // ============================================================
-export function renderChartSvg(chartData, _unitHint) {
-  if (!chartData || !Array.isArray(chartData.series) || chartData.series.length === 0) {
-    return `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Chart data not provided</div>`;
-  }
-  const type = String(chartData.type || 'bar').toLowerCase();
-  if (type === 'donut') return renderDonut(chartData.series);
-  if (type === 'line')  return renderLine(chartData.series);
-  return renderBar(chartData.series);
-}
+
+const KIRA_PALETTE = ['#1E6FFF', '#0F172A', '#F59E0B', '#10B981', '#7C3AED', '#EC4899'];
+const DONUT_PALETTE = ['#1E6FFF', '#3F8AFF', '#7BA8FF', '#A6C2FF', '#CDDBFE', '#E2E8F0'];
 
 function _num(v) {
   const n = Number(v);
   return Number.isFinite(n) ? n : 0;
 }
 
-function renderBar(series) {
-  const W = 600, H = 260;
-  const padL = 80, padR = 20, padT = 24, padB = 50;
+// Auto-format a number with K/M/B suffix. Preserves strings as-is so
+// the LLM can pass pre-formatted display values like "$1.2B".
+function fmtValue(v, opts = {}) {
+  if (v == null) return '';
+  if (typeof v === 'string' && /[a-z$%€£¥]/i.test(v)) return v; // already formatted
+  const n = _num(v);
+  const abs = Math.abs(n);
+  const prefix = opts.prefix || '';
+  if (abs >= 1e9)  return `${prefix}${(n / 1e9).toFixed(abs >= 1e10 ? 0 : 1)}B`;
+  if (abs >= 1e6)  return `${prefix}${(n / 1e6).toFixed(abs >= 1e7 ? 0 : 1)}M`;
+  if (abs >= 1e3)  return `${prefix}${(n / 1e3).toFixed(abs >= 1e4 ? 0 : 1)}K`;
+  if (abs >= 10)   return `${prefix}${Math.round(n)}`;
+  return `${prefix}${n.toFixed(2).replace(/\.?0+$/, '')}`;
+}
+
+// Round max value up to a "nice" scale + return tick values.
+// E.g. max=87 → niceMax=100, ticks=[0,25,50,75,100].
+function niceScale(maxValue, tickCount = 4) {
+  if (maxValue <= 0) return { niceMax: 1, ticks: [0, 1] };
+  const exp     = Math.floor(Math.log10(maxValue));
+  const base    = Math.pow(10, exp);
+  const frac    = maxValue / base;
+  let niceFrac;
+  if (frac <= 1)      niceFrac = 1;
+  else if (frac <= 2) niceFrac = 2;
+  else if (frac <= 5) niceFrac = 5;
+  else                niceFrac = 10;
+  const niceMax = niceFrac * base;
+  const step    = niceMax / tickCount;
+  const ticks   = [];
+  for (let i = 0; i <= tickCount; i++) ticks.push(i * step);
+  return { niceMax, ticks };
+}
+
+// Detect chart shape: single-series ("series") vs multi-series ("groups").
+// Returns: { isMulti, groups, allLabels, allValues }.
+function normaliseChartData(chartData) {
+  if (Array.isArray(chartData.groups) && chartData.groups.length > 0) {
+    const groups = chartData.groups
+      .filter(g => g && Array.isArray(g.values) && g.values.length > 0)
+      .map(g => ({
+        name:   String(g.name || ''),
+        values: g.values
+      }));
+    if (groups.length === 0) return null;
+    // Use the first group's labels as the x-axis labels (assume groups share labels).
+    const allLabels = groups[0].values.map(v => v.label);
+    const allValues = groups.flatMap(g => g.values.map(v => _num(v.value)));
+    return { isMulti: true, groups, allLabels, allValues };
+  }
+  if (Array.isArray(chartData.series) && chartData.series.length > 0) {
+    const groups = [{ name: '', values: chartData.series }];
+    const allLabels = chartData.series.map(v => v.label);
+    const allValues = chartData.series.map(v => _num(v.value));
+    return { isMulti: false, groups, allLabels, allValues };
+  }
+  return null;
+}
+
+export function renderChartSvg(chartData, unitHint) {
+  if (!chartData) {
+    return `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Chart data not provided</div>`;
+  }
+  const type = String(chartData.type || 'bar').toLowerCase();
+  if (type === 'donut') {
+    const series = chartData.series || (chartData.groups?.[0]?.values) || [];
+    if (series.length === 0) return chartEmpty();
+    return renderDonut(series, unitHint);
+  }
+  const norm = normaliseChartData(chartData);
+  if (!norm) return chartEmpty();
+  if (type === 'line') return renderLine(norm, unitHint);
+  return renderBar(norm, unitHint);
+}
+
+function chartEmpty() {
+  return `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Chart data not provided</div>`;
+}
+
+// ============================================================
+// BAR — single-series or grouped multi-series.
+// Multi-series: bars cluster side-by-side per category.
+// ============================================================
+function renderBar({ isMulti, groups, allLabels, allValues }, _unitHint) {
+  const W = 600, H = 280;
+  const legendH = isMulti ? 22 : 0;
+  const padL = 56, padR = 16, padT = 12 + legendH, padB = 50;
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
-  const values = series.map(s => _num(s.value));
-  const max = Math.max(1, ...values);
-  const n = series.length;
-  const barW = Math.max(8, (innerW / n) * 0.62);
-  const step = innerW / n;
 
-  const bars = series.map((s, i) => {
-    const v = _num(s.value);
-    const h = (v / max) * innerH;
-    const x = padL + step * i + (step - barW) / 2;
-    const y = padT + innerH - h;
+  const max = Math.max(1, ...allValues);
+  const { niceMax, ticks } = niceScale(max, 4);
+
+  const n = allLabels.length;
+  const groupStep = innerW / n;
+  const groupCount = groups.length;
+  const groupGap = 4;
+  const groupSlotW = groupStep * 0.72;
+  const barW = Math.max(6, (groupSlotW - groupGap * (groupCount - 1)) / groupCount);
+
+  // Gridlines + Y tick labels
+  const grid = ticks.map(t => {
+    const y = padT + innerH - (t / niceMax) * innerH;
     return `
-      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="#1E6FFF" rx="2"/>
-      <text x="${(x + barW / 2).toFixed(1)}" y="${(y - 6).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#0F172A">${esc(s.label_value || v.toLocaleString())}</text>
-      <text x="${(x + barW / 2).toFixed(1)}" y="${(H - padB + 18).toFixed(1)}" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="10" font-weight="500" fill="#64748B">${esc(String(s.label || '').slice(0, 14))}</text>
+      <line x1="${padL}" y1="${y.toFixed(1)}" x2="${(padL + innerW).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#F1F5F9" stroke-width="1"/>
+      <text x="${(padL - 8).toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" font-weight="500" fill="#94A3B8">${esc(fmtValue(t))}</text>
     `;
   }).join('');
 
-  // Y-axis baseline
+  // Bars
+  const bars = [];
+  for (let i = 0; i < n; i++) {
+    const groupCenter = padL + groupStep * i + groupStep / 2;
+    const groupLeft   = groupCenter - groupSlotW / 2;
+    for (let g = 0; g < groupCount; g++) {
+      const v = _num(groups[g].values[i]?.value);
+      const h = (v / niceMax) * innerH;
+      const x = groupLeft + g * (barW + groupGap);
+      const y = padT + innerH - h;
+      const color = KIRA_PALETTE[g % KIRA_PALETTE.length];
+      const labelV = groups[g].values[i]?.label_value || fmtValue(v);
+      bars.push(`
+        <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="${color}" rx="2"/>
+        ${groupCount === 1 ? `<text x="${(x + barW / 2).toFixed(1)}" y="${(y - 6).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#0F172A">${esc(labelV)}</text>` : ''}
+      `);
+    }
+    // Category axis label
+    bars.push(`<text x="${groupCenter.toFixed(1)}" y="${(H - padB + 18).toFixed(1)}" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="10" font-weight="500" fill="#64748B">${esc(String(allLabels[i] || '').slice(0, 14))}</text>`);
+  }
+
+  // Legend (only for multi-series)
+  const legend = isMulti
+    ? `<g transform="translate(${padL},${(legendH - 6).toFixed(1)})">
+        ${groups.map((g, gi) => {
+          const x = gi * 130;
+          const color = KIRA_PALETTE[gi % KIRA_PALETTE.length];
+          return `
+            <rect x="${x}" y="0" width="10" height="10" fill="${color}" rx="2"/>
+            <text x="${x + 16}" y="9" font-family="Satoshi, sans-serif" font-size="10" font-weight="600" fill="#0F172A">${esc(String(g.name || '').slice(0, 18))}</text>
+          `;
+        }).join('')}
+      </g>`
+    : '';
+
+  // Baseline
   const axisY = padT + innerH;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-    <line x1="${padL}" y1="${axisY}" x2="${padL + innerW}" y2="${axisY}" stroke="#E2E8F0" stroke-width="1"/>
-    ${bars}
+    ${grid}
+    <line x1="${padL}" y1="${axisY}" x2="${(padL + innerW).toFixed(1)}" y2="${axisY}" stroke="#CBD5E1" stroke-width="1"/>
+    ${bars.join('\n')}
+    ${legend}
   </svg>`;
 }
 
-function renderLine(series) {
-  const W = 600, H = 260;
-  const padL = 60, padR = 20, padT = 24, padB = 50;
+// ============================================================
+// LINE — single-series or multi-line.
+// Each group becomes one line with its own color + dots.
+// ============================================================
+function renderLine({ isMulti, groups, allLabels, allValues }, _unitHint) {
+  const W = 600, H = 280;
+  const legendH = isMulti ? 22 : 0;
+  const padL = 56, padR = 16, padT = 12 + legendH, padB = 50;
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
-  const values = series.map(s => _num(s.value));
-  const max = Math.max(1, ...values);
-  const min = Math.min(0, ...values);
-  const range = Math.max(1, max - min);
-  const n = series.length;
+
+  const max = Math.max(1, ...allValues);
+  const { niceMax, ticks } = niceScale(max, 4);
+  // For now, treat min as 0 baseline (most business data is positive).
+  const range = Math.max(1, niceMax - 0);
+
+  const n = allLabels.length;
   const step = n > 1 ? innerW / (n - 1) : 0;
 
-  const pts = series.map((s, i) => {
-    const v = _num(s.value);
-    const x = padL + step * i;
-    const y = padT + innerH - ((v - min) / range) * innerH;
-    return [x, y, v, s.label];
-  });
+  // Gridlines + Y tick labels
+  const grid = ticks.map(t => {
+    const y = padT + innerH - (t / niceMax) * innerH;
+    return `
+      <line x1="${padL}" y1="${y.toFixed(1)}" x2="${(padL + innerW).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#F1F5F9" stroke-width="1"/>
+      <text x="${(padL - 8).toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" font-weight="500" fill="#94A3B8">${esc(fmtValue(t))}</text>
+    `;
+  }).join('');
 
-  const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
-  const dots = pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="#1E6FFF"/>`).join('');
-  const valueLabels = pts.map(p => `<text x="${p[0].toFixed(1)}" y="${(p[1] - 10).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#0F172A">${esc(p[2].toLocaleString())}</text>`).join('');
-  const axisLabels = pts.map(p => `<text x="${p[0].toFixed(1)}" y="${(H - padB + 18).toFixed(1)}" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="10" font-weight="500" fill="#64748B">${esc(String(p[3] || '').slice(0, 14))}</text>`).join('');
+  // Lines + dots per group
+  const lines = groups.map((g, gi) => {
+    const color = KIRA_PALETTE[gi % KIRA_PALETTE.length];
+    const pts = g.values.map((vobj, i) => {
+      const v = _num(vobj.value);
+      const x = padL + step * i;
+      const y = padT + innerH - ((v - 0) / range) * innerH;
+      return [x, y, v];
+    });
+    const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+    const dots = pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="${color}" stroke="#FFF" stroke-width="1.5"/>`).join('');
+    const valueLabels = !isMulti
+      ? pts.map(p => `<text x="${p[0].toFixed(1)}" y="${(p[1] - 10).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#0F172A">${esc(fmtValue(p[2]))}</text>`).join('')
+      : '';
+    return `
+      <path d="${pathD}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      ${dots}
+      ${valueLabels}
+    `;
+  }).join('');
+
+  // X-axis category labels
+  const xLabels = allLabels.map((lbl, i) => {
+    const x = padL + step * i;
+    return `<text x="${x.toFixed(1)}" y="${(H - padB + 18).toFixed(1)}" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="10" font-weight="500" fill="#64748B">${esc(String(lbl || '').slice(0, 14))}</text>`;
+  }).join('');
+
+  // Legend
+  const legend = isMulti
+    ? `<g transform="translate(${padL},${(legendH - 6).toFixed(1)})">
+        ${groups.map((g, gi) => {
+          const x = gi * 130;
+          const color = KIRA_PALETTE[gi % KIRA_PALETTE.length];
+          return `
+            <circle cx="${x + 5}" cy="5" r="5" fill="${color}"/>
+            <text x="${x + 16}" y="9" font-family="Satoshi, sans-serif" font-size="10" font-weight="600" fill="#0F172A">${esc(String(g.name || '').slice(0, 18))}</text>
+          `;
+        }).join('')}
+      </g>`
+    : '';
 
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-    <line x1="${padL}" y1="${padT + innerH}" x2="${padL + innerW}" y2="${padT + innerH}" stroke="#E2E8F0" stroke-width="1"/>
-    <path d="${pathD}" fill="none" stroke="#1E6FFF" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-    ${dots}
-    ${valueLabels}
-    ${axisLabels}
+    ${grid}
+    <line x1="${padL}" y1="${(padT + innerH).toFixed(1)}" x2="${(padL + innerW).toFixed(1)}" y2="${(padT + innerH).toFixed(1)}" stroke="#CBD5E1" stroke-width="1"/>
+    ${lines}
+    ${xLabels}
+    ${legend}
   </svg>`;
 }
 
-function renderDonut(series) {
-  const W = 600, H = 260;
-  const cx = 160, cy = 130, rOuter = 90, rInner = 56;
+// ============================================================
+// DONUT — single-series with center total + side legend.
+// ============================================================
+function renderDonut(series, unitHint) {
+  const W = 600, H = 280;
+  const cx = 150, cy = 140, rOuter = 95, rInner = 60;
   const total = series.reduce((a, s) => a + Math.max(0, _num(s.value)), 0) || 1;
-  const palette = ['#1E6FFF', '#3F8AFF', '#7BA8FF', '#A6C2FF', '#CDDBFE', '#E2E8F0'];
 
   let angle = -Math.PI / 2;
   const slices = series.map((s, i) => {
@@ -653,23 +829,36 @@ function renderDonut(series) {
       `A ${rInner} ${rInner} 0 ${largeArc} 0 ${ix2.toFixed(1)} ${iy2.toFixed(1)}`,
       'Z'
     ].join(' ');
-    const slice = `<path d="${d}" fill="${palette[i % palette.length]}"/>`;
+    const slice = `<path d="${d}" fill="${DONUT_PALETTE[i % DONUT_PALETTE.length]}"/>`;
     angle = next;
-    return { slice, color: palette[i % palette.length], frac, label: s.label, value: v };
+    return { slice, color: DONUT_PALETTE[i % DONUT_PALETTE.length], frac, label: s.label, value: v };
   });
 
+  // Center total
+  const totalLabel = fmtValue(total);
+  const centerLabel = unitHint ? esc(String(unitHint)) : 'TOTAL';
+  const centerBlock = `
+    <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="Satoshi, sans-serif" font-weight="900" font-size="24" fill="#0F172A">${esc(totalLabel)}</text>
+    <text x="${cx}" y="${cy + 16}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#64748B" letter-spacing="0.12em">${centerLabel.toUpperCase().slice(0, 16)}</text>
+  `;
+
+  // Legend (right column)
+  const legendX = 290;
+  const legendStartY = 32;
+  const rowH = Math.min(24, (H - 24 - legendStartY) / Math.max(1, slices.length));
   const legend = slices.map((s, i) => {
-    const y = 24 + i * 22;
+    const y = legendStartY + i * rowH;
     const pct = Math.round(s.frac * 1000) / 10;
     return `
-      <rect x="320" y="${y}" width="12" height="12" fill="${s.color}" rx="2"/>
-      <text x="338" y="${y + 10}" font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#0F172A">${esc(String(s.label || '').slice(0, 24))}</text>
-      <text x="${W - 20}" y="${y + 10}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#1E6FFF">${pct}%</text>
+      <rect x="${legendX}" y="${y}" width="11" height="11" fill="${s.color}" rx="2"/>
+      <text x="${legendX + 18}" y="${y + 9}" font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#0F172A">${esc(String(s.label || '').slice(0, 26))}</text>
+      <text x="${W - 18}" y="${y + 9}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#1E6FFF">${pct}%</text>
     `;
   }).join('');
 
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="display:block;">
     ${slices.map(s => s.slice).join('')}
+    ${centerBlock}
     ${legend}
   </svg>`;
 }

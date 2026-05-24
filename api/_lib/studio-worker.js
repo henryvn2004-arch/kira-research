@@ -637,12 +637,34 @@ function buildSectionSystemPrompt({ report_kind, tone, templateId, templateLabel
   const meta = getTemplateMeta(templateId);
   const chartHint = meta?.has_chart
     ? `\nCHART (this template requires one):
-- "chart_data" must have:
-    "type":   "bar" | "line" | "donut"  (pick whichever best represents the data)
-    "series": array of { "label": "<x-axis label>", "value": <number> }
-- Aim for 4-7 data points (bar/line) or 3-6 slices (donut).
+- "chart_data.type": "bar" | "line" | "donut" (pick whichever best represents the data).
+  • bar   — for category comparisons or stacks of discrete values
+  • line  — for trends over time (years, quarters, months)
+  • donut — for share-of-total breakdowns (3-6 slices)
+
+- SINGLE-SERIES (most common — use this 90% of the time):
+    "chart_data.series": [{ "label": "<x-axis label>", "value": <number> }]
+    Example: { type: "bar", series: [{label:"2021", value:120}, {label:"2022", value:145}, {label:"2023", value:168}] }
+
+- MULTI-SERIES (use for bar/line ONLY when comparing 2-3 series sharing the same x-axis,
+  e.g. revenue vs profit by year, or two segments' growth side-by-side):
+    "chart_data.groups": [
+      { "name": "<series-1 label>", "values": [{label, value}, ...] },
+      { "name": "<series-2 label>", "values": [{label, value}, ...] }
+    ]
+    Example: { type: "line", groups: [
+      { name: "Revenue", values: [{label:"Q1", value:100}, {label:"Q2", value:110}] },
+      { name: "EBITDA",  values: [{label:"Q1", value:25},  {label:"Q2", value:32}] }
+    ]}
+    Rules:
+      • All groups MUST share the same x-axis labels (same labels[] in each group).
+      • 2-3 groups max — more becomes unreadable.
+      • Donut is single-series only — never use groups for donut.
+
+- Aim for 4-7 data points per series (bar/line) or 3-6 slices (donut).
 - All values from uploaded sources. If you cannot find real numbers, set chart_data to null and write a note in subhead_html that the chart was omitted.
-- Set chart_title, chart_subtitle, chart_unit, chart_source — chart_source is a short citation like "[annual-report.pdf]" or "[Kira estimates]".\n`
+- Set chart_title, chart_subtitle, chart_unit ("USD bn", "%", "users", etc.), chart_source — chart_source is a short citation like "[annual-report.pdf]" or "[Kira estimates]".
+- Values can be raw numbers (the renderer auto-formats with K/M/B). If you want to display a pre-formatted string like "$1.2B", pass it as the value directly — the renderer preserves strings.\n`
     : '';
 
   return `You are an expert document writer drafting ONE section of a "${report_kind || 'document'}" for KIRA Studio. The user uploaded source material; another LLM has structured the deliverable and assigned this section a layout template. Your job: fill the template's slots with content drawn from the uploaded sources.
