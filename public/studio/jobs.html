@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generating… — KIRA Studio</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .job-page {
+      max-width: 720px;
+      margin: 80px auto 96px;
+      padding: 0 24px;
+    }
+    .job-card {
+      padding: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--elevation-md);
+    }
+    .job-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .job-topic {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.35;
+      color: var(--text);
+      letter-spacing: -0.015em;
+      margin: 0 0 28px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dim) 100%);
+      width: 0%;
+      transition: width 0.6s ease;
+      border-radius: 999px;
+    }
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 28px;
+    }
+    .progress-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .progress-stage {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 60%;
+      text-align: right;
+    }
+
+    .stage-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .stage-list li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .stage-list li.done { color: var(--text); }
+    .stage-list li.active { color: var(--primary); font-weight: 600; }
+    .stage-list .dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid var(--border-strong);
+      flex-shrink: 0;
+      background: transparent;
+      position: relative;
+    }
+    .stage-list li.done .dot {
+      background: var(--primary); border-color: var(--primary);
+    }
+    .stage-list li.done .dot::after {
+      content: '✓';
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      color: #fff; font-size: 9px; font-weight: 700;
+    }
+    .stage-list li.active .dot {
+      border-color: var(--primary);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(30,111,255,0.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(30,111,255,0); }
+    }
+
+    .job-meta {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .job-error {
+      margin-top: 24px;
+      padding: 16px 20px;
+      background: rgba(192,57,43,0.06);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 6px;
+      color: #C0392B;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .job-error code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: rgba(192,57,43,0.08);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .job-cta {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+    .job-cta a, .job-cta button {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 12px 22px; border-radius: 4px;
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: transparent; color: var(--text);
+      transition: all 0.15s;
+    }
+    .job-cta .primary {
+      background: var(--primary); color: #fff; border-color: var(--primary);
+    }
+    .job-cta .primary:hover { background: var(--primary-dim); border-color: var(--primary-dim); }
+    .job-cta a:hover:not(.primary), .job-cta button:hover:not(.primary) { border-color: var(--primary); color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="job-page">
+    <div class="job-card" id="job-card">
+      <div class="job-eyebrow">KIRA Studio</div>
+      <div style="color: var(--muted); font-size: 14px;">Loading job…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    const STAGES = [
+      { key: 'parse',   label: 'Parse topic' },
+      { key: 'plan',    label: 'Plan structure' },
+      { key: 'search',  label: 'Research sources' },
+      { key: 'content', label: 'Draft sections' },
+      { key: 'render',  label: 'Render PDF' }
+    ];
+
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+    const user = await window.kiraAuth.requireAuth();
+    if (!user) throw new Error('halt');
+
+    const url = new URL(window.location.href);
+    const jobId = url.searchParams.get('id');
+    if (!jobId) {
+      document.getElementById('job-card').innerHTML =
+        '<div class="job-eyebrow">KIRA Studio</div>' +
+        '<div class="job-error">No job id in URL. <a href="/">Start a new report</a>.</div>';
+      throw new Error('halt');
+    }
+
+    let lastStatus = null;
+    let pollTimer = null;
+    let backoff   = 2500; // ms
+    const MAX_BACKOFF = 10000;
+
+    async function fetchJob() {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) {
+        await window.kiraAuth.requireAuth();
+        return null;
+      }
+      const r = await fetch('/api/studio-jobs?id=' + encodeURIComponent(jobId), {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (!r.ok) return null;
+      const body = await r.json();
+      return body.job;
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function render(job) {
+      const card = document.getElementById('job-card');
+      const stagesDone = new Set(job.stages_completed || []);
+      const isDone = job.status === 'completed';
+      const isFailed = job.status === 'failed' || job.status === 'cancelled';
+
+      // Figure out which stage is active.
+      let activeKey = null;
+      for (const s of STAGES) {
+        if (!stagesDone.has(s.key)) { activeKey = s.key; break; }
+      }
+      if (isDone) activeKey = null;
+
+      const stagesHtml = STAGES.map(s => {
+        const cls = stagesDone.has(s.key) ? 'done' : (s.key === activeKey && !isFailed ? 'active' : '');
+        return `<li class="${cls}"><span class="dot"></span><span>${escHtml(s.label)}</span></li>`;
+      }).join('');
+
+      const headline = isDone
+        ? '<div class="progress-pct" style="color: var(--primary);">Done — report ready</div>'
+        : isFailed
+          ? '<div class="progress-pct" style="color: #C0392B;">' + escHtml(job.error_code || 'Failed') + '</div>'
+          : `<div class="progress-pct">${job.progress || 0}%</div>`;
+
+      const stageLine = isDone
+        ? 'Click below to view your report.'
+        : isFailed
+          ? 'The job ended before completion. You can retry from a new topic.'
+          : (job.current_stage || 'Starting…');
+
+      const errBlock = isFailed && job.error_log
+        ? `<div class="job-error"><strong>Error log:</strong> <code>${escHtml(job.error_log.slice(0, 600))}</code></div>`
+        : '';
+
+      const ctaHtml = isDone && job.studio_report_id
+        ? `<div class="job-cta">
+             <a class="primary" href="/reports?id=${encodeURIComponent(job.studio_report_id)}">View report →</a>
+             <a href="/library">My Studio library</a>
+           </div>`
+        : isFailed
+          ? `<div class="job-cta">
+               <a class="primary" href="/">Start a new report</a>
+               <a href="/library">My Studio library</a>
+             </div>`
+          : '';
+
+      card.innerHTML = `
+        <div class="job-eyebrow">KIRA Studio · job ${jobId.slice(0, 8)}</div>
+        <div class="job-topic">${escHtml(job.topic_input || '')}</div>
+
+        <div class="progress-bar"><div class="progress-fill" style="width: ${job.progress || 0}%"></div></div>
+        <div class="progress-row">
+          ${headline}
+          <div class="progress-stage">${escHtml(stageLine)}</div>
+        </div>
+
+        <ul class="stage-list">${stagesHtml}</ul>
+
+        <div class="job-meta">
+          <span>Status: <strong>${escHtml(job.status)}</strong></span>
+          ${job.started_at ? `<span>Started: ${escHtml(new Date(job.started_at).toLocaleTimeString())}</span>` : ''}
+          ${job.completed_at ? `<span>Completed: ${escHtml(new Date(job.completed_at).toLocaleTimeString())}</span>` : ''}
+        </div>
+
+        ${errBlock}
+        ${ctaHtml}
+      `;
+    }
+
+    async function tick() {
+      try {
+        const job = await fetchJob();
+        if (job) {
+          render(job);
+          lastStatus = job.status;
+          if (job.status === 'completed' || job.status === 'failed' || job.status === 'cancelled') {
+            return; // stop polling
+          }
+          backoff = 2500; // reset on success
+        }
+      } catch (err) {
+        backoff = Math.min(backoff * 1.5, MAX_BACKOFF);
+      }
+      pollTimer = setTimeout(tick, backoff);
+    }
+
+    tick();
+  </script>
+</body>
+</html>

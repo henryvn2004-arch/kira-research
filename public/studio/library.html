@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My library — KIRA Studio</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .lib-page {
+      max-width: 1080px;
+      margin: 60px auto 96px;
+      padding: 0 24px;
+    }
+    .lib-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .lib-head .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .lib-head h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin: 0;
+    }
+    .lib-new-btn {
+      background: var(--primary);
+      color: #fff !important;
+      border: none;
+      padding: 12px 22px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .lib-new-btn:hover { background: var(--primary-dim); }
+
+    .lib-jobs-active {
+      margin-bottom: 32px;
+    }
+    .lib-jobs-active h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+    .lib-job-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .lib-job-pill .topic {
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 60%;
+    }
+    .lib-job-pill .progress {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+    }
+    .lib-job-pill a {
+      color: var(--primary); text-decoration: none; font-weight: 600;
+    }
+
+    .lib-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+    .lib-card {
+      padding: 22px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.15s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex; flex-direction: column;
+    }
+    .lib-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--elevation-md);
+      transform: translateY(-2px);
+    }
+    .lib-card .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .lib-card .meta .country { color: var(--primary); }
+    .lib-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0 0 12px;
+    }
+    .lib-card .when {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .lib-empty {
+      padding: 96px 24px;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .lib-empty h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .lib-empty p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 460px;
+      margin: 0 auto 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lib-page" id="lib-root">
+    <div style="padding: 80px 0; text-align: center; color: var(--muted);">Loading…</div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+    const user = await window.kiraAuth.requireAuth();
+    if (!user) throw new Error('halt');
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function fmtDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      try {
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch { return iso.slice(0, 10); }
+    }
+
+    const session = (await window.db.auth.getSession()).data.session;
+    if (!session) {
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    const authHeaders = { 'Authorization': 'Bearer ' + session.access_token };
+
+    // Fetch reports + recent jobs in parallel.
+    let reports = [];
+    let jobs    = [];
+    try {
+      const [rRes, jRes] = await Promise.all([
+        fetch('/api/studio-report',  { headers: authHeaders }),
+        fetch('/api/studio-jobs',    { headers: authHeaders })
+      ]);
+      if (rRes.ok) reports = (await rRes.json()).reports || [];
+      if (jRes.ok) jobs    = (await jRes.json()).jobs    || [];
+    } catch (err) {
+      document.getElementById('lib-root').innerHTML =
+        '<div class="lib-empty"><h2>Could not load library</h2><p>Please retry. ' + escHtml(err.message) + '</p></div>';
+      throw err;
+    }
+
+    const activeJobs = jobs.filter(j => j.status === 'running' || j.status === 'pending');
+
+    const head = `
+      <header class="lib-head">
+        <div>
+          <div class="eyebrow">KIRA Studio · ${escHtml(user.email || '')}</div>
+          <h1>My library</h1>
+        </div>
+        <a class="lib-new-btn" href="/">+ New report</a>
+      </header>
+    `;
+
+    const activeBlock = activeJobs.length ? `
+      <div class="lib-jobs-active">
+        <h2>In progress</h2>
+        ${activeJobs.map(j => `
+          <div class="lib-job-pill">
+            <span class="topic">${escHtml(j.topic_input)}</span>
+            <span style="display:flex;gap:14px;align-items:center;">
+              <span class="progress">${j.progress || 0}%</span>
+              <a href="/jobs?id=${encodeURIComponent(j.id)}">View progress →</a>
+            </span>
+          </div>
+        `).join('')}
+      </div>
+    ` : '';
+
+    let body;
+    if (reports.length === 0 && activeJobs.length === 0) {
+      body = `
+        <div class="lib-empty">
+          <h2>No reports yet</h2>
+          <p>Start a new report to see it here. Reports are saved privately — only you can see them.</p>
+          <a class="lib-new-btn" href="/">Generate a report →</a>
+        </div>
+      `;
+    } else {
+      body = `
+        ${activeBlock}
+        <div class="lib-grid">
+          ${reports.map(r => `
+            <a class="lib-card" href="/reports?id=${encodeURIComponent(r.id)}">
+              <div class="meta">
+                ${r.country ? `<span class="country">${escHtml(r.country)}</span> · ` : ''}
+                <span>${escHtml(r.industry || '')}${r.year ? ' · ' + r.year : ''}</span>
+              </div>
+              <h3>${escHtml(r.title)}</h3>
+              <div class="when">Generated ${escHtml(fmtDate(r.created_at))}${r.pages ? ' · ' + r.pages + ' pages' : ''}</div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    document.getElementById('lib-root').innerHTML = head + body;
+  </script>
+</body>
+</html>

@@ -30,7 +30,19 @@
 
 ---
 
-## Current state (2026-05-22 — light theme + profile page session)
+## Current state (2026-05-24 — KIRA Studio MVP session)
+
+- **Phase N — KIRA Studio (UC2+UC3 unified, subdomain) shipped to code; owner click-throughs pending.**
+  - New subdomain `studio.kiraresearch.com` for self-serve report gen. Same repo, same Vercel project, same Supabase. Logged-in users only.
+  - Single flow: landing page → topic input (optional file attach: PDF/DOCX/XLSX/CSV/TXT, up to 5 × 25 MB) → background gen → live progress page (Supabase-poll + stage timeline) → viewer page with HTML iframe + PDF download.
+  - Architecture: Vercel host-rewrite (`/:path*` w/ host filter → `/studio/:path*`). Per-route `maxDuration: 800` on `api/studio-jobs.js` (Vercel Pro plan). Worker uses `@vercel/functions` `waitUntil()` to keep the function alive after returning 202.
+  - 2 new tables (`studio_jobs`, `studio_reports`) + 2 private storage buckets (`studio-inputs`, `studio-reports`). RLS scoped to `user_id = auth.uid()`. Migration 010.
+  - 3 new API endpoints: `/api/studio-jobs` (POST create + GET poll), `/api/studio-upload` (file → bucket), `/api/studio-report` (GET signed URLs + DELETE soft-archive).
+  - Worker (`api/_lib/studio-worker.js`) runs Stages 1, 3, 4 (web_search tool), 5 (parallel per-section), 7 (assemble + render-pdf) via Anthropic SDK. Reuses existing `/api/render-pdf` for PDF. Reuses skill's `master_styles.css` (bundled via `includeFiles` in vercel.json).
+  - No watermark on Studio PDFs — visually identical to consulting reports per Henry's brief. Anti-positioning blacklist enforced via system prompt + post-gen scrub.
+  - Profile page (`/[locale]/profile`) gets a "KIRA Studio" CTA card surfaced above purchases. Nav adds a "Studio" link visible only to logged-in users.
+
+## Previous state (2026-05-22 — light theme + profile page session)
 
 - **Latest changes:**
   - **Profile / "My Library" page** added: `/[locale]/profile` lists user's purchased reports with title/locale chip/country/industry/year/purchase date + "Open" + "Download PDF" actions. New `api/library-my-purchases.js` (auth-gated GET) joins `purchases × living_reports × report_translations`. PDF download reuses existing `library-content.js` for signed URLs (1h TTL). `/profile` → `/en/profile` redirect in `vercel.json`. nav.js shows "My Library" link only when localStorage has a `sb-*-auth-token` (cheap heuristic; profile page itself does proper auth check). i18n keys `nav.myLibrary` added to all 3 locales. 3 profile.html files (EN/JA/KO) all identical — copy is in-page JS keyed by URL locale, so a single template handles all locales.
@@ -164,6 +176,39 @@ Two things matter here:
 ## Owner action items (BLOCKING — owner must click through)
 
 These are tasks only the owner can do (involve dashboards, not git):
+
+### ⚡ Phase N (KIRA Studio) — required before subdomain works
+
+Do these 3 in order; after step 3, `studio.kiraresearch.com` should accept gen requests end-to-end:
+
+1. ☐ **Run `supabase/migrations/010_studio.sql`** in Supabase dashboard → SQL editor.
+   - Creates: `studio_jobs` + `studio_reports` tables, `studio-inputs` + `studio-reports` private storage buckets, RLS policies, FK back-references.
+   - Idempotent. Safe to re-run if you re-paste the file. The final `RAISE NOTICE` line should print `studio_jobs:t studio_reports:t studio-inputs bucket:t studio-reports bucket:t` — if any are `f`, screenshot and ping back.
+2. ☐ **Add the `studio.kiraresearch.com` domain to the Vercel project.**
+   - Vercel dashboard → Project `kira-research` → **Settings** → **Domains** → **Add Domain** → enter `studio.kiraresearch.com` → **Add**.
+   - Vercel will show DNS instructions. In your DNS provider (wherever `kiraresearch.com` is hosted), add the CNAME / A record Vercel asks for. Usually one `CNAME` record: `studio` → `cname.vercel-dns.com`.
+   - Wait ~5 min for DNS propagation. Vercel domain status flips from `Invalid Configuration` to `Valid Configuration`.
+   - No need to change anything in `vercel.json` — the host-rewrite is already deployed (after step `git push`).
+3. ☐ **Set the `ANTHROPIC_API_KEY` env var in Vercel.**
+   - Get an API key from console.anthropic.com → Settings → API Keys → **Create Key**. Copy it (starts with `sk-ant-`).
+   - Vercel dashboard → Project `kira-research` → **Settings** → **Environment Variables** → **Add New**.
+     - Name: `ANTHROPIC_API_KEY`
+     - Value: paste the key
+     - Environments: tick **Production**, **Preview**, **Development** (all 3)
+     - Save.
+   - Trigger a redeploy so the new env is loaded: Vercel dashboard → **Deployments** → top deployment → **⋯** → **Redeploy**.
+   - (Optional) Override the model: also add `ANTHROPIC_MODEL` = `claude-sonnet-4-5-20250929` (default in code if unset).
+
+#### Verify Phase N works (after the 3 steps above)
+
+1. Visit `https://studio.kiraresearch.com/` — should show the KIRA Studio landing. If it redirects elsewhere → DNS isn't ready yet, give it another 5-10 min.
+2. Sign in with your existing kiraresearch.com account (auth is shared via `.kiraresearch.com` cookie domain).
+3. Type a small topic (e.g. "Coffee market Vietnam 2027") → click **Generate report**.
+4. The page redirects to `/jobs?id=<uuid>`. The progress bar should advance through Parse → Plan → Search → Draft → Render over ~8-14 min.
+5. When complete, click **View report →** → an iframe loads the HTML + a **Download PDF** button works.
+6. Bookmark the URL or use **My library** to see all your previous Studio reports.
+
+### Previous owner action items
 
 1. ☐ **Run `supabase/migrations/008_security_hardening.sql`** in dashboard SQL Editor — closes 3 Supabase advisor findings left over after 001-007:
    - (a) ERROR: `credit_costs` had RLS disabled (anon could read 12 rows). Migration enables RLS with no policies → deny-all for anon/authenticated, service-key bypasses (so the deferred Custom Research rebuild can still query).

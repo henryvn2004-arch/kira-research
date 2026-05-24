@@ -17,16 +17,6 @@
       "permanent": true
     },
     {
-      "source": "/studio",
-      "destination": "/en/custom-research/?from=studio",
-      "permanent": true
-    },
-    {
-      "source": "/studio/:path*",
-      "destination": "/en/custom-research/?from=studio",
-      "permanent": true
-    },
-    {
       "source": "/library",
       "destination": "/en/library",
       "permanent": true
@@ -75,6 +65,12 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" },
 
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "studio.kiraresearch.com" }],
+      "destination": "/studio/:path*"
+    },
+
     { "source": "/sitemap.xml",     "destination": "/api/sitemap" },
     { "source": "/sitemap-en.xml",  "destination": "/api/sitemap?locale=en" },
     { "source": "/sitemap-ja.xml",  "destination": "/api/sitemap?locale=ja" },
@@ -91,6 +87,10 @@
   "functions": {
     "api/*.js": {
       "maxDuration": 60
+    },
+    "api/studio-jobs.js": {
+      "maxDuration": 800,
+      "includeFiles": "skills/kira-research-report/templates/**"
     }
   }
 }

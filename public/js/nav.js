@@ -65,6 +65,7 @@
           <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
           <a href="${localPath('/custom-research/')}" class="${('nav-dropdown'   + activeIf('custom-research')).trim()}" data-i18n="nav.customResearch">Custom Research</a>
           <a href="${localPath('/profile')}" class="${('kira-my-library'   + activeIf('profile')).trim()}" data-i18n="nav.myLibrary" style="display:none">My Library</a>
+          <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
           <a href="${localPath('/library')}" class="nav-cta" data-i18n="nav.browseCta">Browse Library →</a>
         </div>
         <button class="nav-burger" id="kira-nav-burger" aria-label="Toggle menu">
@@ -91,6 +92,7 @@
     <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
     <a href="${localPath('/custom-research/')}" data-i18n="nav.customResearch">Custom Research</a>
     <a href="${localPath('/profile')}" class="kira-my-library" data-i18n="nav.myLibrary" style="display:none">My Library</a>
+    <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
   </div>
 </div>`;
 
@@ -265,7 +267,7 @@
     // page just for the nav. If the token is stale, the /profile page itself
     // gates the user to sign in.
     if (isLikelyAuthenticated()) {
-      document.querySelectorAll('.kira-my-library').forEach(el => { el.style.display = ''; });
+      document.querySelectorAll('.kira-my-library, .kira-studio').forEach(el => { el.style.display = ''; });
     }
 
     // Notify i18n.js (if loaded) that nav DOM is ready

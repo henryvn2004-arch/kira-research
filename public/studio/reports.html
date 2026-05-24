@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Report — KIRA Studio</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .rpt-head {
+      max-width: 1080px;
+      margin: 48px auto 24px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .rpt-head .meta {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .rpt-head .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+    .rpt-head h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 4px 0 0;
+    }
+    .rpt-actions {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .rpt-actions a, .rpt-actions button {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 18px; border-radius: 4px;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: transparent; color: var(--text);
+      transition: all 0.15s;
+    }
+    .rpt-actions .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .rpt-actions .primary:hover { background: var(--primary-dim); border-color: var(--primary-dim); }
+    .rpt-actions a:hover:not(.primary), .rpt-actions button:hover:not(.primary) {
+      border-color: var(--primary); color: var(--primary);
+    }
+    .rpt-actions .danger:hover { border-color: #C0392B; color: #C0392B; }
+
+    .rpt-frame-wrap {
+      max-width: 1080px;
+      margin: 0 auto 96px;
+      padding: 0 24px;
+    }
+    .rpt-frame {
+      width: 100%;
+      height: 80vh;
+      min-height: 720px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: var(--elevation-md);
+    }
+
+    .rpt-status {
+      max-width: 720px;
+      margin: 120px auto;
+      padding: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .rpt-status h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .rpt-status p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <div id="rpt-root">
+    <div class="rpt-status">
+      <h2>Loading report…</h2>
+      <p>Fetching content from your private library.</p>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+    const user = await window.kiraAuth.requireAuth();
+    if (!user) throw new Error('halt');
+
+    const url = new URL(window.location.href);
+    const reportId = url.searchParams.get('id');
+    if (!reportId) {
+      document.getElementById('rpt-root').innerHTML =
+        '<div class="rpt-status"><h2>Missing report id</h2><p><a href="/library">Back to library</a></p></div>';
+      throw new Error('halt');
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    let data;
+    try {
+      const session = (await window.db.auth.getSession()).data.session;
+      const r = await fetch('/api/studio-report?id=' + encodeURIComponent(reportId), {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 404) {
+        document.getElementById('rpt-root').innerHTML =
+          '<div class="rpt-status"><h2>Report not found</h2><p>It may have been archived. <a href="/library">Back to library</a>.</p></div>';
+        throw new Error('halt');
+      }
+      if (!r.ok) throw new Error('http ' + r.status);
+      data = await r.json();
+    } catch (err) {
+      if (err.message === 'halt') throw err;
+      document.getElementById('rpt-root').innerHTML =
+        '<div class="rpt-status"><h2>Could not load report</h2><p>Please retry. <a href="/library">Back to library</a>.</p></div>';
+      throw err;
+    }
+
+    document.title = `${data.title} — KIRA Studio`;
+
+    document.getElementById('rpt-root').innerHTML = `
+      <div class="rpt-head">
+        <div class="meta">
+          <div class="eyebrow">${escHtml(data.eyebrow || 'KIRA Studio')}</div>
+          <h1>${escHtml(data.title)}</h1>
+        </div>
+        <div class="rpt-actions">
+          ${data.pdf_url ? `<a class="primary" href="${escHtml(data.pdf_url)}" target="_blank" rel="noopener">Download PDF ↓</a>` : ''}
+          <a href="/library">← My library</a>
+          <button class="danger" id="archive-btn">Archive</button>
+        </div>
+      </div>
+      <div class="rpt-frame-wrap">
+        ${data.html_url
+          ? `<iframe class="rpt-frame" src="${escHtml(data.html_url)}" title="${escHtml(data.title)}"></iframe>`
+          : `<div class="rpt-status"><h2>HTML edition pending</h2><p>The HTML edition is still being prepared. The PDF download above is ready.</p></div>`
+        }
+      </div>
+    `;
+
+    const archiveBtn = document.getElementById('archive-btn');
+    if (archiveBtn) {
+      archiveBtn.addEventListener('click', async () => {
+        if (!confirm("Archive this report? You won't see it in your library anymore.")) return;
+        archiveBtn.disabled = true;
+        archiveBtn.textContent = 'Archiving…';
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          const r = await fetch('/api/studio-report?id=' + encodeURIComponent(reportId), {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + session.access_token }
+          });
+          if (!r.ok) throw new Error('http ' + r.status);
+          window.location.href = '/library';
+        } catch (err) {
+          archiveBtn.disabled = false;
+          archiveBtn.textContent = 'Archive';
+          alert('Could not archive. Please retry.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

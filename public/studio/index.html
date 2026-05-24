@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KIRA Studio — Generate a market report</title>
+  <meta name="description" content="KIRA Studio — our analyst toolkit, available to logged-in users. Describe a market, optionally attach documents, and our research engine produces a polished report." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="canonical" href="https://studio.kiraresearch.com/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase client + kiraAuth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .studio-hero {
+      padding: 72px 0 32px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .studio-hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .studio-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 6vw, 56px);
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin: 0 0 24px;
+    }
+    .studio-hero p.lede {
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0;
+    }
+
+    .studio-form-card {
+      max-width: 880px;
+      margin: 0 auto 96px;
+      padding: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--elevation-md);
+    }
+    .studio-form-card h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      margin: 0 0 16px;
+      color: var(--text);
+    }
+    .studio-field { margin-bottom: 20px; }
+    .studio-field label {
+      display: block;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .studio-field textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      resize: vertical;
+      min-height: 100px;
+    }
+    .studio-field textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 111, 255, 0.12);
+    }
+    .studio-field .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .upload-zone {
+      border: 1px dashed var(--border-strong);
+      border-radius: 6px;
+      padding: 18px;
+      background: var(--bg);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: var(--primary);
+      background: rgba(30, 111, 255, 0.04);
+    }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-zone .upload-cta {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .upload-zone .upload-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    .upload-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .upload-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .upload-item .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-item .meta { color: var(--muted); font-size: 11px; margin-left: 12px; flex-shrink: 0; }
+    .upload-item button.remove {
+      background: transparent; border: none; color: var(--muted); cursor: pointer;
+      font-family: inherit; font-size: 16px; padding: 0 4px; margin-left: 12px;
+    }
+    .upload-item button.remove:hover { color: #C0392B; }
+
+    .studio-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .studio-actions .left {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 50%;
+    }
+    .studio-actions button.primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .studio-actions button.primary:hover { background: var(--primary-dim); }
+    .studio-actions button.primary:disabled { opacity: 0.6; cursor: wait; }
+
+    .studio-err {
+      padding: 14px 18px;
+      background: rgba(192,57,43,0.06);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 6px;
+      color: #C0392B;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .studio-gate {
+      max-width: 480px;
+      margin: 120px auto;
+      padding: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .studio-gate h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .studio-gate p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .studio-gate a.btn-primary {
+      display: inline-flex; align-items: center; background: var(--primary);
+      color: #fff; padding: 12px 22px; border-radius: 4px; font-size: 14px;
+      font-weight: 600; text-decoration: none;
+    }
+
+    .studio-meta-row {
+      display: flex; gap: 24px; justify-content: center;
+      padding: 24px 0 48px; flex-wrap: wrap;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+    }
+    .studio-meta-row a {
+      color: var(--primary); text-decoration: none; border-bottom: 1px solid currentColor;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" id="studio-root">
+    <div style="padding: 120px 0; text-align: center; color: var(--muted);">Loading…</div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    const root = document.getElementById('studio-root');
+
+    // Wait for kiraAuth (auth.js is classic script).
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      renderGate();
+    } else {
+      renderForm(user);
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function renderGate() {
+      root.innerHTML = `
+        <div class="studio-gate">
+          <h2>Sign in to use KIRA Studio</h2>
+          <p>KIRA Studio is our analyst toolkit. Reports you generate are saved to your private library — only you can see them.</p>
+          <a href="/auth.html" class="btn-primary">Sign in / Create account</a>
+        </div>
+      `;
+      try { sessionStorage.setItem('kira_redirect_after_login', '/'); } catch {}
+    }
+
+    function renderForm(user) {
+      root.innerHTML = `
+        <section class="studio-hero">
+          <div class="eyebrow">KIRA Studio · ${escHtml(user.email || '')}</div>
+          <h1>Generate a market report.</h1>
+          <p class="lede">Describe the market. Attach documents if you have them. Our research engine plans the structure, runs source-grounded research, and delivers a polished PDF + the full web edition — saved to your private library.</p>
+        </section>
+
+        <section class="studio-form-card">
+          <div id="studio-err"></div>
+
+          <div class="studio-field">
+            <label for="topic">Topic</label>
+            <textarea id="topic" placeholder="e.g. EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment" maxlength="600"></textarea>
+            <div class="hint">A sentence or two is enough. Include country, industry, year, and any specific angles you care about.</div>
+          </div>
+
+          <div class="studio-field">
+            <label>Documents (optional)</label>
+            <label for="files" class="upload-zone" id="upload-zone">
+              <div class="upload-cta">Drop files here or click to attach</div>
+              <div class="upload-sub">PDF, DOCX, XLSX, CSV, TXT · max 25 MB each · up to 5 files</div>
+              <input type="file" id="files" multiple accept=".pdf,.docx,.xlsx,.csv,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain" />
+            </label>
+            <div class="upload-list" id="upload-list"></div>
+          </div>
+
+          <div class="studio-actions">
+            <div class="left">In-house testing phase. Generation typically takes 8-14 minutes — you'll see live progress on the next page.</div>
+            <button class="primary" id="generate-btn">Generate report →</button>
+          </div>
+        </section>
+
+        <div class="studio-meta-row">
+          <a href="/library">My Studio library</a>
+          <span>·</span>
+          <a href="https://kiraresearch.com" target="_blank" rel="noopener">KIRA Research home ↗</a>
+        </div>
+      `;
+
+      const topicEl    = document.getElementById('topic');
+      const filesEl    = document.getElementById('files');
+      const zoneEl     = document.getElementById('upload-zone');
+      const listEl     = document.getElementById('upload-list');
+      const generate   = document.getElementById('generate-btn');
+      const errEl      = document.getElementById('studio-err');
+
+      const uploads = []; // { path, name, size, mime }
+
+      function renderUploads() {
+        listEl.innerHTML = uploads.map((u, i) =>
+          `<div class="upload-item">
+             <span class="name">${escHtml(u.name)}</span>
+             <span class="meta">${(u.size / 1024).toFixed(0)} KB</span>
+             <button class="remove" data-idx="${i}" aria-label="Remove">×</button>
+           </div>`
+        ).join('');
+        listEl.querySelectorAll('.remove').forEach(b => {
+          b.addEventListener('click', () => {
+            uploads.splice(Number(b.dataset.idx), 1);
+            renderUploads();
+          });
+        });
+      }
+
+      function showErr(msg) {
+        errEl.innerHTML = msg ? `<div class="studio-err">${escHtml(msg)}</div>` : '';
+      }
+
+      // ── File upload handling ───────────────────────────────
+      ['dragover'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.add('drag'); }));
+      ['dragleave', 'drop'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.remove('drag'); }));
+      zoneEl.addEventListener('drop', e => {
+        if (e.dataTransfer && e.dataTransfer.files) {
+          handleFileList(e.dataTransfer.files);
+        }
+      });
+      filesEl.addEventListener('change', () => handleFileList(filesEl.files));
+
+      async function handleFileList(fileList) {
+        if (uploads.length + fileList.length > 5) {
+          showErr('Maximum 5 files per report.');
+          return;
+        }
+        showErr('');
+        for (const f of fileList) {
+          if (f.size > 25 * 1024 * 1024) {
+            showErr(`${f.name} is over 25 MB.`);
+            continue;
+          }
+          await uploadOne(f);
+        }
+        filesEl.value = '';
+      }
+
+      async function uploadOne(file) {
+        const session = (await window.db.auth.getSession()).data.session;
+        if (!session) { showErr('Session expired. Please sign in again.'); return; }
+        try {
+          const r = await fetch('/api/studio-upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + session.access_token,
+              'Content-Type':  file.type || 'application/octet-stream',
+              'X-File-Name':   file.name,
+              'X-File-Type':   file.type || 'application/octet-stream'
+            },
+            body: file
+          });
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            showErr(`Upload failed: ${body.error || r.status}`);
+            return;
+          }
+          const body = await r.json();
+          uploads.push({ path: body.path, name: body.name || file.name, size: body.size, mime: body.mime });
+          renderUploads();
+        } catch (err) {
+          showErr('Upload failed. Please retry.');
+        }
+      }
+
+      // ── Submit ─────────────────────────────────────────────
+      generate.addEventListener('click', async () => {
+        const topic = topicEl.value.trim();
+        if (!topic) { showErr('Please describe the topic.'); return; }
+        if (topic.length > 600) { showErr('Topic is too long — keep it under 600 characters.'); return; }
+
+        showErr('');
+        generate.disabled = true;
+        generate.textContent = 'Submitting…';
+
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          if (!session) throw new Error('no_session');
+          const r = await fetch('/api/studio-jobs', {
+            method: 'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': 'Bearer ' + session.access_token
+            },
+            body: JSON.stringify({
+              topic_input: topic,
+              uploaded_file_paths: uploads.map(u => u.path)
+            })
+          });
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            throw new Error(body.error || ('http_' + r.status));
+          }
+          const body = await r.json();
+          if (!body.job_id) throw new Error('no_job_id');
+          window.location.href = '/jobs?id=' + encodeURIComponent(body.job_id);
+        } catch (err) {
+          showErr('Could not start generation: ' + (err.message || err));
+          generate.disabled = false;
+          generate.textContent = 'Generate report →';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
