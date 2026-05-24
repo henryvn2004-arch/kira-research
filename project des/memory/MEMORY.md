@@ -13,7 +13,7 @@
 - [Nav logo = text+CSS, logo.png ≠ nav](project_kira_logo_architecture.md) — `.logo-mark` is Satoshi 900 text + ::after parallelogram; logo.png only for og:image / JSON-LD / /auth
 - [@sparticuz/chromium on Vercel: 3 non-obvious tweaks](feedback_sparticuz_chromium_vercel.md) — AWS_EXECUTION_ENV spoof, dynamic import, Buffer.from() wrap for base64
 - ["tool gen report" = the kira-research-report skill](project_tool_gen_report.md) — Henry's internal shorthand
-- [KIRA batch cron system](project_batch_cron_system.md) — 4 daily scheduled tasks gen 1 topic × EN/JA/KO from `data/report_queue.csv`
+- [KIRA batch cron system](project_batch_cron_system.md) — **13** daily scheduled tasks gen 1 topic × EN/JA/KO from `data/report_queue.csv` (45-min cadence, 12am-7am + 5pm-7pm ICT)
 - [PowerShell 5.1 ConvertTo-Json wraps long strings](feedback_powershell_convertto_json_string_wrap.md) — use Node for JSON-API bodies with big string fields
 - [KIRA A+ blueprint flex layer](project_a_plus_flex.md) — 3 customization layers (expand_slots + chart_options + industry overlays) so reports adapt per topic while preserving brand consistency
 - [KIRA L.3 source tag system](project_l3_source_tag_system.md) — `[Kira estimates]` + named-source aliases inline + page-bottom source key; replaces deprecated `[primary]/[secondary]/[estimate]` trio
@@ -21,3 +21,4 @@
 - [KIRA M.3 soft-delete + regen workflow](project_m3_soft_delete_regen.md) — Admin "Retire" = `status='retired'`; batch re-run auto-unretires via UPSERT; buyers retain access; no DB migration needed
 - [KIRA M.4 LLM-inferred language](project_m4_llm_inferred_language.md) — topic parser LLM-infers `local_language_code` from country (any ISO 639-1, not hardcoded); only static table is KIRA's business tier override (5 priority curated languages + tier-2 default for rest)
 - [KIRA N Studio (subdomain)](project_n_kira_studio.md) — UC2+UC3 consolidated into `studio.kiraresearch.com`. Login-gated. Same repo/Vercel/Supabase. Anthropic SDK + waitUntil bg worker. Personal user library; PDFs visually identical to consulting reports (no watermark).
+- [KIRA O Studio credits](project_o_studio_credits.md) — Phase O pay-as-you-go credit wallet: 1 report = 100 credits, 4 PayPal packs ($10/$25/$50/$200), atomic hold-refund via Supabase RPCs. Profile + Studio /billing UIs share one API.
