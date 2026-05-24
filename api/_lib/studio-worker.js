@@ -52,11 +52,19 @@ const MODEL             = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-2025
 const RENDER_PDF_URL    = process.env.PDF_RENDER_URL  || 'https://kiraresearch.com/api/render-pdf';
 const PDF_RENDER_SECRET = process.env.PDF_RENDER_SECRET;
 
-// Max parallel section-content calls. Higher = faster but more API pressure.
-const SECTION_CONCURRENCY = 3;
-// Number of sections in the MVP report — smaller than the full 19-section
-// blueprint so the gen fits comfortably inside the 800s function budget.
-const TARGET_SECTIONS     = 10;
+// Stage 5 drafting concurrency. SEQUENTIAL (=1) since N.21 because
+// Anthropic API rate-limits parallel calls at the account level —
+// confirmed empirically: 3 parallel section drafts succeed on the
+// first batch, then subsequent batches hang indefinitely. Same
+// failure mode that killed Stage 4 web_search, just at the inference
+// layer this time. Trade-off: 10 sections × ~18s = ~3 min instead of
+// ~1 min, but reliable.
+const SECTION_CONCURRENCY = 1;
+// Section count is now decided by the planner (Phase N.21) based on
+// uploaded content + user intent. This is just the hard upper bound
+// so a verbose plan can't blow Stage 5's wall-clock budget.
+const MIN_SECTIONS   = 3;
+const MAX_SECTIONS   = 12;
 
 // ── Phase N.20: upload-only architecture ────────────────────
 // Stage 4 (Anthropic web_search) was removed. The autonomous
@@ -230,45 +238,105 @@ Return JSON only.`;
 }
 
 // ===============================================================
-// STAGE 3 — Plan section structure
+// STAGE 3 — Plan section structure (Phase N.21: content-aware)
+//
+// Planner now sees the actual extracted text from uploaded files
+// (not just filenames) and decides BOTH the section count (3–12)
+// AND the section titles based on what data is actually available.
+// This avoids the previous failure mode where a planner-first flow
+// invented titles like "Macroeconomic context" for files that had
+// no macro data, leaving Stage 5 to fabricate.
 // ===============================================================
-async function stage3PlanSections({ parsed, uploaded_file_paths }) {
+async function stage3PlanSections({ parsed, extracted, topic_input }) {
   const c = client();
-  const hasFiles = !!(uploaded_file_paths && uploaded_file_paths.length);
+  const files = Array.isArray(extracted) ? extracted : [];
+  const filenames = files.map(f => f.filename);
 
-  const system = `You are the section planner for a KIRA Research market report.
+  // Preview block — first ~3000 chars per file is enough for the
+  // planner to see what's in there without blowing the context.
+  // Use a SUMMARY excerpt so the planner sees structure (headings,
+  // first paragraphs, sheet names) without the full body.
+  const PREVIEW_CHARS = 3000;
+  const previewBlock = files
+    .map(f => `### ${f.filename}\n${(f.text || '').slice(0, PREVIEW_CHARS)}${(f.text || '').length > PREVIEW_CHARS ? '\n[…]' : ''}`)
+    .join('\n\n');
 
-Given a parsed topic spec, return JSON describing the report's section structure. Aim for ${TARGET_SECTIONS} sections that flow logically from macro to micro to outlook.
+  const system = `You are the section planner for a KIRA Research report. The user has uploaded source documents and given you a brief. Your job is to decide what sections the final report should have, based on what's ACTUALLY in the uploaded sources + what the user asked for.
+
+DECIDE:
+1. SECTION COUNT: pick between ${MIN_SECTIONS} and ${MAX_SECTIONS} sections.
+   • A thin upload (one short PDF, narrow topic) → ${MIN_SECTIONS}-5 sections
+   • A rich upload (multiple files, broad topic) → 6-${MAX_SECTIONS} sections
+   • If the user asks for "executive summary" or "brief" → 3-4 sections
+   • If the user asks for "full report" or "deep dive" → 8-${MAX_SECTIONS} sections
+
+2. SECTION TITLES: must be grounded in the uploaded content.
+   • If the files have revenue data → include a sizing section
+   • If the files have firm profiles → include a competitive landscape section
+   • If the files have policy/regulator info → include a regulatory section
+   • Do NOT invent sections for data the files don't contain. If files have no macro context, don't plan a macro section.
+   • A title_cover and source_key page is ALWAYS included (don't count them toward the section budget).
 
 Required fields per section:
-- title: sentence-case (NOT title case). E.g. "A market at inflection." not "A Market At Inflection".
-- page_type: one of: title_cover | exec_summary | macro_context | sector_overview | competitive_landscape | demand_channels | regulatory | ai_impact | forecast_outlook | methodology | source_key.
-- brief: 2-3 sentences telling the writer what to cover.
-- needs_search: boolean — true if web research is required.
-- ${hasFiles ? 'use_user_files: boolean — true if this section should draw primarily from user-uploaded files.' : ''}
+- title: sentence-case. E.g. "A market at inflection." not "A Market At Inflection".
+- page_type: title_cover | exec_summary | macro_context | sector_overview | competitive_landscape | demand_channels | regulatory | ai_impact | forecast_outlook | methodology | source_key
+- brief: 2-3 sentences telling the writer EXACTLY what to cover, referencing which uploaded files this section will draw from.
+- primary_sources: array of filenames from the upload list that this section will lean on.
 
-Return shape: { "sections": [...], "estimated_pages": int, "rationale": "1-sentence why this structure" }
+Return shape:
+{
+  "sections": [...],
+  "estimated_pages": int,
+  "rationale": "1-sentence explanation of why you picked this section count + structure based on what's in the uploaded sources"
+}
 
-Hard rules: every section name uses sentence case. No filler titles like "Conclusion" or "Final thoughts" — use "Outlook" or "Forward view". No mention of competitor firms or AI tools by name.`;
+Hard rules:
+- Every section name uses sentence case.
+- No filler titles like "Conclusion" or "Final thoughts" — use "Outlook" or "Forward view".
+- Never mention competitor firms or AI tools by name (Claude, McKinsey, Mordor, Frost, Euromonitor, IMARC, Synovate, Ipsos).
+- Never frame KIRA as a "platform / SaaS / app".`;
 
-  const userMsg = `Parsed spec:
-${JSON.stringify(parsed, null, 2)}
+  const userMsg = `User's report brief:
+"${String(topic_input || '').trim()}"
 
-${hasFiles ? 'User uploaded these files (treat as primary data sources where relevant): ' + uploaded_file_paths.map(p => p.split('/').pop()).join(', ') : ''}
+Parsed metadata:
+${JSON.stringify({
+  country: parsed.country, industry: parsed.industry, year: parsed.year,
+  scope: parsed.scope, intent_keywords: parsed.intent_keywords
+}, null, 2)}
 
-Return JSON only.`;
+Uploaded files (${filenames.length}):
+${JSON.stringify(filenames)}
+
+Source content previews (first ${PREVIEW_CHARS} chars of each file):
+${previewBlock || '(no extractable content)'}
+
+Decide the section structure. Return JSON only.`;
 
   const msg = await c.messages.create({
     model: MODEL,
-    max_tokens: 2048,
+    max_tokens: 3072,
     system,
     messages: [{ role: 'user', content: userMsg }]
   });
 
   const text = textFromMessage(msg);
-  const parsed_sections = parseJsonLoose(text);
+  const planObj = parseJsonLoose(text);
+
+  // Defensive: clamp section count + drop unwanted page_types.
+  if (Array.isArray(planObj?.sections)) {
+    // Drop title_cover / source_key from the list (they're added in Stage 7).
+    planObj.sections = planObj.sections.filter(s =>
+      s && s.page_type !== 'title_cover' && s.page_type !== 'source_key'
+    );
+    // Clamp.
+    if (planObj.sections.length > MAX_SECTIONS) {
+      planObj.sections = planObj.sections.slice(0, MAX_SECTIONS);
+    }
+  }
+
   return {
-    plan: parsed_sections,
+    plan: planObj,
     tokens_in:  msg.usage?.input_tokens  || 0,
     tokens_out: msg.usage?.output_tokens || 0
   };
@@ -387,7 +455,7 @@ async function stage2ExtractFiles({ jobId, userId, uploaded_file_paths, log }) {
 // ===============================================================
 async function stage5Content({ parsed, plan, extracted, onSectionStart, onSectionDone }) {
   const c = client();
-  const sections = (plan?.sections || []).slice(0, TARGET_SECTIONS);
+  const sections = (plan?.sections || []).slice(0, MAX_SECTIONS);
 
   // Build the source-material block once — same context is passed
   // to every section call so Claude can draw on any file for any
@@ -642,12 +710,22 @@ export async function processStudioJob({ jobId, userId }) {
 
   await log('info', 'parse', `Starting report: "${(job.topic_input || '').slice(0, 200)}"`);
 
-  // --- Stage 1 --------------------------------------------------
+  // ───────────────────────────────────────────────────────────
+  // FLOW (Phase N.21):
+  //   1. Parse topic        → country/industry/year/scope from brief
+  //   2. Extract files      → text from each uploaded source
+  //   3. Plan (content-aware) → planner chooses 3-12 sections based on
+  //                             what's IN the files + user's intent
+  //   5. Draft              → write each section using uploaded text
+  //   7. Render             → assemble + PDF + upload
+  // ───────────────────────────────────────────────────────────
+
+  // --- Stage 1: Parse topic ---------------------------------
   await updateJobProgress(jobId, {
     current_stage: 'Parsing topic…',
     progress: 5
   });
-  await log('stage', 'parse', 'Parsing topic — identifying country, industry, year, search languages…');
+  await log('stage', 'parse', 'Parsing the report brief — identifying country, industry, year, scope…');
   const s1 = await stage1ParseTopic({
     topic_input:         job.topic_input,
     uploaded_file_paths: job.uploaded_file_paths || []
@@ -661,31 +739,10 @@ export async function processStudioJob({ jobId, userId }) {
     stages_completed: [...(job.stages_completed || []), 'parse']
   });
 
-  // --- Stage 3 (Stage 2 = inline UC2/UC3 decision based on files) ---
-  await updateJobProgress(jobId, {
-    current_stage: 'Planning section structure…',
-    progress: 18
-  });
-  await log('stage', 'plan', `Planning report structure (~${TARGET_SECTIONS} sections)…`);
-  const s3 = await stage3PlanSections({
-    parsed: s1.parsed,
-    uploaded_file_paths: job.uploaded_file_paths || []
-  });
-  tokIn  += s3.tokens_in;
-  tokOut += s3.tokens_out;
-  const sectionTitles = (s3.plan?.sections || []).map(s => s.title);
-  await log('done', 'plan',
-    `Planned ${sectionTitles.length} sections`,
-    { titles: sectionTitles });
-  await updateJobProgress(jobId, {
-    progress: 25,
-    stages_completed: [...(job.stages_completed || []), 'parse', 'plan']
-  });
-
-  // --- Stage 2 (file extraction) — Phase N.20 -----------------
+  // --- Stage 2: Extract uploaded files (must come BEFORE Plan) ---
   await updateJobProgress(jobId, {
     current_stage: 'Extracting source files…',
-    progress: 28
+    progress: 15
   });
   const uploadedPaths = job.uploaded_file_paths || [];
   await log('stage', 'search',
@@ -698,18 +755,41 @@ export async function processStudioJob({ jobId, userId }) {
   await log('done', 'search',
     `Source extraction complete · ${s2.extracted.length} file${s2.extracted.length === 1 ? '' : 's'} · ${s2.total_chars.toLocaleString()} total chars`);
   await updateJobProgress(jobId, {
-    progress: 55,
-    stages_completed: [...(job.stages_completed || []), 'parse', 'plan', 'search']
+    progress: 30,
+    stages_completed: [...(job.stages_completed || []), 'parse', 'search']
   });
 
-  // --- Stage 5 (draft sections from uploads) ------------------
+  // --- Stage 3: Plan sections (content-aware) -----------------
+  await updateJobProgress(jobId, {
+    current_stage: 'Planning section structure from sources…',
+    progress: 32
+  });
+  await log('stage', 'plan',
+    `Planning report structure (${MIN_SECTIONS}-${MAX_SECTIONS} sections, based on uploaded content + your brief)…`);
+  const s3 = await stage3PlanSections({
+    parsed:      s1.parsed,
+    extracted:   s2.extracted,
+    topic_input: job.topic_input
+  });
+  tokIn  += s3.tokens_in;
+  tokOut += s3.tokens_out;
+  const sectionTitles = (s3.plan?.sections || []).map(s => s.title);
+  await log('done', 'plan',
+    `Planned ${sectionTitles.length} sections` + (s3.plan?.rationale ? ` · ${s3.plan.rationale}` : ''),
+    { titles: sectionTitles });
+  await updateJobProgress(jobId, {
+    progress: 40,
+    stages_completed: [...(job.stages_completed || []), 'parse', 'search', 'plan']
+  });
+
+  // --- Stage 5: Draft sections from uploads ------------------
   await updateJobProgress(jobId, {
     current_stage: 'Drafting sections (0/—)…',
-    progress: 58
+    progress: 42
   });
-  const sectionsToDraft = Math.min(sectionTitles.length, TARGET_SECTIONS);
+  const sectionsToDraft = Math.min(sectionTitles.length, MAX_SECTIONS);
   await log('stage', 'content',
-    `Drafting ${sectionsToDraft} sections in parallel (concurrency ${SECTION_CONCURRENCY}) using uploaded sources…`);
+    `Drafting ${sectionsToDraft} sections sequentially (1 at a time, Anthropic rate-limit safe) using uploaded sources…`);
   const s5 = await stage5Content({
     parsed: s1.parsed,
     plan: s3.plan,
@@ -718,8 +798,8 @@ export async function processStudioJob({ jobId, userId }) {
       await log('info', 'content', `Drafting: ${section.title}`);
     },
     onSectionDone: async (done, total, section) => {
-      // Map 58→88% across content gen.
-      const pct = 58 + Math.floor(30 * (done / Math.max(1, total)));
+      // Map 42→88% across content gen.
+      const pct = 42 + Math.floor(46 * (done / Math.max(1, total)));
       await updateJobProgress(jobId, {
         current_stage: `Drafting sections (${done}/${total})…`,
         progress: pct
