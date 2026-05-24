@@ -889,43 +889,76 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
       slots.footer_text = footerText;
     }
 
-    // Defensive: detect when the LLM returned slots with all loop
-    // arrays empty (so the template would render as a near-blank page).
-    // Fall back to narrative_page, picking up whatever scalar text the
-    // LLM did fill (subhead, headings inside other slots, etc).
+    // Defensive: detect when the LLM returned slots with effectively
+    // no content (empty loops OR loops full of blank-string items).
+    // Without this, methodology_inline / market_data_chart / etc.
+    // render as near-blank pages with column headings + arrows but
+    // no body. Fall back to narrative_page, picking up whatever
+    // scalar text the LLM did fill (subhead, etc).
     const meta = getTemplateMeta(tid);
+    const isItemEmpty = (item, schemaKeys) => {
+      if (!item || typeof item !== 'object') return true;
+      return schemaKeys.every(k => {
+        const v = item[k];
+        if (v == null) return true;
+        if (typeof v === 'string') return v.trim() === '';
+        return false; // non-string truthy values count as content
+      });
+    };
     let emptyLoops = false;
     if (meta?.loops?.length) {
       emptyLoops = meta.loops.every(loop => {
         const arr = slots[loop.key];
-        return !Array.isArray(arr) || arr.length === 0;
+        if (!Array.isArray(arr) || arr.length === 0) return true;
+        return arr.every(item => isItemEmpty(item, loop.schema));
       });
     }
 
+    // Has the template got a usable chart? (chart_data with at least
+    // one numeric value). We keep the template + backfill narrative if so.
+    const chartHasData = meta?.has_chart && slots.chart_data && (
+      (Array.isArray(slots.chart_data.series) && slots.chart_data.series.length > 0) ||
+      (Array.isArray(slots.chart_data.groups) && slots.chart_data.groups.length > 0)
+    );
+
     if (emptyLoops && tid !== 'narrative_page') {
-      console.warn(`[studio-worker] section "${draft.title}" (${tid}) returned all-empty loops — falling back to narrative_page`);
-      // Build a paragraphs array from whatever the LLM gave us.
-      const paragraphs = [];
-      if (typeof slots.subhead_html === 'string' && slots.subhead_html) {
-        paragraphs.push({ heading: draft.title, body_html: slots.subhead_html });
-      }
-      if (Array.isArray(slots.narrative))   paragraphs.push(...slots.narrative);
-      if (Array.isArray(slots.paragraphs))  paragraphs.push(...slots.paragraphs);
-      if (paragraphs.length === 0) {
-        paragraphs.push({
-          heading: draft.title,
-          body_html: '<em>The drafter did not produce structured content for this section — the uploaded sources may not have covered this topic in enough depth.</em>'
+      // Path A — chart-bearing template with usable chart: KEEP the
+      // template (so the chart still renders) and backfill the
+      // narrative loop with the subhead so the left side isn't blank.
+      const narrLoop = meta?.loops?.find(l => l.key === 'narrative' || l.key === 'paragraphs');
+      if (chartHasData && narrLoop && typeof slots.subhead_html === 'string' && slots.subhead_html.trim()) {
+        console.warn(`[studio-worker] section "${draft.title}" (${tid}) loops empty but chart_data present — backfilling narrative with subhead`);
+        slots[narrLoop.key] = [{
+          heading:   draft.title,
+          body_html: slots.subhead_html
+        }];
+        slots.subhead_html = '';
+        // Fall through to normal render below.
+      } else {
+        // Path B — no chart to anchor the page → fall back to narrative_page.
+        console.warn(`[studio-worker] section "${draft.title}" (${tid}) returned all-empty loops and no chart — falling back to narrative_page`);
+        const paragraphs = [];
+        if (typeof slots.subhead_html === 'string' && slots.subhead_html) {
+          paragraphs.push({ heading: draft.title, body_html: slots.subhead_html });
+        }
+        if (Array.isArray(slots.narrative))   paragraphs.push(...slots.narrative.filter(x => !isItemEmpty(x, ['heading','body_html'])));
+        if (Array.isArray(slots.paragraphs))  paragraphs.push(...slots.paragraphs.filter(x => !isItemEmpty(x, ['heading','body_html'])));
+        if (paragraphs.length === 0) {
+          paragraphs.push({
+            heading: draft.title,
+            body_html: '<em>The drafter did not produce structured content for this section — the uploaded sources may not have covered this topic in enough depth.</em>'
+          });
+        }
+        const fallback = await renderTemplate('narrative_page', {
+          section_tag:  slots.section_tag || `Section · ${draft.title}`,
+          page_h1:      slots.page_h1 || draft.title,
+          subhead_html: '',
+          paragraphs,
+          footer_text:  footerText
         });
+        sectionPagesHtml.push(fallback);
+        continue;
       }
-      const fallback = await renderTemplate('narrative_page', {
-        section_tag:  slots.section_tag || `Section · ${draft.title}`,
-        page_h1:      slots.page_h1 || draft.title,
-        subhead_html: '',
-        paragraphs,
-        footer_text:  footerText
-      });
-      sectionPagesHtml.push(fallback);
-      continue;
     }
 
     try {

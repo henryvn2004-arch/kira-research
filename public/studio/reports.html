@@ -66,18 +66,28 @@
     .rpt-actions .danger:hover { border-color: #C0392B; color: #C0392B; }
 
     .rpt-frame-wrap {
-      max-width: 1080px;
+      max-width: 1280px;
       margin: 0 auto 96px;
       padding: 0 24px;
     }
-    .rpt-frame {
+    /* N.27.5: KIRA pages are fixed 1280×720 px each. The iframe
+       renders them at native size; we use CSS transform: scale() to
+       fit the available container width on smaller viewports. */
+    .rpt-frame-scaler {
       width: 100%;
-      height: 80vh;
-      min-height: 720px;
+      position: relative;
+      overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 6px;
       background: #fff;
       box-shadow: var(--elevation-md);
+    }
+    .rpt-frame {
+      display: block;
+      width: 1280px;
+      border: 0;
+      transform-origin: 0 0;
+      background: #fff;
     }
 
     .rpt-status {
@@ -165,11 +175,14 @@
         </div>
       </div>
       <div class="rpt-frame-wrap">
-        ${data.full_content
-          ? `<iframe class="rpt-frame" srcdoc="${escHtml(data.full_content)}" title="${escHtml(data.title)}"></iframe>`
-          : data.html_url
-            ? `<iframe class="rpt-frame" src="${escHtml(data.html_url)}" title="${escHtml(data.title)}"></iframe>`
-            : `<div class="rpt-status"><h2>HTML edition pending</h2><p>The HTML edition is still being prepared. The PDF download above is ready.</p></div>`
+        ${data.full_content || data.html_url
+          ? `<div class="rpt-frame-scaler" id="rpt-scaler">
+               ${data.full_content
+                 ? `<iframe class="rpt-frame" srcdoc="${escHtml(data.full_content)}" title="${escHtml(data.title)}" data-pages="${escHtml(data.pages || 10)}"></iframe>`
+                 : `<iframe class="rpt-frame" src="${escHtml(data.html_url)}" title="${escHtml(data.title)}" data-pages="${escHtml(data.pages || 10)}"></iframe>`
+               }
+             </div>`
+          : `<div class="rpt-status"><h2>HTML edition pending</h2><p>The HTML edition is still being prepared. The PDF download above is ready.</p></div>`
         }
       </div>
     `;
@@ -195,6 +208,35 @@
         }
       });
     }
+
+    // N.27.5: scale-to-fit the report iframe. KIRA page templates are
+    // a fixed 1280×720 px each. The iframe renders them natively and
+    // we apply CSS transform: scale() to fit the viewport width, with
+    // height adjusted from the page count metadata.
+    function fitFrame() {
+      const scaler = document.getElementById('rpt-scaler');
+      if (!scaler) return;
+      const iframe = scaler.querySelector('.rpt-frame');
+      if (!iframe) return;
+      const pages = Math.max(1, Number(iframe.dataset.pages) || 10);
+      // Per-page native height. Each .page div is min-height 720px;
+      // we pad a bit for inter-page margins in print/preview.
+      const pageH = 730;
+      const naturalH = pages * pageH;
+      iframe.style.height = naturalH + 'px';
+      const targetW = scaler.clientWidth;
+      const scale = Math.min(1, targetW / 1280);
+      iframe.style.transform = 'scale(' + scale + ')';
+      // The scaler hosts the scaled iframe — its height needs to
+      // match the visible (scaled) iframe height, otherwise the
+      // page below it has a huge gap or overlap.
+      scaler.style.height = (naturalH * scale) + 'px';
+    }
+    fitFrame();
+    window.addEventListener('resize', () => {
+      // requestAnimationFrame avoids thrashing on continuous resize.
+      window.requestAnimationFrame(fitFrame);
+    });
   </script>
 </body>
 </html>

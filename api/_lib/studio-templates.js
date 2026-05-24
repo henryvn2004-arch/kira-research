@@ -348,7 +348,13 @@ function applyPlaceholders(html, scope) {
 // ============================================================
 function expandLoops(templateHtml, loopDefs, slots) {
   // Find all top-level LOOP/END LOOP pairs in order.
-  const re = /<!--\s*LOOP:[^-]*-->([\s\S]*?)<!--\s*END LOOP\s*-->/g;
+  // N.27.5: switched from `[^-]*` to `[\s\S]*?` (non-greedy any-char)
+  // because the previous pattern broke on comments containing hyphens
+  // — e.g. `<!-- LOOP: 2-3 narrative sections -->` or
+  // `<!-- LOOP: 3-4 items left col -->`. Three templates were silently
+  // dropping their loop bodies because of this (market_data_chart,
+  // methodology_inline, channel_waterfall).
+  const re = /<!--\s*LOOP:[\s\S]*?-->([\s\S]*?)<!--\s*END LOOP\s*-->/g;
   let loopIdx = 0;
   return templateHtml.replace(re, (_match, inner) => {
     const def = loopDefs[loopIdx++];
