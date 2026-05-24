@@ -7,31 +7,55 @@
    ============================================================ */
 
 (function () {
+  // ── Subdomain detection (Phase O.11) ───────────────────────
+  // The main site nav points at content paths like /en/insights that
+  // ONLY exist on the main domain. When this same nav.js runs on the
+  // studio.* subdomain, the relative paths resolve against the studio
+  // host and 404 (Studio's vercel.json host-rewrite only serves /studio/*).
+  //
+  // Fix: detect host. On Studio, emit absolute URLs prefixed with
+  // MAIN_ORIGIN so every nav/footer link lands on the right host.
+  // Logo + Studio link itself stay subdomain-aware via separate code
+  // paths.
+  const MAIN_ORIGIN  = 'https://kiraresearch.com';
+  const isStudioHost = /^studio\./i.test(window.location.hostname);
+  const HOST_PREFIX  = isStudioHost ? MAIN_ORIGIN : '';
+
   // ── Locale detection ───────────────────────────────────────
   // Pathname format: /<locale>/<page>...
   // Falls back to 'en' if no locale segment.
+  //
+  // Studio is English-only and its paths (`/library`, `/jobs`, etc.)
+  // don't have a locale segment — treat the locale as 'en' and force
+  // an empty subPath so locale-switcher links route to the main-domain
+  // locale ROOT, not to a non-existent /{locale}/jobs path.
   const SUPPORTED_LOCALES = ['en', 'ja', 'ko'];
   const pathParts = window.location.pathname.split('/').filter(Boolean);
-  const locale = SUPPORTED_LOCALES.includes(pathParts[0]) ? pathParts[0] : 'en';
+  const locale = isStudioHost
+    ? 'en'
+    : (SUPPORTED_LOCALES.includes(pathParts[0]) ? pathParts[0] : 'en');
 
   // Remaining path after the locale (e.g. ['library'] or ['reports', 'foo'])
-  const subPath = SUPPORTED_LOCALES.includes(pathParts[0])
-    ? pathParts.slice(1)
-    : pathParts;
+  const subPath = isStudioHost
+    ? []
+    : (SUPPORTED_LOCALES.includes(pathParts[0]) ? pathParts.slice(1) : pathParts);
 
   // ── Page detection (for active highlight) ──────────────────
-  // Top-level page key: first segment after locale, or 'home' for /<locale>/
-  const pageKey = subPath[0] || 'home';
+  // Top-level page key: first segment after locale, or 'home' for /<locale>/.
+  // On Studio host we have no main-site active state to highlight.
+  const pageKey = isStudioHost ? null : (subPath[0] || 'home');
 
   // ── Helpers ────────────────────────────────────────────────
   // Build a path for the given locale, preserving current subpath.
+  // On Studio: emits an absolute URL to the main domain.
   function localeHref(targetLocale) {
-    return '/' + targetLocale + '/' + subPath.join('/');
+    return HOST_PREFIX + '/' + targetLocale + '/' + subPath.join('/');
   }
 
   // Build a path within the current locale.
+  // On Studio: emits an absolute URL to the main domain.
   function localPath(p) {
-    return '/' + locale + (p.startsWith('/') ? p : '/' + p);
+    return HOST_PREFIX + '/' + locale + (p.startsWith('/') ? p : '/' + p);
   }
 
   // ── Locale switcher links ──────────────────────────────────
@@ -141,7 +165,12 @@
   // Single global entity block, identifies the publisher to crawlers across
   // every page. Idempotent: skipped if a #ld-organization tag already exists
   // (e.g. dynamic templates may inject their own richer entity).
+  //
+  // Skipped on Studio host — Studio pages are private (noindex) and Henry's
+  // brief is that Studio is invisible infrastructure (no KIRA branding in
+  // output), so we don't want to publish an Organization entity from there.
   function injectOrganizationJsonLd() {
+    if (isStudioHost) return;
     if (document.getElementById('ld-organization')) return;
     const origin = window.location.origin;
     const payload = {
@@ -173,6 +202,12 @@
   // Skips if a canonical link already exists on the page (e.g. a future
   // SSR build, or admin pages that explicitly set their own).
   function injectCanonical() {
+    // Studio host: skip — pages are private/noindex and the path
+    // ('/library', '/jobs', etc.) doesn't exist on the main domain, so
+    // a naive PROD_ORIGIN+pathname canonical would mislead crawlers.
+    // The per-page `<meta name="robots" content="noindex,nofollow">` is
+    // the right primary signal.
+    if (isStudioHost) return;
     if (document.querySelector('link[rel="canonical"]')) return;
 
     const PROD_ORIGIN = 'https://kiraresearch.com';
@@ -194,6 +229,8 @@
   // Idempotent: skips if a kira-hreflang link is already present (e.g.
   // from a server-side render in the future).
   function injectHreflang() {
+    // Studio host: skip — Studio is English-only and pages are noindex.
+    if (isStudioHost) return;
     if (document.querySelector('link[data-kira-hreflang]')) return;
     const origin = window.location.origin;
     const sub    = subPath.join('/');                // preserves trailing-slash-less form
@@ -267,7 +304,11 @@
     // page just for the nav. If the token is stale, the /profile page itself
     // gates the user to sign in.
     if (isLikelyAuthenticated()) {
-      document.querySelectorAll('.kira-my-library, .kira-studio').forEach(el => { el.style.display = ''; });
+      // .kira-studio link is redundant on Studio host (you're already there) — skip.
+      const selector = isStudioHost
+        ? '.kira-my-library'
+        : '.kira-my-library, .kira-studio';
+      document.querySelectorAll(selector).forEach(el => { el.style.display = ''; });
     }
 
     // Notify i18n.js (if loaded) that nav DOM is ready
