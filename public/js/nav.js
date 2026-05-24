@@ -275,12 +275,21 @@
   }
 
   function isLikelyAuthenticated() {
+    // Phase N.14: auth.js now mirrors the Supabase session to a `.kiraresearch.com`
+    // cookie so it's shared across the main domain and the studio subdomain.
+    // Check cookies FIRST — when arriving on a sibling subdomain for the first
+    // time, localStorage is empty on that origin but the cookie carries the
+    // session.
     try {
-      // auth.js configures the Supabase client with a custom `storageKey: 'kira-auth'`,
-      // so the session lives at localStorage['kira-auth']. Fallback to the
-      // default `sb-<projectref>-auth-token` pattern in case that ever changes.
+      if (document.cookie && /(?:^|;\s*)kira-auth(?:\.\d+)?=/.test(document.cookie)) {
+        return true;
+      }
+    } catch (_) { /* document.cookie unavailable → fall through */ }
+    try {
       const direct = localStorage.getItem('kira-auth');
       if (direct && direct.length > 20) return true;
+      // Fallback: the default Supabase storage key shape, in case the custom
+      // `storageKey` is ever removed.
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
         if (k && /^sb-.+-auth-token$/.test(k)) {
@@ -288,7 +297,7 @@
           if (v && v.length > 20) return true;
         }
       }
-    } catch (e) { /* localStorage blocked → assume signed out */ }
+    } catch (_) { /* localStorage blocked → assume signed out */ }
     return false;
   }
 
