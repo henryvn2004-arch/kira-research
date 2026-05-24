@@ -239,14 +239,25 @@
     const user = await window.kiraAuth.getUser();
 
     if (!user) {
+      // ── O.10: PayPal-return recovery ────────────────────
+      // If the session expired mid-checkout, the user lands here
+      // signed-out but with `?paypal=success&token=...` in the URL.
+      // Preserve those params on the redirect so post-sign-in
+      // capture auto-fires. Otherwise the order id is lost and the
+      // PayPal-approved order will expire uncaptured.
+      const hasPaypalReturn = new URL(location.href).searchParams.get('paypal') === 'success';
+      const redirectTarget  = '/billing' + (location.search || '');
+
       root.innerHTML = `
         <div class="bill-gate">
           <h2>Sign in to manage credits</h2>
-          <p>KIRA Studio credits are tied to your account. Existing KIRA Research accounts work.</p>
+          <p>${hasPaypalReturn
+            ? 'You completed the PayPal payment — sign in to credit your account. Your order is held by PayPal and credits will be added automatically once you sign back in.'
+            : 'KIRA Studio credits are tied to your account. Existing KIRA Research accounts work.'}</p>
           <a href="/auth.html" class="btn-primary">Sign in / Create account</a>
         </div>
       `;
-      try { sessionStorage.setItem('kira_redirect_after_login', '/billing'); } catch {}
+      try { sessionStorage.setItem('kira_redirect_after_login', redirectTarget); } catch {}
       throw new Error('halt');
     }
 
