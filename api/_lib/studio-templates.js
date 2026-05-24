@@ -38,19 +38,23 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { EMBEDDED_FILES } from './studio-templates-embedded.js';
 
 // ============================================================
 // Robust path resolution for the bundled templates.
 //
 // On Vercel, `import.meta.url` of a module imported from a function
-// can resolve to either:
-//   • file:///var/task/api/_lib/studio-templates.js  (separate files)
-//   • file:///var/task/api/inngest.js                (bundled, rare)
-// And `process.cwd()` is `/var/task` either way.
+// can resolve differently depending on whether the bundler kept the
+// module as a separate file or rolled it into the function entry.
+// Plus the @vercel/node builder uses ncc which sometimes drops
+// includeFiles silently.
 //
-// We try several candidate base dirs in order and return the first
-// existing file. This survives ESM bundling quirks AND local dev
-// (where __dirname-equivalent works fine).
+// Three-tier resolution:
+//   1. Try several candidate filesystem paths (covers local dev +
+//      most Vercel deploy configurations).
+//   2. Fall back to the EMBEDDED constants generated at commit time
+//      by scripts/build-studio-embedded.mjs (bulletproof — bundled
+//      INSIDE the JS module).
 // ============================================================
 const _moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const CANDIDATE_SKILL_DIRS = [
@@ -62,20 +66,23 @@ const CANDIDATE_SKILL_DIRS = [
 ];
 
 async function findTemplateFile(filename) {
-  let lastErr;
+  // 1) Try the filesystem candidates.
   for (const base of CANDIDATE_SKILL_DIRS) {
     const candidate = path.join(base, 'templates', filename);
     try {
       const data = await readFile(candidate, 'utf8');
-      return { data, path: candidate };
-    } catch (err) {
-      lastErr = err;
-    }
+      return { data, path: candidate, source: 'fs' };
+    } catch (_err) { /* try next */ }
   }
+  // 2) Fall back to the embedded copy.
+  const embedded = EMBEDDED_FILES[filename];
+  if (embedded) {
+    console.warn(`[studio-templates] ${filename}: filesystem candidates all missed, using embedded fallback (${embedded.length} chars)`);
+    return { data: embedded, path: `<embedded:${filename}>`, source: 'embedded' };
+  }
+  // 3) Genuinely not found anywhere — should never happen.
   const tried = CANDIDATE_SKILL_DIRS.map(b => path.join(b, 'templates', filename)).join(' | ');
-  const msg = `templates_file_not_found:${filename} (tried: ${tried}) — last: ${lastErr?.message}`;
-  console.warn(`[studio-templates] ${msg}`);
-  throw new Error(msg);
+  throw new Error(`templates_file_not_found:${filename} (tried: ${tried}; no embedded copy)`);
 }
 
 // ============================================================
