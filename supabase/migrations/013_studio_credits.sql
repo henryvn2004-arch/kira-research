@@ -18,21 +18,40 @@
 --     → atomic deduct for studio hold; raises 'insufficient_credits'
 --       if balance < amount
 --
--- Idempotent — safe to re-run.
+-- LEGACY HANDLING
+-- ---------------
+-- Sprint 5.3 retired the platform-era credit system entirely Year 1
+-- (commit a8a9206). Migration 006's "keeps credit tables for deferred
+-- rebuild" note is stale — the rebuild was officially scoped out.
+-- The legacy `user_credits` and `credit_transactions` tables had a
+-- different schema (no `kind`, no `paypal_order_id`, etc.). This
+-- migration drops them BEFORE recreating, so the column set matches
+-- what Studio's worker + API expect.
+--
+-- The legacy `add_credits()` and `spend_credits()` functions remain
+-- — Studio uses different names (`credit_add`, `credit_debit`) so no
+-- collision. They're already revoked from anon/authenticated per
+-- migration 008.
 -- ============================================================
 
--- ── 1. Balance table ───────────────────────────────────────
+-- ── 0. Drop retired legacy tables ─────────────────────────
+-- Safe because Sprint 5.3 retired this subsystem before any users.
+-- `cascade` covers indexes / policies / dependent objects.
+drop table if exists public.credit_transactions cascade;
+drop table if exists public.user_credits        cascade;
+
+-- ── 1. Balance table ──────────────────────────────────────
 -- Matches existing migrations' convention: plain `user_id uuid` with
 -- no hard FK to auth.users (Supabase auth schema permissions can be
 -- finicky on cross-schema FKs). RLS + service-key writes are the gate.
-create table if not exists public.user_credits (
+create table public.user_credits (
   user_id     uuid primary key,
   balance     integer not null default 0 check (balance >= 0),
   updated_at  timestamptz not null default now()
 );
 
 -- ── 2. Ledger ─────────────────────────────────────────────
-create table if not exists public.credit_transactions (
+create table public.credit_transactions (
   id              uuid primary key default gen_random_uuid(),
   created_at      timestamptz not null default now(),
   user_id         uuid not null,
@@ -46,20 +65,20 @@ create table if not exists public.credit_transactions (
   amount_usd      numeric(10,2)
 );
 
-create index if not exists credit_transactions_user_idx
+create index credit_transactions_user_idx
   on public.credit_transactions (user_id, created_at desc);
 
 -- Idempotency: re-capturing the same PayPal order can't double-credit.
-create unique index if not exists credit_transactions_paypal_topup_idx
+create unique index credit_transactions_paypal_topup_idx
   on public.credit_transactions (paypal_order_id)
   where paypal_order_id is not null and kind = 'topup';
 
 -- Idempotency: a job can be debited at most once (hold) and refunded at most once.
-create unique index if not exists credit_transactions_job_debit_idx
+create unique index credit_transactions_job_debit_idx
   on public.credit_transactions (studio_job_id)
   where studio_job_id is not null and kind = 'studio_debit';
 
-create unique index if not exists credit_transactions_job_refund_idx
+create unique index credit_transactions_job_refund_idx
   on public.credit_transactions (studio_job_id)
   where studio_job_id is not null and kind = 'studio_refund';
 
@@ -67,12 +86,10 @@ create unique index if not exists credit_transactions_job_refund_idx
 alter table public.user_credits         enable row level security;
 alter table public.credit_transactions  enable row level security;
 
-drop policy if exists user_credits_owner_select on public.user_credits;
 create policy user_credits_owner_select
   on public.user_credits for select to authenticated
   using (user_id = auth.uid());
 
-drop policy if exists credit_transactions_owner_select on public.credit_transactions;
 create policy credit_transactions_owner_select
   on public.credit_transactions for select to authenticated
   using (user_id = auth.uid());
