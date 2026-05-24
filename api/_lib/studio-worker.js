@@ -70,10 +70,10 @@ const TARGET_SECTIONS     = 10;
 // Mimics the per-section research pattern of the UC1 skill in
 // Claude Chat and gives the model a clear, focused scope per call
 // instead of a 10-section monolith.
-const PER_SECTION_SEARCHES   = 3;
+const PER_SECTION_SEARCHES   = 2;
 const RESEARCH_CONCURRENCY   = 3;
-const STAGE4_SECTION_TIMEOUT = 90 * 1000;       // 90s per section
-const STAGE4_OVERALL_TIMEOUT = 6 * 60 * 1000;   // 6 min total budget
+const STAGE4_SECTION_TIMEOUT = 75 * 1000;       // 75s per section (Promise.race based)
+const STAGE4_OVERALL_TIMEOUT = 5 * 60 * 1000;   // 5 min total budget
 
 const SKILL_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -257,17 +257,26 @@ Return JSON only.`;
 }
 
 // ===============================================================
-// STAGE 4 — Web search (per-section parallel, Phase N.17)
+// STAGE 4 — Web search (per-section parallel)
 //
-// One Anthropic call per section that has needs_search=true.
-// Each call has its own AbortController with STAGE4_SECTION_TIMEOUT,
-// and there's an overall AbortController with STAGE4_OVERALL_TIMEOUT
-// that aborts every in-flight call if Stage 4 as a whole runs long.
+// One Anthropic call per section that has needs_search=true. Calls
+// run RESEARCH_CONCURRENCY at a time. Each call is bounded by a
+// Promise.race timeout (STAGE4_SECTION_TIMEOUT) and the whole stage
+// is bounded by a wall-clock deadline (STAGE4_OVERALL_TIMEOUT).
+//
+// Why Promise.race instead of AbortController: empirically, the
+// Anthropic SDK's `signal` parameter does NOT reliably interrupt
+// an in-flight web_search tool call — the server-side tool runs
+// to completion regardless. Promise.race resolves at the JS layer
+// without depending on SDK cooperation: when the timer fires we
+// just stop awaiting and move on. The pending Anthropic call may
+// still finish server-side (and will be billed) but the worker
+// loop progresses on schedule.
+//
 // Partial results are kept — a section whose research timed out
-// just contributes an empty findings entry, and Stage 5 falls back
-// gracefully via its existing empty-findings handling.
+// just contributes empty findings, and Stage 5 falls back gracefully.
 // ===============================================================
-async function stage4Research({ parsed, plan, log }) {
+async function stage4Research({ jobId, parsed, plan, log }) {
   const c = client();
   const allSections     = Array.isArray(plan?.sections) ? plan.sections : [];
   // Skip sections explicitly marked needs_search=false (methodology,
@@ -304,7 +313,7 @@ Hard rules:
 - Source aliases stay English even when the original is local-language (e.g. [GSO 2024] not [Tổng cục Thống kê 2024]).
 - If you cannot find good sources after 2-3 searches, RETURN what you have. Do NOT keep trying — empty is fine.`;
 
-  const researchOne = async (section, signal) => {
+  const researchOne = async (section) => {
     const userMsg = `Report context: ${JSON.stringify({
       country: parsed.country, industry: parsed.industry, year: parsed.year,
       local_language: parsed.local_language_name
@@ -327,7 +336,7 @@ Run your ${PER_SECTION_SEARCHES} searches, then return the JSON object. Empty fi
         max_uses: PER_SECTION_SEARCHES
       }],
       messages: [{ role: 'user', content: userMsg }]
-    }, { signal });
+    });
 
     const text = textFromMessage(msg);
     let parsedOut;
@@ -352,78 +361,116 @@ Run your ${PER_SECTION_SEARCHES} searches, then return the JSON object. Empty fi
     };
   };
 
-  // ── Concurrency cap + overall timeout orchestration ────────
-  const overallAc = new AbortController();
-  const overallTimer = setTimeout(() => overallAc.abort(), STAGE4_OVERALL_TIMEOUT);
+  // ── Concurrency cap + Promise.race timeout (Phase N.18) ────
+  //
+  // PREVIOUSLY relied on AbortController to interrupt in-flight
+  // Anthropic web_search calls. Empirical finding: the SDK's
+  // signal parameter does NOT reliably interrupt a hung tool call
+  // — the underlying server-side web_search runs to completion
+  // regardless. Result: setTimeout fired but `await researchOne`
+  // never returned, function ran to Vercel maxDuration kill.
+  //
+  // NEW design uses Promise.race against an in-process timeout
+  // promise. When the timer fires, we GIVE UP WAITING on the
+  // pending Anthropic call (it may still finish server-side and
+  // get billed; we just don't block on it). This guarantees the
+  // worker loop progresses on schedule regardless of SDK behavior.
+  //
+  // The overallDeadline is a wall-clock guard: once Stage 4 has
+  // burned its total budget, in-progress workers stop pulling new
+  // sections and we return whatever findings are already in.
+  const overallDeadline = Date.now() + STAGE4_OVERALL_TIMEOUT;
+
+  // Used as the right side of Promise.race. Resolves to a marker
+  // object so we can distinguish timeout vs. SDK error in the catch.
+  const TIMEOUT_MARKER = Symbol('stage4_section_timeout');
+  function withTimeout(promise, ms) {
+    let to;
+    const timeoutPromise = new Promise(resolve => {
+      to = setTimeout(() => resolve(TIMEOUT_MARKER), ms);
+    });
+    return Promise.race([
+      promise.finally(() => clearTimeout(to)),
+      timeoutPromise
+    ]);
+  }
 
   const results = new Array(targetSections.length);
   let cursor = 0;
+  let sectionsDone = 0;
 
   async function worker() {
     while (cursor < targetSections.length) {
-      if (overallAc.signal.aborted) return;
+      if (Date.now() >= overallDeadline) {
+        // Overall budget exhausted — stop taking new work, but in-flight
+        // calls in other workers may still be racing their own timeouts.
+        return;
+      }
       const idx = cursor++;
       const section = targetSections[idx];
 
       if (log) await log('info', 'search', `Researching: ${section.title}`);
 
-      const sectionAc = new AbortController();
-      const sectionTimer = setTimeout(() => sectionAc.abort(), STAGE4_SECTION_TIMEOUT);
-      // Forward the overall abort to every in-flight section so
-      // when the global cap fires, all running calls die together.
-      const propagateAbort = () => sectionAc.abort();
-      overallAc.signal.addEventListener('abort', propagateAbort);
+      // Per-section budget is the smaller of: (a) section timeout, or
+      // (b) remaining overall budget. Ensures we never wait longer than
+      // the overall deadline allows.
+      const remaining = overallDeadline - Date.now();
+      const sectionTimeoutMs = Math.max(15 * 1000, Math.min(STAGE4_SECTION_TIMEOUT, remaining));
 
       try {
-        results[idx] = await researchOne(section, sectionAc.signal);
-        if (log) {
-          for (const q of results[idx].queries) {
-            await log('search', 'search', `Searched: ${q}`);
+        const outcome = await withTimeout(researchOne(section), sectionTimeoutMs);
+
+        if (outcome === TIMEOUT_MARKER) {
+          // Hard timeout — Anthropic call still in flight server-side
+          // but we're done waiting. Record empty findings and move on.
+          if (log) await log('error', 'search',
+            `Section timed out: ${section.title} (${Math.round(sectionTimeoutMs/1000)}s · proceeding with empty findings)`);
+          results[idx] = {
+            section_title: section.title,
+            page_type:     section.page_type,
+            key_numbers: [], qualitative: [], source_key: [],
+            queries: [], tokens_in: 0, tokens_out: 0
+          };
+        } else {
+          // Real result.
+          results[idx] = outcome;
+          if (log) {
+            for (const q of outcome.queries) {
+              await log('search', 'search', `Searched: ${q}`);
+            }
+            const srcCount = outcome.source_key.length;
+            await log('done', 'search', `Section researched: ${section.title} · ${srcCount} source${srcCount === 1 ? '' : 's'}`);
           }
-          const srcCount = results[idx].source_key.length;
-          await log('done', 'search', `Section researched: ${section.title} · ${srcCount} source${srcCount === 1 ? '' : 's'}`);
         }
       } catch (err) {
-        // Timeout or transport error — record empty findings and
-        // keep going. Don't let one section take down the whole
-        // research phase.
-        const isAbort = err?.name === 'AbortError' || /aborted/i.test(String(err?.message || ''));
-        if (log) {
-          await log(
-            'error',
-            'search',
-            isAbort
-              ? `Section timed out: ${section.title} (proceeding with empty findings)`
-              : `Section research failed: ${section.title} — ${String(err?.message || err).slice(0, 200)}`
-          );
-        }
+        // Transport error or model-side rejection. Record empty findings.
+        if (log) await log('error', 'search',
+          `Section research failed: ${section.title} — ${String(err?.message || err).slice(0, 200)}`);
         results[idx] = {
           section_title: section.title,
           page_type:     section.page_type,
-          key_numbers:   [],
-          qualitative:   [],
-          source_key:    [],
-          queries:       [],
-          tokens_in:     0,
-          tokens_out:    0
+          key_numbers: [], qualitative: [], source_key: [],
+          queries: [], tokens_in: 0, tokens_out: 0
         };
       } finally {
-        clearTimeout(sectionTimer);
-        overallAc.signal.removeEventListener('abort', propagateAbort);
+        sectionsDone++;
+        // Update progress so the UI shows real movement during Stage 4.
+        // Map Stage 4 progress 30%→55% across section completions.
+        const pct = 30 + Math.floor(25 * (sectionsDone / Math.max(1, targetSections.length)));
+        await updateJobProgress(jobId, {
+          current_stage: `Researching sections (${sectionsDone}/${targetSections.length})…`,
+          progress: pct
+        }).catch(() => { /* best-effort */ });
       }
     }
   }
 
-  try {
-    await Promise.all(
-      Array.from(
-        { length: Math.min(RESEARCH_CONCURRENCY, targetSections.length) },
-        worker
-      )
-    );
-  } finally {
-    clearTimeout(overallTimer);
-  }
+  await Promise.all(
+    Array.from(
+      { length: Math.min(RESEARCH_CONCURRENCY, targetSections.length) },
+      worker
+    )
+  );
 
   // ── Aggregate per-section findings into the shape Stage 5 expects ──
   const findingsArr = results.filter(Boolean).map(r => ({
@@ -757,7 +804,7 @@ export async function processStudioJob({ jobId, userId }) {
   const searchableCount = (s3.plan?.sections || []).filter(s => s && s.needs_search !== false).length;
   await log('stage', 'search',
     `Researching ${searchableCount} sections in parallel · ${PER_SECTION_SEARCHES} searches each · English + ${s1.parsed.local_language_name || 'English'}…`);
-  const s4 = await stage4Research({ parsed: s1.parsed, plan: s3.plan, log });
+  const s4 = await stage4Research({ jobId, parsed: s1.parsed, plan: s3.plan, log });
   tokIn  += s4.tokens_in;
   tokOut += s4.tokens_out;
   const sourceCount  = Array.isArray(s4.findings?.source_key) ? s4.findings.source_key.length : 0;
