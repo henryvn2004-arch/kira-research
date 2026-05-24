@@ -171,6 +171,20 @@ function parseJsonLoose(s) {
   throw new Error('json_parse_failed');
 }
 
+// HTML-escape utility used by the cover page assembler (Phase N.23).
+// User-controlled fields (title, subtitle, primary_subject, ...) flow
+// into the cover HTML — escape so embedded `<`, `&`, etc. don't break
+// the document. Section bodies stay as raw HTML on purpose because
+// Stage 5 returns marked-up HTML.
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ---------------------------------------------------------------
 // Anti-positioning blacklist — system prompt enforces it; we also
 // scrub belt-and-braces on every text chunk before assembly.
@@ -186,45 +200,84 @@ function scrub(text) {
 }
 
 // ===============================================================
-// STAGE 1 — Parse topic input
+// STAGE 1 — Free-form intent classifier  (Phase N.23)
 // ===============================================================
-// Phase N.22: each stage fn is exported so api/_lib/studio-workflow.js
-// (Inngest function) can call them as independent step.run() bodies.
-// The legacy in-process orchestrator `processStudioJob` (below) still
-// works via waitUntil but is no longer the active execution path.
+// Studio's job is to gen WHATEVER the user wants from their uploaded
+// sources — company profiles, service decks, market analyses, exec
+// briefs, technical docs, investor pitches, training material, etc.
+// This stage parses the user's INTENT, not market-report metadata.
+//
+// Previously (N.20-N.22) we forced extraction of country/industry/
+// year/local_language — fields only meaningful for market reports.
+// That hardcoding made Studio mis-classify uploads like a company
+// profile PDF + "make a presentation for this file" as a market-
+// report request, inventing country=Vietnam / industry=credit / year=2027
+// from filename keywords.
+//
+// New behaviour:
+//   • LLM infers `report_kind` freely (any short noun phrase) from
+//     the user's brief + filenames + first content snippet.
+//   • Honors user directives verbatim — if they say "3-slide brief"
+//     the planner gets `user_section_count: 3` and uses that.
+//   • country/industry/year are only filled if they're genuinely
+//     part of the report (e.g. "Vietnam fintech 2027" market analysis);
+//     null otherwise. studio_reports row accepts null for these.
+// ===============================================================
 export async function stage1ParseTopic({ topic_input, uploaded_file_paths }) {
   const c = client();
-  const system = `You are the input parser for KIRA Research's Studio report generator.
+  const system = `You are the intent classifier for KIRA Studio, a tool that turns user-uploaded source documents into whatever deliverable the user describes.
 
-Given a user's free-text topic (and optionally a list of filenames they uploaded), return a single JSON object describing the report to generate. No prose, no preamble — JSON only.
+Read the user's brief + the list of uploaded filenames. Return a single JSON object describing what they want. NO prose, NO preamble — JSON only.
+
+The user controls everything. Honor their words literally:
+  • If they say "presentation", "deck", "slides" → it's a presentation.
+  • If they say "report", "analysis", "study" → it's a report.
+  • If they specify a number ("3-page brief", "5 sections", "10 slides") → record it.
+  • If they're vague ("make something from this") → flag for content-driven planning.
+  • If they don't specify report type at all → infer from filenames + brief (e.g. "vietnamcredit company profile.pdf" + "make a presentation for this" → report_kind: "company profile presentation").
 
 Required fields:
-- country: best-guess primary country (e.g. "Vietnam", "South Korea", "Brazil"). If pan-regional, pick the most prominent. If purely cross-border, return "Global".
-- country_iso: ISO 3166-1 alpha-2 (e.g. "VN", "KR", "BR"). "XX" for Global.
-- industry: short industry/topic phrase (e.g. "coffee", "fintech", "EV charging").
-- industry_normalized: lowercase slug-friendly form (e.g. "coffee", "fintech", "ev-charging").
-- year: target analysis year as integer (default to current year + 1 if not specified; today is 2026).
-- scope: 1-sentence phrase describing what the report covers ("market sizing + competitive landscape + 2027 outlook").
-- intent_keywords: 3-6 short noun phrases the user implicitly wants covered.
-- local_language_code: LLM-infer the BUSINESS PRESS language of the country (any ISO 639-1; NOT the official-language list). Examples: VN→vi, KR→ko, BR→pt, MX→es, EG→ar, CH→de, IN→en, SG→en, HK→en. "en" for Global.
-- local_language_name: full English name of that language ("Vietnamese", "Korean", "Portuguese (Brazil)", etc.).
+- report_kind: free-form short noun phrase describing the deliverable. Examples:
+    "company profile", "service overview deck", "market analysis report",
+    "investor briefing", "competitive intel brief", "technical methodology doc",
+    "training material", "executive summary", "case study deck", "due diligence memo".
+    Make it match what the user + sources actually call for. Don't force categories.
+- user_directives: 1-3 sentences capturing the user's explicit asks (length, format, audience, focus) — what they EXPLICITLY said. Empty string if they were silent.
+- user_section_count: integer if the user explicitly stated a number of sections/slides/pages, else null.
+- working_title: a draft title for the deliverable (planner will refine after seeing content). E.g. "VietnamCredit — Company Profile" or "Vietnam Coffee Market 2027" or "Q3 Sales Performance Brief".
+- subtitle: optional 1-line subtitle / framing tag. Null if not natural.
+- primary_subject: the THING the report is about — could be a company name, a market, a process, a region, a product. E.g. "VietnamCredit Group" or "Vietnam fintech market" or "Q3 sales performance".
+- audience: 1 sentence on who reads this ("internal sales team", "external prospects", "investors", "management board", "general business audience"). Best guess.
+- tone: 1 word — analyst / descriptive / technical / promotional / instructional / strategic / neutral. Pick the closest fit.
 - has_uploaded_files: boolean.
-- uploaded_file_summary: 1-line description if files present, else null.
-- parse_notes: 1-2 sentences explaining your reasoning, especially for the language pick if non-obvious.
-- confidence: 0..1 float — your subjective confidence in the parse.
+- uploaded_file_summary: 1-line description of what the uploads appear to contain (read filenames). Null if no files.
+
+Optional market-context fields (fill ONLY if genuinely relevant; null otherwise):
+- country: best-guess primary country IF the deliverable is country/market-specific. Null otherwise.
+- industry: short industry phrase IF the deliverable is industry-specific. Null otherwise.
+- year: target year IF the deliverable carries a year (forecast/period). Null otherwise.
+  Example: "Vietnam coffee market 2027" → country/industry/year filled.
+  Example: "VietnamCredit company profile" → country may be "Vietnam" (where company operates) but industry/year null.
+  Example: "Q3 sales recap" → all three null.
+
+- parse_notes: 1-2 sentences explaining your classification reasoning (especially for ambiguous cases).
+- confidence: 0..1 float — your subjective confidence.
 
 Hard rules:
+- The user is authoritative. If they say "make a presentation for this file", do NOT invent a market-report frame.
 - NEVER use the words: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
-- NEVER frame KIRA as an "AI platform / SaaS / app".
-- KIRA is a research house. Authorial voice: "our analysts" / "our research team".`;
+- NEVER frame KIRA as an "AI platform / SaaS / app". KIRA Studio is a tool; the output is the user's deliverable, not KIRA's.`;
 
-  const userMsg = `Topic: ${topic_input}
+  const filenames = (uploaded_file_paths || []).map(p => String(p).split('/').pop());
+  const userMsg = `User brief:
+"${String(topic_input || '').trim()}"
 
-${uploaded_file_paths && uploaded_file_paths.length
-  ? `Uploaded files (path / inferred name only): ${uploaded_file_paths.map(p => p.split('/').pop()).join(', ')}`
-  : 'No files uploaded.'}
+Uploaded filenames (${filenames.length}):
+${filenames.length ? filenames.map(n => `  - ${n}`).join('\n') : '  (none)'}
 
-Return JSON only.`;
+Today's date: ${new Date().toISOString().slice(0, 10)}
+
+Classify the intent. Return JSON only.`;
 
   const msg = await c.messages.create({
     model: MODEL,
@@ -243,14 +296,19 @@ Return JSON only.`;
 }
 
 // ===============================================================
-// STAGE 3 — Plan section structure (Phase N.21: content-aware)
+// STAGE 3 — Free-form planner  (Phase N.23)
+// ===============================================================
+// Planner sees: user brief + Stage 1 classification + actual file
+// content, then designs whatever structure makes sense for THIS
+// deliverable. No page_type enum, no hard section ranges unless the
+// user specified one.
 //
-// Planner now sees the actual extracted text from uploaded files
-// (not just filenames) and decides BOTH the section count (3–12)
-// AND the section titles based on what data is actually available.
-// This avoids the previous failure mode where a planner-first flow
-// invented titles like "Macroeconomic context" for files that had
-// no macro data, leaving Stage 5 to fabricate.
+// Page types are free-form strings the planner picks. Examples that
+// might show up: "cover", "executive_summary", "company_overview",
+// "service_portfolio", "leadership_team", "financial_highlights",
+// "case_study", "market_sizing", "competitive_landscape", "outlook",
+// "methodology", "appendix". The drafter (Stage 5) doesn't switch
+// on these — they're just hints for the cover/section CSS class.
 // ===============================================================
 export async function stage3PlanSections({ parsed, extracted, topic_input }) {
   const c = client();
@@ -259,55 +317,83 @@ export async function stage3PlanSections({ parsed, extracted, topic_input }) {
 
   // Preview block — first ~3000 chars per file is enough for the
   // planner to see what's in there without blowing the context.
-  // Use a SUMMARY excerpt so the planner sees structure (headings,
-  // first paragraphs, sheet names) without the full body.
   const PREVIEW_CHARS = 3000;
   const previewBlock = files
     .map(f => `### ${f.filename}\n${(f.text || '').slice(0, PREVIEW_CHARS)}${(f.text || '').length > PREVIEW_CHARS ? '\n[…]' : ''}`)
     .join('\n\n');
 
-  const system = `You are the section planner for a KIRA Research report. The user has uploaded source documents and given you a brief. Your job is to decide what sections the final report should have, based on what's ACTUALLY in the uploaded sources + what the user asked for.
+  // Section-count guidance comes from Stage 1's user_section_count if
+  // the user explicitly stated one; otherwise the planner chooses.
+  const userCount   = Number.isInteger(parsed.user_section_count) ? parsed.user_section_count : null;
+  const minSections = MIN_SECTIONS;
+  const maxSections = MAX_SECTIONS;
 
-DECIDE:
-1. SECTION COUNT: pick between ${MIN_SECTIONS} and ${MAX_SECTIONS} sections.
-   • A thin upload (one short PDF, narrow topic) → ${MIN_SECTIONS}-5 sections
-   • A rich upload (multiple files, broad topic) → 6-${MAX_SECTIONS} sections
-   • If the user asks for "executive summary" or "brief" → 3-4 sections
-   • If the user asks for "full report" or "deep dive" → 8-${MAX_SECTIONS} sections
+  const countGuidance = userCount
+    ? `The user EXPLICITLY asked for ${userCount} sections/slides/pages. You MUST produce exactly ${userCount} sections (clamp to ${minSections}-${maxSections} if outside that range).`
+    : `Pick a section count between ${minSections} and ${maxSections} that matches what's actually in the sources + the report kind:
+       • A thin upload (one short file, narrow topic) → ${minSections}-5 sections
+       • A rich upload (multiple files, broad topic) → 6-${maxSections} sections
+       • Short formats (exec summary, brief, snapshot) → ${minSections}-5
+       • Long formats (full report, deep dive, comprehensive) → 8-${maxSections}`;
 
-2. SECTION TITLES: must be grounded in the uploaded content.
-   • If the files have revenue data → include a sizing section
-   • If the files have firm profiles → include a competitive landscape section
-   • If the files have policy/regulator info → include a regulatory section
-   • Do NOT invent sections for data the files don't contain. If files have no macro context, don't plan a macro section.
-   • A title_cover and source_key page is ALWAYS included (don't count them toward the section budget).
+  const system = `You are the structural planner for a KIRA Studio deliverable. The user has uploaded source documents and described what they want. Your job is to design the section structure of the final deliverable based on:
+  (a) what the user asked for (Stage 1 already classified intent),
+  (b) what's actually in the uploaded sources, and
+  (c) the type of deliverable being produced.
 
-Required fields per section:
-- title: sentence-case. E.g. "A market at inflection." not "A Market At Inflection".
-- page_type: title_cover | exec_summary | macro_context | sector_overview | competitive_landscape | demand_channels | regulatory | ai_impact | forecast_outlook | methodology | source_key
-- brief: 2-3 sentences telling the writer EXACTLY what to cover, referencing which uploaded files this section will draw from.
-- primary_sources: array of filenames from the upload list that this section will lean on.
+You have FULL freedom to choose section titles + page types that suit the deliverable. There is NO fixed enum. A company profile presentation has different sections than a market analysis; an investor brief has different sections than a training doc. Match the structure to the deliverable.
 
-Return shape:
+SECTION COUNT
+${countGuidance}
+
+SECTION DESIGN PRINCIPLES
+  • Ground every section in the actual uploaded content. If the files have leadership bios → include a leadership section. If they have revenue data → include a financial highlights section. If they have product specs → include a product section.
+  • Do NOT invent sections for data the files don't contain. If files lack a macro context, don't plan a "macro context" section.
+  • If the user gave directives ("focus on X", "skip Y", "audience is investors"), honor them.
+  • A cover page + source key page are ALWAYS added by the renderer — DO NOT include them in your sections list.
+
+Required fields per section (return JSON):
+- title: sentence-case headline for the section. E.g. "Company at a glance." not "Company At A Glance".
+- page_type: a short snake_case string describing the section's role. Free-form — pick what fits.
+  Examples (NOT exhaustive — use whatever fits the deliverable):
+    "executive_summary", "company_overview", "service_portfolio", "leadership_team",
+    "financial_highlights", "case_studies", "client_logos", "product_features",
+    "market_sizing", "competitive_landscape", "regulatory_environment", "outlook",
+    "methodology", "appendix", "key_findings", "recommendations", "action_plan", "contact"
+- brief: 2-3 sentences telling the drafter EXACTLY what to cover, referencing which uploaded files this section draws from.
+- primary_sources: array of filenames (from the upload list) this section will lean on. Empty array if section is general framing.
+
+Top-level return shape:
 {
-  "sections": [...],
-  "estimated_pages": int,
-  "rationale": "1-sentence explanation of why you picked this section count + structure based on what's in the uploaded sources"
+  "final_title": "<refined working_title — what should appear on the cover>",
+  "subtitle": "<optional subtitle, 1 short line; null if not natural>",
+  "sections": [ { title, page_type, brief, primary_sources }, ... ],
+  "estimated_pages": <int>,
+  "rationale": "1-sentence explanation of why you picked this structure based on Stage 1's intent + what's in the sources"
 }
 
 Hard rules:
-- Every section name uses sentence case.
-- No filler titles like "Conclusion" or "Final thoughts" — use "Outlook" or "Forward view".
-- Never mention competitor firms or AI tools by name (Claude, McKinsey, Mordor, Frost, Euromonitor, IMARC, Synovate, Ipsos).
-- Never frame KIRA as a "platform / SaaS / app".`;
+- Every section title uses sentence case.
+- No filler titles like "Conclusion", "Final thoughts" — use a substantive title like "Outlook" or "What's next".
+- Never mention: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
+- Never frame KIRA as a "platform / SaaS / app". KIRA Studio is invisible infrastructure — the deliverable is the user's, not KIRA's.`;
 
-  const userMsg = `User's report brief:
+  const userMsg = `User brief (verbatim):
 "${String(topic_input || '').trim()}"
 
-Parsed metadata:
+Stage 1 classification:
 ${JSON.stringify({
-  country: parsed.country, industry: parsed.industry, year: parsed.year,
-  scope: parsed.scope, intent_keywords: parsed.intent_keywords
+  report_kind:        parsed.report_kind,
+  user_directives:    parsed.user_directives,
+  user_section_count: parsed.user_section_count,
+  working_title:      parsed.working_title,
+  subtitle:           parsed.subtitle,
+  primary_subject:    parsed.primary_subject,
+  audience:           parsed.audience,
+  tone:               parsed.tone,
+  country:            parsed.country,
+  industry:           parsed.industry,
+  year:               parsed.year
 }, null, 2)}
 
 Uploaded files (${filenames.length}):
@@ -316,7 +402,7 @@ ${JSON.stringify(filenames)}
 Source content previews (first ${PREVIEW_CHARS} chars of each file):
 ${previewBlock || '(no extractable content)'}
 
-Decide the section structure. Return JSON only.`;
+Design the section structure. Return JSON only.`;
 
   const msg = await c.messages.create({
     model: MODEL,
@@ -328,13 +414,15 @@ Decide the section structure. Return JSON only.`;
   const text = textFromMessage(msg);
   const planObj = parseJsonLoose(text);
 
-  // Defensive: clamp section count + drop unwanted page_types.
+  // Defensive cleanup:
   if (Array.isArray(planObj?.sections)) {
-    // Drop title_cover / source_key from the list (they're added in Stage 7).
-    planObj.sections = planObj.sections.filter(s =>
-      s && s.page_type !== 'title_cover' && s.page_type !== 'source_key'
-    );
-    // Clamp.
+    // Drop any sections the planner accidentally labeled as cover/source-key
+    // (the renderer always adds those at fixed positions).
+    planObj.sections = planObj.sections.filter(s => {
+      if (!s || typeof s !== 'object') return false;
+      const pt = String(s.page_type || '').toLowerCase();
+      return pt !== 'cover' && pt !== 'title_cover' && pt !== 'source_key' && pt !== 'sources';
+    });
     if (planObj.sections.length > MAX_SECTIONS) {
       planObj.sections = planObj.sections.slice(0, MAX_SECTIONS);
     }
@@ -453,46 +541,69 @@ export async function stage2ExtractFiles({ jobId, userId: _userId, uploaded_file
 
 
 // ===============================================================
-// STAGE 5 — Draft a single section
-// Phase N.22: refactored to a per-section function so the Inngest
-// workflow can wrap each section in its own step.run() — each one
-// becomes an independent Vercel function invocation with platform-
-// level timeout/retry. This is THE fix for the multi-section hang
-// bug that killed N.16-N.21.
+// STAGE 5 — Voice-adaptive single-section drafter  (Phase N.23)
 // ===============================================================
-const SECTION_SYSTEM_PROMPT = `You are a senior consultant at KIRA Research writing a section of a market report.
+// Previous (N.20-N.22) version was hardcoded "senior consultant
+// writing a section of a market report". That voice is wrong for
+// company profiles, service decks, technical docs, etc.
+//
+// Now: the drafter adapts voice based on `report_kind` + `tone` from
+// Stage 1. Three pieces stay constant regardless of deliverable type:
+//   1. Output HTML only (no markdown / preamble).
+//   2. Cite uploaded sources inline as [filename].
+//   3. Never use banned words; never frame KIRA as "platform/SaaS/app".
+//
+// Phase N.22 architectural note: this function is called per-section
+// inside Inngest step.run, so each section is an independent Vercel
+// invocation with its own retry/timeout budget.
+// ===============================================================
 
-You write ONE section at a time and return HTML only — no preamble, no markdown, no commentary.
+// Per-tone style guidance. The drafter system prompt picks the line
+// matching the tone Stage 1 inferred. Falls back to "neutral" if
+// the tone isn't recognised.
+const TONE_GUIDE = {
+  analyst: `Voice: analyst — measured, data-led, "our analysts" / "our research team" / "we". Sentence-case headlines. De-cliented ("Market participants face…" not "Clients should…"). No filler ("It is worth noting", "In conclusion"). Every quantitative claim carries an inline source tag.`,
+  descriptive: `Voice: descriptive — clear, factual, third-person about the subject. Reads like a company profile or org snapshot ("The company operates…", "Its services include…"). Concrete and concise; no marketing puffery; no analyst-style hedging.`,
+  technical: `Voice: technical — precise, structured, neutral. State methodology, results, and findings explicitly. Use semantic structure (lists, sub-headings) when material is enumerable. Avoid promotional adjectives.`,
+  promotional: `Voice: promotional but credible — describe value proposition, differentiation, outcomes. Active voice. Avoid hype words ("revolutionary", "world-class", "best-in-class") and superlatives without evidence; lean on specific facts from the sources.`,
+  instructional: `Voice: instructional — direct, step-led, second-person where natural ("you can…", "to do X, follow…"). Lead with the action, then context. Numbered steps where a sequence is required.`,
+  strategic: `Voice: strategic — situation → insight → implication → recommendation. Crisp executive register. Speaks to decision-makers. Quantify where possible.`,
+  neutral: `Voice: neutral and professional. Adapt naturally to whatever the section demands — factual where reporting, analytical where interpreting, recommendatory where advising. Sentence-case headlines.`
+};
+
+function buildSectionSystemPrompt({ report_kind, tone }) {
+  const tg = TONE_GUIDE[String(tone || '').toLowerCase()] || TONE_GUIDE.neutral;
+  return `You are an expert document writer drafting ONE section of a "${report_kind || 'document'}" for KIRA Studio. The user uploaded source material and described what they want; another LLM has already structured the deliverable. Your job: write this one section.
+
+Return HTML only — no preamble, no markdown, no commentary.
+
+VOICE FOR THIS DELIVERABLE
+${tg}
 
 SOURCE MATERIAL
-The user has uploaded research sources for this report. Draw facts, numbers, quotes, and qualitative observations PRIMARILY from these uploaded sources. You may add general industry context from your training knowledge, but quantitative claims should be anchored to the uploaded sources whenever possible.
+The user uploaded source documents. Pull facts, numbers, quotes, and qualitative observations PRIMARILY from those uploaded sources. You may add general context from your training knowledge, but quantitative claims should be anchored to the uploaded sources whenever possible.
 
-VOICE
-- "our analysts" / "our research team" / "we" — never "our platform" or "AI-powered".
-- Sentence-case headlines.
-- No filler ("It is worth noting", "In conclusion", "It goes without saying").
-- De-cliented voice: "Market participants face…" not "Client should…".
-
-SOURCE TAGS
-- Every quantitative claim carries an inline tag. Format: [filename] for figures pulled from a user-uploaded file, or [Kira estimates] for analyst inference.
-- Example: "Revenue grew 14% YoY [annual-report.pdf]."
-- Never fabricate filenames — only cite files that were actually uploaded (list provided below).
-- If no source supports a claim, either use [Kira estimates] or omit the number.
+SOURCE CITATIONS (inline)
+- Format: [filename] for figures pulled from a user-uploaded file. Example: "Revenue grew 14% YoY [annual-report.pdf]."
+- Use [Kira estimates] only if no source supports the number but the number is genuinely an analyst inference.
+- Never fabricate filenames — only cite files actually in the upload list provided below.
+- If no source supports a claim, either tag [Kira estimates] or simply omit the number.
 
 FORMAT
-- Wrap section in <div class="page page-{page_type}">…</div> (use the page_type from the plan).
-- Start with <div class="eyebrow">{eyebrow}</div> then <h2>{title}</h2>.
-- 3-5 short paragraphs. ~250-400 words.
-- If the section needs a list/table, use semantic HTML (<ul>, <table>).
-- End sections with a footer line if appropriate, but no "in summary" paragraphs.
+- Wrap the section in <div class="page page-{page_type}">…</div> using the page_type passed in.
+- Start with <div class="eyebrow">{short framing tag}</div> then <h2>{title}</h2>.
+- 3-5 short paragraphs. ~250-450 words.
+- Use semantic HTML for structure: <ul>, <table>, <ol>, <blockquote> when material is naturally listy / tabular / quoted.
+- No "in summary" / "to conclude" paragraphs.
 
-HARD RULES
+HARD RULES (apply to every deliverable kind)
 - Never mention: Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC.
-- Never frame KIRA as an "AI platform / SaaS / app". KIRA is a research house.
-- Never lead with "AI" in headlines.
-- If the uploaded sources don't cover this section, write it more qualitatively — do NOT fabricate numbers to fill space.
+- Never frame KIRA Studio as an "AI platform / SaaS / app".
+- Never lead a headline with "AI".
+- If the uploaded sources don't cover this section's topic, write it more qualitatively — do NOT fabricate numbers, names, or facts to fill space.
 
 Output: HTML for this single section only.`;
+}
 
 export async function stage5DraftSection({ section, parsed, extracted }) {
   const c = client();
@@ -501,30 +612,50 @@ export async function stage5DraftSection({ section, parsed, extracted }) {
     .join('\n\n');
   const sourceFilenames = (Array.isArray(extracted) ? extracted : []).map(f => f.filename);
 
-  const userMsg = `Report context:
-${JSON.stringify({ country: parsed.country, industry: parsed.industry, year: parsed.year, scope: parsed.scope })}
+  const system = buildSectionSystemPrompt({
+    report_kind: parsed.report_kind,
+    tone:        parsed.tone
+  });
+
+  const userMsg = `Deliverable context:
+${JSON.stringify({
+  report_kind:     parsed.report_kind,
+  primary_subject: parsed.primary_subject,
+  audience:        parsed.audience,
+  tone:            parsed.tone,
+  user_directives: parsed.user_directives,
+  // Pass market-context fields only when relevant — null otherwise.
+  country:  parsed.country  || null,
+  industry: parsed.industry || null,
+  year:     parsed.year     || null
+})}
 
 This section:
-${JSON.stringify({ title: section.title, brief: section.brief, page_type: section.page_type })}
+${JSON.stringify({
+  title:           section.title,
+  brief:           section.brief,
+  page_type:       section.page_type,
+  primary_sources: section.primary_sources || []
+})}
 
 Available source files (for inline citations — tag as [filename]):
 ${JSON.stringify(sourceFilenames)}
 
 Uploaded source material (verbatim text extracted from the files):
-${sourceBlock || '(no source material was provided — write the section using general industry knowledge only, tagged as [Kira estimates] where appropriate)'}
+${sourceBlock || '(no source material was provided — write the section using general knowledge only, tagged as [Kira estimates] where appropriate)'}
 
 Write the HTML for this section now.`;
 
   const msg = await c.messages.create({
     model: MODEL,
     max_tokens: 2048,
-    system: SECTION_SYSTEM_PROMPT,
+    system,
     messages: [{ role: 'user', content: userMsg }]
   });
 
   const html = scrub(textFromMessage(msg)) || `<div class="page"><h2>${section.title}</h2><p>Content unavailable.</p></div>`;
   return {
-    title: section.title,
+    title:     section.title,
     page_type: section.page_type,
     html,
     tokens_in:  msg.usage?.input_tokens  || 0,
@@ -559,14 +690,35 @@ async function stage5Content({ parsed, plan, extracted, onSectionStart, onSectio
 }
 
 // ===============================================================
-// STAGE 7 — Assemble + render PDF + upload + insert row
-// Phase N.20: source_key now lists user-uploaded files instead of
-// external web sources, since the report is built from user inputs.
+// STAGE 7 — Adaptive assemble + render + upload  (Phase N.23)
+// ===============================================================
+// Cover + title + studio_reports row populate from Stage 3's free-form
+// `final_title` + `subtitle` (NOT the hardcoded "Industry in Country
+// Year" format from N.20-N.22). KIRA branding moved to a discrete
+// footer line — the deliverable itself is the user's, not KIRA's.
+//
+// `parsed.country / industry / year` are passed through to the row
+// when Stage 1 actually populated them; null is fine for the table.
 // ===============================================================
 export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, extracted, sectionsOut }) {
   const css = await loadMasterCss();
 
-  // Source key now lists the uploaded files that contributed.
+  // ── Free-form title + subtitle from the planner. Fall back to
+  // Stage 1's working_title, then a generic "Untitled deliverable".
+  const reportKind   = String(parsed.report_kind   || 'document').trim();
+  const finalTitle   = String(plan?.final_title    || parsed.working_title || 'Untitled deliverable').trim();
+  const subtitle     = String(plan?.subtitle       || parsed.subtitle      || '').trim();
+  const rationale    = String(plan?.rationale      || '').trim();
+  const primarySubj  = String(parsed.primary_subject || '').trim();
+
+  // Eyebrow on the cover surfaces the deliverable kind + (optional)
+  // subject — not "KIRA Studio · industry · year" which was wrong for
+  // company profiles etc.
+  const coverEyebrow = primarySubj
+    ? `${reportKind} · ${primarySubj}`
+    : reportKind;
+
+  // ── Source key page (unchanged — lists uploaded files) ───────
   const sourceKeyItems = (Array.isArray(extracted) ? extracted : [])
     .slice(0, 40)
     .map(f => {
@@ -584,20 +736,21 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
       <div class="eyebrow">Source key</div>
       <h2>Source key &amp; traceability</h2>
       <ul class="source-key-list">
-        ${sourceKeyItems || '<li>No source files uploaded — report drafted from analyst inference (tagged [Kira estimates]).</li>'}
+        ${sourceKeyItems || '<li>No source files uploaded — deliverable drafted from analyst inference (tagged [Kira estimates]).</li>'}
       </ul>
       <div class="source-key">Inline tags of the form [&lt;filename&gt;] resolve to the user-uploaded sources above. Tags of the form [Kira estimates] indicate analyst inference not directly traceable to an uploaded source.</div>
     </div>
   `;
 
-  // Cover page.
+  // ── Cover page — built from free-form title / subtitle ──────
   const coverHtml = `
-    <div class="page page-title_cover">
-      <div class="eyebrow">KIRA Studio · ${parsed.industry || 'market analysis'} · ${parsed.year || ''}</div>
-      <h1>${(parsed.industry || 'Market').replace(/^./, c => c.toUpperCase())} in ${parsed.country || ''} ${parsed.year || ''}</h1>
-      <p>${plan?.rationale || 'A research-led view of the market — sized, structured, and forecast by our analysts.'}</p>
-      <p style="margin-top:48px;font-size:13px;color:#64748B;">
-        Prepared by KIRA Research analysts · generated ${new Date().toISOString().slice(0, 10)}
+    <div class="page page-cover">
+      <div class="eyebrow">${escapeHtml(coverEyebrow)}</div>
+      <h1>${escapeHtml(finalTitle)}</h1>
+      ${subtitle ? `<p style="font-size:18px;color:#475569;margin-top:8px;">${escapeHtml(subtitle)}</p>` : ''}
+      ${rationale ? `<p style="margin-top:36px;font-size:14px;color:#64748B;line-height:1.6;max-width:680px;">${escapeHtml(rationale)}</p>` : ''}
+      <p style="margin-top:64px;font-size:11px;color:#94A3B8;letter-spacing:0.08em;text-transform:uppercase;">
+        Generated with KIRA Studio · ${new Date().toISOString().slice(0, 10)}
       </p>
     </div>
   `;
@@ -609,7 +762,7 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>${parsed.industry || ''} in ${parsed.country || ''} ${parsed.year || ''} — KIRA Research</title>
+  <title>${escapeHtml(finalTitle)}</title>
   <meta name="viewport" content="width=1280">
   <style>${css}</style>
 </head>
@@ -622,6 +775,7 @@ ${pagesHtml}
   if (!PDF_RENDER_SECRET) {
     throw new Error('missing_pdf_render_secret');
   }
+  const pdfFilename = `${slugify(finalTitle) || 'studio-deliverable'}.pdf`;
   const rpRes = await fetch(RENDER_PDF_URL, {
     method: 'POST',
     headers: {
@@ -630,7 +784,7 @@ ${pagesHtml}
     },
     body: JSON.stringify({
       html: masterHtml,
-      filename: `${slugify(parsed.industry || 'studio')}-${slugify(parsed.country || 'global')}-${parsed.year || 'na'}.pdf`
+      filename: pdfFilename
     })
   });
   if (!rpRes.ok) {
@@ -641,25 +795,28 @@ ${pagesHtml}
     throw new Error('render_pdf_no_output');
   }
 
-  // Insert studio_reports first so we have an ID for the storage paths.
+  // Preview text — pick the first content section (exec_summary or
+  // whatever the planner put first), strip HTML.
+  const firstSection = (sectionsOut?.sections || [])[0];
   const previewText =
-    (sectionsOut?.sections || [])
-      .find(s => s.page_type === 'exec_summary')?.html
+    firstSection?.html
       ?.replace(/<[^>]+>/g, ' ')
       ?.replace(/\s+/g, ' ')
       ?.trim()
       ?.slice(0, 320) ||
-    `${parsed.industry || 'Market'} in ${parsed.country || ''} — generated by KIRA Studio.`;
+    (subtitle || `${reportKind}${primarySubj ? ` · ${primarySubj}` : ''} — generated by KIRA Studio.`);
 
+  // Insert studio_reports row. country/industry/year are passed through
+  // only if Stage 1 found them genuinely relevant (else null).
   const insertedReport = await sb('studio_reports', 'POST', {
     user_id:      userId,
     job_id:       jobId,
-    title:        `${(parsed.industry || 'Market').replace(/^./, c => c.toUpperCase())} in ${parsed.country || ''} ${parsed.year || ''}`.trim(),
-    eyebrow:      `${parsed.country || 'Global'} · ${parsed.year || ''}`,
+    title:        finalTitle,
+    eyebrow:      coverEyebrow,
     preview:      previewText,
-    country:      parsed.country,
-    industry:     parsed.industry,
-    year:         parsed.year,
+    country:      parsed.country  || null,
+    industry:     parsed.industry || null,
+    year:         parsed.year     || null,
     toc:          (plan?.sections || []).map(s => ({ title: s.title, page_type: s.page_type })),
     full_content: null,                  // full HTML lives in storage; row carries metadata only
     pages:        rpJson.page_count || (sectionsOut?.sections?.length || 0) + 2

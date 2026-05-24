@@ -115,15 +115,15 @@ export const studioGen = inngest.createFunction(
     });
 
     // ═══════════════════════════════════════════════════════════
-    //  STEP 1 — parse topic
+    //  STEP 1 — classify intent (Phase N.23: free-form)
     // ═══════════════════════════════════════════════════════════
     const s1 = await step.run('parse', async () => {
       await updateJobProgress(jobId, {
-        current_stage: 'Parsing topic…',
+        current_stage: 'Reading your brief…',
         progress:      5
       });
       await logEv(jobId, 'stage', 'parse',
-        'Parsing the report brief — identifying country, industry, year, scope…');
+        'Reading the brief + uploaded filenames to understand what you want…');
       const result = await stage1ParseTopic({
         topic_input:         job.topic_input,
         uploaded_file_paths: job.uploaded_file_paths
@@ -132,8 +132,11 @@ export const studioGen = inngest.createFunction(
         progress:         12,
         stages_completed: ['parse']
       });
+      const p = result.parsed || {};
+      const titlePart = p.working_title || p.primary_subject || '—';
+      const kindPart  = p.report_kind   ? ` (${p.report_kind})` : '';
       await logEv(jobId, 'done', 'parse',
-        `Topic locked: ${result.parsed.industry || '—'} in ${result.parsed.country || '—'} ${result.parsed.year || ''}`);
+        `Locked intent: ${titlePart}${kindPart}`);
       return result;
     });
 
@@ -163,15 +166,15 @@ export const studioGen = inngest.createFunction(
     });
 
     // ═══════════════════════════════════════════════════════════
-    //  STEP 3 — plan sections (content-aware)
+    //  STEP 3 — plan sections (free-form, content + intent driven)
     // ═══════════════════════════════════════════════════════════
     const s3 = await step.run('plan', async () => {
       await updateJobProgress(jobId, {
-        current_stage: 'Planning section structure from sources…',
+        current_stage: 'Designing the structure…',
         progress:      32
       });
       await logEv(jobId, 'stage', 'plan',
-        'Planning report structure based on uploaded content + your brief…');
+        `Designing the structure for a ${s1.parsed?.report_kind || 'deliverable'} based on your brief + uploaded content…`);
       const result = await stage3PlanSections({
         parsed:      s1.parsed,
         extracted:   s2.extracted,

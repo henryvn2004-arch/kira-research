@@ -201,12 +201,15 @@
     // Dead Zone until this line runs, so previously placing the array
     // below the renderForm() call site threw a ReferenceError before
     // the form ever rendered.
+    // Phase N.23: templates span deliverable types — company profile,
+    // service deck, exec brief, market analysis, technical doc.
+    // Studio is free-form: brief drives report kind, not a fixed enum.
     const TEMPLATE_PROMPTS = [
-      'EV market in South Korea 2027 — competitive landscape, demand outlook, policy environment',
-      'Coffee market Vietnam 2027 — supply, consumption, export dynamics',
-      'Fintech in Indonesia 2027 — segments, regulators, top players',
-      'Roofing materials Thailand 2027 — construction demand, distribution channels',
-      'Cold-chain logistics Philippines 2027 — capacity, demand drivers, M&A activity'
+      'Company profile presentation — summarise the attached annual report into a 6-slide overview: who they are, what they do, key clients, leadership, financial highlights, contact.',
+      'Executive summary — distill the attached materials into a 1-page brief for the management board: situation, key findings, recommended actions.',
+      'Service portfolio deck — turn the attached service catalog into a clean 5-slide presentation for prospects: offerings, use cases, differentiators, case studies, CTA.',
+      'Market analysis report — synthesise the attached firm-level data + regulator notes into an investor-ready market overview. Focus on sizing, players, and 2027 outlook.',
+      'Technical methodology doc — write up the attached research notes as a structured methodology document: approach, findings, limitations, recommendations.'
     ];
 
     while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
@@ -253,8 +256,8 @@
 
           <div class="studio-field">
             <label for="topic">Report brief</label>
-            <textarea id="topic" placeholder="e.g. Vietnam legal services market 2026 — synthesise the attached firm-level revenue data and regulator notes into an investor-ready overview. Focus on M&A demand drivers." maxlength="600"></textarea>
-            <div class="hint">What angle do you want? Country, sector, year, any specific lens. Max 600 characters.</div>
+            <textarea id="topic" placeholder="e.g. Make a 6-slide company profile presentation from this PDF — focus on services, leadership, key clients. Or: Summarise these analyst notes into a 1-page executive brief for the board." maxlength="600"></textarea>
+            <div class="hint">Tell us what you want — type of deliverable (report / deck / brief / profile), length (number of slides or sections), audience, focus. The more specific, the better the output. Max 600 characters.</div>
           </div>
 
           <div class="studio-field">
@@ -283,6 +286,9 @@
       const errEl    = document.getElementById('studio-err');
       const tplEl    = document.getElementById('tpl-chips');
 
+      // Chip label = the short noun phrase before the em-dash (e.g.
+      // "Company profile presentation"); full brief expands into the
+      // textarea on click. Keeps the chip strip readable on mobile.
       tplEl.innerHTML = TEMPLATE_PROMPTS.map((p, i) =>
         `<button type="button" data-idx="${i}">${escHtml(p.split(' — ')[0])}</button>`
       ).join('');
