@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Credits — KIRA Studio</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="canonical" href="https://studio.kiraresearch.com/billing" />
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    body { background: #FAFAFA; }
+    .bill-nav {
+      padding: 22px 0;
+      border-bottom: 1px solid #E2E8F0;
+      background: #FFFFFF;
+    }
+    .bill-nav .container { max-width: 1180px; display: flex; justify-content: space-between; align-items: center; }
+    .bill-nav .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .bill-nav .logo-mark {
+      font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 0.08em; color: #0F172A;
+    }
+    .bill-nav .logo-mark .a-accent { color: #1E6FFF; display: inline-block; transform: skewX(-12deg); }
+    .bill-nav .logo-sub {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #64748B; padding: 3px 7px; background: rgba(30,111,255,0.08); border-radius: 3px;
+    }
+    .bill-nav-links { display: flex; gap: 22px; align-items: center; }
+    .bill-nav-links a {
+      color: #475569; text-decoration: none; font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 13px;
+    }
+    .bill-nav-links a:hover { color: #1E6FFF; }
+
+    .bill-wrap { max-width: 1080px; margin: 48px auto 96px; padding: 0 24px; }
+
+    .bill-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      flex-wrap: wrap; gap: 24px; margin-bottom: 32px;
+    }
+    .bill-head .eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: #1E6FFF;
+    }
+    .bill-head h1 {
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: clamp(28px, 4vw, 36px); line-height: 1.1; letter-spacing: -0.02em;
+      color: #0F172A; margin: 4px 0 0;
+    }
+
+    .balance-card {
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
+      padding: 24px 28px; min-width: 280px;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+    }
+    .balance-card .label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: #64748B; margin-bottom: 6px;
+    }
+    .balance-card .value {
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: 36px; line-height: 1; color: #0F172A;
+    }
+    .balance-card .value .unit {
+      font-size: 14px; font-weight: 500; color: #64748B; margin-left: 8px;
+    }
+    .balance-card .sub {
+      font-size: 13px; color: #64748B; margin-top: 6px; line-height: 1.5;
+    }
+
+    .banner {
+      padding: 14px 18px; border-radius: 6px; margin-bottom: 24px; font-size: 14px;
+    }
+    .banner-success { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); color: #15803D; }
+    .banner-cancel  { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); color: #B45309; }
+    .banner-error   { background: rgba(192,57,43,0.06); border: 1px solid rgba(192,57,43,0.25); color: #C0392B; }
+
+    .packs-section h2 {
+      font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 18px;
+      color: #0F172A; margin: 16px 0 6px;
+    }
+    .packs-section .desc {
+      color: #64748B; font-size: 13.5px; margin-bottom: 22px; line-height: 1.55;
+    }
+
+    .pack-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 48px;
+    }
+    .pack-card {
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
+      padding: 24px; display: flex; flex-direction: column;
+      position: relative; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .pack-card.recommended {
+      border-color: #1E6FFF; box-shadow: 0 0 0 1px #1E6FFF inset;
+    }
+    .pack-card.recommended::before {
+      content: 'BEST VALUE';
+      position: absolute; top: -10px; right: 16px;
+      background: #1E6FFF; color: #FFFFFF;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+      padding: 4px 10px; border-radius: 3px;
+    }
+    .pack-label {
+      font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px;
+      color: #0F172A; margin-bottom: 8px;
+    }
+    .pack-price {
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: 32px; line-height: 1; color: #0F172A; margin-bottom: 4px;
+    }
+    .pack-price .cents { font-size: 16px; font-weight: 500; color: #64748B; }
+    .pack-credits {
+      font-size: 14px; color: #475569; margin-bottom: 10px;
+    }
+    .pack-credits strong { color: #0F172A; font-weight: 600; }
+    .pack-bonus {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.14em; color: #15803D;
+      background: rgba(34,197,94,0.1); padding: 3px 8px; border-radius: 3px;
+      margin-bottom: 14px;
+    }
+    .pack-per {
+      font-size: 12px; color: #64748B; margin-bottom: 18px; line-height: 1.5;
+    }
+    .pack-buy {
+      margin-top: auto;
+      background: #0F172A; color: #FFFFFF; border: none;
+      padding: 12px 0; font-family: inherit; font-size: 14px; font-weight: 600;
+      border-radius: 4px; cursor: pointer; transition: background 0.15s;
+    }
+    .pack-buy:hover { background: #1E293B; }
+    .pack-card.recommended .pack-buy { background: #1E6FFF; }
+    .pack-card.recommended .pack-buy:hover { background: #2980F0; }
+    .pack-buy:disabled { opacity: 0.6; cursor: wait; }
+
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 640px) { .info-grid { grid-template-columns: 1fr; } }
+    .info-box {
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px;
+      padding: 18px 20px;
+    }
+    .info-box .h {
+      font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 13px;
+      color: #0F172A; margin-bottom: 6px;
+    }
+    .info-box p { color: #64748B; font-size: 13px; line-height: 1.55; margin: 0; }
+
+    .history-section h2 {
+      font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 18px;
+      color: #0F172A; margin: 16px 0 12px;
+    }
+    .tx-table {
+      width: 100%; border-collapse: collapse;
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px;
+      overflow: hidden;
+    }
+    .tx-table th, .tx-table td {
+      padding: 12px 16px; text-align: left; font-size: 13px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+    .tx-table th {
+      background: #FAFAFA; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #64748B; font-weight: 500;
+    }
+    .tx-table tr:last-child td { border-bottom: none; }
+    .tx-table td.date { color: #475569; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    .tx-table td.delta-pos { color: #15803D; font-weight: 600; }
+    .tx-table td.delta-neg { color: #C0392B; font-weight: 600; }
+    .tx-table td.balance { font-weight: 600; color: #0F172A; }
+    .tx-kind {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 3px;
+    }
+    .tx-kind.topup    { background: rgba(34,197,94,0.1);  color: #15803D; }
+    .tx-kind.debit    { background: rgba(192,57,43,0.08); color: #C0392B; }
+    .tx-kind.refund   { background: rgba(245,158,11,0.1); color: #B45309; }
+    .tx-kind.bonus    { background: rgba(30,111,255,0.1); color: #1E6FFF; }
+    .tx-kind.adjust   { background: #F1F5F9; color: #475569; }
+    .tx-empty {
+      text-align: center; padding: 32px 16px; color: #64748B; font-size: 13px;
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px;
+    }
+
+    .bill-gate {
+      max-width: 480px; margin: 120px auto;
+      padding: 48px; background: #FFFFFF;
+      border: 1px solid #E2E8F0; border-radius: 8px; text-align: center;
+    }
+    .bill-gate h2 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 22px; color: #0F172A; margin-bottom: 12px; }
+    .bill-gate p { color: #64748B; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .bill-gate a.btn-primary {
+      display: inline-flex; background: #1E6FFF; color: #FFFFFF;
+      padding: 12px 22px; border-radius: 4px;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="bill-nav">
+    <div class="container">
+      <a class="logo" href="/">
+        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
+        <span class="logo-sub">Studio</span>
+      </a>
+      <div class="bill-nav-links">
+        <a href="/new">New report</a>
+        <a href="/library">My library</a>
+        <a href="/billing"><strong>Credits</strong></a>
+        <a href="https://kiraresearch.com">KIRA home ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bill-wrap" id="bill-root">
+    <div style="padding: 120px 0; text-align: center; color: #64748B;">Loading…</div>
+  </div>
+
+  <script type="module">
+    const root = document.getElementById('bill-root');
+
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+    const user = await window.kiraAuth.getUser();
+
+    if (!user) {
+      root.innerHTML = `
+        <div class="bill-gate">
+          <h2>Sign in to manage credits</h2>
+          <p>KIRA Studio credits are tied to your account. Existing KIRA Research accounts work.</p>
+          <a href="/auth.html" class="btn-primary">Sign in / Create account</a>
+        </div>
+      `;
+      try { sessionStorage.setItem('kira_redirect_after_login', '/billing'); } catch {}
+      throw new Error('halt');
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function fmtDate(iso) {
+      try { return new Date(iso).toISOString().slice(0, 16).replace('T', ' '); }
+      catch { return iso || ''; }
+    }
+
+    function kindClass(k) {
+      if (k === 'topup')         return 'topup';
+      if (k === 'studio_debit')  return 'debit';
+      if (k === 'studio_refund') return 'refund';
+      if (k === 'bonus')         return 'bonus';
+      return 'adjust';
+    }
+    function kindLabel(k) {
+      return {
+        topup:          'Top-up',
+        studio_debit:   'Report gen',
+        studio_refund:  'Refund',
+        bonus:          'Bonus',
+        adjust:         'Adjust'
+      }[k] || k;
+    }
+
+    // ── PayPal return-handling ─────────────────────────
+    // PayPal sends ?token=<orderId>&PayerID=... back to our return_url
+    // after the buyer approves. If we see those params, capture the
+    // order before rendering the rest of the page.
+    const url = new URL(window.location.href);
+    const paypalToken  = url.searchParams.get('token');     // = PayPal order id
+    const paypalResult = url.searchParams.get('paypal');    // 'success' | 'cancel'
+
+    let banner = null;
+    if (paypalToken && paypalResult === 'success') {
+      try {
+        const session = (await window.db.auth.getSession()).data.session;
+        const r = await fetch('/api/studio-credits-buy?action=capture', {
+          method:  'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': 'Bearer ' + session.access_token
+          },
+          body: JSON.stringify({ orderId: paypalToken })
+        });
+        const body = await r.json().catch(() => ({}));
+        if (r.ok && body.ok) {
+          banner = {
+            type: 'success',
+            msg:  `Top-up complete · +${body.credits_added} credits · balance ${body.balance}`
+          };
+        } else {
+          banner = {
+            type: 'error',
+            msg:  'Could not finalise the top-up (' + (body.error || r.status) + '). If you were charged, refresh — credits may already be added.'
+          };
+        }
+      } catch (e) {
+        banner = { type: 'error', msg: 'Network error finalising the top-up. Refresh to retry.' };
+      }
+      // Strip the PayPal params from the URL so a refresh doesn't re-fire.
+      url.searchParams.delete('token');
+      url.searchParams.delete('PayerID');
+      url.searchParams.delete('paypal');
+      window.history.replaceState({}, '', url.toString());
+    } else if (paypalResult === 'cancel') {
+      banner = { type: 'cancel', msg: 'Top-up cancelled. No charge was made.' };
+      url.searchParams.delete('paypal');
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    // ── Fetch balance + packs + history ────────────────
+    let data;
+    try {
+      const session = (await window.db.auth.getSession()).data.session;
+      const r = await fetch('/api/studio-credits', {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (!r.ok) throw new Error('http ' + r.status);
+      data = await r.json();
+    } catch (err) {
+      root.innerHTML = `
+        <div class="bill-gate">
+          <h2>Could not load credits</h2>
+          <p>Refresh to try again, or <a href="/">go to the home page</a>.</p>
+        </div>
+      `;
+      throw err;
+    }
+
+    // ── Render ────────────────────────────────────────
+    const recommendedCode = 'plus';
+
+    const bannerHtml = banner
+      ? `<div class="banner banner-${banner.type}">${escHtml(banner.msg)}</div>`
+      : '';
+
+    const packCardsHtml = data.packs.map(p => {
+      const dollars = Math.floor(p.usd);
+      const isRec   = p.code === recommendedCode;
+      const bonusBadge = p.bonus > 0
+        ? `<span class="pack-bonus">+${p.bonus}% BONUS</span>` : '<span class="pack-bonus" style="visibility:hidden;">-</span>';
+      return `
+        <div class="pack-card ${isRec ? 'recommended' : ''}">
+          <div class="pack-label">${escHtml(p.label)}</div>
+          <div class="pack-price">$${dollars}<span class="cents">.00</span></div>
+          <div class="pack-credits"><strong>${p.credits.toLocaleString()}</strong> credits</div>
+          ${bonusBadge}
+          <div class="pack-per">≈ $${p.per_report_usd.toFixed(2)} per report · ${Math.floor(p.credits / data.report_cost)} reports</div>
+          <button class="pack-buy" data-pack="${escHtml(p.code)}" data-label="${escHtml(p.label)}">Buy with PayPal</button>
+        </div>
+      `;
+    }).join('');
+
+    const txRowsHtml = (data.transactions || []).map(tx => {
+      const cls = kindClass(tx.kind);
+      const sign = tx.delta > 0 ? '+' : '';
+      return `
+        <tr>
+          <td class="date">${escHtml(fmtDate(tx.created_at))}</td>
+          <td><span class="tx-kind ${cls}">${escHtml(kindLabel(tx.kind))}</span></td>
+          <td class="${tx.delta > 0 ? 'delta-pos' : 'delta-neg'}">${sign}${tx.delta}</td>
+          <td class="balance">${tx.balance_after}</td>
+          <td>${tx.pack_code ? escHtml(tx.pack_code) : (tx.amount_usd != null ? '$' + Number(tx.amount_usd).toFixed(2) : '—')}</td>
+        </tr>
+      `;
+    }).join('');
+
+    const txTableHtml = data.transactions && data.transactions.length
+      ? `<table class="tx-table">
+           <thead>
+             <tr><th>When</th><th>Type</th><th>Credits</th><th>Balance</th><th>Detail</th></tr>
+           </thead>
+           <tbody>${txRowsHtml}</tbody>
+         </table>`
+      : `<div class="tx-empty">No transactions yet — buy your first pack above.</div>`;
+
+    const reportsLeft = Math.floor(data.balance / data.report_cost);
+
+    root.innerHTML = `
+      ${bannerHtml}
+
+      <header class="bill-head">
+        <div>
+          <div class="eyebrow">Credits & billing</div>
+          <h1>Pay-as-you-go credits</h1>
+        </div>
+        <div class="balance-card">
+          <div class="label">Your balance</div>
+          <div class="value">${data.balance.toLocaleString()}<span class="unit">credits</span></div>
+          <div class="sub">
+            ${reportsLeft >= 1
+              ? `Enough for ~${reportsLeft} report${reportsLeft === 1 ? '' : 's'} · ${data.report_cost} credits per report`
+              : `Not enough for a report yet · need ${data.report_cost - data.balance} more`}
+          </div>
+        </div>
+      </header>
+
+      <section class="packs-section">
+        <h2>Buy credits</h2>
+        <div class="desc">Top up once, generate as many reports as you have credits for. Credits never expire. 1 report = ${data.report_cost} credits.</div>
+        <div class="pack-grid">${packCardsHtml}</div>
+      </section>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <div class="h">How credits work</div>
+          <p>Every report costs ${data.report_cost} credits. If a gen fails, your credits are automatically refunded — you only pay for reports that succeed.</p>
+        </div>
+        <div class="info-box">
+          <div class="h">Payment</div>
+          <p>All purchases through PayPal — major cards accepted. No subscription. No auto-renewal. Buy more credits whenever you want.</p>
+        </div>
+      </div>
+
+      <section class="history-section">
+        <h2>Transaction history</h2>
+        ${txTableHtml}
+      </section>
+    `;
+
+    // Wire up Buy buttons → /api/studio-credits-buy?action=create → redirect.
+    document.querySelectorAll('.pack-buy').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const packCode = btn.dataset.pack;
+        btn.disabled = true;
+        btn.textContent = 'Redirecting to PayPal…';
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          if (!session) throw new Error('no_session');
+          const r = await fetch('/api/studio-credits-buy?action=create', {
+            method: 'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': 'Bearer ' + session.access_token
+            },
+            body: JSON.stringify({ pack_code: packCode })
+          });
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            throw new Error(body.error || ('http_' + r.status));
+          }
+          const body = await r.json();
+          if (!body.approveUrl) throw new Error('no_approve_url');
+          window.location.href = body.approveUrl;
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = 'Buy with PayPal';
+          alert('Could not start checkout: ' + (err.message || err));
+        }
+      });
+    });
+  </script>
+</body>
+</html>

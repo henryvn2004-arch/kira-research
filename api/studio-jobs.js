@@ -36,6 +36,9 @@ import { inngest } from './_lib/inngest-client.js';
 import {
   sb, verifyBearer, cors, updateJobProgress, logActivity
 } from './_lib/studio-shared.js';
+import {
+  REPORT_COST, getBalance, holdCredits, refundCredits
+} from './_lib/credits.js';
 
 // Per-route override no longer needed for the long worker lifetime —
 // Inngest carries that load. We keep a small bump only because the
@@ -138,6 +141,22 @@ export default async function handler(req, res) {
         return;
       }
 
+      // ── Phase O.5: credit pre-flight ─────────────────────
+      // Cheap balance read first so we can return 402 instantly without
+      // creating a job row + PayPal-style "you need to top up" UX. The
+      // atomic hold below is the real guard against concurrent submits.
+      const balance = await getBalance(user.id);
+      if (balance < REPORT_COST) {
+        res.status(402).json({
+          error:       'insufficient_credits',
+          balance,
+          report_cost: REPORT_COST,
+          short_by:    REPORT_COST - balance,
+          buy_url:     '/billing'
+        });
+        return;
+      }
+
       // Insert job row.
       const inserted = await sb('studio_jobs', 'POST', {
         user_id:             user.id,
@@ -154,6 +173,36 @@ export default async function handler(req, res) {
         return;
       }
 
+      // ── Phase O.5: atomic credit hold ────────────────────
+      // Race-safe deduction — `credit_debit()` rejects when balance <
+      // REPORT_COST so two concurrent submits with balance=150 can't
+      // both succeed. If this fails AFTER the job row was inserted,
+      // we soft-archive the orphan job to keep the user's library
+      // clean.
+      const hold = await holdCredits(user.id, REPORT_COST, job.id);
+      if (!hold.ok) {
+        // Archive the orphan job (status='cancelled' is the only
+        // schema-allowed "don't show this" state).
+        await updateJobProgress(job.id, {
+          status:       'cancelled',
+          error_code:   hold.reason,
+          error_log:    'Credit hold failed: ' + hold.reason,
+          completed_at: new Date().toISOString()
+        }).catch(() => {});
+        if (hold.reason === 'insufficient_credits') {
+          // Race: balance dropped between pre-flight read and hold.
+          res.status(402).json({
+            error:       'insufficient_credits',
+            balance:     await getBalance(user.id),
+            report_cost: REPORT_COST,
+            buy_url:     '/billing'
+          });
+        } else {
+          res.status(500).json({ error: 'hold_failed', detail: hold.reason });
+        }
+        return;
+      }
+
       // Publish event → Inngest cloud will webhook /api/inngest to
       // run the workflow. The workflow itself updates job status,
       // progress, activity_log, etc. — this handler just hands off
@@ -166,7 +215,9 @@ export default async function handler(req, res) {
       } catch (sendErr) {
         // If event dispatch fails, the job is stuck in 'pending'.
         // Mark it failed inline so the user sees an error instead of
-        // a hung progress bar.
+        // a hung progress bar. ALSO refund the hold we just placed
+        // (the worker never picked the job up, so workflow onFailure
+        // won't fire to refund).
         const errMsg = String(sendErr && sendErr.message || sendErr).slice(0, 4000);
         console.error('[studio-jobs] inngest.send failed:', sendErr);
         await updateJobProgress(job.id, {
@@ -182,11 +233,16 @@ export default async function handler(req, res) {
           msg:    'Could not dispatch the job to the worker queue',
           detail: { error: errMsg.slice(0, 600) }
         }).catch(() => {});
+        await refundCredits(user.id, REPORT_COST, job.id, 'studio_refund').catch(() => {});
         res.status(500).json({ error: 'dispatch_failed', job_id: job.id });
         return;
       }
 
-      res.status(202).json({ job_id: job.id, status: 'pending' });
+      res.status(202).json({
+        job_id:  job.id,
+        status:  'pending',
+        balance: hold.newBalance
+      });
       return;
     }
 

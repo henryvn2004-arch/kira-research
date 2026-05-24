@@ -171,6 +171,45 @@
       cursor: pointer; transition: all 0.15s;
     }
     .templates-chips button:hover { border-color: #1E6FFF; color: #1E6FFF; background: rgba(30,111,255,0.04); }
+
+    /* Phase O.9 — credit balance pill in the top nav. */
+    .nav-balance {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.2);
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: #1E6FFF;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .nav-balance:hover { background: rgba(30,111,255,0.14); border-color: #1E6FFF; }
+    .nav-balance .num { font-weight: 600; color: #0F172A; }
+    .nav-balance.low { background: rgba(192,57,43,0.06); border-color: rgba(192,57,43,0.25); color: #C0392B; }
+    .nav-balance.low .num { color: #C0392B; }
+
+    /* Phase O.9 — insufficient-credits warning above Generate. */
+    .credit-warn {
+      padding: 14px 18px;
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 6px;
+      color: #B45309; font-size: 13.5px; line-height: 1.55;
+      margin-bottom: 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .credit-warn a.btn {
+      background: #1E6FFF; color: #FFFFFF; text-decoration: none;
+      padding: 8px 16px; border-radius: 4px;
+      font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 13px;
+    }
+    .credit-warn a.btn:hover { background: #2980F0; }
+    .credit-cost-note {
+      font-size: 11.5px; color: #64748B; margin-right: 16px;
+      font-family: 'JetBrains Mono', monospace;
+    }
   </style>
 </head>
 <body>
@@ -183,8 +222,12 @@
       </a>
       <div class="new-nav-links">
         <a href="/library">My library</a>
+        <a href="/billing">Credits</a>
         <a href="/">About</a>
         <a href="https://kiraresearch.com">KIRA home ↗</a>
+        <a href="/billing" class="nav-balance" id="nav-balance" style="display:none;">
+          <span class="num" id="nav-balance-num">–</span><span>credits</span>
+        </a>
       </div>
     </div>
   </nav>
@@ -218,7 +261,27 @@
     if (!user) {
       renderGate();
     } else {
-      renderForm(user);
+      // Phase O.9: kick off balance fetch in parallel with form render
+      // — it just paints into the pre-existing nav pill when ready.
+      const balancePromise = fetchBalance();
+      renderForm(user, balancePromise);
+    }
+
+    // Phase O.9: fetch wallet state. Falls back to { balance: 0, report_cost: 100 }
+    // on any error so the UI degrades safely (user still sees the form,
+    // server-side 402 will catch true insufficiency).
+    async function fetchBalance() {
+      try {
+        const session = (await window.db.auth.getSession()).data.session;
+        if (!session) return { balance: 0, report_cost: 100 };
+        const r = await fetch('/api/studio-credits', {
+          headers: { 'Authorization': 'Bearer ' + session.access_token }
+        });
+        if (!r.ok) return { balance: 0, report_cost: 100 };
+        return await r.json();
+      } catch {
+        return { balance: 0, report_cost: 100 };
+      }
     }
 
     function escHtml(s) {
@@ -238,7 +301,7 @@
       try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch {}
     }
 
-    function renderForm(user) {
+    function renderForm(user, balancePromise) {
       root.innerHTML = `
         <section class="studio-hero">
           <div class="eyebrow">New report · ${escHtml(user.email || '')}</div>
@@ -253,6 +316,7 @@
 
         <section class="studio-form-card">
           <div id="studio-err"></div>
+          <div id="credit-warn-slot"></div>
 
           <div class="studio-field">
             <label for="topic">Report brief</label>
@@ -272,8 +336,11 @@
           </div>
 
           <div class="studio-actions">
-            <div class="left">In-house preview phase. Generation typically takes 3–5 minutes — you'll see live progress on the next page.</div>
-            <button class="primary" id="generate-btn">Generate report →</button>
+            <div class="left">Generation typically takes 3–5 minutes — you'll see live progress on the next page.</div>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <span class="credit-cost-note" id="credit-cost-note" style="display:none;"></span>
+              <button class="primary" id="generate-btn">Generate report →</button>
+            </div>
           </div>
         </section>
       `;
@@ -285,6 +352,46 @@
       const generate = document.getElementById('generate-btn');
       const errEl    = document.getElementById('studio-err');
       const tplEl    = document.getElementById('tpl-chips');
+      const warnSlot = document.getElementById('credit-warn-slot');
+      const costNote = document.getElementById('credit-cost-note');
+      const navBal   = document.getElementById('nav-balance');
+      const navBalNum = document.getElementById('nav-balance-num');
+
+      // ── Phase O.9: paint balance state once it arrives. ───
+      // Form stays usable while loading; server-side 402 is the real
+      // gate. This is just UX clarity.
+      let walletState = null;
+      (async () => {
+        const w = await balancePromise;
+        walletState = w;
+        const enough = (w.balance || 0) >= (w.report_cost || 100);
+
+        // Nav pill
+        navBal.style.display = 'inline-flex';
+        navBalNum.textContent = (w.balance || 0).toLocaleString();
+        if (!enough) navBal.classList.add('low');
+
+        // Cost note next to Generate
+        costNote.style.display = 'inline-block';
+        costNote.textContent = `${w.report_cost || 100} credits per report`;
+
+        // Insufficient warning inside the form
+        if (!enough) {
+          const short = (w.report_cost || 100) - (w.balance || 0);
+          warnSlot.innerHTML = `
+            <div class="credit-warn">
+              <div>
+                You need <strong>${w.report_cost || 100} credits</strong> per report.
+                Current balance: <strong>${w.balance || 0}</strong> — short by ${short}.
+              </div>
+              <a href="/billing" class="btn">Buy credits →</a>
+            </div>
+          `;
+          generate.disabled = true;
+          generate.title    = 'Insufficient credits — buy a pack to continue';
+          generate.style.opacity = '0.55';
+        }
+      })();
 
       // Chip label = the short noun phrase before the em-dash (e.g.
       // "Company profile presentation"); full brief expands into the
@@ -374,6 +481,13 @@
           return;
         }
 
+        // Client-side guard — server is the authority via 402 below.
+        if (walletState && walletState.balance < walletState.report_cost) {
+          showErr('Not enough credits. Please buy a pack first.');
+          window.location.href = '/billing';
+          return;
+        }
+
         showErr('');
         generate.disabled = true;
         generate.textContent = 'Submitting…';
@@ -392,6 +506,15 @@
               uploaded_file_paths: uploads.map(u => u.path)
             })
           });
+
+          // ── Phase O.9: 402 = insufficient credits, redirect to billing. ──
+          if (r.status === 402) {
+            const body = await r.json().catch(() => ({}));
+            showErr(`Not enough credits — short by ${body.short_by ?? '?'}. Redirecting to billing…`);
+            setTimeout(() => { window.location.href = '/billing'; }, 1200);
+            return;
+          }
+
           if (!r.ok) {
             const body = await r.json().catch(() => ({}));
             throw new Error(body.error || ('http_' + r.status));

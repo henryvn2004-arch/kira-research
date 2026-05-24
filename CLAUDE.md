@@ -177,6 +177,30 @@ Two things matter here:
 
 These are tasks only the owner can do (involve dashboards, not git):
 
+### ⚡ Phase O (Studio credits) — required for billing to work
+
+1. ☐ **Run `supabase/migrations/013_studio_credits.sql`** in Supabase dashboard → SQL editor.
+   - Creates: `user_credits` (1 row/user, atomic balance) + `credit_transactions` (append-only ledger) + RLS + 2 RPC functions (`credit_add`, `credit_debit`) for atomic top-up / hold operations.
+   - Idempotent. Safe to re-run. The final `RAISE NOTICE` line should print `user_credits:t credit_transactions:t credit_add:t credit_debit:t` — all four `t`. If any are `f`, screenshot and ping back.
+2. ☐ **PayPal env vars already set?** — yes, Phase N already wired `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_MODE`. Studio credit checkout reuses them (same PayPal account = same dashboard for reconciliation). No new env var needed.
+3. ☐ **Optional: set `STUDIO_URL` env var** to override the return URL PayPal uses after payment.
+   - Default: `https://studio.kiraresearch.com`. Leave unset for prod.
+   - Set to `http://localhost:3000` only for local PayPal sandbox testing (rare).
+
+#### Verify Phase O works (after migration 013 runs)
+
+1. Visit `https://studio.kiraresearch.com/billing` while signed in. You should see:
+   - Balance card reading **0 credits**.
+   - 4 pack cards: Starter $10, **Plus $25 (BEST VALUE)**, Power $50, Bulk $200.
+   - Empty transaction history table with the "no transactions yet" placeholder.
+2. Click **Buy with PayPal** on any pack → redirects to PayPal sandbox/live (depending on `PAYPAL_MODE`).
+3. Complete the test payment. PayPal returns you to `/billing?paypal=success&token=...&PayerID=...`.
+4. The page auto-captures the order — green banner reads `Top-up complete · +N credits · balance N`. Balance card updates. Transaction history shows the `Top-up` row.
+5. Click **New report** in the nav. Balance pill should now appear top-right and the Generate button should be enabled. Generating a report deducts 100 credits and creates a `studio_debit` ledger row.
+6. If a gen fails (kill the worker mid-run if testing), confirm a `studio_refund` row appears and balance restores to pre-gen.
+
+Receipt email (Resend) fires automatically after each successful PayPal capture — uses the existing `RESEND_API_KEY` env from Phase E.
+
 ### ⚡ Phase N (KIRA Studio) — required before subdomain works
 
 Do these 3 in order; after step 3, `studio.kiraresearch.com` should accept gen requests end-to-end:

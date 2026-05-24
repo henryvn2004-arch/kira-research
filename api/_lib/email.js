@@ -130,6 +130,63 @@ export async function sendPurchaseReceipt({
   return resendSend({ to: buyerEmail, subject, html, text });
 }
 
+// ── Studio credit top-up receipt ─────────────────────────
+//
+// Sent after a successful PayPal capture in /api/studio-credits-buy.
+// Best-effort: returns false on any failure, never throws — must not
+// block the success response.
+export async function sendCreditTopupReceipt({
+  buyerEmail,
+  packLabel,
+  credits,
+  amount,
+  currency = 'USD',
+  newBalance
+}) {
+  if (!buyerEmail) return false;
+
+  const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
+  const billingUrl = `${APP_URL.replace(/^https:\/\/(www\.)?kiraresearch\.com/, 'https://studio.kiraresearch.com')}/billing`;
+  const newUrl     = billingUrl.replace('/billing', '/new');
+
+  const subject = `KIRA Studio — ${credits} credits added`;
+
+  const text = [
+    `Thanks for your top-up.`,
+    ``,
+    `Pack:    ${packLabel}`,
+    `Credits: +${credits}`,
+    `Amount:  ${niceAmount} ${currency}`,
+    typeof newBalance === 'number' ? `Balance: ${newBalance} credits` : '',
+    ``,
+    `Start a new report: ${newUrl}`,
+    `Manage credits:     ${billingUrl}`,
+    ``,
+    `— The KIRA Studio team`
+  ].filter(Boolean).join('\n');
+
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA Studio</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Credits added.</h1>
+  <p style="margin:0 0 18px;">Your top-up went through. You're ready to generate.</p>
+  <table style="border-collapse:collapse;margin:0 0 24px;">
+    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Pack</td><td style="padding:4px 0;font-size:14px;">${esc(packLabel)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Credits</td><td style="padding:4px 0;font-size:14px;">+${esc(credits)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Amount</td><td style="padding:4px 0;font-size:14px;">${esc(niceAmount)} ${esc(currency)}</td></tr>
+    ${typeof newBalance === 'number' ? `<tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Balance</td><td style="padding:4px 0;font-size:14px;"><strong>${esc(newBalance)} credits</strong></td></tr>` : ''}
+  </table>
+  <p style="margin:0 0 12px;">
+    <a href="${esc(newUrl)}" style="display:inline-block;background:#1E6FFF;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Start a new report</a>
+    <a href="${esc(billingUrl)}" style="display:inline-block;color:#1E6FFF;text-decoration:none;padding:10px 18px;font-size:14px;">Manage credits</a>
+  </p>
+  <p style="margin:24px 0 6px;font-size:13px;color:#666;">If you have any questions, just reply to this email.</p>
+  <p style="margin:0;font-size:13px;color:#666;">— The KIRA Studio team</p>
+</body></html>`.trim();
+
+  return resendSend({ to: buyerEmail, subject, html, text });
+}
+
 // ── Lead notification ────────────────────────────────────
 export async function sendLeadNotification(lead) {
   if (ADMIN_EMAILS.length === 0) {

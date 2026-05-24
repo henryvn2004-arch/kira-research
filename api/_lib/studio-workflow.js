@@ -41,6 +41,7 @@ import {
 import {
   sb, updateJobProgress, logActivity, slugify
 } from './studio-shared.js';
+import { refundCredits, REPORT_COST } from './credits.js';
 
 // Tiny logActivity wrapper — most events share `ts: now`.
 function logEv(jobId, type, stage, msg, detail) {
@@ -71,6 +72,7 @@ export const studioGen = inngest.createFunction(
       // whose data.event field carries the original trigger.
       const original = event?.data?.event;
       const jobId    = original?.data?.jobId;
+      const userId   = original?.data?.userId;
       if (!jobId) return;
       const msg = String(error?.message || error || 'unknown').slice(0, 4000);
       try {
@@ -83,6 +85,20 @@ export const studioGen = inngest.createFunction(
         await logEv(jobId, 'error', 'render',
           'Workflow failed after retries — see error log for details',
           { error: msg.slice(0, 600) });
+
+        // Phase O.6: refund the credit hold so the user isn't charged
+        // for a failed gen. The unique-index on (studio_job_id, kind=
+        // 'studio_refund') makes this idempotent — Inngest may invoke
+        // onFailure more than once under exotic conditions.
+        if (userId) {
+          const newBalance = await refundCredits(
+            userId, REPORT_COST, jobId, 'studio_refund'
+          );
+          if (newBalance !== null) {
+            await logEv(jobId, 'info', 'render',
+              `Refunded ${REPORT_COST} credits — balance restored to ${newBalance}`);
+          }
+        }
       } catch (writeErr) {
         console.error('[studio-workflow] onFailure write failed:', writeErr.message);
       }
