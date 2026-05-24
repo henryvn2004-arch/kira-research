@@ -1016,12 +1016,22 @@ export async function stage7AssembleAndRender({ jobId, userId, parsed, plan, ext
   const pdfPath   = `${userId}/${reportId}/report.pdf`;
   const pptxPath  = `${userId}/${reportId}/report.pptx`;
 
-  // Phase N.24: explicit charset=utf-8 so browsers don't misinterpret
-  // the UTF-8 bytes as Latin-1 (which mangled em-dash to "â€"").
-  // Supabase preserves whatever Content-Type we set at upload time and
-  // serves it back on signed URL fetches.
+  // ── HTML + PDF upload ───────────────────────────────────────
+  //
+  // Content-Type MUST exactly match the studio-reports bucket's
+  // allowed_mime_types allowlist (set in migration 010 +
+  // expanded in migration 013):
+  //   • text/html
+  //   • application/pdf
+  //   • application/vnd.openxmlformats-officedocument.presentationml.presentation
+  //
+  // Charset hint is omitted from the Content-Type because the
+  // bucket's MIME match is strict equality, not prefix. The
+  // browser still reads UTF-8 correctly because master_wrapper.html
+  // declares <meta charset="UTF-8"> in the document head — that
+  // wins over the response header per HTML5 spec.
   const pdfBytes = Buffer.from(rpJson.pdf_base64, 'base64');
-  const htmlOk = await uploadToBucket(STUDIO_REPORTS_BUCKET, htmlPath, Buffer.from(masterHtml, 'utf8'), 'text/html; charset=utf-8', true);
+  const htmlOk = await uploadToBucket(STUDIO_REPORTS_BUCKET, htmlPath, Buffer.from(masterHtml, 'utf8'), 'text/html',       true);
   const pdfOk  = await uploadToBucket(STUDIO_REPORTS_BUCKET, pdfPath,  pdfBytes,                       'application/pdf', true);
   if (!htmlOk || !pdfOk) {
     throw new Error(`storage_upload_failed:html=${htmlOk},pdf=${pdfOk}`);
