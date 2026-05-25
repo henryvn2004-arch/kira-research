@@ -36,7 +36,13 @@ async function sb(path, method = 'GET', body = null) {
 //   • a full http(s) URL — used for aggregator-hosted PDFs, returned as-is.
 //   • a storage path (e.g. "<uuid>/en.pdf") — resolved to a fresh signed URL.
 //   • null/empty — returned as null so the UI shows "PDF is being prepared".
-async function resolvePdfUrl(pdfUrl) {
+//
+// downloadName (optional, 2026-05-25): when set, append "?download=<name>" to
+// the signed URL. Supabase Storage then serves the file with
+// Content-Disposition: attachment; filename=<name> — so the buyer's browser
+// saves it as e.g. "vietnam-fintech-2026_EN.pdf" instead of the storage path's
+// last segment ("en.pdf"). Aggregator-hosted URLs pass through unchanged.
+async function resolvePdfUrl(pdfUrl, downloadName) {
   if (!pdfUrl) return null;
   if (/^https?:\/\//i.test(pdfUrl)) return pdfUrl;
 
@@ -58,8 +64,14 @@ async function resolvePdfUrl(pdfUrl) {
       return null;
     }
     const { signedURL } = await r.json();
+    if (!signedURL) return null;
     // signedURL is a relative path like "/object/sign/...?token=..." — prepend host.
-    return signedURL ? `${SUPABASE_URL}/storage/v1${signedURL}` : null;
+    let url = `${SUPABASE_URL}/storage/v1${signedURL}`;
+    if (downloadName) {
+      const sep = url.includes('?') ? '&' : '?';
+      url += `${sep}download=${encodeURIComponent(downloadName)}`;
+    }
+    return url;
   } catch (err) {
     console.error('[library-content] sign url error:', err.message);
     return null;
@@ -174,7 +186,11 @@ export default async function handler(req, res) {
     // Generate a short-lived signed URL when pdf_url is a storage path.
     // External URLs pass through. Best-effort: null on failure so the UI
     // shows the "PDF is being prepared" pending state instead of breaking.
-    const signedPdfUrl = await resolvePdfUrl(translation.pdf_url);
+    //
+    // Download filename convention (2026-05-25): "<slug>_<LOCALE-UPPER>.pdf"
+    // e.g. "vietnam-fintech-2026_EN.pdf". Aggregator HTTP URLs ignore this.
+    const downloadName = `${base.slug}_${effectiveLocale.toUpperCase()}.pdf`;
+    const signedPdfUrl = await resolvePdfUrl(translation.pdf_url, downloadName);
 
     res.status(200).json({
       slug:           base.slug,

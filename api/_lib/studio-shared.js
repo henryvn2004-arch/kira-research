@@ -66,7 +66,13 @@ export async function signStorageUrl(bucket, path, ttlSec = SIGNED_URL_TTL_SEC) 
       return null;
     }
     const { signedURL } = await r.json();
-    return signedURL ? `${SUPABASE_URL}/storage/v1${signedURL}` : null;
+    if (!signedURL) return null;
+    let url = `${SUPABASE_URL}/storage/v1${signedURL}`;
+    if (downloadName) {
+      const sep = url.includes('?') ? '&' : '?';
+      url += `${sep}download=${encodeURIComponent(downloadName)}`;
+    }
+    return url;
   } catch (err) {
     console.error('[studio-shared] sign url error:', err.message);
     return null;
