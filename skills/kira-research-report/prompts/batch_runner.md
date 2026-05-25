@@ -15,7 +15,7 @@ pending → [Fire A: EN gen]    → en_done → [Fire B: JA translate] → ja_do
                                                                                                               ↘ error (any fire)
 ```
 
-Why split: a single fire that did EN + JA + KO + publish was running 60-150 min on heavy topics. JA and KO translation subagents are **output-cap bound** (a 67KB en.html ≈ 18K tokens, sat trên Sonnet's 32K per-response output cap). Splitting per locale + chunking the translation per `.kira-page` (Section 4 + 5 below) makes each fire <30 min and survivable.
+Why split: a single fire that did EN + JA + KO + publish was running 60-150 min on heavy topics. JA and KO translation subagents are **output-cap bound** (a 67KB en.html ≈ 18K tokens, sat trên Sonnet's 32K per-response output cap). Splitting per locale + chunking the translation per top-level `<div class="page">` (Section 4 + 5 below) makes each fire <30 min and survivable.
 
 Hard cap: **1 row × 1 stage per fire** to stay safely within Sonnet context budget on the Max 5x plan.
 
@@ -149,13 +149,21 @@ The EN HTML at `skills/kira-research-report/outputs/batch/${id}/en.html` is the 
 
 ### 4.1 — Page split (parent does this, NOT subagent)
 
-Use Read or Bash to count `<div class="kira-page">` occurrences:
+Top-level page containers in the rendered HTML use **`class="page"` or `class="page cover-page"`** (not `kira-page` — that was the planned class name; actual render uses `page`). Inner divs (`page-inner`, `page-header`, `page-footer`, `page-h1`, `page-section-tag`, etc.) are NOT page boundaries — they live inside each page.
 
-```bash
-PAGE_COUNT=$(grep -c '<div class="kira-page' skills/kira-research-report/outputs/batch/${id}/en.html)
+Count top-level page containers via the Grep tool with this regex (matches `page"` or `page ` but excludes `page-`):
+
+```
+pattern: <div class="page[" ]
 ```
 
-Typical reports have 12-22 pages. Note the count for the validation gate (Step 4.3).
+Equivalent shell (use Bash, NOT PowerShell — the `[" ]` character class trips PS):
+
+```bash
+PAGE_COUNT=$(grep -cE '<div class="page[" ]' skills/kira-research-report/outputs/batch/${id}/en.html)
+```
+
+Typical reports have 12-30 pages (cover + methodology + contents + exec + sections + dividers + endnote). Note the count for the validation gate (Step 4.3). If the count is < 8 or > 40, something is wrong — bail to failure path with `unexpected page count <N>`.
 
 ### 4.2 — Chunked translation
 
@@ -163,26 +171,30 @@ Spawn ONE subagent for JA translation. Prompt:
 
 > Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Japanese. Follow `prompts/translator_jp.md` for register / vocabulary / source-tag preservation / anti-positioning rules.
 >
+> **Top-level page containers use `<div class="page">` and `<div class="page cover-page">`.** Subdivs (`page-inner`, `page-header`, `page-footer`, `page-h1`, `page-section-tag`, etc.) are NOT page boundaries — they live inside each page. Match the regex `<div class="page[" ]` to find tops; excludes `page-*` subdivs. Confirmed top-level count for this report: **${PAGE_COUNT}**.
+>
 > **Chunked output protocol (Phase Q.1 — avoids output overflow on 70KB+ reports):**
 >
-> 1. Read en.html. Identify the document shell (everything before the first `<div class="kira-page"`) and the document footer (everything after the last `</div>` closing the last kira-page).
-> 2. Identify each `<div class="kira-page">…</div>` block. There should be ${PAGE_COUNT} of them.
-> 3. Translate the shell `<title>` + any `<meta>` content. Write `ja.html` with: translated shell + opening `<body>` + main wrapper open. **One Write call.**
-> 4. For each page block in order: translate it (per translator_jp.md rules), then `Edit` ja.html appending the translated block right before the body-close placeholder marker. **One Edit per page.**
-> 5. After the last page, Edit ja.html to remove the placeholder and add the closing wrapper + `</body></html>`.
-> 6. Render PDF via POST to `/api/render-pdf` with header `X-Api-Key: $PDF_RENDER_SECRET`, body `{"html": <ja.html content>, "filename": "ja.pdf"}`. Save base64-decoded PDF to `${id}/ja.pdf`.
-> 7. Return paths + page count translated + grep result for forbidden terms (`Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|McKinsey`).
+> 1. Read en.html. Identify the document shell = everything before the FIRST top-level `<div class="page` (with closing quote or space after — NOT `<div class="page-`). Identify the document footer = everything after the LAST top-level `</div>` closing the last page.
+> 2. Identify each top-level `<div class="page...">…</div>` block. There should be ${PAGE_COUNT} of them.
+> 3. Translate the shell `<title>` + `<meta>` content (description, og:title; anti-positioning applies to meta as well). Write `ja.html` with: translated shell (through `<body>` + any pre-page wrappers) + placeholder marker `<!-- KIRA_PAGES_INSERT_HERE -->` + closing `</body></html>`. **One Write call.**
+> 4. For each top-level page block in order: translate it (per translator_jp.md rules), then `Edit` ja.html replacing the placeholder with: translated_page + new placeholder. **One Edit per page.**
+> 5. After the last page, Edit ja.html to remove the placeholder entirely.
+> 6. Render PDF via POST to `https://kiraresearch.com/api/render-pdf` with header `X-Api-Key: $PDF_RENDER_SECRET`, body `{"html": <ja.html content>, "filename": "ja.pdf"}`. Save base64-decoded PDF to `${id}/ja.pdf`. Use Node one-liner via Bash, NOT PowerShell — `ConvertTo-Json` wraps long strings (see `feedback_powershell_convertto_json_string_wrap`).
+> 7. Return paths + page count translated + grep result for forbidden terms (`Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|マッキンゼー|モルドール`).
 >
-> Pre-Write each page: confirm no source tag was translated (`[Kira estimates]` must NOT become `[KIRA推計]`; `[BPS 2024]` must NOT become `[インドネシア統計庁 2024]`).
+> Pre-Write each page: confirm publisher aliases inside source tags are NOT translated (`[Kira estimates]` must NOT become `[KIRA推計]`; `[BPS 2024]` must NOT become `[インドネシア統計庁 2024]`). Inline English descriptive clauses inside tags (e.g. `[Kira estimates · computed from active-user-share above]`) MAY have the descriptive tail translated to Japanese while preserving the `[<Alias>` prefix — the alias still resolves against the SOURCE KEY.
 
 **Hard time cap: 45 minutes.** If subagent has not returned by then → failure path with `error_log: JA translate timeout 45m`. Partial ja.html (if exists) stays on disk for inspection.
 
 ### 4.3 — Parent-side validation gate (post-return)
 
 1. `ls -la …/ja.html …/ja.pdf` — both exist + non-empty (> 1KB)
-2. `grep -c '<div class="kira-page' ja.html` — must equal `$PAGE_COUNT` from 4.1
-3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' ja.html` — zero hits
-4. `grep -oE '\[[A-Za-z][^]]+\]' ja.html | sort -u` vs same on en.html — JA's set must be a SUPERSET of EN's (translator may add `[出典凡例]` label, must not REMOVE any EN source tag)
+2. Top-level page count in ja.html (regex `<div class="page[" ]` via Grep tool) must equal `$PAGE_COUNT` from 4.1
+3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드|マッキンゼー|モルドール)' ja.html` — zero hits
+4. `grep -oE '\[[A-Za-z][^]]+\]' ja.html | sort -u` vs same on en.html — JA's set must be a SUPERSET of EN's (translator may add `[出典凡例]` label, must not REMOVE any EN publisher alias).
+   - **Acceptable diff**: a single tag with the same publisher alias but a translated descriptive tail (e.g. EN `[Kira estimates · computed from active-user-share above]` ≠ JA `[Kira estimates · 上記アクティブ利用者シェアから算出]`). The publisher alias `Kira estimates` is preserved → SOURCE KEY cross-reference still resolves. Log it in the commit message but do NOT fail the gate.
+   - **Fail-gate**: a publisher alias itself was Japanized (e.g. `[BPS 2024]` → `[インドネシア統計庁 2024]`), or any EN alias disappeared entirely.
 
 If any check fails → failure path. Otherwise:
 
@@ -203,7 +215,9 @@ Go to Step 6 — do NOT proceed to KO in same fire.
 
 ### 5.1 — KO chunked translation
 
-Exactly mirror Step 4 but use `translator_ko.md` rules. Subagent prompt is identical to 4.2 except substituting `ja`→`ko` everywhere AND `translator_jp.md` → `translator_ko.md`. Same chunked protocol. Same time cap.
+Exactly mirror Step 4 but use `translator_ko.md` rules. Subagent prompt is identical to 4.2 except substituting `ja`→`ko` everywhere AND `translator_jp.md` → `translator_ko.md`. Same chunked protocol. Same time cap. **Reminder**: top-level page class is `page` / `page cover-page` (not `kira-page`) — see §4.1.
+
+Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specific ones: `Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|클로드|クロード|맥킨지|모르도르`.
 
 ### 5.2 — KO validation gate (same as 4.3 with ja→ko)
 
@@ -224,7 +238,7 @@ Build the SQL via a per-topic Node script. Reference template: `skills/kira-rese
 
 **Slug rule**: `slug = <industry-lower>-<country-full-english>-<year>` (e.g. queue `id=2026-vn-coffee` → `slug=vietnam-coffee-2026`). Country is full English name, not ISO code.
 
-**Pages**: count `.kira-page` divs in EN HTML (already known from Step 4.1 / 5.1).
+**Pages**: top-level page count from EN HTML (already known from Step 4.1 / 5.1 via regex `<div class="page[" ]`).
 
 **`pdf_url` is computed INSIDE the SQL** as `new_report.id::text || '/' || t.locale || '.pdf'` (Supabase Storage path). NEVER emit a GitHub raw URL.
 
@@ -363,10 +377,20 @@ If Henry clicks "Run now" on a task or runs this prompt manually outside the cro
 
 ---
 
+## Page-class fix (2026-05-25, post-first-Q.1-run)
+
+Discovered during `2026-vn-fintech` manual run: the playbook referenced `<div class="kira-page">` but the actual rendered HTML (from `render_and_output.md` skill output) uses `<div class="page">` for body pages and `<div class="page cover-page">` for the cover. Subdivs (`page-inner`, `page-header`, etc.) are NOT page boundaries.
+
+Fixed in §4.1 (count), §4.2 (subagent prompt), §4.3 (validation regex), §5.1 (KO inheritance), §5.3a (publish step pages count), and this changelog. Use regex `<div class="page[" ]` — character class `[" ]` excludes subdivs like `<div class="page-inner">`.
+
+Also clarified §4.3 validation #4 (source-tag superset) — a descriptive tail translation inside a tag that preserves the publisher alias is acceptable; only a localized publisher alias or a missing alias entirely fails the gate. Real example: `[Kira estimates · computed from active-user-share above]` → `[Kira estimates · 上記アクティブ利用者シェアから算出]` is acceptable.
+
+---
+
 ## Phase Q.1 changelog (2026-05-25)
 
 - **Split single-fire-all-stages into 3 fires** (pending→en_done→ja_done→done). Root cause: `2026-vn-fintech` hung 2h24m at JA translate — single subagent tried to Write 70KB ja.html in one call, exceeded Sonnet output cap, returned partial or hung.
-- **Chunked translation per `.kira-page`** in Step 4/5 — each page is a separate Edit call, no single Write exceeds ~5-7KB.
+- **Chunked translation per top-level `<div class="page">`** in Step 4/5 — each page is a separate Edit call, no single Write exceeds ~5-7KB. (Spec previously said `kira-page`; corrected 2026-05-25 — actual render uses `page` / `page cover-page`.)
 - **Validation gates added**: page count match, source tag superset, anti-positioning grep with katakana/hangul variants.
 - **Machine-agnostic path**: `git rev-parse --show-toplevel` instead of hardcoded `C:\Users\vnc-f4\…`. Same prompt now runs on any machine.
 - **Watchdog**: hard 45-min per-stage timeout; partial output stays for inspection.
