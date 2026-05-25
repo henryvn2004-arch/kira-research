@@ -585,6 +585,20 @@ export async function stage2ExtractFiles({ jobId, userId: _userId, uploaded_file
         text = (wb.SheetNames || [])
           .map(n => `--- Sheet: ${n} ---\n${xlsx.utils.sheet_to_csv(wb.Sheets[n])}`)
           .join('\n\n');
+      } else if (ext === 'pptx') {
+        // .pptx added 2026-05-25 — Studio "re-do deck" use case.
+        // officeparser parses pptx (also docx/xlsx, but we keep mammoth/xlsx
+        // for those since they were already wired). Output is plain text with
+        // slide boundaries collapsed; we re-inject "--- Slide N ---" headers
+        // for downstream Claude context if the parser emits page-form feeds.
+        const op = await import('officeparser');
+        const raw = await op.parseOfficeAsync(buf);
+        // officeparser emits "\n" between slides; tag slide boundaries so the
+        // LLM sees discrete slide content (helps with "redo this deck" tasks).
+        const slides = String(raw || '').split(/\n{2,}/).filter(Boolean);
+        text = slides.length
+          ? slides.map((s, i) => `--- Slide ${i + 1} ---\n${s.trim()}`).join('\n\n')
+          : String(raw || '');
       } else if (ext === 'csv' || ext === 'tsv') {
         text = buf.toString('utf8');
       } else if (ext === 'txt' || ext === 'md') {

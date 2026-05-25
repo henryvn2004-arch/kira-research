@@ -27,8 +27,9 @@ import {
 const MAX_BYTES = 25 * 1024 * 1024;
 const ALLOWED_MIMES = new Set([
   'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',     // .docx
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',           // .xlsx
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',   // .pptx (added 2026-05-25 — Studio "re-do deck" use case)
   'text/csv',
   'text/plain'
 ]);
