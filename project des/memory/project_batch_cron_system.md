@@ -11,36 +11,52 @@ metadata:
 
 Henry's KIRA Research has a daily batch report generation system built on top of the `kira-research-report` skill ("[[project_tool_gen_report|tool gen report]]"). Scheduled tasks (`mcp__scheduled-tasks`) fire daily and pull 1 pending topic per fire from `data/report_queue.csv`, gen it as a 3-language report (EN + JA + KO), auto-publish to Supabase, commit results.
 
-## Current schedule (Phase O.13 — 2026-05-24)
+## Current schedule (Phase Q.3 — 2026-05-25)
 
-**13 active tasks, 45-min cadence:**
+**18 active tasks** = 3 evening (45-min) + 5 bridge (60-min) + 10 overnight (45-min). Max gap = ~60 min anywhere in 24h.
 
-| Task ID | Cron | Local ICT |
-|---|---|---|
-| `kira-batch-0000` | `0 0 * * *` | 12:00 AM |
-| `kira-batch-0045` | `45 0 * * *` | 12:45 AM |
-| `kira-batch-0130` | `30 1 * * *` | 01:30 AM |
-| `kira-batch-0215` | `15 2 * * *` | 02:15 AM |
-| `kira-batch-0300` | `0 3 * * *` | 03:00 AM |
-| `kira-batch-0345` | `45 3 * * *` | 03:45 AM |
-| `kira-batch-0430` | `30 4 * * *` | 04:30 AM |
-| `kira-batch-0515` | `15 5 * * *` | 05:15 AM |
-| `kira-batch-0600` | `0 6 * * *` | 06:00 AM |
-| `kira-batch-0645` | `45 6 * * *` | 06:45 AM |
-| `kira-batch-1700` | `0 17 * * *` | 05:00 PM |
-| `kira-batch-1745` | `45 17 * * *` | 05:45 PM |
-| `kira-batch-1830` | `30 18 * * *` | 06:30 PM |
+| Task ID | Cron | Local ICT | Block |
+|---|---|---|---|
+| `kira-batch-1700` | `0 17 * * *` | 05:00 PM | Evening |
+| `kira-batch-1745` | `45 17 * * *` | 05:45 PM | Evening |
+| `kira-batch-1830` | `30 18 * * *` | 06:30 PM | Evening |
+| `kira-batch-1930` | `30 19 * * *` | 07:30 PM | **Bridge (NEW Q.3)** |
+| `kira-batch-2030` | `30 20 * * *` | 08:30 PM | Bridge |
+| `kira-batch-2130` | `30 21 * * *` | 09:30 PM | Bridge |
+| `kira-batch-2230` | `30 22 * * *` | 10:30 PM | Bridge |
+| `kira-batch-2330` | `30 23 * * *` | 11:30 PM | Bridge |
+| `kira-batch-0000` | `0 0 * * *` | 12:00 AM | Overnight |
+| `kira-batch-0045` | `45 0 * * *` | 12:45 AM | Overnight |
+| `kira-batch-0130` | `30 1 * * *` | 01:30 AM | Overnight |
+| `kira-batch-0215` | `15 2 * * *` | 02:15 AM | Overnight |
+| `kira-batch-0300` | `0 3 * * *` | 03:00 AM | Overnight |
+| `kira-batch-0345` | `45 3 * * *` | 03:45 AM | Overnight |
+| `kira-batch-0430` | `30 4 * * *` | 04:30 AM | Overnight |
+| `kira-batch-0515` | `15 5 * * *` | 05:15 AM | Overnight |
+| `kira-batch-0600` | `0 6 * * *` | 06:00 AM | Overnight |
+| `kira-batch-0645` | `45 6 * * *` | 06:45 AM | Overnight |
 
-**Disabled (history)**: `kira-batch-01am`, `kira-batch-05am`, `kira-batch-1215pm`, `kira-batch-05pm` — old 4-task schedule, replaced 2026-05-24 with 13-task fan-out.
+Daytime gap (06:45 → 17:00) still ~10h15m by design — Henry usually works on the other machine during day.
+
+**Disabled (history)**: `kira-batch-01am`, `kira-batch-05am`, `kira-batch-1215pm`, `kira-batch-05pm` — old 4-task schedule, replaced 2026-05-24 with 13-task fan-out (later expanded to 18 in Q.3).
 
 System auto-applies 0-10 min random jitter per task to spread load. All tasks share the same prompt (delegate to `batch_runner.md` in repo).
 
-## Capacity calculation
+## Capacity calculation (Phase Q.3 — 18 fires/day)
 
-- 13 fires/day × 1 topic each = 13 topics processed/day
-- Each topic produces 3 reports (EN + JA + KO) → **~39 reports published/day**
-- Queue depth needed: 13/day → 50-topic queue lasts ~4 days
-- Per fire cost: ~450K tokens (parent + 3 subagents). On Max 5x: 13 fires × 450K = 5.85M tokens/day ≈ 41M/week — well within Max 5x weekly budget.
+Post-Q.1 multi-fire split: each report needs 3 fires (Stage A/B/C). So:
+
+- 18 fires/day ÷ 3 stages = **~6 reports/day fully published** (steady-state)
+- Each report = 3 PDFs (EN + JA + KO) → **~18 PDFs/day**
+- Queue depth needed: 6/day → 50-topic queue lasts ~8 days
+- Per fire cost: ~150-450K tokens (Stage A heavier than B/C). On Max 5x: 18 × ~250K avg = 4.5M tokens/day ≈ 32M/week — within Max 5x weekly budget.
+- Max wait between stages: ~60 min (Q.3 bridge closed the 5h30m evening↔overnight gap).
+- Worst-case per-report latency: claim Stage A at 06:45 (last overnight fire) → wait ~10h15m (daytime gap) → Stage B at 17:00 → Stage C at 17:45 → done in ~11h30m. (Daytime gap still present by design — Henry uses other machine.)
+- Best-case: claim Stage A at 00:00 → Stage B at 00:45 → Stage C at 01:30 → done in ~1h30m.
+
+## Pre-Q.3 capacity (history)
+
+Pre-2026-05-25, the schedule was 13 fires/day with a 5h30m gap between block 2 end (18:30) and block 1 start (00:00). At Q.1 (3-fire-per-report), this caused worst-case ~18h latency when Stage A claimed at 18:30. Q.3 added 5 evening bridge fires (19:30/20:30/21:30/22:30/23:30) to close that gap; daytime gap retained.
 
 ## Architecture
 
