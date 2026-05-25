@@ -303,9 +303,45 @@ When translating an EN HTML to KO:
 
 1. Parse the HTML — identify all translatable text nodes (skip SVG geometry, class names, IDs)
 2. Translate page-by-page (preserves context within each page)
-3. After translation: regex-sweep for forbidden terms (Mordor, Frost, etc.) — should be zero hits, but verify
+3. After translation: regex-sweep for forbidden terms (Mordor, Frost, etc., plus hangul like `클로드` for Claude) — should be zero hits, but verify
 4. Char-count check on callout labels and change-lines against the KO-specific caps in Section 5
 5. Write final to `outputs/<slug>/ko.html`
 6. Render PDF via `/api/render-pdf` (the endpoint handles KO fonts via Noto Sans KR fallback)
 
 If a paragraph overflows after translation, prefer trimming `<strong>` content reach or removing one 부사, NOT removing a source tag or a number. Source tags + numbers are load-bearing; voice flourishes are not.
+
+---
+
+## 11.5 Chunked output protocol — for batch mode (Phase Q.1, 2026-05-25)
+
+When called from `batch_runner.md` Stage C (multi-fire batch), a single `Write` of the full 67KB+ ko.html exceeds Sonnet's per-response output cap (~32K tokens ≈ 100KB), causing partial truncation or hangs. To avoid this:
+
+**Use per-page Edit instead of one-shot Write.**
+
+1. Read en.html. Identify:
+   - **Shell prefix** — everything from `<!DOCTYPE html>` up to (but not including) the first `<div class="kira-page"`.
+   - **Page blocks** — each `<div class="kira-page">…</div>` (top-level closing). Count them; should match `PAGE_COUNT` from parent.
+   - **Shell suffix** — everything from after the last `</div>` (closing the last kira-page) to `</html>`.
+
+2. **Write the shell prefix first** as ko.html:
+   - Translate `<title>`, `<meta description>`, any inline shell text
+   - Insert a SENTINEL comment line where pages will go: `<!-- KIRA_BATCH_PAGES_INSERT_HERE -->`
+   - Then translate shell suffix (closing tags etc.)
+   - Write the full skeleton + sentinel + suffix. **One Write call, ~3-5KB.**
+
+3. **For each page block in order** (P1, P2, … Pn):
+   - Translate just that page's text content per Sections 1-10 above
+   - Use `Edit` to insert the translated page right before the sentinel:
+     - `old_string`: `<!-- KIRA_BATCH_PAGES_INSERT_HERE -->`
+     - `new_string`: `<translated page block>\n<!-- KIRA_BATCH_PAGES_INSERT_HERE -->`
+   - This appends each page before the sentinel. **One Edit per page, ~3-7KB each.**
+
+4. **After the last page**, one final `Edit` removes the sentinel:
+   - `old_string`: `\n<!-- KIRA_BATCH_PAGES_INSERT_HERE -->`
+   - `new_string`: ``
+
+5. Render PDF, verify no truncation by counting `.kira-page` divs in the final file (must equal `PAGE_COUNT`).
+
+**Page-level chunking rationale**: a typical KIRA page is 200-500 words = 600-1500 tokens output. Per-page Edit fits comfortably within any response budget with headroom for thinking.
+
+**Validation post-translation**: the parent (`batch_runner.md` Step 5.2) re-counts `.kira-page` divs and source tags. If your output is missing pages (because you skipped some), the gate will fail and the row goes to status=error with a clear log. So: translate ALL pages, in order, no skipping.
