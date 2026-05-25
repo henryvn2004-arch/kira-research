@@ -44,7 +44,13 @@ These 3 env vars must be present (set in Windows User scope, mirrored from Verce
 - `SUPABASE_URL` — `https://iygoynbnscednfzdsflc.supabase.co`
 - `SUPABASE_SERVICE_KEY` — Bearer token for Supabase Storage + SQL via MCP
 
-If ANY is empty → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
+**Use Node for the check, NOT bash `${VAR:+SET}` expansion** — bash variable expansion triggers Claude Code's "Contains expansion" permission prompt every fire even when `Bash(node *)` and `Bash(cd *)` are pre-approved. Node reads `process.env` directly without shell expansion, so the command stays in the auto-approved allowlist.
+
+```bash
+node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>{const v=process.env[k];console.log(k+'='+(v&&v.length?'SET':'MISSING'))})"
+```
+
+If ANY prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
 
 ---
 
