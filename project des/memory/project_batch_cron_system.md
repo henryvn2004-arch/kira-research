@@ -139,9 +139,15 @@ Batch fires need 3 env vars set in the **Windows User scope** of every machine t
 - `upload-pdf.mjs` — POST PDF to Supabase Storage bucket `reports-pdfs/<report-id>/<locale>.pdf`.
 - `_build_vn_coffee_sql.mjs` — one-off SQL builder template; copy + adapt per-topic.
 
-## Pre-approval gotcha — SOLVED (2026-05-25)
+## Pre-approval gotcha — PARTIALLY SOLVED (2026-05-25 → 2026-05-26)
 
-**Solution shipped:** `.claude/settings.json` committed to the repo with explicit allowlist for the tool set batch_runner + insight_runner need. Travels via git → DELL inherits on pull → no per-machine click-approve required.
+**2026-05-26 update:** Project-level `.claude/settings.json` alone was NOT enough — cron fires launch Claude Code in the parent dir (`C:\Users\<user>\Rira Research`), not the project dir, so the project allowlist never loads. Discovered after 0600 fire hung on a permission prompt overnight. See [[feedback_scheduled_task_cwd_parent]] for full diagnosis path.
+
+**Working fix (must do BOTH):**
+1. **Project-level** `.claude/settings.json` (committed to repo) — for interactive sessions and as the source-of-truth template
+2. **User-level** `C:\Users\<user>\.claude\settings.json` (per-machine, NOT committed) — same content, applies to cron regardless of launch cwd
+
+**2026-05-25 shipped (project-level):** `.claude/settings.json` committed to the repo with explicit allowlist for the tool set batch_runner + insight_runner need. Travels via git → DELL inherits on pull → no per-machine click-approve for interactive sessions.
 
 What's in the allowlist (commit `07d1a5c`):
 - Built-in tools: Read, Glob, Grep, Edit, Write, Agent, ToolSearch, WebSearch, WebFetch
