@@ -139,13 +139,22 @@ Batch fires need 3 env vars set in the **Windows User scope** of every machine t
 - `upload-pdf.mjs` — POST PDF to Supabase Storage bucket `reports-pdfs/<report-id>/<locale>.pdf`.
 - `_build_vn_coffee_sql.mjs` — one-off SQL builder template; copy + adapt per-topic.
 
-## Pre-approval gotcha
+## Pre-approval gotcha — SOLVED (2026-05-25)
 
-First time each task fires, Claude Code prompts for tool approvals (Read, Write, Edit, Bash, Agent, ToolSearch). To avoid the cron pausing on these prompts:
+**Solution shipped:** `.claude/settings.json` committed to the repo with explicit allowlist for the tool set batch_runner + insight_runner need. Travels via git → DELL inherits on pull → no per-machine click-approve required.
 
-> **Henry: click "Run now" on `kira-batch-0000` (or any one task) in the Scheduled sidebar BEFORE first auto-fire.** Approve each tool when prompted. Subsequent fires auto-apply.
+What's in the allowlist (commit `07d1a5c`):
+- Built-in tools: Read, Glob, Grep, Edit, Write, Agent, ToolSearch, WebSearch, WebFetch
+- Bash patterns (prefix-wildcard): `git *`, `node *`, `npm *`, `npx *`, `curl *`, `gh *`, `mkdir/mv/cp/rm/ls/cat/echo/printf/cd/wc/tail/head/grep/find/sed/awk/tr/sort/uniq/date/diff/test/[`
+- Deny: `git push --force*`, `git push -f*`, `rm -rf /`, `rm -rf /*`, `rm -rf ~`, `rm -rf ~/*` (deny wins over allow)
 
-OR enable auto-approve for tools in Claude Code settings — Henry's preferred path.
+**Why this works:** scheduled-task SKILL.md hardcodes working dir to the repo root (`C:\Users\<user>\Rira Research\kira-research` or equivalent). Fresh Claude Code session spawns there → loads `.claude/settings.json` → allowlist applies before first tool call → no prompt.
+
+**What's NOT in the allowlist:** MCP tools (`mcp__<uuid>__*`). MCP server names use machine-specific UUID prefixes (e.g., `mcp__763a5dc5-...__execute_sql` on vnc-f4 may be a different UUID on DELL), so can't be portably committed. batch_runner uses curl + node helper scripts for Supabase (not the MCP), so MCP prompts are rare. If a cron fire does prompt for an MCP tool, click approve once and consider adding a machine-specific rule to `.claude/settings.local.json` (gitignored).
+
+**Per-machine override:** `.claude/settings.local.json` is in `.gitignore` for things like machine-specific MCP allowlists or hooks. Settings load order: user → project → local (later overrides earlier).
+
+**Historical note:** Pre-allowlist (before 2026-05-25), the gotcha was: click "Run now" on any task before first auto-fire, approve each tool, hope subsequent fires reuse approvals. Unreliable since fresh sessions don't always inherit approvals. Allowlist file fixes this deterministically.
 
 ## Cost / billing notes
 
