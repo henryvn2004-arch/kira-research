@@ -46,7 +46,7 @@ Run via `mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__execute_sql`:
 
 ```sql
 WITH reports AS (
-  SELECT lr.id, lr.slug, lr.country, lr.industry, lr.year
+  SELECT lr.id, lr.slug, lr.country, lr.industry, lr.year, lr.created_at
   FROM living_reports lr
   WHERE lr.status = 'published'
 ),
