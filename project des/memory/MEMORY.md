@@ -13,7 +13,7 @@
 - [Nav logo = text+CSS, logo.png ≠ nav](project_kira_logo_architecture.md) — `.logo-mark` is Satoshi 900 text + ::after parallelogram; logo.png only for og:image / JSON-LD / /auth
 - [@sparticuz/chromium on Vercel: 3 non-obvious tweaks](feedback_sparticuz_chromium_vercel.md) — AWS_EXECUTION_ENV spoof, dynamic import, Buffer.from() wrap for base64
 - ["tool gen report" = the kira-research-report skill](project_tool_gen_report.md) — Henry's internal shorthand
-- [KIRA batch cron system](project_batch_cron_system.md) — **13** daily scheduled tasks gen 1 topic × EN/JA/KO from `data/report_queue.csv` (45-min cadence, 12am-7am + 5pm-7pm ICT)
+- [KIRA batch cron system](project_batch_cron_system.md) — **Phase Q.3: 18** daily fires (3 evening + 5 bridge + 10 overnight). Q.1 multi-fire split = 3 fires per report → ~6 reports/day published
 - [PowerShell 5.1 ConvertTo-Json wraps long strings](feedback_powershell_convertto_json_string_wrap.md) — use Node for JSON-API bodies with big string fields
 - [KIRA A+ blueprint flex layer](project_a_plus_flex.md) — 3 customization layers (expand_slots + chart_options + industry overlays) so reports adapt per topic while preserving brand consistency
 - [KIRA L.3 source tag system](project_l3_source_tag_system.md) — `[Kira estimates]` + named-source aliases inline + page-bottom source key; replaces deprecated `[primary]/[secondary]/[estimate]` trio
@@ -23,3 +23,4 @@
 - [KIRA N Studio (subdomain)](project_n_kira_studio.md) — UC2+UC3 consolidated into `studio.kiraresearch.com`. Login-gated. Same repo/Vercel/Supabase. Anthropic SDK + waitUntil bg worker. Personal user library; PDFs visually identical to consulting reports (no watermark).
 - [KIRA O Studio credits](project_o_studio_credits.md) — Phase O pay-as-you-go credit wallet: 1 report = 100 credits, 4 PayPal packs ($10/$25/$50/$200), atomic hold-refund via Supabase RPCs. Profile + Studio /billing UIs share one API.
 - [KIRA Q.2 Insight runner](project_q_insight_runner.md) — Phase Q.2 (2026-05-25) 4-fires/day insight cron extracts 3 sections from each published report en.html, gens trilingual Insight articles (EN→JA→KO via multi-fire) with AEO question-form H2 + FAQ JSON-LD. State via insight_translations row count, no schema change. See batch_cron_system.md for the Q.1 batch split that this complements.
+- [KIRA queue topic strategy](project_queue_topic_strategy.md) — Target JP/KR/SG enterprise buyer + AU resource supply chain. 99 pending (~16 days runway) as of 2026-05-25; next top-up ~2026-06-10.
