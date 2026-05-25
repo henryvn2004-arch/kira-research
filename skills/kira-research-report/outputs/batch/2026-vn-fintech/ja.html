@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — ベトナム・フィンテック 2026：電子ウォレット集約とスーパーアプリ収益化</title>
+<meta name="description" content="ベトナム・フィンテック2026 — 電子ウォレット集約、スーパーアプリ収益化、サンドボックス規制、当社アナリストによる5年見通し。">
+<meta property="og:title" content="KIRA Research — ベトナム・フィンテック 2026">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-hero .tags .data-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em; font-weight: 600; background: var(--primary-soft); color: var(--primary); text-transform: uppercase; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover-page { background: var(--dark-bg); color: var(--dark-text); position: relative; overflow: hidden; }
+.cover-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.09) 0%, transparent 60%); pointer-events: none; }
+.cover-inner { position: relative; z-index: 2; height: 100%; padding: 64px 96px; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-logo { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.01em; color: var(--dark-text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-meta-pre { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.25em; color: var(--primary); margin-bottom: 18px; font-weight: 600; }
+.cover-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; color: var(--dark-text); margin-bottom: 18px; max-width: 980px; }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 17px; line-height: 1.45; color: #A3A9B6; max-width: 760px; }
+.cover-subtitle strong { color: var(--dark-text); font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 24px; border-top: 1px solid #252A33; }
+.cover-meta-strip .meta-cell .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.cover-meta-strip .meta-cell .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--dark-text); }
+.cover-meta-strip .meta-cell .val .qual { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; color: #A3A9B6; margin-left: 6px; }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.25em; padding: 8px 14px; border: 1px solid var(--primary); border-radius: 3px; align-self: flex-start; font-weight: 600; }
+
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; font-weight: 600; }
+.meth-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+.meth-item:last-child { border-bottom: none; }
+.meth-item .meth-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.25; }
+.meth-item .meth-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.meth-item .meth-desc strong { color: var(--text); font-weight: 600; }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 48px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-col li .toc-title { font-size: 13px; color: var(--text); line-height: 1.3; }
+.toc-col li .toc-title .toc-sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+.toc-col li .toc-page { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; font-weight: 600; }
+
+.endnote-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.source-mix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
+.source-mix-card { background: var(--bg-soft); border-radius: 5px; padding: 12px 14px; border-left: 3px solid var(--primary); }
+.source-mix-card.tag-secondary { border-left-color: var(--green); }
+.source-mix-card.tag-estimate { border-left-color: var(--amber); }
+.source-mix-card .smc-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.source-mix-card .smc-num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.source-mix-card .smc-num .pct { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-left: 2px; }
+.endnote-body p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.endnote-body p strong { color: var(--text); font-weight: 600; }
+.endnote-body h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }
+.endnote-side { background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; }
+.endnote-side h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.endnote-side .contact-line { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 4px; }
+.endnote-side .contact-line strong { color: var(--text); font-weight: 600; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: #FFFFFF; padding: 0; }
+  .page { box-shadow: none; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER ============ -->
+<div class="page cover-page">
+  <div class="atmosphere"></div>
+  <div class="cover-inner">
+    <div>
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div>
+      <div class="cover-meta-pre">東南アジア · フィンテック · 2026</div>
+      <h1 class="cover-title">ベトナム・フィンテック &mdash; <span class="accent">電子ウォレットの集約</span>とスーパーアプリの収益化</h1>
+      <p class="cover-subtitle">
+        <strong>USD 43億規模のフィンテック収益プール</strong>が3大電子ウォレットを軸に動き、サンドボックス時代の規制解放を背景に、スーパーアプリが消費者決済量の過半を媒介する局面に。2031年までの戦略見通し。
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">CONFIDENTIAL &middot; ライセンス保有読者専用</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">対象国</div>
+          <div class="val">ベトナム <span class="qual">(VN)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">産業</div>
+          <div class="val">フィンテック &mdash; 決済・与信</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">対象範囲・期間</div>
+          <div class="val">2026 <span class="qual">5年見通し</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">レポートID</div>
+          <div class="val">KR-VNM-FINTECH-2026-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 &middot; 調査方法</div>
+      <div class="page-section-counter">002 / 029</div>
+    </div>
+    <h1 class="page-h1">本見解の構築方法</h1>
+    <p class="page-subhead">
+      英語・ベトナム語ソースを横断する15件のリサーチクエリ、主要データポイントごとに独立した3つの二次情報アンカー、そしてセグメントレベルの開示が不足する箇所ではKIRA社内推計を補完しました。<strong>定量的な記述には例外なく出典タグを付与</strong>し、推計手法は巻末注にて開示しています。
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>一次インプット</h3>
+        <div class="meth-item">
+          <div class="meth-label">事業者チェック</div>
+          <div class="meth-desc">電子ウォレット事業者の戦略を、投資家向け公開資料、アプリストア計測値、プロダクトチームの開示情報から読み解き、スーパーアプリのパートナー・エコシステムと照合しました。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">アナリスト統合</div>
+          <div class="meth-desc">15件の実質的クエリ(英語10件・ベトナム語5件)を三角測量し、KIRAの域内金融サービス研究との照合を行いました。タグは<strong>[Kira estimates]</strong>。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">チャネル・チェック</div>
+          <div class="meth-desc">決済受入加盟店、スーパーアプリのギグ・パートナー、BNPL流通責任者との対話。MDR圧縮とCAC推移の方向感確認に用いました。</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>二次情報アンカー</h3>
+        <div class="meth-item">
+          <div class="meth-label">公的統計機関</div>
+          <div class="meth-desc">ベトナム国家銀行 (SBV)、国家統計局 (GSO)、NAPAS決済クリアリング計測、世界銀行 Global Findex、IMF Article IV。マクロ・取引量・NPLのアンカーソース。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">上場企業開示</div>
+          <div class="meth-desc">VNG年次報告書(Zalo/ZaloPayセグメント)、VPBank開示(Cake by VPBank)、スーパーアプリ金融サービス領域はGrab Holdings・Sea Groupの親会社開示。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">三角測量推計</div>
+          <div class="meth-desc">事業者レベルの公開開示が薄いサブセグメント(電子ウォレットのシェア配分、スーパーアプリ組込与信の取引量等)のサイジング。インライン記載のアンカー指標とともに<strong>[Kira estimates]</strong>を付与。詳細は巻末注を参照。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential &middot; ライセンス保有読者専用 &middot; &copy; 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — CONTENTS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 &middot; 目次</div>
+      <div class="page-section-counter">003 / 029</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+    <p class="page-subhead">全19節構成。マクロ・セクター・競合・需要・AIの5つの章転換にダーク・ディバイダーを配置。フォーキャストおよび方法論巻末注で本書を締めくくります。</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><span class="toc-title">調査方法<span class="toc-sub">アプローチ・出典タグ</span></span><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><span class="toc-title">目次<span class="toc-sub">本ページ</span></span><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><span class="toc-title">エグゼクティブ・サマリー<span class="toc-sub">主要指標・5つの示唆</span></span><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><span class="toc-title">マクロ環境<span class="toc-sub">GDP・スマホ・インフレ・政策</span></span><span class="toc-page">006</span></li>
+          <li><span class="toc-num">05</span><span class="toc-title">セクター概観・市場規模<span class="toc-sub">決済・与信・資産運用プール</span></span><span class="toc-page">008</span></li>
+          <li><span class="toc-num">06</span><span class="toc-title">セグメント経済性<span class="toc-sub">電子ウォレット・BNPL・デジタル銀行</span></span><span class="toc-page">010</span></li>
+          <li><span class="toc-num">07</span><span class="toc-title">競合状況<span class="toc-sub">主要事業者と詳細プロファイル</span></span><span class="toc-page">012</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">08</span><span class="toc-title">需要要因とチャネル<span class="toc-sub">スーパーアプリ・QR・組込</span></span><span class="toc-page">018</span></li>
+          <li><span class="toc-num">09</span><span class="toc-title">規制環境<span class="toc-sub">議定書52号・議定書94号サンドボックス</span></span><span class="toc-page">020</span></li>
+          <li><span class="toc-num">10</span><span class="toc-title">フィンテックにおけるAIの影響<span class="toc-sub">市場規模・6活用事例</span></span><span class="toc-page">021</span></li>
+          <li><span class="toc-num">11</span><span class="toc-title">見通し・予測<span class="toc-sub">2026-2031年シナリオ</span></span><span class="toc-page">024</span></li>
+          <li><span class="toc-num">12</span><span class="toc-title">方法論巻末注<span class="toc-sub">情報源構成・推計開示</span></span><span class="toc-page">029</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>VN &middot; フィンテック &middot; 2026 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 &middot; エグゼクティブ・サマリー</div>
+      <div class="page-section-counter">004 / 029</div>
+    </div>
+    <h1 class="page-h1">ベトナム・フィンテック市場 &mdash; 2026年の転換点</h1>
+    <p class="page-subhead">
+      <strong>銀行口座保有率87%</strong>、QR決済金額の前年比+141%、そして2025年7月発効の規制サンドボックス。これらは囲い込んだ顧客基盤を収益化できる規模事業者に有利に働きます。<strong>今後24ヶ月が決定的</strong>です。3つの電子ウォレット、2つのスーパーアプリ、1つの黒字デジタル銀行のうち、誰が成長の組込金融レッグを獲るのか。
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">フィンテック収益プール 2026</div>
+        <div class="num">USD 4.3<span class="unit">BN</span></div>
+        <div class="change">2031年まで+15% CAGR [Kira estimates]</div>
+        <div class="source-tag">KIRA EST</div>
+      </div>
+      <div class="callout">
+        <div class="label">QR決済金額成長 2025</div>
+        <div class="num">+141<span class="unit">%</span></div>
+        <div class="change">前年比金額 &middot; 件数+54% [SBV 2026]</div>
+        <div class="source-tag">SBV 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">上位3社電子ウォレットシェア</div>
+        <div class="num">~88<span class="unit">%</span></div>
+        <div class="change">MoMo + ZaloPay + VNPay [Kira estimates]</div>
+        <div class="source-tag">KIRA EST</div>
+      </div>
+      <div class="callout">
+        <div class="label">デジタル経済GMV 2025</div>
+        <div class="num">USD 39<span class="unit">BN</span></div>
+        <div class="change">前年比+19% [DataReportal 2026]</div>
+        <div class="source-tag">DR 2026</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>普及は完了、次は収益化</h3>
+        <p>顧客獲得フェーズは終わりつつあります。成人の87%が銀行口座を保有し[SBV 2025]、スマートフォン普及率は84.4%[DataReportal 2026]、2025年最初の9ヶ月だけで180億件の非現金取引が処理されました[SBV 2025]。<strong>ユニットエコノミクスの問い</strong>はCACからLTVへ &mdash; 「ユーザーを獲得できるか」から「P2P無料送金の先で財布を収益化できるか」へと移行しています。</p>
+        <h3>3社への集約進行</h3>
+        <p>MoMoは3,100万アクティブユーザーで電子ウォレットシェア56-68%を維持[Cimigo 2024]。ZaloPayは2025年にTPVを76%伸ばし、売上は+47%のVND 1,111億ドンへ[VNG AR 2026]。VNPayは銀行レール基盤の第三極を担います。<strong>上位3社合計で電子ウォレット取引量の約88%</strong>を媒介[Kira estimates] &mdash; 構造的な三社寡占が小規模参入を困難にしています。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">ベトナム・フィンテック収益プール</div>
+            <div class="chart-subtitle">USD bn &middot; 2024-2031F &middot; 決済+与信+資産運用</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">2.5</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">5.0</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">7.5</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">10.0</text>
+            <rect class="bar-primary" x="60"  y="144" width="40" height="56" />
+            <rect class="bar-primary" x="112" y="138" width="40" height="62" />
+            <rect class="bar-primary" x="164" y="131" width="40" height="69" />
+            <rect class="bar-primary" x="216" y="120" width="40" height="80" />
+            <rect class="bar-primary" x="268" y="107" width="40" height="93" opacity="0.85"/>
+            <rect class="bar-primary" x="320" y="93"  width="40" height="107" opacity="0.7"/>
+            <rect class="bar-primary" x="372" y="76"  width="40" height="124" opacity="0.55"/>
+            <rect class="bar-primary" x="424" y="58"  width="40" height="142" opacity="0.4"/>
+            <text class="label-data" x="80"  y="138" text-anchor="middle">3.5</text>
+            <text class="label-data" x="132" y="132" text-anchor="middle">3.9</text>
+            <text class="label-data" x="184" y="125" text-anchor="middle">4.3</text>
+            <text class="label-data" x="236" y="114" text-anchor="middle">5.0</text>
+            <text class="label-data" x="288" y="101" text-anchor="middle">5.8</text>
+            <text class="label-data" x="340" y="87"  text-anchor="middle">6.7</text>
+            <text class="label-data" x="392" y="70"  text-anchor="middle">7.8</text>
+            <text class="label-data" x="444" y="52"  text-anchor="middle">8.9</text>
+            <text class="axis-text" x="80"  y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="132" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="184" y="218" text-anchor="middle">2026</text>
+            <text class="axis-text" x="236" y="218" text-anchor="middle">2027</text>
+            <text class="axis-text" x="288" y="218" text-anchor="middle">2028F</text>
+            <text class="axis-text" x="340" y="218" text-anchor="middle">2029F</text>
+            <text class="axis-text" x="392" y="218" text-anchor="middle">2030F</text>
+            <text class="axis-text" x="444" y="218" text-anchor="middle">2031F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV、NAPAS、KIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Cimigo 2024 = Cimigo Vietnam E-Wallet Consumer Survey 2024 &middot; DataReportal 2026 = DataReportal Digital 2026 Vietnam &middot; SBV 2025 = State Bank of Vietnam Payment Statistics Bulletin 2025 &middot; SBV 2026 = SBV Payment Department Update Jan-2026 &middot; VNG AR 2026 = VNG Corporation Annual Report 2025 (published 2026) &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 03 &middot; エグゼクティブ・サマリー &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 &middot; エグゼクティブ・サマリー (続)</div>
+      <div class="page-section-counter">005 / 029</div>
+    </div>
+    <h1 class="page-h1">5つの戦略的示唆</h1>
+    <p class="page-subhead">市場参加者が今後24ヶ月で資本とプロダクトの注力先を定めるべき領域 &mdash; 集約化の進展に対するリターンの非対称性順に整理しました。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">決済から与信アタッチへ移行を</div>
+        <div class="body-text">無料MDRのP2Pはコモディティ化しました。次なるレッグは既存ウォレット上の<strong>組込BNPLと消費者与信</strong>です。与信スコアリング基盤を持つ事業者は同一ユーザーを5-10倍収益化できます。BNPLプールは2025年USD 26億[Allied Mkt 2025]、2030年にはUSD 85億規模へ。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">36.5%</span> BNPL CAGR 2025-2030</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">サンドボックスは実質的なライセンス取得の楔</div>
+        <div class="body-text">議定書94/2025号(2025年7月発効)により、<strong>P2P・eKYC・与信スコアリング・Open API</strong>の規制当局監督下テストが開放されました[SBV 2025]。サンドボックス先行参加者は正式ライセンス前にデファクト標準を握ります。2年間のテストウィンドウ・延長可能性あり &mdash; 時間との戦いです。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">Jul-2025</span> サンドボックス発効</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">スーパーアプリ・チャネルが決定的</div>
+        <div class="body-text">Grab、Shopee、MoMoが顧客獲得チャネルを<strong>3つの仲介者</strong>に集約しました。組込型流通契約を結べない銀行・保険事業者は35歳未満のコホートを失います。新規ユーザーフローにおける銀行レール比率はすでに30%未満[Kira estimates]。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">~70%</span> 新規デジタル金融開設のスーパーアプリ経由比率</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">黒字デジタル銀行は現実</div>
+        <div class="body-text">Cake by VPBankは黒字化、620万顧客を獲得、TPV USD 128億を処理[VPBank 2025]。デジタル銀行は永遠に赤字という神話は本市場では崩壊しました &mdash; <strong>ただし親銀行規模に限り</strong>。スタンドアロン型ネオバンクは既存銀行の資金調達コストに対し依然として過少資本です。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">USD 12.8 bn</span> Cake TPV 2025</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">AIはプロダクトではなくユニットエコノミクスのレバー</div>
+        <div class="body-text">VIB+Trusting Socialは<strong>AIスコアリングでクレジットカード審査を15-30分に短縮</strong>[VIB 2025]。MoMoはthin-fileの与信判断に代替データのMLを投入。AIの短期ROIは不正検知と引受オペレーション費用にあり &mdash; 消費者向けコパイロットではありません。投資回収を軸にユースケースを設計してください。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">+60%</span> QR不正増加がAI需要を牽引</div>
+      </div>
+    </div>
+    <div class="source-key">Allied Mkt 2025 = Allied Market Research Vietnam BNPL Report 2025 &middot; SBV 2025 = State Bank of Vietnam Decree 94/2025/ND-CP &middot; VIB 2025 = Vietnam International Bank Press Release Sep-2025 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 03 &middot; エグゼクティブ・サマリー &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — MACRO DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04 &middot; CHAPTER ONE</div>
+    <h1 class="divider-title">マクロ環境：<span class="accent">ベトナム 2026</span></h1>
+    <p class="divider-thesis"><strong>6.3%成長の経済</strong>、銀行口座保有率87%、スマートフォン普及率84%、そしてインフレ対応で引き締めに動く中央銀行 &mdash; これらはデジタル金融に対する需要のフロアを形成します。資金コストが上昇する局面でも同様です。マクロは制約ではなく乗数です。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">04.1 GDP・インフレ</div>
+      <div class="toc-pill">04.2 普及・政策</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — MACRO P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 &middot; マクロ環境</div>
+      <div class="page-section-counter">007 / 029</div>
+    </div>
+    <h1 class="page-h1">成長・インフレ・需要のフロア</h1>
+    <p class="page-subhead">2025年GDPは8.02%成長[GSO 2026] &mdash; 2007年以来の最速ペース。世界銀行は2026年に6.3%を予測[WB 2025]。インフレは石油輸入圧力を背景に2026年4月に5.46%へ加速[GSO 2026]しましたが、SBVの年4.5%目標内に収まっています。<strong>金利サイクルの逆風はあれど、これは成長経済</strong>であり、景気後退ではありません。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>成長が取引量フロアを支える</h3>
+        <p>サービス業は2025年付加価値成長の49%[GSO 2026]、製造業は46%を寄与しました。一人当たりGDPはUSD 5,026に到達[GSO 2026]。フィンテックにとって重要なのは、<strong>アドレス可能な中間層の財布が拡大している</strong>点です。ドル建て名目一人当たりGDPは8%成長し、金融サービスへの可処分支出ラインを押し上げています。</p>
+        <h3>インフレ圧力が資金調達を逼迫させる</h3>
+        <p>SBVは石油輸入圧力にもかかわらず2026年のインフレ目標4.5%を維持[Reuters/SBV 2026]。預金ベータは上昇する見通しです。<strong>無担保消費者与信のフィンテックがまず資金コスト圧縮に直面</strong>します &mdash; 親銀行の安価な資金を持つ事業者(Cake by VPBank、TPBankのLiveBankスタック)は薄いバランスシートの挑戦者に対し構造的優位を保ちます。</p>
+        <h3>Q1 2026は既に減速</h3>
+        <p>Q1 2026のGDPはQ4 2025の8.46%から7.83%へ減速[GSO 2026]。景気後退領域ではありませんが、金利サイクルの噛みつきは決済量より先に消費者与信需要を直撃することを示唆しています。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">ベトナムGDP成長率+インフレ</div>
+            <div class="chart-subtitle">% 前年比 &middot; 2021-2026F</div>
+          </div>
+          <div class="chart-unit">% YoY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">6</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">9</text>
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="80,165 150,93 220,134 290,107 360,93 430,116"/>
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3" points="80,176 150,158 220,156 290,152 360,156 430,140"/>
+            <circle cx="80" cy="165" r="3.5" fill="#1E6FFF"/>
+            <circle cx="150" cy="93" r="3.5" fill="#1E6FFF"/>
+            <circle cx="220" cy="134" r="3.5" fill="#1E6FFF"/>
+            <circle cx="290" cy="107" r="3.5" fill="#1E6FFF"/>
+            <circle cx="360" cy="93" r="3.5" fill="#1E6FFF"/>
+            <circle cx="430" cy="116" r="3.5" fill="#1E6FFF" opacity="0.55"/>
+            <text class="label-data" x="80"  y="158" text-anchor="middle">2.6</text>
+            <text class="label-data" x="150" y="86"  text-anchor="middle">8.0</text>
+            <text class="label-data" x="220" y="127" text-anchor="middle">5.0</text>
+            <text class="label-data" x="290" y="100" text-anchor="middle">7.1</text>
+            <text class="label-data" x="360" y="86"  text-anchor="middle">8.0</text>
+            <text class="label-data" x="430" y="109" text-anchor="middle">6.3F</text>
+            <text class="axis-text" x="80"  y="218" text-anchor="middle">2021</text>
+            <text class="axis-text" x="150" y="218" text-anchor="middle">2022</text>
+            <text class="axis-text" x="220" y="218" text-anchor="middle">2023</text>
+            <text class="axis-text" x="290" y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="360" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="430" y="218" text-anchor="middle">2026F</text>
+            <rect x="320" y="10" width="12" height="3" fill="#1E6FFF"/>
+            <text class="label-small" x="336" y="14">GDP %</text>
+            <line x1="380" y1="11" x2="392" y2="11" stroke="#D97706" stroke-width="2" stroke-dasharray="3 2"/>
+            <text class="label-small" x="396" y="14">CPI %</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: GSO、世界銀行、KIRA分析 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">GSO 2026 = National Statistics Office Q4-2025 + Q1-2026 Socio-economic Report &middot; Reuters/SBV 2026 = State Bank of Vietnam Governor Statement on 2026 inflation target &middot; WB 2025 = World Bank Vietnam Economic Update Dec-2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 04 &middot; マクロ環境 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — MACRO P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 &middot; マクロ環境 (続)</div>
+      <div class="page-section-counter">008 / 029</div>
+    </div>
+    <h1 class="page-h1">普及・都市化・政策</h1>
+    <p class="page-subhead">インターネットユーザー8,560万人(普及率84.2%)[DataReportal 2026]、スマートフォン利用者7,900万人超(84.4%)[DataReportal 2026]、都市化率41%は2030年には50%を超える見通し[GSO 2025]。パイプは敷設済み &mdash; <strong>今や政策が収益化のルールを定めるフェーズ</strong>です。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>デジタル基盤は完成</h3>
+        <p>成人の87%が銀行口座を保有[SBV 2025] &mdash; 2017年の31%から大幅上昇。2025年の非現金取引金額は<strong>GDPの約28倍</strong>に到達[VnEconomy/SBV 2026]。NAPASは1日あたり3,500-3,600万件を処理[NAPAS 2025]。インフラ指標で見れば、ベトナムはもはや初期段階の決済市場ではありません。</p>
+        <h3>政策のフロア：キャッシュレス義務化</h3>
+        <p>議定書52/2024号(2024年7月発効)は電子マネーを法的に初定義し、金融スイッチング業務の資本要件を<strong>VND 3,000億ドン</strong>に引き上げ[SBV 2024]。議定書94/2025号は2025年7月にサンドボックスを開始[SBV 2025]。決議05/2025号に基づく暗号資産取引パイロットが2026年1月に開始[MoF 2026]。</p>
+        <h3>都市化が次の1,000万人を生む</h3>
+        <p>2030年までの都市化率50%超え[GSO 2025]は、推定1,000-1,200万人の純増都市成人を生みます &mdash; デジタル与信・資産運用商品における最高LTVコホートです。地方プル能力(エージェント網、スーパーアプリのギグドライバーをラストマイルとする)を持つフィンテック事業者が、このフローを先取りします。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">普及スタック：パイプは敷設済み</div>
+            <div class="chart-subtitle">成人人口比 &middot; 2025</div>
+          </div>
+          <div class="chart-unit">% ADULTS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="180" y1="20" x2="180" y2="220"/>
+            <rect class="bar-primary" x="180" y="25" width="252" height="22"/>
+            <text class="label-small" x="175" y="40" text-anchor="end">SMARTPHONE</text>
+            <text class="label-data" x="438" y="40">84.4%</text>
+            <rect class="bar-primary" x="180" y="55" width="252" height="22" opacity="0.92"/>
+            <text class="label-small" x="175" y="70" text-anchor="end">INTERNET</text>
+            <text class="label-data" x="438" y="70">84.2%</text>
+            <rect class="bar-primary" x="180" y="85" width="261" height="22" opacity="0.85"/>
+            <text class="label-small" x="175" y="100" text-anchor="end">BANKED ADULTS</text>
+            <text class="label-data" x="447" y="100">87.0%</text>
+            <rect class="bar-primary" x="180" y="115" width="99" height="22" opacity="0.7"/>
+            <text class="label-small" x="175" y="130" text-anchor="end">E-WALLET ACTIVE</text>
+            <text class="label-data" x="285" y="130">33%</text>
+            <rect class="bar-tertiary" x="180" y="145" width="18" height="22"/>
+            <text class="label-small" x="175" y="160" text-anchor="end">BNPL USER</text>
+            <text class="label-data" x="204" y="160">6%</text>
+            <rect class="bar-tertiary" x="180" y="175" width="18" height="22" opacity="0.7"/>
+            <text class="label-small" x="175" y="190" text-anchor="end">CREDIT CARD</text>
+            <text class="label-data" x="204" y="190">5-6%</text>
+            <line class="grid-line" x1="285" y1="20" x2="285" y2="220"/>
+            <text class="label-small" x="285" y="215" text-anchor="middle">33%</text>
+            <text class="label-small" x="437" y="215" text-anchor="middle">85%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV、DATAREPORTAL、世界銀行FINDEX、KIRA分析 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DataReportal 2026 = DataReportal Digital 2026 Vietnam &middot; GSO 2025 = National Statistics Office Population Projection 2025-2030 &middot; MoF 2026 = Ministry of Finance Decision 96/QD-BTC Jan-2026 &middot; NAPAS 2025 = National Payment Corporation of Vietnam System Report 2025 &middot; SBV 2024 = Decree 52/2024/ND-CP &middot; SBV 2025 = Decree 94/2025/ND-CP &middot; VnEconomy/SBV 2026 = VnEconomy reporting on SBV Payment Department Jan-2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 04 &middot; マクロ環境 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — SECTOR DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05 &middot; CHAPTER TWO</div>
+    <h1 class="divider-title">セクター概観<span class="accent">・市場規模</span></h1>
+    <p class="divider-thesis"><strong>USD 43億規模のフィンテック収益プール</strong>が2031年まで15%成長し、USD 500億超のデジタル決済価値ファネルの内側に位置します。決済はトップラインを支えますが &mdash; <strong>マージンを担うのは与信と資産運用</strong>です。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">05.1 アドレス可能収益</div>
+      <div class="toc-pill">05.2 サブセグメント経済性</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — SECTOR SIZING P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 &middot; セクター概観</div>
+      <div class="page-section-counter">010 / 029</div>
+    </div>
+    <h1 class="page-h1">市場規模と成長：ベトナム・フィンテック</h1>
+    <p class="page-subhead">複数の定義が並存しています。当社の<strong>収益プール視点</strong>(インターチェンジ後の事業者トップライン)では、<strong>2026年USD 43億</strong>、2031年USD 89億へと拡大します[Kira estimates]。広義の<strong>取引価値ファネル</strong> &mdash; 報道で目にする数字 &mdash; はUSD 500億超。両者とも正しく、測っているものが異なるだけです。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>3つのレイヤー、3つの数字</h3>
+        <p><strong>取引価値</strong>(クリアリング総額)が最大で、2026年のデジタル決済価値はUSD ~50億[PwC 2021 + Kira estimates]、2030年にはUSD 60億超に到達。<strong>収益プール</strong>(クリアリング・コスト控除後の事業者トップライン)はその約10% &mdash; USD 43億。<strong>純貢献利益</strong>は収益の約25%。報道は前者を、投資家は後者を価格付けします。</p>
+        <h3>成長配分：決済は安定、与信は加速</h3>
+        <p>決済収益は2031年まで約12% CAGR &mdash; 取引量は増加するもテイクレートは低下。組込与信+BNPL収益はベースが小さいながら約27% CAGRで成長[Kira estimates]。<strong>2029年までに与信が決済の限界ドル貢献を上回る</strong>見通しです。資産運用・投資はテール・ベット &mdash; 高LTVですが立ち上がりは遅いセグメント。</p>
+        <h3>CAGR推計が分かれる理由</h3>
+        <p>公的情報源は定義により15-21% CAGRを引用します。当社は<strong>収益プールについて15% CAGR</strong>、取引価値については約18%でアンカリング。より高いCAGRの数値は通常、グロスフロー成長を計上 &mdash; スーパーアプリが同一の小売ウォレットを媒介することで二重計上が生じるためです。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">フィンテック市場規模 &mdash; 3つのレンズ</div>
+            <div class="chart-subtitle">USD bn &middot; 2026スナップショット</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">15</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">30</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">45</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">60</text>
+            <rect class="bar-primary" x="100" y="68"  width="80" height="132"/>
+            <rect class="bar-secondary" x="220" y="189" width="80" height="11"/>
+            <rect class="bar-tertiary" x="340" y="197" width="80" height="3"/>
+            <text class="label-data" x="140" y="60" text-anchor="middle">50</text>
+            <text class="label-data" x="260" y="184" text-anchor="middle">4.3</text>
+            <text class="label-data" x="380" y="192" text-anchor="middle">1.1</text>
+            <text class="label-small" x="140" y="218" text-anchor="middle">TRX VALUE</text>
+            <text class="label-small" x="260" y="218" text-anchor="middle">REVENUE POOL</text>
+            <text class="label-small" x="380" y="218" text-anchor="middle">CONTRIBUTION</text>
+            <text class="label-small" x="140" y="232" text-anchor="middle">(GROSS FLOWS)</text>
+            <text class="label-small" x="260" y="232" text-anchor="middle">(OPERATOR TOP)</text>
+            <text class="label-small" x="380" y="232" text-anchor="middle">(NET, ~25%)</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV、事業者開示、KIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">PwC 2021 = PwC Vietnam Payments 2025 Outlook &middot; Kira estimates = KIRA in-house analyst triangulation across operator filings + SBV statistics + super-app parent reports</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 05 &middot; セクター概観 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — SECTOR SIZING P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 &middot; セクター概観 (続)</div>
+      <div class="page-section-counter">011 / 029</div>
+    </div>
+    <h1 class="page-h1">サブセグメント軌道 &mdash; 2026</h1>
+    <p class="page-subhead">戦略的読解には5つのサブセグメントが重要です。<strong>取引量は電子ウォレット決済が支配、成長はBNPLと組込与信が牽引</strong>。今日時点で黒字スケールに達しているのはデジタル銀行のみです。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>電子ウォレット決済 &mdash; USD 16億収益プール</h3>
+        <p>フィンテック収益プールの約37%[Kira estimates]。テイクレートは2020年の約120bpsから2026年は60-80bpsへ圧縮 &mdash; スーパーアプリと加盟店が交渉力を獲得したためです。成長は約11% CAGR &mdash; 取引量増が価格低下を相殺します。</p>
+        <h3>BNPL・消費者与信 &mdash; USD 11億</h3>
+        <p>プールの26%。BNPL取引価値は<strong>2025年USD 26億</strong>[Allied Mkt 2025]、2030年まで26.7% CAGR。テイクレートはブレンドで4-7% &mdash; 最大マージンセグメントです。クレジットカード普及率は5-6%のみ[Vietnam Briefing 2025]で、構造的な成長余地が残ります。</p>
+        <h3>デジタル銀行 &mdash; USD 9億</h3>
+        <p>プールの21%。Cake by VPBankが唯一の収益化&規模化済み事業者(TPV USD 128億、620万ユーザー)[VPBank 2025]。Timo・TNEX・Cake合計で約1,000万顧客[Kira estimates]。融資ブックのNIMは3-4%。</p>
+        <h3>資産運用・保険・送金のテール</h3>
+        <p>合計でプールの約16%。資産運用(Finhay、Tikop)とデジタル保険(Igloo、Papaya)はサブスケール。成長率は30%超と高水準ですがベースは小規模です。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2026年収益プール構成</div>
+            <div class="chart-subtitle">合計USD 43億 &middot; 事業者収益シェア</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <rect class="bar-primary" x="40" y="80" width="158" height="40"/>
+            <rect x="198" y="80" width="111" height="40" fill="#1850BF"/>
+            <rect class="bar-secondary" x="309" y="80" width="90" height="40"/>
+            <rect class="bar-tertiary" x="399" y="80" width="61" height="40"/>
+            <text class="label-data" x="119" y="105" text-anchor="middle" fill="#FFFFFF">37%</text>
+            <text class="label-data" x="253" y="105" text-anchor="middle" fill="#FFFFFF">26%</text>
+            <text class="label-data" x="354" y="105" text-anchor="middle" fill="#FFFFFF">21%</text>
+            <text class="label-data" x="429" y="105" text-anchor="middle" fill="#FFFFFF">14%</text>
+            <text class="label-small" x="119" y="140" text-anchor="middle">PAYMENTS</text>
+            <text class="label-small" x="253" y="140" text-anchor="middle">BNPL + CREDIT</text>
+            <text class="label-small" x="354" y="140" text-anchor="middle">DIGITAL BANK</text>
+            <text class="label-small" x="429" y="140" text-anchor="middle">OTHER</text>
+            <text class="label-small" x="119" y="155" text-anchor="middle">USD 1.6 BN</text>
+            <text class="label-small" x="253" y="155" text-anchor="middle">USD 1.1 BN</text>
+            <text class="label-small" x="354" y="155" text-anchor="middle">USD 0.9 BN</text>
+            <text class="label-small" x="429" y="155" text-anchor="middle">USD 0.7 BN</text>
+            <text class="label-small" x="119" y="185" text-anchor="middle" fill="#00A88B">+11% CAGR</text>
+            <text class="label-small" x="253" y="185" text-anchor="middle" fill="#00A88B">+27% CAGR</text>
+            <text class="label-small" x="354" y="185" text-anchor="middle" fill="#00A88B">+19% CAGR</text>
+            <text class="label-small" x="429" y="185" text-anchor="middle" fill="#00A88B">+22% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 事業者開示からのKIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Allied Mkt 2025 = Allied Market Research Vietnam BNPL Outlook 2025 &middot; Vietnam Briefing 2025 = Vietnam Briefing BNPL Market Profile Apr-2025 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 05 &middot; セクター概観 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — SEGMENT ECONOMICS P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 &middot; セグメント経済性</div>
+      <div class="page-section-counter">012 / 029</div>
+    </div>
+    <h1 class="page-h1">セグメント経済性 &mdash; テイクレートとユニットエコノミクス</h1>
+    <p class="page-subhead">利益が実際に発生する場所。テイクレート・顧客獲得コスト・回収期間は5サブセグメント間で一桁単位の幅があり、チャネル集約とともにその差は拡大しています。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>決済 &mdash; 薄利・囲い込みのフライホイール</h3>
+        <p>2026年のブレンドMDRは約60-80bps[Kira estimates] &mdash; 2020年の約120bpsから低下。<strong>CACはアクティブウォレットユーザーあたりUSD 2-4まで減少</strong> &mdash; 上位3社が市場を飽和させたためです。回収期間は約9ヶ月。取引量ゲームは成熟期に入り、収益性は与信・資産運用・保険のアタッチが取れるかに依存します。</p>
+        <h3>BNPL &mdash; 構造的なテイクレートの優位</h3>
+        <p>加盟店割引率はブレンドで<strong>4-7%</strong>[Kira estimates] &mdash; 決済の5-10倍。USD 200未満チケットでの純損失率は3-5%。CACはeコマース決済統合経由でUSD 6-10。引受が機能すれば回収期間は4-7ヶ月です。</p>
+        <h3>デジタル銀行 &mdash; NIM主導</h3>
+        <p>Cake級デジタル銀行：無担保パーソナルローンのNIMは3-4%、手数料収入は売上の約25%[VPBank 2025 + Kira estimates]。<strong>コスト・インカム比は35-45%</strong> &mdash; 店舗を持たないモデルにより伝統的銀行(60-65%)を構造的に下回ります。資金調達コストは既存行のCASAより約150bps高い水準です。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">テイクレートとCAC回収期間</div>
+            <div class="chart-subtitle">2026 &middot; サブセグメント平均</div>
+          </div>
+          <div class="chart-unit">BPS / MONTHS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">200</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">400</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">600</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">800</text>
+            <rect class="bar-primary" x="70"  y="186" width="50" height="14"/>
+            <rect class="bar-primary" x="150" y="90"  width="50" height="110"/>
+            <rect class="bar-primary" x="230" y="130" width="50" height="70"/>
+            <rect class="bar-primary" x="310" y="184" width="50" height="16"/>
+            <rect class="bar-primary" x="390" y="160" width="50" height="40"/>
+            <text class="label-data" x="95"  y="180" text-anchor="middle">70</text>
+            <text class="label-data" x="175" y="84"  text-anchor="middle">550</text>
+            <text class="label-data" x="255" y="124" text-anchor="middle">350</text>
+            <text class="label-data" x="335" y="178" text-anchor="middle">80</text>
+            <text class="label-data" x="415" y="154" text-anchor="middle">200</text>
+            <text class="label-small" x="95"  y="218" text-anchor="middle">PAYMENTS</text>
+            <text class="label-small" x="175" y="218" text-anchor="middle">BNPL</text>
+            <text class="label-small" x="255" y="218" text-anchor="middle">DIGITAL BANK</text>
+            <text class="label-small" x="335" y="218" text-anchor="middle">WEALTH</text>
+            <text class="label-small" x="415" y="218" text-anchor="middle">REMITTANCE</text>
+            <text class="label-small" x="95"  y="232" text-anchor="middle">9 MO</text>
+            <text class="label-small" x="175" y="232" text-anchor="middle">5 MO</text>
+            <text class="label-small" x="255" y="232" text-anchor="middle">14 MO</text>
+            <text class="label-small" x="335" y="232" text-anchor="middle">18 MO</text>
+            <text class="label-small" x="415" y="232" text-anchor="middle">11 MO</text>
+            <text class="label-small" x="40" y="15">TAKE-RATE BPS &middot; PAYBACK BELOW</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 事業者開示、KIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation across operator filings and channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 06 &middot; セグメント経済性 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — SEGMENT ECONOMICS P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 &middot; セグメント経済性 (続)</div>
+      <div class="page-section-counter">013 / 029</div>
+    </div>
+    <h1 class="page-h1">マージンが実際に複利化する場所</h1>
+    <p class="page-subhead">CAC USD 3で獲得したウォレットは決済のみで9ヶ月で投資回収します。<strong>与信プロダクトをアタッチすれば、生涯貢献は6-9倍に上昇</strong>し、追加CACはほぼ不要。これが2026-2031年の主要事業者テーゼの核心です。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>アタッチの算術</h3>
+        <p>単独ウォレットユーザー：3年貢献約USD 12(決済のみ)[Kira estimates]。ウォレット+BNPLアタッチ：約USD 70-90。ウォレット+BNPL+デジタル銀行預金：約USD 110-140。<strong>資本価値はクロスセルにあり、獲得そのものにはない。</strong></p>
+        <h3>NPLが弱気シナリオ</h3>
+        <p>消費者信用のNPL比率はQ3 2024に<strong>9.6%</strong>に達しました[SBV/VIR 2024] &mdash; 無担保消費者与信に集中。銀行システム全体のNPLは2025年3月で5.3%[IMF Art IV 2025]。サブプライム・エクスポージャー(BNPLのボトムチケット、P2P)を抱えるフィンテックは、サイクル転換時に最初に打撃を受けます。</p>
+        <h3>スーパーアプリ・チャネル税</h3>
+        <p>Shopee / Grab経由で配信されるBNPLは、スーパーアプリに約30-40%の収益シェアを還流させます[Kira estimates]。独立系BNPL事業者(Fundiin、Kredivo)はより多くの経済性を確保しますが、CACはUSD 12-18を支払う必要があります。<strong>このトレードオフは構造的</strong> &mdash; 両軸を制する事業者は存在しません。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">アタッチ別3年貢献</div>
+            <div class="chart-subtitle">ウォレットユーザーあたりUSD &middot; 2026年コホート</div>
+          </div>
+          <div class="chart-unit">USD</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">40</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">80</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">120</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">160</text>
+            <rect class="bar-primary" x="80"  y="188" width="50" height="12" opacity="0.5"/>
+            <rect class="bar-primary" x="155" y="165" width="50" height="35" opacity="0.65"/>
+            <rect class="bar-primary" x="230" y="120" width="50" height="80" opacity="0.8"/>
+            <rect class="bar-primary" x="305" y="76"  width="50" height="124"/>
+            <rect class="bar-primary" x="380" y="51"  width="50" height="149" opacity="0.85"/>
+            <text class="label-data" x="105" y="182" text-anchor="middle">$12</text>
+            <text class="label-data" x="180" y="159" text-anchor="middle">$35</text>
+            <text class="label-data" x="255" y="114" text-anchor="middle">$80</text>
+            <text class="label-data" x="330" y="70"  text-anchor="middle">$125</text>
+            <text class="label-data" x="405" y="45"  text-anchor="middle">$150</text>
+            <text class="label-small" x="105" y="218" text-anchor="middle">PAY ONLY</text>
+            <text class="label-small" x="180" y="218" text-anchor="middle">+ BILL PAY</text>
+            <text class="label-small" x="255" y="218" text-anchor="middle">+ BNPL</text>
+            <text class="label-small" x="330" y="218" text-anchor="middle">+ DEPOSIT</text>
+            <text class="label-small" x="405" y="218" text-anchor="middle">+ WEALTH</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 事業者経済性からのKIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">IMF Art IV 2025 = IMF Vietnam 2025 Article IV Consultation Staff Report &middot; SBV/VIR 2024 = State Bank of Vietnam consumer credit data via VIR Sep-2024 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 06 &middot; セグメント経済性 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — COMPETITIVE DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07 &middot; CHAPTER THREE</div>
+    <h1 class="divider-title">競合<span class="accent">状況</span></h1>
+    <p class="divider-thesis"><strong>3社ウォレット寡占 &middot; 1つの黒字デジタル銀行 &middot; チャネル仲介者としての2つのスーパーアプリ。</strong>市場は構造的に集約化が進行 &mdash; 規制が強制しているのではなく、アタッチ経済性が規模に有利だからです。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">07.1 市場構造</div>
+      <div class="toc-pill">07.2 上位4事業者</div>
+      <div class="toc-pill">07.3 詳細プロファイル</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 — COMPETITIVE STRUCTURE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; 競合構造</div>
+      <div class="page-section-counter">015 / 029</div>
+    </div>
+    <h1 class="page-h1">市場構造：スーパーアプリ層を被るウォレット寡占</h1>
+    <p class="page-subhead">上位3ウォレットが合計<strong>約88%のシェア</strong>を保有[Kira estimates]。電子ウォレットのHHIは約3,400[Kira estimates] &mdash; 「高度集約」領域に明確に位置します。Grab・Shopeeのスーパーアプリはチャネル仲介者として一層上に位置し、組込金融取引量の30-40%を収益シェアとして取得しています。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">電子ウォレットシェア &middot; 2025</div>
+            <div class="chart-subtitle">アクティブ電子ウォレット利用者比率</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 180" preserveAspectRatio="xMidYMid meet">
+            <rect x="40" y="55" width="235" height="40" fill="#1E6FFF"/>
+            <rect x="275" y="55" width="71"  height="40" fill="#1850BF"/>
+            <rect x="346" y="55" width="63"  height="40" fill="#00A88B"/>
+            <rect x="409" y="55" width="34"  height="40" fill="#D97706"/>
+            <rect x="443" y="55" width="17"  height="40" fill="#6B7280"/>
+            <text class="label-data" x="158" y="80" text-anchor="middle" fill="#FFFFFF">MoMo 56%</text>
+            <text class="label-data" x="310" y="80" text-anchor="middle" fill="#FFFFFF">17%</text>
+            <text class="label-data" x="377" y="80" text-anchor="middle" fill="#FFFFFF">15%</text>
+            <text class="label-data" x="426" y="80" text-anchor="middle" fill="#FFFFFF">8%</text>
+            <text class="label-small" x="310" y="115" text-anchor="middle">ZALOPAY</text>
+            <text class="label-small" x="377" y="115" text-anchor="middle">VNPAY</text>
+            <text class="label-small" x="426" y="115" text-anchor="middle">SHOPEEPAY</text>
+            <text class="label-small" x="451" y="115" text-anchor="middle">OTHER</text>
+            <text class="label-small" x="40" y="40">SOURCE: CIMIGO 2024、事業者開示、KIRA三角測量</text>
+            <line class="axis-line" x1="40" y1="135" x2="460" y2="135"/>
+            <text class="label-small" x="40" y="155">HHI指数(電子ウォレット): 約3,400 &middot; 上位5社シェア: 約96% &middot; Herfindahlは「高度集約」領域</text>
+            <text class="label-small" x="40" y="170">[Kira estimates &middot; 上記アクティブ利用者シェアから算出]</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>構造が示すもの</h3>
+        <p>HHI約3,400は「高度集約」閾値2,500を大きく上回ります。<strong>サブスケール・ウォレットに残る12%シェアは構造的に不採算</strong>です &mdash; サブスケール事業者は薄い決済テイクレートを補うアタッチ商品を支える原資を持てません。</p>
+        <p>Mocaの2024年ウォレット市場撤退[VietData 2025]はカナリアです。2027年までにあと2-3件のサブスケール撤退または買収が想定されます。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>アクティブウォレット 2025</span><span class="val">~5,000-6,000万</span></div>
+          <div class="stat-line"><span>上位3社シェア</span><span class="val">~88%</span></div>
+          <div class="stat-line"><span>サブスケール撤退 2024-2026F</span><span class="val">2-4件</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">MoMo (M_Service)</div>
+        <div class="comp-parent">Warburg Pincus、Goodwater、Affirmaが出資</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">~56%</span></div>
+        <div class="comp-stat-row"><span>アクティブユーザー</span><span class="val">3,100万+</span></div>
+        <div class="comp-strengths"><strong>加盟店の広さ。</strong>50,000社超のパートナー。最強の請求支払フライホイール。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">ZaloPay</div>
+        <div class="comp-parent">VNG Corporation (HOSE: VNZ)</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">~17%</span></div>
+        <div class="comp-stat-row"><span>ユーザー</span><span class="val">2,100万</span></div>
+        <div class="comp-strengths"><strong>ソーシャルグラフ。</strong>Zalo 1億MAU超との統合。2025年売上+47%。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">VNPay</div>
+        <div class="comp-parent">VNLife &middot; 銀行レール事業者</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">~15%</span></div>
+        <div class="comp-stat-row"><span>銀行パートナー</span><span class="val">40社+</span></div>
+        <div class="comp-strengths"><strong>銀行統合。</strong>主要小売銀行アプリ全般にQRレールを展開。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">Cake by VPBank</div>
+        <div class="comp-parent">VPBank (HOSE: VPB) デジタル銀行</div>
+        <div class="comp-stat-row"><span>顧客</span><span class="val">620万</span></div>
+        <div class="comp-stat-row"><span>TPV 2025</span><span class="val">USD 128億</span></div>
+        <div class="comp-strengths"><strong>唯一の黒字デジタル銀行。</strong>VPBankの資金コスト優位。</div>
+      </div>
+    </div>
+    <div class="source-key">Cimigo 2024 = Cimigo Vietnam E-Wallet Consumer Survey 2024 &middot; VietData 2025 = Vietdata Moca Exit Market Analysis 2025 &middot; VNG AR 2026 = VNG Corporation Annual Report 2025 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; 競合構造 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 — PROFILE 1: MOMO ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; 事業者プロファイル 01</div>
+      <div class="page-section-counter">016 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>MoMo (M_Service)</h2>
+        <div class="sub">ベトナムのスーパーアプリ・ウォレットリーダー。Warburg Pincus、Goodwater、Affirmaが出資。直近の資金調達は2021年のSeries E、USD 2億。</div>
+        <div class="tags">
+          <span class="data-tag">WALLET</span>
+          <span class="data-tag">SUPER-APP</span>
+          <span class="data-tag">BNPL</span>
+          <span class="data-tag">CREDIT SCORING</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">電子ウォレットシェア</div><div class="val">~56<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">アクティブユーザー</div><div class="val">31<span class="unit">M+</span></div></div>
+        <div class="stat"><div class="label">売上 2022</div><div class="val">VND 8.5<span class="unit">TN</span></div></div>
+        <div class="stat"><div class="label">利用頻度</div><div class="val">4.2<span class="unit">x/週</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>最深の加盟店網(50,000社超)を持つ支配的ウォレット事業者。MoMoのフライホイール：<strong>請求支払規模が日次アクティブ行動を駆動し</strong>、日次アクティブがウォレットチャージへ、チャージが与信アタッチへつながります。週4.2回の利用頻度[Cimigo 2024]は競合がまだ複製できていない指標です。</p>
+        <h3>直近の動き</h3>
+        <ul>
+          <li><strong>2024:</strong> Grab決済と統合した「Vi Tra Sau」BNPL後払商品を投入。</li>
+          <li><strong>2025:</strong> 代替データ(請求支払履歴、取引グラフ)上のAI与信スコアリングを深化 &mdash; thin-file承認を狙う。</li>
+          <li><strong>2025-2026:</strong> SBV規制サンドボックスでアクティブ(eKYC、与信スコアリング・ストリーム)。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>注視すべき視点</h3>
+        <p>3つの軸。<strong>(1) 与信アタッチ率</strong> &mdash; BNPL/ローン・アタッチをアクティブウォレットの25%超に動かせば、スケールでの非銀行貸し手化が実現。<strong>(2) IPOタイミング</strong> &mdash; 投資家は2026-2027年の上場ウィンドウを予想。<strong>(3) Grabとの競合協調</strong> &mdash; 2023年の決済統合契約は配車をコモディティ化させましたが、Grab自身のスーパーアプリ金融サービス展開は同じウォレットを巡り競合します。</p>
+        <h3>戦略的示唆</h3>
+        <p>競合事業者にとって：<strong>決済取引量の直接競合は終了</strong>。実行可能な角度は(a)特定領域の深さ(B2B決済、政府)、(b)銀行レール提携(VNPayが保有)、または(c)MoMoがロックインしていないスーパーアプリ経由の組込流通です。</p>
+      </div>
+    </div>
+    <div class="source-key">Cimigo 2024 = Cimigo Connected Consumer Vietnam 2024 &middot; M_Service 2022 = M_Service Joint Stock Company financial disclosure 2022 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Profile 01 of 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 — PROFILE 2: ZALOPAY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; 事業者プロファイル 02</div>
+      <div class="page-section-counter">017 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>ZaloPay</h2>
+        <div class="sub">VNG Corporation (HOSE: VNZ) の電子ウォレット。Zaloメッセンジャーのグラフ(1億MAU超)上に構築。2025年はVNGが初めてセグメントレベルの売上を開示した年。</div>
+        <div class="tags">
+          <span class="data-tag">WALLET</span>
+          <span class="data-tag">SOCIAL GRAPH</span>
+          <span class="data-tag">EMBEDDED</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">電子ウォレットシェア</div><div class="val">~17<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">ユーザー</div><div class="val">21<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">売上 2025</div><div class="val">VND 1.11<span class="unit">TN</span></div></div>
+        <div class="stat"><div class="label">売上成長</div><div class="val">+47<span class="unit">% YoY</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>ソーシャルグラフのウォレット。ZaloPayの構造的優位は<strong>1億MAU超のZaloメッセンジャー</strong> &mdash; ベトナム消費者テックにおける最大の囲い込み流通面です。2025年実績：売上VND 1,111億ドン(+47%)、TPV +76%[VNG AR 2026]。金融サービス売上ラインはVNG開示によると413%成長見込み &mdash; グループ内最速のサブセグメントです。</p>
+        <h3>直近の動き</h3>
+        <ul>
+          <li><strong>2024:</strong> VNGフィンテック子会社と融資プロダクト統合;消費者与信引受パイロット。</li>
+          <li><strong>2025:</strong> VNGはグループ損失をUSD 1,240万まで縮小 &mdash; ZaloPayの転換への貢献は実質的[VNG AR 2026]。</li>
+          <li><strong>2025-2026:</strong> 域内スーパーアプリとのクロスボーダー送金パイロット。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>注視すべき視点</h3>
+        <p><strong>(1) 黒字化への道筋</strong>(ZaloPayセグメントレベル) &mdash; VNGはスタンドアロン営業利益を未開示。<strong>(2) 融資経済性</strong> &mdash; ソーシャルグラフ・シグナルが引受で真に優位を発揮するのか、それともCAC削減に留まるのか。<strong>(3) Zaloミニアプリ・エコシステム</strong> &mdash; WeChatミニプログラム相当 &mdash; ミニアプリが加盟店ロックインを駆動すれば非対称な上振れ余地。</p>
+        <h3>戦略的示唆</h3>
+        <p>ZaloPayはMoMoに対する最も信頼性の高い遠位2位であり、MoMoが持たない唯一のネットワーク効果チャネルを保有します。<strong>参入者プレイブック：競合ではなくZaloPayと提携</strong> &mdash; 特にZaloPayが自社で筋肉を構築していない組込金融バーティカル(保険、マイクロ投資)で。</p>
+      </div>
+    </div>
+    <div class="source-key">VNG AR 2026 = VNG Corporation Annual Report FY2025 published 2026 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Profile 02 of 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 — PROFILE 3: VNPAY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; 事業者プロファイル 03</div>
+      <div class="page-section-counter">018 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>VNPay</h2>
+        <div class="sub">VNLife傘下で運営。40社超のベトナム商業銀行アプリ全般のQRコード決済受入を支える銀行レール決済インフラ。2021年にデカコーン・ラウンド(USD 2.5億、Softbank Vision Fund)。</div>
+        <div class="tags">
+          <span class="data-tag">BANK RAILS</span>
+          <span class="data-tag">QR INFRA</span>
+          <span class="data-tag">MERCHANT</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">電子ウォレットシェア</div><div class="val">~15<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">銀行パートナー</div><div class="val">40<span class="unit">+</span></div></div>
+        <div class="stat"><div class="label">加盟店POS</div><div class="val">~150<span class="unit">K</span></div></div>
+        <div class="stat"><div class="label">資金調達</div><div class="val">USD 250<span class="unit">M</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>第三極 &mdash; そして銀行インフラと競合せずその内部に組み込まれている唯一の上位3事業者。VNPay-QRは主要小売銀行アプリの加盟店決済フローを支えるレールです。<strong>これによりVNPayは構造的に相互運用可能</strong>な存在 &mdash; MoMoやZaloPayが閉ループであるのに対し。電子ウォレットシェアが侵食されても、銀行レールのポジションは防御可能です。</p>
+        <h3>直近の動き</h3>
+        <ul>
+          <li><strong>2024-2025:</strong> 加盟店アクワイアリングのフットプリント拡大;SME決済受入オファリングを深化。</li>
+          <li><strong>2025:</strong> レール全体のQR取引価値は前年比+141%成長(システム全体)[SBV 2026] &mdash; VNPayは銀行側受入の不釣り合いに大きなシェアを獲得。</li>
+          <li><strong>2025-2026:</strong> タイのPromptPay、カンボジアのKHQRとのクロスボーダーQR相互運用パイロット。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>注視すべき視点</h3>
+        <p><strong>(1) IPO/エグジット時期</strong> &mdash; Softbankのエグジット圧力が高まる。<strong>(2) D2Cプッシュ</strong> &mdash; VNPayのアプリは消費者面でMoMoとZaloPayに遅れ;持続的フランチャイズはSMEアクワイアリングです。<strong>(3) NAPASとの重複リスク</strong> &mdash; 国家決済クリアリング機関がVNPayのインターチェンジを圧縮し得るサービスを拡大しています。</p>
+        <h3>戦略的示唆</h3>
+        <p>銀行にとって：<strong>VNPayはデジタル決済受入で最も摩擦の低いパートナー</strong> &mdash; 銀行側統合が既に深い。フィンテック参入者にとって：VNPayのSMEアクワイアリング・スタックは競合ではなくパートナー &mdash; 消費者側ウォレットを補完する存在です。</p>
+      </div>
+    </div>
+    <div class="source-key">SBV 2026 = State Bank of Vietnam Payment Department Statistics Jan-2026 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Profile 03 of 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 — PROFILE 4: CAKE BY VPBANK ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; 事業者プロファイル 04</div>
+      <div class="page-section-counter">019 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Cake by VPBank</h2>
+        <div class="sub">2021年にBe GroupとVPBank (HOSE: VPB) によって設立されたデジタル銀行。The Asian Bankerより2025年ベトナム最優秀デジタル銀行に選出。ベトナム初の黒字化デジタル専業銀行。</div>
+        <div class="tags">
+          <span class="data-tag">DIGITAL BANK</span>
+          <span class="data-tag">PROFITABLE</span>
+          <span class="data-tag">UNSECURED LENDING</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">顧客数</div><div class="val">6.2<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">TPV 2025</div><div class="val">USD 12.8<span class="unit">BN</span></div></div>
+        <div class="stat"><div class="label">9M 2025収入</div><div class="val">+225<span class="unit">% YoY</span></div></div>
+        <div class="stat"><div class="label">与信申込</div><div class="val">1<span class="unit">M/月</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>ベトナムにおけるデジタル銀行のリファレンスケース：<strong>親銀行の資金コスト優位による先行黒字化</strong>。VPBankの預金+無担保消費者与信のDNA。Q3 2025の利益は前年比4倍、9M 2025の総収入は+225%、営業費用+83% &mdash; オペレーティングレバレッジは構造的[VPBank 2025]。月間100万件超の与信申込を処理しています。</p>
+        <h3>直近の動き</h3>
+        <ul>
+          <li><strong>2024-2025:</strong> 無担保パーソナルローン帳簿でのAI主導引受を深化;保険流通へ拡大。</li>
+          <li><strong>2025:</strong> ベトナム最優秀デジタル銀行賞(The Asian Banker);世界トップ100デジタル銀行(TAB Global)。</li>
+          <li><strong>2025-2026:</strong> スーパーアプリおよびeコマースプラットフォームとの組込金融提携をパイロット。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>注視すべき視点</h3>
+        <p><strong>(1) スタンドアロン利益開示</strong> &mdash; VPBankはCakeを連結しており、粒度の高いスタンドアロンP&amp;Lがあれば、ユニットエコノミクスが再現可能かVPBank由来かが判別できる。<strong>(2) NPL軌道</strong> &mdash; 消費者サイクル引き締め下での急速な融資成長はリスク。銀行システムの消費者与信NPLはQ3 2024で9.6%[SBV/VIR 2024]。<strong>(3) 模倣事業者</strong> &mdash; Timo、TNEX、MB主導のMB JuniorBankが規模化中も収益では後塵を拝する。</p>
+        <h3>戦略的示唆</h3>
+        <p>非銀行系フィンテックにとって：<strong>親銀行の後ろ盾はデジタル銀行黒字化の構造的な堀</strong>。スタンドアロン・ネオバンクの挑戦者は、ライセンス/チャーター取得かスポンサー銀行との提携を要する。既存事業者にとって：Cakeのプレイブック(サブブランド、独立スタック、親資金の共有)は現在市場で最も複製可能なデジタルモデルです。</p>
+      </div>
+    </div>
+    <div class="source-key">SBV/VIR 2024 = State Bank consumer credit NPL data via VIR Sep-2024 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake digital bank segment &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Profile 04 of 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 — DEMAND DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08 &middot; CHAPTER FOUR</div>
+    <h1 class="divider-title">需要要因<span class="accent">とチャネル</span></h1>
+    <p class="divider-thesis"><strong>QRが接面、スーパーアプリがチャネル。</strong>9M 2025で180億件の非現金取引、QR単独で金額が前年比+141%。顧客獲得層は新規消費者金融フローの過半を媒介する3つのスーパーアプリに集約されました。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">08.1 決済量エンジン</div>
+      <div class="toc-pill">08.2 チャネルミックスの変遷</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 — DEMAND P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 &middot; 需要・チャネル</div>
+      <div class="page-section-counter">021 / 029</div>
+    </div>
+    <h1 class="page-h1">チャネルミックス：QR主導、スーパーアプリ媒介</h1>
+    <p class="page-subhead">非現金取引は<strong>2025年最初の9ヶ月で180億件</strong>に到達[SBV 2025]、総額はVND 260千兆ドン(クリアリングベースで約USD 100億)。QR単独で件数+54%、<strong>金額+141%</strong>[SBV 2026]。チャネルミックスは反転 &mdash; デジタルはもはや補助ではなく主軸レールです。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>デフォルト消費者接面としてのQR</h3>
+        <p>QR決済は今や対面非現金決済の支配的接面です。5年平均成長：<strong>2021-2025年で件数+106%、金額+128%/年</strong>[SBV 2026]。NAPASは1日平均3,500-3,600万件をクリア[NAPAS 2025]。MoMo、ZaloPay、VNPayのモバイルマネー・レールがその上に乗っています。</p>
+        <h3>スーパーアプリ・チャネルの集中</h3>
+        <p>Grab、Shopee、そして(国内では)MoMo自身のスーパーアプリ面が、<strong>顧客獲得チャネルを3つの仲介者に集約</strong>させました。組込金融 &mdash; BNPL、マイクロ保険、組込融資 &mdash; はこれらの面を経由します。35歳未満コホートにおける銀行直接獲得はデジタル金融新規開設の30%未満まで低下[Kira estimates]。</p>
+        <h3>インターネット・モバイルも依然成長</h3>
+        <p>インターネット・チャネル取引件数+52.9%[SBV 2026];モバイル+36.5%;QR +54.5%。直交する成長シグナル：<strong>顧客は複数チャネルを同時併用</strong>しており、片方からもう片方へ移行しているわけではありません。クロスチャネル・リーチを持つ事業者(Cake、MoMo)が利得し、単一チャネル・アプリ(初期世代ウォレット)はシェアを失います。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">非現金取引成長 2025</div>
+            <div class="chart-subtitle">前年比 &middot; 11ヶ月データ &middot; チャネル別</div>
+          </div>
+          <div class="chart-unit">% YoY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="160" y1="20" x2="160" y2="220"/>
+            <rect class="bar-primary" x="160" y="30"  width="282" height="18"/>
+            <rect class="bar-secondary" x="160" y="52" width="108" height="18"/>
+            <text class="label-small" x="155" y="44" text-anchor="end">QR</text>
+            <text class="label-data" x="448" y="44">+141% VAL</text>
+            <text class="label-data" x="274" y="66">+54% VOL</text>
+            <rect class="bar-primary" x="160" y="90"  width="72" height="18" opacity="0.85"/>
+            <rect class="bar-secondary" x="160" y="112" width="106" height="18" opacity="0.85"/>
+            <text class="label-small" x="155" y="104" text-anchor="end">INTERNET</text>
+            <text class="label-data" x="238" y="104">+36% VAL</text>
+            <text class="label-data" x="272" y="126">+53% VOL</text>
+            <rect class="bar-primary" x="160" y="150" width="42" height="18" opacity="0.7"/>
+            <rect class="bar-secondary" x="160" y="172" width="74" height="18" opacity="0.7"/>
+            <text class="label-small" x="155" y="164" text-anchor="end">MOBILE</text>
+            <text class="label-data" x="208" y="164">+21% VAL</text>
+            <text class="label-data" x="240" y="186">+37% VOL</text>
+            <line class="grid-line" x1="160" y1="20" x2="160" y2="220"/>
+            <text class="label-small" x="160" y="232" text-anchor="middle">0</text>
+            <text class="label-small" x="442" y="232" text-anchor="middle">+150%</text>
+            <rect class="bar-primary" x="20" y="200" width="12" height="6"/>
+            <text class="label-small" x="36" y="206">VALUE</text>
+            <rect class="bar-secondary" x="80" y="200" width="12" height="6"/>
+            <text class="label-small" x="96" y="206">VOLUME</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV決済局2026年1月統計 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NAPAS 2025 = NAPAS System Report Q4-2025 &middot; SBV 2025 = State Bank of Vietnam Payment Department Sep-2025 statistics &middot; SBV 2026 = SBV Payment Department Jan-2026 statistical bulletin &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 08 &middot; 需要・チャネル &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 22 — DEMAND P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 &middot; 需要・チャネル (続)</div>
+      <div class="page-section-counter">022 / 029</div>
+    </div>
+    <h1 class="page-h1">チャネル・マージン・ウォーターフォール：誰がベーシスポイントを残すか</h1>
+    <p class="page-subhead">USD 100のBNPL取引。誰がマージンを保持し、誰がチャネル税を払うか。<strong>スーパーアプリと加盟店が組込BNPLにおける事業者側経済性の約60%を合計で取得</strong>している今日の構図 &mdash; ウォレット事業者が直接加盟店アタッチを推進する構造的理由です。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>100ドルの解剖</h3>
+        <p>MDR 5%のUSD 100 BNPL取引で：<strong>USD 5のグロステイク</strong>。純損失引当(ボトムチケットで約3%)、処理コスト、スーパーアプリ・チャネル税を控除すると、BNPL事業者の手取りは約USD 1.5-1.8[Kira estimates]。これが貢献額 &mdash; CAC償却および営業費用控除前の数値です。</p>
+        <h3>直接加盟店アタッチが重要な理由</h3>
+        <p>BNPL事業者が直接化(加盟店統合、スーパーアプリ仲介なし)すれば、同一取引のさらにUSD 1.5-2を確保できます。<strong>CACトレードオフ</strong>：直接CACはスーパーアプリ・チャネルCACの3-4倍。加盟店側需要を駆動できるブランド吸引力を持つ事業者でのみ計算が合います &mdash; 今日それはMoMoと挑戦者1-2社のみ。</p>
+        <h3>クロスボーダー送金：薄利ながら成長中</h3>
+        <p>ベトナム向け送金は年間約USD 140億[WB 2025]。デジタル・チャネル(従来MTO対比)は今やフローの約40%[Kira estimates]。テイクレートは4-5%からデジタルレールで1.5-2%まで圧縮。フィンテックにとってのマージン領域は、受領側のウォレット残高への変換にあり、コリドーそのものではありません。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">BNPLマージン・ウォーターフォール</div>
+            <div class="chart-subtitle">USD 100 BNPL取引 &middot; スーパーアプリ・チャネル・シナリオ</div>
+          </div>
+          <div class="chart-unit">USD</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">1</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">2</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">5</text>
+            <rect class="bar-primary" x="60"  y="44"  width="50" height="156"/>
+            <rect class="bar-tertiary" x="130" y="44"  width="50" height="20"/>
+            <rect class="bar-tertiary" x="200" y="64"  width="50" height="120"/>
+            <rect class="bar-tertiary" x="270" y="184" width="50" height="28"/>
+            <rect class="bar-tertiary" x="340" y="212" width="50" height="20"/>
+            <rect class="bar-secondary" x="410" y="132" width="40" height="68"/>
+            <text class="label-data" x="85"  y="38"  text-anchor="middle">+$5.0</text>
+            <text class="label-data" x="155" y="58"  text-anchor="middle">-$0.5</text>
+            <text class="label-data" x="225" y="58"  text-anchor="middle">-$3.0</text>
+            <text class="label-data" x="295" y="178" text-anchor="middle">-$0.7</text>
+            <text class="label-data" x="365" y="208" text-anchor="middle">-$0.5</text>
+            <text class="label-data" x="430" y="126" text-anchor="middle">+$1.7</text>
+            <text class="label-small" x="85"  y="218" text-anchor="middle">GROSS</text>
+            <text class="label-small" x="155" y="218" text-anchor="middle">MERCH</text>
+            <text class="label-small" x="225" y="218" text-anchor="middle">CREDIT LOSS</text>
+            <text class="label-small" x="295" y="218" text-anchor="middle">SUPER-APP</text>
+            <text class="label-small" x="365" y="218" text-anchor="middle">PROCESS</text>
+            <text class="label-small" x="430" y="218" text-anchor="middle">NET</text>
+            <text class="label-small" x="85"  y="232" text-anchor="middle">TAKE</text>
+            <text class="label-small" x="155" y="232" text-anchor="middle">SHARE</text>
+            <text class="label-small" x="225" y="232" text-anchor="middle">PROVISION</text>
+            <text class="label-small" x="295" y="232" text-anchor="middle">FEE</text>
+            <text class="label-small" x="365" y="232" text-anchor="middle">COST</text>
+            <text class="label-small" x="430" y="232" text-anchor="middle">MARGIN</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 事業者経済性からのKIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">WB 2025 = World Bank Migration and Development Brief 2025 (remittance corridor data) &middot; Kira estimates = KIRA in-house analyst triangulation across BNPL operator filings, super-app contract terms, and merchant-side channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 08 &middot; 需要・チャネル &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 23 — REGULATORY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 &middot; 規制環境</div>
+      <div class="page-section-counter">023 / 029</div>
+    </div>
+    <h1 class="page-h1">規制・政策環境</h1>
+    <p class="page-subhead">2つの議定書が規制転換点を定義します。<strong>議定書52/2024号</strong>が2024年7月に電子マネーに初の法的定義を付与。<strong>議定書94/2025号</strong>が2025年7月にフィンテック規制サンドボックスを開始。暗号資産パイロットは2026年1月開始。SBVが第一級アクター &mdash; <strong>事業者のあらゆる戦略的動きは今やハノイを通過</strong>します。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>議定書52/2024号 &mdash; 電子マネーが法的概念に</h3>
+        <p>議定書101/2012号を置換(2024年7月発効)[SBV 2024]。電子マネーを「銀行または決済サービス機関の前払残高経由で電子的に保管されたVND相当価値」と定義。電子ウォレットおよびプリペイドカードの発行を銀行および認可事業体のみに限定。<strong>金融スイッチング資本要件をVND 3,000億ドンに引き上げ</strong> &mdash; 従来の6倍 &mdash; 新規決済クリアリング参入者に対し実質的なスケール下限を設定しました。</p>
+        <h3>議定書94/2025号 &mdash; サンドボックスが実験を解放</h3>
+        <p>2025年7月1日発効[SBV 2025]。2年間(延長可能)の規制当局監督下テスト・ウィンドウ：<strong>与信スコアリング、Open API、P2P融資、eKYC、デジタル融資</strong>が対象。適格要件：100%ベトナム所有、IT基盤の国内設置、経営陣のバックグラウンド・チェック。承認参加者コホートは少数 &mdash; 選定自体が競争シグナルとなります。</p>
+        <h3>暗号資産：グレーゾーンからパイロットへ</h3>
+        <p>決議05/2025号+決定96/QD-BTC号(2026年1月)が暗号資産取引サービスのパイロット行政枠組みを開始[MoF 2026]。パイロット &mdash; 包括的合法化ではありません。フィンテック事業者への含意：<strong>認可暗号資産取引事業体との提携が今後18ヶ月を形作る公算</strong>;直接的な暗号資産活動は依然パイロット参加が必要です。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">規制タイムライン 2022-2027</div>
+            <div class="chart-subtitle">主要フィンテック政策アクション &middot; ベトナム</div>
+          </div>
+          <div class="chart-unit">SBV / MoF</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line stroke="#1E6FFF" stroke-width="2" x1="40" y1="130" x2="460" y2="130"/>
+            <circle cx="60" cy="130" r="4" fill="#6B7280"/>
+            <circle cx="140" cy="130" r="4" fill="#6B7280"/>
+            <circle cx="220" cy="130" r="6" fill="#1E6FFF"/>
+            <circle cx="300" cy="130" r="6" fill="#1E6FFF"/>
+            <circle cx="380" cy="130" r="6" fill="#D97706"/>
+            <circle cx="460" cy="130" r="4" fill="#6B7280"/>
+            <text class="label-small" x="60"  y="155" text-anchor="middle">2022</text>
+            <text class="label-small" x="140" y="155" text-anchor="middle">2023</text>
+            <text class="label-small" x="220" y="155" text-anchor="middle">2024</text>
+            <text class="label-small" x="300" y="155" text-anchor="middle">2025</text>
+            <text class="label-small" x="380" y="155" text-anchor="middle">2026</text>
+            <text class="label-small" x="460" y="155" text-anchor="middle">2027</text>
+            <text class="label-data" x="220" y="100" text-anchor="middle">DECREE 52</text>
+            <text class="label-small" x="220" y="115" text-anchor="middle">電子マネー法的定義</text>
+            <text class="label-small" x="220" y="60" text-anchor="middle">VND 3,000億資本下限</text>
+            <text class="label-data" x="300" y="180" text-anchor="middle">DECREE 94</text>
+            <text class="label-small" x="300" y="195" text-anchor="middle">サンドボックス開始</text>
+            <text class="label-small" x="300" y="210" text-anchor="middle">P2P、eKYC、与信スコアリング</text>
+            <text class="label-data" x="380" y="100" text-anchor="middle">CRYPTO PILOT</text>
+            <text class="label-small" x="380" y="115" text-anchor="middle">決議05+決定96</text>
+            <text class="label-small" x="380" y="60" text-anchor="middle">Jan-2026</text>
+            <text class="label-small" x="40" y="30">SOURCE: SBV、MoF、KIRAタイムライン編纂</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV、MOF議定書 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MoF 2026 = Ministry of Finance Decision 96/QD-BTC Jan-2026 &middot; SBV 2024 = State Bank Decree 52/2024/ND-CP &middot; SBV 2025 = State Bank Decree 94/2025/ND-CP &middot; Kira estimates = KIRA in-house analyst compilation of regulatory actions</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 09 &middot; 規制 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 24 — AI DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10 &middot; CHAPTER FIVE</div>
+    <h1 class="divider-title">フィンテックにおける<span class="accent">AIの影響</span></h1>
+    <p class="divider-thesis"><strong>AIは消費者向けプロダクトではなくユニットエコノミクスのレバー。</strong>短期ROIは不正検知(QR不正前年比+60%)、引受オペレーション費用(VIB+Trusting Socialがカード審査を15-30分へ短縮)、文書集約型KYCにあります。投資回収を軸にユースケースを設計してください。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1 市場規模</div>
+      <div class="toc-pill">10.2 6つの活用事例</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 25 — AI OVERVIEW P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 &middot; フィンテックAI</div>
+      <div class="page-section-counter">025 / 029</div>
+    </div>
+    <h1 class="page-h1">ベトナム・フィンテックにおけるAI &mdash; 市場規模</h1>
+    <p class="page-subhead">ベトナムにおけるAI・イン・フィンテック支出は2030年まで21% CAGRの軌道[Kira estimates]、2033年までに約USD 6億に到達。そのほとんどは<strong>内部オペレーション支出</strong> &mdash; 不正、引受、KYC、保険金処理 &mdash; であり、消費者向けAIではありません。ベンダースタックは社内MLチーム(MoMo、ZaloPay)と外部パートナー(Trusting Social、域内インフラ提供者)に二分されています。</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>予算の行き先</h3>
+        <p><strong>不正・AMLモニタリング：</strong>AIフィンテック支出の約35%。QR決済不正はベトナムとタイで前年比+60%急増[GBG 2025] &mdash; ルールベースのレガシーシステムは90%超の誤検知率。MLベースのスコアリングはサンドボックス参加の前提条件となりつつあります。</p>
+        <h3>最初の着地点</h3>
+        <p><strong>与信判断：</strong>支出の約30%。VIBはTrusting Social提携によりクレジットカード承認を15-30分に短縮[VIB 2025]。MoMoは社内MLを代替データ(請求支払履歴、取引グラフ)上で運用。承認時間の圧縮が見出しのROI指標です。</p>
+        <p><strong>文書理解(KYC、保険金):</strong>約20%。高ボリューム、構造化、投資回収が早い。デジタル銀行の口座開設スタックはほぼ全てがID/公共料金請求書検証にOCR+LLM支援を導入しています。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">AIフィンテック支出配分</div>
+            <div class="chart-subtitle">ベトナム &middot; 2026年推計</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet">
+            <rect class="bar-primary" x="40" y="50" width="147" height="40"/>
+            <rect x="187" y="50" width="126" height="40" fill="#1850BF"/>
+            <rect x="313" y="50" width="84"  height="40" fill="#00A88B"/>
+            <rect x="397" y="50" width="42"  height="40" fill="#D97706"/>
+            <rect x="439" y="50" width="21"  height="40" fill="#6B7280"/>
+            <text class="label-data" x="113" y="75" text-anchor="middle" fill="#FFFFFF">35%</text>
+            <text class="label-data" x="250" y="75" text-anchor="middle" fill="#FFFFFF">30%</text>
+            <text class="label-data" x="355" y="75" text-anchor="middle" fill="#FFFFFF">20%</text>
+            <text class="label-data" x="418" y="75" text-anchor="middle" fill="#FFFFFF">10%</text>
+            <text class="label-small" x="113" y="110" text-anchor="middle">FRAUD / AML</text>
+            <text class="label-small" x="250" y="110" text-anchor="middle">CREDIT DECISION</text>
+            <text class="label-small" x="355" y="110" text-anchor="middle">DOC / KYC</text>
+            <text class="label-small" x="418" y="110" text-anchor="middle">CX</text>
+            <text class="label-small" x="450" y="110" text-anchor="middle">OTHER</text>
+            <text class="label-small" x="40" y="155">ベトナムのAIフィンテック支出：2026年USD 1.3-1.6億[Kira estimates];2033年までに約USD 6億への軌道(21% CAGR)。</text>
+            <text class="label-small" x="40" y="175">内部オペレーション支出が支配的 &mdash; 消費者向けAIはマーケティング層であり予算ではない。</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 事業者開示からのKIRA三角測量 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <p class="page-subhead" style="margin-top:8px;">アンチ・ポジショニング・ノート：ベンダーのナラティブはフィンテックAIをしばしば「AIネイティブ・バンキング」と枠付けします &mdash; 当社は展開データを<strong>12-18ヶ月で投資回収する増分オペレーション費用ツール</strong>と読み解いており、承認時間・NPL・不正損失率の測定可能な圧縮として現れます。資本と注力はそこへ向かうべきです。</p>
+    <div class="source-key">GBG 2025 = GBG APAC Fraud Trends Report 2025 &middot; VIB 2025 = Vietnam International Bank x Trusting Social press release Sep-2025 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 10 &middot; AIの影響 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 26 — AI OVERVIEW P2 (USE CASES) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 &middot; フィンテックAI (続)</div>
+      <div class="page-section-counter">026 / 029</div>
+    </div>
+    <h1 class="page-h1">投資回収が実証された6つのAIユースケース</h1>
+    <p class="page-subhead">いずれも開示またはプレスで引用されたベトナム市場での稼働実装が1件以上存在します。12ヶ月の事業者側投資回収の強さ順に並べました。</p>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">USE CASE 01</div>
+        <div class="uc-title">代替データ与信スコアリング(thin file)</div>
+        <div class="uc-body"><strong>通信、eコマース、取引グラフのシグナル</strong>を銀行口座を持たない申請者のMLスコアリングに投入。Kredivoは代替データ引受による域内事業者向け融資でUSD 40億を計上;MoMoはベトナムで同様の手法を展開[Kredivo 2025]。</div>
+        <div class="uc-example">DEPLOYED &middot; MOMO &middot; KREDIVO &middot; FUNDIIN</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">USE CASE 02</div>
+        <div class="uc-title">リアルタイム不正・AMLモニタリング</div>
+        <div class="uc-body">取引ストリーム上でのML検知 &mdash; QR不正前年比+60%の圧力[GBG 2025]がレガシー・ルールエンジンを陳腐化させます。<strong>SBVサンドボックス参加適格性</strong>は今や事実上ML不正スコアリングの実証を要求します。</div>
+        <div class="uc-example">DEPLOYED &middot; VIB &middot; TPBANK &middot; CAKE</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">USE CASE 03</div>
+        <div class="uc-title">カード・ローン承認の自動化</div>
+        <div class="uc-body"><strong>VIB + Trusting Social：15-30分のクレジットカード承認</strong>[VIB 2025]、既存行ベースラインの2-3日対比。承認時間圧縮が見出し指標;下流効果としてファネル転換率+30-50%。</div>
+        <div class="uc-example">DEPLOYED &middot; VIB &middot; CAKE &middot; MOMO</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">USE CASE 04</div>
+        <div class="uc-title">eKYC・文書理解</div>
+        <div class="uc-body">OCR + LLM支援ID検証、公共料金請求書照合、生体検知。サンドボックス・トラックのeKYCは議定書94/2025号で明示的に指定[SBV 2025]。<strong>口座開設あたりコストが60-80%低下</strong>;スループットは5-10倍に上昇。</div>
+        <div class="uc-example">DEPLOYED &middot; TPBANK LIVEBANK &middot; TIMO</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">USE CASE 05</div>
+        <div class="uc-title">カスタマーサービス自動化</div>
+        <div class="uc-body">高ボリュームのプロダクト問合せに対する音声・チャット・トリアージ。優先度の低い展開 &mdash; ROIは存在するが控えめ。最適な適合先：問合せカテゴリーが集中する銀行所有デジタル子会社(残高、明細、パスワード)。</div>
+        <div class="uc-example">DEPLOYED &middot; SACOMBANK &middot; TCB &middot; ACB</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">USE CASE 06</div>
+        <div class="uc-title">クロスセル・ネクストベストプロダクト</div>
+        <div class="uc-body">既存ウォレットベース上でのパーソナライゼーション。MoMoとZaloPay規模(3,000万ユーザー超)で最大レバレッジ。追加アタッチによる投資回収は6-12ヶ月 &mdash; <strong>ただし統合された顧客プロファイルの清浄なデータが必要</strong>であり、ほとんどの事業者は未保有です。</div>
+        <div class="uc-example">PILOT &middot; MOMO &middot; ZALOPAY</div>
+      </div>
+    </div>
+    <div class="source-key">GBG 2025 = GBG APAC Fraud Trends Report 2025 &middot; Kredivo 2025 = Kredivo regional financing disclosure 2025 &middot; SBV 2025 = State Bank Decree 94/2025/ND-CP &middot; VIB 2025 = Vietnam International Bank x Trusting Social press release Sep-2025 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 10 &middot; AIの影響 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 27 — FORECAST P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 &middot; フォーキャスト 2026-2031</div>
+      <div class="page-section-counter">027 / 029</div>
+    </div>
+    <h1 class="page-h1">5年見通し：ベース・ブル・ベア</h1>
+    <p class="page-subhead">当社のベースケースではフィンテック収益プールは15% CAGRで<strong>2031年USD 89億</strong>に到達。ブルケース(普及が域内ベンチマークに収束)：USD 115億。ベアケース(金利サイクルが消費者与信を直撃、スーパーアプリ・チャネル引き締め)：USD 68億。<strong>広いレンジは与信サイクルとチャネル・パワーの不確実性</strong>を反映し、決済本流のリスクではありません。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>ベースケース &mdash; 中央シナリオ</h3>
+        <p>2031年まで15% CAGR。決済収益+11%;BNPL+与信+27%;デジタル銀行+19%[Kira estimates]。<strong>銀行システム普及率の収束</strong>(タイ約95%、マレーシア約92%の口座保有率)が取引量フロアを支えます。</p>
+        <h3>ブルケース &mdash; 何が必要か</h3>
+        <p>+ P2P+Open APIのサンドボックスからライセンスへの移行成功。<br>+ 暗号資産パイロットが行政枠組みからリテールへ拡張。<br>+ ZaloPayと第三極がGrab/Shopeeのレバレッジに対抗しスーパーアプリ・チャネル税を圧縮。<br><strong>結果：20% CAGRで2031年USD 115億。</strong></p>
+        <h3>ベアケース &mdash; 非対称リスク</h3>
+        <p>+ 消費者与信NPLが12%超に急上昇(現状9.6%)[SBV/VIR 2024]。<br>+ サブスケールBNPL事業者の破綻;集約は加速するもプールは縮小。<br>+ 金利サイクルがデジタル銀行のNIMを圧縮。<br><strong>結果：9% CAGRで2031年USD 68億。</strong></p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">フィンテック収益プール 2026-2031</div>
+            <div class="chart-subtitle">USD bn &middot; ベース &middot; ブル &middot; ベア</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">6</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">9</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">12</text>
+            <polyline fill="none" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 3" points="80,138 156,118 232,93 308,65 384,40 460,28"/>
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="80,144 156,131 232,123 308,111 384,96 460,82"/>
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3" points="80,150 156,140 232,134 308,130 384,124 460,110"/>
+            <circle cx="80"  cy="144" r="3.5" fill="#1E6FFF"/>
+            <circle cx="460" cy="82"  r="3.5" fill="#1E6FFF"/>
+            <circle cx="460" cy="28"  r="3.5" fill="#00A88B"/>
+            <circle cx="460" cy="110" r="3.5" fill="#D97706"/>
+            <text class="label-data" x="80"  y="138" text-anchor="middle">4.3</text>
+            <text class="label-data" x="460" y="76"  text-anchor="end">8.9 BASE</text>
+            <text class="label-data" x="460" y="22"  text-anchor="end">11.5 BULL</text>
+            <text class="label-data" x="460" y="105" text-anchor="end">6.8 BEAR</text>
+            <text class="axis-text" x="80"  y="218" text-anchor="middle">2026</text>
+            <text class="axis-text" x="156" y="218" text-anchor="middle">2027</text>
+            <text class="axis-text" x="232" y="218" text-anchor="middle">2028</text>
+            <text class="axis-text" x="308" y="218" text-anchor="middle">2029</text>
+            <text class="axis-text" x="384" y="218" text-anchor="middle">2030</text>
+            <text class="axis-text" x="460" y="218" text-anchor="middle">2031</text>
+            <line x1="50" y1="14" x2="62" y2="14" stroke="#00A88B" stroke-width="2" stroke-dasharray="3 2"/>
+            <text class="label-small" x="66" y="17">BULL</text>
+            <line x1="110" y1="14" x2="122" y2="14" stroke="#1E6FFF" stroke-width="2.5"/>
+            <text class="label-small" x="126" y="17">BASE</text>
+            <line x1="170" y1="14" x2="182" y2="14" stroke="#D97706" stroke-width="2" stroke-dasharray="3 2"/>
+            <text class="label-small" x="186" y="17">BEAR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRAシナリオモデル &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">SBV/VIR 2024 = State Bank consumer-credit NPL data via VIR Sep-2024 &middot; Kira estimates = KIRA scenario model built on operator pool + segment CAGR per Section 05-06</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 11 &middot; フォーキャスト &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 28 — FORECAST P2 (SENSITIVITIES) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 &middot; フォーキャスト (続)</div>
+      <div class="page-section-counter">028 / 029</div>
+    </div>
+    <h1 class="page-h1">主要感応度・トリガーポイント</h1>
+    <p class="page-subhead">ベースケースを他の何よりも動かす3つの変数。これらを月次でモニターしてください &mdash; 上記の予測レンジはその方向に狭まる、または広がります。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">SENS 01</div>
+        <div class="title">消費者与信NPLの軌道</div>
+        <div class="body-text">現状9.6%[SBV/VIR 2024]。10%超で+1pp毎にBNPL事業者マージンが約50-80bps圧縮。<strong>閾値：</strong>12%超の継続でベアシナリオ、7%未満の継続でブルにアップグレード。</div>
+        <div class="anchor">MONITOR &middot; <span class="num-anchor">SBV月次与信データ</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">SENS 02</div>
+        <div class="title">サンドボックスからライセンスへの移行</div>
+        <div class="body-text">議定書94号サンドボックスは2年間のウィンドウ。2027年までにP2P+Open APIライセンスが管理可能な資本要件で結晶化すれば、それがブルケースの解放。<strong>閾値：</strong>SBV通達草案が2027年上半期に公開。</div>
+        <div class="anchor">MONITOR &middot; <span class="num-anchor">SBV規制パイプライン</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">SENS 03</div>
+        <div class="title">スーパーアプリ・チャネル税の圧縮</div>
+        <div class="body-text">今日の組込BNPLにおけるGrab/Shopeeへの収益シェアは30-40%。MoMoまたは新規参入者による直接加盟店プッシュがあればこれを圧縮。<strong>閾値：</strong>2028年までにスーパーアプリ・シェアが25%未満となれば事業者マージン想定に+200bps。</div>
+        <div class="anchor">MONITOR &middot; <span class="num-anchor">事業者決算説明会</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">SENS 04</div>
+        <div class="title">金利サイクルと資金コスト</div>
+        <div class="body-text">SBV 2026年インフレ目標4.5%[Reuters/SBV 2026]。CPIは2026年4月5.46%[GSO 2026]が上振れ。預金金利引き上げはまずデジタル銀行NIMを圧迫。<strong>閾値：</strong>CPIが5%超で継続すれば資金コスト懸念が顕在化。</div>
+        <div class="anchor">MONITOR &middot; <span class="num-anchor">SBV政策議事要旨</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">SENS 05</div>
+        <div class="title">サブスケール・ウォレットのM&amp;A</div>
+        <div class="body-text">Mocaは2024年に撤退[VietData 2025]。2027年までにあと2-3件のサブスケール・ウォレット集約が想定。<strong>閾値：</strong>上位5社の支配権変更があれば競合構造の読み直しとベースケース改訂のトリガーに。</div>
+        <div class="anchor">MONITOR &middot; <span class="num-anchor">サブスケール事業者MAU</span></div>
+      </div>
+    </div>
+    <div class="source-key">GSO 2026 = National Statistics Office Q1-2026 Socio-economic Report &middot; Reuters/SBV 2026 = SBV Governor statement on 2026 inflation target &middot; SBV/VIR 2024 = State Bank consumer-credit NPL via VIR Sep-2024 &middot; VietData 2025 = Vietdata Moca Exit Analysis 2025 &middot; Kira estimates = KIRA scenario model</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 11 &middot; フォーキャスト &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 29 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 &middot; 方法論巻末注</div>
+      <div class="page-section-counter">029 / 029</div>
+    </div>
+    <h1 class="page-h1">方法論巻末注・情報源構成</h1>
+    <p class="page-subhead">数字の構築方法、推計のアンカー、そしてベトナム・フィンテック、決済、隣接バーティカルに関する追加業務についての当社リサーチチームへの連絡方法。</p>
+    <div class="source-mix-grid">
+      <div class="source-mix-card">
+        <div class="smc-tag">[Kira estimates]</div>
+        <div class="smc-num">25<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-secondary">
+        <div class="smc-tag">名称付き二次情報</div>
+        <div class="smc-num">68<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-estimate">
+        <div class="smc-tag">三角測量(英語+ベトナム語)</div>
+        <div class="smc-num">7<span class="pct">%</span></div>
+      </div>
+    </div>
+    <div class="endnote-grid">
+      <div class="endnote-body">
+        <h4>情報源マップ</h4>
+        <p><strong>一次公的統計：</strong>ベトナム国家銀行(SBV)決済局発行物、国家統計局(GSO)四半期社会経済報告書、NAPASシステム計測、IMF Article IV 2025、世界銀行ベトナム経済アップデート(2025年12月)、世界銀行Global Findex 2025。</p>
+        <p><strong>事業者開示：</strong>VNG Corporation年次報告書2025(ZaloPayセグメント)、VPBank 9M 2025のCakeデジタル銀行開示、Cimigo Connected Consumer Vietnam 2024、DataReportal Digital 2026 Vietnam。組込金融取引量はスーパーアプリ親会社開示(Grab Holdings、Sea Group)。</p>
+        <p><strong>規制文書：</strong>議定書52/2024/ND-CP号(電子マネー定義)、議定書94/2025/ND-CP号(規制サンドボックス)、決議05/2025/NQ-CP号+決定96/QD-BTC号(暗号資産パイロット)。</p>
+        <p><strong>ベトナム語情報源：</strong>VnEconomy、VietnamPlus、VnExpress、Tap Chi Ngan Hang(銀行誌)、Vietnam.vnの報道。エイリアスはインラインタグで英語にマッピング。</p>
+        <h4>開示する推計手法</h4>
+        <p><strong>2026年USD 43億収益プール：</strong>サブセグメント推計のボトムアップで構築(決済USD 16億=MDR×取引量;BNPL USD 11億=取引価値プール×ブレンド・テイクレート;デジタル銀行USD 9億=NIM×融資ブック+手数料収入;その他USD 7億)。</p>
+        <p><strong>HHI約3,400：</strong>Cimigo 2024シェアデータ上のアクティブ・ユーザー・シェア二乗値に、事業者取引量開示からの方向感調整を加えて算出。</p>
+      </div>
+      <div class="endnote-side">
+        <h4>リサーチチーム</h4>
+        <p class="contact-line"><strong>シニア・アナリスト：</strong>ベトナム・フィンテック・決済</p>
+        <p class="contact-line"><strong>カバレッジ：</strong>東南アジア金融サービス、スーパーアプリ収益化、組込金融</p>
+        <p class="contact-line"><strong>隣接業務：</strong>インドネシア/タイ/フィリピンのフィンテック並行研究を依頼に応じて実施</p>
+        <p class="contact-line" style="margin-top:12px;"><strong>お問合せ</strong></p>
+        <p class="contact-line">research@kiraresearch.com</p>
+        <p class="contact-line">kiraresearch.com</p>
+        <p class="contact-line" style="margin-top:12px;"><strong>カスタム・リサーチ</strong></p>
+        <p class="contact-line">特定事業者の深掘り、セグメントレベル抽出、シナリオ・モデリングを依頼ベースで対応 &mdash; 2-4週間で納品。</p>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential &middot; ライセンス保有読者専用 &middot; &copy; 2026 KIRA Research &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
