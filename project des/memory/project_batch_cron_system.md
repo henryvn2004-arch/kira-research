@@ -144,4 +144,41 @@ OR enable auto-approve for tools in Claude Code settings — Henry's preferred p
 - Queue bumped +50 SEA topics (10 VN, 8 ID, 7 TH, 5 MY/PH/SG/JP/KR each).
 - Documented overlap-safe claim-then-commit pattern (was implicit before).
 
-See also: [[project_tool_gen_report]] · [[reference_kira_research]] · [[feedback_sparticuz_chromium_vercel]] · [[project_o_studio_credits]]
+## Phase Q.1 changelog (2026-05-25) — multi-fire split + chunked translation
+
+**Root cause for split**: `2026-vn-fintech` hung 2h24m at JA translation stage (commit `0b6be26` claimed at 06:31 ICT, no further commits). Outputs/ folder rỗng → confirmed translation subagent failed before any file write. Investigation showed JA subagent was asked to one-shot Write ~67KB ja.html, exceeding Sonnet's ~32K-token per-response output cap → partial truncation or hang.
+
+**What changed**:
+
+- **Status flow extended**: `pending → en_in_progress → en_done → ja_in_progress → ja_done → ko_in_progress → done` (or `error`). Legacy `in_progress` rows treated as error (skip).
+- **1 fire = 1 stage = 1 row**: each fire picks the most-advanced row (ja_done first, then en_done, then pending) and advances it ONE stage. Drains pipeline toward `done`.
+- **Chunked translator output**: per `translator_jp.md` / `translator_ko.md` Section 11.5 — sentinel `<!-- KIRA_BATCH_PAGES_INSERT_HERE -->` comment, per-page `Edit` instead of one-shot Write. Each Edit ≤ ~7KB → no truncation risk.
+- **Machine-agnostic working dir**: `git rev-parse --show-toplevel` instead of hardcoded `C:\Users\vnc-f4\...`. Same prompt runs on any machine.
+- **Validation gates added** (parent-side, post-subagent):
+  - Page count match (`grep -c '<div class="kira-page'` in ja/ko = en)
+  - Source tag superset (every `[…]` in en must appear in ja/ko)
+  - Anti-positioning grep with katakana/hangul variants (`クロード`, `클로드`)
+- **45-min hard timeout per stage**: failures logged with stage label.
+- **Throughput same**: 13 fires/day still = ~13 reports/day at steady state (each report flows through 3 fires but pipeline is parallel).
+
+**Implication for machine setup**: 13 batch tasks now exist on DELL too (recreated from vnc-f4 set 2026-05-25). Both machines can fire safely — claim-then-commit prevents double-claim. Quota cost: ~2x if both run.
+
+## Phase Q.2 changelog (2026-05-25) — Insight gen pipeline
+
+New cron added: 4 `kira-insight-XXXX` daily fires (07/11/15/21 ICT) on DELL. Reads `skills/kira-research-report/prompts/insight_runner.md` — extracts 3 strongest sections from each published report's `en.html`, gens 3 insights × 3 locales = 9 `insight_translations` rows.
+
+Multi-fire split same pattern as Q.1:
+- Stage E: extract + publish 3 EN insights
+- Stage J: translate to JA + publish
+- Stage K: translate to KO + publish
+
+Source of truth for stage = row count in `insight_translations` (per `insight_id`): `< 3 EN` → stage_en; `< 3 JA` → stage_ja; `< 3 KO` → stage_ko. No DB schema change.
+
+Question-form H2 per locale via `prompts/question_templates.md`:
+- EN allows `?` (e.g. "How large is X?")
+- JA/KO use 体言止め / 명사형 (no `？`/`?` — translator anti-pattern rule)
+- FAQ JSON-LD restores interrogative form for AI Overviews indexing
+
+Cost: ~4 × 150K tokens/day = 600K/day Insight (~10% of batch quota).
+
+See also: [[project_tool_gen_report]] · [[reference_kira_research]] · [[feedback_sparticuz_chromium_vercel]] · [[project_o_studio_credits]] · [[project_q_insight_runner]]
