@@ -164,3 +164,26 @@ See [[project_batch_cron_system]] for the full cron architecture + [[feedback_sc
 - Git config (Step 1 sub-step)
 
 See also: [[project_batch_cron_system]] · [[feedback_scheduled_task_cwd_parent]] · [[user_henry]] · [[reference_kira_research]]
+
+---
+
+## Deferred cleanup: rename folder `Rira` → `Kira` (typo)
+
+The folder `C:\Users\vnc-f4\Rira Research\` was created with a typo — brand is **KIRA** Research. It's purely local (no public/git impact — domain is `kiraresearch.com`, repo is `kira-research`, brand strings everywhere else are correct). Deferred 2026-05-26 because cron was actively firing — no urgency.
+
+**When ready to fix (vnc-f4, ~5-10 min):**
+
+1. Close Claude Code completely (all windows including any paused cron-fire windows).
+2. Wait for any in-progress fire to finish (or accept the dropped fire — claim row resets to error, manual `git checkout -- data/report_queue.csv` to recover).
+3. File Explorer: rename `C:\Users\vnc-f4\Rira Research\` → `C:\Users\vnc-f4\Kira Research\`.
+4. Bulk-update 18 batch + 4 insight SKILL.md files at `C:\Users\vnc-f4\.claude\scheduled-tasks\kira-*\SKILL.md`. The "Working directory:" line currently says `C:\Users\vnc-f4\Rira Research\kira-research` — change `Rira` → `Kira` in each.
+   - Or have Claude do it via Glob+Edit once the new Claude Code session opens.
+5. Rename Claude Code project memory dir: `C:\Users\vnc-f4\.claude\projects\C--Users-vnc-f4-Rira-Research\` → `C--Users-vnc-f4-Kira-Research\`.
+6. Reopen Claude Code in the new folder location.
+7. Verify: `git status` in repo works, `git rev-parse --show-toplevel` returns the new path, and a manual "Run now" on a scheduled task succeeds.
+
+**Same procedure for DELL** if its folder is also typo'd.
+
+The repo itself (kira-research) has no `Rira` strings — only the parent folder name does, so renaming the parent doesn't require any repo commits.
+
+**Risk if left unfixed:** zero functional risk. Purely cosmetic.
