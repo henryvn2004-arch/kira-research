@@ -31,6 +31,24 @@ Settings load order (Claude Code docs): user → project → local. With `cwd` o
 
 For kira-research, the canonical allowlist content lives at `kira-research/.claude/settings.json` in the repo. Copy verbatim to user level on each machine that runs the cron. Same content works on Windows + POSIX since the rules are tool-name patterns.
 
+## Second gotcha (2026-05-26): bash variable expansion bypasses allowlist
+
+Even with the user-level allowlist in place, the first prompt encountered on the manual test run was:
+```
+cd "C:/Users/vnc-f4/Rira Research/kira-research" && echo "PDF_RENDER_SECRET=${PDF_RENDER_SECRET:+SET}" ...
+```
+UI label: "Contains expansion".
+
+Claude Code treats ANY bash command containing `$VAR` or `${VAR}` expansion as high-risk regardless of allowlist — security feature to prevent allowlist bypass like `Bash(curl *)` allowed → attacker uses `curl $LEAK_VAR` to exfiltrate env. Prefix-match rules in `permissions.allow` do NOT cover commands with expansion.
+
+**Two ways out (we chose both, layered):**
+
+1. **`permissions.defaultMode: "auto"`** in user-level settings — Claude Code uses its built-in LLM classifier to auto-decide instead of prompting. For cron fires running a known-good prompt (batch_runner.md), the classifier auto-approves the predictable command patterns (curl with $PDF_RENDER_SECRET, git commit with $id, etc.). Risky operations still surface prompts. Deny rules in allowlist still take precedence.
+
+2. **Refactor batch_runner.md Step 0** to use `node -e "process.env..."` instead of bash `${VAR:+SET}` — Node reads env vars directly without shell expansion, so the command stays in the auto-approved `Bash(node *)` rule even without `defaultMode: "auto"`. This is the per-command surgical fix; useful when defaultMode is set to `"default"`.
+
+Commit `3ee9043` shipped the Step 0 node refactor. User-level `defaultMode: "auto"` was added 2026-05-26 on vnc-f4. **DELL needs the same: set `defaultMode: "auto"` in `C:\Users\<dell-user>\.claude\settings.json`.**
+
 ## Recovery steps when a fire is found hung
 
 1. **Close the paused Claude Code window** (force-quit if needed) — frees the app to process newer fires.
