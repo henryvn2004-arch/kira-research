@@ -498,12 +498,9 @@
     function renderToc(toc, ownsContent) {
       if (!Array.isArray(toc) || !toc.length) return '';
       const items = toc.map(t => {
-        const isPreview = t.locked === false;
+        const isPreview  = t.locked === false;
         const isLockable = !ownsContent && !isPreview;
         const cls = (isPreview || ownsContent) ? ' preview' : ' lockable';
-        const lock = ownsContent
-          ? 'UNLOCKED'
-          : (isPreview ? 'PREVIEW' : 'LOCKED');
         const tag = isLockable ? 'button' : 'div';
         const typeAttr = isLockable ? ' type="button"' : '';
         const dataAttr = isLockable
@@ -513,7 +510,6 @@
                  '<span class="num">' + escapeHtml(t.num) + '</span>' +
                  '<span class="name">' + escapeHtml(t.name) + '</span>' +
                  '<span class="pages">' + escapeHtml(t.pages || '') + '</span>' +
-                 '<span class="lock">' + lock + '</span>' +
                '</' + tag + '>';
       }).join('');
       return (
