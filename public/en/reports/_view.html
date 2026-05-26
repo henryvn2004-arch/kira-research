@@ -516,6 +516,52 @@
       );
     }
 
+    // High-fidelity preview: iframe loads the first 5 pages of the source
+    // report HTML via /api/preview-html. The HTML inside is 1280×720-per-page
+    // (matches the PDF visually). We scale it to fit the parent column width
+    // via JS, with a gradient fade + "Unlock" CTA card overlaid on the bottom.
+    //
+    // Pages × height: 5 pages × 720px = 3600px tall at 1280px wide.
+    const PREVIEW_PAGE_W = 1280;
+    const PREVIEW_PAGE_H = 720;
+    const PREVIEW_PAGES  = 5;
+
+    function renderPreviewFrame(d, currentLocale) {
+      const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) +
+                  '&locale=' + encodeURIComponent(currentLocale);
+      const totalH = PREVIEW_PAGE_H * PREVIEW_PAGES;
+      const price  = d.price || 39;
+      return (
+        '<section class="rpt-preview-section">' +
+          '<div class="rpt-preview-eyebrow">Inside the report · Pages 1–' + PREVIEW_PAGES + '</div>' +
+          '<div class="rpt-preview-frame" data-w="' + PREVIEW_PAGE_W +
+                                       '" data-h="' + totalH + '">' +
+            '<iframe src="' + src + '" ' +
+                    'title="Report preview — first ' + PREVIEW_PAGES + ' pages" ' +
+                    'loading="lazy" ' +
+                    'referrerpolicy="same-origin"></iframe>' +
+            '<div class="rpt-preview-fade" aria-hidden="true"></div>' +
+            '<div class="rpt-preview-cta">' +
+              '<div class="rpt-preview-cta-lede">Continue reading the full report</div>' +
+              '<button class="buy-btn" id="preview-buy-btn">' +
+                'Unlock full report — $' + price + ' →' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</section>'
+      );
+    }
+
+    function fitPreviewFrame() {
+      document.querySelectorAll('.rpt-preview-frame').forEach(wrap => {
+        const iframe = wrap.querySelector('iframe');
+        if (!iframe) return;
+        const w = Number(wrap.dataset.w) || PREVIEW_PAGE_W;
+        const scale = wrap.clientWidth / w;
+        iframe.style.transform = 'scale(' + scale + ')';
+      });
+    }
+
     // Cross-sell: up to 3 other reports matching country/industry/year. Loaded
     // from /api/library-report (relatedReports key). Cards link to the full
     // report page in the same locale.
@@ -725,6 +771,8 @@
               lede + paras + chart +
             '</section>' +
 
+            (purchaseState.purchased ? '' : renderPreviewFrame(d, locale)) +
+
             toc +
 
             fullBody +
@@ -756,6 +804,18 @@
       // Wire LOCKED TOC rows → unlock modal. PREVIEW rows stay as plain text
       // (rendered as <div>, not <button>) so they don't intercept clicks.
       wireUnlockModal(d, purchaseState);
+
+      // Wire preview iframe scale-fit + the inline CTA button under it.
+      fitPreviewFrame();
+      window.addEventListener('resize', fitPreviewFrame);
+      const previewBuyBtn = document.getElementById('preview-buy-btn');
+      if (previewBuyBtn) {
+        previewBuyBtn.addEventListener('click', () => {
+          previewBuyBtn.disabled = true;
+          previewBuyBtn.textContent = 'Opening checkout…';
+          startCheckout(d.slug, locale);
+        });
+      }
     }
 
     function wireUnlockModal(d, purchaseState) {

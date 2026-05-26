@@ -1030,6 +1030,101 @@ button.toc-item.lockable:focus-visible {
   letter-spacing: 0.04em;
 }
 
+/* High-fidelity preview — iframe loaded from /api/preview-html showing the
+   first 5 pages of the source report HTML. Pages are authored at 1280×720
+   (PDF-page aspect); we scale the iframe to fit the column width and clip
+   the bottom with a gradient + a centered Unlock CTA. */
+.rpt-preview-section {
+  margin: 40px 0 48px;
+}
+.rpt-preview-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rpt-preview-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--primary);
+}
+.rpt-preview-frame {
+  position: relative;
+  width: 100%;
+  /* 5 pages × 720px tall at 1280px wide = aspect-ratio 1280:3600 = 16:45. */
+  aspect-ratio: 1280 / 3600;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #DDE0E5; /* matches the source HTML's body background */
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
+}
+.rpt-preview-frame iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  height: 3600px;
+  border: 0;
+  transform-origin: top left;
+  /* JS sets transform: scale() on load + resize. */
+  pointer-events: none; /* prevent users from interacting / scrolling inside */
+}
+.rpt-preview-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.85) 55%,
+    var(--bg) 100%
+  );
+  pointer-events: none;
+}
+.rpt-preview-cta {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: min(420px, calc(100% - 32px));
+  text-align: center;
+  padding: 22px 26px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.18);
+}
+.rpt-preview-cta-lede {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.005em;
+}
+.rpt-preview-cta .buy-btn {
+  width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .rpt-preview-cta {
+    bottom: 16px;
+    padding: 16px 18px 14px;
+  }
+  .rpt-preview-cta-lede { font-size: 13px; }
+  .rpt-preview-fade { height: 32%; }
+}
+
 /* Related reports — cross-sell cards below related insights. Reuses the
    .rpt-related-grid layout from .rpt-related-insights for consistency. */
 .rpt-related-reports {
