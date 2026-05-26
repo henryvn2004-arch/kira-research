@@ -926,6 +926,192 @@ footer.kira-footer {
 }
 .toc-item.preview .lock { color: var(--primary); }
 
+/* Clickable LOCKED rows — rendered as <button>. Strip button defaults, add
+   hover affordance so users know to click for the unlock modal. */
+button.toc-item {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s, padding 0.15s;
+}
+button.toc-item:last-child { border-bottom: none; }
+button.toc-item.lockable .lock {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+button.toc-item.lockable:hover {
+  background: var(--surface-2);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+button.toc-item.lockable:hover .lock { color: var(--primary); }
+button.toc-item.lockable:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* Unlock modal — shown when a LOCKED TOC row is clicked. */
+.unlock-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: unlockModalFade 0.18s ease-out;
+}
+.unlock-modal-overlay[hidden] { display: none; }
+@keyframes unlockModalFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.unlock-modal-card {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+  max-width: 440px;
+  width: 100%;
+  padding: 32px 32px 28px;
+  text-align: left;
+}
+.unlock-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: transparent;
+  border: 0;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.unlock-modal-close:hover { color: var(--text); }
+.unlock-modal-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.unlock-modal-card h3 {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.unlock-modal-card p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+.unlock-modal-card p strong { color: var(--text); }
+.unlock-modal-card .buy-btn {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.unlock-modal-footnote {
+  font-size: 11px;
+  color: var(--muted-dim);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* Related reports — cross-sell cards below related insights. Reuses the
+   .rpt-related-grid layout from .rpt-related-insights for consistency. */
+.rpt-related-reports {
+  margin-top: 56px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+}
+.rpt-related-reports h4 {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+.rpt-related-reports .rpt-related-intro {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 620px;
+  margin: 0 0 28px;
+}
+.rpt-report-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  box-shadow: var(--elevation-sm);
+}
+.rpt-report-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--elevation-md);
+}
+.rpt-report-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.rpt-report-meta .cat { color: var(--primary); }
+.rpt-report-card h3 {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0;
+}
+.rpt-report-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.rpt-report-price {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text);
+}
+.rpt-report-cta {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 /* Buy box (sticky sidebar) */
 .buy-box {
   background: var(--surface);

@@ -158,6 +158,18 @@
     <div class="rpt-loading">Loading report…</div>
   </div>
 
+  <!-- Unlock modal — shown when user clicks a LOCKED section in the TOC. -->
+  <div id="unlock-modal" class="unlock-modal-overlay" hidden>
+    <div class="unlock-modal-card" role="dialog" aria-modal="true" aria-labelledby="unlock-modal-title">
+      <button class="unlock-modal-close" id="unlock-modal-close" aria-label="Close">×</button>
+      <div class="unlock-modal-eyebrow">Locked Section</div>
+      <h3 id="unlock-modal-title">Section</h3>
+      <p id="unlock-modal-body">This section is part of the full report. Unlock the complete PDF + online reader access.</p>
+      <button class="buy-btn" id="unlock-modal-buy">Unlock full report →</button>
+      <div class="unlock-modal-footnote">Single-user license · Free updates for 12 months</div>
+    </div>
+  </div>
+
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
 
@@ -478,22 +490,64 @@
     function renderToc(toc, ownsContent) {
       if (!Array.isArray(toc) || !toc.length) return '';
       const items = toc.map(t => {
-        const cls = (t.locked === false || ownsContent) ? ' preview' : '';
+        const isPreview = t.locked === false;
+        const isLockable = !ownsContent && !isPreview;
+        const cls = (isPreview || ownsContent) ? ' preview' : ' lockable';
         const lock = ownsContent
           ? 'UNLOCKED'
-          : (t.locked === false ? 'PREVIEW' : 'LOCKED');
-        return '<div class="toc-item' + cls + '">' +
+          : (isPreview ? 'PREVIEW' : 'LOCKED');
+        const tag = isLockable ? 'button' : 'div';
+        const typeAttr = isLockable ? ' type="button"' : '';
+        const dataAttr = isLockable
+          ? ' data-section="' + escapeHtml(t.name) + '"'
+          : '';
+        return '<' + tag + ' class="toc-item' + cls + '"' + typeAttr + dataAttr + '>' +
                  '<span class="num">' + escapeHtml(t.num) + '</span>' +
                  '<span class="name">' + escapeHtml(t.name) + '</span>' +
                  '<span class="pages">' + escapeHtml(t.pages || '') + '</span>' +
                  '<span class="lock">' + lock + '</span>' +
-               '</div>';
+               '</' + tag + '>';
       }).join('');
       return (
         '<div class="toc">' +
           '<h4>Table of Contents · ' + toc.length + ' Sections</h4>' +
           items +
         '</div>'
+      );
+    }
+
+    // Cross-sell: up to 3 other reports matching country/industry/year. Loaded
+    // from /api/library-report (relatedReports key). Cards link to the full
+    // report page in the same locale.
+    function renderRelatedReports(items) {
+      if (!Array.isArray(items) || !items.length) return '';
+      const cards = items.map(it => {
+        const tagLabel = [it.country, it.industry].filter(Boolean)
+          .map(s => s.toUpperCase()).join(' · ');
+        const yearStr  = it.year ? String(it.year) : '';
+        return (
+          '<a href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '" class="rpt-report-card">' +
+            '<div class="rpt-report-meta">' +
+              '<span class="cat">' + escapeHtml(tagLabel || 'REPORT') + '</span>' +
+              (yearStr ? '<span>' + escapeHtml(yearStr) + '</span>' : '') +
+            '</div>' +
+            '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
+            '<div class="rpt-report-foot">' +
+              '<span class="rpt-report-price">$' + (it.price || 39) + '</span>' +
+              '<span class="rpt-report-cta">Read report →</span>' +
+            '</div>' +
+          '</a>'
+        );
+      }).join('');
+      const intro = items.length > 1
+        ? "Adjacent markets and years our analysts cover — same depth, different angles."
+        : "Another market our analysts cover at the same depth.";
+      return (
+        '<section class="rpt-related-reports">' +
+          '<h4>Related reports</h4>' +
+          '<p class="rpt-related-intro">' + intro + '</p>' +
+          '<div class="rpt-related-grid">' + cards + '</div>' +
+        '</section>'
       );
     }
 
@@ -676,6 +730,8 @@
             fullBody +
 
             renderRelatedInsights(d.relatedInsights) +
+
+            renderRelatedReports(d.relatedReports) +
           '</article>' +
 
           renderBuyBox(d, {
@@ -696,6 +752,55 @@
           startCheckout(d.slug, locale);
         });
       }
+
+      // Wire LOCKED TOC rows → unlock modal. PREVIEW rows stay as plain text
+      // (rendered as <div>, not <button>) so they don't intercept clicks.
+      wireUnlockModal(d, purchaseState);
+    }
+
+    function wireUnlockModal(d, purchaseState) {
+      const modal     = document.getElementById('unlock-modal');
+      const closeBtn  = document.getElementById('unlock-modal-close');
+      const buyBtn    = document.getElementById('unlock-modal-buy');
+      const titleEl   = document.getElementById('unlock-modal-title');
+      const bodyEl    = document.getElementById('unlock-modal-body');
+      if (!modal || !closeBtn || !buyBtn || !titleEl || !bodyEl) return;
+
+      const price = d.price || 39;
+      const pages = d.pages || 78;
+
+      function openModal(sectionName) {
+        titleEl.textContent = sectionName || 'Locked section';
+        bodyEl.innerHTML =
+          'This section is part of the full report. Unlock the complete <strong>' +
+          pages + '-page PDF</strong> + online reader access for <strong>$' +
+          price + '</strong>.';
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+      }
+      function closeModal() {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll('.toc-item.lockable').forEach(el => {
+        el.addEventListener('click', () => openModal(el.dataset.section));
+      });
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', e => {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+      });
+
+      buyBtn.addEventListener('click', () => {
+        if (purchaseState.purchased) { closeModal(); return; }
+        buyBtn.disabled = true;
+        buyBtn.textContent = 'Opening checkout…';
+        startCheckout(d.slug, locale);
+      });
     }
   </script>
 </body>

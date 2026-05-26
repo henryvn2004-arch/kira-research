@@ -171,6 +171,71 @@ export default async function handler(req, res) {
       // Swallow — non-critical for the report render.
     }
 
+    // 6) Related reports — cross-sell.
+    //    Match strategy, scored highest-to-lowest:
+    //      • Same country (+3)
+    //      • Same industry (+2)
+    //      • Year within 1 of base.year (+1)
+    //    Filter: status=published, exclude self. Order by score desc then year desc.
+    //    Limit 3. Pull title from report_translations (prefer effectiveLocale, fall
+    //    back to EN). Failures degrade to empty array.
+    let relatedReports = [];
+    try {
+      const orParts = [];
+      if (base.country)  orParts.push(`country.eq.${encodeURIComponent(base.country)}`);
+      if (base.industry) orParts.push(`industry.eq.${encodeURIComponent(base.industry)}`);
+      if (!orParts.length) throw new Error('no country/industry on base');
+
+      const candidates = await sb(
+        `living_reports?or=(${orParts.join(',')})` +
+        `&status=eq.published&id=neq.${base.id}` +
+        `&select=id,slug,country,industry,year,price` +
+        `&limit=24`
+      );
+
+      const scored = (candidates || []).map(r => {
+        let s = 0;
+        if (base.country  && r.country  === base.country)  s += 3;
+        if (base.industry && r.industry === base.industry) s += 2;
+        if (base.year && r.year && Math.abs(r.year - base.year) <= 1) s += 1;
+        return { r, s };
+      }).filter(x => x.s > 0);
+      scored.sort((a, b) => b.s - a.s || (b.r.year || 0) - (a.r.year || 0));
+      const top = scored.slice(0, 3).map(x => x.r);
+
+      if (top.length) {
+        const topIds = top.map(x => x.id);
+        const titleRows = await sb(
+          `report_translations?report_id=in.(${topIds.join(',')})` +
+          `&status=eq.published&locale=in.(${effectiveLocale},en)` +
+          `&select=report_id,locale,title,eyebrow`
+        );
+        const byReport = new Map();
+        (titleRows || []).forEach(t => {
+          const cur = byReport.get(t.report_id);
+          if (!cur || (t.locale === effectiveLocale && cur.locale !== effectiveLocale)) {
+            byReport.set(t.report_id, t);
+          }
+        });
+        relatedReports = top.map(r => {
+          const t = byReport.get(r.id);
+          if (!t) return null;
+          return {
+            slug:     r.slug,
+            country:  r.country,
+            industry: r.industry,
+            year:     r.year,
+            price:    r.price || 39,
+            title:    t.title,
+            eyebrow:  t.eyebrow,
+            locale:   t.locale
+          };
+        }).filter(Boolean);
+      }
+    } catch (relErr) {
+      console.warn('[library-report] related reports lookup failed:', relErr.message);
+    }
+
     res.status(200).json({
       slug:           base.slug,
       country:        base.country || '',
@@ -194,7 +259,8 @@ export default async function handler(req, res) {
                                                        // post-purchase only via /api/get-purchased-report
       aggregators:    base.aggregators || [],
 
-      relatedInsights  // [{slug,title,excerpt,read_time,country,industry,locale}, ...] up to 3
+      relatedInsights, // [{slug,title,excerpt,read_time,country,industry,locale}, ...] up to 3
+      relatedReports   // [{slug,title,eyebrow,country,industry,year,price,locale}, ...] up to 3
     });
   } catch (err) {
     console.error('[library-report] error:', err.message);
