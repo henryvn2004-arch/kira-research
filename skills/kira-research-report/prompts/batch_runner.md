@@ -137,6 +137,16 @@ Spawn a `general-purpose` subagent with this prompt (substitute `${...}` fields)
 2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf` — both must exist and be non-empty (> 1KB)
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
 
+**Step 3 retry path** (anti-positioning leaks specifically — not the other failures): if grep returns hits, do NOT immediately fail. Instead, spawn one more `general-purpose` subagent fire with this prompt:
+
+> The EN HTML at `skills/kira-research-report/outputs/batch/${id}/en.html` contains a forbidden competitor reference. Offending matches:
+> ```
+> ${grep output, file:line:match}
+> ```
+> Rewrite the file **in place**, replacing every flagged citation with either the underlying primary source (gov stats, operator filings, industry association the competitor itself synthesized from) or `[Kira estimates]`. See `prompts/voice_guide.md` § "Forbidden (anti-positioning)" for the worked examples. Do NOT regenerate other sections. Do NOT re-render the PDF (parent will do that). Return when grep is clean.
+
+After the retry returns, re-run grep. If still dirty → failure path with `error_log: EN gen anti-positioning leak persisted after retry: ${first match}`. If clean → re-render the PDF via `node skills/kira-research-report/scripts/render-one.mjs <html> <pdf>` and proceed to commit. Only one retry — second leak means manual review.
+
 If all pass → set queue row status to `en_done`, output_paths to (empty for now, populated by Stage C). Commit + push:
 
 ```bash

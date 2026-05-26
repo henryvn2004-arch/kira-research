@@ -100,6 +100,18 @@ The reference target is `references/sample_R0152_baseline.html` and the 10 extra
 - Internal source-archive R-numbers (R0152, etc.)
 - "Our platform", "our SaaS", "our app", "AI-powered platform"
 
+**This applies equally to source tags and source-key entries — not just prose.** A data point that originated from a competitor aggregator must cite the underlying primary source it ultimately traces back to (gov stats, operator filings, industry association), or fall back to `[Kira estimates]`. The aggregator's name itself never appears in any visible attribution.
+
+Worked examples:
+
+❌ `Capacity 525 MW [Mordor/B-Company 2025]`
+❌ `Market USD 1.4 bn [Frost & Sullivan 2024]`
+❌ Source-key: `Mordor/B-Company 2025 = B-Company Vietnam Data Centre Outlook 2025`
+
+✅ `Capacity 525 MW [B-Company 2025]` &nbsp;— if the primary source is genuinely B-Company; drop the aggregator co-attribution
+✅ `Capacity 525 MW [Kira estimates]` &nbsp;— if the only routes to this number are competitor aggregators; treat as KIRA triangulation and footnote the underlying inputs in methodology
+✅ `Market USD 1.4 bn [Operator filings 2024]` &nbsp;— cite the upstream primary source the competitor itself was synthesizing
+
 ---
 
 ## 5. Callout cards (4-card grid in exec summary, etc.)
