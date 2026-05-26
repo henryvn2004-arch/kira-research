@@ -184,6 +184,14 @@
 
     document.documentElement.setAttribute('lang', locale);
 
+    // Preview iframe geometry. Source HTML is authored at 1280×720 per page
+    // (matches the PDF). 5 pages × 720px = 3600px tall. Declared up here so
+    // renderPreviewFrame() and fitPreviewFrame() — both called from render()
+    // — can reference them without hitting the TDZ.
+    const PREVIEW_PAGE_W = 1280;
+    const PREVIEW_PAGE_H = 720;
+    const PREVIEW_PAGES  = 5;
+
     const root = document.getElementById('rpt-root');
 
     if (!slug) {
@@ -515,16 +523,6 @@
         '</div>'
       );
     }
-
-    // High-fidelity preview: iframe loads the first 5 pages of the source
-    // report HTML via /api/preview-html. The HTML inside is 1280×720-per-page
-    // (matches the PDF visually). We scale it to fit the parent column width
-    // via JS, with a gradient fade + "Unlock" CTA card overlaid on the bottom.
-    //
-    // Pages × height: 5 pages × 720px = 3600px tall at 1280px wide.
-    const PREVIEW_PAGE_W = 1280;
-    const PREVIEW_PAGE_H = 720;
-    const PREVIEW_PAGES  = 5;
 
     function renderPreviewFrame(d, currentLocale) {
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) +
