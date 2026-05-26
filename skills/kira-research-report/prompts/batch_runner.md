@@ -296,10 +296,28 @@ done
 
 Expects HTTP 200 + `{"Key": "reports-pdfs/<report_id>/<locale>.pdf", "Id": "<uuid>"}`. Any non-200 → bail to failure path.
 
-**5.3c — Verify (2 cache-busted curls):**
+**5.3b-2 — Upload 3 preview HTML files to Supabase Storage bucket `reports-html`.**
+
+The report page on /<locale>/reports/<slug> embeds an iframe showing the first 5 pages of the source HTML. Without this step, the iframe loads empty and the page looks broken.
+
+Path: `<report_id>/<locale>.html`. The script slices the first 5 `<div class="page">` blocks before upload, so only preview-safe content lands in the bucket.
+
+```bash
+for loc in en ja ko; do
+  node skills/kira-research-report/scripts/upload-html.mjs \
+    "skills/kira-research-report/outputs/batch/${id}/${loc}.html" \
+    "${REPORT_ID}" \
+    "${loc}"
+done
+```
+
+Expects HTTP 200 + `{"Key": "reports-html/<report_id>/<locale>.html", "Id": "<uuid>"}`. Any non-200 → bail to failure path.
+
+**5.3c — Verify (3 cache-busted curls):**
 
 1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` contains the new slug
 2. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all 200
+3. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/api/preview-html?slug=<slug>&locale=$loc&_t=$(date +%s)"; done` — all 200, confirms the preview iframe HTML is uploaded for every locale
 
 **5.3d — Finalize queue row + commit + push.**
 
