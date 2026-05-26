@@ -5,6 +5,10 @@
 //   GET /api/insights-list?
 //       locale=en
 //       &category=fintech|methodology|vietnam|...   (optional)
+//       &q=coffee+vietnam                           (optional — server-side
+//                                                    keyword search across
+//                                                    title, excerpt, slug,
+//                                                    country, industry, category)
 //       &limit=24&offset=0
 //
 // Returns { items: [...], total } — each item has slug, category,
@@ -46,6 +50,16 @@ function int(s, def, max) {
   return Math.min(n, max);
 }
 
+// PostgREST ILIKE wants `*foo*`; escape commas/parens since they're
+// part of the or-filter syntax. Cap length to keep the URL sane.
+function sanitizeQ(q) {
+  if (typeof q !== 'string') return '';
+  const trimmed = q.trim().slice(0, 64);
+  if (trimmed.length < 2) return '';
+  // Strip characters that break PostgREST or-filter parsing.
+  return trimmed.replace(/[(),*]/g, ' ').trim();
+}
+
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
@@ -54,6 +68,7 @@ export default async function handler(req, res) {
   const url      = new URL(req.url, `https://${req.headers.host || 'x'}`);
   const locale   = SUPPORTED.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
   const category = clean(url.searchParams.get('category'));
+  const q        = sanitizeQ(url.searchParams.get('q'));
   const limit    = int(url.searchParams.get('limit'),  24, 96);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
 
@@ -74,6 +89,35 @@ export default async function handler(req, res) {
         `country.ilike.${encodeURIComponent(category)},` +
         `industry.ilike.${encodeURIComponent(category)})`
       );
+    }
+
+    // 1b) Keyword search (server-side, two-phase):
+    //     - Phase A: find insight_translations matching title/excerpt ILIKE
+    //     - Phase B: find insights matching slug/country/industry/category ILIKE
+    //     Union the IDs and filter the main query with id=in.(...)
+    if (q) {
+      const qPattern = encodeURIComponent(`*${q}*`);
+      // Phase A: title + excerpt across all locales (case-insensitive)
+      const transRes = await sb(
+        `insight_translations?status=eq.published` +
+        `&or=(title.ilike.${qPattern},excerpt.ilike.${qPattern})` +
+        `&select=insight_id&limit=500`
+      );
+      const transIds = new Set((transRes.rows || []).map(r => r.insight_id));
+
+      // Phase B: slug + country + industry + category on the base insights table
+      const slugRes = await sb(
+        `insights?status=eq.published` +
+        `&or=(slug.ilike.${qPattern},country.ilike.${qPattern},industry.ilike.${qPattern},category.ilike.${qPattern})` +
+        `&select=id&limit=500`
+      );
+      (slugRes.rows || []).forEach(r => transIds.add(r.id));
+
+      if (!transIds.size) {
+        res.status(200).json({ items: [], total: 0, limit, offset, locale });
+        return;
+      }
+      where.push(`id=in.(${Array.from(transIds).join(',')})`);
     }
     const baseQs =
       where.join('&') +

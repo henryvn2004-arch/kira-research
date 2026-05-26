@@ -1683,6 +1683,20 @@ button.toc-item.preview-scroll:focus-visible {
 .article-body ul, .article-body ol { margin: 8px 0 22px 20px; }
 .article-body li { color: var(--muted); font-size: 16px; line-height: 1.7; margin-bottom: 8px; }
 
+/* Inline SVG charts (copied verbatim from report template — class fills are
+   defined inside report.html <style>, so we mirror them here so the same
+   markup renders correctly inside the insight body. Without this block, all
+   <rect class="bar-*"> and <text class="label-*"> default to black fill. */
+.article-body svg { max-width: 100%; height: auto; display: block; margin: 24px 0; }
+.article-body svg .axis-text  { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--muted); }
+.article-body svg .axis-line  { stroke: var(--border); stroke-width: 1; }
+.article-body svg .grid-line  { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.article-body svg .bar-primary   { fill: var(--primary); }
+.article-body svg .bar-secondary { fill: #00A88B; }
+.article-body svg .bar-tertiary  { fill: #D97706; }
+.article-body svg .label-data    { font-family: 'JetBrains Mono', monospace; font-size: 12px; fill: var(--text); font-weight: 700; }
+.article-body svg .label-small   { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--muted); }
+
 /* Related-report block at bottom of article */
 .related-reports {
   margin-top: 64px;
@@ -1706,12 +1720,88 @@ button.toc-item.preview-scroll:focus-visible {
 }
 .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 
+/* Related-insights block (insight → insight cross-link, separate from related-reports) */
+.related-insights {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.related-insights h4 {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 18px;
+}
+.related-insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.related-insight-card {
+  display: block;
+  padding: 18px 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  background: var(--bg, #FFFFFF);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.related-insight-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+.related-insight-card .ri-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.related-insight-card h5 {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text);
+  margin: 0;
+}
+
+/* Search bar on /insights index */
+.insights-search-wrap {
+  margin: 0 0 24px;
+  position: relative;
+}
+.insights-search {
+  width: 100%;
+  padding: 14px 18px 14px 44px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg, #FFFFFF);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.insights-search:focus { border-color: var(--primary); }
+.insights-search::placeholder { color: var(--muted); }
+.insights-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
 @media (max-width: 960px) {
   .insight-featured { grid-template-columns: 1fr; }
   .insight-featured-img { min-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
   .insight-featured-body { padding: 32px; }
   .insights-grid { grid-template-columns: 1fr; }
   .related-grid { grid-template-columns: 1fr; }
+  .related-insights-grid { grid-template-columns: 1fr; }
   .insights-pager {
     flex-wrap: wrap;
     justify-content: center;

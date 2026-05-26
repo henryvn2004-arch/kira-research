@@ -139,6 +139,69 @@ export default async function handler(req, res) {
       });
     }
 
+    // 5) Related insights (insight → insight cross-link, for SEO + dwell time).
+    //    Scoring (mirrors library-report.js relatedReports):
+    //      same country  +3
+    //      same industry +2
+    //      published in last 90 days +1
+    //    Exclude self. Take top 3.
+    let relatedInsights = [];
+    try {
+      const orParts = [];
+      if (base.country)  orParts.push(`country.eq.${encodeURIComponent(base.country)}`);
+      if (base.industry) orParts.push(`industry.eq.${encodeURIComponent(base.industry)}`);
+      if (orParts.length) {
+        const candWhere =
+          `or=(${orParts.join(',')})` +
+          `&status=eq.published` +
+          `&published_at=lte.${encodeURIComponent(nowIso)}` +
+          `&id=neq.${base.id}` +
+          `&select=id,slug,country,industry,category,published_at` +
+          `&limit=24`;
+        const candRows = await sb(`insights?${candWhere}`);
+        const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+        const scored = (Array.isArray(candRows) ? candRows : []).map(c => {
+          let score = 0;
+          if (base.country  && c.country  === base.country)  score += 3;
+          if (base.industry && c.industry === base.industry) score += 2;
+          if (c.published_at && new Date(c.published_at).getTime() >= cutoff) score += 1;
+          return { c, score };
+        }).filter(x => x.score > 0)
+          .sort((a, b) => b.score - a.score || new Date(b.c.published_at || 0) - new Date(a.c.published_at || 0))
+          .slice(0, 3);
+
+        if (scored.length) {
+          const candIds = scored.map(x => x.c.id);
+          const idList = encodeURIComponent('(' + candIds.join(',') + ')');
+          const titleRows = await sb(
+            `insight_translations?insight_id=in.${idList}` +
+            `&status=eq.published&locale=in.(${effectiveLocale},en)` +
+            `&select=insight_id,locale,title`
+          );
+          const titleByInsight = new Map();
+          (titleRows || []).forEach(t => {
+            const cur = titleByInsight.get(t.insight_id);
+            if (!cur || (t.locale === effectiveLocale && cur.locale !== effectiveLocale)) {
+              titleByInsight.set(t.insight_id, t);
+            }
+          });
+          relatedInsights = scored.map(({ c }) => {
+            const t = titleByInsight.get(c.id);
+            return {
+              slug:     c.slug,
+              country:  c.country,
+              industry: c.industry,
+              category: c.category,
+              title:    (t && t.title) || null
+            };
+          }).filter(x => x.title); // hide rows we couldn't get a title for
+        }
+      }
+    } catch (err) {
+      // Non-fatal — log and serve the article without related insights.
+      console.error('[insight] relatedInsights error:', err.message);
+    }
+
     res.status(200).json({
       slug:           base.slug,
       category:       base.category,
@@ -157,7 +220,8 @@ export default async function handler(req, res) {
       body:           translation.body,     // markdown-ish HTML stored in DB
       read_time:      translation.read_time,
 
-      relatedReports
+      relatedReports,
+      relatedInsights
     });
   } catch (err) {
     console.error('[insight] error:', err.message);

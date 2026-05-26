@@ -41,6 +41,15 @@
       <p data-i18n="insights.sub">Short reads on what's changing across Southeast Asia — markets we cover, signals we're tracking, methodology we use. Free to read.</p>
     </header>
 
+    <!-- ── SEARCH ──────────────────────────────────────── -->
+    <div class="insights-search-wrap">
+      <svg class="insights-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="insights-search" class="insights-search" type="search" autocomplete="off"
+             placeholder="Search by topic, country, industry…" aria-label="Search insights" />
+    </div>
+
     <!-- ── CATEGORY FILTER ─────────────────────────────── -->
     <nav class="insights-cats" aria-label="Insight categories">
       <a href="#" class="active" data-i18n="insights.catAll">All</a>
@@ -85,14 +94,17 @@
   <script src="/js/i18n.js" defer></script>
   <script defer>
     document.addEventListener('DOMContentLoaded', () => {
-      const root   = document.getElementById('insights-root');
-      const cats   = document.querySelectorAll('.insights-cats a');
-      const locale = (window.kira && window.kira.locale) || 'en';
+      const root      = document.getElementById('insights-root');
+      const cats      = document.querySelectorAll('.insights-cats a');
+      const searchEl  = document.getElementById('insights-search');
+      const locale    = (window.kira && window.kira.locale) || 'en';
       const PAGE_SIZE = 12;
       let activeCat = '';
+      let searchQ   = '';
       let page      = 1;
+      let searchTimer = null;
 
-      // ── Hydrate active category + page from URL (?cat=foo&page=N) ──
+      // ── Hydrate active category + page + query from URL (?cat=foo&q=bar&page=N) ──
       const params = new URLSearchParams(window.location.search);
       const initCat = params.get('cat');
       if (initCat) {
@@ -102,6 +114,11 @@
             (a.dataset.cat || '').toLowerCase() === activeCat ||
             (!a.dataset.cat && !activeCat));
         });
+      }
+      const initQ = params.get('q');
+      if (initQ) {
+        searchQ = initQ.slice(0, 64);
+        if (searchEl) searchEl.value = searchQ;
       }
       const initPage = parseInt(params.get('page'), 10);
       if (initPage && initPage > 0) page = initPage;
@@ -119,10 +136,25 @@
         });
       });
 
+      // ── Search input (debounced) ──
+      if (searchEl) {
+        searchEl.addEventListener('input', () => {
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => {
+            searchQ = searchEl.value.trim();
+            page = 1;
+            syncUrl();
+            fetchAndRender();
+          }, 220);
+        });
+      }
+
       // ── Back/forward navigation ──
       window.addEventListener('popstate', () => {
         const p = new URLSearchParams(window.location.search);
         activeCat = (p.get('cat') || '').toLowerCase();
+        searchQ   = (p.get('q')   || '').slice(0, 64);
+        if (searchEl) searchEl.value = searchQ;
         page = Math.max(1, parseInt(p.get('page'), 10) || 1);
         cats.forEach(a => {
           a.classList.toggle('active',
@@ -135,6 +167,7 @@
       function syncUrl() {
         const p = new URLSearchParams();
         if (activeCat) p.set('cat', activeCat);
+        if (searchQ)   p.set('q',   searchQ);
         if (page > 1)  p.set('page', String(page));
         const qs = p.toString();
         const url = window.location.pathname + (qs ? '?' + qs : '');
@@ -148,6 +181,7 @@
         qs.set('limit',  String(PAGE_SIZE));
         qs.set('offset', String((page - 1) * PAGE_SIZE));
         if (activeCat) qs.set('category', activeCat);
+        if (searchQ)   qs.set('q', searchQ);
 
         try {
           const r = await fetch('/api/insights-list?' + qs.toString());
@@ -161,14 +195,17 @@
 
       function render(items, total) {
         if (!items.length) {
-          root.innerHTML = '<div class="insight-empty">No insights match this filter yet.</div>';
+          const msg = searchQ
+            ? 'No insights match "' + escapeHtml(searchQ) + '". Try a broader keyword.'
+            : 'No insights match this filter yet.';
+          root.innerHTML = '<div class="insight-empty">' + msg + '</div>';
           return;
         }
 
         const html = [];
 
-        if (page === 1) {
-          // Page 1: featured + rest as grid.
+        if (page === 1 && !searchQ) {
+          // Page 1 (no search): featured + rest as grid.
           const featured = items.find(it => it.featured) || items[0];
           const rest     = items.filter(it => it.slug !== featured.slug);
           html.push(renderFeatured(featured));

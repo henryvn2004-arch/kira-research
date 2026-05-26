@@ -262,6 +262,29 @@
         '</div>'
       );
     }
+    function renderRelatedInsights(items) {
+      if (!Array.isArray(items) || !items.length) return '';
+      const heading = ({
+        en: 'Continue reading',
+        ja: '関連インサイト',
+        ko: '관련 인사이트'
+      })[locale] || 'Continue reading';
+      const cards = items.map(it => {
+        const tags = [it.country, it.industry].filter(Boolean).map(s => s.toUpperCase()).join(' · ');
+        return (
+          '<a href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '" class="related-insight-card">' +
+            (tags ? '<div class="ri-meta">' + escapeHtml(tags) + '</div>' : '') +
+            '<h5>' + escapeHtml(it.title || it.slug) + '</h5>' +
+          '</a>'
+        );
+      }).join('');
+      return (
+        '<div class="related-insights">' +
+          '<h4>' + escapeHtml(heading) + '</h4>' +
+          '<div class="related-insights-grid">' + cards + '</div>' +
+        '</div>'
+      );
+    }
     function render(d) {
       const cat = buildCatLabel(d);
       const date = formatDate(d.published_at);
@@ -294,7 +317,8 @@
 
         '<div class="article-body">' + body + '</div>' +
 
-        renderRelated(d.relatedReports)
+        renderRelated(d.relatedReports) +
+        renderRelatedInsights(d.relatedInsights)
       );
     }
   </script>
