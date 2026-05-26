@@ -138,4 +138,16 @@ Future (Tier 2): generate PNG hero per insight via reused chromium endpoint, upl
 
 Same env vars as batch (PDF_RENDER_SECRET, SUPABASE_URL, SUPABASE_SERVICE_KEY). PDF_RENDER_SECRET not strictly used by insight gen but checked for consistency.
 
-See also: [[project_batch_cron_system]] · [[project_tool_gen_report]] · [[reference_kira_research]]
+## Surface polish shipped 2026-05-27 (commit cc3124c)
+
+Three improvements to the public insights surface, orthogonal to the gen pipeline:
+
+1. **Chart CSS fix in `kira.css`** — inline SVGs in insight bodies use class-based fills (`.bar-primary`, `.bar-secondary`, `.label-data`, `.axis-text`, `.axis-line`) defined only inside the report template's `<style>`. Mirrored those classes into `kira.css` scoped to `.article-body svg`. Without this, all bars/labels defaulted to black fill on insight pages — a serious visual bug found by Henry on `/en/insights/coffee-vietnam-top-players-2026`.
+
+2. **Server-side keyword search** on `/api/insights-list` via new `?q=` param. Two-phase lookup: ILIKE on `insight_translations.title|excerpt` + ILIKE on `insights.slug|country|industry|category`, union IDs, then filter main query. Frontend adds debounced search input to all 3 locale index pages (en/ja/ko) with URL persistence.
+
+3. **Related insights** via new `relatedInsights` field on `/api/insight`. Scoring mirrors library-report's `relatedReports`: same country (+3), same industry (+2), published <90d (+1). `_view.html` renders top 3 in a 3-card grid below the existing related-reports block. SEO/AEO win via internal-link density + dwell time.
+
+All 3 are AEO-adjacent — the chart fix unblocks visual quality of insights that AI Overviews crawl; search aids in-site discovery; related insights compound crawl depth. Compatible with future Phase R companies directory.
+
+See also: [[project_batch_cron_system]] · [[project_tool_gen_report]] · [[reference_kira_research]] · [[project_r_seo_companies_directory]]

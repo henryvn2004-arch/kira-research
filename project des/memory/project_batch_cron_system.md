@@ -194,6 +194,8 @@ What's in the allowlist (commit `07d1a5c`):
 
 **Implication for machine setup**: 13 batch tasks now exist on DELL too (recreated from vnc-f4 set 2026-05-25). Both machines can fire safely — claim-then-commit prevents double-claim. Quota cost: ~2x if both run.
 
+**2026-05-27 sync update**: vnc-f4 brought to canonical Q.3 layout — 18 batch (added 5 bridges: 1930/2030/2130/2230/2330) + 2 monitor + 4 insight = 24 tasks total. Mirrors DELL exactly. Achieved via `mcp__scheduled-tasks__create_scheduled_task` × 9 calls.
+
 ## Phase Q.2 changelog (2026-05-25) — Insight gen pipeline
 
 New cron added: 4 `kira-insight-XXXX` daily fires (07/11/15/21 ICT) on DELL. Reads `skills/kira-research-report/prompts/insight_runner.md` — extracts 3 strongest sections from each published report's `en.html`, gens 3 insights × 3 locales = 9 `insight_translations` rows.
