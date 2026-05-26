@@ -40,7 +40,7 @@ async function sb(path, method = 'GET', body = null) {
 // downloadName (optional, 2026-05-25): when set, append "?download=<name>" to
 // the signed URL. Supabase Storage then serves the file with
 // Content-Disposition: attachment; filename=<name> — so the buyer's browser
-// saves it as e.g. "vietnam-fintech-2026_EN.pdf" instead of the storage path's
+// saves it as e.g. "Vietnam fintech 2026_EN.pdf" instead of the storage path's
 // last segment ("en.pdf"). Aggregator-hosted URLs pass through unchanged.
 async function resolvePdfUrl(pdfUrl, downloadName) {
   if (!pdfUrl) return null;
@@ -187,9 +187,14 @@ export default async function handler(req, res) {
     // External URLs pass through. Best-effort: null on failure so the UI
     // shows the "PDF is being prepared" pending state instead of breaking.
     //
-    // Download filename convention (2026-05-25): "<slug>_<LOCALE-UPPER>.pdf"
-    // e.g. "vietnam-fintech-2026_EN.pdf". Aggregator HTTP URLs ignore this.
-    const downloadName = `${base.slug}_${effectiveLocale.toUpperCase()}.pdf`;
+    // Download filename convention (2026-05-26): "<Country> <industry-lower> <year>_<LOCALE-UPPER>.pdf"
+    // e.g. "Vietnam fintech 2026_EN.pdf", "Vietnam e-commerce 2026_JA.pdf".
+    // Computed from living_reports country/industry/year so it auto-updates
+    // for ALL reports (already-published + future) — no Storage rename needed
+    // because the storage path stays <uuid>/<locale>.pdf; only the browser
+    // Content-Disposition filename (via ?download=…) changes. Aggregator HTTP
+    // URLs ignore this.
+    const downloadName = `${base.country} ${(base.industry || '').toLowerCase()} ${base.year}_${effectiveLocale.toUpperCase()}.pdf`;
     const signedPdfUrl = await resolvePdfUrl(translation.pdf_url, downloadName);
 
     res.status(200).json({
