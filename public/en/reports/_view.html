@@ -498,11 +498,18 @@
     function renderToc(toc, ownsContent) {
       if (!Array.isArray(toc) || !toc.length) return '';
       const items = toc.map(t => {
-        const isPreview  = t.locked === false;
-        const isLockable = !ownsContent && !isPreview;
-        const cls = (isPreview || ownsContent) ? ' preview' : ' lockable';
-        const tag = isLockable ? 'button' : 'div';
-        const typeAttr = isLockable ? ' type="button"' : '';
+        const isPreview        = t.locked === false;
+        const isLockable       = !ownsContent && !isPreview;
+        const isPreviewScroll  = !ownsContent && isPreview;
+        const interactive      = isLockable || isPreviewScroll;
+        // .preview = blue-tinted (free or owned); .lockable = clickable, opens modal;
+        // .preview-scroll = clickable, scrolls to the iframe preview above.
+        let cls = '';
+        if (ownsContent || isPreview) cls += ' preview';
+        if (isLockable)               cls += ' lockable';
+        if (isPreviewScroll)          cls += ' preview-scroll';
+        const tag = interactive ? 'button' : 'div';
+        const typeAttr = interactive ? ' type="button"' : '';
         const dataAttr = isLockable
           ? ' data-section="' + escapeHtml(t.name) + '"'
           : '';
@@ -840,6 +847,13 @@
 
       document.querySelectorAll('.toc-item.lockable').forEach(el => {
         el.addEventListener('click', () => openModal(el.dataset.section));
+      });
+      // Preview rows scroll up to the iframe preview block.
+      document.querySelectorAll('.toc-item.preview-scroll').forEach(el => {
+        el.addEventListener('click', () => {
+          const target = document.querySelector('.rpt-preview-section');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
       });
       closeBtn.addEventListener('click', closeModal);
       modal.addEventListener('click', e => {
