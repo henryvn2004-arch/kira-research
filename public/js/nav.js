@@ -256,9 +256,82 @@
     document.head.appendChild(xd);
   }
 
+  // ── Favicon injection ──────────────────────────────────────
+  // Many static HTML pages were never wired with the `<link rel="icon">`.
+  // Inject from one place so every page (51+ across locales + admin + studio)
+  // gets the same favicon stack. Idempotent — skip if any rel="icon" exists.
+  function injectFavicon() {
+    // Idempotent only across nav.js re-runs; pages that hardcoded the SVG
+    // <link> in HTML still get the supplementary PNG/ICO/apple/manifest
+    // links because we only short-circuit on our own data attribute.
+    if (document.querySelector('link[data-kira-favicon]')) return;
+
+    // Primary SVG favicon (modern browsers: Chrome/FF/Edge/Safari 14+).
+    // Skip if a hardcoded SVG link is already in the HTML head (the 23 static
+    // HTML files have `<link rel="icon" type="image/svg+xml" href="/favicon.svg">`).
+    if (!document.querySelector('link[rel="icon"][type="image/svg+xml"]')) {
+      const svg = document.createElement('link');
+      svg.rel  = 'icon';
+      svg.type = 'image/svg+xml';
+      svg.href = '/favicon.svg';
+      svg.setAttribute('data-kira-favicon', '1');
+      document.head.appendChild(svg);
+    }
+
+    // PNG variants — crawlers + browsers that prefer raster.
+    [
+      { size: '32x32', href: '/favicon-32.png' },
+      { size: '16x16', href: '/favicon-16.png' },
+    ].forEach(p => {
+      const l = document.createElement('link');
+      l.rel = 'icon';
+      l.type = 'image/png';
+      l.sizes = p.size;
+      l.href = p.href;
+      l.setAttribute('data-kira-favicon', '1');
+      document.head.appendChild(l);
+    });
+
+    // ICO fallback for legacy crawlers + browsers that ignore SVG icons.
+    const ico = document.createElement('link');
+    ico.rel  = 'icon';
+    ico.type = 'image/x-icon';
+    ico.href = '/favicon.ico';
+    ico.setAttribute('data-kira-favicon', '1');
+    document.head.appendChild(ico);
+
+    // Apple touch icon for iOS Safari "Add to Home Screen" + share-sheet.
+    const apple = document.createElement('link');
+    apple.rel  = 'apple-touch-icon';
+    apple.sizes = '180x180';
+    apple.href = '/apple-touch-icon.png';
+    apple.setAttribute('data-kira-favicon', '1');
+    document.head.appendChild(apple);
+
+    // PWA manifest — enables "Add to Home Screen" with proper name/icons.
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const manifest = document.createElement('link');
+      manifest.rel = 'manifest';
+      manifest.href = '/site.webmanifest';
+      manifest.setAttribute('data-kira-favicon', '1');
+      document.head.appendChild(manifest);
+    }
+
+    // Theme color matches the brand-dark background of the icon — affects
+    // mobile browser chrome (Android Chrome address bar, etc.).
+    if (!document.querySelector('meta[name="theme-color"]')) {
+      const theme = document.createElement('meta');
+      theme.name = 'theme-color';
+      theme.content = '#0B0D10';
+      theme.setAttribute('data-kira-theme-color', '1');
+      document.head.appendChild(theme);
+    }
+  }
+
   // ── Inject ─────────────────────────────────────────────────
   function inject() {
     // canonical + hreflang first so they're in <head> before <body> work begins.
+    injectFavicon();
     injectCanonical();
     injectHreflang();
     injectOrganizationJsonLd();
