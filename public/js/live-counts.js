@@ -165,6 +165,95 @@
     });
   }
 
+  // ── Home — Latest Research panel + Featured grid ────────────
+  // Replaces the hardcoded report rows on the homepage hero panel and the
+  // Featured reports grid with the N most-recently-published reports from
+  // the DB. The hardcoded markup that ships in the static HTML serves as
+  // a skeleton — visible during the brief fetch window, replaced on success.
+  // Containers must carry `data-live-reports="panel"` or `data-live-reports="grid"`.
+  async function applyHomeFeaturedReports() {
+    const panel = document.querySelector('[data-live-reports="panel"]');
+    const grid  = document.querySelector('[data-live-reports="grid"]');
+    if (!panel && !grid) return;
+
+    let items;
+    try { items = await fetchAll(getLocale()); }
+    catch (_) { return; }
+
+    // Sort by published_at desc (newest first). Drop unpublished.
+    items = items
+      .filter(it => it.slug && it.title)
+      .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
+
+    const locale = getLocale();
+
+    // ── Hero panel (compact rows, max 4) ──
+    if (panel) {
+      const top = items.slice(0, 4);
+      if (top.length) {
+        const rowsHtml = top.map(it => {
+          const country  = (it.country  || '').toUpperCase();
+          const industry = (it.industry || '').toUpperCase();
+          const price    = it.price || 39;
+          const safeTitle = escapeHtml(it.title);
+          return (
+            '<a href="/' + locale + '/reports/' + escapeAttr(it.slug) + '" class="panel-row" style="text-decoration:none;color:inherit;">' +
+              '<div>' +
+                '<div class="panel-label">' + safeTitle + '</div>' +
+                '<div class="panel-meta">' + escapeHtml([country, industry].filter(Boolean).join(' · ')) + '</div>' +
+              '</div>' +
+              '<div class="panel-value">$' + Number(price) + '</div>' +
+            '</a>'
+          );
+        }).join('');
+        // Preserve the panel-header (LIVE badge) — only replace the rows.
+        const header = panel.querySelector('.panel-header');
+        panel.innerHTML = (header ? header.outerHTML : '') + rowsHtml;
+      }
+    }
+
+    // ── Featured grid (3 cards, prefer newer ones not already in panel) ──
+    if (grid) {
+      const top = items.slice(0, 3);
+      if (top.length) {
+        const cardsHtml = top.map(it => {
+          const country  = (it.country  || '').toUpperCase();
+          const industry = (it.industry || '').toUpperCase();
+          const year     = it.year || '';
+          const price    = it.price || 39;
+          const safeTitle = escapeHtml(it.title);
+          const excerpt = it.excerpt ? escapeHtml(String(it.excerpt).slice(0, 240)) + (String(it.excerpt).length > 240 ? '…' : '') : '';
+          // Localized CTA labels — match the labels the rest of the page uses.
+          const ctaLabel = locale === 'ja' ? 'プレビュー →' : locale === 'ko' ? '미리보기 →' : 'Preview →';
+          return (
+            '<a href="/' + locale + '/reports/' + escapeAttr(it.slug) + '" class="report-card">' +
+              '<div class="report-meta">' +
+                '<span class="country">' + escapeHtml(country) + '</span>' +
+                '<span>' + escapeHtml([industry, year].filter(Boolean).join(' · ')) + '</span>' +
+              '</div>' +
+              '<h3>' + safeTitle + '</h3>' +
+              (excerpt ? '<p class="report-desc">' + excerpt + '</p>' : '') +
+              '<div class="report-footer">' +
+                '<span class="report-price">$' + Number(price) + '</span>' +
+                '<span class="report-cta">' + ctaLabel + '</span>' +
+              '</div>' +
+            '</a>'
+          );
+        }).join('');
+        grid.innerHTML = cardsHtml;
+      }
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function escapeAttr(s) {
+    return encodeURIComponent(String(s == null ? '' : s));
+  }
+
   // ── Boot ────────────────────────────────────────────────────
   function boot() {
     // Defer slightly so the page's own init (library.html dynamic fetch)
@@ -172,6 +261,7 @@
     setTimeout(() => {
       applyHomeCounts();
       applyLibraryCounts();
+      applyHomeFeaturedReports();
     }, 50);
   }
 

@@ -40,7 +40,7 @@ function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=300');
+  res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
 }
 
 const SUPPORTED = new Set(['en', 'ja', 'ko']);

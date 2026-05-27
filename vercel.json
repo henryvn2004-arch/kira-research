@@ -105,5 +105,37 @@
       "maxDuration": 60,
       "includeFiles": "skills/kira-research-report/templates/*"
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/css/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/locales/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=600, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/(.*).(woff2|woff|ttf|otf)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(favicon.svg|favicon.ico|favicon-16.png|favicon-32.png|apple-touch-icon.png|icon-512.png|logo.png|site.webmanifest)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800, s-maxage=2592000" }
+      ]
+    }
+  ]
 }
