@@ -128,7 +128,9 @@ export default async function handler(req, res) {
 
     const { rows: insights, total } = await sb(`insights?${baseQs}`);
 
-    // 2) Translations in one in() query.
+    // 2) Translations in one in() query. We also pull body length so we
+    //    can drop stub rows (title+excerpt present but body never written)
+    //    from the public list. body=not.is.null is the PostgREST filter.
     const ids = insights.map(r => r.id);
     let translations = [];
     if (ids.length) {
@@ -136,10 +138,12 @@ export default async function handler(req, res) {
       const tQs =
         `insight_id=in.${idList}` +
         `&status=eq.published` +
+        `&body=not.is.null` +
         `&locale=in.(${locale},en)` +
-        `&select=insight_id,locale,title,excerpt,read_time`;
+        `&select=insight_id,locale,title,excerpt,read_time,body`;
       const { rows } = await sb(`insight_translations?${tQs}`);
-      translations = rows;
+      // Drop empty-string bodies that slipped past the IS NULL filter.
+      translations = rows.filter(r => r.body && r.body.length > 0);
     }
 
     const byId = new Map();
@@ -150,24 +154,34 @@ export default async function handler(req, res) {
       }
     });
 
-    const items = insights.map(i => {
-      const t = byId.get(i.id) || null;
-      return {
-        slug:         i.slug,
-        category:     i.category,
-        country:      i.country,
-        industry:     i.industry,
-        published_at: i.published_at,
-        featured:     !!i.featured,
-        title:        (t && t.title)    || null,
-        excerpt:      (t && t.excerpt)  || null,
-        read_time:    (t && t.read_time) || null,
-        locale:       t ? t.locale : null,
-        hasTranslation: !!t
-      };
-    });
+    // Filter out insights whose only published translation has a null/empty
+    // body — those would render as "Full article body is being written…" stubs
+    // on the detail page, which looks broken from a buyer's POV. Better to
+    // hide them entirely until someone writes the body.
+    const items = insights
+      .map(i => {
+        const t = byId.get(i.id) || null;
+        if (!t) return null;
+        return {
+          slug:         i.slug,
+          category:     i.category,
+          country:      i.country,
+          industry:     i.industry,
+          published_at: i.published_at,
+          featured:     !!i.featured,
+          title:        t.title    || null,
+          excerpt:      t.excerpt  || null,
+          read_time:    t.read_time || null,
+          locale:       t.locale,
+          hasTranslation: true
+        };
+      })
+      .filter(Boolean);
 
-    res.status(200).json({ items, total, limit, offset, locale });
+    // Total reflects post-filter count. If callers rely on the pre-filter
+    // total for pagination, they'll see the visible-items count instead —
+    // which is the more honest number anyway.
+    res.status(200).json({ items, total: items.length, limit, offset, locale });
   } catch (err) {
     console.error('[insights-list] error:', err.message);
     res.status(500).json({ error: 'server_error' });

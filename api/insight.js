@@ -93,6 +93,14 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Reject stubs — title+excerpt without a body would render the
+    // "Full article body is being written…" fallback on _view.html.
+    // That looks broken to a buyer, so treat it as not_found.
+    if (!translation.body || !translation.body.trim()) {
+      res.status(404).json({ error: 'body_empty' });
+      return;
+    }
+
     // 3) Available locales for the article (for hreflang)
     const allRows = await sb(
       `insight_translations?insight_id=eq.${base.id}` +
