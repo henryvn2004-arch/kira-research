@@ -54,6 +54,59 @@ If ANY prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do 
 
 ---
 
+## Step 0.5: Auto-recover stale claims (Phase Q.4 — 2026-05-28)
+
+Cron fires sometimes die AFTER committing the claim but BEFORE producing
+output (Claude session crash, machine sleep, network reset, sub-agent
+hang past timeout, anti-positioning retry-loop hard-stop). The status
+stays `*_in_progress` forever, silently stalling the queue. Pre-Q.4 the
+only recovery was manual.
+
+This step runs BEFORE stage routing every fire, so the next available
+fire automatically reclaims any orphaned slug.
+
+### How it works
+
+`scripts/audit-queue.mjs` scans `data/report_queue.csv` for rows where
+`status` ends in `_in_progress` AND `claimed_at` is empty OR older than
+**90 minutes** ago (2× the 45-min hard stage timeout — wide margin to
+never kill a legitimately-running stage).
+
+For each stale row:
+
+- **Strike-1** (error_log does NOT contain `auto-recovered`): revert
+  status to the prior stage, clear `claimed_at`, append
+  `auto-recovered <iso>` to `error_log`.
+  - `en_in_progress` → `pending`
+  - `ja_in_progress` → `en_done`
+  - `ko_in_progress` → `ja_done`
+- **Strike-2** (already auto-recovered once and got stuck again): real
+  bug, do NOT auto-recover again. Set status = `error`, append
+  `second-strike auto-recover skipped` to error_log for manual review.
+
+The script is **idempotent**: if nothing is stale, the CSV is not
+touched on disk (script prints `recovered=0` and exits; the caller's
+`git status` will show no diff). It also migrates the schema (adds
+`claimed_at` column) on first run.
+
+### Call from the fire
+
+```bash
+RECOVERED=$(node skills/kira-research-report/scripts/audit-queue.mjs | awk -F= '/^recovered=/{print $2}')
+if [ "${RECOVERED:-0}" -gt 0 ]; then
+  git add data/report_queue.csv
+  git commit -m "batch: auto-recover ${RECOVERED} stale claim(s)"
+  git pull --rebase origin main 2>/dev/null || true
+  git push origin main
+fi
+```
+
+If push fails (remote ahead even after rebase), EXIT with
+`recovery commit collided, no-op` — next fire will retry the audit
+fresh. Do NOT proceed to Step 1 with un-pushed recovery state.
+
+---
+
 ## Step 1: Find work — stage routing
 
 Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose status is one of `pending | en_done | ja_done` (in priority order — pick the most-advanced first):
@@ -70,11 +123,19 @@ Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose stat
 | status | meaning |
 |---|---|
 | `pending` | not yet started |
+| `en_in_progress` | a fire is generating EN (or claimed and died — see `claimed_at`) |
 | `en_done` | EN HTML+PDF generated + committed; awaiting JA |
+| `ja_in_progress` | a fire is translating JA (or claimed and died) |
 | `ja_done` | JA HTML+PDF generated + committed; awaiting KO + publish |
+| `ko_in_progress` | a fire is translating KO + publishing (or claimed and died) |
 | `done` | all 3 langs + Supabase published; terminal success |
-| `error` | a stage failed; see `error_log`; terminal failure (manual reset to `pending` to retry) |
+| `error` | a stage failed (or strike-2 auto-recovery escalated); see `error_log`; terminal failure (manual reset to `pending` / `en_done` / `ja_done` to retry) |
 | `in_progress` | (legacy) treat as `error` and skip — old single-fire-all-stages format |
+
+**Companion column `claimed_at`** (Phase Q.4): ISO 8601 UTC timestamp set
+at claim time, cleared on success / failure / auto-recovery. If a row
+has `*_in_progress` status with a `claimed_at` more than 90 minutes ago
+(or empty), Step 0.5 of the next fire automatically reverts it.
 
 Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `target_languages`, current `status`.
 
@@ -82,13 +143,25 @@ Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `targ
 
 ## Step 2: Claim the row (atomic, push immediately)
 
-Update the row in-place — set status to the **next** stage marker that says "I'm working on it":
+Update the row in-place — set TWO fields:
 
-| Picked status | Set to | Commit message |
-|---|---|---|
-| `pending` | `en_in_progress` | `batch: claim ${id} for EN gen` |
-| `en_done` | `ja_in_progress` | `batch: claim ${id} for JA translate` |
-| `ja_done` | `ko_in_progress` | `batch: claim ${id} for KO translate + publish` |
+1. `status` → next stage marker (`I'm working on it`):
+
+   | Picked status | Set to | Commit message |
+   |---|---|---|
+   | `pending` | `en_in_progress` | `batch: claim ${id} for EN gen` |
+   | `en_done` | `ja_in_progress` | `batch: claim ${id} for JA translate` |
+   | `ja_done` | `ko_in_progress` | `batch: claim ${id} for KO translate + publish` |
+
+2. `claimed_at` → current UTC ISO 8601 timestamp. Compute with:
+
+   ```bash
+   CLAIMED_AT=$(node -e "process.stdout.write(new Date().toISOString())")
+   ```
+
+   This timestamp is what Step 0.5 of the NEXT fire uses to detect a
+   stale claim if this fire dies mid-stage. Always quote when written
+   to CSV (ISO timestamps contain `:`).
 
 Write CSV back. Commit + push immediately:
 
@@ -147,7 +220,7 @@ Spawn a `general-purpose` subagent with this prompt (substitute `${...}` fields)
 
 After the retry returns, re-run grep. If still dirty → failure path with `error_log: EN gen anti-positioning leak persisted after retry: ${first match}`. If clean → re-render the PDF via `node skills/kira-research-report/scripts/render-one.mjs <html> <pdf>` and proceed to commit. Only one retry — second leak means manual review.
 
-If all pass → set queue row status to `en_done`, output_paths to (empty for now, populated by Stage C). Commit + push:
+If all pass → set queue row status to `en_done`, **clear `claimed_at`** (this fire succeeded; Step 0.5 should never see this row as stale), leave `output_paths` empty (populated by Stage C). Commit + push:
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/en.html
@@ -215,6 +288,7 @@ Spawn ONE subagent for JA translation. Prompt:
 If any check fails → failure path. Otherwise:
 
 - Set queue row status to `ja_done`
+- **Clear `claimed_at`** (this fire succeeded; next fire's audit must not see it as stale)
 - Commit + push:
 
 ```bash
@@ -335,6 +409,7 @@ Expects HTTP 200 + `{"Key": "reports-html/<report_id>/<locale>.html", "Id": "<uu
 - output_paths → `reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf`
 - date_completed → today (YYYY-MM-DD)
 - error_log → empty
+- `claimed_at` → empty (terminal success; clears the in-flight marker)
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
@@ -368,6 +443,7 @@ Update queue row:
 - output_paths → any PDFs that DID get generated (partial)
 - date_completed → today's ISO date
 - error_log → one-line summary including the stage (`EN gen timeout 45m` / `JA section count 15/22` / `KO render-pdf 500` / etc.)
+- `claimed_at` → empty (terminal failure; clears the in-flight marker so Step 0.5 doesn't try to re-recover an `error` row)
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
@@ -420,6 +496,25 @@ Fixed in §4.1 (count), §4.2 (subagent prompt), §4.3 (validation regex), §5.1
 Also clarified §4.3 validation #4 (source-tag superset) — a descriptive tail translation inside a tag that preserves the publisher alias is acceptable; only a localized publisher alias or a missing alias entirely fails the gate. Real example: `[Kira estimates · computed from active-user-share above]` → `[Kira estimates · 上記アクティブ利用者シェアから算出]` is acceptable.
 
 ---
+
+## Phase Q.4 changelog (2026-05-28)
+
+- **Auto-recovery for stale `*_in_progress` claims.** Pre-Q.4 a fire that
+  committed `claim` then died (Claude session crash, machine sleep,
+  network blip, sub-agent hang past timeout) left the row stuck forever
+  until manual unstuck. Discovered after a queue audit found 4 rows stuck
+  for 5.5h-21h, burning ~1 day of queue capacity silently.
+- **New column `claimed_at`** in `data/report_queue.csv` (ISO 8601 UTC).
+  Set at claim, cleared on success/failure/auto-recover.
+- **New script** `skills/kira-research-report/scripts/audit-queue.mjs`.
+  Idempotent CSV migration + 90-min stale-claim detector. Strike-1 reverts
+  to prior stage; strike-2 (row already auto-recovered once) escalates
+  to `error` so manual review surfaces real bugs.
+- **New Step 0.5** in this prompt runs the audit before stage routing.
+  Adds at most one extra `batch: auto-recover N stale claim(s)` commit
+  per fire that finds stale rows; zero overhead when queue is clean.
+- **Steps 2, 3, 4, 5.3d, 7 updated** to set/clear `claimed_at` alongside
+  status transitions.
 
 ## Phase Q.1 changelog (2026-05-25)
 

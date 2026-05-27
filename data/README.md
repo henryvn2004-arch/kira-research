@@ -20,7 +20,8 @@ The daily 4-fire cron (`prompts/batch_runner.md`) reads this file each fire, pic
 | `output_paths` | string | After completion, pipe-separated Supabase Storage paths to the 3 PDFs. |
 | `date_added` | ISO date | When you added the row. |
 | `date_completed` | ISO date | When status moved to `done` or `error`. |
-| `error_log` | string | If status=error, brief message including the stage that failed. |
+| `error_log` | string | If status=error, brief message including the stage that failed. Also accumulates `auto-recovered <iso>` notes when Phase Q.4 auto-recovery flips a stale row. |
+| `claimed_at` | ISO 8601 UTC | Phase Q.4. Set when a fire claims the row (`*_in_progress`); cleared on `done` / `error` / auto-recover. Used by `audit-queue.mjs` to detect stale claims older than 90 min. |
 
 ### Status flow (Phase Q.1, 2026-05-25 — multi-fire split)
 
@@ -54,7 +55,7 @@ The next batch cron fire (13 fires/day, 45-min cadence, ICT) picks it up. A full
 - `ja_done` — two-thirds done, awaiting KO translate + publish at next fire
 - `done` — published to library; check `output_paths` for Storage paths
 - `error` — failed at some stage; check `error_log`; reset to `pending` to retry
-- `*_in_progress` — currently being worked on by a fire RIGHT NOW (or stuck if fire crashed; check git log timestamp of the claim commit — if > 90 min ago, likely stuck → reset to the pre-claim status)
+- `*_in_progress` — currently being worked on by a fire RIGHT NOW. **Phase Q.4 auto-recovery (2026-05-28):** Step 0.5 of every fire runs `scripts/audit-queue.mjs` which detects rows where `claimed_at` is older than 90 minutes (or empty) and reverts the status to the pre-claim stage automatically. Strike-1 reverts to prior stage; strike-2 (already auto-recovered once) escalates to `error` so a real bug surfaces instead of looping. Manual unstuck is the fallback if auto-recovery itself is broken.
 
 ### Why CSV instead of database
 
