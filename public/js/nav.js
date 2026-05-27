@@ -133,21 +133,21 @@
         <p class="footer-tag" data-i18n="footer.tagline">Southeast Asia's specialized market research firm. Senior analysts, modern delivery.</p>
       </div>
       <div class="footer-col">
-        <h5 data-i18n="footer.libraryCol">Library</h5>
+        <h3 data-i18n="footer.libraryCol">Library</h3>
         <a href="${localPath('/library')}"                       data-i18n="footer.browseAll">Browse All</a>
         <a href="${localPath('/library?filter=country')}"        data-i18n="footer.byCountry">By Country</a>
         <a href="${localPath('/library?filter=industry')}"       data-i18n="footer.byIndustry">By Industry</a>
         <a href="${localPath('/library?sort=recent')}"           data-i18n="footer.latest">Latest</a>
       </div>
       <div class="footer-col">
-        <h5 data-i18n="footer.firmCol">Firm</h5>
+        <h3 data-i18n="footer.firmCol">Firm</h3>
         <a href="${localPath('/about')}"            data-i18n="footer.about">About</a>
         <a href="${localPath('/methodology')}"      data-i18n="footer.methodology">Methodology</a>
         <a href="${localPath('/custom-research/')}" data-i18n="footer.customResearch">Custom Research</a>
         <a href="${localPath('/contact')}"          data-i18n="footer.contact">Contact</a>
       </div>
       <div class="footer-col">
-        <h5 data-i18n="footer.resourcesCol">Resources</h5>
+        <h3 data-i18n="footer.resourcesCol">Resources</h3>
         <a href="${localPath('/insights')}" data-i18n="footer.insights">Insights</a>
         <a href="${localPath('/pricing')}"  data-i18n="footer.pricing">Pricing</a>
         <a href="${localPath('/terms')}"    data-i18n="footer.terms">Terms</a>
