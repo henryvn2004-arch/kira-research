@@ -1,11 +1,21 @@
 ---
 name: kira-r-seo-companies-directory
-description: "Phase R brainstorm — companies directory as SEO/AEO/GEO long-tail catcher. Henry's hypothesis: company-name long-tail outperforms category long-tail. Two complementary patterns proposed."
+description: "Phase R — companies directory as SEO/AEO/GEO long-tail catcher. Henry's hypothesis: company-name long-tail outperforms category long-tail. Two complementary patterns proposed. Picked up 2026-05-28 as part of broader SEO/GEO/AEO push."
 metadata:
   node_type: memory
   type: project
-  status: brainstorm (not started)
+  status: next-up (2026-05-28 — SEO/GEO/AEO sprint kickoff)
 ---
+
+## Status (2026-05-27 evening)
+
+Henry signaled tomorrow's session (**2026-05-28**) starts SEO/GEO/AEO work. Phase R companies-directory is the most concrete starting point but the umbrella may also cover:
+
+- **SEO (technical/on-page)** — schema markup expansion, internal linking, Phase 7.3 GSC follow-up
+- **GEO (Generative Engine Optimization)** — make KIRA the cited source for ChatGPT / Perplexity / Gemini answers on SEA market data
+- **AEO (Answer Engine Optimization)** — same family as GEO; structured data + concise factual claims tuned for LLM citation extraction
+
+First-question to ask Henry when picking up: which scope first — Phase R companies pages, AEO surface (schema + factual concision), or GSC-side technical SEO?
 
 ## The hypothesis (Henry, 2026-05-27)
 
