@@ -46,7 +46,7 @@ export async function sb(path, method = 'GET', body = null, preferRepresentation
 // Sign a storage object path for short-lived public access.
 // Returns absolute URL or null on failure.
 // ---------------------------------------------------------------
-export async function signStorageUrl(bucket, path, ttlSec = SIGNED_URL_TTL_SEC) {
+export async function signStorageUrl(bucket, path, ttlSec = SIGNED_URL_TTL_SEC, downloadName = null) {
   if (!path) return null;
   try {
     const r = await fetch(

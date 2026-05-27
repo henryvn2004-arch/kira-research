@@ -12,6 +12,8 @@
 //              overflow_detected, overflow_pages, rendered_at }
 // ============================================================
 
+/* global document */ // used inside page.evaluate() callbacks (Chromium ctx)
+
 // CRITICAL: @sparticuz/chromium-min runs Lambda-environment detection at
 // MODULE LOAD time — its index.js body calls setupLambdaEnvironment() which
 // prepends /tmp/al2023/lib to LD_LIBRARY_PATH. Vercel's runtime is

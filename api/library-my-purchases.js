@@ -79,10 +79,9 @@ export default async function handler(req, res) {
       basesById = Object.fromEntries((baseRows || []).map(b => [b.id, b]));
     }
 
-    // 3) Batch-fetch translations for (report_id, locale) pairs we care about.
-    //    Use the locale the user actually purchased. If that translation is
-    //    missing, fall back to EN title so the row still renders.
-    const wantedPairs = purchases.map(p => ({ report_id: p.report_id, locale: p.locale }));
+    // 3) Batch-fetch translations for purchased report_ids. Lookup is later
+    //    keyed by `${report_id}:${locale}`; if the purchased locale row is
+    //    missing we fall back to EN so the row still renders.
     const allTranslations = await sb(
       `report_translations?report_id=in.(${reportIds.join(',')})` +
       `&select=report_id,locale,title,pdf_url`

@@ -126,7 +126,7 @@ export default async function handler(req, res) {
       `&offset=${offset}` +
       `&select=id,slug,category,country,industry,published_at,featured`;
 
-    const { rows: insights, total } = await sb(`insights?${baseQs}`);
+    const { rows: insights } = await sb(`insights?${baseQs}`);
 
     // 2) Translations in one in() query. We also pull body length so we
     //    can drop stub rows (title+excerpt present but body never written)
