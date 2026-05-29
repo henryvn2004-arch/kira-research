@@ -2,14 +2,16 @@
 // KIRA RESEARCH — api/company-search.js
 // Company Intelligence: search / resolve endpoint.
 //
-// GET /api/company-search?mst=0123456789
-//   → { entity: { id, mst, canonical_name, status_cache } }
+// GET /api/company-search?tax_id=0123456789&country=VN   (default country=VN)
+//   → { entity: { id, country_code, tax_id, canonical_name, status_cache } }
 //
-// GET /api/company-search?name=Cong+ty+ABC
+// GET /api/company-search?name=Intimex+Group&country=VN
 //   → { entity: ... }           single match
 //   → { candidates: [...] }     multiple matches — caller must show selector
 //
-// Errors → { error: 'missing_input'|'mst_not_found'|'no_candidates'|'search_failed' }
+// Legacy: ?mst= still accepted as alias for ?tax_id= with country=VN
+//
+// Errors → { error: 'missing_input'|'not_found'|'no_candidates'|'search_failed' }
 //
 // Auth: public (no JWT). Rate limiting via Vercel edge (future).
 // Cache: s-maxage=60 (short — entities can be enriched any time)
@@ -17,15 +19,24 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { runPipeline } from './_lib/company/pipeline.js';
+import { SUPPORTED_COUNTRIES, DEFAULT_COUNTRY } from './_lib/company/config.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  const { mst, name } = req.query;
-  if (!mst && !name) {
-    return res.status(400).json({ error: 'missing_input', hint: 'Provide ?mst= or ?name=' });
+  // ?mst= is a legacy alias for ?tax_id= (VN only)
+  const taxId  = req.query.tax_id || req.query.mst || null;
+  const name   = req.query.name   || null;
+  const country = (req.query.country || DEFAULT_COUNTRY).toUpperCase();
+
+  if (!taxId && !name) {
+    return res.status(400).json({ error: 'missing_input', hint: 'Provide ?tax_id= (or legacy ?mst=) or ?name=. Optional: &country=VN' });
+  }
+
+  if (!SUPPORTED_COUNTRIES.includes(country)) {
+    return res.status(400).json({ error: 'unsupported_country', supported: SUPPORTED_COUNTRIES });
   }
 
   const supabase = createClient(
@@ -34,11 +45,11 @@ export default async function handler(req, res) {
     { auth: { persistSession: false } }
   );
 
-  const result = await runPipeline({ mst, name }, { supabase });
+  const result = await runPipeline({ taxId, name, country }, { supabase });
 
   if (result.error) {
-    const status = result.error === 'missing_input' ? 400
-                 : result.error === 'mst_not_found' || result.error === 'no_candidates' ? 404
+    const status = result.error === 'missing_input' || result.error === 'unsupported_country' ? 400
+                 : result.error === 'not_found' || result.error === 'no_candidates' ? 404
                  : 500;
     return res.status(status).json({ error: result.error });
   }

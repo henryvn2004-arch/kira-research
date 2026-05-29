@@ -4,8 +4,8 @@
 // runPipeline(input, ctx) → { report } | { candidates } | { error }
 //
 // 6-stage pipeline:
-//   1. Resolve entity (MST → direct; name → candidates list)
-//   2. Fetch official sources (dkkd, tax) — deterministic, cheap
+//   1. Resolve entity (tax_id → direct; name → candidates list)
+//   2. Fetch official sources (country-specific: dkkd/tax for VN, ACRA for SG, etc.)
 //   3. Footprint discovery (gmb, website, shopee) — expensive
 //   4. Graph expansion (recursive CTE up to depth 2)
 //   5. LLM synthesis (only when unstructured text exists)
@@ -15,22 +15,24 @@
 // Sprint 0 scaffold: stages 1 + cache check + stub the rest.
 // ============================================================
 
-import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF } from './config.js';
+import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF, DEFAULT_COUNTRY } from './config.js';
 
 /**
- * @param {{ mst?: string, name?: string }} input
+ * @param {{ taxId?: string, name?: string, country?: string }} input
  * @param {{ supabase: import('@supabase/supabase-js').SupabaseClient }} ctx
  * @returns {Promise<{
  *   report?:     object,
- *   candidates?: Array<{ id: string, canonical_name: string, mst?: string, status_cache?: string }>,
+ *   candidates?: Array<{ id: string, country_code: string, canonical_name: string, tax_id?: string, status_cache?: string }>,
  *   error?:      string
  * }>}
  */
 export async function runPipeline(input, ctx) {
-  if (!input.mst && !input.name) return { error: 'missing_input' };
+  if (!input.taxId && !input.name) return { error: 'missing_input' };
+
+  const country = (input.country || DEFAULT_COUNTRY).toUpperCase();
 
   // Stage 1: resolve entity
-  const resolved = await resolveEntity(input, ctx);
+  const resolved = await resolveEntity({ ...input, country }, ctx);
   if (resolved.candidates) return { candidates: resolved.candidates };
   if (resolved.error)      return { error: resolved.error };
 
@@ -80,22 +82,25 @@ export async function expandGraph(seedId, supabase) {
 
 async function resolveEntity(input, ctx) {
   const { supabase } = ctx;
+  const country = input.country || DEFAULT_COUNTRY;
 
-  if (input.mst) {
+  if (input.taxId) {
     const { data, error } = await supabase
       .from('entities')
-      .select('id, type, mst, canonical_name, name_norm, status_cache')
-      .eq('mst', input.mst)
+      .select('id, type, country_code, tax_id, canonical_name, name_norm, status_cache')
+      .eq('country_code', country)
+      .eq('tax_id', input.taxId)
       .single();
-    if (error || !data) return { error: 'mst_not_found' };
+    if (error || !data) return { error: 'not_found' };
     return { entity: data };
   }
 
-  // Name search via pg_trgm similarity
+  // Name search via pg_trgm similarity, scoped to country
   const norm = input.name.toLowerCase().trim();
   const { data, error } = await supabase
     .from('entities')
-    .select('id, type, mst, canonical_name, status_cache')
+    .select('id, type, country_code, tax_id, canonical_name, status_cache')
+    .eq('country_code', country)
     .ilike('name_norm', `%${norm}%`)
     .limit(10);
 
@@ -121,7 +126,8 @@ async function getCachedReport(entityId, ctx) {
 function assembleThinReport(entity) {
   return {
     entity_id:    entity.id,
-    mst:          entity.mst,
+    country_code: entity.country_code,
+    tax_id:       entity.tax_id,
     name:         entity.canonical_name,
     status:       entity.status_cache || 'unknown',
     is_thin:      true,

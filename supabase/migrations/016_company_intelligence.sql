@@ -2,12 +2,16 @@
 -- KIRA RESEARCH — migration 016: Company Intelligence Engine
 -- Sprint 0: DB schema — 7 tables + extensions + RLS
 --
+-- Multi-country design: VN first, then JP/KR/AU/SG/MY/ID/TH/PH etc.
+-- country_code = ISO 3166-1 alpha-2 (VN, JP, KR, AU, SG, MY, ID, TH, PH, NZ)
+-- tax_id       = country-specific registration ID (MST for VN, ABN for AU, etc.)
+--
 -- Run in Supabase dashboard → SQL Editor.
 -- Idempotent (CREATE ... IF NOT EXISTS everywhere).
 -- Expected final notice: "Company Intelligence schema: all 7 tables OK"
 -- ============================================================
 
--- Extensions for Vietnamese fuzzy search
+-- Extensions for multilingual fuzzy search
 create extension if not exists unaccent;
 create extension if not exists pg_trgm;
 
@@ -17,16 +21,19 @@ create extension if not exists pg_trgm;
 create table if not exists entities (
   id               uuid primary key default gen_random_uuid(),
   type             text not null check (type in ('company','brand','person','address','foreign_org')),
-  mst              text unique,               -- VN tax ID: 10-digit = legal entity, 13-digit = branch
+  country_code     text not null default 'VN',  -- ISO 3166-1 alpha-2
+  tax_id           text,                         -- country-specific: MST (VN), ABN (AU), BRN (SG/MY), CRN (GB), CIN (IN), etc.
   canonical_name   text not null,
-  name_norm        text not null,             -- unaccent + lower + stripped legal suffix → used for fuzzy search
-  status_cache     text,                      -- denorm: 'active'|'dissolved'|'suspended' — source of truth is facts table
+  name_norm        text not null,               -- unaccent + lower + stripped legal suffix → used for fuzzy search
+  status_cache     text,                        -- denorm: 'active'|'dissolved'|'suspended' — source of truth is facts table
   last_enriched_at timestamptz,
-  created_at       timestamptz default now()
+  created_at       timestamptz default now(),
+  unique (country_code, tax_id)                 -- tax_id unique within a country, NULLs excluded automatically
 );
 
 create index if not exists entities_name_norm_trgm  on entities using gin (name_norm gin_trgm_ops);
-create index if not exists entities_mst             on entities (mst) where mst is not null;
+create index if not exists entities_tax_id          on entities (country_code, tax_id) where tax_id is not null;
+create index if not exists entities_country         on entities (country_code);
 create index if not exists entities_type            on entities (type);
 create index if not exists entities_status          on entities (status_cache) where status_cache is not null;
 
@@ -224,10 +231,10 @@ declare
   v_edge_id     uuid;
   v_count       int;
 begin
-  -- Insert seed entity
-  insert into entities (type, mst, canonical_name, name_norm, status_cache)
-  values ('company', '0000000000', 'TEST COMPANY TNHH', 'test company', 'active')
-  on conflict (mst) do update set canonical_name = excluded.canonical_name
+  -- Insert seed entity (VN)
+  insert into entities (type, country_code, tax_id, canonical_name, name_norm, status_cache)
+  values ('company', 'VN', '0000000000', 'TEST COMPANY TNHH', 'test company', 'active')
+  on conflict (country_code, tax_id) do update set canonical_name = excluded.canonical_name
   returning id into v_entity_id;
 
   -- Insert source
