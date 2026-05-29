@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Company Intelligence — KIRA RESEARCH</title>
+  <meta name="description" content="Search and profile Vietnam companies. Registration data, charter capital, founding year — sourced from official ĐKKD registry. Powered by KIRA RESEARCH." />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+  <style>
+    /* ── Hero ───────────────────────────────────────── */
+    .ci-hero {
+      padding: 64px 24px 40px;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .ci-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .ci-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: clamp(26px, 5vw, 40px);
+      color: var(--text);
+      margin: 0 0 14px;
+      line-height: 1.15;
+    }
+    .ci-hero p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── Search bar ─────────────────────────────────── */
+    .ci-search-wrap {
+      max-width: 660px;
+      margin: 32px auto 0;
+      padding: 0 24px;
+      position: relative;
+    }
+    .ci-search-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .ci-country-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0 14px;
+      height: 50px;
+      cursor: pointer;
+      flex-shrink: 0;
+      outline: none;
+    }
+    .ci-country-select:focus {
+      border-color: var(--primary);
+    }
+    .ci-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .ci-input {
+      width: 100%;
+      height: 50px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 15px;
+      padding: 0 48px 0 16px;
+      outline: none;
+      transition: border-color 0.15s;
+      box-sizing: border-box;
+    }
+    .ci-input::placeholder { color: var(--muted); }
+    .ci-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,102,240,0.1);
+    }
+    .ci-search-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 16px;
+    }
+
+    /* ── Autocomplete dropdown ──────────────────────── */
+    .ci-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      z-index: 100;
+      overflow: hidden;
+      display: none;
+    }
+    .ci-dropdown.open { display: block; }
+    .ci-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.1s;
+      border-bottom: 1px solid var(--border);
+    }
+    .ci-dropdown-item:last-child { border-bottom: none; }
+    .ci-dropdown-item:hover, .ci-dropdown-item.focused {
+      background: rgba(26,102,240,0.06);
+    }
+    .ci-dd-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(26,102,240,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .ci-dd-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .ci-dd-meta {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .ci-dd-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+    }
+    .ci-dd-status::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .ci-dd-status.active::before  { background: #22c55e; }
+    .ci-dd-status.dissolved::before { background: #ef4444; }
+    .ci-dd-status.unknown::before { background: #94a3b8; }
+    .ci-dd-arrow {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .ci-dd-loading, .ci-dd-empty {
+      padding: 20px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ── Stats bar ──────────────────────────────────── */
+    .ci-stats {
+      max-width: 660px;
+      margin: 12px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .ci-stats span strong { color: var(--text); }
+
+    /* ── Featured companies grid ────────────────────── */
+    .ci-section {
+      max-width: 960px;
+      margin: 48px auto 0;
+      padding: 0 24px 96px;
+    }
+    .ci-section-title {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin: 0 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ci-section-title span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .ci-companies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .ci-co-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.15s;
+    }
+    .ci-co-card:hover {
+      border-color: var(--primary);
+    }
+    .ci-co-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ci-co-meta {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .ci-co-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 4px;
+      background: rgba(26,102,240,0.07);
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .ci-sector-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .ci-tab {
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: transparent;
+    }
+    .ci-tab:hover, .ci-tab.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(26,102,240,0.06);
+    }
+  </style>
+</head>
+<body>
+  <script src="/js/nav.js"></script>
+
+  <main>
+    <!-- Hero + Search -->
+    <div class="ci-hero">
+      <div class="ci-eyebrow">Company Intelligence · Vietnam</div>
+      <h1>Search Vietnam companies<br>by name or tax ID</h1>
+      <p>Official registration data from the national ĐKKD registry — charter capital, founding year, legal status, registered address.</p>
+    </div>
+
+    <div class="ci-search-wrap">
+      <div class="ci-search-row">
+        <select class="ci-country-select" id="ci-country" aria-label="Country">
+          <option value="VN">🇻🇳 Vietnam</option>
+          <option value="SG" disabled>🇸🇬 Singapore (soon)</option>
+          <option value="ID" disabled>🇮🇩 Indonesia (soon)</option>
+          <option value="TH" disabled>🇹🇭 Thailand (soon)</option>
+        </select>
+        <div class="ci-input-wrap">
+          <input
+            id="ci-input"
+            class="ci-input"
+            type="text"
+            placeholder="Search by company name or tax ID…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search company"
+            aria-autocomplete="list"
+            aria-controls="ci-dropdown"
+          />
+          <span class="ci-search-icon">⌕</span>
+          <div class="ci-dropdown" id="ci-dropdown" role="listbox"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ci-stats" id="ci-stats">
+      <span><strong id="ci-total">25</strong> companies indexed</span>
+      <span>Vietnam · ĐKKD registry</span>
+    </div>
+
+    <!-- Companies grid -->
+    <div class="ci-section" id="ci-section">
+      <div class="ci-section-title">All indexed companies <span id="ci-grid-count"></span></div>
+      <div class="ci-sector-tabs" id="ci-tabs">
+        <button class="ci-tab active" data-sector="all">All</button>
+        <button class="ci-tab" data-sector="Banking">Banking</button>
+        <button class="ci-tab" data-sector="Technology">Technology</button>
+        <button class="ci-tab" data-sector="Energy">Energy</button>
+        <button class="ci-tab" data-sector="F&B">F&amp;B</button>
+        <button class="ci-tab" data-sector="Real Estate">Real Estate</button>
+        <button class="ci-tab" data-sector="Aviation">Aviation</button>
+        <button class="ci-tab" data-sector="Retail">Retail</button>
+        <button class="ci-tab" data-sector="FMCG">FMCG</button>
+      </div>
+      <div class="ci-companies-grid" id="ci-grid">
+        <div style="color:var(--muted);font-size:14px;padding:20px 0">Loading…</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const input    = document.getElementById('ci-input');
+    const dropdown = document.getElementById('ci-dropdown');
+    const countryEl = document.getElementById('ci-country');
+    const gridEl    = document.getElementById('ci-grid');
+    const gridCount = document.getElementById('ci-grid-count');
+    const tabs      = document.getElementById('ci-tabs');
+
+    let allCompanies = [];   // all fetched from DB
+    let activeFilter = 'all';
+    let debounceTimer;
+    let focusIdx = -1;
+
+    // ── Load all VN companies for the grid ─────────────────────
+    function loadGrid() {
+      fetch('/api/company-search?name=&country=VN&list=1')
+        .catch(() => null)
+        .then(r => r && r.ok ? r.json() : null)
+        .then(data => {
+          // Fallback: if list endpoint not implemented, use static data
+          if (!data || !data.candidates) {
+            renderGridStatic();
+            return;
+          }
+          allCompanies = data.candidates || [];
+          renderGrid(allCompanies);
+        });
+    }
+
+    // Static grid from known slugs (fallback when list API not available)
+    function renderGridStatic() {
+      // Load from a curated list embedded here
+      allCompanies = [
+        { canonical_name: 'Tập đoàn Vingroup - Công ty Cổ phần',   slug: 'vn-vingroup-0101231488',             industry: 'Real Estate',    status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Vinhomes',               slug: 'vn-vinhomes-0101245765',             industry: 'Real Estate',    status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Tập đoàn Masan',         slug: 'vn-masan-0101241133',                industry: 'FMCG',           status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần FPT',                    slug: 'vn-fpt-0101248141',                  industry: 'Technology',     status_cache: 'active' },
+        { canonical_name: 'Tập đoàn Công nghiệp - Viễn thông Quân đội', slug: 'vn-viettel-0100109106',         industry: 'Telecommunications', status_cache: 'active' },
+        { canonical_name: 'Tập đoàn Bưu chính Viễn thông Việt Nam', slug: 'vn-vnpt-0100686209',                industry: 'Telecommunications', status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Đầu tư Thế Giới Di Động', slug: 'vn-the-gioi-di-dong-mwg-0301452948', industry: 'Retail',      status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Vàng bạc Đá quý Phú Nhuận', slug: 'vn-pnj-0300715692',            industry: 'Retail',         status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Sữa Việt Nam',           slug: 'vn-vinamilk-1800236211',             industry: 'F&B',            status_cache: 'active' },
+        { canonical_name: 'Tổng Công ty Cổ phần Bia - Rượu - Nước giải khát Sài Gòn', slug: 'vn-sabeco-0300581946', industry: 'F&B', status_cache: 'active' },
+        { canonical_name: 'Tổng Công ty Cổ phần Bia - Rượu - Nước giải khát Hà Nội', slug: 'vn-habeco-0100108704', industry: 'F&B', status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Tập đoàn Hòa Phát',     slug: 'vn-hoa-phat-0400186680',             industry: 'Steel',          status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần An Phát Holdings',       slug: 'vn-an-phat-holdings-0200284693',     industry: 'Manufacturing',  status_cache: 'active' },
+        { canonical_name: 'Tổng Công ty Hàng không Việt Nam - Công ty Cổ phần', slug: 'vn-vietnam-airlines-0100107518', industry: 'Aviation', status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Hàng không VietJet',     slug: 'vn-vietjet-0102182728',              industry: 'Aviation',       status_cache: 'active' },
+        { canonical_name: 'Tập đoàn Xăng dầu Việt Nam - Công ty Cổ phần', slug: 'vn-petrolimex-0100107716',   industry: 'Energy',         status_cache: 'active' },
+        { canonical_name: 'Tập đoàn Điện lực Việt Nam',             slug: 'vn-evn-0100100079',                  industry: 'Energy',         status_cache: 'active' },
+        { canonical_name: 'Tập đoàn Dầu khí Việt Nam',              slug: 'vn-pvn-petrovietnam-0100681380',     industry: 'Energy',         status_cache: 'active' },
+        { canonical_name: 'Ngân hàng Thương mại Cổ phần Ngoại thương Việt Nam', slug: 'vn-vietcombank-vcb-0100112437', industry: 'Banking', status_cache: 'active' },
+        { canonical_name: 'Ngân hàng Thương mại Cổ phần Đầu tư và Phát triển Việt Nam', slug: 'vn-bidv-0100150619', industry: 'Banking', status_cache: 'active' },
+        { canonical_name: 'Ngân hàng Thương mại Cổ phần Kỹ thương Việt Nam', slug: 'vn-techcombank-tcb-0100230800', industry: 'Banking', status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Xây dựng Coteccons',     slug: 'vn-coteccons-0304132923',            industry: 'Construction',   status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Phát triển Bất động sản Phát Đạt', slug: 'vn-phat-dat-0305152492', industry: 'Real Estate',    status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Phát triển Đô thị Kinh Bắc', slug: 'vn-kinh-bac-city-0200170831', industry: 'Real Estate',   status_cache: 'active' },
+        { canonical_name: 'Công ty Cổ phần Hàng tiêu dùng Masan',   slug: 'vn-masan-consumer-0303655599',      industry: 'FMCG',           status_cache: 'active' },
+      ];
+      renderGrid(allCompanies);
+    }
+
+    function renderGrid(companies) {
+      const filtered = activeFilter === 'all'
+        ? companies
+        : companies.filter(c => c.industry === activeFilter);
+
+      gridCount.textContent = `· ${filtered.length}`;
+
+      if (filtered.length === 0) {
+        gridEl.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:20px 0">No companies in this category yet.</div>';
+        return;
+      }
+
+      gridEl.innerHTML = filtered.map(c => {
+        const url = `/en/companies/vn/${c.slug}`;
+        return `
+          <a href="${url}" class="ci-co-card">
+            <div class="ci-co-name" title="${esc(c.canonical_name)}">${esc(shortName(c.canonical_name))}</div>
+            <div class="ci-co-meta">
+              ${c.industry ? `<span class="ci-co-tag">${esc(c.industry)}</span>` : ''}
+              <span>${c.status_cache === 'active' ? '● Active' : c.status_cache || ''}</span>
+            </div>
+          </a>`;
+      }).join('');
+    }
+
+    // ── Tabs ───────────────────────────────────────────────────
+    tabs.addEventListener('click', e => {
+      const btn = e.target.closest('.ci-tab');
+      if (!btn) return;
+      tabs.querySelectorAll('.ci-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.sector;
+      renderGrid(allCompanies);
+    });
+
+    // ── Search autocomplete ────────────────────────────────────
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const q = input.value.trim();
+      if (q.length < 2) { closeDropdown(); return; }
+      debounceTimer = setTimeout(() => doSearch(q), 280);
+    });
+
+    input.addEventListener('keydown', e => {
+      const items = dropdown.querySelectorAll('.ci-dropdown-item');
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        focusIdx = Math.min(focusIdx + 1, items.length - 1);
+        updateFocus(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        focusIdx = Math.max(focusIdx - 1, 0);
+        updateFocus(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const focused = dropdown.querySelector('.ci-dropdown-item.focused');
+        if (focused) focused.click();
+      } else if (e.key === 'Escape') {
+        closeDropdown();
+      }
+    });
+
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.ci-input-wrap')) closeDropdown();
+    });
+
+    function doSearch(q) {
+      const country = countryEl.value;
+      dropdown.innerHTML = '<div class="ci-dd-loading">Searching…</div>';
+      dropdown.classList.add('open');
+      focusIdx = -1;
+
+      // First try local filter (instant, no API call)
+      if (allCompanies.length > 0) {
+        const norm = q.toLowerCase();
+        const local = allCompanies.filter(c =>
+          c.canonical_name.toLowerCase().includes(norm) ||
+          (c.tax_id || '').includes(q)
+        ).slice(0, 8);
+        if (local.length > 0) { renderDropdown(local, q); return; }
+      }
+
+      // Fallback: API search
+      fetch(`/api/company-search?name=${encodeURIComponent(q)}&country=${country}`)
+        .then(r => r.json())
+        .then(data => {
+          const results = data.candidates || (data.entity ? [data.entity] : []);
+          renderDropdown(results, q);
+        })
+        .catch(() => {
+          dropdown.innerHTML = '<div class="ci-dd-empty">Search unavailable. Try again.</div>';
+        });
+    }
+
+    function renderDropdown(results, query) {
+      if (results.length === 0) {
+        dropdown.innerHTML = `<div class="ci-dd-empty">No companies found for "<strong>${esc(query)}</strong>"</div>`;
+        dropdown.classList.add('open');
+        return;
+      }
+
+      dropdown.innerHTML = results.map((c, i) => {
+        const url   = `/en/companies/vn/${c.slug}`;
+        const name  = shortName(c.canonical_name || c.name || '');
+        const ind   = c.industry || '';
+        const status = c.status_cache || c.status || 'active';
+        return `
+          <a href="${url}" class="ci-dropdown-item" role="option" data-idx="${i}">
+            <div class="ci-dd-icon">🏢</div>
+            <div style="flex:1;min-width:0">
+              <div class="ci-dd-name">${esc(name)}</div>
+              <div class="ci-dd-meta">
+                ${ind ? `<span>${esc(ind)}</span> ·` : ''}
+                <span class="ci-dd-status ${status}">Vietnam</span>
+              </div>
+            </div>
+            <span class="ci-dd-arrow">→</span>
+          </a>`;
+      }).join('');
+      dropdown.classList.add('open');
+    }
+
+    function updateFocus(items) {
+      items.forEach((el, i) => el.classList.toggle('focused', i === focusIdx));
+      if (items[focusIdx]) items[focusIdx].scrollIntoView({ block: 'nearest' });
+    }
+
+    function closeDropdown() {
+      dropdown.classList.remove('open');
+      dropdown.innerHTML = '';
+      focusIdx = -1;
+    }
+
+    // ── Helpers ────────────────────────────────────────────────
+    function esc(s) {
+      return String(s || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function shortName(name) {
+      return name
+        .replace(/^(Tập đoàn|Công ty Cổ phần|Tổng Công ty|Công ty TNHH|Tổng Công ty Cổ phần)\s*/i, '')
+        .replace(/\s*-\s*Công ty Cổ phần$/, '')
+        || name;
+    }
+
+    // ── Init ───────────────────────────────────────────────────
+    loadGrid();
+  })();
+  </script>
+</body>
+</html>

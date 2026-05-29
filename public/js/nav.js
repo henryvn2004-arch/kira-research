@@ -84,6 +84,7 @@
         <div class="nav-links" id="kira-nav-links">
           <a href="${localPath('/library')}"          class="${('library'        + activeIf('library')).trim()}"        data-i18n="nav.library">Library</a>
           <a href="${localPath('/insights')}"         class="${('insights'       + activeIf('insights')).trim()}"       data-i18n="nav.insights">Insights</a>
+          <a href="${localPath('/tools/')}"           class="${('tools'          + activeIf('tools')).trim()}"          data-i18n="nav.tools">Tools</a>
           <a href="${localPath('/about')}"            class="${('about'          + activeIf('about')).trim()}"          data-i18n="nav.about">About</a>
           <a href="${localPath('/methodology')}"      class="${('methodology'    + activeIf('methodology')).trim()}"    data-i18n="nav.methodology">Methodology</a>
           <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
@@ -111,6 +112,7 @@
     </div>
     <a href="${localPath('/library')}"          data-i18n="nav.library">Library</a>
     <a href="${localPath('/insights')}"         data-i18n="nav.insights">Insights</a>
+    <a href="${localPath('/tools/')}"           data-i18n="nav.tools">Tools</a>
     <a href="${localPath('/about')}"            data-i18n="nav.about">About</a>
     <a href="${localPath('/methodology')}"      data-i18n="nav.methodology">Methodology</a>
     <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
