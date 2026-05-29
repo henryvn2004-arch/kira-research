@@ -14,6 +14,8 @@
 
 import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF, SOURCE_TTL_DAYS, DEFAULT_COUNTRY } from './config.js';
 import * as vn_dkkd from './connectors/vn_dkkd.js';
+import * as vn_masothue from './connectors/vn_masothue.js';
+import * as tavily_web from './connectors/tavily_web.js';
 import { makeSlug } from './normalize.js';
 
 // ── Public entry point ─────────────────────────────────────────
@@ -91,13 +93,34 @@ async function stage2OfficialSources(entity, ctx) {
     || isCoverageStale(dkkdCoverage, 'dkkd');
 
   if (needsFetch && country === 'VN' && entity.tax_id) {
-    const connector = vn_dkkd;
-    await runConnector(entity, 'dkkd', connector, ctx);
-    // Reload facts after connector run
-    return loadFacts(entity.id, supabase);
+    await runConnector(entity, 'dkkd', vn_dkkd, ctx);
   }
 
-  return existingFacts;
+  // masothue scraper — charter_capital + founding_date (VN only)
+  if (country === 'VN' && entity.tax_id && process.env.FIRECRAWL_API_KEY) {
+    const masothueCoverage = await getCoverage(entity.id, 'masothue', supabase);
+    const needsMasothue = !masothueCoverage
+      || masothueCoverage.status === 'not_checked'
+      || masothueCoverage.status === 'failed'
+      || isCoverageStale(masothueCoverage, 'masothue');
+    if (needsMasothue) {
+      await runConnector(entity, 'masothue', vn_masothue, ctx);
+    }
+  }
+
+  // Tavily web enrichment — description + website (all countries, run once)
+  if (process.env.TAVILY_API_KEY) {
+    const tavilyCoverage = await getCoverage(entity.id, 'tavily', supabase);
+    const needsTavily = !tavilyCoverage
+      || tavilyCoverage.status === 'not_checked'
+      || isCoverageStale(tavilyCoverage, 'tavily');
+    if (needsTavily) {
+      await runConnector(entity, 'tavily', tavily_web, ctx);
+    }
+  }
+
+  // Reload all facts after connectors run
+  return loadFacts(entity.id, supabase);
 }
 
 // ── Connector runner ───────────────────────────────────────────
