@@ -1,6 +1,6 @@
 # batch_runner.md — self-contained prompt for scheduled batch report generation
 
-Fired by `mcp__scheduled-tasks` crons (currently 13 fires/day, 45-min cadence, in two blocks). Each fire is a **fresh Claude session with no memory** of any prior conversation — everything needed is in this prompt + the files it references.
+Fired by `mcp__scheduled-tasks` crons (currently 18 fires/day — 3 evening + 5 bridge + 10 overnight; see `project des/memory/project_batch_cron_system.md` for full schedule). Each fire is a **fresh Claude session with no memory** of any prior conversation — everything needed is in this prompt + the files it references.
 
 This prompt is **machine-agnostic**: it derives its working directory from git, so the same prompt runs on any laptop where the repo is cloned (vnc-f4, DELL, future machines).
 
