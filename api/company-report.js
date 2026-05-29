@@ -2,15 +2,20 @@
 // KIRA RESEARCH — api/company-report.js
 // Company Intelligence: get assembled report by slug.
 //
-// GET /api/company-report?slug=ten-cong-ty-0123456789
-//   → { report: { entity_id, mst, name, status, facts, graph, narrative, coverage, ... } }
+// GET /api/company-report?slug=vn-vingroup-0101231488
+//   → { report: { entity_id, tax_id, name, status, facts, coverage, ... } }
 //
-// 404 if slug not found or report expired and pipeline not yet re-run.
+// Behaviour:
+//   • Fresh cache hit        → serve immediately
+//   • Stub (is_stub=true)    → run pipeline inline (~5-10s), return fresh data
+//   • Expired (not stub)     → serve stale + async refresh in background
+//   • Not found              → 404
 //
-// Auth: public. Cache: s-maxage=1800 (30 min — refreshed by pipeline).
+// Auth: public. Cache: s-maxage=1800 when fresh, 60 when stale.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
+import { runPipeline }  from './_lib/company/pipeline.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -28,29 +33,65 @@ export default async function handler(req, res) {
     { auth: { persistSession: false } }
   );
 
-  const { data, error } = await supabase
+  // ── Look up by slug ─────────────────────────────────────────
+  const { data: cr, error: crErr } = await supabase
     .from('company_reports')
-    .select('payload, pipeline_version, expires_at, updated_at')
+    .select('entity_id, payload, pipeline_version, expires_at, updated_at')
     .eq('slug', slug)
     .single();
 
-  if (error || !data) {
+  if (crErr || !cr) {
     return res.status(404).json({ error: 'not_found' });
   }
 
-  // Expired but still serving — mark stale in response header for debugging
-  const isExpired = data.expires_at && new Date(data.expires_at) < new Date();
-  if (isExpired) {
-    res.setHeader('X-Cache-Status', 'stale');
+  const isExpired = cr.expires_at && new Date(cr.expires_at) < new Date();
+  const isStub    = !!cr.payload?.is_stub;
+
+  // ── Stub: run pipeline inline to hydrate with real facts ────
+  if (isStub) {
+    const { data: entity } = await supabase
+      .from('entities')
+      .select('id, type, country_code, tax_id, canonical_name, name_norm, status_cache')
+      .eq('id', cr.entity_id)
+      .single();
+
+    if (entity) {
+      const result = await runPipeline(
+        { taxId: entity.tax_id, country: entity.country_code },
+        { supabase }
+      );
+
+      if (result.report) {
+        res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
+        return res.status(200).json({ report: result.report, updated_at: new Date().toISOString() });
+      }
+    }
+    // Pipeline failed: fall through and serve the stub
   }
 
-  res.setHeader('Cache-Control', isExpired
-    ? 'public, s-maxage=60, stale-while-revalidate=60'
-    : 'public, s-maxage=1800, stale-while-revalidate=3600'
-  );
+  // ── Expired (but not stub): serve stale, refresh fires async ─
+  if (isExpired && !isStub) {
+    // Fire-and-forget — do NOT await; Vercel will keep alive via response stream
+    supabase
+      .from('entities')
+      .select('id, type, country_code, tax_id, canonical_name, name_norm, status_cache')
+      .eq('id', cr.entity_id)
+      .single()
+      .then(({ data: entity }) => {
+        if (entity) {
+          runPipeline(
+            { taxId: entity.tax_id, country: entity.country_code },
+            { supabase }
+          ).catch(() => {});
+        }
+      });
 
-  return res.status(200).json({
-    report:      data.payload,
-    updated_at:  data.updated_at,
-  });
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=60');
+    res.setHeader('X-Cache-Status', 'stale');
+    return res.status(200).json({ report: cr.payload, updated_at: cr.updated_at });
+  }
+
+  // ── Fresh ────────────────────────────────────────────────────
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
+  return res.status(200).json({ report: cr.payload, updated_at: cr.updated_at });
 }

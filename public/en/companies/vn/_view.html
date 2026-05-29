@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Company Profile — KIRA RESEARCH</title>
+  <meta name="description" content="Company intelligence profile from KIRA RESEARCH." />
+
+  <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/" />
+
+  <meta property="og:type"        content="profile" />
+  <meta property="og:site_name"   content="KIRA RESEARCH" />
+  <meta property="og:title"       id="meta-og-title"       content="Company Profile — KIRA RESEARCH" />
+  <meta property="og:description" id="meta-og-description" content="Company intelligence profile from KIRA RESEARCH." />
+  <meta property="og:url"         id="meta-og-url"         content="https://kiraresearch.com/" />
+  <meta property="og:image"       id="meta-og-image"       content="https://kiraresearch.com/logo.png" />
+  <meta name="twitter:card"  content="summary_large_image" />
+  <meta name="twitter:title" id="meta-tw-title" content="Company Profile — KIRA RESEARCH" />
+
+  <!-- Structured data — populated by JS -->
+  <script type="application/ld+json" id="ld-organization">{}</script>
+  <script type="application/ld+json" id="ld-breadcrumb">{}</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    /* ── Company page layout ─────────────────────── */
+    .co-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+
+    /* Loading / error states */
+    .co-loading, .co-error {
+      padding: 96px 0;
+      text-align: center;
+      color: var(--muted);
+    }
+    .co-error h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800; font-size: 26px;
+      color: var(--text); margin-bottom: 12px;
+    }
+
+    /* ── Header block ─────────────────────────────── */
+    .co-breadcrumb {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .co-breadcrumb a { color: var(--primary); text-decoration: none; }
+    .co-breadcrumb a:hover { text-decoration: underline; }
+    .co-breadcrumb span { color: var(--muted); }
+
+    .co-header {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .co-header-text { flex: 1; min-width: 220px; }
+    .co-name {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      line-height: 1.2;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+    .co-meta {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .co-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .co-status.active   { background: rgba(34,197,94,0.12); color: #16a34a; }
+    .co-status.suspended{ background: rgba(234,179,8,0.12);  color: #a16207; }
+    .co-status.dissolved{ background: rgba(239,68,68,0.12);  color: #dc2626; }
+    .co-status.unknown  { background: rgba(100,116,139,0.12);color: var(--muted); }
+
+    /* ── Facts grid ───────────────────────────────── */
+    .co-facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .co-fact {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+    .co-fact-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .co-fact-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Satoshi', sans-serif;
+    }
+    .co-fact-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* ── Analysis section ─────────────────────────── */
+    .co-section {
+      margin-bottom: 40px;
+    }
+    .co-section-title {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--text);
+      margin: 0 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .co-body-text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .co-body-text p { margin: 0 0 16px; }
+
+    /* ── Coverage badges ──────────────────────────── */
+    .co-coverage {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .co-coverage-badge {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .co-coverage-badge.found        { background: rgba(34,197,94,0.1);  color: #16a34a; border: 1px solid rgba(34,197,94,0.2); }
+    .co-coverage-badge.not-checked  { background: rgba(100,116,139,0.1);color: var(--muted); border: 1px solid var(--border); }
+    .co-coverage-badge.checked-empty{ background: rgba(234,179,8,0.1);  color: #a16207; border: 1px solid rgba(234,179,8,0.2); }
+    .co-coverage-badge.failed       { background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.15); }
+
+    /* ── CTA box ──────────────────────────────────── */
+    .co-cta {
+      background: linear-gradient(135deg, rgba(26,102,240,0.07) 0%, rgba(26,102,240,0.03) 100%);
+      border: 1px solid rgba(26,102,240,0.2);
+      border-radius: 10px;
+      padding: 28px 32px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .co-cta-text { flex: 1; min-width: 200px; }
+    .co-cta-title {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin: 0 0 6px;
+    }
+    .co-cta-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .co-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 22px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .co-cta-btn:hover { opacity: 0.9; }
+
+    /* ── Disclaimer ───────────────────────────────── */
+    .co-disclaimer {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .co-name { font-size: 22px; }
+      .co-cta { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <!-- nav.js injects header + footer -->
+  <script src="/js/nav.js"></script>
+
+  <main class="co-wrap" id="co-main">
+    <div class="co-loading" id="co-loading">Loading company data…</div>
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // Extract slug from URL: /en/companies/vn/<slug>
+    const parts = location.pathname.replace(/\/$/, '').split('/');
+    const slug = parts[parts.length - 1];
+
+    if (!slug || slug === '_view') {
+      renderError('No company specified.', 'Browse our <a href="/en/library">report library</a> or <a href="/en/custom-research/">request custom research</a>.');
+      return;
+    }
+
+    fetch(`/api/company-report?slug=${encodeURIComponent(slug)}`)
+      .then(r => {
+        if (r.status === 404) throw { is404: true };
+        if (!r.ok) throw new Error('api_error');
+        return r.json();
+      })
+      .then(({ report }) => render(report))
+      .catch(err => {
+        if (err.is404) {
+          renderError('Company not found.', 'We may not have data for this company yet. <a href="/en/custom-research/">Request custom research →</a>');
+        } else {
+          renderError('Unable to load company data.', 'Please try again in a moment.');
+        }
+      });
+
+    function render(r) {
+      updateHead(r);
+      injectJsonLd(r);
+
+      const country = (r.country_code || 'VN').toUpperCase();
+      const countryLabel = { VN: 'Vietnam', JP: 'Japan', KR: 'South Korea', AU: 'Australia',
+                              SG: 'Singapore', MY: 'Malaysia', ID: 'Indonesia',
+                              TH: 'Thailand', PH: 'Philippines', NZ: 'New Zealand' }[country] || country;
+      const industryLabel = r.facts?.industry?.value || null;
+
+      document.getElementById('co-main').innerHTML = `
+        <nav class="co-breadcrumb" aria-label="Breadcrumb">
+          <a href="/en/">Home</a><span>›</span>
+          <a href="/en/library">Research</a><span>›</span>
+          <span>Companies</span><span>›</span>
+          <span>${countryLabel}</span>
+        </nav>
+
+        <div class="co-header">
+          <div class="co-header-text">
+            <h1 class="co-name">${esc(r.name)}</h1>
+            <div class="co-meta">
+              <span class="co-status ${r.status || 'unknown'}">${statusLabel(r.status)}</span>
+              ${r.tax_id ? `<span>MST: <strong>${esc(r.tax_id)}</strong></span>` : ''}
+              ${countryLabel ? `<span>${countryLabel}</span>` : ''}
+              ${industryLabel ? `<span>${esc(industryLabel)}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        ${buildFactsGrid(r.facts)}
+
+        <div class="co-section">
+          <h2 class="co-section-title">Company Overview</h2>
+          <div class="co-body-text">${buildNarrative(r)}</div>
+        </div>
+
+        ${buildCoverageSection(r.coverage)}
+
+        <div class="co-cta">
+          <div class="co-cta-text">
+            <p class="co-cta-title">Deeper market intelligence on ${esc(r.name)}</p>
+            <p class="co-cta-desc">Our analysts publish in-depth sector reports covering competitive landscape, market sizing, and strategic outlook for companies like this one across Southeast Asia.</p>
+          </div>
+          <a class="co-cta-btn" href="/en/library">Browse research reports →</a>
+        </div>
+
+        <p class="co-disclaimer">
+          Data sourced from Vietnam's National Business Registration Portal (ĐKKD), tax authority records, and KIRA Research analyst notes.
+          Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND).
+          For investment decisions, verify directly with official registries.
+          Last updated: ${fmtDate(r.generated_at)}.
+        </p>
+      `;
+    }
+
+    function buildFactsGrid(facts) {
+      if (!facts || Object.keys(facts).length === 0) return '';
+
+      const items = [];
+
+      const cap = facts.charter_capital?.value;
+      if (cap) {
+        items.push(factCard('Charter Capital', fmtVND(cap), 'Vietnamese Dong'));
+      }
+
+      const fy = facts.founding_year?.value;
+      if (fy) {
+        const age = new Date().getFullYear() - Number(fy);
+        items.push(factCard('Founded', fy, `${age} years in operation`));
+      }
+
+      const addr = facts.address?.value;
+      if (addr) {
+        items.push(factCard('Registered Address', truncate(addr, 60), ''));
+      }
+
+      const status = facts.legal_status?.value;
+      if (status) {
+        items.push(factCard('Legal Status', status, ''));
+      }
+
+      const sector = facts.sector?.value;
+      if (sector) {
+        items.push(factCard('Sector', capitalize(sector.replace(/_/g, ' ')), ''));
+      }
+
+      const intl = facts.international_name?.value;
+      if (intl) {
+        items.push(factCard('International Name', intl, ''));
+      }
+
+      if (items.length === 0) return '';
+      return `<div class="co-facts">${items.join('')}</div>`;
+    }
+
+    function factCard(label, value, sub) {
+      return `
+        <div class="co-fact">
+          <div class="co-fact-label">${esc(label)}</div>
+          <div class="co-fact-value">${esc(String(value))}</div>
+          ${sub ? `<div class="co-fact-sub">${esc(sub)}</div>` : ''}
+        </div>`;
+    }
+
+    function buildNarrative(r) {
+      const name     = esc(r.name);
+      const country  = (r.country_code || 'VN');
+      const countryFull = { VN: 'Vietnam', JP: 'Japan', KR: 'South Korea' }[country] || country;
+      const industry = r.facts?.industry?.value ? esc(r.facts.industry.value) : 'its sector';
+      const sector   = r.facts?.sector?.value   ? r.facts.sector.value        : null;
+      const founded  = r.facts?.founding_year?.value;
+      const cap      = r.facts?.charter_capital?.value;
+      const addr     = r.facts?.address?.value;
+      const status   = r.status || 'active';
+
+      let para1 = `${name} is a ${statusInline(status)} company registered in ${countryFull}, operating in the ${industry} sector.`;
+      if (founded) {
+        const age = new Date().getFullYear() - Number(founded);
+        para1 += ` Established in ${founded}, the company has more than ${age} years of operating history in the ${countryFull} market.`;
+      }
+      if (addr) {
+        para1 += ` Its registered office is located at ${esc(addr)}.`;
+      }
+
+      let para2 = '';
+      if (cap) {
+        para2 = `The company's registered charter capital stands at ${fmtVND(cap)}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
+        if (sector) {
+          para2 += ` As a player in the ${capitalize(sector.replace(/_/g,' '))} space, ${name} participates in a market that KIRA Research analysts monitor across Southeast Asia for structural shifts and competitive dynamics.`;
+        }
+      }
+
+      let para3 = `KIRA Research tracks companies like ${name} as part of our ongoing coverage of ${countryFull}'s corporate landscape.`;
+      para3 += ` Our sector reports provide granular data on market share, revenue trajectories, regulatory exposure, and competitive positioning — the contextual layer that public registry data alone cannot provide.`;
+
+      return `<p>${para1}</p>${para2 ? `<p>${para2}</p>` : ''}<p>${para3}</p>`;
+    }
+
+    function buildCoverageSection(coverage) {
+      if (!coverage || Object.keys(coverage).length === 0) return '';
+      const sourceLabels = {
+        dkkd: 'ĐKKD (Business Registry)', tax: 'Tax Authority',
+        static_seed: 'Curated Data', gmb: 'Google Business',
+        noip: 'Trademark (NOIP)', court: 'Court Records',
+        bidding: 'Public Procurement',
+      };
+      const badges = Object.entries(coverage)
+        .filter(([s]) => s !== 'static_seed')
+        .map(([s, st]) => {
+          const cls = st.replace('_', '-');
+          const label = sourceLabels[s] || s.toUpperCase();
+          return `<span class="co-coverage-badge ${cls}" title="${esc(st)}">${esc(label)}</span>`;
+        }).join('');
+
+      if (!badges) return '';
+      return `
+        <div class="co-section">
+          <h2 class="co-section-title">Data Sources</h2>
+          <p style="font-size:13px;color:var(--muted);margin:0 0 10px;">Intelligence coverage for this company profile:</p>
+          <div class="co-coverage">${badges}</div>
+        </div>`;
+    }
+
+    // ── Head + JSON-LD ─────────────────────────────────────────
+
+    function updateHead(r) {
+      const title = `${r.name} — Company Profile | KIRA RESEARCH`;
+      const desc  = `${r.name} company profile: registration data, charter capital, legal status, and analyst context from KIRA RESEARCH.`;
+      const url   = `https://kiraresearch.com/en/companies/${(r.country_code || 'vn').toLowerCase()}/${r.slug}`;
+
+      document.title = title;
+      setMeta('meta-canonical',     'href', url);
+      setMeta('meta-og-title',      'content', title);
+      setMeta('meta-og-description','content', desc);
+      setMeta('meta-og-url',        'content', url);
+      setMeta('meta-tw-title',      'content', title);
+      document.querySelector('meta[name="description"]')?.setAttribute('content', desc);
+    }
+
+    function injectJsonLd(r) {
+      const name = r.name;
+      const url  = `https://kiraresearch.com/en/companies/${(r.country_code || 'vn').toLowerCase()}/${r.slug}`;
+
+      // Organization
+      const org = {
+        '@context':   'https://schema.org',
+        '@type':      'Organization',
+        name,
+        url,
+        identifier:   r.tax_id ? { '@type': 'PropertyValue', name: 'MST', value: r.tax_id } : undefined,
+        address:      r.facts?.address?.value ? {
+          '@type':           'PostalAddress',
+          streetAddress:     r.facts.address.value,
+          addressCountry:    r.country_code || 'VN',
+        } : undefined,
+        foundingDate: r.facts?.founding_year?.value ? String(r.facts.founding_year.value) : undefined,
+        description:  `${name} company profile — registration data and analyst context from KIRA RESEARCH.`,
+      };
+      document.getElementById('ld-organization').textContent = JSON.stringify(obj_clean(org));
+
+      // BreadcrumbList
+      const crumbs = {
+        '@context':        'https://schema.org',
+        '@type':           'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'KIRA Research', item: 'https://kiraresearch.com' },
+          { '@type': 'ListItem', position: 2, name: 'Research',      item: 'https://kiraresearch.com/en/library' },
+          { '@type': 'ListItem', position: 3, name: 'Companies',     item: 'https://kiraresearch.com/en/companies' },
+          { '@type': 'ListItem', position: 4, name: name,            item: url },
+        ],
+      };
+      document.getElementById('ld-breadcrumb').textContent = JSON.stringify(crumbs);
+    }
+
+    // ── Utilities ──────────────────────────────────────────────
+
+    function renderError(h2, body) {
+      document.getElementById('co-main').innerHTML = `
+        <div class="co-error">
+          <h2>${h2}</h2>
+          <p>${body}</p>
+        </div>`;
+    }
+
+    function esc(s) {
+      return String(s ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    function setMeta(id, attr, val) {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute(attr, val);
+    }
+
+    function statusLabel(s) {
+      return { active: 'Active', suspended: 'Suspended', dissolved: 'Dissolved', unknown: 'Unknown' }[s] || s;
+    }
+
+    function statusInline(s) {
+      return { active: 'an active', suspended: 'a suspended', dissolved: 'a dissolved', unknown: 'a' }[s] || 'a';
+    }
+
+    function fmtVND(n) {
+      const num = Number(n);
+      if (isNaN(num)) return String(n);
+      if (num >= 1e12) return (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion VND';
+      if (num >= 1e9)  return (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion VND';
+      return num.toLocaleString('en') + ' VND';
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return 'N/A';
+      return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function truncate(s, max) {
+      return s && s.length > max ? s.slice(0, max) + '…' : s;
+    }
+
+    function capitalize(s) {
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+    }
+
+    function obj_clean(o) {
+      return JSON.parse(JSON.stringify(o, (_, v) => v === undefined ? undefined : v));
+    }
+  })();
+  </script>
+</body>
+</html>
