@@ -30,18 +30,27 @@
 
 ---
 
-## Current state (2026-05-29 — Company Intelligence Sprint 0)
+## Current state (2026-05-29 — Company Intelligence Sprint 1 ready)
 
-**Phase R: Company Intelligence engine — Sprint 0 scaffolded (`279304c`).** Owner must run migration 016 in Supabase SQL Editor before continuing to Sprint 1.
+**Phase R: Company Intelligence engine — Sprint 0 DONE. Migration 016 live on prod.**
 
-Sprint 0 deliverables:
-- `supabase/migrations/016_company_intelligence.sql` — 7 new tables (entities, sources, facts, relationships, coverage, raw_documents, company_reports) + `company_graph_bfs()` RPC + RLS
-- `api/_lib/company/` — 5 scaffold modules: config, normalize, connector, search, pipeline
-- `api/company-search.js` + `api/company-report.js` — public API stubs
+Sprint 0 complete (`279304c` + `14942a6`):
+- 7 tables live on Supabase: `entities`, `sources`, `facts`, `relationships`, `coverage`, `raw_documents`, `company_reports` + `company_graph_bfs()` RPC
+- Multi-country schema: `country_code` (default `VN`) + `tax_id` composite unique — supports VN/JP/KR/AU/SG/MY/ID/TH/PH/NZ
+- `api/_lib/company/` — config, normalize (per-country legal token strip), connector, search, pipeline
+- `api/company-search.js` (`?tax_id=&country=VN`, legacy `?mst=` ok) + `api/company-report.js` stubs
 
-**⚡ Owner action needed:** Run `supabase/migrations/016_company_intelligence.sql` in Supabase SQL Editor. Expected output: `"Company Intelligence schema: all 7 tables OK"`
+**⚡ No owner action needed — migration already applied via MCP.**
 
-**Next sprint:** Sprint 1 — seed danh sách công ty VN vào `entities` từ ĐKKD crawler.
+**Next: Sprint 1** — first working end-to-end for VN:
+1. Seed ~200 top VN companies into `entities` (static curated list)
+2. ĐKKD connector — lookup MST → save facts (charter_capital, founding_date, legal_status, address)
+3. `/api/company-report?slug=` returns real assembled payload
+4. SEO page `/companies/vn/[slug]` — Organization JSON-LD, ~500 words
+
+**Owner workflow:** Henry travels 2026-05-29 to ~2026-06-02. Chats daily via Claude mobile app.
+Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
+DB migrations: Claude applies via Supabase MCP directly (no owner Supabase action needed).
 
 ---
 
