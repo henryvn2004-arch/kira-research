@@ -14,6 +14,7 @@
 
 import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF, SOURCE_TTL_DAYS, DEFAULT_COUNTRY } from './config.js';
 import * as vn_dkkd from './connectors/vn_dkkd.js';
+import { makeSlug } from './normalize.js';
 
 // ── Public entry point ─────────────────────────────────────────
 
@@ -183,7 +184,6 @@ async function assembleAndCache(entity, factsMap, ctx) {
     .eq('entity_id', entity.id)
     .single();
 
-  const { makeSlug } = await import('./normalize.js');
   const slug = existing?.slug ?? makeSlug(entity.canonical_name, entity.tax_id, entity.country_code);
 
   const report = {
@@ -206,7 +206,6 @@ async function assembleAndCache(entity, factsMap, ctx) {
 }
 
 async function upsertReport(entity, report, ctx) {
-  const { makeSlug } = await import('./normalize.js');
   const slug = report.slug ?? makeSlug(entity.canonical_name, entity.tax_id, entity.country_code);
 
   const ttlDays = 30;
