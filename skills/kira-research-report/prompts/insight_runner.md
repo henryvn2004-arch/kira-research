@@ -23,6 +23,12 @@ Hard cap: 1 report × 1 stage per fire.
 
 ---
 
+## Model routing (Phase Q.5 — 2026-05-29)
+
+Insight articles are SEO/AEO marketing content derived from already-published reports — not the sellable report itself. **All spawned `general-purpose` subagents in this pipeline (extraction + JA + KO) run on `model: "sonnet"`** via the `Agent` tool's `model` parameter. The orchestrating cron session runs on the account default (only does validation + SQL + commits — lightweight). Wherever a step says "spawn `general-purpose`", pass `model: "sonnet"`. If the `model` param is unavailable for any reason, proceed on the default model (do NOT fail the fire) and note it in the summary.
+
+---
+
 ## Working directory (machine-agnostic)
 
 ```bash
@@ -114,7 +120,7 @@ If en.html doesn't exist locally → EXIT with error log. (Edge case: published 
 
 ### 3.1 — Spawn extraction subagent
 
-Spawn `general-purpose` with this prompt (substitute fields):
+Spawn `general-purpose` **with `model: "sonnet"`** (insight pipeline → Sonnet per Model routing) and this prompt (substitute fields):
 
 > Read the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html`.
 >
@@ -242,7 +248,7 @@ Where `$1` is the report slug from Step 1. Should return 3 rows. If returns 0 �
 
 ### 4.2 — Spawn JA translation subagent (1 call, 3 insights)
 
-Insight bodies are ~3-5KB each, so 3 × 5KB = 15KB total — well within Sonnet output cap. One subagent can do all 3.
+Insight bodies are ~3-5KB each, so 3 × 5KB = 15KB total — well within Sonnet output cap. One subagent can do all 3. Spawn it **with `model: "sonnet"`** (per Model routing).
 
 Subagent prompt:
 
@@ -307,7 +313,7 @@ Print summary + exit.
 
 ## Step 5 (Stage K only): translate 3 insights to KO
 
-Exactly mirror Step 4 but with `translator_ko.md` rules + KO question templates from `question_templates.md` Section C. Same chunked approach (1 subagent, 3 insights).
+Exactly mirror Step 4 but with `translator_ko.md` rules + KO question templates from `question_templates.md` Section C. Same chunked approach (1 subagent **with `model: "sonnet"`**, 3 insights).
 
 After successful INSERT → this report's insight pipeline is **fully done** (9 insight_translations rows: 3 insights × 3 locales).
 

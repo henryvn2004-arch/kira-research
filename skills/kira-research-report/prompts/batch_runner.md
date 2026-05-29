@@ -21,6 +21,20 @@ Hard cap: **1 row × 1 stage per fire** to stay safely within Sonnet context bud
 
 ---
 
+## Model routing (Phase Q.5 — 2026-05-29)
+
+The cron fire itself (this orchestrating session) runs on the account-default model — it only does file ops, claims, validation greps, and commits, so its model doesn't matter much. **The token-heavy work is the spawned `general-purpose` subagent, and THAT is where the model is chosen explicitly via the `Agent` tool's `model` parameter.** Policy:
+
+| Stage | Subagent work | `model` to pass | Why |
+|---|---|---|---|
+| A (EN gen) | Step 3 | **`opus`** | EN report is the sellable product — synthesis depth matters, keep top model |
+| B (JA translate) | Step 4 | **`sonnet`** | Translation is mechanical; Sonnet is near-parity and the chunked protocol was designed for its output cap |
+| C (KO translate) | Step 5 | **`sonnet`** | Same as JA |
+
+When the spawn step below says "spawn a `general-purpose` subagent", pass the `model` from this table in the `Agent` tool call. If for any reason the `model` param is unavailable, proceed with the default model (do NOT fail the fire over it) and note it in the summary.
+
+---
+
 ## Working directory (machine-agnostic)
 
 Derive the repo root every fire:
@@ -179,7 +193,7 @@ If push fails (remote ahead): `git pull --rebase origin main` → re-read CSV (i
 
 ## Step 3 (Stage A only): EN gen
 
-Spawn a `general-purpose` subagent with this prompt (substitute `${...}` fields):
+Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sellable core — see Model routing) and this prompt (substitute `${...}` fields):
 
 > Generate a KIRA Research market analysis report. Load the skill at `skills/kira-research-report/SKILL.md` and follow its standard pipeline: topic_parser → orchestrator → content_per_section → chart_generator → render_and_output. Use UC1 (template) or UC2 (design mode) — whichever the orchestrator selects.
 >
@@ -256,7 +270,7 @@ Typical reports have 12-30 pages (cover + methodology + contents + exec + sectio
 
 ### 4.2 — Chunked translation
 
-Spawn ONE subagent for JA translation. Prompt:
+Spawn ONE subagent for JA translation **with `model: "sonnet"`** (translation → Sonnet per Model routing). Prompt:
 
 > Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Japanese. Follow `prompts/translator_jp.md` for register / vocabulary / source-tag preservation / anti-positioning rules.
 >
@@ -305,7 +319,7 @@ Go to Step 6 — do NOT proceed to KO in same fire.
 
 ### 5.1 — KO chunked translation
 
-Exactly mirror Step 4 but use `translator_ko.md` rules. Subagent prompt is identical to 4.2 except substituting `ja`→`ko` everywhere AND `translator_jp.md` → `translator_ko.md`. Same chunked protocol. Same time cap. **Reminder**: top-level page class is `page` / `page cover-page` (not `kira-page`) — see §4.1.
+Exactly mirror Step 4 but use `translator_ko.md` rules. Spawn the subagent **with `model: "sonnet"`** (translation → Sonnet per Model routing). Subagent prompt is identical to 4.2 except substituting `ja`→`ko` everywhere AND `translator_jp.md` → `translator_ko.md`. Same chunked protocol. Same time cap. **Reminder**: top-level page class is `page` / `page cover-page` (not `kira-page`) — see §4.1.
 
 Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specific ones: `Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|클로드|クロード|맥킨지|모르도르`.
 
