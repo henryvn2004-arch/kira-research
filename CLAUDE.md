@@ -30,23 +30,32 @@
 
 ---
 
-## Current state (2026-05-29 — Company Intelligence Sprint 1 ready)
+## Current state (2026-05-29 — Company Intelligence Sprint 1 DONE)
 
-**Phase R: Company Intelligence engine — Sprint 0 DONE. Migration 016 live on prod.**
+**Phase R: Company Intelligence engine — Sprint 1 DONE. Migrations 016+017 live on prod.**
 
 Sprint 0 complete (`279304c` + `14942a6`):
 - 7 tables live on Supabase: `entities`, `sources`, `facts`, `relationships`, `coverage`, `raw_documents`, `company_reports` + `company_graph_bfs()` RPC
 - Multi-country schema: `country_code` (default `VN`) + `tax_id` composite unique — supports VN/JP/KR/AU/SG/MY/ID/TH/PH/NZ
 - `api/_lib/company/` — config, normalize (per-country legal token strip), connector, search, pipeline
-- `api/company-search.js` (`?tax_id=&country=VN`, legacy `?mst=` ok) + `api/company-report.js` stubs
+- `api/company-search.js` (`?tax_id=&country=VN`, legacy `?mst=` ok) + `api/company-report.js`
 
-**⚡ No owner action needed — migration already applied via MCP.**
+Sprint 1 complete (`cf6a0b4` squash-merged 2026-05-29):
+- **Migration 017 live**: 25 top VN companies in `entities` (HOSE/HNX public filings), 100 facts (industry/sector/founding_year/charter_capital at confidence 0.8), 25 `company_reports` stub rows. `facts_entity_key_unique` constraint added.
+- **ĐKKD connector** `api/_lib/company/connectors/vn_dkkd.js` — VietQR API, fetches legal_status/address/registered_name by MST, no API key needed.
+- **Pipeline Stage 2 + Stage 6** implemented: ĐKKD fetch → fact upsert → status_cache sync → assemble report → cache 30 days.
+- **company-report.js** updated: stub payloads trigger inline pipeline run on first page load (user sees real facts, not skeleton).
+- **SEO page** `/en/companies/vn/_view.html` — Organization + BreadcrumbList JSON-LD, facts grid, ~500-word analyst narrative, coverage badges, KIRA CTA.
+- **vercel.json** rewrites `/:locale/companies/vn/:slug` → `/en/companies/vn/_view` for EN/JA/KO.
 
-**Next: Sprint 1** — first working end-to-end for VN:
-1. Seed ~200 top VN companies into `entities` (static curated list)
-2. ĐKKD connector — lookup MST → save facts (charter_capital, founding_date, legal_status, address)
-3. `/api/company-report?slug=` returns real assembled payload
-4. SEO page `/companies/vn/[slug]` — Organization JSON-LD, ~500 words
+**Live URL pattern**: `/en/companies/vn/vn-vingroup-0101231488`, `/en/companies/vn/vn-fpt-0101248141` etc.
+
+**Next: Sprint 2** — expand coverage:
+1. Seed 200 more VN companies (currently 25/200)
+2. `masothue` scraper connector for charter_capital + founding_date from official ĐKKD portal
+3. `/en/companies/vn/` index page — list all seeded companies, filterable by industry/sector
+4. Sitemap entries for company pages
+5. Link company pages from relevant report pages ("Top players" section)
 
 **Owner workflow:** Henry travels 2026-05-29 to ~2026-06-02. Chats daily via Claude mobile app.
 Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
