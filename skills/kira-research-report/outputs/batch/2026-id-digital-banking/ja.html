@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research &mdash; インドネシアデジタルバンキング2026：ネオバンク収益性と農村部顧客獲得</title>
+<meta name="description" content="インドネシアデジタルバンキング2026 &mdash; 収益性の転換点、上位6ネオバンクのスコアカード、農村部獲得のコスト構造、OJK規制フレーム、そして5年間の見通しを当社のアナリストが分析する。">
+<meta property="og:title" content="KIRA Research &mdash; インドネシアデジタルバンキング2026">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --red: #B91C1C; --red-soft: #FEE2E2;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); padding-top: 10px; margin-top: 10px; border-top: 1px dashed var(--border); line-height: 1.5; letter-spacing: 0.02em; }
+.source-key::before { content: "出典凡例 \00b7 "; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); position: relative; overflow: hidden; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(11,13,16,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,13,16,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; padding: 60px 84px; }
+.cover-brand { display: flex; align-items: baseline; gap: 18px; margin-bottom: auto; }
+.cover-brand .logo-mark { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 36px; letter-spacing: -0.04em; color: var(--text); }
+.cover-brand .logo-mark .accent { color: var(--primary); }
+.cover-brand .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.4em; color: var(--primary); text-transform: uppercase; font-weight: 600; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.35em; color: var(--primary); text-transform: uppercase; font-weight: 600; margin-bottom: 30px; }
+.cover-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.04em; margin-bottom: 28px; max-width: 1050px; color: var(--text); }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 19px; line-height: 1.5; color: var(--text-mid); max-width: 920px; margin-bottom: 50px; font-weight: 400; }
+.cover-subtitle strong { color: var(--text); font-weight: 600; }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 22px; border-top: 1px solid var(--border); }
+.meta-cell .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
+.meta-cell .val { font-family: 'Satoshi', sans-serif; font-size: 14px; color: var(--text); font-weight: 700; }
+.meta-cell .val .qual { color: var(--muted); font-weight: 400; font-size: 11px; margin-left: 4px; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 0.98; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 18px; line-height: 1.5; color: #A3A9B6; max-width: 880px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* EXEC CALLOUTS */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* CHART PRIMITIVES */
+.axis-line { stroke: #4A5568; stroke-width: 1; }
+.grid-line { stroke: #E5E7EB; stroke-width: 1; stroke-dasharray: 2 2; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: #6B7280; }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: #0B0D10; font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: #4A5568; }
+.bar-primary { fill: #1E6FFF; }
+.bar-secondary { fill: #94A3B8; }
+.bar-tertiary { fill: #1850BF; }
+
+/* IMP GRID */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* COMP STRUCTURE + CARDS */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* PROFILE DEEP */
+.profile-hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; padding: 14px 0 18px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px; line-height: 1.05; letter-spacing: -0.03em; color: var(--text); margin-bottom: 6px; }
+.profile-hero .sub { font-size: 12.5px; color: var(--text-mid); margin-bottom: 10px; }
+.profile-hero .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 3px; letter-spacing: 0.08em; font-weight: 600; text-transform: uppercase; background: var(--primary-soft); color: var(--primary); }
+.data-tag.green { background: var(--green-soft); color: var(--green); }
+.data-tag.amber { background: var(--amber-soft); color: var(--amber); }
+.profile-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.profile-stats .stat { background: var(--bg-soft); border-left: 2px solid var(--primary); padding: 8px 12px; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 17px; color: var(--text); letter-spacing: -0.01em; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 6px; margin-top: 10px; letter-spacing: -0.005em; }
+.profile-col h3:first-child { margin-top: 0; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 6px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { padding-left: 16px; margin-bottom: 8px; }
+.profile-col ul li { font-size: 11px; line-height: 1.55; color: var(--text-mid); margin-bottom: 4px; }
+.profile-col ul li strong { color: var(--text); font-weight: 600; }
+
+/* METHODOLOGY */
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; }
+.meth-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.meth-item { margin-bottom: 14px; padding-left: 20px; position: relative; }
+.meth-label { font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.meth-label::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+.meth-desc { font-size: 12px; color: var(--text-mid); line-height: 1.55; }
+.meth-desc strong { color: var(--text); font-weight: 600; }
+
+/* TOC */
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 60px; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); align-items: center; }
+.toc-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-title { display: flex; flex-direction: column; }
+.toc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); }
+.toc-sub { font-size: 10.5px; color: var(--text-mid); margin-top: 2px; font-weight: 400; }
+.toc-page { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-align: right; letter-spacing: 0.05em; }
+
+/* AI OVERVIEW */
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 14px; height: 290px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 6px; margin-top: 10px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+
+/* USE CASE GRID 6 */
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; }
+.uc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.12em; font-weight: 700; margin-bottom: 6px; }
+.uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12.5px; line-height: 1.25; color: var(--text); margin-bottom: 6px; min-height: 30px; }
+.uc-body { font-size: 11px; line-height: 1.45; color: var(--text-mid); flex: 1; }
+.uc-body strong { color: var(--text); font-weight: 600; }
+.uc-example { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — カバー ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-brand">
+      <span class="logo-mark">KIRA<span class="accent">.</span></span>
+      <span class="tag">Research</span>
+    </div>
+    <div>
+      <div class="cover-eyebrow">Indonesia &middot; Digital Banking &middot; 2026</div>
+      <h1 class="cover-title">インドネシアのネオバンクが黒字転換 &mdash; <span class="accent">農村部獲得が次の試練となる。</span></h1>
+      <p class="cover-subtitle">
+        ライセンス取得済みのデジタルバンク9行が正の純利益を計上した。<strong>合計口座数約8,500万件</strong>を積み上げた獲得の好循環は、非Javaの地方都市以外に居住するインドネシア人口の40%で壁に直面している。当社のアナリストは収益性転換の規模を定量化し、上位6事業者の農村リーチをスコアリングし、2026年に施行されるOJK監督層を分析する。
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">CONFIDENTIAL &middot; LICENSED READER USE ONLY</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">Country</div>
+          <div class="val">Indonesia <span class="qual">(ID)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Industry</div>
+          <div class="val">Digital Banking &mdash; neobanks &amp; rural</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Scope &amp; horizon</div>
+          <div class="val">2026 <span class="qual">5y forecast</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Report ID</div>
+          <div class="val">KR-IDN-DBANK-2026-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — 調査手法 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 &middot; Methodology</div>
+      <div class="page-section-counter">002 / 026</div>
+    </div>
+    <h1 class="page-h1">本レポートの構築方法</h1>
+    <p class="page-subhead">
+      英語およびバハサ・インドネシア語の情報源にわたる20件の実質的なリサーチクエリ、上位6デジタルバンクのIDX上場企業開示資料、OJK監督ブレティン、ならびにセグメントレベルの開示が不十分な箇所については当社内部による三角検証を活用した。<strong>すべての定量的主張には明示的な出典タグが付与されており</strong>、推計手法は末尾注に開示されている。
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>Primary inputs</h3>
+        <div class="meth-item">
+          <div class="meth-label">事業者開示資料</div>
+          <div class="meth-desc">ARTO、BBHI、BBYB、BANK、KCBI、SUPAのIDX四半期開示、SeaBankおよびKromの投資家向けプレゼンテーション、Allo、Aladin、Superbank、Bank Jagoの公開プレスリリース。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">アナリスト統合分析</div>
+          <div class="meth-desc">20件のクエリ（英語15件・バハサ・インドネシア語5件）にわたる三角検証と、当社の地域金融サービス調査とのパターン照合。<strong>[Kira estimates]</strong>としてタグ付け。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">チャネル調査</div>
+          <div class="meth-desc">エージェントバンキング（BRILink、Agen46、Mandiri Agen）、スーパーアプリ・オンボーディング（Shopee、GoTo、Grab/OVO）、および農村部KYCボトルネックに関するセカンダリ・プレス調査。</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>Secondary anchors</h3>
+        <div class="meth-item">
+          <div class="meth-label">規制当局データ</div>
+          <div class="meth-desc">Otoritas Jasa Keuangan（OJK）監督データ、Bank Indonesia（BI）決済システム計測データ、Badan Pusat Statistik（BPS）通信・人口統計データ、IMF第4条協議、World Bank Findex 2024。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">規制テキスト</div>
+          <div class="meth-desc">POJK 12/POJK.03/2021（デジタルバンク資本要件）、POJK 3/2024（ITSKレギュラトリーサンドボックス）、Bank Indonesia BI-FASTおよびQRIS運用ブレティン。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">三角推計</div>
+          <div class="meth-desc">事業者レベルの開示が薄いサブセグメントの規模推計（農村部CAC、エージェントチャネルシェア、AI帰属のオペックス削減額）。<strong>[Kira estimates]</strong>としてタグ付けし、アンカー指標をインライン開示。手法詳細は末尾注参照。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential &middot; For licensed reader use only &middot; &copy; 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — 目次 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 &middot; Contents</div>
+      <div class="page-section-counter">003 / 026</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+    <p class="page-subhead">マクロ・セクター規模・競争構造・農村需要・AIを章立てした5つのダークセクション・ディバイダーを含む12セクション構成。5年間予測と手法末尾注でレポートを締めくくる。</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><div class="toc-title">調査手法<div class="toc-sub">アプローチと出典タグ体系</div></div><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><div class="toc-title">目次<div class="toc-sub">本ページ</div></div><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><div class="toc-title">エグゼクティブサマリー<div class="toc-sub">コールアウト + 5つの示唆</div></div><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><div class="toc-title">マクロ環境<div class="toc-sub">GDP、インフレ、BI金利、スマートフォン</div></div><span class="toc-page">007</span></li>
+          <li><span class="toc-num">05</span><div class="toc-title">セクター規模と収益プール<div class="toc-sub">ネオバンクのバランスシート・収益プール</div></div><span class="toc-page">010</span></li>
+          <li><span class="toc-num">06</span><div class="toc-title">セグメント経済性<div class="toc-sub">NIM &middot; CIR &middot; コスト・トゥ・サーブ</div></div><span class="toc-page">011</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">07</span><div class="toc-title">競争構造<div class="toc-sub">上位6スコアカード + 詳細プロファイル</div></div><span class="toc-page">012</span></li>
+          <li><span class="toc-num">08</span><div class="toc-title">農村部顧客獲得<div class="toc-sub">エージェント網、KYC、チャネルCAC</div></div><span class="toc-page">018</span></li>
+          <li><span class="toc-num">09</span><div class="toc-title">規制環境<div class="toc-sub">POJK 12 &middot; POJK 3/2024サンドボックス</div></div><span class="toc-page">020</span></li>
+          <li><span class="toc-num">10</span><div class="toc-title">インドネシアネオバンクにおけるAI<div class="toc-sub">規模推計 + 6つのユースケース</div></div><span class="toc-page">022</span></li>
+          <li><span class="toc-num">11</span><div class="toc-title">見通しと予測<div class="toc-sub">2026-2031年シナリオ + 戦略的示唆</div></div><span class="toc-page">025</span></li>
+          <li><span class="toc-num">12</span><div class="toc-title">手法末尾注<div class="toc-sub">出典構成と推計の開示</div></div><span class="toc-page">026</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>ID &middot; Digital Banking &middot; 2026 &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — エグゼクティブサマリー P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 &middot; Executive Summary</div>
+      <div class="page-section-counter">004 / 026</div>
+    </div>
+    <h1 class="page-h1">インドネシアデジタルバンキング — 収益性の転換点</h1>
+    <p class="page-subhead">
+      2026年3月時点で、デジタルバンクの平均<strong>ROAは2.87%</strong>に達し、業界平均2.50%を上回った。NIMは13.90%と業界平均4.49%を大幅に超えている[OJK 2026]。ライセンス取得済みのネオバンク9行がFY-2025通期で正の純利益を計上した。<strong>今後24ヶ月</strong>が、エコシステム連携型の大規模事業者が、農村部のJava・Sumatra・東部諸島に集中する9,700万人の非銀行口座保有者層までその収益性を拡大できるかどうかを決定する[World Bank 2024]。
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">デジタルバンク ROA 2026年3月</div>
+        <div class="num">2.87<span class="unit">%</span></div>
+        <div class="change">vs 2.50% 業界平均 [OJK 2026]</div>
+        <div class="source-tag">OJK 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">SeaBank 顧客数 YE-2025</div>
+        <div class="num">28<span class="unit">M</span></div>
+        <div class="change">最大のデジタル顧客基盤 [SeaBank 2026]</div>
+        <div class="source-tag">SeaBank 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">QRIS 利用者数 YE-2025</div>
+        <div class="num">59<span class="unit">M</span></div>
+        <div class="change">取引額+139% [BI Stats 2026]</div>
+        <div class="source-tag">BI Stats 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">非銀行口座保有成人数</div>
+        <div class="num">~97<span class="unit">M</span></div>
+        <div class="change">世界第4位の規模 [World Bank 2024]</div>
+        <div class="source-tag">WB 2024</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>獲得から収益化へ</h3>
+        <p>上位6ネオバンク（SeaBank、Bank Jago、Bank Neo Commerce、Allo、AlladinおよびSuperbank）は合計でFY-2025純利益<strong>IDR 2.3兆</strong>近くを計上した[Kira estimates · 各社開示資料から算出]。SeaBankのみでIDR 678億、前年比+79%[SeaBank 2026]。Bank JagoはIDR 276億と倍増[ARTO 2026]。Bank Neo CommerceはIDR 565億、前年の27倍を記録した[BBYB 2026]。成長最優先の局面は終わりを告げた。</p>
+        <h3>農村部は依然として未開拓の楔</h3>
+        <p>農村部の金融包摂率は70%で都市部の78%を下回る[OJK 2024]。APJIIによればインターネット普及率は80.5%だが、固定ブロードバンドは世帯普及率わずか21%にとどまる[APJII 2025]。<strong>モバイルファーストが唯一の実行可能なチャネル</strong>であり、Java外でのCACはJakartaの基準値の2〜3倍に達する[Kira estimates]。エージェントバンキング（BRI・BNI親行）を持つ事業者は、デジタル専業の挑戦者に対して構造的優位を保持する。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">インドネシアネオバンク純利益（上位6行）</div>
+            <div class="chart-subtitle">IDR bn &middot; FY-2024 vs FY-2025</div>
+          </div>
+          <div class="chart-unit">IDR BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="200" x2="470" y2="200"/>
+            <line class="grid-line" x1="60" y1="40" x2="470" y2="40"/>
+            <line class="grid-line" x1="60" y1="80" x2="470" y2="80"/>
+            <line class="grid-line" x1="60" y1="120" x2="470" y2="120"/>
+            <line class="grid-line" x1="60" y1="160" x2="470" y2="160"/>
+            <text class="axis-text" x="55" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="164" text-anchor="end">200</text>
+            <text class="axis-text" x="55" y="124" text-anchor="end">400</text>
+            <text class="axis-text" x="55" y="84" text-anchor="end">600</text>
+            <text class="axis-text" x="55" y="44" text-anchor="end">800</text>
+            <rect class="bar-secondary" x="78"  y="124" width="20" height="76"/>
+            <rect class="bar-secondary" x="142" y="196" width="20" height="4"/>
+            <rect class="bar-secondary" x="206" y="107" width="20" height="93"/>
+            <rect class="bar-secondary" x="270" y="174" width="20" height="26"/>
+            <rect class="bar-secondary" x="334" y="208" width="20" height="0" stroke="#94A3B8" stroke-width="1"/>
+            <rect class="bar-secondary" x="398" y="208" width="20" height="0" stroke="#94A3B8" stroke-width="1"/>
+            <rect class="bar-primary" x="100" y="64" width="20" height="136"/>
+            <rect class="bar-primary" x="164" y="87" width="20" height="113"/>
+            <rect class="bar-primary" x="228" y="85" width="20" height="115"/>
+            <rect class="bar-primary" x="292" y="145" width="20" height="55"/>
+            <rect class="bar-primary" x="356" y="170" width="20" height="30"/>
+            <rect class="bar-primary" x="420" y="172" width="20" height="28"/>
+            <text class="label-data" x="110" y="58"  text-anchor="middle">678</text>
+            <text class="label-data" x="174" y="81"  text-anchor="middle">566</text>
+            <text class="label-data" x="238" y="79"  text-anchor="middle">574</text>
+            <text class="label-data" x="302" y="139" text-anchor="middle">276</text>
+            <text class="label-data" x="366" y="164" text-anchor="middle">151</text>
+            <text class="label-data" x="430" y="166" text-anchor="middle">143</text>
+            <text class="axis-text" x="100" y="218" text-anchor="middle">SeaBank</text>
+            <text class="axis-text" x="164" y="218" text-anchor="middle">BNC</text>
+            <text class="axis-text" x="228" y="218" text-anchor="middle">Allo</text>
+            <text class="axis-text" x="292" y="218" text-anchor="middle">Jago</text>
+            <text class="axis-text" x="356" y="218" text-anchor="middle">Aladin</text>
+            <text class="axis-text" x="420" y="218" text-anchor="middle">Superbank</text>
+            <rect class="bar-secondary" x="80" y="10" width="10" height="10"/>
+            <text class="label-small" x="94" y="19">FY-2024</text>
+            <rect class="bar-primary" x="160" y="10" width="10" height="10"/>
+            <text class="label-small" x="174" y="19">FY-2025</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ARTO, BBHI, BBYB, BANK, SUPA FILINGS &middot; SEABANK PRESS &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">APJII 2025 = APJII Internet Penetration Survey 2025 &middot; ARTO 2026 = PT Bank Jago FY-2025 Disclosure Mar-2026 &middot; BBYB 2026 = Bank Neo Commerce FY-2025 Results Mar-2026 &middot; BI Stats 2026 = Bank Indonesia Payment System Statistics 2026 &middot; OJK 2024 = OJK Financial Inclusion Index 2024 &middot; OJK 2026 = OJK Digital Banking Update May-2026 &middot; SeaBank 2026 = SeaBank Indonesia FY-2025 Press Apr-2026 &middot; World Bank 2024 = World Bank Findex Indonesia 2024 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 03 &middot; Executive Summary &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — エグゼクティブサマリー P2（戦略的示唆） ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 &middot; Executive Summary (cont.)</div>
+      <div class="page-section-counter">005 / 026</div>
+    </div>
+    <h1 class="page-h1">5つの戦略的示唆</h1>
+    <p class="page-subhead">今後24ヶ月間において資本と製品投資を向けるべき領域 — 農村部獲得の現状スコアを踏まえ、非対称なリターンの大きさで優先順位付けした。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">エコシステム流通がモートになる。</div>
+        <div class="body-text">SeaBankの2,800万ユーザー[SeaBank 2026]、Bank JagoのGoTo組み込み[ARTO 2026]、AlloのCT Corp小売連携[BBHI 2026]はいずれも、親会社の顧客基盤を無料のCACファネルに変換する。<strong>スタンドアロン型ネオバンク</strong>はエコシステムの錨を持たないため、2026〜2027年の資金調達コスト上昇局面で圧迫を受ける。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">~85M</span> 上位6行 合計口座数</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">農村部展開にはエージェント銀行との連携が必要。</div>
+        <div class="body-text">BRILinkは81,000以上の村落をカバー[BRI 2024]。BNI Agen46は207,000名のエージェントで35,000村落をカバーする[BNI 2024]。デジタル専業ネオバンクは<strong>この物理的リーチに匹敵できない</strong>。BRI・BNI・Mandiriのエージェント網とのJVが、グリーンフィールド展開以外で唯一実行可能な農村戦略である。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">207k</span> Agen46 拠点数</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">CIR圧縮が新たな競争軸となる。</div>
+        <div class="body-text">Bank JagoはCIRをQ3-2025に74%から<strong>59%</strong>へ圧縮した[Bank Jago Q3 2025]。AladinはBOPOを119%から85%へ改善した[BANK 2026]。2028年までにCIR 50%未満を達成した事業者が勝者となり、残りは買収されるか撤退を迫られる。<em>今や運営規律が預金プロモーションより優先される。</em></div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">59%</span> Jago Q3-25 CIR</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">POJK 3/2024サンドボックスが規制上の楔となる。</div>
+        <div class="body-text">OJKの拡張ITSKサンドボックスは<strong>代替信用スコアリング、eKYC、ロボアドバイザリー</strong>および暗号資産関連モデルを対象とする[POJK 3/2024]。試験期間は最長1年。サンドボックスを通過した事業者がセグメントの事実上のコンプライアンス基準を設定する。サンドボックス・ロードマップを持たない貸し手は規制上の発言力を失う。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">12 mo</span> 最大サンドボックス期間</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">AIはナラティブではなく単位経済性である。</div>
+        <div class="body-text">デバイスインテル引受は、不正損失を抑えながら承認率を最大<strong>+40%</strong>向上させる[Kira estimates · 業界ベンチマークから算出]。Bank JagoはAIオペレーションをCIR圧縮の要因の一つとして公表している[Bank Jago Q3 2025]。論点はオペックス回収であり、消費者向けコパイロットではない。AIベンダーを選定する際はコスト・トゥ・サーブへの寄与の開示を求めるべきだ。</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">+40%</span> 承認率向上の可能性</div>
+      </div>
+    </div>
+    <div class="source-key">ARTO 2026 = Bank Jago FY-2025 Disclosure &middot; Bank Jago Q3 2025 = Bank Jago Q3-2025 Press Release &middot; BANK 2026 = Bank Aladin Syariah FY-2025 Results &middot; BBHI 2026 = Allo Bank FY-2025 Results &middot; BNI 2024 = BNI Agen46 Update Jul-2024 &middot; BRI 2024 = BRI BRILink Network Disclosure 2024 &middot; POJK 3/2024 = OJK Regulation 3/2024 on ITSK &middot; SeaBank 2026 = SeaBank FY-2025 Press Apr-2026 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 03 &middot; Executive Summary &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — マクロ・ディバイダー ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04 &middot; CHAPTER ONE</div>
+    <h1 class="divider-title">マクロ環境：<span class="accent">インドネシア2026</span></h1>
+    <p class="divider-thesis"><strong>5.3%成長経済</strong>に80%のインターネット普及率、世界第4位の非銀行口座保有人口、そしてルピア防衛を目的に引き締めに転じた中央銀行が組み合わさることで、非対称な需要下限が生じる。デジタルバンキングの取引量は下支えされる一方、農村部の獲得は資本集約度を高める。マクロはこのサイクルにおける乗数<em>かつ</em>摩擦要因である。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">04.1 GDP &amp; インフレ</div>
+      <div class="toc-pill">04.2 普及率 &amp; 政策</div>
+      <div class="toc-pill">04.3 決済インフラ</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — マクロ P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 &middot; Macro Context</div>
+      <div class="page-section-counter">007 / 026</div>
+    </div>
+    <h1 class="page-h1">成長は続くが、資金調達コストが逆風となる。</h1>
+    <p class="page-subhead">Bank Indonesiaは2026年のGDP成長率を5.33%（財政支出が加速すれば5.4%の可能性）と見込んでいる[BI 2026]。IMFはより保守的な5.1%を示す[IMF Nov 2025]。注視すべき変数は<strong>資金調達コスト感応度</strong>である。BIは2026年5月に政策金利を50bp引き上げて5.25%とし[BI 2026]、前の利下げサイクルを反転させた。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>成長が取引量の下限を支える。</h3>
+        <p>インドネシアの名目GDPは2026年に一人当たりUSD 5,300に近づく[Kira estimates · BPS + BI予測から算出]。サービスおよび消費が付加価値成長の約57%を占める[BPS 2025]。<strong>デジタル金融の潜在市場は</strong>都市中間層の消費シェアが1ポイント拡大するごとに広がり、農村部の下限はKUR補助融資を通じた政策によって担保されている。</p>
+        <h3>金利サイクルが安価な資金調達モデルを圧迫する。</h3>
+        <p>BI政策金利は5.25%（2026年5月）、2025年11月時点の底値4.75%から上昇した[BI 2026]。預金ベータは2026〜2027年を通じて上昇する。変動性預金に<strong>8〜9%のプロモ金利</strong>を提示するネオバンク[Kira estimates · 商品開示から算出]はスプレッド圧縮に最初にさらされる。親行から安価な資金を調達できる事業者（Aladin-BSIの姉妹連携など）は構造的優位を持つ。</p>
+        <h3>インフレは管理可能だが楽観視はできない。</h3>
+        <p>BIは2026年のヘッドラインインフレを2.62%と予測し、2.5%±1%の目標レンジ内に収まる[BI 2026]。IMFはルピア下落圧力を主要リスクとして挙げる[IMF Nov 2025]。輸入投入コストのコストプッシュ圧力が今後12ヶ月の主な注視項目となる。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">インドネシアGDP成長率 + BI政策金利</div>
+            <div class="chart-subtitle">% YoY &middot; 2021-2026F</div>
+          </div>
+          <div class="chart-unit">% YoY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">2</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">4</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">6</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">8</text>
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="80,126 150,94 220,98 290,100 360,100 430,94"/>
+            <circle cx="80" cy="126" r="3.5" fill="#1E6FFF"/>
+            <circle cx="150" cy="94" r="3.5" fill="#1E6FFF"/>
+            <circle cx="220" cy="98" r="3.5" fill="#1E6FFF"/>
+            <circle cx="290" cy="100" r="3.5" fill="#1E6FFF"/>
+            <circle cx="360" cy="100" r="3.5" fill="#1E6FFF"/>
+            <circle cx="430" cy="94" r="3.5" fill="#1E6FFF" opacity="0.55"/>
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3" points="80,130 150,90 220,80 290,75 360,105 430,95"/>
+            <circle cx="80" cy="130" r="3" fill="#D97706"/>
+            <circle cx="150" cy="90" r="3" fill="#D97706"/>
+            <circle cx="220" cy="80" r="3" fill="#D97706"/>
+            <circle cx="290" cy="75" r="3" fill="#D97706"/>
+            <circle cx="360" cy="105" r="3" fill="#D97706"/>
+            <circle cx="430" cy="95" r="3" fill="#D97706"/>
+            <text class="label-data" x="80" y="120" text-anchor="middle">3.7</text>
+            <text class="label-data" x="150" y="88" text-anchor="middle">5.3</text>
+            <text class="label-data" x="220" y="92" text-anchor="middle">5.0</text>
+            <text class="label-data" x="290" y="94" text-anchor="middle">5.0</text>
+            <text class="label-data" x="360" y="94" text-anchor="middle">5.0</text>
+            <text class="label-data" x="430" y="88" text-anchor="middle">5.3F</text>
+            <text class="axis-text" x="80" y="218" text-anchor="middle">2021</text>
+            <text class="axis-text" x="150" y="218" text-anchor="middle">2022</text>
+            <text class="axis-text" x="220" y="218" text-anchor="middle">2023</text>
+            <text class="axis-text" x="290" y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="360" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="430" y="218" text-anchor="middle">2026F</text>
+            <rect x="320" y="10" width="12" height="3" fill="#1E6FFF"/>
+            <text class="label-small" x="338" y="14">GDP %</text>
+            <rect x="380" y="10" width="12" height="3" fill="#D97706"/>
+            <text class="label-small" x="398" y="14">BI-Rate %</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BPS, BANK INDONESIA, IMF ARTICLE IV NOV-2025 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">BI 2026 = Bank Indonesia Board Press Release May-2026 &middot; BPS 2025 = Badan Pusat Statistik National Accounts 2025 &middot; IMF Nov 2025 = IMF Article IV Indonesia Staff Concluding Statement Nov-2025 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 04 &middot; Macro Context &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — マクロ P2（普及率 + 決済） ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 &middot; Macro Context (cont.)</div>
+      <div class="page-section-counter">008 / 026</div>
+    </div>
+    <h1 class="page-h1">インターネット普及率は高水準だが、農村部の固定回線は低い。</h1>
+    <p class="page-subhead">インドネシアは2025年10月に<strong>インターネット利用者2億3,000万人（普及率80.5%）</strong>に達した[APJII 2025]。モバイルブロードバンド契約数は人口100人あたり121件を超える[BPS 2025]。<strong>固定ブロードバンドは世帯普及率わずか約21%</strong>にとどまり、都市・農村間の格差は40ポイントを超える[BPS 2025]。デジタルバンクにとってモバイルファーストは戦略的選択ではなく、唯一の道筋である。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>モバイルリープフロッグは成熟段階にある。</h3>
+        <p>スマートフォン普及率は全国で70%台後半に達し、プリペイドテレコムバンドルを通じた農村部での普及が顕著である[DataReportal 2026]。拡大の方向性は「端末の増加」ではなく<strong>アプリ内ARPUとデータ品質</strong>の向上にある。Telkomsel、Indosat、XL Axiataの4Gカバレッジは人口カバー率95%超に達している[Kira estimates · 各社開示資料から算出]。</p>
+        <h3>農村部インフラが課題である。</h3>
+        <p>SATRIA-1衛星（2023年中頃打ち上げ）は15万の農村公共サービス拠点への接続を目標とする[BPS 2025]。インドネシアの都市・農村比60/40[BPS 2025]は州間のばらつきを隠している。NTT・Maluku・Papuaはインターネット普及率60%未満にとどまる[Kira estimates]。<strong>ラストマイルの遅延</strong>こそが引受の真の障壁であり、ユーザーの意欲ではない。</p>
+        <h3>決済インフラは世界水準にある。</h3>
+        <p>QRISは2025年に136.6億件の取引（目標65億件の2倍超）を達成し、利用者5,900万人・加盟店4,200万店舗に達した[BI Stats 2026]。BI-FASTは2025年7月単月で4億1,460万件、前年比+38%、累計IDR 1京を処理した[BI Stats 2026]。ネオバンクはこれらのインフラを公共財として利用する — 差別化は別の領域で生まれなければならない。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">QRIS 取引件数と利用者数</div>
+            <div class="chart-subtitle">取引件数（bn）&middot; 利用者数（M）&middot; 2022-2026F</div>
+          </div>
+          <div class="chart-unit">BN / M</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="50" y1="50" x2="460" y2="50"/>
+            <line class="grid-line" x1="50" y1="100" x2="460" y2="100"/>
+            <line class="grid-line" x1="50" y1="150" x2="460" y2="150"/>
+            <text class="axis-text" x="45" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="154" text-anchor="end">5</text>
+            <text class="axis-text" x="45" y="104" text-anchor="end">10</text>
+            <text class="axis-text" x="45" y="54" text-anchor="end">15</text>
+            <rect class="bar-primary" x="80" y="183" width="40" height="17"/>
+            <rect class="bar-primary" x="155" y="166" width="40" height="34"/>
+            <rect class="bar-primary" x="230" y="143" width="40" height="57"/>
+            <rect class="bar-primary" x="305" y="63"  width="40" height="137"/>
+            <rect class="bar-primary" x="380" y="30"  width="40" height="170" opacity="0.55"/>
+            <text class="label-data" x="100" y="177" text-anchor="middle">1.7</text>
+            <text class="label-data" x="175" y="160" text-anchor="middle">3.4</text>
+            <text class="label-data" x="250" y="137" text-anchor="middle">5.7</text>
+            <text class="label-data" x="325" y="57"  text-anchor="middle">13.7</text>
+            <text class="label-data" x="400" y="24"  text-anchor="middle">17F</text>
+            <text class="axis-text" x="100" y="218" text-anchor="middle">2022</text>
+            <text class="axis-text" x="175" y="218" text-anchor="middle">2023</text>
+            <text class="axis-text" x="250" y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="325" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="400" y="218" text-anchor="middle">2026F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BANK INDONESIA QRIS BULLETIN 2025 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">APJII 2025 = APJII Internet Penetration Survey 2025 &middot; BI Stats 2026 = Bank Indonesia QRIS Bulletin Jan-2026 &middot; BPS 2025 = Badan Pusat Statistik Telecommunication Statistics 2025 &middot; DataReportal 2026 = DataReportal Digital 2026 Indonesia &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 04 &middot; Macro Context &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — セクター・ディバイダー ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05 &middot; CHAPTER TWO</div>
+    <h1 class="divider-title">規模推計と<span class="accent">セグメント経済性</span></h1>
+    <p class="divider-thesis"><strong>ネオバンクの収益プール</strong>は既存行の資産規模に比べて絶対額では小さいが、年率25〜30%で拡大している。注目すべきはユニット経済性の分散だ。NIMは6%から14%、CIRは50%から90%、不良債権比率は0.4%から4%超まで広がる。集計値はこの収斂パターンを隠してしまう。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">05.1 収益プール規模</div>
+      <div class="toc-pill">05.2 NIM &amp; CIR分散</div>
+      <div class="toc-pill">05.3 コスト・トゥ・サーブ</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — セクター規模 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 &middot; Sector Sizing</div>
+      <div class="page-section-counter">010 / 026</div>
+    </div>
+    <h1 class="page-h1">USD 30〜40億の収益プールが年率25%で拡大中。</h1>
+    <p class="page-subhead">インドネシアには東南アジア最多の17行のライセンス取得済みデジタルバンクが存在する[Nikkei 2025]。上位7行の合計顧客預金は<strong>2021年のUSD 22億から2025年にUSD 62億</strong>へ、年率30%のCAGRで拡大した[Redseer 2025]。ネオバンキングの取引額は定義次第で年率9.6〜14.3%のCAGRで拡大する見通しであり[Kira estimates]、収益プールは2031年にUSD 70〜90億に達する。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>3層の事業者構造。</h3>
+        <p>Tier-1（SeaBank、Bank Jago、Allo、Bank Neo Commerce）はそれぞれ1,400万件超の顧客を保有する[Kira estimates · 各社開示資料から算出]。Tier-2（Superbank、Aladin、Krom）は強固なエコシステムの錨を持ちながら400〜1,500万件規模に成長中。Tier-3（Jenius BTPN、Blu BCA Digital、LINE Bank、TMRW）は親行の流通に依存したまま。<strong>中間層が最も速く圧縮される</strong> — Tier-2はエコシステム契約で加速するか、吸収されるかの二択だ。</p>
+        <h3>預金成長が融資を上回る。</h3>
+        <p>SeaBank DPK前年比+20.6%でIDR 28.32兆（H1-2025）[SeaBank 2026]。Bank Jago DPK +51%でIDR 22.4兆[ARTO 2026]。Allo DPK +78%でIDR 8.78兆（Q3-2025）[BBHI 2026]。貸出残高は遅れており（LDR平均60〜80%）、これが現在の収益に対する国債運用収益の寄与を意味ある水準に保っている。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">上位7デジタルバンク 預金残高推移</div>
+            <div class="chart-subtitle">USD bn &middot; 2021-2025</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="50" y1="50" x2="460" y2="50"/>
+            <line class="grid-line" x1="50" y1="100" x2="460" y2="100"/>
+            <line class="grid-line" x1="50" y1="150" x2="460" y2="150"/>
+            <text class="axis-text" x="45" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="154" text-anchor="end">2</text>
+            <text class="axis-text" x="45" y="104" text-anchor="end">4</text>
+            <text class="axis-text" x="45" y="54" text-anchor="end">6</text>
+            <rect class="bar-primary" x="80" y="145" width="55" height="55"/>
+            <rect class="bar-primary" x="160" y="120" width="55" height="80"/>
+            <rect class="bar-primary" x="240" y="98" width="55" height="102"/>
+            <rect class="bar-primary" x="320" y="75" width="55" height="125"/>
+            <rect class="bar-primary" x="400" y="45" width="55" height="155"/>
+            <text class="label-data" x="107" y="140" text-anchor="middle">2.2</text>
+            <text class="label-data" x="187" y="115" text-anchor="middle">3.2</text>
+            <text class="label-data" x="267" y="93" text-anchor="middle">4.1</text>
+            <text class="label-data" x="347" y="70" text-anchor="middle">5.0</text>
+            <text class="label-data" x="427" y="40" text-anchor="middle">6.2</text>
+            <text class="axis-text" x="107" y="218" text-anchor="middle">2021</text>
+            <text class="axis-text" x="187" y="218" text-anchor="middle">2022</text>
+            <text class="axis-text" x="267" y="218" text-anchor="middle">2023</text>
+            <text class="axis-text" x="347" y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="427" y="218" text-anchor="middle">2025</text>
+            <text class="label-small" x="250" y="30" text-anchor="middle" style="fill:#1E6FFF;font-weight:700">CAGR 2021-25: 30%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: REDSEER 2025, OPERATOR FILINGS &middot; KIRA TRIANGULATION 2026</div>
+      </div>
+    </div>
+    <div class="source-key">ARTO 2026 = Bank Jago FY-2025 Disclosure &middot; BBHI 2026 = Allo Bank Q3-2025 Update &middot; Nikkei 2025 = Nikkei Asia Indonesian Digital Banks Report 2025 &middot; Redseer 2025 = Redseer Indonesia Banking Gap Report 2025 &middot; SeaBank 2026 = SeaBank H1-2025 Press &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 05 &middot; Sector Sizing &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — セグメント経済性 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 &middot; Segment Economics</div>
+      <div class="page-section-counter">011 / 026</div>
+    </div>
+    <h1 class="page-h1">NIM 14%は魅力的に見えるが、信用リスクが相殺要因となる。</h1>
+    <p class="page-subhead">2026年3月のOJKデータによれば、デジタルバンクセグメントの<strong>NIMは13.9%で業界平均4.5%</strong>を大幅に上回る[OJK 2026]。これは銀行経済性ではなく消費者金融経済性だ。高利回りだが、Tier-2・Tier-3事業者では不良債権比率が高い。<strong>コホートは二分される</strong>：GoToデータ活用（Jago・Allo）は不良債権0.4〜2%、薄いファイル積極型（BNC・Superbank）は3〜5%超だがNIM 10%超を維持する。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>NIMの分散は大きい。</h3>
+        <p>Bank Jagoは<strong>NIM約10%、不良債権（グロス）0.4%</strong>で運営し[ARTO 2026]、GoToエコシステムデータを信用選別に活用している。Bank Neo Commerceは高い表面利回りを維持するが、信用コストは構造的にセグメント平均を上回る[Kira estimates]。AlloとAladinはその中間に位置し、親会社コングロマリットの流通に依存した保守的な貸出ポートフォリオを維持する。</p>
+        <h3>CIRが収斂の指標となる。</h3>
+        <p>Bank Jago: Q3-2025に59%、4年以内にサブ30%を目標とする[Bank Jago Q3 2025]。AladinのBOPOは118.75%から85.16%、CIRは136.71%から73.27%へ改善[BANK 2026]。<strong>CIR 50%未満が構造的な勝者の閾値</strong> — NubankのスケールでのCIR約30%に相当する。80%超の事業者はユニット経済性が脆弱なまま残る。</p>
+        <h3>コスト・トゥ・サーブがAIの最前線となる。</h3>
+        <p>Nubankのコストはラテンアメリカ既存行比85%低い月間USD 0.80/アクティブユーザーだ[Redseer 2025]。インドネシアの同等指標はUSD 1.50〜3.00の範囲[Kira estimates]。<strong>AIによるKYC自動化 + カスタマーサービス自動化</strong>が2026〜2028年にこの差を縮める現実的なレバーとなる。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">NIM &amp; CIR — 上位6デジタルバンク</div>
+            <div class="chart-subtitle">% &middot; H1/Q3-2025 最新開示</div>
+          </div>
+          <div class="chart-unit">% NIM/CIR</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="200" x2="470" y2="200"/>
+            <line class="grid-line" x1="60" y1="40" x2="470" y2="40"/>
+            <line class="grid-line" x1="60" y1="80" x2="470" y2="80"/>
+            <line class="grid-line" x1="60" y1="120" x2="470" y2="120"/>
+            <line class="grid-line" x1="60" y1="160" x2="470" y2="160"/>
+            <text class="axis-text" x="55" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="164" text-anchor="end">25</text>
+            <text class="axis-text" x="55" y="124" text-anchor="end">50</text>
+            <text class="axis-text" x="55" y="84" text-anchor="end">75</text>
+            <text class="axis-text" x="55" y="44" text-anchor="end">100</text>
+            <rect class="bar-primary" x="78" y="181" width="14" height="19"/>
+            <rect class="bar-secondary" x="94" y="112" width="14" height="88"/>
+            <text class="label-small" x="85" y="178" text-anchor="middle">12</text>
+            <text class="label-small" x="101" y="108" text-anchor="middle">55</text>
+            <rect class="bar-primary" x="142" y="184" width="14" height="16"/>
+            <rect class="bar-secondary" x="158" y="106" width="14" height="94"/>
+            <text class="label-small" x="149" y="180" text-anchor="middle">10</text>
+            <text class="label-small" x="165" y="102" text-anchor="middle">59</text>
+            <rect class="bar-primary" x="206" y="178" width="14" height="22"/>
+            <rect class="bar-secondary" x="222" y="80" width="14" height="120"/>
+            <text class="label-small" x="213" y="174" text-anchor="middle">14</text>
+            <text class="label-small" x="229" y="76" text-anchor="middle">75</text>
+            <rect class="bar-primary" x="270" y="187" width="14" height="13"/>
+            <rect class="bar-secondary" x="286" y="104" width="14" height="96"/>
+            <text class="label-small" x="277" y="183" text-anchor="middle">8</text>
+            <text class="label-small" x="293" y="100" text-anchor="middle">60</text>
+            <rect class="bar-primary" x="334" y="190" width="14" height="10"/>
+            <rect class="bar-secondary" x="350" y="84" width="14" height="116"/>
+            <text class="label-small" x="341" y="186" text-anchor="middle">6</text>
+            <text class="label-small" x="357" y="80" text-anchor="middle">73</text>
+            <rect class="bar-primary" x="398" y="183" width="14" height="17"/>
+            <rect class="bar-secondary" x="414" y="69" width="14" height="131"/>
+            <text class="label-small" x="405" y="179" text-anchor="middle">11</text>
+            <text class="label-small" x="421" y="65" text-anchor="middle">82</text>
+            <text class="axis-text" x="93" y="218" text-anchor="middle">SeaBank</text>
+            <text class="axis-text" x="157" y="218" text-anchor="middle">Jago</text>
+            <text class="axis-text" x="221" y="218" text-anchor="middle">BNC</text>
+            <text class="axis-text" x="285" y="218" text-anchor="middle">Allo</text>
+            <text class="axis-text" x="349" y="218" text-anchor="middle">Aladin</text>
+            <text class="axis-text" x="413" y="218" text-anchor="middle">SuperB</text>
+            <rect class="bar-primary" x="60" y="10" width="10" height="10"/>
+            <text class="label-small" x="74" y="19">NIM %</text>
+            <rect class="bar-secondary" x="160" y="10" width="10" height="10"/>
+            <text class="label-small" x="174" y="19">CIR %</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OPERATOR DISCLOSURES H1/Q3-2025 &middot; KIRA TRIANGULATION FOR CIR ON NON-DISCLOSED BANKS</div>
+      </div>
+    </div>
+    <div class="source-key">ARTO 2026 = Bank Jago FY-2025 Disclosure &middot; Bank Jago Q3 2025 = Bank Jago Q3-2025 Press &middot; BANK 2026 = Bank Aladin Syariah FY-2025 Results &middot; OJK 2026 = OJK Digital Banking Update May-2026 &middot; Redseer 2025 = Redseer Indonesia Banking Gap 2025 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 06 &middot; Segment Economics &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — 競争構造 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; Competitive Structure</div>
+      <div class="page-section-counter">012 / 026</div>
+    </div>
+    <h1 class="page-h1">6つのエコシステム、1つの規制当局、17のライセンス。</h1>
+    <p class="page-subhead">競争環境はライセンス取得時期ではなく、親会社のエコシステムで区分される。6事業者（SeaBank、Bank Jago、Allo、Bank Neo Commerce、AladinおよびSuperbank）が2021年以降のデジタルバンク預金成長の約85%を占める[Kira estimates · 各社開示資料 + Redseer 2025から算出]。以降の4ページで各社を詳細にプロファイルする。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">上位6行 顧客基盤 — インドネシアネオバンク YE-2025</div>
+            <div class="chart-subtitle">百万口座 &middot; 資金調達 + アクティブ</div>
+          </div>
+          <div class="chart-unit">M USERS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 180" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="80" y1="160" x2="590" y2="160"/>
+            <line class="grid-line" x1="80" y1="120" x2="590" y2="120"/>
+            <line class="grid-line" x1="80" y1="80" x2="590" y2="80"/>
+            <line class="grid-line" x1="80" y1="40" x2="590" y2="40"/>
+            <text class="axis-text" x="75" y="164" text-anchor="end">0</text>
+            <text class="axis-text" x="75" y="124" text-anchor="end">10</text>
+            <text class="axis-text" x="75" y="84" text-anchor="end">20</text>
+            <text class="axis-text" x="75" y="44" text-anchor="end">30</text>
+            <rect class="bar-primary" x="100" y="48" width="50" height="112"/>
+            <rect class="bar-primary" x="180" y="87" width="50" height="73"/>
+            <rect class="bar-primary" x="260" y="104" width="50" height="56"/>
+            <rect class="bar-primary" x="340" y="108" width="50" height="52"/>
+            <rect class="bar-primary" x="420" y="136" width="50" height="24"/>
+            <rect class="bar-primary" x="500" y="144" width="50" height="16"/>
+            <text class="label-data" x="125" y="42" text-anchor="middle">28.0</text>
+            <text class="label-data" x="205" y="81" text-anchor="middle">18.2</text>
+            <text class="label-data" x="285" y="98" text-anchor="middle">14.0</text>
+            <text class="label-data" x="365" y="102" text-anchor="middle">~13</text>
+            <text class="label-data" x="445" y="130" text-anchor="middle">6.0</text>
+            <text class="label-data" x="525" y="138" text-anchor="middle">~4</text>
+            <text class="axis-text" x="125" y="176" text-anchor="middle">SeaBank</text>
+            <text class="axis-text" x="205" y="176" text-anchor="middle">Bank Jago</text>
+            <text class="axis-text" x="285" y="176" text-anchor="middle">Allo Bank</text>
+            <text class="axis-text" x="365" y="176" text-anchor="middle">BNC</text>
+            <text class="axis-text" x="445" y="176" text-anchor="middle">Superbank</text>
+            <text class="axis-text" x="525" y="176" text-anchor="middle">Aladin</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OPERATOR PRESS RELEASES YE-2025 &middot; KIRA TRIANGULATION FOR BNC + ALADIN</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>集中度は中程度。</h3>
+        <p>上位3行が合計口座数の<strong>約70%</strong>を占める[Kira estimates]。上位3行以外の分散は決済よりも大きく、ライセンスと資本が実質的な参入障壁となり農村部の流通が非対称であることを反映している。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>上位3行の口座シェア</span><span class="val">~70%</span></div>
+          <div class="stat-line"><span>ライセンス取得済みデジタルバンク</span><span class="val">17</span></div>
+          <div class="stat-line"><span>FY-2025 黒字行数</span><span class="val">9</span></div>
+          <div class="stat-line"><span>POJK 12 最低資本要件</span><span class="val">IDR 10 trn</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">SeaBank Indonesia</div>
+        <div class="comp-parent">Sea Group（SE NYSE）子会社</div>
+        <div class="comp-stat-row"><span>顧客数 YE25</span><span class="val">28.0M</span></div>
+        <div class="comp-stat-row"><span>FY-25 純利益</span><span class="val">IDR 678 bn</span></div>
+        <div class="comp-stat-row"><span>総資産</span><span class="val">IDR 44.4 trn</span></div>
+        <div class="comp-strengths"><strong>Shopeeファネル</strong> + 4年連続黒字。リーチ戦略の体現者[SeaBank 2026]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">Bank Jago (ARTO)</div>
+        <div class="comp-parent">GoToエコシステム + Patrick Walujo</div>
+        <div class="comp-stat-row"><span>顧客数 YE25</span><span class="val">18.2M</span></div>
+        <div class="comp-stat-row"><span>FY-25 純利益</span><span class="val">IDR 276 bn</span></div>
+        <div class="comp-stat-row"><span>不良債権（グロス）</span><span class="val">0.4%</span></div>
+        <div class="comp-strengths"><strong>GoToデータ</strong>がセグメント最高品質の与信ポートフォリオを生む[ARTO 2026]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">Allo Bank (BBHI)</div>
+        <div class="comp-parent">CT Corp（Chairul Tanjung）</div>
+        <div class="comp-stat-row"><span>顧客数 YE25</span><span class="val">~14M</span></div>
+        <div class="comp-stat-row"><span>FY-25 純利益</span><span class="val">IDR 574 bn</span></div>
+        <div class="comp-stat-row"><span>総資産</span><span class="val">IDR 18.5 trn</span></div>
+        <div class="comp-strengths"><strong>CT小売連携</strong> — Transmart、Transホテル[BBHI 2026]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">Bank Neo Commerce (BBYB)</div>
+        <div class="comp-parent">Akulaku Group（27.3%）</div>
+        <div class="comp-stat-row"><span>顧客数 YE25</span><span class="val">~13M</span></div>
+        <div class="comp-stat-row"><span>FY-25 純利益</span><span class="val">IDR 566 bn</span></div>
+        <div class="comp-stat-row"><span>総資産</span><span class="val">IDR 19 trn</span></div>
+        <div class="comp-strengths"><strong>BNPL連携</strong>（Akulaku経由）— 高NIM、不良債権を注視[BBYB 2026]。</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Structure &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — プロファイル 01 SeaBank ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; Player Profile 01</div>
+      <div class="page-section-counter">013 / 026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>SeaBank Indonesia</h2>
+        <div class="sub">Sea Groupのデジタルバンク子会社 — Shopee組み込みオンボーディング、地域Shopeeファネル型</div>
+        <div class="tags">
+          <span class="data-tag">MARKET LEADER</span>
+          <span class="data-tag green">4Y PROFITABLE</span>
+          <span class="data-tag">SHOPEE EMBEDDED</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">顧客数 YE-2025</div><div class="val">28.0<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">FY-2025 純利益</div><div class="val">IDR 678<span class="unit">bn</span></div></div>
+        <div class="stat"><div class="label">総資産 YE-2025</div><div class="val">IDR 44.4<span class="unit">trn</span></div></div>
+        <div class="stat"><div class="label">第三者預金</div><div class="val">IDR 34.8<span class="unit">trn</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>本質的な投資命題</h3>
+        <p>SeaBankはSEAデジタルバンキングにおける<strong>エコシステム＝CACファネル</strong>の最も明確な事例だ。Shopeeとの直接統合により、インドネシア最大のEコマース顧客基盤を限界取得コストほぼゼロで口座開設に転換する。4年連続黒字[SeaBank 2026]がこのモデルの有効性を証明している。</p>
+        <h3>財務実績</h3>
+        <p>FY-2025純利益IDR 678.4億、前年比+79%[SeaBank 2026]。顧客数は2024年中頃の1,300万件から2025年末の2,800万件へ、Shopeeピーク期プロモーションにより倍増に近い増加を達成。総資産IDR 44.4兆（前年比+28.5%）。第三者預金IDR 34.8兆はインドネシアのデジタルバンク中最大の預金基盤。</p>
+      </div>
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <ul>
+          <li><strong>CACの競争優位：</strong>Shopeeの既存顧客基盤は競合が追随できないアプリストア水準のコンバージョン率を実現する。</li>
+          <li><strong>クロスセル動線：</strong>ShopeePay決済 → SeaBank預金 → Shopee SPayLaterによる融資。</li>
+          <li><strong>地理的傾斜：</strong>Shopee物流網を通じてTier-2/3都市が過剰代表されている。</li>
+          <li><strong>リスク：</strong>4年連続黒字はShopeePay成長が無償資金調達源だった時期に構築されたもの — そのサイクルは正常化しつつある。</li>
+        </ul>
+        <h3>2026年の注目点</h3>
+        <p><strong>2,800万件から3,500万件</strong>への軌道[Kira estimates]は自然な停滞ポイントとなる。Java Tier-1の飽和は近く、農村部の獲得が限界ユーザーとなる。コスト・トゥ・サーブがさらに圧縮されなければ、純増ユーザーの質が低下する。</p>
+      </div>
+    </div>
+    <div class="source-key">SeaBank 2026 = SeaBank Indonesia FY-2025 Press Apr-2026 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Structure &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — プロファイル 02 Bank Jago ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; Player Profile 02</div>
+      <div class="page-section-counter">014 / 026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Bank Jago (ARTO)</h2>
+        <div class="sub">GoToエコシステムのデジタルバンク — インドネシアネオバンクにおける与信品質の基準行</div>
+        <div class="tags">
+          <span class="data-tag">GOTO PARTNER</span>
+          <span class="data-tag green">NPL 0.4%</span>
+          <span class="data-tag">CIR 59%</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">顧客数 YE-2025</div><div class="val">18.2<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">FY-2025 純利益</div><div class="val">IDR 276<span class="unit">bn</span></div></div>
+        <div class="stat"><div class="label">貸出残高 Sep-2025</div><div class="val">IDR 23.5<span class="unit">trn</span></div></div>
+        <div class="stat"><div class="label">DPK Sep-2025</div><div class="val">IDR 23.9<span class="unit">trn</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>本質的な投資命題</h3>
+        <p>「GoToデータで与信判断の精度を高める」というBank Jagoの主張は、今や数字に表れている。<strong>不良債権（グロス）0.4%</strong>[Bank Jago Q3 2025]は全国銀行平均を大幅に下回る一方、貸出残高は前年比36%成長でIDR 23.5兆に達した。同行は運営規律をバランスシート品質に転換した。</p>
+        <h3>CIR改善の軌跡</h3>
+        <p>費用収益比率はQ3-2025に74%から59%へ低下した[Bank Jago Q3 2025] — 1年間で15ポイントの圧縮。経営陣は<strong>2029年までにCIR 30%未満</strong>を公式目標として掲げている[Kontan 2025]。AIのオペレーション統合が挙げられた施策の一つであり、もう一つは取引量増加に伴う営業レバレッジだ。</p>
+      </div>
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <ul>
+          <li><strong>データの競争優位：</strong>GoTo（GojekおよびTokopedia）のテレメトリが与信スコアリングに供給される。</li>
+          <li><strong>流通：</strong>GojekおよびTokopediaのアプリ画面に組み込まれ、薄いファイルのユーザーにリーチする。</li>
+          <li><strong>Patrick Walujoの信認効果：</strong>資金力のある支配的株主が資金市場の安心感を高める。</li>
+          <li><strong>リスク：</strong>LDR 98% — 預金のほぼ全額が運用済み。不良債権が急上昇した際の緩衝が乏しい[Kira estimates]。</li>
+        </ul>
+        <h3>2026年の注目点</h3>
+        <p>貸出成長ペースと信用コストの軌道。不良債権が0.4%を維持しながら貸出が年率30%超で成長すれば、Jagoは構造的勝者となる。1%超へのドリフトが生じれば株価倍率が再評価される。資本充足率と資金調達ミックスの変化が二次指標となる。</p>
+      </div>
+    </div>
+    <div class="source-key">ARTO 2026 = Bank Jago FY-2025 Disclosure &middot; Bank Jago Q3 2025 = Bank Jago Q3-2025 Press Release &middot; Kontan 2025 = Kontan Bank Jago CIR Target Coverage 2025 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Structure &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 — プロファイル 03 Allo Bank ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; Player Profile 03</div>
+      <div class="page-section-counter">015 / 026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Allo Bank Indonesia (BBHI)</h2>
+        <div class="sub">CT Corpのデジタルバンク — コングロマリット小売連携、保守的ポートフォリオ、セグメント最大の預金成長率</div>
+        <div class="tags">
+          <span class="data-tag">CT CORP</span>
+          <span class="data-tag green">DPK +78% YoY</span>
+          <span class="data-tag">RETAIL EMBED</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">顧客数 YE-2025</div><div class="val">~14<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">FY-2025 純利益</div><div class="val">IDR 574<span class="unit">bn</span></div></div>
+        <div class="stat"><div class="label">総資産 YE-2025</div><div class="val">IDR 18.5<span class="unit">trn</span></div></div>
+        <div class="stat"><div class="label">貸出残高 FY-2025</div><div class="val">IDR 9.1<span class="unit">trn</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>本質的な投資命題</h3>
+        <p>Alloはインドネシアにおける「銀行を小売に組み込む」モデルの最も純粋な体現だ。CT Corpのフットプリント — <strong>Transmart、Trans Hotel、Trans Studio、CT Corpメディア資産</strong> — がAllo PayおよびAllo Primeに固有の流通網を提供する。FY-2025純利益IDR 574億（前年比+22.9%）[BBHI 2026]は低リスク・ブランド連携モデルを裏付ける。</p>
+        <h3>財務実績</h3>
+        <p>総資産前年比+32%でIDR 18.5兆、純利息収益+29%でIDR 1.44兆、貸出残高IDR 9.1兆（前年比+22%）。Q3-2025のDPKは前年比78%増のIDR 8.78兆[BBHI 2026] — Allo Primeの高利回り貯蓄商品とCT Corp内部フローに牽引されたセグメント最大の預金成長率。</p>
+      </div>
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <ul>
+          <li><strong>内部資金フロー：</strong>Transmart レジ、Transホテル、CTブランドがAllo Pay+に資金を供給する。</li>
+          <li><strong>BNPL角度：</strong>Allo PayLaterは小売加盟店網を通じた薄いファイルの引受に活用される。</li>
+          <li><strong>ブランドの信認効果：</strong>Chairul Tanjungはインドネシア屈指の著名経営者の一人だ。</li>
+          <li><strong>リスク：</strong>保守的な成長戦略はTier-1純獲得競争での地位を後退させる。</li>
+        </ul>
+        <h3>2026年の注目点</h3>
+        <p>AlloがCT小売ファネルをSumatraやSulawesiの<strong>地方CT Corp拠点</strong>に拡張できるかどうか — Indomaret/Alfamart型の展開が次の獲得ベクターとなる。収益規律と預金プロモーション競争のトレードオフが繰り返し迫られる戦略的判断だ。</p>
+      </div>
+    </div>
+    <div class="source-key">BBHI 2026 = Allo Bank FY-2025 Results Mar-2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Structure &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 — プロファイル 04 Bank Neo Commerce ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; Player Profile 04</div>
+      <div class="page-section-counter">016 / 026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Bank Neo Commerce (BBYB)</h2>
+        <div class="sub">Akulaku基盤のデジタルバンク — BNPL連携融資による再建事例、2025年最大の純利益サプライズ</div>
+        <div class="tags">
+          <span class="data-tag">AKULAKU</span>
+          <span class="data-tag amber">NPL WATCH</span>
+          <span class="data-tag">BNPL-LED</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">FY-2025 純利益</div><div class="val">IDR 566<span class="unit">bn</span></div></div>
+        <div class="stat"><div class="label">前年比 純利益成長率</div><div class="val">+2,745<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">総資産 YE-25</div><div class="val">IDR 19<span class="unit">trn</span></div></div>
+        <div class="stat"><div class="label">DPK YE-2025</div><div class="val">IDR 14<span class="unit">trn</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>本質的な投資命題</h3>
+        <p>Bank Neo Commerceは<strong>「BNPL＝銀行」</strong>モデルの典型例だ。PT Akulaku Silvrが27.3%、Rockcore Financialが6.1%を保有する[BBYB 2026]。同行はAkulakuのBNPL顧客基盤を銀行ライセンスへと誘導する — 高NIM・高利回り・信用コスト要注意の構造だ。FY-2025純利益IDR 565.7億は前年の27倍に相当し[BBYB 2026]、効率化と資産品質改善を原動力とする。</p>
+        <h3>収益構造</h3>
+        <p>2025年Q1単期の融資実行額はIDR 8.5兆[BBYB 2026]。NIMはセグメント内で最高水準の約14%[OJK 2026] — 銀行ライセンス下での消費者金融経済性と整合する。2025年を通じて預金プロモーションから低コストの卸売資金調達へ転換し、調達コストが低下した。</p>
+      </div>
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <ul>
+          <li><strong>Akulakuデータの好循環：</strong>BNPLの行動データが銀行側融資の与信選別に供給される。</li>
+          <li><strong>高利回り預金獲得競争：</strong>普通預金金利はセグメント内で最も積極的な水準の一つ。</li>
+          <li><strong>ライセンスの選択価値：</strong>銀行免許によりAkulakuグループはP2P専業より低コストの資金調達が可能になる。</li>
+          <li><strong>リスク：</strong>2026年の不良債権動向が注視指標 — 資金調達コスト上昇がスプレッドを圧縮する。</li>
+        </ul>
+        <h3>2026年の注目点</h3>
+        <p>BNCが不良債権を3%未満に抑えながらFY-2026純利益をIDR 600億超で維持できるかどうか。前年比2,745%の利益急増はベース効果による部分が大きい。来年は持続性がヘッドラインより重要だ。Akulakuグループの規制上の立場も影響する。</p>
+      </div>
+    </div>
+    <div class="source-key">BBYB 2026 = Bank Neo Commerce FY-2025 Results Mar-2026 &middot; OJK 2026 = OJK Digital Banking Update May-2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Structure &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 — プロファイル 05 Aladin + Superbank複合 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 &middot; Player Profile 05</div>
+      <div class="page-section-counter">017 / 026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Aladin Syariah &middot; Superbank &middot; Krom</h2>
+        <div class="sub">挑戦者トリオ — イスラム金融特化・スーパーアプリ連携・BNPLスピンオフ — 2026年の獲得地図で異なる領域を担う</div>
+        <div class="tags">
+          <span class="data-tag">CHALLENGERS</span>
+          <span class="data-tag green">ALL PROFITABLE</span>
+          <span class="data-tag">ECOSYSTEM JV</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Aladin FY-25 純利益</div><div class="val">IDR 151<span class="unit">bn</span></div></div>
+        <div class="stat"><div class="label">Superbank FY-25 税前利益</div><div class="val">IDR 143<span class="unit">bn</span></div></div>
+        <div class="stat"><div class="label">Aladin 総資産 Nov-25</div><div class="val">IDR 14.2<span class="unit">trn</span></div></div>
+        <div class="stat"><div class="label">Superbank 顧客数</div><div class="val">6.0<span class="unit">M</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Aladin Syariah (BANK)</h3>
+        <p>インドネシア初のデジタルイスラム銀行。FY-2025純利益IDR 150.71億、前年の赤字から黒字転換[BANK 2026]。BOPOは118.75%から85.16%、CIRは136.71%から73.27%へ圧縮[BANK 2026] — セグメント内で最も劇的な効率改善。Alfamart、Alfamidi、LawsonおよびDAN+DANとの提携により<strong>2万店超のモダントレード拠点での現金引き出し</strong>が可能[BANK 2026]。</p>
+        <h3>Superbank (SUPA)</h3>
+        <p>Grab、Emtek、Singtel、KakaoBankおよびGXS Bankが出資。FY-2025税前利益IDR 143.3億、前年の赤字から黒字転換[Superbank 2026]。顧客数600万件、総資産IDR 24兆（前年比+72%）、デジタル融資商品「Pinjaman Atur Sendiri」は2024年12月〜2025年6月で130%超の成長を記録[Superbank 2026]。SingtelのGrab持分移転後、Grabが2026年にSuperbankを連結する。</p>
+      </div>
+      <div class="profile-col">
+        <h3>Krom Bank (KCBI)</h3>
+        <p>Kredivo Group子会社。<strong>2030年までに2,000万口座</strong>を目標とする[Mambu 2025]。Q3-2024の第三者預金はIDR 2.22兆（前年12月のIDR 347.5億から+541% YTD）[Krom 2024]。定期預金金利は最大8.75% — セグメント内で最も積極的な水準。Mambuクラウドバンキングスタックの更新は継続的な技術投資を示す。</p>
+        <h3>2026年の注目点</h3>
+        <p>Aladinのイスラム金融角度はハラール意識の高い預金セグメントで差別化を生む。SuperbankのGrab連結はOVO×Superbankのクロスセルを大規模に解放する可能性がある。Kromは利回り主導の獲得をより粘着性の高い残高へ転換する必要がある。<strong>3行ともTier-1と比較すれば規模が小さい</strong> — エコシステムJVまたは提携深化が2026〜2027年を規定する。</p>
+      </div>
+    </div>
+    <div class="source-key">BANK 2026 = Bank Aladin Syariah FY-2025 Results Apr-2026 &middot; Krom 2024 = Krom Bank Q3-2024 Update &middot; Mambu 2025 = Mambu &times; Krom Partnership Renewal 2025 &middot; Superbank 2026 = Superbank FY-2025 IPO Filing Apr-2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Structure &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 — 農村部・ディバイダー ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08 &middot; CHAPTER THREE</div>
+    <h1 class="divider-title">農村部獲得：<span class="accent">未開拓の楔</span></h1>
+    <p class="divider-thesis"><strong>9,700万人の非銀行口座保有インドネシア人</strong>が残存する — 世界第4位の規模[World Bank 2024]。JavaのTier-1ではモバイルファーストが機能するが、Tier-2/3および農村部の諸島では物理的なエージェントの補完が不可欠だ。BRI・BNI・Mandiriのエージェント網は、JVなしにはネオバンクが匹敵できない構造的優位である。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">08.1 包摂格差</div>
+      <div class="toc-pill">08.2 エージェントバンキング</div>
+      <div class="toc-pill">08.3 CAC の実態</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 — 農村部獲得 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 &middot; Rural Acquisition</div>
+      <div class="page-section-counter">019 / 026</div>
+    </div>
+    <h1 class="page-h1">農村部インドネシアでエージェントが純デジタルを上回る理由。</h1>
+    <p class="page-subhead">農村部の金融包摂率は70%で都市部の78%を下回る[OJK 2024]。インドネシア人が銀行口座を持たない上位2つの理由は<strong>「遠すぎる（33%）」と「費用がかかりすぎる（32%）」</strong>[OJK Inklusi 2024]。純デジタルのオンボーディングはNTT・Maluku・Kalimantan Tengah・West Papuaでいずれの理由も解消できない。エージェントバンキングだけが実証済みの橋渡し手段だ。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>エージェント網の実態。</h3>
+        <p>BRILinkは<strong>34州にまたがる81,616村落</strong>をカバーする[BRI 2024]。BNI Agen46は6,000超の小区域・35,000村落（うち3T〔辺境・遠隔・後発開発〕地域1万5,000村落を含む）に207,027名のエージェントを配置する[BNI 2024]。Mandiri AgenとBSI Laku PandaiがSumatraと東Javaでさらにカバレッジを補完する。<strong>物理的接点の累計は30万超に達する</strong>[Kira estimates]。</p>
+        <h3>純デジタルにできないこと。</h3>
+        <p>農村部の日雇い労働者への現金入出金。スマートフォンを持たないユーザー（農村部成人の約15%[Kira estimates · BPS 2025から算出]）へのKYC対応。初めて銀行口座を開設する顧客への信頼醸成。1回の訪問での公共料金支払いと口座開設の同時対応。<strong>摩擦の積み重ね</strong>はデジタルではなく物理的なものだ。</p>
+        <h3>実行可能な農村部戦略の類型。</h3>
+        <p>3つのパターンが確認される。<strong>第一</strong>：エコシステム借用型リーチ（AlloのIndomaret/Alfamart型小売経由）。<strong>第二</strong>：BRI/BNI/Mandiriエージェントとの収益分配JV。<strong>第三</strong>：Grab/Gojekドライバーをエージェント化したスーパーアプリの物理拠点拡張。現在のコスト・トゥ・サーブ水準では農村部へのスタンドアロンデジタル展開は採算が合わない。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">エージェントバンキング網 — 主要既存行</div>
+            <div class="chart-subtitle">エージェント数 &middot; 2024-2025</div>
+          </div>
+          <div class="chart-unit">'000 AGENTS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="40" x2="460" y2="40"/>
+            <line class="grid-line" x1="60" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="60" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="60" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="55" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="164" text-anchor="end">200</text>
+            <text class="axis-text" x="55" y="124" text-anchor="end">400</text>
+            <text class="axis-text" x="55" y="84" text-anchor="end">600</text>
+            <text class="axis-text" x="55" y="44" text-anchor="end">800</text>
+            <rect class="bar-primary" x="100" y="40" width="50" height="160"/>
+            <rect class="bar-primary" x="190" y="159" width="50" height="41"/>
+            <rect class="bar-primary" x="280" y="170" width="50" height="30"/>
+            <rect class="bar-primary" x="370" y="174" width="50" height="26"/>
+            <text class="label-data" x="125" y="34" text-anchor="middle">~800</text>
+            <text class="label-data" x="215" y="153" text-anchor="middle">207</text>
+            <text class="label-data" x="305" y="164" text-anchor="middle">~150</text>
+            <text class="label-data" x="395" y="168" text-anchor="middle">127</text>
+            <text class="axis-text" x="125" y="218" text-anchor="middle">BRILink</text>
+            <text class="axis-text" x="215" y="218" text-anchor="middle">BNI Agen46</text>
+            <text class="axis-text" x="305" y="218" text-anchor="middle">Mandiri Agen</text>
+            <text class="axis-text" x="395" y="218" text-anchor="middle">BSI Laku Pandai</text>
+            <text class="label-small" x="250" y="25" text-anchor="middle" style="fill:#1E6FFF;font-weight:700">ネオバンクで1,000拠点超を持つ事業者はゼロ</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BRI, BNI, MANDIRI, BSI DISCLOSURES 2024-2025 &middot; KIRA TRIANGULATION FOR BRILINK CURRENT TOTAL</div>
+      </div>
+    </div>
+    <div class="source-key">BNI 2024 = BNI Agen46 Update Jul-2024 &middot; BPS 2025 = Badan Pusat Statistik Telecommunication Statistics 2025 &middot; BRI 2024 = BRI BRILink Network Disclosure 2024 &middot; OJK 2024 = OJK Financial Inclusion Index 2024 &middot; OJK Inklusi 2024 = OJK Inclusion Survey Findings 2024 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 08 &middot; Rural Acquisition &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 — 農村部 P2（チャネル経済性） ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 &middot; Rural Acquisition (cont.)</div>
+      <div class="page-section-counter">020 / 026</div>
+    </div>
+    <h1 class="page-h1">チャネル別CACが同じ構図を示す。</h1>
+    <p class="page-subhead">デジタル専業ネオバンクの推計CACは<strong>Jakarta Tier-1でUSD 8〜12、農村部東インドネシアでUSD 22〜35</strong>[Kira estimates · 事業者チャネル比率から算出]。エージェントバンキング提携では収益分配モデルにより農村部の数値がUSD 6〜9まで低下する。この算数が次の3,000万口座を誰が獲得するかを決定する。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>チャネル別のCAC分散。</h3>
+        <p>スーパーアプリ・クロスセル（Shopee→SeaBank、GoTo→Bank Jago）：<strong>獲得口座あたりUSD 3〜6</strong>、限界コストはほぼゼロ。パフォーマンスマーケティング獲得：Tier-1都市でUSD 10〜18、Tier-2/3でUSD 18〜30。純デジタル農村部獲得：アプリのアンインストール率が高くサポートコールの追跡が必要なためUSD 22〜35[Kira estimates · 業界チャネルベンチマークから算出]。</p>
+        <h3>エージェントJVの経済性。</h3>
+        <p>BRILinkエージェントの取引手数料収入はIDR 2,500〜5,000/件[BRI 2024]。JVに参加するネオバンクは完全オンボーディング完了口座あたりIDR 25,000〜50,000を支払うのが通例[Kira estimates · 業界取引実績から算出]。<strong>完全コストベースでUSD 6〜9</strong>であれば、Tier-1デジタル獲得と競合し、純デジタル農村部を大幅に下回る。</p>
+        <h3>KYCのオーバーレイ。</h3>
+        <p>OJKは新規口座開設にDukcapil NIKと生体認証ライブネスを義務付ける[OJK 2024]。農村部の通信環境では純デジタルフローの失敗率が8〜15%に達する[Kira estimates]。エージェント補助によるKYCは95%超の成功率を示す。経済性は相乗効果を持つ。エージェントJVは獲得コストを下げるだけでなく、より高い確率でコンバートする。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">チャネル別推計CAC</div>
+            <div class="chart-subtitle">オンボーディング完了口座あたりUSD &middot; 2025年</div>
+          </div>
+          <div class="chart-unit">USD CAC</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="40" x2="460" y2="40"/>
+            <line class="grid-line" x1="60" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="60" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="60" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="55" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="164" text-anchor="end">10</text>
+            <text class="axis-text" x="55" y="124" text-anchor="end">20</text>
+            <text class="axis-text" x="55" y="84" text-anchor="end">30</text>
+            <text class="axis-text" x="55" y="44" text-anchor="end">40</text>
+            <rect class="bar-primary" x="80" y="182" width="50" height="18"/>
+            <rect class="bar-primary" x="160" y="144" width="50" height="56"/>
+            <rect class="bar-primary" x="240" y="104" width="50" height="96"/>
+            <rect class="bar-primary" x="320" y="170" width="50" height="30"/>
+            <rect class="bar-tertiary" x="400" y="88" width="50" height="112"/>
+            <text class="label-data" x="105" y="176" text-anchor="middle">~4.5</text>
+            <text class="label-data" x="185" y="138" text-anchor="middle">~14</text>
+            <text class="label-data" x="265" y="98" text-anchor="middle">~24</text>
+            <text class="label-data" x="345" y="164" text-anchor="middle">~7.5</text>
+            <text class="label-data" x="425" y="82" text-anchor="middle">~28</text>
+            <text class="axis-text" x="105" y="216" text-anchor="middle">Ecosystem</text>
+            <text class="axis-text" x="185" y="216" text-anchor="middle">PM T-1</text>
+            <text class="axis-text" x="265" y="216" text-anchor="middle">PM T-2/3</text>
+            <text class="axis-text" x="345" y="216" text-anchor="middle">Agent JV</text>
+            <text class="axis-text" x="425" y="216" text-anchor="middle">Pure rural</text>
+            <text class="axis-text" x="105" y="228" text-anchor="middle" style="font-size:7px;">クロスセル</text>
+            <text class="axis-text" x="185" y="228" text-anchor="middle" style="font-size:7px;">Tier-1都市</text>
+            <text class="axis-text" x="265" y="228" text-anchor="middle" style="font-size:7px;">Tier-2/3</text>
+            <text class="axis-text" x="345" y="228" text-anchor="middle" style="font-size:7px;">農村JV</text>
+            <text class="axis-text" x="425" y="228" text-anchor="middle" style="font-size:7px;">エージェントなし</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA TRIANGULATION FROM OPERATOR CHANNEL DISCLOSURES &amp; INDUSTRY BENCHMARKS</div>
+      </div>
+    </div>
+    <div class="source-key">BRI 2024 = BRI BRILink Network Disclosure 2024 &middot; OJK 2024 = OJK eKYC Framework Update 2024 &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 08 &middot; Rural Acquisition &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 — 規制環境 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 &middot; Regulatory Landscape</div>
+      <div class="page-section-counter">021 / 026</div>
+    </div>
+    <h1 class="page-h1">POJK 12が参入障壁を高め、POJK 3/2024がサンドボックスを開く。</h1>
+    <p class="page-subhead">OJK規則12/POJK.03/2021は新規デジタルバンクの<strong>最低コア資本をIDR 10兆</strong>（設立認可段階でIDR 3兆、銀行子会社型デジタルバンクはIDR 1兆）と規定する[POJK 12/2021]。続くPOJK 3/2024は代替信用スコアリング・eKYC・ロボアドバイザリー・暗号資産ビジネスモデルを対象としたITSKレギュラトリーサンドボックスを拡充した[POJK 3/2024]。OJKは<strong>2026年1月1日付でデジタルバンキング監督専門局</strong>も設置した[OJK 2026]。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>資本要件の意義。</h3>
+        <p>POJK 12は事実上、資本不足のフィンテック→銀行転換の門戸を閉ざした。IDR 10兆（約USD 6億4,000万）の要件は新規参入者を、資金力のある親会社（Sea、GoTo、CT Corp、Akulaku、Grab/Emtek、Kredivo）か小規模銀行のM&Aに絞り込む。<strong>外部支援なしに2026〜2027年にこの水準を達成できるグリーンフィールドのデジタルバンクは存在しない</strong>[Kira estimates]。</p>
+        <h3>サンドボックスが規制上の楔となる。</h3>
+        <p>サンドボックス期間は1年で延長可能[POJK 3/2024]。承認済みユースケースには代替データ信用スコアリング、AI不正検知、自動引受、組み込み型保険が含まれる。暗号資産監督は2025年1月にBappebtiからOJKへ移管された[POJK 3/2024]。<strong>サンドボックス卒業者がセグメントの事実上のコンプライアンス基準を設定する。</strong></p>
+        <h3>2026年に監督が強化される。</h3>
+        <p>新設のOJKデジタルバンキング局は独立した精査経路を示す。資本充足率・AIガバナンス・eKYC基準・薄いファイル型消費者信用の不良債権分類が対象となる[OJK 2026]。2026〜2027年を通じて開示規則とストレステスト要件の厳格化が見込まれる。<strong>規制当局は事業者と並走して専門化を深めている。</strong></p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">デジタルバンク規制タイムライン</div>
+            <div class="chart-subtitle">OJK主要マイルストーン 2021-2026年</div>
+          </div>
+          <div class="chart-unit">REGS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="120" x2="460" y2="120"/>
+            <circle cx="70" cy="120" r="6" fill="#1E6FFF"/>
+            <circle cx="170" cy="120" r="6" fill="#1E6FFF"/>
+            <circle cx="270" cy="120" r="6" fill="#1E6FFF"/>
+            <circle cx="370" cy="120" r="6" fill="#1E6FFF"/>
+            <circle cx="445" cy="120" r="6" fill="#1E6FFF" opacity="0.55"/>
+            <text class="axis-text" x="70" y="140" text-anchor="middle">Oct-2021</text>
+            <text class="axis-text" x="170" y="140" text-anchor="middle">2023</text>
+            <text class="axis-text" x="270" y="140" text-anchor="middle">2024</text>
+            <text class="axis-text" x="370" y="140" text-anchor="middle">Jan-2026</text>
+            <text class="axis-text" x="445" y="140" text-anchor="middle">2026+</text>
+            <text class="label-small" x="70" y="100" text-anchor="middle" style="font-weight:700;fill:#0B0D10">POJK 12/2021</text>
+            <text class="label-small" x="70" y="88" text-anchor="middle">IDR 10兆資本要件</text>
+            <text class="label-small" x="170" y="100" text-anchor="middle" style="font-weight:700;fill:#0B0D10">P2P貸金業者</text>
+            <text class="label-small" x="170" y="88" text-anchor="middle">OJK登録</text>
+            <text class="label-small" x="270" y="100" text-anchor="middle" style="font-weight:700;fill:#0B0D10">POJK 3/2024</text>
+            <text class="label-small" x="270" y="88" text-anchor="middle">ITSKサンドボックス</text>
+            <text class="label-small" x="370" y="100" text-anchor="middle" style="font-weight:700;fill:#0B0D10">DB監督局</text>
+            <text class="label-small" x="370" y="88" text-anchor="middle">専門ユニット設置</text>
+            <text class="label-small" x="445" y="100" text-anchor="middle" style="font-weight:700;fill:#1E6FFF">AIガバナンス</text>
+            <text class="label-small" x="445" y="88" text-anchor="middle" style="fill:#1E6FFF">策定中</text>
+            <text class="label-small" x="70" y="160" text-anchor="middle" style="fill:#4A5568">資本下限</text>
+            <text class="label-small" x="170" y="160" text-anchor="middle" style="fill:#4A5568">ITSK正式化</text>
+            <text class="label-small" x="270" y="160" text-anchor="middle" style="fill:#4A5568">暗号資産含む</text>
+            <text class="label-small" x="370" y="160" text-anchor="middle" style="fill:#4A5568">独立監督経路</text>
+            <text class="label-small" x="445" y="160" text-anchor="middle" style="fill:#4A5568">見込み</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OJK GAZETTE, KIRA REGULATORY TRACKER 2021-2026</div>
+      </div>
+    </div>
+    <div class="source-key">OJK 2026 = OJK Digital Banking Update May-2026 &middot; POJK 12/2021 = OJK Regulation 12/POJK.03/2021 on Commercial Banks &middot; POJK 3/2024 = OJK Regulation 3/2024 on ITSK &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 09 &middot; Regulatory Landscape &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 22 — AI・ディバイダー ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10 &middot; CHAPTER FOUR</div>
+    <h1 class="divider-title">インドネシアの<span class="accent">デジタルバンキングにおけるAI</span></h1>
+    <p class="divider-thesis">消費者向けコパイロットのナラティブは忘れるべきだ。インドネシアのデジタルバンキングにおける<strong>AIの近期ROI</strong>は3領域に集中する。薄いファイルのユーザーを対象とした代替データ信用スコアリング、リアルタイム不正防止とデバイスインテルによるリスク管理、そしてコスト・トゥ・サーブの圧縮だ。Bank JagoはCIR 15ポイント低下の要因としてAIを公式に言及している。基準はオペックス回収であり、ビジョンではない。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1 ユースケース</div>
+      <div class="toc-pill">10.2 ベンダー地図</div>
+      <div class="toc-pill">10.3 OJKガバナンス</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 23 — AI概要 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 &middot; AI in Digital Banking</div>
+      <div class="page-section-counter">023 / 026</div>
+    </div>
+    <h1 class="page-h1">AIはユニット経済性のインフラであり、機能ではない。</h1>
+    <p class="page-subhead">インドネシアのネオバンクはAIを主に<strong>代替データ引受・不正検知・プロセス自動化</strong>に活用している。当社の推計では、AI帰属のオペックス削減額は2025年に上位6行合計でUSD 8,000万〜1億2,000万に達した[Kira estimates · 各社開示資料 + 業界ベンチマークから算出]。効果はコスト・トゥ・サーブと承認率の改善にあり、表面的な顧客向け機能ではない。</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>引受が最高ROIの領域。</h3>
+        <p>TokopediaのSDB信用スコアリングはEコマースの行動データを活用し、BlibliのVici Scoreは信用と行動を組み合わせ、Amarthaは社会的評判とグループ融資シグナルを重ね合わせる[GBG 2025]。デバイスインテル（CredoLabパターン）は信用・不正リスク保護を最大<strong>+40%</strong>向上させる[Kira estimates · 業界ベンチマークから算出]。</p>
+        <h3>不正検知が次に実行可能な領域。</h3>
+        <p>QRISの不正はペイメントボリュームとともに増加する。リアルタイムスコアリング＋デバイスインテリジェンス＋行動バイオメトリクスが多層的な対応を構成する。<strong>100ms未満の判定</strong>はセグメントの標準要件となっている。</p>
+        <h3>カスタマーサポートが3番目の領域。</h3>
+        <p>バハサ・インドネシア語、ジャワ語、スンダ語を含む多方言LLMチャットオペレーションにより、導入済みの比較対象ではアクティブユーザーあたりのサポートコストが30〜50%削減される[Kira estimates]。翻訳の問題はほぼ解決済みだが、展開規律の問題は未解決のままだ。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">推計AIオペックス削減効果</div>
+            <div class="chart-subtitle">USD M 年間削減額 &middot; 上位6行</div>
+          </div>
+          <div class="chart-unit">USD M</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 230" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="190" x2="380" y2="190"/>
+            <line class="grid-line" x1="50" y1="40" x2="380" y2="40"/>
+            <line class="grid-line" x1="50" y1="90" x2="380" y2="90"/>
+            <line class="grid-line" x1="50" y1="140" x2="380" y2="140"/>
+            <text class="axis-text" x="45" y="194" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="144" text-anchor="end">40</text>
+            <text class="axis-text" x="45" y="94" text-anchor="end">80</text>
+            <text class="axis-text" x="45" y="44" text-anchor="end">120</text>
+            <rect class="bar-secondary" x="100" y="115" width="60" height="75"/>
+            <rect class="bar-primary" x="240" y="40" width="60" height="150"/>
+            <text class="label-data" x="130" y="109" text-anchor="middle">~55</text>
+            <text class="label-data" x="270" y="34" text-anchor="middle">~100</text>
+            <text class="axis-text" x="130" y="208" text-anchor="middle">FY-2024</text>
+            <text class="axis-text" x="270" y="208" text-anchor="middle">FY-2025</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA TRIANGULATION ON OPERATOR DISCLOSURES + INDUSTRY BENCHMARKS</div>
+      </div>
+    </div>
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">デバイスインテル向上幅</div>
+        <div class="num">+40<span class="unit">%</span></div>
+        <div class="change">信用・不正精度向上 [Kira estimates]</div>
+        <div class="source-tag">KIRA EST</div>
+      </div>
+      <div class="callout">
+        <div class="label">JAGO CIR 圧縮幅</div>
+        <div class="num">15<span class="unit">PP</span></div>
+        <div class="change">74% &rarr; 59% Q3-2025 [Bank Jago Q3 2025]</div>
+        <div class="source-tag">BANK JAGO</div>
+      </div>
+      <div class="callout">
+        <div class="label">サポートコスト削減率</div>
+        <div class="num">30-50<span class="unit">%</span></div>
+        <div class="change">多方言LLMオペレーション [Kira estimates]</div>
+        <div class="source-tag">KIRA EST</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 10 &middot; AI in Digital Banking &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 24 — AIユースケース グリッド6 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 &middot; AI in Digital Banking (cont.)</div>
+      <div class="page-section-counter">024 / 026</div>
+    </div>
+    <h1 class="page-h1">インドネシアのネオバンクを再構成する6つのAI活用事例。</h1>
+    <p class="page-subhead">各ユースケースはインドネシア市場で実際に展開済みまたは展開直前のパターンに基づく。新規性ではなく現在のROI順に掲載 — 引受と不正検知がリードし、チャットとパーソナライゼーションが後続する。</p>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">01 &middot; UNDERWRITE</div>
+        <div class="uc-title">代替データ薄ファイル信用スコアリング</div>
+        <div class="uc-body">通信記録、Eコマース行動、デバイスメタデータ、社会的評判を活用。エコシステムデータと組み合わせることで不良債権0.4〜2%を維持しながら承認率を向上させる[Bank Jago Q3 2025]。</div>
+        <div class="uc-example">事例：Bank Jago + GoToエコシステムデータ</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">02 &middot; FRAUD</div>
+        <div class="uc-title">リアルタイム デバイスインテル + 行動バイオメトリクス</div>
+        <div class="uc-body">QRIS・BI-FAST・行内送金向け100ms未満スコアリング。導入済み事業者で<strong>信用・不正合計で最大+40%の精度向上</strong>[Kira estimates · 業界ベンチマークから算出]。</div>
+        <div class="uc-example">パターン：CredoLab型デバイススコアカード</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">03 &middot; KYC</div>
+        <div class="uc-title">ライブネス検知 + Dukcapil NIKマッチング</div>
+        <div class="uc-body">OJK eKYCフレームワークの義務要件[OJK 2024]。AIライブネスがディープフェイク注入を遮断する。2025〜2026年のボトルネックはモデル精度ではなく<strong>農村部接続の成功率</strong>にある。</div>
+        <div class="uc-example">義務根拠：POJK 3/2024下のOJK eKYC</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">04 &middot; OPS</div>
+        <div class="uc-title">バックオフィス自動化と勘定照合</div>
+        <div class="uc-body">RPA + LLM補助による例外処理が取引あたりの運用人員を削減する。<strong>Bank Jagoは公式に</strong>CIR圧縮の要因としてAIオペレーション統合を言及している[Bank Jago Q3 2025]。</div>
+        <div class="uc-example">開示：ARTO Q3-2025 CIRコメンタリー</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">05 &middot; CHAT</div>
+        <div class="uc-title">多方言カスタマーサポートLLM</div>
+        <div class="uc-body">バハサ・インドネシア語を主言語、地方言語を副言語として対応。ハンドオフ規律を徹底した運用でアクティブユーザーあたりのサポートコストを30〜50%削減[Kira estimates]。精度閾値はOJKの消費者保護規則が設定する。</div>
+        <div class="uc-example">制約：OJK説明可能性基準</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">06 &middot; OFFER</div>
+        <div class="uc-title">パーソナライズド商品提案</div>
+        <div class="uc-body">預金クロスセル・BNPLアタッチ・保険付帯向けのネクストベストアクション・ターゲティング。<strong>現在の規模では</strong>最初の4つより低ROI — 各行のアクティブユーザー基盤が1,000万件を超えたタイミングで再評価[Kira estimates]。</div>
+        <div class="uc-example">注目：CT CorpフットプリントへのAlloクロスセル</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 10 &middot; AI in Digital Banking &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 25 — 予測 + 戦略的示唆 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 &middot; Outlook &amp; Forecast</div>
+      <div class="page-section-counter">025 / 026</div>
+    </div>
+    <h1 class="page-h1">5年間の見通し：USD 70〜90億の収益プール、3社の勝者。</h1>
+    <p class="page-subhead">ベースケース — インドネシアのデジタルバンキング収益プールは<strong>2025年の約USD 35億から2031年にUSD 75億</strong>へ年率13〜14%で拡大する[Kira estimates · Statistaネオバンキング年率9.62% + IFTS Outlook 2031との三角推計]。増分プールの60%超を3事業者（SeaBank（Shopee）・Bank Jago（GoTo）・Allo（CT Corp））が獲得する。中間層はM&Aで集約される。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>3つのシナリオ。</h3>
+        <p><strong>ベースケース（確率60%）：</strong>年率13〜14%成長、上位3行が70%シェアに到達。Tier-2はM&Aで集約。<strong>上振れ（25%）：</strong>農村部エージェントJVが3,000万人超の非銀行口座層を想定より速く開拓し収益プールがUSD 90億に達する。<strong>下振れ（15%）：</strong>信用サイクルが悪化し不良債権がセグメント全体で3〜5%にドリフト、収益性が圧縮されプールは2031年にUSD 50億で横ばい。</p>
+        <h3>2026〜2027年に向けた5つの戦略的示唆。</h3>
+        <p><strong>（1）</strong>2026年末までにエージェントバンキングJVを構築または取得する。<strong>（2）</strong>36ヶ月以内にCIRを50%未満に圧縮する。<strong>（3）</strong>ITSKサンドボックスを少なくとも1回通過する。<strong>（4）</strong>AIへの投資は機能ではなく開示済みオペックス削減に紐付ける。<strong>（5）</strong>Tier-2/3展開に向けた多方言運用能力を構築する。これらのチェックポイントを2つ以上未達成の事業者は2028年までに買収候補となる。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">インドネシアデジタルバンキング収益プール</div>
+            <div class="chart-subtitle">USD bn &middot; 2024-2031F &middot; ベース / 上振れ / 下振れ</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">6</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">9</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">12</text>
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="60,160 110,153 160,147 210,139 260,130 310,119 360,109 410,100"/>
+            <polyline fill="none" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 3" points="260,130 310,113 360,99 410,80"/>
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3" points="260,130 310,135 360,138 410,134"/>
+            <text class="label-data" x="60" y="155" text-anchor="middle">3.0</text>
+            <text class="label-data" x="410" y="94" text-anchor="middle" style="fill:#1E6FFF">7.5</text>
+            <text class="label-data" x="410" y="74" text-anchor="middle" style="fill:#00A88B">9.0</text>
+            <text class="label-data" x="410" y="128" text-anchor="middle" style="fill:#D97706">5.0</text>
+            <text class="axis-text" x="60" y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="110" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="160" y="218" text-anchor="middle">2026</text>
+            <text class="axis-text" x="210" y="218" text-anchor="middle">2027</text>
+            <text class="axis-text" x="260" y="218" text-anchor="middle">2028F</text>
+            <text class="axis-text" x="310" y="218" text-anchor="middle">2029F</text>
+            <text class="axis-text" x="360" y="218" text-anchor="middle">2030F</text>
+            <text class="axis-text" x="410" y="218" text-anchor="middle">2031F</text>
+            <rect x="60" y="14" width="12" height="3" fill="#1E6FFF"/>
+            <text class="label-small" x="78" y="18">ベース</text>
+            <rect x="130" y="14" width="12" height="3" fill="#00A88B"/>
+            <text class="label-small" x="148" y="18">上振れ</text>
+            <rect x="210" y="14" width="12" height="3" fill="#D97706"/>
+            <text class="label-small" x="228" y="18">下振れ</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA TRIANGULATION ON STATISTA NEOBANKING + 業界フィンテック予測 + OPERATOR FILINGS</div>
+      </div>
+    </div>
+    <div class="source-key">Bank Jago Q3 2025 = Bank Jago Q3-2025 Press &middot; IFTS Outlook 2031 = Indonesia FinTech Services market outlook to 2031 (third-party industry forecast) &middot; Statista 2024 = Statista Neobanking Indonesia Outlook &middot; Kira estimates = KIRA在籍アナリストによる三角推計</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 11 &middot; Outlook &amp; Forecast &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 26 — 手法末尾注 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 &middot; Methodology Endnote</div>
+      <div class="page-section-counter">026 / 026</div>
+    </div>
+    <h1 class="page-h1">調査手法と出典</h1>
+    <p class="page-subhead">
+      本レポートは2つのエビデンス・ストリームを三角検証したものだ。数値に名前付き出典タグ（例：<strong>[OJK 2026]</strong>、<strong>[Bank Jago Q3 2025]</strong>）が付いている場合、そのデータはその出典から取得したものであり、完全な引用は下記に示す。数値に<strong>[Kira estimates]</strong>が付いている場合、当社のアナリストが開示済みの投入データ（開示資料・OJK監督データ・業界ベンチマーク）から当該セクションに開示した手法で算出した。定量的主張の約26%はKIRA算出であり、74%は外部引用である。
+    </p>
+
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">出典索引</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.55;">
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[APJII 2025]</span> APJII (Asosiasi Penyelenggara Jasa Internet Indonesia) Internet Penetration Survey 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[ARTO 2026]</span> PT Bank Jago Tbk FY-2025 Disclosure, March 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Bank Jago Q3 2025]</span> Bank Jago Q3-2025 Press Release, October 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BANK 2026]</span> PT Bank Aladin Syariah Tbk FY-2025 Results, April 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BBHI 2026]</span> PT Allo Bank Indonesia Tbk FY-2025 Results, March 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BBYB 2026]</span> PT Bank Neo Commerce Tbk FY-2025 Results, March 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BI 2026]</span> Bank Indonesia Board Press Release, May 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BI Stats 2026]</span> Bank Indonesia QRIS &amp; BI-FAST Bulletin, January 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BNI 2024]</span> Bank BNI Agen46 Update, July 2024.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BPS 2025]</span> Badan Pusat Statistik Telecommunication Statistics in Indonesia 2024 (published 2025).</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[BRI 2024]</span> Bank BRI BRILink Agent Network Disclosure, 2024.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[DataReportal 2026]</span> DataReportal Digital 2026 Indonesia Report.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[GBG 2025]</span> GBG Digital/AI-driven risk management for Indonesia's unbanked, 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[IMF Nov 2025]</span> IMF Article IV Indonesia Staff Concluding Statement, November 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Kontan 2025]</span> Kontan Bank Jago CIR Target Coverage, 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Krom 2024]</span> PT Krom Bank Indonesia Q3-2024 Update, November 2024.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Mambu 2025]</span> Mambu &times; Krom Bank Partnership Renewal Press, 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[IFTS Outlook 2031]</span> Indonesia FinTech Services market outlook to 2031 (third-party industry forecast).</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Nikkei 2025]</span> Nikkei Asia Indonesian Digital Banks Report, 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[OJK 2024]</span> OJK Financial Inclusion Index + Inklusi Survey, 2024.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[OJK 2026]</span> Otoritas Jasa Keuangan Digital Banking Update, May 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[POJK 12/2021]</span> OJK Regulation 12/POJK.03/2021 on Commercial Banks.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[POJK 3/2024]</span> OJK Regulation 3/2024 on ITSK &amp; Regulatory Sandbox.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Redseer 2025]</span> Redseer Indonesia USD 500bn Banking Gap Report, 2025.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[SeaBank 2026]</span> SeaBank Indonesia FY-2025 Press Release, April 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Statista 2024]</span> Statista Neobanking Indonesia Outlook, 2024.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[Superbank 2026]</span> PT Super Bank Indonesia Tbk FY-2025 IPO Filing, April 2026.</div>
+        <div style="margin-bottom: 5px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[World Bank 2024]</span> World Bank Findex Indonesia Financial Inclusion 2024.</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>CONFIDENTIAL &middot; &copy; 2026 KIRA Research &middot; KR-IDN-DBANK-2026-001</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
