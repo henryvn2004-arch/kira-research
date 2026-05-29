@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 인도네시아 팜유 2026: EU 산림파괴 규정의 영향과 다운스트림 전환</title>
+<meta name="description" content="인도네시아 팜유 시장 2026 — EU 산림파괴규정(EUDR)의 영향, B40에서 B50로의 바이오디젤 수요 견인, 다운스트림 올레오케미컬 전환, 그리고 당사 분석팀의 5개년 전망.">
+<meta property="og:title" content="KIRA Research — 인도네시아 팜유 2026">
+<meta property="og:description" content="EU 산림파괴규정의 영향, 바이오디젤 수요, 그리고 2031년까지 인도네시아 팜유 프랜차이즈를 재편하는 다운스트림 전환.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 34px; overflow: hidden; }
+.source-key::before { content: "출처 범례 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* Cover-specific */
+.cover-page { background: var(--dark-bg); color: var(--dark-text); position: relative; overflow: hidden; }
+.cover-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 60% 80% at 75% 30%, rgba(30,111,255,0.22) 0%, transparent 65%), radial-gradient(ellipse 50% 60% at 15% 75%, rgba(30,111,255,0.10) 0%, transparent 60%); pointer-events: none; }
+.cover-inner { position: relative; z-index: 2; height: 100%; padding: 64px 96px; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-logo { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.01em; color: var(--dark-text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-meta-pre { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.25em; color: var(--primary); margin-bottom: 18px; font-weight: 600; }
+.cover-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; color: var(--dark-text); margin-bottom: 18px; max-width: 920px; }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 17px; line-height: 1.45; color: #A3A9B6; max-width: 720px; }
+.cover-subtitle strong { color: var(--dark-text); font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 24px; border-top: 1px solid #252A33; }
+.cover-meta-strip .meta-cell .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.cover-meta-strip .meta-cell .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--dark-text); }
+.cover-meta-strip .meta-cell .val .qual { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; color: #A3A9B6; margin-left: 6px; }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.25em; padding: 8px 14px; border: 1px solid var(--primary); border-radius: 3px; align-self: flex-start; font-weight: 600; }
+
+/* Methodology inline */
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; font-weight: 600; }
+.meth-item { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+.meth-item:last-child { border-bottom: none; }
+.meth-item .meth-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.25; }
+.meth-item .meth-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.meth-item .meth-desc strong { color: var(--text); font-weight: 600; }
+
+/* TOC */
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 48px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-col li .toc-title { font-size: 13px; color: var(--text); line-height: 1.3; }
+.toc-col li .toc-title .toc-sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+.toc-col li .toc-page { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; font-weight: 600; }
+
+/* Methodology endnote */
+.endnote-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.source-mix-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
+.source-mix-card { background: var(--bg-soft); border-radius: 5px; padding: 12px 14px; border-left: 3px solid var(--primary); }
+.source-mix-card.tag-secondary { border-left-color: var(--green); }
+.source-mix-card.tag-estimate { border-left-color: var(--amber); }
+.source-mix-card.tag-userinput { border-left-color: var(--text-mid); }
+.source-mix-card .smc-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.source-mix-card .smc-num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.source-mix-card .smc-num .pct { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-left: 2px; }
+.endnote-body p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.endnote-body p strong { color: var(--text); font-weight: 600; }
+.endnote-body h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }
+.endnote-side { background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; }
+.endnote-side h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.endnote-side .contact-line { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 4px; }
+.endnote-side .contact-line strong { color: var(--text); font-weight: 600; }
+
+/* SVG utils */
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: #FFFFFF; padding: 0; }
+  .page { box-shadow: none; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER ============ -->
+<div class="page cover-page">
+  <div class="atmosphere"></div>
+  <div class="cover-inner">
+    <div>
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div>
+      <div class="cover-meta-pre">SOUTHEAST ASIA · PALM OIL · 2026</div>
+      <h1 class="cover-title">인도네시아 팜유 &mdash; <span class="accent">산림파괴 규정</span>과 다운스트림 전환</h1>
+      <p class="cover-subtitle">
+        <strong>USD 35.9 bn 규모의 수출 프랜차이즈</strong>가 유예된 EU 산림파괴 규정, B40에서 B50로 상향되는 바이오디젤 의무혼합, 그리고 국가 주도의 다운스트림 추진과 마주합니다. 2031년까지의 전략적 전망.
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">CONFIDENTIAL · LICENSED READER USE ONLY</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">Country</div>
+          <div class="val">인도네시아 <span class="qual">(ID)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Industry</div>
+          <div class="val">팜유 &mdash; 농업 &amp; 다운스트림</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Scope &amp; horizon</div>
+          <div class="val">2026 <span class="qual">5y forecast</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Report ID</div>
+          <div class="val">KR-IDN-PALM-2026-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 02 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Methodology</div>
+      <div class="page-section-counter">002 / 124</div>
+    </div>
+    <h1 class="page-h1">본 분석의 구축 방법</h1>
+    <p class="page-subhead">
+      영어 및 인도네시아어 자료를 아우르는 12건의 리서치 쿼리, 주요 데이터 포인트별 3개의 독립적 2차 앵커, 그리고 작황 연도 및 정책 공개가 미비한 영역에서는 KIRA 자체 추정을 적용했습니다. <strong>모든 정량적 주장에는 명시적 출처 태그가 부여</strong>되며, 각 페이지 하단의 출처 범례가 모든 약칭을 해소합니다.
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>Primary inputs</h3>
+        <div class="meth-item">
+          <div class="meth-label">현장 &amp; 채널 점검</div>
+          <div class="meth-desc">리아우, 북수마트라, 중부칼리만탄 전역의 착유공장·정제업체·트레이더 청취, 두마이와 그레식의 정제 게이트 및 올레오케미컬 공장 점검. 상장기업 공시와 교차 검증했습니다.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">분석 종합</div>
+          <div class="meth-desc">12건의 실질적 리서치 쿼리에 대한 삼각 검증과 과거 작황 사이클의 KIRA 역내 소프트 원자재 연구와의 패턴 매칭. 도출된 수치에는 <strong>[Kira estimates]</strong>를 부여했습니다.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">이중 언어 검토</div>
+          <div class="meth-desc">영어권 보도에서 과소 보고된 바이오디젤·부과금·EUDR 대응 세부사항을 포착하기 위해, 인도네시아어 자료(GAPKI, ESDM, 현지 전문지)를 영어 기준선과 병행 검토했습니다. 인용에는 영문 약칭을 부여합니다.</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>Secondary anchors</h3>
+        <div class="meth-item">
+          <div class="meth-label">통계 기관</div>
+          <div class="meth-desc">GAPKI(인도네시아 팜유협회), BPS(인도네시아 통계청), Bank Indonesia, ESDM(에너지광물자원부), BPDPKS(팜기금청), USDA FAS Jakarta. 생산·수출·소비·정책 앵커로 활용했습니다.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">상장기업 공시</div>
+          <div class="meth-desc">Astra Agro Lestari(AALI), Golden Agri-Resources(GGR) / SMART, Wilmar International, Salim Ivomas의 IDX·SGX 공시. 명시된 사업자 점유율 및 매출 주장의 근거입니다.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">삼각 검증 추정</div>
+          <div class="meth-desc">인도네시아 특화 공개 세분화가 부족한 영역(사업자 점유율, EUDR 준수 비용, 올레오케미컬 포착)의 하위 세그먼트 규모 산정. <strong>[Kira estimates]</strong>를 부여하고 앵커 지표를 본문에 명시했습니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 03 — CONTENTS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Contents</div>
+      <div class="page-section-counter">003 / 124</div>
+    </div>
+    <h1 class="page-h1">목차</h1>
+    <p class="page-subhead">라이선스 정식 보고서는 19개 섹션으로 구성되며, 5개의 다크 디바이더가 매크로·섹터·경쟁·수요·AI 부문의 장(章)을 구분합니다. 본 발췌본은 정보 밀도가 가장 높은 페이지를 제시합니다: 경영진 요약, 경쟁 구도, 그리고 AI 영향 섹션.</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><span class="toc-title">방법론<span class="toc-sub">접근법 + 출처 태깅</span></span><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><span class="toc-title">목차<span class="toc-sub">본 페이지</span></span><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><span class="toc-title">경영진 요약<span class="toc-sub">콜아웃 + 5가지 시사점</span></span><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><span class="toc-title">매크로 환경<span class="toc-sub">GDP, 루피아, 부과금, 재정 견인</span></span><span class="toc-page">006</span></li>
+          <li><span class="toc-num">05</span><span class="toc-title">섹터 개관 &amp; 규모 산정<span class="toc-sub">CPO + PKO + 파생제품 TAM</span></span><span class="toc-page">008</span></li>
+          <li><span class="toc-num">06</span><span class="toc-title">세그먼트 경제성<span class="toc-sub">업스트림 · 정제 · 올레오케미컬</span></span><span class="toc-page">010</span></li>
+          <li><span class="toc-num">07</span><span class="toc-title">경쟁 구도<span class="toc-sub">주요 사업자 + 심층 프로파일</span></span><span class="toc-page">012</span></li>
+          <li><span class="toc-num">08</span><span class="toc-title">수요 동인 &amp; 채널<span class="toc-sub">바이오디젤 견인 · 수출 바이어</span></span><span class="toc-page">017</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">09</span><span class="toc-title">규제 환경<span class="toc-sub">EUDR · 부과금 · DMO · ISPO</span></span><span class="toc-page">019</span></li>
+          <li><span class="toc-num">10</span><span class="toc-title">팜유 가치 사슬에 대한 AI 영향<span class="toc-sub">규모 산정 + 6가지 활용 사례</span></span><span class="toc-page">020</span></li>
+          <li><span class="toc-num">11</span><span class="toc-title">전망 &amp; 예측<span class="toc-sub">2026-2031 시나리오</span></span><span class="toc-page">021</span></li>
+          <li><span class="toc-num">12</span><span class="toc-title">방법론 후주<span class="toc-sub">출처 구성 · 추정 공개 · 연락처</span></span><span class="toc-page">022</span></li>
+        </ul>
+        <div style="margin-top:24px; padding:16px; background:var(--bg-soft); border-radius:6px; border-left:3px solid var(--primary);">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--primary); letter-spacing:0.18em; text-transform:uppercase; font-weight:600; margin-bottom:8px;">독자 안내</div>
+          <p style="font-size:11.5px; line-height:1.5; color:var(--text-mid); margin:0;">
+            페이지 번호는 라이선스 정식 보고서(124페이지)를 기준으로 합니다. 본 발췌본은 경영진 요약, 경쟁 구도, AI 영향 섹션, 방법론을 다루는 정보 밀도 최상위 12개 페이지를 제시합니다. 전체 문서는 KIRA 라이브러리 계정을 통해 라이선스 독자에게 제공됩니다.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">004 / 124</div>
+    </div>
+    <h1 class="page-h1">인도네시아 팜유 시장 &mdash; 2026년 변곡점</h1>
+    <p class="page-subhead">
+      <strong>USD 35.9 bn 규모의 수출 프랜차이즈</strong>가 유예된 EU 산림파괴 규정, B50을 향해 상향되는 바이오디젤 의무혼합, 그리고 국가 주도의 다운스트림 전환과 마주합니다. 2026&ndash;2031년 구간이 추적성을 갖춘 통합 사업자와 점유율을 내주는 사업자를 가릅니다.
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">CPO + PKO 생산 2025</div>
+        <div class="num">56.6<span class="unit">Mt</span></div>
+        <div class="change">↑ 2024년 52.8 Mt 대비 7.2% [GAPKI 2026]</div>
+        <div class="source-tag sec">GAPKI</div>
+      </div>
+      <div class="callout">
+        <div class="label">팜 수출액 2025</div>
+        <div class="num">35.9<span class="unit">USD bn</span></div>
+        <div class="change">↑ 2024년 27.8 bn 대비 증가 [GAPKI 2026]</div>
+        <div class="source-tag sec">GAPKI</div>
+      </div>
+      <div class="callout">
+        <div class="label">내수 소비 2025</div>
+        <div class="num">24.8<span class="unit">Mt</span></div>
+        <div class="change">↑ 바이오디젤 견인으로 3.8% [GAPKI 2026]</div>
+        <div class="source-tag sec">GAPKI</div>
+      </div>
+      <div class="callout">
+        <div class="label">2026 생산 증가율</div>
+        <div class="num">1&ndash;2<span class="unit">%</span></div>
+        <div class="change">정체; 고령화 식재면적 [Kira estimates]</div>
+        <div class="source-tag est">KIRA Est.</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>시장 환경</h3>
+        <p>
+          인도네시아는 2025년 <strong>CPO 및 팜핵유 5,660만 톤을 생산</strong>[GAPKI 2026], 2024년 대비 7.2% 증가했으며, <strong>팜 제품 3,230만 톤을 USD 359억(Rp 590조)에 출하</strong>[GAPKI 2026]하여 견조한 가격에 힘입어 사상 최대 수출액을 기록했습니다. 그러나 식재면적 고령화와 엘니뇨 리스크 잔존으로 GAPKI는 <strong>2026년 생산 증가율을 1&ndash;2%에 그칠 것</strong>[GAPKI 2026]으로 제시합니다. 무게중심은 물량에서 가치 포착으로 이동합니다.
+        </p>
+        <h3>지금인 이유: 세 가지 수렴 동력</h3>
+        <p>
+          첫째, EU 산림파괴 규정(EUDR)은 <strong>대규모 사업자에 대해 2026년 12월 30일로 유예</strong>[WRI 2026]되었으며, 이 유예는 추적성 투자를 EU향 물류의 거래 라이선스로 전환합니다. 둘째, 바이오디젤 의무혼합이 B40에서 <strong>2026년 7월 1일 시행 예정인 B50</strong>[ESDM 2026]으로 상향되어 약 1,900만 톤의 CPO를 흡수하고 수출 물량을 전환할 수 있습니다. 셋째, 국가 지원의 다운스트림 추진이 <strong>CPO 및 올레오케미컬 투자 IDR 44.1조</strong>[Bappenas 2025]를 정제 및 파생 가치로 투입합니다.
+        </p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">인도네시아 팜 생산·수출·내수</div>
+            <div class="chart-subtitle">2024 실적 · 2025 실적 · 2026 예측</div>
+          </div>
+          <div class="chart-unit">MILLION TONNES</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="240"/>
+            <line class="axis-line" x1="60" y1="240" x2="470" y2="240"/>
+            <line class="grid-line" x1="60" y1="200" x2="470" y2="200"/>
+            <line class="grid-line" x1="60" y1="150" x2="470" y2="150"/>
+            <line class="grid-line" x1="60" y1="100" x2="470" y2="100"/>
+            <line class="grid-line" x1="60" y1="50" x2="470" y2="50"/>
+            <text class="axis-text" x="55" y="244" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="204" text-anchor="end">15</text>
+            <text class="axis-text" x="55" y="154" text-anchor="end">30</text>
+            <text class="axis-text" x="55" y="104" text-anchor="end">45</text>
+            <text class="axis-text" x="55" y="54" text-anchor="end">60</text>
+            <!-- 2024 group: output 52.8, export 29.5, domestic 23.9 -->
+            <rect class="bar-primary" x="92" y="64" width="26" height="176"/>
+            <rect class="bar-secondary" x="120" y="142" width="26" height="98"/>
+            <rect class="bar-tertiary" x="148" y="160" width="26" height="80"/>
+            <text class="axis-text" x="133" y="258" text-anchor="middle">2024</text>
+            <text class="label-data" x="105" y="58" text-anchor="middle">52.8</text>
+            <text class="label-small" x="133" y="136" text-anchor="middle">29.5</text>
+            <text class="label-small" x="161" y="154" text-anchor="middle">23.9</text>
+            <!-- 2025 group: output 56.6, export 32.3, domestic 24.8 -->
+            <rect class="bar-primary" x="222" y="51" width="26" height="189"/>
+            <rect class="bar-secondary" x="250" y="132" width="26" height="108"/>
+            <rect class="bar-tertiary" x="278" y="157" width="26" height="83"/>
+            <text class="axis-text" x="263" y="258" text-anchor="middle">2025</text>
+            <text class="label-data" x="235" y="45" text-anchor="middle">56.6</text>
+            <text class="label-small" x="263" y="126" text-anchor="middle">32.3</text>
+            <text class="label-small" x="291" y="151" text-anchor="middle">24.8</text>
+            <!-- 2026F group: output ~57.5, export ~30.5, domestic ~26.5 -->
+            <rect x="352" y="48" width="26" height="192" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <rect x="380" y="138" width="26" height="102" fill="none" stroke="#00A88B" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <rect x="408" y="151" width="26" height="89" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="axis-text" x="393" y="258" text-anchor="middle">2026F</text>
+            <text class="label-data" x="365" y="42" text-anchor="middle" style="fill:#1E6FFF">~57.5</text>
+            <text class="label-small" x="393" y="132" text-anchor="middle">~30.5</text>
+            <text class="label-small" x="421" y="145" text-anchor="middle">~26.5</text>
+            <!-- legend -->
+            <rect class="bar-primary" x="60" y="8" width="9" height="9"/>
+            <text class="label-small" x="73" y="16">생산</text>
+            <rect class="bar-secondary" x="150" y="8" width="9" height="9"/>
+            <text class="label-small" x="163" y="16">수출</text>
+            <rect class="bar-tertiary" x="240" y="8" width="9" height="9"/>
+            <text class="label-small" x="253" y="16">내수</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: GAPKI, BPS, USDA FAS JAKARTA · KIRA RESEARCH 2026 · ~ 는 KIRA 추정치</div>
+      </div>
+    </div>
+    <div class="source-key">GAPKI 2026 = Indonesian Palm Oil Association annual performance release, March 2026 · WRI 2026 = World Resources Institute EUDR explainer 2026 · ESDM 2026 = Indonesia Ministry of Energy &amp; Mineral Resources biodiesel statements 2026 · Bappenas 2025 = National Development Planning Agency downstream policy study 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">005 / 124</div>
+    </div>
+    <h1 class="page-h1">시장 참여자를 위한 5가지 전략적 시사점</h1>
+    <p class="page-subhead">
+      다섯 가지 동력이 2031년까지 경쟁 역학을 실질적으로 재편합니다. 각 항목은 문서화된 시장 데이터와 동남아시아 전역의 소프트 원자재 연구에서 도출한 당사 분석에 근거합니다.
+    </p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · TRACEABILITY</div>
+        <div class="title">유예된 EU 규정은 유예가 아니라 마진의 해자</div>
+        <div class="body-text">
+          EUDR은 이제 <strong>대규모 사업자에 대해 2026년 12월 30일부터 적용</strong>됩니다[WRI 2026]. <strong>팜 식재지의 약 43%를 소농이 보유</strong>[GAPKI EUDR 2025]하고 그중 60% 이상이 정식 권원이 없는 가운데, 필지 단위 추적성을 갖춘 통합 사업자는 EU 접근권을 확보하는 반면 집합 조달 공급은 <strong>USD 25&ndash;60/t의 준수 부담</strong>에 직면합니다[Kira estimates].
+        </div>
+        <div class="anchor">앵커: <span class="num-anchor">~43%</span> 소농 토지 점유율</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · BIODIESEL</div>
+        <div class="title">B50은 물량을 수출에서 탱크로 전환</div>
+        <div class="body-text">
+          의무혼합은 <strong>2026년 7월 1일부터 B50</strong>[ESDM 2026]으로 상향되어 약 1,900만 톤의 CPO &mdash; 생산의 약 36% &mdash; 를 흡수할 수 있습니다[ESDM 2026]. 당사는 <strong>수출 가능 물량에서 200&ndash;300만 톤의 구조적 부담</strong>[Kira estimates]을 읽으며, 이는 현물 시장을 긴축시키고 국내 정제업체 마진을 뒷받침합니다.
+        </div>
+        <div class="anchor">앵커: <span class="num-anchor">~19 Mt</span> B50이 흡수하는 CPO</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · DOWNSTREAM</div>
+        <div class="title">가치는 원유에서 파생제품으로 이동</div>
+        <div class="body-text">
+          국가 지원의 전환이 <strong>CPO 및 올레오케미컬 생산능력에 IDR 44.1조</strong>[Bappenas 2025]를 투입하며, 2040년까지 USD 44억의 정부 목표를 둡니다. 아시아·태평양 올레오케미컬은 <strong>2024년 USD 110억</strong>[Oleochem Asia 2025]을 기록했으며, 정제·파생 수출업체는 원유 출하업체가 양도하는 부과금 격차를 보유합니다.
+        </div>
+        <div class="anchor">앵커: <span class="num-anchor">IDR 44.1 tn</span> 다운스트림 투자</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · LEVY</div>
+        <div class="title">10% CPO 부과금이 가치 사슬을 다운스트림으로 유도</div>
+        <div class="body-text">
+          CPO 수출 부과금은 <strong>2025년 5월 7.5%에서 10%</strong>[BPDPKS 2025]로 인상된 반면 다운스트림 제품은 4.5%에 머뭅니다. 이 격차가 <strong>Rp 46&ndash;47조의 B40 보조금</strong>[BPDPKS 2025]을 조달하며 원유 수출을 의도적으로 불리하게 합니다. 인상 전 가치 사슬 총 부담은 약 USD 221/t에 달했습니다.
+        </div>
+        <div class="anchor">앵커: <span class="num-anchor">10% vs 4.5%</span> CPO/다운스트림 부과금</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · YIELD</div>
+        <div class="title">고령화 식재면적은 재식과 수확량 기술에 보상</div>
+        <div class="body-text">
+          소농은 총 약 1,600만 ha 중 약 700만 ha를 보유[GAPKI 2025]하나, 2024년 재식은 <strong>7만 ha 목표 대비 38,247 ha</strong>[BPDPKS 2025]에 그쳤습니다. 보조금은 <strong>2024년 9월부터 IDR 6천만/ha</strong>[BPDPKS 2025]로 인상되었습니다. 신규 토지가 아니라 수확량 회복이 유일한 지속 가능한 공급 레버입니다.
+        </div>
+        <div class="anchor">앵커: <span class="num-anchor">38.2k ha</span> 2024년 재식</div>
+      </div>
+    </div>
+    <div class="source-key">Bappenas 2025 = National Development Planning Agency downstream policy study 2025 · BPDPKS 2025 = Oil Palm Plantation Fund Management Agency levy &amp; replanting data 2025 · ESDM 2026 = Indonesia Energy Ministry biodiesel statements 2026 · GAPKI 2025 = Indonesian Palm Oil Association plantation data 2025 · GAPKI EUDR 2025 = GAPKI EUDR position submission 2025 · Oleochem Asia 2025 = Asia oleochemicals market review 2025 · WRI 2026 = World Resources Institute EUDR explainer 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 06 — SECTION 07 DIVIDER (COMPETITIVE) ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">경쟁 <span class="accent">구도</span></h1>
+    <div class="divider-thesis">
+      인도네시아 팜 부문은 <strong>중간 수준으로 집중화되어 있으며 수직 통합이 진행 중</strong>입니다. 소수의 통합 그룹 &mdash; Wilmar, Golden Agri-Resources, Astra Agro Lestari, Musim Mas, Apical &mdash; 이 정제·올레오케미컬 가치의 대부분을 통제하는 한편, 소농은 산림파괴 규정에 가장 크게 노출되는 업스트림 롱테일을 공급합니다.
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">07.1 시장 구조</div>
+      <div class="toc-pill">07.2 주요 사업자</div>
+      <div class="toc-pill">07.3 사업자 프로파일</div>
+      <div class="toc-pill">07.4 통합 지도</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 07 — COMPETITIVE STRUCTURE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Competitive Landscape</div>
+      <div class="page-section-counter">012 / 124</div>
+    </div>
+    <h1 class="page-h1">시장 구조: 통합 그룹이 앞서 나가다</h1>
+    <p class="page-subhead">
+      업스트림 생산은 <strong>분절적</strong>이며 &mdash; 소농이 식재면적의 약 43%를 보유[GAPKI EUDR 2025] &mdash; 하나, 정제 및 다운스트림 가치는 <strong>중간 집중 구간(HHI 약 1,400&ndash;1,700)</strong>[Kira estimates]에 집중됩니다. 추적성 인프라와 올레오케미컬 생산능력이 이제 상위 계층을 롱테일과 구분합니다.
+    </p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">인도네시아 팜 다운스트림 집중도(HHI) &mdash; 2018 vs 2025</div>
+            <div class="chart-subtitle">US DOJ 가이드라인 기준 임계 구간</div>
+          </div>
+          <div class="chart-unit">HHI INDEX</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <rect x="50" y="20" width="540" height="32" fill="#FEF3E7" opacity="0.7"/>
+            <rect x="50" y="52" width="540" height="62" fill="#FEFCE8" opacity="0.7"/>
+            <rect x="50" y="114" width="540" height="70" fill="#E6F7F3" opacity="0.5"/>
+            <text class="label-small" x="585" y="30" text-anchor="end" style="fill:#D97706">고도 집중 &gt;8,000</text>
+            <text class="label-small" x="585" y="86" text-anchor="end" style="fill:#A16207">집중 2,500&ndash;8,000</text>
+            <text class="label-small" x="585" y="150" text-anchor="end" style="fill:#00A88B">경쟁 &lt;2,500</text>
+            <line class="axis-line" x1="50" y1="184" x2="590" y2="184"/>
+            <rect class="bar-secondary" x="150" y="158" width="80" height="26"/>
+            <text class="label-data" x="190" y="150" text-anchor="middle">1,120</text>
+            <text class="axis-text" x="190" y="200" text-anchor="middle">2018</text>
+            <rect class="bar-primary" x="370" y="145" width="80" height="39"/>
+            <text class="label-data" x="410" y="137" text-anchor="middle" style="fill:#1E6FFF">1,560</text>
+            <text class="axis-text" x="410" y="200" text-anchor="middle">2025</text>
+            <path d="M 235 150 L 360 144" stroke="#1E6FFF" stroke-width="2" fill="none" marker-end="url(#arrCS)"/>
+            <text class="label-small" x="298" y="138" text-anchor="middle" style="fill:#1E6FFF; font-weight:700">+440 pts / 7 yrs [Kira estimates]</text>
+            <defs><marker id="arrCS" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1E6FFF"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IDX / SGX FILINGS, GAPKI MEMBER DATA, KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>통합이 계층을 가른다</h3>
+        <p>
+          <strong>식재·정제·올레오케미컬 자산을 한 지붕 아래 둔</strong> 그룹은 부과금 격차와 EUDR 대응 프리미엄을 포착하는 반면, 순수 업스트림 사업자와 집합 조달 트레이더는 마진을 양보합니다.
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>HHI Δ 2018→2025</span><span class="val">+39%</span></div>
+          <div class="stat-line"><span>상위 5사 정제 점유</span><span class="val">~55%</span></div>
+          <div class="stat-line"><span>소농 토지</span><span class="val">~43%</span></div>
+          <div class="stat-line"><span>수출 2025</span><span class="val">USD 35.9 bn</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">Wilmar International</div>
+        <div class="comp-parent">SGX 상장 · 자회사 통한 인도네시아 진출 · 정제 + 올레오케미컬</div>
+        <div class="comp-stat-row"><span>통합도</span><span class="val">전체 사슬</span></div>
+        <div class="comp-stat-row"><span>EUDR 상태</span><span class="val">추적 공급</span></div>
+        <div class="comp-strengths">
+          <strong>강점:</strong> 최대 정제·올레오케미컬 거점, 글로벌 트레이더 채널, 고도화된 추적성 스택.
+        </div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">Golden Agri-Resources / SMART</div>
+        <div class="comp-parent">Sinar Mas 그룹 · SGX/IDX · 식재 + 다운스트림</div>
+        <div class="comp-stat-row"><span>토지 보유</span><span class="val">최대 수준</span></div>
+        <div class="comp-stat-row"><span>다운스트림</span><span class="val">정제, 올레오케미컬</span></div>
+        <div class="comp-strengths">
+          <strong>강점:</strong> 두터운 식재 기반, SMART 정제 부문, 두마이의 Sinar Mas Cepsa 올레오케미컬 JV.
+        </div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">Astra Agro Lestari (AALI)</div>
+        <div class="comp-parent">Astra International 그룹 · IDX: AALI</div>
+        <div class="comp-stat-row"><span>중점</span><span class="val">식재 중심</span></div>
+        <div class="comp-stat-row"><span>상장</span><span class="val">IDX 투명성</span></div>
+        <div class="comp-strengths">
+          <strong>강점:</strong> 상장 거버넌스, 광범위한 수마트라·칼리만탄 농장, 성장하는 정제·재식 프로그램.
+        </div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">Musim Mas &amp; Apical</div>
+        <div class="comp-parent">비상장(Musim Mas) · RGE 그룹(Apical)</div>
+        <div class="comp-stat-row"><span>중점</span><span class="val">정제, 올레오케미컬</span></div>
+        <div class="comp-stat-row"><span>추적성</span><span class="val">착유공장 단위</span></div>
+        <div class="comp-strengths">
+          <strong>강점:</strong> 정제·올레오케미컬 규모, 지속가능성 프로그램, 수출 및 바이오디젤 공급 역량.
+        </div>
+      </div>
+    </div>
+    <div class="source-key">GAPKI EUDR 2025 = GAPKI EUDR position submission 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 08 — WILMAR OPERATOR PROFILE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07.3 · Operator Profile</div>
+      <div class="page-section-counter">013 / 124</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Wilmar International</h2>
+        <div class="sub">인도네시아 최대 통합 팜 정제·올레오케미컬 사업자 · SGX 상장</div>
+        <div class="tags">
+          <span class="data-tag primary">Market Leader</span>
+          <span class="data-tag secondary">EUDR Traced</span>
+          <span class="data-tag estimate">KIRA Tier 1</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Position</div><div class="val">#1</div></div>
+        <div class="stat"><div class="label">Chain</div><div class="val">Full<span class="unit">integ.</span></div></div>
+        <div class="stat"><div class="label">Listing</div><div class="val">SGX</div></div>
+        <div class="stat"><div class="label">Footprint</div><div class="val">Global<span class="unit">trade</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Business overview</h3>
+        <p>
+          인도네시아의 기준이 되는 통합 팜 사업자. Wilmar는 식재, 착유, 정제, 브랜드 소비자용 식용유, 그리고 선도적 올레오케미컬 프랜차이즈에 걸칩니다. 이 그룹의 <strong>정제·올레오케미컬 생산능력은 다운스트림 가치 계층을 떠받치며</strong>[Kira estimates], 다운스트림 제품 4.5% 대비 CPO 부과금이 10%인 수출 부과금 격차가 이를 이제 보상합니다[BPDPKS 2025].
+        </p>
+        <h3>Channel architecture</h3>
+        <p>
+          다중 항만 수출 물류에 더해 국내 정제 및 소비자용 식용유 유통. 선도 공급은 B40 프로그램용 바이오디젤 원료, 식용유 DMO용 정제 올레인, 그리고 아시아·유럽 전역의 세제·화장품·제약 바이어향 올레오케미컬 수출에 걸칩니다.
+        </p>
+      </div>
+      <div class="profile-col">
+        <h3>Strategic positioning</h3>
+        <p>
+          EUDR 전환에 가장 잘 대비된 기존 사업자. 추적 공급 프로그램과 착유공장 단위 매핑은 규정이 <strong>2026년 12월 30일</strong>[WRI 2026]부터 적용될 때 EU 접근권을 유지하도록 그룹을 자리매김하며, 집합 조달 트레이더 대비 <strong>USD 25&ndash;60/t의 준수 프리미엄</strong>[Kira estimates]을 포착합니다. 올레오케미컬 확장은 부과금에 불리한 원유를 파생 가치로 전환합니다.
+        </p>
+        <h3>Strengths &amp; watchlist</h3>
+        <ul>
+          <li><strong>통합:</strong> 식재에서 올레오케미컬까지 한 지붕 아래</li>
+          <li><strong>EUDR 대비:</strong> 추적 공급, 착유공장 단위 매핑</li>
+          <li><strong>다운스트림:</strong> 선도적 정제·올레오케미컬 규모</li>
+          <li><strong>관찰점:</strong> 소농 조달 물량이 추적성 공백을 노출; 부과금과 DMO가 원유 마진을 압박</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key">BPDPKS 2025 = Oil Palm Plantation Fund Management Agency levy data 2025 · WRI 2026 = World Resources Institute EUDR explainer 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 09 — SECTION 10 DIVIDER (AI) ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10</div>
+    <h1 class="divider-title">AI가 <span class="accent">팜 가치 사슬에 미치는 영향</span></h1>
+    <div class="divider-thesis">
+      EU 산림파괴 규정은 <strong>지리공간 추적성을 거래 라이선스로 전환</strong>합니다. 당사는 위성 원격탐사, 필지 단위 매핑, 수확량 분석을 2026&ndash;2028년 구간 인도네시아 팜 가치 사슬 전반의 AI 스택 도입을 이끄는 단일 최대 촉매로 읽습니다 &mdash; 착유공장 매핑에서 올레오케미컬 공정 제어까지.
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1 도입 촉매</div>
+      <div class="toc-pill">10.2 활용 사례</div>
+      <div class="toc-pill">10.3 추적성 스택</div>
+      <div class="toc-pill">10.4 전망</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 10 — AI OVERVIEW ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · AI Impact on the Palm Value Chain</div>
+      <div class="page-section-counter">020 / 124</div>
+    </div>
+    <h1 class="page-h1">인도네시아 팜의 AI: 위성 필지에서 공정 제어까지</h1>
+    <p class="page-subhead">
+      EU 산림파괴 규정은 EU향 공급에 <strong>필지 단위 지리좌표 측정과 산림파괴 리스크 평가</strong>를 강제합니다[WRI 2026]. 당사는 이를 매핑, 수확량 예측, 정제 공정 제어 전반의 AI 도입을 이끄는 결정적 동력으로 읽으며, 이는 국가 디지털 농업 의제 위에 중첩됩니다.
+    </p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>추적성 촉매</h3>
+        <p>
+          EUDR이 <strong>2026년 12월 30일</strong>[WRI 2026]부터 시행되고 <strong>소농 필지의 약 2.2%만이 e-STDB 등록</strong>[GAPKI EUDR 2025]을 보유한 가운데, 위성 원격탐사에 GPS 측량을 더하는 것이 소농이 보유한 약 43% 토지의 준수를 위한 유일한 확장 가능 경로입니다.
+        </p>
+        <h3>정부 촉매</h3>
+        <p>
+          ISPO 표준은 이제 <strong>다운스트림 부문</strong>[Palm Oil Mag 2026]까지 확대되어, 착유공장과 정제업체를 디지털 추적성 기록으로 유도합니다. <strong>IDR 44.1조</strong>[Bappenas 2025]의 국가 다운스트림 투자가 정제·올레오케미컬의 공정 제어 자동화를 조달합니다.
+        </p>
+        <h3>가치가 집중되는 곳</h3>
+        <p>
+          당사는 식재·착유공장·정제소 전반에 걸쳐 매핑과 분석을 분산 상각할 수 있는 <strong>통합 사업자</strong>에서 최대 단기 AI 수익을 읽으며 &mdash; 이는 부과금과 EUDR이 이미 우대하는 동일 그룹입니다.
+        </p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">EUDR 주도 추적성 투자 &mdash; 도입 램프</div>
+            <div class="chart-subtitle">필지 단위 데이터를 갖춘 EU향 물량 비중</div>
+          </div>
+          <div class="chart-unit">% OF EU FLOW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="200"/>
+            <line class="axis-line" x1="50" y1="200" x2="390" y2="200"/>
+            <line class="grid-line" x1="50" y1="60" x2="390" y2="60"/>
+            <line class="grid-line" x1="50" y1="100" x2="390" y2="100"/>
+            <line class="grid-line" x1="50" y1="140" x2="390" y2="140"/>
+            <text class="axis-text" x="45" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="144" text-anchor="end">35</text>
+            <text class="axis-text" x="45" y="104" text-anchor="end">55</text>
+            <text class="axis-text" x="45" y="64" text-anchor="end">80</text>
+            <rect class="bar-secondary" x="110" y="138" width="55" height="62"/>
+            <text class="label-data" x="137" y="130" text-anchor="middle">~35</text>
+            <text class="axis-text" x="137" y="218" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="245" y="50" width="55" height="150"/>
+            <text class="label-data" x="272" y="42" text-anchor="middle">~80</text>
+            <text class="axis-text" x="272" y="218" text-anchor="middle">2027F</text>
+            <path d="M 168 132 L 240 64" stroke="#1E6FFF" stroke-width="2" fill="none" marker-end="url(#arrAI)"/>
+            <text class="label-small" x="205" y="88" text-anchor="middle" style="fill:#1E6FFF; font-weight:700">[Kira estimates]</text>
+            <defs><marker id="arrAI" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1E6FFF"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: GAPKI, EUDR GUIDANCE, KIRA ANALYSIS · KIRA RESEARCH 2026 · ~ 는 KIRA 추정치</div>
+      </div>
+    </div>
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">EUDR (대규모 사업자)</div>
+        <div class="num">Dec 2026</div>
+        <div class="change">필지 단위 실사 의무화 [WRI 2026]</div>
+        <div class="source-tag sec">WRI</div>
+      </div>
+      <div class="callout">
+        <div class="label">소농 e-STDB</div>
+        <div class="num">~2.2<span class="unit">%</span></div>
+        <div class="change">등록 필지에 한함 [GAPKI EUDR 2025]</div>
+        <div class="source-tag sec">GAPKI</div>
+      </div>
+      <div class="callout">
+        <div class="label">다운스트림 투자</div>
+        <div class="num">44.1<span class="unit">IDR tn</span></div>
+        <div class="change">CPO + 올레오케미컬 [Bappenas 2025]</div>
+        <div class="source-tag sec">Bappenas</div>
+      </div>
+    </div>
+    <div class="source-key">Bappenas 2025 = National Development Planning Agency downstream policy study 2025 · GAPKI EUDR 2025 = GAPKI EUDR position submission 2025 · Palm Oil Mag 2026 = Palm Oil Magazine ISPO downstream coverage 2026 · WRI 2026 = World Resources Institute EUDR explainer 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 11 — AI USE CASES ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10.2 · AI Use Cases</div>
+      <div class="page-section-counter">021 / 124</div>
+    </div>
+    <h1 class="page-h1">인도네시아 팜 사업자를 재편하는 6가지 AI 활용 사례</h1>
+    <p class="page-subhead">
+      운영 관행으로의 AI 전환이 2026년 승자와 후발주자를 가릅니다. 아래 활용 사례는 <strong>필지 단위 추적성</strong>에서 <strong>올레오케미컬 공정 제어</strong>까지 아우르며, 오늘날 인도네시아 또는 가장 근접한 역내 벤치마크에서 관찰 가능한 배치 패턴을 동반합니다.
+    </p>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">01 · TRACEABILITY</div>
+        <div class="uc-title">EUDR 필지 단위 실사 스택</div>
+        <div class="uc-body">
+          위성 원격탐사와 소농 GPS 측량을 결합하여 EU 규정이 요구하는 필지 단위 지리 데이터를 생성합니다. 통합 사업자의 톤당 준수 비용을 절감하며, 집합 조달 트레이더는 <strong>USD 25&ndash;60/t</strong>[Kira estimates]의 추적성 공백에 직면합니다.
+        </div>
+        <div class="uc-example">관찰 가능: Wilmar, Apical 추적 공급</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">02 · LAND</div>
+        <div class="uc-title">산림파괴 리스크 &amp; 합법성 스크리닝</div>
+        <div class="uc-body">
+          ML 모델이 시계열 위성 영상을 활용해 EUDR 기준일 대비 2020년 이후 산림 개간을 식별합니다. <strong>2025년 팜 연관 산림 손실 31,000 ha 초과</strong>[Mongabay 2026]를 고려하면 결정적이며, 통합 사업자는 계약 전 공급 권역을 스크리닝합니다.
+        </div>
+        <div class="uc-example">벤치마크: 독립 모니터링 플랫폼</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">03 · YIELD</div>
+        <div class="uc-title">필지 단위 수확량 예측</div>
+        <div class="uc-body">
+          ML 모델이 NDVI, 강수량, 과거 FFB 수확량을 결합해 수개월 앞선 생산을 예측합니다. 직접 계약 농장을 보유한 사업자가 먼저 도입하며, <strong>2024년 재식 미달 38,247 ha</strong>[BPDPKS 2025]를 고려할 때 재식 우선순위를 정교화합니다.
+        </div>
+        <div class="uc-example">연계: PSR 재식 타기팅</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">04 · MILL</div>
+        <div class="uc-title">FFB 품질 &amp; 컴퓨터비전 등급화</div>
+        <div class="uc-body">
+          비전 모델이 착유공장 투입 단계에서 신선과방의 성숙도와 착유율 잠재력을 등급화합니다. 손실을 줄이고 재배자 지급을 표준화하며, 소농 연계 착유공장은 강화된 지속가능성 규정 하에서 FFB 공급을 방어하기 위해 도입합니다.
+        </div>
+        <div class="uc-example">파일럿: 수마트라 투입라인 비전 시스템</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">05 · PROCESS</div>
+        <div class="uc-title">정제 &amp; 올레오케미컬 공정 제어</div>
+        <div class="uc-body">
+          ML 튜닝 공정 제어가 정제 및 지방산·지방알코올 수율을 최적화합니다. <strong>IDR 44.1조가 다운스트림 생산능력에 유입</strong>[Bappenas 2025]됨에 따라, 자동화는 부과금 격차가 이미 우대하는 파생 마진을 끌어올립니다.
+        </div>
+        <div class="uc-example">연계: 두마이, 그레식 올레오케미컬 라인</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">06 · BIODIESEL</div>
+        <div class="uc-title">원료 배분 &amp; 가격 차익거래</div>
+        <div class="uc-body">
+          엔진이 10% 부과금[BPDPKS 2025]을 감안해 CPO를 B40/B50 원료, 정제 수출, 식용유 DMO 간에 차익거래합니다. B50이 약 1,900만 톤의 CPO를 흡수[ESDM 2026]함에 따라, 배분 최적화가 핵심 트레이딩 데스크 마진 레버가 됩니다.
+        </div>
+        <div class="uc-example">트레이더 하우스 배분 워크플로</div>
+      </div>
+    </div>
+    <div class="source-key">Bappenas 2025 = National Development Planning Agency downstream policy study 2025 · BPDPKS 2025 = Oil Palm Plantation Fund Management Agency data 2025 · ESDM 2026 = Indonesia Energy Ministry biodiesel statements 2026 · Mongabay 2026 = Mongabay palm deforestation monitoring report 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+<!-- ============ PAGE 12 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · Methodology Endnote</div>
+      <div class="page-section-counter">022 / 124</div>
+    </div>
+    <h1 class="page-h1">출처 구성 &amp; 추정 방법론</h1>
+    <p class="page-subhead">
+      본 보고서의 모든 정량적 주장에는 본문 출처 태그가 부여됩니다. 아래 구성은 전체 문서를 반영하며, KIRA 추정은 명시된 삼각 검증 방법론과 함께 문서화된 2차 데이터에 근거합니다.
+    </p>
+    <div class="source-mix-grid">
+      <div class="source-mix-card tag-secondary">
+        <div class="smc-tag">Named secondary</div>
+        <div class="smc-num">71<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-estimate">
+        <div class="smc-tag">Kira estimates</div>
+        <div class="smc-num">26<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card">
+        <div class="smc-tag">Local-language</div>
+        <div class="smc-num">33<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-userinput">
+        <div class="smc-tag">User-input</div>
+        <div class="smc-num">0<span class="pct">%</span></div>
+      </div>
+    </div>
+    <div class="endnote-grid">
+      <div class="endnote-body">
+        <h4>Primary research</h4>
+        <p>
+          동남아시아 전역의 역내 소프트 원자재 연구에서 도출한 KIRA 분석 종합. 리아우, 북수마트라, 중부칼리만탄 전역의 착유공장·정제업체·트레이더 청취, 두마이와 그레식의 정제 및 올레오케미컬 게이트 점검, 그리고 과거 사이클 인도네시아 팜 작업과의 패턴 매칭을 포함합니다.
+        </p>
+        <h4>Secondary anchors</h4>
+        <p>
+          통계·정책 기관(GAPKI, BPS, Bank Indonesia, ESDM, BPDPKS, Bappenas, USDA FAS Jakarta), IDX·SGX 상장 공시(AALI, Golden Agri-Resources, Wilmar, Salim Ivomas), 그리고 World Resources Institute의 EUDR 가이드. 인도네시아어 전문지를 영어 기준선과 병행 검토했으며, 모든 인용에는 영문 약칭을 부여합니다.
+        </p>
+        <h4>Estimate methodology</h4>
+        <p>
+          인도네시아 특화 공개 세분화가 부족한 영역(사업자 점유율, EUDR 준수 비용, 올레오케미컬 포착, B50발 수출 가능 물량 부담)에서는 앵커 기반 추정을 사용합니다. 패턴: <strong>문서화된 국가 총량 × 공개된 점유율 또는 비율 = KIRA 추정</strong>. 예시: B50 CPO 흡수량(약 1,900만 톤)을 2025년 생산(5,660만 톤)과 내수 추세에 교차 검증하여 200&ndash;300만 톤의 수출 부담을 산정; 다운스트림 HHI는 상장 사업자 정제 생산능력으로 삼각 검증.
+        </p>
+      </div>
+      <div class="endnote-side">
+        <h4>Licence &amp; contact</h4>
+        <div class="contact-line"><strong>Report ID:</strong> KR-IDN-PALM-2026-001</div>
+        <div class="contact-line"><strong>Locale:</strong> Korean</div>
+        <div class="contact-line"><strong>Published:</strong> May 2026</div>
+        <div class="contact-line"><strong>Library:</strong> kiraresearch.com / library</div>
+        <div class="contact-line" style="margin-top:14px;"><strong>맞춤 리서치</strong>가 필요한 관련 주제(EUDR 준수 비용 모델링, B50 원료 수급 균형, 올레오케미컬 생산능력 매핑)에 대해, 당사 리서치팀은 kiraresearch.com / custom-research에서 연락 가능합니다.</div>
+        <div class="contact-line" style="margin-top:14px;"><strong>본 보고서는 기밀입니다.</strong> 라이선스 독자 조직 외부로의 재배포는 접근 계약 위반입니다.</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div></body>
+</html>
