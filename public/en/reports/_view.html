@@ -255,6 +255,46 @@
 
     if (window.kira && window.kira.i18n) window.kira.i18n.apply();
 
+    // ── 7) Key Players strip (async, VN reports only) ────
+    const _countryUp = (data.country || '').toUpperCase();
+    if ((_countryUp === 'VN' || _countryUp === 'VIETNAM') && data.industry) {
+      loadKeyPlayers(data.industry, locale);
+    }
+
+    async function loadKeyPlayers(industry, _locale) {
+      try {
+        const r = await fetch(
+          '/api/company-list?country=VN&industry=' + encodeURIComponent(industry),
+          { signal: AbortSignal.timeout(5000) }
+        );
+        if (!r.ok) return;
+        const { companies } = await r.json();
+        const top = (companies || []).filter(c => c.slug).slice(0, 5);
+        if (top.length < 2) return;
+
+        const chips = top.map(c =>
+          '<a href="/en/companies/vn/' + encodeURIComponent(c.slug) + '" class="rpt-kp-chip">' +
+            '<span>' + escapeHtml(c.name) + '</span>' +
+            (c.sector ? '<span class="kp-sector">' +
+              escapeHtml(c.sector.replace(/_/g, ' ').toUpperCase()) +
+            '</span>' : '') +
+          '</a>'
+        ).join('');
+
+        const slot = document.getElementById('rpt-key-players-slot');
+        if (!slot) return;
+        slot.innerHTML =
+          '<section class="rpt-key-players">' +
+            '<h4>Key players in this market</h4>' +
+            '<p class="kp-intro">VN companies tracked by KIRA Company Intelligence</p>' +
+            '<div class="rpt-kp-grid">' + chips + '</div>' +
+            '<div class="rpt-kp-footer">' +
+              '<a href="/en/companies/vn/">View all companies in the directory →</a>' +
+            '</div>' +
+          '</section>';
+      } catch (_) {}
+    }
+
     // ══════════════════════════════════════════════════════
     //  Auth / purchase helpers
     // ══════════════════════════════════════════════════════
@@ -777,6 +817,8 @@
             toc +
 
             fullBody +
+
+            '<div id="rpt-key-players-slot"></div>' +
 
             renderRelatedInsights(d.relatedInsights) +
 
