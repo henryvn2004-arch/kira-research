@@ -17,24 +17,20 @@
   <meta name="twitter:card"  content="summary_large_image" />
   <meta name="twitter:title" id="meta-tw-title" content="Company Profile — KIRA RESEARCH" />
 
-  <!-- Structured data — populated by JS -->
   <script type="application/ld+json" id="ld-organization">{}</script>
   <script type="application/ld+json" id="ld-breadcrumb">{}</script>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://api.fontshare.com" />
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
   <link rel="stylesheet" href="/css/kira.css" />
 
   <style>
-    /* ── Company page layout ─────────────────────── */
+    /* ── Layout ──────────────────────────────────── */
     .co-wrap {
       max-width: 860px;
       margin: 0 auto;
       padding: 48px 24px 96px;
     }
-
-    /* Loading / error states */
     .co-loading, .co-error {
       padding: 96px 0;
       text-align: center;
@@ -46,7 +42,7 @@
       color: var(--text); margin-bottom: 12px;
     }
 
-    /* ── Header block ─────────────────────────────── */
+    /* ── Breadcrumb ──────────────────────────────── */
     .co-breadcrumb {
       font-size: 12px;
       color: var(--muted);
@@ -58,13 +54,13 @@
     }
     .co-breadcrumb a { color: var(--primary); text-decoration: none; }
     .co-breadcrumb a:hover { text-decoration: underline; }
-    .co-breadcrumb span { color: var(--muted); }
 
+    /* ── Header ──────────────────────────────────── */
     .co-header {
       display: flex;
       gap: 20px;
       align-items: flex-start;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       flex-wrap: wrap;
     }
     .co-header-text { flex: 1; min-width: 220px; }
@@ -93,10 +89,63 @@
       font-size: 12px;
       font-weight: 600;
     }
-    .co-status.active   { background: rgba(34,197,94,0.12); color: #16a34a; }
-    .co-status.suspended{ background: rgba(234,179,8,0.12);  color: #a16207; }
-    .co-status.dissolved{ background: rgba(239,68,68,0.12);  color: #dc2626; }
-    .co-status.unknown  { background: rgba(100,116,139,0.12);color: var(--muted); }
+    .co-status.active    { background: rgba(34,197,94,0.12);  color: #16a34a; }
+    .co-status.suspended { background: rgba(234,179,8,0.12);  color: #a16207; }
+    .co-status.dissolved { background: rgba(239,68,68,0.12);  color: #dc2626; }
+    .co-status.unknown   { background: rgba(100,116,139,0.12);color: var(--muted); }
+
+    /* ── Due Diligence strip ─────────────────────── */
+    .co-dd-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .co-dd-cell {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .co-dd-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .co-dd-cell--clear   { border-color: rgba(34,197,94,0.25); }
+    .co-dd-cell--warning { border-color: rgba(234,179,8,0.3); }
+    .co-dd-cell--danger  { border-color: rgba(239,68,68,0.25); }
+    .co-dd-cell--clear   .co-dd-icon { background: rgba(34,197,94,0.12);  color: #16a34a; }
+    .co-dd-cell--warning .co-dd-icon { background: rgba(234,179,8,0.12);  color: #a16207; }
+    .co-dd-cell--danger  .co-dd-icon { background: rgba(239,68,68,0.1);   color: #dc2626; }
+    .co-dd-cell--pending .co-dd-icon { background: rgba(100,116,139,0.1); color: var(--muted); }
+    .co-dd-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .co-dd-status {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .co-dd-sub { font-size: 12px; color: var(--muted); }
+    .co-dd-cell--clear   .co-dd-status { color: #16a34a; }
+    .co-dd-cell--warning .co-dd-status { color: #a16207; }
+    .co-dd-cell--danger  .co-dd-status { color: #dc2626; }
 
     /* ── Facts grid ───────────────────────────────── */
     .co-facts {
@@ -125,16 +174,88 @@
       color: var(--text);
       font-family: 'Satoshi', sans-serif;
     }
-    .co-fact-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 3px;
-    }
+    .co-fact-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
-    /* ── Analysis section ─────────────────────────── */
-    .co-section {
-      margin-bottom: 40px;
+    /* ── Risk signals section ─────────────────────── */
+    .co-risk-clean {
+      padding: 14px 20px;
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #16a34a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+    .co-risk-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(239,68,68,0.1);
+      color: #dc2626;
+    }
+    .co-risk-tag--warn {
+      background: rgba(234,179,8,0.12);
+      color: #a16207;
+    }
+    .co-risk-subhead {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .co-risk-subhead strong { font-size: 14px; }
+    .co-risk-match {
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      background: rgba(239,68,68,0.025);
+    }
+    .co-risk-match-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .co-risk-match-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .co-risk-dataset {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: rgba(239,68,68,0.1);
+      color: #dc2626;
+      font-weight: 600;
+    }
+    .co-risk-dataset--pep {
+      background: rgba(234,179,8,0.1);
+      color: #a16207;
+    }
+    .co-risk-news-item {
+      border-left: 2px solid rgba(234,179,8,0.5);
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 0 6px 6px 0;
+    }
+    .co-risk-news-title a {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .co-risk-news-title a:hover { text-decoration: underline; }
+    .co-risk-news-meta { font-size: 12px; color: var(--muted); margin: 3px 0 5px; }
+    .co-risk-news-snippet { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+    /* ── Sections ─────────────────────────────────── */
+    .co-section { margin-bottom: 40px; }
     .co-section-title {
       font-family: 'Satoshi', sans-serif;
       font-weight: 700;
@@ -144,20 +265,11 @@
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
     }
-    .co-body-text {
-      font-size: 15px;
-      line-height: 1.8;
-      color: var(--text);
-    }
+    .co-body-text { font-size: 15px; line-height: 1.8; color: var(--text); }
     .co-body-text p { margin: 0 0 16px; }
 
     /* ── Coverage badges ──────────────────────────── */
-    .co-coverage {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
+    .co-coverage { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
     .co-coverage-badge {
       font-size: 11px;
       padding: 3px 9px;
@@ -165,12 +277,12 @@
       font-weight: 600;
       letter-spacing: 0.03em;
     }
-    .co-coverage-badge.found        { background: rgba(34,197,94,0.1);  color: #16a34a; border: 1px solid rgba(34,197,94,0.2); }
-    .co-coverage-badge.not-checked  { background: rgba(100,116,139,0.1);color: var(--muted); border: 1px solid var(--border); }
-    .co-coverage-badge.checked-empty{ background: rgba(234,179,8,0.1);  color: #a16207; border: 1px solid rgba(234,179,8,0.2); }
-    .co-coverage-badge.failed       { background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.15); }
+    .co-coverage-badge.found         { background: rgba(34,197,94,0.1);  color: #16a34a;    border: 1px solid rgba(34,197,94,0.2); }
+    .co-coverage-badge.not-checked   { background: rgba(100,116,139,0.1);color: var(--muted);border: 1px solid var(--border); }
+    .co-coverage-badge.checked-empty { background: rgba(234,179,8,0.1);  color: #a16207;    border: 1px solid rgba(234,179,8,0.2); }
+    .co-coverage-badge.failed        { background: rgba(239,68,68,0.08); color: #dc2626;    border: 1px solid rgba(239,68,68,0.15); }
 
-    /* ── CTA box ──────────────────────────────────── */
+    /* ── CTA ──────────────────────────────────────── */
     .co-cta {
       background: linear-gradient(135deg, rgba(26,102,240,0.07) 0%, rgba(26,102,240,0.03) 100%);
       border: 1px solid rgba(26,102,240,0.2);
@@ -182,19 +294,8 @@
       flex-wrap: wrap;
     }
     .co-cta-text { flex: 1; min-width: 200px; }
-    .co-cta-title {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      color: var(--text);
-      margin: 0 0 6px;
-    }
-    .co-cta-desc {
-      font-size: 14px;
-      color: var(--muted);
-      margin: 0;
-      line-height: 1.5;
-    }
+    .co-cta-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); margin: 0 0 6px; }
+    .co-cta-desc  { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
     .co-cta-btn {
       display: inline-flex;
       align-items: center;
@@ -222,12 +323,16 @@
 
     @media (max-width: 600px) {
       .co-name { font-size: 22px; }
+      .co-dd-strip { grid-template-columns: 1fr; }
       .co-cta { flex-direction: column; align-items: flex-start; }
+    }
+    @keyframes co-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
     }
   </style>
 </head>
 <body>
-  <!-- nav.js injects header + footer -->
   <script src="/js/nav.js"></script>
 
   <main class="co-wrap" id="co-main">
@@ -238,9 +343,8 @@
   (function () {
     'use strict';
 
-    // Extract slug from URL: /en/companies/vn/<slug>
     const parts = location.pathname.replace(/\/$/, '').split('/');
-    const slug = parts[parts.length - 1];
+    const slug  = parts[parts.length - 1];
 
     if (!slug || slug === '_view') {
       renderError('No company specified.', 'Browse our <a href="/en/library">report library</a> or <a href="/en/custom-research/">request custom research</a>.');
@@ -253,20 +357,19 @@
         if (!r.ok) throw new Error('api_error');
         return r.json();
       })
-      .then(({ report }) => {
+      .then(({ report, needs_enrichment }) => {
         render(report);
-        // Fire background enrichment if masothue/Tavily haven't run yet.
-        // Indicator: seeded facts lack founding_date, address, legal_rep.
-        // Idempotent on the server — skips if coverage already fresh.
-        const hasDeepFacts = report.facts && (
-          report.facts.founding_date || report.facts.address || report.facts.legal_rep
-        );
-        if (!hasDeepFacts) {
+        const isEmpty = !report.facts || Object.keys(report.facts).length === 0;
+        if (needs_enrichment || isEmpty) {
+          showEnrichBanner();
           fetch('/api/company-enrich', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slug }),
-          }).catch(() => {});
+          })
+          .then(r => r.json())
+          .then(({ enriched }) => { if (enriched) location.reload(); })
+          .catch(() => hideEnrichBanner());
         }
       })
       .catch(err => {
@@ -277,15 +380,26 @@
         }
       });
 
+    function showEnrichBanner() {
+      const b = document.createElement('div');
+      b.id = 'co-enrich-banner';
+      b.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;';
+      b.innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--primary);animation:co-pulse 1.2s ease-in-out infinite;"></span>Fetching company data — sanctions screening, adverse news, registry check in progress…';
+      const main = document.getElementById('co-main');
+      if (main?.firstChild) main.insertBefore(b, main.firstChild);
+    }
+    function hideEnrichBanner() {
+      document.getElementById('co-enrich-banner')?.remove();
+    }
+
     function render(r) {
       updateHead(r);
       injectJsonLd(r);
 
-      const country = (r.country_code || 'VN').toUpperCase();
+      const country      = (r.country_code || 'VN').toUpperCase();
       const countryLabel = { VN: 'Vietnam', JP: 'Japan', KR: 'South Korea', AU: 'Australia',
                               SG: 'Singapore', MY: 'Malaysia', ID: 'Indonesia',
                               TH: 'Thailand', PH: 'Philippines', NZ: 'New Zealand' }[country] || country;
-      const industryLabel = r.facts?.industry?.value || null;
 
       document.getElementById('co-main').innerHTML = `
         <nav class="co-breadcrumb" aria-label="Breadcrumb">
@@ -300,14 +414,18 @@
             <h1 class="co-name">${esc(r.name)}</h1>
             <div class="co-meta">
               <span class="co-status ${r.status || 'unknown'}">${statusLabel(r.status)}</span>
-              ${r.tax_id ? `<span>MST: <strong>${esc(r.tax_id)}</strong></span>` : ''}
+              ${r.tax_id ? `<span>${taxIdLabel(country)}: <strong>${esc(r.tax_id)}</strong></span>` : ''}
               ${countryLabel ? `<span>${countryLabel}</span>` : ''}
-              ${industryLabel ? `<span>${esc(industryLabel)}</span>` : ''}
+              ${r.facts?.industry?.value ? `<span>${esc(stripQ(r.facts.industry.value))}</span>` : ''}
             </div>
           </div>
         </div>
 
-        ${buildFactsGrid(r.facts)}
+        ${buildDDStrip(r)}
+
+        ${buildFactsGrid(r.facts, r.country_code)}
+
+        ${buildRiskSection(r)}
 
         <div class="co-section">
           <h2 class="co-section-title">Company Overview</h2>
@@ -325,22 +443,160 @@
         </div>
 
         <p class="co-disclaimer">
-          Data sourced from Vietnam's National Business Registration Portal (ĐKKD), tax authority records, and KIRA Research analyst notes.
-          Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND).
-          For investment decisions, verify directly with official registries.
+          ${disclaimerText(r.country_code)}
           Last updated: ${fmtDate(r.generated_at)}.
         </p>
       `;
     }
 
-    function buildFactsGrid(facts) {
+    // ── Due Diligence strip ────────────────────────────────────
+
+    function buildDDStrip(r) {
+      const facts = r.facts || {};
+
+      // Sanctions cell
+      const sanctionsStatus = stripQ(facts.sanctions_status?.value ?? '');
+      let sancCls, sancIcon, sancMain, sancSub;
+      if (sanctionsStatus === 'clear') {
+        sancCls = 'clear'; sancIcon = '✓';
+        sancMain = 'Sanctions Clear'; sancSub = '100+ watchlists screened';
+      } else if (sanctionsStatus === 'found') {
+        const matches = Array.isArray(facts.sanctions_matches?.value) ? facts.sanctions_matches.value : [];
+        const hasHard = matches.some(m => m.is_sanctions);
+        sancCls = hasHard ? 'danger' : 'warning'; sancIcon = '⚠';
+        sancMain = 'Match Found'; sancSub = `${matches.length} entr${matches.length === 1 ? 'y' : 'ies'} flagged`;
+      } else {
+        sancCls = 'pending'; sancIcon = '–';
+        sancMain = '—'; sancSub = 'Not yet screened';
+      }
+
+      // Registration cell
+      const status   = r.status || 'unknown';
+      const regMap   = {
+        active:    ['clear',   '✓', 'Active',    'Registered & operating'],
+        suspended: ['warning', '!', 'Suspended', 'Operations halted'],
+        dissolved: ['danger',  '✗', 'Dissolved', 'Company wound up'],
+        unknown:   ['pending', '–', '—',         'Status unclear'],
+      };
+      const [regCls, regIcon, regMain, regSub] = regMap[status] || regMap.unknown;
+
+      // Adverse news cell
+      const newsCount = facts.risk_news_count?.value;
+      let newsCls, newsIcon, newsMain, newsSub;
+      if (newsCount === 0 || newsCount === '0') {
+        newsCls = 'clear'; newsIcon = '✓';
+        newsMain = 'No Adverse News'; newsSub = 'No negative press found';
+      } else if (newsCount > 0) {
+        newsCls = newsCount >= 3 ? 'danger' : 'warning'; newsIcon = '⚠';
+        newsMain = `${newsCount} Article${newsCount > 1 ? 's' : ''}`; newsSub = 'Adverse press found';
+      } else {
+        newsCls = 'pending'; newsIcon = '–';
+        newsMain = '—'; newsSub = 'Not yet screened';
+      }
+
+      return `<div class="co-dd-strip">
+        ${ddCell(sancCls, sancIcon, 'Sanctions', sancMain, sancSub)}
+        ${ddCell(regCls,  regIcon,  'Registration', regMain, regSub)}
+        ${ddCell(newsCls, newsIcon, 'Adverse News', newsMain, newsSub)}
+      </div>`;
+    }
+
+    function ddCell(cls, icon, label, statusText, sub) {
+      return `<div class="co-dd-cell co-dd-cell--${esc(cls)}">
+        <div class="co-dd-icon">${icon}</div>
+        <div>
+          <div class="co-dd-label">${esc(label)}</div>
+          <div class="co-dd-status">${esc(statusText)}</div>
+          <div class="co-dd-sub">${esc(sub)}</div>
+        </div>
+      </div>`;
+    }
+
+    // ── Risk signals section ───────────────────────────────────
+
+    function buildRiskSection(r) {
+      const facts    = r.facts || {};
+      const sStatus  = stripQ(facts.sanctions_status?.value ?? '');
+      const sMatches = Array.isArray(facts.sanctions_matches?.value) ? facts.sanctions_matches.value : [];
+      const nCount   = (facts.risk_news_count?.value != null) ? Number(facts.risk_news_count.value) : null;
+      const nArticles= Array.isArray(facts.risk_news_articles?.value) ? facts.risk_news_articles.value : [];
+
+      const hasSanctions = sStatus === 'found' && sMatches.length > 0;
+      const hasNews      = nCount !== null && nCount > 0 && nArticles.length > 0;
+
+      // Both screened and clean — positive confirmation
+      if (sStatus === 'clear' && nCount === 0) {
+        return `<div class="co-section">
+          <h2 class="co-section-title">Due Diligence Signals</h2>
+          <div class="co-risk-clean">
+            <span style="font-size:18px;flex-shrink:0;">✓</span>
+            No adverse signals detected — sanctions screening clear across 100+ international watchlists. No negative press found.
+          </div>
+        </div>`;
+      }
+
+      if (!hasSanctions && !hasNews) return '';
+
+      let html = '<div class="co-section"><h2 class="co-section-title">Due Diligence Signals</h2>';
+
+      if (hasSanctions) {
+        html += `<div style="margin-bottom:24px;">
+          <div class="co-risk-subhead">
+            <strong>Sanctions &amp; Watchlist Matches</strong>
+            <span class="co-risk-tag">${sMatches.length} match${sMatches.length > 1 ? 'es' : ''}</span>
+          </div>`;
+        for (const m of sMatches) {
+          const labels = (m.dataset_labels || m.datasets || []).slice(0, 3);
+          html += `<div class="co-risk-match">
+            <div class="co-risk-match-name">${esc(m.name)}</div>
+            <div class="co-risk-match-tags">
+              ${labels.map(l => `<span class="co-risk-dataset${!m.is_sanctions ? ' co-risk-dataset--pep' : ''}">${esc(l)}</span>`).join('')}
+              <span style="font-size:11px;color:var(--muted);margin-left:4px;">Match score: ${Math.round((m.score || 0) * 100)}%</span>
+            </div>
+            <div style="font-size:12px;"><a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--primary);">View on OpenSanctions →</a></div>
+          </div>`;
+        }
+        html += '</div>';
+      }
+
+      if (hasNews) {
+        html += `<div>
+          <div class="co-risk-subhead">
+            <strong>Adverse News</strong>
+            <span class="co-risk-tag co-risk-tag--warn">${nArticles.length} article${nArticles.length > 1 ? 's' : ''}</span>
+          </div>`;
+        for (const a of nArticles.slice(0, 5)) {
+          let dateStr = '';
+          if (a.published_date) {
+            try { dateStr = new Date(a.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); } catch {}
+          }
+          let host = '';
+          try { host = new URL(a.url).hostname.replace(/^www\./, ''); } catch {}
+          html += `<div class="co-risk-news-item">
+            <div class="co-risk-news-title"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a></div>
+            <div class="co-risk-news-meta">${dateStr ? esc(dateStr) + ' · ' : ''}${esc(host)}</div>
+            ${a.snippet ? `<div class="co-risk-news-snippet">${esc(a.snippet)}</div>` : ''}
+          </div>`;
+        }
+        html += '</div>';
+      }
+
+      html += '<p style="font-size:12px;color:var(--muted);margin-top:16px;">Sources: OpenSanctions database, Tavily web search. Always verify adverse findings directly with authoritative sources before making business decisions.</p>';
+      html += '</div>';
+      return html;
+    }
+
+    // ── Facts grid ─────────────────────────────────────────────
+
+    function buildFactsGrid(facts, countryCode) {
       if (!facts || Object.keys(facts).length === 0) return '';
 
       const items = [];
 
       const cap = facts.charter_capital?.value;
       if (cap) {
-        items.push(factCard('Charter Capital', fmtVND(cap), 'Vietnamese Dong'));
+        const { amount, label } = fmtCapital(cap, countryCode);
+        items.push(factCard('Registered Capital', amount, label));
       }
 
       const fy = facts.founding_year?.value;
@@ -350,68 +606,93 @@
       }
 
       const addr = facts.address?.value;
-      if (addr) {
-        items.push(factCard('Registered Address', truncate(addr, 60), ''));
-      }
+      if (addr) items.push(factCard('Registered Address', truncate(stripQ(addr), 60), ''));
 
       const status = facts.legal_status?.value;
-      if (status) {
-        items.push(factCard('Legal Status', status, ''));
-      }
-
-      const sector = facts.sector?.value;
-      if (sector) {
-        items.push(factCard('Sector', capitalize(sector.replace(/_/g, ' ')), ''));
-      }
+      if (status) items.push(factCard('Legal Status', stripQ(status), ''));
 
       const intl = facts.international_name?.value;
-      if (intl) {
-        items.push(factCard('International Name', intl, ''));
+      if (intl) items.push(factCard('International Name', stripQ(intl), ''));
+
+      const industry = facts.industry?.value;
+      if (industry) items.push(factCard('Industry', capitalize(stripQ(industry).replace(/_/g, ' ')), ''));
+
+      const employees = facts.employees?.value;
+      if (employees) items.push(factCard('Employees', Number(employees).toLocaleString(), ''));
+
+      const website = facts.website?.value;
+      if (website) {
+        const ws     = stripQ(website);
+        const wsHref = ws.startsWith('http') ? ws : `https://${ws}`;
+        items.push(`<div class="co-fact">
+          <div class="co-fact-label">Website</div>
+          <div class="co-fact-value" style="font-size:13px;font-weight:600;">
+            <a href="${esc(wsHref)}" target="_blank" rel="noopener" style="color:var(--primary);">${esc(truncate(ws.replace(/^https?:\/\//, ''), 40))}</a>
+          </div>
+        </div>`);
       }
+
+      const hq = facts.hq_city?.value;
+      if (hq) items.push(factCard('HQ City', stripQ(hq), ''));
+
+      const ceo = facts.ceo_name?.value;
+      if (ceo) items.push(factCard('CEO', stripQ(ceo), ''));
+
+      const parent = facts.parent_company?.value;
+      if (parent) items.push(factCard('Parent Company', stripQ(parent), ''));
+
+      const exchange = facts.stock_exchange?.value;
+      const ticker   = facts.stock_ticker?.value;
+      if (exchange || ticker) {
+        items.push(factCard('Listed', ticker ? stripQ(ticker) : '—', exchange ? stripQ(exchange) : ''));
+      }
+
+      const marketCap = facts.market_cap_usd?.value;
+      if (marketCap) items.push(factCard('Market Cap', fmtUSD(marketCap), 'USD'));
+
+      const revenueUsd = facts.revenue_usd?.value;
+      if (revenueUsd) items.push(factCard('Revenue', fmtUSD(revenueUsd), 'USD (annual)'));
 
       if (items.length === 0) return '';
       return `<div class="co-facts">${items.join('')}</div>`;
     }
 
     function factCard(label, value, sub) {
-      return `
-        <div class="co-fact">
-          <div class="co-fact-label">${esc(label)}</div>
-          <div class="co-fact-value">${esc(String(value))}</div>
-          ${sub ? `<div class="co-fact-sub">${esc(sub)}</div>` : ''}
-        </div>`;
+      return `<div class="co-fact">
+        <div class="co-fact-label">${esc(label)}</div>
+        <div class="co-fact-value">${esc(String(value))}</div>
+        ${sub ? `<div class="co-fact-sub">${esc(sub)}</div>` : ''}
+      </div>`;
     }
 
     function buildNarrative(r) {
-      const name     = esc(r.name);
-      const country  = (r.country_code || 'VN');
+      const name        = esc(r.name);
+      const country     = (r.country_code || 'VN');
       const countryFull = { VN: 'Vietnam', JP: 'Japan', KR: 'South Korea' }[country] || country;
-      const industry = r.facts?.industry?.value ? esc(r.facts.industry.value) : 'its sector';
-      const sector   = r.facts?.sector?.value   ? r.facts.sector.value        : null;
-      const founded  = r.facts?.founding_year?.value;
-      const cap      = r.facts?.charter_capital?.value;
-      const addr     = r.facts?.address?.value;
-      const status   = r.status || 'active';
+      const industry    = r.facts?.industry?.value ? esc(stripQ(r.facts.industry.value)) : 'its sector';
+      const sector      = r.facts?.sector?.value   ? stripQ(r.facts.sector.value) : null;
+      const founded     = r.facts?.founding_year?.value;
+      const cap         = r.facts?.charter_capital?.value;
+      const addr        = r.facts?.address?.value;
+      const status      = r.status || 'active';
 
-      let para1 = `${name} is a ${statusInline(status)} company registered in ${countryFull}, operating in the ${industry} sector.`;
+      let para1 = `${name} is ${statusInline(status)} company registered in ${countryFull}, operating in the ${industry} sector.`;
       if (founded) {
         const age = new Date().getFullYear() - Number(founded);
         para1 += ` Established in ${founded}, the company has more than ${age} years of operating history in the ${countryFull} market.`;
       }
-      if (addr) {
-        para1 += ` Its registered office is located at ${esc(addr)}.`;
-      }
+      if (addr) para1 += ` Its registered office is located at ${esc(stripQ(addr))}.`;
 
       let para2 = '';
       if (cap) {
-        para2 = `The company's registered charter capital stands at ${fmtVND(cap)}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
+        const capFmt = fmtCapital(cap, r.country_code);
+        para2 = `The company's registered charter capital stands at ${capFmt.amount} ${capFmt.label}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
         if (sector) {
           para2 += ` As a player in the ${capitalize(sector.replace(/_/g,' '))} space, ${name} participates in a market that KIRA Research analysts monitor across Southeast Asia for structural shifts and competitive dynamics.`;
         }
       }
 
-      let para3 = `KIRA Research tracks companies like ${name} as part of our ongoing coverage of ${countryFull}'s corporate landscape.`;
-      para3 += ` Our sector reports provide granular data on market share, revenue trajectories, regulatory exposure, and competitive positioning — the contextual layer that public registry data alone cannot provide.`;
+      const para3 = `KIRA Research tracks companies like ${name} as part of our ongoing coverage of ${countryFull}'s corporate landscape. Our sector reports provide granular data on market share, revenue trajectories, regulatory exposure, and competitive positioning — the contextual layer that public registry data alone cannot provide.`;
 
       return `<p>${para1}</p>${para2 ? `<p>${para2}</p>` : ''}<p>${para3}</p>`;
     }
@@ -419,35 +700,37 @@
     function buildCoverageSection(coverage) {
       if (!coverage || Object.keys(coverage).length === 0) return '';
       const sourceLabels = {
+        opencorporates: 'OpenCorporates (Official Registry)',
+        wikidata:       'Wikidata (Knowledge Graph)',
+        tavily:         'Web Search',
+        opensanctions:  'OpenSanctions (Watchlist)',
+        llm_narrative:  'AI Narrative',
+        static_seed:    'Curated Data',
         dkkd: 'ĐKKD (Business Registry)', tax: 'Tax Authority',
-        static_seed: 'Curated Data', gmb: 'Google Business',
-        noip: 'Trademark (NOIP)', court: 'Court Records',
-        bidding: 'Public Procurement',
+        gmb: 'Google Business', noip: 'Trademark (NOIP)',
+        court: 'Court Records', bidding: 'Public Procurement',
       };
       const badges = Object.entries(coverage)
         .filter(([s]) => s !== 'static_seed')
         .map(([s, st]) => {
-          const cls = st.replace('_', '-');
+          const cls   = st.replace('_', '-');
           const label = sourceLabels[s] || s.toUpperCase();
           return `<span class="co-coverage-badge ${cls}" title="${esc(st)}">${esc(label)}</span>`;
         }).join('');
-
       if (!badges) return '';
-      return `
-        <div class="co-section">
-          <h2 class="co-section-title">Data Sources</h2>
-          <p style="font-size:13px;color:var(--muted);margin:0 0 10px;">Intelligence coverage for this company profile:</p>
-          <div class="co-coverage">${badges}</div>
-        </div>`;
+      return `<div class="co-section">
+        <h2 class="co-section-title">Data Sources</h2>
+        <p style="font-size:13px;color:var(--muted);margin:0 0 10px;">Intelligence coverage for this company profile:</p>
+        <div class="co-coverage">${badges}</div>
+      </div>`;
     }
 
     // ── Head + JSON-LD ─────────────────────────────────────────
 
     function updateHead(r) {
       const title = `${r.name} — Company Profile | KIRA RESEARCH`;
-      const desc  = `${r.name} company profile: registration data, charter capital, legal status, and analyst context from KIRA RESEARCH.`;
+      const desc  = `${r.name} company profile: sanctions screening, adverse news, registration data, and analyst context from KIRA RESEARCH.`;
       const url   = `https://kiraresearch.com/en/companies/${(r.country_code || 'vn').toLowerCase()}/${r.slug}`;
-
       document.title = title;
       setMeta('meta-canonical',     'href', url);
       setMeta('meta-og-title',      'content', title);
@@ -460,33 +743,29 @@
     function injectJsonLd(r) {
       const name = r.name;
       const url  = `https://kiraresearch.com/en/companies/${(r.country_code || 'vn').toLowerCase()}/${r.slug}`;
-
-      // Organization
-      const org = {
+      const org  = {
         '@context':   'https://schema.org',
         '@type':      'Organization',
-        name,
-        url,
+        name, url,
         identifier:   r.tax_id ? { '@type': 'PropertyValue', name: 'MST', value: r.tax_id } : undefined,
         address:      r.facts?.address?.value ? {
-          '@type':           'PostalAddress',
-          streetAddress:     r.facts.address.value,
-          addressCountry:    r.country_code || 'VN',
+          '@type': 'PostalAddress',
+          streetAddress: stripQ(r.facts.address.value),
+          addressCountry: r.country_code || 'VN',
         } : undefined,
         foundingDate: r.facts?.founding_year?.value ? String(r.facts.founding_year.value) : undefined,
         description:  `${name} company profile — registration data and analyst context from KIRA RESEARCH.`,
       };
       document.getElementById('ld-organization').textContent = JSON.stringify(obj_clean(org));
 
-      // BreadcrumbList
       const crumbs = {
-        '@context':        'https://schema.org',
-        '@type':           'BreadcrumbList',
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'KIRA Research', item: 'https://kiraresearch.com' },
           { '@type': 'ListItem', position: 2, name: 'Research',      item: 'https://kiraresearch.com/en/library' },
           { '@type': 'ListItem', position: 3, name: 'Companies',     item: 'https://kiraresearch.com/en/companies' },
-          { '@type': 'ListItem', position: 4, name: name,            item: url },
+          { '@type': 'ListItem', position: 4, name,                  item: url },
         ],
       };
       document.getElementById('ld-breadcrumb').textContent = JSON.stringify(crumbs);
@@ -495,11 +774,7 @@
     // ── Utilities ──────────────────────────────────────────────
 
     function renderError(h2, body) {
-      document.getElementById('co-main').innerHTML = `
-        <div class="co-error">
-          <h2>${h2}</h2>
-          <p>${body}</p>
-        </div>`;
+      document.getElementById('co-main').innerHTML = `<div class="co-error"><h2>${h2}</h2><p>${body}</p></div>`;
     }
 
     function esc(s) {
@@ -513,6 +788,11 @@
       if (el) el.setAttribute(attr, val);
     }
 
+    function stripQ(v) {
+      if (typeof v === 'string') return v.replace(/^"|"$/g, '');
+      return String(v ?? '');
+    }
+
     function statusLabel(s) {
       return { active: 'Active', suspended: 'Suspended', dissolved: 'Dissolved', unknown: 'Unknown' }[s] || s;
     }
@@ -521,12 +801,40 @@
       return { active: 'an active', suspended: 'a suspended', dissolved: 'a dissolved', unknown: 'a' }[s] || 'a';
     }
 
-    function fmtVND(n) {
+    function fmtCapital(n, countryCode) {
+      const num = Number(n);
+      if (isNaN(num)) return { amount: String(n), label: '' };
+      const cc = (countryCode || 'VN').toUpperCase();
+      if (cc === 'JP') {
+        if (num >= 1e12) return { amount: (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion', label: 'Japanese Yen (JPY)' };
+        if (num >= 1e8)  return { amount: (num / 1e8).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' hundred million', label: 'Japanese Yen (JPY)' };
+        return { amount: num.toLocaleString('en') + ' JPY', label: 'Japanese Yen' };
+      }
+      if (num >= 1e12) return { amount: (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion', label: 'Vietnamese Dong (VND)' };
+      if (num >= 1e9)  return { amount: (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion',  label: 'Vietnamese Dong (VND)' };
+      return { amount: num.toLocaleString('en') + ' VND', label: 'Vietnamese Dong' };
+    }
+
+    function fmtUSD(n) {
       const num = Number(n);
       if (isNaN(num)) return String(n);
-      if (num >= 1e12) return (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion VND';
-      if (num >= 1e9)  return (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion VND';
-      return num.toLocaleString('en') + ' VND';
+      if (num >= 1e12) return (num / 1e12).toFixed(1) + ' T';
+      if (num >= 1e9)  return (num / 1e9).toFixed(1)  + ' B';
+      if (num >= 1e6)  return (num / 1e6).toFixed(1)  + ' M';
+      return num.toLocaleString('en');
+    }
+
+    function taxIdLabel(countryCode) {
+      const labels = { JP: '法人番号', KR: '사업자번호', SG: 'UEN', MY: 'SSM No.', AU: 'ABN' };
+      return labels[(countryCode || '').toUpperCase()] || 'MST';
+    }
+
+    function disclaimerText(countryCode) {
+      const cc = (countryCode || 'VN').toUpperCase();
+      if (cc === 'JP') {
+        return 'Data sourced from Japan\'s National Tax Agency corporate number registry (法人番号公表サイト), Wikidata, OpenSanctions international watchlist database, and Tavily web search. Registration data reflects public filings and may not capture the latest changes. Sanctions and news screening is provided for informational purposes only; always verify directly before making business decisions.';
+      }
+      return 'Data sourced from Vietnam\'s National Business Registration Portal (ĐKKD), OpenCorporates, OpenSanctions international watchlist database, Tavily web search, and KIRA Research analyst notes. Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND). Sanctions and news screening is provided for informational purposes only; always verify directly before making business decisions.';
     }
 
     function fmtDate(iso) {
@@ -535,7 +843,7 @@
     }
 
     function truncate(s, max) {
-      return s && s.length > max ? s.slice(0, max) + '…' : s;
+      return s && s.length > max ? s.slice(0, max) + '…' : (s || '');
     }
 
     function capitalize(s) {

@@ -187,19 +187,18 @@ async function buildLocale(locale) {
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
   //    Only include EN locale to avoid duplicate sitemap entries for the same content.
   if (locale === 'en') {
-    const companyQs = 'select=slug,updated_at&order=updated_at.desc&limit=5000';
+    // Join entities to get per-company country_code for correct URL paths
+    const companyQs = 'select=slug,updated_at,entities!inner(country_code)&order=updated_at.desc&limit=5000';
     const { rows: companies } = await sb(`company_reports?${companyQs}`);
-    // Index page
-    urls.push(urlEntry({
-      subPath:    'companies/vn/',
-      locale,
-      changefreq: 'weekly',
-      priority:   '0.6',
-    }));
+    // Unified search landing + per-country directory index pages
+    urls.push(urlEntry({ subPath: 'companies/',     locale, changefreq: 'weekly',  priority: '0.7' }));
+    urls.push(urlEntry({ subPath: 'companies/vn/',  locale, changefreq: 'weekly',  priority: '0.6' }));
+    urls.push(urlEntry({ subPath: 'companies/jp/',  locale, changefreq: 'weekly',  priority: '0.6' }));
     for (const c of companies) {
       if (!c.slug) continue;
+      const countryCode = (c.entities?.country_code || 'VN').toLowerCase();
       urls.push(urlEntry({
-        subPath:    `companies/vn/${c.slug}`,
+        subPath:    `companies/${countryCode}/${c.slug}`,
         locale,
         lastmod:    c.updated_at ? c.updated_at.slice(0, 10) : null,
         changefreq: 'monthly',
