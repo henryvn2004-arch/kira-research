@@ -58,10 +58,11 @@ export async function runPipeline(input, ctx, { force = false } = {}) {
   // Stage 2: official sources
   const factsMap = await stage2OfficialSources(entity, ctx);
 
-  // Stages 3–5 deferred to later sprints
+  // Stage 5: LLM synthesis — generate analyst narrative from collected facts
+  const narrative = await stage5LlmSynthesis(entity, factsMap, ctx);
 
   // Stage 6: assemble + cache
-  const report = await assembleAndCache(entity, factsMap, ctx);
+  const report = await assembleAndCache(entity, factsMap, ctx, narrative);
   return { report };
 }
 
@@ -187,7 +188,85 @@ async function runConnector(entity, sourceType, connector, ctx) {
 
 // ── Stage 6: assemble + cache ──────────────────────────────────
 
-async function assembleAndCache(entity, factsMap, ctx) {
+// ── Stage 5: LLM synthesis ─────────────────────────────────────
+
+async function stage5LlmSynthesis(entity, factsMap, ctx) {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
+
+  // Skip if narrative already generated recently
+  const narCoverage = await getCoverage(entity.id, 'llm_narrative', ctx.supabase);
+  if (narCoverage?.status === 'found' && !isCoverageStale(narCoverage, 'llm_narrative')) {
+    // Retrieve existing narrative from stored report payload
+    const { data: cr } = await ctx.supabase
+      .from('company_reports')
+      .select('payload')
+      .eq('entity_id', entity.id)
+      .single();
+    return cr?.payload?.narrative || null;
+  }
+
+  // Build facts summary for the prompt
+  const factLines = Object.entries(factsMap)
+    .filter(([, v]) => v?.value != null)
+    .map(([k, v]) => {
+      const val = typeof v.value === 'string'
+        ? v.value.replace(/^"|"$/g, '')  // strip JSON string quotes
+        : v.value;
+      return `${k}: ${val}`;
+    })
+    .join('\n');
+
+  if (!factLines) return null;
+
+  const country = entity.country_code || 'VN';
+  const countryName = { VN: 'Vietnam', JP: 'Japan', KR: 'South Korea', AU: 'Australia',
+    SG: 'Singapore', MY: 'Malaysia', ID: 'Indonesia', TH: 'Thailand',
+    PH: 'Philippines', NZ: 'New Zealand' }[country] || country;
+
+  const prompt = `You are a senior analyst at KIRA Research, a specialist research house covering Asia-Pacific emerging markets.
+
+Write a concise 180–220 word company profile for ${entity.canonical_name} (${countryName}).
+
+Use these verified facts:
+${factLines}
+
+Requirements:
+- Professional, third-person analyst voice
+- Structure: (1) overview & sector position, (2) scale & operational context, (3) strategic relevance
+- Do not invent facts not provided. If a fact is missing, omit that point
+- Do not mention KIRA Research, AI, or any research platform
+- No headers or bullet points — flowing prose only
+
+Output only the narrative text.`;
+
+  try {
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const msg = await client.messages.create({
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 350,
+      messages:   [{ role: 'user', content: prompt }],
+    });
+
+    const narrative = msg.content[0]?.text?.trim() || null;
+
+    // Record coverage
+    await ctx.supabase.from('coverage').upsert(
+      { entity_id: entity.id, source_type: 'llm_narrative',
+        status: narrative ? 'found' : 'checked_empty', checked_at: new Date().toISOString() },
+      { onConflict: 'entity_id,source_type' }
+    );
+
+    return narrative;
+  } catch {
+    return null;
+  }
+}
+
+// ── Stage 6: assemble + cache ──────────────────────────────────
+
+async function assembleAndCache(entity, factsMap, ctx, narrative = null) {
   // Load coverage summary
   const { data: coverageRows } = await ctx.supabase
     .from('coverage')
@@ -217,8 +296,8 @@ async function assembleAndCache(entity, factsMap, ctx) {
     status:       entity.status_cache || 'active',
     coverage,
     facts:        factsMap,
-    graph:        [],       // populated in Sprint 4
-    narrative:    null,     // populated in Sprint 5
+    graph:        [],
+    narrative,
     generated_at: new Date().toISOString(),
     pipeline_ver: PIPELINE_VERSION,
   };
