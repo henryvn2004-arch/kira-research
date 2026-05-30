@@ -8,12 +8,7 @@
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
-
-// OpenCorporates jurisdiction codes per KIRA country
-const OC_JURISDICTION = {
-  VN: 'vn', JP: 'jp', KR: 'kr', AU: 'au',
-  SG: 'sg', MY: 'my', ID: 'id', TH: 'th', PH: 'ph', NZ: 'nz',
-};
+import { OC_JURISDICTION } from './_lib/company/config.js';
 
 // Escape SQL LIKE wildcards in user input so they're treated as literals
 function escapeLike(s) {
