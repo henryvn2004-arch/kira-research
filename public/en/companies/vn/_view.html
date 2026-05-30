@@ -253,7 +253,22 @@
         if (!r.ok) throw new Error('api_error');
         return r.json();
       })
-      .then(({ report }) => render(report))
+      .then(({ report }) => {
+        render(report);
+        // Fire background enrichment if masothue/Tavily haven't run yet.
+        // Indicator: seeded facts lack founding_date, address, legal_rep.
+        // Idempotent on the server — skips if coverage already fresh.
+        const hasDeepFacts = report.facts && (
+          report.facts.founding_date || report.facts.address || report.facts.legal_rep
+        );
+        if (!hasDeepFacts) {
+          fetch('/api/company-enrich', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug }),
+          }).catch(() => {});
+        }
+      })
       .catch(err => {
         if (err.is404) {
           renderError('Company not found.', 'We may not have data for this company yet. <a href="/en/custom-research/">Request custom research →</a>');
