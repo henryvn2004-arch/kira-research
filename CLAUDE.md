@@ -185,6 +185,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **R.7** | Admin panel `/en/admin/companies` | ✅ | `0d4e859` · `api/admin-companies.js` · all admin sub-navs updated |
 | **R.8** | 50 JP companies seed (250 total) | ✅ | `c4be8c0` + migration 021 applied via MCP · JP=50 · VN=200 |
 | **R.9** | Unified company search `/en/companies/` | ✅ | `33db1be` · `api/company-search-live.js` + `api/company-stub.js` · 52 smoke tests |
+| **R.10** | Universal OC + Wikidata pipeline + sitemap fix | ✅ | `4b8c754` · `connectors/opencorporates.js` + `connectors/wikidata.js` · pipeline v2 · sitemap JP fix |
 | **∞** | **Infra & quality (unplanned)** | ✅ | Smoke CI `7e4e0de`+`87cd168`, security `09dbc30`, memory `9fde035`+`4d9456a` |
 
 **Detail per checkbox:** `project des/workplan.md` has the full
@@ -537,4 +538,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-30 — Company Intelligence Sprints 2–9 complete. **250 companies live on prod** (VN=200 · JP=50). Unified search landing `/en/companies/` live with typeahead + OpenCorporates fallback + stub creation. Latest commit: `33db1be` (Sprint R.9, PR #24). **52 smoke tests total. Code blocker = 0**. Next logical work: JP company directory page `/en/companies/jp/`, fix admin profile link hardcoded to `/vn/`, JP enrichment connector.*
+*Last updated: 2026-05-30 — Sprint R.10 complete. **Universal OC + Wikidata pipeline live** — single code path for all 10 countries, sitemap fix. Latest commit: `4b8c754` (Sprint R.10, PR #25). **Code blocker = 0**. Next: Wikidata bulk seeder to auto-import companies for all countries.*
