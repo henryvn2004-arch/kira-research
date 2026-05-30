@@ -396,8 +396,37 @@
 
       const website = facts.website?.value;
       if (website) {
-        items.push(factCard('Website', truncate(website.replace(/^https?:\/\//, ''), 40), ''));
+        const wsDisplay = truncate(stripQ(website).replace(/^https?:\/\//, ''), 40);
+        const wsHref = stripQ(website).startsWith('http') ? stripQ(website) : `https://${stripQ(website)}`;
+        items.push(`
+          <div class="co-fact">
+            <div class="co-fact-label">${esc('Website')}</div>
+            <div class="co-fact-value" style="font-size:13px;font-weight:600;">
+              <a href="${esc(wsHref)}" target="_blank" rel="noopener" style="color:var(--primary);">${esc(wsDisplay)}</a>
+            </div>
+          </div>`);
       }
+
+      const hq = facts.hq_city?.value;
+      if (hq) items.push(factCard('HQ City', stripQ(hq), ''));
+
+      const ceo = facts.ceo_name?.value;
+      if (ceo) items.push(factCard('CEO', stripQ(ceo), ''));
+
+      const parent = facts.parent_company?.value;
+      if (parent) items.push(factCard('Parent Company', stripQ(parent), ''));
+
+      const exchange = facts.stock_exchange?.value;
+      const ticker   = facts.stock_ticker?.value;
+      if (exchange || ticker) {
+        items.push(factCard('Listed', ticker ? stripQ(ticker) : '—', exchange ? stripQ(exchange) : ''));
+      }
+
+      const marketCap = facts.market_cap_usd?.value;
+      if (marketCap) items.push(factCard('Market Cap', fmtUSD(marketCap), 'USD'));
+
+      const revenueUsd = facts.revenue_usd?.value;
+      if (revenueUsd) items.push(factCard('Revenue', fmtUSD(revenueUsd), 'USD (annual)'));
 
       if (items.length === 0) return '';
       return `<div class="co-facts">${items.join('')}</div>`;
@@ -599,6 +628,21 @@
 
     function obj_clean(o) {
       return JSON.parse(JSON.stringify(o, (_, v) => v === undefined ? undefined : v));
+    }
+
+    function fmtUSD(n) {
+      const num = Number(n);
+      if (isNaN(num)) return String(n);
+      if (num >= 1e12) return (num / 1e12).toFixed(1) + ' T';
+      if (num >= 1e9)  return (num / 1e9).toFixed(1)  + ' B';
+      if (num >= 1e6)  return (num / 1e6).toFixed(1)  + ' M';
+      return num.toLocaleString('en');
+    }
+
+    // Facts stored as JSON strings may have surrounding quotes — strip them
+    function stripQ(v) {
+      if (typeof v === 'string') return v.replace(/^"|"$/g, '');
+      return String(v ?? '');
     }
   })();
   </script>

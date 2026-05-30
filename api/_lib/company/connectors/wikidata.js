@@ -149,6 +149,39 @@ export async function fetch(entity, _ctx) {
     facts.push({ key: 'revenue_usd', value: Math.round(Math.abs(revenue)), confidence: 0.75, observed_at: now });
   }
 
+  // Stock ticker (P249) — direct string claim, no extra fetch needed
+  const ticker = stringClaim(claims, 'P249');
+  if (ticker) facts.push({ key: 'stock_ticker', value: ticker, confidence: 0.9, observed_at: now });
+
+  // Market capitalisation (P2137) — raw number in USD
+  const marketCap = quantityClaim(claims, 'P2137');
+  if (marketCap && marketCap > 0) {
+    facts.push({ key: 'market_cap_usd', value: Math.round(Math.abs(marketCap)), confidence: 0.7, observed_at: now });
+  }
+
+  // Resolve entity QIDs to labels in parallel (HQ, CEO, parent, stock exchange)
+  const [hqQid, ceoQid, parentQid, exchangeQid] = [
+    entityIdClaim(claims, 'P159'),  // headquarters location
+    entityIdClaim(claims, 'P169'),  // chief executive officer
+    entityIdClaim(claims, 'P749'),  // parent organisation
+    entityIdClaim(claims, 'P414'),  // stock exchange
+  ];
+
+  const labelResults = await Promise.allSettled([
+    hqQid       ? resolveLabel(hqQid)       : Promise.resolve(null),
+    ceoQid      ? resolveLabel(ceoQid)      : Promise.resolve(null),
+    parentQid   ? resolveLabel(parentQid)   : Promise.resolve(null),
+    exchangeQid ? resolveLabel(exchangeQid) : Promise.resolve(null),
+  ]);
+  const [hqLabel, ceoLabel, parentLabel, exchangeLabel] = labelResults.map(r =>
+    r.status === 'fulfilled' ? r.value : null
+  );
+
+  if (hqLabel)       facts.push({ key: 'hq_city',       value: hqLabel,       confidence: 0.8,  observed_at: now });
+  if (ceoLabel)      facts.push({ key: 'ceo_name',       value: ceoLabel,      confidence: 0.75, observed_at: now });
+  if (parentLabel)   facts.push({ key: 'parent_company', value: parentLabel,   confidence: 0.9,  observed_at: now });
+  if (exchangeLabel) facts.push({ key: 'stock_exchange', value: exchangeLabel, confidence: 0.9,  observed_at: now });
+
   return {
     facts,
     edges: [],
