@@ -526,6 +526,33 @@ test.describe('company intelligence', () => {
     const r = await request.get('/api/company-enrich');
     expect(r.status()).toBe(405);
   });
+
+  test('/en/companies/ unified search landing page loads', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/companies/', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    await expect(page.locator('#co-query')).toBeVisible();
+    await expect(page.locator('#co-country')).toBeVisible();
+    expect(errors, `pageerror on /en/companies/: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/company-search-live returns suggestions JSON', async ({ request }) => {
+    const r = await request.get('/api/company-search-live?q=vingroup&country=VN');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.suggestions)).toBe(true);
+    }
+  });
+
+  test('/api/company-stub rejects GET (POST only)', async ({ request }) => {
+    const r = await request.get('/api/company-stub');
+    expect(r.status()).toBe(405);
+  });
 });
 
 // ── 10) Mobile viewport sanity — Phase 10.1 ──
