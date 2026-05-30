@@ -404,7 +404,8 @@
 
       let para2 = '';
       if (cap) {
-        para2 = `The company's registered charter capital stands at ${fmtVND(cap)}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
+        const capFmt = fmtCapital(cap, r.country_code);
+        para2 = `The company's registered charter capital stands at ${capFmt.amount} ${capFmt.label}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
         if (sector) {
           para2 += ` As a player in the ${capitalize(sector.replace(/_/g,' '))} space, ${name} participates in a market that KIRA Research analysts monitor across Southeast Asia for structural shifts and competitive dynamics.`;
         }
