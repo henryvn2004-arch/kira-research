@@ -3,18 +3,18 @@
 //
 // runPipeline(input, ctx) → { report } | { candidates } | { error }
 //
-// 6-stage pipeline:
+// Universal pipeline (all 10 KIRA countries):
 //   1. Resolve entity (tax_id → direct; name → candidates list)
-//   2. Fetch official sources (VN: ĐKKD via VietQR; other countries TBD)
-//   3. Footprint discovery (gmb, website, shopee) — Sprint 3
-//   4. Graph expansion (recursive CTE up to depth 2) — Sprint 4
-//   5. LLM synthesis (unstructured text → narrative) — Sprint 5
-//   6. Quality gate + assemble report + cache
+//   2. OpenCorporates — official registration data (all countries)
+//      Wikidata       — structured knowledge graph enrichment
+//      Tavily         — web search for description + website
+//   3. LLM synthesis — Claude Haiku analyst narrative
+//   4. Assemble + cache report
 // ============================================================
 
 import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF, SOURCE_TTL_DAYS, DEFAULT_COUNTRY } from './config.js';
-import * as vn_dkkd from './connectors/vn_dkkd.js';
-import * as vn_masothue from './connectors/vn_masothue.js';
+import * as opencorporates from './connectors/opencorporates.js';
+import * as wikidata from './connectors/wikidata.js';
 import * as tavily_web from './connectors/tavily_web.js';
 import { makeSlug } from './normalize.js';
 
@@ -79,44 +79,31 @@ export async function expandGraph(seedId, supabase) {
   return data || [];
 }
 
-// ── Stage 2: official sources ──────────────────────────────────
+// ── Stage 2: universal enrichment sources ─────────────────────
 
 async function stage2OfficialSources(entity, ctx) {
   const { supabase } = ctx;
-  const country = entity.country_code || DEFAULT_COUNTRY;
 
-  // Check if ĐKKD data is fresh enough to skip re-fetch
-  const dkkdCoverage = await getCoverage(entity.id, 'dkkd', supabase);
-  const needsFetch = !dkkdCoverage
-    || dkkdCoverage.status === 'not_checked'
-    || dkkdCoverage.status === 'failed'
-    || isCoverageStale(dkkdCoverage, 'dkkd');
-
-  if (needsFetch && country === 'VN' && entity.tax_id) {
-    await runConnector(entity, 'dkkd', vn_dkkd, ctx);
+  // OpenCorporates — official registration data (all countries, requires tax_id)
+  if (entity.tax_id) {
+    const ocCov = await getCoverage(entity.id, 'opencorporates', supabase);
+    const needsOC = !ocCov || ocCov.status === 'not_checked' || ocCov.status === 'failed'
+      || isCoverageStale(ocCov, 'opencorporates');
+    if (needsOC) await runConnector(entity, 'opencorporates', opencorporates, ctx);
   }
 
-  // masothue scraper — charter_capital + founding_date (VN only)
-  if (country === 'VN' && entity.tax_id && process.env.FIRECRAWL_API_KEY) {
-    const masothueCoverage = await getCoverage(entity.id, 'masothue', supabase);
-    const needsMasothue = !masothueCoverage
-      || masothueCoverage.status === 'not_checked'
-      || masothueCoverage.status === 'failed'
-      || isCoverageStale(masothueCoverage, 'masothue');
-    if (needsMasothue) {
-      await runConnector(entity, 'masothue', vn_masothue, ctx);
-    }
-  }
+  // Wikidata — structured knowledge graph enrichment (all countries)
+  const wdCov = await getCoverage(entity.id, 'wikidata', supabase);
+  const needsWD = !wdCov || wdCov.status === 'not_checked' || wdCov.status === 'failed'
+    || isCoverageStale(wdCov, 'wikidata');
+  if (needsWD) await runConnector(entity, 'wikidata', wikidata, ctx);
 
-  // Tavily web enrichment — description + website (all countries, run once)
+  // Tavily — web search for description + website (all countries, requires API key)
   if (process.env.TAVILY_API_KEY) {
-    const tavilyCoverage = await getCoverage(entity.id, 'tavily', supabase);
-    const needsTavily = !tavilyCoverage
-      || tavilyCoverage.status === 'not_checked'
-      || isCoverageStale(tavilyCoverage, 'tavily');
-    if (needsTavily) {
-      await runConnector(entity, 'tavily', tavily_web, ctx);
-    }
+    const tavilyCov = await getCoverage(entity.id, 'tavily', supabase);
+    const needsTavily = !tavilyCov || tavilyCov.status === 'not_checked'
+      || isCoverageStale(tavilyCov, 'tavily');
+    if (needsTavily) await runConnector(entity, 'tavily', tavily_web, ctx);
   }
 
   // Reload all facts after connectors run

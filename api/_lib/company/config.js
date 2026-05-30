@@ -1,14 +1,25 @@
 // ============================================================
 // Company Intelligence — pipeline constants
-// Multi-country: VN first; JP/KR/AU/SG/MY/ID/TH/PH/NZ in later sprints.
+// Universal: OpenCorporates + Wikidata for all 10 countries.
 // ============================================================
 
-export const PIPELINE_VERSION = 1;
+export const PIPELINE_VERSION = 2;
 
-// Supported countries (ISO 3166-1 alpha-2). VN = fully wired Sprint 1.
-// Others = schema-ready, connectors TBD per sprint.
+// Supported countries (ISO 3166-1 alpha-2).
 export const SUPPORTED_COUNTRIES = ['VN', 'JP', 'KR', 'AU', 'SG', 'MY', 'ID', 'TH', 'PH', 'NZ'];
 export const DEFAULT_COUNTRY = 'VN';
+
+// OpenCorporates jurisdiction codes per KIRA country
+export const OC_JURISDICTION = {
+  VN: 'vn', JP: 'jp', KR: 'kr', AU: 'au',
+  SG: 'sg', MY: 'my', ID: 'id', TH: 'th', PH: 'ph', NZ: 'nz',
+};
+
+// Wikidata country QIDs (P17 values)
+export const WIKIDATA_COUNTRY_QID = {
+  VN: 'Q881', JP: 'Q17',  KR: 'Q884', AU: 'Q408',
+  SG: 'Q334', MY: 'Q833', ID: 'Q252', TH: 'Q869', PH: 'Q928', NZ: 'Q664',
+};
 
 // Tax ID field name per country (for UI hints and API docs)
 export const TAX_ID_LABEL = {
@@ -26,10 +37,13 @@ export const TAX_ID_LABEL = {
 
 // Cache TTL in days per source type (0 = no cache / realtime)
 export const SOURCE_TTL_DAYS = {
-  dkkd:           30,  // VN: Cổng thông tin ĐKKD
-  masothue:       90,  // VN: masothue.com (charter_capital, founding_date)
+  opencorporates: 90,  // Universal: OpenCorporates company detail (all countries)
+  wikidata:      180,  // Universal: Wikidata structured entity data
   tavily:         90,  // Universal: Tavily web search (description, website)
   llm_narrative:  90,  // LLM synthesis — Claude company narrative
+  // Legacy VN-only connectors (kept for backward-compat with old coverage rows)
+  dkkd:           30,
+  masothue:       90,
   tax:             7,  // VN: Tổng cục Thuế
   noip:           30,  // VN: NOIP trademarks
   court:          30,  // VN: court filings
@@ -67,11 +81,13 @@ export const GRAPH_MIN_CONF  = 0.3;  // Prune edges below this path-confidence
 
 // Source types that all connectors must recognise
 export const SOURCE_TYPES = [
-  // VN
-  'dkkd', 'tax', 'noip', 'court', 'bidding',
-  // Other countries
+  // Universal (primary pipeline)
+  'opencorporates', 'wikidata', 'tavily', 'llm_narrative',
+  // Legacy VN-only
+  'dkkd', 'masothue', 'tax', 'noip', 'court', 'bidding',
+  // Other country-specific (future)
   'acra', 'asic', 'dart', 'edinet', 'ssm', 'ahu', 'dbd', 'sec_ph', 'nzbn',
-  // Universal
+  // Social / web
   'gmb', 'shopee', 'facebook', 'website', 'news', 'foreign_filing',
 ];
 

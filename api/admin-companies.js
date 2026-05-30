@@ -85,7 +85,7 @@ export default async function handler(req, res) {
 
     // 3) Fetch coverage for relevant source types
     const coverageRaw = await sb(
-      `coverage?entity_id=in.(${entityIds.join(',')})&source_type=in.(dkkd,masothue,tavily,llm_narrative)&select=entity_id,source_type,status,checked_at`
+      `coverage?entity_id=in.(${entityIds.join(',')})&source_type=in.(opencorporates,wikidata,tavily,llm_narrative)&select=entity_id,source_type,status,checked_at`
     );
     const coverageMap = {};
     for (const c of coverageRaw) {
@@ -117,10 +117,10 @@ export default async function handler(req, res) {
         sector:       fm.sector       || null,
         founding_year: fm.founding_year != null ? Number(fm.founding_year) : null,
         coverage: {
-          dkkd:         cov.dkkd?.status         || null,
-          masothue:     cov.masothue?.status      || null,
-          tavily:       cov.tavily?.status        || null,
-          llm_narrative: cov.llm_narrative?.status || null,
+          opencorporates: cov.opencorporates?.status  || null,
+          wikidata:       cov.wikidata?.status        || null,
+          tavily:         cov.tavily?.status          || null,
+          llm_narrative:  cov.llm_narrative?.status   || null,
         },
       };
     });
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
     }
 
     // 6) Stats
-    const enriched       = companies.filter(c => c.coverage.masothue === 'found' || c.coverage.tavily === 'found').length;
+    const enriched       = companies.filter(c => c.coverage.opencorporates === 'found' || c.coverage.wikidata === 'found' || c.coverage.tavily === 'found').length;
     const with_narrative = companies.filter(c => c.coverage.llm_narrative === 'found').length;
 
     return res.status(200).json({
