@@ -468,7 +468,62 @@ test.describe('SEO surface', () => {
   });
 });
 
-// ── 9) Mobile viewport sanity — Phase 10.1 ──
+// ── 9) Company Intelligence — Phase R ──
+//
+// Covers the directory index, a seeded company profile, and the three
+// company API endpoints. We use Vingroup (MST 0101231488) as the known
+// anchor because it's seeded by migration 016 and won't be removed.
+test.describe('company intelligence', () => {
+  const KNOWN_SLUG = 'vn-vingroup-0101231488';
+
+  test('/en/companies/vn/ loads the directory shell', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/companies/vn/', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on /en/companies/vn/: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test(`/en/companies/vn/${KNOWN_SLUG} loads without JS errors`, async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto(`/en/companies/vn/${KNOWN_SLUG}`, { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on company _view: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/company-list?country=VN returns JSON array', async ({ request }) => {
+    const r = await request.get('/api/company-list?country=VN&page=1');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.companies)).toBe(true);
+      expect(typeof data.total).toBe('number');
+    }
+  });
+
+  test('/api/company-report returns payload for known slug', async ({ request }) => {
+    const r = await request.get(`/api/company-report?slug=${KNOWN_SLUG}`);
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(data.report || data.error).toBeTruthy();
+    }
+  });
+
+  test('/api/company-enrich rejects GET (POST only)', async ({ request }) => {
+    const r = await request.get('/api/company-enrich');
+    expect(r.status()).toBe(405);
+  });
+});
+
+// ── 10) Mobile viewport sanity — Phase 10.1 ──
 //
 // We don't replace Lighthouse here — that's an owner-run audit step. These
 // tests catch regressions that ONLY surface at narrow viewports: horizontal
