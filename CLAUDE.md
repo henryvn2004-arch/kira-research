@@ -538,4 +538,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-30 — Sprint R.10 complete. **Universal OC + Wikidata pipeline live** — single code path for all 10 countries, sitemap fix. Latest commit: `4b8c754` (Sprint R.10, PR #25). **Code blocker = 0**. Next: Wikidata bulk seeder to auto-import companies for all countries.*
+*Last updated: 2026-05-30 — Fix: company detail page "unable to load" bug resolved (PR #26, `a32cf52`). Sprint R.10 complete (`4b8c754`). **Code blocker = 0**. Next: Wikidata bulk seeder to auto-import companies for all countries.*
