@@ -29,6 +29,7 @@ export const SOURCE_TTL_DAYS = {
   dkkd:           30,  // VN: Cổng thông tin ĐKKD
   masothue:       90,  // VN: masothue.com (charter_capital, founding_date)
   tavily:         90,  // Universal: Tavily web search (description, website)
+  llm_narrative:  90,  // LLM synthesis — Claude company narrative
   tax:             7,  // VN: Tổng cục Thuế
   noip:           30,  // VN: NOIP trademarks
   court:          30,  // VN: court filings

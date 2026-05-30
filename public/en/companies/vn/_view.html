@@ -311,7 +311,7 @@
 
         <div class="co-section">
           <h2 class="co-section-title">Company Overview</h2>
-          <div class="co-body-text">${buildNarrative(r)}</div>
+          <div class="co-body-text">${r.narrative ? '<p>' + esc(r.narrative).split(/\n\n+/).map(p => p.replace(/\n/g,' ')).join('</p><p>') + '</p>' : buildNarrative(r)}</div>
         </div>
 
         ${buildCoverageSection(r.coverage)}
