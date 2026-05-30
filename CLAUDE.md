@@ -30,36 +30,44 @@
 
 ---
 
-## Current state (2026-05-29 — Company Intelligence Sprint 1 DONE)
+## Current state (2026-05-30 — Company Intelligence Sprints R.10–R.12 DONE)
 
-**Phase R: Company Intelligence engine — Sprint 1 DONE. Migrations 016+017 live on prod.**
+**Phase R: Company Intelligence engine — Sprints R.0–R.12 complete. 250 companies live. Due Diligence Signals live.**
 
-Sprint 0 complete (`279304c` + `14942a6`):
-- 7 tables live on Supabase: `entities`, `sources`, `facts`, `relationships`, `coverage`, `raw_documents`, `company_reports` + `company_graph_bfs()` RPC
-- Multi-country schema: `country_code` (default `VN`) + `tax_id` composite unique — supports VN/JP/KR/AU/SG/MY/ID/TH/PH/NZ
-- `api/_lib/company/` — config, normalize (per-country legal token strip), connector, search, pipeline
-- `api/company-search.js` (`?tax_id=&country=VN`, legacy `?mst=` ok) + `api/company-report.js`
+Sprints R.0–R.9 complete (see previous sessions):
+- Schema, VN/JP seeds (250 companies total), connectors (ĐKKD, masothue, Tavily), pipeline v1→v2, LLM narrative, admin panel, unified search landing, JP directory.
 
-Sprint 1 complete (`cf6a0b4` squash-merged 2026-05-29):
-- **Migration 017 live**: 25 top VN companies in `entities` (HOSE/HNX public filings), 100 facts (industry/sector/founding_year/charter_capital at confidence 0.8), 25 `company_reports` stub rows. `facts_entity_key_unique` constraint added.
-- **ĐKKD connector** `api/_lib/company/connectors/vn_dkkd.js` — VietQR API, fetches legal_status/address/registered_name by MST, no API key needed.
-- **Pipeline Stage 2 + Stage 6** implemented: ĐKKD fetch → fact upsert → status_cache sync → assemble report → cache 30 days.
-- **company-report.js** updated: stub payloads trigger inline pipeline run on first page load (user sees real facts, not skeleton).
-- **SEO page** `/en/companies/vn/_view.html` — Organization + BreadcrumbList JSON-LD, facts grid, ~500-word analyst narrative, coverage badges, KIRA CTA.
-- **vercel.json** rewrites `/:locale/companies/vn/:slug` → `/en/companies/vn/_view` for EN/JA/KO.
+Sprint R.10 complete (`4b8c754`):
+- **Universal pipeline v2**: OpenCorporates connector (all countries, by tax_id) + Wikidata connector (all countries, by name + P17 country match). Replaces VN-only ĐKKD/masothue as primary sources.
+- New facts: description, website, founding_year, employees, industry (P452), revenue_usd, stock_ticker, market_cap_usd, hq_city, ceo_name, parent_company, stock_exchange.
+- Sitemap JP fix: JP company pages now included in sitemap.
 
-**Live URL pattern**: `/en/companies/vn/vn-vingroup-0101231488`, `/en/companies/vn/vn-fpt-0101248141` etc.
+Sprint R.11 complete (`be9afe9` + `a886779` + fixes):
+- **Admin Wikidata bulk seeder** `/api/admin-wikidata-seed` — auth-gated POST, SPARQL subclass traversal (`wdt:P31/wdt:P279* wd:Q783794`) catches ALL company subtypes. 500 rows/page. Auto-chains in admin UI with 1.3s delay.
+- **Admin panel** `/en/admin/companies` — "Seed from Wikidata" panel with country selector (all 10 KIRA countries) and progress indicator.
+- SPARQL fixes: simplified query for JP/KR/AU timeouts; subclass traversal for VN coverage (172 → 500+).
 
-**Next: Sprint 2** — expand coverage:
-1. Seed 200 more VN companies (currently 25/200)
-2. `masothue` scraper connector for charter_capital + founding_date from official ĐKKD portal
-3. `/en/companies/vn/` index page — list all seeded companies, filterable by industry/sector
-4. Sitemap entries for company pages
-5. Link company pages from relevant report pages ("Top players" section)
+Sprint R.12 complete (`0f25673` squash-merged 2026-05-30, PR #31):
+- **OpenSanctions connector** `api/_lib/company/connectors/opensanctions.js` — screens all companies against 100+ international watchlists (OFAC, UN, EU, Interpol, PEP lists). Free tier, no API key required. Score threshold ≥ 0.80. Facts: `sanctions_status` ("clear"/"found"), `sanctions_matches` (JSONB array with dataset labels, scores, OpenSanctions URLs). TTL 30 days.
+- **Tavily risk search** — now runs 2 parallel Tavily queries: overview (description + website) + risk-focused (country-native terms: VN kiện tụng/phá sản, JP 訴訟/破産, KR 소송/파산). New facts: `risk_news_count`, `risk_news_articles`. Articles filtered at score ≥ 0.4.
+- **Pipeline v3**: bumps `PIPELINE_VERSION` to force re-enrichment of all cached reports. `factExists()` helper — tavily re-runs if `risk_news_count` missing (graceful v2→v3 upgrade).
+- **Company page redesign** (`/en/companies/vn/_view.html`): Due Diligence Summary strip (3 cells: Sanctions | Registration | News) always visible above facts grid. Risk Signals detail section shows sanctions matches (dataset tags, scores, links) + adverse news articles. Clean companies see green "No adverse signals" confirmation box.
+
+**Live URL patterns**:
+- VN: `/en/companies/vn/vn-vingroup-0101231488`
+- JP: `/en/companies/jp/jp-toyota-motor-corporation-9180301018771`
+- Unified search: `/en/companies/`
+- Admin seeder: `/en/admin/companies` → "Seed from Wikidata" panel
 
 **Owner workflow:** Henry travels 2026-05-29 to ~2026-06-02. Chats daily via Claude mobile app.
 Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
 DB migrations: Claude applies via Supabase MCP directly (no owner Supabase action needed).
+
+**Next: Sprint R.13 (TBD)** — possible directions:
+1. `/en/companies/jp/` index page + `/en/companies/jp/_view.html` SEO template for JP
+2. Admin companies fix: profile link hardcodes `/vn/` — JP companies need `/jp/`
+3. Country-specific DD checks: VN tax debt API, AU AFSA insolvency, SG MinLaw, JP TSR bankruptcy
+4. Wikidata seeder run for all 10 countries to populate DB at scale
 
 ---
 
