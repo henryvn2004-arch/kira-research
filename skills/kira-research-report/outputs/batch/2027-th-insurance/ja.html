@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — タイ保険市場2027年展望：高齢化社会の転換点と健康保障格差</title>
+<meta name="description" content="超高齢社会を目前に控えるタイのUSD 310億保険市場を分析した調査報告書。需要要因、健康保障格差、競争構造、規制動向、テクノロジー、および生命・健康保険事業者向け2027年展望。">
+<meta property="og:title" content="タイ保険2027年展望：高齢化社会の転換点と健康保障格差">
+<meta property="og:description" content="タイの人口動態転換が2027年に向け保険市場をいかに再編するか ー ヘルスライダー、年金保険、介護保険、そして保障格差の構造分析。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans JP', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 01: COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner" style="padding:0;">
+      <div class="cover-top">
+        <div style="font-family:'Satoshi',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.02em;">KIRA<span style="color:var(--primary);">.</span> RESEARCH</div>
+      </div>
+      <div class="cover-main" style="margin-top:auto;margin-bottom:auto;">
+        <div class="cover-eyebrow">Thailand · Insurance · 2027</div>
+        <h1>超<span class="accent">高齢社会</span>の転換点に立つタイ保険市場</h1>
+        <p class="cover-subtitle">人口動態の転換が、生命・健康保障の需要曲線を書き換えている。ヘルスライダー、年金保険、そして保障格差が2027年の機会を規定する。</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">タイ</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">保険</div></div>
+          <div class="cover-meta-item"><div class="label">Published</div><div class="val">2026年5月</div></div>
+          <div class="cover-meta-item"><div class="label">Horizon</div><div class="val"><span class="accent">2027–2032</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · シングルユーザーライセンス · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 02: METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Methodology</div>
+      <div class="page-section-counter">002 / 018</div>
+    </div>
+    <h1 class="page-h1">本分析の構築方法</h1>
+    <p class="page-subhead">本レポートは、規制当局の開示情報、業界団体統計、人口動態予測、および事業者の財務情報を三角検証し、タイ保険市場の先行きを読み解いたものです。すべての定量的主張にはインライン出典タグを付与しており、<strong>[Kira estimates]</strong>は当社の独自分析から導いた数値を示します。</p>
+
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">PRIMARY INPUTS</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 規制・業界団体データ</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">保険委員会（OIC）指令、タイ生命保険協会およびタイ損害保険協会の収入保険料統計、上場保険会社の開示資料。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 人口動態・医療制度の分析</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">高齢化進展予測、国民皆保険（UCS）利用実態調査、および需要仮説の根拠となる国民医療費系列データ。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ アナリスト三角検証</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">公表数値に乖離がある場合、当社チームが最も妥当な中間値に収斂させ、KIRA推計としてタグを付与します。</div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">SCOPE &amp; LIMITS</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 分析対象</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">人口動態転換の観点から捉えたタイ国内保険市場（生命・損害保険）。再保険およびオフショアキャプティブは対象外です。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 通貨・換算</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">タイバーツ（THB）は届出値で記載。USD換算はTHB 34.5/USD を使用し、方向感を示す参考値です。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 予測の考え方</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">将来数値は確定予測ではなく、記録済みの基準年に固定した方向性シナリオです。レンジ表示は実質的な不確実性を反映しています。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 03: TABLE OF CONTENTS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Table of Contents</div>
+      <div class="page-section-counter">003 / 018</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-height: 0; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">04</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">エグゼクティブサマリー</div><div style="font-size: 11px; color: var(--text-mid);">市場の現状、人口動態仮説、および5つの戦略的示唆</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 04</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">06</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">人口動態転換</div><div style="font-size: 11px; color: var(--text-mid);">高齢社会から超高齢社会へ ー 需要のエンジン</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 07</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">07</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">健康保障格差</div><div style="font-size: 11px; color: var(--text-mid);">公的保障の限界と民間補完の起点</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 08</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">08</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">市場規模と商品構成</div><div style="font-size: 11px; color: var(--text-mid);">種目別収入保険料。ヘルスライダーと年金保険が牽引</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 09</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">10</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">競争構造</div><div style="font-size: 11px; color: var(--text-mid);">上位生命保険会社とリーダーのプロファイル</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 11</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">13</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">規制とコスト抑制の転換</div><div style="font-size: 11px; color: var(--text-mid);">コペイメント、RBC、IFRS 17の影響</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 14</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">15</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">テクノロジーとAI：募集・保険金支払いの変革</div><div style="font-size: 11px; color: var(--text-mid);">引受、不正検知、チャネル経済性</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 16</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">17</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">2032年展望と出典</div><div style="font-size: 11px; color: var(--text-mid);">シナリオ、収入保険料軌跡、調査方法論後記</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 17</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 04: EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">004 / 018</div>
+    </div>
+
+    <h1 class="page-h1">タイ保険市場 — 人口動態による再評価</h1>
+    <p class="page-subhead"><strong>USD 310億の収入保険料プール</strong>に、超高齢社会入りを目前にした人口動態が重なる。ヘッドライン成長は一桁台にとどまるが、商品構成はヘルスライダー、年金保険、老後連動型保障へと決定的にシフトしている。<strong>今後24ヶ月が</strong>、高齢顧客を取り込む事業者を決定づける。</p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">業界収入保険料 2024年</div>
+        <div class="num">941<span class="unit">THB bn</span></div>
+        <div class="change">前年比+2.4% [TLAA-OIC 2024]</div>
+        <div class="source-tag sec">TLAA-OIC</div>
+      </div>
+      <div class="callout">
+        <div class="label">医療・CI保険料 2024年</div>
+        <div class="num">125<span class="unit">THB bn</span></div>
+        <div class="change">+13.7%、全体の19.1% [TLAA 2024]</div>
+        <div class="source-tag sec">TLAA</div>
+      </div>
+      <div class="callout">
+        <div class="label">60歳以上人口比率 2024年</div>
+        <div class="num">20<span class="unit">%</span></div>
+        <div class="change">1,360万人 [GISTDA 2025]</div>
+        <div class="source-tag sec">GISTDA</div>
+      </div>
+      <div class="callout">
+        <div class="label">医療費自己負担比率</div>
+        <div class="num">11.3<span class="unit">%</span></div>
+        <div class="change down">民間保障の構造的格差</div>
+        <div class="source-tag sec">UHC Study</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>市場の現状</h3>
+        <p>
+          タイの保険会社は<strong>2024年に収入保険料THB 9,410億を計上し、前年比2.4%増</strong>[TLAA-OIC 2024]となりました。生命保険はTHB 6,540億（+3.2%）[TLAA 2024]、損害保険はTHB 2,860億（+0.5%）[TGIA 2024]です。ヘッドライン成長は一桁台ですが、構成は急速に変化しており、医療・重篤疾病保険料は<strong>13.7%増のTHB 1,250億へ急伸し、生命保険料の19.1%</strong>を占めるに至っています[TLAA 2024]。
+        </p>
+        <h3>なぜ今か：需要エンジンとしての人口動態</h3>
+        <p>
+          60歳以上の人口は<strong>2024年に1,360万人（全人口の20%）</strong>に達し[GISTDA 2025]、子ども（15歳未満）の数を初めて上回りました。2035年までには60歳以上が28%に達する「超高齢社会」入りが見込まれます[WHO 2024]。自己負担が医療費の11.3%を占め[UHC Study 2024]、医療インフレが年率8〜10%で推移する中[Bangkok Post 2024]、公的制度が現状維持の間、民間の保障格差は毎年拡大し続けます。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">収入保険料プールとヘルスライダー構成比の変化</div>
+            <div class="chart-subtitle">タイ · THB bn · 2024年実績 · 2032年予測</div>
+          </div>
+          <div class="chart-unit">THB BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="240"/>
+            <line class="axis-line" x1="55" y1="240" x2="470" y2="240"/>
+            <line class="grid-line" x1="55" y1="60" x2="470" y2="60"/>
+            <line class="grid-line" x1="55" y1="110" x2="470" y2="110"/>
+            <line class="grid-line" x1="55" y1="160" x2="470" y2="160"/>
+            <line class="grid-line" x1="55" y1="200" x2="470" y2="200"/>
+            <text class="axis-text" x="50" y="244" text-anchor="end">0</text>
+            <text class="axis-text" x="50" y="204" text-anchor="end">400</text>
+            <text class="axis-text" x="50" y="164" text-anchor="end">700</text>
+            <text class="axis-text" x="50" y="114" text-anchor="end">1,000</text>
+            <text class="axis-text" x="50" y="64" text-anchor="end">1,250</text>
+            <!-- 2024 total 941, health 125 -->
+            <rect class="bar-primary" x="120" y="71" width="48" height="169"/>
+            <rect class="bar-tertiary" x="172" y="178" width="30" height="62"/>
+            <text class="label-data" x="144" y="65" text-anchor="middle">941</text>
+            <text class="label-small" x="187" y="172" text-anchor="middle">125</text>
+            <text class="axis-text" x="160" y="258" text-anchor="middle">2024</text>
+            <!-- 2032F total ~1180, health ~245 -->
+            <rect class="bar-primary" x="300" y="36" width="48" height="204" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <rect class="bar-tertiary" x="352" y="118" width="30" height="122" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="324" y="30" text-anchor="middle">~1,180</text>
+            <text class="label-small" x="367" y="112" text-anchor="middle" style="fill:#D97706">~245</text>
+            <text class="axis-text" x="340" y="258" text-anchor="middle">2032F</text>
+            <rect class="bar-primary" x="55" y="6" width="10" height="10"/>
+            <text class="label-small" x="69" y="15">収入保険料合計</text>
+            <rect class="bar-tertiary" x="170" y="6" width="10" height="10"/>
+            <text class="label-small" x="184" y="15">医療・CI</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: TLAA, OIC, KIRA TRIANGULATION · FORECAST = KIRA ESTIMATE ANCHORED TO 2024 BASE · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">GISTDA 2025 = Geo-Informatics &amp; Space Technology Development Agency population analysis 2025 · TGIA 2024 = Thai General Insurance Association direct-premium statistics 2024 · TLAA 2024 = Thai Life Assurance Association annual statistics 2024 · TLAA-OIC 2024 = TLAA &amp; Office of Insurance Commission combined industry total 2024 · UHC Study 2024 = Universal Coverage Scheme out-of-pocket study 2024 · WHO 2024 = WHO South-East Asia healthy-ageing feature 2024 · Bangkok Post 2024 = Bangkok Post insurer medical-inflation report 2024 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 05: EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">005 / 018</div>
+    </div>
+
+    <h1 class="page-h1">市場参加者に向けた5つの戦略的示唆</h1>
+    <p class="page-subhead">2032年に向けた競争力学を再編する5つの力。いずれも記録済みの市場データと、タイの人口動態・規制軌跡に関する当社の分析に基づいています。</p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · DEMAND</div>
+        <div class="title">高齢顧客のライフサイクル全体を取り込む</div>
+        <div class="body-text">
+          60歳以上が<strong>全人口の20%から2035年には28%へ上昇する</strong>中[GISTDA 2025][WHO 2024]、勝者は医療・年金・介護を1つの顧客関係でバンドルする事業者です。2027年の価値創出を牽引するのは新規顧客獲得数ではなく、クロスセル深度です。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">1,360万人</span>（60歳以上、2024年）</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">02 · HEALTH GAP</div>
+        <div class="title">保障格差が成長の源泉</div>
+        <div class="body-text">
+          公的保障は人口の74%をカバーする[Frontiers 2024]一方、自己負担は医療費の11.3%に達しています[UHC Study 2024]。医療・重篤疾病保険料はすでに<strong>年率13.7%で成長</strong>しています[TLAA 2024]。中間層の保障格差を解消することが、最大の有機的成長機会です。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">19.1%</span>（医療保険の生命保険料比率）</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">03 · COST CONTROL</div>
+        <div class="title">コペイメントが医療経済を再設定する</div>
+        <div class="body-text">
+          <strong>2025年3月19日</strong>付けで施行されたOICコペイメント条項[OIC 2025]は、年率8〜10%の医療インフレを抑制するため[Bangkok Post 2024]、請求コストを契約者と分担する仕組みです。コペイメントを適切に価格設定・説明できる事業者は損害率を守り、対応が遅れた事業者は逆選択にさらされます。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">8〜10%</span>（年間医療インフレ率）</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">04 · CAPITAL</div>
+        <div class="title">IFRS 17とRBCは大規模事業者の貸借対照表に有利</div>
+        <div class="body-text">
+          リスクベース資本（RBC）とIFRS 17は長期保証のコストを引き上げます[OIC 2025]。年金保険を多く抱える事業者には厳密なALMが求められます。<strong>規模の小さい保険会社</strong>は上位3社に対し構造的な資本劣位に置かれており、選択的な業界再編が見込まれます。
+        </div>
+        <div class="anchor">Anchor: 上位3社が<span class="num-anchor">~53%</span>の生命保険料を占有</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">05 · DIGITAL</div>
+        <div class="title">AIはパイロットから引受の中核へ</div>
+        <div class="body-text">
+          AI引受、保険金請求自動化、不正検知モデル — 先進的な導入例では不正請求を<strong>最大〜30%削減</strong>しています[InsurTech 2025] — は2027年には業界標準となります。バンカシュアランスと代理店チャネルは高齢顧客の信頼チャネルとして残存し、デジタルはこれを補完します。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">~30%</span>（不正請求削減率）</div>
+      </div>
+    </div>
+
+    <div class="source-key">Frontiers 2024 = Frontiers in Public Health, low use of Thailand's Universal Coverage Scheme 2024 · GISTDA 2025 = GISTDA population analysis 2025 · InsurTech 2025 = InsurTech Digital AI claims &amp; underwriting review 2025 · OIC 2025 = Office of Insurance Commission 2025 directives (copayment, RBC, IFRS 17) · TLAA 2024 = Thai Life Assurance Association statistics 2024 · UHC Study 2024 = Universal Coverage Scheme out-of-pocket study 2024 · WHO 2024 = WHO South-East Asia healthy-ageing feature 2024 · Bangkok Post 2024 = Bangkok Post medical-inflation report 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 06: DIVIDER — DEMOGRAPHICS ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">人口動態の<span class="accent">転換</span></h1>
+    <div class="divider-thesis">
+      タイは同所得水準のどの国よりも速いペースで高齢化している。60歳以上の人口は<strong>2024年に全人口の20%を超え</strong>、2035年には28%に達する見通し — 超高齢社会の到来だ。これは保険業界の背景要因ではない。<strong>それ自体が</strong>本質的なテーマである。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1 年齢構造</div>
+      <div class="toc-pill">6.2 超高齢社会への軌跡</div>
+      <div class="toc-pill">6.3 地域間格差</div>
+      <div class="toc-pill">6.4 需要への影響</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 07: DEMOGRAPHIC TRANSITION — DATA CHART ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · The Demographic Transition</div>
+      <div class="page-section-counter">007 / 018</div>
+    </div>
+
+    <h1 class="page-h1">高齢社会から超高齢社会へ：保障需要を牽引するエンジン</h1>
+    <p class="page-subhead">60歳以上のタイ人の比率は2000年の10%から<strong>2020〜2024年の20%へ倍増</strong>[World Bank 2023][GISTDA 2025]し、2050年には36%に達すると予測されます。1ポイントの上昇ごとに、需要は蓄積型商品から医療・年金・介護へとシフトします。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>逆転した年齢ピラミッド</h3>
+        <p>
+          2024年に60歳以上の人口は<strong>1,360万人に達し、15歳未満の950万人を上回りました</strong>[GISTDA 2025]。縮小する生産年齢人口が増加する高齢扶養層を支える — タイでは地域の競合国よりも早くこの典型的な高齢化社会の構造圧力が到来しています。
+        </p>
+        <h3>超高齢社会の閾値</h3>
+        <p>
+          WHOはタイが<strong>2035年</strong>までに60歳以上28%の「超高齢社会」入りすると予測しています[WHO 2024]。2050年には人口の約36%が60歳以上になります[World Bank 2023]。長寿化は保険会社が引き受ける医療・介護債務の期間を長期化させます。
+        </p>
+        <h3>地域間格差</h3>
+        <p>
+          北部、中部、東北部はすでに最高水準の高齢化指数を示しており[GISTDA 2025]、出生率の低下と生産年齢層の流出が背景にあります。地方のミクロ市場ごとに成熟速度が異なり、農村部での販売網投資の回収時期に影響します。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">60歳以上人口比率の推移</div>
+            <div class="chart-subtitle">タイ · % of population · 2000–2050F</div>
+          </div>
+          <div class="chart-unit">% 60+</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="20" x2="40" y2="200"/>
+            <line class="axis-line" x1="40" y1="200" x2="390" y2="200"/>
+            <line class="grid-line" x1="40" y1="60" x2="390" y2="60"/>
+            <line class="grid-line" x1="40" y1="105" x2="390" y2="105"/>
+            <line class="grid-line" x1="40" y1="150" x2="390" y2="150"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="154" text-anchor="end">12</text>
+            <text class="axis-text" x="35" y="109" text-anchor="end">24</text>
+            <text class="axis-text" x="35" y="64" text-anchor="end">36</text>
+            <rect class="bar-secondary" x="70" y="150" width="42" height="50"/>
+            <text class="label-small" x="91" y="144" text-anchor="middle">10</text>
+            <text class="axis-text" x="91" y="216" text-anchor="middle">2000</text>
+            <rect class="bar-primary" x="150" y="100" width="42" height="100"/>
+            <text class="label-data" x="171" y="94" text-anchor="middle">20</text>
+            <text class="axis-text" x="171" y="216" text-anchor="middle">2024</text>
+            <rect class="bar-tertiary" x="230" y="60" width="42" height="140" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="251" y="54" text-anchor="middle" style="fill:#D97706">28</text>
+            <text class="axis-text" x="251" y="216" text-anchor="middle">2035F</text>
+            <rect class="bar-tertiary" x="310" y="20" width="42" height="180" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="331" y="14" text-anchor="middle" style="fill:#D97706">36</text>
+            <text class="axis-text" x="331" y="216" text-anchor="middle">2050F</text>
+            <path d="M 112 145 L 148 105" stroke="var(--primary)" stroke-width="1.5" fill="none"/>
+            <path d="M 192 100 L 228 65" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="2,2" fill="none"/>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: WORLD BANK, GISTDA, WHO · KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">15歳未満人口 2024年</div>
+        <div class="num">9.5<span class="unit">m</span></div>
+        <div class="change down">60歳以上を下回る</div>
+        <div class="source-tag sec">GISTDA</div>
+      </div>
+      <div class="callout">
+        <div class="label">超高齢社会突入年</div>
+        <div class="num">2035</div>
+        <div class="change">60歳以上28% [WHO 2024]</div>
+        <div class="source-tag sec">WHO</div>
+      </div>
+      <div class="callout">
+        <div class="label">60歳以上比率 2050年</div>
+        <div class="num">36<span class="unit">%</span></div>
+        <div class="change">2000年の10%から上昇</div>
+        <div class="source-tag sec">World Bank</div>
+      </div>
+    </div>
+
+    <div class="source-key">GISTDA 2025 = GISTDA population analysis 2025 · WHO 2024 = WHO South-East Asia healthy-ageing feature 2024 · World Bank 2023 = World Bank, Caring for Thailand's Aging Population 2023</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 08: HEALTH PROTECTION GAP ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · The Health Protection Gap</div>
+      <div class="page-section-counter">008 / 018</div>
+    </div>
+
+    <h1 class="page-h1">公的保障の限界と民間補完の起点</h1>
+    <p class="page-subhead">タイの税財源による国民皆保険（UCS）は真の成果ですが、カバレッジの広さは深さと同義ではありません。人口が高齢化し医療費が一般インフレを上回る中、<strong>民間健康保障格差</strong>が決定的な商業機会となっています。</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">医療制度の圧力指標</div>
+            <div class="chart-subtitle">タイ · 指数化シグナル · 基準年は指標ごとに異なる</div>
+          </div>
+          <div class="chart-unit">SIGNAL</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="170" x2="585" y2="170"/>
+            <rect class="bar-primary" x="90" y="59" width="70" height="111"/>
+            <text class="label-data" x="125" y="52" text-anchor="middle">74%</text>
+            <text class="axis-text" x="125" y="186" text-anchor="middle">UCSカバレッジ</text>
+            <rect class="bar-tertiary" x="220" y="153" width="70" height="17"/>
+            <text class="label-data" x="255" y="146" text-anchor="middle" style="fill:#D97706">11.3%</text>
+            <text class="axis-text" x="255" y="186" text-anchor="middle">自己負担比率</text>
+            <rect class="bar-tertiary" x="350" y="155" width="70" height="15"/>
+            <text class="label-data" x="385" y="148" text-anchor="middle" style="fill:#D97706">8–10%</text>
+            <text class="axis-text" x="385" y="186" text-anchor="middle">医療インフレ</text>
+            <rect class="bar-secondary" x="480" y="163" width="70" height="7"/>
+            <text class="label-data" x="515" y="156" text-anchor="middle" style="fill:#00A88B">4.37%</text>
+            <text class="axis-text" x="515" y="186" text-anchor="middle">医療費/GDP</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: UHC STUDY, FRONTIERS, WORLD BANK, BANGKOK POST · KIRA RESEARCH 2026</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>カバレッジの広さ vs. 深さ</h3>
+        <p>
+          UCSは人口の約<strong>74%をカバーする</strong>[Frontiers 2024]一方、予算が医療コストに追いつかず、民間医療機関への移行により自己負担は<strong>医療費の11.3%</strong>に達しています[UHC Study 2024]。
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>UCS対象人口</span><span class="val">~74%</span></div>
+          <div class="stat-line"><span>自己負担比率</span><span class="val">11.3%</span></div>
+          <div class="stat-line"><span>医療費/GDP（2023年）</span><span class="val">4.37%</span></div>
+          <div class="stat-line"><span>医療インフレ</span><span class="val">8–10%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;min-height:0;">
+      <div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:600;">なぜ格差は拡大するのか</h3>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text-mid);">医療費はGDPの<strong>4.37%（2023年）</strong>から2028年には~4.49%へ緩やかに上昇する見通しで[World Bank 2023]、保健省の総医療費5%上限の枠内にとどまっています。しかし要介護高齢者の長期介護コストは<strong>2040年にTHB 5,000億に達する</strong>と予測され、高齢者医療費は2032年までに3倍になる見込みです[NER 2024]。財政的な枠組みだけでは高齢化の曲線を吸収できません。</p>
+      </div>
+      <div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:600;">商業的な解釈</h3>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text-mid);">中間層はすでに、基本的な公的医療と自身が期待する水準（個室、迅速なアクセス、慢性疾患管理）の差額を自己負担しています。これはまさにヘルスライダーや単独医療保険が取り込む需要であり、このセグメントで<strong>収入保険料が13.7%成長</strong>している理由です[TLAA 2024]。保障格差は嘆くべき市場の失敗ではなく、責任ある形で引き受けるべき成長可能残高です。</p>
+      </div>
+    </div>
+
+    <div class="source-key">Frontiers 2024 = Frontiers in Public Health, low use of UCS 2024 · NER 2024 = Development Economic Review, future health expenditure &amp; long-term care 2024 · TLAA 2024 = Thai Life Assurance Association statistics 2024 · UHC Study 2024 = Universal Coverage Scheme out-of-pocket study 2024 · World Bank 2023 = World Bank Thailand ageing &amp; expenditure 2023</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 09: MARKET SIZING & PRODUCT MIX ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Market Sizing &amp; Product Mix</div>
+      <div class="page-section-counter">009 / 018</div>
+    </div>
+
+    <h1 class="page-h1">種目別収入保険料：ヘルスライダーと年金保険が構成を牽引</h1>
+    <p class="page-subhead">生命保険が保険料プールを支配しているが、成長は保障・老後商品に集中している。<strong>終身蓄積型は成熟段階</strong>にあり、ヘルスライダー、重篤疾病、年金保険が2027年に向けて人口動態の追い風を受けます。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>生命保険がリード、損害保険は安定</h3>
+        <p>
+          生命保険料<strong>THB 6,540億（+3.2%）</strong>は損害保険のTHB 2,860億（+0.5%）を大きく上回ります[TLAA 2024][TGIA 2024]。損害保険内では、医療保険が2025年上半期に24%増と際立った伸びを見せた一方、自動車は2%増にとどまり[TGIA 2025]、両種目にわたって高齢化シグナルが表れています。
+        </p>
+        <h3>ライダーと年金保険が成長エンジン</h3>
+        <p>
+          終身保険は生命保険収入保険料の約60%を占めますが、付帯特約が<strong>22.3%のシェアを持ち、より速いペースで成長</strong>しています[GlobalData 2025]。医療・CI特約は2028年まで5.4% CAGRで成長予測[GlobalData 2025]。90〜99歳払の年金保険は超高齢社会に対する自然な老後収入の解答です[Muang Thai 2025]。
+        </p>
+        <h3>USDフレーム</h3>
+        <p>
+          市場全体は<strong>2024年に約USD 310億</strong>で、4.1% CAGRで2029年までにUSD 380億に達すると予測[Statista 2025]。生命保険単体では2028年までにUSD 230億へ成長見込みです[GlobalData 2025]。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2024年収入保険料の種目別内訳</div>
+            <div class="chart-subtitle">タイ · THB bn · 生命 vs 損害 vs 医療CI</div>
+          </div>
+          <div class="chart-unit">THB BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="45" y1="20" x2="45" y2="200"/>
+            <line class="axis-line" x1="45" y1="200" x2="390" y2="200"/>
+            <line class="grid-line" x1="45" y1="55" x2="390" y2="55"/>
+            <line class="grid-line" x1="45" y1="103" x2="390" y2="103"/>
+            <line class="grid-line" x1="45" y1="151" x2="390" y2="151"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="155" text-anchor="end">250</text>
+            <text class="axis-text" x="40" y="107" text-anchor="end">500</text>
+            <text class="axis-text" x="40" y="59" text-anchor="end">700</text>
+            <rect class="bar-primary" x="80" y="32" width="60" height="168"/>
+            <text class="label-data" x="110" y="26" text-anchor="middle">654</text>
+            <text class="axis-text" x="110" y="216" text-anchor="middle">生命保険</text>
+            <rect class="bar-secondary" x="180" y="126" width="60" height="74"/>
+            <text class="label-data" x="210" y="120" text-anchor="middle">286</text>
+            <text class="axis-text" x="210" y="216" text-anchor="middle">損害保険</text>
+            <rect class="bar-tertiary" x="280" y="168" width="60" height="32"/>
+            <text class="label-data" x="310" y="162" text-anchor="middle" style="fill:#D97706">125</text>
+            <text class="axis-text" x="310" y="216" text-anchor="middle">医療・CI*</text>
+            <text class="label-small" x="310" y="232" text-anchor="middle">*生命保険内特約</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: TLAA, TGIA, GLOBALDATA, STATISTA · KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">生命保険料 2024年</div>
+        <div class="num">654<span class="unit">THB bn</span></div>
+        <div class="change">前年比+3.2% [TLAA 2024]</div>
+        <div class="source-tag sec">TLAA</div>
+      </div>
+      <div class="callout">
+        <div class="label">損害医療 2025年上半期</div>
+        <div class="num">+24<span class="unit">%</span></div>
+        <div class="change">損害保険最速成長種目 [TGIA 2025]</div>
+        <div class="source-tag sec">TGIA</div>
+      </div>
+      <div class="callout">
+        <div class="label">2029年市場規模</div>
+        <div class="num">38<span class="unit">USD bn</span></div>
+        <div class="change">4.1% CAGR [Statista 2025]</div>
+        <div class="source-tag sec">Statista</div>
+      </div>
+    </div>
+
+    <div class="source-key">GlobalData 2025 = GlobalData Thailand life insurance market analysis 2025 · Muang Thai 2025 = Muang Thai Life annuity product disclosures 2025 · Statista 2025 = Statista Thailand insurance market forecast 2025 · TGIA 2024 = Thai General Insurance Association statistics 2024 · TGIA 2025 = Thai General Insurance Association H1 2025 update · TLAA 2024 = Thai Life Assurance Association statistics 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 10: DIVIDER — COMPETITIVE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10</div>
+    <h1 class="divider-title">競争<span class="accent">構造</span></h1>
+    <div class="divider-thesis">
+      タイの生命保険は規模のゲームだ。上位3社 — <strong>AIA、FWD、タイライフ</strong> — は保険料の半数以上を書き、人口動態のシフトは加齢ライフサイクル全体をカバーする貸借対照表の厚み、販売信頼、商品幅を持つ事業者を有利にする。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1 市場シェア</div>
+      <div class="toc-pill">10.2 上位5社</div>
+      <div class="toc-pill">10.3 リーダープロファイル</div>
+      <div class="toc-pill">10.4 販売チャネル</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 11: COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · Competitive Landscape</div>
+      <div class="page-section-counter">011 / 018</div>
+    </div>
+
+    <h1 class="page-h1">市場構造：集約化・外資主導・スケール競争</h1>
+    <p class="page-subhead">上位3生命保険会社が収入保険料の約<strong>53%を支配</strong>しており[OIC 2024]、中程度から高度の集約化構造です。外資系親会社が資本と保険数理の専門性を提供し、人口動態転換はスケール保有者と長尾小規模事業者の差を拡大させます。</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">生命保険市場シェア（2024年）</div>
+            <div class="chart-subtitle">タイ · 生命保険料に占める %</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="20" x2="120" y2="180"/>
+            <rect class="bar-primary" x="120" y="28" width="412" height="20"/>
+            <text class="label-data" x="540" y="43" >25.5%</text>
+            <text class="label-small" x="115" y="43" text-anchor="end">AIA</text>
+            <rect class="bar-primary" x="120" y="58" width="228" height="20"/>
+            <text class="label-data" x="356" y="73">14.1%</text>
+            <text class="label-small" x="115" y="73" text-anchor="end">FWD Life</text>
+            <rect class="bar-primary" x="120" y="88" width="217" height="20"/>
+            <text class="label-data" x="345" y="103">13.4%</text>
+            <text class="label-small" x="115" y="103" text-anchor="end">Thai Life</text>
+            <rect class="bar-secondary" x="120" y="118" width="178" height="20"/>
+            <text class="label-data" x="306" y="133">~11.0%</text>
+            <text class="label-small" x="115" y="133" text-anchor="end">Muang Thai</text>
+            <rect class="bar-secondary" x="120" y="148" width="129" height="20"/>
+            <text class="label-data" x="257" y="163">~8.0%</text>
+            <text class="label-small" x="115" y="163" text-anchor="end">Krungthai-AXA</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OIC PREMIUM FILINGS 2024 · MUANG THAI &amp; KRUNGTHAI-AXA SHARES KIRA-ESTIMATED · KIRA RESEARCH 2026</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>規模と親会社</h3>
+        <p>
+          AIAが<strong>25.5%（THB 1,670億）</strong>でトップ、FWDが14.1%（THB 920億）、タイライフが13.4%（THB 880億）[OIC 2024]。外資および銀行系親会社がリーダーの資本力を支えています。
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>上位3社合計シェア</span><span class="val">~53%</span></div>
+          <div class="stat-line"><span>AIA保険料</span><span class="val">THB 167 bn</span></div>
+          <div class="stat-line"><span>FWD保険料</span><span class="val">THB 92 bn</span></div>
+          <div class="stat-line"><span>ムアンタイ保険料</span><span class="val">THB 72 bn</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">AIA Thailand</div>
+        <div class="comp-parent">AIA Group（香港）</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">25.5%</span></div>
+        <div class="comp-stat-row"><span>保険料</span><span class="val">THB 167 bn</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">代理店主体</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>最大規模の専属代理店、医療・保障重視、地域全体の貸借対照表の厚み。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">FWD Life Insurance</div>
+        <div class="comp-parent">FWD Group（汎アジア系）</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">14.1%</span></div>
+        <div class="comp-stat-row"><span>保険料</span><span class="val">THB 92 bn</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">バンカ + デジタル</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>デジタルファーストのブランド、強力なバンカシュアランス、急成長する保障ビジネス。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">Thai Life Insurance</div>
+        <div class="comp-parent">国内上場（SET: TLI）</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">13.4%</span></div>
+        <div class="comp-stat-row"><span>保険料</span><span class="val">THB 88 bn</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">代理店主体</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>国内ブランドの厚み、高齢者向け商品、上場企業としての情報開示。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">Muang Thai Life</div>
+        <div class="comp-parent">ムアンタイグループ / Ageas提携</div>
+        <div class="comp-stat-row"><span>保険料</span><span class="val">THB 72 bn</span></div>
+        <div class="comp-stat-row"><span>注力領域</span><span class="val">年金・老後</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">バンカ（カシコン銀行）</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>老後商品の深さ（99歳払年金）、強力な銀行系販売網。
+        </div>
+      </div>
+    </div>
+
+    <div class="source-key">OIC 2024 = Office of Insurance Commission life-premium filings 2024 · Kira estimates = KIRA in-house analyst triangulation (Muang Thai, Krungthai-AXA shares derived from premium vs total)</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 12: LEADER PROFILE — AIA ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10.3 · Player Profile</div>
+      <div class="page-section-counter">012 / 018</div>
+    </div>
+
+    <div class="profile-hero">
+      <div>
+        <h2>AIA Thailand</h2>
+        <div class="sub">AIA Groupの子会社 · 香港上場の汎アジア系保険会社</div>
+        <div class="tags">
+          <span class="data-tag primary">Market Leader</span>
+          <span class="data-tag secondary">Health &amp; Protection</span>
+          <span class="data-tag estimate">KIRA Tier 1</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">生命保険シェア</div><div class="val">25.5<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">収入保険料</div><div class="val">167<span class="unit">THB bn</span></div></div>
+        <div class="stat"><div class="label">主要チャネル</div><div class="val">代理店</div></div>
+        <div class="stat"><div class="label">親会社</div><div class="val">AIA Grp</div></div>
+      </div>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>市場ポジション</h3>
+        <p>
+          AIAはタイ生命保険の明確なリーダーであり、<strong>2024年にTHB 1,670億・保険料シェア25.5%</strong>を計上[OIC 2024] — 第2位の2倍近い規模です。この強さは国内最大規模の専属代理店網と、純粋な貯蓄商品よりも医療・保障に長年注力してきた姿勢に支えられています。
+        </p>
+        <h3>なぜ高齢顧客を取り込めるか</h3>
+        <p>
+          ヘルスライダー、重篤疾病、シニア生命保険にわたる商品の深さが人口動態シフトに直接対応しています。医療・CI保険料が業界全体で<strong>年率13.7%成長</strong>する中[TLAA 2024]、AIAの保障重視のポジションはこのプールから不均衡に大きなシェアを取り込む構造にあります。
+        </p>
+      </div>
+
+      <div class="profile-col">
+        <h3>戦略的姿勢</h3>
+        <p>
+          グループとしての資本力が、強化されるRBCとIFRS 17の制度下で長期医療・年金保証を支えます[OIC 2025]。AIAは高齢顧客が好む対面代理店の信頼性に、デジタル引受・保険金支払いへの着実な投資を組み合わせ、市場が再プラットフォーム化する中でシェアを守るポジションを確立しています。
+        </p>
+        <h3>強みと注視点</h3>
+        <ul>
+          <li><strong>代理店規模：</strong>最大の対面網、シニア顧客獲得において決定的</li>
+          <li><strong>保障重視：</strong>医療・CI注力が人口動態の追い風を受ける</li>
+          <li><strong>資本の厚み：</strong>地域系親会社がRBC / IFRS 17負担を緩和</li>
+          <li><strong>注視：</strong>FWDのデジタルバンカ攻勢；コペイメント説明不足リスク</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="source-key">OIC 2024 = Office of Insurance Commission life-premium filings 2024 · OIC 2025 = Office of Insurance Commission 2025 directives (RBC, IFRS 17) · TLAA 2024 = Thai Life Assurance Association statistics 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 13: DIVIDER — REGULATION ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 11</div>
+    <h1 class="divider-title">規制と<span class="accent">コスト抑制の転換</span></h1>
+    <div class="divider-thesis">
+      保険委員会（OIC）は持続可能性へ方針を転換した。<strong>2025年3月のコペイメント条項</strong>は、リスクベース資本とIFRS 17とともに、医療コストが上昇する中で損害率の規律と財務健全性を重視する制度への転換を示している。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">11.1 コペイメント</div>
+      <div class="toc-pill">11.2 RBC &amp; IFRS 17</div>
+      <div class="toc-pill">11.3 新健康保険標準</div>
+      <div class="toc-pill">11.4 勝者と敗者</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 14: REGULATION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Regulation</div>
+      <div class="page-section-counter">014 / 018</div>
+    </div>
+
+    <h1 class="page-h1">成長だけでなく持続可能性に照準を合わせた規制制度</h1>
+    <p class="page-subhead">OICの2025年アジェンダ — コペイメント、リスクベース資本、IFRS 17、ESG — は、人口動態と医療コストの曲線が急峻化する中での<strong>長期的な支払能力</strong>を明確に意識したものです。早期に価格設定・資本・情報開示を整合させた事業者が、抵抗した事業者を業績で上回ります。</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;min-height:0;">
+      <div class="profile-col">
+        <h3>コペイメント：需要側のブレーキ</h3>
+        <p>
+          <strong>2025年3月19日</strong>以降に締結された個人保険契約に適用されるコペイメント条項[OIC 2025]は、過剰受診を抑制し保険料水準を安定させるため、請求コストを契約者と分担する仕組みです。新健康保険標準（OIC Order 14〜15/2564）のもとで整備されており、年率<strong>8〜10%の医療インフレ</strong>に対する意図的な措置です[Bangkok Post 2024]。
+        </p>
+        <h3>RBCとIFRS 17</h3>
+        <p>
+          リスクベース資本とIFRS 17は長期保証のコストを明確化します[OIC 2025]。年金保険・終身保険のポートフォリオには透明な資本賦課が課され、厳密な資産負債管理（ALM）と潤沢な親会社資本を持つ事業者が有利になります。
+        </p>
+      </div>
+      <div class="profile-col">
+        <h3>市場参加者への含意</h3>
+        <p>
+          コスト抑制への転換は<strong>規模・保険数理の専門性・顧客への明確なコミュニケーション</strong>を持つ事業者に有利です。コペイメントをうまく説明できる事業者は信頼を守り損害率を防衛しますが、契約者を驚かせた事業者は失効と逆選択のリスクにさらされます。
+        </p>
+        <ul>
+          <li><strong>勝者：</strong>強力な保険数理機能を持つ、資本力・医療保障重視のリーダー</li>
+          <li><strong>圧力下：</strong>RBC / IFRS 17のもとで資本が薄い規模の小さな事業者</li>
+          <li><strong>転換点：</strong>信頼を損なわずコペイメントを説明できる販売チャネル</li>
+          <li><strong>新潮流：</strong>比較・価格競争を容易にする標準化商品</li>
+        </ul>
+        <p style="margin-top:6px;">OICの2025年包括フレームワークは、新たなグローバルリスクに対する金融システム強化のための13項目のメカニズムを列挙しており[OIC 2025]、ヘッドライン成長ではなくレジリエンスが次のサイクルを定義するという明確なシグナルです。</p>
+      </div>
+    </div>
+
+    <div class="source-key">OIC 2025 = Office of Insurance Commission 2025 industry directives (copayment, RBC, IFRS 17, New Health Standard) · Bangkok Post 2024 = Bangkok Post insurer medical-inflation report 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 15: AI OVERVIEW ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · Technology in Distribution &amp; Claims</div>
+      <div class="page-section-counter">015 / 018</div>
+    </div>
+
+    <h1 class="page-h1">テクノロジーはパイロットから引受の中核へ</h1>
+    <p class="page-subhead">引受、保険金支払い、不正検知におけるAI活用は、グローバルな業界全体で差別化要因から<strong>業界標準</strong>へと移行しています[InsurTech 2025]。高齢化した顧客ポートフォリオを持つタイの保険会社にとっての目標は、迅速なオンボーディング、損害率の制御、そして信頼できる人的アドバイザーの維持可能なチャネル経済性です。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>実験からインフラへ</h3>
+        <p>
+          保険会社とインシュアテックは現在、顧客サービス、引受、保険金支払い、不正予測にわたって機械学習モデルを稼働させています[InsurTech 2025]。2026年までにこれらはもはや競争優位ではなくベースライン能力となり、タイの事業者もコアワークフローへの統合を進めています。
+        </p>
+        <h3>不正検知と損害率管理</h3>
+        <p>
+          AI不正検知は先進的な導入例で<strong>不正請求を最大〜30%削減</strong>しています[InsurTech 2025]。コペイメント制度と組み合わせることで、タイの医療保険会社は医療コスト上昇に対する第2のレバーを持つことになります。
+        </p>
+        <h3>チャネル：補完であり代替ではない</h3>
+        <p>
+          高齢の顧客は依然として対面アドバイスとバンカシュアランスを信頼しています。タイで現実的なのは<strong>AIで強化された代理店・バンカ</strong>というパターンです — デジタルツールが見積もり・引受・保険金支払いを効率化しつつ、人的関係が販売の基盤を担います。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">タイ保険業界でのAI活用の優先領域</div>
+            <div class="chart-subtitle">導入成熟度 · 方向性指標</div>
+          </div>
+          <div class="chart-unit">MATURITY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="20" x2="120" y2="200"/>
+            <rect class="bar-primary" x="120" y="32" width="200" height="22"/>
+            <text class="label-data" x="328" y="48">高</text>
+            <text class="label-small" x="115" y="48" text-anchor="end">請求自動化</text>
+            <rect class="bar-primary" x="120" y="66" width="175" height="22"/>
+            <text class="label-data" x="303" y="82">高</text>
+            <text class="label-small" x="115" y="82" text-anchor="end">不正検知</text>
+            <rect class="bar-secondary" x="120" y="100" width="150" height="22"/>
+            <text class="label-small" x="278" y="116" style="fill:#00A88B">拡大中</text>
+            <text class="label-small" x="115" y="116" text-anchor="end">引受</text>
+            <rect class="bar-secondary" x="120" y="134" width="125" height="22"/>
+            <text class="label-small" x="253" y="150" style="fill:#00A88B">拡大中</text>
+            <text class="label-small" x="115" y="150" text-anchor="end">販売AI</text>
+            <rect class="bar-tertiary" x="120" y="168" width="85" height="22"/>
+            <text class="label-small" x="213" y="184" style="fill:#D97706">初期</text>
+            <text class="label-small" x="115" y="184" text-anchor="end">介護分析</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: INSURTECH DIGITAL, NORTON ROSE FULBRIGHT · KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">不正請求削減率</div>
+        <div class="num">~30<span class="unit">%</span></div>
+        <div class="change">先進的AI導入事例 [InsurTech 2025]</div>
+        <div class="source-tag sec">InsurTech</div>
+      </div>
+      <div class="callout">
+        <div class="label">2026年の位置づけ</div>
+        <div class="num">Table<span class="unit">stakes</span></div>
+        <div class="change">AI請求・引受 [InsurTech 2025]</div>
+        <div class="source-tag sec">InsurTech</div>
+      </div>
+      <div class="callout">
+        <div class="label">タイの優先チャネル</div>
+        <div class="num">Banca<span class="unit">+ 代理店</span></div>
+        <div class="change">高齢顧客の信頼チャネル</div>
+        <div class="source-tag est">KIRA Est.</div>
+      </div>
+    </div>
+
+    <div class="source-key">InsurTech 2025 = InsurTech Digital, AI claims &amp; underwriting review 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 16: AI USE CASES — 6 CARDS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12.2 · Technology Use Cases</div>
+      <div class="page-section-counter">016 / 018</div>
+    </div>
+
+    <h1 class="page-h1">タイの保険会社を変革する6つのテクノロジー活用事例</h1>
+    <p class="page-subhead">実務への落とし込みが2027年の勝者と敗者を分けます。これらの事例は<strong>顧客獲得</strong>から<strong>保険金支払い管理</strong>まで幅広く、いずれもタイまたは最も近い地域ベンチマークで現在観察可能なものです。</p>
+
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">01 · UNDERWRITING</div>
+        <div class="uc-title">アルゴリズム健康引受</div>
+        <div class="uc-body">
+          MLモデルが高齢申込者の医療・CI リスクをより速く、より細かく価格設定し、従来は一律排除されていた引受可能年齢を拡大します。60歳以上の顧客プールを収益的に取り込む上で不可欠です。
+        </div>
+        <div class="uc-example">Benchmark: pan-Asian carriers</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">02 · CLAIMS</div>
+        <div class="uc-title">保険金支払いの自動化</div>
+        <div class="uc-body">
+          AIが定型的な医療請求を手動処理なしに審査・支払い、処理時間とコストを削減します。コペイメントルールと組み合わせることで、一貫性のある監査可能な査定を規模に応じて実施できます。
+        </div>
+        <div class="uc-example">Status: high maturity globally</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">03 · FRAUD</div>
+        <div class="uc-title">保険金不正検知</div>
+        <div class="uc-body">
+          パターンモデルが異常な医療請求を検出し、先進的な導入例では不正支払いを最大<strong>〜30%削減</strong>しています[InsurTech 2025]。医療コスト上昇に対する直接的な損害率改善レバーです。
+        </div>
+        <div class="uc-example">Anchor: ~30%不正削減</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">04 · DISTRIBUTION</div>
+        <div class="uc-title">代理店・バンカ支援</div>
+        <div class="uc-body">
+          レコメンデーションエンジンがアドバイスの時点で各顧客に最適な年金保険やヘルスライダーを提示し、加齢ライフサイクル全体でクロスセルを向上させながら、信頼できる人的チャネルを維持します。
+        </div>
+        <div class="uc-example">Observable: bancassurance leaders</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">05 · RETENTION</div>
+        <div class="uc-title">失効・継続率モデリング</div>
+        <div class="uc-body">
+          予測モデルが失効リスクの高い契約（コペイメント変更で期待が変わった契約者に多い）を特定し、長期の医療・年金ポートフォリオを守るためのプロアクティブな対応を可能にします。
+        </div>
+        <div class="uc-example">Tie-in: コペイメント説明</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">06 · CARE ANALYTICS</div>
+        <div class="uc-title">長期介護リスク分析</div>
+        <div class="uc-body">
+          新興モデルが高齢者の要介護度と介護コスト軌跡を予測 — <strong>THB 5,000億</strong>規模の2040年介護コスト波に対応する介護保険商品の価格設定の基盤となります[NER 2024]。
+        </div>
+        <div class="uc-example">Stage: 初期・高い戦略的価値</div>
+      </div>
+    </div>
+
+    <div class="source-key">InsurTech 2025 = InsurTech Digital, AI claims &amp; underwriting review 2025 · NER 2024 = Development Economic Review, long-term care cost projection 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 17: OUTLOOK ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 13 · Outlook to 2032</div>
+      <div class="page-section-counter">017 / 018</div>
+    </div>
+
+    <h1 class="page-h1">2032年展望：ヘッドライン成長は控えめ、構成転換は決定的</h1>
+    <p class="page-subhead">タイの収入保険料成長は<strong>低〜中一桁台</strong>で推移すると見ており、人口動態転換がヘルスライダー・年金保険、そしてホライズン後半には介護保険で平均超えの拡大を牽引します。勝者は今から高齢顧客に向けてポジションを再構成する事業者です。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>ベースケース</h3>
+        <p>
+          業界収入保険料は<strong>2029年まで約4%で複利成長</strong>[Statista 2025]し、生命保険単体は2028年までに~USD 230億へ[GlobalData 2025]。医療・CI保険は保障格差と医療インフレが続く中[TLAA 2024][GlobalData 2025]、高一桁〜低二桁の伸びで市場を上回ります。
+        </p>
+        <h3>上振れ・下振れ要因</h3>
+        <p>
+          上振れ要因：民間医療への中間層の取り込み加速、税制優遇付き年金保険、介護保険商品の革新。下振れ要因：経済減速による保護支出の裁量的縮小、またはコペイメント摩擦が近期のヘルスライダー販売を抑圧するシナリオ。
+        </p>
+        <h3>戦略的命題</h3>
+        <p>
+          人口動態の曲線はこの市場で最も信頼性の高い変数です。<strong>60歳以上のライフサイクル向けにポートフォリオを再構成</strong>し — 医療、年金保険、介護 — 資本力強化とAIで強化された販売に投資してください。規模が小さく貯蓄型に傾いた事業者が最も大きな調整を迫られます。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">収入保険料合計の軌跡</div>
+            <div class="chart-subtitle">タイ · USD bn · 2024–2032F</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="45" y1="20" x2="45" y2="200"/>
+            <line class="axis-line" x1="45" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="45" y1="60" x2="460" y2="60"/>
+            <line class="grid-line" x1="45" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="45" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="164" text-anchor="end">15</text>
+            <text class="axis-text" x="40" y="114" text-anchor="end">30</text>
+            <text class="axis-text" x="40" y="64" text-anchor="end">45</text>
+            <rect class="bar-primary" x="75" y="76" width="50" height="124"/>
+            <text class="label-data" x="100" y="70" text-anchor="middle">31</text>
+            <text class="axis-text" x="100" y="216" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="170" y="64" width="50" height="136"/>
+            <text class="label-data" x="195" y="58" text-anchor="middle">34</text>
+            <text class="axis-text" x="195" y="216" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="265" y="48" width="50" height="152" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text class="label-data" x="290" y="42" text-anchor="middle">38</text>
+            <text class="axis-text" x="290" y="216" text-anchor="middle">2029F</text>
+            <rect class="bar-tertiary" x="360" y="28" width="50" height="172" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="385" y="22" text-anchor="middle" style="fill:#D97706">~43</text>
+            <text class="axis-text" x="385" y="216" text-anchor="middle">2032F</text>
+            <path d="M 125 78 L 168 66" stroke="var(--primary)" stroke-width="1.5" fill="none"/>
+            <text class="label-small" x="240" y="38" text-anchor="middle" style="fill:var(--primary);font-weight:700">~4% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: STATISTA, GLOBALDATA · 2032 FIGURE KIRA-ESTIMATED FROM ~4% CAGR · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">2027年市場（ベースケース）</div>
+        <div class="num">~34<span class="unit">USD bn</span></div>
+        <div class="change">~4% CAGRベース [Kira estimates]</div>
+        <div class="source-tag est">KIRA Est.</div>
+      </div>
+      <div class="callout">
+        <div class="label">生命保険 2028年</div>
+        <div class="num">23<span class="unit">USD bn</span></div>
+        <div class="change">[GlobalData 2025]</div>
+        <div class="source-tag sec">GlobalData</div>
+      </div>
+      <div class="callout">
+        <div class="label">介護コスト波 2040年</div>
+        <div class="num">500<span class="unit">THB bn</span></div>
+        <div class="change down">要介護高齢者の介護費 [NER 2024]</div>
+        <div class="source-tag sec">NER</div>
+      </div>
+    </div>
+
+    <div class="source-key">GlobalData 2025 = GlobalData Thailand life insurance market analysis 2025 · NER 2024 = Development Economic Review long-term care projection 2024 · Statista 2025 = Statista Thailand insurance forecast 2025 · TLAA 2024 = Thai Life Assurance Association statistics 2024 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 18: METHODOLOGY ENDNOTE & SOURCES ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 14 · Methodology &amp; Sources</div>
+      <div class="page-section-counter">018 / 018</div>
+    </div>
+    <h1 class="page-h1">調査方法論と出典索引</h1>
+    <p class="page-subhead">本分析は、規制当局・業界団体の統計、人口動態・医療制度研究、事業者の開示資料を、KIRAアナリストの三角検証と組み合わせています。将来数値は確定予測ではなく、記録済みの基準年に固定した方向性シナリオです。定量的主張の約5分の1はKIRA推計であり、残りは記名外部出典を引用しています。</p>
+
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">Source Index</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.6;">
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[1]</span>Thai Life Assurance Association — 生命保険料統計・年次報告書 2024年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[2]</span>Thai General Insurance Association — 損害保険収入保険料統計 2024年・2025年上半期。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[3]</span>Office of Insurance Commission — 2024年収入保険料届出；2025年業界指令、コペイメント条項、RBC・IFRS 17。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[4]</span>GISTDA — 高齢者と子ども世代の比較に関する2025年人口分析。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[5]</span>World Health Organization — 東南アジア健康的高齢化特集；2035年超高齢社会予測。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[6]</span>World Bank — Caring for Thailand's Aging Population；医療費系列データ 2023年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[7]</span>Universal Coverage Scheme 利用実態・自己負担調査 2024年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[8]</span>Frontiers in Public Health — UCS低利用の規定要因 2024年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[9]</span>Development Economic Review — 将来の医療費と長期介護コスト 2024年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[10]</span>Statista — タイ保険市場予測 2025年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[11]</span>GlobalData — タイ生命保険市場分析・2028年予測 2025年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[12]</span>Bangkok Post — 保険会社成長・医療インフレ報道 2024年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[13]</span>Muang Thai Life — 年金・老後商品開示 2025年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[14]</span>InsurTech Digital — 保険金支払い・引受におけるAI活用 2025年。</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[15]</span>KIRA Research — 上記全出典にわたる社内アナリスト三角検証。</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
