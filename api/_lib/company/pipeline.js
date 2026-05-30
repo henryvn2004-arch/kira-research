@@ -29,7 +29,7 @@ import { makeSlug } from './normalize.js';
  *   error?:      string
  * }>}
  */
-export async function runPipeline(input, ctx) {
+export async function runPipeline(input, ctx, { force = false } = {}) {
   if (!input.taxId && !input.name) return { error: 'missing_input' };
 
   const country = (input.country || DEFAULT_COUNTRY).toUpperCase();
@@ -41,9 +41,11 @@ export async function runPipeline(input, ctx) {
 
   const { entity } = resolved;
 
-  // Cache check — fresh hit → return immediately
-  const cached = await getCachedReport(entity.id, ctx);
-  if (cached) return { report: cached };
+  // Cache check — fresh hit → return immediately (skipped when force=true)
+  if (!force) {
+    const cached = await getCachedReport(entity.id, ctx);
+    if (cached) return { report: cached };
+  }
 
   // Short-circuit: dissolved/cancelled companies skip scraping
   const isActive = !entity.status_cache || entity.status_cache === 'active';
