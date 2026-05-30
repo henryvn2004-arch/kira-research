@@ -9,7 +9,7 @@
 // TTL 90 days — company descriptions rarely change.
 // ============================================================
 
-import { emptyResult, failedResult } from '../connector.js';
+import { failedResult } from '../connector.js';
 
 const TAVILY_BASE = 'https://api.tavily.com/search';
 

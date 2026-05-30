@@ -82,9 +82,6 @@ async function stage2OfficialSources(entity, ctx) {
   const { supabase } = ctx;
   const country = entity.country_code || DEFAULT_COUNTRY;
 
-  // Load all existing facts for this entity (includes static seed)
-  const existingFacts = await loadFacts(entity.id, supabase);
-
   // Check if ĐKKD data is fresh enough to skip re-fetch
   const dkkdCoverage = await getCoverage(entity.id, 'dkkd', supabase);
   const needsFetch = !dkkdCoverage
