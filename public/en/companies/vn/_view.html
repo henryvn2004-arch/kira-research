@@ -224,6 +224,10 @@
       .co-name { font-size: 22px; }
       .co-cta { flex-direction: column; align-items: flex-start; }
     }
+    @keyframes co-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
   </style>
 </head>
 <body>
@@ -253,20 +257,20 @@
         if (!r.ok) throw new Error('api_error');
         return r.json();
       })
-      .then(({ report }) => {
+      .then(({ report, needs_enrichment }) => {
         render(report);
-        // Fire background enrichment if masothue/Tavily haven't run yet.
-        // Indicator: seeded facts lack founding_date, address, legal_rep.
-        // Idempotent on the server — skips if coverage already fresh.
-        const hasDeepFacts = report.facts && (
-          report.facts.founding_date || report.facts.address || report.facts.legal_rep
-        );
-        if (!hasDeepFacts) {
+        // Trigger enrichment if: API flagged it (stub with no payload), or facts are empty
+        const isEmpty = !report.facts || Object.keys(report.facts).length === 0;
+        if (needs_enrichment || isEmpty) {
+          showEnrichBanner();
           fetch('/api/company-enrich', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slug }),
-          }).catch(() => {});
+          })
+          .then(r => r.json())
+          .then(({ enriched }) => { if (enriched) location.reload(); })
+          .catch(() => hideEnrichBanner());
         }
       })
       .catch(err => {
@@ -276,6 +280,18 @@
           renderError('Unable to load company data.', 'Please try again in a moment.');
         }
       });
+
+    function showEnrichBanner() {
+      const b = document.createElement('div');
+      b.id = 'co-enrich-banner';
+      b.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;';
+      b.innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--primary);animation:co-pulse 1.2s ease-in-out infinite;"></span>Fetching company data from public registries…';
+      const main = document.getElementById('co-main');
+      if (main?.firstChild) main.insertBefore(b, main.firstChild);
+    }
+    function hideEnrichBanner() {
+      document.getElementById('co-enrich-banner')?.remove();
+    }
 
     function render(r) {
       updateHead(r);
@@ -307,7 +323,7 @@
           </div>
         </div>
 
-        ${buildFactsGrid(r.facts)}
+        ${buildFactsGrid(r.facts, r.country_code)}
 
         <div class="co-section">
           <h2 class="co-section-title">Company Overview</h2>
@@ -331,14 +347,14 @@
       `;
     }
 
-    function buildFactsGrid(facts) {
+    function buildFactsGrid(facts, countryCode) {
       if (!facts || Object.keys(facts).length === 0) return '';
 
       const items = [];
 
       const cap = facts.charter_capital?.value;
       if (cap) {
-        const { amount, label } = fmtCapital(cap, r.country_code);
+        const { amount, label } = fmtCapital(cap, countryCode);
         items.push(factCard('Registered Capital', amount, label));
       }
 
@@ -366,6 +382,21 @@
       const intl = facts.international_name?.value;
       if (intl) {
         items.push(factCard('International Name', intl, ''));
+      }
+
+      const industry = facts.industry?.value;
+      if (industry) {
+        items.push(factCard('Industry', capitalize(industry.replace(/_/g, ' ')), ''));
+      }
+
+      const employees = facts.employees?.value;
+      if (employees) {
+        items.push(factCard('Employees', Number(employees).toLocaleString(), ''));
+      }
+
+      const website = facts.website?.value;
+      if (website) {
+        items.push(factCard('Website', truncate(website.replace(/^https?:\/\//, ''), 40), ''));
       }
 
       if (items.length === 0) return '';
@@ -418,10 +449,14 @@
     function buildCoverageSection(coverage) {
       if (!coverage || Object.keys(coverage).length === 0) return '';
       const sourceLabels = {
+        opencorporates: 'OpenCorporates (Official Registry)',
+        wikidata:       'Wikidata (Knowledge Graph)',
+        tavily:         'Web Search',
+        llm_narrative:  'AI Narrative',
+        static_seed:    'Curated Data',
         dkkd: 'ĐKKD (Business Registry)', tax: 'Tax Authority',
-        static_seed: 'Curated Data', gmb: 'Google Business',
-        noip: 'Trademark (NOIP)', court: 'Court Records',
-        bidding: 'Public Procurement',
+        gmb: 'Google Business', noip: 'Trademark (NOIP)',
+        court: 'Court Records', bidding: 'Public Procurement',
       };
       const badges = Object.entries(coverage)
         .filter(([s]) => s !== 'static_seed')
