@@ -27,22 +27,17 @@ const TAX_ID_PROP = {
   SG: 'P4534',  // Singapore UEN
 };
 
-// Keep to 3 types max — VALUES with 7 items creates a wide UNION that times out for large countries (JP, KR)
-const COMPANY_TYPE_QIDS = [
-  'wd:Q783794',   // business enterprise (parent class)
-  'wd:Q4830453',  // public company
-  'wd:Q891723',   // private company
-];
-
 function buildSparql(countryQid, taxIdProp, offset) {
   const taxClause = taxIdProp
     ? `  OPTIONAL { ?company wdt:${taxIdProp} ?taxId }`
     : '';
-  // schema:description intentionally omitted — requires a large join and is the
-  // primary cause of SPARQL timeouts on country datasets with 1000+ companies.
+  // Use subclass-traversal path (wdt:P31/wdt:P279* wd:Q783794) instead of a
+  // VALUES union. This catches ALL company types regardless of how specifically
+  // Wikidata classifies them — including cty cổ phần (Q47932634), cty TNHH
+  // (Q1616075), SOEs (Q2659904), etc. that would be missed by direct P31 match.
+  // schema:description omitted — expensive join, primary cause of timeouts.
   return `SELECT DISTINCT ?company ?companyLabel ?website ?inception ?taxId ?ticker WHERE {
-  VALUES ?ctype { ${COMPANY_TYPE_QIDS.join(' ')} }
-  ?company wdt:P31 ?ctype .
+  ?company wdt:P31/wdt:P279* wd:Q783794 .
   ?company wdt:P17 wd:${countryQid} .
   OPTIONAL { ?company wdt:P856 ?website }
   OPTIONAL { ?company wdt:P571 ?inception }
@@ -115,11 +110,10 @@ export default async function handler(req, res) {
     const taxId    = row.taxId?.value    || null;
     const website  = row.website?.value  || null;
     const foundYear= parseYear(row.inception?.value);
-    // Skip rows with no data beyond name
-    if (!taxId && !website && !foundYear) continue;
+    // Accept any company with a valid label — wikidata_qid alone is enough
+    // for the enrichment connector to fetch full details on first page visit.
     valid.push({ qid, name, taxId, website, foundYear,
-      ticker: row.ticker?.value || null,
-      description: row.description?.value || null });
+      ticker: row.ticker?.value || null });
   }
 
   // ── 3. Load existing entities for fast dedup ───────────────
@@ -191,11 +185,10 @@ export default async function handler(req, res) {
   const now   = new Date().toISOString();
   const facts = [];
   for (const e of toEnrich) {
-    if (e.qid)         facts.push({ entity_id: e.entityId, key: 'wikidata_qid',  value: JSON.stringify(e.qid),         confidence: 1.0, observed_at: now });
-    if (e.website)     facts.push({ entity_id: e.entityId, key: 'website',       value: JSON.stringify(e.website),     confidence: 0.9, observed_at: now });
-    if (e.foundYear)   facts.push({ entity_id: e.entityId, key: 'founding_year', value: e.foundYear,                   confidence: 0.9, observed_at: now });
-    if (e.ticker)      facts.push({ entity_id: e.entityId, key: 'stock_ticker',  value: JSON.stringify(e.ticker),      confidence: 0.9, observed_at: now });
-    if (e.description) facts.push({ entity_id: e.entityId, key: 'description',   value: JSON.stringify(e.description), confidence: 0.9, observed_at: now });
+    if (e.qid)       facts.push({ entity_id: e.entityId, key: 'wikidata_qid',  value: JSON.stringify(e.qid),     confidence: 1.0, observed_at: now });
+    if (e.website)   facts.push({ entity_id: e.entityId, key: 'website',       value: JSON.stringify(e.website), confidence: 0.9, observed_at: now });
+    if (e.foundYear) facts.push({ entity_id: e.entityId, key: 'founding_year', value: e.foundYear,               confidence: 0.9, observed_at: now });
+    if (e.ticker)    facts.push({ entity_id: e.entityId, key: 'stock_ticker',  value: JSON.stringify(e.ticker),  confidence: 0.9, observed_at: now });
   }
   if (facts.length > 0) {
     await supabase.from('facts').upsert(facts, { onConflict: 'entity_id,key' });
