@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Company Intelligence — KIRA RESEARCH</title>
+  <meta name="description" content="Search company profiles across Vietnam, Japan, South Korea, Australia, Singapore and more. Tax registration, charter capital, key facts — from official registries." />
+
+  <link rel="canonical" href="https://kiraresearch.com/en/companies/" />
+  <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/companies/" />
+  <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/companies/" />
+  <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/companies/" />
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/companies/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:site_name"   content="KIRA RESEARCH" />
+  <meta property="og:title"       content="Company Intelligence — KIRA RESEARCH" />
+  <meta property="og:description" content="Search company profiles across Asia-Pacific. Tax registration, charter capital, verified facts from official registries." />
+  <meta property="og:url"         content="https://kiraresearch.com/en/companies/" />
+  <meta name="twitter:card"       content="summary_large_image" />
+
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "SearchResultsPage",
+    "name": "Company Intelligence Search — KIRA RESEARCH",
+    "description": "Search company profiles across Asia-Pacific markets. Verified from official registries.",
+    "url": "https://kiraresearch.com/en/companies/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "KIRA RESEARCH",
+      "url": "https://kiraresearch.com"
+    }
+  }</script>
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    /* ── Page wrap ───────────────────────────────── */
+    .co-land-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+
+    /* ── Hero ────────────────────────────────────── */
+    .co-land-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+    .co-land-wrap h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 800;
+      font-size: clamp(26px, 4vw, 40px);
+      line-height: 1.15;
+      color: var(--text);
+      margin: 0 0 14px;
+    }
+    .co-land-sub {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 36px;
+    }
+
+    /* ── Search box ──────────────────────────────── */
+    .co-search-row {
+      display: flex;
+      gap: 0;
+      position: relative;
+      box-shadow: 0 2px 16px rgba(0,0,0,.08);
+      border-radius: 10px;
+      margin-bottom: 40px;
+    }
+    .co-country-select {
+      flex: 0 0 auto;
+    }
+    .co-country-select select {
+      height: 52px;
+      padding: 0 12px 0 14px;
+      border: 1.5px solid var(--border, #dde1e8);
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+      background: var(--surface, #f8f9fb);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      min-width: 140px;
+    }
+    .co-country-select select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .co-query-wrap {
+      flex: 1 1 auto;
+      position: relative;
+    }
+    #co-query {
+      width: 100%;
+      height: 52px;
+      padding: 0 46px 0 16px;
+      border: 1.5px solid var(--border, #dde1e8);
+      border-radius: 0 10px 10px 0;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: #fff;
+      box-sizing: border-box;
+    }
+    #co-query::placeholder { color: var(--muted); }
+    #co-query:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .co-query-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      display: flex;
+    }
+
+    /* ── Suggestions dropdown ────────────────────── */
+    .co-suggestions {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid var(--border, #dde1e8);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      z-index: 200;
+      overflow: hidden;
+    }
+    .co-suggestions[hidden] { display: none; }
+
+    .co-sug-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border, #eef0f4);
+      transition: background 0.1s;
+    }
+    .co-sug-item:last-child { border-bottom: none; }
+    .co-sug-item:hover,
+    .co-sug-item.active { background: var(--surface, #f8f9fb); }
+
+    .co-sug-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .co-sug-tax {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .co-sug-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: color-mix(in srgb, var(--primary) 10%, transparent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .co-sug-loading {
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .co-sug-empty {
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Country directory grid ──────────────────── */
+    .co-land-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .co-land-divider-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .co-land-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border, #dde1e8);
+    }
+
+    .co-country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .co-country-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border: 1.5px solid var(--border, #dde1e8);
+      border-radius: 10px;
+      text-decoration: none;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .co-country-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    }
+    .co-country-card.co-soon {
+      opacity: 0.55;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .co-cc-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .co-country-card.co-soon .co-cc-badge {
+      background: var(--muted);
+    }
+
+    .co-cc-info { min-width: 0; }
+    .co-cc-name {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .co-cc-count {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 480px) {
+      .co-search-row { flex-direction: column; box-shadow: none; }
+      .co-country-select select {
+        width: 100%;
+        border-right: 1.5px solid var(--border, #dde1e8);
+        border-bottom: none;
+        border-radius: 10px 10px 0 0;
+      }
+      #co-query { border-radius: 0 0 10px 10px; }
+      .co-country-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="co-land-wrap">
+    <p class="co-land-eyebrow">Company Intelligence</p>
+    <h1>Search any company<br>across Asia-Pacific</h1>
+    <p class="co-land-sub">Tax registration, charter capital, key facts — pulled from official registries and verified sources. Click a result to view the full profile.</p>
+
+    <!-- Search bar -->
+    <div class="co-search-row">
+      <div class="co-country-select">
+        <select id="co-country" aria-label="Select country">
+          <option value="VN">Vietnam</option>
+          <option value="JP">Japan</option>
+          <option value="KR">South Korea</option>
+          <option value="AU">Australia</option>
+          <option value="SG">Singapore</option>
+          <option value="MY">Malaysia</option>
+          <option value="ID">Indonesia</option>
+          <option value="TH">Thailand</option>
+          <option value="PH">Philippines</option>
+          <option value="NZ">New Zealand</option>
+        </select>
+      </div>
+      <div class="co-query-wrap">
+        <input
+          type="text"
+          id="co-query"
+          placeholder="Search company name…"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Search company"
+          aria-autocomplete="list"
+          aria-haspopup="listbox"
+        />
+        <span class="co-query-icon" aria-hidden="true">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+            <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <div id="co-suggestions" class="co-suggestions" role="listbox" hidden></div>
+      </div>
+    </div>
+
+    <!-- Per-country directories -->
+    <div class="co-land-divider">
+      <span class="co-land-divider-label">Browse by country</span>
+      <div class="co-land-divider-line"></div>
+    </div>
+
+    <div class="co-country-grid">
+      <a href="/en/companies/vn/" class="co-country-card">
+        <span class="co-cc-badge">VN</span>
+        <span class="co-cc-info">
+          <span class="co-cc-name">Vietnam</span>
+          <span class="co-cc-count">200 companies</span>
+        </span>
+      </a>
+      <a href="/en/companies/jp/" class="co-country-card">
+        <span class="co-cc-badge">JP</span>
+        <span class="co-cc-info">
+          <span class="co-cc-name">Japan</span>
+          <span class="co-cc-count">50 companies</span>
+        </span>
+      </a>
+      <span class="co-country-card co-soon">
+        <span class="co-cc-badge">KR</span>
+        <span class="co-cc-info">
+          <span class="co-cc-name">South Korea</span>
+          <span class="co-cc-count">Coming soon</span>
+        </span>
+      </span>
+      <span class="co-country-card co-soon">
+        <span class="co-cc-badge">AU</span>
+        <span class="co-cc-info">
+          <span class="co-cc-name">Australia</span>
+          <span class="co-cc-count">Coming soon</span>
+        </span>
+      </span>
+      <span class="co-country-card co-soon">
+        <span class="co-cc-badge">SG</span>
+        <span class="co-cc-info">
+          <span class="co-cc-name">Singapore</span>
+          <span class="co-cc-count">Coming soon</span>
+        </span>
+      </span>
+      <span class="co-country-card co-soon">
+        <span class="co-cc-badge">MY</span>
+        <span class="co-cc-info">
+          <span class="co-cc-name">Malaysia</span>
+          <span class="co-cc-count">Coming soon</span>
+        </span>
+      </span>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  const countryEl   = document.getElementById('co-country');
+  const queryEl     = document.getElementById('co-query');
+  const sugBox      = document.getElementById('co-suggestions');
+
+  let debounce = null;
+  let activeIdx = -1;
+  let currentHits = [];
+
+  // ── Typeahead ────────────────────────────────────────────────
+  queryEl.addEventListener('input', () => {
+    clearTimeout(debounce);
+    activeIdx = -1;
+    const q = queryEl.value.trim();
+    if (q.length < 2) { hideSug(); return; }
+    sugBox.innerHTML = '<div class="co-sug-loading">Searching…</div>';
+    sugBox.hidden = false;
+    debounce = setTimeout(() => fetchSuggestions(q), 300);
+  });
+
+  async function fetchSuggestions(q) {
+    const country = countryEl.value;
+    try {
+      const r = await fetch(`/api/company-search-live?q=${encodeURIComponent(q)}&country=${country}`);
+      if (!r.ok) { hideSug(); return; }
+      const { suggestions } = await r.json();
+      currentHits = suggestions || [];
+      renderSuggestions(currentHits);
+    } catch (_) { hideSug(); }
+  }
+
+  function renderSuggestions(hits) {
+    if (!hits.length) {
+      sugBox.innerHTML = '<div class="co-sug-empty">No results found</div>';
+      sugBox.hidden = false;
+      return;
+    }
+    sugBox.innerHTML = hits.map((h, i) => `
+      <div class="co-sug-item" role="option" data-idx="${i}" tabindex="-1">
+        <span class="co-sug-name">${esc(h.name)}</span>
+        ${h.tax_id ? `<span class="co-sug-tax">${esc(h.tax_id)}</span>` : ''}
+        ${h.source === 'opencorporates' ? '<span class="co-sug-badge">Registry</span>' : ''}
+      </div>
+    `).join('');
+    sugBox.hidden = false;
+
+    sugBox.querySelectorAll('.co-sug-item').forEach(el => {
+      el.addEventListener('click', () => selectHit(+el.dataset.idx));
+      el.addEventListener('mouseenter', () => setActive(+el.dataset.idx));
+    });
+  }
+
+  async function selectHit(idx) {
+    const h = currentHits[idx];
+    if (!h) return;
+
+    if (h.source === 'db' && h.slug) {
+      // Already in DB — go directly
+      window.location.href = `/en/companies/${h.country.toLowerCase()}/${h.slug}`;
+      return;
+    }
+
+    // OpenCorporates result (or DB result without slug) — create stub first
+    queryEl.disabled = true;
+    sugBox.innerHTML = '<div class="co-sug-loading">Loading profile…</div>';
+    sugBox.hidden = false;
+
+    try {
+      const r = await fetch('/api/company-stub', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: h.name, tax_id: h.tax_id || null, country_code: h.country }),
+      });
+      if (!r.ok) throw new Error('stub failed');
+      const { slug } = await r.json();
+      window.location.href = `/en/companies/${h.country.toLowerCase()}/${slug}`;
+    } catch (_) {
+      queryEl.disabled = false;
+      hideSug();
+    }
+  }
+
+  // ── Keyboard navigation ───────────────────────────────────────
+  queryEl.addEventListener('keydown', e => {
+    const items = sugBox.querySelectorAll('.co-sug-item');
+    if (!items.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActive(Math.min(activeIdx + 1, items.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActive(Math.max(activeIdx - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const target = activeIdx >= 0 ? activeIdx : 0;
+      if (currentHits[target]) selectHit(target);
+    } else if (e.key === 'Escape') {
+      hideSug();
+    }
+  });
+
+  function setActive(idx) {
+    activeIdx = idx;
+    sugBox.querySelectorAll('.co-sug-item').forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+  }
+
+  function hideSug() {
+    sugBox.hidden = true;
+    sugBox.innerHTML = '';
+    activeIdx = -1;
+    currentHits = [];
+  }
+
+  // Close on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.co-search-row')) hideSug();
+  });
+
+  // Re-fetch when country changes
+  countryEl.addEventListener('change', () => {
+    hideSug();
+    const q = queryEl.value.trim();
+    if (q.length >= 2) {
+      debounce = setTimeout(() => fetchSuggestions(q), 100);
+    }
+  });
+
+  // ── Helpers ───────────────────────────────────────────────────
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, m => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]
+    ));
+  }
+})();
+</script>
+
+<script src="/js/nav.js" defer></script>
+</body>
+</html>
