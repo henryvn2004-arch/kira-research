@@ -184,6 +184,30 @@ async function buildLocale(locale) {
     }));
   }
 
+  // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
+  //    Only include EN locale to avoid duplicate sitemap entries for the same content.
+  if (locale === 'en') {
+    const companyQs = 'select=slug,updated_at&order=updated_at.desc&limit=5000';
+    const { rows: companies } = await sb(`company_reports?${companyQs}`);
+    // Index page
+    urls.push(urlEntry({
+      subPath:    'companies/vn/',
+      locale,
+      changefreq: 'weekly',
+      priority:   '0.6',
+    }));
+    for (const c of companies) {
+      if (!c.slug) continue;
+      urls.push(urlEntry({
+        subPath:    `companies/vn/${c.slug}`,
+        locale,
+        lastmod:    c.updated_at ? c.updated_at.slice(0, 10) : null,
+        changefreq: 'monthly',
+        priority:   '0.5',
+      }));
+    }
+  }
+
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',

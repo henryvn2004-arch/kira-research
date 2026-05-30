@@ -27,6 +27,8 @@ export const TAX_ID_LABEL = {
 // Cache TTL in days per source type (0 = no cache / realtime)
 export const SOURCE_TTL_DAYS = {
   dkkd:           30,  // VN: Cổng thông tin ĐKKD
+  masothue:       90,  // VN: masothue.com (charter_capital, founding_date)
+  tavily:         90,  // Universal: Tavily web search (description, website)
   tax:             7,  // VN: Tổng cục Thuế
   noip:           30,  // VN: NOIP trademarks
   court:          30,  // VN: court filings
