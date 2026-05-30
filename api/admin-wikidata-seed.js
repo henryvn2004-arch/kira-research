@@ -27,23 +27,26 @@ const TAX_ID_PROP = {
   SG: 'P4534',  // Singapore UEN
 };
 
+// Keep to 3 types max — VALUES with 7 items creates a wide UNION that times out for large countries (JP, KR)
 const COMPANY_TYPE_QIDS = [
-  'wd:Q783794', 'wd:Q4830453', 'wd:Q891723', 'wd:Q2659904',
-  'wd:Q47932634', 'wd:Q6881511', 'wd:Q1616075',
+  'wd:Q783794',   // business enterprise (parent class)
+  'wd:Q4830453',  // public company
+  'wd:Q891723',   // private company
 ];
 
 function buildSparql(countryQid, taxIdProp, offset) {
   const taxClause = taxIdProp
     ? `  OPTIONAL { ?company wdt:${taxIdProp} ?taxId }`
     : '';
-  return `SELECT DISTINCT ?company ?companyLabel ?website ?inception ?taxId ?ticker ?description WHERE {
+  // schema:description intentionally omitted — requires a large join and is the
+  // primary cause of SPARQL timeouts on country datasets with 1000+ companies.
+  return `SELECT DISTINCT ?company ?companyLabel ?website ?inception ?taxId ?ticker WHERE {
   VALUES ?ctype { ${COMPANY_TYPE_QIDS.join(' ')} }
   ?company wdt:P31 ?ctype .
   ?company wdt:P17 wd:${countryQid} .
   OPTIONAL { ?company wdt:P856 ?website }
   OPTIONAL { ?company wdt:P571 ?inception }
   OPTIONAL { ?company wdt:P249 ?ticker }
-  OPTIONAL { ?company schema:description ?description . FILTER(LANG(?description) = "en") }
 ${taxClause}
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 }
@@ -90,7 +93,7 @@ export default async function handler(req, res) {
     const sparqlRes = await fetch(
       `${SPARQL_URL}?query=${encodeURIComponent(buildSparql(countryQid, taxIdProp, pageOffset))}&format=json`,
       { headers: { Accept: 'application/sparql-results+json', 'User-Agent': UA },
-        signal: AbortSignal.timeout(25000) }
+        signal: AbortSignal.timeout(50000) }
     );
     if (!sparqlRes.ok) throw new Error(`HTTP ${sparqlRes.status}`);
     sparqlRows = (await sparqlRes.json()).results?.bindings || [];
