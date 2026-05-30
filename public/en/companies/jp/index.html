@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Japan Company Directory — KIRA RESEARCH</title>
+  <meta name="description" content="Company intelligence profiles for 50+ Japan corporations. Corporate number (法人番号), industry, sector — sourced from National Tax Agency public registry and TSE filings." />
+
+  <link rel="canonical" href="https://kiraresearch.com/en/companies/jp/" />
+  <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/companies/jp/" />
+  <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/companies/jp/" />
+  <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/companies/jp/" />
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/companies/jp/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:site_name"   content="KIRA RESEARCH" />
+  <meta property="og:title"       content="Japan Company Directory — KIRA RESEARCH" />
+  <meta property="og:description" content="Company intelligence profiles for Japan's leading corporations. Corporate number (法人番号), industry, and sector data sourced from official NTA registry and TSE filings." />
+  <meta property="og:url"         content="https://kiraresearch.com/en/companies/jp/" />
+  <meta name="twitter:card"       content="summary_large_image" />
+
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Japan Company Directory",
+    "description": "Company intelligence profiles for Japan's leading corporations.",
+    "url": "https://kiraresearch.com/en/companies/jp/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "KIRA RESEARCH",
+      "url": "https://kiraresearch.com"
+    }
+  }</script>
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .co-dir-wrap {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+    .co-dir-header { margin-bottom: 40px; }
+    .co-dir-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 12px;
+    }
+    .co-dir-header h1 {
+      font-family: 'Satoshi', sans-serif; font-weight: 800;
+      font-size: clamp(26px, 4vw, 38px); line-height: 1.15;
+      color: var(--text); margin: 0 0 14px;
+    }
+    .co-dir-header p {
+      font-size: 15px; color: var(--muted); max-width: 560px;
+      line-height: 1.6; margin: 0;
+    }
+    .co-dir-controls {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      align-items: center; margin-bottom: 28px;
+    }
+    .co-dir-search {
+      flex: 1; min-width: 200px; max-width: 340px;
+      padding: 9px 14px; border: 1px solid var(--border);
+      border-radius: 6px; background: var(--surface); color: var(--text);
+      font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.15s;
+    }
+    .co-dir-search:focus { border-color: var(--primary); }
+    .co-dir-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .co-filter-chip {
+      padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px;
+      background: var(--surface); color: var(--muted); font-size: 12px;
+      font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .co-filter-chip:hover { border-color: var(--primary); color: var(--primary); }
+    .co-filter-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .co-dir-count {
+      margin-left: auto; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.05em; color: var(--muted); white-space: nowrap;
+    }
+    .co-dir-table-wrap {
+      overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;
+    }
+    .co-dir-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .co-dir-table thead th {
+      padding: 11px 14px; text-align: left; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
+      background: var(--surface); border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .co-dir-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    .co-dir-table tbody tr:last-child { border-bottom: none; }
+    .co-dir-table tbody tr:hover { background: var(--surface); }
+    .co-dir-table td { padding: 11px 14px; vertical-align: middle; }
+    .co-name-cell a {
+      color: var(--text); text-decoration: none; font-weight: 600; line-height: 1.3;
+    }
+    .co-name-cell a:hover { color: var(--primary); }
+    .co-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .co-badge-active   { background: #d1fae5; color: #065f46; }
+    .co-badge-inactive { background: #fee2e2; color: #991b1b; }
+    .co-industry-tag { font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .co-taxid { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-family: monospace; }
+    .co-year  { font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+    .co-dir-pagination { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+    .co-page-btn {
+      padding: 7px 16px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--surface); color: var(--text); font-size: 13px; cursor: pointer; transition: all 0.15s;
+    }
+    .co-page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .co-page-btn:disabled { opacity: 0.4; cursor: default; }
+    .co-page-btn.current { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 700; }
+    .co-dir-state {
+      text-align: center; padding: 64px 24px; color: var(--muted); font-size: 14px;
+    }
+    .co-dir-state strong {
+      display: block; font-size: 17px; color: var(--text);
+      font-family: 'Satoshi', sans-serif; font-weight: 700; margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="co-dir-wrap">
+    <div class="co-dir-header">
+      <div class="co-dir-eyebrow">Company Intelligence · Japan</div>
+      <h1>Japan Company Directory</h1>
+      <p>Company profiles for Japan's leading corporations — corporate number (法人番号), sector classification, and industry data sourced from the National Tax Agency public registry and Tokyo Stock Exchange filings.</p>
+    </div>
+
+    <div class="co-dir-controls">
+      <input
+        type="search"
+        class="co-dir-search"
+        id="co-search"
+        placeholder="Search by name or 法人番号…"
+        aria-label="Search companies"
+      />
+      <div class="co-dir-filters" id="co-filters">
+        <button class="co-filter-chip active" data-industry="">All</button>
+      </div>
+      <div class="co-dir-count" id="co-count">—</div>
+    </div>
+
+    <div class="co-dir-table-wrap" id="co-table-wrap">
+      <div class="co-dir-state" id="co-state">
+        <strong>Loading companies…</strong>
+        Fetching company data from registry.
+      </div>
+      <table class="co-dir-table" id="co-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Industry</th>
+            <th>Sector</th>
+            <th>法人番号</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="co-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="co-dir-pagination" id="co-pagination"></div>
+  </div>
+
+  <script>
+    (function () {
+      let allCompanies = [];
+      let filtered     = [];
+      let activePage   = 1;
+      let activeIndustry = '';
+      let searchQ      = '';
+      const PAGE_SIZE  = 50;
+
+      const searchEl  = document.getElementById('co-search');
+      const filtersEl = document.getElementById('co-filters');
+      const countEl   = document.getElementById('co-count');
+      const stateEl   = document.getElementById('co-state');
+      const tableEl   = document.getElementById('co-table');
+      const tbodyEl   = document.getElementById('co-tbody');
+      const paginEl   = document.getElementById('co-pagination');
+
+      async function loadAll() {
+        try {
+          const res  = await fetch('/api/company-list?country=JP&page=1');
+          if (!res.ok) throw new Error('API error');
+          const json = await res.json();
+          allCompanies = json.companies || [];
+          const pages = json.pages || 1;
+          if (pages > 1) {
+            const extras = await Promise.all(
+              Array.from({ length: pages - 1 }, (_, i) =>
+                fetch(`/api/company-list?country=JP&page=${i + 2}`)
+                  .then(r => r.json()).then(j => j.companies || [])
+              )
+            );
+            for (const arr of extras) allCompanies = allCompanies.concat(arr);
+          }
+          buildIndustryChips();
+          applyFilters();
+        } catch {
+          stateEl.innerHTML = '<strong>Could not load companies</strong>Try refreshing the page.';
+        }
+      }
+
+      function buildIndustryChips() {
+        const counts = {};
+        for (const c of allCompanies) {
+          const ind = c.industry;
+          if (ind) counts[ind] = (counts[ind] || 0) + 1;
+        }
+        const industries = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+          .map(([ind]) => ind);
+
+        const newChips = industries.map(ind =>
+          `<button class="co-filter-chip" data-industry="${esc(ind)}">${esc(ind)}</button>`
+        ).join('');
+
+        const allChip = filtersEl.querySelector('[data-industry=""]');
+        filtersEl.innerHTML = '';
+        if (allChip) filtersEl.appendChild(allChip);
+        filtersEl.insertAdjacentHTML('beforeend', newChips);
+
+        const activeChip = filtersEl.querySelector(`[data-industry="${esc(activeIndustry)}"]`);
+        if (activeChip) activeChip.classList.add('active');
+        else {
+          const allBtn = filtersEl.querySelector('[data-industry=""]');
+          if (allBtn) allBtn.classList.add('active');
+          activeIndustry = '';
+        }
+      }
+
+      function applyFilters() {
+        const q = searchQ.trim().toLowerCase();
+        filtered = allCompanies.filter(c => {
+          const matchIndustry = !activeIndustry || (c.industry || '') === activeIndustry;
+          const matchQ = !q
+            || (c.name || '').toLowerCase().includes(q)
+            || (c.tax_id || '').includes(q);
+          return matchIndustry && matchQ;
+        });
+        activePage = 1;
+        render();
+      }
+
+      function render() {
+        const total = filtered.length;
+        countEl.textContent = total + ' COMPANIES';
+
+        if (total === 0) {
+          tableEl.style.display = 'none';
+          stateEl.style.display = '';
+          stateEl.innerHTML = '<strong>No companies found</strong>Try a different search or filter.';
+          paginEl.innerHTML = '';
+          return;
+        }
+
+        stateEl.style.display = 'none';
+        tableEl.style.display = '';
+
+        const start = (activePage - 1) * PAGE_SIZE;
+        const slice = filtered.slice(start, start + PAGE_SIZE);
+
+        tbodyEl.innerHTML = slice.map(c => {
+          const slugPath = c.slug ? `/en/companies/jp/${c.slug}` : '#';
+          const statusBadge = c.status_cache === 'active'
+            ? '<span class="co-badge co-badge-active">Active</span>'
+            : c.status_cache
+              ? `<span class="co-badge co-badge-inactive">${cap(c.status_cache)}</span>`
+              : '—';
+
+          return `<tr>
+            <td class="co-name-cell"><a href="${esc(slugPath)}">${esc(c.name)}</a></td>
+            <td class="co-industry-tag">${esc(c.industry || '—')}</td>
+            <td class="co-industry-tag">${esc(c.sector || '—')}</td>
+            <td class="co-taxid">${esc(c.tax_id || '—')}</td>
+            <td>${statusBadge}</td>
+          </tr>`;
+        }).join('');
+
+        renderPagination(total);
+      }
+
+      function renderPagination(total) {
+        const pages = Math.ceil(total / PAGE_SIZE);
+        if (pages <= 1) { paginEl.innerHTML = ''; return; }
+        let html = '';
+        if (activePage > 1) html += `<button class="co-page-btn" data-page="${activePage - 1}">← Prev</button>`;
+        for (let p = 1; p <= pages; p++) {
+          if (pages > 7 && Math.abs(p - activePage) > 2 && p !== 1 && p !== pages) {
+            if (p === activePage - 3 || p === activePage + 3) html += '<span style="padding:0 4px;color:var(--muted)">…</span>';
+            continue;
+          }
+          html += `<button class="co-page-btn${p === activePage ? ' current' : ''}" data-page="${p}">${p}</button>`;
+        }
+        if (activePage < pages) html += `<button class="co-page-btn" data-page="${activePage + 1}">Next →</button>`;
+        paginEl.innerHTML = html;
+      }
+
+      searchEl.addEventListener('input', () => { searchQ = searchEl.value; applyFilters(); });
+
+      filtersEl.addEventListener('click', e => {
+        const chip = e.target.closest('.co-filter-chip');
+        if (!chip) return;
+        filtersEl.querySelectorAll('.co-filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeIndustry = chip.dataset.industry;
+        applyFilters();
+      });
+
+      paginEl.addEventListener('click', e => {
+        const btn = e.target.closest('.co-page-btn');
+        if (!btn || btn.disabled) return;
+        activePage = parseInt(btn.dataset.page, 10);
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      function esc(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+      function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+      loadAll();
+    })();
+  </script>
+
+  <script src="/js/nav.js" defer></script>
+</body>
+</html>

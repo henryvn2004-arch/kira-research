@@ -30,9 +30,9 @@
 
 ---
 
-## Current state (2026-05-29 — Company Intelligence Sprint 1 DONE)
+## Current state (2026-05-30 — Company Intelligence Sprints 2–8 DONE)
 
-**Phase R: Company Intelligence engine — Sprint 1 DONE. Migrations 016+017 live on prod.**
+**Phase R: Company Intelligence engine — Sprints 0–8 complete. 250 companies live on prod.**
 
 Sprint 0 complete (`279304c` + `14942a6`):
 - 7 tables live on Supabase: `entities`, `sources`, `facts`, `relationships`, `coverage`, `raw_documents`, `company_reports` + `company_graph_bfs()` RPC
@@ -41,25 +41,44 @@ Sprint 0 complete (`279304c` + `14942a6`):
 - `api/company-search.js` (`?tax_id=&country=VN`, legacy `?mst=` ok) + `api/company-report.js`
 
 Sprint 1 complete (`cf6a0b4` squash-merged 2026-05-29):
-- **Migration 017 live**: 25 top VN companies in `entities` (HOSE/HNX public filings), 100 facts (industry/sector/founding_year/charter_capital at confidence 0.8), 25 `company_reports` stub rows. `facts_entity_key_unique` constraint added.
-- **ĐKKD connector** `api/_lib/company/connectors/vn_dkkd.js` — VietQR API, fetches legal_status/address/registered_name by MST, no API key needed.
-- **Pipeline Stage 2 + Stage 6** implemented: ĐKKD fetch → fact upsert → status_cache sync → assemble report → cache 30 days.
-- **company-report.js** updated: stub payloads trigger inline pipeline run on first page load (user sees real facts, not skeleton).
-- **SEO page** `/en/companies/vn/_view.html` — Organization + BreadcrumbList JSON-LD, facts grid, ~500-word analyst narrative, coverage badges, KIRA CTA.
-- **vercel.json** rewrites `/:locale/companies/vn/:slug` → `/en/companies/vn/_view` for EN/JA/KO.
+- **Migration 017 live**: 25 top VN companies seeded, ĐKKD connector, Pipeline Stage 2 + 6, SEO `_view.html`, vercel.json rewrites.
 
-**Live URL pattern**: `/en/companies/vn/vn-vingroup-0101231488`, `/en/companies/vn/vn-fpt-0101248141` etc.
+Sprint 2 complete (`31b3608`):
+- **Migration 018+019 live**: 200 VN companies total (HOSE/HNX + private sector). Key Players strip on report pages (`loadKeyPlayers()` in reports `_view.html`). Sitemap updated.
 
-**Next: Sprint 2** — expand coverage:
-1. Seed 200 more VN companies (currently 25/200)
-2. `masothue` scraper connector for charter_capital + founding_date from official ĐKKD portal
-3. `/en/companies/vn/` index page — list all seeded companies, filterable by industry/sector
-4. Sitemap entries for company pages
-5. Link company pages from relevant report pages ("Top players" section)
+Sprint 3 complete (`492a705`):
+- `/en/companies/vn/` index page — filterable by industry/sector, search box, loads from `/api/company-list`. Migration 019 (200 companies) applied.
+
+Sprint 4 complete (`5bfdc2a`):
+- **Progressive pipeline enrichment** — company page visit triggers Stage 2 (ĐKKD), Stage 3 (masothue scraper), Stage 4 (Tavily web search) inline if not yet cached. Real facts visible on first load. masothue connector + Tavily connector live.
+
+Sprint 5 complete (`859f13c`):
+- **LLM narrative synthesis** (Stage 5) — Claude Haiku writes ~500-word analyst narrative per company after enrichment stages. Cached in `company_reports.payload`. `api/company-enrich.js` orchestrates all stages.
+
+Sprint 6 complete (`9da5d76`):
+- **Smoke tests** — 5 company intelligence tests added to `tests/smoke.spec.js` (company directory, company page, `/api/company-list`, `/api/company-report`, `/api/company-enrich` POST-only). `/en/admin/companies` + `/api/admin-companies` auth gate tests added. Total: **49 smoke tests**.
+
+Sprint 7 complete (`0d4e859`):
+- **Admin panel** `/en/admin/companies` — KPI strip (total/enriched/with_narrative/pending), searchable table, coverage badges (ĐKKD/MST/Web/LLM), per-row Enrich button. `api/admin-companies.js` auth-gated. Companies link added to all 8 admin sub-navs.
+
+Sprint 8 complete (`c4be8c0` + Migration 021 applied via MCP):
+- **50 JP companies seeded** — 9 sectors: Automotive, Technology/Electronics, Telecom, Banking & Finance, Retail, F&B, Healthcare, Materials, Trading/Conglomerates. 法人番号 (13-digit) as `tax_id`. Facts + company_reports stubs + coverage rows seeded. Admin panel updated with JP country filter.
+- **DB totals**: VN=200 · JP=50 · **Total=250 companies on prod**.
+
+**Live URL patterns**:
+- VN: `/en/companies/vn/vn-vingroup-0101231488`
+- JP: `/en/companies/jp/jp-toyota-motor-corporation-9180301018771`
+- Directory: `/en/companies/vn/` (filterable)
 
 **Owner workflow:** Henry travels 2026-05-29 to ~2026-06-02. Chats daily via Claude mobile app.
 Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
 DB migrations: Claude applies via Supabase MCP directly (no owner Supabase action needed).
+
+**Next: Sprint 9 (TBD)** — possible directions:
+1. `/en/companies/jp/` index page for JP directory
+2. Fix admin company profile link — currently hardcodes `/en/companies/vn/` (JP companies need `/en/companies/jp/`)
+3. JP connector — 法人番号公表サイト API for legal status/address enrichment
+4. SEO: `/en/companies/jp/_view.html` page template for JP company profiles
 
 ---
 
@@ -146,6 +165,15 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **9.2** | KO report translations | ⏸️ | Henry content work |
 | **9.3** | KO aggregator distribution | ⏸️ | Henry outreach work |
 | **10** | Polish & launch | 🔴 | Mobile QA + perf audit + GSC + soft launch pending |
+| **R.0** | Company Intelligence schema + API foundation | ✅ | `279304c`+`14942a6` · 7 tables + `company_graph_bfs()` RPC + `api/_lib/company/` + `company-search.js` + `company-report.js` |
+| **R.1** | VN seed (25) + ĐKKD connector + SEO page | ✅ | `cf6a0b4` squash-merged 2026-05-29 · migration 017 |
+| **R.2** | VN scale to 200 + Key Players on reports | ✅ | `31b3608` · migrations 018+019 · sitemap updated |
+| **R.3** | `/en/companies/vn/` directory index | ✅ | `492a705` · filterable by industry/sector + search |
+| **R.4** | Progressive enrichment pipeline (masothue + Tavily) | ✅ | `5bfdc2a` · Stages 2–4 inline on page visit |
+| **R.5** | LLM narrative synthesis (Claude Haiku) | ✅ | `859f13c` · Stage 5 · `api/company-enrich.js` |
+| **R.6** | Smoke tests for Company Intelligence | ✅ | `9da5d76` · 49 total smoke tests |
+| **R.7** | Admin panel `/en/admin/companies` | ✅ | `0d4e859` · `api/admin-companies.js` · all admin sub-navs updated |
+| **R.8** | 50 JP companies seed (250 total) | ✅ | `c4be8c0` + migration 021 applied via MCP · JP=50 · VN=200 |
 | **∞** | **Infra & quality (unplanned)** | ✅ | Smoke CI `7e4e0de`+`87cd168`, security `09dbc30`, memory `9fde035`+`4d9456a` |
 
 **Detail per checkbox:** `project des/workplan.md` has the full
@@ -165,8 +193,12 @@ public/
 │   ├── insights/index.html         # insights list
 │   ├── insights/_view.html         # single article template
 │   ├── custom-research/index.html  # contact + research-on-demand
+│   ├── companies/
+│   │   └── vn/
+│   │       ├── index.html          # VN company directory (filterable by industry/sector)
+│   │       └── _view.html          # single company page (SEO, facts grid, narrative, CTA)
 │   └── admin/                      # EN-only admin (auth-gated)
-│       ├── leads.html  reports.html  insights.html
+│       ├── leads.html  reports.html  insights.html  companies.html
 ├── css/                            # kira.css
 ├── js/                             # nav.js + i18n
 ├── locales/                        # en.json, ja.json, ko.json
@@ -186,8 +218,23 @@ api/                                # 16 Vercel serverless functions (all active
 ├── admin-aggregators.js            # admin CRUD for aggregator_submissions + aggregator_sales (Sprint 4.4)
 ├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
 ├── admin-upload-pdf.js             # admin PDF upload to Supabase Storage (item D)
-├── sitemap.js                      # dynamic sitemap (index + per-locale)
-└── _lib/email.js                   # shared Resend send helper — purchase receipts + lead notifications (Sprint E). NOT a route (Vercel skips `_` dirs).
+├── admin-companies.js              # admin company coverage stats (Phase R.7)
+├── company-search.js               # public search by tax_id + country (Phase R.0)
+├── company-report.js               # public company profile payload (Phase R.0)
+├── company-enrich.js               # POST trigger pipeline stages 2–5 (Phase R.4–5)
+├── company-list.js                 # public paginated list for directory (Phase R.3)
+├── sitemap.js                      # dynamic sitemap (index + per-locale + company pages)
+└── _lib/
+    ├── email.js                    # Resend send helper — receipts + lead notifications (Sprint E)
+    └── company/                    # Company Intelligence pipeline (Phase R)
+        ├── config.js               # per-country settings
+        ├── normalize.js            # legal token strip per country
+        ├── connector.js            # connector registry
+        ├── pipeline.js             # orchestrator (stages 1–6)
+        └── connectors/
+            ├── vn_dkkd.js          # VietQR API — VN legal status/address
+            ├── masothue.js         # masothue.vn scraper — charter_capital/founding_date
+            └── tavily_web.js       # Tavily web search — general enrichment
 
 supabase/migrations/                # idempotent schema
 ├── 001_leads.sql                   # leads table + RLS
@@ -198,9 +245,14 @@ supabase/migrations/                # idempotent schema
 ├── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
 ├── 007_aggregators.sql             # aggregator_submissions + aggregator_sales tables (Sprint 4.4)
 ├── 008_security_hardening.sql      # close advisor flags: RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path
-└── 009_audit_log.sql               # audit_log table — append-only record of admin write actions (Sprint 4.1 close)
+├── 009_audit_log.sql               # audit_log table — append-only record of admin write actions (Sprint 4.1 close)
+├── 016_company_intelligence.sql    # Phase R schema: entities, sources, facts, relationships, coverage, raw_documents, company_reports + BFS RPC
+├── 017_vn_seed_companies.sql       # 25 VN companies seed (Sprint R.1)
+├── 018_vn_connectors.sql           # ĐKKD + masothue connectors, facts_entity_key_unique constraint
+├── 019_vn_more_companies.sql       # 200 VN companies total (Sprint R.2)
+└── 021_jp_seed_companies.sql       # 50 JP companies (法人番号), 9 sectors (Sprint R.8)
 
-tests/smoke.spec.js                 # 41 Playwright tests (CI green)
+tests/smoke.spec.js                 # 49 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
 playwright.config.js                # chromium-only, github reporter
 vercel.json                         # cleanUrls + 13 redirects + 11 rewrites (all sources/destinations no-extension form)
@@ -474,4 +526,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-27 evening — honest surface + favicon + stub cleanup + perf session. 7 items live: (1) live counts on home + library facets via `/js/live-counts.js` replacing hardcoded fake numbers, (2) full favicon stack site-wide via nav.js + SVG/PNG/ICO/manifest fallbacks generated from existing `favicon.svg` via transient sharp install, (3) 6 stub field-note insights got real bodies (3000-3600 chars each, KIRA brand voice) + API now filters body=NULL from public surface, (4) insight cron cwd bug discovered + fixed (4 local SKILL.md edits + memory note `feedback_scheduled_task_cwd_parent.md` "Third gotcha"; vnc-f4 needs same SKILL.md fix applied locally), (5) earlier insights polish (chart CSS + search + related cards) verified live via curl, (6) dynamic hero reports + featured grid on home replacing 3 broken hardcoded slugs (indonesia-fmcg-distribution-2026, thailand-ecommerce-logistics-2026, philippines-healthtech-2026 all 404'ed since launch), (7) cache headers in vercel.json for /css /js /locales/fonts/favicons + API s-maxage bumped 300→1800 for report-detail. Latest commit `874b495`. **Code blocker = 0**; cron continues processing 2027-vn-tourism + 2027-vn-ev tonight. Phase R (companies directory) parked — Henry brainstormed Mordor's playbook (aggregator-style breadth via stock-exchange scrape + Wikipedia enrich, vs niche-depth KIRA analyst layer) but wants to think more before committing.)*
+*Last updated: 2026-05-30 — Company Intelligence Sprints 2–8 complete. **250 companies live on prod** (VN=200 · JP=50). All 8 sprints merged to main, migration 021 applied via Supabase MCP. Sprints done this session: R.6 smoke tests (49 total), R.7 admin panel `/en/admin/companies`, R.8 50 JP companies (9 sectors, 法人番号 tax_id). Latest commits: `9da5d76` (smoke) → `0d4e859` (admin) → `c4be8c0` (JP seed). **Code blocker = 0**. Next logical work: JP company directory page `/en/companies/jp/`, fix admin profile link hardcoded to `/vn/`, JP enrichment connector.*

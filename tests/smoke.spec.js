@@ -480,6 +480,7 @@ test.describe('SEO surface', () => {
 // anchor because it's seeded by migration 016 and won't be removed.
 test.describe('company intelligence', () => {
   const KNOWN_SLUG = 'vn-vingroup-0101231488';
+  const JP_SLUG    = 'jp-toyota-motor-corporation-9180301018771';
 
   test('/en/companies/vn/ loads the directory shell', async ({ page }) => {
     const errors = [];
@@ -490,6 +491,27 @@ test.describe('company intelligence', () => {
     expect(errors, `pageerror on /en/companies/vn/: ${errors.join(' | ')}`).toEqual([]);
   });
 
+  test('/en/companies/jp/ loads the JP directory shell', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/companies/jp/', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on /en/companies/jp/: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/company-list?country=JP returns JSON array', async ({ request }) => {
+    const r = await request.get('/api/company-list?country=JP&page=1');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.companies)).toBe(true);
+      expect(typeof data.total).toBe('number');
+    }
+  });
+
   test(`/en/companies/vn/${KNOWN_SLUG} loads without JS errors`, async ({ page }) => {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
@@ -497,6 +519,15 @@ test.describe('company intelligence', () => {
     expect(res.status()).toBe(200);
     await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
     expect(errors, `pageerror on company _view: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test(`/en/companies/jp/${JP_SLUG} loads without JS errors`, async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto(`/en/companies/jp/${JP_SLUG}`, { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on JP company _view: ${errors.join(' | ')}`).toEqual([]);
   });
 
   test('/api/company-list?country=VN returns JSON array', async ({ request }) => {
