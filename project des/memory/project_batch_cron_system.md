@@ -1,6 +1,6 @@
 ---
 name: kira-batch-cron-system
-description: "Phase Q.4: 18 daily scheduled tasks fire batch_runner.md (Q.1 3-fire pipeline per report) + Q.4 auto-recovery of stale `*_in_progress` claims via Step 0.5 audit-queue.mjs (90-min threshold, strike-1/strike-2 escalation). Max gap ~60min anywhere except 06:45→17:00 daytime by design."
+description: "Phase Q.6: 18 daily scheduled tasks, hourly 07:00–00:00 ICT (00:00–17:00 UTC). Cron times are UTC — task names reflect UTC hour. Redesigned 2026-05-31 after discovering old schedule clustered 10 fires at 07:00–13:45 ICT + 8 fires at 00:00–06:30 ICT (useless when machine off overnight)."
 metadata:
   node_type: memory
   type: project
@@ -11,13 +11,47 @@ metadata:
 
 Henry's KIRA Research has a daily batch report generation system built on top of the `kira-research-report` skill ("[[project_tool_gen_report|tool gen report]]"). Scheduled tasks (`mcp__scheduled-tasks`) fire daily and pull 1 pending topic per fire from `data/report_queue.csv`, gen it as a 3-language report (EN + JA + KO), auto-publish to Supabase, commit results.
 
-## Current schedule (Phase Q.3 — 2026-05-25)
+## IMPORTANT: Cron times are UTC
 
-**18 active tasks** = 3 evening (45-min) + 5 bridge (60-min) + 10 overnight (45-min). Max gap = ~60 min anywhere in 24h.
+Task names like `kira-batch-0000` mean **00:00 UTC = 07:00 ICT**. All cron expressions are UTC. Add 7 hours to get Vietnam time.
 
-| Task ID | Cron | Local ICT | Block |
-|---|---|---|---|
-| `kira-batch-1700` | `0 17 * * *` | 05:00 PM | Evening |
+## Current schedule (Phase Q.6 — 2026-05-31)
+
+**18 active tasks**, hourly on-the-hour from 00:00–17:00 UTC = **07:00–00:00 ICT**. Gap: 00:00–07:00 ICT (7h overnight).
+
+| Task ID | Cron (UTC) | Vietnam time (ICT) |
+|---|---|---|
+| `kira-batch-0000` | `0 0 * * *` | 07:00 |
+| `kira-batch-0100` | `0 1 * * *` | 08:00 |
+| `kira-batch-0200` | `0 2 * * *` | 09:00 |
+| `kira-batch-0300` | `0 3 * * *` | 10:00 |
+| `kira-batch-0400` | `0 4 * * *` | 11:00 |
+| `kira-batch-0500` | `0 5 * * *` | 12:00 |
+| `kira-batch-0600` | `0 6 * * *` | 13:00 |
+| `kira-batch-0700` | `0 7 * * *` | 14:00 |
+| `kira-batch-0800` | `0 8 * * *` | 15:00 |
+| `kira-batch-0900` | `0 9 * * *` | 16:00 |
+| `kira-batch-1000` | `0 10 * * *` | 17:00 |
+| `kira-batch-1100` | `0 11 * * *` | 18:00 |
+| `kira-batch-1200` | `0 12 * * *` | 19:00 |
+| `kira-batch-1300` | `0 13 * * *` | 20:00 |
+| `kira-batch-1400` | `0 14 * * *` | 21:00 |
+| `kira-batch-1500` | `0 15 * * *` | 22:00 |
+| `kira-batch-1600` | `0 16 * * *` | 23:00 |
+| `kira-batch-1700` | `0 17 * * *` | 00:00 (next day) |
+
+**Daytime gap: 00:00–07:00 ICT** (17:00–24:00 UTC) — 7h overnight. Acceptable since machine typically off after midnight.
+
+## Setup on machine (recreate all tasks)
+
+Delete all old `kira-batch-*` tasks. Create 18 new ones via Claude Code:
+> "Create scheduled task `kira-batch-0000` with cron `0 0 * * *`, prompt: delegate to `skills/kira-research-report/prompts/batch_runner.md`"
+
+Repeat for each row above. Prompt body is identical for all 18.
+
+## Current schedule (Phase Q.3 — 2026-05-25, SUPERSEDED)
+
+Old schedule had crons mislabeled as ICT but actually UTC, causing 10 fires to cluster at 07:00–13:45 ICT and 8 fires at 00:00–06:30 ICT (wasted when machine off). Replaced by Q.6.
 | `kira-batch-1745` | `45 17 * * *` | 05:45 PM | Evening |
 | `kira-batch-1830` | `30 18 * * *` | 06:30 PM | Evening |
 | `kira-batch-1930` | `30 19 * * *` | 07:30 PM | **Bridge (NEW Q.3)** |
