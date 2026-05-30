@@ -129,6 +129,7 @@
             style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;">
             <option value="">All countries</option>
             <option value="VN" selected>Vietnam (VN)</option>
+            <option value="JP">Japan (JP)</option>
           </select>
           <span id="co-count" style="font-size:13px;color:var(--ink-muted);">${companies.length} companies</span>
         </div>`;
@@ -190,6 +191,17 @@
       }
 
       searchEl.addEventListener('input', filter);
+
+      document.getElementById('co-country').addEventListener('change', async e => {
+        const country = e.target.value;
+        root.innerHTML = '<div class="admin-empty">Loading…</div>';
+        try {
+          const data = await api('/api/admin-companies' + (country ? `?country=${country}` : ''));
+          render(data);
+        } catch (err) {
+          root.innerHTML = `<div class="admin-empty">Error: ${err.message}</div>`;
+        }
+      });
 
       function wireEnrich() {
         document.querySelectorAll('[data-slug]').forEach(btn => {
