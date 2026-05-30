@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vietnam Company Directory — KIRA RESEARCH</title>
-  <meta name="description" content="Company intelligence profiles for 100+ Vietnam companies. Tax registration, charter capital, industry, founding year — verified from official sources." />
+  <meta name="description" content="Company intelligence profiles for 200+ Vietnam companies. Tax registration, charter capital, industry, founding year — verified from official sources." />
 
   <link rel="canonical" href="https://kiraresearch.com/en/companies/vn/" />
   <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/companies/vn/" />
@@ -271,18 +271,7 @@
       />
       <div class="co-dir-filters" id="co-filters">
         <button class="co-filter-chip active" data-industry="">All</button>
-        <button class="co-filter-chip" data-industry="Banking">Banking</button>
-        <button class="co-filter-chip" data-industry="Technology">Technology</button>
-        <button class="co-filter-chip" data-industry="Real Estate">Real Estate</button>
-        <button class="co-filter-chip" data-industry="Energy">Energy</button>
-        <button class="co-filter-chip" data-industry="F&B">F&amp;B</button>
-        <button class="co-filter-chip" data-industry="FMCG">FMCG</button>
-        <button class="co-filter-chip" data-industry="Retail">Retail</button>
-        <button class="co-filter-chip" data-industry="Steel">Steel</button>
-        <button class="co-filter-chip" data-industry="Healthcare">Healthcare</button>
-        <button class="co-filter-chip" data-industry="Logistics">Logistics</button>
-        <button class="co-filter-chip" data-industry="Manufacturing">Manufacturing</button>
-        <button class="co-filter-chip" data-industry="Finance">Finance</button>
+        <!-- industry chips injected dynamically after data loads -->
       </div>
       <div class="co-dir-count" id="co-count">—</div>
     </div>
@@ -348,9 +337,42 @@
             );
             for (const arr of extras) allCompanies = allCompanies.concat(arr);
           }
+          buildIndustryChips();
           applyFilters();
         } catch (err) {
           stateEl.innerHTML = '<strong>Could not load companies</strong>Try refreshing the page.';
+        }
+      }
+
+      // ── Build industry filter chips from actual data ──────────
+      function buildIndustryChips() {
+        const counts = {};
+        for (const c of allCompanies) {
+          const ind = c.industry;
+          if (ind) counts[ind] = (counts[ind] || 0) + 1;
+        }
+        // Sort by count desc, then alpha
+        const industries = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+          .map(([ind]) => ind);
+
+        const newChips = industries.map(ind =>
+          `<button class="co-filter-chip" data-industry="${esc(ind)}">${esc(ind)}</button>`
+        ).join('');
+
+        // Keep "All" chip, replace the rest
+        const allChip = filtersEl.querySelector('[data-industry=""]');
+        filtersEl.innerHTML = '';
+        if (allChip) filtersEl.appendChild(allChip);
+        filtersEl.insertAdjacentHTML('beforeend', newChips);
+
+        // Restore active state
+        const activeChip = filtersEl.querySelector(`[data-industry="${esc(activeIndustry)}"]`);
+        if (activeChip) activeChip.classList.add('active');
+        else {
+          const allBtn = filtersEl.querySelector('[data-industry=""]');
+          if (allBtn) allBtn.classList.add('active');
+          activeIndustry = '';
         }
       }
 
