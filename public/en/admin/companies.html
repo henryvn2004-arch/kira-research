@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Companies — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <!-- Admin sub-nav -->
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies" class="active">Companies</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    // ── Auth gate ────────────────────────────────────────
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML =
+      user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+
+    // ── API helper ───────────────────────────────────────
+    async function api(path) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, {
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+      });
+      if (!r.ok) throw new Error(`${r.status}`);
+      return r.json();
+    }
+
+    // ── Coverage badge ───────────────────────────────────
+    function badge(status) {
+      if (!status) return '<span class="co-badge co-badge--none">—</span>';
+      if (status === 'found')         return '<span class="co-badge co-badge--found">✓</span>';
+      if (status === 'checked_empty') return '<span class="co-badge co-badge--empty">∅</span>';
+      if (status === 'failed')        return '<span class="co-badge co-badge--fail">✗</span>';
+      return `<span class="co-badge co-badge--none">${status}</span>`;
+    }
+
+    // ── Enrich single company ────────────────────────────
+    async function enrich(slug, btn) {
+      btn.disabled = true;
+      btn.textContent = '…';
+      try {
+        const r = await fetch('/api/company-enrich', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug })
+        });
+        const d = await r.json();
+        btn.textContent = d.enriched ? '✓ done' : d.reason || 'skip';
+      } catch {
+        btn.textContent = 'error';
+      }
+    }
+
+    // ── Render ───────────────────────────────────────────
+    function render({ stats, companies }) {
+      const { total, enriched, with_narrative } = stats;
+
+      // KPI strip
+      const kpi = `
+        <div class="admin-stats-strip" style="margin-bottom:24px;">
+          <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">Companies</div></div>
+          <div class="stat-card"><div class="stat-val">${enriched}</div><div class="stat-lbl">Enriched</div></div>
+          <div class="stat-card"><div class="stat-val">${with_narrative}</div><div class="stat-lbl">With narrative</div></div>
+          <div class="stat-card"><div class="stat-val">${total - enriched}</div><div class="stat-lbl">Pending</div></div>
+        </div>`;
+
+      if (companies.length === 0) {
+        root.innerHTML = kpi + '<div class="admin-empty">No companies found.</div>';
+        return;
+      }
+
+      // Search + country filter
+      const controls = `
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+          <input type="search" id="co-search" placeholder="Search name or MST…"
+            style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;width:220px;" />
+          <select id="co-country"
+            style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;">
+            <option value="">All countries</option>
+            <option value="VN" selected>Vietnam (VN)</option>
+          </select>
+          <span id="co-count" style="font-size:13px;color:var(--ink-muted);">${companies.length} companies</span>
+        </div>`;
+
+      const head = `
+        <table class="admin-table">
+          <thead><tr>
+            <th>Company</th>
+            <th>MST / Tax ID</th>
+            <th>Industry</th>
+            <th style="text-align:center;">ĐKKD</th>
+            <th style="text-align:center;">MST</th>
+            <th style="text-align:center;">Web</th>
+            <th style="text-align:center;">LLM</th>
+            <th>Updated</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="co-tbody">`;
+
+      function rows(list) {
+        return list.map(c => {
+          const profileLink = c.slug
+            ? `<a href="/en/companies/vn/${c.slug}" target="_blank" style="color:var(--primary);">${c.name}</a>`
+            : c.name;
+          const updated = c.updated_at ? c.updated_at.slice(0, 10) : '—';
+          const enrichBtn = c.slug
+            ? `<button class="admin-btn-sm" data-slug="${c.slug}">Enrich</button>`
+            : '—';
+          return `<tr>
+            <td>${profileLink}${c.industry ? `<br><small style="color:var(--ink-muted)">${c.industry}</small>` : ''}</td>
+            <td style="font-family:monospace;font-size:13px;">${c.tax_id || '—'}</td>
+            <td>${c.industry || '—'}</td>
+            <td style="text-align:center;">${badge(c.coverage.dkkd)}</td>
+            <td style="text-align:center;">${badge(c.coverage.masothue)}</td>
+            <td style="text-align:center;">${badge(c.coverage.tavily)}</td>
+            <td style="text-align:center;">${badge(c.coverage.llm_narrative)}</td>
+            <td style="font-size:13px;color:var(--ink-muted);">${updated}</td>
+            <td>${enrichBtn}</td>
+          </tr>`;
+        }).join('');
+      }
+
+      root.innerHTML = kpi + controls + head + rows(companies) + '</tbody></table>';
+
+      // Wire search
+      let allCos = companies;
+      const searchEl  = document.getElementById('co-search');
+      const countEl   = document.getElementById('co-count');
+      const tbody     = document.getElementById('co-tbody');
+
+      function filter() {
+        const q = searchEl.value.toLowerCase().trim();
+        const filtered = q
+          ? allCos.filter(c => c.name.toLowerCase().includes(q) || (c.tax_id || '').includes(q))
+          : allCos;
+        tbody.innerHTML = rows(filtered);
+        countEl.textContent = `${filtered.length} companies`;
+        wireEnrich();
+      }
+
+      searchEl.addEventListener('input', filter);
+
+      function wireEnrich() {
+        document.querySelectorAll('[data-slug]').forEach(btn => {
+          btn.addEventListener('click', () => enrich(btn.dataset.slug, btn));
+        });
+      }
+      wireEnrich();
+    }
+
+    // ── Load ─────────────────────────────────────────────
+    root.innerHTML = '<div class="admin-empty">Loading companies…</div>';
+    try {
+      const data = await api('/api/admin-companies?country=VN');
+      render(data);
+    } catch (err) {
+      root.innerHTML = `<div class="admin-empty">Error: ${err.message}</div>`;
+    }
+  </script>
+
+  <style>
+    .co-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .co-badge--found { background: #166534; color: #bbf7d0; }
+    .co-badge--empty { background: #78350f; color: #fde68a; }
+    .co-badge--fail  { background: #991b1b; color: #fecaca; }
+    .co-badge--none  { background: transparent; color: var(--ink-muted); }
+    .admin-btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .admin-btn-sm:hover { border-color: var(--primary); color: var(--primary); }
+    .admin-btn-sm:disabled { opacity: 0.5; cursor: default; }
+  </style>
+
+</body>
+</html>
