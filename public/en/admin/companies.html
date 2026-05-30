@@ -219,7 +219,78 @@
     } catch (err) {
       root.innerHTML = `<div class="admin-empty">Error: ${err.message}</div>`;
     }
+
+    // ── Wikidata seeder ────────────────────────────────────
+    document.getElementById('seed-btn').addEventListener('click', async () => {
+      const country  = document.getElementById('seed-country').value;
+      const btn      = document.getElementById('seed-btn');
+      const progress = document.getElementById('seed-progress');
+
+      btn.disabled = true;
+      let offset = 0, totalImported = 0, totalUpdated = 0, page = 1;
+
+      while (true) {
+        progress.innerHTML = `Page ${page} (offset ${offset})…`;
+        let result;
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          const r = await fetch('/api/admin-wikidata-seed', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                       'Authorization': `Bearer ${session.access_token}` },
+            body: JSON.stringify({ country, offset }),
+          });
+          result = await r.json();
+        } catch (err) {
+          progress.innerHTML = `<span style="color:#dc2626">Error: ${err.message}</span>`;
+          btn.disabled = false;
+          break;
+        }
+
+        if (result.error) {
+          progress.innerHTML = `<span style="color:#dc2626">✗ ${result.error}</span>`;
+          btn.disabled = false;
+          break;
+        }
+
+        totalImported += result.imported || 0;
+        totalUpdated  += result.updated  || 0;
+
+        if (result.done) {
+          progress.innerHTML = `<span style="color:#16a34a">✓ Done — ${totalImported} new · ${totalUpdated} matched</span>`;
+          btn.disabled = false;
+          try { const d = await api(`/api/admin-companies?country=${country}`); render(d); } catch (_) {}
+          break;
+        }
+
+        offset = result.next_offset;
+        page++;
+        await new Promise(r => setTimeout(r, 1300)); // Wikidata rate limit
+      }
+    });
   </script>
+
+  <!-- Wikidata seeder panel -->
+  <div style="max-width:860px;margin:24px auto 0;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+    <div style="font-family:'Satoshi',sans-serif;font-weight:700;font-size:15px;margin-bottom:8px;">Seed from Wikidata</div>
+    <p style="font-size:13px;color:var(--ink-muted);margin:0 0 14px;">Imports company stubs from Wikidata SPARQL (500 per page). Matches by tax ID or name; creates stubs for new companies.</p>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <select id="seed-country" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;">
+        <option value="VN">Vietnam (VN)</option>
+        <option value="JP">Japan (JP)</option>
+        <option value="KR">South Korea (KR)</option>
+        <option value="AU">Australia (AU)</option>
+        <option value="SG">Singapore (SG)</option>
+        <option value="MY">Malaysia (MY)</option>
+        <option value="ID">Indonesia (ID)</option>
+        <option value="TH">Thailand (TH)</option>
+        <option value="PH">Philippines (PH)</option>
+        <option value="NZ">New Zealand (NZ)</option>
+      </select>
+      <button id="seed-btn" class="admin-btn-sm" style="padding:8px 18px;font-size:13px;">Run seed →</button>
+      <span id="seed-progress" style="font-size:13px;color:var(--ink-muted);"></span>
+    </div>
+  </div>
 
   <style>
     .co-badge {
