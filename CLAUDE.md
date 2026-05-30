@@ -30,9 +30,9 @@
 
 ---
 
-## Current state (2026-05-30 — Company Intelligence Sprints 2–8 DONE)
+## Current state (2026-05-30 — Company Intelligence Sprints 2–9 DONE)
 
-**Phase R: Company Intelligence engine — Sprints 0–8 complete. 250 companies live on prod.**
+**Phase R: Company Intelligence engine — Sprints 0–9 complete. 250 companies live on prod. Unified search landing page live.**
 
 Sprint 0 complete (`279304c` + `14942a6`):
 - 7 tables live on Supabase: `entities`, `sources`, `facts`, `relationships`, `coverage`, `raw_documents`, `company_reports` + `company_graph_bfs()` RPC
@@ -65,7 +65,17 @@ Sprint 8 complete (`c4be8c0` + Migration 021 applied via MCP):
 - **50 JP companies seeded** — 9 sectors: Automotive, Technology/Electronics, Telecom, Banking & Finance, Retail, F&B, Healthcare, Materials, Trading/Conglomerates. 法人番号 (13-digit) as `tax_id`. Facts + company_reports stubs + coverage rows seeded. Admin panel updated with JP country filter.
 - **DB totals**: VN=200 · JP=50 · **Total=250 companies on prod**.
 
+Sprint 9 complete (`33db1be` — squash-merged PR #24 from `feat/company-search-landing`):
+- **Unified company search landing page** `/en/companies/` — country selector (10 KIRA countries) + live typeahead input with 300ms debounce.
+- `api/company-search-live.js` — GET `?q=&country=VN`, DB-first (entities + embedded company_reports slug), OpenCorporates fallback if < 3 DB hits. Returns up to 5 suggestions `{ name, tax_id, country, slug, source }`.
+- `api/company-stub.js` — POST idempotent entity + company_reports stub creation for OC-discovered companies not yet in DB. Returns `{ slug, entity_id }`.
+- Keyboard nav (↑↓ Enter Escape) on dropdown. DB hits redirect directly; OC hits POST to stub then redirect.
+- Country grid: VN + JP as active `<a>` links; KR/AU/SG/MY as `.co-soon` spans.
+- `vercel.json` — 2 new locale rewrites: `/ja/companies/` + `/ko/companies/` → `/en/companies/`
+- 3 new smoke tests (52 total): landing page load, search-live API, company-stub POST-only gate.
+
 **Live URL patterns**:
+- Unified search: `/en/companies/`
 - VN: `/en/companies/vn/vn-vingroup-0101231488`
 - JP: `/en/companies/jp/jp-toyota-motor-corporation-9180301018771`
 - Directory: `/en/companies/vn/` (filterable)
@@ -74,7 +84,7 @@ Sprint 8 complete (`c4be8c0` + Migration 021 applied via MCP):
 Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
 DB migrations: Claude applies via Supabase MCP directly (no owner Supabase action needed).
 
-**Next: Sprint 9 (TBD)** — possible directions:
+**Next: Sprint 10 (TBD)** — possible directions:
 1. `/en/companies/jp/` index page for JP directory
 2. Fix admin company profile link — currently hardcodes `/en/companies/vn/` (JP companies need `/en/companies/jp/`)
 3. JP connector — 法人番号公表サイト API for legal status/address enrichment
@@ -174,6 +184,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **R.6** | Smoke tests for Company Intelligence | ✅ | `9da5d76` · 49 total smoke tests |
 | **R.7** | Admin panel `/en/admin/companies` | ✅ | `0d4e859` · `api/admin-companies.js` · all admin sub-navs updated |
 | **R.8** | 50 JP companies seed (250 total) | ✅ | `c4be8c0` + migration 021 applied via MCP · JP=50 · VN=200 |
+| **R.9** | Unified company search `/en/companies/` | ✅ | `33db1be` · `api/company-search-live.js` + `api/company-stub.js` · 52 smoke tests |
 | **∞** | **Infra & quality (unplanned)** | ✅ | Smoke CI `7e4e0de`+`87cd168`, security `09dbc30`, memory `9fde035`+`4d9456a` |
 
 **Detail per checkbox:** `project des/workplan.md` has the full
@@ -526,4 +537,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-30 — Company Intelligence Sprints 2–8 complete. **250 companies live on prod** (VN=200 · JP=50). All 8 sprints merged to main, migration 021 applied via Supabase MCP. Sprints done this session: R.6 smoke tests (49 total), R.7 admin panel `/en/admin/companies`, R.8 50 JP companies (9 sectors, 法人番号 tax_id). Latest commits: `9da5d76` (smoke) → `0d4e859` (admin) → `c4be8c0` (JP seed). **Code blocker = 0**. Next logical work: JP company directory page `/en/companies/jp/`, fix admin profile link hardcoded to `/vn/`, JP enrichment connector.*
+*Last updated: 2026-05-30 — Company Intelligence Sprints 2–9 complete. **250 companies live on prod** (VN=200 · JP=50). Unified search landing `/en/companies/` live with typeahead + OpenCorporates fallback + stub creation. Latest commit: `33db1be` (Sprint R.9, PR #24). **52 smoke tests total. Code blocker = 0**. Next logical work: JP company directory page `/en/companies/jp/`, fix admin profile link hardcoded to `/vn/`, JP enrichment connector.*
