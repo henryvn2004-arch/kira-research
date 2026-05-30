@@ -151,8 +151,9 @@
 
       function rows(list) {
         return list.map(c => {
+          const countryPath = (c.country_code || 'VN').toLowerCase();
           const profileLink = c.slug
-            ? `<a href="/en/companies/vn/${c.slug}" target="_blank" style="color:var(--primary);">${c.name}</a>`
+            ? `<a href="/en/companies/${countryPath}/${c.slug}" target="_blank" style="color:var(--primary);">${c.name}</a>`
             : c.name;
           const updated = c.updated_at ? c.updated_at.slice(0, 10) : '—';
           const enrichBtn = c.slug

@@ -300,7 +300,7 @@
             <h1 class="co-name">${esc(r.name)}</h1>
             <div class="co-meta">
               <span class="co-status ${r.status || 'unknown'}">${statusLabel(r.status)}</span>
-              ${r.tax_id ? `<span>MST: <strong>${esc(r.tax_id)}</strong></span>` : ''}
+              ${r.tax_id ? `<span>${taxIdLabel(country)}: <strong>${esc(r.tax_id)}</strong></span>` : ''}
               ${countryLabel ? `<span>${countryLabel}</span>` : ''}
               ${industryLabel ? `<span>${esc(industryLabel)}</span>` : ''}
             </div>
@@ -325,9 +325,7 @@
         </div>
 
         <p class="co-disclaimer">
-          Data sourced from Vietnam's National Business Registration Portal (ĐKKD), tax authority records, and KIRA Research analyst notes.
-          Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND).
-          For investment decisions, verify directly with official registries.
+          ${disclaimerText(r.country_code)}
           Last updated: ${fmtDate(r.generated_at)}.
         </p>
       `;
@@ -340,7 +338,8 @@
 
       const cap = facts.charter_capital?.value;
       if (cap) {
-        items.push(factCard('Charter Capital', fmtVND(cap), 'Vietnamese Dong'));
+        const { amount, label } = fmtCapital(cap, r.country_code);
+        items.push(factCard('Registered Capital', amount, label));
       }
 
       const fy = facts.founding_year?.value;
@@ -521,12 +520,32 @@
       return { active: 'an active', suspended: 'a suspended', dissolved: 'a dissolved', unknown: 'a' }[s] || 'a';
     }
 
-    function fmtVND(n) {
+    function fmtCapital(n, countryCode) {
       const num = Number(n);
-      if (isNaN(num)) return String(n);
-      if (num >= 1e12) return (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion VND';
-      if (num >= 1e9)  return (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion VND';
-      return num.toLocaleString('en') + ' VND';
+      if (isNaN(num)) return { amount: String(n), label: '' };
+      const cc = (countryCode || 'VN').toUpperCase();
+      if (cc === 'JP') {
+        if (num >= 1e12) return { amount: (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion', label: 'Japanese Yen (JPY)' };
+        if (num >= 1e8)  return { amount: (num / 1e8).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' hundred million', label: 'Japanese Yen (JPY)' };
+        return { amount: num.toLocaleString('en') + ' JPY', label: 'Japanese Yen' };
+      }
+      // Default VND
+      if (num >= 1e12) return { amount: (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion', label: 'Vietnamese Dong (VND)' };
+      if (num >= 1e9)  return { amount: (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion',  label: 'Vietnamese Dong (VND)' };
+      return { amount: num.toLocaleString('en') + ' VND', label: 'Vietnamese Dong' };
+    }
+
+    function taxIdLabel(countryCode) {
+      const labels = { JP: '法人番号', KR: '사업자번호', SG: 'UEN', MY: 'SSM No.', AU: 'ABN' };
+      return labels[(countryCode || '').toUpperCase()] || 'MST';
+    }
+
+    function disclaimerText(countryCode) {
+      const cc = (countryCode || 'VN').toUpperCase();
+      if (cc === 'JP') {
+        return 'Data sourced from Japan\'s National Tax Agency corporate number registry (法人番号公表サイト), Tokyo Stock Exchange public filings, and KIRA Research analyst notes. Registration data reflects public filings and may not capture the latest changes. For investment decisions, verify directly with official registries.';
+      }
+      return 'Data sourced from Vietnam\'s National Business Registration Portal (ĐKKD), tax authority records, and KIRA Research analyst notes. Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND). For investment decisions, verify directly with official registries.';
     }
 
     function fmtDate(iso) {
