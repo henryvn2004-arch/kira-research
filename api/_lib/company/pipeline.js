@@ -13,9 +13,10 @@
 // ============================================================
 
 import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF, SOURCE_TTL_DAYS, DEFAULT_COUNTRY } from './config.js';
-import * as opencorporates from './connectors/opencorporates.js';
-import * as wikidata from './connectors/wikidata.js';
-import * as tavily_web from './connectors/tavily_web.js';
+import * as opencorporates  from './connectors/opencorporates.js';
+import * as wikidata         from './connectors/wikidata.js';
+import * as tavily_web       from './connectors/tavily_web.js';
+import * as opensanctions    from './connectors/opensanctions.js';
 import { makeSlug } from './normalize.js';
 
 // ── Public entry point ─────────────────────────────────────────
@@ -98,13 +99,21 @@ async function stage2OfficialSources(entity, ctx) {
     || isCoverageStale(wdCov, 'wikidata');
   if (needsWD) await runConnector(entity, 'wikidata', wikidata, ctx);
 
-  // Tavily — web search for description + website (all countries, requires API key)
+  // Tavily — overview + risk news (all countries, requires API key)
+  // Re-runs if stale OR if risk_news_count fact is missing (new field, pipeline v2→v3 upgrade)
   if (process.env.TAVILY_API_KEY) {
-    const tavilyCov = await getCoverage(entity.id, 'tavily', supabase);
+    const tavilyCov  = await getCoverage(entity.id, 'tavily', supabase);
+    const missingRisk = !(await factExists(entity.id, 'risk_news_count', supabase));
     const needsTavily = !tavilyCov || tavilyCov.status === 'not_checked'
-      || isCoverageStale(tavilyCov, 'tavily');
+      || isCoverageStale(tavilyCov, 'tavily') || missingRisk;
     if (needsTavily) await runConnector(entity, 'tavily', tavily_web, ctx);
   }
+
+  // OpenSanctions — sanctions + PEP screening (all countries, name-based)
+  const osCov  = await getCoverage(entity.id, 'opensanctions', supabase);
+  const needsOS = !osCov || osCov.status === 'not_checked' || osCov.status === 'failed'
+    || isCoverageStale(osCov, 'opensanctions');
+  if (needsOS) await runConnector(entity, 'opensanctions', opensanctions, ctx);
 
   // Reload all facts after connectors run
   return loadFacts(entity.id, supabase);
@@ -385,6 +394,17 @@ async function getCoverage(entityId, sourceType, supabase) {
     .eq('source_type', sourceType)
     .single();
   return data;
+}
+
+async function factExists(entityId, key, supabase) {
+  const { data } = await supabase
+    .from('facts')
+    .select('key')
+    .eq('entity_id', entityId)
+    .eq('key', key)
+    .limit(1)
+    .maybeSingle();
+  return !!data;
 }
 
 function isCoverageStale(coverage, sourceType) {

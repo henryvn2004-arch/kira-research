@@ -3,7 +3,7 @@
 // Universal: OpenCorporates + Wikidata for all 10 countries.
 // ============================================================
 
-export const PIPELINE_VERSION = 2;
+export const PIPELINE_VERSION = 3;
 
 // Supported countries (ISO 3166-1 alpha-2).
 export const SUPPORTED_COUNTRIES = ['VN', 'JP', 'KR', 'AU', 'SG', 'MY', 'ID', 'TH', 'PH', 'NZ'];
@@ -37,9 +37,10 @@ export const TAX_ID_LABEL = {
 
 // Cache TTL in days per source type (0 = no cache / realtime)
 export const SOURCE_TTL_DAYS = {
-  opencorporates: 90,  // Universal: OpenCorporates company detail (all countries)
-  wikidata:      180,  // Universal: Wikidata structured entity data
-  tavily:         90,  // Universal: Tavily web search (description, website)
+  opencorporates:  90,  // Universal: OpenCorporates company detail (all countries)
+  wikidata:       180,  // Universal: Wikidata structured entity data
+  tavily:          90,  // Universal: Tavily web search (description, website, risk news)
+  opensanctions:   30,  // Universal: OpenSanctions sanctions + PEP screening
   llm_narrative:  90,  // LLM synthesis — Claude company narrative
   // Legacy VN-only connectors (kept for backward-compat with old coverage rows)
   dkkd:           30,
@@ -82,7 +83,7 @@ export const GRAPH_MIN_CONF  = 0.3;  // Prune edges below this path-confidence
 // Source types that all connectors must recognise
 export const SOURCE_TYPES = [
   // Universal (primary pipeline)
-  'opencorporates', 'wikidata', 'tavily', 'llm_narrative',
+  'opencorporates', 'wikidata', 'tavily', 'opensanctions', 'llm_narrative',
   // Legacy VN-only
   'dkkd', 'masothue', 'tax', 'noip', 'court', 'bidding',
   // Other country-specific (future)
