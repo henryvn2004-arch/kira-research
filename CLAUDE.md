@@ -74,11 +74,12 @@ Sprint 8 complete (`c4be8c0` + Migration 021 applied via MCP):
 Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
 DB migrations: Claude applies via Supabase MCP directly (no owner Supabase action needed).
 
-**Next: Sprint 9 (TBD)** — possible directions:
-1. `/en/companies/jp/` index page for JP directory
-2. Fix admin company profile link — currently hardcodes `/en/companies/vn/` (JP companies need `/en/companies/jp/`)
-3. JP connector — 法人番号公表サイト API for legal status/address enrichment
-4. SEO: `/en/companies/jp/_view.html` page template for JP company profiles
+**Phase R complete.** All 10 sprints (R.0–R.9) shipped and live on prod.
+
+Possible future extensions (no sprint planned):
+- JP enrichment connector — 法人番号公表サイト API for legal status/address/capital for JP companies
+- KR companies seed (Korean Customs Service registry)
+- Company pages linked from report "Key Players" section (link to profile instead of just name)
 
 ---
 
@@ -174,6 +175,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **R.6** | Smoke tests for Company Intelligence | ✅ | `9da5d76` · 49 total smoke tests |
 | **R.7** | Admin panel `/en/admin/companies` | ✅ | `0d4e859` · `api/admin-companies.js` · all admin sub-navs updated |
 | **R.8** | 50 JP companies seed (250 total) | ✅ | `c4be8c0` + migration 021 applied via MCP · JP=50 · VN=200 |
+| **R.9** | JP directory + multi-country _view + admin fix | ✅ | `688335d` squash-merged 2026-05-30 · 52 smoke tests |
 | **∞** | **Infra & quality (unplanned)** | ✅ | Smoke CI `7e4e0de`+`87cd168`, security `09dbc30`, memory `9fde035`+`4d9456a` |
 
 **Detail per checkbox:** `project des/workplan.md` has the full
@@ -526,4 +528,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-30 — Company Intelligence Sprints 2–8 complete. **250 companies live on prod** (VN=200 · JP=50). All 8 sprints merged to main, migration 021 applied via Supabase MCP. Sprints done this session: R.6 smoke tests (49 total), R.7 admin panel `/en/admin/companies`, R.8 50 JP companies (9 sectors, 法人番号 tax_id). Latest commits: `9da5d76` (smoke) → `0d4e859` (admin) → `c4be8c0` (JP seed). **Code blocker = 0**. Next logical work: JP company directory page `/en/companies/jp/`, fix admin profile link hardcoded to `/vn/`, JP enrichment connector.*
+*Last updated: 2026-05-30 — Company Intelligence Phase R complete (Sprints R.0–R.9). **250 companies live on prod** (VN=200 · JP=50). Sprint R.9 shipped: JP directory `/en/companies/jp/`, multi-country `_view.html` (法人番号/JPY/Japan NTA disclaimer), admin profile link fix, 52 smoke tests. Latest merged commit `2e445ce` (PR #22). **Code blocker = 0**. Phase R fully done.*
