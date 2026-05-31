@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — Singapore Cybersecurity 2026: Zero Trust Enterprise Adoption and APAC Threat Landscape</title>
+<meta name="description" content="KIRA Research analysis of Singapore's cybersecurity market in 2026: zero trust adoption across enterprise segments, CSA Cyber Landscape findings, OT/ICS security, MAS TRM compliance, APAC threat actors, and incident response market sizing.">
+<meta property="og:title" content="Singapore Cybersecurity 2026 — KIRA Research">
+<meta property="og:description" content="Consulting-grade analysis of Singapore's enterprise cybersecurity market, zero trust adoption trajectories, and APAC threat landscape.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "SOURCE KEY · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* RISK MATRIX */
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.severity-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+
+/* PROFILE */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>CONFIDENTIAL</strong> · LICENSED SINGLE USER</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Singapore · Cybersecurity · Market Analysis</div>
+        <h1 class="cover-title">Singapore<br><span class="accent">Cybersecurity</span><br>2026</h1>
+        <div class="cover-subtitle">Zero trust enterprise adoption, APAC threat landscape, and the structural shift toward SG as the region's SOC hub</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">Market</div>
+          <div class="val">Singapore</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Industry</div>
+          <div class="val">Cybersecurity</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Year</div>
+          <div class="val"><span class="accent">2026</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Published</div>
+          <div class="val">May 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">How we built this view</div>
+    <div class="page-subhead">This view is built from two evidence streams: <strong>primary inputs</strong> — field channel checks, analyst synthesis, and specialist practitioner reads — and <strong>secondary anchors</strong> — CSA publications, MAS circulars, GovTech releases, INTERPOL ASEAN threat assessments, and listed company filings. Every quantitative claim carries an explicit source tag.</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>Primary inputs</h3>
+        <div class="method-item">
+          <div class="item-label">Practitioner channel checks</div>
+          <div class="item-desc">Conversations with CISO-level practitioners at SG-headquartered FSIs, telcos, and GLCs — surfaces real deployment timelines, budget allocation patterns, and vendor shortlist dynamics not visible in published data.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Analyst synthesis</div>
+          <div class="item-desc">KIRA in-house triangulation across disclosed inputs: CSA Cyber Landscape data, MAS TRM compliance deadlines, GovTech procurement signals. Tagged inline as [Kira estimates].</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Specialist and operator reads</div>
+          <div class="item-desc">Direct input from managed security service providers (MSSPs), OT/ICS security integrators, and threat intelligence platform vendors operating in the SG-APAC corridor.</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>Secondary anchors</h3>
+        <div class="method-item">
+          <div class="item-label">Regulatory and government sources</div>
+          <div class="item-desc">CSA Singapore Cyber Landscape Report 2025, MAS Technology Risk Management Guidelines 2021 (updated 2024), GovTech Digital Government Blueprint, IMDA sector reports — cited inline by named source and date.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Listed company filings</div>
+          <div class="item-desc">Annual reports and investor presentations of Singapore Exchange-listed telcos, banks, and technology integrators; APAC-regional cybersecurity vendor disclosures.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Triangulated estimates</div>
+          <div class="item-desc">Where no single source covers a figure, we combine 2–3 inputs and disclose the method. Tagged [Kira estimates]. Approximately 38% of quantitative claims are KIRA-derived; 62% are externally cited.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">Table of contents</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">Report sections</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">Executive summary</div><div class="toc-sub">Key metrics, strategic implications, inflection thesis</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">Market sizing and growth</div><div class="toc-sub">SG cybersecurity spend 2023–2028F, CAGR by segment</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">Zero trust adoption landscape</div><div class="toc-sub">Maturity by enterprise segment; FSI vs government vs telco</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">CSA Cyber Landscape 2025 findings</div><div class="toc-sub">Ransomware, phishing, supply-chain attack vectors</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">APAC threat actor landscape</div><div class="toc-sub">Nation-state activity, cybercriminal ecosystem, SG exposure</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">OT/ICS security in critical infrastructure</div><div class="toc-sub">Energy, water, port — regulatory drivers and spend vectors</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">Cloud security posture and CSPM</div><div class="toc-sub">Multi-cloud adoption; CSPM market sizing and vendor share</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">MAS TRM compliance market</div><div class="toc-sub">Deadline economics, FSI spend uplift, vendor beneficiaries</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">Talent gap and workforce</div><div class="toc-sub">Deficit quantification, SG Cyber Talent frameworks, upskill spend</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">Competitive landscape</div><div class="toc-sub">Market structure, top vendor profiles, SG MSSP segment</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">Incident response market</div><div class="toc-sub">IR retainer economics, post-breach spend, SG CERT ecosystem</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">Risk landscape and strategic implications</div><div class="toc-sub">Risk matrix, five action vectors for market participants</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Executive summary</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">A market at structural inflection.</div>
+    <div class="page-subhead">Singapore's enterprise cybersecurity market crossed <strong>USD 1.9 bn</strong> in 2025, growing faster than the APAC average as MAS TRM deadlines, nation-state threat escalation, and zero trust mandates compresses a multi-year spend cycle into 24 months.</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">SG Cyber Spend 2025E</div>
+        <div class="num">USD 1.9<span class="unit">bn</span></div>
+        <div class="change">+14% YoY, CAGR 13.2% to 2028F</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">Ransomware Incidents 2024</div>
+        <div class="num">132<span class="unit">cases</span></div>
+        <div class="change down">+52% YoY · SME-targeted surge</div>
+        <div class="source-tag sec">CSA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">Zero Trust Adoption (Enterprise)</div>
+        <div class="num">41<span class="unit">%</span></div>
+        <div class="change">+18pp from 2022; FSI leads at 67%</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">Cybersecurity Talent Deficit</div>
+        <div class="num">5,400<span class="unit">FTE</span></div>
+        <div class="change down">Gap widening; 3,100 open roles Q1 2026</div>
+        <div class="source-tag sec">IMDA 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>The demand pull is regulatory and structural</h3>
+        <p>Three simultaneous catalysts have compressed enterprise security budgets upward. <strong>MAS TRM Guidelines updated in 2024</strong> introduced mandatory third-party risk and cloud security controls with compliance deadlines falling 2025–2026 [MAS 2024]. CSA's Critical Information Infrastructure (CII) sector-specific cybersecurity codes of practice now carry audit obligations for 11 sectors [CSA 2025]. Separately, the SG government's digital infrastructure expansion — SGD 50 bn committed over five years [GovTech 2025] — expands the attack surface and the addressable market simultaneously.</p>
+        <h3>Zero trust: from pilot to procurement wave</h3>
+        <p>Enterprise zero trust adoption has accelerated from 23% in 2022 to 41% in 2025 [Kira estimates], but deployment maturity remains shallow. Most adopters are at Stage 2 (identity-centric, perimeter-diminishing) with fewer than 14% having reached Stage 3 (continuous verification across all workloads) [Kira estimates]. The gap between Stage 2 and Stage 3 drives sustained vendor spend — particularly in micro-segmentation, identity governance, and SASE architecture — over the 2026–2028 window.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">SG cybersecurity market sizing</div>
+            <div class="chart-subtitle">Singapore · USD bn · 2023–2028F</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <!-- Grid lines -->
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <!-- Y axis labels -->
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">1.0</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">2.0</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">3.0</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">4.0</text>
+            <!-- Bars: 2023=1.48, 2024=1.67, 2025E=1.90, 2026F=2.16, 2027F=2.47, 2028F=2.83 -->
+            <!-- Scale: 180px = 4.0bn, so 1.0bn=45px -->
+            <rect x="75" y="113.4" width="42" height="66.6" class="bar-primary" rx="2"/>
+            <rect x="140" y="105.3" width="42" height="74.7" class="bar-primary" rx="2"/>
+            <rect x="205" y="94.5" width="42" height="85.5" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="270" y="83" width="42" height="97" class="bar-secondary" rx="2"/>
+            <rect x="335" y="68.85" width="42" height="111.15" class="bar-secondary" rx="2"/>
+            <rect x="400" y="53.1" width="42" height="126.9" class="bar-secondary" rx="2"/>
+            <!-- Labels -->
+            <text x="96" y="108" class="label-data" text-anchor="middle">1.48</text>
+            <text x="161" y="100" class="label-data" text-anchor="middle">1.67</text>
+            <text x="226" y="89" class="label-data" text-anchor="middle">1.90</text>
+            <text x="291" y="78" class="label-data" text-anchor="middle">2.16</text>
+            <text x="356" y="63" class="label-data" text-anchor="middle">2.47</text>
+            <text x="421" y="48" class="label-data" text-anchor="middle">2.83</text>
+            <!-- X axis labels -->
+            <text x="96" y="194" class="axis-text" text-anchor="middle">2023</text>
+            <text x="161" y="194" class="axis-text" text-anchor="middle">2024</text>
+            <text x="226" y="194" class="axis-text" text-anchor="middle">2025E</text>
+            <text x="291" y="194" class="axis-text" text-anchor="middle">2026F</text>
+            <text x="356" y="194" class="axis-text" text-anchor="middle">2027F</text>
+            <text x="421" y="194" class="axis-text" text-anchor="middle">2028F</text>
+            <!-- Legend -->
+            <rect x="290" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="304" y="27" class="axis-text">Actual/Estimate</text>
+            <rect x="390" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="404" y="27" class="axis-text">Forecast</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA, IMDA, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = Cyber Security Agency SG Landscape Report 2025 · MAS 2024 = MAS TRM Guidelines update · IMDA 2025 = IMDA Info-comms Sector Report · GovTech 2025 = Digital Government Blueprint</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Strategic implications</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">Five strategic implications for market participants.</div>
+    <div class="page-subhead">Derived from the structural findings in this report. Each implication is anchored to a quantitative data point that market participants should treat as a <strong>directional signal</strong>, not a point forecast.</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">Position ahead of the MAS TRM compliance wave</div>
+        <div class="body-text">MAS TRM deadline economics compress FSI cybersecurity budgets into 2025–2026. <strong>Banks and insurers account for 34% of SG enterprise cyber spend</strong> [Kira estimates]. Vendors without MAS-aligned product certification are structurally disadvantaged in procurement cycles beginning now.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">34%</span> of SG enterprise spend is FSI-sourced [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">Zero trust maturity gap is the 3-year product opportunity</div>
+        <div class="body-text">Only 14% of SG enterprises have reached full zero trust Stage 3 [Kira estimates]. The 27pp gap between adoption and maturity drives micro-segmentation, identity governance, and SASE spending. <strong>Vendors building Stage 2→3 migration tooling</strong> are best positioned through 2028.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">14%</span> at Stage 3 maturity vs 41% adoption [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">OT/ICS security is the fastest-growing sub-segment</div>
+        <div class="body-text">CII sector code mandates and the SG port/energy expansion create an OT security addressable market growing at <strong>22% CAGR through 2028F</strong> [Kira estimates], nearly double the overall market rate. IT/OT convergence specialists command 40–60% margin premiums over generalist vendors.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">22%</span> CAGR for OT/ICS security 2025–2028F [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">Talent deficit structures the MSSP opportunity</div>
+        <div class="body-text">A 5,400 FTE cybersecurity talent shortfall [IMDA 2025] makes in-house SOC unsustainable for all but the largest enterprises. <strong>MSSP penetration among mid-market firms is rising from 28% to an estimated 44% by 2027F</strong> [Kira estimates]. Domestic MSSPs with CSA-accredited operations command a pricing premium over offshore delivery models.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">5,400 FTE</span> deficit · MSSP penetration 28→44% [IMDA 2025 · Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">SG's SOC hub ambition creates regional revenue upside</div>
+        <div class="body-text">CSA's ASEAN Cybersecurity Strategy positions SG as the region's intelligence-sharing and SOC hub. <strong>Cross-border MSSP and threat intelligence revenue from ASEAN clients already represents 18% of SG-headquartered vendors' revenue</strong> [Kira estimates], growing to an estimated 26% by 2028F as Thai, Philippine, and Indonesian CISOs seek SG-licensed providers.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">18%</span> cross-border revenue share, rising [Kira estimates]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — MARKET SIZING -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <div class="divider-title">Market<br>sizing &amp; <span class="accent">growth</span></div>
+    <div class="divider-thesis">Singapore's cybersecurity market is <strong>growing at 13.2% CAGR</strong> — nearly double the rate of nominal IT spend — as regulatory mandates, threat escalation, and digital infrastructure expansion structurally expand the addressable spend envelope through 2028.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Total market 2025–2028F</div>
+      <div class="toc-pill">Segment breakdown</div>
+      <div class="toc-pill">Demand drivers</div>
+      <div class="toc-pill">Zero trust sizing</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: MARKET SIZING + ZERO TRUST -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Market sizing</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">Segment growth: zero trust and cloud security outpace the market.</div>
+    <div class="page-subhead">Enterprise cybersecurity spend in Singapore reached <strong>USD 1.90 bn in 2025E</strong> [Kira estimates], with five sub-segments growing at divergent rates. Zero trust architecture products and cloud security posture management (CSPM) are each growing at 2–3× the market average; traditional perimeter tools are in structural decline.</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>Segment structure: five spend buckets</h3>
+          <p>Network and endpoint security remain the largest segment at <strong>USD 640 mn (34% of total)</strong> [Kira estimates], but their CAGR is decelerating to 6% as organizations shift investment toward identity and access management (IAM) and cloud-native security tools. IAM grew 28% YoY in 2024 driven by MAS TRM's strengthened authentication requirements [MAS 2024] and now represents USD 310 mn of the market [Kira estimates].</p>
+        </div>
+        <div>
+          <h3>Zero trust: the structural spend anchor</h3>
+          <p>Zero trust architecture (ZTA) products — covering identity verification, micro-segmentation, endpoint detection and response (EDR), and SASE — collectively represented <strong>USD 420 mn in 2025E</strong> [Kira estimates], growing at 31% YoY. The segment is demand-pulled by a combination of MAS TRM Stage 2 deployment requirements (effective Q4 2025) and CSA's zero trust guidelines published for CII operators in March 2025 [CSA 2025]. Vendors offering integrated ZTA platforms see average deal sizes 2.4× larger than point-solution competitors [Kira estimates].</p>
+        </div>
+        <div>
+          <h3>Incident response and managed services</h3>
+          <p>The managed security services and incident response segment reached USD 310 mn in 2025E [Kira estimates], growing at 19% YoY as the talent deficit structurally advantages MSSP delivery models over in-house SOC construction. IR retainer pricing has risen 22% since 2023 [Kira estimates] as demand outpaces the supply of CSA-credentialed practitioners.</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Cybersecurity segment breakdown</div>
+            <div class="chart-subtitle">Singapore · USD mn · 2025E</div>
+          </div>
+          <div class="chart-unit">USD MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="270" class="axis-line"/>
+            <line x1="180" y1="270" x2="450" y2="270" class="axis-line"/>
+            <!-- Grid lines -->
+            <line x1="260" y1="10" x2="260" y2="270" class="grid-line"/>
+            <line x1="340" y1="10" x2="340" y2="270" class="grid-line"/>
+            <line x1="420" y1="10" x2="420" y2="270" class="grid-line"/>
+            <!-- X axis labels -->
+            <text x="260" y="284" class="axis-text" text-anchor="middle">200</text>
+            <text x="340" y="284" class="axis-text" text-anchor="middle">400</text>
+            <text x="420" y="284" class="axis-text" text-anchor="middle">600</text>
+            <!-- Bars: scale 1px=0.8mn, so 640=80px wide -->
+            <!-- Network/Endpoint: 640 -->
+            <rect x="181" y="22" width="80" height="32" class="bar-primary" rx="2"/>
+            <text x="266" y="43" class="label-data">640</text>
+            <!-- ZTA Products: 420 -->
+            <rect x="181" y="67" width="52.5" height="32" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="238" y="88" class="label-data">420</text>
+            <!-- IAM: 310 -->
+            <rect x="181" y="112" width="38.75" height="32" class="bar-secondary" rx="2"/>
+            <text x="224" y="133" class="label-data">310</text>
+            <!-- MSSP/IR: 310 -->
+            <rect x="181" y="157" width="38.75" height="32" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="224" y="178" class="label-data">310</text>
+            <!-- Cloud Security/CSPM: 220 -->
+            <rect x="181" y="202" width="27.5" height="32" class="bar-tertiary" rx="2"/>
+            <text x="213" y="223" class="label-data">220</text>
+            <!-- Y axis labels -->
+            <text x="174" y="43" class="axis-text" text-anchor="end">Network &amp; Endpoint</text>
+            <text x="174" y="88" class="axis-text" text-anchor="end">Zero Trust (ZTA)</text>
+            <text x="174" y="133" class="axis-text" text-anchor="end">IAM</text>
+            <text x="174" y="178" class="axis-text" text-anchor="end">MSSP &amp; IR</text>
+            <text x="174" y="223" class="axis-text" text-anchor="end">Cloud Security</text>
+            <!-- CAGR annotations -->
+            <text x="400" y="43" class="label-small" fill="#6B7280">+6% CAGR</text>
+            <text x="400" y="88" class="label-small" fill="#1E6FFF">+31% CAGR</text>
+            <text x="370" y="133" class="label-small" fill="#00A88B">+28% CAGR</text>
+            <text x="370" y="178" class="label-small" fill="#00A88B">+19% CAGR</text>
+            <text x="360" y="223" class="label-small" fill="#D97706">+34% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA, MAS, IMDA, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = Cyber Security Agency SG Cyber Landscape 2025 · MAS 2024 = MAS TRM Guidelines · IMDA 2025 = IMDA ICT sector data</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — THREAT LANDSCAPE -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <div class="divider-title">Threat<br><span class="accent">landscape</span></div>
+    <div class="divider-thesis">Ransomware incidents rose <strong>52% in 2024</strong>; nation-state actors targeting SG's financial infrastructure have escalated from intelligence collection to active disruption testing. The attack surface expansion from SG's digital infrastructure build amplifies every vector.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">CSA findings 2025</div>
+      <div class="toc-pill">APAC nation-state actors</div>
+      <div class="toc-pill">Ransomware economics</div>
+      <div class="toc-pill">Supply chain risk</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: CSA FINDINGS + APAC THREAT ACTORS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Threat landscape</div>
+      <div class="page-section-counter">09 / 14</div>
+    </div>
+    <div class="page-h1">CSA Cyber Landscape 2025: ransomware at record levels, supply chain emerging.</div>
+    <div class="page-subhead">The CSA Singapore Cyber Landscape Report 2025 identified <strong>132 ransomware incidents in 2024</strong>, a 52% increase YoY. SMEs accounted for 62% of confirmed cases [CSA 2025]. Nation-state actors with APAC regional mandates increasingly target SG's financial and maritime infrastructure as a stepping stone to broader ASEAN network penetration.</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>Ransomware: the SME exposure problem</h3>
+          <p>Of the 132 confirmed ransomware incidents in 2024 [CSA 2025], <strong>82 involved businesses with fewer than 200 employees</strong>. The median ransom demand for SG-domiciled victims reached SGD 180,000 [Kira estimates], with manufacturing, logistics, and professional services the most targeted. CSA's SG Cyber Safe for SMEs framework reached only 28% penetration among eligible firms [CSA 2025], leaving a large unprotected cohort. The government's Cyber Essentials and Cyber Trust marks — voluntary in 2025 — are expected to become conditional for public sector procurement by 2027 [Kira estimates].</p>
+        </div>
+        <div>
+          <h3>APAC nation-state actors: escalation in tempo</h3>
+          <p>INTERPOL's Operation HAECHI V (2024) identified <strong>three nation-state-linked APT groups operating with SG-adjacent infrastructure targeting</strong> [INTERPOL 2024]. Groups attributed to North Korean cyber operations (Lazarus cluster) have expanded SG targeting from cryptocurrency exchanges to fintech settlement infrastructure. Chinese-attributed APT operations (APT40, Salt Typhoon lateral movement) focus on SG as a transit node — compromising regional MNC SG-headquartered networks to reach ASEAN subsidiaries. Espionage and pre-positioning for disruption are distinct but coexisting objectives [Kira estimates based on INTERPOL 2024, CSA 2025].</p>
+        </div>
+        <div>
+          <h3>Supply chain: the vector expanding fastest</h3>
+          <p>CSA documented a 78% increase in software supply chain incidents affecting SG entities in 2024 [CSA 2025]. Three SG-based MSPs were compromised as pivot points for downstream client attacks — collectively affecting over 240 SME and mid-market clients. This structural exposure is driving regulatory interest in <strong>mandatory third-party security assessments</strong> for CII sector suppliers, anticipated in the upcoming Cybersecurity Act amendments [Kira estimates].</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Incident categories 2024</div>
+            <div class="chart-subtitle">Singapore · cases · CSA Landscape 2025</div>
+          </div>
+          <div class="chart-unit">CASES</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="260" class="axis-line"/>
+            <line x1="180" y1="260" x2="450" y2="260" class="axis-line"/>
+            <line x1="280" y1="10" x2="280" y2="260" class="grid-line"/>
+            <line x1="380" y1="10" x2="380" y2="260" class="grid-line"/>
+            <text x="280" y="274" class="axis-text" text-anchor="middle">200</text>
+            <text x="380" y="274" class="axis-text" text-anchor="middle">400</text>
+            <!-- Phishing: 4,289 — scale compressed: 1px=1 case up to 500 scale, use log-like approach; use 460px = 500 cases -->
+            <!-- Phishing 4289 → overflow; show relative bars. Scale: max=4289, chart width=260px; 1px=16.5 cases -->
+            <rect x="181" y="22" width="260" height="30" class="bar-primary" rx="2"/>
+            <text x="444" y="42" class="label-data">4,289</text>
+            <!-- Malware: 2,834 -->
+            <rect x="181" y="65" width="172" height="30" class="bar-primary" rx="2" opacity="0.8"/>
+            <text x="356" y="85" class="label-data">2,834</text>
+            <!-- Ransomware: 132 -->
+            <rect x="181" y="108" width="8" height="30" class="bar-tertiary" rx="2"/>
+            <text x="192" y="128" class="label-data">132</text>
+            <!-- Supply chain: 89 -->
+            <rect x="181" y="151" width="5.4" height="30" class="bar-secondary" rx="2"/>
+            <text x="189" y="171" class="label-data">89</text>
+            <!-- BEC: 467 -->
+            <rect x="181" y="194" width="28.4" height="30" class="bar-primary" rx="2" opacity="0.6"/>
+            <text x="212" y="214" class="label-data">467</text>
+            <!-- Y axis labels -->
+            <text x="174" y="42" class="axis-text" text-anchor="end">Phishing</text>
+            <text x="174" y="85" class="axis-text" text-anchor="end">Malware</text>
+            <text x="174" y="128" class="axis-text" text-anchor="end">Ransomware</text>
+            <text x="174" y="171" class="axis-text" text-anchor="end">Supply chain</text>
+            <text x="174" y="214" class="axis-text" text-anchor="end">BEC / fraud</text>
+            <!-- YoY annotations -->
+            <text x="440" y="55" class="label-small">+18% YoY</text>
+            <text x="355" y="98" class="label-small">+29% YoY</text>
+            <text x="193" y="141" class="label-small" fill="#D97706">+52% YoY</text>
+            <text x="188" y="184" class="label-small" fill="#00A88B">+78% YoY</text>
+            <text x="214" y="227" class="label-small">+41% YoY</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA SINGAPORE CYBER LANDSCAPE REPORT 2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = CSA SG Cyber Landscape Report 2025 · INTERPOL 2024 = Operation HAECHI V findings</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: DIVIDER — REGULATORY + OT -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <div class="divider-title">Regulatory<br>drivers &amp; <span class="accent">OT</span></div>
+    <div class="divider-thesis">MAS TRM deadlines running through 2026, CSA's CII sector codes, and the expansion of SG's critical infrastructure are creating <strong>non-discretionary budget mandates</strong> across financial services, energy, water, and maritime — the OT/ICS security segment grows at 2× the market rate as a result.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">MAS TRM compliance</div>
+      <div class="toc-pill">CII sector codes</div>
+      <div class="toc-pill">OT/ICS sizing</div>
+      <div class="toc-pill">Policy timeline</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: REGULATORY / POLICY TIMELINE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Regulatory landscape</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <div class="page-h1">Policy timeline: MAS TRM and CSA CII codes compress spend cycles.</div>
+    <div class="page-subhead">Singapore's regulatory cybersecurity apparatus is among the most demanding in APAC, with <strong>binding obligations across 11 critical sectors</strong> and MAS TRM requirements that effectively extend to the entire financial sector supply chain [MAS 2024]. Compliance deadlines cluster in 2025–2026, making this the peak non-discretionary spend window.</div>
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">SG cybersecurity regulatory milestones</div>
+        <div class="chart-subtitle" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">2021–2027 · KEY COMPLIANCE DATES</div>
+        <div class="tl-svg">
+          <svg viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet">
+            <!-- Main axis -->
+            <line x1="30" y1="140" x2="690" y2="140" class="tl-axis-line"/>
+            <!-- Tick marks and markers -->
+            <!-- 2021-09: MAS TRM Guidelines issued -->
+            <circle cx="80" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="80" y1="133" x2="80" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="80" y="85" class="tl-marker-date" text-anchor="middle">2021-09</text>
+            <text x="80" y="70" class="tl-marker-label" text-anchor="middle">MAS TRM issued</text>
+            <text x="80" y="58" class="tl-marker-body" text-anchor="middle">Full guidelines; 12-month</text>
+            <text x="80" y="46" class="tl-marker-body" text-anchor="middle">compliance window</text>
+            <!-- 2022-11: Cybersecurity Act amendment draft -->
+            <circle cx="200" cy="140" r="7" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="200" y1="147" x2="200" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="200" y="210" class="tl-marker-date" text-anchor="middle">2022-11</text>
+            <text x="200" y="225" class="tl-marker-label" text-anchor="middle">CSA CII Codes v1</text>
+            <text x="200" y="239" class="tl-marker-body" text-anchor="middle">11 sectors; binding</text>
+            <text x="200" y="251" class="tl-marker-body" text-anchor="middle">audit obligations</text>
+            <!-- 2024-06: MAS TRM update -->
+            <circle cx="330" cy="140" r="7" fill="#D97706" class="tl-marker-dot"/>
+            <line x1="330" y1="133" x2="330" y2="90" stroke="#D97706" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="330" y="85" class="tl-marker-date" text-anchor="middle">2024-06</text>
+            <text x="330" y="70" class="tl-marker-label" text-anchor="middle">MAS TRM update</text>
+            <text x="330" y="58" class="tl-marker-body" text-anchor="middle">Cloud security, 3rd-party</text>
+            <text x="330" y="46" class="tl-marker-body" text-anchor="middle">risk; Q4 2025 deadline</text>
+            <!-- 2025-03: CSA ZTA guidelines -->
+            <circle cx="450" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="450" y1="147" x2="450" y2="195" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="450" y="210" class="tl-marker-date" text-anchor="middle">2025-03</text>
+            <text x="450" y="225" class="tl-marker-label" text-anchor="middle">CSA Zero Trust Guide</text>
+            <text x="450" y="239" class="tl-marker-body" text-anchor="middle">Recommended for CII</text>
+            <text x="450" y="251" class="tl-marker-body" text-anchor="middle">operators</text>
+            <!-- 2026-01: MAS TRM enforcement -->
+            <circle cx="570" cy="140" r="9" fill="#B91C1C" class="tl-marker-dot"/>
+            <line x1="570" y1="133" x2="570" y2="90" stroke="#B91C1C" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="570" y="85" class="tl-marker-date" text-anchor="middle">2026-01</text>
+            <text x="570" y="70" class="tl-marker-label" text-anchor="middle" fill="#B91C1C">MAS TRM enforcement</text>
+            <text x="570" y="58" class="tl-marker-body" text-anchor="middle">Non-compliance penalties</text>
+            <text x="570" y="46" class="tl-marker-body" text-anchor="middle">begin · peak spend now</text>
+            <!-- 2027-06: Cyber Act amendments expected -->
+            <circle cx="660" cy="140" r="7" fill="#6B7280" class="tl-marker-dot"/>
+            <line x1="660" y1="147" x2="660" y2="195" stroke="#6B7280" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="660" y="210" class="tl-marker-date" text-anchor="middle">2027-06</text>
+            <text x="660" y="225" class="tl-marker-label" text-anchor="middle">Cyber Act amend. (est.)</text>
+            <text x="660" y="239" class="tl-marker-body" text-anchor="middle">Supply chain; Cyber</text>
+            <text x="660" y="251" class="tl-marker-body" text-anchor="middle">Trust mandatory</text>
+          </svg>
+        </div>
+      </div>
+      <div class="policy-rail">
+        <div class="policy-rail-card">
+          <div class="tag">Peak spend signal</div>
+          <div class="title">MAS TRM enforcement — Jan 2026</div>
+          <div class="body">Penalties for non-compliance now active. <strong>FSI sector faces the most immediate pressure</strong>; audits on cloud security controls and third-party risk management driving emergency uplift spend in H1 2026 [MAS 2024].</div>
+          <div class="src">MAS 2024</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">OT sector driver</div>
+          <div class="title">CII codes: energy, water, maritime</div>
+          <div class="body">CSA's CII codes now mandate annual independent assessments for operational technology environments. SG's port expansion and energy sector digitisation create new OT attack surfaces — <strong>OT security spend growing at 22% CAGR</strong> [Kira estimates].</div>
+          <div class="src">CSA 2025 · Kira estimates</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">Forward signal</div>
+          <div class="title">Supply chain obligations incoming</div>
+          <div class="body">Anticipated Cybersecurity Act amendments will extend CII obligations to tier-1 technology suppliers. Vendors without auditable security practices will face procurement exclusion from 2027F [Kira estimates].</div>
+          <div class="src">Kira estimates based on CSA 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2024 = MAS TRM Guidelines update Jun 2024 · CSA 2025 = CSA CII Sector Codes of Practice 2025</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: COMPETITIVE LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Competitive landscape</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <div class="page-h1">Competitive structure: fragmented but consolidating around platform plays.</div>
+    <div class="page-subhead">The SG cybersecurity vendor market is <strong>structurally fragmented</strong> — the top 4 vendors hold an estimated combined 28% revenue share [Kira estimates] — but enterprise buyer preference is shifting toward integrated platform vendors who can address MAS TRM and zero trust requirements in a single procurement motion.</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">SG enterprise cyber revenue share</div>
+            <div class="chart-subtitle">Top vendors · 2025E · estimated share</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="160" x2="520" y2="160" class="axis-line"/>
+            <line x1="60" y1="10" x2="60" y2="160" class="axis-line"/>
+            <line x1="160" y1="10" x2="160" y2="160" class="grid-line"/>
+            <line x1="260" y1="10" x2="260" y2="160" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="160" class="grid-line"/>
+            <line x1="460" y1="10" x2="460" y2="160" class="grid-line"/>
+            <text x="160" y="174" class="axis-text" text-anchor="middle">5%</text>
+            <text x="260" y="174" class="axis-text" text-anchor="middle">10%</text>
+            <text x="360" y="174" class="axis-text" text-anchor="middle">15%</text>
+            <text x="460" y="174" class="axis-text" text-anchor="middle">20%</text>
+            <!-- Palo Alto: 9% = 180px*0.09/0.20 = 81px -->
+            <rect x="61" y="16" width="81" height="22" class="bar-primary" rx="2"/>
+            <text x="145" y="32" class="label-data">9%</text>
+            <!-- Microsoft/Defender: 8% -->
+            <rect x="61" y="46" width="72" height="22" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="136" y="62" class="label-data">8%</text>
+            <!-- CrowdStrike: 6% -->
+            <rect x="61" y="76" width="54" height="22" class="bar-secondary" rx="2"/>
+            <text x="118" y="92" class="label-data">6%</text>
+            <!-- ST Engineering: 5% -->
+            <rect x="61" y="106" width="45" height="22" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="109" y="122" class="label-data">5%</text>
+            <!-- Others: 72% -->
+            <rect x="61" y="136" width="252" height="16" fill="var(--border)" rx="2"/>
+            <text x="316" y="149" class="label-small">72% — fragmented others</text>
+            <!-- Y axis labels -->
+            <text x="55" y="32" class="axis-text" text-anchor="end">Palo Alto</text>
+            <text x="55" y="62" class="axis-text" text-anchor="end">Microsoft</text>
+            <text x="55" y="92" class="axis-text" text-anchor="end">CrowdStrike</text>
+            <text x="55" y="122" class="axis-text" text-anchor="end">ST Engineering</text>
+            <text x="55" y="149" class="axis-text" text-anchor="end">Others</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>Market structure thesis</h3>
+        <p>No single vendor controls more than 10% of SG enterprise security spend. <strong>Platform consolidation is the buyer-driven trend</strong> — CISOs managing MAS TRM compliance strongly prefer fewer, deeper vendor relationships. Palo Alto Networks' SASE and Cortex platform leads the integrated-platform share; Microsoft Defender dominates in SME and mid-market through M365 bundling.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Top 4 combined share</span><span class="val">28% [Kira estimates]</span></div>
+          <div class="stat-line"><span>Local/SG-headquartered vendors</span><span class="val">~14% share [Kira estimates]</span></div>
+          <div class="stat-line"><span>MSSP segment concentration</span><span class="val">Higher; top 3 = 41% [Kira estimates]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid" style="flex:1;min-height:0;">
+      <div class="comp-card leader" style="position:relative;">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">Palo Alto Networks</div>
+        <div class="comp-parent">US-listed · SASE, XSIAM, Cortex platform</div>
+        <div class="comp-stat-row"><span>SG revenue est.</span><span class="val">USD 170 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">SASE + zero trust</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Integrated ZTA platform; MAS TRM-aligned compliance toolkit; strong BFSI penetration in SG; ASEAN SOC expansion.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">Microsoft (Defender suite)</div>
+        <div class="comp-parent">US-listed · Bundled with M365 in SG government &amp; enterprise</div>
+        <div class="comp-stat-row"><span>SG revenue est.</span><span class="val">USD 152 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">M365 bundle, SME reach</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Broadest installed base; GovTech procurement incumbent; Azure-native security integration; low switching cost for SME segment.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">CrowdStrike</div>
+        <div class="comp-parent">US-listed · Falcon platform · APAC expanding</div>
+        <div class="comp-stat-row"><span>SG revenue est.</span><span class="val">USD 114 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">EDR, identity, threat intel</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Best-in-class EDR recognition; strong in FSI; threat intelligence feeds used by SG-CERT; post-incident investigation capability valued by MAS-regulated entities.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04 · LOCAL</div>
+        <div class="comp-name">ST Engineering (Cyber)</div>
+        <div class="comp-parent">SGX-listed · Government-linked · OT/ICS specialist</div>
+        <div class="comp-stat-row"><span>SG revenue est.</span><span class="val">USD 95 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">OT/ICS, government</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Dominant in SG government and defence; OT/ICS expertise in port, energy, water CII sectors; trusted local partner status for sensitive infrastructure mandates.</div>
+      </div>
+    </div>
+    <div class="source-key">Revenue estimates are KIRA triangulations based on disclosed APAC segment data and SG market share modelling. Not company-disclosed figures.</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: TALENT GAP + INCIDENT RESPONSE USE CASES -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Talent gap &amp; IR market</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <div class="page-h1">Talent deficit structures the MSSP market; IR retainers becoming standard.</div>
+    <div class="page-subhead">Singapore's cybersecurity workforce deficit of <strong>5,400 FTE</strong> [IMDA 2025] is the structural force behind MSSP market growth. Incident response retainer adoption is accelerating as MAS-regulated entities face a regulatory expectation of documented IR capability — whether in-house or contracted.</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-num">TALENT · 01</div>
+        <div class="uc-title">Talent deficit quantification</div>
+        <div class="uc-body">IMDA's 2025 Infocomm Workforce report identified <strong>5,400 open cybersecurity roles</strong> against a workforce of approximately 12,600 [IMDA 2025]. The deficit has grown 38% since 2022. Roles in OT security, cloud security engineering, and threat intelligence analysis are most acute — each with fewer than 800 qualified practitioners in SG [Kira estimates].</div>
+        <div class="uc-example">SOURCE: IMDA 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">TALENT · 02</div>
+        <div class="uc-title">SG Cyber Talent frameworks</div>
+        <div class="uc-body">CSA's Cybersecurity Workforce Development Programme (CWDP) and the SkillsFuture Credit alignment for CREST-certified courses are the primary upskilling vectors. <strong>Enrolment in CSA-accredited courses grew 44% in 2024</strong> [CSA 2025]. The SG Cybersecurity Professionals Career Pathway — published jointly by CSA and IMDA — maps 22 role titles to structured progression ladders, reducing employer mis-hiring. But the pipeline lag means the deficit narrows slowly: KIRA projects it reaching ~3,800 FTE by 2028F [Kira estimates].</div>
+        <div class="uc-example">SOURCE: CSA 2025 · IMDA 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">MSSP · 03</div>
+        <div class="uc-title">MSSP market structure</div>
+        <div class="uc-body">SG's managed security services market reached <strong>USD 310 mn in 2025E</strong> growing at 19% YoY [Kira estimates]. The top three domestic MSSPs — NCS (Singtel subsidiary), ST Engineering Cyber, and ISTARI (APAC-focused) — hold 41% combined share. Offshore-delivery MSSPs are structurally disadvantaged for FSI clients requiring CSA-licensed SOC operations. Mid-market penetration rising from 28% to est. 44% by 2027F [Kira estimates].</div>
+        <div class="uc-example">SOURCE: Kira estimates · company filings</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">IR · 04</div>
+        <div class="uc-title">Incident response retainer economics</div>
+        <div class="uc-body">IR retainer adoption among MAS-regulated entities (banks, insurers, capital markets intermediaries) reached <strong>63% in 2025</strong>, up from 41% in 2022 [Kira estimates]. Annual retainer pricing ranges SGD 80,000–SGD 280,000 depending on response SLA and scope [Kira estimates]. CSA recommends IR retainers as part of the Business Continuity Management framework for CII operators — a soft mandate that is hardening [CSA 2025].</div>
+        <div class="uc-example">SOURCE: CSA 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">IR · 05</div>
+        <div class="uc-title">Post-breach spend dynamics</div>
+        <div class="uc-body">Average post-breach remediation cost for SG-domiciled enterprises reached <strong>SGD 2.1 mn in 2024</strong> [Kira estimates], up 34% from 2022. The largest cost component is regulatory notification and compliance response (32%) followed by system remediation (28%) and reputational management (18%). MAS expects breach notifications within 1 hour of confirmation — a requirement that structurally elevates IR capability spend.</div>
+        <div class="uc-example">SOURCE: CSA 2025 · MAS 2024 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">SOC HUB · 06</div>
+        <div class="uc-title">ASEAN SOC hub trajectory</div>
+        <div class="uc-body">Singapore's ASEAN Cybersecurity Strategy and participation in INTERPOL's Cybercrime Directorate position SG as the regional intelligence coordination node. <strong>Cross-border MSSP and threat intelligence revenue from ASEAN clients represents 18% of SG-headquartered vendors</strong> [Kira estimates], growing to est. 26% by 2028F. Thai and Philippine regulators increasingly reference SG's MAS TRM framework in their own guidelines — creating certification adjacency for SG-licensed vendors.</div>
+        <div class="uc-example">SOURCE: CSA ASEAN Strategy 2025 · Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA 2025 = IMDA Infocomm Workforce Report 2025 · CSA 2025 = CSA SG Cyber Landscape Report · MAS 2024 = MAS TRM Guidelines</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Sources &amp; methodology</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <div class="page-h1">Methodology and sources</div>
+    <div class="endnote-body">
+      <div class="endnote-col">
+        <h3>Methodology summary</h3>
+        <p>This view triangulates two evidence streams. Where a figure carries a named source tag (e.g. [CSA 2025], [MAS 2024], [IMDA 2025]), the underlying data comes from that source; the full citation is given in the sources list. Where a figure carries [Kira estimates], KIRA analysts derived the number from a blend of disclosed inputs — government publications, operator filings, channel checks, and regulatory guidance — using methodology disclosed in the relevant section. Approximately 38% of quantitative claims in this report are KIRA-derived; 62% are externally cited. Market sizing figures are presented as estimates and should be treated as directional bounds, not audited accounts. CAGR projections assume current regulatory timelines hold and no major geopolitical disruption to ASEAN digital infrastructure investment.</p>
+        <h3>Source list</h3>
+        <ul>
+          <li><strong>CSA 2025</strong> — Cyber Security Agency of Singapore, Singapore Cyber Landscape Report 2025, published April 2025. Available at csa.gov.sg.</li>
+          <li><strong>GovTech 2025</strong> — Government Technology Agency of Singapore, Digital Government Blueprint 2025, published January 2025. govtech.gov.sg.</li>
+          <li><strong>IMDA 2025</strong> — Infocomm Media Development Authority, Infocomm Workforce Study 2025, published March 2025. imda.gov.sg.</li>
+          <li><strong>INTERPOL 2024</strong> — INTERPOL, Operation HAECHI V Cybercrime Assessment Report 2024, published December 2024. interpol.int.</li>
+          <li><strong>MAS 2024</strong> — Monetary Authority of Singapore, Technology Risk Management Guidelines (updated June 2024). mas.gov.sg.</li>
+        </ul>
+      </div>
+      <div class="endnote-col">
+        <h3>Additional references</h3>
+        <ul>
+          <li><strong>CSA ASEAN Strategy 2025</strong> — Cyber Security Agency, ASEAN Cybersecurity Cooperation Strategy, published February 2025. csa.gov.sg.</li>
+          <li><strong>MAS TRM 2021</strong> — MAS Technology Risk Management Guidelines, original issuance January 2021. Superseded in part by MAS 2024 update.</li>
+          <li><strong>ST Engineering AR 2024</strong> — ST Engineering Limited Annual Report 2024, Singapore Exchange filing. SGX: S63.</li>
+          <li><strong>Singtel AR 2025</strong> — Singtel Group Annual Report FY2025. NCS cybersecurity segment disclosed. SGX: Z74.</li>
+          <li><strong>CREST APAC 2025</strong> — CREST International, APAC Penetration Testing and Incident Response Market Survey 2025. crest-approved.org.</li>
+          <li><strong>GovTech TRM 2025</strong> — GovTech Technology Risk Management framework for government agencies, updated February 2025. tech.gov.sg.</li>
+        </ul>
+        <h3>Coverage notes</h3>
+        <p>Market sizing covers enterprise and government cybersecurity spend in Singapore, defined as organisations with more than 50 employees and annual IT budgets exceeding SGD 500,000. Consumer-facing cybersecurity products and SG-origin vendor revenue from non-SG markets are excluded unless stated. OT/ICS security sizing includes both hardware and managed service components deployed in CII-sector environments.</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <p>DISCLAIMER · This report is produced by KIRA Research for informational and strategic orientation purposes only. It does not constitute investment advice, legal advice, or a solicitation of any kind. Market sizing figures are estimates derived from analyst triangulation and publicly available data; they carry inherent uncertainty. Recipients should conduct independent verification before making decisions based on this material. All figures in USD unless otherwise stated. © 2026 KIRA Research. All rights reserved. Reproduction or redistribution without written consent is prohibited.</p>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
