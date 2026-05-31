@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Philippines BPO 2026 — KIRA Research</title>
+<style>
+:root{
+--ink:#0B0D10;
+--paper:#ffffff;
+--accent:#1E6FFF;
+--accent-soft:#EAF1FF;
+--muted:#5B6470;
+--line:#E5E8EC;
+--mono:'JetBrains Mono',ui-monospace,monospace;
+--sans:'Satoshi','Inter',system-ui,-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+font-family:var(--sans);
+background:var(--paper);
+color:var(--ink);
+line-height:1.5;
+}
+.page{
+width:1280px;
+height:720px;
+position:relative;
+overflow:hidden;
+background:var(--paper);
+page-break-after:always;
+margin:0 auto;
+}
+.page-num{
+position:absolute;
+bottom:24px;
+right:32px;
+font-size:12px;
+letter-spacing:0.04em;
+color:var(--muted);
+}
+.kicker{
+font-family:var(--mono);
+font-size:12px;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(--accent);
+margin-bottom:16px;
+}
+.cover{
+padding:80px;
+display:flex;
+flex-direction:column;
+height:100%;
+}
+.cover-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+}
+.logo-mark{
+font-family:var(--mono);
+font-weight:700;
+font-size:20px;
+letter-spacing:0.18em;
+}
+.cover-mid{
+margin-top:auto;
+margin-bottom:auto;
+}
+.cover-title{
+font-size:64px;
+font-weight:700;
+line-height:1.05;
+letter-spacing:-0.02em;
+margin-bottom:24px;
+}
+.cover-sub{
+font-size:24px;
+font-weight:400;
+color:var(--muted);
+line-height:1.35;
+max-width:820px;
+}
+.cover-meta{
+display:flex;
+gap:48px;
+margin-top:48px;
+font-family:var(--mono);
+font-size:13px;
+}
+.cover-meta div span{
+display:block;
+color:var(--muted);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.08em;
+margin-bottom:4px;
+}
+.section-h{
+font-size:34px;
+font-weight:700;
+letter-spacing:-0.01em;
+margin-bottom:24px;
+line-height:1.1;
+}
+.content{
+padding:64px 80px;
+height:100%;
+display:flex;
+flex-direction:column;
+}
+.body-text{
+font-size:16px;
+line-height:1.6;
+color:#1a1d24;
+max-width:920px;
+}
+.body-text p{margin-bottom:14px;}
+.source-tag{
+font-family:var(--mono);
+font-size:11px;
+color:var(--accent);
+vertical-align:super;
+font-weight:500;
+}
+.callout{
+background:var(--accent-soft);
+border-left:3px solid var(--accent);
+padding:20px 24px;
+margin:20px 0;
+border-radius:0 8px 8px 0;
+max-width:920px;
+}
+.callout-label{
+font-family:var(--mono);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.1em;
+color:var(--accent);
+margin-bottom:8px;
+}
+.kpi-row{
+display:flex;
+gap:40px;
+margin:28px 0;
+}
+.kpi{flex:1;}
+.kpi-num{
+font-size:44px;
+font-weight:700;
+letter-spacing:-0.02em;
+color:var(--accent);
+}
+.kpi-label{
+font-size:13px;
+color:var(--muted);
+margin-top:6px;
+line-height:1.3;
+}
+.bar-chart{margin:24px 0;}
+.bar-row{
+display:flex;
+align-items:center;
+margin-bottom:14px;
+gap:16px;
+}
+.bar-label{
+width:180px;
+font-size:13px;
+text-align:right;
+color:#1a1d24;
+}
+.bar-track{
+flex:1;
+background:#F0F2F5;
+height:28px;
+border-radius:4px;
+overflow:hidden;
+position:relative;
+}
+.bar-fill{
+height:100%;
+background:var(--accent);
+border-radius:4px;
+display:flex;
+align-items:center;
+justify-content:flex-end;
+padding-right:10px;
+color:#fff;
+font-size:12px;
+font-weight:600;
+font-family:var(--mono);
+}
+.bar-fill.muted{background:#9DB2CE;}
+.data-table{
+width:100%;
+border-collapse:collapse;
+margin:20px 0;
+font-size:14px;
+max-width:920px;
+}
+.data-table th{
+text-align:left;
+padding:12px 16px;
+background:#F7F8FA;
+font-family:var(--mono);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.06em;
+color:var(--muted);
+border-bottom:2px solid var(--line);
+}
+.data-table td{
+padding:12px 16px;
+border-bottom:1px solid var(--line);
+}
+.data-table tr:last-child td{border-bottom:none;}
+.two-col{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+max-width:920px;
+}
+.list-clean{list-style:none;}
+.list-clean li{
+padding-left:24px;
+position:relative;
+margin-bottom:12px;
+font-size:15px;
+line-height:1.5;
+}
+.list-clean li::before{
+content:"";
+position:absolute;
+left:0;
+top:9px;
+width:8px;
+height:8px;
+background:var(--accent);
+border-radius:50%;
+}
+.tag{
+display:inline-block;
+font-family:var(--mono);
+font-size:11px;
+padding:4px 10px;
+border-radius:4px;
+background:var(--accent-soft);
+color:var(--accent);
+margin-right:8px;
+}
+.footer-brand{
+position:absolute;
+bottom:24px;
+left:32px;
+font-family:var(--mono);
+font-size:11px;
+color:var(--muted);
+letter-spacing:0.04em;
+}
+.scenario-row{display:flex;gap:24px;margin:24px 0;}
+.scenario-card{
+border:1px solid var(--line);
+border-radius:10px;
+padding:24px;
+flex:1;
+}
+.scenario-card h4{
+font-size:18px;
+margin-bottom:12px;
+}
+.scenario-card.highlight{
+border-color:var(--accent);
+background:var(--accent-soft);
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+<div class="cover-top">
+<div class="logo-mark">KIRA RESEARCH</div>
+<div class="kicker">Market Intelligence</div>
+</div>
+<div class="cover-mid">
+<div class="kicker">Philippines · Business Process Outsourcing · 2026</div>
+<h1 class="cover-title">Philippines BPO 2026</h1>
+<h2 class="cover-sub">The services migration: how automation, captive centers, and the move up the value chain reshape the world's largest contact-center economy</h2>
+</div>
+<div class="cover-meta">
+<div><span>Report</span>KIRA-2026-PH-BPO</div>
+<div><span>Pages</span>16</div>
+<div><span>Published</span>May 2026</div>
+<div><span>Coverage</span>Philippines</div>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+</div>
+
+<!-- EXEC SUMMARY -->
+<div class="page content">
+<div class="kicker">01 · Executive Summary</div>
+<h2 class="section-h">Executive summary</h2>
+<div class="body-text">
+<p>The Philippine information technology and business process management (IT-BPM) sector enters 2026 as the country's most strategic export industry and one of its largest private employers. Revenue reached <strong>US$38 billion<span class="source-tag">[secondary]</span></strong> in 2024, up from US$35.4 billion in 2023<span class="source-tag">[secondary]</span> — annual growth of roughly 7%<span class="source-tag">[estimate]</span> — while direct headcount climbed to <strong>1.82 million<span class="source-tag">[secondary]</span></strong> from about 1.7 million the year prior<span class="source-tag">[secondary]</span>.</p>
+<p>Yet the growth story now carries a question mark. Generative automation can absorb a meaningful share of the low-complexity voice and transactional work that built the industry. The sector's response is not retreat but migration: up the value chain into finance, healthcare, analytics, and software, and outward into captive centers and countryside hubs. 2026 is the year that migration becomes the operating reality rather than a slide in a roadmap deck.</p>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-num">$38B</div><div class="kpi-label">IT-BPM revenue 2024<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">1.82M</div><div class="kpi-label">Direct employees 2024<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">~7%</div><div class="kpi-label">GDP contribution<span class="source-tag">[estimate]</span></div></div>
+</div>
+<div class="callout">
+<div class="callout-label">Key Insight</div>
+The threat and the opportunity are the same force. Automation that hollows out entry-level voice work simultaneously funds the upskilling and margin headroom needed to win higher-value mandates. Operators that treat AI as an augmentation layer rather than a headcount lever will define the 2028 cohort of winners.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">02</div>
+</div>
+
+<!-- MARKET CONTEXT -->
+<div class="page content">
+<div class="kicker">02 · Market Context</div>
+<h2 class="section-h">From cost arbitrage to capability</h2>
+<div class="body-text">
+<p>For two decades the Philippine value proposition was straightforward: a large, English-fluent, culturally Western-aligned workforce delivering voice and back-office services at a fraction of onshore cost. That proposition made the country the global leader in contact-center delivery and the world's second-largest IT-BPM destination after India<span class="source-tag">[secondary]</span>. The sector now accounts for an estimated 10–15% of the global BPO market<span class="source-tag">[secondary]</span> and contributes roughly 7–8% of national GDP<span class="source-tag">[secondary]</span>.</p>
+<p>The arbitrage logic is eroding at both ends. On the demand side, enterprise buyers increasingly want outcomes — resolved tickets, closed books, clean claims — not seats. On the supply side, generative tooling compresses the cost of the simplest interactions toward zero, removing the very tasks that anchored low-cost positioning. The industry's defining shift is therefore from selling labor capacity to selling capability: domain expertise, process ownership, and analytics that a buyer cannot easily replicate in-house.</p>
+<p>The Information Technology and Business Process Association of the Philippines (IBPAP) has codified this in its IT-BPM Roadmap 2028, which targets US$59 billion in revenue and 2.5 million direct employees by 2028<span class="source-tag">[secondary]</span>. Hitting those numbers requires revenue per employee to rise faster than headcount — the arithmetic of moving up, not just adding seats.</p>
+</div>
+<div class="callout">
+<div class="callout-label">Structural Shift</div>
+The question for 2026 is no longer whether the Philippines can grow BPO headcount, but whether it can grow revenue per head fast enough to outrun automation at the bottom of the stack.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">03</div>
+</div>
+
+<!-- MARKET SIZING -->
+<div class="page content">
+<div class="kicker">03 · Market Sizing</div>
+<h2 class="section-h">The trajectory to 2028</h2>
+<div class="body-text">
+<p>Industry revenue has compounded steadily through the recovery from the pandemic-era demand shock. From US$35.4 billion in 2023 to US$38 billion in 2024<span class="source-tag">[secondary]</span>, the sector added roughly US$2.6 billion in a single year. The Roadmap 2028 target of US$59 billion<span class="source-tag">[secondary]</span> implies a compound annual growth rate of approximately 9% from the 2024 base<span class="source-tag">[estimate]</span> — achievable only if higher-value mandates carry the load as commodity voice plateaus.</p>
+</div>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">2023 revenue</div><div class="bar-track"><div class="bar-fill muted" style="width:60%;">$35.4B</div></div></div>
+<div class="bar-row"><div class="bar-label">2024 revenue</div><div class="bar-track"><div class="bar-fill muted" style="width:64%;">$38.0B</div></div></div>
+<div class="bar-row"><div class="bar-label">2028 target</div><div class="bar-track"><div class="bar-fill" style="width:100%;">$59.0B</div></div></div>
+</div>
+<div class="body-text">
+<p>Headcount follows a parallel but flatter curve. The path from 1.82 million employees in 2024 to a 2.5 million target<span class="source-tag">[secondary]</span> represents roughly 8% annual additions<span class="source-tag">[estimate]</span> — but the composition of those additions matters more than the count. Net new seats will skew toward non-voice, technical, and domain-specialist roles, while entry-level voice hiring decelerates.</p>
+</div>
+<div class="callout">
+<div class="callout-label">Analyst View</div>
+Revenue growth of ~9% against headcount growth of ~8% looks modest, but the gap is the entire thesis: it is the first sustained period in which Philippine BPO revenue per employee is engineered to rise rather than drift.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">04</div>
+</div>
+
+<!-- SEGMENTATION -->
+<div class="page content">
+<div class="kicker">04 · Segmentation</div>
+<h2 class="section-h">Where the value sits</h2>
+<div class="body-text">
+<p>The sector spans a spectrum from commodity customer support to specialist knowledge work. Voice-based contact-center services remain the largest single segment by headcount and the historic core of Philippine delivery<span class="source-tag">[secondary]</span>. Above it sit a band of higher-value lines — finance and accounting, healthcare information management, software and IT services, and data analytics — that the industry is deliberately expanding<span class="source-tag">[secondary]</span>.</p>
+</div>
+<table class="data-table">
+<thead><tr><th>Segment</th><th>Maturity</th><th>Automation exposure</th><th>2026 trajectory</th></tr></thead>
+<tbody>
+<tr><td>Voice / contact center</td><td>Mature, dominant</td><td>High</td><td>Flat to declining headcount<span class="source-tag">[estimate]</span></td></tr>
+<tr><td>Finance &amp; accounting</td><td>Scaling</td><td>Medium</td><td>Growth<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>Healthcare information mgmt</td><td>Scaling</td><td>Medium</td><td>Strong growth<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>Software &amp; IT services</td><td>Emerging at scale</td><td>Low</td><td>Strong growth<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>Data analytics / knowledge</td><td>Emerging</td><td>Low</td><td>Strong growth<span class="source-tag">[estimate]</span></td></tr>
+</tbody>
+</table>
+<div class="body-text">
+<p>The inversion underway is clear in this table: the segment most exposed to automation is also the largest, while the segments least exposed are the smallest but fastest-growing. The strategic task is to grow the bottom rows faster than the top row shrinks.</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">05</div>
+</div>
+
+<!-- DEMAND DRIVERS -->
+<div class="page content">
+<div class="kicker">05 · Demand Drivers</div>
+<h2 class="section-h">What pulls work to the Philippines</h2>
+<div class="body-text">
+<p>Three forces sustain inbound demand even as the delivery model changes.</p>
+</div>
+<ul class="list-clean">
+<li><strong>Enterprise cost pressure persists.</strong> Western corporates facing margin compression continue to offshore, but the brief has shifted from "cut cost" to "cut cost and add capability." The Philippines is positioned to answer both.</li>
+<li><strong>The captive-center wave.</strong> Multinationals are standing up their own global capability centers (GCCs) on the ground rather than contracting third parties, concentrating in analytics, finance, IT, and R&amp;D functions<span class="source-tag">[secondary]</span>. This shifts value capture but anchors high-skill demand locally.</li>
+<li><strong>Talent depth in English-language knowledge work.</strong> A large pool of college-educated, English-fluent workers with Western cultural alignment remains scarce globally and is the country's most durable moat<span class="source-tag">[secondary]</span>.</li>
+</ul>
+<div class="callout">
+<div class="callout-label">Demand Signal</div>
+The GCC wave is the most consequential demand shift of the decade. It moves the Philippines from a vendor of seats to a host of permanent multinational operations — stickier, higher-skilled, and harder to repatriate.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">06</div>
+</div>
+
+<!-- COMPETITIVE LANDSCAPE -->
+<div class="page content">
+<div class="kicker">06 · Competitive Landscape</div>
+<h2 class="section-h">The global field</h2>
+<div class="body-text">
+<p>The Philippines competes on a global board where positioning, not just price, decides mandates. It holds an estimated 10–15% of the global BPO market<span class="source-tag">[secondary]</span> and remains the clear leader in voice-based contact-center delivery<span class="source-tag">[secondary]</span>, while India retains overall IT-BPM leadership on the strength of its software and engineering depth<span class="source-tag">[secondary]</span>.</p>
+</div>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">Voice / contact center</div><div class="bar-track"><div class="bar-fill" style="width:92%;">PH leads globally</div></div></div>
+<div class="bar-row"><div class="bar-label">Software / engineering</div><div class="bar-track"><div class="bar-fill muted" style="width:55%;">India-led</div></div></div>
+<div class="bar-row"><div class="bar-label">Nearshore US (LatAm)</div><div class="bar-track"><div class="bar-fill muted" style="width:40%;">Rising</div></div></div>
+<div class="bar-row"><div class="bar-label">Nearshore EU (E. Europe)</div><div class="bar-track"><div class="bar-fill muted" style="width:35%;">Niche</div></div></div>
+</div>
+<div class="body-text">
+<p>The competitive threat is increasingly nearshore. Latin America offers US buyers same-time-zone Spanish and English support, and Eastern Europe serves the EU market<span class="source-tag">[secondary]</span>. The Philippine counter is depth and scale in English knowledge work plus a cost base that nearshore locations cannot match — a defensible position only if the country keeps climbing the value chain faster than rivals close the cost gap.</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">07</div>
+</div>
+
+<!-- AI & TECHNOLOGY -->
+<div class="page content">
+<div class="kicker">07 · Technology &amp; Automation</div>
+<h2 class="section-h">Automation as augmentation, not replacement</h2>
+<div class="body-text">
+<p>Generative tooling is already embedded in Philippine delivery floors as an agent-assist and copilot layer: real-time call summarization, suggested responses, automated quality monitoring, and after-call documentation<span class="source-tag">[secondary]</span>. The near-term effect is productivity per agent, not wholesale displacement — though industry leaders acknowledge that entry-level voice and transactional roles carry the highest automation risk<span class="source-tag">[secondary]</span>.</p>
+<p>IBPAP's public stance frames automation as an augmentation tool that raises the floor of what a single worker can deliver, paired with large-scale upskilling and reskilling programs to move staff into AI-supervised and higher-complexity roles<span class="source-tag">[secondary]</span>. The honest reading is that automation simultaneously erodes the bottom of the pyramid and raises the ceiling: low-complexity tasks compress while demand grows for workers who can manage, audit, and exception-handle automated workflows.</p>
+</div>
+<div class="callout">
+<div class="callout-label">Automation Calculus</div>
+The unit of competition shifts from cost-per-seat to cost-per-resolution. Operators that re-price around automated throughput — and pass enough savings to clients to keep mandates — protect volume even as seat counts fall.
+</div>
+<div class="body-text">
+<p>The risk is not that automation arrives; it is that it arrives faster than the workforce can be moved up. Reskilling velocity, not technology access, is the binding constraint for 2026.</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">08</div>
+</div>
+
+<!-- TALENT & WAGE ECONOMICS -->
+<div class="page content">
+<div class="kicker">08 · Talent &amp; Economics</div>
+<h2 class="section-h">The workforce and where it lives</h2>
+<div class="body-text">
+<p>With 1.82 million direct employees<span class="source-tag">[secondary]</span> and a large indirect footprint, IT-BPM is among the country's largest private-sector employers and a primary channel for middle-class formation. The geography of that workforce is changing: an estimated 30% of the industry workforce is now based outside Metro Manila<span class="source-tag">[secondary]</span>, the result of a deliberate decentralization push.</p>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-num">1.82M</div><div class="kpi-label">Direct employees<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">~30%</div><div class="kpi-label">Workforce outside Metro Manila<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">25</div><div class="kpi-label">Digital Cities 2025 hubs<span class="source-tag">[secondary]</span></div></div>
+</div>
+<div class="body-text">
+<p>The Digital Cities 2025 program and the earlier Next Wave Cities initiative identified 25 emerging digital hubs<span class="source-tag">[secondary]</span> — Davao, Iloilo, Bacolod, Cagayan de Oro, and the Clark–Pampanga corridor among them<span class="source-tag">[secondary]</span>. Countryside expansion lowers facilities and wage costs, taps untapped graduate pools, and improves staff retention through quality-of-life factors. The strategic prize is a wage structure that can absorb automation-driven margin pressure while still funding the upskilling the value-chain climb requires.</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">09</div>
+</div>
+
+<!-- REGULATORY -->
+<div class="page content">
+<div class="kicker">09 · Policy &amp; Incentives</div>
+<h2 class="section-h">The incentives question</h2>
+<div class="body-text">
+<p>Policy is a live variable for 2026. IBPAP has publicly urged the government to strengthen incentives for the local IT-BPM industry<span class="source-tag">[secondary]</span>, reflecting concern that fiscal-incentive reforms and work-arrangement rules could blunt the country's competitiveness against aggressive nearshore and offshore rivals.</p>
+<p>Two policy levers carry the most weight. First, the tax and incentive regime governing economic-zone locators determines the after-tax economics of expansion decisions, and any erosion of predictability pushes new mandates toward rival geographies<span class="source-tag">[estimate]</span>. Second, hybrid and remote-work flexibility — critical to talent retention and countryside delivery — must remain compatible with incentive eligibility, or operators face a forced trade-off between people strategy and tax position<span class="source-tag">[estimate]</span>.</p>
+</div>
+<div class="callout">
+<div class="callout-label">Policy Watch</div>
+The industry's Roadmap 2028 targets assume a stable, competitive incentive environment. Incentive predictability is now as material to the investment case as wage cost — and a swing factor that sits largely outside operator control.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">10</div>
+</div>
+
+<!-- RISKS -->
+<div class="page content">
+<div class="kicker">10 · Risks &amp; Headwinds</div>
+<h2 class="section-h">What could break the thesis</h2>
+<div class="body-text">
+<p>The migration to higher value is the base case, but it is not guaranteed. Four risks dominate.</p>
+</div>
+<ul class="list-clean">
+<li><strong>Automation outpaces reskilling.</strong> If low-complexity voice work compresses faster than workers move up, the result is net job loss and stranded capacity rather than orderly migration<span class="source-tag">[estimate]</span>.</li>
+<li><strong>Nearshore erosion.</strong> Sustained LatAm and Eastern Europe gains in US and EU accounts could cap Philippine voice volumes earlier than the value-chain build-out can offset<span class="source-tag">[estimate]</span>.</li>
+<li><strong>Incentive uncertainty.</strong> Adverse changes to fiscal incentives or work-arrangement rules could divert new mandates and GCC investments to rival locations<span class="source-tag">[secondary]</span>.</li>
+<li><strong>Talent ceiling in specialist roles.</strong> The graduate pipeline is deep in generalist English work but thinner in the engineering, analytics, and domain expertise the higher-value segments demand<span class="source-tag">[estimate]</span>.</li>
+</ul>
+<div class="callout">
+<div class="callout-label">Risk Concentration</div>
+The risks compound. Slow reskilling, nearshore competition, and incentive uncertainty each pressure the same lever — revenue per employee — and a shortfall there is what turns a managed migration into a contraction.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">11</div>
+</div>
+
+<!-- OUTLOOK & SCENARIOS -->
+<div class="page content">
+<div class="kicker">11 · Outlook &amp; Scenarios</div>
+<h2 class="section-h">Three paths to 2028</h2>
+<div class="scenario-row">
+<div class="scenario-card">
+<h4>Stall</h4>
+<p style="font-size:14px;color:var(--muted);">Automation erodes voice faster than upskilling fills higher-value roles; incentive uncertainty diverts GCC investment. Revenue plateaus near US$42–45B<span class="source-tag">[estimate]</span> and headcount flattens.</p>
+</div>
+<div class="scenario-card highlight">
+<h4>Managed migration</h4>
+<p style="font-size:14px;color:var(--muted);">The value-chain climb offsets voice compression; GCCs and countryside hubs scale. Revenue approaches the US$59B Roadmap target<span class="source-tag">[secondary]</span> with headcount near 2.5M<span class="source-tag">[secondary]</span>.</p>
+</div>
+<div class="scenario-card">
+<h4>Breakout</h4>
+<p style="font-size:14px;color:var(--muted);">Aggressive reskilling plus stable incentives make the Philippines a default GCC and knowledge-work hub. Revenue exceeds US$59B ahead of schedule<span class="source-tag">[estimate]</span> on rising value per head.</p>
+</div>
+</div>
+<div class="body-text">
+<p>Our base case is managed migration. The industry has the demand, the talent depth, and the roadmap; the binding constraints are reskilling velocity and incentive stability. Both are addressable, neither is assured. The probability mass sits between managed migration and stall, with breakout requiring policy tailwinds that are not yet visible<span class="source-tag">[estimate]</span>.</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">12</div>
+</div>
+
+<!-- STRATEGIC IMPLICATIONS -->
+<div class="page content">
+<div class="kicker">12 · Strategic Implications</div>
+<h2 class="section-h">What it means for participants</h2>
+<div class="body-text">
+<p>The 2026 environment rewards different moves depending on where a participant sits.</p>
+</div>
+<div class="two-col">
+<div>
+<div class="callout-label">For incumbents</div>
+<ul class="list-clean">
+<li>Re-price mandates around resolution and outcomes, not seats, to lock in volume as automation lands<span class="source-tag">[estimate]</span>.</li>
+<li>Build domain depth in finance, healthcare, and analytics — the segments least exposed to automation<span class="source-tag">[secondary]</span>.</li>
+<li>Treat reskilling as core capex, not HR overhead<span class="source-tag">[estimate]</span>.</li>
+</ul>
+</div>
+<div>
+<div class="callout-label">For enterprise buyers</div>
+<ul class="list-clean">
+<li>Use the GCC model to capture value where process ownership is strategic<span class="source-tag">[secondary]</span>.</li>
+<li>Diversify delivery across Metro Manila and countryside hubs for resilience and cost<span class="source-tag">[estimate]</span>.</li>
+<li>Contract for automation-adjusted pricing to share productivity gains<span class="source-tag">[estimate]</span>.</li>
+</ul>
+</div>
+</div>
+<div class="callout">
+<div class="callout-label">Bottom Line</div>
+The winners of 2026 are not those who automate fastest or hire most — they are those who convert automation savings into capability buyers will pay a premium for.
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">13</div>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="page content">
+<div class="kicker">13 · Recommendations</div>
+<h2 class="section-h">Where to focus</h2>
+<div class="body-text">
+<p>For participants positioning in Philippine IT-BPM, five priorities stand out for 2026.</p>
+</div>
+<ul class="list-clean">
+<li><strong>Migrate the mix, not just the marketing.</strong> Set explicit revenue-per-employee targets and shift hiring toward non-voice, technical, and domain-specialist roles<span class="source-tag">[estimate]</span>.</li>
+<li><strong>Industrialize reskilling.</strong> Reskilling velocity is the binding constraint; fund it at the scale of a core operation, not a training budget<span class="source-tag">[estimate]</span>.</li>
+<li><strong>Lean into GCCs.</strong> The captive-center wave anchors high-skill, sticky demand locally — partner with or build for it<span class="source-tag">[secondary]</span>.</li>
+<li><strong>Decentralize deliberately.</strong> Countryside hubs cut cost and improve retention; the 25 Digital Cities provide a ready map<span class="source-tag">[secondary]</span>.</li>
+<li><strong>Hedge the policy variable.</strong> Build incentive uncertainty into expansion models and engage on the reforms that shape after-tax economics<span class="source-tag">[secondary]</span>.</li>
+</ul>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">14</div>
+</div>
+
+<!-- METHODOLOGY -->
+<div class="page content">
+<div class="kicker">14 · Methodology</div>
+<h2 class="section-h">Methodology &amp; sources</h2>
+<div class="body-text">
+<p>This report synthesizes industry association data, published sector figures, and our analysts' interpretation of structural trends in Philippine IT-BPM as of Q2 2026<span class="source-tag">[primary]</span>. Quantitative projections combine published roadmap targets with KIRA analyst modeling of revenue-per-employee dynamics<span class="source-tag">[estimate]</span>.</p>
+</div>
+<div class="two-col">
+<div>
+<div class="callout-label">Primary sources</div>
+<ul class="list-clean">
+<li>KIRA analyst synthesis &amp; modeling (Q2 2026)</li>
+<li>Industry roadmap target interpretation</li>
+</ul>
+</div>
+<div>
+<div class="callout-label">Secondary sources</div>
+<ul class="list-clean">
+<li>IBPAP industry figures &amp; IT-BPM Roadmap 2028</li>
+<li>Digital Cities 2025 / Next Wave Cities program data</li>
+</ul>
+</div>
+</div>
+<div class="callout">
+<div class="callout-label">Source Tags</div>
+<strong>[primary]</strong> KIRA original research · <strong>[secondary]</strong> published third-party data · <strong>[estimate]</strong> KIRA analyst modeling
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">15</div>
+</div>
+
+<!-- CTA -->
+<div class="page content" style="justify-content:center;align-items:flex-start;">
+<div class="kicker">KIRA Research</div>
+<h2 class="section-h" style="font-size:44px;max-width:820px;">Independent market intelligence for Southeast Asia</h2>
+<div class="body-text">
+<p>This report is part of KIRA Research's Southeast Asia coverage. Our analysts produce independent, source-tagged market intelligence across the region's fastest-moving industries. For custom research, market-entry studies, or competitive strategy work on the Philippine IT-BPM sector, our team can build to brief.</p>
+</div>
+<div style="margin-top:32px;">
+<span class="tag">Custom Research</span>
+<span class="tag">Market Entry</span>
+<span class="tag">Competitive Strategy</span>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">16</div>
+</div>
+
+</body>
+</html>
