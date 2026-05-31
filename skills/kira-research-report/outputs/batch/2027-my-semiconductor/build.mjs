@@ -119,7 +119,7 @@ pages.push(page(`${header('Executive summary', pn(4))}
         <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px; letter-spacing:0.05em;">SOURCE: WSTS, SIA · KIRA RESEARCH 2027</div>
       </div>
     </div>
-${sourceKey('SOURCE KEY · MIDA = Malaysian Investment Development Authority · MATRADE = Malaysia External Trade Development Corp · WSTS = World Semiconductor Trade Statistics · SIA = Semiconductor Industry Assn · NSS = National Semiconductor Strategy 2024 · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('MIDA = Malaysian Investment Development Authority · MATRADE = Malaysia External Trade Development Corp · WSTS = World Semiconductor Trade Statistics · SIA = Semiconductor Industry Assn · NSS = National Semiconductor Strategy 2024 · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* helper: vertical bar chart for exec/market pages */
@@ -200,7 +200,7 @@ pages.push(page(`${header('Section 04 · Macro context', pn(7))}
         <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: BNM, DOSM · KIRA RESEARCH 2027</div>
       </div>
     </div>
-${sourceKey('SOURCE KEY · BNM = Bank Negara Malaysia · DOSM = Dept of Statistics Malaysia · MATRADE = Malaysia External Trade Development Corp · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('BNM = Bank Negara Malaysia · DOSM = Dept of Statistics Malaysia · MATRADE = Malaysia External Trade Development Corp · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 function comboChart() {
@@ -245,7 +245,7 @@ pages.push(page(`${header('Section 05 · Sector sizing', pn(9))}
         <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: MATRADE; 2027F KIRA EST. · KIRA RESEARCH 2027</div>
       </div>
     </div>
-${sourceKey('SOURCE KEY · MIDA = Malaysian Investment Development Authority · MATRADE = Malaysia External Trade Development Corp · WSTS = World Semiconductor Trade Statistics · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('MIDA = Malaysian Investment Development Authority · MATRADE = Malaysia External Trade Development Corp · WSTS = World Semiconductor Trade Statistics · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* ============ 10 · SEGMENT ECONOMICS ============ */
@@ -265,16 +265,17 @@ pages.push(page(`${header('Section 06 · Segment economics', pn(10))}
         <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">Standard assembly — commoditising</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">Wirebond and leadframe work remains the volume base but faces price pressure [Kira estimates]. Defensible only on scale, automation, and proximity to test.</p></div>
       </div>
     </div>
-${sourceKey('SOURCE KEY · Margin bands are KIRA estimates triangulated from listed OSAT filings and corridor channel checks · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('Margin bands are KIRA estimates triangulated from listed OSAT filings and corridor channel checks · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
-function hbar(rows, max) {
+function hbar(rows, max, unit) {
+  unit = (unit===undefined) ? "%" : unit;
   const W=460, rowH=42, top=8;
   let s=`<svg viewBox="0 0 ${W} ${rows.length*rowH+top}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">`;
   rows.forEach((r,i)=>{const [label,val,color]=r; const y=top+i*rowH; const bw=Math.round((val/max)*(W-150));
     s+=`\n<text x="0" y="${y+16}" font-size="11" fill="#0B0D10" font-weight="500">${label}</text>`;
     s+=`\n<rect x="0" y="${y+22}" width="${bw}" height="12" fill="${color}" rx="2"/>`;
-    s+=`\n<text x="${bw+8}" y="${y+32}" font-size="10" font-weight="700" fill="${color}">${val}%</text>`;
+    s+=`\n<text x="${bw+8}" y="${y+32}" font-size="10" font-weight="700" fill="${color}">${val}${unit}</text>`;
   });
   s+=`\n</g></svg>`;
   return s;
@@ -291,7 +292,7 @@ pages.push(page(`${header('Section 07 · Competitive landscape', pn(12))}
       <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
         <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">Anchor commitments in the corridor</div>
         <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">SELECTED INVESTMENT, USD BN · RECENT</div>
-        ${hbar([['Intel · 3D packaging, Penang',7.0,'#1E6FFF'],['Infineon · SiC fab, Kulim',5.0,'#1E6FFF'],['Texas Instruments · assembly/test',3.1,'#4A5568']],8)}
+        ${hbar([['Intel · 3D packaging, Penang',7.0,'#1E6FFF'],['Infineon · SiC fab, Kulim',5.0,'#1E6FFF'],['Texas Instruments · assembly/test',3.1,'#4A5568']],8,' bn')}
         <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: MIDA, COMPANY ANNOUNCEMENTS · KIRA RESEARCH 2027</div>
       </div>
       <div>
@@ -317,7 +318,7 @@ pages.push(page(`${header('Section 07 · Competitive landscape', pn(12))}
         <div class="mono" style="font-size:9px; color:var(--muted);">${c[3]}</div>
       </div>`).join('\n      ')}
     </div>
-${sourceKey('SOURCE KEY · MIDA = Malaysian Investment Development Authority · Inari AR / Unisem AR = company annual reports · Infineon = company announcement · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('MIDA = Malaysian Investment Development Authority · Inari AR / Unisem AR = company annual reports · Infineon = company announcement · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* ============ 13 · PLAYER PROFILE 1 — Inari ============ */
@@ -411,7 +412,7 @@ pages.push(page(`${header('Section 08 · Demand & investment', pn(17))}
         <div class="mono" style="font-size:9px; color:var(--muted); margin-top:12px;">SOURCE: MIDA, COMPANY ANNOUNCEMENTS · KIRA RESEARCH 2027</div>
       </div>
     </div>
-${sourceKey('SOURCE KEY · MIDA = Malaysian Investment Development Authority · Infineon = company announcement · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('MIDA = Malaysian Investment Development Authority · Infineon = company announcement · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* ============ 18 · POLICY DIVIDER ============ */
@@ -444,7 +445,7 @@ pages.push(page(`${header('Section 09 · Policy landscape', pn(19))}
         <div class="mono" style="font-size:9px; color:var(--muted); margin-top:4px;">SOURCE: NSS 2024 · KIRA RESEARCH 2027</div>
       </div>
     </div>
-${sourceKey('SOURCE KEY · NSS = National Semiconductor Strategy, launched 2024 · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('NSS = National Semiconductor Strategy, launched 2024 · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* ============ 20 · AI DIVIDER ============ */
@@ -480,7 +481,7 @@ pages.push(page(`${header('Section 10 · AI impact', pn(21))}
         <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">${c[2]}</div>
       </div>`).join('\n      ')}
     </div>
-${sourceKey('SOURCE KEY · Advanced-packaging sizing is KIRA triangulation of industry sources (~USD 38–44 bn 2024 → USD 65–80 bn 2030, ~9–11% CAGR) · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('Advanced-packaging sizing is KIRA triangulation of industry sources (~USD 38–44 bn 2024 → USD 65–80 bn 2030, ~9–11% CAGR) · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* ============ 22 · FORECAST ============ */
@@ -505,7 +506,7 @@ pages.push(page(`${header('Section 11 · Five-year outlook', pn(22))}
         <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">${c[2]}</p>
       </div>`).join('\n      ')}
     </div>
-${sourceKey('SOURCE KEY · MATRADE = Malaysia External Trade Development Corp (actuals) · Forecast bands and CAGR are KIRA estimates anchored to WSTS global trajectory and corridor pipeline · Kira estimates = KIRA in-house triangulation')}
+${sourceKey('MATRADE = Malaysia External Trade Development Corp (actuals) · Forecast bands and CAGR are KIRA estimates anchored to WSTS global trajectory and corridor pipeline · Kira estimates = KIRA in-house triangulation')}
 ${footer()}`));
 
 /* ============ 23 · METHODOLOGY ENDNOTE ============ */
