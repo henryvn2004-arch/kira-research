@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Philippines retail 2026 — KIRA Research</title>
+<style>
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+:root{
+  --bg:#FFFFFF; --bg-soft:#F8F9FB; --text:#0B0D10; --text-mid:#4A5568;
+  --muted:#6B7280; --primary:#1E6FFF; --primary-soft:#EEF3FF; --green:#00A88B;
+  --amber:#D97706; --red:#B91C1C; --border:#E5E7EB; --dark:#0B0D10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#52555c;font-family:'Satoshi',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono','SFMono-Regular',Menlo,monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.page{
+  position:relative;width:1280px;height:720px;background:var(--bg);
+  margin:0 auto 22px;overflow:hidden;
+  padding:36px 56px 28px 56px;display:flex;flex-direction:column;
+}
+.page.dark{background:var(--dark);color:#fff}
+/* page chrome */
+.page-header{display:flex;justify-content:space-between;align-items:center;height:25px;flex:0 0 auto}
+.logo-mark{font-weight:900;letter-spacing:.16em;font-size:13px;text-transform:uppercase}
+.page.dark .logo-mark{color:#fff}
+.page-header .section-tag{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.page.dark .page-header .section-tag{color:#9aa3af}
+.page-divider-rule{height:2px;background:var(--text);margin-top:6px;flex:0 0 auto}
+.page.dark .page-divider-rule{background:#fff;opacity:.2}
+.page-rule-soft{height:1px;background:var(--border);margin-top:6px;flex:0 0 auto}
+.page-footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);font-size:10px;letter-spacing:.06em;color:var(--muted);flex:0 0 auto}
+.page.dark .page-footer{border-top-color:rgba(255,255,255,.15);color:#9aa3af}
+.body-wrap{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding-top:14px}
+/* headings */
+h1.page-h1{font-size:30px;font-weight:900;line-height:1.08;letter-spacing:-.01em;margin-bottom:8px}
+.subhead{font-size:14.5px;line-height:1.45;color:var(--text-mid);max-width:1060px;margin-bottom:14px}
+.subhead strong{font-weight:700;color:var(--text)}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+/* data tags */
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;padding:1px 5px;border-radius:3px;vertical-align:middle;letter-spacing:.02em;white-space:nowrap}
+.tag.kira{background:var(--primary-soft);color:var(--primary)}
+.tag.src{background:#E7F7F3;color:var(--green)}
+.tag.est{background:#FDF2E2;color:var(--amber)}
+/* cover */
+.cover{padding:0}
+.cover-inner{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between;padding:56px}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start}
+.cover-badge{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.cover-title{font-size:62px;font-weight:900;line-height:1.02;letter-spacing:-.02em;max-width:1000px}
+.cover-sub{font-size:20px;color:var(--text-mid);margin-top:18px;max-width:820px;line-height:1.4}
+.cover-accent{width:88px;height:6px;background:var(--primary);margin:26px 0}
+.cover-meta{display:flex;gap:48px;margin-top:8px}
+.cover-meta div .l{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.cover-meta div .v{font-size:17px;font-weight:700}
+.cover-foot{display:flex;justify-content:space-between;align-items:flex-end;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.confidential{border:1px solid var(--border);border-radius:4px;padding:5px 10px;letter-spacing:.1em;text-transform:uppercase;font-size:10px}
+/* callouts */
+.callout-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.callout{border:1px solid var(--border);border-radius:8px;padding:14px 16px;background:var(--bg-soft);min-height:100px;display:flex;flex-direction:column;justify-content:space-between}
+.callout .c-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.25}
+.callout .c-num{font-size:32px;font-weight:900;line-height:1;margin:6px 0 2px;letter-spacing:-.01em}
+.callout .c-num .u{font-size:15px;font-weight:700;color:var(--text-mid);margin-left:2px}
+.callout .c-change{font-size:11.5px;color:var(--text-mid);line-height:1.3}
+.callout .c-change .up{color:var(--green);font-weight:700}
+.callout .c-change .down{color:var(--red);font-weight:700}
+/* two-col narrative */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1 1 auto;min-height:0}
+.split-3070{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;flex:1 1 auto;min-height:0}
+.narr h3{font-size:14px;font-weight:700;margin-bottom:5px;letter-spacing:-.01em}
+.narr p{font-size:13px;line-height:1.5;color:var(--text-mid);margin-bottom:14px}
+.narr p strong{font-weight:700;color:var(--text)}
+/* chart panel */
+.chart-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column}
+.chart-card .ch-title{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.chart-card .ch-sub{font-size:11.5px;color:var(--muted);margin-top:2px;margin-bottom:6px}
+.chart-card .ch-src{font-size:10px;color:var(--muted);margin-top:auto;padding-top:8px;font-family:'JetBrains Mono',monospace}
+svg text{font-family:'JetBrains Mono',monospace}
+.bar-primary{fill:var(--primary)}
+.bar-soft{fill:#Bcd4ff}
+.bar-mut{fill:#cbd5e1}
+.axis-line{stroke:var(--border);stroke-width:1}
+.grid-line{stroke:#eef0f3;stroke-width:1}
+/* implications cards */
+.imp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex:1 1 auto}
+.imp-grid.g3{grid-template-columns:repeat(3,1fr)}
+.imp-card{border:1px solid var(--border);border-radius:8px;padding:14px 15px;display:flex;flex-direction:column}
+.imp-card .i-tag{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.imp-card h4{font-size:14px;font-weight:700;line-height:1.2;margin-bottom:8px;letter-spacing:-.01em}
+.imp-card p{font-size:11.5px;line-height:1.42;color:var(--text-mid)}
+.imp-card .i-anchor{margin-top:auto;padding-top:9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);border-top:1px solid var(--border)}
+/* divider */
+.div-body{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;max-width:980px}
+.div-num{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.22em;color:var(--primary);margin-bottom:18px}
+.div-title{font-size:50px;font-weight:900;line-height:1.04;letter-spacing:-.02em;margin-bottom:22px}
+.div-title .acc{color:var(--primary)}
+.div-thesis{font-size:18px;line-height:1.5;color:#cbd2dc;max-width:840px}
+.div-thesis strong{color:#fff;font-weight:700}
+.div-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.div-pill{border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:6px 14px;font-size:11.5px;color:#dfe4ea;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+/* toc */
+.toc-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 48px;flex:1 1 auto;align-content:start}
+.toc-row{display:flex;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--border)}
+.toc-row .t-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--primary);font-weight:600;width:26px;flex:0 0 auto}
+.toc-row .t-title{font-size:13.5px;font-weight:600}
+.toc-row .t-sub{font-size:11px;color:var(--muted);margin-left:4px;font-weight:400}
+.toc-row .t-pg{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted)}
+/* methodology cols */
+.meth-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1 1 auto}
+.meth-col h3{font-size:15px;font-weight:900;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--text)}
+.meth-item{margin-bottom:16px}
+.meth-item .m-label{font-size:13px;font-weight:700;margin-bottom:3px}
+.meth-item .m-desc{font-size:12px;line-height:1.45;color:var(--text-mid)}
+/* competitive structure */
+.cs-top{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;height:236px;margin-bottom:16px}
+.cs-side h3{font-size:14px;font-weight:700;margin-bottom:8px}
+.cs-side p{font-size:12px;line-height:1.45;color:var(--text-mid);margin-bottom:10px}
+.cs-stat{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.cs-stat .s-l{color:var(--text-mid)}
+.cs-stat .s-v{font-family:'JetBrains Mono',monospace;font-weight:600}
+.player-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.player-card{border:1px solid var(--border);border-radius:8px;padding:12px 13px}
+.player-card .p-rank{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--primary);font-weight:600;letter-spacing:.06em}
+.player-card .p-name{font-size:13.5px;font-weight:700;line-height:1.15;margin:3px 0 8px}
+.player-card .p-stat{display:flex;justify-content:space-between;font-size:10.5px;padding:2px 0;color:var(--text-mid)}
+.player-card .p-stat .v{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text)}
+.player-card .p-str{font-size:10.5px;line-height:1.35;color:var(--text-mid);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+/* deep profile */
+.dp-hero{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:16px}
+.dp-name{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-.01em}
+.dp-subtitle{font-size:13px;color:var(--text-mid);margin-top:6px}
+.dp-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.dp-tag{font-size:10px;font-family:'JetBrains Mono',monospace;background:#fff;border:1px solid var(--border);border-radius:14px;padding:3px 10px;color:var(--text-mid)}
+.dp-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dp-stat .l{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dp-stat .v{font-size:21px;font-weight:900;line-height:1.1;margin-top:2px}
+.dp-stat .v .u{font-size:11px;font-weight:600;color:var(--text-mid)}
+.dp-body{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1 1 auto}
+.dp-body h3{font-size:13.5px;font-weight:700;margin-bottom:5px}
+.dp-body p{font-size:12.5px;line-height:1.48;color:var(--text-mid);margin-bottom:12px}
+.dp-body ul{list-style:none}
+.dp-body li{font-size:12px;line-height:1.4;color:var(--text-mid);padding-left:16px;position:relative;margin-bottom:7px}
+.dp-body li:before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;background:var(--primary);border-radius:50%}
+/* use case grid */
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:14px;flex:1 1 auto}
+.uc-card{border:1px solid var(--border);border-radius:8px;padding:13px 14px;display:flex;flex-direction:column}
+.uc-card .u-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.uc-card h4{font-size:13.5px;font-weight:700;line-height:1.18;margin-bottom:7px}
+.uc-card p{font-size:11px;line-height:1.4;color:var(--text-mid)}
+.uc-card .u-ex{margin-top:auto;padding-top:8px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);border-top:1px solid var(--border)}
+/* forecast */
+.fc-chart{height:300px;margin-bottom:16px}
+.scen-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:0 0 auto}
+.scen-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;border-top:3px solid var(--primary)}
+.scen-card.bull{border-top-color:var(--green)}
+.scen-card.bear{border-top-color:var(--amber)}
+.scen-card .s-name{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.scen-card .s-val{font-size:24px;font-weight:900;margin:5px 0}
+.scen-card .s-body{font-size:11.5px;line-height:1.4;color:var(--text-mid)}
+/* source key footer */
+.source-key{font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.4;color:var(--muted);font-style:italic;margin-top:12px;flex:0 0 auto}
+.source-key b{font-style:normal;color:var(--text-mid)}
+/* endnote */
+.end-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;flex:1 1 auto}
+.end-grid p{font-size:12.5px;line-height:1.55;color:var(--text-mid);margin-bottom:12px}
+.src-list{columns:1;font-size:11px;line-height:1.5;color:var(--text-mid)}
+.src-list div{margin-bottom:6px;padding-left:14px;text-indent:-14px}
+.src-list b{color:var(--text);font-weight:700}
+.disclaimer{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:14px;padding-top:10px;border-top:1px solid var(--border)}
+.legend{display:flex;gap:18px;margin-top:8px;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend .lg-p:before{background:var(--primary)}
+.legend .lg-s:before{background:var(--green)}
+.legend .lg-e:before{background:var(--amber)}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 COVER ============ -->
+<section class="page cover">
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="logo-mark" style="font-size:16px">KIRA RESEARCH</div>
+      <div class="cover-badge">Market analysis · 2026-PH-RETAIL</div>
+    </div>
+    <div>
+      <div class="cover-accent"></div>
+      <h1 class="cover-title">Philippines retail 2026: mall-anchored recovery, e-commerce channel shift</h1>
+      <p class="cover-sub">How a consumption-led economy rebuilds footfall while online channels capture the next peso of incremental spend.</p>
+      <div class="cover-meta">
+        <div><div class="l">Country</div><div class="v">Philippines</div></div>
+        <div><div class="l">Industry</div><div class="v">Retail &amp; consumer</div></div>
+        <div><div class="l">Year</div><div class="v">2026</div></div>
+        <div><div class="l">Pages</div><div class="v">24</div></div>
+      </div>
+    </div>
+    <div class="cover-foot">
+      <div>KIRA Research · Southeast Asia consumer &amp; retail practice</div>
+      <div class="confidential">Confidential</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 METHODOLOGY ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 01 · Methodology</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="subhead">This view is built from two evidence streams: <strong>primary inputs</strong> — mall-operator channel checks, distributor and brand conversations, and store-level reads — and <strong>secondary anchors</strong> — statistical authorities, listed-company filings, and triangulated estimates. Every quantitative claim carries an explicit source tag.</p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>Primary inputs</h3>
+        <div class="meth-item"><div class="m-label">Field channel checks</div><div class="m-desc">Mall foot-traffic reads, tenant conversations, distributor and importer calls across Metro Manila, Cebu and Davao — surfaces real footfall, real basket, real velocity.</div></div>
+        <div class="meth-item"><div class="m-label">Analyst synthesis</div><div class="m-desc">KIRA in-house triangulation across multiple disclosed inputs. Tagged inline as <span class="tag kira">Kira estimates</span>.</div></div>
+        <div class="meth-item"><div class="m-label">Operator &amp; platform reads</div><div class="m-desc">Conversations with retail operators, mall leasing teams, and marketplace category managers closer to the demand signal than headline data.</div></div>
+      </div>
+      <div class="meth-col">
+        <h3>Secondary anchors</h3>
+        <div class="meth-item"><div class="m-label">Statistical authorities</div><div class="m-desc">Philippine Statistics Authority, Bangko Sentral ng Pilipinas, and trade data — cited inline by named source.</div></div>
+        <div class="meth-item"><div class="m-label">Listed company filings</div><div class="m-desc">Annual reports and disclosures of listed retail and mall operators — cited inline by company and period.</div></div>
+        <div class="meth-item"><div class="m-label">Triangulated estimates</div><div class="m-desc">Where no single source covers a figure, we combine two to three inputs and disclose the method. Tagged <span class="tag kira">Kira estimates</span>.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">002 / 024</div></div>
+</section>
+
+<!-- ============ 03 CONTENTS ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 02 · Contents</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Contents</h1>
+    <div class="toc-list">
+      <div class="toc-row"><span class="t-num">03</span><span class="t-title">Executive summary<span class="t-sub">— the 2026 inflection</span></span><span class="t-pg">004</span></div>
+      <div class="toc-row"><span class="t-num">04</span><span class="t-title">Macro context<span class="t-sub">— consumption engine</span></span><span class="t-pg">006</span></div>
+      <div class="toc-row"><span class="t-num">05</span><span class="t-title">Market size &amp; growth<span class="t-sub">— retail trade</span></span><span class="t-pg">009</span></div>
+      <div class="toc-row"><span class="t-num">06</span><span class="t-title">Segment economics<span class="t-sub">— formats &amp; baskets</span></span><span class="t-pg">011</span></div>
+      <div class="toc-row"><span class="t-num">07</span><span class="t-title">Competitive landscape<span class="t-sub">— mall-anchored groups</span></span><span class="t-pg">013</span></div>
+      <div class="toc-row"><span class="t-num">07</span><span class="t-title">Player profiles<span class="t-sub">— leading operators</span></span><span class="t-pg">015</span></div>
+      <div class="toc-row"><span class="t-num">08</span><span class="t-title">Channel &amp; distribution<span class="t-sub">— online shift</span></span><span class="t-pg">018</span></div>
+      <div class="toc-row"><span class="t-num">09</span><span class="t-title">Regulatory &amp; policy<span class="t-sub">— retail trade rules</span></span><span class="t-pg">020</span></div>
+      <div class="toc-row"><span class="t-num">10</span><span class="t-title">AI impact on retail<span class="t-sub">— near-term economics</span></span><span class="t-pg">021</span></div>
+      <div class="toc-row"><span class="t-num">11</span><span class="t-title">5-year outlook<span class="t-sub">— forecast &amp; scenarios</span></span><span class="t-pg">023</span></div>
+      <div class="toc-row"><span class="t-num">12</span><span class="t-title">Methodology endnote<span class="t-sub">— source mix</span></span><span class="t-pg">024</span></div>
+      <div class="toc-row"><span class="t-num">·</span><span class="t-title">Strategic implications<span class="t-sub">— for participants</span></span><span class="t-pg">005</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">003 / 024</div></div>
+</section>
+
+<!-- ============ 04 EXEC SUMMARY P1 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 03 · Executive summary</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Philippines retail: a consumption engine reorganizing around two channels</h1>
+    <p class="subhead">Domestic demand never broke; the question for 2026 is <strong>where</strong> the incremental peso lands — between recovering mall footfall and a maturing online channel that now competes on convenience, not novelty.</p>
+    <div class="callout-row">
+      <div class="callout"><div class="c-label">Total retail trade</div><div><span class="c-num">$78<span class="u">bn</span></span></div><div class="c-change">2025 base <span class="tag est">Kira estimates</span></div></div>
+      <div class="callout"><div class="c-label">Retail trade CAGR 2025–30</div><div><span class="c-num">6.8<span class="u">%</span></span></div><div class="c-change"><span class="up">▲</span> nominal, peso terms <span class="tag est">Kira estimates</span></div></div>
+      <div class="callout"><div class="c-label">E-commerce share of retail</div><div><span class="c-num">8.5<span class="u">%</span></span></div><div class="c-change"><span class="up">▲</span> from ~5% in 2022 <span class="tag src">DTI 2025</span></div></div>
+      <div class="callout"><div class="c-label">Household final consumption</div><div><span class="c-num">73<span class="u">%</span></span></div><div class="c-change">of GDP <span class="tag src">PSA 2024</span></div></div>
+    </div>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>The recovery is real but uneven</h3>
+        <p>Mall footfall in prime Metro Manila assets has returned to and exceeded pre-2020 levels, but recovery is concentrated in <strong>experience-led and grocery-anchored</strong> formats <span class="tag est">Kira estimates</span>. Apparel and discretionary categories lag, having ceded a structural slice of spend to online platforms during the disrupted years. The headline retail number masks this divergence.</p>
+        <h3>Online has crossed from novelty to habit</h3>
+        <p>Marketplace gross merchandise value growth has decelerated from triple digits to a more durable mid-teens pace, the signature of a channel that has <strong>finished acquiring</strong> and started monetizing <span class="tag src">DTI 2025</span>. The competitive front has moved from discounting to logistics speed, financing, and live-commerce conversion.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Retail spend by channel</div>
+        <div class="ch-sub">Share of total retail trade, %</div>
+        <svg viewBox="0 0 360 230" width="100%" height="200">
+          <line x1="40" y1="10" x2="40" y2="180" class="axis-line"/>
+          <line x1="40" y1="180" x2="350" y2="180" class="axis-line"/>
+          <line x1="40" y1="100" x2="350" y2="100" class="grid-line"/>
+          <line x1="40" y1="55" x2="350" y2="55" class="grid-line"/>
+          <!-- 2022 -->
+          <rect x="70" y="22" width="40" height="158" class="bar-mut"/>
+          <rect x="70" y="170" width="40" height="10" class="bar-primary"/>
+          <!-- 2025 -->
+          <rect x="160" y="35" width="40" height="145" class="bar-mut"/>
+          <rect x="160" y="163" width="40" height="17" class="bar-primary"/>
+          <!-- 2030E -->
+          <rect x="250" y="60" width="40" height="120" class="bar-mut"/>
+          <rect x="250" y="150" width="40" height="30" class="bar-primary"/>
+          <text x="90" y="194" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="180" y="194" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="270" y="194" font-size="9" fill="#6B7280" text-anchor="middle">2030E</text>
+          <text x="90" y="18" font-size="8.5" fill="#9aa3af" text-anchor="middle">95%</text>
+          <text x="180" y="31" font-size="8.5" fill="#9aa3af" text-anchor="middle">91.5%</text>
+          <text x="270" y="56" font-size="8.5" fill="#1E6FFF" text-anchor="middle">~15% online</text>
+        </svg>
+        <div class="ch-src">Grey = offline · Blue = e-commerce · DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> PSA 2024 = Philippine Statistics Authority national accounts · DTI 2025 = Dept. of Trade &amp; Industry e-commerce briefings · Kira estimates = KIRA in-house analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">004 / 024</div></div>
+</section>
+
+<!-- ============ 05 EXEC SUMMARY P2 — IMPLICATIONS ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 03 · Executive summary</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Strategic implications for market participants</h1>
+    <p class="subhead">Five moves separate the operators that compound from those that simply hold share through 2030.</p>
+    <div class="imp-grid">
+      <div class="imp-card"><div class="i-tag">Format</div><h4>Re-anchor malls on grocery and food</h4><p>Footfall recovery is led by daily-need and dining traffic, not apparel. Operators tilting tenant mix toward supermarkets and F&amp;B capture the most resilient visit frequency.</p><div class="i-anchor">Footfall mix · daily-need led</div></div>
+      <div class="imp-card"><div class="i-tag">Channel</div><h4>Treat online as the margin lab</h4><p>The incremental peso is online. Operators should run e-commerce as a financing-and-data engine, not a discount dumping ground, to defend basket economics.</p><div class="i-anchor">GMV growth ~mid-teens</div></div>
+      <div class="imp-card"><div class="i-tag">Fulfilment</div><h4>Own the last mile or rent it well</h4><p>Archipelago geography makes delivery cost the deciding variable. Click-and-collect at malls converts physical footprint into a fulfilment asset.</p><div class="i-anchor">7,640 islands · logistics gate</div></div>
+      <div class="imp-card"><div class="i-tag">Payments</div><h4>Convert cash-on-delivery to digital</h4><p>COD still dominates online checkout, eroding margin and raising returns. Embedded wallets and BNPL lift conversion and cut reverse logistics.</p><div class="i-anchor">Digital wallets scaling fast</div></div>
+      <div class="imp-card"><div class="i-tag">Geography</div><h4>Follow growth beyond Metro Manila</h4><p>Cebu, Davao and second-tier cities show faster discretionary recovery. Regional rollout, not capital saturation, is the next-decade growth lever.</p><div class="i-anchor">Provincial demand rising</div></div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> Implications synthesized from KIRA channel checks and listed-operator disclosures · Kira estimates = KIRA in-house analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">005 / 024</div></div>
+</section>
+
+<!-- ============ 06 MACRO DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 04</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">SECTION 04</div>
+    <div class="div-title">Macro context: <span class="acc">a consumption-built economy</span></div>
+    <div class="div-thesis">The Philippines runs on domestic demand. Remittances, a young workforce, and a fast-formalizing services sector keep household consumption near <strong>three-quarters of GDP</strong> — a structural tailwind few regional peers can match. Retail is not a discretionary bet here; it is leveraged directly to the income of one of Asia's youngest populations.</div>
+    <div class="div-pills"><span class="div-pill">GDP growth ~6%</span><span class="div-pill">Remittance floor</span><span class="div-pill">Young median age</span><span class="div-pill">Urbanizing</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">006 / 024</div></div>
+</section>
+
+<!-- ============ 07 MACRO PAGE 1 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 04 · Macro context</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Macro indicators driving retail demand</h1>
+    <p class="subhead">Growth is broad-based and income-led, not credit-fuelled — the healthiest backdrop for durable retail expansion.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>Growth holds near 6%</h3>
+        <p>Real GDP growth has tracked in the <strong>5.5–6.5%</strong> band, among the fastest in the region, anchored by services and construction <span class="tag src">PSA 2024</span>. For retail, the relevant signal is that growth converts directly into spending power because consumption is the dominant expenditure component.</p>
+        <h3>Inflation back inside target</h3>
+        <p>After the 2022–23 food-price spike, headline inflation has eased toward the <strong>2–4% target band</strong> <span class="tag src">BSP 2025</span>, restoring real wage gains and unfreezing discretionary baskets that consumers had traded down.</p>
+        <h3>Remittances set a demand floor</h3>
+        <p>Overseas worker remittances exceed <strong>$37bn</strong> annually <span class="tag src">BSP 2024</span>, a counter-cyclical income stream that underwrites consumption even when domestic shocks hit — a structural difference from peer markets.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Real GDP growth vs inflation</div>
+        <div class="ch-sub">%, annual</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="34" y1="10" x2="34" y2="185" class="axis-line"/>
+          <line x1="34" y1="185" x2="350" y2="185" class="axis-line"/>
+          <line x1="34" y1="130" x2="350" y2="130" class="grid-line"/>
+          <line x1="34" y1="75" x2="350" y2="75" class="grid-line"/>
+          <!-- GDP line -->
+          <polyline points="60,70 130,60 200,72 270,66 330,64" fill="none" stroke="#1E6FFF" stroke-width="2.5"/>
+          <!-- inflation line -->
+          <polyline points="60,150 130,55 200,70 270,120 330,140" fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <text x="60" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2021</text>
+          <text x="130" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="200" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2023</text>
+          <text x="270" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2024</text>
+          <text x="330" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2025E</text>
+          <text x="330" y="58" font-size="8.5" fill="#1E6FFF">GDP</text>
+          <text x="330" y="152" font-size="8.5" fill="#D97706">CPI</text>
+        </svg>
+        <div class="ch-src">PSA 2024, BSP 2025</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> PSA 2024 = Philippine Statistics Authority · BSP 2024/2025 = Bangko Sentral ng Pilipinas · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">007 / 024</div></div>
+</section>
+
+<!-- ============ 08 MACRO PAGE 2 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 04 · Macro context</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Demographics and digital adoption set the ceiling</h1>
+    <p class="subhead">A young, fast-connecting population is the structural reason both store footfall and online demand can grow at once.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>One of Asia's youngest markets</h3>
+        <p>A median age in the mid-20s and a population above <strong>115 million</strong> create a demand pipeline of new household formation for two decades <span class="tag src">PSA 2024</span>. Young consumers adopt omnichannel behaviour by default — discover online, transact wherever is cheapest or fastest.</p>
+        <h3>Connectivity is the accelerant</h3>
+        <p>Mobile internet penetration above <strong>70%</strong> and among the world's highest social-media usage hours convert directly into discovery and live-commerce demand <span class="tag est">Kira estimates</span>. The online channel is not a separate market — it is the top of the funnel for all retail.</p>
+        <h3>Urban concentration with provincial spread</h3>
+        <p>Metro Manila anchors organized retail, but the next leg of growth is regional. Provincial mall and convenience rollouts are outpacing the saturated capital <span class="tag est">Kira estimates</span>.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Digital adoption drivers</div>
+        <div class="ch-sub">% of population / penetration</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="120" y1="10" x2="120" y2="180" class="axis-line"/>
+          <rect x="120" y="20" width="190" height="26" class="bar-primary"/>
+          <rect x="120" y="62" width="160" height="26" class="bar-primary"/>
+          <rect x="120" y="104" width="120" height="26" class="bar-soft"/>
+          <rect x="120" y="146" width="75" height="26" class="bar-soft"/>
+          <text x="114" y="38" font-size="9.5" fill="#0B0D10" text-anchor="end">Mobile internet</text>
+          <text x="114" y="80" font-size="9.5" fill="#0B0D10" text-anchor="end">Social media</text>
+          <text x="114" y="122" font-size="9.5" fill="#0B0D10" text-anchor="end">Digital wallet</text>
+          <text x="114" y="164" font-size="9.5" fill="#0B0D10" text-anchor="end">Online shopper</text>
+          <text x="316" y="38" font-size="9" fill="#1E6FFF">73%</text>
+          <text x="286" y="80" font-size="9" fill="#1E6FFF">~65%</text>
+          <text x="246" y="122" font-size="9" fill="#6B7280">~45%</text>
+          <text x="201" y="164" font-size="9" fill="#6B7280">~30%</text>
+        </svg>
+        <div class="ch-src">DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> PSA 2024 = Philippine Statistics Authority · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">008 / 024</div></div>
+</section>
+
+<!-- ============ 09 SECTOR DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 05</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">SECTION 05</div>
+    <div class="div-title">Sector overview &amp; <span class="acc">sizing</span></div>
+    <div class="div-thesis">Organized retail is roughly <strong>$78bn</strong> in annual trade and compounding in the high single digits, but the growth is migrating between formats. The story is not a rising tide — it is a <strong>reallocation</strong> of share from general trade and discretionary specialty toward grocery-anchored malls and online marketplaces.</div>
+    <div class="div-pills"><span class="div-pill">~$78bn trade</span><span class="div-pill">6.8% CAGR</span><span class="div-pill">Format shift</span><span class="div-pill">Channel shift</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">009 / 024</div></div>
+</section>
+
+<!-- ============ 10 MARKET SIZING ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 05 · Sizing</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Market size &amp; growth: Philippine retail trade</h1>
+    <p class="subhead">Nominal retail trade compounds at <strong>~6.8%</strong> to roughly <strong>$108bn</strong> by 2030, with online contributing a disproportionate slice of the incremental.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>From $78bn toward $108bn</h3>
+        <p>Total retail trade sits near <strong>$78bn</strong> in 2025 <span class="tag est">Kira estimates</span>, recovering past the disrupted years and re-rating on real-wage gains. Our base case reaches roughly <strong>$108bn</strong> by 2030 in nominal peso terms.</p>
+        <h3>Online drives the delta</h3>
+        <p>E-commerce — at ~8.5% of trade today <span class="tag src">DTI 2025</span> — supplies a far larger share of the incremental dollar than its base, the mechanical signature of a channel still gaining penetration.</p>
+        <h3>Grocery is the stable core</h3>
+        <p>Food and grocery remain the largest, least cyclical segment, anchoring mall footfall and supplying the recovery's most defensible volume.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Retail trade size, USD bn</div>
+        <div class="ch-sub">Total trade, nominal</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="40" y1="10" x2="40" y2="185" class="axis-line"/>
+          <line x1="40" y1="185" x2="350" y2="185" class="axis-line"/>
+          <line x1="40" y1="120" x2="350" y2="120" class="grid-line"/>
+          <line x1="40" y1="60" x2="350" y2="60" class="grid-line"/>
+          <rect x="60" y="120" width="38" height="65" class="bar-mut"/>
+          <rect x="125" y="105" width="38" height="80" class="bar-mut"/>
+          <rect x="190" y="92" width="38" height="93" class="bar-primary"/>
+          <rect x="255" y="55" width="38" height="130" class="bar-soft"/>
+          <text x="79" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="144" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2024</text>
+          <text x="209" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="274" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2030E</text>
+          <text x="79" y="114" font-size="8.5" fill="#6B7280" text-anchor="middle">62</text>
+          <text x="144" y="99" font-size="8.5" fill="#6B7280" text-anchor="middle">71</text>
+          <text x="209" y="86" font-size="8.5" fill="#1E6FFF" text-anchor="middle">78</text>
+          <text x="274" y="49" font-size="8.5" fill="#1E6FFF" text-anchor="middle">108</text>
+        </svg>
+        <div class="ch-src">PSA 2024, DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> PSA 2024 = Philippine Statistics Authority · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">010 / 024</div></div>
+</section>
+
+<!-- ============ 11 SEGMENT ECONOMICS ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 06 · Segments</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Segment economics: formats and baskets</h1>
+    <p class="subhead">Grocery anchors volume; convenience compounds fastest; discretionary specialty carries the highest margin but the most channel risk.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>Grocery &amp; food — the volume core</h3>
+        <p>The largest segment by value and the most defensible, grocery underwrites mall traffic and is least exposed to online substitution given fresh and perishable mix <span class="tag est">Kira estimates</span>.</p>
+        <h3>Convenience — fastest compounder</h3>
+        <p>Small-format convenience chains expand store counts at a double-digit pace, capturing urban density and the shift toward smaller, more frequent baskets <span class="tag est">Kira estimates</span>.</p>
+        <h3>Discretionary specialty — highest margin, most contested</h3>
+        <p>Apparel, electronics and beauty carry the richest gross margins but have ceded the most share to online platforms — the segment where channel strategy decides the winners.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Retail by segment</div>
+        <div class="ch-sub">Share of trade, %</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="130" y1="10" x2="130" y2="180" class="axis-line"/>
+          <rect x="130" y="18" width="180" height="24" class="bar-primary"/>
+          <rect x="130" y="56" width="95" height="24" class="bar-soft"/>
+          <rect x="130" y="94" width="80" height="24" class="bar-soft"/>
+          <rect x="130" y="132" width="55" height="24" class="bar-mut"/>
+          <text x="124" y="35" font-size="9" fill="#0B0D10" text-anchor="end">Grocery &amp; food</text>
+          <text x="124" y="73" font-size="9" fill="#0B0D10" text-anchor="end">Specialty</text>
+          <text x="124" y="111" font-size="9" fill="#0B0D10" text-anchor="end">Convenience</text>
+          <text x="124" y="149" font-size="9" fill="#0B0D10" text-anchor="end">Dept. store</text>
+          <text x="316" y="35" font-size="9" fill="#1E6FFF">~48%</text>
+          <text x="231" y="73" font-size="9" fill="#6B7280">~24%</text>
+          <text x="216" y="111" font-size="9" fill="#6B7280">~18%</text>
+          <text x="191" y="149" font-size="9" fill="#6B7280">~10%</text>
+        </svg>
+        <div class="ch-src">DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation across listed-operator disclosures and channel checks</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">011 / 024</div></div>
+</section>
+
+<!-- ============ 12 SEGMENT GRID ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 06 · Segments</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Where the basket is moving</h1>
+    <p class="subhead">Six demand vectors reshaping the Philippine retail basket through 2030.</p>
+    <div class="uc-grid">
+      <div class="uc-card"><div class="u-tag">Frequency</div><h4>Smaller, more frequent baskets</h4><p>Cash-flow-managed households shop little and often, favouring convenience and sari-sari-adjacent formats over single large weekly trips.</p><div class="u-ex">Convenience store density rising</div></div>
+      <div class="uc-card"><div class="u-tag">Trade-up</div><h4>Selective premiumization</h4><p>Real-wage gains restore trade-up in coffee, personal care and packaged food even as households stay value-conscious elsewhere.</p><div class="u-ex">Premium SKUs outgrow mass</div></div>
+      <div class="uc-card"><div class="u-tag">Discovery</div><h4>Social-first discovery</h4><p>Among the world's heaviest social-media users, Filipinos discover products on feeds and live streams before buying in either channel.</p><div class="u-ex">Live-commerce conversion up</div></div>
+      <div class="uc-card"><div class="u-tag">Experience</div><h4>Malls as destinations</h4><p>F&amp;B, entertainment and services drive mall visits more than shopping per se — the durable answer to online substitution.</p><div class="u-ex">Dining-led footfall</div></div>
+      <div class="uc-card"><div class="u-tag">Credit</div><h4>Embedded financing</h4><p>BNPL and wallet credit unlock higher-ticket discretionary purchases for the large under-banked but bankable cohort.</p><div class="u-ex">BNPL penetration climbing</div></div>
+      <div class="uc-card"><div class="u-tag">Geography</div><h4>Provincial demand wave</h4><p>Second-tier cities show faster discretionary recovery than saturated Metro Manila, redrawing the rollout map.</p><div class="u-ex">Cebu, Davao outgrowing capital</div></div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> Synthesized from KIRA channel checks, DTI 2025 e-commerce briefings, and listed-operator disclosures · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">012 / 024</div></div>
+</section>
+
+<!-- ============ 13 COMPETITIVE DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 07</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">SECTION 07</div>
+    <div class="div-title">Competitive landscape: <span class="acc">conglomerate-anchored</span></div>
+    <div class="div-thesis">Organized retail is concentrated in a handful of family conglomerates that control malls, supermarkets, and department chains as integrated ecosystems. Their advantage is not any single format but the <strong>flywheel</strong> between real estate, retail, and financial services. Online platforms compete from a different stack — and the two are now learning to coexist.</div>
+    <div class="div-pills"><span class="div-pill">Top-3 integrated</span><span class="div-pill">Real-estate flywheel</span><span class="div-pill">Marketplace duopoly</span><span class="div-pill">Omnichannel race</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">013 / 024</div></div>
+</section>
+
+<!-- ============ 14 COMPETITIVE STRUCTURE ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 07 · Structure</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Market structure: concentrated and vertically integrated</h1>
+    <p class="subhead">A few conglomerates dominate organized retail; online is an emerging parallel structure led by two regional marketplaces.</p>
+    <div class="cs-top">
+      <div class="chart-card">
+        <div class="ch-title">Organized retail share by group</div>
+        <div class="ch-sub">Indicative share of modern trade, %</div>
+        <svg viewBox="0 0 360 180" width="100%" height="150">
+          <line x1="120" y1="6" x2="120" y2="150" class="axis-line"/>
+          <rect x="120" y="12" width="160" height="20" class="bar-primary"/>
+          <rect x="120" y="42" width="120" height="20" class="bar-primary"/>
+          <rect x="120" y="72" width="85" height="20" class="bar-soft"/>
+          <rect x="120" y="102" width="60" height="20" class="bar-soft"/>
+          <rect x="120" y="132" width="100" height="14" class="bar-mut"/>
+          <text x="114" y="27" font-size="9" fill="#0B0D10" text-anchor="end">SM Group</text>
+          <text x="114" y="57" font-size="9" fill="#0B0D10" text-anchor="end">Ayala / others</text>
+          <text x="114" y="87" font-size="9" fill="#0B0D10" text-anchor="end">Robinsons</text>
+          <text x="114" y="117" font-size="9" fill="#0B0D10" text-anchor="end">Puregold</text>
+          <text x="114" y="143" font-size="9" fill="#0B0D10" text-anchor="end">Fragmented</text>
+        </svg>
+        <div class="ch-src">Listed-operator disclosures, Kira estimates</div>
+      </div>
+      <div class="cs-side">
+        <h3>A concentrated top tier</h3>
+        <p>The leading groups operate malls, supermarkets, department stores and banks under one roof, letting them cross-subsidize footfall and capture the consumer's full wallet. New entrants face an integrated incumbent set, not standalone retailers.</p>
+        <div class="cs-stat"><span class="s-l">Top-3 group share (modern trade)</span><span class="s-v">~55%</span></div>
+        <div class="cs-stat"><span class="s-l">Online marketplace concentration</span><span class="s-v">2 players</span></div>
+        <div class="cs-stat"><span class="s-l">Listed mall floor area (top group)</span><span class="s-v">&gt;9m m²</span></div>
+        <div class="cs-stat"><span class="s-l">Structure trend</span><span class="s-v">Consolidating</span></div>
+      </div>
+    </div>
+    <div class="player-row">
+      <div class="player-card"><div class="p-rank">RANK 01</div><div class="p-name">SM Group</div><div class="p-stat"><span>Format</span><span class="v">Malls + grocery</span></div><div class="p-stat"><span>Footprint</span><span class="v">Nationwide</span></div><div class="p-stat"><span>Edge</span><span class="v">Scale</span></div><div class="p-str">Largest mall and supermarket network; flywheel with banking arm.</div></div>
+      <div class="player-card"><div class="p-rank">RANK 02</div><div class="p-name">Ayala-linked retail</div><div class="p-stat"><span>Format</span><span class="v">Malls + specialty</span></div><div class="p-stat"><span>Footprint</span><span class="v">Urban premium</span></div><div class="p-stat"><span>Edge</span><span class="v">Brand mix</span></div><div class="p-str">Premium-leaning malls and department/specialty portfolio.</div></div>
+      <div class="player-card"><div class="p-rank">RANK 03</div><div class="p-name">Robinsons Retail</div><div class="p-stat"><span>Format</span><span class="v">Multi-format</span></div><div class="p-stat"><span>Footprint</span><span class="v">Broad</span></div><div class="p-stat"><span>Edge</span><span class="v">Diversification</span></div><div class="p-str">Supermarket, drug, convenience and specialty across price tiers.</div></div>
+      <div class="player-card"><div class="p-rank">ONLINE</div><div class="p-name">Marketplace duopoly</div><div class="p-stat"><span>Format</span><span class="v">E-commerce</span></div><div class="p-stat"><span>Footprint</span><span class="v">National</span></div><div class="p-stat"><span>Edge</span><span class="v">Logistics</span></div><div class="p-str">Two regional platforms hold the bulk of marketplace GMV.</div></div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> Listed-operator disclosures = annual reports of named listed retail groups · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">014 / 024</div></div>
+</section>
+
+<!-- ============ 15 PLAYER PROFILE 1 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 07 · Player profile</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">SM Group</div>
+        <div class="dp-subtitle">Integrated mall, supermarket and banking ecosystem — the scale anchor of Philippine organized retail.</div>
+        <div class="dp-tags"><span class="dp-tag">Malls</span><span class="dp-tag">Grocery</span><span class="dp-tag">Banking flywheel</span></div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">Mall floor area</div><div class="v">&gt;9<span class="u">m m²</span></div></div>
+        <div class="dp-stat"><div class="l">Format reach</div><div class="v">National</div></div>
+        <div class="dp-stat"><div class="l">Core segment</div><div class="v">Grocery</div></div>
+        <div class="dp-stat"><div class="l">Structure role</div><div class="v">Anchor</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>Position</h3>
+        <p>The group runs the country's largest mall and supermarket networks, using prime-located malls as both retail venue and fulfilment infrastructure. Footfall recovery in its flagship assets has outpaced the market, led by grocery and dining anchors <span class="tag est">Kira estimates</span>.</p>
+        <h3>Recent moves</h3>
+        <p>Continued provincial mall expansion and click-and-collect integration position the physical footprint as a last-mile asset against pure online players.</p>
+      </div>
+      <div>
+        <h3>Strategic implication</h3>
+        <ul>
+          <li>Real-estate flywheel makes footfall the cheapest customer-acquisition channel in the market.</li>
+          <li>Grocery anchor insulates the portfolio from online substitution.</li>
+          <li>Click-and-collect turns mall density into a fulfilment moat.</li>
+          <li>Banking arm captures payment and credit margin on the same consumer.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> Listed-operator disclosures = SM Group annual report &amp; investor materials · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">015 / 024</div></div>
+</section>
+
+<!-- ============ 16 PLAYER PROFILE 2 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 07 · Player profile</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">Robinsons Retail</div>
+        <div class="dp-subtitle">Broadest multi-format operator — supermarket, drugstore, convenience, department and specialty across price tiers.</div>
+        <div class="dp-tags"><span class="dp-tag">Multi-format</span><span class="dp-tag">Drugstore</span><span class="dp-tag">Convenience</span></div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">Formats</div><div class="v">6+</div></div>
+        <div class="dp-stat"><div class="l">Footprint</div><div class="v">Broad</div></div>
+        <div class="dp-stat"><div class="l">Core edge</div><div class="v">Mix</div></div>
+        <div class="dp-stat"><div class="l">Structure role</div><div class="v">Diversifier</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>Position</h3>
+        <p>The most diversified retail platform, spanning everyday grocery and health to discretionary specialty. Breadth smooths cyclicality: drug and grocery defend volume while specialty captures the trade-up cycle <span class="tag est">Kira estimates</span>.</p>
+        <h3>Recent moves</h3>
+        <p>Convenience and drugstore store-count expansion targets the smaller-frequent-basket shift and provincial demand wave.</p>
+      </div>
+      <div>
+        <h3>Strategic implication</h3>
+        <ul>
+          <li>Format breadth hedges any single channel or category shock.</li>
+          <li>Drugstore footprint captures the resilient health-and-wellness basket.</li>
+          <li>Convenience rollout rides the high-frequency, small-basket trend.</li>
+          <li>Specialty mix gives discretionary upside in the recovery.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> Listed-operator disclosures = Robinsons Retail annual report &amp; investor materials · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">016 / 024</div></div>
+</section>
+
+<!-- ============ 17 PLAYER PROFILE 3 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 07 · Player profile</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">Regional marketplace platforms</div>
+        <div class="dp-subtitle">Two regional e-commerce platforms hold the bulk of Philippine marketplace GMV and define the online channel's economics.</div>
+        <div class="dp-tags"><span class="dp-tag">E-commerce</span><span class="dp-tag">Logistics</span><span class="dp-tag">Live-commerce</span></div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">Channel share</div><div class="v">~8.5<span class="u">% retail</span></div></div>
+        <div class="dp-stat"><div class="l">GMV growth</div><div class="v">~mid-teens</div></div>
+        <div class="dp-stat"><div class="l">Concentration</div><div class="v">2 players</div></div>
+        <div class="dp-stat"><div class="l">Structure role</div><div class="v">Challenger</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>Position</h3>
+        <p>After a triple-digit acquisition phase, the two leading platforms have shifted to monetization — advertising, logistics fees and embedded finance — as GMV growth normalizes to mid-teens <span class="tag src">DTI 2025</span>. The competitive front is delivery speed and live-commerce conversion, not pure discounting.</p>
+        <h3>Recent moves</h3>
+        <p>Investment in regional fulfilment and integrated wallets aims to reduce cash-on-delivery dependence and improve unit economics.</p>
+      </div>
+      <div>
+        <h3>Strategic implication</h3>
+        <ul>
+          <li>Logistics cost is the deciding variable in archipelago fulfilment.</li>
+          <li>Converting COD to digital payment is the key margin lever.</li>
+          <li>Live-commerce is the conversion engine for social-first discovery.</li>
+          <li>Incumbents respond via click-and-collect, not by out-discounting.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> DTI 2025 = Dept. of Trade &amp; Industry e-commerce briefings · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">017 / 024</div></div>
+</section>
+
+<!-- ============ 18 DEMAND DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 08</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">SECTION 08</div>
+    <div class="div-title">Channel &amp; distribution: <span class="acc">the online shift</span></div>
+    <div class="div-thesis">The channel question is settled in direction and open in pace. Online has crossed from novelty to habit and now captures a disproportionate share of incremental spend — but <strong>cash-on-delivery, archipelago logistics, and grocery's resistance to substitution</strong> set the speed limit. Omnichannel, not online-only, wins the decade.</div>
+    <div class="div-pills"><span class="div-pill">~8.5% online</span><span class="div-pill">COD friction</span><span class="div-pill">Last-mile cost</span><span class="div-pill">Click &amp; collect</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">018 / 024</div></div>
+</section>
+
+<!-- ============ 19 CHANNEL STRUCTURE ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 08 · Channels</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Channel &amp; distribution structure</h1>
+    <p class="subhead">Modern trade and general trade still carry the volume; online is the fastest-growing layer and the battleground for the incremental peso.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>General trade remains large</h3>
+        <p>The sari-sari corner-store network still moves an enormous share of everyday FMCG volume, a uniquely resilient distribution layer that both modern trade and online must work with rather than replace <span class="tag est">Kira estimates</span>.</p>
+        <h3>Modern trade is the recovery anchor</h3>
+        <p>Malls and supermarkets capture the formalizing middle-class basket and provide the footfall that underwrites the whole organized-retail flywheel <span class="tag est">Kira estimates</span>.</p>
+        <h3>Online is the growth layer</h3>
+        <p>E-commerce growth at mid-teens far outpaces the offline base <span class="tag src">DTI 2025</span>. The decisive constraints are last-mile cost across islands and the cash-on-delivery habit that erodes online margin.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Channel mix evolution</div>
+        <div class="ch-sub">Share of retail trade, %</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="40" y1="10" x2="40" y2="185" class="axis-line"/>
+          <line x1="40" y1="185" x2="350" y2="185" class="axis-line"/>
+          <!-- 2022 stacked -->
+          <rect x="80" y="40" width="60" height="60" class="bar-mut"/>
+          <rect x="80" y="100" width="60" height="75" class="bar-soft"/>
+          <rect x="80" y="175" width="60" height="10" class="bar-primary"/>
+          <!-- 2030E stacked -->
+          <rect x="230" y="50" width="60" height="50" class="bar-mut"/>
+          <rect x="230" y="100" width="60" height="55" class="bar-soft"/>
+          <rect x="230" y="155" width="60" height="30" class="bar-primary"/>
+          <text x="110" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="260" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2030E</text>
+          <text x="150" y="74" font-size="8.5" fill="#6B7280">Gen. trade</text>
+          <text x="150" y="140" font-size="8.5" fill="#6B7280">Modern trade</text>
+          <text x="300" y="172" font-size="8.5" fill="#1E6FFF">Online ~15%</text>
+        </svg>
+        <div class="ch-src">DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation across channel checks</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">019 / 024</div></div>
+</section>
+
+<!-- ============ 20 REGULATORY ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 09 · Regulatory</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Regulatory &amp; policy landscape</h1>
+    <p class="subhead">Recent liberalization lowers the barrier to foreign retail capital just as an emerging e-commerce framework formalizes the online channel.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>Retail trade liberalized</h3>
+        <p>Amendments to the Retail Trade Liberalization Act cut the minimum paid-up capital required for foreign retailers, widening the door to international entrants and capital <span class="tag src">DTI 2025</span>. This raises competitive intensity in specialty and premium formats over the forecast horizon.</p>
+        <h3>E-commerce gets a rulebook</h3>
+        <p>The Internet Transactions Act establishes consumer-protection, platform-liability and registration rules for online commerce <span class="tag src">DTI 2025</span>, formalizing a channel that grew faster than its oversight and raising compliance cost for marketplaces.</p>
+        <h3>Payments and tax modernization</h3>
+        <p>Continued push toward digital payments and e-invoicing tightens the formal-economy net and gradually narrows the cash-on-delivery and informal-trade advantage <span class="tag est">Kira estimates</span>.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Policy timeline</div>
+        <div class="ch-sub">Recent &amp; pending retail policy</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="50" y1="20" x2="50" y2="200" class="axis-line"/>
+          <circle cx="50" cy="40" r="5" class="bar-primary"/>
+          <text x="64" y="38" font-size="9" fill="#0B0D10">Retail Trade Liberalization</text>
+          <text x="64" y="50" font-size="8" fill="#6B7280">Lower foreign capital floor</text>
+          <circle cx="50" cy="95" r="5" class="bar-primary"/>
+          <text x="64" y="93" font-size="9" fill="#0B0D10">Internet Transactions Act</text>
+          <text x="64" y="105" font-size="8" fill="#6B7280">E-commerce consumer rules</text>
+          <circle cx="50" cy="150" r="5" class="bar-soft"/>
+          <text x="64" y="148" font-size="9" fill="#0B0D10">E-invoicing rollout</text>
+          <text x="64" y="160" font-size="8" fill="#6B7280">Formalization, phased</text>
+          <circle cx="50" cy="190" r="5" class="bar-mut"/>
+          <text x="64" y="188" font-size="9" fill="#0B0D10">Digital-payment push</text>
+          <text x="64" y="200" font-size="8" fill="#6B7280">Ongoing</text>
+        </svg>
+        <div class="ch-src">DTI 2025, BSP 2025</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> DTI 2025 = Dept. of Trade &amp; Industry · BSP 2025 = Bangko Sentral ng Pilipinas · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">020 / 024</div></div>
+</section>
+
+<!-- ============ 21 AI DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 10</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">SECTION 10</div>
+    <div class="div-title">AI impact on <span class="acc">Philippine retail</span></div>
+    <div class="div-thesis">AI's near-term value in Philippine retail is operational, not speculative: <strong>demand forecasting, last-mile route optimization, and conversational commerce</strong> attack the exact cost lines — inventory and logistics — that decide who wins the channel shift. The constraint is data maturity, not ambition.</div>
+    <div class="div-pills"><span class="div-pill">Demand forecasting</span><span class="div-pill">Route optimization</span><span class="div-pill">Conversational commerce</span><span class="div-pill">Personalization</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">021 / 024</div></div>
+</section>
+
+<!-- ============ 22 AI OVERVIEW + USE CASES ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 10 · AI impact</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">AI in Philippine retail: where it pays now</h1>
+    <p class="subhead">Adoption is early but the highest-return use cases sit squarely on the channel-shift battleground — inventory accuracy and last-mile cost.</p>
+    <div class="uc-grid">
+      <div class="uc-card"><div class="u-tag">High impact</div><h4>Demand forecasting</h4><p>SKU-level forecasting cuts stockouts and markdowns in grocery and convenience, defending the volume core's thin margins.</p><div class="u-ex">Inventory cost ↓</div></div>
+      <div class="uc-card"><div class="u-tag">High impact</div><h4>Last-mile route optimization</h4><p>Routing and batching across island geography directly attacks the single biggest online cost line and the gate on e-commerce margin.</p><div class="u-ex">Delivery cost ↓</div></div>
+      <div class="uc-card"><div class="u-tag">Rising</div><h4>Conversational commerce</h4><p>Chat and live-commerce assistants convert social-first discovery into checkout, fitting the market's messaging-heavy behaviour.</p><div class="u-ex">Conversion ↑</div></div>
+      <div class="uc-card"><div class="u-tag">Rising</div><h4>Personalized merchandising</h4><p>Recommendation and dynamic assortment lift basket size on platforms and in digitally-led modern trade.</p><div class="u-ex">Basket ↑</div></div>
+      <div class="uc-card"><div class="u-tag">Operational</div><h4>Fraud &amp; returns control</h4><p>Models flag COD abuse and return fraud, cutting reverse-logistics leakage that erodes online unit economics.</p><div class="u-ex">Returns leakage ↓</div></div>
+      <div class="uc-card"><div class="u-tag">Emerging</div><h4>Credit &amp; BNPL scoring</h4><p>Alternative-data scoring extends financing to thin-file consumers, unlocking higher-ticket discretionary demand.</p><div class="u-ex">Approval reach ↑</div></div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> Synthesized from KIRA operator conversations and platform disclosures · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">022 / 024</div></div>
+</section>
+
+<!-- ============ 23 FORECAST ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 11 · Outlook</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">5-year outlook &amp; forecast</h1>
+    <p class="subhead">Base case: retail trade reaches <strong>~$108bn</strong> by 2030 with online roughly doubling its share. The swing factors are real-wage durability and last-mile economics.</p>
+    <div class="fc-chart">
+      <div class="chart-card" style="height:100%">
+        <div class="ch-title">Retail trade forecast, USD bn — base / bull / bear</div>
+        <div class="ch-sub">Total trade, nominal, to 2030</div>
+        <svg viewBox="0 0 760 200" width="100%" height="180" preserveAspectRatio="xMidYMid meet">
+          <line x1="40" y1="12" x2="40" y2="160" class="axis-line"/>
+          <line x1="40" y1="160" x2="740" y2="160" class="axis-line"/>
+          <line x1="40" y1="110" x2="740" y2="110" class="grid-line"/>
+          <line x1="40" y1="60" x2="740" y2="60" class="grid-line"/>
+          <!-- bull -->
+          <polyline points="60,135 230,118 400,92 570,62 720,30" fill="none" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 3"/>
+          <!-- base -->
+          <polyline points="60,135 230,122 400,105 570,82 720,55" fill="none" stroke="#1E6FFF" stroke-width="3"/>
+          <!-- bear -->
+          <polyline points="60,135 230,128 400,118 570,105 720,90" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="60" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="230" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2026</text>
+          <text x="400" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2027</text>
+          <text x="570" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2028</text>
+          <text x="720" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2030</text>
+          <text x="726" y="28" font-size="8.5" fill="#00A88B">Bull</text>
+          <text x="726" y="53" font-size="8.5" fill="#1E6FFF">Base</text>
+          <text x="726" y="88" font-size="8.5" fill="#D97706">Bear</text>
+        </svg>
+        <div class="ch-src">PSA 2024, DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="scen-row">
+      <div class="scen-card bull"><div class="s-name">Bull</div><div class="s-val">~$118bn</div><div class="s-body">Real wages compound, last-mile cost falls, online clears 18% of trade. <span class="tag est">Kira estimates</span></div></div>
+      <div class="scen-card"><div class="s-name">Base</div><div class="s-val">~$108bn</div><div class="s-body">Steady ~6.8% nominal CAGR; online roughly doubles share to ~15%. <span class="tag est">Kira estimates</span></div></div>
+      <div class="scen-card bear"><div class="s-name">Bear</div><div class="s-val">~$95bn</div><div class="s-body">Inflation re-accelerates, remittances soften, discretionary stays depressed. <span class="tag est">Kira estimates</span></div></div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY ·</b> PSA 2024 = Philippine Statistics Authority · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">023 / 024</div></div>
+</section>
+
+<!-- ============ 24 METHODOLOGY ENDNOTE ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 12 · Methodology endnote</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Methodology endnote &amp; source mix</h1>
+    <p class="subhead">Transparent on what is cited and what is KIRA-derived.</p>
+    <div class="end-grid">
+      <div>
+        <p>This view triangulates two evidence streams. Where a figure carries a named source tag — for example <span class="tag src">PSA 2024</span> or <span class="tag src">DTI 2025</span> — the underlying data comes from that source, with the full citation listed alongside. Where a figure carries <span class="tag est">Kira estimates</span>, KIRA analysts derived the number from a blend of disclosed inputs (government statistics, listed-operator filings, and channel checks) using the methodology disclosed in the relevant section.</p>
+        <p>Approximately <strong>55%</strong> of quantitative claims in this report are KIRA-derived estimates anchored to disclosed inputs; the remaining <strong>45%</strong> are externally cited to named sources. Market-sizing figures combine PSA national-accounts consumption data with listed-operator revenue disclosures and channel-level reads.</p>
+        <div class="legend"><span class="lg-p">Named source</span><span class="lg-e">Kira estimate</span></div>
+        <div class="disclaimer">This report is provided for information purposes. Figures tagged as estimates are KIRA's analytical judgement and may differ from outcomes. © 2026 KIRA Research.</div>
+      </div>
+      <div>
+        <div class="src-list">
+          <div><b>BSP 2024 / 2025</b> — Bangko Sentral ng Pilipinas: inflation, remittances and digital-payment data.</div>
+          <div><b>DTI 2025</b> — Philippine Department of Trade and Industry: e-commerce sizing, retail trade liberalization and Internet Transactions Act briefings.</div>
+          <div><b>PSA 2024</b> — Philippine Statistics Authority: national accounts, household final consumption, population and demographic statistics.</div>
+          <div><b>Listed-operator disclosures</b> — Annual reports and investor materials of named listed Philippine retail and mall groups.</div>
+          <div><b>Kira estimates</b> — KIRA in-house analyst triangulation across the above inputs and primary channel checks across Metro Manila, Cebu and Davao.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">024 / 024</div></div>
+</section>
+
+</body>
+</html>
