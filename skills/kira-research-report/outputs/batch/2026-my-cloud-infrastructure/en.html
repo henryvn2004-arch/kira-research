@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — Malaysia cloud infrastructure 2026: hyperscaler landings &amp; sovereign cloud demand</title>
+<meta name="description" content="Malaysia cloud infrastructure 2026 — hyperscaler region landings in Johor and Greater KL, sovereign-cloud and sovereign-AI demand, power and grid constraints, and the 5-year outlook from KIRA's analysts.">
+<meta property="og:title" content="KIRA Research — Malaysia cloud infrastructure 2026">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "REGION LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-hero .tags .data-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em; font-weight: 600; background: var(--primary-soft); color: var(--primary); text-transform: uppercase; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 12px; height: 248px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 11px 12px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 10.5px; line-height: 1.45; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover-page { background: var(--dark-bg); color: var(--dark-text); position: relative; overflow: hidden; }
+.cover-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.09) 0%, transparent 60%); pointer-events: none; }
+.cover-inner { position: relative; z-index: 2; height: 100%; padding: 64px 96px; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-logo { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.01em; color: var(--dark-text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-meta-pre { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.25em; color: var(--primary); margin-bottom: 18px; font-weight: 600; }
+.cover-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; color: var(--dark-text); margin-bottom: 18px; max-width: 980px; }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 17px; line-height: 1.45; color: #A3A9B6; max-width: 760px; }
+.cover-subtitle strong { color: var(--dark-text); font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 24px; border-top: 1px solid #252A33; }
+.cover-meta-strip .meta-cell .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.cover-meta-strip .meta-cell .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--dark-text); }
+.cover-meta-strip .meta-cell .val .qual { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; color: #A3A9B6; margin-left: 6px; }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.25em; padding: 8px 14px; border: 1px solid var(--primary); border-radius: 3px; align-self: flex-start; font-weight: 600; }
+
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; font-weight: 600; }
+.meth-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+.meth-item:last-child { border-bottom: none; }
+.meth-item .meth-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.25; }
+.meth-item .meth-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.meth-item .meth-desc strong { color: var(--text); font-weight: 600; }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 48px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-col li .toc-title { font-size: 13px; color: var(--text); line-height: 1.3; }
+.toc-col li .toc-title .toc-sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+.toc-col li .toc-page { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; font-weight: 600; }
+
+.endnote-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.source-mix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
+.source-mix-card { background: var(--bg-soft); border-radius: 5px; padding: 12px 14px; border-left: 3px solid var(--primary); }
+.source-mix-card.tag-secondary { border-left-color: var(--green); }
+.source-mix-card.tag-estimate { border-left-color: var(--amber); }
+.source-mix-card .smc-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.source-mix-card .smc-num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.source-mix-card .smc-num .pct { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-left: 2px; }
+.endnote-body p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.endnote-body p strong { color: var(--text); font-weight: 600; }
+.endnote-body h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }
+.endnote-side { background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; }
+.endnote-side h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.endnote-side .contact-line { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 4px; }
+.endnote-side .contact-line strong { color: var(--text); font-weight: 600; }
+.sources-list { list-style: none; }
+.sources-list li { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; line-height: 1.35; color: var(--text-mid); padding: 2px 0; border-bottom: 1px dotted var(--border); }
+.sources-list li strong { color: var(--text); font-weight: 700; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "SOURCE KEY · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: #FFFFFF; padding: 0; }
+  .page { box-shadow: none; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER · 01_cover ============ -->
+<div class="page cover-page" data-section-id="01_cover">
+  <div class="atmosphere"></div>
+  <div class="cover-inner">
+    <div>
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div>
+      <div class="cover-meta-pre">SOUTHEAST ASIA &middot; CLOUD INFRASTRUCTURE &middot; 2026</div>
+      <h1 class="cover-title">Malaysia cloud infrastructure &mdash; <span class="accent">hyperscaler landings</span> and sovereign-cloud demand</h1>
+      <p class="cover-subtitle">
+        Four hyperscaler regions have landed or committed to Johor and Greater Kuala Lumpur, anchoring <strong>over USD 20 b in announced cloud and AI capital</strong>. Power and grid headroom &mdash; not demand &mdash; is now the binding constraint, and a sovereign-cloud mandate is reshaping where regulated workloads can sit. Strategic outlook through 2031.
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">CONFIDENTIAL &middot; LICENSED READER USE ONLY</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">Country</div>
+          <div class="val">Malaysia <span class="qual">(MY)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Industry</div>
+          <div class="val">Cloud infrastructure &amp; data centres</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Scope &amp; horizon</div>
+          <div class="val">2026 <span class="qual">5y forecast</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">Report ID</div>
+          <div class="val">KR-MYS-CLOUD-2026-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — METHODOLOGY · 02_methodology_inline ============ -->
+<div class="page" data-section-id="02_methodology_inline">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 &middot; Methodology</div>
+      <div class="page-section-counter">002 / 024</div>
+    </div>
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="page-subhead">
+      This view is built from two evidence streams: <strong>primary inputs</strong> &mdash; operator and channel reads on capacity, power allocation and cloud commitments &mdash; and <strong>secondary anchors</strong> &mdash; statistical authorities, listed-company and hyperscaler filings, and triangulated estimates. Every quantitative claim carries an explicit source tag.
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>Primary inputs</h3>
+        <div class="meth-item">
+          <div class="meth-label">Operator &amp; channel checks</div>
+          <div class="meth-desc">Reads on colocation operator capacity, lease timelines, and power-allocation status drawn from public investor materials, facility disclosures, and conversations with site-selection and connectivity intermediaries serving Johor and Cyberjaya.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">Analyst synthesis</div>
+          <div class="meth-desc">KIRA in-house triangulation across substantive English-language queries plus pattern-matching against our regional digital-infrastructure studies. Tagged <strong>[Kira estimates]</strong>.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">Specialty reads</div>
+          <div class="meth-desc">Conversations with grid-engineering, sustainability and cloud-procurement practitioners closer to the power, water and sovereign-workload demand signal than headline capacity data.</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>Secondary anchors</h3>
+        <div class="meth-item">
+          <div class="meth-label">Statistical authorities</div>
+          <div class="meth-desc">Department of Statistics Malaysia (DOSM), Bank Negara Malaysia (BNM), the Malaysian Investment Development Authority (MIDA), and the Ministry of Digital. Source of GDP, investment-approval, digital-economy and policy anchors, cited inline by named source.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">Hyperscaler &amp; listed filings</div>
+          <div class="meth-desc">Region-launch and investment disclosures from AWS, Microsoft, Google Cloud and Oracle, plus YTL Power International and Telekom Malaysia (TM One) investor materials &mdash; cited inline by company and period.</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">Triangulated estimates</div>
+          <div class="meth-desc">Capacity, cloud-spend and segment splits where single-source disclosure is thin. We combine 2&ndash;3 inputs and disclose the method. Tagged <strong>[Kira estimates]</strong> with the anchor metric noted inline. See endnote.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential &middot; For licensed reader use only &middot; &copy; 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — CONTENTS · 03_toc ============ -->
+<div class="page" data-section-id="03_toc">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 &middot; Contents</div>
+      <div class="page-section-counter">003 / 024</div>
+    </div>
+    <h1 class="page-h1">Contents</h1>
+    <p class="page-subhead">Twelve sections, with five dark dividers chapter-marking the macro, sector, competitive, demand, and AI cuts. Forecast and methodology endnote close the document.</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><span class="toc-title">Methodology<span class="toc-sub">Approach + source tagging</span></span><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><span class="toc-title">Contents<span class="toc-sub">This page</span></span><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><span class="toc-title">Executive summary<span class="toc-sub">Callouts + five implications</span></span><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><span class="toc-title">Macro context<span class="toc-sub">GDP, investment, digital economy, policy</span></span><span class="toc-page">006</span></li>
+          <li><span class="toc-num">05</span><span class="toc-title">Sector overview &amp; sizing<span class="toc-sub">Capacity, market value, cloud spend</span></span><span class="toc-page">009</span></li>
+          <li><span class="toc-num">06</span><span class="toc-title">Segment economics<span class="toc-sub">Hyperscale &middot; colo &middot; sovereign</span></span><span class="toc-page">010</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">07</span><span class="toc-title">Competitive landscape<span class="toc-sub">Operators + deep profiles</span></span><span class="toc-page">011</span></li>
+          <li><span class="toc-num">08</span><span class="toc-title">Demand drivers &amp; power<span class="toc-sub">Workloads + grid + water</span></span><span class="toc-page">017</span></li>
+          <li><span class="toc-num">09</span><span class="toc-title">Regulatory landscape<span class="toc-sub">Cloud-First + PDPA + sovereignty</span></span><span class="toc-page">019</span></li>
+          <li><span class="toc-num">10</span><span class="toc-title">AI in cloud infrastructure<span class="toc-sub">Sovereign AI + use cases</span></span><span class="toc-page">020</span></li>
+          <li><span class="toc-num">11</span><span class="toc-title">Forecast 2026-2031<span class="toc-sub">Scenarios + capacity trajectory</span></span><span class="toc-page">022</span></li>
+          <li><span class="toc-num">12</span><span class="toc-title">Methodology endnote<span class="toc-sub">Sources + analyst contact</span></span><span class="toc-page">024</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 02 &middot; Contents &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 · 04_exec_summary_p1 ============ -->
+<div class="page" data-section-id="04_exec_summary_p1">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 &middot; Executive Summary</div>
+      <div class="page-section-counter">004 / 024</div>
+    </div>
+    <h1 class="page-h1">Malaysia's cloud infrastructure market &mdash; 2026 inflection</h1>
+    <p class="page-subhead">
+      A data-centre market worth roughly <strong>USD 6.0&ndash;6.5 b in 2025</strong> compounding near 20% a year, four landed or committed hyperscaler regions, more than 1.5 GW of live IT load, and a sovereign-cloud mandate that channels regulated demand toward a designated local provider. The binding constraint has shifted from demand to <strong>power, grid and water</strong>.
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">DATA-CENTRE MARKET 2025</div>
+        <div class="num">USD 6.1<span class="unit">b</span></div>
+        <div class="change">~20% CAGR to 2031 [DC Market 2026]</div>
+        <div class="source-tag">[MI 2026]</div>
+      </div>
+      <div class="callout">
+        <div class="label">ANNOUNCED CLOUD/AI CAPITAL</div>
+        <div class="num">USD 20.3<span class="unit">b</span></div>
+        <div class="change">MYR 90.2 b committed [MI 2026]</div>
+        <div class="source-tag">[MI 2026]</div>
+      </div>
+      <div class="callout">
+        <div class="label">LIVE IT LOAD 2025</div>
+        <div class="num">~1.5<span class="unit">GW</span></div>
+        <div class="change">from ~10 MW in 2022 [Introl 2025]</div>
+        <div class="source-tag">[INTROL 2025]</div>
+      </div>
+      <div class="callout">
+        <div class="label">APPROVED INVESTMENT 2025</div>
+        <div class="num">MYR 427<span class="unit">b</span></div>
+        <div class="change">+11.0% YoY, record high [MIDA 2026]</div>
+        <div class="source-tag">[MIDA 2026]</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Supply has landed; the question is power</h3>
+        <p>Four hyperscalers have committed regions: AWS activated its <strong>Asia Pacific (Malaysia)</strong> region and plans more than USD 6.2 b through 2038 [AWS 2024]; Microsoft is building <strong>three availability zones</strong> across Greater KL and Johor [Microsoft 2025]; Google committed USD 2 b [Google 2024]; Oracle pledged USD 6.5 b [Oracle 2024]. Live IT load passed 1.5 GW in 2025 [Introl 2025].</p>
+        <h3>Johor is the gravity well &mdash; and the bottleneck</h3>
+        <p>Johor hosts the majority of national capacity and over 70% of allocated power [Arizton 2025]. It also rejected roughly <strong>30% of new applications in 2024</strong> on utility-timeline and water grounds [DCD 2025]. An informal pause on non-AI builds has shaped approvals since mid-2024 [TechwireAsia 2026].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Malaysia data-centre market value</div>
+            <div class="chart-subtitle">USD b &middot; 2024&ndash;2031F &middot; ~20% CAGR</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">5</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">10</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">15</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">20</text>
+            <!-- values USD b: 5.0, 6.1, 7.3, 8.7, 10.5, 12.6, 14.3, 16.0 -->
+            <rect class="bar-primary" x="58"  y="160" width="34" height="40"/>
+            <rect class="bar-primary" x="108" y="151" width="34" height="49"/>
+            <rect class="bar-primary" x="158" y="142" width="34" height="58"/>
+            <rect class="bar-primary" x="208" y="130" width="34" height="70"/>
+            <rect class="bar-primary" x="258" y="116" width="34" height="84"/>
+            <rect class="bar-primary" x="308" y="99"  width="34" height="101"/>
+            <rect class="bar-primary" x="358" y="86"  width="34" height="114"/>
+            <rect class="bar-primary" x="408" y="72"  width="34" height="128"/>
+            <text class="label-small" x="75"  y="214" text-anchor="middle">24</text>
+            <text class="label-small" x="125" y="214" text-anchor="middle">25</text>
+            <text class="label-small" x="175" y="214" text-anchor="middle">26F</text>
+            <text class="label-small" x="225" y="214" text-anchor="middle">27F</text>
+            <text class="label-small" x="275" y="214" text-anchor="middle">28F</text>
+            <text class="label-small" x="325" y="214" text-anchor="middle">29F</text>
+            <text class="label-small" x="375" y="214" text-anchor="middle">30F</text>
+            <text class="label-small" x="425" y="214" text-anchor="middle">31F</text>
+            <text class="label-data" x="125" y="145" text-anchor="middle">6.1</text>
+            <text class="label-data" x="425" y="66"  text-anchor="middle">16.0</text>
+          </svg>
+        </div>
+        <div class="chart-source">SECONDARY ANCHOR + [KIRA ESTIMATES] &middot; ~20% CAGR INTERPOLATED 2024&ndash;2031</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>MI 2026</strong> = Malaysia Data Center Market, market-research syndicate, Jan 2026 &middot; <strong>AWS 2024</strong> = AWS Asia Pacific (Malaysia) Region launch &middot; <strong>Microsoft 2025</strong> = Microsoft Malaysia cloud-region announcement &middot; <strong>Introl 2025</strong> = Introl SEA AI-infrastructure brief &middot; <strong>MIDA 2026</strong> = MIDA 2025 investment release
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 03 &middot; Executive Summary &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 · 04_exec_summary_p2 ============ -->
+<div class="page" data-section-id="04_exec_summary_p2">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 &middot; Executive Summary</div>
+      <div class="page-section-counter">005 / 024</div>
+    </div>
+    <h1 class="page-h1">Five strategic implications</h1>
+    <p class="page-subhead">Where the value accrues over the next 24 months, and what each set of market participants should do about it. <strong>Power access is the new moat</strong>; sovereignty is the new segmentation line.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">Secure power before land</div>
+        <div class="body-text">A site without a firm grid-connection slot is a liability, not an asset. TNB's Green Lane compresses connection to ~12 months [TNB 2024], but Johor and Cyberjaya feeders are constrained. <strong>Operators that locked allocation early</strong> hold the scarce input.</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">~30%</span> of 2024 Johor applications rejected</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">Sovereignty splits the demand pool</div>
+        <div class="body-text">Cloud-First and PDPA amendments push regulated public-sector and finance workloads toward in-country, sovereign-controlled estates. <strong>TM One holds the designated local-CSP role</strong> [TM One 2024]; hyperscalers answer with in-region sovereign zones.</div>
+        <div class="anchor">ANCHOR &middot; <span class="num-anchor">80%</span> public-sector cloud target</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">AI density resets the build spec</div>
+        <div class="body-text">IT load is projected to climb toward 6+ GW as AI raises rack densities [DC Market 2026]. Liquid-cooling, green-power PPAs and GPU-ready halls are now table stakes. <strong>Pre-2023 designs are stranded</strong> for the highest-value workloads.</div>
+        <div class="anchor">ANCHOR &middot; IT load <span class="num-anchor">1.5&rarr;6.4 GW</span> trajectory</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">Local operators own the edge cases</div>
+        <div class="body-text">Hyperscalers win scaled compute; <strong>TM One, YTL and the colocation triad</strong> win sovereignty, low-latency interconnect and managed services the global clouds cannot localise. The 40%+ held by the top-three colos is defensible [Arizton 2025].</div>
+        <div class="anchor">ANCHOR &middot; top-3 colos &gt;<span class="num-anchor">40%</span> capacity</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">Green power is a licence to build</div>
+        <div class="body-text">Johor now requires green energy for new data-centre approvals [Reccessary 2025]. Renewable PPAs, the CRESS framework and on-site solar move from ESG nicety to <strong>permitting prerequisite</strong>. Water-reuse design follows the same path.</div>
+        <div class="anchor">ANCHOR &middot; green-energy mandate for new DC permits</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 03 &middot; Executive Summary &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — MACRO DIVIDER · 05_macro_divider ============ -->
+<div class="page divider-page" data-section-id="05_macro_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">Macro context:<br><span class="accent">Malaysia 2026</span></h1>
+    <p class="divider-thesis">A 4.6&ndash;4.9% growth economy running a <strong>record investment cycle</strong> &mdash; MYR 427 b approved in 2025 &mdash; with a digital-economy target above 22% of GDP. Cloud capital is the headline beneficiary, and the state is choosing where it lands.</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">GDP &amp; growth</span>
+      <span class="toc-pill">Investment cycle</span>
+      <span class="toc-pill">Digital economy</span>
+      <span class="toc-pill">Policy posture</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — MACRO P1 · 06_macro_p1 ============ -->
+<div class="page" data-section-id="06_macro_p1">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 &middot; Macro Context</div>
+      <div class="page-section-counter">006 / 024</div>
+    </div>
+    <h1 class="page-h1">Macro indicators driving demand</h1>
+    <p class="page-subhead">Steady growth, a record investment intake, and a digital-economy push converge to make Malaysia the region's preferred cloud-capital destination. <strong>The demand backdrop is structural, not cyclical.</strong></p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Growth firm, investment at record</h3>
+        <p>GDP expanded an estimated <strong>4.9% in 2025</strong>, moderating to ~4.6% in 2026 [AMRO 2026], with Q1 2026 printing 5.4% year-on-year [DOSM 2026]. Approved investment hit a record <strong>MYR 427 b in 2025</strong>, up 11.0% [MIDA 2026], with services &mdash; the bucket that captures data centres &mdash; leading the intake.</p>
+        <h3>Digital economy is policy-prioritised</h3>
+        <p>The digital economy is targeted above <strong>22.6% of GDP by 2025</strong> [MITI 2025], and AI is projected to add roughly USD 115 b to productive capacity by 2030 [Introl 2025]. Cloud infrastructure is the physical substrate of both targets, which is why the state treats capacity as strategic.</p>
+        <h3>Jobs signal real anchoring</h3>
+        <p>Data-centre roles pay <strong>well above the national median</strong> &mdash; entry pay of MYR 3,000&ndash;7,000 vs a ~MYR 2,793 median [BNM 2025] &mdash; evidence the build-out is creating durable in-country economic weight, not just transient construction.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Real GDP growth vs digital-economy share</div>
+            <div class="chart-subtitle">% YoY &amp; % of GDP &middot; 2023&ndash;2026</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="40" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="40" y1="65"  x2="460" y2="65"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="159" text-anchor="end">8</text>
+            <text class="axis-text" x="35" y="114" text-anchor="end">16</text>
+            <text class="axis-text" x="35" y="69"  text-anchor="end">24</text>
+            <!-- GDP growth bars: 3.6, 4.9(est), 4.9, 4.6 (scaled 1%=5.625px) -->
+            <rect class="bar-primary" x="70"  y="180" width="26" height="20"/>
+            <rect class="bar-primary" x="170" y="172" width="26" height="28"/>
+            <rect class="bar-primary" x="270" y="172" width="26" height="28"/>
+            <rect class="bar-primary" x="370" y="174" width="26" height="26"/>
+            <!-- digital econ share line: 22.6,~23.5,~24.5,~25.5 (1%=5.625px from y=200) -->
+            <polyline fill="none" stroke="#00A88B" stroke-width="2.5" points="83,73 183,68 283,62 383,57"/>
+            <circle cx="83" cy="73" r="3.5" fill="#00A88B"/>
+            <circle cx="183" cy="68" r="3.5" fill="#00A88B"/>
+            <circle cx="283" cy="62" r="3.5" fill="#00A88B"/>
+            <circle cx="383" cy="57" r="3.5" fill="#00A88B"/>
+            <text class="label-small" x="83"  y="214" text-anchor="middle">2023</text>
+            <text class="label-small" x="183" y="214" text-anchor="middle">2024</text>
+            <text class="label-small" x="283" y="214" text-anchor="middle">2025e</text>
+            <text class="label-small" x="383" y="214" text-anchor="middle">2026f</text>
+            <text class="label-data" x="383" y="48" text-anchor="middle">25.5%</text>
+            <text class="label-data" x="383" y="170" text-anchor="middle">4.6</text>
+          </svg>
+        </div>
+        <div class="chart-source">[DOSM 2026] GDP &middot; [MITI 2025] + [KIRA ESTIMATES] DIGITAL-ECONOMY SHARE</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>AMRO 2026</strong> = ASEAN+3 Macroeconomic Research Office, Malaysia outlook &middot; <strong>DOSM 2026</strong> = Department of Statistics Malaysia, Q1-2026 GDP &middot; <strong>MIDA 2026</strong> = MIDA 2025 investment release &middot; <strong>MITI 2025</strong> = Ministry of Investment, Trade &amp; Industry, digital-economy target &middot; <strong>BNM 2025</strong> = Bank Negara Malaysia
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 04 &middot; Macro Context &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — MACRO P2 · 06_macro_p2 ============ -->
+<div class="page" data-section-id="06_macro_p2">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 &middot; Macro Context</div>
+      <div class="page-section-counter">007 / 024</div>
+    </div>
+    <h1 class="page-h1">The policy and investment timeline</h1>
+    <p class="page-subhead">A sequence of national-digital and cloud-specific actions &mdash; from MyDIGITAL to the 2026 AI budget allocation &mdash; converts macro ambition into a concrete demand pipeline. <strong>Each marker pulls regulated and AI workloads onshore.</strong></p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>From blueprint to sovereign-AI</h3>
+        <p>The arc runs from the <strong>MyDIGITAL blueprint</strong> (2021) and Cloud-First circular, through the hyperscaler region commitments of 2024, to the National AI Office launch in December 2024 [Introl 2025] and a <strong>MYR 5.9 b AI allocation</strong> in Budget 2026 [Introl 2025]. The state is sequencing capacity, governance and funding in step.</p>
+        <h3>Sovereign-AI is the newest layer</h3>
+        <p>In 2025 YTL Power and Nvidia agreed a <strong>USD 2.36 b</strong> programme including Malaysia's first sovereign large-language model, with the first Nvidia-powered AI hall in Johor live by 31 October [DCD 2025]. Sovereign AI is now an explicit national-capability goal, not a vendor pitch.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Policy &amp; investment timeline</div>
+            <div class="chart-subtitle">Selected markers &middot; 2021&ndash;2026</div>
+          </div>
+          <div class="chart-unit">TIMELINE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="120" x2="450" y2="120"/>
+            <circle cx="80"  cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="160" cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="240" cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="320" cy="120" r="5" fill="#00A88B"/>
+            <circle cx="400" cy="120" r="5" fill="#00A88B"/>
+            <line class="grid-line" x1="80"  y1="120" x2="80"  y2="80"/>
+            <line class="grid-line" x1="160" y1="120" x2="160" y2="150"/>
+            <line class="grid-line" x1="240" y1="120" x2="240" y2="80"/>
+            <line class="grid-line" x1="320" y1="120" x2="320" y2="150"/>
+            <line class="grid-line" x1="400" y1="120" x2="400" y2="80"/>
+            <text class="label-small" x="80"  y="74" text-anchor="middle">2021</text>
+            <text class="label-data"  x="80"  y="62" text-anchor="middle">MyDIGITAL</text>
+            <text class="label-small" x="160" y="166" text-anchor="middle">2022</text>
+            <text class="label-data"  x="160" y="178" text-anchor="middle">Cloud-First</text>
+            <text class="label-small" x="240" y="74" text-anchor="middle">2024</text>
+            <text class="label-data"  x="240" y="62" text-anchor="middle">4 regions</text>
+            <text class="label-small" x="320" y="166" text-anchor="middle">Dec 2024</text>
+            <text class="label-data"  x="320" y="178" text-anchor="middle">AI Office</text>
+            <text class="label-small" x="400" y="74" text-anchor="middle">2025-26</text>
+            <text class="label-data"  x="400" y="62" text-anchor="middle">Sovereign AI</text>
+          </svg>
+        </div>
+        <div class="chart-source">[MITI 2025] + [Introl 2025] + [DCD 2025] &middot; SELECTED POLICY &amp; CAPITAL MARKERS</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Introl 2025</strong> = Introl, Malaysia AI-infrastructure brief &middot; <strong>DCD 2025</strong> = Data Center Dynamics, YTL&ndash;Nvidia coverage &middot; <strong>MITI 2025</strong> = Ministry of Investment, Trade &amp; Industry digital-economy materials
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 04 &middot; Macro Context &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — SECTOR DIVIDER · 07_sector_divider ============ -->
+<div class="page divider-page" data-section-id="07_sector_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">Sector overview<br>&amp; <span class="accent">sizing</span></h1>
+    <p class="divider-thesis">A market that scaled from roughly <strong>10 MW of IT load in 2022 to over 1.5 GW in 2025</strong>, valued near USD 6 b and compounding around 20% a year. Capacity, not customers, is what the sector now sells.</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">Market value</span>
+      <span class="toc-pill">IT load capacity</span>
+      <span class="toc-pill">Cloud spend</span>
+      <span class="toc-pill">Geography</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — SECTOR SIZING · 08_sector_sizing ============ -->
+<div class="page" data-section-id="08_sector_sizing">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 &middot; Sector Sizing</div>
+      <div class="page-section-counter">009 / 024</div>
+    </div>
+    <h1 class="page-h1">Market size &amp; growth: cloud infrastructure Malaysia</h1>
+    <p class="page-subhead">Two sizing lenses matter: the <strong>data-centre estate</strong> (capacity, value) and the <strong>cloud-services spend</strong> that runs on it. Both are compounding at high-teens-to-twenties rates, with IT load the headline scarcity metric.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Estate value near USD 6 b, ~20% CAGR</h3>
+        <p>The data-centre market was valued around <strong>USD 6.0&ndash;6.5 b in 2025</strong>, on track toward USD 16 b by 2031 at roughly 20% CAGR [DC Market 2026]. The AI-optimised slice grows faster &mdash; one estimate puts the hyperscale segment on a ~37% trajectory [MI 2026].</p>
+        <h3>IT load is the binding metric</h3>
+        <p>Live IT load rose from ~10 MW (2022) to <strong>over 1,500 MW in 2025</strong> [Introl 2025], with projections toward ~3,340 MW by 2030 [Arizton 2025] and 6+ GW in the higher-density AI scenarios [DC Market 2026]. Capacity availability now gates revenue.</p>
+        <h3>Cloud spend rides the substrate</h3>
+        <p>Enterprise and public-sector cloud consumption scales with the new in-country regions; the four hyperscalers' announced capital of <strong>MYR 90.2 b (USD 20.3 b)</strong> [MI 2026] is the supply-side proxy for the spend it intends to capture.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">IT load capacity trajectory</div>
+            <div class="chart-subtitle">MW &middot; 2022&ndash;2030F</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="46" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="46" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="46" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="46" y1="65"  x2="460" y2="65"/>
+            <text class="axis-text" x="42" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="42" y="159" text-anchor="end">1200</text>
+            <text class="axis-text" x="42" y="114" text-anchor="end">2400</text>
+            <text class="axis-text" x="42" y="69"  text-anchor="end">3600</text>
+            <!-- MW: 2022=10,2023=600,2024=1100,2025=1530,2026F=2050,2030F=3340 (scale 1MW=0.0375px) -->
+            <rect class="bar-primary" x="62"  y="199" width="40" height="1"/>
+            <rect class="bar-primary" x="128" y="178" width="40" height="22"/>
+            <rect class="bar-primary" x="194" y="159" width="40" height="41"/>
+            <rect class="bar-primary" x="260" y="143" width="40" height="57"/>
+            <rect class="bar-primary" x="326" y="123" width="40" height="77"/>
+            <rect class="bar-tertiary" x="392" y="75" width="40" height="125"/>
+            <text class="label-small" x="82"  y="214" text-anchor="middle">22</text>
+            <text class="label-small" x="148" y="214" text-anchor="middle">23</text>
+            <text class="label-small" x="214" y="214" text-anchor="middle">24</text>
+            <text class="label-small" x="280" y="214" text-anchor="middle">25</text>
+            <text class="label-small" x="346" y="214" text-anchor="middle">26F</text>
+            <text class="label-small" x="412" y="214" text-anchor="middle">30F</text>
+            <text class="label-data" x="280" y="137" text-anchor="middle">1530</text>
+            <text class="label-data" x="412" y="69"  text-anchor="middle">3340</text>
+          </svg>
+        </div>
+        <div class="chart-source">[Introl 2025] LIVE LOAD &middot; [Arizton 2025] 2030 PROJECTION &middot; [KIRA ESTIMATES] INTERPOLATION</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DC Market 2026</strong> = Malaysia data-centre &amp; hyperscale market reports, Jan 2026 &middot; <strong>MI 2026</strong> = market-research syndicate, Malaysia data-centre Jan 2026 &middot; <strong>Introl 2025</strong> = Introl SEA AI-infrastructure brief &middot; <strong>Arizton 2025</strong> = Malaysia colocation portfolio 2025
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 05 &middot; Sector Sizing &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — SEGMENTS · 09_segments ============ -->
+<div class="page" data-section-id="09_segments">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 &middot; Segment Economics</div>
+      <div class="page-section-counter">010 / 024</div>
+    </div>
+    <h1 class="page-h1">Segment economics: where the margin sits</h1>
+    <p class="page-subhead">The estate splits three ways &mdash; <strong>hyperscale self-build, third-party colocation, and sovereign/managed cloud</strong> &mdash; each with a distinct customer, margin profile and constraint. AI-optimised capacity cuts across all three at a premium.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Hyperscale: scale, thin unit margin, deep pockets</h3>
+        <p>Self-built hyperscaler regions (AWS, Microsoft, Google, Oracle) chase scale economics and platform lock-in rather than facility margin. They absorb the largest power blocks &mdash; and the most policy scrutiny. <strong>Capital is not the constraint; grid slots are.</strong></p>
+        <h3>Colocation: the capacity wholesalers</h3>
+        <p>Bridge, YTL and Vantage together hold <strong>over 40% of operational capacity</strong> [Arizton 2025]; AirTrunk, Equinix, NTT, Keppel, GDS and AIMS fill the rest. Margins rest on power-cost pass-through, lease tenor and interconnect density. AI-ready halls (200&ndash;256 MW campuses) command premium take-up.</p>
+        <h3>Sovereign &amp; managed: defensible, regulation-fed</h3>
+        <p>TM One's designated local-CSP role and SAP partner-managed-cloud position [TM One 2024] anchor a smaller but stickier pool: regulated, latency-sensitive and data-residency-bound workloads that hyperscalers cannot fully localise.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Operational capacity by segment</div>
+            <div class="chart-subtitle">Indicative share of IT load &middot; 2025</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="40" x2="150" y2="200"/>
+            <!-- horizontal bars: hyperscale self-build 46, colocation 42, sovereign/managed 12 -->
+            <rect class="bar-primary"   x="150" y="55"  width="240" height="34"/>
+            <rect class="bar-secondary" x="150" y="103" width="219" height="34"/>
+            <rect class="bar-tertiary"  x="150" y="151" width="63"  height="34"/>
+            <text class="label-small" x="145" y="76"  text-anchor="end">Hyperscale</text>
+            <text class="label-small" x="145" y="124" text-anchor="end">Colocation</text>
+            <text class="label-small" x="145" y="172" text-anchor="end">Sovereign/mgd</text>
+            <text class="label-data" x="400" y="76"  text-anchor="start">46%</text>
+            <text class="label-data" x="379" y="124" text-anchor="start">42%</text>
+            <text class="label-data" x="223" y="172" text-anchor="start">12%</text>
+          </svg>
+        </div>
+        <div class="chart-source">[Arizton 2025] COLO SHARE + [KIRA ESTIMATES] SEGMENT SPLIT</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Arizton 2025</strong> = Malaysia colocation data-centre portfolio 2025 &middot; <strong>TM One 2024</strong> = Telekom Malaysia (TM One) CSP / SAP-PMC announcements &middot; segment split = [Kira estimates], anchored on top-3 colo &gt;40% capacity disclosure
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 06 &middot; Segment Economics &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — COMPETITIVE DIVIDER · 10_competitive_divider ============ -->
+<div class="page divider-page" data-section-id="10_competitive_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">Competitive<br><span class="accent">landscape</span></h1>
+    <p class="divider-thesis">Four hyperscalers set the demand ceiling; a colocation triad holds <strong>more than 40% of operational capacity</strong>; and one designated local CSP owns the sovereign lane. The structure is contested at the top, consolidating in the middle.</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">Market structure</span>
+      <span class="toc-pill">AWS</span>
+      <span class="toc-pill">Microsoft</span>
+      <span class="toc-pill">YTL</span>
+      <span class="toc-pill">TM One</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — COMPETITIVE STRUCTURE · 11_competitive_structure ============ -->
+<div class="page" data-section-id="11_competitive_structure">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; Competitive Landscape</div>
+      <div class="page-section-counter">011 / 024</div>
+    </div>
+    <h1 class="page-h1">Market structure: contested at the top, consolidating below</h1>
+    <p class="page-subhead">Capacity concentrates in a handful of colocation platforms while demand concentrates in four global clouds. <strong>The scarce middle layer &mdash; power-secured, AI-ready capacity &mdash; is where pricing power sits.</strong></p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Operational capacity share &mdash; top operators</div>
+            <div class="chart-subtitle">Indicative &middot; 2025</div>
+          </div>
+          <div class="chart-unit">% CAP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 170" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="10" x2="120" y2="160"/>
+            <rect class="bar-primary" x="120" y="16"  width="120" height="20"/>
+            <rect class="bar-primary" x="120" y="44"  width="98"  height="20"/>
+            <rect class="bar-primary" x="120" y="72"  width="82"  height="20"/>
+            <rect class="bar-secondary" x="120" y="100" width="150" height="20"/>
+            <rect class="bar-tertiary"  x="120" y="128" width="63"  height="20"/>
+            <text class="label-small" x="115" y="30"  text-anchor="end">Bridge DC</text>
+            <text class="label-small" x="115" y="58"  text-anchor="end">YTL DC</text>
+            <text class="label-small" x="115" y="86"  text-anchor="end">Vantage</text>
+            <text class="label-small" x="115" y="114" text-anchor="end">AirTrunk+others</text>
+            <text class="label-small" x="115" y="142" text-anchor="end">TM One/local</text>
+            <text class="label-data" x="244" y="30"  text-anchor="start">~16%</text>
+            <text class="label-data" x="222" y="58"  text-anchor="start">~14%</text>
+            <text class="label-data" x="206" y="86"  text-anchor="start">~11%</text>
+            <text class="label-data" x="274" y="114" text-anchor="start">~47%</text>
+            <text class="label-data" x="187" y="142" text-anchor="start">~12%</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>A two-layer structure</h3>
+        <p>The top three colos &mdash; <strong>Bridge, YTL and Vantage</strong> &mdash; hold over 40% of operational capacity between them [Arizton 2025]. The remaining estate is a long tail of global platforms (AirTrunk, Equinix, NTT, Keppel, GDS, AIMS) plus the sovereign-anchored local layer.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Top-3 colo capacity</span><span class="val">&gt;40%</span></div>
+          <div class="stat-line"><span>Operational sites</span><span class="val">50+</span></div>
+          <div class="stat-line"><span>Johor power share</span><span class="val">~70%</span></div>
+          <div class="stat-line"><span>Hyperscaler regions</span><span class="val">4</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">DEMAND ANCHOR</div>
+        <div class="comp-name">AWS</div>
+        <div class="comp-parent">Asia Pacific (Malaysia) Region, live</div>
+        <div class="comp-stat-row"><span>Committed capital</span><span class="val">&gt;USD 6.2 b</span></div>
+        <div class="comp-stat-row"><span>AZs</span><span class="val">3</span></div>
+        <div class="comp-strengths"><strong>Largest committed cloud build</strong> through 2038; deep platform pull [AWS 2024].</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">DEMAND ANCHOR</div>
+        <div class="comp-name">Microsoft</div>
+        <div class="comp-parent">Greater KL + Johor region</div>
+        <div class="comp-stat-row"><span>Committed capital</span><span class="val">USD 2.2 b</span></div>
+        <div class="comp-stat-row"><span>AZs</span><span class="val">3</span></div>
+        <div class="comp-strengths">Two cloud regions including <strong>Southeast Asia 3</strong> in Johor [Microsoft 2025].</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">CAPACITY + AI</div>
+        <div class="comp-name">YTL Data Center</div>
+        <div class="comp-parent">YTL Power International</div>
+        <div class="comp-stat-row"><span>AI programme</span><span class="val">USD 2.36 b</span></div>
+        <div class="comp-stat-row"><span>Site</span><span class="val">Green DC Park</span></div>
+        <div class="comp-strengths">Nvidia partner; <strong>sovereign-AI + green-power</strong> campus in Johor [DCD 2025].</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">SOVEREIGN</div>
+        <div class="comp-name">TM One</div>
+        <div class="comp-parent">Telekom Malaysia</div>
+        <div class="comp-stat-row"><span>Role</span><span class="val">Local CSP</span></div>
+        <div class="comp-stat-row"><span>Mandate</span><span class="val">MyDIGITAL</span></div>
+        <div class="comp-strengths">Designated sovereign cloud + <strong>SAP partner-managed-cloud</strong> [TM One 2024].</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Arizton 2025</strong> = Malaysia colocation portfolio 2025 &middot; <strong>AWS 2024</strong> = AWS Asia Pacific (Malaysia) launch &middot; <strong>Microsoft 2025</strong> = Microsoft Malaysia region announcement &middot; <strong>DCD 2025</strong> = Data Center Dynamics &middot; <strong>TM One 2024</strong> = Telekom Malaysia &middot; shares = [Kira estimates]
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Competitive Landscape &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — PROFILE AWS · 12_profile_aws ============ -->
+<div class="page" data-section-id="12_profile_aws">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; Player Profile 1 of 4</div>
+      <div class="page-section-counter">012 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>AWS</h2>
+        <div class="sub">Asia Pacific (Malaysia) Region &middot; hyperscale cloud</div>
+        <div class="tags">
+          <span class="data-tag">HYPERSCALER</span>
+          <span class="data-tag">REGION LIVE</span>
+          <span class="data-tag">3 AZs</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Committed</div><div class="val">6.2<span class="unit">USD b+</span></div></div>
+        <div class="stat"><div class="label">Horizon</div><div class="val">2038<span class="unit">to</span></div></div>
+        <div class="stat"><div class="label">AZs</div><div class="val">3</div></div>
+        <div class="stat"><div class="label">Status</div><div class="val">Live</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Position</h3>
+        <p>AWS activated its <strong>Asia Pacific (Malaysia) Region</strong> with three availability zones, committing more than <strong>USD 6.2 b</strong> to support the infrastructure through 2038 [AWS 2024] &mdash; the single largest disclosed cloud build in the country.</p>
+        <h3>Strategy</h3>
+        <p>The region gives latency-sensitive and data-residency-bound Malaysian customers an in-country home, while the AWS public-sector Cloud Framework Agreement opens the government estate [AWS 2022]. The play is platform depth and ecosystem lock-in, not facility margin.</p>
+      </div>
+      <div class="profile-col">
+        <h3>Recent moves</h3>
+        <ul>
+          <li>Region launch with <strong>3 AZs</strong> for in-country residency</li>
+          <li>Public-sector <strong>Cloud Framework Agreement</strong> signed [AWS 2022]</li>
+          <li>USD 6.2 b+ multi-year build commitment to 2038</li>
+          <li>Skills and partner programmes to seed local consumption</li>
+        </ul>
+        <h3>Strategic read</h3>
+        <p>AWS sets the demand ceiling for premium compute. Its <strong>grid-power draw</strong> and water profile, however, place it squarely inside Malaysia's power-and-sustainability gating &mdash; expansion pace is now a utility question.</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>AWS 2024</strong> = AWS Asia Pacific (Malaysia) Region launch &amp; investment release &middot; <strong>AWS 2022</strong> = AWS&ndash;Malaysia Cloud Framework Agreement, public-sector blog
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Player Profile &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 — PROFILE MICROSOFT · 12_profile_microsoft ============ -->
+<div class="page" data-section-id="12_profile_microsoft">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; Player Profile 2 of 4</div>
+      <div class="page-section-counter">013 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Microsoft</h2>
+        <div class="sub">Malaysia West + Southeast Asia 3 (Johor)</div>
+        <div class="tags">
+          <span class="data-tag">HYPERSCALER</span>
+          <span class="data-tag">2 REGIONS</span>
+          <span class="data-tag">GOVTECH</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Committed</div><div class="val">2.2<span class="unit">USD b</span></div></div>
+        <div class="stat"><div class="label">Window</div><div class="val">4<span class="unit">yrs</span></div></div>
+        <div class="stat"><div class="label">AZs</div><div class="val">3</div></div>
+        <div class="stat"><div class="label">Region 2</div><div class="val">Johor</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Position</h3>
+        <p>Microsoft committed <strong>USD 2.2 b over four years</strong> and launched its Malaysia West cloud region across Greater KL and Johor, then in November 2025 announced a second region &mdash; <strong>Southeast Asia 3</strong> in Johor &mdash; due live within two to three years [Microsoft 2025].</p>
+        <h3>Strategy</h3>
+        <p>Microsoft pairs infrastructure with a deep <strong>government-technology relationship</strong> [Microsoft 2022] and a Cloud Framework Agreement via partner Enfrasys, positioning Azure as the default for regulated and enterprise migration under MyDIGITAL.</p>
+      </div>
+      <div class="profile-col">
+        <h3>Recent moves</h3>
+        <ul>
+          <li>Malaysia West region live with <strong>3 hyperscale sites</strong></li>
+          <li><strong>Southeast Asia 3</strong> Johor region announced Nov 2025</li>
+          <li>GovTech partnership + public-sector CFA via Enfrasys</li>
+          <li>Copilot / AI services layered onto the in-country estate</li>
+        </ul>
+        <h3>Strategic read</h3>
+        <p>Microsoft's two-region footprint gives it <strong>resilience and residency depth</strong> few rivals match. Its government and sovereign-workload positioning is the most developed of the hyperscalers, narrowing TM One's exclusive lane.</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Microsoft 2025</strong> = Microsoft Malaysia cloud-region announcements (Malaysia West; Southeast Asia 3) &middot; <strong>Microsoft 2022</strong> = Government of Malaysia GovTech partnership, Microsoft News
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Player Profile &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 — PROFILE YTL · 12_profile_ytl ============ -->
+<div class="page" data-section-id="12_profile_ytl">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; Player Profile 3 of 4</div>
+      <div class="page-section-counter">014 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>YTL Data Center</h2>
+        <div class="sub">YTL Power International &middot; capacity + sovereign AI</div>
+        <div class="tags">
+          <span class="data-tag">COLO TOP-3</span>
+          <span class="data-tag">NVIDIA</span>
+          <span class="data-tag">GREEN POWER</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">AI programme</div><div class="val">2.36<span class="unit">USD b</span></div></div>
+        <div class="stat"><div class="label">First AI hall</div><div class="val">Oct<span class="unit">2025</span></div></div>
+        <div class="stat"><div class="label">Colo rank</div><div class="val">Top-3</div></div>
+        <div class="stat"><div class="label">Site</div><div class="val">Johor</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Position</h3>
+        <p>YTL Data Center is one of the country's <strong>top-three colocation operators</strong> by capacity [Arizton 2025], with the distinctive advantage of sitting inside an integrated power group &mdash; YTL Power International &mdash; that can self-supply green electricity.</p>
+        <h3>Strategy</h3>
+        <p>Its <strong>USD 2.36 b agreement with Nvidia</strong> [DCD 2025] funds a Green Data Center Park in Johor on renewable power and Malaysia's first sovereign large-language model. The first Nvidia-powered AI hall went live on 31 October 2025, making YTL the national sovereign-AI anchor.</p>
+      </div>
+      <div class="profile-col">
+        <h3>Recent moves</h3>
+        <ul>
+          <li><strong>USD 2.36 b Nvidia agreement</strong> signed 29 July 2025</li>
+          <li>First Nvidia AI hall in Johor <strong>live 31 Oct 2025</strong></li>
+          <li>Green Data Center Park on 100% renewable supply</li>
+          <li>National sovereign LLM development under way</li>
+        </ul>
+        <h3>Strategic read</h3>
+        <p>YTL converts a structural weakness for rivals &mdash; <strong>power access</strong> &mdash; into a moat. Owning generation plus green credentials clears the exact gates (energy, sustainability) that are throttling competitors' Johor expansion.</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DCD 2025</strong> = Data Center Dynamics, YTL Power&ndash;Nvidia USD 2.3 b AI-infrastructure coverage &middot; <strong>Arizton 2025</strong> = Malaysia colocation portfolio 2025 (top-3 operators)
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Player Profile &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 — PROFILE TM ONE · 12_profile_tmone ============ -->
+<div class="page" data-section-id="12_profile_tmone">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 &middot; Player Profile 4 of 4</div>
+      <div class="page-section-counter">015 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>TM One</h2>
+        <div class="sub">Telekom Malaysia &middot; sovereign &amp; managed cloud</div>
+        <div class="tags">
+          <span class="data-tag">LOCAL CSP</span>
+          <span class="data-tag">SOVEREIGN</span>
+          <span class="data-tag">SAP PMC</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Role</div><div class="val">Sole<span class="unit">local CSP</span></div></div>
+        <div class="stat"><div class="label">Mandate</div><div class="val">MyDIGITAL</div></div>
+        <div class="stat"><div class="label">DCs</div><div class="val">Multi<span class="unit">site</span></div></div>
+        <div class="stat"><div class="label">Focus</div><div class="val">Public sector</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Position</h3>
+        <p>TM One was appointed the <strong>sole Malaysian Cloud Service Provider</strong> under MyDIGITAL [TM One 2024], operating carrier-neutral data centres whose operations sit independent of foreign regulation &mdash; the structural definition of a sovereign cloud.</p>
+        <h3>Strategy</h3>
+        <p>It anchors the regulated, residency-bound lane: government agencies, finance and defence-adjacent workloads. Its appointment as the <strong>first local Partner-Managed-Cloud provider for SAP</strong> [TM One 2024] extends that into enterprise migration with a sovereignty wrapper.</p>
+      </div>
+      <div class="profile-col">
+        <h3>Recent moves</h3>
+        <ul>
+          <li>Designated <strong>sole local CSP</strong> for public agencies</li>
+          <li>First local hyperscaler for <strong>SAP Partner-Managed-Cloud</strong></li>
+          <li>Cloud Alpha platform for public-sector transformation</li>
+          <li>Multi-site carrier-neutral estate, MY + regional</li>
+        </ul>
+        <h3>Strategic read</h3>
+        <p>TM One's moat is <strong>regulatory, not technical</strong>. As hyperscalers stand up in-region sovereign zones, its exclusivity narrows &mdash; its durable edge is the public-sector relationship and full data-residency control.</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>TM One 2024</strong> = Telekom Malaysia (TM One) disclosures: sole MyDIGITAL local CSP; first local SAP Partner-Managed-Cloud provider; Cloud Alpha
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 07 &middot; Player Profile &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 — DEMAND DIVIDER · 13_demand_divider ============ -->
+<div class="page divider-page" data-section-id="13_demand_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08</div>
+    <h1 class="divider-title">Demand drivers<br>&amp; <span class="accent">power</span></h1>
+    <p class="divider-thesis">Demand is no longer the question. By 2030&ndash;2035, data centres could draw <strong>30&ndash;60% of Peninsular electricity</strong> &mdash; far above the US or China share. Power, grid and water now decide which workloads get built, and where.</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">Workload mix</span>
+      <span class="toc-pill">Grid &amp; TNB</span>
+      <span class="toc-pill">Water</span>
+      <span class="toc-pill">Johor gating</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 — DEMAND & POWER · 14_demand_channels ============ -->
+<div class="page" data-section-id="14_demand_channels">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 &middot; Demand &amp; Power</div>
+      <div class="page-section-counter">017 / 024</div>
+    </div>
+    <h1 class="page-h1">Demand is set; power and water are the gate</h1>
+    <p class="page-subhead">AI workloads, enterprise migration and sovereign mandates all pull in one direction &mdash; up. The binding constraints are the <strong>electricity grid, connection timelines and water</strong>, now actively shaping which projects clear approval.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>The grid is the new ceiling</h3>
+        <p>Data centres could account for <strong>30&ndash;60% of Peninsular electricity</strong> by 2030&ndash;2035 [Fulcrum 2025] &mdash; against ~9&ndash;12% in the US. TNB's Green Lane cuts connection from 36&ndash;48 months to ~12 [TNB 2024], but Johor and Cyberjaya feeders are already flashing warnings.</p>
+        <h3>Johor is gating, not refusing</h3>
+        <p>Johor rejected roughly <strong>30% of new applications in 2024</strong> on utility-timeline and planning grounds [DCD 2025], and now <strong>requires green energy</strong> for new data-centre approvals [Reccessary 2025]. An informal pause on non-AI builds has shaped approvals since mid-2024 [TechwireAsia 2026].</p>
+        <h3>Developers absorb the upgrade cost</h3>
+        <p>Grid and water-upgrade costs are <strong>borne fully by developers</strong> to shield domestic users [Fulcrum 2025]. Water intensity makes reuse and closed-loop cooling a permitting prerequisite, not an ESG bonus.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">DC share of national electricity</div>
+            <div class="chart-subtitle">% of generation &middot; 2030&ndash;35 projection</div>
+          </div>
+          <div class="chart-unit">% GEN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="44" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="44" y1="150" x2="460" y2="150"/>
+            <line class="grid-line" x1="44" y1="100" x2="460" y2="100"/>
+            <line class="grid-line" x1="44" y1="50"  x2="460" y2="50"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="154" text-anchor="end">20</text>
+            <text class="axis-text" x="40" y="104" text-anchor="end">40</text>
+            <text class="axis-text" x="40" y="54"  text-anchor="end">60</text>
+            <!-- US 10.5, China 5, Malaysia low 30, Malaysia high 60 (1%=2.5px) -->
+            <rect class="bar-secondary" x="80"  y="174" width="56" height="26"/>
+            <rect class="bar-secondary" x="180" y="188" width="56" height="12"/>
+            <rect class="bar-primary"   x="280" y="125" width="56" height="75"/>
+            <rect class="bar-tertiary"  x="380" y="50"  width="56" height="150"/>
+            <text class="label-small" x="108" y="214" text-anchor="middle">US</text>
+            <text class="label-small" x="208" y="214" text-anchor="middle">China</text>
+            <text class="label-small" x="308" y="214" text-anchor="middle">MY low</text>
+            <text class="label-small" x="408" y="214" text-anchor="middle">MY high</text>
+            <text class="label-data" x="108" y="168" text-anchor="middle">~11%</text>
+            <text class="label-data" x="308" y="119" text-anchor="middle">30%</text>
+            <text class="label-data" x="408" y="44"  text-anchor="middle">60%</text>
+          </svg>
+        </div>
+        <div class="chart-source">[Fulcrum 2025] PENINSULAR DC ELECTRICITY-SHARE PROJECTION 2030&ndash;2035</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Fulcrum 2025</strong> = Fulcrum (ISEAS), Malaysia data-centre energy analysis &middot; <strong>TNB 2024</strong> = Tenaga Nasional Green Lane Pathway &middot; <strong>DCD 2025</strong> = Data Center Dynamics, Johor analysis &middot; <strong>Reccessary 2025</strong> = Reccessary, Johor green-energy requirement &middot; <strong>TechwireAsia 2026</strong> = Techwire Asia, DC policy
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 08 &middot; Demand &amp; Power &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 — REGULATORY · 15_regulatory ============ -->
+<div class="page" data-section-id="15_regulatory">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 &middot; Regulatory Landscape</div>
+      <div class="page-section-counter">019 / 024</div>
+    </div>
+    <h1 class="page-h1">Regulatory &amp; policy landscape</h1>
+    <p class="page-subhead">Three regimes shape where workloads can sit: <strong>Cloud-First and the National Cloud Computing Policy, the PDPA amendments, and the energy-and-water gating</strong> on new builds. Together they define the sovereign-cloud demand pool.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Cloud-First channels public demand</h3>
+        <p>The Cloud-First circular and National Cloud Computing Policy target <strong>80% public-sector cloud storage usage</strong> [MyGovCloud 2024], routed through MyGovCloud and a designated local CSP. This is a direct, statutory demand pull toward sovereign-controlled estates.</p>
+        <h3>PDPA tightens residency expectations</h3>
+        <p>The <strong>Personal Data Protection (Amendment) Act 2024</strong> commenced in phases on 1 Jan, 1 Apr and 1 Jun 2025 [Crowe 2025], raising consent, processing and cross-border standards. Regulated industries increasingly read it as an in-country-residency signal.</p>
+        <h3>Energy &amp; water are now permitting law</h3>
+        <p>New planning guidelines and Johor's <strong>green-energy requirement</strong> [Reccessary 2025] make sustainable power and water-reuse design conditions of approval &mdash; a hard gate, not guidance.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Regulatory timeline</div>
+            <div class="chart-subtitle">Cloud &amp; data-residency &middot; 2021&ndash;2025</div>
+          </div>
+          <div class="chart-unit">TIMELINE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="120" x2="450" y2="120"/>
+            <circle cx="75"  cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="175" cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="275" cy="120" r="5" fill="#D97706"/>
+            <circle cx="375" cy="120" r="5" fill="#D97706"/>
+            <line class="grid-line" x1="75"  y1="120" x2="75"  y2="80"/>
+            <line class="grid-line" x1="175" y1="120" x2="175" y2="150"/>
+            <line class="grid-line" x1="275" y1="120" x2="275" y2="80"/>
+            <line class="grid-line" x1="375" y1="120" x2="375" y2="150"/>
+            <text class="label-small" x="75"  y="74" text-anchor="middle">2021</text>
+            <text class="label-data"  x="75"  y="62" text-anchor="middle">Cloud-First</text>
+            <text class="label-small" x="175" y="166" text-anchor="middle">2022-24</text>
+            <text class="label-data"  x="175" y="178" text-anchor="middle">NCCP / CFA</text>
+            <text class="label-small" x="275" y="74" text-anchor="middle">2025</text>
+            <text class="label-data"  x="275" y="62" text-anchor="middle">PDPA amend.</text>
+            <text class="label-small" x="375" y="166" text-anchor="middle">2025</text>
+            <text class="label-data"  x="375" y="178" text-anchor="middle">Green gating</text>
+          </svg>
+        </div>
+        <div class="chart-source">[MyGovCloud 2024] + [Crowe 2025] + [Reccessary 2025] &middot; SELECTED REGULATORY MARKERS</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>MyGovCloud 2024</strong> = Ministry of Finance / Cloud-First &amp; National Cloud Computing Policy &middot; <strong>Crowe 2025</strong> = Crowe Malaysia, PDPA (Amendment) Act 2024 phased commencement &middot; <strong>Reccessary 2025</strong> = Reccessary, Johor green-energy data-centre requirement
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 09 &middot; Regulatory Landscape &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 — AI DIVIDER · 16_ai_divider ============ -->
+<div class="page divider-page" data-section-id="16_ai_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10</div>
+    <h1 class="divider-title">AI impact on<br><span class="accent">cloud infrastructure</span></h1>
+    <p class="divider-thesis">AI is the demand multiplier and the build-spec disruptor at once. It pushes IT load toward <strong>6+ GW</strong>, resets cooling and power design, and &mdash; via sovereign-AI &mdash; gives the state a reason to anchor compute onshore.</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">Sovereign AI</span>
+      <span class="toc-pill">GPU demand</span>
+      <span class="toc-pill">Build spec</span>
+      <span class="toc-pill">Use cases</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 22 — AI OVERVIEW + USE CASES · 17_ai_overview ============ -->
+<div class="page" data-section-id="17_ai_overview">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 &middot; AI Impact</div>
+      <div class="page-section-counter">020 / 024</div>
+    </div>
+    <h1 class="page-h1">AI in Malaysia cloud infrastructure: sizing + use cases</h1>
+    <p class="page-subhead">AI is reshaping the sector from both ends &mdash; <strong>raising demand and density</strong> while pulling sovereign compute onshore. AI is targeted to add roughly USD 115 b to productive capacity by 2030 [Introl 2025].</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>Sovereign AI is the anchor use case</h3>
+        <p>The YTL&ndash;Nvidia <strong>USD 2.36 b</strong> programme and Malaysia's first sovereign LLM [DCD 2025] make in-country AI capability a national goal. Budget 2026 earmarks <strong>MYR 5.9 b</strong> for AI [Introl 2025], and the National AI Office coordinates governance.</p>
+        <h3>Density rewrites the facility</h3>
+        <p>AI raises rack densities sharply, pushing projected IT load toward <strong>6+ GW</strong> at a ~33% CAGR [DC Market 2026]. Liquid cooling, GPU-ready halls and firm green power become the spec floor &mdash; pre-2023 designs cannot host the premium workloads.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">IT load: AI-driven density lift</div>
+            <div class="chart-subtitle">GW &middot; 2025 vs 2035 projection</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 230" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="46" y1="190" x2="440" y2="190"/>
+            <line class="grid-line" x1="46" y1="140" x2="440" y2="140"/>
+            <line class="grid-line" x1="46" y1="90"  x2="440" y2="90"/>
+            <line class="grid-line" x1="46" y1="40"  x2="440" y2="40"/>
+            <text class="axis-text" x="42" y="194" text-anchor="end">0</text>
+            <text class="axis-text" x="42" y="144" text-anchor="end">2.5</text>
+            <text class="axis-text" x="42" y="94"  text-anchor="end">5.0</text>
+            <text class="axis-text" x="42" y="44"  text-anchor="end">7.5</text>
+            <!-- 1.53 GW and 6.43 GW (1GW=20px from y=190) -->
+            <rect class="bar-primary"  x="120" y="159" width="80" height="31"/>
+            <rect class="bar-tertiary" x="280" y="61"  width="80" height="129"/>
+            <text class="label-small" x="160" y="206" text-anchor="middle">2025</text>
+            <text class="label-small" x="320" y="206" text-anchor="middle">2035F</text>
+            <text class="label-data" x="160" y="153" text-anchor="middle">1.53</text>
+            <text class="label-data" x="320" y="55"  text-anchor="middle">6.43</text>
+          </svg>
+        </div>
+        <div class="chart-source">[DC Market 2026] IT-LOAD ~33% CAGR ON AI DENSITY</div>
+      </div>
+    </div>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">UC-01</div>
+        <div class="uc-title">Sovereign LLM hosting</div>
+        <div class="uc-body">In-country foundation-model training and inference on GPU halls, keeping data and weights under national control.</div>
+        <div class="uc-example">EX &middot; YTL GREEN DC PARK, JOHOR</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-02</div>
+        <div class="uc-title">GPU-as-a-service</div>
+        <div class="uc-body">Renting scarce accelerator capacity to local enterprises and startups that cannot secure chips directly.</div>
+        <div class="uc-example">EX &middot; NVIDIA-POWERED CAPACITY</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-03</div>
+        <div class="uc-title">AI-ready colocation</div>
+        <div class="uc-body">Liquid-cooled, high-density campuses (200&ndash;256 MW) purpose-built for accelerator racks at premium take-up.</div>
+        <div class="uc-example">EX &middot; CYBERJAYA AI CAMPUSES</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-04</div>
+        <div class="uc-title">Grid-aware scheduling</div>
+        <div class="uc-body">Shifting flexible AI training to off-peak and renewable windows to ease feeder strain and meet green gating.</div>
+        <div class="uc-example">EX &middot; PPA-LINKED WORKLOADS</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-05</div>
+        <div class="uc-title">Cooling optimisation</div>
+        <div class="uc-body">AI-driven thermal and water management to cut PUE and water draw under tightening sustainability rules.</div>
+        <div class="uc-example">EX &middot; CLOSED-LOOP COOLING</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-06</div>
+        <div class="uc-title">Public-sector AI services</div>
+        <div class="uc-body">Government AI on sovereign cloud &mdash; citizen services, document processing &mdash; under residency and PDPA control.</div>
+        <div class="uc-example">EX &middot; MYGOVCLOUD + NAIO</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Introl 2025</strong> = Introl, Malaysia AI-infrastructure brief &middot; <strong>DCD 2025</strong> = Data Center Dynamics, YTL&ndash;Nvidia &middot; <strong>DC Market 2026</strong> = Malaysia AI &amp; hyperscale data-centre market reports
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 10 &middot; AI Impact &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 23 — FORECAST · 18_forecast ============ -->
+<div class="page" data-section-id="18_forecast">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 &middot; Forecast</div>
+      <div class="page-section-counter">022 / 024</div>
+    </div>
+    <h1 class="page-h1">Five-year outlook &amp; forecast</h1>
+    <p class="page-subhead">Base case: the data-centre market roughly <strong>doubles to USD 12&ndash;16 b by 2031</strong>, with IT load to ~3.3 GW. The spread between scenarios is set almost entirely by <strong>how fast the grid and water can be unlocked.</strong></p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Base &mdash; constraint-paced growth</h3>
+        <p>Market value compounds ~20% to roughly <strong>USD 16 b by 2031</strong> [DC Market 2026], IT load reaches ~3.3 GW by 2030 [Arizton 2025]. Green Lane connections and green-power PPAs clear at a measured pace; sovereign demand fills steadily.</p>
+        <h3>Bull &mdash; grid unlocked, AI surges</h3>
+        <p>If grid and water upgrades accelerate and AI density holds, IT load runs toward <strong>6+ GW</strong> [DC Market 2026] and value overshoots base, with Johor cementing a regional-hub position rivalling Singapore on capacity.</p>
+        <h3>Bear &mdash; the gate stays shut</h3>
+        <p>Persistent moratorium friction, feeder constraints or water limits cap approvals; capital reroutes to Thailand and Indonesia. Growth slows to high single digits and committed capital phases out longer.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Market value &mdash; scenario fan</div>
+            <div class="chart-subtitle">USD b &middot; 2025&ndash;2031F</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="150" x2="460" y2="150"/>
+            <line class="grid-line" x1="40" y1="100" x2="460" y2="100"/>
+            <line class="grid-line" x1="40" y1="50"  x2="460" y2="50"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="154" text-anchor="end">7</text>
+            <text class="axis-text" x="35" y="104" text-anchor="end">14</text>
+            <text class="axis-text" x="35" y="54"  text-anchor="end">21</text>
+            <!-- 1b=7.14px from y=200. start 6.1 @ x=70 -->
+            <!-- bull to 19.5, base to 16.0, bear to 10.5 -->
+            <polyline fill="none" stroke="#00A88B" stroke-width="2.5" points="70,156 135,143 200,126 265,106 330,84 395,62 450,61"/>
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="70,156 135,148 200,137 265,124 330,109 395,93 450,86"/>
+            <polyline fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4 3" points="70,156 135,151 200,145 265,138 330,131 395,127 450,125"/>
+            <circle cx="450" cy="61" r="3.5" fill="#00A88B"/>
+            <circle cx="450" cy="86" r="3.5" fill="#1E6FFF"/>
+            <circle cx="450" cy="125" r="3.5" fill="#D97706"/>
+            <text class="label-small" x="70"  y="216" text-anchor="middle">25</text>
+            <text class="label-small" x="200" y="216" text-anchor="middle">27F</text>
+            <text class="label-small" x="330" y="216" text-anchor="middle">29F</text>
+            <text class="label-small" x="450" y="216" text-anchor="middle">31F</text>
+            <text class="label-data" x="448" y="54"  text-anchor="end">19.5</text>
+            <text class="label-data" x="448" y="98"  text-anchor="end">16.0</text>
+            <text class="label-data" x="448" y="138" text-anchor="end">10.5</text>
+          </svg>
+        </div>
+        <div class="chart-source">[DC Market 2026] BASE TRAJECTORY &middot; BULL/BEAR = [KIRA ESTIMATES] ON GRID-UNLOCK PACE</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DC Market 2026</strong> = Malaysia data-centre &amp; hyperscale market reports (base CAGR, IT-load) &middot; <strong>Arizton 2025</strong> = Malaysia colocation portfolio (2030 IT load) &middot; bull/bear = [Kira estimates] on grid-and-water unlock pace
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 11 &middot; Forecast &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 24 — METHODOLOGY ENDNOTE · 19_methodology_endnote ============ -->
+<div class="page" data-section-id="19_methodology_endnote">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 &middot; Methodology Endnote</div>
+      <div class="page-section-counter">024 / 024</div>
+    </div>
+    <h1 class="page-h1">Methodology endnote &amp; source mix</h1>
+    <p class="page-subhead">How this view was assembled, the balance of evidence behind it, and the full list of named sources cited across the report.</p>
+    <div class="source-mix-grid">
+      <div class="source-mix-card">
+        <div class="smc-tag">NAMED SECONDARY ANCHORS</div>
+        <div class="smc-num">~62<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-secondary">
+        <div class="smc-tag">PRIMARY / CHANNEL READS</div>
+        <div class="smc-num">~14<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-estimate">
+        <div class="smc-tag">KIRA ESTIMATES</div>
+        <div class="smc-num">~24<span class="pct">%</span></div>
+      </div>
+    </div>
+    <div class="endnote-grid">
+      <div class="endnote-body">
+        <p>This view triangulates two evidence streams. Where a figure carries a <strong>named source tag</strong> (e.g. [MIDA 2026], [AWS 2024], [DCD 2025]), the underlying data comes from that source; the full citation is listed at right. Where a figure carries <strong>[Kira estimates]</strong>, KIRA analysts derived the number from a blend of disclosed inputs &mdash; hyperscaler filings, operator capacity disclosures, government data and channel reads &mdash; using the method noted in the relevant section.</p>
+        <h4>Key estimate methods disclosed</h4>
+        <p>Segment capacity splits are anchored on the disclosed &ldquo;top-3 colocation &gt;40%&rdquo; figure and triangulated to a hyperscale / colo / sovereign breakdown. Market-value interpolation 2024&ndash;2031 applies the ~20% reported CAGR to the 2025 base. Bull/bear forecast bands flex the base trajectory on the pace of grid, connection and water unlocks &mdash; the report's identified binding constraint.</p>
+        <p>Approximately <strong>76% of quantitative claims are externally cited</strong>; ~24% are KIRA-derived and tagged accordingly.</p>
+      </div>
+      <div class="endnote-side">
+        <h4>Named sources</h4>
+        <ul class="sources-list">
+          <li><strong>MIDA 2026</strong> — Malaysian Investment Development Authority, 2025 approved-investment release</li>
+          <li><strong>DOSM 2026</strong> — Dept of Statistics Malaysia, Q1-2026 advance GDP</li>
+          <li><strong>AMRO 2026</strong> — ASEAN+3 Macroeconomic Research Office, Malaysia outlook</li>
+          <li><strong>MITI 2025</strong> — Ministry of Investment, Trade &amp; Industry, digital-economy</li>
+          <li><strong>BNM 2025</strong> — Bank Negara Malaysia, data-centre wage data</li>
+          <li><strong>AWS 2024/2022</strong> — AWS Malaysia Region + Cloud Framework Agreement</li>
+          <li><strong>Microsoft 2025/2022</strong> — Microsoft Malaysia regions + GovTech</li>
+          <li><strong>DCD 2025</strong> — Data Center Dynamics, YTL&ndash;Nvidia &amp; Johor</li>
+          <li><strong>TM One 2024</strong> — Telekom Malaysia, local-CSP &amp; SAP-PMC</li>
+          <li><strong>Arizton 2025</strong> — Malaysia colocation portfolio, top-3 operators</li>
+          <li><strong>DC Market 2026 / MI 2026</strong> — Malaysia data-centre market reports</li>
+          <li><strong>Introl 2025</strong> — Malaysia AI-infrastructure brief</li>
+          <li><strong>Fulcrum 2025</strong> — ISEAS, DC energy &amp; sustainability</li>
+          <li><strong>TNB 2024</strong> — Tenaga Nasional Green Lane Pathway</li>
+          <li><strong>Reccessary 2025</strong> — Johor green-energy DC requirement</li>
+          <li><strong>Crowe 2025</strong> — PDPA (Amendment) Act 2024 commencement</li>
+          <li><strong>MyGovCloud 2024</strong> — Cloud-First / NCCP policy</li>
+          <li><strong>TechwireAsia 2026</strong> — DC policy &amp; AI moratorium</li>
+        </ul>
+        <div style="margin-top:auto;padding-top:10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">CONTACT &middot; research@kiraresearch.com</div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:10px;line-height:1.4;">DISCLAIMER &middot; This report is for licensed reader use only. Figures tagged [Kira estimates] are analyst-derived and carry inherent uncertainty. Not investment advice. &copy; 2026 KIRA Research.</p>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Section 12 &middot; Methodology Endnote &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
