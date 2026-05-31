@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — フィリピン越境決済 2027年展望：OFW海外送金のデジタル化と地域コリドー</title>
+<meta name="description" content="フィリピンのUSD 380億規模の送金経済とクロスボーダー決済のデジタル化に関するコンサルティンググレードの分析。OFWコリドー、電子ウォレットレール、競争構造、規制、そして即時地域連携に向けた2027年展望。">
+<meta property="og:title" content="フィリピン越境決済 2027年展望：OFW海外送金のデジタル化と地域コリドー">
+<meta property="og:description" content="フィリピンのOFW送金フローが現金からデジタルレールへ移行する過程、そしてASEAN即時決済連携が2027年のコリドー経済に与える影響。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "コリドー最有力"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 01: COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner" style="padding:0;">
+      <div class="cover-top">
+        <div style="font-family:'Satoshi',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.02em;">KIRA<span style="color:var(--primary);">.</span> RESEARCH</div>
+      </div>
+      <div class="cover-main" style="margin-top:auto;margin-bottom:auto;">
+        <div class="cover-eyebrow">Philippines · Cross-Border Payments · 2027</div>
+        <h1>フィリピン送金経済の<span class="accent">デジタル化</span></h1>
+        <p class="cover-subtitle">USD 380億規模のディアスポラ資金フローが、現金窓口からウォレット・即時レールへ移行している。OFWコリドー、電子ウォレットの経済性、そしてASEAN連携が2027年の機会を定義する。</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">国・地域</div><div class="val">フィリピン</div></div>
+          <div class="cover-meta-item"><div class="label">セクター</div><div class="val">越境決済</div></div>
+          <div class="cover-meta-item"><div class="label">発行</div><div class="val">2026年5月</div></div>
+          <div class="cover-meta-item"><div class="label">分析期間</div><div class="val"><span class="accent">2027–2030</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · シングルユーザーライセンス · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 02: METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Methodology</div>
+      <div class="page-section-counter">002 / 014</div>
+    </div>
+    <h1 class="page-h1">本分析の構築方法</h1>
+    <p class="page-subhead">本レポートは、中央銀行の送金統計、世界銀行のコリドーコストデータ、規制開示情報、オペレーターの開示資料を統合し、フィリピンの越境決済に関する先行的な読みを提供するものです。すべての定量的な主張にはインライン出典タグを付記しており、<strong>[Kira estimates]</strong>は弊社の独自試算による数値を示します。</p>
+
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">主要インプット</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 中央銀行・統計データ</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">フィリピン中央銀行（BSP）の現金・個人送金シリーズ、コリドー別内訳、デジタル決済モニタリングデータを、世界銀行の四半期送金コストデータベースで裏付けています。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ オペレーター・チャネル情報</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">OFW送金フローを取り扱う主要ウォレット事業者、銀行、送金業者（MTO）の開示情報およびパートナーシップ発表。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ アナリストによる統合</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">公表数値に乖離がある場合、弊社チームが最も合理的な中間値に調整し、KIRA推計として明記します。</div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">対象範囲と制約</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 分析対象</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">フィリピン向けの越境消費者決済（主にOFW送金）とその決済レール。貿易決済・ホールセールFXは対象外です。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 通貨表記</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">フローはBSP申告ベースのUSD表記。ペソ参照値はUSD 1 = PHP 57の作業レートを使用し、方向性の指標としてのみ提示します。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 予測の表記</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">将来数値は文書化された基準年に固定した方向性シナリオであり、点予測ではありません。レンジは実質的な不確実性を示します。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 03: TABLE OF CONTENTS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Table of Contents</div>
+      <div class="page-section-counter">003 / 014</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-height: 0; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">04</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">エグゼクティブサマリー</div><div style="font-size: 11px; color: var(--text-mid);">市場の現状、デジタル化テーゼ、5つの戦略的示唆</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 04</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">06</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">送金エンジン</div><div style="font-size: 11px; color: var(--text-mid);">過去最高の送金フロー、コリドーマップ、コスト重力</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 07</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">07</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">現金からデジタルへの移行</div><div style="font-size: 11px; color: var(--text-mid);">ウォレットレール、QR決済、デジタル送金プール</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 08</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">09</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">競争構造</div><div style="font-size: 11px; color: var(--text-mid);">ウォレット、銀行、送金業者</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 10</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">11</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">地域コリドーと即時レール</div><div style="font-size: 11px; color: var(--text-mid);">ASEAN連携、Project Nexus、ステーブルコインパイロット</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 12</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">13</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">2030年展望と出典</div><div style="font-size: 11px; color: var(--text-mid);">シナリオ、デジタルシェアの軌跡、方法論補足</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 13</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 04: EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">004 / 014</div>
+    </div>
+
+    <h1 class="page-h1">フィリピン越境決済 — デジタル化による再評価</h1>
+    <p class="page-subhead"><strong>USD 380〜400億規模の送金プール</strong>は堅調に拡大しているが、その基盤となるレールは急速に変容しています。現金窓口はウォレット、QR、そして2027年には即時地域連携へと主役を譲りつつあります。<strong>今後24ヶ月</strong>が、デジタル化されたコリドーをどのオペレーターが掌握するかを決定します。</p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">現金送金額 2025年</div>
+        <div class="num">35.6<span class="unit">USD bn</span></div>
+        <div class="change">前年比+3.3%、過去最高 [BSP 2025]</div>
+        <div class="source-tag sec">BSP</div>
+      </div>
+      <div class="callout">
+        <div class="label">個人送金額 2025年</div>
+        <div class="num">39.6<span class="unit">USD bn</span></div>
+        <div class="change">GDP比約8.3% [BSP 2025]</div>
+        <div class="source-tag sec">BSP</div>
+      </div>
+      <div class="callout">
+        <div class="label">米国シェア 2025年</div>
+        <div class="num">39.7<span class="unit">%</span></div>
+        <div class="change">最大コリドー [BSP 2025]</div>
+        <div class="source-tag sec">BSP</div>
+      </div>
+      <div class="callout">
+        <div class="label">平均コリドーコスト 2024年</div>
+        <div class="num">~4<span class="unit">%</span></div>
+        <div class="change down">SDG目標3%超 [World Bank 2024]</div>
+        <div class="source-tag sec">World Bank</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>市場の現状</h3>
+        <p>
+          OFW現金送金は2025年に<strong>USD 356億の過去最高</strong>を更新し、前年比3.3%増 [BSP 2025]。在外フィリピン人からの個人送金はUSD 396億、GDP比約8.3%に達しています [BSP 2025] [Ken 2025]。12月単月も史上最高を記録しました。フローは構造的に安定していますが、デジタルレールによってその経済性は書き換えられつつあります。
+        </p>
+        <h3>なぜ今：現金からレールへの移行</h3>
+        <p>
+          ウォレットとQRが限界取引を取り込んでいます。QR決済は2026年初頭時点でデジタル取引の<strong>約60%</strong>を占め [Thunes 2026]、デジタル決済収益は年率13.9%で2033年にはUSD 17.8億に達する見通しです [Ken 2025]。平均コリドーコストが依然4%近辺（国連目標3%超）にある中 [World Bank 2024]、デジタルレールで手数料を圧縮できるオペレーターがシェアを獲得します。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">送金フローとデジタルレールへの移行</div>
+            <div class="chart-subtitle">PHILIPPINES · USD BN · 2025年実績 · 2030年予測</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="240"/>
+            <line class="axis-line" x1="55" y1="240" x2="470" y2="240"/>
+            <line class="grid-line" x1="55" y1="60" x2="470" y2="60"/>
+            <line class="grid-line" x1="55" y1="110" x2="470" y2="110"/>
+            <line class="grid-line" x1="55" y1="160" x2="470" y2="160"/>
+            <line class="grid-line" x1="55" y1="200" x2="470" y2="200"/>
+            <text class="axis-text" x="50" y="244" text-anchor="end">0</text>
+            <text class="axis-text" x="50" y="204" text-anchor="end">15</text>
+            <text class="axis-text" x="50" y="164" text-anchor="end">30</text>
+            <text class="axis-text" x="50" y="114" text-anchor="end">45</text>
+            <text class="axis-text" x="50" y="64" text-anchor="end">60</text>
+            <rect class="bar-primary" x="120" y="133" width="48" height="107"/>
+            <rect class="bar-tertiary" x="172" y="213" width="30" height="27"/>
+            <text class="label-data" x="144" y="127" text-anchor="middle">35.6</text>
+            <text class="label-small" x="187" y="207" text-anchor="middle">~9</text>
+            <text class="axis-text" x="160" y="258" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="300" y="114" width="48" height="126" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <rect class="bar-tertiary" x="352" y="186" width="30" height="54" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="324" y="108" text-anchor="middle">~42</text>
+            <text class="label-small" x="367" y="180" text-anchor="middle" style="fill:#D97706">~18</text>
+            <text class="axis-text" x="340" y="258" text-anchor="middle">2030F</text>
+            <rect class="bar-primary" x="55" y="6" width="10" height="10"/>
+            <text class="label-small" x="69" y="15">現金送金</text>
+            <rect class="bar-tertiary" x="200" y="6" width="10" height="10"/>
+            <text class="label-small" x="214" y="15">デジタルレール部分</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BSP、KEN RESEARCH、KIRA統合分析 · 2030年予測 = 2025年基準KIRA推計 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">BSP 2025 = Bangko Sentral ng Pilipinas remittance statistics, full-year 2025 · Ken 2025 = Ken Research Philippines digital payments &amp; remittance market 2025 · Thunes 2026 = Thunes Philippines digital-wallet review early 2026 · World Bank 2024 = World Bank Remittance Prices Worldwide database 2024 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 05: EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">005 / 014</div>
+    </div>
+
+    <h1 class="page-h1">市場参加者に向けた5つの戦略的示唆</h1>
+    <p class="page-subhead">2030年までの競争力学を形成する5つの力。それぞれが文書化された市場データと、フィリピンの送金・決済軌跡に関する当社の分析に裏付けられています。</p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · 需要</div>
+        <div class="title">フローは安定；競争の主戦場はレール</div>
+        <div class="body-text">
+          <strong>USD 356億の現金フロー</strong>は低一桁台で成長 [BSP 2025]。シェア獲得は、市場成長ではなく、取引をより安価で速いレールへ移行させることで実現します。2027年の価値を決めるのは量ではなく、速度と利便性です。
+        </div>
+        <div class="anchor">基準値：<span class="num-anchor">+3.3%</span> 2025年送金成長率</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">02 · コスト</div>
+        <div class="title">手数料格差の解消が最大の機会</div>
+        <div class="body-text">
+          平均コリドーコストは依然<strong>約4%、SDG目標3%超</strong> [World Bank 2024]。デジタルレールでスケールを持ちながら3%未満を実現できる事業者は、価格感応度の高い送金者を取り込み、既存の現金マージンを圧迫します。
+        </div>
+        <div class="anchor">基準値：<span class="num-anchor">~4%</span> 平均送金コスト</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">03 · ウォレット</div>
+        <div class="title">スーパーアプリが受取側を掌握</div>
+        <div class="body-text">
+          非銀行ウォレットがデジタルウォレットプールの<strong>約39%</strong>を占め [Ken 2025]、パートナーシップで約160カ国への展開を実現しています [Industry 2025]。受取ウォレットを持つ事業者が顧客関係とクロスセルを握ります。
+        </div>
+        <div class="anchor">基準値：<span class="num-anchor">~39%</span> 非銀行ウォレットシェア</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">04 · レール</div>
+        <div class="title">即時地域連携が2027年に始動</div>
+        <div class="body-text">
+          Project Nexusは<strong>2027年の最初のライブ取引</strong>を目標としており [BIS 2025]、BSPをASEAN+インドの即時決済システムと接続します。事業者は共有レールへの接続か、独自コリドーの防衛かを決断する必要があります。
+        </div>
+        <div class="anchor">基準値：<span class="num-anchor">2027</span> Nexus初回取引目標</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">05 · トークン</div>
+        <div class="title">ステーブルコインがサンドボックスからコリドーへ</div>
+        <div class="body-text">
+          BSP認可のペソステーブルコインPHPCが<strong>2025年半ばに規制サンドボックスを修了</strong> [BeInCrypto 2025]。トークンレールはより安価な決済を約束するが、規制整備とオフランプの流動性が主流OFWフローへの普及を左右します。
+        </div>
+        <div class="anchor">基準値：<span class="num-anchor">2025</span> ステーブルコインSB修了</div>
+      </div>
+    </div>
+
+    <div class="source-key">BSP 2025 = Bangko Sentral ng Pilipinas remittance statistics 2025 · BIS 2025 = BIS Innovation Hub / Nexus Global Payments updates 2025 · BeInCrypto 2025 = BeInCrypto / Coins.ph PHPC sandbox reporting 2025 · Ken 2025 = Ken Research Philippines digital payments market 2025 · Industry 2025 = Philippine remittance-market analyst forecasts, consolidated 2025 · World Bank 2024 = World Bank Remittance Prices Worldwide 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 06: DIVIDER — REMITTANCE ENGINE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">送金<span class="accent">エンジン</span></h1>
+    <div class="divider-thesis">
+      900万人の在外フィリピン人が、同規模の経済圏のどの国よりも多くの送金を故国に届けています。2025年の現金送金は<strong>USD 356億</strong>を超え、全国の家計消費を支えています。これは決済ストーリーの背景ではありません。これ自体がストーリーです。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1 過去最高のフロー</div>
+      <div class="toc-pill">6.2 コリドーマップ</div>
+      <div class="toc-pill">6.3 コスト重力</div>
+      <div class="toc-pill">6.4 需要への示唆</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 07: REMITTANCE ENGINE — DATA CHART ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · The Remittance Engine</div>
+      <div class="page-section-counter">007 / 014</div>
+    </div>
+
+    <h1 class="page-h1">過去最高のフロー、集中したコリドーマップ、コスト重力</h1>
+    <p class="page-subhead">OFW現金送金は10年間にわたり増加を続け、2025年に新記録を更新しました [BSP 2025]。フローは地理的に集中しており、<strong>米国単独で39.7%</strong>を占めています。コストは依然グローバル目標を上回っており、デジタル化の機会を示しています。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>10年間の記録更新</h3>
+        <p>
+          現金送金は2023年のUSD 335億から<strong>2024年USD 345億、2025年USD 356億へ</strong>と増加 [BSP 2025]。2025年12月は月次過去最高を記録しました。高所得国とGCC諸国の労働市場にまたがるディアスポラが、景気循環を超えた構造的な安定をもたらしています。
+        </p>
+        <h3>集中したコリドーマップ</h3>
+        <p>
+          米国が現金送金の<strong>39.7%</strong>を占め、シンガポール（7.3%）、サウジアラビア（6.6%）、日本（5.0%）が続きます [BSP 2025]。北米とGCCが価値を牽引し、ASEAN域内コリドーは規模は小さいものの、デジタル化が最も速く進んでいます。
+        </p>
+        <h3>コスト重力</h3>
+        <p>
+          平均送金コストは2024年に<strong>約4%、SDG目標3%超</strong>で推移 [World Bank 2024]。引用されているコリドー手数料は1.8〜4.6%の範囲です [World Bank 2024]。コスト圧縮1ベーシスポイントが、OFW家計への直接的な価値移転となります。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">現金送金コリドー別シェア（2025年）</div>
+            <div class="chart-subtitle">PHILIPPINES · 現金送金に占める送金元国シェア</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="110" y1="20" x2="110" y2="210"/>
+            <rect class="bar-primary" x="110" y="28" width="338" height="22"/>
+            <text class="label-data" x="452" y="44">39.7%</text>
+            <text class="label-small" x="105" y="44" text-anchor="end">米国</text>
+            <rect class="bar-secondary" x="110" y="62" width="62" height="22"/>
+            <text class="label-data" x="180" y="78">7.3%</text>
+            <text class="label-small" x="105" y="78" text-anchor="end">シンガポール</text>
+            <rect class="bar-secondary" x="110" y="96" width="56" height="22"/>
+            <text class="label-data" x="174" y="112">6.6%</text>
+            <text class="label-small" x="105" y="112" text-anchor="end">サウジアラビア</text>
+            <rect class="bar-secondary" x="110" y="130" width="43" height="22"/>
+            <text class="label-data" x="161" y="146">5.0%</text>
+            <text class="label-small" x="105" y="146" text-anchor="end">日本</text>
+            <rect class="bar-tertiary" x="110" y="164" width="349" height="22"/>
+            <text class="label-data" x="463" y="180" style="fill:#D97706">41.4%</text>
+            <text class="label-small" x="105" y="180" text-anchor="end">その他</text>
+            <text class="axis-text" x="110" y="206">2025年現金送金に占めるシェア</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BSP REMITTANCE STATISTICS 2025 · KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">現金送金額 2024年</div>
+        <div class="num">34.5<span class="unit">USD bn</span></div>
+        <div class="change">前年比+3.0% [BSP 2025]</div>
+        <div class="source-tag sec">BSP</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年12月単月</div>
+        <div class="num">3.52<span class="unit">USD bn</span></div>
+        <div class="change">月次過去最高 [BSP 2025]</div>
+        <div class="source-tag sec">BSP</div>
+      </div>
+      <div class="callout">
+        <div class="label">コリドーコスト幅</div>
+        <div class="num">1.8–4.6<span class="unit">%</span></div>
+        <div class="change down">SDG目標3%超 [World Bank 2024]</div>
+        <div class="source-tag sec">World Bank</div>
+      </div>
+    </div>
+
+    <div class="source-key">BSP 2025 = Bangko Sentral ng Pilipinas overseas-Filipino cash remittance statistics, full-year 2025 · World Bank 2024 = World Bank Remittance Prices Worldwide database, Philippine corridors 2024</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 08: THE CASH-TO-DIGITAL SHIFT ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · The Cash-to-Digital Shift</div>
+      <div class="page-section-counter">008 / 014</div>
+    </div>
+
+    <h1 class="page-h1">ウォレットレールとQRが限界取引を取り込む</h1>
+    <p class="page-subhead">フィリピンはアジア屈指のウォレット普及速度を誇ります。QRとウォレット受取がデフォルトとなるにつれ、送金バリューチェーンは現金払出ネットワークから<strong>デジタル決済</strong>へとシフトし、2027年コリドー経済の構造的な変化を牽引しています。</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">デジタル決済指標</div>
+            <div class="chart-subtitle">PHILIPPINES · 指標別シグナル · 基準年各種</div>
+          </div>
+          <div class="chart-unit">SIGNAL</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="170" x2="585" y2="170"/>
+            <rect class="bar-primary" x="90" y="80" width="70" height="90"/>
+            <text class="label-data" x="125" y="73" text-anchor="middle">~60%</text>
+            <text class="axis-text" x="125" y="186" text-anchor="middle">QR比率</text>
+            <rect class="bar-primary" x="220" y="111" width="70" height="59"/>
+            <text class="label-data" x="255" y="104" text-anchor="middle">~39%</text>
+            <text class="axis-text" x="255" y="186" text-anchor="middle">ウォレットシェア</text>
+            <rect class="bar-secondary" x="350" y="149" width="70" height="21"/>
+            <text class="label-data" x="385" y="142" text-anchor="middle" style="fill:#00A88B">13.9%</text>
+            <text class="axis-text" x="385" y="186" text-anchor="middle">デジタルCAGR</text>
+            <rect class="bar-tertiary" x="480" y="157" width="70" height="13"/>
+            <text class="label-data" x="515" y="150" text-anchor="middle" style="fill:#D97706">8.3%</text>
+            <text class="axis-text" x="515" y="186" text-anchor="middle">送金/GDP比</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: THUNES、KEN RESEARCH、BSP · KIRA RESEARCH 2026</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>窓口からウォレットへ</h3>
+        <p>
+          QR決済は2026年初頭時点でデジタル取引の<strong>約60%</strong>を占め [Thunes 2026]、非銀行ウォレットがウォレットプールの約39%を保有しています [Ken 2025]。受取側のデジタル化は、送金側を上回るペースで進んでいます。
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>QRのデジタル取引比率</span><span class="val">~60%</span></div>
+          <div class="stat-line"><span>非銀行ウォレットシェア</span><span class="val">~39%</span></div>
+          <div class="stat-line"><span>デジタル決済CAGR</span><span class="val">13.9%</span></div>
+          <div class="stat-line"><span>デジタルプール 2033年</span><span class="val">USD 1.78 bn</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;min-height:0;">
+      <div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:600;">レールの経済性</h3>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text-mid);">ウォレットへのデジタル払出は数秒で完了し、現金窓口コストの数分の一で済みます。さらに受取オペレーターは請求書払い、融資、貯蓄、加盟店決済といった下流で収益化できます。デジタル決済収益プールは、基盤となる送金フローが低一桁台の成長にとどまる中でも、<strong>年率13.9%で2033年にはUSD 17.8億</strong>へ拡大する見通しです [Ken 2025]。受取エンドポイントを掌握する事業者が経済的に優位に立ちます。</p>
+      </div>
+      <div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:600;">事業機会の読み方</h3>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text-mid);">越境パートナーシップはウォレットの到達範囲を<strong>約160カ国</strong>に拡大し [Industry 2025]、支店網を持つ送金業者の歴史的優位を無効化しています。競争の焦点はもはや現金払出の拠点密度にありません。送金側のオンボーディング、FXスプレッド、受取スーパーアプリの粘着性の3点に移っています。現金からデジタルへの移行は、このコリドーにおける最大の利益率再評価です。</p>
+      </div>
+    </div>
+
+    <div class="source-key">Ken 2025 = Ken Research Philippines digital payments &amp; remittance market 2025 · Industry 2025 = Philippine remittance-market analyst forecasts, consolidated 2025 · Thunes 2026 = Thunes Philippines digital-wallet review early 2026 · BSP 2025 = Bangko Sentral ng Pilipinas remittance &amp; payments data 2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 09: DIVIDER — COMPETITIVE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 09</div>
+    <h1 class="divider-title">競争<span class="accent">構造</span></h1>
+    <div class="divider-thesis">
+      このコリドーは3層の競争構図です。<strong>ウォレット、銀行、送金業者</strong>が同じOFW家計をめぐって争いますが、それぞれ異なるレール上で戦っています。ウォレットは受取側を、銀行はバランスシートを、レガシーネットワークは縮小しつつある現金ラストマイルを持っています。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">9.1 3つの層</div>
+      <div class="toc-pill">9.2 主要事業者</div>
+      <div class="toc-pill">9.3 パートナーシップ</div>
+      <div class="toc-pill">9.4 チャネル経済性</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 10: COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Competitive Landscape</div>
+      <div class="page-section-counter">010 / 014</div>
+    </div>
+
+    <h1 class="page-h1">市場構造：ウォレット主導の受取側、銀行が支えるバランスシート</h1>
+    <p class="page-subhead">3層の事業者が流入フローを争っています。<strong>デジタル受取側はウォレットが主導</strong> [Ken 2025]し、普通銀行が資本と信頼を提供、既存の送金業者は縮小する現金ラストマイルを防衛しています。構造を規定するのは単一チャネルの支配ではなく、パートナーシップです。</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">デジタル受取のチャネルミックス（参考値）</div>
+            <div class="chart-subtitle">PHILIPPINES · デジタル送金価値に占める比率 · KIRA推計</div>
+          </div>
+          <div class="chart-unit">% MIX</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="20" x2="150" y2="180"/>
+            <rect class="bar-primary" x="150" y="32" width="356" height="22"/>
+            <text class="label-data" x="514" y="48">~40%</text>
+            <text class="label-small" x="145" y="48" text-anchor="end">非銀行ウォレット</text>
+            <rect class="bar-secondary" x="150" y="68" width="267" height="22"/>
+            <text class="label-data" x="425" y="84">~30%</text>
+            <text class="label-small" x="145" y="84" text-anchor="end">銀行・銀行アプリ</text>
+            <rect class="bar-secondary" x="150" y="104" width="178" height="22"/>
+            <text class="label-data" x="336" y="120">~20%</text>
+            <text class="label-small" x="145" y="120" text-anchor="end">MTOデジタル払出</text>
+            <rect class="bar-tertiary" x="150" y="140" width="89" height="22"/>
+            <text class="label-data" x="247" y="156" style="fill:#D97706">~10%</text>
+            <text class="label-small" x="145" y="156" text-anchor="end">暗号資産・その他</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KEN RESEARCH、オペレーター開示 · ミックスはKIRA推計 · KIRA RESEARCH 2026</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>3層、1つの家計</h3>
+        <p>
+          非銀行ウォレットがデジタル受取の<strong>約39%</strong>を主導 [Ken 2025]。BDOは<strong>2024年にPHP 820億の純利益</strong>を計上 [Industry 2025]。MTOは現金ラストマイルを防衛しています。
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>非銀行ウォレットシェア</span><span class="val">~39%</span></div>
+          <div class="stat-line"><span>BDO 2024年純利益</span><span class="val">PHP 82 bn</span></div>
+          <div class="stat-line"><span>ウォレットパートナー到達</span><span class="val">~160カ国</span></div>
+          <div class="stat-line"><span>デジタルプール 2033年</span><span class="val">USD 1.78 bn</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">TIER · WALLET</div>
+        <div class="comp-name">GCash</div>
+        <div class="comp-parent">G-Xchange (Globe / Mynt)</div>
+        <div class="comp-stat-row"><span>層</span><span class="val">ウォレット</span></div>
+        <div class="comp-stat-row"><span>リーチ</span><span class="val">~160カ国</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">スーパーアプリ</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>最大のウォレット基盤、RiaおよびViamericasとの提携、米国・カナダから即時ウォレット入金。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">TIER · WALLET</div>
+        <div class="comp-name">Maya</div>
+        <div class="comp-parent">Voyager / PLDT-backed</div>
+        <div class="comp-stat-row"><span>層</span><span class="val">ウォレット</span></div>
+        <div class="comp-stat-row"><span>リーチ</span><span class="val">TerraPayネット</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">スーパーアプリ+銀行</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>デジタル銀行ライセンス、TerraPay経由のコリドー展開、貯蓄・信用クロスセル。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">TIER · BANK</div>
+        <div class="comp-name">BDO &amp; 銀行アプリ</div>
+        <div class="comp-parent">BDO, Metrobank, UnionBank, RCBC</div>
+        <div class="comp-stat-row"><span>層</span><span class="val">銀行</span></div>
+        <div class="comp-stat-row"><span>BDO 2024年利益</span><span class="val">PHP 82 bn</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">銀行+アプリ</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>バランスシートの厚み、信頼性、エンドツーエンドのプラットフォーム投資、支店とデジタルの複合展開。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">TIER · MTO</div>
+        <div class="comp-name">Western Union &amp; 同業他社</div>
+        <div class="comp-parent">WU, MoneyGram, Remitly, Cebuana, LBC</div>
+        <div class="comp-stat-row"><span>層</span><span class="val">MTO</span></div>
+        <div class="comp-stat-row"><span>強み</span><span class="val">現金払出</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">代理店+デジタル</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>高密度の払出ネットワーク、ブランド信頼性。現金シェア低下に伴いデジタルへ軸足を移しています。
+        </div>
+      </div>
+    </div>
+
+    <div class="source-key">Ken 2025 = Ken Research Philippines digital remittance &amp; wallet market 2025 · Industry 2025 = Philippine remittance-market analyst forecasts, consolidated 2025 · Operator disclosures = GCash, Maya, BDO, and money-transfer-operator partnership announcements 2024–2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 11: DIVIDER — REGIONAL CORRIDORS & RAILS ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 11</div>
+    <h1 class="divider-title">地域コリドーと<span class="accent">即時レール</span></h1>
+    <div class="divider-thesis">
+      次世代レールは独自ではなく、共有されます。<strong>Project Nexus</strong>は、BSPをASEAN+インドの即時決済システムと接続し、2027年に最初のライブ取引を目指しています。BSP認可のペソステーブルコインはすでにサンドボックスを通過しました。コリドーはインフラ層で配管の引き直しが行われています。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">11.1 ASEAN連携</div>
+      <div class="toc-pill">11.2 Project Nexus</div>
+      <div class="toc-pill">11.3 ステーブルコイン</div>
+      <div class="toc-pill">11.4 政策リスク</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 12: REGIONAL CORRIDORS & RAILS — DETAIL ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Regional Corridors &amp; Rails</div>
+      <div class="page-section-counter">012 / 014</div>
+    </div>
+
+    <h1 class="page-h1">共有即時レールとトークン決済がコリドーを再編する</h1>
+    <p class="page-subhead">2027年に向けて2つのインフラ変革が同時進行しています。Project Nexusによる<strong>多国間即時決済連携</strong>と、BSPサンドボックスを通過した<strong>ペソ担保ステーブルコイン決済</strong>です。両者がOFW資金を運ぶレールのコストと時間を圧縮します。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>ASEAN連携とNexus</h3>
+        <p>
+          BSPはASEAN5中央銀行の一員として、国内即時決済システムをつなぐBIS主導の共有基盤<strong>Project Nexus</strong>を構築中です [BIS 2025]。Nexus Global Paymentsは3月にシンガポールで法人化し、インドも参加。<strong>最初のライブ取引は2027年を目標</strong>としています [BIS 2025]。
+        </p>
+        <h3>ステーブルコインパイロット</h3>
+        <p>
+          Coins.phのペソステーブルコイン<strong>PHPC</strong>は、2024年のBSP承認を経て、2025年半ばに規制サンドボックスを修了しました [BeInCrypto 2025] [CoinGecko 2025]。ペソ準備金1:1裏付け、マルチチェーン発行で、国内ペソシステムへのより安価・高速なオフランプを目指しています。
+        </p>
+        <h3>政策リスク</h3>
+        <p>
+          共有レールとトークン決済は新たな監督上の問題を提起します。AML・FX・決済ファイナリティのリスクが共通インフラに集中します [AMRO 2025]。普及は技術と同様に、規制当局間の協調にかかっています。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2027年に向けたレールロードマップ</div>
+            <div class="chart-subtitle">PHILIPPINES · 越境レールのマイルストーン</div>
+          </div>
+          <div class="chart-unit">TIMELINE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 440 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="30" x2="40" y2="210"/>
+            <circle cx="40" cy="50" r="5" class="bar-primary"/>
+            <text class="label-data" x="54" y="48">2024 · PHPC BSP承認</text>
+            <text class="label-small" x="54" y="62">ペソステーブルコインパイロット初承認</text>
+            <circle cx="40" cy="100" r="5" class="bar-primary"/>
+            <text class="label-data" x="54" y="98">2025 · サンドボックス修了</text>
+            <text class="label-small" x="54" y="112">PHPC SB修了；Nexusエンティティ法人化</text>
+            <circle cx="40" cy="150" r="5" class="bar-tertiary"/>
+            <text class="label-data" x="54" y="148" style="fill:#D97706">2026 · Nexus構築</text>
+            <text class="label-small" x="54" y="162">BSP、MAS、BNM、BOT、RBI統合</text>
+            <circle cx="40" cy="200" r="5" class="bar-tertiary"/>
+            <text class="label-data" x="54" y="198" style="fill:#D97706">2027 · Nexus初回ライブ取引</text>
+            <text class="label-small" x="54" y="212">ASEAN+インド即時連携目標</text>
+            <line class="grid-line" x1="40" y1="50" x2="40" y2="200"/>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BIS INNOVATION HUB、COINS.PH、AMRO · KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">Nexus初回取引目標</div>
+        <div class="num">2027</div>
+        <div class="change">ASEAN-5+インド [BIS 2025]</div>
+        <div class="source-tag sec">BIS</div>
+      </div>
+      <div class="callout">
+        <div class="label">PHPCステーブルコイン</div>
+        <div class="num">1:1<span class="unit">peso</span></div>
+        <div class="change">2025年SB修了 [BeInCrypto 2025]</div>
+        <div class="source-tag sec">BeInCrypto</div>
+      </div>
+      <div class="callout">
+        <div class="label">連携参加メンバー数</div>
+        <div class="num">6</div>
+        <div class="change">PH、SG、MY、TH、ID、IN [BIS 2025]</div>
+        <div class="source-tag sec">BIS</div>
+      </div>
+    </div>
+
+    <div class="source-key">AMRO 2025 = ASEAN+3 Macroeconomic Research Office, cross-border payments policy notes 2025 · BIS 2025 = BIS Innovation Hub / Nexus Global Payments updates 2025 · BeInCrypto 2025 = BeInCrypto / Coins.ph PHPC reporting 2025 · CoinGecko 2025 = CoinGecko PHPC stablecoin profile 2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 13: OUTLOOK ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 13 · Outlook to 2030</div>
+      <div class="page-section-counter">013 / 014</div>
+    </div>
+
+    <h1 class="page-h1">2030年展望：安定したフロー、決定的なレール移行</h1>
+    <p class="page-subhead">送金価値の成長は<strong>低〜中一桁台</strong>にとどまる一方、デジタルレールシェアは急上昇し、即時地域連携が始動する見通しです。勝者となるのは、受取エンドポイントを掌握し、共有レールに早期接続した事業者です。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>ベースケース</h3>
+        <p>
+          送金市場全体は<strong>2025年のUSD 410億から2030年にはUSD 560億へ、約6.2%のCAGRで成長</strong>する見通しです [Industry 2025]。現金送金は約3%成長にとどまり [BSP 2025]、その差がデジタルレールの価値となります。デジタル決済収益は13.9%のCAGRで拡大します [Ken 2025]。
+        </p>
+        <h3>上振れ・下振れリスク</h3>
+        <p>
+          上振れ：2027年のNexusライブ稼働と3%未満のデジタル手数料が現金からの移行を加速。下振れ：米国の労働市場またはFXショックが主要コリドーを直撃するか、規制の断片化が共有レールとステーブルコイン普及を遅延させるシナリオ。
+        </p>
+        <h3>戦略的優先課題</h3>
+        <p>
+          コリドーマップは集中しており、フローは安定しています。変数はレールです。<strong>受取ウォレットを掌握し、手数料を圧縮し、Nexus稼働時に接続する</strong>ことが行動指針です。現金偏重・ネットワーク依存の事業者が最も大きな調整を迫られます。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">送金市場規模の軌跡</div>
+            <div class="chart-subtitle">PHILIPPINES · USD BN · 2025–2030F</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="45" y1="20" x2="45" y2="200"/>
+            <line class="axis-line" x1="45" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="45" y1="60" x2="460" y2="60"/>
+            <line class="grid-line" x1="45" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="45" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="164" text-anchor="end">20</text>
+            <text class="axis-text" x="40" y="114" text-anchor="end">40</text>
+            <text class="axis-text" x="40" y="64" text-anchor="end">60</text>
+            <rect class="bar-primary" x="75" y="77" width="50" height="123"/>
+            <text class="label-data" x="100" y="71" text-anchor="middle">41</text>
+            <text class="axis-text" x="100" y="216" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="170" y="62" width="50" height="138"/>
+            <text class="label-data" x="195" y="56" text-anchor="middle">46</text>
+            <text class="axis-text" x="195" y="216" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="265" y="47" width="50" height="153" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text class="label-data" x="290" y="41" text-anchor="middle">51</text>
+            <text class="axis-text" x="290" y="216" text-anchor="middle">2029F</text>
+            <rect class="bar-tertiary" x="360" y="32" width="50" height="168" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="385" y="26" text-anchor="middle" style="fill:#D97706">~56</text>
+            <text class="axis-text" x="385" y="216" text-anchor="middle">2030F</text>
+            <path d="M 125 79 L 168 64" stroke="var(--primary)" stroke-width="1.5" fill="none"/>
+            <text class="label-small" x="240" y="40" text-anchor="middle" style="fill:var(--primary);font-weight:700">~6.2% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 業界予測、BSP · 2027–2030年数値はCAGR~6.2%からKIRA推計 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">市場規模 2030年（ベース）</div>
+        <div class="num">~56<span class="unit">USD bn</span></div>
+        <div class="change">CAGR~6.2% [Industry 2025]</div>
+        <div class="source-tag sec">Industry</div>
+      </div>
+      <div class="callout">
+        <div class="label">現金フロー成長率</div>
+        <div class="num">~3<span class="unit">%</span></div>
+        <div class="change">低一桁台 [BSP 2025]</div>
+        <div class="source-tag sec">BSP</div>
+      </div>
+      <div class="callout">
+        <div class="label">デジタル収益CAGR</div>
+        <div class="num">13.9<span class="unit">%</span></div>
+        <div class="change">2033年USD 1.78 bn [Ken 2025]</div>
+        <div class="source-tag sec">Ken</div>
+      </div>
+    </div>
+
+    <div class="source-key">BSP 2025 = Bangko Sentral ng Pilipinas remittance statistics 2025 · Ken 2025 = Ken Research Philippines digital payments market 2025 · Industry 2025 = Philippine remittance-market analyst forecasts, consolidated 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 14: METHODOLOGY ENDNOTE & SOURCES ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 14 · Methodology &amp; Sources</div>
+      <div class="page-section-counter">014 / 014</div>
+    </div>
+    <h1 class="page-h1">方法論と出典索引</h1>
+    <p class="page-subhead">本分析は、中央銀行・世界銀行の統計、市場調査予測、規制・インフラ開示、オペレーターの開示資料を、KIRA独自のアナリスト統合と組み合わせています。将来数値は文書化された基準年に固定した方向性シナリオであり、点予測ではありません。定量的主張の約5分の1がKIRA推計であり、残りは記名外部出典を引用しています。</p>
+
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">出典索引</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.6;">
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[1]</span>Bangko Sentral ng Pilipinas — overseas-Filipino cash- and personal-remittance statistics and corridor splits, full-year 2024 and 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[2]</span>World Bank — Remittance Prices Worldwide database, Philippine corridor costs 2024.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[3]</span>Ken Research — Philippines digital payments, remittance and wallet-apps market 2024–2030.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[4]</span>Consolidated Philippine remittance-market analyst forecasts, market size and growth 2025–2030.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[5]</span>Thunes — Philippines digital-wallet adoption and QR-payment review, early 2026.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[6]</span>BIS Innovation Hub / Nexus Global Payments — Project Nexus multilateral instant-payment linkage updates 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[7]</span>ASEAN+3 Macroeconomic Research Office — regional payment-connectivity and policy-risk notes 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[8]</span>BeInCrypto — Coins.ph PHPC peso stablecoin sandbox and approval reporting 2024–2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[9]</span>CoinGecko — PHPC peso-pegged stablecoin profile and reserve disclosures 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[10]</span>Operator disclosures — GCash, Maya, BDO and money-transfer-operator partnership and results announcements 2024–2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[11]</span>KIRA Research — in-house analyst triangulation across the above.</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
