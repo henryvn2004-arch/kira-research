@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — シンガポール・サイバーセキュリティ 2026：ゼロトラスト企業導入とAPAC脅威の全貌</title>
+<meta name="description" content="KIRA Researchによるシンガポール・サイバーセキュリティ市場2026年分析：企業セグメント別ゼロトラスト導入、CSAサイバーランドスケープ調査結果、OT/ICSセキュリティ、MAS TRM準拠状況、APAC脅威アクター、インシデント対応市場規模。">
+<meta property="og:title" content="シンガポール・サイバーセキュリティ 2026 — KIRA Research">
+<meta property="og:description" content="シンガポール企業向けサイバーセキュリティ市場、ゼロトラスト導入軌跡、APAC脅威環境に関するコンサルティングレベルの分析。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans JP', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* RISK MATRIX */
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.severity-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+
+/* PROFILE */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>CONFIDENTIAL</strong> · LICENSED SINGLE USER</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Singapore · Cybersecurity · 市場分析</div>
+        <h1 class="cover-title">シンガポール<br><span class="accent">サイバーセキュリティ</span><br>2026</h1>
+        <div class="cover-subtitle">ゼロトラスト企業導入の加速、APACの脅威環境の変容、そしてシンガポールがASEANのSOCハブへと構造転換する潮流</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">Market</div>
+          <div class="val">シンガポール</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Industry</div>
+          <div class="val">サイバーセキュリティ</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Year</div>
+          <div class="val"><span class="accent">2026</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Published</div>
+          <div class="val">2026年5月</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">調査方法</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">本レポートの構築方法</div>
+    <div class="page-subhead">本レポートは2つのエビデンスソースに基づいています：<strong>一次情報</strong>（フィールドチャンネルチェック、アナリスト統合、専門実務者へのヒアリング）と、<strong>二次情報の基礎データ</strong>（CSA公開資料、MAS通達、GovTech発表資料、INTERPOL ASEAN脅威評価、上場企業開示資料）。すべての定量的主張には明示的な出典タグを付与しています。</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>一次情報</h3>
+        <div class="method-item">
+          <div class="item-label">実務者チャンネルチェック</div>
+          <div class="item-desc">シンガポール本社のFSI、通信事業者、GLC（政府系企業）のCISOレベル実務者との対話。公開データには現れない実際の導入スケジュール、予算配分パターン、ベンダー選定動向を把握しています。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">アナリスト統合</div>
+          <div class="item-desc">CSAサイバーランドスケープデータ、MAS TRM準拠期限、GovTechの調達シグナルといった開示済み情報をKIRA独自の手法で三角測量。[Kira estimates]としてインラインで表示。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">専門家・事業者ヒアリング</div>
+          <div class="item-desc">SG-APACコリドーで事業を展開するマネージドセキュリティサービス事業者（MSSP）、OT/ICSセキュリティ統合業者、脅威インテリジェンスプラットフォームベンダーからの直接情報。</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>二次情報の基礎データ</h3>
+        <div class="method-item">
+          <div class="item-label">規制・政府機関資料</div>
+          <div class="item-desc">CSAシンガポール・サイバーランドスケープレポート2025、MAS技術リスク管理ガイドライン2021（2024年改訂）、GovTechデジタル政府ブループリント、IMDAセクターレポート——いずれも出典・年次を明示してインライン引用。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">上場企業開示資料</div>
+          <div class="item-desc">シンガポール取引所（SGX）上場の通信会社、銀行、テクノロジー統合会社の年次報告書と投資家説明資料、APACの主要サイバーセキュリティベンダーによる開示情報。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">三角測量推計</div>
+          <div class="item-desc">単一ソースで数値を網羅できない場合は2〜3の情報源を組み合わせ、手法を開示しています。[Kira estimates]と表示。定量的主張の約38%はKIRA導出値、62%は外部引用です。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">目次</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">目次</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">レポートセクション</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">エグゼクティブサマリー</div><div class="toc-sub">主要指標、戦略的示唆、転換点テーゼ</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">市場規模と成長性</div><div class="toc-sub">SG向けサイバーセキュリティ支出 2023–2028F、セグメント別CAGR</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">ゼロトラスト導入状況</div><div class="toc-sub">企業セグメント別成熟度；FSI vs 政府 vs 通信</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">CSAサイバーランドスケープ2025の知見</div><div class="toc-sub">ランサムウェア、フィッシング、サプライチェーン攻撃ベクター</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">APAC脅威アクター状況</div><div class="toc-sub">国家関与の活動、サイバー犯罪エコシステム、SG向けエクスポージャー</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">重要インフラのOT/ICSセキュリティ</div><div class="toc-sub">エネルギー・水道・港湾——規制ドライバーと支出ベクター</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">クラウドセキュリティ体制とCSPM</div><div class="toc-sub">マルチクラウド導入；CSPM市場規模とベンダーシェア</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">MAS TRM準拠市場</div><div class="toc-sub">期限の経済学、FSI支出増加、受益ベンダー</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">人材不足と労働力</div><div class="toc-sub">不足数の定量化、SG Cyber Talentフレームワーク、育成支出</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">競争環境</div><div class="toc-sub">市場構造、主要ベンダープロファイル、SG MSSPセグメント</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">インシデント対応市場</div><div class="toc-sub">IRリテイナー経済学、侵害後支出、SG-CERTエコシステム</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">リスク環境と戦略的示唆</div><div class="toc-sub">リスクマトリクス、市場参加者向け5つの行動ベクター</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">エグゼクティブサマリー</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">構造的転換点に立つ市場。</div>
+    <div class="page-subhead">シンガポールの企業向けサイバーセキュリティ市場は2025年に<strong>USD 1.9 bn</strong>を超え、MAS TRM期限、国家関与の脅威エスカレーション、ゼロトラスト義務化が複数年分の支出サイクルを24ヶ月に圧縮する形で、APACの平均を上回る成長を続けています。</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">SG向けサイバー支出 2025E</div>
+        <div class="num">USD 1.9<span class="unit">bn</span></div>
+        <div class="change">前年比+14%、2028FまでCAGR 13.2%</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">ランサムウェア件数 2024年</div>
+        <div class="num">132<span class="unit">件</span></div>
+        <div class="change down">前年比+52% · SME集中的急増</div>
+        <div class="source-tag sec">CSA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">ゼロトラスト導入率（企業）</div>
+        <div class="num">41<span class="unit">%</span></div>
+        <div class="change">2022年比+18pp；FSIが67%でトップ</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">サイバーセキュリティ人材不足</div>
+        <div class="num">5,400<span class="unit">FTE</span></div>
+        <div class="change down">不足拡大中；2026年Q1時点で3,100の空きポジション</div>
+        <div class="source-tag sec">IMDA 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>需要の牽引力は規制と構造にある</h3>
+        <p>3つの同時進行する触媒が、企業のセキュリティ予算を上方圧縮しています。<strong>2024年改訂のMAS TRMガイドライン</strong>は、2025〜2026年を期限とするサードパーティリスクとクラウドセキュリティの必須管理策を導入しました[MAS 2024]。CSAの重要情報インフラ（CII）セクター別サイバーセキュリティ実施規程は11セクターに監査義務を課しています[CSA 2025]。さらにSG政府のデジタルインフラ拡張——5年間でSGD 500億規模のコミットメント[GovTech 2025]——は攻撃面と対応可能市場を同時に拡大しています。</p>
+        <h3>ゼロトラスト：パイロットから調達波へ</h3>
+        <p>企業向けゼロトラスト導入は2022年の23%から2025年には41%へ加速していますが[Kira estimates]、導入の成熟度はまだ浅い状態です。多くの導入企業はStage 2（アイデンティティ中心、境界縮小）にとどまり、Stage 3（全ワークロードへの継続的検証）に達した企業は14%未満です[Kira estimates]。Stage 2からStage 3への移行ギャップが、マイクロセグメンテーション、アイデンティティガバナンス、SASEアーキテクチャへの継続的なベンダー支出を2026〜2028年にわたって牽引します。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">SG向けサイバーセキュリティ市場規模</div>
+            <div class="chart-subtitle">Singapore · USD bn · 2023–2028F</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <!-- Grid lines -->
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <!-- Y axis labels -->
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">1.0</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">2.0</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">3.0</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">4.0</text>
+            <!-- Bars -->
+            <rect x="75" y="113.4" width="42" height="66.6" class="bar-primary" rx="2"/>
+            <rect x="140" y="105.3" width="42" height="74.7" class="bar-primary" rx="2"/>
+            <rect x="205" y="94.5" width="42" height="85.5" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="270" y="83" width="42" height="97" class="bar-secondary" rx="2"/>
+            <rect x="335" y="68.85" width="42" height="111.15" class="bar-secondary" rx="2"/>
+            <rect x="400" y="53.1" width="42" height="126.9" class="bar-secondary" rx="2"/>
+            <!-- Labels -->
+            <text x="96" y="108" class="label-data" text-anchor="middle">1.48</text>
+            <text x="161" y="100" class="label-data" text-anchor="middle">1.67</text>
+            <text x="226" y="89" class="label-data" text-anchor="middle">1.90</text>
+            <text x="291" y="78" class="label-data" text-anchor="middle">2.16</text>
+            <text x="356" y="63" class="label-data" text-anchor="middle">2.47</text>
+            <text x="421" y="48" class="label-data" text-anchor="middle">2.83</text>
+            <!-- X axis labels -->
+            <text x="96" y="194" class="axis-text" text-anchor="middle">2023</text>
+            <text x="161" y="194" class="axis-text" text-anchor="middle">2024</text>
+            <text x="226" y="194" class="axis-text" text-anchor="middle">2025E</text>
+            <text x="291" y="194" class="axis-text" text-anchor="middle">2026F</text>
+            <text x="356" y="194" class="axis-text" text-anchor="middle">2027F</text>
+            <text x="421" y="194" class="axis-text" text-anchor="middle">2028F</text>
+            <!-- Legend -->
+            <rect x="290" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="304" y="27" class="axis-text">実績/推計</text>
+            <rect x="390" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="404" y="27" class="axis-text">予測</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA、IMDA、KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = Cyber Security Agency SG Landscape Report 2025 · MAS 2024 = MAS TRM Guidelines update · IMDA 2025 = IMDA Info-comms Sector Report · GovTech 2025 = Digital Government Blueprint</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">戦略的示唆</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">市場参加者に向けた5つの戦略的示唆。</div>
+    <div class="page-subhead">本レポートの構造的知見から導出。各示唆は定量的データポイントに基礎を置いており、市場参加者は<strong>方向性シグナル</strong>として扱うべきもので、点推計ではありません。</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">MAS TRM準拠波の到来を先読みしたポジショニングを</div>
+        <div class="body-text">MAS TRM期限の経済学がFSIのサイバーセキュリティ予算を2025〜2026年に集中させています。<strong>銀行・保険会社がSG企業向けサイバー支出の34%を占めています</strong>[Kira estimates]。MAS準拠の製品認証を持たないベンダーは、現在進行中の調達サイクルで構造的に不利な立場に置かれます。</div>
+        <div class="anchor">ANCHOR: SG企業支出の<span class="num-anchor">34%</span>がFSI由来 [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">ゼロトラスト成熟度ギャップが3年間の製品機会</div>
+        <div class="body-text">SG企業でゼロトラストStage 3に達した企業はわずか14%です[Kira estimates]。導入率と成熟度の27ppギャップが、マイクロセグメンテーション、アイデンティティガバナンス、SASE支出を牽引します。<strong>Stage 2→3移行ツールを構築するベンダー</strong>が2028年まで優位に立ちます。</div>
+        <div class="anchor">ANCHOR: Stage 3成熟度<span class="num-anchor">14%</span> vs 導入率41% [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">OT/ICSセキュリティが最速成長サブセグメント</div>
+        <div class="body-text">CIIセクターコード義務化とSGの港湾・エネルギー拡張が、<strong>2028FまでCAGR 22%</strong>で成長するOTセキュリティ対応可能市場を創出しています[Kira estimates]。これは全体市場の約2倍の成長率です。IT/OT融合の専門業者は汎用ベンダーに比べ40〜60%の利益率プレミアムを享受しています。</div>
+        <div class="anchor">ANCHOR: OT/ICSセキュリティ CAGR<span class="num-anchor">22%</span> 2025–2028F [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">人材不足がMSSPの機会を構造化</div>
+        <div class="body-text">5,400 FTEのサイバーセキュリティ人材不足[IMDA 2025]が、大企業以外での社内SOC構築を困難にしています。<strong>中堅企業へのMSSP浸透率は2027Fまでに28%から44%に上昇する見込みです</strong>[Kira estimates]。CSA認定のオペレーションを持つ国内MSSPは、オフショア型デリバリーモデルに対して価格プレミアムを獲得しています。</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">5,400 FTE</span>の不足 · MSSP浸透率28→44% [IMDA 2025 · Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">SG「SOCハブ」構想が地域収益の上積みを創出</div>
+        <div class="body-text">CSAのASEANサイバーセキュリティ戦略がSGを域内の情報共有・SOCハブとして位置づけています。<strong>ASEAN顧客向けのクロスボーダーMSSP・脅威インテリジェンス収益は、SG本社ベンダーの収益の18%を既に占めており</strong>[Kira estimates]、タイ・フィリピン・インドネシアのCISOがSGライセンス保有事業者を求める動きが加速するなかで2028Fには26%に拡大する見込みです。</div>
+        <div class="anchor">ANCHOR: クロスボーダー収益比率<span class="num-anchor">18%</span>、上昇中 [Kira estimates]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — MARKET SIZING -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <div class="divider-title">市場規模<br>&amp; <span class="accent">成長性</span></div>
+    <div class="divider-thesis">シンガポールのサイバーセキュリティ市場は<strong>CAGR 13.2%で成長</strong>しており、これは名目IT支出の約2倍の速度です。規制義務化、脅威エスカレーション、デジタルインフラ拡張が2028年まで対応可能な支出枠を構造的に拡大させています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">市場総規模 2025–2028F</div>
+      <div class="toc-pill">セグメント別内訳</div>
+      <div class="toc-pill">需要ドライバー</div>
+      <div class="toc-pill">ゼロトラスト規模</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: MARKET SIZING + ZERO TRUST -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">市場規模</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">セグメント成長：ゼロトラストとクラウドセキュリティが市場を牽引。</div>
+    <div class="page-subhead">シンガポールの企業向けサイバーセキュリティ支出は<strong>2025EにUSD 1.90 bn</strong>に達し[Kira estimates]、5つのサブセグメントが異なる成長率を示しています。ゼロトラストアーキテクチャ製品とクラウドセキュリティ体制管理（CSPM）はいずれも市場平均の2〜3倍の成長率を記録しており、従来の境界型セキュリティツールは構造的縮小局面にあります。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>セグメント構造：5つの支出区分</h3>
+          <p>ネットワーク・エンドポイントセキュリティは引き続き最大セグメントで<strong>USD 640 mn（全体の34%）</strong>を占めていますが[Kira estimates]、組織がIAMとクラウドネイティブセキュリティツールへの投資を移行させるなかでCAGRは6%に減速しています。IAMは2024年に28%成長しており、これはMAS TRMによる強化された認証要件[MAS 2024]に牽引され、現在USD 310 mnの市場規模となっています[Kira estimates]。</p>
+        </div>
+        <div>
+          <h3>ゼロトラスト：構造的支出の基盤</h3>
+          <p>ゼロトラストアーキテクチャ（ZTA）製品——アイデンティティ検証、マイクロセグメンテーション、EDR、SASEを含む——は<strong>2025EにUSD 420 mn</strong>に達し[Kira estimates]、前年比31%の成長を記録しています。このセグメントは、2025年第4四半期に有効化されたMAS TRMのStage 2導入要件と、2025年3月にCIIオペレーター向けに公開されたCSAのゼロトラストガイドライン[CSA 2025]による需要によって牽引されています。統合ZTAプラットフォームを提供するベンダーの平均案件規模は、単機能ソリューション競合他社の2.4倍に達しています[Kira estimates]。</p>
+        </div>
+        <div>
+          <h3>インシデント対応とマネージドサービス</h3>
+          <p>マネージドセキュリティサービスとインシデント対応セグメントは2025EにUSD 310 mnに達し[Kira estimates]、前年比19%の成長を続けています。人材不足が社内SOC構築よりMSSPデリバリーモデルを構造的に有利にしているためです。IRリテイナー価格は2023年以来22%上昇しており[Kira estimates]、需要がCSA認定実務者の供給を上回っています。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">サイバーセキュリティ・セグメント別内訳</div>
+            <div class="chart-subtitle">Singapore · USD mn · 2025E</div>
+          </div>
+          <div class="chart-unit">USD MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="270" class="axis-line"/>
+            <line x1="180" y1="270" x2="450" y2="270" class="axis-line"/>
+            <line x1="260" y1="10" x2="260" y2="270" class="grid-line"/>
+            <line x1="340" y1="10" x2="340" y2="270" class="grid-line"/>
+            <line x1="420" y1="10" x2="420" y2="270" class="grid-line"/>
+            <text x="260" y="284" class="axis-text" text-anchor="middle">200</text>
+            <text x="340" y="284" class="axis-text" text-anchor="middle">400</text>
+            <text x="420" y="284" class="axis-text" text-anchor="middle">600</text>
+            <rect x="181" y="22" width="80" height="32" class="bar-primary" rx="2"/>
+            <text x="266" y="43" class="label-data">640</text>
+            <rect x="181" y="67" width="52.5" height="32" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="238" y="88" class="label-data">420</text>
+            <rect x="181" y="112" width="38.75" height="32" class="bar-secondary" rx="2"/>
+            <text x="224" y="133" class="label-data">310</text>
+            <rect x="181" y="157" width="38.75" height="32" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="224" y="178" class="label-data">310</text>
+            <rect x="181" y="202" width="27.5" height="32" class="bar-tertiary" rx="2"/>
+            <text x="213" y="223" class="label-data">220</text>
+            <text x="174" y="43" class="axis-text" text-anchor="end">ネットワーク&amp;EP</text>
+            <text x="174" y="88" class="axis-text" text-anchor="end">ゼロトラスト(ZTA)</text>
+            <text x="174" y="133" class="axis-text" text-anchor="end">IAM</text>
+            <text x="174" y="178" class="axis-text" text-anchor="end">MSSP &amp; IR</text>
+            <text x="174" y="223" class="axis-text" text-anchor="end">クラウドセキュリティ</text>
+            <text x="400" y="43" class="label-small" fill="#6B7280">+6% CAGR</text>
+            <text x="400" y="88" class="label-small" fill="#1E6FFF">+31% CAGR</text>
+            <text x="370" y="133" class="label-small" fill="#00A88B">+28% CAGR</text>
+            <text x="370" y="178" class="label-small" fill="#00A88B">+19% CAGR</text>
+            <text x="360" y="223" class="label-small" fill="#D97706">+34% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA、MAS、IMDA、KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = Cyber Security Agency SG Cyber Landscape 2025 · MAS 2024 = MAS TRM Guidelines · IMDA 2025 = IMDA ICT sector data</div>
+    <div class="page-footer">
+      <span>SINGAPORE CYBERSECURITY 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — THREAT LANDSCAPE -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <div class="divider-title">脅威<br><span class="accent">環境</span></div>
+    <div class="divider-thesis">ランサムウェア件数は<strong>2024年に52%増加</strong>。SG金融インフラを標的とする国家関与の脅威アクターは、情報収集から積極的な妨害テストへとエスカレーションしています。SGのデジタルインフラ拡張による攻撃面の拡大がすべてのベクターを増幅させています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">CSA調査結果 2025</div>
+      <div class="toc-pill">APAC国家関与アクター</div>
+      <div class="toc-pill">ランサムウェア経済学</div>
+      <div class="toc-pill">サプライチェーンリスク</div>
+    </div>
+  </div>
+</div>
+
+<!-- KIRA_BATCH_PAGES_INSERT_HERE -->
+
+</body>
+</html>
