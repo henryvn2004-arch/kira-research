@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フィリピン BPO 2026 — KIRA Research</title>
+<meta name="description" content="フィリピンIT-BPM産業2026年版：自動化・キャプティブセンター・バリューチェーン上位移行がもたらす産業構造転換の分析。">
+<style>
+:root{
+--ink:#0B0D10;
+--paper:#ffffff;
+--accent:#1E6FFF;
+--accent-soft:#EAF1FF;
+--muted:#5B6470;
+--line:#E5E8EC;
+--mono:'JetBrains Mono',ui-monospace,monospace;
+--sans:'Satoshi','Inter',system-ui,-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+font-family:var(--sans);
+background:var(--paper);
+color:var(--ink);
+line-height:1.5;
+}
+.page{
+width:1280px;
+height:720px;
+position:relative;
+overflow:hidden;
+background:var(--paper);
+page-break-after:always;
+margin:0 auto;
+}
+.page-num{
+position:absolute;
+bottom:24px;
+right:32px;
+font-size:12px;
+letter-spacing:0.04em;
+color:var(--muted);
+}
+.kicker{
+font-family:var(--mono);
+font-size:12px;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(--accent);
+margin-bottom:16px;
+}
+.cover{
+padding:80px;
+display:flex;
+flex-direction:column;
+height:100%;
+}
+.cover-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+}
+.logo-mark{
+font-family:var(--mono);
+font-weight:700;
+font-size:20px;
+letter-spacing:0.18em;
+}
+.cover-mid{
+margin-top:auto;
+margin-bottom:auto;
+}
+.cover-title{
+font-size:64px;
+font-weight:700;
+line-height:1.05;
+letter-spacing:-0.02em;
+margin-bottom:24px;
+}
+.cover-sub{
+font-size:24px;
+font-weight:400;
+color:var(--muted);
+line-height:1.35;
+max-width:820px;
+}
+.cover-meta{
+display:flex;
+gap:48px;
+margin-top:48px;
+font-family:var(--mono);
+font-size:13px;
+}
+.cover-meta div span{
+display:block;
+color:var(--muted);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.08em;
+margin-bottom:4px;
+}
+.section-h{
+font-size:30px;
+font-weight:700;
+letter-spacing:-0.01em;
+margin-bottom:24px;
+line-height:1.1;
+}
+.content{
+padding:42px 72px;
+height:100%;
+display:flex;
+flex-direction:column;
+}
+.body-text{
+font-size:14.5px;
+line-height:1.5;
+color:#1a1d24;
+max-width:920px;
+}
+.body-text p{margin-bottom:10px;}
+.source-tag{
+font-family:var(--mono);
+font-size:11px;
+color:var(--accent);
+vertical-align:super;
+font-weight:500;
+}
+.callout{
+background:var(--accent-soft);
+border-left:3px solid var(--accent);
+padding:14px 20px;
+margin:14px 0;
+border-radius:0 8px 8px 0;
+max-width:920px;
+}
+.callout-label{
+font-family:var(--mono);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.1em;
+color:var(--accent);
+margin-bottom:8px;
+}
+.kpi-row{display:flex;gap:36px;margin:18px 0;}
+.kpi{flex:1;}
+.kpi-num{
+font-size:38px;
+font-weight:700;
+letter-spacing:-0.02em;
+color:var(--accent);
+}
+.kpi-label{
+font-size:13px;
+color:var(--muted);
+margin-top:6px;
+line-height:1.3;
+}
+.bar-chart{margin:24px 0;}
+.bar-row{
+display:flex;
+align-items:center;
+margin-bottom:14px;
+gap:16px;
+}
+.bar-label{
+width:180px;
+font-size:13px;
+text-align:right;
+color:#1a1d24;
+}
+.bar-track{
+flex:1;
+background:#F0F2F5;
+height:28px;
+border-radius:4px;
+overflow:hidden;
+position:relative;
+}
+.bar-fill{
+height:100%;
+background:var(--accent);
+border-radius:4px;
+display:flex;
+align-items:center;
+justify-content:flex-end;
+padding-right:10px;
+color:#fff;
+font-size:12px;
+font-weight:600;
+font-family:var(--mono);
+}
+.bar-fill.muted{background:#9DB2CE;}
+.data-table{
+width:100%;
+border-collapse:collapse;
+margin:20px 0;
+font-size:14px;
+max-width:920px;
+}
+.data-table th{
+text-align:left;
+padding:12px 16px;
+background:#F7F8FA;
+font-family:var(--mono);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.06em;
+color:var(--muted);
+border-bottom:2px solid var(--line);
+}
+.data-table td{
+padding:12px 16px;
+border-bottom:1px solid var(--line);
+}
+.data-table tr:last-child td{border-bottom:none;}
+.two-col{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+max-width:920px;
+}
+.list-clean{list-style:none;}
+.list-clean li{
+padding-left:24px;
+position:relative;
+margin-bottom:12px;
+font-size:15px;
+line-height:1.5;
+}
+.list-clean li::before{
+content:"";
+position:absolute;
+left:0;
+top:9px;
+width:8px;
+height:8px;
+background:var(--accent);
+border-radius:50%;
+}
+.tag{
+display:inline-block;
+font-family:var(--mono);
+font-size:11px;
+padding:4px 10px;
+border-radius:4px;
+background:var(--accent-soft);
+color:var(--accent);
+margin-right:8px;
+}
+.footer-brand{
+position:absolute;
+bottom:24px;
+left:32px;
+font-family:var(--mono);
+font-size:11px;
+color:var(--muted);
+letter-spacing:0.04em;
+}
+.scenario-row{display:flex;gap:24px;margin:24px 0;}
+.scenario-card{
+border:1px solid var(--line);
+border-radius:10px;
+padding:24px;
+flex:1;
+}
+.scenario-card h4{
+font-size:18px;
+margin-bottom:12px;
+}
+.scenario-card.highlight{
+border-color:var(--accent);
+background:var(--accent-soft);
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+<div class="cover-top">
+<div class="logo-mark">KIRA RESEARCH</div>
+<div class="kicker">Market Intelligence</div>
+</div>
+<div class="cover-mid">
+<div class="kicker">Philippines · Business Process Outsourcing · 2026</div>
+<h1 class="cover-title">フィリピン BPO 2026</h1>
+<h2 class="cover-sub">サービスの移行：自動化・キャプティブセンター・バリューチェーン上位移行が、世界最大のコンタクトセンター経済を再構成する</h2>
+</div>
+<div class="cover-meta">
+<div><span>Report</span>KIRA-2026-PH-BPO</div>
+<div><span>Pages</span>16</div>
+<div><span>Published</span>May 2026</div>
+<div><span>Coverage</span>Philippines</div>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+</div>
+
+<!-- EXEC SUMMARY -->
+<div class="page content">
+<div class="kicker">01 · エグゼクティブサマリー</div>
+<h2 class="section-h">エグゼクティブサマリー</h2>
+<div class="body-text">
+<p>フィリピンの情報技術・ビジネスプロセス管理（IT-BPM）産業は、2026年に同国最重要の輸出産業かつ最大規模の民間雇用源として臨界点を迎えています。売上高は2023年の350億ドルから2024年に<strong>US$38B<span class="source-tag">[secondary]</span></strong>へと達し<span class="source-tag">[secondary]</span>、年率約7%の成長<span class="source-tag">[estimate]</span>を実現する一方、直接雇用者数も前年の約170万人から<strong>182万人<span class="source-tag">[secondary]</span></strong>へと増加しました<span class="source-tag">[secondary]</span>。</p>
+<p>しかしこの成長の物語には、問いが伴います。生成的自動化は、産業を支えてきた低複雑度の音声対応・定型業務の相当部分を吸収できる段階に達しています。産業の対応は退却ではなく移行です：金融・医療・分析・ソフトウェアなどの高付加価値領域へのバリューチェーン上位移行と、キャプティブセンターおよび地方拠点への展開。2026年は、その移行がロードマップのスライドから現実の事業運営へと変わる年です。</p>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-num">$38B</div><div class="kpi-label">IT-BPM売上高（2024年）<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">1.82M</div><div class="kpi-label">直接雇用者数（2024年）<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">~7%</div><div class="kpi-label">GDP寄与率<span class="source-tag">[estimate]</span></div></div>
+</div>
+<div class="callout">
+<div class="callout-label">Key Insight</div>
+脅威と機会は同一の力から生まれます。エントリーレベルの音声業務を侵食する自動化は、同時に高付加価値案件獲得に必要な人材育成投資とマージン余地を生み出します。AIを人員削減の手段ではなく拡張レイヤーとして活用する事業者が、2028年の勝者群を形成するでしょう。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">02</div>
+</div>
+
+<!-- MARKET CONTEXT -->
+<div class="page content">
+<div class="kicker">02 · 市場背景</div>
+<h2 class="section-h">コスト裁定からケイパビリティへ。</h2>
+<div class="body-text">
+<p>過去20年、フィリピンの競争優位は明快でした：英語堪能かつ文化的に西洋志向の大規模労働力が、音声対応とバックオフィス業務をオンショアの何分の一かのコストで提供する。この優位性によって同国はコンタクトセンター分野で世界首位に立ち、インドに次ぐ世界第2位のIT-BPM拠点となりました<span class="source-tag">[secondary]</span>。産業全体では世界BPO市場の推定10〜15%<span class="source-tag">[secondary]</span>を占め、国内GDPの約7〜8%<span class="source-tag">[secondary]</span>に貢献しています。</p>
+<p>その裁定ロジックは両端から侵食されています。需要側では、企業バイヤーがシートではなく成果——解決されたチケット、締まった帳簿、整理されたクレーム——を求めるようになっています。供給側では、生成ツールが最も単純な業務のコストをゼロに近づけ、低コストポジショニングを支えてきた業務そのものを消滅させています。産業の定義的転換は、したがって労働力の提供から能力の提供へ：専門領域の知識、プロセスの所有権、そしてバイヤーが社内で容易に再現できないアナリティクスへの移行です。</p>
+<p>IBPAPは「IT-BPM Roadmap 2028」においてこれを明文化し、2028年までに売上高US$59B・直接雇用者250万人を目標として掲げています<span class="source-tag">[secondary]</span>。その達成には、雇用者数よりも従業員一人当たり収益を速く伸ばすことが必須です——席を増やすだけでなく、上位へ移行するという算術です。</p>
+</div>
+<div class="callout">
+<div class="callout-label">Structural Shift</div>
+2026年の問いは、フィリピンがBPO雇用者数を増やせるかどうかではありません。スタック底辺の自動化を追い抜く速度で、従業員一人当たり収益を伸ばせるかどうかです。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">03</div>
+</div>
+
+<!-- MARKET SIZING -->
+<div class="page content">
+<div class="kicker">03 · 市場規模</div>
+<h2 class="section-h">2028年への軌道</h2>
+<div class="body-text">
+<p>産業売上高はパンデミック期の需要ショックからの回復を経て、着実な複利成長を続けています。2023年のUS$35.4Bから2024年のUS$38.0B<span class="source-tag">[secondary]</span>へ、単年でUS$26億を積み増しました。Roadmap 2028のUS$59.0B目標<span class="source-tag">[secondary]</span>は、2024年基準から約9%の年平均成長率<span class="source-tag">[estimate]</span>を意味します——コモディティ音声が踊り場を迎える中、高付加価値案件が牽引役を担う場合にのみ達成可能な数字です。</p>
+</div>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">2023年売上高</div><div class="bar-track"><div class="bar-fill muted" style="width:60%;">$35.4B</div></div></div>
+<div class="bar-row"><div class="bar-label">2024年売上高</div><div class="bar-track"><div class="bar-fill muted" style="width:64%;">$38.0B</div></div></div>
+<div class="bar-row"><div class="bar-label">2028年目標</div><div class="bar-track"><div class="bar-fill" style="width:100%;">$59.0B</div></div></div>
+</div>
+<div class="body-text">
+<p>雇用者数は並行しながらもより緩やかな曲線をたどります。2024年の182万人から250万人目標<span class="source-tag">[secondary]</span>への道筋は年率約8%の純増<span class="source-tag">[estimate]</span>を意味しますが、増加の内訳が数よりも重要です。純新規の雇用はノンボイス・技術・専門領域に偏移し、エントリーレベルの音声採用は減速します。</p>
+</div>
+<div class="callout">
+<div class="callout-label">Analyst View</div>
+売上高成長率約9%に対して雇用者数成長率約8%という数字は一見僅差に見えますが、このギャップこそが論旨の全てです：フィリピンBPOの従業員一人当たり収益が、漂流ではなく意図的に引き上げられる最初の持続期間です。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">04</div>
+</div>
+
+<!-- SEGMENTATION -->
+<div class="page content">
+<div class="kicker">04 · セグメント分析</div>
+<h2 class="section-h">価値の所在</h2>
+<div class="body-text">
+<p>産業はコモディティ型カスタマーサポートから高度な知識労働まで幅広いスペクトルにわたります。音声ベースのコンタクトセンターサービスは雇用者数で最大のセグメントであり、フィリピン供給の歴史的中核です<span class="source-tag">[secondary]</span>。その上位には、産業が意図的に拡大しているより高付加価値のライン——財務・会計、医療情報管理、ソフトウェア・ITサービス、データアナリティクス——が位置しています<span class="source-tag">[secondary]</span>。</p>
+</div>
+<table class="data-table">
+<thead><tr><th>セグメント</th><th>成熟度</th><th>自動化リスク</th><th>2026年動向</th></tr></thead>
+<tbody>
+<tr><td>音声／コンタクトセンター</td><td>成熟・支配的</td><td>高</td><td>雇用者数は横ばい〜減少<span class="source-tag">[estimate]</span></td></tr>
+<tr><td>財務・会計</td><td>拡大中</td><td>中</td><td>成長<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>医療情報管理</td><td>拡大中</td><td>中</td><td>強い成長<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>ソフトウェア・ITサービス</td><td>規模化段階</td><td>低</td><td>強い成長<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>データアナリティクス／知識業務</td><td>新興</td><td>低</td><td>強い成長<span class="source-tag">[estimate]</span></td></tr>
+</tbody>
+</table>
+<div class="body-text">
+<p>この表から進行中の逆転が明瞭に読み取れます：自動化にもっとも晒されているセグメントが最大規模であり、最も晒されていないセグメントが最小規模ながら最速で成長しています。戦略的課題は、上行の行を下行が縮むより速く伸ばすことです。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">05</div>
+</div>
+
+<!-- DEMAND DRIVERS -->
+<div class="page content">
+<div class="kicker">05 · 需要要因</div>
+<h2 class="section-h">フィリピンに業務が集まる理由</h2>
+<div class="body-text">
+<p>供給モデルが変化する中でも、3つの力が受注需要を持続させています。</p>
+</div>
+<ul class="list-clean">
+<li><strong>企業のコスト圧力は継続しています。</strong>利益率圧縮に直面する欧米企業はオフショアを継続していますが、発注要件は「コスト削減」から「コスト削減とケイパビリティ追加」へと移行しています。フィリピンはその両方に応えられる位置にあります。</li>
+<li><strong>キャプティブセンターの波。</strong>多国籍企業は第三者への委託ではなく、アナリティクス・財務・IT・R&amp;D機能を中心に自社のグローバルケイパビリティセンター（GCC）を現地に設立しています<span class="source-tag">[secondary]</span>。価値捕捉の形は変わりますが、高度技能の需要を現地に固定します。</li>
+<li><strong>英語知識労働における人材の厚み。</strong>高学歴・英語堪能・西洋文化親和性を備えた大規模な労働力プールは世界的に希少であり、同国の最も持続的な参入障壁です<span class="source-tag">[secondary]</span>。</li>
+</ul>
+<div class="callout">
+<div class="callout-label">Demand Signal</div>
+GCCの波は、この10年で最も重要な需要構造の転換です。フィリピンをシートの供給者から多国籍企業の恒久的な事業拠点のホストへと変え、より粘着性が高く、高度技能を必要とし、本国回帰が困難な構造を生み出しています。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">06</div>
+</div>
+
+<!-- COMPETITIVE LANDSCAPE -->
+<div class="page content">
+<div class="kicker">06 · 競争環境</div>
+<h2 class="section-h">グローバルの競争地図</h2>
+<div class="body-text">
+<p>フィリピンは、価格だけでなくポジショニングが案件を決するグローバルの競争盤上にあります。世界BPO市場の推定10〜15%<span class="source-tag">[secondary]</span>を占め、音声ベースのコンタクトセンター供給では明確なリーダー<span class="source-tag">[secondary]</span>である一方、インドはソフトウェアとエンジニアリングの厚みを背景にIT-BPM全体のリーダーシップを維持しています<span class="source-tag">[secondary]</span>。</p>
+</div>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">音声／コンタクトセンター</div><div class="bar-track"><div class="bar-fill" style="width:92%;">フィリピンが世界首位</div></div></div>
+<div class="bar-row"><div class="bar-label">ソフトウェア／エンジニアリング</div><div class="bar-track"><div class="bar-fill muted" style="width:55%;">インド主導</div></div></div>
+<div class="bar-row"><div class="bar-label">米国向けニアショア（中南米）</div><div class="bar-track"><div class="bar-fill muted" style="width:40%;">台頭中</div></div></div>
+<div class="bar-row"><div class="bar-label">EU向けニアショア（東欧）</div><div class="bar-track"><div class="bar-fill muted" style="width:35%;">特定領域</div></div></div>
+</div>
+<div class="body-text">
+<p>競争上の脅威はニアショアから高まっています。中南米は米国バイヤーに対して同一タイムゾーンでのスペイン語・英語サポートを提供し、東欧はEU市場を担います<span class="source-tag">[secondary]</span>。フィリピンの対抗軸は、英語知識労働の深みとスケール、およびニアショア拠点が追いつけないコスト基盤です——ライバルがコストギャップを縮めるよりも速くバリューチェーンを上位移行し続ける場合にのみ維持可能な優位性です。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">07</div>
+</div>
+
+<!-- AI & TECHNOLOGY -->
+<div class="page content">
+<div class="kicker">07 · テクノロジーと自動化</div>
+<h2 class="section-h">自動化は代替ではなく拡張。</h2>
+<div class="body-text">
+<p>生成ツールはすでにフィリピンの事業フロアに、エージェントアシスト・コパイロット層として組み込まれています：リアルタイムの通話サマリー、応答候補の提示、自動品質モニタリング、通話後の文書化<span class="source-tag">[secondary]</span>。近期の効果はエージェント当たりの生産性向上であり、全面的な代替ではありません——ただし業界リーダーは、エントリーレベルの音声・定型業務が最も高い自動化リスクにさらされていることを認めています<span class="source-tag">[secondary]</span>。</p>
+<p>IBPAPの公式見解は、自動化をひとりの従業員が提供できる業務の底上げツールとして位置付け、AI管理・高複雑度業務への移行を促す大規模なリスキリングプログラムと組み合わせています<span class="source-tag">[secondary]</span>。率直に読めば、自動化はピラミッド底辺を侵食しながら天井を引き上げる：低複雑度業務が収縮する一方、自動化ワークフローを管理・監査・例外処理できる人材への需要が高まります。</p>
+</div>
+<div class="callout">
+<div class="callout-label">Automation Calculus</div>
+競争単位は、シート当たりコストから解決当たりコストへと移行します。自動化スループットを基準に再価格設定し——かつ案件維持に十分な節約分をクライアントに還元する——事業者は、シート数が減少しても数量を守ります。
+</div>
+<div class="body-text">
+<p>リスクは自動化が到来することではなく、労働力が上位移行できるより速く到来することです。2026年の制約要因は技術へのアクセスではなく、リスキリングの速度です。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">08</div>
+</div>
+
+<!-- TALENT & WAGE ECONOMICS -->
+<div class="page content">
+<div class="kicker">08 · 人材と経済</div>
+<h2 class="section-h">労働力とその地理</h2>
+<div class="body-text">
+<p>182万人の直接雇用者数<span class="source-tag">[secondary]</span>と大規模な間接雇用を擁するIT-BPMは、同国最大規模の民間雇用源のひとつであり、中間層形成の主要チャネルです。その地理は変化しています：業界労働力の推定30%<span class="source-tag">[secondary]</span>が現在、意図的な分散化推進の結果としてメトロマニラ以外に拠点を置いています。</p>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-num">1.82M</div><div class="kpi-label">直接雇用者数<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">~30%</div><div class="kpi-label">メトロマニラ以外の労働力比率<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">25</div><div class="kpi-label">Digital Cities 2025拠点数<span class="source-tag">[secondary]</span></div></div>
+</div>
+<div class="body-text">
+<p>Digital Cities 2025プログラムと先行するNext Wave Cities構想は25の新興デジタル拠点を特定しています<span class="source-tag">[secondary]</span>——ダバオ、イロイロ、バコロド、カガヤン・デ・オロ、クラーク・パンパンガ回廊などが含まれます<span class="source-tag">[secondary]</span>。地方展開により施設・賃金コストが低下し、未開拓の大卒人材プールへのアクセスが広がり、生活の質を通じた人材定着が改善します。戦略的な目標は、自動化による利益率圧迫を吸収しながら、バリューチェーン上位移行に必要なリスキリングを賄える賃金構造の確立です。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">09</div>
+</div>
+
+<!-- REGULATORY -->
+<div class="page content">
+<div class="kicker">09 · 政策とインセンティブ</div>
+<h2 class="section-h">インセンティブという問い</h2>
+<div class="body-text">
+<p>政策は2026年の変数です。IBPAPは国内IT-BPM産業に対するインセンティブ強化を政府に公式に求めており<span class="source-tag">[secondary]</span>、財政インセンティブ改革や勤務形態規則がニアショア・オフショアのライバルに対する競争力を損なう懸念を反映しています。</p>
+<p>最も影響の大きい政策要素は2つです。第一に、経済特区内事業者の税・インセンティブ制度は拡張投資の税引後経済性を左右し、予見可能性の低下はいかなるものも新規案件をライバル地域へ向かわせます<span class="source-tag">[estimate]</span>。第二に、人材定着と地方供給に不可欠なハイブリッド・リモート勤務の柔軟性が、インセンティブ適格性と整合しなければなりません——さもなければ事業者は、人材戦略と税務上の立場の間で強制的なトレードオフに直面します<span class="source-tag">[estimate]</span>。</p>
+</div>
+<div class="callout">
+<div class="callout-label">Policy Watch</div>
+Roadmap 2028の目標値は、安定した競争力あるインセンティブ環境を前提としています。インセンティブの予見可能性は、賃金コストと同等に投資判断の重要要素となっており、事業者のコントロール外に置かれたスイング要因です。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">10</div>
+</div>
+
+<!-- RISKS -->
+<div class="page content">
+<div class="kicker">10 · リスクと逆風</div>
+<h2 class="section-h">論旨を崩しうる要因</h2>
+<div class="body-text">
+<p>高付加価値への移行はベースケースですが、保証されてはいません。4つのリスクが支配的です。</p>
+</div>
+<ul class="list-clean">
+<li><strong>自動化がリスキリングを上回る速度で進む。</strong>低複雑度の音声業務が、従業員の上位移行より速く収縮した場合、結果は秩序ある移行ではなく純雇用損失と稼働余剰となります<span class="source-tag">[estimate]</span>。</li>
+<li><strong>ニアショアの浸食。</strong>中南米・東欧が米国・EUの案件で持続的な伸びを示した場合、フィリピンの音声数量をバリューチェーン上位構築が補填できるより早期に上限に達します<span class="source-tag">[estimate]</span>。</li>
+<li><strong>インセンティブの不確実性。</strong>財政インセンティブや勤務形態規則の不利な変更は、新規案件とGCC投資をライバル拠点に向かわせる可能性があります<span class="source-tag">[secondary]</span>。</li>
+<li><strong>専門職での人材の天井。</strong>大卒人材プールは汎用英語業務では厚みがありますが、高付加価値セグメントが求めるエンジニアリング・アナリティクス・専門領域の知識では薄い状況です<span class="source-tag">[estimate]</span>。</li>
+</ul>
+<div class="callout">
+<div class="callout-label">Risk Concentration</div>
+リスクは相互に増幅します。リスキリングの遅延、ニアショア競合、インセンティブの不確実性——それぞれが従業員一人当たり収益という同一のレバーを押し下げ、その低下が管理された移行を収縮へと変える構造です。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">11</div>
+</div>
+
+<!-- OUTLOOK & SCENARIOS -->
+<div class="page content">
+<div class="kicker">11 · 見通しとシナリオ</div>
+<h2 class="section-h">2028年への3つの経路</h2>
+<div class="scenario-row">
+<div class="scenario-card">
+<h4>停滞シナリオ</h4>
+<p style="font-size:14px;color:var(--muted);">自動化が音声業務を侵食する速度がリスキリングを上回り、インセンティブの不確実性がGCC投資を遠ざける。売上高はUS$42〜45B<span class="source-tag">[estimate]</span>近辺で横ばいとなり、雇用者数も停滞。</p>
+</div>
+<div class="scenario-card highlight">
+<h4>管理された移行（ベースケース）</h4>
+<p style="font-size:14px;color:var(--muted);">バリューチェーン上位移行が音声業務の収縮を相殺し、GCCと地方拠点が規模を拡大。売上高はRoadmap目標のUS$59B<span class="source-tag">[secondary]</span>に近づき、雇用者数は250万人<span class="source-tag">[secondary]</span>前後に。</p>
+</div>
+<div class="scenario-card">
+<h4>ブレイクアウト</h4>
+<p style="font-size:14px;color:var(--muted);">積極的なリスキリングと安定したインセンティブにより、フィリピンがデフォルトのGCC・知識労働拠点となる。一人当たり価値の上昇を追い風に、売上高はUS$59Bを前倒しで超過<span class="source-tag">[estimate]</span>。</p>
+</div>
+</div>
+<div class="body-text">
+<p>弊社のベースケースは管理された移行です。産業には需要・人材の厚み・ロードマップが揃っています。制約はリスキリングの速度とインセンティブの安定性であり、どちらも対処可能ですが、どちらも保証されてはいません。確率の重みは管理された移行と停滞の間にあり、ブレイクアウトには現時点では見えていない政策の追い風が必要です<span class="source-tag">[estimate]</span>。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">12</div>
+</div>
+
+<!-- STRATEGIC IMPLICATIONS -->
+<div class="page content">
+<div class="kicker">12 · 戦略的示唆</div>
+<h2 class="section-h">市場参加者にとっての意味</h2>
+<div class="body-text">
+<p>2026年の環境は、市場参加者の立場によって有効な打ち手が異なります。</p>
+</div>
+<div class="two-col">
+<div>
+<div class="callout-label">既存事業者向け</div>
+<ul class="list-clean">
+<li>自動化の定着にあわせ、シートではなく解決と成果を基準に案件を再価格設定し、数量を維持する<span class="source-tag">[estimate]</span>。</li>
+<li>自動化リスクが最も低いセグメントである財務・医療・アナリティクスで専門領域の深みを構築する<span class="source-tag">[secondary]</span>。</li>
+<li>リスキリングをHR予算ではなく中核設備投資として扱う<span class="source-tag">[estimate]</span>。</li>
+</ul>
+</div>
+<div>
+<div class="callout-label">企業バイヤー向け</div>
+<ul class="list-clean">
+<li>プロセス所有権が戦略的な領域では、GCCモデルで価値を内製化する<span class="source-tag">[secondary]</span>。</li>
+<li>レジリエンスとコストのため、メトロマニラと地方拠点に分散して供給を確保する<span class="source-tag">[estimate]</span>。</li>
+<li>生産性向上を共有する自動化調整型価格設定で契約する<span class="source-tag">[estimate]</span>。</li>
+</ul>
+</div>
+</div>
+<div class="callout">
+<div class="callout-label">Bottom Line</div>
+2026年の勝者は、最速で自動化した事業者でも最多を雇用した事業者でもありません。自動化による節約をバイヤーが割増を払う能力へと変換した事業者です。
+</div>
+<div class="footer-brand">KIRA RESEARCH · Independent Market Intelligence</div>
+<div class="page-num">13</div>
+</div>
+
+<!-- KIRA_BATCH_PAGES_INSERT_HERE -->
+
+</body>
+</html>
