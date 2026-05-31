@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — タイサイバーセキュリティ2027年展望：PDPA施行とマネージドセキュリティサービス</title>
+<meta name="description" content="2027年に向けたタイのUSD 4億4,000万サイバーセキュリティ市場のコンサルティング級分析。PDPA施行の転換、マネージドセキュリティサービスへのシフト、脅威環境、競争構造、人材不足、防御におけるAI、5カ年展望。">
+<meta property="og:title" content="タイサイバーセキュリティ2027年展望：PDPA施行とマネージドセキュリティサービス">
+<meta property="og:description" content="規制施行と構造的な人材不足が2027年に向けてタイのサイバーセキュリティ市場をどのように再構成するか。マネージド検知、コンプライアンス需要、MSSPの機会。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 01: COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner" style="padding:0;">
+      <div class="cover-top">
+        <div style="font-family:'Satoshi',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.02em;">KIRA<span style="color:var(--primary);">.</span> RESEARCH</div>
+      </div>
+      <div class="cover-main" style="margin-top:auto;margin-bottom:auto;">
+        <div class="cover-eyebrow">Thailand · Cybersecurity · 2027</div>
+        <h1>タイサイバーセキュリティ、<span class="accent">施行</span>の転換点</h1>
+        <p class="cover-subtitle">データ保護違反への罰則の現実化と構造的な人材不足が、コンプライアンスへの危機感をマネージドサービス支出へと転換させています。PDPA施行とMSSPへのシフトが2027年の機会を定義します。</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">Thailand</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">Cybersecurity</div></div>
+          <div class="cover-meta-item"><div class="label">Published</div><div class="val">May 2026</div></div>
+          <div class="cover-meta-item"><div class="label">Horizon</div><div class="val"><span class="accent">2027–2032</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · シングルユーザーライセンス · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 02: METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Methodology</div>
+      <div class="page-section-counter">002 / 018</div>
+    </div>
+    <h1 class="page-h1">本分析の構築方法</h1>
+    <p class="page-subhead">本レポートは、規制上の開示情報、国家インシデント統計、業界市場規模、事業者のポジショニングを三角測量し、タイのサイバーセキュリティ市場の先行きを読み解きます。定量的な主張にはすべてインラインの出典タグを付しており、<strong>[Kira estimates]</strong>は当社の独自分析に基づく数値を示しています。</p>
+
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">主要インプット</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 規制・施行データ</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">個人データ保護委員会の行政処分発表、サイバーセキュリティ法の枠組み、国家サイバー機関のインシデント報告。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 脅威・人材動向</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">週次攻撃量テレメトリ、侵害発生率調査、タイのサイバーセキュリティ人材不足に関する公表推計値。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ アナリスト三角測量</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">公表されている市場数値が乖離している場合、当社チームが最も合理的な中間値に集約し、KIRAの推計として明示しています。</div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">スコープ・制約</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 分析単位</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">タイ国内のサイバーセキュリティ市場（製品・サービス）を、規制施行とマネージドサービスの観点から分析。コンシューマー向けウイルス対策小売はスコープ外。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 通貨・換算</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">市場規模はUSDで報告。罰金・損失のタイバーツ（THB）数値は公表値のまま記載。USD換算はTHB 34.5/USDを作業レートとして使用し、方向性を示すものです。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 予測の位置づけ</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">将来数値は文書化されたベースイヤーに基づく方向性シナリオであり、ポイント予測ではありません。レンジは本質的な不確実性を示しています。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 03: TABLE OF CONTENTS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Table of Contents</div>
+      <div class="page-section-counter">003 / 018</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-height: 0; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">04</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">エグゼクティブサマリー</div><div style="font-size: 11px; color: var(--text-mid);">市場の現状、施行論題、5つの示唆</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 04</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">06</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">脅威環境</div><div style="font-size: 11px; color: var(--text-mid);">攻撃量、フィッシング、ランサムウェア、侵害コスト</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 07</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">07</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">PDPA施行：猶予期間から罰金へ</div><div style="font-size: 11px; color: var(--text-mid);">コンプライアンス需要の駆動エンジン</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 08</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">08</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">市場規模・セグメント構成</div><div style="font-size: 11px; color: var(--text-mid);">セグメント別支出：マネージドサービスとクラウドが先行</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 09</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">10</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">競争構造</div><div style="font-size: 11px; color: var(--text-mid);">グローバルベンダー、ローカルMSSP、リーダー事業者プロファイル</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 11</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">13</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">規制とマネージドサービスへのシフト</div><div style="font-size: 11px; color: var(--text-mid);">PDPA、サイバーセキュリティ法、詐欺防止勅令</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 14</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">15</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">検知におけるAIと人材不足</div><div style="font-size: 11px; color: var(--text-mid);">AIの定着領域と人材不足が需要を再編する構図</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 16</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">17</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">2032年展望・出典</div><div style="font-size: 11px; color: var(--text-mid);">シナリオ、支出軌跡、方法論エンドノート</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 17</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 04: EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">004 / 018</div>
+    </div>
+
+    <h1 class="page-h1">タイのサイバーセキュリティ市場 — コンプライアンス主導の再評価</h1>
+    <p class="page-subhead"><strong>USD 4億4,000万の支出規模</strong>は、世界平均を大きく上回る脅威環境と、待機を終えた規制当局に直面しています。ヘッドライン成長率は高い一桁台ですが、需要の構成はマネージド検知、コンプライアンスサービス、クラウドセキュリティへと明確にシフトしています。<strong>次の24ヶ月で</strong>、規制対応バイヤーを掌握する事業者が決まります。</p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">市場規模 2024年</div>
+        <div class="num">440<span class="unit">USD mn</span></div>
+        <div class="change">~9.3% CAGR（2029年まで） [VMR 2025]</div>
+        <div class="source-tag sec">VMR</div>
+      </div>
+      <div class="callout">
+        <div class="label">週次攻撃数（組織あたり）</div>
+        <div class="num">3,180</div>
+        <div class="change down">グローバル平均1,843比 [Check Point 2025]</div>
+        <div class="source-tag sec">Check Point</div>
+      </div>
+      <div class="callout">
+        <div class="label">人材不足 2024年</div>
+        <div class="num">20k<span class="unit">+</span></div>
+        <div class="change down">未充足ポジション [NCSA 2024]</div>
+        <div class="source-tag sec">NCSA</div>
+      </div>
+      <div class="callout">
+        <div class="label">PDPA累積罰金</div>
+        <div class="num">21<span class="unit">THB mn</span></div>
+        <div class="change">2024年8月の初回処分以降 [PDPC 2025]</div>
+        <div class="source-tag sec">PDPC</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>市場の現状</h3>
+        <p>
+          タイのサイバーセキュリティ市場は<strong>2024年にUSD 4億4,000万</strong>規模であり、~9.3% CAGRで2029年にはUSD 5億7,300万に達する軌道にあります [VMR 2025] [Statista 2025]。ネットワークセキュリティは依然として<strong>支出の61%</strong>を占める最大セグメントですが [GVR 2024]、成長はクラウドセキュリティとマネージドサービスに集中しており、企業が自社では対応しきれない防衛業務を外部委託しています。
+        </p>
+        <h3>なぜ今か：施行が需要エンジンとなる</h3>
+        <p>
+          個人データ保護委員会は2024年8月に最高額の<strong>THB 700万</strong>の初回行政処分を課し、2025年8月にはさらに5件の案件でTHB 1,450万を追加しました [PDPC 2025]。組織が<strong>週3,180件</strong>の攻撃に直面し — グローバル平均の70%超 [Check Point 2025] — コンプライアンスへの危機感が予算項目となっています。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">支出規模とマネージドサービス構成シフト</div>
+            <div class="chart-subtitle">Thailand · USD mn · 2024実績 · 2029予測</div>
+          </div>
+          <div class="chart-unit">USD MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="240"/>
+            <line class="axis-line" x1="55" y1="240" x2="470" y2="240"/>
+            <line class="grid-line" x1="55" y1="60" x2="470" y2="60"/>
+            <line class="grid-line" x1="55" y1="110" x2="470" y2="110"/>
+            <line class="grid-line" x1="55" y1="160" x2="470" y2="160"/>
+            <line class="grid-line" x1="55" y1="200" x2="470" y2="200"/>
+            <text class="axis-text" x="50" y="244" text-anchor="end">0</text>
+            <text class="axis-text" x="50" y="204" text-anchor="end">200</text>
+            <text class="axis-text" x="50" y="164" text-anchor="end">350</text>
+            <text class="axis-text" x="50" y="114" text-anchor="end">500</text>
+            <text class="axis-text" x="50" y="64" text-anchor="end">650</text>
+            <!-- 2024 total 440, managed-services ~120 -->
+            <rect class="bar-primary" x="120" y="119" width="48" height="121"/>
+            <rect class="bar-tertiary" x="172" y="207" width="30" height="33"/>
+            <text class="label-data" x="144" y="113" text-anchor="middle">440</text>
+            <text class="label-small" x="187" y="201" text-anchor="middle">~120</text>
+            <text class="axis-text" x="160" y="258" text-anchor="middle">2024</text>
+            <!-- 2029F total ~573, managed-services ~190 -->
+            <rect class="bar-primary" x="300" y="83" width="48" height="157" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <rect class="bar-tertiary" x="352" y="188" width="30" height="52" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="324" y="77" text-anchor="middle">~573</text>
+            <text class="label-small" x="367" y="182" text-anchor="middle" style="fill:#D97706">~190</text>
+            <text class="axis-text" x="340" y="258" text-anchor="middle">2029F</text>
+            <rect class="bar-primary" x="55" y="6" width="10" height="10"/>
+            <text class="label-small" x="69" y="15">総支出</text>
+            <rect class="bar-tertiary" x="180" y="6" width="10" height="10"/>
+            <text class="label-small" x="194" y="15">マネージドサービス</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: VMR, STATISTA, KIRA TRIANGULATION · マネージドサービス分割はKIRA推計 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">VMR 2025 = Verified Market Research Thailand cybersecurity market 2025 · Statista 2025 = Statista Thailand cybersecurity market forecast 2025 · GVR 2024 = Grand View Research Thailand cybersecurity segment shares 2024 · Check Point 2025 = Check Point regional attack-volume telemetry Aug 2024–Jan 2025 · NCSA 2024 = National Cyber Security Agency workforce-gap statement 2024 · PDPC 2025 = Personal Data Protection Committee administrative-penalty announcements 2024–2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 05: EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">005 / 018</div>
+    </div>
+
+    <h1 class="page-h1">市場参加者に向けた5つの戦略的示唆</h1>
+    <p class="page-subhead">5つの力が2032年に向けて競争力学を再編します。それぞれは文書化された市場データと、タイの規制・脅威軌道に関する当社の分析に基づいています。</p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · COMPLIANCE</div>
+        <div class="title">施行が危機感をリカーリング支出に転換する</div>
+        <div class="body-text">
+          PDPAの罰則が現実のものとなり — <strong>2024年8月以降THB 2,100万が課徴</strong> [PDPC 2025] — 経営層はデータ保護を政策文書ではなく予算項目として扱います。コンプライアンス自動化とモニタリングを一体化した事業者が、持続的な更新収益を獲得します。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">THB 700万</span> 1件あたり最高罰金</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">02 · MANAGED</div>
+        <div class="title">MSSPモデルが成長の源泉</div>
+        <div class="body-text">
+          マネージドセキュリティサービスが、自社では要員を確保できない企業の防衛外部委託の受け皿として市場を牽引。SMEは<strong>~16% CAGR</strong>で最速成長し [GVR 2024]、マネージド検知とサブスクリプションバンドルに傾斜。製品単体での販売はリカーリング利益率を逃します。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">~16%</span> SMEセグメントCAGR</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">03 · TALENT</div>
+        <div class="title">人材不足は構造的であり循環的ではない</div>
+        <div class="body-text">
+          タイは<strong>20,000人超</strong>のサイバーセキュリティ専門家を欠いており [NCSA 2024]、2026年までに10,000人育成する国家計画でも不足は解消されません。希少性がアウトソーシングの論理を強固にし、共有SOCを効率的に運営できる事業者を優位に立てます。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">1万人</span> 2026年育成目標</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">04 · CLOUD</div>
+        <div class="title">クラウドセキュリティがペリメターを凌駕する</div>
+        <div class="body-text">
+          ネットワークセキュリティは依然<strong>支出の61%</strong>を占めますが、フィンテック・EC・政府クラウドの拡大に伴いクラウドセキュリティが最速成長（十数% CAGR）しています [GVR 2024]。予算はボックス製品からアイデンティティ、ポスチャー、ワークロード保護へシフトしています。
+        </div>
+        <div class="anchor">Anchor: クラウドセキュリティ <span class="num-anchor">~16%</span> CAGR</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">05 · AI</div>
+        <div class="title">AIは攻撃側と防御側の双方を武装させる</div>
+        <div class="body-text">
+          AIを用いたフィッシングとディープフェイク詐欺が蔓延する一方、AI検知がテーブルステークスとなっています [Nation 2025]。詐欺防止勅令は3ヶ月で<strong>~THB 60億</strong>の損失を阻止しました [Nation 2025]。トリアージを自動化した防御側が損失率の競争に勝ちます。
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">~THB 60億</span> 詐欺損失阻止額</div>
+      </div>
+    </div>
+
+    <div class="source-key">GVR 2024 = Grand View Research Thailand cybersecurity segment &amp; SME analysis 2024 · NCSA 2024 = National Cyber Security Agency workforce-gap statement 2024 · Nation 2025 = The Nation Thailand AI-threat &amp; anti-scam-decree reporting 2025 · PDPC 2025 = Personal Data Protection Committee administrative-penalty announcements 2024–2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 06: DIVIDER — THREAT LANDSCAPE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">脅威<span class="accent">環境</span></h1>
+    <div class="divider-thesis">
+      タイの組織は週平均<strong>3,180件の攻撃</strong>を受けており — グローバル平均の70%超 — フィッシングと銀行詐欺が支配的です。これはサイバーセキュリティの物語の背景ではありません。これ自体が<strong>需要エンジン</strong>です。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1 攻撃量</div>
+      <div class="toc-pill">6.2 フィッシング・詐欺</div>
+      <div class="toc-pill">6.3 ランサムウェア</div>
+      <div class="toc-pill">6.4 侵害コスト</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 07: THREAT LANDSCAPE — DATA CHART ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · The Threat Landscape</div>
+      <div class="page-section-counter">007 / 018</div>
+    </div>
+
+    <h1 class="page-h1">世界平均を大きく上回る攻撃水準</h1>
+    <p class="page-subhead">タイの国家サイバー対応チームは<strong>2024年に1,800件超のインシデントを記録</strong>し、2025年の最初の5ヶ月だけで1,000件を超えました [NCSA 2025]。各インシデントは潜在的なコンプライアンスリスクを文書化されたリスクへと転換させ、それが予算申請となります。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>標準を大幅に上回る攻撃量</h3>
+        <p>
+          2025年1月までの6ヶ月間、タイの組織は週平均<strong>3,180件の攻撃</strong>に直面し、グローバル平均の1,843件を大きく上回っています [Check Point 2025]。タイの攻撃水準は世界より約70%高く、フィッシングと金融詐欺が中心を占めています。
+        </p>
+        <h3>フィッシング、詐欺、AI</h3>
+        <p>
+          銀行詐欺とフィッシングが攻撃量を支配しており、犯罪者はAIを活用して — ディープフェイク音声、生成コンテンツで — なりすましを高度化し、銀行の管理を回避しています [Nation 2025]。<strong>組織の63%超</strong>が侵害を報告し、52%がランサムを支払ったと認めています [Bangkok Post 2025]。
+        </p>
+        <h3>侵害コスト</h3>
+        <p>
+          ある調査では、タイ企業の68%が12ヶ月以内に重大なインシデントを経験し、34%が<strong>THB 300万超</strong>の損失を被りました [Fortinet 2024]。購買判断を動かすのは損失の深刻度だけでなく、その頻度です。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">組織あたり週次攻撃数</div>
+            <div class="chart-subtitle">Thailand vs グローバル · 攻撃数/週 · Aug 2024–Jan 2025</div>
+          </div>
+          <div class="chart-unit">ATTACKS/WK</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="200"/>
+            <line class="axis-line" x1="50" y1="200" x2="390" y2="200"/>
+            <line class="grid-line" x1="50" y1="60" x2="390" y2="60"/>
+            <line class="grid-line" x1="50" y1="105" x2="390" y2="105"/>
+            <line class="grid-line" x1="50" y1="150" x2="390" y2="150"/>
+            <text class="axis-text" x="45" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="154" text-anchor="end">1,200</text>
+            <text class="axis-text" x="45" y="109" text-anchor="end">2,400</text>
+            <text class="axis-text" x="45" y="64" text-anchor="end">3,600</text>
+            <rect class="bar-primary" x="100" y="41" width="70" height="159"/>
+            <text class="label-data" x="135" y="35" text-anchor="middle">3,180</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">Thailand</text>
+            <rect class="bar-secondary" x="250" y="108" width="70" height="92"/>
+            <text class="label-data" x="285" y="102" text-anchor="middle" style="fill:#00A88B">1,843</text>
+            <text class="axis-text" x="285" y="216" text-anchor="middle">グローバル平均</text>
+            <text class="label-small" x="220" y="32" text-anchor="middle" style="fill:var(--amber);font-weight:700">+70%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CHECK POINT REGIONAL TELEMETRY · KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">2025年1–5月インシデント数</div>
+        <div class="num">1,000<span class="unit">+</span></div>
+        <div class="change down">5ヶ月間 [NCSA 2025]</div>
+        <div class="source-tag sec">NCSA</div>
+      </div>
+      <div class="callout">
+        <div class="label">侵害報告組織</div>
+        <div class="num">63<span class="unit">%</span></div>
+        <div class="change down">52%がランサムを支払 [Bangkok Post 2025]</div>
+        <div class="source-tag sec">Bangkok Post</div>
+      </div>
+      <div class="callout">
+        <div class="label">THB 300万超の損失</div>
+        <div class="num">34<span class="unit">%</span></div>
+        <div class="change down">被害企業比率 [Fortinet 2024]</div>
+        <div class="source-tag sec">Fortinet</div>
+      </div>
+    </div>
+
+    <div class="source-key">Check Point 2025 = Check Point regional attack-volume telemetry Aug 2024–Jan 2025 · NCSA 2025 = National Cyber Security Agency incident count Jan–May 2025 · Bangkok Post 2025 = Bangkok Post cyber-attack-surge reporting 2025 · Fortinet 2024 = Fortinet Thailand breach-cost survey 2024 · Nation 2025 = The Nation Thailand AI-threat reporting 2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 08: PDPA ENFORCEMENT ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · PDPA Enforcement</div>
+      <div class="page-section-counter">008 / 018</div>
+    </div>
+
+    <h1 class="page-h1">猶予期間から罰金へ：コンプライアンス需要の駆動エンジン</h1>
+    <p class="page-subhead">タイの個人データ保護法（PDPA）は2022年に完全施行されましたが、2024年まで意識啓発フェーズにとどまっていました。規制当局の<strong>実際の行政処分</strong>への転換は、サイバーセキュリティを裁量的コストから合理的投資へと転換させる最も明確な触媒です。</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">PDPA行政罰金</div>
+            <div class="chart-subtitle">Thailand · THB mn · 累積</div>
+          </div>
+          <div class="chart-unit">THB MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="170" x2="585" y2="170"/>
+            <rect class="bar-secondary" x="80" y="168" width="90" height="2"/>
+            <text class="label-data" x="125" y="161" text-anchor="middle" style="fill:#00A88B">~0</text>
+            <text class="axis-text" x="125" y="186" text-anchor="middle">2022–23</text>
+            <rect class="bar-tertiary" x="240" y="135" width="90" height="35"/>
+            <text class="label-data" x="285" y="128" text-anchor="middle" style="fill:#D97706">7.0</text>
+            <text class="axis-text" x="285" y="186" text-anchor="middle">Aug 2024</text>
+            <rect class="bar-primary" x="400" y="65" width="90" height="105"/>
+            <text class="label-data" x="445" y="58" text-anchor="middle">21+</text>
+            <text class="axis-text" x="445" y="186" text-anchor="middle">Aug 2025</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: PDPC PENALTY ANNOUNCEMENTS 2024–2025 · KIRA RESEARCH 2026</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>施行の転換点</h3>
+        <p>
+          PDPCの初回処分 — データ保護責任者を置かずに運営していた大手ECプラットフォームへの最高額<strong>THB 700万</strong> — は2024年8月に下されました [PDPC 2024]。1年後、8件5案件の追加処分が<strong>THB 1,450万</strong>を加えました [PDPC 2025]。
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>初回処分（2024年8月）</span><span class="val">THB 700万</span></div>
+          <div class="stat-line"><span>2025年8月ラウンド</span><span class="val">THB 1,450万</span></div>
+          <div class="stat-line"><span>累積処分額</span><span class="val">&gt; THB 2,100万</span></div>
+          <div class="stat-line"><span>違反1件あたり最高額</span><span class="val">THB 500万</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;min-height:0;">
+      <div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:600;">処分を受けた事業者とその理由</h3>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text-mid);">2025年ラウンドは官民双方に及びました：政府機関とそのシステム開発業者が<strong>20万人超の市民データ漏洩</strong>で各々処分を受け、病院はTHB 121万（患者ファイル漏洩）、化粧品会社はTHB 250万、小売業者のデータ処理業者はTHB 300万の処分を受けました [PDPC 2025]。共通点はセキュリティ対策の欠如と処理業者の監督不備であり、これはまさにマネージドモニタリングとガバナンスサービスが対処する領域です。</p>
+      </div>
+      <div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:600;">商業的な読み</h3>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text-mid);">2024年以前、PDPAコンプライアンスは他のあらゆる裁量的プロジェクトと競合していました。2度の施行ラウンドと、1四半期に<strong>5,273件の潜在的漏洩事案</strong>を能動的に指摘した規制当局の存在により [PDPC 2024]、コンプライアンスはいかなる競合とも関係なく義務となっています。コンプライアンス自動化、DPO-as-a-service、継続的モニタリングを組み合わせた事業者が、その義務を一時的な監査ではなく更新型契約に転換します。</p>
+      </div>
+    </div>
+
+    <div class="source-key">PDPC 2024 = Personal Data Protection Committee first administrative penalty &amp; proactive-investigation disclosure 2024 · PDPC 2025 = Personal Data Protection Committee August 2025 penalty round (five cases, eight fines) · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 09: MARKET SIZING & SEGMENT MIX ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Market Sizing &amp; Segment Mix</div>
+      <div class="page-section-counter">009 / 018</div>
+    </div>
+
+    <h1 class="page-h1">セグメント別支出：マネージドサービスとクラウドが構成を牽引</h1>
+    <p class="page-subhead">ネットワークセキュリティは既設インフラで依然として主導的ですが、成長はクラウドセキュリティとマネージドサービスに集中しています。<strong>ペリメター支出は成熟段階にある</strong>。規制対象かつ要員不足でクラウド移行中のバイヤーという需要の性格が、2027年に向けて市場をサブスクリプションおよびアウトソーシングモデルへと引き寄せています。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>ソリューションが先行、サービスが高成長</h3>
+        <p>
+          2024年支出の約<strong>61%をソリューション</strong>が占め [GVR 2024]、既設のファイアウォールとエンドポイント管理が反映されています。しかし人材不足がアウトソーシングを強いる中、マネージド検知・コンサルティング・コンプライアンスといったサービスが高成長しており、クラウド配信型の導入が新規購買の大半を占めています。
+        </p>
+        <h3>クラウドとSMEが成長エンジン</h3>
+        <p>
+          政府クラウドの展開とフィンテック普及に後押しされ、クラウドセキュリティが<strong>十数% CAGR</strong>で最速成長しています [GVR 2024]。大企業が依然として収益の~65%を占めますが、PDPAの罰金とサプライチェーン要件に迫られたSMEが<strong>~16% CAGR</strong>を記録し、重要な増分成長エンジンとなっています [GVR 2024]。
+        </p>
+        <h3>ヘッドライン数値</h3>
+        <p>
+          市場全体は<strong>2024年にUSD 4億4,000万</strong>であり、~9.3% CAGRで2029年にはUSD 5億7,300万に達する見込みです [VMR 2025] [Statista 2025]。より長期的な見通しでは2032年にはUSD 9億に近づきます。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2024年セグメント別支出</div>
+            <div class="chart-subtitle">Thailand · %シェア · ネットワーク vs クラウド vs マネージド vs その他</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="45" y1="20" x2="45" y2="200"/>
+            <line class="axis-line" x1="45" y1="200" x2="390" y2="200"/>
+            <line class="grid-line" x1="45" y1="55" x2="390" y2="55"/>
+            <line class="grid-line" x1="45" y1="103" x2="390" y2="103"/>
+            <line class="grid-line" x1="45" y1="151" x2="390" y2="151"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="155" text-anchor="end">25</text>
+            <text class="axis-text" x="40" y="107" text-anchor="end">50</text>
+            <text class="axis-text" x="40" y="59" text-anchor="end">70</text>
+            <rect class="bar-primary" x="70" y="43" width="55" height="157"/>
+            <text class="label-data" x="97" y="37" text-anchor="middle">61%</text>
+            <text class="axis-text" x="97" y="216" text-anchor="middle">Network</text>
+            <rect class="bar-secondary" x="155" y="159" width="55" height="41"/>
+            <text class="label-data" x="182" y="153" text-anchor="middle" style="fill:#00A88B">16%</text>
+            <text class="axis-text" x="182" y="216" text-anchor="middle">Cloud*</text>
+            <rect class="bar-tertiary" x="240" y="164" width="55" height="36"/>
+            <text class="label-data" x="267" y="158" text-anchor="middle" style="fill:#D97706">14%</text>
+            <text class="axis-text" x="267" y="216" text-anchor="middle">Managed*</text>
+            <rect class="bar-secondary" x="325" y="177" width="55" height="23"/>
+            <text class="label-data" x="352" y="171" text-anchor="middle" style="fill:#00A88B">9%</text>
+            <text class="axis-text" x="352" y="216" text-anchor="middle">Other*</text>
+            <text class="label-small" x="267" y="232" text-anchor="middle">*シェア・成長率はKIRA推計</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: GRAND VIEW RESEARCH, VMR, STATISTA · セグメント分割はKIRA推計 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">ネットワークセキュリティシェア</div>
+        <div class="num">61<span class="unit">%</span></div>
+        <div class="change">2024年最大セグメント [GVR 2024]</div>
+        <div class="source-tag sec">GVR</div>
+      </div>
+      <div class="callout">
+        <div class="label">大企業収益比率</div>
+        <div class="num">65<span class="unit">%</span></div>
+        <div class="change">成熟したフレームワーク [GVR 2024]</div>
+        <div class="source-tag sec">GVR</div>
+      </div>
+      <div class="callout">
+        <div class="label">2029年市場規模</div>
+        <div class="num">573<span class="unit">USD mn</span></div>
+        <div class="change">~9.3% CAGR [Statista 2025]</div>
+        <div class="source-tag sec">Statista</div>
+      </div>
+    </div>
+
+    <div class="source-key">GVR 2024 = Grand View Research Thailand cybersecurity segment, deployment &amp; enterprise-size analysis 2024 · Statista 2025 = Statista Thailand cybersecurity market forecast 2025 · VMR 2025 = Verified Market Research Thailand cybersecurity market 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 10: DIVIDER — COMPETITIVE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10</div>
+    <h1 class="divider-title">競争<span class="accent">構造</span></h1>
+    <div class="divider-thesis">
+      タイのサイバーセキュリティは二層構造の市場です。グローバルベンダー — <strong>Fortinet、Palo Alto、Trend Micro、Cisco</strong> — が技術を供給し、地場の通信系MSSPと専門事業者が規制対応に必要なマネージドサービスとタイ語対応のコンプライアンスを提供します。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1 二層市場</div>
+      <div class="toc-pill">10.2 ローカルMSSP</div>
+      <div class="toc-pill">10.3 リーダープロファイル</div>
+      <div class="toc-pill">10.4 流通</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 11: COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · Competitive Landscape</div>
+      <div class="page-section-counter">011 / 018</div>
+    </div>
+
+    <h1 class="page-h1">市場構造：グローバル製品層とローカルサービス層</h1>
+    <p class="page-subhead">タイのサイバーセキュリティをエンドツーエンドで支配する事業者は存在しません。グローバルベンダーが製品スタックを供給し、<strong>通信系テレコバックのMSSP</strong>がマネージドサービスとコンプライアンス業務を担います。タイ語サポートと規制への精通が決定的な優位性となるからです。需要の性格は両層を橋渡しするインテグレーターを有利にします。</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">主要マネージドサービス・製品ポジション</div>
+            <div class="chart-subtitle">Thailand · アドレサブル支出における参考シェア</div>
+          </div>
+          <div class="chart-unit">REL. POSITION</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="135" y1="20" x2="135" y2="180"/>
+            <rect class="bar-primary" x="135" y="28" width="360" height="20"/>
+            <text class="label-data" x="503" y="43">Leader</text>
+            <text class="label-small" x="130" y="43" text-anchor="end">True Digital Sec.</text>
+            <rect class="bar-primary" x="135" y="58" width="300" height="20"/>
+            <text class="label-data" x="443" y="73">Strong</text>
+            <text class="label-small" x="130" y="73" text-anchor="end">AIS Cyber Sec.</text>
+            <rect class="bar-secondary" x="135" y="88" width="240" height="20"/>
+            <text class="label-data" x="383" y="103" style="fill:#00A88B">Specialist</text>
+            <text class="label-small" x="130" y="103" text-anchor="end">Cybertron</text>
+            <rect class="bar-secondary" x="135" y="118" width="210" height="20"/>
+            <text class="label-data" x="353" y="133" style="fill:#00A88B">Product</text>
+            <text class="label-small" x="130" y="133" text-anchor="end">Fortinet TH</text>
+            <rect class="bar-secondary" x="135" y="148" width="195" height="20"/>
+            <text class="label-data" x="338" y="163" style="fill:#00A88B">Product</text>
+            <text class="label-small" x="130" y="163" text-anchor="end">Palo Alto / Trend</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA ANALYST POSITIONING FROM PUBLIC OPERATOR DISCLOSURES · 参考値（監査済み市場シェアではない） · KIRA RESEARCH 2026</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>二層、一人の買い手</h3>
+        <p>
+          グローバルベンダーがファイアウォール、EDR、脅威インテリジェンスを供給し、<strong>通信系MSSP</strong>が24時間365日のSOC運用、PDPAコンプライアンス、タイ語サポートでそれを包みます [Ken 2025]。
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>先行ローカルMSSP</span><span class="val">True Digital</span></div>
+          <div class="stat-line"><span>通信系競合</span><span class="val">AIS Cyber</span></div>
+          <div class="stat-line"><span>タイ系専門SOC</span><span class="val">Cybertron</span></div>
+          <div class="stat-line"><span>主要製品ベンダー</span><span class="val">Fortinet, Palo Alto</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">True Digital Security</div>
+        <div class="comp-parent">True Corporation（タイ通信グループ）</div>
+        <div class="comp-stat-row"><span>種別</span><span class="val">MSSP / SOC</span></div>
+        <div class="comp-stat-row"><span>強み</span><span class="val">マネージド</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">直販＋通信</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>通信規模のSOC、大企業との既存関係、PDPAコンプライアンス一体型。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">AIS Cyber Security</div>
+        <div class="comp-parent">Advanced Info Service（通信事業者）</div>
+        <div class="comp-stat-row"><span>種別</span><span class="val">MSSP / クラウド</span></div>
+        <div class="comp-stat-row"><span>強み</span><span class="val">流通</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">通信ベース</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>最大のモバイル・企業顧客基盤、クラウドセキュリティ強化、SMEリーチ。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">Cybertron</div>
+        <div class="comp-parent">タイ系専門事業者</div>
+        <div class="comp-stat-row"><span>種別</span><span class="val">SOC / EDR</span></div>
+        <div class="comp-stat-row"><span>強み</span><span class="val">ペンテスト、MDR</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">直販</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>リアルタイムSOC、脅威ハンティング、SMEから大企業への柔軟対応。
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">グローバル製品ベンダー</div>
+        <div class="comp-parent">Fortinet · Palo Alto · Trend · Cisco</div>
+        <div class="comp-stat-row"><span>種別</span><span class="val">製品</span></div>
+        <div class="comp-stat-row"><span>強み</span><span class="val">テクノロジー</span></div>
+        <div class="comp-stat-row"><span>チャネル</span><span class="val">パートナー経由</span></div>
+        <div class="comp-strengths">
+          <strong>強み：</strong>NGFW、EDR、脅威インテル。ローカルMSSPおよびディストリビューターチャネルを通じて提供。
+        </div>
+      </div>
+    </div>
+
+    <div class="source-key">Ken 2025 = Ken Research Thailand MSSP &amp; SOC market overview 2025 · Kira estimates = KIRA in-house analyst positioning from public operator disclosures (relative positions indicative, not audited market share)</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 12: LEADER PROFILE — TRUE DIGITAL SECURITY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10.3 · Player Profile</div>
+      <div class="page-section-counter">012 / 018</div>
+    </div>
+
+    <div class="profile-hero">
+      <div>
+        <h2>True Digital Security</h2>
+        <div class="sub">True CorporationのサイバーセキュリティアームⅠタイ通信グループ</div>
+        <div class="tags">
+          <span class="data-tag primary">Managed Services</span>
+          <span class="data-tag secondary">SOC / Compliance</span>
+          <span class="data-tag estimate">KIRA Tier 1</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Model</div><div class="val">MSSP</div></div>
+        <div class="stat"><div class="label">Core</div><div class="val">24/7<span class="unit">SOC</span></div></div>
+        <div class="stat"><div class="label">Channel</div><div class="val">Telco</div></div>
+        <div class="stat"><div class="label">Parent</div><div class="val">True Corp</div></div>
+      </div>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>市場ポジション</h3>
+        <p>
+          タイ最大手通信グループの一角であるTrue Digital Securityは、大企業・政府向けを中心とした<strong>マネージドセキュリティ・SOC事業者</strong>として存在感を示しています [Ken 2025]。そのポジションは通信事業者規模のインフラ、大企業との深い関係、コネクティビティ・クラウド・セキュリティをワンコントラクトで提供できる能力に支えられています。
+        </p>
+        <h3>規制対応バイヤーを獲得する理由</h3>
+        <p>
+          タイ語でのPDPAおよびサイバーセキュリティ法コンプライアンスサービスと24時間365日モニタリングを組み合わせた提供形態は、施行の転換点が最も評価する組み合わせです。罰金がコンプライアンスを義務とし、<strong>20,000人超の人材不足</strong> [NCSA 2024]がアウトソーシングを強いる構造の下、一括請求型マネージドモデルが製品ベンダーには獲得できないリカーリング収益を確保します。
+        </p>
+      </div>
+
+      <div class="profile-col">
+        <h3>戦略的ポジチャー</h3>
+        <p>
+          通信事業者の財務基盤は共有SOCの効率的な運営とAI支援検知への投資を支えます。同社はサブスクリプションバンドルを通じて高成長のSMEセグメントへのダウン・マーケット展開と、グローバルインテグレーターおよびライバル通信系のAISに対する大企業アカウント防御を同時に追求するポジションにあります。
+        </p>
+        <h3>強みとウォッチリスト</h3>
+        <ul>
+          <li><strong>通信規模：</strong>共有SOC経済性に必要なインフラとバランスシート</li>
+          <li><strong>コンプライアンス一体型：</strong>タイ語契約でPDPAとモニタリングを一括提供</li>
+          <li><strong>大企業基盤：</strong>規制セクター全域にわたる既存顧客関係</li>
+          <li><strong>注視：</strong>AISのクラウドセキュリティの勢い、専門MDR事業者の台頭</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="source-key">Ken 2025 = Ken Research Thailand MSSP &amp; SOC market overview 2025 · NCSA 2024 = National Cyber Security Agency workforce-gap statement 2024 · Kira estimates = KIRA in-house analyst positioning</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 13: DIVIDER — REGULATION ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 11</div>
+    <h1 class="divider-title">規制と<span class="accent">マネージドサービスへのシフト</span></h1>
+    <div class="divider-thesis">
+      3つの法的枠組み — <strong>PDPA、サイバーセキュリティ法、2025年詐欺防止勅令</strong> — は今や奨励から義務へと変化しています。義務的な報告、侵害への罰則、インシデント対応義務が、買い手を単発的な製品購入から継続的なマネージド防衛へと向かわせます。
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">11.1 PDPA</div>
+      <div class="toc-pill">11.2 サイバーセキュリティ法</div>
+      <div class="toc-pill">11.3 詐欺防止勅令</div>
+      <div class="toc-pill">11.4 勝者と敗者</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 14: REGULATION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Regulation</div>
+      <div class="page-section-counter">014 / 018</div>
+    </div>
+
+    <h1 class="page-h1">採用促進ではなく説明責任を求める規制体系</h1>
+    <p class="page-subhead">タイの規制スタック — PDPA、サイバーセキュリティ法B.E. 2562、2025年詐欺防止王室勅令 — は、デジタルリスクの高まりに対応した<strong>執行可能な義務</strong>を明確に指向しています。ガバナンス、モニタリング、報告体制を早期に整備した組織は、抵抗する組織よりも次のサイクルをうまく乗り越えられます。</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;min-height:0;">
+      <div class="profile-col">
+        <h3>PDPA：需要側の触媒</h3>
+        <p>
+          違反1件あたり最高<strong>THB 500万</strong>の罰則と刑事責任、2024年8月以降のTHB 2,100万超の課徴を踏まえれば [PDPC 2025]、PDPAはデータガバナンス、侵害通知、セキュリティ管理を不可避とします。コンプライアンス主導のサイバーセキュリティ支出における最も明確な需要喚起要因です。
+        </p>
+        <h3>サイバーセキュリティ法とNCSA</h3>
+        <p>
+          サイバーセキュリティ法B.E. 2562（2019年）は国家サイバーセキュリティ機関（NCSA）に政策策定と<strong>重要情報インフラ</strong>に関するインシデント報告義務付けを付与しています [NCSA 2024]。報告義務と罰則は規制対象事業者を継続的なモニタリングへと押し進めます。
+        </p>
+      </div>
+      <div class="profile-col">
+        <h3>市場参加者への示唆</h3>
+        <p>
+          説明責任の強化は<strong>規模、継続的モニタリング、タイ語でのコンプライアンス対応力</strong>を持つ事業者に有利に働きます。2025年詐欺防止王室勅令は3ヶ月で~THB 60億の損失阻止と~18万口座の凍結を実現しており [Nation 2025]、国家が情報開示だけでなく積極的な防衛を義務付けることを示しています。
+        </p>
+        <ul>
+          <li><strong>勝者：</strong>コンプライアンス、モニタリング、報告を一体化したMSSP</li>
+          <li><strong>圧力下：</strong>サービスラップを持たない製品のみのリセラー</li>
+          <li><strong>重要：</strong>SME経営層にタイ語で義務を説明できるパートナー</li>
+          <li><strong>新興：</strong>補償と組み合わせたサイバー保険・侵害対応パッケージ</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="source-key">PDPC 2025 = Personal Data Protection Committee penalty announcements &amp; framework 2024–2025 · NCSA 2024 = National Cyber Security Agency / Cybersecurity Act B.E. 2562 reporting duties · Nation 2025 = The Nation Thailand anti-scam Royal Decree outcomes 2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 15: AI OVERVIEW ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · AI in Detection &amp; the Skills Gap</div>
+      <div class="page-section-counter">015 / 018</div>
+    </div>
+
+    <h1 class="page-h1">AIはパイロットから検知の中核へ移行 — 人材不足は続く</h1>
+    <p class="page-subhead">AIはタイのサイバー紛争の両側に位置しています：犯罪者がフィッシングとディープフェイク詐欺を高度化する一方、防御側はトリアージと検知を自動化しています [Nation 2025]。<strong>20,000人超の専門家不足</strong>を抱える現状 [NCSA 2024]、AI強化型マネージドサービスのみが大半のタイ組織に信頼できる防衛力を提供できます。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>攻撃側のAI</h3>
+        <p>
+          サイバー犯罪者はAIを用いてなりすまし、金融詐取、銀行管理の回避を高度化しており、AIが生成するフィッシングとディープフェイク音声が蔓延しています [Nation 2025]。攻撃の量と高度化は手動対応を超えており、特に要員不足のSMEにとって深刻です。
+        </p>
+        <h3>防御側のAI</h3>
+        <p>
+          タイの銀行とMSSPは、新法に後押しされ、詐欺検知・異常検知・悪意あるサイトのブロックにAIを活用しています [Nation 2025]。2026年までにAI支援検知は差別化要因ではなく<strong>テーブルステークス（最低限の能力）</strong>となります。問題はそれを規模で実装できるのが誰かです。
+        </p>
+        <h3>人材不足の乗数効果</h3>
+        <p>
+          人材不足が構造的である以上、AIはコスト削減手段よりも、希少なアナリストにとっての<strong>戦力倍増器</strong>です。自動化と共有SOCを組み合わせた事業者は、限られた人的専門性を多数の顧客に展開します — MSSPモデルの経済的核心です。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">タイのサイバー防衛でAIが先に定着する領域</div>
+            <div class="chart-subtitle">採用成熟度 · 方向性の読み</div>
+          </div>
+          <div class="chart-unit">MATURITY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="20" x2="120" y2="200"/>
+            <rect class="bar-primary" x="120" y="32" width="200" height="22"/>
+            <text class="label-data" x="328" y="48">高</text>
+            <text class="label-small" x="115" y="48" text-anchor="end">詐欺検知</text>
+            <rect class="bar-primary" x="120" y="66" width="175" height="22"/>
+            <text class="label-data" x="303" y="82">高</text>
+            <text class="label-small" x="115" y="82" text-anchor="end">フィッシングトリアージ</text>
+            <rect class="bar-secondary" x="120" y="100" width="150" height="22"/>
+            <text class="label-small" x="278" y="116" style="fill:#00A88B">拡大中</text>
+            <text class="label-small" x="115" y="116" text-anchor="end">SOC自動化</text>
+            <rect class="bar-secondary" x="120" y="134" width="125" height="22"/>
+            <text class="label-small" x="253" y="150" style="fill:#00A88B">拡大中</text>
+            <text class="label-small" x="115" y="150" text-anchor="end">異常検知 / UEBA</text>
+            <rect class="bar-tertiary" x="120" y="168" width="85" height="22"/>
+            <text class="label-small" x="213" y="184" style="fill:#D97706">初期段階</text>
+            <text class="label-small" x="115" y="184" text-anchor="end">自律対応</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NATION THAILAND, PKF THAILAND · KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">2024年専門家不足</div>
+        <div class="num">20k<span class="unit">+</span></div>
+        <div class="change down">未充足ポジション [NCSA 2024]</div>
+        <div class="source-tag sec">NCSA</div>
+      </div>
+      <div class="callout">
+        <div class="label">2026年以降の位置づけ</div>
+        <div class="num">Table<span class="unit">stakes</span></div>
+        <div class="change">AI検知がベースライン [Nation 2025]</div>
+        <div class="source-tag sec">Nation</div>
+      </div>
+      <div class="callout">
+        <div class="label">タイにおける提供優先度</div>
+        <div class="num">Managed<span class="unit">+ AI</span></div>
+        <div class="change">外部委託共有SOC</div>
+        <div class="source-tag est">KIRA Est.</div>
+      </div>
+    </div>
+
+    <div class="source-key">NCSA 2024 = National Cyber Security Agency workforce-gap statement 2024 · Nation 2025 = The Nation Thailand AI-threat &amp; AI-defence reporting 2025 · PKF Thailand 2025 = PKF Thailand AI &amp; cybersecurity trends 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 16: AI / SERVICE USE CASES — 6 CARDS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12.2 · Technology Use Cases</div>
+      <div class="page-section-counter">016 / 018</div>
+    </div>
+
+    <h1 class="page-h1">タイのサイバー事業者を再編する6つの活用事例</h1>
+    <p class="page-subhead">実運用への落とし込みが、2027年の勝者と出遅れ組を分けます。これらの活用事例は<strong>コンプライアンス</strong>から<strong>積極的防衛</strong>まで及び、タイまたは近隣の地域ベンチマークで既に観察可能です。</p>
+
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">01 · COMPLIANCE</div>
+        <div class="uc-title">PDPAコンプライアンス自動化</div>
+        <div class="uc-body">
+          データフローのマッピング、同意管理、侵害通知記録の生成を行うツールは、<strong>THB 2,100万</strong>の施行実績 [PDPC 2025]を、一時的な監査ではなく更新型サブスクリプションに転換します。
+        </div>
+        <div class="uc-example">Anchor: THB 2,100万超の罰金累計</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">02 · DETECTION</div>
+        <div class="uc-title">マネージド検知・対応（MDR）</div>
+        <div class="uc-body">
+          自社でチームを組成できない買い手に向けた24時間365日のSOC-as-a-service。SMEの<strong>~16% CAGR</strong>に乗る最速成長の提供モデルです [GVR 2024]。
+        </div>
+        <div class="uc-example">Status: 主要サービスセグメント</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">03 · FRAUD</div>
+        <div class="uc-title">AI詐欺・スキャム検知</div>
+        <div class="uc-body">
+          銀行向けに異常取引とスキャムパターンを検知するモデル。詐欺防止勅令を支援し、3ヶ月で<strong>~THB 60億</strong>の損失を阻止しました [Nation 2025]。直接的な損失防止効果を持ちます。
+        </div>
+        <div class="uc-example">Anchor: ~THB 60億の損失阻止</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">04 · CLOUD</div>
+        <div class="uc-title">クラウドセキュリティポスチャー</div>
+        <div class="uc-body">
+          フィンテック、EC、政府クラウド移行に追随するCSPMとワークロード保護。ペリメターが崩壊する中で<strong>最速成長セグメント</strong>（十数% CAGR）を形成しています [GVR 2024]。
+        </div>
+        <div class="uc-example">Observable: G-Cloud、フィンテック</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">05 · IDENTITY</div>
+        <div class="uc-title">ゼロトラスト・アイデンティティ</div>
+        <div class="uc-body">
+          アイデンティティ中心の管理とゼロトラスト設計が、フラットなペリメターに置き換わります。成熟したスタックを持つ大企業に支持されています [GVR 2024]。リモートワークとSaaSの拡大が攻撃面を拡張する中で基盤となります。
+        </div>
+        <div class="uc-example">Tie-in: 大企業スタック</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">06 · RESILIENCE</div>
+        <div class="uc-title">インシデント対応・サイバー保険</div>
+        <div class="uc-body">
+          NCSAの詐欺保険フレームワークを背景に、侵害対応リテーナーとサイバー保険アセスメントをパッケージ化。義務的な報告に直面する買い手に復旧とリスク移転を提供します [NCSA 2024]。
+        </div>
+        <div class="uc-example">Stage: 新興、高付加価値</div>
+      </div>
+    </div>
+
+    <div class="source-key">GVR 2024 = Grand View Research Thailand cybersecurity segment analysis 2024 · NCSA 2024 = National Cyber Security Agency cyber-fraud-insurance framework 2024 · Nation 2025 = The Nation Thailand anti-scam decree outcomes 2025 · PDPC 2025 = Personal Data Protection Committee penalty announcements 2024–2025</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 17: OUTLOOK ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 13 · Outlook to 2032</div>
+      <div class="page-section-counter">017 / 018</div>
+    </div>
+
+    <h1 class="page-h1">2032年展望：ヘッドライン成長は安定、構成の転換が決定的</h1>
+    <p class="page-subhead">タイのサイバーセキュリティ支出は<strong>高い一桁台</strong>で拡大を続け、施行と人材不足がマネージドサービス、クラウドセキュリティ、コンプライアンスの市場平均超の成長を促すと見込まれます。勝者となる事業者は、今すぐ製品販売から継続的なマネージド防衛へとポジションを移した事業者です。</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>ベースケース</h3>
+        <p>
+          市場支出は<strong>2029年にかけて~9%で拡大</strong>し、~USD 5億7,300万に達する見込みです [Statista 2025] [VMR 2025]。施行と人材不足が続く中、マネージドサービスとクラウドセキュリティが市場を上回る成長を示します。同じ軌道で2032年には市場は~USD 7億に近づきます [Kira estimates]。
+        </p>
+        <h3>上振れ・下振れ</h3>
+        <p>
+          上振れ：PDPA施行の強化、重要インフラへの義務的な報告、SMEのコンプライアンス採用。下振れ：裁量的なアップグレードを先送りする予算削減、または近期にアウトソーシングの追い風を鈍化させる人材育成の急加速。
+        </p>
+        <h3>戦略的必要性</h3>
+        <p>
+          施行と希少性がこの市場で最も確実な変数です。<strong>継続的なマネージド防衛へのポジション転換</strong> — コンプライアンス、MDR、クラウドポスチャー — と、AI強化型共有SOCへの投資が不可欠です。製品のみのリセラーは最も急峻な調整を迫られます。
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">サイバーセキュリティ支出の軌跡</div>
+            <div class="chart-subtitle">Thailand · USD mn · 2024–2032F</div>
+          </div>
+          <div class="chart-unit">USD MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="45" y1="20" x2="45" y2="200"/>
+            <line class="axis-line" x1="45" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="45" y1="60" x2="460" y2="60"/>
+            <line class="grid-line" x1="45" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="45" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="164" text-anchor="end">250</text>
+            <text class="axis-text" x="40" y="114" text-anchor="end">500</text>
+            <text class="axis-text" x="40" y="64" text-anchor="end">750</text>
+            <rect class="bar-primary" x="75" y="94" width="50" height="106"/>
+            <text class="label-data" x="100" y="88" text-anchor="middle">440</text>
+            <text class="axis-text" x="100" y="216" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="170" y="78" width="50" height="122"/>
+            <text class="label-data" x="195" y="72" text-anchor="middle">~510</text>
+            <text class="axis-text" x="195" y="216" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="265" y="62" width="50" height="138" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text class="label-data" x="290" y="56" text-anchor="middle">573</text>
+            <text class="axis-text" x="290" y="216" text-anchor="middle">2029F</text>
+            <rect class="bar-tertiary" x="360" y="32" width="50" height="168" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text class="label-data" x="385" y="26" text-anchor="middle" style="fill:#D97706">~700</text>
+            <text class="axis-text" x="385" y="216" text-anchor="middle">2032F</text>
+            <path d="M 125 96 L 168 80" stroke="var(--primary)" stroke-width="1.5" fill="none"/>
+            <text class="label-small" x="240" y="44" text-anchor="middle" style="fill:var(--primary);font-weight:700">~9% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: STATISTA, VMR · 2027年・2032年はKIRA推計（~9% CAGRより） · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">2027年市場（ベース）</div>
+        <div class="num">~510<span class="unit">USD mn</span></div>
+        <div class="change">~9% CAGRベース [Kira estimates]</div>
+        <div class="source-tag est">KIRA Est.</div>
+      </div>
+      <div class="callout">
+        <div class="label">2029年市場</div>
+        <div class="num">573<span class="unit">USD mn</span></div>
+        <div class="change">[Statista 2025]</div>
+        <div class="source-tag sec">Statista</div>
+      </div>
+      <div class="callout">
+        <div class="label">SMEセグメントCAGR</div>
+        <div class="num">~16<span class="unit">%</span></div>
+        <div class="change">最速の需要プール [GVR 2024]</div>
+        <div class="source-tag sec">GVR</div>
+      </div>
+    </div>
+
+    <div class="source-key">GVR 2024 = Grand View Research Thailand cybersecurity segment analysis 2024 · Statista 2025 = Statista Thailand cybersecurity forecast 2025 · VMR 2025 = Verified Market Research Thailand cybersecurity market 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- KIRA_PAGES_INSERT_HERE -->
+</body>
+</html>
