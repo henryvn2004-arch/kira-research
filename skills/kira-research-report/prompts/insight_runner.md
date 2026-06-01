@@ -32,11 +32,29 @@ Insight articles are SEO/AEO marketing content derived from already-published re
 ## Working directory (machine-agnostic)
 
 ```bash
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+# Try git rev-parse first; if cron fired from parent dir it will fail — use fallback.
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "$REPO_ROOT" ]; then
+  for _CANDIDATE in \
+    "$HOME/kira-research" \
+    "/home/user/kira-research" \
+    "/home/henry/kira-research" \
+    "$(pwd)/kira-research" \
+    "$(dirname "$(pwd)")/kira-research"; do
+    if [ -f "$_CANDIDATE/skills/kira-research-report/SKILL.md" ]; then
+      REPO_ROOT="$_CANDIDATE"
+      break
+    fi
+  done
+fi
+if [ -z "$REPO_ROOT" ]; then
+  echo "ERROR: Cannot find repo root. PWD=$PWD. Tried git rev-parse + 5 fallback paths."
+  exit 1
+fi
 cd "$REPO_ROOT"
 ```
 
-If `git rev-parse` fails → EXIT `not in git, no-op`.
+If all paths fail → EXIT with the error above (cron will log it). **Do NOT silently no-op — log the failure so it surfaces in the cron output.**
 
 ---
 
