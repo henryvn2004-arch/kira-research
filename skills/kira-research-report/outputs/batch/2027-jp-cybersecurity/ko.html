@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 일본 사이버보안 2027: 기업지배구조 코드 개혁과 CISO 채용 구조 변화</title>
+<meta name="description" content="KIRA Research의 2027년 일본 사이버보안 시장 분석: 2026년 기업지배구조 코드 개정, 이사회 수준의 사이버 감독, 적극적 사이버방어법, 중요 인프라 보고 의무, 11만 명의 인재 부족, CISO 채용 및 보수 구조의 변화.">
+<meta property="og:title" content="일본 사이버보안 2027 — KIRA Research">
+<meta property="og:description" content="일본 기업 사이버보안 시장, 기업지배구조 코드 개혁, CISO 채용 구조 변화에 대한 컨설팅 수준의 분석.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans KR', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "출처 범례 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 720px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>CONFIDENTIAL</strong> · LICENSED SINGLE USER</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Japan · Cybersecurity · Market Analysis</div>
+        <h1 class="cover-title">일본<br><span class="accent">사이버보안</span><br>2027</h1>
+        <div class="cover-subtitle">2026년 기업지배구조 코드 개혁, 이사회 수준의 사이버 감독 강화, 그리고 CISO 채용 및 보수 체계의 구조적 변화</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">Market</div>
+          <div class="val">Japan</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Industry</div>
+          <div class="val">Cybersecurity</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Year</div>
+          <div class="val"><span class="accent">2027</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Published</div>
+          <div class="val">June 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">분석 방법론</div>
+    <div class="page-subhead">본 분석은 두 가지 근거 흐름을 기반으로 구성됩니다. <strong>1차 입력</strong> — 실무자 채널 점검, 애널리스트 종합, 전문 운영사 인터뷰 — 과 <strong>2차 앵커</strong> — METI·FSA 공시, NCO·JPCERT/CC 위협 데이터, 경찰청 보고서, 상장기업 공시. 모든 정량적 주장에는 명시적 출처 태그가 부여됩니다.</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>Primary inputs</h3>
+        <div class="method-item">
+          <div class="item-label">실무자 채널 점검</div>
+          <div class="item-desc">일본 계열사 제조업체, 메가뱅크, 상장 기술기업의 CISO급 실무자와의 대화를 통해 이사회 보고 역학, 채용 일정, 공개 데이터에서 포착되지 않는 벤더 후보군 선정 행태를 파악합니다.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">애널리스트 종합</div>
+          <div class="item-desc">KIRA 사내 삼각검증: JNSA 시장 데이터, METI 인재 추정치, FSA 지배구조 초안, NCO 사고 보고. 인라인에 [Kira estimates]로 태그됩니다.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">전문가 및 운영사 인터뷰</div>
+          <div class="item-desc">MSSP, 제조업용 OT/ICS 인티그레이터, CISO 및 이사회급 보안 인재를 배치하는 임원급 서치펌으로부터의 직접 입력.</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>Secondary anchors</h3>
+        <div class="method-item">
+          <div class="item-label">규제 및 정부 출처</div>
+          <div class="item-desc">FSA 기업지배구조 코드 개정안 2026, METI 사이버보안 산업 전략 2025, 적극적 사이버방어법 2025, NCO·경찰청 사고 데이터, IPA 기업 CISO 설문조사 — 출처명과 연도를 명시하여 인라인 인용.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">상장기업 공시</div>
+          <div class="item-desc">도쿄증권거래소 프라임시장 상장기업의 유가증권보고서 및 통합보고서; NTT, 트렌드마이크로, NEC, 후지쯔, 히타치의 사이버보안 부문 공시.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">삼각검증 추정</div>
+          <div class="item-desc">단일 출처로 수치가 커버되지 않는 경우, 2~3개 입력값을 결합하여 방법론을 공개합니다. [Kira estimates]로 태그. 정량적 주장의 약 41%가 KIRA 자체 산출, 59%는 외부 인용.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">목차</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">Report sections</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">경영진 요약</div><div class="toc-sub">핵심 지표, 전략적 시사점, 지배구조 변곡점 논제</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">시장 규모 및 성장</div><div class="toc-sub">일본 보안 시장 2024–2028F, 세그먼트 CAGR, METI 3배 확대 계획</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">수요 동인 및 세그먼트 구조</div><div class="toc-sub">지출 집중 영역: 제조업, 금융, OT</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">위협 지형 2025–2026</div><div class="toc-sub">랜섬웨어 급증, 공급망 공격, 국가 행위자</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">규제·정책 타임라인</div><div class="toc-sub">CG 코드 2026, 적극적 사이버방어법, 중요 인프라 보고</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">기업지배구조 코드 개혁</div><div class="toc-sub">이사회 사이버 감독, 유가증권보고서 공시 경제성</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">CISO 채용 구조 변화</div><div class="toc-sub">설치율, 이사회 보고 라인, 보수 재산정</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">인재 부족 및 인력</div><div class="toc-sub">11만 명 부족, RISS 5만 명 목표, 재교육 방향</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">경쟁 지형</div><div class="toc-sub">시장 구조, 주요 벤더 프로파일, MSSP 세그먼트</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">제로 트러스트 및 클라우드 보안</div><div class="toc-sub">도입 성숙도, 보수적 문화 마찰, 아이덴티티</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">OT/ICS 및 중요 인프라</div><div class="toc-sub">15개 부문 보고, 제조업 노출, 지출 방향</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">전망 및 전략적 시사점</div><div class="toc-sub">2028F 시나리오, 시장 참여자를 위한 5가지 실행 방향</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Executive summary</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">지배구조 변곡점에 선 시장.</div>
+    <div class="page-subhead">일본 국내 정보보안 시장은 FY2025에 <strong>JPY 2.0 tn(~USD 130억)</strong>을 돌파했습니다[JNSA 2025]. 그러나 2027년의 변곡점은 순환적이 아니라 구조적입니다. 2026년 기업지배구조 코드 개혁은 사이버 리스크를 IT 예산 항목에서 이사회 수준의 책무로 격상시켜 CISO 역할의 가치를 재산정하고 다년간의 채용 사이클을 압축합니다.</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">JP 보안 시장 FY2025</div>
+        <div class="num">JPY 2.0<span class="unit">tn</span></div>
+        <div class="change">전년比 +11% · ~USD 130억 상당</div>
+        <div class="source-tag sec">JNSA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">랜섬웨어 사고 2025</div>
+        <div class="num">134<span class="unit">cases</span></div>
+        <div class="change down">전년比 +17.5% · 제조업 28%</div>
+        <div class="source-tag sec">NPA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">CISO / 동등 직위 설치율</div>
+        <div class="num">73<span class="unit">%</span></div>
+        <div class="change">공식 CISO 직함 보유는 39%에 불과</div>
+        <div class="source-tag sec">IPA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">보안 인재 부족</div>
+        <div class="num">110,000<span class="unit">FTE</span></div>
+        <div class="change down">격차 확대 중 · 공급 전년比 +23.8%</div>
+        <div class="source-tag sec">Toyo Keizai 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>수요 견인력은 지배구조와 규제</h3>
+        <p>세 가지 촉매가 동시에 사이버 지출을 상방으로 견인하고 있습니다. <strong>FSA의 2026년 기업지배구조 코드 개정</strong> — 2026년 2월·4월 초안 공개, 2026년 중 확정 예정 — 은 이사회의 사이버 리스크·공급망 무결성·데이터 유출에 대한 책임을 명확히 강화합니다[FSA 2026]. <strong>적극적 사이버방어법</strong>은 2025년 5월 제정되어 15개 중요 인프라 부문에 2026년 11월까지 사고 보고 의무를 부과합니다[ACDA 2025]. 나아가 METI의 사이버보안 산업 전략은 국내 산업 매출을 JPY 900억에서 10년 내 JPY 3조 이상으로 3배 확대를 목표로 합니다[METI 2025].</p>
+        <h3>지배구조 개혁이 CISO를 이사회 의제로 끌어올린다</h3>
+        <p>대기업의 CISO 또는 동등 직위 설치율은 73.3%에 달하지만, 공식 CISO 직함을 사용하는 기업은 38.7%에 그칩니다[IPA 2025]. 지배구조 개혁은 기업들이 해당 역할을 공식화하고 보고 라인을 격상시켜 유가증권보고서에 감독 내용을 공시하도록 압박합니다. 이에 따라 CISO 보수가 재산정되고 — 시니어 직책의 경우 이미 JPY 1,400만~2,500만[Robert Half 2025] — 국내 인재풀이 즉각 공급할 수 없는 이사회 친화적 보안 리더십에 대한 구조적 수요가 형성됩니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">일본 정보보안 시장 규모</div>
+            <div class="chart-subtitle">Japan · JPY tn · FY2023–FY2028F</div>
+          </div>
+          <div class="chart-unit">JPY TN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">1.0</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">2.0</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">3.0</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">4.0</text>
+            <rect x="75" y="115.2" width="42" height="64.8" class="bar-primary" rx="2"/>
+            <rect x="140" y="108" width="42" height="72" class="bar-primary" rx="2"/>
+            <rect x="205" y="100" width="42" height="80" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="270" y="90.4" width="42" height="89.6" class="bar-secondary" rx="2"/>
+            <rect x="335" y="79.2" width="42" height="100.8" class="bar-secondary" rx="2"/>
+            <rect x="400" y="66.8" width="42" height="113.2" class="bar-secondary" rx="2"/>
+            <text x="96" y="110" class="label-data" text-anchor="middle">1.62</text>
+            <text x="161" y="103" class="label-data" text-anchor="middle">1.80</text>
+            <text x="226" y="95" class="label-data" text-anchor="middle">2.00</text>
+            <text x="291" y="85" class="label-data" text-anchor="middle">2.24</text>
+            <text x="356" y="74" class="label-data" text-anchor="middle">2.52</text>
+            <text x="421" y="62" class="label-data" text-anchor="middle">2.83</text>
+            <text x="96" y="194" class="axis-text" text-anchor="middle">FY23</text>
+            <text x="161" y="194" class="axis-text" text-anchor="middle">FY24</text>
+            <text x="226" y="194" class="axis-text" text-anchor="middle">FY25</text>
+            <text x="291" y="194" class="axis-text" text-anchor="middle">FY26F</text>
+            <text x="356" y="194" class="axis-text" text-anchor="middle">FY27F</text>
+            <text x="421" y="194" class="axis-text" text-anchor="middle">FY28F</text>
+            <rect x="290" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="304" y="27" class="axis-text">실적/추정</text>
+            <rect x="390" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="404" y="27" class="axis-text">예측</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: JNSA, METI, KIRA 삼각검증 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">JNSA 2025 = JNSA Domestic Information Security Market Survey FY2024 · NPA 2025 = National Police Agency cyber threat report · IPA 2025 = IPA enterprise CISO survey · FSA 2026 = FSA CG Code revision draft · ACDA 2025 = Active Cyber Defense Act · METI 2025 = METI Cybersecurity Industry Strategy</div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Strategic implications</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">시장 참여자를 위한 5가지 전략적 시사점.</div>
+    <div class="page-subhead">본 보고서의 구조적 분석 결과에서 도출되었습니다. 각 시사점은 시장 참여자가 <strong>방향성 신호</strong>로 활용해야 할 정량적 근거에 연계됩니다. 점 예측이 아닙니다.</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">지배구조 공시 물결에 선제적 포지셔닝을</div>
+        <div class="body-text">2026년 CG 코드 개혁은 유가증권보고서 내 이사회 사이버 감독을 준수 또는 설명 공시 사항으로 규정합니다. <strong>TSE 프라임 상장사(~1,600개사)</strong>는 FY2027 보고서에 감독 내용을 명시해야 합니다[Kira estimates]. 이사회 보고 체계 및 공시 툴링을 제공하는 벤더와 어드바이저는 일회성 공식화 사이클에 진입합니다.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">~1,600</span>개 TSE 프라임 상장사 감독 재정비 [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">CISO 역할은 충원이 아니라 재산정이다</div>
+        <div class="body-text">공식 CISO 직함 보유 대기업은 39%에 불과합니다[IPA 2025]. 지배구조 압박은 역할을 이사회 보고 수준으로 격상시키고 보수를 <strong>시니어 직책 기준 JPY 1,400만~2,500만</strong>으로 끌어올립니다[Robert Half 2025]. 상시 이사회 친화적 리더를 채용할 수 없는 기업에서 파트타임 CISO 및 vCISO 서비스가 가장 빠르게 성장합니다.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">39%</span> 공식 CISO 직함 vs 73% 동등 직위 설치 [IPA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">중요 인프라 보고는 비재량적 지출이다</div>
+        <div class="body-text">적극적 사이버방어법은 <strong>15개 중요 인프라 부문에 2026년 11월까지</strong> 사고 보고 의무를 부과합니다[ACDA 2025]. 제조업·에너지·금융·운송 부문은 탐지·통지 역량이 의무화되어 OT/ICS 모니터링과 관리형 탐지 지출이 추정 18% CAGR로 성장합니다[Kira estimates].</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">15개 부문</span> · 2026년 11월 보고 의무 발효 [ACDA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">인재 부족이 MSSP 기회를 구조화한다</div>
+        <div class="body-text">11만 FTE의 보안 인재 부족[Toyo Keizai 2025]으로 자체 SOC는 대형 계열사를 제외하면 현실적으로 불가능합니다. <strong>중견시장 기업의 MSSP·MDR 침투율은 추정 31%에서 2028F 47%로 상승합니다</strong>[Kira estimates]. 일본어 텔레메트리와 현장 지원에 능숙한 사업자는 구조적 프리미엄을 획득합니다.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">110,000 FTE</span> 부족 · MSSP 31→47% [Toyo Keizai 2025 · Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">제조업 공급망이 격전지다</div>
+        <div class="body-text">제조업은 2025년 랜섬웨어 피해의 28%를 흡수했습니다[NPA 2025]. 아사히그룹·카도카와 사건은 공급업체 한 곳의 침해가 생산 라인 전체를 멈출 수 있음을 입증했습니다. <strong>계열사 핵심 기업들은 2027년부터 1차 공급업체 보안 평가를 조달 조건으로 설정합니다</strong>[Kira estimates]. 이는 제3자 리스크 관리 시장을 형성합니다.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">28%</span> 랜섬웨어 피해가 제조업 집중 [NPA 2025]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — MARKET SIZING -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <div class="divider-title">시장<br>규모 &amp; <span class="accent">성장</span></div>
+    <div class="divider-thesis">일본 정보보안 시장은 — <strong>FY2025 기준 약 JPY 2조</strong> — 지배구조 개혁, 적극적 사이버방어 체제, 제조업 공급망 리스크가 2028년까지 시장 가용 범위를 구조적으로 확대하면서 명목 IT 지출 증가율의 약 두 배 속도로 성장하고 있습니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">FY25–FY28F 전체 시장</div>
+      <div class="toc-pill">세그먼트 분석</div>
+      <div class="toc-pill">수요 동인</div>
+      <div class="toc-pill">METI ×3 계획</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: MARKET SIZING + SEGMENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Market sizing</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">세그먼트 성장: 관리형 서비스와 아이덴티티가 시장 평균을 상회한다.</div>
+    <div class="page-subhead">일본 국내 정보보안 시장은 FY2025에 <strong>JPY 2.0 tn</strong>에 도달했으며[JNSA 2025], 서비스와 툴로 구분됩니다. 관리형 보안 서비스와 아이덴티티/제로 트러스트 제품은 각각 시장 평균의 1.5~2배 수준으로 성장하는 반면, 전통적인 경계 보안 및 온프레미스 어플라이언스 지출은 정체 중입니다.</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>세그먼트 구조: 서비스 선도, 툴 후행</h3>
+          <p>보안 서비스 — 컨설팅, SOC 운영, MSSP/MDR, 인시던트 대응 — 는 <strong>JPY 1.18 tn(전체의 59%)</strong>으로 최대 세그먼트를 유지하며[JNSA 2025 · Kira estimates], 일본의 시스템 인티그레이터 의존 구조를 반영합니다. 툴·제품 지출(엔드포인트, 네트워크, 아이덴티티, 클라우드)이 나머지를 차지합니다. 11만 명의 인재 부족이 기업들을 위탁 운영으로 몰면서 서비스 비중은 상승 추세입니다.</p>
+        </div>
+        <div>
+          <h3>관리형 서비스: 구조적 지출 앵커</h3>
+          <p>사이버보험 언더라이팅과 적극적 사이버방어 체제가 중요 인프라에 위협 모니터링 기준선을 의무화하면서 관리형 보안 서비스는 <strong>전년比 12% 이상</strong> 성장 중입니다[Kira estimates]. NTT, NEC, 후지쯔, 히타치 등 대형 인티그레이터는 기존 IT 서비스 관계에 SOC 운영을 묶어 제공하여 순수 보안 벤더 대비 유통 우위를 점합니다.</p>
+        </div>
+        <div>
+          <h3>METI의 산업 규모 목표</h3>
+          <p>METI의 2025년 3월 사이버보안 산업 전략은 국내 산업 매출을 <strong>JPY 900억에서 10년 내 JPY 3조 이상으로</strong> 3배 확대한다는 목표를 제시합니다[METI 2025]. 중소기업 대상 수요측 조달 보조금과 국산 제품 개발 지원을 병행하여 해외 툴 의존도를 낮추고 시장 가용 범위를 확장하는 것이 정책 의도입니다.</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">보안 시장 세그먼트 분포</div>
+            <div class="chart-subtitle">Japan · JPY bn · FY2025E</div>
+          </div>
+          <div class="chart-unit">JPY BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="270" class="axis-line"/>
+            <line x1="180" y1="270" x2="450" y2="270" class="axis-line"/>
+            <line x1="260" y1="10" x2="260" y2="270" class="grid-line"/>
+            <line x1="340" y1="10" x2="340" y2="270" class="grid-line"/>
+            <line x1="420" y1="10" x2="420" y2="270" class="grid-line"/>
+            <text x="260" y="284" class="axis-text" text-anchor="middle">400</text>
+            <text x="340" y="284" class="axis-text" text-anchor="middle">800</text>
+            <text x="420" y="284" class="axis-text" text-anchor="middle">1,200</text>
+            <rect x="181" y="22" width="236" height="30" class="bar-primary" rx="2"/>
+            <text x="421" y="42" class="label-data">1,180</text>
+            <rect x="181" y="65" width="82" height="30" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="268" y="85" class="label-data">410</text>
+            <rect x="181" y="108" width="40" height="30" class="bar-secondary" rx="2"/>
+            <text x="226" y="128" class="label-data">200</text>
+            <rect x="181" y="151" width="26" height="30" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="212" y="171" class="label-data">130</text>
+            <rect x="181" y="194" width="16" height="30" class="bar-tertiary" rx="2"/>
+            <text x="202" y="214" class="label-data">80</text>
+            <text x="174" y="42" class="axis-text" text-anchor="end">SOC &amp; MSSP</text>
+            <text x="174" y="85" class="axis-text" text-anchor="end">엔드포인트/네트워크</text>
+            <text x="174" y="128" class="axis-text" text-anchor="end">아이덴티티 / ZTA</text>
+            <text x="174" y="171" class="axis-text" text-anchor="end">클라우드 보안</text>
+            <text x="174" y="214" class="axis-text" text-anchor="end">IR &amp; 포렌식</text>
+            <text x="400" y="42" class="label-small" fill="#1E6FFF">+12% CAGR</text>
+            <text x="290" y="85" class="label-small" fill="#6B7280">+7% CAGR</text>
+            <text x="250" y="128" class="label-small" fill="#00A88B">+19% CAGR</text>
+            <text x="236" y="171" class="label-small" fill="#00A88B">+24% CAGR</text>
+            <text x="226" y="214" class="label-small" fill="#D97706">+21% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: JNSA, METI, KIRA 삼각검증 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">JNSA 2025 = JNSA Domestic Information Security Market Survey FY2024 · METI 2025 = METI Cybersecurity Industry Strategy March 2025</div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — THREAT LANDSCAPE -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <div class="divider-title">위협<br><span class="accent">지형</span></div>
+    <div class="divider-thesis">랜섬웨어 사고는 2025년 <strong>134건</strong>에 달했으며 제조업에 집중됩니다. 아사히그룹·카도카와 침해 사건은 단 한 번의 침투로 국가적 공급망이 마비될 수 있음을 보여주었습니다. 국가 행위자들은 일본 다국적기업을 역내 자회사 공략의 경유지로 활용하는 사례가 증가하고 있습니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">랜섬웨어 2025</div>
+      <div class="toc-pill">공급망 공격</div>
+      <div class="toc-pill">국가 행위자</div>
+      <div class="toc-pill">제조업 노출</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: THREAT LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Threat landscape</div>
+      <div class="page-section-counter">09 / 14</div>
+    </div>
+    <div class="page-h1">랜섬웨어는 제조업에 집중되고, 공급망이 가장 빠른 침투 경로다.</div>
+    <div class="page-subhead">경찰청은 2025년 <strong>랜섬웨어 사고 134건</strong>을 기록했습니다. 전년比 17.5% 증가이며, 제조업이 전체 사건의 28%로 단일 최다 피해 부문입니다[NPA 2025]. 카도카와·아사히그룹의 고프로파일 침해는 공급망과 생산 시스템 침투의 비용이 몸값을 수 배 초과함을 입증했습니다.</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>랜섬웨어: 제조업 노출 문제</h3>
+          <p>2025년 확인된 134건 중 제조업이 28%를 차지했으며, 그 뒤를 자동차 관련 산업(8%), 상사(7%), IT(6%)가 따릅니다[NPA 2025]. <strong>2024년 카도카와 침해는 25만 명 이상의 개인 정보를 유출시키고 복구 비용이 JPY 240억을 초과</strong>하여 몸값을 크게 상회했습니다. FY2025 상반기 가장 활발했던 그룹은 Qilin이며, Kawa4096 그룹은 처음부터 일본을 표적으로 삼았습니다[Talos 2025].</p>
+        </div>
+        <div>
+          <h3>공급망: 공급업체 하나가 생산 라인을 멈춘다</h3>
+          <p>2025년 9월 <strong>아사히그룹은 전국 생산·출하 시스템을 마비시킨 공격을 받아</strong> 음료 공급이 중단되고 12개 신제품 출시가 연기됐습니다. 일본의 계열사 중심 공급망 구조는 2차 벤더 한 곳의 침해가 핵심 기업으로 연쇄되는 취약성을 내포합니다. 이 구조적 노출이 적극적 사이버방어법의 공급망 보고 조항을 만든 핵심 동인입니다[ACDA 2025].</p>
+        </div>
+        <div>
+          <h3>국가 행위자: 일본을 경유지로 활용</h3>
+          <p>중국·러시아·북한에 귀속되는 국가 지원 스파이 활동은 랜섬웨어, AI 활용 공격, 공급망 침해와 함께 일본 기업의 4대 주요 위협 중 하나입니다[JPCERT 2025 · Kira estimates]. 행위자들은 일본 다국적기업 본사 네트워크를 ASEAN 역내 자회사 공략의 발판으로 활용하는 사례가 늘고 있습니다.</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">부문별 랜섬웨어 피해 현황 2025</div>
+            <div class="chart-subtitle">Japan · % of reported cases</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="260" class="axis-line"/>
+            <line x1="180" y1="260" x2="450" y2="260" class="axis-line"/>
+            <line x1="270" y1="10" x2="270" y2="260" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="260" class="grid-line"/>
+            <text x="270" y="274" class="axis-text" text-anchor="middle">10%</text>
+            <text x="360" y="274" class="axis-text" text-anchor="middle">20%</text>
+            <rect x="181" y="22" width="252" height="26" class="bar-tertiary" rx="2"/>
+            <text x="437" y="40" class="label-data">28%</text>
+            <rect x="181" y="58" width="72" height="26" class="bar-primary" rx="2"/>
+            <text x="258" y="76" class="label-data">8%</text>
+            <rect x="181" y="94" width="63" height="26" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="249" y="112" class="label-data">7%</text>
+            <rect x="181" y="130" width="54" height="26" class="bar-primary" rx="2" opacity="0.7"/>
+            <text x="240" y="148" class="label-data">6%</text>
+            <rect x="181" y="166" width="45" height="26" class="bar-secondary" rx="2"/>
+            <text x="231" y="184" class="label-data">5%</text>
+            <rect x="181" y="202" width="180" height="20" fill="var(--border)" rx="2"/>
+            <text x="365" y="217" class="label-small">46% — 기타 부문</text>
+            <text x="174" y="40" class="axis-text" text-anchor="end">제조업</text>
+            <text x="174" y="76" class="axis-text" text-anchor="end">자동차</text>
+            <text x="174" y="112" class="axis-text" text-anchor="end">상사</text>
+            <text x="174" y="148" class="axis-text" text-anchor="end">IT</text>
+            <text x="174" y="184" class="axis-text" text-anchor="end">교육</text>
+            <text x="174" y="217" class="axis-text" text-anchor="end">기타</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NATIONAL POLICE AGENCY, TALOS 2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NPA 2025 = National Police Agency ransomware incident report 2025 · Talos 2025 = Cisco Talos Japan ransomware overview 2025 · JPCERT 2025 = JPCERT/CC threat assessment · ACDA 2025 = Active Cyber Defense Act</div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: DIVIDER — GOVERNANCE & REGULATION -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <div class="divider-title">지배구조<br>&amp; <span class="accent">규제</span></div>
+    <div class="divider-thesis">2026년 기업지배구조 코드 개혁은 사이버 리스크를 <strong>준수 또는 설명 의무</strong>로서 이사회 안으로 끌어들입니다. 적극적 사이버방어법은 15개 중요 부문에 구속력 있는 사고 보고를 추가합니다. 두 제도가 결합되어 재량적 보안 예산을 이사회의 비재량적 의무로 전환합니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">CG 코드 2026</div>
+      <div class="toc-pill">적극적 사이버방어</div>
+      <div class="toc-pill">유가증권보고서 공시</div>
+      <div class="toc-pill">정책 타임라인</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: REGULATORY / POLICY TIMELINE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Governance &amp; regulation</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <div class="page-h1">정책 타임라인: 지배구조 개혁과 적극적 방어가 지출 사이클을 압축한다.</div>
+    <div class="page-subhead">일본의 사이버 규제 체계는 2025~2026년에 결정적으로 전진했습니다. <strong>적극적 사이버방어법</strong>은 NISC를 국가사이버보안국(NCO)으로 재편하고 중요 인프라 보고를 추가했으며, <strong>2026년 기업지배구조 코드 개정</strong>은 이사회 사이버 감독을 공시 책무로 격상시켰습니다[FSA 2026 · ACDA 2025]. 준수 기한이 2026~2027년에 집중되어 비재량적 지출의 정점 기간을 형성합니다.</div>
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">일본 사이버 지배구조 및 규제 주요 일정</div>
+        <div class="chart-subtitle" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">2025–2027 · KEY DATES</div>
+        <div class="tl-svg">
+          <svg viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="30" y1="140" x2="690" y2="140" class="tl-axis-line"/>
+            <circle cx="90" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="90" y1="133" x2="90" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="90" y="85" class="tl-marker-date" text-anchor="middle">2025-05</text>
+            <text x="90" y="70" class="tl-marker-label" text-anchor="middle">적극적 사이버방어법</text>
+            <text x="90" y="58" class="tl-marker-body" text-anchor="middle">제정; 선제적</text>
+            <text x="90" y="46" class="tl-marker-body" text-anchor="middle">방어 태세 채택</text>
+            <circle cx="220" cy="140" r="7" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="220" y1="147" x2="220" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="220" y="210" class="tl-marker-date" text-anchor="middle">2025-07</text>
+            <text x="220" y="225" class="tl-marker-label" text-anchor="middle">NISC → NCO</text>
+            <text x="220" y="239" class="tl-marker-body" text-anchor="middle">국가사이버보안국</text>
+            <text x="220" y="251" class="tl-marker-body" text-anchor="middle">설립</text>
+            <circle cx="360" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="360" y1="133" x2="360" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="360" y="85" class="tl-marker-date" text-anchor="middle">2026-04</text>
+            <text x="360" y="70" class="tl-marker-label" text-anchor="middle">CG 코드 초안 공개</text>
+            <text x="360" y="58" class="tl-marker-body" text-anchor="middle">이사회 사이버 감독</text>
+            <text x="360" y="46" class="tl-marker-body" text-anchor="middle">명확화 및 강화</text>
+            <circle cx="500" cy="140" r="9" fill="#B91C1C" class="tl-marker-dot"/>
+            <line x1="500" y1="147" x2="500" y2="195" stroke="#B91C1C" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="500" y="210" class="tl-marker-date" text-anchor="middle">2026-11</text>
+            <text x="500" y="225" class="tl-marker-label" text-anchor="middle" fill="#B91C1C">중요 인프라 보고 개시</text>
+            <text x="500" y="239" class="tl-marker-body" text-anchor="middle">15개 부문 NCO에</text>
+            <text x="500" y="251" class="tl-marker-body" text-anchor="middle">사고 보고 의무화</text>
+            <circle cx="600" cy="140" r="7" fill="#D97706" class="tl-marker-dot"/>
+            <line x1="600" y1="133" x2="600" y2="90" stroke="#D97706" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="600" y="85" class="tl-marker-date" text-anchor="middle">2026-06</text>
+            <text x="600" y="70" class="tl-marker-label" text-anchor="middle">CG 코드 확정</text>
+            <text x="600" y="58" class="tl-marker-body" text-anchor="middle">준수 또는 설명</text>
+            <text x="600" y="46" class="tl-marker-body" text-anchor="middle">공시 개시</text>
+            <circle cx="670" cy="140" r="7" fill="#6B7280" class="tl-marker-dot"/>
+            <line x1="670" y1="147" x2="670" y2="195" stroke="#6B7280" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="670" y="210" class="tl-marker-date" text-anchor="middle">2027</text>
+            <text x="670" y="225" class="tl-marker-label" text-anchor="middle">FY27 공시</text>
+            <text x="670" y="239" class="tl-marker-body" text-anchor="middle">프라임 상장사</text>
+            <text x="670" y="251" class="tl-marker-body" text-anchor="middle">사이버 감독 보고</text>
+          </svg>
+        </div>
+      </div>
+      <div class="policy-rail">
+        <div class="policy-rail-card">
+          <div class="tag">지배구조 신호</div>
+          <div class="title">CG 코드: 이사회 사이버 책무</div>
+          <div class="body">개정안은 사이버 리스크·공급망 무결성·데이터 유출에 대한 이사회 책임을 명확히 하고, IT 투자 논의를 이사회 의제로 끌어올립니다. <strong>중요 사이버 사항은 연간 유가증권보고서로 이전됩니다</strong>[FSA 2026].</div>
+          <div class="src">FSA 2026</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">지출 정점 신호</div>
+          <div class="title">중요 인프라 사고 보고 — 2026년 11월</div>
+          <div class="body">15개 부문의 지정 중요 인프라 사업자는 사고를 NCO에 보고해야 하며, 지정 중요 시스템 배치 전 사전 통보도 의무화됩니다. <strong>탐지·통지 역량이 법적 필수 요건이 됩니다</strong>[ACDA 2025].</div>
+          <div class="src">ACDA 2025</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">선행 신호</div>
+          <div class="title">공급업체 평가를 조달 조건으로</div>
+          <div class="body">의무의 1차 공급업체 확대가 예상되면서 핵심 기업들은 2027F부터 감사 가능한 공급업체 보안을 요구합니다. 검증 가능한 보안 관행이 없는 벤더는 조달에서 배제됩니다[Kira estimates].</div>
+          <div class="src">Kira estimates based on ACDA 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">FSA 2026 = FSA Corporate Governance Code revision draft (Feb / Apr 2026) · ACDA 2025 = Active Cyber Defense Act (enacted May 2025; reporting by Nov 2026)</div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: COMPETITIVE LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Competitive landscape</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <div class="page-h1">경쟁 구조: 인티그레이터 주도, 국산 제품 챔피언 1개사.</div>
+    <div class="page-subhead">일본 사이버보안 시장은 기존 IT 관계에 SOC 운영을 묶어 제공하는 <strong>대형 시스템 인티그레이터가 주도</strong>하며, 트렌드마이크로가 유일한 글로벌 규모의 국산 제품 챔피언입니다. 구매자는 일본어 텔레메트리와 현장 지원을 갖춘 신뢰할 수 있는 국내 사업자를 선호하여 기존 사업자에게 구조적 우위를 부여합니다[Kira estimates].</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">일본 보안 매출 점유율 (추정)</div>
+            <div class="chart-subtitle">주요 사업자 · FY2025E · 추정치</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="160" x2="520" y2="160" class="axis-line"/>
+            <line x1="60" y1="10" x2="60" y2="160" class="axis-line"/>
+            <line x1="160" y1="10" x2="160" y2="160" class="grid-line"/>
+            <line x1="260" y1="10" x2="260" y2="160" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="160" class="grid-line"/>
+            <line x1="460" y1="10" x2="460" y2="160" class="grid-line"/>
+            <text x="160" y="174" class="axis-text" text-anchor="middle">5%</text>
+            <text x="260" y="174" class="axis-text" text-anchor="middle">10%</text>
+            <text x="360" y="174" class="axis-text" text-anchor="middle">15%</text>
+            <text x="460" y="174" class="axis-text" text-anchor="middle">20%</text>
+            <rect x="61" y="16" width="220" height="20" class="bar-primary" rx="2"/>
+            <text x="285" y="31" class="label-data">11%</text>
+            <rect x="61" y="44" width="180" height="20" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="245" y="59" class="label-data">9%</text>
+            <rect x="61" y="72" width="140" height="20" class="bar-secondary" rx="2"/>
+            <text x="205" y="87" class="label-data">7%</text>
+            <rect x="61" y="100" width="120" height="20" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="185" y="115" class="label-data">6%</text>
+            <rect x="61" y="128" width="268" height="16" fill="var(--border)" rx="2"/>
+            <text x="333" y="141" class="label-small">67% — 분산된 기타 사업자</text>
+            <text x="55" y="31" class="axis-text" text-anchor="end">NTT Security</text>
+            <text x="55" y="59" class="axis-text" text-anchor="end">Trend Micro</text>
+            <text x="55" y="87" class="axis-text" text-anchor="end">NEC</text>
+            <text x="55" y="115" class="axis-text" text-anchor="end">Fujitsu/Hitachi</text>
+            <text x="55" y="141" class="axis-text" text-anchor="end">기타</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>시장 구조 논제</h3>
+        <p>일본 보안 지출의 ~11% 이상을 단독으로 통제하는 사업자는 없습니다. <strong>기술이 아닌 유통이 해자</strong>입니다 — 인티그레이터는 기존 IT 관계를 통해 SOC 위탁을 수주하고, 트렌드마이크로는 엔드포인트·클라우드 제품에서 선도합니다. 해외 플랫폼 벤더(Microsoft, Palo Alto, CrowdStrike)는 점유율을 늘리지만 현지화·신뢰 프리미엄 장벽에 직면합니다.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>상위 4사 합산 점유율</span><span class="val">~33% [Kira estimates]</span></div>
+          <div class="stat-line"><span>서비스 vs 제품 비율</span><span class="val">59 / 41 [JNSA 2025]</span></div>
+          <div class="stat-line"><span>MSSP 집중도</span><span class="val">인티그레이터 주도; 상위 3사 ~38% [Kira estimates]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid" style="flex:1;min-height:0;">
+      <div class="comp-card leader" style="position:relative;">
+        <div class="comp-rank">RANK 01 · LOCAL</div>
+        <div class="comp-name">NTT Security</div>
+        <div class="comp-parent">NTT 그룹 · 글로벌 SOC 네트워크 · MSSP 선두</div>
+        <div class="comp-stat-row"><span>JP 매출 추정</span><span class="val">~JPY 220 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>핵심 강점</span><span class="val">SOC + IT 서비스 번들</span></div>
+        <div class="comp-strengths"><strong>강점:</strong> 가장 깊은 기업 관계망; 글로벌 SOC 텔레메트리; 중요 인프라 위탁에 신뢰도 높음; ACD 기반 모니터링 수요 대응에 최적.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">Trend Micro</div>
+        <div class="comp-parent">TSE 상장 · 글로벌 제품 챔피언 · 엔드포인트/클라우드</div>
+        <div class="comp-stat-row"><span>JP 매출 추정</span><span class="val">~JPY 180 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>핵심 강점</span><span class="val">엔드포인트, 클라우드, 플랫폼</span></div>
+        <div class="comp-strengths"><strong>강점:</strong> 유일한 글로벌 규모 일본 제품 벤더; 통합 엔드포인트·이메일·클라우드 라이선스로 2024년 Q3 영업이익 42% 증가; 중소·대기업 모두에서 브랜드 신뢰도 확립.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">NEC</div>
+        <div class="comp-parent">TSE 상장 · 인티그레이터 · 정부 &amp; 통신사</div>
+        <div class="comp-stat-row"><span>JP 매출 추정</span><span class="val">~JPY 140 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>핵심 강점</span><span class="val">정부, 5G, AI 탐지</span></div>
+        <div class="comp-strengths"><strong>강점:</strong> 공공부문·통신사 기반 강고; AI 위협 탐지 5G 코어 내장; 민감 인프라 신뢰도 높음; 생체인증 인접 사업 보유.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">Fujitsu &amp; Hitachi Systems</div>
+        <div class="comp-parent">TSE 상장 · 인티그레이터 · 장기 SOC 운영</div>
+        <div class="comp-stat-row"><span>JP 매출 추정</span><span class="val">~JPY 120 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>핵심 강점</span><span class="val">OT/ICS, 관리형 SOC</span></div>
+        <div class="comp-strengths"><strong>강점:</strong> 제조업·OT 부문 심층 역량; 국내 SOC 장기 운영 실적; 그룹사 연계; 계열사 핵심 기업의 신뢰 파트너 지위.</div>
+      </div>
+    </div>
+    <div class="source-key">매출 및 점유율 추정치는 공개 부문별 데이터와 시장 모델링에 기반한 KIRA 삼각검증 결과입니다. 기업 공식 수치가 아닙니다. JNSA 2025 = JNSA market survey.</div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: CISO HIRING SHIFT + TALENT (USE CASE GRID) -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">CISO shift &amp; talent</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <div class="page-h1">CISO 채용 구조 변화: 지배구조 개혁이 인재 파이프라인보다 빠르게 역할을 재산정한다.</div>
+    <div class="page-subhead">일본의 11만 FTE 보안 인재 부족[Toyo Keizai 2025]은 이사회 친화적 보안 리더십을 요구하는 지배구조 개혁과 정면으로 충돌합니다. 결과는 CISO 역할의 보수 재산정, 파트타임·외부 모델의 부상, 그리고 정부의 RISS 5만 명 목표를 향한 느리지만 가속화되는 진전입니다.</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-num">CISO · 01</div>
+        <div class="uc-title">설치율 vs 공식 직함 격차</div>
+        <div class="uc-body">CISO 또는 동등 직위 설치율은 <strong>대기업의 73.3%에 달하지만, 공식 CISO 직함 사용은 38.7%에 불과합니다</strong>[IPA 2025]. 보안 책임자를 둔 기업 중 64.5%가 임원(役員) 급에 배치하고 49.1%가 CEO에 직접 보고합니다[Nikkei Research 2022]. 지배구조 개혁은 나머지 기업들이 역할을 공식화·격상하도록 압박합니다.</div>
+        <div class="uc-example">SOURCE: IPA 2025 · Nikkei Research 2022</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">CISO · 02</div>
+        <div class="uc-title">보수 재산정</div>
+        <div class="uc-body">시니어 CISO 직책은 현재 <strong>JPY 1,400만~2,500만, 주요 금융기관 역할은 JPY 1,800만 이상</strong>을 요구합니다[Robert Half 2025]. 이사회 친화적 리더 유치를 위해 신주예약권·주식교부신탁 등 형태의 지분 보상이 늘고 있습니다. 프라임 상장사들이 동일한 얕은 인재풀을 놓고 경쟁하면서 희소성 프리미엄이 확대됩니다.</div>
+        <div class="uc-example">SOURCE: Robert Half 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">CISO · 03</div>
+        <div class="uc-title">파트타임 및 외부 CISO 모델</div>
+        <div class="uc-body">상시 이사회 친화적 리더를 채용할 수 없는 기업은 <strong>파트타임 CISO 및 vCISO 서비스</strong>로 전환합니다. 이는 가장 빠르게 성장하는 자문 하위 세그먼트입니다[Kira estimates]. 교육 사업자들은 리더십 격차 해소를 위한 전문 CISO 과정을 출시했으나 자격을 갖춘 강사 수가 수요를 따라가지 못합니다.</div>
+        <div class="uc-example">SOURCE: Kira estimates · vendor disclosures</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">TALENT · 04</div>
+        <div class="uc-title">11만 FTE 부족</div>
+        <div class="uc-body">민간 설문조사는 일본의 보안 인재 부족을 <strong>~11만 FTE</strong>로 추산하며, 공급이 전년比 23.8% 증가했음에도 수급 격차는 사상 최대를 기록 중입니다[Toyo Keizai 2025]. OT 보안, 클라우드 엔지니어링, 위협 인텔리전스 분석이 가장 심각한 공석 영역입니다[Kira estimates].</div>
+        <div class="uc-example">SOURCE: Toyo Keizai 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">TALENT · 05</div>
+        <div class="uc-title">RISS와 5만 명 목표</div>
+        <div class="uc-body">METI의 인력 계획은 <strong>2030년까지 사이버보안 전문가 5만 명 육성</strong>을 목표로 하며, 2025년 현재 등록정보보안스페셜리스트(RISS) 자격 보유자는 약 2만 4,000명입니다[METI 2025]. 자격 취득의 난이도와 시험 내용·실무 간 괴리가 취득을 제한하여 진전이 더딥니다[Kira estimates].</div>
+        <div class="uc-example">SOURCE: METI 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">MSSP · 06</div>
+        <div class="uc-title">인재 부족이 MSSP 수요를 구조화한다</div>
+        <div class="uc-body">부족으로 인해 대형 계열사를 제외한 자체 SOC 운영은 현실적으로 불가능합니다. <strong>중견시장 기업의 MSSP·MDR 침투율은 추정 31%에서 2028F 47%로 상승합니다</strong>[Kira estimates]. 일본어 텔레메트리와 현장 지원에 능숙한 사업자는 해외 원격 납품 대비 구조적 프리미엄을 획득합니다.</div>
+        <div class="uc-example">SOURCE: Kira estimates · company filings</div>
+      </div>
+    </div>
+    <div class="source-key">IPA 2025 = IPA enterprise CISO survey · Nikkei Research 2022 = CISO set-up &amp; reporting-line survey · Robert Half 2025 = CISO compensation guide · Toyo Keizai 2025 = security talent gap report · METI 2025 = METI talent development final report</div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Sources &amp; methodology</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <div class="page-h1">방법론 및 출처</div>
+    <div class="endnote-body">
+      <div class="endnote-col">
+        <h3>Methodology summary</h3>
+        <p>본 분석은 두 가지 근거 흐름을 삼각검증합니다. 수치에 명명된 출처 태그(예: [JNSA 2025], [NPA 2025], [FSA 2026])가 부여된 경우, 해당 데이터는 그 출처에서 비롯되며 전체 인용은 출처 목록에 제공됩니다. [Kira estimates]가 부여된 수치는 KIRA 애널리스트가 정부 공시, 운영사 공시, 채널 점검, 규제 지침 등 공개 입력값을 혼합하여 산출한 것으로, 해당 섹션에 방법론이 공개됩니다. 본 보고서 정량적 주장의 약 41%는 KIRA 자체 산출, 59%는 외부 인용입니다. 시장 규모 수치는 추정치로서 감사 받은 재무 수치가 아닌 방향성 범위로 취급해야 합니다. CAGR 및 예측 수치는 현행 규제 일정이 유지되고 일본 기업 IT 투자에 대한 주요 거시경제·지정학적 충격이 없다는 전제를 바탕으로 합니다.</p>
+        <h3>Source list</h3>
+        <ul>
+          <li><strong>JNSA 2025</strong> — Japan Network Security Association, Domestic Information Security Market Survey FY2024, published June 2025. jnsa.org.</li>
+          <li><strong>NPA 2025</strong> — National Police Agency of Japan, ransomware and cyber incident statistics 2025. npa.go.jp.</li>
+          <li><strong>FSA 2026</strong> — Financial Services Agency, Corporate Governance Code revision draft (Feb / Apr 2026); Action Program for Corporate Governance Reform 2025. fsa.go.jp.</li>
+          <li><strong>ACDA 2025</strong> — Active Cyber Defense Act / Cyber Response Capability Enhancement Act, enacted May 2025; critical-infrastructure reporting by Nov 2026.</li>
+          <li><strong>METI 2025</strong> — Ministry of Economy, Trade and Industry, Cybersecurity Industry Strategy (Mar 2025) and Talent Development Study Group Final Report (May 2025). meti.go.jp.</li>
+        </ul>
+      </div>
+      <div class="endnote-col">
+        <h3>Additional references</h3>
+        <ul>
+          <li><strong>IPA 2025</strong> — Information-technology Promotion Agency, enterprise CISO and security-management survey. ipa.go.jp.</li>
+          <li><strong>Toyo Keizai 2025</strong> — Toyo Keizai analysis of Japan's ~110,000 security-talent shortfall, citing private workforce survey data.</li>
+          <li><strong>Talos 2025</strong> — Cisco Talos, ransomware incidents in Japan H1 2025 and Qilin/Kawa4096 case analysis. blog.talosintelligence.com.</li>
+          <li><strong>Robert Half 2025</strong> — Robert Half Japan salary guide, CISO and security-leadership compensation bands.</li>
+          <li><strong>Nikkei Research 2022</strong> — CISO set-up rate and board reporting-line survey of large Japanese enterprises.</li>
+          <li><strong>JPCERT 2025</strong> — JPCERT/CC threat assessment and incident-handling reporting.</li>
+        </ul>
+        <h3>Coverage notes</h3>
+        <p>시장 규모는 100명 이상 임직원 기준 일본 기업·정부의 정보보안 지출을 포괄하며, 서비스(SOC, MSSP/MDR, 컨설팅, 인시던트 대응)와 제품(엔드포인트, 네트워크, 아이덴티티, 클라우드) 모두를 포함합니다. 소비자 보안 제품과 일본 출신 벤더의 일본 외 시장 매출은 별도 명시되지 않는 한 제외됩니다. OT/ICS 규모에는 중요 인프라 환경에 배치된 하드웨어 및 관리형 서비스 구성 요소가 포함됩니다. 환율 변환은 JPY 155 = USD 1 기준을 사용합니다.</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <p>DISCLAIMER · 본 보고서는 KIRA Research가 정보 제공 및 전략적 방향 제시 목적으로만 작성한 것입니다. 투자 조언, 법률 자문, 또는 어떠한 형태의 권유도 구성하지 않습니다. 시장 규모 수치는 애널리스트 삼각검증 및 공개 데이터에서 도출된 추정치로 내재적 불확실성을 수반합니다. 수신자는 본 자료를 바탕으로 의사결정을 내리기 전 독립적인 검증을 수행해야 합니다. 별도 명시되지 않는 한 수치는 JPY 기준이며, USD 환산액은 참고용입니다. © 2026 KIRA Research. All rights reserved. 서면 동의 없는 복제 또는 재배포를 금합니다.</p>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN CYBERSECURITY 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
