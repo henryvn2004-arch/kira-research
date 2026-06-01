@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 日本の医療機器市場 2026：高齢コホート需要と診療報酬改定</title>
+<meta name="description" content="KIRA Researchによる2026年日本医療機器市場の分析：高齢コホート需要構造、FY2026診療報酬材料価格改定、逆ざや補正、デバイスラグ、国内対輸入構造、主要メーカー、SaMD・AI機器の動向。">
+<meta property="og:title" content="日本の医療機器市場 2026 — KIRA Research">
+<meta property="og:description" content="日本の医療機器市場、FY2026材料価格改定、世界最高齢人口が牽引する需要構造をコンサルティンググレードで分析。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans JP', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>CONFIDENTIAL</strong> · LICENSED SINGLE USER</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Japan · Medical Devices · Market Analysis</div>
+        <h1 class="cover-title">日本<br><span class="accent">医療機器</span><br>2026</h1>
+        <div class="cover-subtitle">高齢コホート需要、FY2026診療報酬材料価格改定、そして機器経済を塗り替える逆ざや補正</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">Market</div>
+          <div class="val">日本</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Industry</div>
+          <div class="val">医療機器</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Year</div>
+          <div class="val"><span class="accent">2026</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Published</div>
+          <div class="val">2026年6月</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">本レポートの構築方法</div>
+    <div class="page-subhead">本分析は2つのエビデンス源から構成されています。<strong>一次情報</strong>――アナリスト統合、流通チャネルチェック、病院調達・製造の実務者ヒアリング――と、<strong>二次的アンカー</strong>――MHLW生産統計、中医協FY2026材料価格改定の概要、PMDA開示情報、METI産業文書、上場メーカー開示資料――です。定量的主張にはすべて明示的な出典タグを付しています。</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>Primary inputs</h3>
+        <div class="method-item">
+          <div class="item-label">調達チャネルチェック</div>
+          <div class="item-desc">病院調達責任者およびグループ購買仲介者へのヒアリング。公表価格表には現れない、実際の診療報酬サイクル上の行動、流通マージン圧縮、代替品採用パターンを把握します。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">アナリスト統合</div>
+          <div class="item-desc">MHLW生産統計、中医協材料価格改定の概要、PMDA承認データなど開示情報を当社アナリストが横断的に三角検証しています。[Kira estimates]として明示。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">事業者・専門家ヒアリング</div>
+          <div class="item-desc">国内機器メーカー、外国製品を取り扱う輸入販売業者、診断画像・治療機器を運用する臨床工学技士からの直接情報を取り入れています。</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>Secondary anchors</h3>
+        <div class="method-item">
+          <div class="item-label">政府・規制当局資料</div>
+          <div class="item-desc">MHLW薬事工業生産動態統計、中医協FY2026材料価格改定概要、PMDA承認・SaMD開示情報、METI医療機器産業文書――各出典と日付を明示して引用。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">上場メーカー開示資料</div>
+          <div class="item-desc">東京証券取引所上場の医療機器メーカーの有価証券報告書・投資家向け資料、および医療部門を持つ複合電機グループのセグメント開示情報。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">三角検証推計</div>
+          <div class="item-desc">単一ソースで数値をカバーできない場合、2〜3の情報源を組み合わせ、その手法を開示しています。[Kira estimates]として表示。定量的主張の約36%が当社推計、64%が外部引用です。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">目次</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">レポート構成</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">エグゼクティブサマリー</div><div class="toc-sub">市場規模・成長・構造・改定サイクルの論点</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">戦略的示唆</div><div class="toc-sub">市場参加者に向けた5つの行動軸</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">市場規模とセグメント</div><div class="toc-sub">市場全体・国内生産対輸入・セグメント内訳</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">セグメント経済</div><div class="toc-sub">画像診断・循環器・整形外科・IVD成長率</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">高齢コホート需要構造</div><div class="toc-sub">人口動態・疾病負担・処置件数の牽引要因</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">FY2026診療報酬改定</div><div class="toc-sub">材料価格改定・逆ざや補正</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">診療報酬政策タイムライン</div><div class="toc-sub">2021〜2027年の主要改定マイルストーンと期限</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">デバイスラグと価格格差</div><div class="toc-sub">外国価格基準・内外価格差・FRP見直し</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">競争環境</div><div class="toc-sub">市場構造・主要メーカーのプロフィール</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">SaMDとAI機器</div><div class="toc-sub">プログラム医療機器承認・AI診断</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">5年間の見通しと予測</div><div class="toc-sub">2030年F市場動向・シナリオ感度分析</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">調査方法と情報源</div><div class="toc-sub">出典構成・引用・カバレッジ注記</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Executive summary</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">人口動態が需要を引き、改定が価格を規定する市場。</div>
+    <div class="page-subhead">日本の医療機器市場は2023年に<strong>約JPY 6.0兆（USD ~400億）に達し</strong>[MHLW 2024]、世界第3位の規模を誇ります。需要は地球上で最も高齢化した人口によって構造的に下支えされています。FY2026診療報酬改定——史上初の逆ざや補正を含む——は、高齢コホートが最高利用率を迎える10年の入口において機器経済を塗り替えつつあります。</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">市場規模 2023年</div>
+        <div class="num">JPY 6.0<span class="unit">兆</span></div>
+        <div class="change">USD ~400億 · 世界第3位</div>
+        <div class="source-tag sec">MHLW 2024</div>
+      </div>
+      <div class="callout">
+        <div class="label">65歳以上人口比率</div>
+        <div class="num">29.3<span class="unit">%</span></div>
+        <div class="change down">3,630万人 · 世界最高水準</div>
+        <div class="source-tag sec">Govt stats 2024</div>
+      </div>
+      <div class="callout">
+        <div class="label">FY2026材料価格改定</div>
+        <div class="num">−0.01<span class="unit">%</span></div>
+        <div class="change">史上初の逆ざや補正を導入</div>
+        <div class="source-tag sec">Chuikyo 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">輸入依存度 2023年</div>
+        <div class="num">55<span class="unit">%</span></div>
+        <div class="change down">輸入JPY 3.32兆 · 前年比+13.8%</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>需要は人口動態的に非裁量的である。</h3>
+        <p>日本は2024年時点で<strong>65歳以上が3,630万人——人口の29.3%</strong>に達し[Govt stats 2024]、10人に1人超が80歳以上となっています。老年従属人口指数は2020年の39%から2040年には71%へ上昇する見通しです[Govt stats 2024]。このコホートが最高需要の機器カテゴリ——画像診断、循環器インターベンション、整形外科インプラント、体外診断——を牽引しており、経済サイクルに依存せず、総人口が減少する中でも市場成長を下支えします。</p>
+        <h3>改定が価格フロアを塗り替える。</h3>
+        <p>FY2026医療費改定は<strong>本体部分+3.09%の引き上げ</strong>——12年以上ぶりのプラス改定——を行い、インフレと賃金コストに対応する一方、特定材料価格を−0.01%とわずかに引き下げました[Chuikyo 2025]。より構造的な変化として、中医協は史上初の逆ざや（gyaku-zaya）補正を承認：円安で病院の購入価格が保険償還価格を上回る特定機器カテゴリについて、実勢価格に基づく引き上げが適用されます[Chuikyo 2025]。純粋なコスト抑制から供給安全保障・臨床価値重視の価格設定へのシフトを示すシグナルです。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">日本医療機器市場規模</div>
+            <div class="chart-subtitle">Japan · USD bn · 2021–2030F</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">20</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">40</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">60</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">80</text>
+            <!-- Scale: 160px = 80bn, 1bn=2px. Values: 2021=36, 2023=40, 2025=42.5, 2027=48, 2030=58 -->
+            <rect x="72" y="108" width="40" height="72" class="bar-primary" rx="2"/>
+            <rect x="135" y="100" width="40" height="80" class="bar-primary" rx="2"/>
+            <rect x="198" y="95" width="40" height="85" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="261" y="84" width="40" height="96" class="bar-secondary" rx="2"/>
+            <rect x="324" y="70" width="40" height="110" class="bar-secondary" rx="2"/>
+            <rect x="387" y="46" width="40" height="134" class="bar-secondary" rx="2"/>
+            <text x="92" y="103" class="label-data" text-anchor="middle">36</text>
+            <text x="155" y="95" class="label-data" text-anchor="middle">40</text>
+            <text x="218" y="90" class="label-data" text-anchor="middle">42</text>
+            <text x="281" y="79" class="label-data" text-anchor="middle">48</text>
+            <text x="344" y="65" class="label-data" text-anchor="middle">54</text>
+            <text x="407" y="41" class="label-data" text-anchor="middle">62</text>
+            <text x="92" y="194" class="axis-text" text-anchor="middle">2021</text>
+            <text x="155" y="194" class="axis-text" text-anchor="middle">2023</text>
+            <text x="218" y="194" class="axis-text" text-anchor="middle">2025E</text>
+            <text x="281" y="194" class="axis-text" text-anchor="middle">2027F</text>
+            <text x="344" y="194" class="axis-text" text-anchor="middle">2028F</text>
+            <text x="407" y="194" class="axis-text" text-anchor="middle">2030F</text>
+            <rect x="280" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="294" y="27" class="axis-text">実績/推計</text>
+            <rect x="385" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="399" y="27" class="axis-text">予測</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MHLW生産統計、KIRA三角検証 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MHLW 2024 = MHLW Pharmaceutical &amp; Medical Device Production Statistics (2023 data) · Chuikyo 2025 = Central Social Insurance Medical Council FY2026 reform outline · Govt stats 2024 = national population statistics</div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Strategic implications</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">市場参加者に向けた5つの戦略的示唆。</div>
+    <div class="page-subhead">本レポートの構造的知見から導出しています。各示唆は定量的データポイントに裏付けられており、市場参加者は<strong>方向性のシグナル</strong>として捉えるべきであり、単一点予測として扱うべきではありません。</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">逆ざや補正に向けたポジショニングを</div>
+        <div class="body-text">FY2026は円安下で損失を被っているデバイスカテゴリへの実勢価格ベースの保険点数引き上げを導入します[Chuikyo 2025]。<strong>価格報告を適切に行った輸入販売業者</strong>がマージンを回復し、FX損失を暗黙に吸収し続けた事業者は、より証拠を整備した競合への利益流出を余儀なくされます。</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">−0.01%</span> ヘッドライン、ただしカテゴリ別引き上げは適用可能 [Chuikyo 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">高齢コホートはインプラントとIVDの拡大を支持する</div>
+        <div class="body-text">整形外科インプラントと体外診断は人口動態的に最も純粋な成長セグメントです。<strong>日本IVDはUSD 48.4億（2024年）からUSD 70.2億（2033年）へ拡大する見通し</strong>[secondary]。人工関節置換術と循環器インターベンションの処置件数は、人口の10%超を占める80歳以上コホートとともに増加します。</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">USD 70億</span> IVD 2033年 · 4.2% CAGR [secondary]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">臨床価値重視の価格設定はエビデンスを持つ企業に有利</div>
+        <div class="body-text">中医協は外国価格基準から臨床価値・患者アウトカム重視へシフトしています[Chuikyo 2025]。<strong>日本人集団の臨床データを保有するメーカー</strong>がプレミアム価格カテゴリで優位に立ち、海外価格のみに依存する製品は費用対効果評価を通じた引き下げリスクにさらされます。</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">−4.29%</span> 費用対効果審査における中央値調整 [Chuikyo 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">デバイスラグ改革が外資参入の窓を開く</div>
+        <div class="body-text">2026年5月以降、強固なエビデンスを持ち代替品のない機器・IVDは条件付き登録の対象となります[secondary]。米国FDAが同等規制当局として認定され[secondary]、<strong>日本製品を先行例に持つ同種品</strong>が優先審査を受け、歴史的なデバイスラグによる参入障壁が縮小します。</div>
+        <div class="anchor">ANCHOR: 条件付き登録 <span class="num-anchor">2026年5月</span> 施行 [secondary]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">SaMD・AIが新たな保険適用フロンティアとなる</div>
+        <div class="body-text"><strong>約100件のAI搭載SaMDがPMDA承認と保険適用を取得済み</strong>[secondary]。IDATENフレームワークはソフトウェア更新の事前承認後通知を可能とし、2025年10月のPMDA AIアクションプランは審査プロセスの加速を示唆します。画像診断AIが最初の保険適用領域となっています。</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">~100件</span> AI SaMD承認・保険適用済み [secondary]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — MARKET SIZING -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <div class="divider-title">市場規模&amp;<br><span class="accent">セグメント</span></div>
+    <div class="divider-thesis">日本の機器市場は<strong>構造的に輸入依存</strong>——輸入JPY 3.32兆が国内生産JPY 2.67兆を上回る——であり、為替と、円安を病院購買圧力に変換する診療報酬改定の双方にリスクをさらしています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">総市場 2023年</div>
+      <div class="toc-pill">国内生産対輸入</div>
+      <div class="toc-pill">セグメント内訳</div>
+      <div class="toc-pill">成長率</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: MARKET SIZING + SEGMENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Market sizing</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">セグメント成長：画像診断とIVDが基盤、インプラントが加速。</div>
+    <div class="page-subhead">日本の機器市場全体は2023年に<strong>JPY 5兆9,960億</strong>[MHLW 2024]に達し、国内生産（JPY 2.67兆、前年比+3.6%）と輸入（JPY 3.32兆、前年比+13.8%）に分かれます。国内出荷はJPY 4.87兆、輸出はJPY 1.13兆で、純輸入国構造を確認しています。セグメント成長率は人口動態的な牽引力に応じて大きく分岐します。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>輸入依存の基幹構造</h3>
+          <p>輸入は2023年に<strong>前年比13.8%増</strong>のJPY 3.32兆へ拡大しました[MHLW 2024]。円安による輸入コスト押し上げと、心臓リズム管理機器・冠動脈ステント・高性能画像診断モダリティなど外国製治療機器への持続的依存が主因です。主要輸入元は米国、アイルランド、中国です。この構造は為替リスクと、輸入業者がコストを転嫁できるかを左右する診療報酬タイミングに対して市場を鋭敏にさらします。</p>
+        </div>
+        <div>
+          <h3>国内生産が集中する領域</h3>
+          <p>製品別では、2023年の国内生産上位カテゴリは人工内臓（JPY 2,370億）、医療用X線装置・管（JPY 2,230億）、血液検査機器（JPY 2,200億）、生体機能計測機器（JPY 1,430億）でした[MHLW 2024]。画像診断と体外診断は日本メーカーが真のグローバル規模を持つ領域であり、治療インプラントは引き続き輸入主導です。</p>
+        </div>
+        <div>
+          <h3>セグメント成長の分岐</h3>
+          <p>体外診断は<strong>USD 48.4億（2024年）からUSD 70.2億（2033年）へ、CAGR 4.2%</strong>で拡大する見通しです[secondary]。画像診断は慢性疾患の早期発見とAI支援読影に牽引されて最大シェアを維持します。整形外科は人口の10%超を占める80歳以上コホートが人工関節置換術の件数を押し上げ、人口動態的に最も純粋な加速セグメントです[Kira estimates]。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">機器セグメント内訳</div>
+            <div class="chart-subtitle">Japan · USD bn · 2025E</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="260" class="axis-line"/>
+            <line x1="180" y1="260" x2="450" y2="260" class="axis-line"/>
+            <line x1="247" y1="10" x2="247" y2="260" class="grid-line"/>
+            <line x1="314" y1="10" x2="314" y2="260" class="grid-line"/>
+            <line x1="381" y1="10" x2="381" y2="260" class="grid-line"/>
+            <text x="247" y="274" class="axis-text" text-anchor="middle">4</text>
+            <text x="314" y="274" class="axis-text" text-anchor="middle">8</text>
+            <text x="381" y="274" class="axis-text" text-anchor="middle">12</text>
+            <rect x="181" y="22" width="209" height="30" class="bar-primary" rx="2"/>
+            <text x="395" y="42" class="label-data">12.5</text>
+            <rect x="181" y="65" width="97" height="30" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="283" y="85" class="label-data">5.8</text>
+            <rect x="181" y="108" width="87" height="30" class="bar-secondary" rx="2"/>
+            <text x="273" y="128" class="label-data">5.2</text>
+            <rect x="181" y="151" width="74" height="30" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="260" y="171" class="label-data">4.4</text>
+            <rect x="181" y="194" width="201" height="30" class="bar-tertiary" rx="2" opacity="0.7"/>
+            <text x="387" y="214" class="label-data">12.0</text>
+            <text x="174" y="42" class="axis-text" text-anchor="end">画像診断</text>
+            <text x="174" y="85" class="axis-text" text-anchor="end">循環器</text>
+            <text x="174" y="128" class="axis-text" text-anchor="end">体外診断</text>
+            <text x="174" y="171" class="axis-text" text-anchor="end">整形外科</text>
+            <text x="174" y="214" class="axis-text" text-anchor="end">その他機器</text>
+            <text x="395" y="55" class="label-small" fill="#1E6FFF">~5% CAGR</text>
+            <text x="285" y="98" class="label-small" fill="#6B7280">~6% CAGR</text>
+            <text x="276" y="141" class="label-small" fill="#00A88B">+4.2% CAGR</text>
+            <text x="262" y="184" class="label-small" fill="#00A88B">~7% CAGR</text>
+            <text x="389" y="227" class="label-small" fill="#6B7280">mixed</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MHLW、セグメント二次データ、KIRA三角検証 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MHLW 2024 = MHLW Pharmaceutical &amp; Medical Device Production Statistics, 2023 calendar-year data · secondary = published segment forecasts, multi-source</div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — AGING DEMAND -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <div class="divider-title">高齢コホート<br><span class="accent">需要</span></div>
+    <div class="divider-thesis"><strong>人口の29.3%が65歳以上</strong>を占め、老年従属人口指数が2040年に向け71%へ上昇する中、日本の機器需要は世界で最も強固な人口動態的裏付けを持ちます——総人口が減少する中でも数量を下支えする構造的な床となっています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">人口動態 2024年</div>
+      <div class="toc-pill">疾病負担</div>
+      <div class="toc-pill">処置件数</div>
+      <div class="toc-pill">介護需要</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: AGING DEMAND DRIVERS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Demand drivers</div>
+      <div class="page-section-counter">09 / 14</div>
+    </div>
+    <div class="page-h1">機器需要数量を下支えする人口動態的な床。</div>
+    <div class="page-subhead">日本は2024年に<strong>65歳以上が3,625万人——総人口の29.3%</strong>という過去最多を記録しました[Govt stats 2024]。この比率は2040年に34.8%、2045年には36.3%に達する見通しです。疾病・処置負担は機器集約的なカテゴリに集中しており、経済・財政サイクルに依らない構造的な需要の頑健性をもたらしています。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>80歳以上コホートの転換点</h3>
+          <p><strong>日本の居住者の10人に1人以上が現在80歳以上</strong>です[Govt stats 2024]——循環器インターベンション、人工関節置換術、白内障手術、慢性疾患モニタリングの一人あたり利用率が最も高いコホートです。老年従属人口指数は2020年の39%から2040年の71%へ上昇し、保険制度を支える労働年齢人口基盤を圧迫しながら、給付を受ける人口を拡大させます。機器需要は増加しますが、それを償還する財政的余力は同じペースでは伸びません。</p>
+        </div>
+        <div>
+          <h3>疾病負担が機器ミックスを規定する</h3>
+          <p>がんと循環器疾患が依然として主要な死因であり、早期発見画像診断（MRI・CT）とインターベンショナルカーディオロジーへの需要を持続させます。糖尿病と腎疾患は透析とIVDの基盤を支えており、国内メーカーが規模を持つカテゴリです。白内障と整形外科処置の件数は75歳以上コホートとほぼ線形に増加します[Kira estimates]。機器ミックスは一時的な資本設備よりも、高頻度・反復消耗品カテゴリへ傾いています。</p>
+        </div>
+        <div>
+          <h3>介護キャパシティの制約</h3>
+          <p><strong>介護サービス事業者が需要を充足できている市区町村は全体の40%にとどまります</strong>[Govt stats 2024]。この労働力不足が介護ロボット・遠隔モニタリング・AI支援診断の最大の牽引力となっています——希少な臨床人材を代替する技術です。政府は介護人材が需要コホートと同じペースでは増やせないからこそ、機器活用型ケアモデルへの支援を強化しています。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">65歳以上人口比率の推移</div>
+            <div class="chart-subtitle">Japan · % of population · 2010–2045F</div>
+          </div>
+          <div class="chart-unit">% 65+</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line x1="50" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="50" y1="70" x2="460" y2="70" class="grid-line"/>
+            <line x1="50" y1="120" x2="460" y2="120" class="grid-line"/>
+            <line x1="50" y1="170" x2="460" y2="170" class="grid-line"/>
+            <line x1="50" y1="220" x2="460" y2="220" class="axis-line"/>
+            <line x1="50" y1="20" x2="50" y2="220" class="axis-line"/>
+            <text x="42" y="223" class="axis-text" text-anchor="end">10</text>
+            <text x="42" y="173" class="axis-text" text-anchor="end">20</text>
+            <text x="42" y="123" class="axis-text" text-anchor="end">30</text>
+            <text x="42" y="73" class="axis-text" text-anchor="end">40</text>
+            <polyline points="70,155 135,137 200,127 250,123.5 320,114 405,96 450,88.5" fill="none" stroke="#1E6FFF" stroke-width="2.5"/>
+            <circle cx="70" cy="155" r="3.5" fill="#1E6FFF"/>
+            <circle cx="135" cy="137" r="3.5" fill="#1E6FFF"/>
+            <circle cx="200" cy="127" r="3.5" fill="#1E6FFF"/>
+            <circle cx="250" cy="123.5" r="4.5" fill="#1E6FFF"/>
+            <circle cx="320" cy="114" r="3.5" fill="#00A88B"/>
+            <circle cx="405" cy="96" r="3.5" fill="#00A88B"/>
+            <circle cx="450" cy="88.5" r="3.5" fill="#00A88B"/>
+            <text x="70" y="148" class="label-data" text-anchor="middle">23.0</text>
+            <text x="250" y="116" class="label-data" text-anchor="middle">29.3</text>
+            <text x="405" y="89" class="label-data" text-anchor="middle">34.8</text>
+            <text x="450" y="81" class="label-data" text-anchor="middle">36.3</text>
+            <text x="70" y="234" class="axis-text" text-anchor="middle">2010</text>
+            <text x="135" y="234" class="axis-text" text-anchor="middle">2015</text>
+            <text x="200" y="234" class="axis-text" text-anchor="middle">2020</text>
+            <text x="250" y="234" class="axis-text" text-anchor="middle">2024</text>
+            <text x="320" y="234" class="axis-text" text-anchor="middle">2030F</text>
+            <text x="405" y="234" class="axis-text" text-anchor="middle">2040F</text>
+            <text x="450" y="234" class="axis-text" text-anchor="middle">2045F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 国勢統計・将来人口推計 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Govt stats 2024 = national population statistics &amp; IPSS long-range projections · Kira estimates = analyst triangulation of procedure-volume drivers</div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: DIVIDER — REIMBURSEMENT REFORM -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <div class="divider-title">FY2026<br>診療報酬<span class="accent">改定</span></div>
+    <div class="divider-thesis">FY2026改定は<strong>本体+3.09%引き上げ</strong>——12年ぶりのプラス全体改定——と、わずかな材料価格変更、そして史上初の逆ざや補正を組み合わせています。機器価格が自動的に侵食される時代は終わりつつあり、供給安全保障と臨床価値が価格決定ロジックに加わっています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">材料価格改定</div>
+      <div class="toc-pill">逆ざや補正</div>
+      <div class="toc-pill">費用対効果</div>
+      <div class="toc-pill">政策タイムライン</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: REIMBURSEMENT / POLICY TIMELINE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Reimbursement policy</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <div class="page-h1">政策タイムライン：コスト抑制から臨床価値重視の価格設定へ。</div>
+    <div class="page-subhead">日本は2年ごとのサイクルで診療報酬を改定します。FY2026改定は構造的に異質です：本体は<strong>+3.09%</strong>引き上げてインフレと賃金圧力に対応し、特定材料価格は−0.01%、そして中医協は損失を被っている機器への実勢価格ベースの引き上げを初めて承認し、逆ざやを解消します[Chuikyo 2025]。</div>
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">日本機器診療報酬改定マイルストーン</div>
+        <div class="chart-subtitle" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">2021–2027 · 主要改定日程</div>
+        <div class="tl-svg">
+          <svg viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="30" y1="140" x2="690" y2="140" class="tl-axis-line"/>
+            <circle cx="90" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="90" y1="133" x2="90" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="90" y="85" class="tl-marker-date" text-anchor="middle">2022-04</text>
+            <text x="90" y="70" class="tl-marker-label" text-anchor="middle">FY2022材料価格改定</text>
+            <text x="90" y="58" class="tl-marker-body" text-anchor="middle">外国価格基準見直し；</text>
+            <text x="90" y="46" class="tl-marker-body" text-anchor="middle">価格格差の縮小</text>
+            <circle cx="240" cy="140" r="7" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="240" y1="147" x2="240" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="240" y="210" class="tl-marker-date" text-anchor="middle">2024-04</text>
+            <text x="240" y="225" class="tl-marker-label" text-anchor="middle">FY2024改定</text>
+            <text x="240" y="239" class="tl-marker-body" text-anchor="middle">費用対効果評価</text>
+            <text x="240" y="251" class="tl-marker-body" text-anchor="middle">対象範囲拡大</text>
+            <circle cx="380" cy="140" r="7" fill="#D97706" class="tl-marker-dot"/>
+            <line x1="380" y1="133" x2="380" y2="90" stroke="#D97706" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="380" y="85" class="tl-marker-date" text-anchor="middle">2025-05</text>
+            <text x="380" y="70" class="tl-marker-label" text-anchor="middle">薬機法改正</text>
+            <text x="380" y="58" class="tl-marker-body" text-anchor="middle">品質・安全管理者制度；</text>
+            <text x="380" y="46" class="tl-marker-body" text-anchor="middle">2027年5月までに完全施行</text>
+            <circle cx="520" cy="140" r="9" fill="#B91C1C" class="tl-marker-dot"/>
+            <line x1="520" y1="147" x2="520" y2="195" stroke="#B91C1C" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="520" y="210" class="tl-marker-date" text-anchor="middle">2026-06</text>
+            <text x="520" y="225" class="tl-marker-label" text-anchor="middle" fill="#B91C1C">FY2026材料価格適用</text>
+            <text x="520" y="239" class="tl-marker-body" text-anchor="middle">−0.01%＋逆ざや</text>
+            <text x="520" y="251" class="tl-marker-body" text-anchor="middle">補正施行</text>
+            <circle cx="650" cy="140" r="7" fill="#6B7280" class="tl-marker-dot"/>
+            <line x1="650" y1="133" x2="650" y2="90" stroke="#6B7280" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="650" y="85" class="tl-marker-date" text-anchor="middle">2027-05</text>
+            <text x="650" y="70" class="tl-marker-label" text-anchor="middle">薬機法完全施行</text>
+            <text x="650" y="58" class="tl-marker-body" text-anchor="middle">条件付き登録；</text>
+            <text x="650" y="46" class="tl-marker-body" text-anchor="middle">サプライチェーン監督</text>
+          </svg>
+        </div>
+      </div>
+      <div class="policy-rail">
+        <div class="policy-rail-card">
+          <div class="tag">ヘッドライン変更</div>
+          <div class="title">本体+3.09%、材料−0.01%</div>
+          <div class="body">FY2026本体は<strong>+3.09%引き上げ——12年ぶりのプラス全体改定</strong>——でインフレと賃金コストに対応し、特定医療材料は−0.01%[Chuikyo 2025]。</div>
+          <div class="src">Chuikyo 2025</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">構造的転換</div>
+          <div class="title">逆ざや補正（史上初）</div>
+          <div class="body">円安で病院購入価格が保険点数を上回った機器について、中医協は条件付きで保険点数を実勢価格に近づける引き上げを行い、<strong>機器供給安全保障を確保します</strong>[Chuikyo 2025]。</div>
+          <div class="src">Chuikyo 2025</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">価格規律</div>
+          <div class="title">費用対効果調整</div>
+          <div class="body">費用対効果価格調整の対象となった38品目において、<strong>中央値調整幅は−4.29%</strong>[Chuikyo 2025]。外国価格比較ではなく臨床価値が、プレミアムカテゴリの価格決定を左右する度合いを強めています。</div>
+          <div class="src">Chuikyo 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">Chuikyo 2025 = Central Social Insurance Medical Council FY2026 materials reform outline &amp; fee-revision decision · PMD Act = Pharmaceutical and Medical Device Act amendment, May 2025</div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: COMPETITIVE LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Competitive landscape</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <div class="page-h1">競争構造：画像診断で国内優位、治療機器で輸入主導。</div>
+    <div class="page-subhead">市場は<strong>構造的に二分</strong>されています。国内メーカーは画像診断・内視鏡・IVDで真のグローバル規模を持ち、外資系メーカーは高マージンの治療インプラントカテゴリ——心臓リズム管理・構造的心疾患・整形外科インプラント——で主導しており、これが55%の輸入依存度の中核的な要因です[Kira estimates]。</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">主要国内メーカー</div>
+            <div class="chart-subtitle">医療セグメント売上 · 2024年 · USD bn 推計</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="90" y1="160" x2="520" y2="160" class="axis-line"/>
+            <line x1="90" y1="10" x2="90" y2="160" class="axis-line"/>
+            <line x1="190" y1="10" x2="190" y2="160" class="grid-line"/>
+            <line x1="290" y1="10" x2="290" y2="160" class="grid-line"/>
+            <line x1="390" y1="10" x2="390" y2="160" class="grid-line"/>
+            <line x1="490" y1="10" x2="490" y2="160" class="grid-line"/>
+            <text x="190" y="174" class="axis-text" text-anchor="middle">2</text>
+            <text x="290" y="174" class="axis-text" text-anchor="middle">4</text>
+            <text x="390" y="174" class="axis-text" text-anchor="middle">6</text>
+            <text x="490" y="174" class="axis-text" text-anchor="middle">8</text>
+            <rect x="91" y="16" width="250" height="20" class="bar-primary" rx="2"/>
+            <text x="345" y="31" class="label-data">5.0</text>
+            <rect x="91" y="44" width="210" height="20" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="305" y="59" class="label-data">4.2</text>
+            <rect x="91" y="72" width="200" height="20" class="bar-secondary" rx="2"/>
+            <text x="295" y="87" class="label-data">4.0</text>
+            <rect x="91" y="100" width="190" height="20" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="285" y="115" class="label-data">3.8</text>
+            <rect x="91" y="128" width="100" height="20" class="bar-tertiary" rx="2"/>
+            <text x="195" y="143" class="label-data">2.0</text>
+            <text x="85" y="31" class="axis-text" text-anchor="end">Olympus</text>
+            <text x="85" y="59" class="axis-text" text-anchor="end">Terumo</text>
+            <text x="85" y="87" class="axis-text" text-anchor="end">Canon Medical</text>
+            <text x="85" y="115" class="axis-text" text-anchor="end">Fujifilm (med)</text>
+            <text x="85" y="143" class="axis-text" text-anchor="end">Nipro</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>市場構造の論点</h3>
+        <p>市場全体を単独で支配する企業は存在せず、主導権はカテゴリ別に異なります。<strong>国内事業者が優位に立つのは日本が製造基盤を持つ領域</strong>——画像診断・内視鏡・透析・IVD試薬です。構造的心疾患・電気生理・整形外科インプラントでは外資系多国籍企業が主導し、デバイスラグ・価格格差の議論が最も鋭く交わされる領域です。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>輸入依存度</span><span class="val">~55% [Kira estimates]</span></div>
+          <div class="stat-line"><span>内視鏡グローバル優位</span><span class="val">国内 [secondary]</span></div>
+          <div class="stat-line"><span>治療インプラント</span><span class="val">輸入主導 [Kira estimates]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid" style="flex:1;min-height:0;">
+      <div class="comp-card leader" style="position:relative;">
+        <div class="comp-rank">CATEGORY · ENDOSCOPY</div>
+        <div class="comp-name">Olympus</div>
+        <div class="comp-parent">東証上場 · 内視鏡・外科機器</div>
+        <div class="comp-stat-row"><span>医療部門売上推計</span><span class="val">USD ~50億 [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>グローバル強み</span><span class="val">消化器内視鏡で世界首位</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>消化器内視鏡で圧倒的なグローバルシェア。治療・エネルギーデバイスポートフォリオを拡充中。日本国内および輸出先の病院に深い導入実績。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">CATEGORY · VASCULAR</div>
+        <div class="comp-name">Terumo</div>
+        <div class="comp-parent">東証上場 · 循環器・血液・細胞</div>
+        <div class="comp-stat-row"><span>医療部門売上推計</span><span class="val">USD ~42億 [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>グローバル強み</span><span class="val">血管インターベンション</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>カテーテル・経皮的血管インターベンション。強力な血液管理事業。輸入主導の治療カテゴリで競合する数少ない国内企業の一つ。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">CATEGORY · IMAGING</div>
+        <div class="comp-name">Canon Medical</div>
+        <div class="comp-parent">キヤノン子会社 · CT・MRI・超音波</div>
+        <div class="comp-stat-row"><span>医療部門売上推計</span><span class="val">USD ~40億 [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>グローバル強み</span><span class="val">画像診断</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>フルライン画像診断。AI支援再構成技術。画像診断AIが保険適用に入る中、国内導入基盤の優位を活かせます。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">CATEGORY · IMAGING/IVD</div>
+        <div class="comp-name">Fujifilm (Healthcare)</div>
+        <div class="comp-parent">東証上場 · 画像診断・IVD・内視鏡</div>
+        <div class="comp-stat-row"><span>医療部門売上推計</span><span class="val">USD ~38億 [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>グローバル強み</span><span class="val">画像診断＋バイオCDMO</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>画像診断とIVDの広範なポートフォリオ。内視鏡での挑戦者ポジション。レガシーな画像科学技術のヘルスケア成長軸への転換。</div>
+      </div>
+    </div>
+    <div class="source-key">売上数値はKIRAが開示医療セグメントデータから三角検証した推計値であり、公式の全社数値ではありません。secondary = published global category-share data.</div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: SaMD / AI DEVICES + DEVICE LAG -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">SaMD, AI &amp; device lag</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <div class="page-h1">ソフトウェア機器と参入格差の縮小。</div>
+    <div class="page-subhead">日本は悪名高いデバイスラグの後進国から積極的な改革推進国へと転換しました。<strong>約100件のAI搭載SaMDがPMDA承認と保険適用を取得済み</strong>[secondary]であり、2025年5月の薬機法改正とFDA同等性認定が外国製治療機器の参入障壁を縮小しています。</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-num">SAMD · 01</div>
+        <div class="uc-title">AI SaMDが保険適用に到達</div>
+        <div class="uc-body">約<strong>100件のAI搭載プログラム医療機器</strong>がPMDA承認と保険適用を取得しています[secondary]。放射線科・内視鏡の画像解析ソフトウェアが最初の保険適用領域であり、日本の画像診断ハードウェアにおける国内の強みと整合しています。</div>
+        <div class="uc-example">SOURCE: secondary · PMDA disclosures</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">SAMD · 02</div>
+        <div class="uc-title">IDATENと継続的アップデート</div>
+        <div class="uc-body"><strong>IDATENフレームワーク</strong>は、再承認ではなく簡略な届出によるソフトウェアアップデートを可能にします[secondary]。再学習によって改善するAIモデルにとって決定的な仕組みであり、固定機能ハードウェアと比較してSaMDのライフサイクル規制コストを低減します。</div>
+        <div class="uc-example">SOURCE: secondary · PMDA framework</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">SAMD · 03</div>
+        <div class="uc-title">PMDAのAIアクションプラン</div>
+        <div class="uc-body"><strong>2025年10月にPMDAはAI活用に関するアクションプランを公表し</strong>[secondary]、日本は2025年6月にAI推進法を制定しました。規制当局がAI機器の審査を迅速化する準備を進めるシグナルであり、専用のSaMD事前相談窓口が申請前サイクルを短縮します。</div>
+        <div class="uc-example">SOURCE: secondary · PMDA Oct 2025</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">LAG · 04</div>
+        <div class="uc-title">デバイスラグと価格格差</div>
+        <div class="uc-body">歴史的な保険点数格差は深刻でした——ペースメーカーは<strong>米国・イタリア水準の3〜4倍、冠動脈ステントは6〜10倍</strong>の価格設定[secondary]——価格格差と、海外承認機器の日本導入遅れというデバイスラグの両方を招いていました。外国価格調整の繰り返しで格差は縮小しており、中医協は外国価格基準から臨床価値へのウェイトシフトを進めています。</div>
+        <div class="uc-example">SOURCE: secondary · JMARI price-gap survey</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">LAG · 05</div>
+        <div class="uc-title">条件付き登録が参入を開く</div>
+        <div class="uc-body"><strong>2026年5月以降、強固なエビデンスを持ち代替品のない機器・IVDは条件付き登録承認の対象となります</strong>[secondary]。この制度は2025年5月の薬機法改正と組み合わされ、海外では利用可能だが日本では入手できなかった機器による患者不利益の解消を目指します。</div>
+        <div class="uc-example">SOURCE: secondary · PMD Act 2025</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">LAG · 06</div>
+        <div class="uc-title">FDA同等性認定と優先審査</div>
+        <div class="uc-body">日本は<strong>米国FDAを同等規制当局として認定しました</strong>（政令第362号）[secondary]。日本の先行例を持つ米国既承認の同種品は優先審査を受け、外資参入タイムラインが構造的に短縮され、デバイスラグ批判への直接的な対応となっています。</div>
+        <div class="uc-example">SOURCE: secondary · Cabinet Order 362</div>
+      </div>
+    </div>
+    <div class="source-key">secondary = PMDA disclosures, PMD Act 2025 amendment, JMARI internal-external price-gap survey, Cabinet Order No. 362, published regulatory analyses</div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Sources &amp; methodology</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <div class="page-h1">調査方法と情報源</div>
+    <div class="endnote-body">
+      <div class="endnote-col">
+        <h3>Methodology summary</h3>
+        <p>本分析は2つのエビデンス源を三角検証しています。数値に名前付き出典タグ（例：[MHLW 2024]、[Chuikyo 2025]、[Govt stats 2024]）が付いている場合、当該データはその出典に基づいており、完全な引用情報を出典リストに記載しています。[Kira estimates]が付いている場合、当社アナリストが政府刊行物・メーカー開示資料・チャネルチェック・規制指針などの開示情報から、関連セクションに開示する手法によって数値を導出しています。本レポートの定量的主張の約36%が当社推計、64%が外部引用です。USD数値は円からの概算換算であり四捨五入しています。市場規模は方向性を示す範囲として扱うべきであり、監査済みの確定値ではありません。CAGR予測は現行の診療報酬スケジュールが維持され、機器サプライチェーンに大きな混乱が生じないことを前提としています。</p>
+        <h3>Source list</h3>
+        <ul>
+          <li><strong>MHLW 2024</strong> — Ministry of Health, Labour and Welfare, Pharmaceutical and Medical Device Production Statistics (Yakuji Kogyo Seisan Dotai Tokei), 2023 calendar-year data. mhlw.go.jp.</li>
+          <li><strong>Chuikyo 2025</strong> — Central Social Insurance Medical Council (Chuo Shakai Hoken Iryo Kyogikai), FY2026 medical fee revision and materials-price reform outline, approved December 2025. mhlw.go.jp.</li>
+          <li><strong>Govt stats 2024</strong> — National population statistics and IPSS long-range population projections, 2024 estimates. stat.go.jp / ipss.go.jp.</li>
+          <li><strong>METI 2023</strong> — Ministry of Economy, Trade and Industry, medical-device industry challenges working paper, May 2023. meti.go.jp.</li>
+          <li><strong>PMDA 2025</strong> — Pharmaceuticals and Medical Devices Agency, SaMD approval data and AI operations action plan, October 2025. pmda.go.jp.</li>
+        </ul>
+      </div>
+      <div class="endnote-col">
+        <h3>Additional references</h3>
+        <ul>
+          <li><strong>PMD Act 2025</strong> — Pharmaceutical and Medical Device Act amendment, enacted May 2025; full implementation expected by May 2027.</li>
+          <li><strong>Cabinet Order 362</strong> — Designation of the US FDA as an equivalent regulatory authority for priority device review.</li>
+          <li><strong>JMARI price-gap</strong> — Japan Medical Association Research Institute, survey of internal-external price gaps for specified medical materials.</li>
+          <li><strong>Terumo AR 2025</strong> — Terumo Corporation, financial results for the fiscal year ended March 2025. Tokyo Stock Exchange filing.</li>
+          <li><strong>JFMDA MDPRO</strong> — Japan Federation of Medical Devices Associations, market-trend data series. jfmda.gr.jp.</li>
+          <li><strong>Segment forecasts</strong> — multi-source published segment forecasts for IVD, diagnostic imaging, and orthopedic categories, triangulated.</li>
+        </ul>
+        <h3>Coverage notes</h3>
+        <p>市場規模はMHLWが報告する日本医療機器市場全体——国内生産＋輸入、国内出荷ベースでは輸出を除く——をカバーしています。セグメントUSD数値はKIRAが円建て生産・貿易データと公表セグメント予測を組み合わせて換算・按分した推計値です。SaMD・AI機器件数は保険適用を伴うPMDA累積承認数を反映しています。医薬品（薬剤）の診療報酬変更は、機器経済に影響を与える場合のみ参照しています。</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <p>免責事項 · 本レポートはKIRA Researchが情報提供および戦略的方向性の把握を目的として作成したものです。投資助言、法的助言、または勧誘を構成するものではありません。市場規模数値はアナリストの三角検証と公開情報に基づく推計であり、固有の不確実性を伴います。受領者は本資料に基づいて意思決定を行う前に独自の検証を実施してください。USD数値は特段の記載がない限り円からの概算換算です。© 2026 KIRA Research. All rights reserved. 書面による同意なしの複製・再配布を禁じます。</p>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN MEDICAL DEVICES 2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
