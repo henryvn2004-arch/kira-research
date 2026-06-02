@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>Korea fintech 2026 — KakaoBank profitability path & embedded finance B2B</title>
+<meta name="description" content="KIRA Research analysis of South Korea fintech in 2026: KakaoBank profitability path to 15% ROE, internet-bank divergence, and B2B embedded finance.">
+<meta property="og:title" content="Korea fintech 2026 — KakaoBank profitability path & embedded finance B2B">
+<meta property="og:description" content="KIRA Research analysis of South Korea fintech in 2026: KakaoBank profitability path to 15% ROE, internet-bank divergence, and B2B embedded finance.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* === MASTER STYLES INJECTED HERE === */
+/* ============================================================
+   KIRA Research — Master report styles v1.0
+   All page types use these styles. Do not edit per-report.
+   ============================================================ */
+
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+/* ============ PAGE BASE ============ */
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+/* ============ DATA TAGS ============ */
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+/* ============ DARK DIVIDER ============ */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* ============ EXEC SUMMARY ============ */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+/* ============ CHART CARDS ============ */
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* ============ SOURCE KEY (Phase L.3) ============
+   Per-page footer line resolving inline source aliases to full citations.
+   Renders just above .page-footer; pages may omit if all numbers are
+   [Kira estimates] only. Pattern: alias = full citation · alias = full citation · ... */
+.source-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--muted);
+  padding: 8px 0 6px;
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  max-height: 32px;
+  overflow: hidden;
+}
+.source-key::before {
+  content: "SOURCE KEY · ";
+  font-weight: 700;
+  color: var(--text-mid);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+/* Hide entirely when empty so layout doesn't show an orphan dotted line */
+.source-key:empty { display: none; }
+
+/* ============ IMPLICATIONS GRID ============ */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* ============ COMPETITIVE ============ */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* ============ PROFILE DEEP-DIVE ============ */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+/* ============ AI / USE CASE GRID ============ */
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* ============ COVER ============ */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+/* ============ SVG UTILITIES ============ */
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* ============ PRINT (for PDF) ============ */
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+  .viewer-divider { display: none; }
+}
+
+/* ============================================================
+   === Phase H new page types (2026-05-23) ===
+   5 new page types: persona_profile, policy_timeline,
+   risk_matrix (qualitative), channel_waterfall,
+   price_quality_matrix. All conform to 1280x720 canvas with
+   page-header + body + page-footer chrome inherited from .page.
+   Severity tokens shared across types where useful.
+   ============================================================ */
+
+/* shared severity tokens (risk_matrix + winner/loser chips) */
+:root {
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+
+.severity-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.neutral { background: var(--sev-neutral-soft); color: var(--sev-neutral); }
+.severity-chip.winner { background: var(--green-soft); color: var(--green); }
+.severity-chip.loser { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.mixed { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.pending { background: var(--primary-soft); color: var(--primary); }
+
+/* ============ PERSONA PROFILE (consumer_segmentation) ============ */
+.persona-profile-page .page-inner { padding-top: 30px; }
+.persona-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 14px; flex-shrink: 0; }
+.persona-header .persona-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; }
+.persona-header .persona-headline { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); flex: 1; max-width: 760px; }
+.persona-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex-shrink: 0; margin-bottom: 12px; }
+.persona-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
+.persona-block h4 { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.persona-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-stat { padding: 4px 0; }
+.persona-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.persona-stat .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 18px; line-height: 1; color: var(--text); letter-spacing: -0.02em; }
+.persona-stat .num .unit { font-size: 10px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-stat .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; font-weight: 600; }
+.persona-behavior-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-behavior { padding: 4px 0; }
+.persona-behavior .metric { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 17px; line-height: 1.1; color: var(--text); margin-bottom: 3px; }
+.persona-behavior .label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+.persona-behavior .change { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-behavior .change.down { color: var(--amber); }
+.persona-bottom-row { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; flex: 1; min-height: 0; }
+.persona-quote-block { background: var(--primary-soft); border-left: 3px solid var(--primary); padding: 14px 16px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; justify-content: center; }
+.persona-quote-block .qmark { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 32px; line-height: 0.6; color: var(--primary); margin-bottom: 4px; }
+.persona-quote-block .body { font-size: 13px; line-height: 1.45; color: var(--text); font-style: italic; margin-bottom: 8px; }
+.persona-quote-block .attribution { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.persona-channel-pref { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
+.persona-channel-pref .title { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.persona-channel-row { display: grid; grid-template-columns: 90px 1fr 38px; gap: 8px; align-items: center; font-size: 10.5px; }
+.persona-channel-row .ch-name { color: var(--text-mid); font-weight: 500; }
+.persona-channel-row .ch-bar { height: 8px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.persona-channel-row .ch-bar-fill { height: 100%; background: var(--primary); }
+.persona-channel-row .ch-pct { font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 700; text-align: right; }
+.persona-channel-caption { font-size: 10.5px; color: var(--text-mid); margin-top: 6px; line-height: 1.4; }
+.persona-wtp-anchor { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 10px 14px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+.persona-wtp-anchor .left .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.persona-wtp-anchor .left .change { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-wtp-anchor .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.persona-wtp-anchor .num .unit { font-size: 11px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; }
+
+/* ============ POLICY TIMELINE (regulatory_brief) ============ */
+.policy-timeline-page .page-inner { padding-top: 30px; }
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.policy-timeline-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.policy-timeline-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.policy-timeline-chart .tl-svg { flex: 1; min-height: 0; width: 100%; }
+.policy-timeline-chart .tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.policy-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ RISK MATRIX (entry_strategy, qualitative) ============ */
+.risk-matrix-page .page-inner { padding-top: 30px; }
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-matrix-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.risk-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-cell-bg-empty { fill: var(--surface-alt); stroke: var(--border); stroke-width: 0.5; }
+.risk-cell-bg-low { fill: var(--sev-low-soft); stroke: var(--sev-low); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-med { fill: var(--sev-med-soft); stroke: var(--sev-med); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-high { fill: var(--sev-high-soft); stroke: var(--sev-high); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-label { font-family: 'Satoshi', sans-serif; font-size: 9px; font-weight: 600; fill: var(--text); }
+.risk-axis-label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.risk-axis-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.risk-legend-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; font-weight: 600; flex-shrink: 0; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.risk-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ CHANNEL WATERFALL (distribution_analysis) ============ */
+.channel-waterfall-page .page-inner { padding-top: 30px; }
+.waterfall-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 12px; }
+.waterfall-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.waterfall-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.waterfall-svg-wrap { height: 260px; width: 100%; }
+.waterfall-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.wf-segment-label { font-family: 'Satoshi', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.wf-segment-pct { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--text); font-weight: 700; }
+.wf-segment-note { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.04em; }
+.wf-segment-src { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.wf-axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.wf-segment-fill-1 { fill: var(--primary); }
+.wf-segment-fill-2 { fill: var(--primary-dim); }
+.wf-segment-fill-3 { fill: var(--green); }
+.wf-segment-fill-4 { fill: var(--amber); }
+.wf-segment-fill-5 { fill: #6366F1; }
+.wf-segment-fill-6 { fill: #DB2777; }
+.wf-segment-fill-7 { fill: #0EA5E9; }
+.waterfall-commentary { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.waterfall-commentary h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.waterfall-commentary p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 6px; }
+.waterfall-commentary p strong { color: var(--text); font-weight: 600; }
+.waterfall-commentary ul { list-style: none; padding: 0; margin: 0; }
+.waterfall-commentary li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.waterfall-commentary li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.waterfall-commentary li strong { color: var(--text); font-weight: 600; }
+.waterfall-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ PRICE QUALITY MATRIX (pricing_strategy) ============ */
+.price-quality-page .page-inner { padding-top: 30px; }
+.pq-matrix-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.pq-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-matrix-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.pq-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.pq-svg-wrap { flex: 1; min-height: 0; width: 100%; }
+.pq-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.pq-quadrant-bg { fill: var(--bg); stroke: var(--border); stroke-width: 0.5; }
+.pq-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.pq-grid-line { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 2 2; }
+.pq-axis-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.pq-axis-tick { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.pq-quadrant-label { font-family: 'Satoshi', sans-serif; font-size: 10px; fill: var(--text-mid); font-weight: 700; letter-spacing: -0.005em; text-transform: uppercase; }
+.pq-dot { fill: var(--primary); stroke: var(--bg); stroke-width: 1.5; }
+.pq-dot-label { font-family: 'Satoshi', sans-serif; font-size: 10px; fill: var(--text); font-weight: 700; }
+.pq-sidebar { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-sidebar h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.pq-sidebar p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.pq-sidebar p strong { color: var(--text); font-weight: 600; }
+.pq-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+
+</style>
+</head>
+<body>
+
+<!-- ============ ALL PAGES INJECTED HERE ============ -->
+<!-- ============ 001 COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-eyebrow">KIRA Research · Financial Services</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow" style="margin-bottom:-12px;">South Korea · 2026</div>
+        <h1>Korea fintech at the <span class="accent">profitability turn</span></h1>
+        <div class="cover-subtitle">KakaoBank's path to a 15% ROE, the internet-bank divergence, and where embedded finance moves from consumer wallets into B2B platforms.</div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">South Korea</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">Fintech &amp; digital banking</div></div>
+          <div class="cover-meta-item"><div class="label">Base year</div><div class="val"><span class="accent">2026</span></div></div>
+          <div class="cover-meta-item"><div class="label">Reference</div><div class="val">KR-FIN-2026</div></div>
+        </div>
+      </div>
+      <div class="cover-confidential">Prepared by <strong>our research team</strong> · Strictly for the named recipient · Not for redistribution</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 002 METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">002 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="page-subhead">This view is built from two evidence streams: <strong>primary inputs</strong> — operator earnings reads, regulator filings, and analyst synthesis — and <strong>secondary anchors</strong> — statistical authorities, listed-company disclosures, and triangulated estimates. Every quantitative claim carries an explicit source tag.</p>
+    <div class="exec-body" style="grid-template-columns:1fr 1fr;">
+      <div class="exec-narrative">
+        <h3>Primary inputs</h3>
+        <p><strong>Operator earnings reads.</strong> Quarterly and annual disclosures of the three internet-only banks and the major payment platforms — net profit, loan mix, deposit base, and non-interest income.</p>
+        <p><strong>Analyst synthesis.</strong> KIRA in-house triangulation across multiple disclosed inputs where no single source covers a figure. Tagged inline as [Kira estimates].</p>
+        <p><strong>Regulator &amp; policy reads.</strong> Financial Services Commission releases on licensing, household-loan management, and open-data frameworks — the rules that gate every operating decision.</p>
+      </div>
+      <div class="exec-narrative">
+        <h3>Secondary anchors</h3>
+        <p><strong>Statistical authorities.</strong> National statistics and central-bank data on payments volume, credit, and the digital economy — cited inline by named source.</p>
+        <p><strong>Listed-company filings.</strong> Annual and quarterly disclosures of named operators — cited by company and period.</p>
+        <p><strong>Triangulated estimates.</strong> Where coverage is partial, we combine two to three inputs and disclose the method. Tagged [Kira estimates]. Local-language (Korean) sources are cited via English aliases.</p>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 003 TOC ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">003 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Contents</h1>
+    <div class="exec-body" style="grid-template-columns:1fr 1fr; gap:40px;">
+      <div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">01</span>Executive summary</span><span class="mono" style="color:var(--muted);">004</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">02</span>Strategic implications</span><span class="mono" style="color:var(--muted);">005</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">03</span>The market at inflection</span><span class="mono" style="color:var(--muted);">006</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">04</span>Market structure &amp; sizing</span><span class="mono" style="color:var(--muted);">007</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">05</span>Internet-bank landscape</span><span class="mono" style="color:var(--muted);">008</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">06</span>The KakaoBank profitability path</span><span class="mono" style="color:var(--muted);">009</span></div>
+      </div>
+      <div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">07</span>KakaoBank: company profile</span><span class="mono" style="color:var(--muted);">010</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">08</span>Loan mix &amp; the road to 15% ROE</span><span class="mono" style="color:var(--muted);">011</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">09</span>Embedded finance moves B2B</span><span class="mono" style="color:var(--muted);">012</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">10</span>B2B embedded-finance plays</span><span class="mono" style="color:var(--muted);">013</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">11</span>Regulatory landscape</span><span class="mono" style="color:var(--muted);">014</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">12</span>AI impact &amp; 2026-2030 outlook</span><span class="mono" style="color:var(--muted);">015</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 004 EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Executive summary</div>
+      <div class="page-section-counter">004 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Korea fintech crosses from scale to profit</h1>
+    <p class="page-subhead">The three internet-only banks have hit profit together for the first time, but their paths diverge sharply. <strong>KakaoBank is the test case</strong> — proving a platform model can earn a bank-grade return while the next leg of growth shifts to corporate credit and B2B embedded finance.</p>
+    <div class="exec-callouts">
+      <div class="callout"><div class="label">KakaoBank net profit 2025</div><div class="num">KRW 480<span class="unit">bn</span></div><div class="change">+9.1% YoY, record high</div><div class="source-tag">KakaoBank AR 2025</div></div>
+      <div class="callout"><div class="label">Non-interest income share</div><div class="num">35<span class="unit">%</span></div><div class="change">KRW 1.09 trn, +22.4% YoY</div><div class="source-tag">KakaoBank AR 2025</div></div>
+      <div class="callout"><div class="label">KR fintech revenue 2025</div><div class="num">USD 4.2<span class="unit">bn</span></div><div class="change">~7% CAGR to 2030</div><div class="source-tag est">Kira estimates</div></div>
+      <div class="callout"><div class="label">Embedded finance 2025</div><div class="num">USD 4.4<span class="unit">bn</span></div><div class="change">B2B segment fastest-growing</div><div class="source-tag est">Kira estimates</div></div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Profit, finally — but uneven</h3>
+        <p>All three internet-only banks posted profit in 2025, a first. KakaoBank led with a record KRW 480 bn net profit [KakaoBank AR 2025]; Toss Bank roughly doubled to KRW 97 bn [FSC 2026]; K Bank slipped 12% to KRW 113 bn on its Upbit deposit-cost exposure [FSC 2026]. Scale is no longer the contest — <strong>return on equity is</strong>.</p>
+        <h3>The next growth engine</h3>
+        <p>With household-loan caps tightening, the banks are pivoting to corporate and sole-proprietor credit and to embedded distribution. KakaoBank's corporate book jumped ~80% in a year to KRW 3.4 trn [KakaoBank Q1 2026]; embedded finance is moving from consumer checkout into ERP, payroll, and SME invoice financing.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Internet-bank net profit, 2025</div><div class="chart-subtitle">South Korea · KRW bn</div></div><div class="chart-unit">KRW BN</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="200" x2="500" y2="200" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="80" y="30" width="90" height="170" fill="#1E6FFF"></rect>
+              <text x="125" y="218" text-anchor="middle" font-size="11" fill="#6B7280">KakaoBank</text>
+              <text x="125" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0B0D10">480</text>
+              <rect x="215" y="160" width="90" height="40" fill="#4A5568"></rect>
+              <text x="260" y="218" text-anchor="middle" font-size="11" fill="#6B7280">K Bank</text>
+              <text x="260" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#0B0D10">113</text>
+              <rect x="350" y="166" width="90" height="34" fill="#00A88B"></rect>
+              <text x="395" y="218" text-anchor="middle" font-size="11" fill="#6B7280">Toss Bank</text>
+              <text x="395" y="158" text-anchor="middle" font-size="12" font-weight="700" fill="#0B0D10">97</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OPERATOR DISCLOSURES, FSC · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">KakaoBank AR 2025 = KakaoBank FY2025 Earnings Release · KakaoBank Q1 2026 = KakaoBank 1Q2026 Earnings Release · FSC 2026 = Financial Services Commission internet-bank results 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 005 EXEC SUMMARY P2 IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Strategic implications</div>
+      <div class="page-section-counter">005 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Five strategic implications for market participants</h1>
+    <p class="page-subhead">Where the profit pool sits in 2026, and how incumbents, challengers, and platform partners should position into the embedded-finance and corporate-credit shift.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">Re-rate on return, not user count</div>
+        <div class="body-text">User scale is saturated — KakaoBank already reaches <strong>26.7 mn</strong> subscribers. The premium now accrues to the operator that lifts ROE toward the 15% 2027 target while holding cost-to-income low.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">8.1% H1 ROE</span> vs 15% target</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">Diversify revenue off net interest</div>
+        <div class="body-text">Household-loan caps cap rate income. <strong>Non-interest income at 35%</strong> of revenue is the differentiator; fee, platform, and advertising lines should be pushed to 40%+ to defend margin through the rate cycle.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">KRW 1.09 trn</span> non-interest income</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">Sequence into corporate credit</div>
+        <div class="body-text">The regulatory-light growth lane is SME and sole-proprietor lending. KakaoBank's corporate book rose <strong>~80% in a year</strong>; challengers should build alternative-data underwriting before the lane crowds.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">KRW 3.4 trn</span> corporate loans Q1 2026</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">Own the B2B embedded layer</div>
+        <div class="body-text">Consumer checkout finance is mature; the open lane is <strong>embedded credit inside ERP and commerce platforms</strong>. Sponsor-bank and BaaS partnerships, not app front-doors, win the next SME relationships.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">26% CAGR</span> B2B embedded to 2031</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">Export the model while it travels</div>
+        <div class="body-text">Domestic share is capped; offshore digital-bank stakes compound. KakaoBank's Indonesia and Thailand vehicles extend the playbook — <strong>anchor returns to ROE, not headlines</strong>, and gate capital on break-even proof.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">6.4 mn</span> Superbank users, Indonesia</div>
+      </div>
+    </div>
+    <div class="source-key">KakaoBank AR 2025 = KakaoBank FY2025 Earnings Release · KakaoBank Q1 2026 = KakaoBank 1Q2026 Earnings Release · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 006 DIVIDER — MARKET ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <div class="divider-title">The market at <span class="accent">inflection.</span></div>
+    <div class="divider-thesis">Korea is among the world's most cashless economies, and its fintech revenue pool is large but maturing. <strong>The contest has moved from acquiring users to monetizing them</strong> — and from consumer wallets to corporate credit and embedded distribution.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Market sizing</div>
+      <div class="toc-pill">Payment volume</div>
+      <div class="toc-pill">Internet-bank landscape</div>
+      <div class="toc-pill">Concentration</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 007 MARKET STRUCTURE & SIZING ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Market structure</div>
+      <div class="page-section-counter">007 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">A large, cashless pool growing into the single digits</h1>
+    <p class="page-subhead">Korea's payment rails are vast and near-saturated; the value migration is toward platform monetization, real-time rails, and embedded credit rather than raw transaction growth.</p>
+    <div class="exec-body" style="grid-template-columns:1fr 1.1fr;">
+      <div class="exec-narrative">
+        <h3>Mature core, faster edges</h3>
+        <p>The domestic fintech revenue pool sits near <strong>USD 4.2 bn in 2025</strong> [Kira estimates], growing in the mid-single digits. Mobile payment value is far larger at roughly USD 44-58 bn [Kira estimates], but it is the maturing core; growth concentrates at the edges.</p>
+        <h3>Real-time rails compound</h3>
+        <p>Real-time payment value is small but compounding fast — a high-double-digit growth rate off a low base [Kira estimates]. Super-apps push daily wallet transactions toward <strong>~30 mn</strong> [Kira estimates], pulling more spend onto fintech-intermediated rails.</p>
+        <h3>Where value migrates</h3>
+        <p>Net interest margin is rate-capped and household-loan-capped; the rising revenue lines are platform fees, advertising, BNPL, and B2B embedded credit. The structural read: <strong>monetization, not acquisition</strong>, defines the 2026-2030 winners.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Korea fintech revenue pool</div><div class="chart-subtitle">USD bn · 2024-2030F</div></div><div class="chart-unit">USD BN</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="210" x2="540" y2="210" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="55" y="130" width="48" height="80" fill="#1E6FFF"></rect>
+              <text x="79" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+              <text x="79" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">3.9</text>
+              <rect x="125" y="124" width="48" height="86" fill="#1E6FFF"></rect>
+              <text x="149" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2025</text>
+              <text x="149" y="117" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">4.2</text>
+              <rect x="195" y="118" width="48" height="92" fill="#1E6FFF"></rect>
+              <text x="219" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2026</text>
+              <text x="219" y="111" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">4.5</text>
+              <rect x="265" y="110" width="48" height="100" fill="#1E6FFF"></rect>
+              <text x="289" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2027</text>
+              <text x="289" y="103" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">4.8</text>
+              <rect x="335" y="100" width="48" height="110" fill="#1E6FFF"></rect>
+              <text x="359" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2028</text>
+              <text x="359" y="93" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">5.2</text>
+              <rect x="405" y="88" width="48" height="122" fill="#1E6FFF"></rect>
+              <text x="429" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2029</text>
+              <text x="429" y="81" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">5.6</text>
+              <rect x="475" y="74" width="48" height="136" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="499" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+              <text x="499" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">6.0</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA TRIANGULATION — OPERATOR + PAYMENTS DATA · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Kira estimates = KIRA in-house analyst triangulation across payments, operator, and statistical inputs</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 008 INTERNET-BANK LANDSCAPE (competitive_structure) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Competitive landscape</div>
+      <div class="page-section-counter">008 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Three internet banks, three divergent models</h1>
+    <p class="page-subhead">All three are profitable, but the return engines differ: KakaoBank on platform scale, Toss Bank on super-app cross-sell, K Bank on a concentrated crypto-deposit tie.</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header"><div><div class="chart-title">Subscribers by internet bank</div><div class="chart-subtitle">millions · year-end 2025</div></div><div class="chart-unit">MN USERS</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 440 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <text x="8" y="32" font-size="10" fill="#6B7280">KakaoBank</text>
+              <rect x="95" y="22" width="300" height="16" fill="#1E6FFF"></rect>
+              <text x="402" y="34" font-size="10" font-weight="700" fill="#0B0D10">26.7</text>
+              <text x="8" y="72" font-size="10" fill="#6B7280">K Bank</text>
+              <rect x="95" y="62" width="163" height="16" fill="#4A5568"></rect>
+              <text x="265" y="74" font-size="10" font-weight="700" fill="#0B0D10">14.5</text>
+              <text x="8" y="112" font-size="10" fill="#6B7280">Toss Bank</text>
+              <rect x="95" y="102" width="151" height="16" fill="#00A88B"></rect>
+              <text x="253" y="114" font-size="10" font-weight="700" fill="#0B0D10">13.4</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OPERATOR DISCLOSURES, FSC · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>A profitable but capped trio</h3>
+        <p>Combined internet-bank deposits reached <strong>~KRW 127 trn</strong> against a ~KRW 81 trn loan book at year-end 2025 [FSC 2026] — a low loan-to-deposit ratio that frames the corporate-credit push.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Combined deposits 2025</span><span class="val">KRW 127 trn</span></div>
+          <div class="stat-line"><span>Combined loans 2025</span><span class="val">KRW 81 trn</span></div>
+          <div class="stat-line"><span>Licensed internet banks</span><span class="val">3</span></div>
+          <div class="stat-line"><span>4th-bank bids approved</span><span class="val">0 of 4</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">KakaoBank</div>
+        <div class="comp-parent">KRX 323410 · Kakao ecosystem</div>
+        <div class="comp-stat-row"><span>Net profit 2025</span><span class="val">KRW 480 bn</span></div>
+        <div class="comp-stat-row"><span>Subscribers</span><span class="val">26.7 mn</span></div>
+        <div class="comp-stat-row"><span>Non-int. income</span><span class="val">35%</span></div>
+        <div class="comp-strengths"><strong>Platform scale.</strong> Largest base, record profit, leading non-interest mix. Pivoting to corporate credit and AI.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">Toss Bank</div>
+        <div class="comp-parent">Viva Republica · Toss super-app</div>
+        <div class="comp-stat-row"><span>Net profit 2025</span><span class="val">KRW 97 bn</span></div>
+        <div class="comp-stat-row"><span>Subscribers</span><span class="val">13.4 mn</span></div>
+        <div class="comp-stat-row"><span>Deposits</span><span class="val">&gt;KRW 30 trn</span></div>
+        <div class="comp-strengths"><strong>Super-app cross-sell.</strong> Profit ~doubled; bank, securities, insurance feed one funnel. US IPO planned 2026.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">K Bank</div>
+        <div class="comp-parent">KT-linked · Upbit deposit tie</div>
+        <div class="comp-stat-row"><span>Net profit 2025</span><span class="val">KRW 113 bn</span></div>
+        <div class="comp-stat-row"><span>Subscribers</span><span class="val">14.5 mn</span></div>
+        <div class="comp-stat-row"><span>Profit change</span><span class="val">-12.1%</span></div>
+        <div class="comp-strengths"><strong>Crypto-deposit drag.</strong> Higher Upbit deposit-fee costs squeezed profit; competitiveness concerns persist.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">CONTEXT</div>
+        <div class="comp-name">Incumbents &amp; platforms</div>
+        <div class="comp-parent">KB, Shinhan · Naver, Kakao, Toss Pay</div>
+        <div class="comp-stat-row"><span>Payment super-apps</span><span class="val">3 major</span></div>
+        <div class="comp-stat-row"><span>Daily wallet txns</span><span class="val">~30 mn</span></div>
+        <div class="comp-stat-row"><span>BNPL 2026</span><span class="val">~USD 1.1 bn</span></div>
+        <div class="comp-strengths"><strong>Channel and threat.</strong> Naver Pay, Kakao Pay, Toss Pay intermediate spend and increasingly embed credit.</div>
+      </div>
+    </div>
+    <div class="source-key">FSC 2026 = Financial Services Commission internet-bank results 2026 · KakaoBank AR 2025 = KakaoBank FY2025 Earnings Release · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 009 DIVIDER — KAKAOBANK ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <div class="divider-title">The KakaoBank <span class="accent">profitability path.</span></div>
+    <div class="divider-thesis">A record KRW 480 bn profit masks a structural question: can a platform bank earn an incumbent-grade return? <strong>The answer runs through loan-mix reshaping, a 35%-and-rising non-interest line, and disciplined offshore capital.</strong></div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Company profile</div>
+      <div class="toc-pill">Loan-mix shift</div>
+      <div class="toc-pill">Non-interest income</div>
+      <div class="toc-pill">Path to 15% ROE</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 010 KAKAOBANK PROFILE (competitive_profile_deep) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Company profile</div>
+      <div class="page-section-counter">010 · KR-FIN-2026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>KakaoBank</h2>
+        <div class="sub">Korea's largest internet-only bank · KRX 323410</div>
+        <div class="tags">
+          <span class="data-tag primary">PLATFORM BANK</span>
+          <span class="data-tag secondary">PROFITABLE</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Net profit 2025</div><div class="val">480<span class="unit">KRW bn</span></div></div>
+        <div class="stat"><div class="label">Subscribers</div><div class="val">26.7<span class="unit">mn</span></div></div>
+        <div class="stat"><div class="label">Deposits 2025</div><div class="val">68.3<span class="unit">KRW trn</span></div></div>
+        <div class="stat"><div class="label">H1 ROE</div><div class="val">8.1<span class="unit">%</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Business model</h3>
+        <p>KakaoBank pairs a low-cost retail deposit base with a platform layer — lending and investment marketplaces, advertising, and merchant services — that carries fee income beyond the loan book. Monthly active users surpassed <strong>20 mn</strong> [KakaoBank AR 2025], the funnel for cross-sell.</p>
+        <h3>2025 performance</h3>
+        <p>Net profit rose 9.1% to a record KRW 480 bn on total revenue of KRW 3.09 trn [KakaoBank AR 2025]. Deposits grew KRW 13.3 trn in the year to <strong>KRW 68.3 trn</strong> [KakaoBank AR 2025], lifting the low-cost funding share that protects margin.</p>
+      </div>
+      <div class="profile-col">
+        <h3>Strategic priorities</h3>
+        <ul>
+          <li><strong>Corporate &amp; sole-proprietor credit</strong> — regulatory-light growth lane, ~80% book growth in a year</li>
+          <li><strong>Non-interest income</strong> — fee, platform, advertising lines past KRW 1 trn</li>
+          <li><strong>AI-native bank</strong> — AI financial assistant, alternative-data scoring</li>
+          <li><strong>Offshore stakes</strong> — Indonesia (Superbank), Thailand, Mongolia</li>
+        </ul>
+        <h3>Targets</h3>
+        <p>Management targets <strong>30 mn users and KRW 90 trn deposits</strong> near-term, and KRW 100 trn assets at a <strong>15% ROE by 2027</strong> [KakaoBank IR 2026] — the explicit profitability commitment this report tests.</p>
+      </div>
+    </div>
+    <div class="source-key">KakaoBank AR 2025 = KakaoBank FY2025 Earnings Release · KakaoBank IR 2026 = KakaoBank Investor Relations briefing 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 011 PROFITABILITY PATH (market_data_chart) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Profitability path</div>
+      <div class="page-section-counter">011 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Loan-mix reshaping is the lever to 15% ROE</h1>
+    <p class="page-subhead">With household lending capped, KakaoBank is tilting the book toward corporate and sole-proprietor credit while pushing non-interest income — the two moves that lift return without breaching regulation.</p>
+    <div class="exec-body" style="grid-template-columns:1fr 1.1fr;">
+      <div class="exec-narrative">
+        <h3>The corporate tilt</h3>
+        <p>Corporate loans rose to <strong>KRW 3.4 trn</strong> by Q1 2026, up ~80% from KRW 1.9 trn at end-2024 [KakaoBank Q1 2026]. The corporate share of the book climbed from 4.4% to 7.1% [KakaoBank Q1 2026]; sole-proprietor loans crossed KRW 3 trn [KakaoBank AR 2025].</p>
+        <h3>The non-interest engine</h3>
+        <p>Non-interest income reached <strong>KRW 1.09 trn</strong>, 35% of revenue [KakaoBank AR 2025]; fee and platform revenue alone were KRW 311 bn [KakaoBank AR 2025]. This is the line that decouples profit from the rate cycle.</p>
+        <h3>The honest gap</h3>
+        <p>H1 ROE was <strong>8.1%</strong> [KakaoBank AR 2025] against a 15% 2027 target. Closing it needs higher-yield corporate credit, sustained fee growth, and offshore equity contribution — a credible but not guaranteed path [Kira estimates].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Corporate loan balance &amp; book share</div><div class="chart-subtitle">KRW trn · end-2024 to Q1 2026</div></div><div class="chart-unit">KRW TRN</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="210" x2="540" y2="210" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="90" y="142" width="80" height="68" fill="#4A5568"></rect>
+              <text x="130" y="226" text-anchor="middle" font-size="10" fill="#6B7280">End-2024</text>
+              <text x="130" y="135" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">1.9</text>
+              <text x="130" y="120" text-anchor="middle" font-size="9" fill="#6B7280">4.4% share</text>
+              <rect x="240" y="88" width="80" height="122" fill="#1E6FFF"></rect>
+              <text x="280" y="226" text-anchor="middle" font-size="10" fill="#6B7280">End-2025</text>
+              <text x="280" y="81" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">3.1</text>
+              <text x="280" y="66" text-anchor="middle" font-size="9" fill="#6B7280">6.5% share</text>
+              <rect x="390" y="68" width="80" height="142" fill="#1E6FFF"></rect>
+              <text x="430" y="226" text-anchor="middle" font-size="10" fill="#6B7280">Q1 2026</text>
+              <text x="430" y="61" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">3.4</text>
+              <text x="430" y="46" text-anchor="middle" font-size="9" fill="#1E6FFF" font-weight="700">7.1% share</text>
+              <path d="M 150 138 L 405 72" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2" fill="none"></path>
+              <polygon points="405,72 396,72 401,80" fill="#1E6FFF"></polygon>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KAKAOBANK QUARTERLY DISCLOSURES · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">KakaoBank AR 2025 = KakaoBank FY2025 Earnings Release · KakaoBank Q1 2026 = KakaoBank 1Q2026 Earnings Release · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 012 DIVIDER — EMBEDDED ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 09</div>
+    <div class="divider-title">Embedded finance <span class="accent">moves B2B.</span></div>
+    <div class="divider-thesis">Consumer checkout finance is mature. The open lane is credit, payments, and insurance embedded inside ERP, commerce, and SME software — distributed through sponsor banks and BaaS, not app front-doors. <strong>The B2B segment is the fastest-growing slice.</strong></div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">BaaS &amp; sponsor banks</div>
+      <div class="toc-pill">SME lending</div>
+      <div class="toc-pill">MyData 2.0</div>
+      <div class="toc-pill">Platform partners</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 013 B2B EMBEDDED PLAYS (use_case_grid_6) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · Embedded finance</div>
+      <div class="page-section-counter">013 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Six B2B embedded-finance plays taking shape</h1>
+    <p class="page-subhead">Korea's embedded-finance market sits near <strong>USD 4.4 bn in 2025</strong> [Kira estimates]; consumer is the larger slice today, but enterprise-facing propositions are forecast to compound fastest through 2031.</p>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">PLAY 01</div>
+        <div class="uc-title">ERP-embedded SME credit</div>
+        <div class="uc-body">Cloud ERP providers embed invoicing, payroll financing, and invoice factoring for real-time SME cash flow — credit underwritten on platform transaction data.</div>
+        <div class="uc-example">EXAMPLE · DOUZONE BIZON ERP</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PLAY 02</div>
+        <div class="uc-title">Commerce-platform lending</div>
+        <div class="uc-body">Merchant payments and working-capital loans embedded inside marketplace and storefront platforms, scored on seller sales history rather than bureau files.</div>
+        <div class="uc-example">EXAMPLE · NAVER SMARTSTORE</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PLAY 03</div>
+        <div class="uc-title">Sponsor-bank BaaS</div>
+        <div class="uc-body">Licensed banks act as <strong>sponsors</strong> for non-bank product launches via APIs — the regulated rail letting platforms ship accounts and cards without a charter.</div>
+        <div class="uc-example">EXAMPLE · BANK-FINTECH TIE-UP</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PLAY 04</div>
+        <div class="uc-title">B2B BNPL &amp; trade credit</div>
+        <div class="uc-body">Installment and deferred-payment terms embedded into B2B procurement; the B2B BNPL pool is forecast to roughly double by 2030 on bank-fintech partnership models [Kira estimates].</div>
+        <div class="uc-example">EXAMPLE · KAKAO PAY · FINNQ</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PLAY 05</div>
+        <div class="uc-title">MyData-powered underwriting</div>
+        <div class="uc-body">MyData 2.0 widens consented data access — including offline channels — letting partners price thin-file SMEs and gig workers more accurately.</div>
+        <div class="uc-example">EXAMPLE · MYDATA 2.0 FRAMEWORK</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PLAY 06</div>
+        <div class="uc-title">Guarantee-backed micro-loans</div>
+        <div class="uc-body">Platforms pair payment terminals with public credit-guarantee schemes to extend low-risk small-business loans at point of installation.</div>
+        <div class="uc-example">EXAMPLE · NAVER PAY · GUARANTEE FUND</div>
+      </div>
+    </div>
+    <div class="source-key">Kira estimates = KIRA in-house analyst triangulation across embedded-finance, BNPL, and operator inputs</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 014 REGULATORY (market_data_chart) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Regulatory landscape</div>
+      <div class="page-section-counter">014 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">The regulator shapes every growth lane</h1>
+    <p class="page-subhead">The Financial Services Commission holds the rules that redirect lending, gate new entrants, and widen data access. Three live levers define the 2026 operating environment.</p>
+    <div class="exec-body" style="grid-template-columns:1.15fr 1fr;">
+      <div class="exec-narrative">
+        <h3>Household-loan management</h3>
+        <p>The FSC is running monthly and quarterly household-debt targets through 2026, with tighter mortgage limits and LTV rules in regulated zones [FSC 2026]. This is precisely why the banks are <strong>redirecting growth to corporate and sole-proprietor credit</strong>.</p>
+        <h3>The 4th-bank gate</h3>
+        <p>In September 2025 the FSC <strong>rejected all four</strong> bids for a fourth internet-only bank — Soso, Korea SOHO, Podo, AMZ — on insufficient funding stability [FSC 2025]. Entry criteria now stress non-Seoul SME supply and shareholder capital strength.</p>
+        <h3>Open data &amp; MyData 2.0</h3>
+        <p>MyData was upgraded to 2.0 — offline channels added, minimum age lowered to 14 [FSC 2025]. Registered open-banking usage is in the hundreds of millions of accounts [Kira estimates], the data substrate for embedded underwriting.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Regulatory levers &amp; market effect</div><div class="chart-subtitle">South Korea · 2025-2026</div></div><div class="chart-unit">FSC</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <rect x="20" y="20" width="440" height="58" rx="4" fill="#EEF3FF" stroke="#1E6FFF" stroke-width="1"></rect>
+              <text x="34" y="42" font-size="11" font-weight="700" fill="#1850BF">Household-loan caps</text>
+              <text x="34" y="60" font-size="9.5" fill="#4A5568">Pushes banks into corporate / SME credit</text>
+              <rect x="20" y="96" width="440" height="58" rx="4" fill="#FEF3E7" stroke="#D97706" stroke-width="1"></rect>
+              <text x="34" y="118" font-size="11" font-weight="700" fill="#B45309">4th-bank bids rejected (0 of 4)</text>
+              <text x="34" y="136" font-size="9.5" fill="#4A5568">Three-bank structure holds; entry bar high</text>
+              <rect x="20" y="172" width="440" height="58" rx="4" fill="#E6F7F3" stroke="#00A88B" stroke-width="1"></rect>
+              <text x="34" y="194" font-size="11" font-weight="700" fill="#00786A">MyData 2.0 + open banking</text>
+              <text x="34" y="212" font-size="9.5" fill="#4A5568">Wider consented data → embedded underwriting</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FSC RELEASES · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">FSC 2025 = Financial Services Commission releases 2025 (4th-bank review, MyData 2.0) · FSC 2026 = Financial Services Commission household-loan management 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 015 DIVIDER — AI & OUTLOOK ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 12</div>
+    <div class="divider-title">AI and the <span class="accent">outlook.</span></div>
+    <div class="divider-thesis">The operators are reframing themselves as AI-native — assistants, alternative-data scoring, and automated operations. <strong>The 2026-2030 read: profitability compounds through monetization, corporate credit, and disciplined offshore expansion.</strong></div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">AI use cases</div>
+      <div class="toc-pill">Alternative-data scoring</div>
+      <div class="toc-pill">Scenarios to 2030</div>
+      <div class="toc-pill">ROE path</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 016 AI IMPACT (ai_overview) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · AI impact</div>
+      <div class="page-section-counter">015 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">AI moves from feature to operating model</h1>
+    <p class="page-subhead">Korean fintechs are repositioning as AI-native, with the highest-ROI use cases in underwriting, fraud, and service automation. Revised financial-sector AI guidelines take effect in early 2026.</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>Alternative-data underwriting</h3>
+        <p>AI scoring on behavioral and platform data expands credit to thin-file SMEs and first-time borrowers — the underwriting unlock behind the corporate-credit and embedded-finance push [Kira estimates].</p>
+        <h3>Fraud &amp; AML</h3>
+        <p>Rule-based monitoring runs high false-positive rates; AI transaction monitoring cuts cost per alert materially [Kira estimates].</p>
+        <h3>AI-native operations</h3>
+        <p>KakaoBank's AI financial assistant and automated service are framed as a cost-to-income lever, not a feature — central to its 15% ROE target [KakaoBank IR 2026].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Where AI lands first</div><div class="chart-subtitle">relative ROI · KIRA composite</div></div><div class="chart-unit">INDEX</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 440 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <text x="8" y="30" font-size="10" fill="#6B7280">Underwriting</text>
+              <rect x="120" y="20" width="270" height="15" fill="#1E6FFF"></rect>
+              <text x="396" y="32" font-size="9" font-weight="700" fill="#0B0D10">High</text>
+              <text x="8" y="66" font-size="10" fill="#6B7280">Fraud / AML</text>
+              <rect x="120" y="56" width="240" height="15" fill="#1E6FFF"></rect>
+              <text x="366" y="68" font-size="9" font-weight="700" fill="#0B0D10">High</text>
+              <text x="8" y="102" font-size="10" fill="#6B7280">Service auto.</text>
+              <rect x="120" y="92" width="195" height="15" fill="#4A5568"></rect>
+              <text x="321" y="104" font-size="9" font-weight="700" fill="#0B0D10">Med</text>
+              <text x="8" y="138" font-size="10" fill="#6B7280">Cross-sell</text>
+              <rect x="120" y="128" width="160" height="15" fill="#4A5568"></rect>
+              <text x="286" y="140" font-size="9" font-weight="700" fill="#0B0D10">Med</text>
+              <text x="8" y="174" font-size="10" fill="#6B7280">Reg-reporting</text>
+              <rect x="120" y="164" width="130" height="15" fill="#00A88B"></rect>
+              <text x="256" y="176" font-size="9" font-weight="700" fill="#0B0D10">Build</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA SYNTHESIS, OPERATOR DISCLOSURES · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="ai-callouts">
+      <div class="callout"><div class="label">AI-native target</div><div class="num">15<span class="unit">%</span></div><div class="change">ROE by 2027, AI as lever</div><div class="source-tag">KakaoBank IR 2026</div></div>
+      <div class="callout"><div class="label">Guidelines effective</div><div class="num">Q1 2026</div><div class="change">Revised financial-sector AI rules</div><div class="source-tag">FSC 2026</div></div>
+      <div class="callout"><div class="label">User target</div><div class="num">30<span class="unit">mn</span></div><div class="change">via AI + global push</div><div class="source-tag">KakaoBank IR 2026</div></div>
+    </div>
+    <div class="source-key">KakaoBank IR 2026 = KakaoBank Investor Relations briefing 2026 · FSC 2026 = Financial Services Commission AI guidelines 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 017 FORECAST (forecast_outlook) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · Outlook</div>
+      <div class="page-section-counter">016 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Three scenarios for the profitability path to 2030</h1>
+    <p class="page-subhead">KakaoBank's stated 15% ROE by 2027 anchors the base case. The spread depends on corporate-credit yield, non-interest growth, and how much offshore equity contributes.</p>
+    <div class="exec-chart" style="height:300px; margin-bottom:14px;">
+      <div class="chart-header"><div><div class="chart-title">KakaoBank ROE path scenarios</div><div class="chart-subtitle">South Korea · % · 2024-2030F</div></div><div class="chart-unit">ROE %</div></div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1100 230" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <line x1="50" y1="195" x2="1080" y2="195" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="50" y1="30" x2="50" y2="195" stroke="#E5E7EB" stroke-width="1"/>
+          <g class="mono" font-size="10" fill="#6B7280">
+            <text x="40" y="198" text-anchor="end">5%</text>
+            <text x="40" y="118" text-anchor="end">12%</text>
+            <text x="40" y="38" text-anchor="end">18%</text>
+          </g>
+          <!-- x labels -->
+          <g class="mono" font-size="10" fill="#6B7280" text-anchor="middle">
+            <text x="110" y="214">2024</text>
+            <text x="270" y="214">2025</text>
+            <text x="430" y="214">2026</text>
+            <text x="590" y="214">2027</text>
+            <text x="750" y="214">2028</text>
+            <text x="910" y="214">2029</text>
+            <text x="1050" y="214">2030F</text>
+          </g>
+          <!-- bull (amber dashed) -->
+          <path d="M 110 170 L 270 150 L 430 120 L 590 78 L 750 58 L 910 44 L 1050 34" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="4,3"></path>
+          <!-- base (primary) -->
+          <path d="M 110 170 L 270 150 L 430 128 L 590 96 L 750 84 L 910 76 L 1050 70" stroke="#1E6FFF" stroke-width="2.5" fill="none"></path>
+          <!-- bear (gray) -->
+          <path d="M 110 170 L 270 150 L 430 138 L 590 120 L 750 116 L 910 114 L 1050 112" stroke="#4A5568" stroke-width="2" fill="none" stroke-dasharray="2,2"></path>
+          <circle cx="270" cy="150" r="4" fill="#1E6FFF"></circle>
+          <text x="270" y="142" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10" class="mono">8.1</text>
+          <circle cx="590" cy="96" r="4" fill="#1E6FFF"></circle>
+          <text x="590" y="88" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF" class="mono">15</text>
+          <!-- legend -->
+          <g class="mono" font-size="10">
+            <rect x="760" y="32" width="14" height="3" fill="#D97706"></rect><text x="780" y="36" fill="#6B7280">Bull</text>
+            <rect x="840" y="32" width="14" height="3" fill="#1E6FFF"></rect><text x="860" y="36" fill="#6B7280">Base</text>
+            <rect x="920" y="32" width="14" height="3" fill="#4A5568"></rect><text x="940" y="36" fill="#6B7280">Bear</text>
+          </g>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: KAKAOBANK GUIDANCE, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="imp-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="imp-card" style="border-top-color:#D97706;">
+        <div class="num" style="color:#D97706;">BULL</div>
+        <div class="title">~17% ROE by 2030</div>
+        <div class="body-text">Corporate-credit yield holds, non-interest income tops 40% of revenue, and offshore stakes turn equity-accretive ahead of plan.</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">BASE</div>
+        <div class="title">15% ROE by 2027, held</div>
+        <div class="body-text">Loan-mix tilt and fee growth deliver the stated target on schedule; offshore contributes modestly [Kira estimates].</div>
+      </div>
+      <div class="imp-card" style="border-top-color:#4A5568;">
+        <div class="num" style="color:#4A5568;">BEAR</div>
+        <div class="title">~11% ROE, target slips</div>
+        <div class="body-text">Rate cuts compress NIM, corporate credit costs rise, and offshore vehicles stay sub-scale — ROE plateaus below target.</div>
+      </div>
+    </div>
+    <div class="source-key">KakaoBank IR 2026 = KakaoBank Investor Relations briefing 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 018 METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology &amp; sources</div>
+      <div class="page-section-counter">017 · KR-FIN-2026</div>
+    </div>
+    <h1 class="page-h1">Methodology &amp; sources</h1>
+    <div class="exec-body" style="grid-template-columns:1fr 1.2fr; gap:40px;">
+      <div class="exec-narrative">
+        <h3>How to read the numbers</h3>
+        <p>This view triangulates two evidence streams. Where a figure carries a named source tag — for example [KakaoBank AR 2025] or [FSC 2026] — the underlying data comes from that source; the full citation is listed at right.</p>
+        <p>Where a figure carries [Kira estimates], our analysts derived it from a blend of disclosed inputs — operator filings, regulator releases, payments data — using the method noted in the relevant section. Roughly <strong>30% of quantitative claims are KIRA-derived</strong>; the balance are externally cited.</p>
+        <p>Korean-language sources were searched alongside English ones and are cited via English aliases for readability; original source names appear in the source list where relevant.</p>
+        <p style="font-size:10.5px; color:var(--muted); margin-top:12px;">This document is prepared for the named recipient and reflects conditions at time of writing. Figures are best estimates and may be revised. Not investment advice.</p>
+      </div>
+      <div class="exec-narrative">
+        <h3>Sources</h3>
+        <div style="font-size:11px; line-height:1.7; color:var(--text-mid);">
+          <p style="margin-bottom:5px;"><strong>FSC 2025/2026</strong> — Financial Services Commission releases (internet-bank results, 4th-bank review, MyData 2.0, household-loan management)</p>
+          <p style="margin-bottom:5px;"><strong>KakaoBank AR 2025</strong> — KakaoBank FY2025 Earnings Release</p>
+          <p style="margin-bottom:5px;"><strong>KakaoBank Q1 2026</strong> — KakaoBank 1Q2026 Earnings Release</p>
+          <p style="margin-bottom:5px;"><strong>KakaoBank IR 2026</strong> — KakaoBank Investor Relations briefing 2026 (targets, AI, overseas)</p>
+          <p style="margin-bottom:5px;"><strong>Kira estimates</strong> — KIRA in-house analyst triangulation across operator, regulator, and payments inputs</p>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Korea fintech 2026 · KR-FIN-2026</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
