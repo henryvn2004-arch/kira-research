@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — ベトナム データセンター 2027年展望</title>
+<meta name="description" content="ベトナムのデータセンターセクターは2027年の着地テストに直面している：500MW超のハイパースケーラー案件パイプラインに対し、HCMC・ハノイの稼働容量は約60MWにとどまり、電力供給と送電網が着地を左右する。">
+<meta property="og:title" content="KIRA Research — ベトナム データセンター 2027年展望">
+<meta property="og:description" content="ハイパースケーラーの着地制約とHCMC・ハノイの電力供給 — KIRAリサーチの2027年展望。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.md-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.md-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 7px; margin-top: 14px; }
+.md-narrative h3:first-child { margin-top: 0; }
+.md-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.md-narrative p strong { color: var(--text); font-weight: 600; }
+.md-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.fo-chart-wrap { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.fo-scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.fo-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.fo-card.base { border-top: 3px solid var(--primary); }
+.fo-card.bull { border-top: 3px solid var(--green); }
+.fo-card.bear { border-top: 3px solid var(--amber); }
+.fo-card .sc-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.fo-card.base .sc-name { color: var(--primary); }
+.fo-card.bull .sc-name { color: var(--green); }
+.fo-card.bear .sc-name { color: var(--amber); }
+.fo-card .sc-val { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.fo-card .sc-val .unit { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-left: 3px; }
+.fo-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.fo-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.me-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; flex: 1; min-height: 0; }
+.me-method h3, .me-sources h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.me-method p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.me-method p strong { color: var(--text); font-weight: 600; }
+.me-disclaimer { margin-top: 12px; font-size: 9.5px; line-height: 1.5; color: var(--muted); font-style: italic; }
+.me-sources ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+.me-sources li { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; line-height: 1.45; color: var(--text-mid); margin-bottom: 7px; break-inside: avoid; }
+.me-sources li strong { color: var(--text); font-weight: 700; }
+
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 760px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+.cover-logo { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.cover-logo .accent { color: var(--primary); }
+
+.mi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.mi-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.mi-item { margin-bottom: 14px; }
+.mi-item .lbl { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.mi-item .dsc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: grid; grid-template-columns: 34px 1fr 44px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; }
+.toc-row .ttitle { font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); }
+.toc-row .ttitle .tsub { display: block; font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.toc-row .tpage { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 001 — COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">デジタルインフラ · ベトナム · 2027年展望</div>
+      <h1>ベトナムのデータセンター <span class="accent">着地テスト</span> — 容量・電力と2027年の制約</h1>
+      <p class="cover-subtitle">500MW超のハイパースケーラーパイプラインに対し、HCMCとハノイの稼働容量は約60MW。2027年までに実際に着地する規模を決めるのは、需要ではなく電力供給と送電網である。</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">国</div><div class="val">ベトナム <span class="accent">·</span> VN</div></div>
+        <div class="cover-meta-item"><div class="label">産業</div><div class="val">データセンター / デジタルインフラ</div></div>
+        <div class="cover-meta-item"><div class="label">期間</div><div class="val">2025 &#8211; 2030F</div></div>
+        <div class="cover-meta-item"><div class="label">版</div><div class="val">2027 <span class="accent">Outlook</span></div></div>
+      </div>
+      <div style="margin-top:24px;" class="cover-confidential"><strong>CONFIDENTIAL</strong> · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 002 — METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · 分析手法</div>
+      <div class="page-section-counter">002 / 017</div>
+    </div>
+    <h1 class="page-h1">本レポートの構築方法</h1>
+    <p class="page-subhead">本展望は2つのエビデンスストリームから構築されています。<strong>一次インプット</strong> &#8212; 事業者の届出、プロジェクト登録、アナリスト合成 &#8212; と、<strong>二次アンカー</strong> &#8212; 統計当局、政府計画、三角検証済み推計です。すべての定量的主張には明示的な出典タグを付しています。</p>
+    <div class="mi-body">
+      <div class="mi-col">
+        <h3>一次インプット</h3>
+        <div class="mi-item"><div class="lbl">プロジェクト・投資登録</div><div class="dsc">ホーチミン市・ハノイのハイパースケールキャンパスに係る投資証明書の届出および事業者発表 &#8212; 実際のMW・設備投資額・タイムラインを把握するための一次資料。</div></div>
+        <div class="mi-item"><div class="lbl">アナリスト合成</div><div class="dsc">複数の開示済み情報 &#8212; パイプライン対稼働容量、電力需要、送電余裕 &#8212; を横断したKIRA社内三角検証。インライン表記は[Kira estimates]。</div></div>
+        <div class="mi-item"><div class="lbl">通信事業者・セクター読解</div><div class="dsc">通信事業者のインフラポジションおよびコロケーション料金の読解 &#8212; ヘッドライン市場規模より需要シグナルに近い情報源。</div></div>
+      </div>
+      <div class="mi-col">
+        <h3>二次アンカー</h3>
+        <div class="mi-item"><div class="lbl">政府計画・統計資料</div><div class="dsc">修正版電力開発計画VIII、省庁の電力供給指針、政令テキスト &#8212; 名称付き出典をインラインで引用。</div></div>
+        <div class="mi-item"><div class="lbl">市場調査データセット</div><div class="dsc">公開されているベトナムのデータセンター容量・収益・コロケーションデータを事業者開示と照合 &#8212; データセットと期間を明記して引用。</div></div>
+        <div class="mi-item"><div class="lbl">三角検証済み推計</div><div class="dsc">単一情報源でカバーできない数値 &#8212; 例えば稼働対パイプラインのギャップ &#8212; については、2〜3の情報源を組み合わせ手法を開示。[Kira estimates]タグを付与。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 003 — TOC ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · 目次</div>
+      <div class="page-section-counter">003 / 017</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+    <p class="page-subhead">4つの構成：容量を引き込む需要の急増、着地を制約する供給側の制限、建設を競う事業者、そして2027年へのシナリオ考察。</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">エグゼクティブサマリー<span class="tsub">2027年の着地論考</span></span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">戦略的示唆<span class="tsub">市場参加者への5つの論点</span></span><span class="tpage">005</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">市場規模・成長軌道<span class="tsub">2030年までの容量と収益</span></span><span class="tpage">007</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">需要ドライバー<span class="tsub">AI・クラウド・データローカライゼーション</span></span><span class="tpage">008</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">電力と送電網<span class="tsub">PDP8修正版 対 DC電力需要</span></span><span class="tpage">010</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">稼働ギャップ<span class="tsub">稼働MW対パイプライン</span></span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">接続性と規制<span class="tsub">海底ケーブル・データ規則</span></span><span class="tpage">012</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">競合構造<span class="tsub">容量を着地させる事業者</span></span><span class="tpage">014</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">2027年展望・シナリオ<span class="tsub">基本・加速・制約</span></span><span class="tpage">016</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">分析手法・出典<span class="tsub">タグ体系と出典凡例</span></span><span class="tpage">017</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 004 — EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · エグゼクティブサマリー</div>
+      <div class="page-section-counter">004 / 017</div>
+    </div>
+    <h1 class="page-h1">ベトナムのデータセンター市場 &#8212; 2027年着地テスト</h1>
+    <p class="page-subhead"><strong>2025年時点でUSD 10.4億の市場</strong>の上に500MW超の発表済みパイプラインが積み上がっているが、2大クラスターで稼働中の容量は約60MWにすぎない。<strong>ハイパースケール容量が実際に着地するペースを決めるのは需要ではなく、電力と送電網である。</strong></p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">市場規模 2025年</div>
+        <div class="num">1.04<span class="unit">USD bn</span></div>
+        <div class="change">&#8593; 2031年に~32億ドルへ</div>
+        <div class="source-tag sec">Arizton 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">DC稼働容量 2025年</div>
+        <div class="num">~525<span class="unit">MW</span></div>
+        <div class="change">&#8593; 2030年に~950 MWへ</div>
+        <div class="source-tag sec">DC Outlook 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">HCMC＋ハノイ稼働負荷</div>
+        <div class="num">~60<span class="unit">MW</span></div>
+        <div class="change down">vs 500MW超パイプライン</div>
+        <div class="source-tag sec">VnEconomy 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">建設コスト / MW</div>
+        <div class="num">6&#8211;8<span class="unit">USD mn</span></div>
+        <div class="change">地域最低水準</div>
+        <div class="source-tag sec">Arizton 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>前提条件</h3>
+        <p>ベトナムのデータセンター市場は2025年に<strong>USD 10.4億</strong>に達し[Arizton 2025]、設置容量は<strong>約525 MW</strong>[DC Outlook 2025]、12.6% CAGRで<strong>2030年には~950 MW</strong>に向かっています[DC Outlook 2025]。ハイパースケールへの意欲は本物です：ホーチミン市の発表済み・建設中プロジェクトだけで<strong>500 MW超</strong>[DCD 2026]に上り、USD 20億のG42&#8211;Microsoft&#8211;FPTキャンパスとViettel IDCのタンフータウン140 MWビルドがその中核を担っています[Cafef 2025]。</p>
+        <h3>制約要因</h3>
+        <p>ボトルネックは物理的なものです。ハノイとHCMCの稼働負荷は2025年時点で約<strong>60 MW</strong>にとどまり、全国稼働ベースは約104 MW[VnEconomy 2025]。発表済みパイプラインとのギャップを埋めるには送電網の整備とクリーン電力へのアクセスが前提となります。全国需要は2030年まで年率<strong>10.3&#8211;12.5%</strong>拡大し[MOIT 2025]、ハイテク向け負荷ではすでに断続的な電力ストレスが報告されています。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">稼働容量 対 発表済みパイプライン</div>
+            <div class="chart-subtitle">ベトナム · MW · 2025年実績 対 パイプライン</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="200"/>
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="60" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="60" y1="65" x2="460" y2="65"/>
+            <text class="axis-text" x="54" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="54" y="159" text-anchor="end">200</text>
+            <text class="axis-text" x="54" y="114" text-anchor="end">400</text>
+            <text class="axis-text" x="54" y="69" text-anchor="end">600</text>
+            <rect class="bar-tertiary" x="100" y="187" width="70" height="13"/>
+            <text class="label-data" x="135" y="181" text-anchor="middle">~60</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">HCMC+HN稼働</text>
+            <rect class="bar-secondary" x="220" y="153" width="70" height="47"/>
+            <text class="label-data" x="255" y="147" text-anchor="middle">~525</text>
+            <text class="axis-text" x="255" y="216" text-anchor="middle">全国稼働合計</text>
+            <rect class="bar-primary" x="340" y="88" width="70" height="112"/>
+            <text class="label-data" x="375" y="82" text-anchor="middle">500&#43;</text>
+            <text class="axis-text" x="375" y="216" text-anchor="middle">HCMCパイプライン</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: VNECONOMY, DC OUTLOOK, DCD, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Arizton 2025 = Vietnam Data Center Market Investment Analysis 2025 &#183; DC Outlook 2025 = Vietnam Data Center Capacity Outlook to 2031 (industry dataset) &#183; DCD 2026 = Data Center Dynamics HCMC pipeline tracking 2026 &#183; Cafef 2025 = CafeF operator capacity reporting 2025 &#183; VnEconomy 2025 = VnEconomy DC capacity report 2025 &#183; MOIT 2025 = Power Development Plan VIII (adjusted) 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 005 — EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · エグゼクティブサマリー</div>
+      <div class="page-section-counter">005 / 017</div>
+    </div>
+    <h1 class="page-h1">市場参加者に向けた5つの戦略的示唆</h1>
+    <p class="page-subhead">2027年までのベトナムのデータセンター建設を左右する5つの力。それぞれ文書化されたデータとKIRA合成に基づいています。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · 電力</div>
+        <div class="title">送電余裕が決定的制約となっている</div>
+        <div class="body-text">全国電力需要は2030年まで年率<strong>10.3&#8211;12.5%</strong>拡大します[MOIT 2025]。ハイパースケールキャンパスには安定した連続負荷が必要であり、立地選定は今や地価ではなく変電所と500kV送電線へのアクセスに従っています。<strong>電力の準備状況こそが</strong>2027年の上限を規定します。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">505 TWh</span> 2030年需要</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · クリーン電力</div>
+        <div class="title">DPPAがハイパースケーラーの必須要件を解除する</div>
+        <div class="body-text">政令57/2025号が直接電力購入契約を再開し、発電所近傍のキャンパスに有利な私設配線モデルも含まれます[IEEFA 2025]。クリーンエネルギーへのアクセスは、再生可能エネルギー目標を持つグローバルクラウドテナントにとって<strong>着地の前提条件</strong>となっています。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">政令57号</span> 2025年3月</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · 集約化</div>
+        <div class="title">通信事業者の既存基盤が支配的</div>
+        <div class="body-text">国内4事業者 &#8212; Viettel、VNPT、FPT、CMC &#8212; が容量の<strong>約97%</strong>を保有しています[Cafef 2025]。外資系ハイパースケーラーは単独グリーンフィールドではなく、現地JVとコロケーションを通じて参入します。既存事業者の接続性と土地が<strong>着地のレール</strong>となっています。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">~97%</span> 国内シェア</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · 規制</div>
+        <div class="title">データローカライゼーションが需要を創出する</div>
+        <div class="body-text">個人データ保護法（2026年1月施行）とDecree 53のデータ居住規則がベトナムユーザーデータの国内保管を義務付け、<strong>24ヶ月の最低保持期間</strong>を定めています[FPF 2025]。コンプライアンス需要は循環的ではなく構造的であり、2027年までのコロケーションの<strong>需要フロア</strong>となっています。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">24ヶ月</span> 保持規則</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · 接続性</div>
+        <div class="title">海底容量がハブ入札の信頼性を高める</div>
+        <div class="body-text">50 TbpsのAsia Direct Cableが2025年に開通し、ベトナムの既存5系統の合計を超える容量を持ちます[VietnamPlus 2025]。2030年までにさらに10本のケーブルを目標とし、<strong>レイテンシと冗長性の優位性</strong>による地域ハブとしての位置付けが固まりつつあります。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">50 Tbps</span> ADC容量</div>
+      </div>
+    </div>
+    <div class="source-key">Cafef 2025 = CafeF operator capacity reporting 2025 &#183; FPF 2025 = Future of Privacy Forum analysis of Vietnam PDPL 2025 &#183; IEEFA 2025 = IEEFA Vietnam DPPA decree analysis 2025 &#183; MOIT 2025 = Power Development Plan VIII (adjusted) 2025 &#183; VietnamPlus 2025 = VietnamPlus Asia Direct Cable report 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 006 — DIVIDER: DEMAND SURGE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">需要の<span class="accent">急増</span></h1>
+    <div class="divider-thesis">ベトナムのデータセンター収益と容量は、いずれも10年間でほぼ3倍になります。その牽引力は<strong>AIコンピューティング、クラウド移行、そして強制力を持つデータローカライゼーション義務</strong>です &#8212; 需要はこの方程式の易しい側面です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1 市場規模</div>
+      <div class="toc-pill">4.2 容量軌道</div>
+      <div class="toc-pill">4.3 需要ドライバー</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 007 — MARKET SIZING ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · 市場規模</div>
+      <div class="page-section-counter">007 / 017</div>
+    </div>
+    <h1 class="page-h1">容量は2030年までにほぼ倍増、収益はほぼ3倍に。</h1>
+    <p class="page-subhead">2つの時計が異なるスピードで動いています。<strong>設置容量</strong>は~525 MWから2030年には~950 MWへと拡大し、<strong>市場価値</strong>はAIグレードラックとコロケーションプレミアムがMW当たり収益を押し上げ、より速いペースで複利成長します。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>容量曲線</h3>
+        <p>設置容量は<strong>2025年時点で約525 MW</strong>[DC Outlook 2025]、12.6% CAGRで<strong>2030年には約950 MW</strong>に達する見通しです[DC Outlook 2025]。独立系調査では同期間に総電力容量が~580 MWから~980 MWへ上昇するとしており[Trade.gov 2025]、2つの見方はほぼ倍増という点で収束しています。</p>
+        <h3>収益曲線</h3>
+        <p>市場価値は<strong>2025年にUSD 10.4億</strong>で、<strong>2031年にはUSD 31.9億</strong>（CAGR 20.5%）に向かっています[Arizton 2025]。市場の約82%を占めるコロケーションが最も速く複利成長しており、2024年のUSD 1.48億から2030年には USD 6.73億へ拡大します[Arizton 2025]。</p>
+        <h3>コスト優位性</h3>
+        <p>建設コストは<strong>MW当たりUSD 6〜8百万</strong>で、地域ハブの中で最低水準です[Arizton 2025]。建設の経済合理性は確立済みであり、問いは処理能力（スループット）です。<strong>[Kira estimates]</strong>によれば、2027年の実現容量はヘッドラインパイプラインを大幅に下回ります。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">ベトナムデータセンター &#8212; 容量と市場価値</div>
+            <div class="chart-subtitle">MW（棒グラフ） · USD bn（折れ線） · 2025&#8211;2031F</div>
+          </div>
+          <div class="chart-unit">MW / USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">300</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">600</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">900</text>
+            <rect class="bar-primary" x="95" y="126" width="48" height="79"/>
+            <text class="label-data" x="119" y="120" text-anchor="middle">525</text>
+            <text class="axis-text" x="119" y="221" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="240" y="100" width="48" height="105"/>
+            <text class="label-data" x="264" y="94" text-anchor="middle">~700</text>
+            <text class="axis-text" x="264" y="221" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="385" y="62" width="48" height="143"/>
+            <text class="label-data" x="409" y="56" text-anchor="middle">950</text>
+            <text class="axis-text" x="409" y="221" text-anchor="middle">2030F</text>
+            <polyline points="119,180 264,150 409,108" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="119" cy="180" r="4" fill="#D97706"/><text class="label-small" x="119" y="175" text-anchor="middle" style="fill:#D97706">1.0</text>
+            <circle cx="264" cy="150" r="4" fill="#D97706"/><text class="label-small" x="280" y="148" style="fill:#D97706">~2.1</text>
+            <circle cx="409" cy="108" r="4" fill="#D97706"/><text class="label-small" x="409" y="103" text-anchor="middle" style="fill:#D97706">3.2</text>
+            <rect class="bar-primary" x="50" y="232" width="10" height="10"/><text class="label-small" x="64" y="241">容量 MW</text>
+            <rect x="160" y="232" width="10" height="10" fill="#D97706"/><text class="label-small" x="174" y="241">市場価値 USD bn</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DC OUTLOOK, ARIZTON, TRADE.GOV, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Arizton 2025 = Vietnam Data Center Market Investment Analysis 2025 &#183; DC Outlook 2025 = Vietnam Data Center Capacity Outlook to 2031 (industry dataset) &#183; Trade.gov 2025 = US ITA Vietnam Data Centers market brief 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 008 — DEMAND DRIVERS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · 需要ドライバー</div>
+      <div class="page-section-counter">008 / 017</div>
+    </div>
+    <h1 class="page-h1">3つの需要エンジン：AIコンピューティング、クラウド、ローカライゼーション</h1>
+    <p class="page-subhead">需要は構造的に容易な側面です。国家デジタル経済目標、AI投資の波、そして強制力を持つデータ居住規制がそれぞれ容量を引き込み、相互に強化し合っています。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>AIコンピューティング</h3>
+        <p>主要プロジェクトは明示的にAIグレードです：HCMCに<strong>USD 20億のG42&#8211;Microsoft&#8211;FPT「AIファクトリー」</strong>と、200 MW ITロードを目標とするUSD 20億のKBC&#8211;AIC&#8211;VietinBank AI複合施設があります[Cafef 2025]。AIラックはキャビネット当たりの消費電力がはるかに大きく、010ページの送電網問題を増幅させます。</p>
+        <h3>クラウド移行</h3>
+        <p>ベトナムは<strong>2025年にGDPの20%をデジタル経済</strong>とする目標を掲げ、2030年には30%への引き上げを目指し[Trade.gov 2025]、2030年までに政府の完全クラウド移行を計画しています。コロケーションはすでに市場の約82%を占めており[Arizton 2025]、企業が自社構築より賃貸を選ぶ傾向を示しています。</p>
+        <h3>ローカライゼーション義務</h3>
+        <p>個人データ保護法（2026年1月施行）とDecree 53はベトナムユーザーデータの国内保管を義務付け、<strong>最低24ヶ月の保持期間</strong>を定めています[FPF 2025]。これによりコンプライアンスがAIサイクルに依存しない恒続的なコロケーション需要に転換されます。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">容量を引き込む需要要因</div>
+            <div class="chart-subtitle">指数化された需要貢献 · 方向性を示すもの</div>
+          </div>
+          <div class="chart-unit">ドライバー</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="20" x2="150" y2="210"/>
+            <rect class="bar-primary" x="150" y="34" width="280" height="34"/>
+            <text class="label-data" x="438" y="56" style="fill:var(--primary)">高</text>
+            <text class="label-small" x="146" y="55" text-anchor="end">AIコンピューティング</text>
+            <rect class="bar-primary" x="150" y="92" width="230" height="34" opacity="0.85"/>
+            <text class="label-data" x="388" y="114">高</text>
+            <text class="label-small" x="146" y="113" text-anchor="end">クラウド移行</text>
+            <rect class="bar-secondary" x="150" y="150" width="250" height="34"/>
+            <text class="label-data" x="408" y="172" style="fill:var(--green)">構造的</text>
+            <text class="label-small" x="146" y="171" text-anchor="end">ローカライゼーション</text>
+            <text class="label-small" x="150" y="232">棒の長さ = 2025&#8211;2030年の容量需要への方向性的牽引力</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: TRADE.GOV, ARIZTON, FPF, CAFEF, KIRA SYNTHESIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Arizton 2025 = Vietnam Data Center Market Investment Analysis 2025 &#183; Cafef 2025 = CafeF operator capacity reporting 2025 &#183; FPF 2025 = Future of Privacy Forum analysis of Vietnam PDPL 2025 &#183; Trade.gov 2025 = US ITA Vietnam Data Centers market brief 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 009 — DIVIDER: LANDING CONSTRAINT ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">着地の<span class="accent">制約</span></h1>
+    <div class="divider-thesis">発表はメガワットではありません。<strong>電力供給、送電網、そして薄い稼働基盤</strong> &#8212; 2大クラスターで約60 MW &#8212; が、パイプラインのどれだけが2027年までに実際に通電するかを決めます。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1 電力・送電網</div>
+      <div class="toc-pill">5.2 稼働ギャップ</div>
+      <div class="toc-pill">5.3 接続性・規則</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 010 — POWER & GRID ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · 電力と送電網</div>
+      <div class="page-section-counter">010 / 017</div>
+    </div>
+    <h1 class="page-h1">電力供給がゲート、送電網が錠前。</h1>
+    <p class="page-subhead">PDP8（修正版）は発電容量のほぼ3倍化を約束していますが、キャンパスにとって決定的な問いは<strong>安定した負荷がメーターに届く場所と時期</strong>です &#8212; 特に需要の重い南部において。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>計画</h3>
+        <p>修正版電力開発計画VIII（2025年4月承認）は2030年までに<strong>183〜236 GWの容量</strong>を目標とし、2023年の~80 GWから大幅に拡大します[MOIT 2025]。地域間の不均衡を解消するため、新規500kV線約12,944 kmと大規模な220 kVの整備に資金を投入します[MOIT 2025]。</p>
+        <h3>逼迫状況</h3>
+        <p>需要は2030年まで年率<strong>10.3〜12.5%</strong>で拡大し、約505 TWhに達します[MOIT 2025]。2023年の不足は推定<strong>USD 14億</strong>のコストをもたらし[Vietnam Briefing 2025]、データセンターを含むハイテク向け負荷ではすでに断続的な電力ストレスが報告されています。</p>
+        <h3>ローカルの解決策</h3>
+        <p>HCMCは2026年に向けて<strong>5〜10%の供給不足余裕</strong>をモデル化しており、計画中のキャンパスへの電力供給のためニンファン、ビントゥアン、メコンデルタからの送電ルートを整備しています[Thanh Nien 2025]。クリーン電力の立地選定は今やキャンパス設計の後付けではなく、前提条件となっています。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">発電容量 対 需要成長</div>
+            <div class="chart-subtitle">GW設置容量 · PDP8修正版 · 2023&#8211;2030F</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">80</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">160</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">240</text>
+            <rect class="bar-secondary" x="120" y="160" width="70" height="45"/>
+            <text class="label-data" x="155" y="154" text-anchor="middle">~80</text>
+            <text class="axis-text" x="155" y="221" text-anchor="middle">2023</text>
+            <rect class="bar-primary" x="300" y="102" width="70" height="103"/>
+            <text class="label-data" x="335" y="96" text-anchor="middle">183</text>
+            <rect class="bar-primary" x="300" y="72" width="70" height="30" opacity="0.45"/>
+            <text class="label-small" x="335" y="68" text-anchor="middle" style="fill:var(--primary)">&#8211;236 高位</text>
+            <text class="axis-text" x="335" y="221" text-anchor="middle">2030F (PDP8)</text>
+            <path d="M 190 168 L 296 110" stroke="#D97706" stroke-width="2" fill="none" marker-end="url(#arrp)"/>
+            <text class="label-small" x="243" y="128" text-anchor="middle" style="fill:#D97706; font-weight:700">需要 &#43;10&#8211;12%/年</text>
+            <defs><marker id="arrp" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#D97706"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: POWER DEVELOPMENT PLAN VIII (ADJUSTED), KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MOIT 2025 = Power Development Plan VIII (adjusted), Ministry of Industry &amp; Trade 2025 &#183; Vietnam Briefing 2025 = Vietnam Briefing power-shortage analysis 2025 &#183; Thanh Nien 2025 = Thanh Nien clean-power supply reporting 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 011 — OPERATIONAL GAP ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · 稼働ギャップ</div>
+      <div class="page-section-counter">011 / 017</div>
+    </div>
+    <h1 class="page-h1">発表と通電のギャップ</h1>
+    <p class="page-subhead">パイプラインはギガワット規模の意図で読まれるが、メーターは数十メガワットの実績を示す。<strong>2027年までにそのギャップを縮めるのは電力と建設の問題であり、需要の問題ではありません。</strong></p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>稼働中の実態</h3>
+        <p>ハノイとHCMCの稼働負荷は<strong>2025年時点で約60 MW</strong>であり、全国稼働ベースは約104 MW[VnEconomy 2025]。ベトナムは28〜42程度の稼働施設を擁し、2大クラスターが支配的です[DCD 2026]。</p>
+        <h3>発表済みの実態</h3>
+        <p>HCMCのパイプラインだけで<strong>500 MW超</strong>[DCD 2026]：Viettel IDCのタンフータウン140 MW建設（完工2030年）、USD 20億のG42&#8211;Microsoft&#8211;FPTキャンパス、Sembcorpが承認を得たハイパースケールキャンパス、Evolution DC（52 MW）、Starmason（60 MW）[Sembcorp 2026]。</p>
+        <h3>2027年までに着地するもの</h3>
+        <p>主要キャンパスの大多数は<strong>2027〜2030年の通電</strong>を目標としており、AIファクトリーの第一フェーズ（~50 MW）は2027年頃の完成が見込まれています[VnExpress 2025]。<strong>[Kira estimates]</strong>によれば、2027年の追加稼働容量の実現値はヘッドラインパイプラインのごく一部にとどまり、送電線接続の窓口が律速要因となります。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">パイプラインじょうご &#8212; 発表から通電まで</div>
+            <div class="chart-subtitle">HCMC ＋ ハノイ · MW · 納入段階別</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <rect class="bar-primary" x="90" y="34" width="300" height="34"/>
+            <text class="label-data" x="240" y="56" text-anchor="middle" style="fill:#fff">500&#43; 発表済み</text>
+            <rect class="bar-primary" x="140" y="86" width="200" height="34" opacity="0.8"/>
+            <text class="label-data" x="240" y="108" text-anchor="middle" style="fill:#fff">~250 建設中</text>
+            <rect class="bar-tertiary" x="180" y="138" width="120" height="34"/>
+            <text class="label-data" x="240" y="160" text-anchor="middle" style="fill:#fff">~90&#8211;130 2027年までに稼働</text>
+            <rect class="bar-secondary" x="205" y="190" width="70" height="30"/>
+            <text class="label-data" x="240" y="210" text-anchor="middle" style="fill:#fff">~60 現時点稼働</text>
+            <text class="label-small" x="240" y="240" text-anchor="middle">電力・送電線接続の窓口によりじょうごは狭まる [Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: VNECONOMY, DCD, SEMBCORP, VNEXPRESS, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DCD 2026 = Data Center Dynamics HCMC pipeline tracking 2026 &#183; Sembcorp 2026 = Sembcorp Development HCMC hyperscale approval release 2026 &#183; VnEconomy 2025 = VnEconomy DC capacity report 2025 &#183; VnExpress 2025 = VnExpress HCMC AI data center reporting 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 012 — CONNECTIVITY & REGULATION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · 接続性と規制</div>
+      <div class="page-section-counter">012 / 017</div>
+    </div>
+    <h1 class="page-h1">海底容量は増強、データ規制は需要フロアを固める。</h1>
+    <p class="page-subhead">制約の全体像を補完する2つの要因：地域ハブとしての信頼性を高める<strong>国際帯域幅</strong>と、国内需要のベースラインを保証する<strong>データ居住規制</strong>。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>接続性</h3>
+        <p><strong>50 TbpsのAsia Direct Cable</strong>が2025年4月に開通し、ベトナムの既存5系統の合計を超える容量を持ちます[VietnamPlus 2025]。ベトナムは2030年までに<strong>少なくとも10本の新規ケーブル</strong>（計15本）を目標とし、シンガポールへの自営リンクを含みます[VietnamPlus 2025]。</p>
+        <h3>冗長性リスク</h3>
+        <p>ケーブルの脆弱性は依然として現実的なリスクです：2024年には3つの海底システムが同時障害を起こし、APGケーブルは2025年に3度断線しました[DCD 2026]。ルート多様性は地域ハブを求めるテナントの調達基準となっています。</p>
+        <h3>規制</h3>
+        <p>個人データ保護法（2026年1月）とDecree 356は収益ベースの罰則を追加 &#8212; 国境越えデータ転送違反に対し<strong>年間収益の最大5%</strong>[FPF 2025]。Decree 53は24ヶ月のローカルストレージ規則を維持し、コロケーション需要を固定します。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">国際海底ケーブルシステム数</div>
+            <div class="chart-subtitle">ベトナムに接続するシステム数 · 2024&#8211;2030F</div>
+          </div>
+          <div class="chart-unit">ケーブル本数</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">5</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">10</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">15</text>
+            <rect class="bar-secondary" x="110" y="160" width="60" height="45"/>
+            <text class="label-data" x="140" y="154" text-anchor="middle">5</text>
+            <text class="axis-text" x="140" y="221" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="240" y="151" width="60" height="54"/>
+            <text class="label-data" x="270" y="145" text-anchor="middle">6&#43;</text>
+            <text class="axis-text" x="270" y="221" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="370" y="70" width="60" height="135" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text class="label-data" x="400" y="64" text-anchor="middle" style="fill:var(--primary)">15</text>
+            <text class="axis-text" x="400" y="221" text-anchor="middle">2030F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: VIETNAMPLUS, DCD, KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DCD 2026 = Data Center Dynamics subsea outage reporting 2026 &#183; FPF 2025 = Future of Privacy Forum analysis of Vietnam PDPL 2025 &#183; VietnamPlus 2025 = VietnamPlus Asia Direct Cable report 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 013 — DIVIDER: WHO LANDS THE CAPACITY ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">容量を<span class="accent">着地</span>させる事業者</h1>
+    <div class="divider-thesis">国内通信事業者が設置容量の<strong>約97%</strong>を保有し、接続性・土地・送電網との関係を握っています。外資系ハイパースケーラーはその事業者を通じて参入します &#8212; 現地のレールこそが容量の着地経路です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1 市場構造</div>
+      <div class="toc-pill">6.2 主要事業者</div>
+      <div class="toc-pill">6.3 外資参入</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 014 — COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · 競合構造</div>
+      <div class="page-section-counter">014 / 017</div>
+    </div>
+    <h1 class="page-h1">通信事業者主導の基盤、外資はその上に参入する。</h1>
+    <p class="page-subhead">国有・上場の4事業者が容量の<strong>約97%</strong>を支配しています[Cafef 2025]。その優位性は建物ではなく、メガワットを実際に通電させる束ねられた接続性・土地バンク・送電網アクセスにあります。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">事業者別容量シェア</div>
+            <div class="chart-subtitle">ベトナム · 設置MW中の概算シェア · 2025年</div>
+          </div>
+          <div class="chart-unit">% シェア</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="15" x2="120" y2="175"/>
+            <rect class="bar-primary" x="120" y="22" width="170" height="22"/><text class="label-data" x="298" y="39">~21%</text><text class="label-small" x="116" y="38" text-anchor="end">Viettel IDC</text>
+            <rect class="bar-primary" x="120" y="56" width="170" height="22" opacity="0.85"/><text class="label-data" x="298" y="73">~21%</text><text class="label-small" x="116" y="72" text-anchor="end">VNPT</text>
+            <rect class="bar-secondary" x="120" y="90" width="98" height="22"/><text class="label-data" x="226" y="107">~12%</text><text class="label-small" x="116" y="106" text-anchor="end">FPT Telecom</text>
+            <rect class="bar-secondary" x="120" y="124" width="74" height="22" opacity="0.8"/><text class="label-data" x="202" y="141">~9%</text><text class="label-small" x="116" y="140" text-anchor="end">CMC Telecom</text>
+            <rect class="bar-tertiary" x="120" y="158" width="50" height="22"/><text class="label-data" x="178" y="175">~6%</text><text class="label-small" x="116" y="174" text-anchor="end">VNG / その他</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CAFEF, VIETDATA, KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>集約的・通信主導</h3>
+        <p>事業者は<strong>コロケーションと接続性・マネージドサービスを一体化</strong>して提供しており、Viettel IDCだけで国内コロケーションラックの約<strong>49%</strong>を運営しています[Cafef 2025]。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>上位4社の容量シェア</span><span class="val">~97%</span></div>
+          <div class="stat-line"><span>Viettel施設数</span><span class="val">14 / ~87 MW</span></div>
+          <div class="stat-line"><span>コロケーション比率</span><span class="val">~82%</span></div>
+          <div class="stat-line"><span>建設コスト / MW</span><span class="val">USD 6&#8211;8 mn</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">Viettel IDC</div>
+        <div class="comp-parent">Viettel Group（国有） · 14施設</div>
+        <div class="comp-stat-row"><span>容量</span><span class="val">~87 MW</span></div>
+        <div class="comp-stat-row"><span>主力案件</span><span class="val">140 MW HCMC</span></div>
+        <div class="comp-stat-row"><span>ラック</span><span class="val">~49% 全国比</span></div>
+        <div class="comp-strengths"><strong>規模と送電網関係。</strong>ハイパースケールの先行者；全国ネットワークを一体提供。[Cafef 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">VNPT</div>
+        <div class="comp-parent">VNPT Group（国有）</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">~21%</span></div>
+        <div class="comp-stat-row"><span>拠点</span><span class="val">ホアラック（HN）</span></div>
+        <div class="comp-stat-row"><span>強み</span><span class="val">バックボーン</span></div>
+        <div class="comp-strengths"><strong>北部での強さ。</strong>400 Gbpsバックボーン、南北間遅延8ms未満。[Arizton 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">FPT Telecom</div>
+        <div class="comp-parent">FPT Corporation（上場）</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">~12%</span></div>
+        <div class="comp-stat-row"><span>JV</span><span class="val">G42 / Microsoft</span></div>
+        <div class="comp-stat-row"><span>注力</span><span class="val">AIファクトリー</span></div>
+        <div class="comp-strengths"><strong>外資資本の導管。</strong>USD 20億HCMCアドキャンパスのアンカーパートナー。[Cafef 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">CMC Telecom</div>
+        <div class="comp-parent">CMC Corporation（上場）</div>
+        <div class="comp-stat-row"><span>シェア</span><span class="val">~9%</span></div>
+        <div class="comp-stat-row"><span>建設</span><span class="val">30&#8594;120 MW</span></div>
+        <div class="comp-stat-row"><span>設備投資</span><span class="val">USD 250 mn</span></div>
+        <div class="comp-strengths"><strong>ハイパースケール挑戦者。</strong>HCMC承認済みキャンパスを30 MWから120 MWへ拡張。[DCD 2026]</div>
+      </div>
+    </div>
+    <div class="source-key">Arizton 2025 = Vietnam Data Center Market Investment Analysis 2025 &#183; Cafef 2025 = CafeF operator capacity reporting 2025 &#183; DCD 2026 = Data Center Dynamics HCMC pipeline tracking 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 015 — DIVIDER: 2027 OUTLOOK ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">2027年<span class="accent">展望</span></h1>
+    <div class="divider-thesis">3つのシナリオは1つの変数で分岐します：<strong>安定したクリーン電力がキャンパスに届く速さ</strong>。需要はほぼ確実であり、シナリオ間のスプレッドはほぼ完全に電力・送電網の話です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1 基本ケース</div>
+      <div class="toc-pill">7.2 加速</div>
+      <div class="toc-pill">7.3 制約</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 016 — FORECAST / SCENARIOS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · 2027年展望</div>
+      <div class="page-section-counter">016 / 017</div>
+    </div>
+    <h1 class="page-h1">2027年までの通電容量 &#8212; 3つのシナリオ</h1>
+    <p class="page-subhead">パイプラインは固定されており、問いはスループットです。各シナリオの違いは主に<strong>HCMCとハノイの両クラスターにおける送電線接続の速度とクリーン電力の利用可能性</strong>にあります。</p>
+    <div class="fo-chart-wrap">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">データセンター通電容量 &#8212; 2027年へのシナリオファン</div>
+          <div class="chart-subtitle">ベトナム全国稼働MW · 2025年実績 &#183; 2027年シナリオ</div>
+        </div>
+        <div class="chart-unit">MW LIVE</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1080 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <line class="axis-line" x1="60" y1="15" x2="60" y2="165"/>
+          <line class="axis-line" x1="60" y1="165" x2="1060" y2="165"/>
+          <line class="grid-line" x1="60" y1="125" x2="1060" y2="125"/>
+          <line class="grid-line" x1="60" y1="85" x2="1060" y2="85"/>
+          <line class="grid-line" x1="60" y1="45" x2="1060" y2="45"/>
+          <text class="axis-text" x="54" y="169" text-anchor="end">400</text>
+          <text class="axis-text" x="54" y="129" text-anchor="end">600</text>
+          <text class="axis-text" x="54" y="89" text-anchor="end">800</text>
+          <text class="axis-text" x="54" y="49" text-anchor="end">1000</text>
+          <circle cx="150" cy="140" r="5" fill="#0B0D10"/>
+          <text class="label-data" x="150" y="132" text-anchor="middle">525</text>
+          <text class="axis-text" x="150" y="182" text-anchor="middle">2025年実績</text>
+          <path d="M 150 140 L 980 95" stroke="#00A88B" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="95" r="5" fill="#00A88B"/>
+          <text class="label-data" x="998" y="93" style="fill:#00A88B">~760 加速</text>
+          <path d="M 150 140 L 980 117" stroke="#1E6FFF" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="117" r="5" fill="#1E6FFF"/>
+          <text class="label-data" x="998" y="115" style="fill:#1E6FFF">~660 基本</text>
+          <path d="M 150 140 L 980 133" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="980" cy="133" r="5" fill="#D97706"/>
+          <text class="label-data" x="998" y="131" style="fill:#D97706">~590 制約</text>
+          <text class="axis-text" x="980" y="182" text-anchor="middle">2027F</text>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: DC OUTLOOK, DCD, VNECONOMY, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="fo-scenarios">
+      <div class="fo-card bull">
+        <div class="sc-name">加速シナリオ</div>
+        <div class="sc-val">~760<span class="unit">MW 稼働</span></div>
+        <div class="sc-body">送電線接続の窓口が維持され、DPPAクリーン電力契約が速やかに成立し、AIファクトリー第一フェーズが予定通り通電します。HCMCが500MW超のバックログを最速で消化します。<strong>[Kira estimates]</strong></div>
+      </div>
+      <div class="fo-card base">
+        <div class="sc-name">基本ケース</div>
+        <div class="sc-val">~660<span class="unit">MW 稼働</span></div>
+        <div class="sc-body">容量は~12.6% CAGRの軌道を辿り、送電整備に追いつかれた主要キャンパスの一部が2028〜2030年にずれ込みます。ローカライゼーション規制がコロケーションを満杯に保ちます。<strong>[Kira estimates]</strong></div>
+      </div>
+      <div class="fo-card bear">
+        <div class="sc-name">制約シナリオ</div>
+        <div class="sc-val">~590<span class="unit">MW 稼働</span></div>
+        <div class="sc-body">5〜10%の供給不足が再発し、500 kV整備の遅れが通電を遅らせます。AIキャンパスは計画より段階的に稼働。需要は健在だが供給が絞られます。<strong>[Kira estimates]</strong></div>
+      </div>
+    </div>
+    <div class="source-key">DCD 2026 = Data Center Dynamics HCMC pipeline tracking 2026 &#183; DC Outlook 2025 = Vietnam Data Center Capacity Outlook to 2031 (industry dataset) &#183; VnEconomy 2025 = VnEconomy DC capacity report 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 017 — METHODOLOGY ENDNOTE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · 分析手法と出典</div>
+      <div class="page-section-counter">017 / 017</div>
+    </div>
+    <h1 class="page-h1">分析手法と出典</h1>
+    <p class="page-subhead">数値の導出方法、および本展望で使用したすべての名称付き出典の完全引用。</p>
+    <div class="me-body">
+      <div class="me-method">
+        <h3>分析手法</h3>
+        <p>本展望は2つのエビデンスストリームを三角検証して構築しています。数値に<strong>名称付き出典タグ</strong>（例：[DC Outlook 2025]、[MOIT 2025]）が付いている場合、基礎データはその出典に由来し、完全引用は右に記載しています。数値に<strong>[Kira estimates]</strong>が付いている場合、KIRAのアナリストが開示済みの情報 &#8212; 事業者届出、プロジェクト登録、政府計画 &#8212; から、各セクションに記載した手法を用いて導出しています。</p>
+        <p>容量数値は公開市場データセットと事業者開示を照合しており、稼働対パイプラインのギャップおよび2027年のシナリオファンはKIRAが構築したものです。定量的主張の約<strong>25%がKIRA導出</strong>であり、残りは外部引用です。</p>
+        <div class="me-disclaimer">本レポートはライセンス読者限定です。将来推計はシナリオベースであり、保証を意味しません。© 2026 KIRA Research。</div>
+      </div>
+      <div class="me-sources">
+        <h3>出典凡例</h3>
+        <ul>
+          <li><strong>Arizton 2025</strong> — Vietnam Data Center Market Investment Analysis 2025</li>
+          <li><strong>DC Outlook 2025</strong> — Vietnam Data Center Capacity Outlook to 2031 (industry dataset)</li>
+          <li><strong>Trade.gov 2025</strong> — US ITA Vietnam Data Centers market brief 2025</li>
+          <li><strong>DCD 2026</strong> — Data Center Dynamics HCMC pipeline &amp; subsea reporting 2026</li>
+          <li><strong>Sembcorp 2026</strong> — Sembcorp Development HCMC hyperscale approval release 2026</li>
+          <li><strong>Cafef 2025</strong> — CafeF operator capacity &amp; market-share reporting 2025</li>
+          <li><strong>VnEconomy 2025</strong> — VnEconomy data center capacity report 2025</li>
+          <li><strong>VnExpress 2025</strong> — VnExpress HCMC AI data center reporting 2025</li>
+          <li><strong>MOIT 2025</strong> — Power Development Plan VIII (adjusted), Ministry of Industry &amp; Trade 2025</li>
+          <li><strong>Vietnam Briefing 2025</strong> — Vietnam Briefing power-shortage analysis 2025</li>
+          <li><strong>Thanh Nien 2025</strong> — Thanh Nien clean-power supply reporting 2025</li>
+          <li><strong>IEEFA 2025</strong> — IEEFA Vietnam DPPA decree (57/2025) analysis 2025</li>
+          <li><strong>FPF 2025</strong> — Future of Privacy Forum analysis of Vietnam PDPL &amp; Decree 53/356 2025</li>
+          <li><strong>VietnamPlus 2025</strong> — VietnamPlus Asia Direct Cable &amp; subsea program report 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · ライセンス読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
