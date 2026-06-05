@@ -442,6 +442,28 @@
   }
   injectVercelScripts();
 
+  // ── Google Analytics 4 ────────────────────────────────────
+  // Skip on localhost + admin pages (no point tracking internal traffic).
+  // Idempotent via script id.
+  function injectGA() {
+    const host = window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local');
+    if (isLocal) return;
+    if (window.location.pathname.startsWith('/en/admin/')) return;
+    if (document.getElementById('kira-ga')) return;
+    const GA_ID = 'G-N1891GBDCB';
+    const s = document.createElement('script');
+    s.id = 'kira-ga';
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ window.dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+  }
+  injectGA();
+
   // ── instant.page prefetch ──────────────────────────────────
   // Prefetches pages on hover (~65ms before click), making navigation
   // feel instant. Skip on admin pages (not useful) and Studio host
