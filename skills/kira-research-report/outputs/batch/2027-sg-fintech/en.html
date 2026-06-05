@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Singapore Fintech Market 2027 — KIRA Research</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,600,900&f[]=jetbrains-mono@600&display=swap" rel="stylesheet">
+<style>
+  /* ── Design tokens ── */
+  :root {
+    --bg: #FFFFFF;
+    --bg-soft: #F8F9FB;
+    --text: #0B0D10;
+    --text-mid: #4A5568;
+    --muted: #6B7280;
+    --primary: #1E6FFF;
+    --primary-soft: #EEF3FF;
+    --green: #00A88B;
+    --amber: #D97706;
+    --border: #E5E7EB;
+    --font-body: 'Satoshi', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text-mid);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page wrapper ── */
+  .report-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  /* ── Cover page ── */
+  .cover {
+    min-height: 540px;
+    background: var(--text);
+    color: #fff;
+    padding: 56px 64px 48px;
+    margin: 0 -40px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: rgba(30,111,255,0.12);
+    pointer-events: none;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 200px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(0,168,139,0.08);
+    pointer-events: none;
+  }
+  .cover-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 28px;
+  }
+  .cover-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid rgba(30,111,255,0.6);
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #5B9FFF;
+    margin-right: 8px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1.15;
+    color: #fff;
+    max-width: 700px;
+    margin-bottom: 16px;
+  }
+  .cover-sub {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+  .cover-stats {
+    display: flex;
+    gap: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    position: relative;
+    z-index: 1;
+  }
+  .cover-stat-item {}
+  .cover-stat-num {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 28px;
+    color: #fff;
+    display: block;
+  }
+  .cover-stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ── Section layout ── */
+  .section {
+    margin-bottom: 64px;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  h2 {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 26px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  h3 {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--text);
+    margin: 32px 0 12px;
+    line-height: 1.3;
+  }
+  p {
+    margin-bottom: 16px;
+    font-size: 15.5px;
+    color: var(--text-mid);
+    line-height: 1.72;
+  }
+
+  /* ── Callout card grid ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .kpi-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 18px;
+    border-top: 3px solid var(--primary);
+  }
+  .kpi-num {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 26px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .kpi-delta {
+    font-size: 12.5px;
+    color: var(--text-mid);
+    line-height: 1.4;
+  }
+  .kpi-delta .up { color: var(--green); font-weight: 600; }
+  .kpi-delta .warn { color: var(--amber); font-weight: 600; }
+
+  /* ── Data tags ── */
+  .tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 3px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tag-primary { background: var(--primary-soft); color: var(--primary); }
+  .tag-secondary { background: #E6F7F4; color: var(--green); }
+  .tag-estimate { background: #FEF3C7; color: var(--amber); }
+
+  /* ── SVG chart panels ── */
+  .chart-wrap {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 24px 20px;
+    margin: 28px 0;
+  }
+  .chart-title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .chart-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .chart-source {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  svg text { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── Competitor table ── */
+  .player-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  .player-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg-soft);
+    border-bottom: 2px solid var(--border);
+  }
+  .player-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    vertical-align: top;
+  }
+  .player-table tr:last-child td { border-bottom: none; }
+  .player-table .player-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .badge-blue { background: var(--primary-soft); color: var(--primary); }
+  .badge-green { background: #E6F7F4; color: var(--green); }
+  .badge-amber { background: #FEF3C7; color: var(--amber); }
+  .badge-gray { background: var(--border); color: var(--muted); }
+
+  /* ── Implications grid ── */
+  .impl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 28px 0;
+  }
+  .impl-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 20px;
+    background: var(--bg-soft);
+  }
+  .impl-verb {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .impl-card h4 {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .impl-card p {
+    font-size: 13.5px;
+    margin-bottom: 0;
+  }
+
+  /* ── Risk table ── */
+  .risk-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 100px;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .risk-desc { font-size: 13.5px; }
+  .risk-level {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-align: right;
+  }
+  .risk-high { color: #DC2626; }
+  .risk-med { color: var(--amber); }
+  .risk-low { color: var(--green); }
+
+  /* ── Blockquote callout ── */
+  .callout-box {
+    background: var(--primary-soft);
+    border-left: 3px solid var(--primary);
+    padding: 20px 24px;
+    border-radius: 0 8px 8px 0;
+    margin: 24px 0;
+  }
+  .callout-box p {
+    font-size: 14.5px;
+    color: var(--text);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  /* ── Report footer ── */
+  .report-footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .footer-brand {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .footer-brand span { color: var(--primary); }
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+    text-align: right;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 56px;
+  }
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .toc-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 40px;
+  }
+  .toc-list li {
+    font-size: 13.5px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--text-mid);
+  }
+  .toc-list .toc-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--primary);
+    flex-shrink: 0;
+    min-width: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="report-wrap">
+
+  <!-- ══════════════════════════════════════════════════
+       COVER
+  ══════════════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-meta">KIRA Research · Singapore · Fintech · 2027 Outlook · May 2026</div>
+    <span class="cover-tag">Market Intelligence</span>
+    <span class="cover-tag">Regulatory Deep-Dive</span>
+    <h1>Singapore fintech 2027: consolidation, compliance, and the embedded-finance inflection</h1>
+    <p class="cover-sub">A structural assessment of Singapore's fintech market trajectory through 2027 — regulatory regime hardening, payment-infrastructure maturation, and the competitive realignment following MAS licensing enforcement.</p>
+    <div class="cover-stats">
+      <div class="cover-stat-item">
+        <span class="cover-stat-num">USD 16.1 bn</span>
+        <span class="cover-stat-label">Fintech market size 2027F</span>
+      </div>
+      <div class="cover-stat-item">
+        <span class="cover-stat-num">15.9% CAGR</span>
+        <span class="cover-stat-label">2026–2031 projection</span>
+      </div>
+      <div class="cover-stat-item">
+        <span class="cover-stat-num">SGD 89 bn</span>
+        <span class="cover-stat-label">Digital wallet volume 2027F</span>
+      </div>
+      <div class="cover-stat-item">
+        <span class="cover-stat-num">USD 3.8 bn</span>
+        <span class="cover-stat-label">Fintech VC raised 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       TABLE OF CONTENTS
+  ══════════════════════════════════════════════════ -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">01</span> Executive summary</li>
+      <li><span class="toc-num">05</span> Competitive landscape</li>
+      <li><span class="toc-num">02</span> Market size &amp; forecast</li>
+      <li><span class="toc-num">06</span> Embedded finance &amp; open banking</li>
+      <li><span class="toc-num">03</span> Regulatory landscape</li>
+      <li><span class="toc-num">07</span> Digital assets &amp; stablecoins</li>
+      <li><span class="toc-num">04</span> Digital payments infrastructure</li>
+      <li><span class="toc-num">08</span> Key risks &amp; opportunities 2027</li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       01 EXECUTIVE SUMMARY
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s01">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Executive summary</h2>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-num">USD 16.1 bn</div>
+        <span class="kpi-label">Fintech market 2027F</span>
+        <div class="kpi-delta"><span class="up">+15.9% CAGR</span> 2026–2031; structural, not cyclical <span class="tag tag-estimate">Kira estimates</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">USD 25.8 bn</div>
+        <span class="kpi-label">Payments mkt 2026</span>
+        <div class="kpi-delta">→ USD 40.9 bn by 2031 at <span class="up">9.6% CAGR</span> <span class="tag tag-secondary">MAS 2026</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">USD 8.5 bn</div>
+        <span class="kpi-label">Embedded finance 2025</span>
+        <div class="kpi-delta"><span class="up">5.0% CAGR</span> to USD 10.3 bn by 2030; wealth + insurance leading <span class="tag tag-secondary">GlobeNewswire 2025</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">USD 1.7 bn</div>
+        <span class="kpi-label">Fintech VC deal value 2025</span>
+        <div class="kpi-delta"><span class="up">+34% YoY</span>; payments = 45% of total <span class="tag tag-secondary">GFTN 2025</span></div>
+      </div>
+    </div>
+
+    <p>Singapore's fintech market enters 2027 at a structural inflection: the regulatory framework has hardened from voluntary codes to enforceable licensing regimes, the payment infrastructure has crossed the threshold from domestic to regional, and embedded finance is shifting from pilot to primary distribution channel. <strong>Three forces are reshaping the competitive order simultaneously</strong> — MAS licensing enforcement tightening the operating field for digital-asset and cross-border-payment operators, Project Nexus extending PayNow's reach across five ASEAN economies, and the embedded finance layer pulling financial services distribution toward super-apps and sector platforms.</p>
+
+    <p>Capital deployment has re-anchored toward late-stage, proven-model fintech. Fintech retained the top-funded sector position in Singapore in 2025, with deal value rising 34% year-on-year to USD 1.7 bn [GFTN 2025], but the composition shifted — later-stage VC accounted for 65% of investment value, signals of a market consolidating around defensible positions rather than funding expansion bets. Speculative digital-asset and BNPL paper has been repriced; operators that secured MAS licensing have materially outperformed those that did not.</p>
+
+    <p>The 2027 outlook is constructive but segmented. <strong>Payments infrastructure, wealthtech, and embedded finance are on the favorable side of the structural arc</strong>; BNPL faces volume-ceiling pressure from the Code of Conduct credit cap; and unregistered digital-asset operators face mandatory exit following the June 2025 FSMA compliance deadline. Market participants that sequenced licensing ahead of growth are entering 2027 as price-setters; those that delayed are managing regulatory overhead from a cost-disadvantaged position.</p>
+
+    <div class="callout-box">
+      <p>"The story in Singapore fintech for 2027 is not about the next wave of entrants — it is about who among the current cohort has built the compliance infrastructure and unit-economics discipline to compound at the market's structural growth rate." — KIRA Research analyst team</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       02 MARKET SIZE & FORECAST
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s02">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Market size &amp; forecast</h2>
+    </div>
+
+    <p>Singapore's fintech market was valued at approximately USD 14.0 billion in 2026 [Kira estimates] and is forecast to reach <strong>USD 16.1 billion in 2027</strong>, sustaining a 15.9% CAGR through 2031 to USD 29.2 billion [Kira estimates based on Verified Market Research 2025 anchor]. The underlying driver is structural: Singapore's fintech sector benefits from the MAS SGD 100 million FSTI 3.0 co-funding program for quantum-safe cybersecurity and model-risk infrastructure, combined with the progressive deepening of digital payment rails across the ASEAN-6 corridor.</p>
+
+    <p>Within the headline market, digital payments continue to command the highest growth rate — projected at a 16.95% CAGR between 2026 and 2031 — followed by wealthtech at 14.2% [Kira estimates]. Digital wallet transaction value is forecast to reach <strong>SGD 89 billion by 2027</strong> [Kira estimates based on Statista 2026 trend line], up from approximately SGD 62 billion in 2024. The gap between transaction volume growth and GDP growth is widening: cash-to-digital migration continues to add incremental volume on top of organic consumption growth.</p>
+
+    <!-- Market sizing chart -->
+    <div class="chart-wrap">
+      <div class="chart-title">Singapore fintech market sizing</div>
+      <div class="chart-subtitle">USD bn · 2024–2031F · total addressable market</div>
+      <svg viewBox="0 0 760 280" width="100%" height="280" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grid lines -->
+        <line x1="60" y1="20" x2="60" y2="220" stroke="#E5E7EB" stroke-width="1"/>
+        <line x1="60" y1="220" x2="740" y2="220" stroke="#E5E7EB" stroke-width="1"/>
+        <line x1="60" y1="170" x2="740" y2="170" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="4,3"/>
+        <line x1="60" y1="120" x2="740" y2="120" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="4,3"/>
+        <line x1="60" y1="70" x2="740" y2="70" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="4,3"/>
+
+        <!-- Y-axis labels -->
+        <text x="50" y="224" text-anchor="end" fill="#6B7280" font-size="10">0</text>
+        <text x="50" y="174" text-anchor="end" fill="#6B7280" font-size="10">10</text>
+        <text x="50" y="124" text-anchor="end" fill="#6B7280" font-size="10">20</text>
+        <text x="50" y="74" text-anchor="end" fill="#6B7280" font-size="10">30</text>
+
+        <!-- Bars: years 2024, 2025, 2026, 2027F, 2028F, 2029F, 2030F, 2031F -->
+        <!-- Bar width 60, gap 30, start x=80 -->
+        <!-- Values (USD bn): 10.5, 12.1, 14.0, 16.1, 18.7, 21.6, 25.1, 29.2 -->
+        <!-- Scale: 0–32 USD bn → 0–200px height, so 1bn = 6.25px. Start y=220 -->
+
+        <!-- 2024: 10.5 → h=65.6 -->
+        <rect x="80" y="154" width="55" height="66" fill="#1E6FFF" rx="3"/>
+        <text x="107" y="148" text-anchor="middle" fill="#4A5568" font-size="9.5">10.5</text>
+        <text x="107" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2024</text>
+
+        <!-- 2025: 12.1 → h=75.6 -->
+        <rect x="165" y="145" width="55" height="75" fill="#1E6FFF" rx="3"/>
+        <text x="192" y="139" text-anchor="middle" fill="#4A5568" font-size="9.5">12.1</text>
+        <text x="192" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2025</text>
+
+        <!-- 2026: 14.0 → h=87.5 -->
+        <rect x="250" y="133" width="55" height="87" fill="#1E6FFF" rx="3"/>
+        <text x="277" y="127" text-anchor="middle" fill="#4A5568" font-size="9.5">14.0</text>
+        <text x="277" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2026</text>
+
+        <!-- 2027F: 16.1 → h=100.6 — highlighted -->
+        <rect x="335" y="120" width="55" height="100" fill="#0B0D10" rx="3"/>
+        <text x="362" y="114" text-anchor="middle" fill="#1E6FFF" font-size="9.5" font-weight="600">16.1</text>
+        <text x="362" y="236" text-anchor="middle" fill="#0B0D10" font-size="10" font-weight="600">2027F</text>
+
+        <!-- 2028F: 18.7 → h=116.9 -->
+        <rect x="420" y="103" width="55" height="117" fill="#93B8FF" rx="3"/>
+        <text x="447" y="97" text-anchor="middle" fill="#4A5568" font-size="9.5">18.7</text>
+        <text x="447" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2028F</text>
+
+        <!-- 2029F: 21.6 → h=135 -->
+        <rect x="505" y="85" width="55" height="135" fill="#93B8FF" rx="3"/>
+        <text x="532" y="79" text-anchor="middle" fill="#4A5568" font-size="9.5">21.6</text>
+        <text x="532" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2029F</text>
+
+        <!-- 2030F: 25.1 → h=156.9 -->
+        <rect x="590" y="63" width="55" height="157" fill="#93B8FF" rx="3"/>
+        <text x="617" y="57" text-anchor="middle" fill="#4A5568" font-size="9.5">25.1</text>
+        <text x="617" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2030F</text>
+
+        <!-- 2031F: 29.2 → h=182.5 -->
+        <rect x="675" y="38" width="55" height="182" fill="#93B8FF" rx="3"/>
+        <text x="702" y="32" text-anchor="middle" fill="#4A5568" font-size="9.5">29.2</text>
+        <text x="702" y="236" text-anchor="middle" fill="#6B7280" font-size="10">2031F</text>
+
+        <!-- Forecast annotation -->
+        <line x1="335" y1="24" x2="730" y2="24" stroke="#93B8FF" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="400" y="19" fill="#6B7280" font-size="9">← Forecast period</text>
+      </svg>
+      <div class="chart-source">SOURCE: VERIFIED MARKET RESEARCH 2025, MAS 2026, STATISTA 2026 · KIRA RESEARCH TRIANGULATION · F = FORECAST</div>
+    </div>
+
+    <h3>Sub-segment growth dynamics</h3>
+    <p>The payments segment commands a disproportionate share of near-term growth: <strong>45% of 2025 fintech VC in Singapore flowed into payments</strong> [GFTN 2025], reflecting investor conviction that infrastructure plays (cross-border rails, B2B settlement, FX conversion) will generate durable fee pools ahead of the commoditization of consumer wallet products. Wealthtech is the second-highest conviction area, with Syfe managing over USD 10 billion in client assets as of 2025 [Fintech Singapore 2026], and the robo-advisory segment driven by the comparatively low household equity-participation rate in Singapore versus the UK and US.</p>
+
+    <p>Lending fintech remains structurally constrained. The BNPL Code of Conduct caps the unsecured credit limit at SGD 2,000 without additional credit assessment, limiting revenue-per-user growth for BNPL operators. Singapore's BNPL market is forecast at USD 2.66 billion by 2032 [GlobeNewswire 2026], implying modest single-digit CAGR from current levels — below the fintech sector aggregate. Operators are responding by extending upmarket into instalment credit for higher-ticket categories (travel, electronics, healthcare), where the SGD 2,000 cap is less constraining per transaction.</p>
+
+    <!-- Digital wallet chart -->
+    <div class="chart-wrap">
+      <div class="chart-title">Digital wallet transaction value, Singapore</div>
+      <div class="chart-subtitle">SGD bn · 2022–2027F · total e-wallet ecosystem</div>
+      <svg viewBox="0 0 640 220" width="100%" height="220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background -->
+        <!-- Grid -->
+        <line x1="60" y1="20" x2="60" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+        <line x1="60" y1="170" x2="620" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+        <line x1="60" y1="120" x2="620" y2="120" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+        <line x1="60" y1="70" x2="620" y2="70" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+
+        <!-- Y labels -->
+        <text x="50" y="174" text-anchor="end" fill="#6B7280" font-size="10">0</text>
+        <text x="50" y="124" text-anchor="end" fill="#6B7280" font-size="10">30</text>
+        <text x="50" y="74" text-anchor="end" fill="#6B7280" font-size="10">60</text>
+        <text x="50" y="24" text-anchor="end" fill="#6B7280" font-size="10">90</text>
+
+        <!-- Area path: 2022=28, 2023=36, 2024=50, 2025=62, 2026=74, 2027F=89 -->
+        <!-- Scale: 0-90 → 0-150px. 1 unit=1.67px. x positions: 100,200,300,400,500,600 -->
+        <!-- y = 170 - val*1.67 -->
+        <!-- 2022: 170-46.7=123.3; 2023: 170-60=110; 2024: 170-83.5=86.5; 2025: 170-103.5=66.5; 2026: 170-123.6=46.4; 2027: 170-148.6=21.4 -->
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1E6FFF" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#1E6FFF" stop-opacity="0.02"/>
+          </linearGradient>
+        </defs>
+        <path d="M100,123.3 L200,110 L300,86.5 L400,66.5 L500,46.4 L600,21.4 L600,170 L100,170 Z"
+              fill="url(#areaGrad)"/>
+        <polyline points="100,123.3 200,110 300,86.5 400,66.5 500,46.4 600,21.4"
+                  fill="none" stroke="#1E6FFF" stroke-width="2.5" stroke-linejoin="round"/>
+
+        <!-- Data points -->
+        <circle cx="100" cy="123.3" r="4.5" fill="#1E6FFF"/>
+        <circle cx="200" cy="110" r="4.5" fill="#1E6FFF"/>
+        <circle cx="300" cy="86.5" r="4.5" fill="#1E6FFF"/>
+        <circle cx="400" cy="66.5" r="4.5" fill="#1E6FFF"/>
+        <circle cx="500" cy="46.4" r="4.5" fill="#1E6FFF"/>
+        <circle cx="600" cy="21.4" r="6" fill="#0B0D10" stroke="#1E6FFF" stroke-width="2"/>
+
+        <!-- Labels -->
+        <text x="100" y="115" text-anchor="middle" fill="#4A5568" font-size="9.5">28</text>
+        <text x="200" y="102" text-anchor="middle" fill="#4A5568" font-size="9.5">36</text>
+        <text x="300" y="78" text-anchor="middle" fill="#4A5568" font-size="9.5">50</text>
+        <text x="400" y="58" text-anchor="middle" fill="#4A5568" font-size="9.5">62</text>
+        <text x="500" y="38" text-anchor="middle" fill="#4A5568" font-size="9.5">74</text>
+        <text x="600" y="13" text-anchor="middle" fill="#0B0D10" font-size="10" font-weight="600">89F</text>
+
+        <!-- X labels -->
+        <text x="100" y="186" text-anchor="middle" fill="#6B7280" font-size="10">2022</text>
+        <text x="200" y="186" text-anchor="middle" fill="#6B7280" font-size="10">2023</text>
+        <text x="300" y="186" text-anchor="middle" fill="#6B7280" font-size="10">2024</text>
+        <text x="400" y="186" text-anchor="middle" fill="#6B7280" font-size="10">2025</text>
+        <text x="500" y="186" text-anchor="middle" fill="#6B7280" font-size="10">2026</text>
+        <text x="600" y="186" text-anchor="middle" fill="#0B0D10" font-size="10" font-weight="600">2027F</text>
+      </svg>
+      <div class="chart-source">SOURCE: STATISTA 2026, MAS PAYMENTS DASHBOARD, KIRA TRIANGULATION · F = FORECAST</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       03 REGULATORY LANDSCAPE
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s03">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Regulatory landscape</h2>
+    </div>
+
+    <p>Singapore's regulatory trajectory through 2027 is defined by a single structural shift: the MAS has moved from framework construction to compliance enforcement. The Payment Services Act (PSA) 2019 has been progressively amended, and the 2024 PSA amendments — which brought custodial digital payment token (DPT) services, cross-border DPT transmission, and DPT exchange facilitation into the regulated perimeter — came into force in phased implementation [MAS 2024]. <strong>Phase 1 (July 2026) covers capital and governance requirements; Phase 2 (January 2027) mandates full operational compliance</strong>, meaning that 2027 begins with the highest regulatory compliance bar Singapore fintech has faced.</p>
+
+    <p>For payments operators, the capital threshold distinction between Standard Payment Institutions (SPI, minimum SGD 100,000 base capital) and Major Payment Institutions (MPI, minimum SGD 250,000) is less consequential than the operational compliance stack: MPI licensees must now maintain safeguarding accounts, submit to annual external audits, and comply with enhanced anti-money-laundering (AML) transaction monitoring requirements. Operators that previously operated under transitional exemptions — approximately 60–80 firms by KIRA analyst count — faced hard exit or licensing deadlines in H2 2025 [Kira estimates based on MAS licensing register analysis].</p>
+
+    <h3>BNPL: voluntary code, finite ceiling</h3>
+    <p>Buy Now, Pay Later remains outside the PSA perimeter as of Q2 2026, governed instead by the industry Code of Conduct developed under MAS guidance. Since May 2024, all four accredited BNPL providers in Singapore (Atome, Grab PayLater, SPayLater/SeaMoney, and Singtel GOMO) are accredited as compliant [MAS Parliamentary Reply 2026]. The SGD 2,000 unsecured credit cap, mandatory bureau checks above that threshold, and prohibition on compound interest on outstanding amounts constrain the structural addressable market. MAS has indicated it will review the framework "as appropriate" — market participants should model a scenario in which a legislative framework (akin to the UK's approach) applies by 2028–2029, which would impose licensing requirements on current code-only operators.</p>
+
+    <h3>Digital token service provider framework: hard licensing from June 2025</h3>
+    <p>From 30 June 2025, Digital Token Service Providers (DTSPs) providing DPT services to customers outside Singapore were required to be licensed or cease operations [MAS 2025]. The threshold represents a decisive enforcement posture: <strong>MAS has stated it will "generally not issue a licence"</strong> to operators that cannot demonstrate institutional-grade compliance infrastructure, customer asset segregation, and risk governance. Established players — OSL, Coinhako, and three others holding Major Payment Institution licenses for DPT services — are in a structurally advantaged position versus late applicants or unlicensed operators.</p>
+
+    <!-- Regulatory timeline SVG -->
+    <div class="chart-wrap">
+      <div class="chart-title">MAS fintech regulatory milestones</div>
+      <div class="chart-subtitle">Timeline · 2024–2027 · key enforcement dates</div>
+      <svg viewBox="0 0 740 200" width="100%" height="200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Spine -->
+        <line x1="60" y1="100" x2="700" y2="100" stroke="#E5E7EB" stroke-width="2"/>
+
+        <!-- Events: x positions spread across 60–700 -->
+        <!-- Apr 2024: PSA amendments enacted -->
+        <circle cx="110" cy="100" r="7" fill="#1E6FFF"/>
+        <line x1="110" y1="93" x2="110" y2="50" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="110" y="44" text-anchor="middle" fill="#0B0D10" font-size="9.5" font-weight="600">PSA amendments</text>
+        <text x="110" y="56" text-anchor="middle" fill="#6B7280" font-size="9">enacted</text>
+        <text x="110" y="118" text-anchor="middle" fill="#6B7280" font-size="9">Apr 2024</text>
+
+        <!-- Nov 2024: BNPL all 4 accredited -->
+        <circle cx="235" cy="100" r="7" fill="#00A88B"/>
+        <line x1="235" y1="107" x2="235" y2="148" stroke="#00A88B" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="235" y="158" text-anchor="middle" fill="#0B0D10" font-size="9.5" font-weight="600">BNPL Code</text>
+        <text x="235" y="170" text-anchor="middle" fill="#6B7280" font-size="9">all 4 accredited</text>
+        <text x="235" y="84" text-anchor="middle" fill="#6B7280" font-size="9">May 2024</text>
+
+        <!-- Jun 2025: DTSP licensing mandatory -->
+        <circle cx="380" cy="100" r="7" fill="#DC2626"/>
+        <line x1="380" y1="93" x2="380" y2="50" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="380" y="44" text-anchor="middle" fill="#0B0D10" font-size="9.5" font-weight="600">DTSP hard</text>
+        <text x="380" y="56" text-anchor="middle" fill="#6B7280" font-size="9">licensing deadline</text>
+        <text x="380" y="118" text-anchor="middle" fill="#6B7280" font-size="9">Jun 2025</text>
+
+        <!-- Jul 2026: PSA Phase 1 live -->
+        <circle cx="540" cy="100" r="7" fill="#1E6FFF"/>
+        <line x1="540" y1="107" x2="540" y2="148" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="540" y="158" text-anchor="middle" fill="#0B0D10" font-size="9.5" font-weight="600">PSA Phase 1</text>
+        <text x="540" y="170" text-anchor="middle" fill="#6B7280" font-size="9">capital + governance</text>
+        <text x="540" y="84" text-anchor="middle" fill="#6B7280" font-size="9">Jul 2026</text>
+
+        <!-- Jan 2027: PSA Phase 2 full compliance -->
+        <circle cx="670" cy="100" r="9" fill="#0B0D10" stroke="#1E6FFF" stroke-width="2"/>
+        <line x1="670" y1="93" x2="670" y2="50" stroke="#0B0D10" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="670" y="44" text-anchor="middle" fill="#0B0D10" font-size="9.5" font-weight="600">PSA Phase 2</text>
+        <text x="670" y="56" text-anchor="middle" fill="#1E6FFF" font-size="9" font-weight="600">full compliance</text>
+        <text x="670" y="118" text-anchor="middle" fill="#0B0D10" font-size="9" font-weight="600">Jan 2027</text>
+      </svg>
+      <div class="chart-source">SOURCE: MAS MEDIA RELEASES 2024–2025, PAYMENT SERVICES ACT (AMENDMENT) 2024, KIRA RESEARCH ANALYSIS</div>
+    </div>
+
+    <h3>Stablecoin framework: draft legislation expected 2026</h3>
+    <p>MAS confirmed at the Singapore FinTech Festival (November 2025) that draft stablecoin legislation will be published in 2026. The framework mandates full reserve backing in high-quality liquid assets and reliable redemption mechanisms, and applies to single-currency stablecoins pegged to the SGD or any G10 currency issued in Singapore. StraitsX and Paxos Digital Singapore are positioned as likely first MAS-regulated stablecoin issuers [Kira estimates based on public MAS dialogue]. The BLOOM initiative (October 2025) supports integration trials of tokenized bank liabilities and regulated stablecoins into payment rails — an architectural move that, if successful, will embed regulated stablecoins into commercial settlement by 2027.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       04 DIGITAL PAYMENTS INFRASTRUCTURE
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s04">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Digital payments infrastructure</h2>
+    </div>
+
+    <p>Singapore's payment infrastructure is operating at a level of maturity that domestic volume growth alone cannot justify — the growth thesis is now explicitly regional. PayNow registrations surpassed 5 million by end-2024, with cumulative processed value exceeding <strong>SGD 50 billion</strong> [MAS 2025]. PayNow linkages to India (UPI), Malaysia (DuitNow), and Thailand (PromptPay) are already live; the Philippines and Indonesia connections form part of the Project Nexus Phase 3 blueprint, with live implementation targeted for 2025–2026 [Kira estimates].</p>
+
+    <p>Project Nexus — the five-country instant-payment corridor coordinated by the BIS Innovation Hub — was incorporated in Singapore in 2025. When fully live, it will connect SGD, MYR, THB, PHP, and INR instant-payment rails into a single interoperable network. For Singapore-based fintech operators, Nexus represents a structural opportunity: operators with MPI licenses and FX conversion capability will be able to serve SME cross-border payment flows that currently rely on correspondent banking intermediation at significantly lower cost and latency.</p>
+
+    <h3>GrabPay and the super-app payment layer</h3>
+    <p>GrabPay's wallet share position — estimated at 35.3% of the Singapore digital wallet market as of 2024 [Kira estimates] — is underpinned by its transactional ubiquity across ride-hailing, food delivery, and grocery verticals. Grab's 43.9 million monthly active users in Southeast Asia generated USD 253 million in financial-services revenue in 2024 [Grab 2024 filing]; Singapore remains the highest-ARPU market within that base given income levels and smartphone penetration. The risk for GrabPay is structural: as PayNow deepens bank-to-merchant direct-payment linkages, the marginal utility of a closed-loop wallet diminishes for merchants who prefer settlement directly to their bank account.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       05 COMPETITIVE LANDSCAPE
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s05">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Competitive landscape</h2>
+    </div>
+
+    <p>Singapore's fintech competitive map is best understood by segment, with dominant positions varying sharply across payments, wealthtech, BNPL, and digital banking. No single operator commands cross-segment scale comparable to a universal bank; instead, the market presents a series of segment-level duopolies or triopolies with fragmented challenger tails. <strong>Regulatory licensing asymmetries — particularly in digital assets and cross-border payments — are the primary driver of competitive position entering 2027</strong>, rewarding operators that invested in compliance infrastructure ahead of growth.</p>
+
+    <table class="player-table">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Segment(s)</th>
+          <th>Key metrics</th>
+          <th>2027 positioning</th>
+          <th>Reg status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="player-name">GrabPay</span></td>
+          <td>Digital wallet, payments, BNPL</td>
+          <td>35.3% wallet share; USD 253 mn financial-services revenue (2024) <span class="tag tag-secondary">Grab 2024</span></td>
+          <td>Defending wallet share against PayNow bank-direct erosion; embedded insurance + credit growth vector</td>
+          <td><span class="badge badge-green">MPI licensed</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">PayNow / FAST</span></td>
+          <td>Instant P2P + P2B payments</td>
+          <td>5 mn+ registrations; SGD 50 bn+ cumulative value <span class="tag tag-secondary">MAS 2025</span></td>
+          <td>Regional expansion via Nexus; merchant adoption accelerating as bank-direct model matures</td>
+          <td><span class="badge badge-blue">MAS infrastructure</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">Sea Money / SPayLater</span></td>
+          <td>Digital wallet, BNPL, digital banking (SG)</td>
+          <td>Shopee checkout integration; USD 1.8 bn SeaMoney revenue (SEA 2024) <span class="tag tag-secondary">Sea Ltd 2024</span></td>
+          <td>BNPL constrained by SGD 2,000 cap; digital bank license (MariBank) differentiates</td>
+          <td><span class="badge badge-green">MPI + digital bank</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">Wise</span></td>
+          <td>Cross-border payments, FX</td>
+          <td>30+ currencies; MPI license; breakeven reached 2023 <span class="tag tag-secondary">Wise 2024 filing</span></td>
+          <td>Nexus integration opportunity; B2B expansion via Wise Platform API</td>
+          <td><span class="badge badge-green">MPI licensed</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">Revolut</span></td>
+          <td>Multi-currency, wealthtech, robo-advisory</td>
+          <td>Robo-advisory launched SG 2025; min USD 100 entry, 0.75% mgmt fee <span class="tag tag-secondary">Asian Banker 2026</span></td>
+          <td>Competing for wealthtech share vs StashAway, Syfe; digital bank license application pending</td>
+          <td><span class="badge badge-amber">MPI (no bank license)</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">StashAway</span></td>
+          <td>Robo-advisory, wealth management</td>
+          <td>Multi-billion AUM; profitability trajectory 2025 <span class="tag tag-estimate">Kira estimates</span></td>
+          <td>Defending against Revolut/Syfe fee competition; institutional B2B2C growth vector</td>
+          <td><span class="badge badge-green">CMS licensed</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">Syfe</span></td>
+          <td>Robo-advisory, cash management, brokerage</td>
+          <td>USD 10+ bn AUM; USD 80 mn Series C; profitable Q4 2025 <span class="tag tag-secondary">Fintech Singapore 2026</span></td>
+          <td>Fastest-growing robo-advisor in APAC FT ranking 2026; business wealth expansion</td>
+          <td><span class="badge badge-green">CMS licensed</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Market share chart: payments segment -->
+    <div class="chart-wrap">
+      <div class="chart-title">Digital wallet market share, Singapore</div>
+      <div class="chart-subtitle">Estimated share · 2024 · by registered wallet base</div>
+      <svg viewBox="0 0 640 220" width="100%" height="220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Donut chart centered at 220,110 r=80 inner=50 -->
+        <defs>
+          <clipPath id="donut"><circle cx="220" cy="110" r="80"/></clipPath>
+        </defs>
+        <!-- Total = 100%, segments: GrabPay 35.3, PayNow/bank-direct 28.5, SeaMoney 14.2, Others 22 -->
+        <!-- Circumference of r=80: 502.6. Stroke-dasharray for each segment -->
+        <!-- Using stroke-dasharray technique on circle with stroke-width=30, r=65 -->
+        <!-- circumference = 2πr = 408.4 for r=65 -->
+        <!-- Gap between segments: 2px -->
+        <!-- GrabPay 35.3%: 408.4*0.353=144.2 -->
+        <!-- PayNow 28.5%: 408.4*0.285=116.4 -->
+        <!-- SeaMoney 14.2%: 408.4*0.142=58 -->
+        <!-- Others 22%: 408.4*0.22=89.8 -->
+        <!-- Start at top = rotate(-90deg) -->
+
+        <circle cx="220" cy="110" r="65" fill="none" stroke="#1E6FFF" stroke-width="30"
+                stroke-dasharray="144.2 264.2" stroke-dashoffset="0"
+                transform="rotate(-90 220 110)"/>
+        <circle cx="220" cy="110" r="65" fill="none" stroke="#00A88B" stroke-width="30"
+                stroke-dasharray="116.4 292" stroke-dashoffset="-146.2"
+                transform="rotate(-90 220 110)"/>
+        <circle cx="220" cy="110" r="65" fill="none" stroke="#D97706" stroke-width="30"
+                stroke-dasharray="58 350.4" stroke-dashoffset="-264.6"
+                transform="rotate(-90 220 110)"/>
+        <circle cx="220" cy="110" r="65" fill="none" stroke="#E5E7EB" stroke-width="30"
+                stroke-dasharray="87.8 320.6" stroke-dashoffset="-324.6"
+                transform="rotate(-90 220 110)"/>
+
+        <!-- Center label -->
+        <text x="220" y="105" text-anchor="middle" fill="#0B0D10" font-size="16" font-weight="900">100%</text>
+        <text x="220" y="122" text-anchor="middle" fill="#6B7280" font-size="9.5">Digital wallets</text>
+
+        <!-- Legend -->
+        <rect x="340" y="50" width="12" height="12" fill="#1E6FFF" rx="2"/>
+        <text x="358" y="61" fill="#4A5568" font-size="12.5">GrabPay — 35.3%</text>
+
+        <rect x="340" y="76" width="12" height="12" fill="#00A88B" rx="2"/>
+        <text x="358" y="87" fill="#4A5568" font-size="12.5">PayNow/bank-direct — 28.5%</text>
+
+        <rect x="340" y="102" width="12" height="12" fill="#D97706" rx="2"/>
+        <text x="358" y="113" fill="#4A5568" font-size="12.5">SeaMoney/SPayLater — 14.2%</text>
+
+        <rect x="340" y="128" width="12" height="12" fill="#E5E7EB" rx="2"/>
+        <text x="358" y="139" fill="#4A5568" font-size="12.5">Others (Wise, Revolut, etc.) — 22%</text>
+
+        <text x="340" y="175" fill="#6B7280" font-size="9">Shares are Kira analyst estimates</text>
+        <text x="340" y="187" fill="#6B7280" font-size="9">based on public registration data.</text>
+      </svg>
+      <div class="chart-source">SOURCE: GRAB 2024 ANNUAL FILING, MAS PAYMENTS DASHBOARD, KIRA TRIANGULATION · ESTIMATES BASED ON REGISTRATION + TRANSACTION DATA</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       06 EMBEDDED FINANCE & OPEN BANKING
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s06">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Embedded finance &amp; open banking</h2>
+    </div>
+
+    <p>Embedded finance represents the most structurally significant growth vector in Singapore fintech through 2027 — not because the absolute market size is largest, but because it is the mechanism by which financial services distribution shifts from direct-to-consumer fintech to B2B2C sector platforms. Singapore's embedded finance market reached <strong>USD 8.48 billion in 2025</strong>, with a projected 5.0% CAGR to USD 10.3 billion by 2030 [GlobeNewswire 2025]. The sub-segments with the highest near-term growth are embedded wealth (via super-apps and digital brokerage integrations) and embedded insurance (via e-commerce and travel platforms), both of which benefit from Singapore's comparatively high financial literacy and product uptake rates.</p>
+
+    <p>The structural driver is API-first infrastructure maturation. Singapore's banking sector — led by DBS, OCBC, and UOB — has invested heavily in open API suites since 2020; by 2025, all three majors expose read and write APIs for account data, payment initiation, and loan applications to certified third parties. This enables fintech operators to embed financial products into non-financial platforms (logistics, healthcare, e-commerce) without requiring users to leave the host application. <strong>GrabPay's 35.3% wallet share is partly a consequence of this model</strong> — Grab embeds lending, insurance, and investment products into a rideshare and delivery app — but the model is being replicated across a broader set of verticals including property, healthcare, and B2B procurement.</p>
+
+    <h3>Project Nexus and cross-border embedded payments</h3>
+    <p>Project Nexus — the BIS-coordinated five-country instant-payment corridor incorporating Singapore, Malaysia, Thailand, the Philippines, and India — transforms the addressable market for embedded payment products from domestic to regional. Once live, an e-commerce operator in Singapore can embed a PayNow-originating payment that settles in real time to a Philippine merchant's GCash or InstaPay account, without correspondent banking intermediation. The revenue pool for settlement, FX conversion, and liquidity management across this corridor is material: cross-border SME payment flows between ASEAN-5 and India exceeded USD 320 billion annually as of 2024 [Kira estimates based on BIS corridor data].</p>
+
+    <h3>Wealthtech as embedded finance anchor</h3>
+    <p>Syfe's USD 10 billion AUM milestone and Revolut's 2025 robo-advisory launch both reflect the same structural bet: that wealth management will increasingly be embedded in multi-product financial apps rather than distributed through standalone platforms. The competitive dynamic is compressing fees — Revolut entered at a 0.75% management fee versus StashAway's tiered model starting at 0.8% — and the volume advantage will accrue to operators that reach sufficient scale to absorb fee compression while maintaining product-development spend. Syfe's Q4 2025 profitability and USD 80 million Series C [Fintech Singapore 2026] position it as the operator best capitalized to sustain that competition.</p>
+
+    <!-- Embedded finance segment breakdown -->
+    <div class="chart-wrap">
+      <div class="chart-title">Embedded finance: Singapore segment breakdown</div>
+      <div class="chart-subtitle">USD bn · 2025 estimate · by product category</div>
+      <svg viewBox="0 0 700 200" width="100%" height="200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Horizontal bar chart -->
+        <!-- Categories: Payments 3.1, Insurance 1.8, Wealth/Invest 1.6, Lending/credit 1.2, Other 0.78 -->
+        <!-- Max 3.5, scale 1bn=130px. Start x=200, bars go right. -->
+        <line x1="200" y1="10" x2="200" y2="175" stroke="#E5E7EB" stroke-width="1"/>
+        <line x1="330" y1="10" x2="330" y2="175" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+        <line x1="460" y1="10" x2="460" y2="175" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+        <line x1="590" y1="10" x2="590" y2="175" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+
+        <text x="200" y="188" text-anchor="middle" fill="#6B7280" font-size="9">0</text>
+        <text x="330" y="188" text-anchor="middle" fill="#6B7280" font-size="9">1.0</text>
+        <text x="460" y="188" text-anchor="middle" fill="#6B7280" font-size="9">2.0</text>
+        <text x="590" y="188" text-anchor="middle" fill="#6B7280" font-size="9">3.0</text>
+
+        <!-- Payments 3.1 = 403px -->
+        <rect x="200" y="18" width="403" height="26" fill="#1E6FFF" rx="2"/>
+        <text x="190" y="35" text-anchor="end" fill="#4A5568" font-size="11">Payments</text>
+        <text x="610" y="35" fill="#4A5568" font-size="11" font-weight="600">USD 3.1 bn</text>
+
+        <!-- Insurance 1.8 = 234px -->
+        <rect x="200" y="54" width="234" height="26" fill="#00A88B" rx="2"/>
+        <text x="190" y="71" text-anchor="end" fill="#4A5568" font-size="11">Insurance</text>
+        <text x="440" y="71" fill="#4A5568" font-size="11" font-weight="600">USD 1.8 bn</text>
+
+        <!-- Wealth 1.6 = 208px -->
+        <rect x="200" y="90" width="208" height="26" fill="#5B9FFF" rx="2"/>
+        <text x="190" y="107" text-anchor="end" fill="#4A5568" font-size="11">Wealth</text>
+        <text x="414" y="107" fill="#4A5568" font-size="11" font-weight="600">USD 1.6 bn</text>
+
+        <!-- Lending 1.2 = 156px -->
+        <rect x="200" y="126" width="156" height="26" fill="#D97706" rx="2"/>
+        <text x="190" y="143" text-anchor="end" fill="#4A5568" font-size="11">Lending</text>
+        <text x="362" y="143" fill="#4A5568" font-size="11" font-weight="600">USD 1.2 bn</text>
+
+        <!-- Other 0.78 = 101px -->
+        <rect x="200" y="162" width="101" height="18" fill="#E5E7EB" rx="2"/>
+        <text x="190" y="175" text-anchor="end" fill="#6B7280" font-size="11">Other</text>
+        <text x="307" y="175" fill="#6B7280" font-size="11">USD 0.78 bn</text>
+      </svg>
+      <div class="chart-source">SOURCE: GLOBENEWSWIRE / RESEARCH & MARKETS 2025, KIRA TRIANGULATION · TOTAL USD 8.48 BN 2025 [ESTIMATE]</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       07 DIGITAL ASSETS & STABLECOINS
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s07">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Digital assets &amp; stablecoins</h2>
+    </div>
+
+    <p>Singapore's digital-asset sector entered 2027 through a regulatory funnel that has simultaneously clarified the operating framework and concentrated the competitive field. The June 2025 DTSP licensing deadline effectively removed unlicensed operators — MAS's stated posture of "generally not issuing a licence" to operators that cannot demonstrate institutional-grade compliance means the remaining licensed cohort faces structurally reduced direct competition [MAS 2025]. <strong>The competitive dynamic now favors institutional-grade operators over growth-first startups</strong>, a reversal of the 2021–2023 pattern.</p>
+
+    <p>Retail investor protections introduced in June 2025 — mandatory Risk Awareness Quiz prior to cryptocurrency trading on licensed platforms, customer asset segregation, enhanced AML monitoring — add compliance cost but also credentialing value for operators that complete implementation. Retail engagement with digital assets remains lower in Singapore than in the UAE or Hong Kong, constrained by the retail protection framework; the professional investor and institutional segment (family offices, asset managers, corporate treasuries) is the structural growth driver.</p>
+
+    <h3>Stablecoin regulatory framework: timing and impact</h3>
+    <p>Draft stablecoin legislation is expected in 2026, covering single-currency stablecoins pegged to SGD or G10 currencies and issued in Singapore. The mandatory full-reserve requirement and real-time redemption mechanism will distinguish MAS-regulated stablecoins from unregulated alternatives and create a credentialing moat for compliant issuers. <strong>StraitsX and Paxos Digital Singapore are the most advanced candidates for the first MAS-regulated stablecoin designation</strong> [Kira estimates based on MAS consultation engagement record]. Once regulated stablecoins are integrated into the BLOOM trial infrastructure — which tests settlement between financial institutions using tokenized bank liabilities and regulated stablecoins — Singapore will have the most complete regulated digital-asset settlement stack in ASEAN.</p>
+
+    <h3>Tokenization: from pilot to infrastructure</h3>
+    <p>Project Guardian (MAS, 2022–present) has progressed from proof-of-concept to live trials involving tokenized government bills, tokenized fund products, and FX settlement using wholesale CBDC. By 2026, approximately 15 financial institutions are participating in Guardian trials [MAS Project Guardian 2026]. The implication for 2027 is directional: tokenized fixed-income and fund products are likely to enter limited commercial distribution through licensed operators in Singapore ahead of any other ASEAN jurisdiction, creating a first-mover advantage for operators who have built the back-office infrastructure to custody and transfer tokenized securities.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       08 KEY RISKS & OPPORTUNITIES 2027
+  ══════════════════════════════════════════════════ -->
+  <div class="section" id="s08">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Key risks &amp; opportunities 2027</h2>
+    </div>
+
+    <h3>Risk register</h3>
+    <div style="margin: 20px 0;">
+      <div class="risk-row" style="background:var(--bg-soft); padding:14px 16px; border-radius:8px 8px 0 0; display:grid; grid-template-columns:200px 1fr 120px; gap:16px; align-items:center;">
+        <div class="risk-name" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-weight:600;">Risk factor</div>
+        <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-weight:600;">Description</div>
+        <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-weight:600; text-align:right;">Severity · probability</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">PSA Phase 2 compliance cost</div>
+        <div class="risk-desc">Full operational compliance from Jan 2027 will force capital allocation toward audit, AML systems, and safeguarding infrastructure — compressing near-term margins for mid-tier MPI operators. Operators without pre-built compliance stacks face 18–24 month build cycles. <span class="tag tag-estimate">Kira estimates</span></div>
+        <div class="risk-level risk-high">HIGH · HIGH</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">PayNow/bank-direct wallet erosion</div>
+        <div class="risk-desc">Accelerating merchant adoption of PayNow direct-to-bank settlement reduces the incremental utility of closed-loop wallets (GrabPay, ShopeePay). Wallet operators must pivot toward lending, insurance, and investment products to sustain revenue-per-user growth. <span class="tag tag-estimate">Kira estimates</span></div>
+        <div class="risk-level risk-high">HIGH · MED</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Wealthtech fee compression</div>
+        <div class="risk-desc">Revolut's Singapore robo-advisory entry at 0.75% AUM fee, combined with Syfe and StashAway's existing sub-1% fee structures, is compressing the addressable margin pool for wealthtech operators. Scale and product breadth (cash management, brokerage, private wealth) are the primary differentiation levers. <span class="tag tag-secondary">Asian Banker 2026</span></div>
+        <div class="risk-level risk-med">MED · HIGH</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Stablecoin legislation delay</div>
+        <div class="risk-desc">If draft stablecoin legislation is delayed beyond Q4 2026, the commercial deployment of BLOOM trial infrastructure into live settlement will slip to 2028+, deferring the tokenized-asset revenue opportunity for compliant issuers. <span class="tag tag-estimate">Kira estimates</span></div>
+        <div class="risk-level risk-med">MED · MED</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">BNPL legislative upgrade</div>
+        <div class="risk-desc">A move from voluntary Code of Conduct to mandatory BNPL legislation (as in the UK/Australia model) would require current BNPL operators to obtain credit licenses, materially raising capital and compliance costs. MAS has signalled review intent without committing to a timeline. <span class="tag tag-secondary">MAS Parliamentary Reply 2026</span></div>
+        <div class="risk-level risk-med">MED · LOW</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Regional macro deterioration</div>
+        <div class="risk-desc">Singapore fintech's cross-border payment and embedded finance growth thesis depends on ASEAN trade and consumption growth. A material regional slowdown (trade-war escalation, ASEAN geopolitical disruption) would compress cross-border payment volumes and delay Project Nexus adoption. <span class="tag tag-estimate">Kira estimates</span></div>
+        <div class="risk-level risk-low">LOW · LOW</div>
+      </div>
+    </div>
+
+    <h3>Strategic implications for market participants</h3>
+    <div class="impl-grid">
+      <div class="impl-card">
+        <span class="impl-verb">Sequence</span>
+        <h4>PSA Phase 2 compliance ahead of Q4 2026</h4>
+        <p>Operators with MPI licenses should prioritize PSA Phase 2 compliance infrastructure (safeguarding accounts, AML monitoring, audit readiness) before the January 2027 deadline. Compliance costs incurred pre-deadline are operating costs; non-compliance costs post-deadline are existential. <span class="tag tag-estimate">Kira estimates</span></p>
+      </div>
+      <div class="impl-card">
+        <span class="impl-verb">Build</span>
+        <h4>Cross-border Nexus capability ahead of live implementation</h4>
+        <p>Operators with FX conversion and cross-border settlement licenses should build Nexus-integration capability now, targeting the USD 320+ bn annual ASEAN-5 + India SME corridor that becomes addressable at meaningfully lower cost once Nexus is live. <span class="tag tag-estimate">Kira estimates</span></p>
+      </div>
+      <div class="impl-card">
+        <span class="impl-verb">Pivot</span>
+        <h4>Wallet operators: embed financial products, exit closed-loop</h4>
+        <p>Closed-loop wallet share is structurally under pressure from PayNow's bank-direct model. Wallet operators should accelerate embedded lending, insurance, and wealth product integration — Grab's USD 253 mn financial-services revenue in 2024 demonstrates the unit economics are defensible when transaction data anchors credit underwriting. <span class="tag tag-secondary">Grab 2024</span></p>
+      </div>
+      <div class="impl-card">
+        <span class="impl-verb">Position</span>
+        <h4>Digital-asset operators: license first, then scale</h4>
+        <p>The post-June 2025 licensing landscape means that unlicensed digital-asset operators face mandatory exit while licensed operators face structurally reduced direct competition. Operators that completed MAS licensing before the deadline have a 12–18 month window to build customer base before any new licensed entrants reach scale. <span class="tag tag-estimate">Kira estimates</span></p>
+      </div>
+      <div class="impl-card">
+        <span class="impl-verb">Anticipate</span>
+        <h4>Stablecoin legislation: prepare issuance infrastructure now</h4>
+        <p>Operators positioned to be among the first MAS-regulated stablecoin issuers (StraitsX, Paxos, and potentially two to three others) should finalize reserve management and redemption infrastructure ahead of draft legislation publication, to minimize the compliance gap when the legal framework activates. <span class="tag tag-estimate">Kira estimates</span></p>
+      </div>
+      <div class="impl-card">
+        <span class="impl-verb">Hedge</span>
+        <h4>BNPL: model a legislative upgrade scenario</h4>
+        <p>BNPL operators should stress-test their financial models against a scenario in which a credit-licensing requirement is imposed by 2028–2029. The SGD 2,000 cap and Code of Conduct protections may not be the endpoint of MAS's regulatory intent; operators that build credit-license-ready governance structures now avoid a compressed remediation cycle. <span class="tag tag-secondary">MAS 2026</span></p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Source key -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">—</span>
+      <h2>Source key</h2>
+    </div>
+    <p style="font-size:13px; line-height:1.9;">
+      <strong>MAS 2024</strong> — Monetary Authority of Singapore, "MAS Expands Scope of Regulated Payment Services", Media Release, April 2024.<br>
+      <strong>MAS 2025</strong> — Monetary Authority of Singapore, "MAS Clarifies Regulatory Regime for Digital Token Service Providers", Media Release, 2025.<br>
+      <strong>MAS 2026</strong> — Monetary Authority of Singapore, Parliamentary Replies on Buy Now Pay Later (2026); MAS Payments Dashboard 2025.<br>
+      <strong>Grab 2024</strong> — Grab Holdings Limited, Annual Report and Earnings Release, FY2024.<br>
+      <strong>Sea Ltd 2024</strong> — Sea Limited, Annual Report, FY2024.<br>
+      <strong>Wise 2024 filing</strong> — Wise plc, Annual Report, FY2024.<br>
+      <strong>Fintech Singapore 2026</strong> — Fintech News Singapore, "Fastest-Growing Asia Pacific Fintechs" (FT 2026 ranking); "Singapore Surpasses ASEAN Peers with US$319 Million in Fintech Funding".<br>
+      <strong>GFTN 2025</strong> — Global Fintech Networks, FinTech Investments 2025 Report.<br>
+      <strong>GlobeNewswire 2025</strong> — "Singapore Embedded Finance Market Report 2025–2030", GlobeNewswire / Research &amp; Markets, October 2025.<br>
+      <strong>GlobeNewswire 2026</strong> — "Singapore Buy Now Pay Later Business Report 2026", GlobeNewswire, January 2026.<br>
+      <strong>Asian Banker 2026</strong> — "Revolut expands in Singapore and Southeast Asia with wealth and multi-currency services", The Asian Banker, 2026.<br>
+      <strong>Statista 2026</strong> — Statista Market Forecast, "Payments — Singapore", 2026.<br>
+      <strong>Verified Market Research 2025</strong> — Singapore Fintech Market Report, Verified Market Research, 2025.<br>
+      <strong>MAS Project Guardian 2026</strong> — MAS Project Guardian institutional participants list and progress update, 2026.<br>
+      <strong>Kira estimates</strong> — KIRA Research analyst triangulation. Methodology: anchor external published statistics where available; extrapolate segment growth using compound rates; cross-check against operator filing disclosures and MAS licensing register. All estimates subject to material revision on publication of new MAS statistical bulletins or operator filings.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="report-footer">
+    <div>
+      <div class="footer-brand">KIRA <span>Research</span></div>
+      <div style="font-size:12px; color:var(--muted); margin-top:6px; max-width:420px; line-height:1.6;">
+        This report is produced by KIRA Research analysts and is intended for strategic intelligence use. All quantitative claims carry source attribution; estimates are derived using stated methodology. Reproduction requires written permission.
+      </div>
+    </div>
+    <div class="footer-meta">
+      Singapore Fintech Market 2027<br>
+      Published: May 2026<br>
+      KIRA Research · kiraresearch.com<br>
+      Country: Singapore · Industry: Fintech
+    </div>
+  </div>
+
+</div><!-- /.report-wrap -->
+</body>
+</html>

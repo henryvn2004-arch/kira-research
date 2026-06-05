@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan retail market 2027 — KIRA Research</title>
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,700,600,400&f[]=jetbrains-mono@600,400&display=swap');
+
+  :root {
+    --bg: #FFFFFF;
+    --bg-soft: #F8F9FB;
+    --text: #0B0D10;
+    --text-mid: #4A5568;
+    --muted: #6B7280;
+    --primary: #1E6FFF;
+    --primary-soft: #EEF3FF;
+    --green: #00A88B;
+    --amber: #D97706;
+    --border: #E5E7EB;
+    --red: #DC2626;
+    --font-sans: 'Satoshi', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-mid);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PAGE LAYOUT ── */
+  .page {
+    width: 1280px;
+    min-height: 720px;
+    margin: 0 auto 4px;
+    padding: 36px 56px 28px 56px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .page:last-child { border-bottom: none; }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    background: var(--text);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 56px 72px;
+  }
+  .cover-kira {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .cover-flag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+  .cover-title {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: 52px;
+    line-height: 1.1;
+    color: #fff;
+    max-width: 780px;
+    margin-bottom: 20px;
+  }
+  .cover-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    max-width: 640px;
+    line-height: 1.55;
+  }
+  .cover-meta-row {
+    display: flex;
+    gap: 48px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 24px;
+    margin-top: 24px;
+  }
+  .cover-meta-item { }
+  .cover-meta-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 4px;
+  }
+  .cover-meta-value {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+  }
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .cover-disclaimer {
+    font-size: 11px;
+    color: rgba(255,255,255,0.28);
+    max-width: 540px;
+    line-height: 1.5;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-flag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .page-title {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .page-title.large {
+    font-size: 34px;
+    margin-bottom: 24px;
+  }
+  .section-divider {
+    width: 40px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  h2 {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  h3 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 8px;
+    margin-top: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  p {
+    margin-bottom: 12px;
+    color: var(--text-mid);
+    font-size: 14.5px;
+    line-height: 1.68;
+  }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 600; }
+
+  /* ── SOURCE TAGS ── */
+  .tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  .tag-primary { background: var(--primary-soft); color: var(--primary); }
+  .tag-secondary { background: #E6FAF7; color: var(--green); }
+  .tag-estimate { background: #FEF3C7; color: var(--amber); }
+
+  /* ── KPI CALLOUT GRID ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px 14px;
+  }
+  .kpi-number {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .kpi-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .kpi-change {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .kpi-change.up { color: var(--green); }
+  .kpi-change.down { color: var(--red); }
+
+  /* ── CHART PANELS ── */
+  .chart-panel {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 22px 14px;
+    margin-bottom: 18px;
+  }
+  .chart-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .chart-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    letter-spacing: 0.04em;
+  }
+  .chart-source {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  /* ── TWO-COLUMN LAYOUT ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+  }
+  .col-span-2 { grid-column: span 2; }
+
+  /* ── CALLOUT BLOCK ── */
+  .callout {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-soft);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .callout p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* ── PLAYER TABLE ── */
+  .player-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .player-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    background: var(--bg-soft);
+  }
+  .player-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    vertical-align: top;
+  }
+  .player-table tr:last-child td { border-bottom: none; }
+  .player-table .player-name {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 13.5px;
+  }
+  .player-table .mono {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  /* ── IMPLICATIONS GRID ── */
+  .implications-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .impl-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .impl-verb {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .impl-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .impl-body {
+    font-size: 12.5px;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+
+  /* ── PAGE FOOTER ── */
+  .page-footer {
+    position: absolute;
+    bottom: 14px;
+    left: 56px;
+    right: 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .page-footer-brand {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .page-footer-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .bar-label {
+    font-size: 12.5px;
+    color: var(--text-mid);
+    width: 160px;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--primary);
+  }
+  .bar-fill.green { background: var(--green); }
+  .bar-fill.amber { background: var(--amber); }
+  .bar-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text);
+    width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── SOURCE KEY ── */
+  .source-key {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .source-key strong {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  ul.body-list {
+    padding-left: 18px;
+    margin-bottom: 12px;
+  }
+  ul.body-list li {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 5px;
+    line-height: 1.6;
+  }
+
+  .highlight-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .highlight-box {
+    flex: 1;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .highlight-box.accent {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+  .highlight-box .hl-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .highlight-box .hl-value {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .highlight-box .hl-note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  /* ── CHANNEL MIX TABLE ── */
+  .channel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .channel-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+    padding: 7px 10px;
+    text-align: right;
+    background: var(--bg-soft);
+  }
+  .channel-table th:first-child { text-align: left; }
+  .channel-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    color: var(--text-mid);
+  }
+  .channel-table td:first-child { text-align: left; font-weight: 600; color: var(--text); }
+  .channel-table tr:last-child td { border-bottom: none; font-weight: 700; color: var(--text); background: var(--bg-soft); }
+  .channel-table .mono-cell {
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .trend-up { color: var(--green); font-family: var(--font-mono); font-size: 11px; }
+  .trend-dn { color: var(--red); font-family: var(--font-mono); font-size: 11px; }
+  .trend-fl { color: var(--amber); font-family: var(--font-mono); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 01 — COVER
+══════════════════════════════════════════════════════════════ -->
+<div class="page cover">
+  <div>
+    <div class="cover-kira">KIRA Research · Confidential</div>
+  </div>
+  <div>
+    <div class="cover-flag">Japan · Retail · 2027 Outlook</div>
+    <div class="cover-title">Japan retail market 2027</div>
+    <div class="cover-subtitle">
+      A JPY 162 trillion channel landscape under structural rebalancing —
+      convenience evolves into micro-platform, e-commerce crosses the 20% threshold,
+      and department stores face a dual demand headwind from domestic demographics
+      and shifting inbound visitor mix.
+    </div>
+    <div class="cover-meta-row">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Published</div>
+        <div class="cover-meta-value">June 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Coverage</div>
+        <div class="cover-meta-value">Japan · National</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Horizon</div>
+        <div class="cover-meta-value">2025 – 2027F</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Pages</div>
+        <div class="cover-meta-value">12</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Industry</div>
+        <div class="cover-meta-value">Retail · Consumer</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-disclaimer">
+      This report is prepared by KIRA Research for informational purposes. All market sizing figures
+      represent analyst synthesis of public data sources. Forward projections are estimates and
+      carry inherent uncertainty. Not for redistribution without written consent.
+    </div>
+    <div class="cover-kira" style="text-align:right;">kiraresearch.com</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 02 — EXECUTIVE SUMMARY (KEY METRICS)
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Executive summary · 01</div>
+  <div class="page-title large">Market at a structural inflection.</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-number">162</div>
+      <div class="kpi-unit">JPY trillion · total retail 2027F</div>
+      <div class="kpi-label">Market size</div>
+      <div class="kpi-change up">+1.4% CAGR 2025–2027 [Kira estimates]</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">22%</div>
+      <div class="kpi-unit">e-commerce channel share 2027F</div>
+      <div class="kpi-label">Online penetration</div>
+      <div class="kpi-change up">Up from ~18% in 2025 [Kira estimates]</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">58%</div>
+      <div class="kpi-unit">cashless payment ratio 2025</div>
+      <div class="kpi-label">Cashless ratio</div>
+      <div class="kpi-change up">Target 80% by 2030 [METI 2026]</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">9.5 tn</div>
+      <div class="kpi-unit">JPY inbound visitor spend 2025</div>
+      <div class="kpi-label">Tourism retail</div>
+      <div class="kpi-change up">+16.4% YoY, record high [JNTO 2026]</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p>The core thesis: Japan's retail market is not declining — it is reallocating. Physical volume
+    holds steady while the channel mix rotates decisively toward convenience, e-commerce, and
+    omnichannel hybrids. Operators with a unified customer data layer capture the reallocation;
+    those without cede margin to the aggregators.</p>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h2>Structural shifts in motion</h2>
+      <p>Three forces are reshaping channel economics simultaneously.
+      First, <strong>convenience stores are evolving beyond retail</strong> — the top three operators
+      (Seven-Eleven, FamilyMart, Lawson) now operate as micro-platforms combining food service,
+      financial services, and last-mile logistics, with average daily sales per outlet hitting
+      a record ¥584,000 at Lawson <span class="tag tag-secondary">[Japan Times 2026]</span>.</p>
+
+      <p>Second, department stores face a structural compression. Duty-free sales — historically
+      a key earnings driver — fell 12.7% YoY in 2025 as visitor composition shifted sharply away
+      from high-spending Chinese tourists <span class="tag tag-secondary">[Retail Japan 2026]</span>.
+      Domestic demographic aging deepens the headwind.</p>
+
+      <p>Third, the cashless transition has crossed a psychological threshold. With <strong>58% of
+      consumer spending now cashless</strong> <span class="tag tag-secondary">[METI 2026]</span>,
+      payment data becomes a structural competitive asset — and retailers with proprietary payment
+      rails (Seven Pay, AEON Pay, Rakuten Pay) widen their personalization advantage over cash-heavy
+      independents.</p>
+    </div>
+    <div>
+      <h2>Five structural observations</h2>
+      <ul class="body-list">
+        <li>Total market value estimated at JPY 155–158 trillion in 2025, growing to JPY 160–164 trillion
+            by 2027 at low single-digit CAGR — <em>not</em> a high-growth story, but a compositional one.
+            <span class="tag tag-estimate">[Kira estimates]</span></li>
+        <li>E-commerce on track to overtake GMS/general merchandise stores as second-largest channel
+            by 2026–27, with a projected 21–23% total retail share.
+            <span class="tag tag-estimate">[Kira estimates]</span></li>
+        <li>The AEON group surpassed Seven &amp; i in market capitalisation in August 2025 —
+            a signal of investor preference for diversified format portfolios over legacy GMS.
+            <span class="tag tag-secondary">[Japan Times 2025]</span></li>
+        <li>Inbound visitor spending reached a record ¥9.5 trillion in 2025, but the composition is
+            shifting: Korean visitors now the top source market as Chinese arrivals fell 55% in early 2026.
+            <span class="tag tag-secondary">[JNTO 2026]</span></li>
+        <li>Tax-free refund system reform (effective November 2026) will structurally alter inbound
+            retail economics — shifting refund friction to departure gates.
+            <span class="tag tag-secondary">[Japan Travel 2026]</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 02</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 03 — MARKET SIZE & FORECAST
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 01 · Market sizing</div>
+  <div class="page-title">Market size and forecast: modest growth, decisive reallocation.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <p>Japan's total retail market — encompassing food, general merchandise, specialty, e-commerce,
+      and service-adjacent retail — is estimated at <strong>JPY 155–158 trillion (USD 1.04–1.06 trillion)</strong>
+      in 2025, expanding to JPY 160–164 trillion by 2027
+      <span class="tag tag-estimate">[Kira estimates]</span>
+      <span class="tag tag-secondary">[METI Commerce Survey 2025]</span>.
+      This represents an implied CAGR of approximately 1.3–1.5%, consistent with a mature, high-saturation
+      market where volume growth is constrained by demographics.</p>
+
+      <p>The headline growth rate flatters structural heterogeneity within it. <strong>Convenience,
+      e-commerce, and specialty health/beauty are growing at 3–6% annually;</strong> department stores
+      and traditional GMS formats are contracting. The market-level aggregate masks a violent channel
+      rotation that will consolidate market power among operators with omnichannel capability.</p>
+
+      <p>Monthly retail sales data from METI shows a 2.1% YoY increase in April 2026, supported by
+      the government's consumption stimulus package targeting price pressures
+      <span class="tag tag-secondary">[METI 2026]</span>. This consumer-support tailwind is projected
+      to sustain through at least mid-2027 before fiscal normalisation.</p>
+
+      <p>In USD terms, the market sits at approximately <strong>USD 1.0–1.1 trillion</strong> using
+      a 150 JPY/USD reference rate — the 10th largest retail market globally by total consumer
+      expenditure <span class="tag tag-estimate">[Kira estimates]</span>.</p>
+
+      <!-- Forecast chart SVG -->
+      <div class="chart-panel" style="margin-top:16px;">
+        <div class="chart-title">Japan retail market sizing</div>
+        <div class="chart-subtitle">JPY TRILLION · 2023–2027F · ALL CHANNELS</div>
+        <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <!-- grid lines -->
+          <line x1="50" y1="20" x2="50" y2="145" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="50" y1="145" x2="390" y2="145" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="50" y1="105" x2="390" y2="105" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="50" y1="65" x2="390" y2="65" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="50" y1="25" x2="390" y2="25" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+
+          <!-- Y-axis labels -->
+          <text x="44" y="148" text-anchor="end" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">140</text>
+          <text x="44" y="108" text-anchor="end" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">150</text>
+          <text x="44" y="68" text-anchor="end" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">160</text>
+          <text x="44" y="28" text-anchor="end" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">170</text>
+
+          <!-- bars: 2023=150, 2024=152, 2025=156, 2026F=159, 2027F=162 -->
+          <!-- scale: 140=145px, 175=25px => 1 unit = 4px, 0 baseline = 145 + 140*4=705... compress: each JPY tn = 0.8px relative to base 140 -->
+          <!-- 2023: 150 → (150-140)*4 = 40px height, top = 145-40 = 105 -->
+          <rect x="65" y="105" width="42" height="40" fill="#1E6FFF" rx="2"/>
+          <text x="86" y="101" text-anchor="middle" font-size="9" fill="#0B0D10" font-family="JetBrains Mono, monospace">150</text>
+          <text x="86" y="158" text-anchor="middle" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">2023</text>
+
+          <!-- 2024: 152 → 48px, top = 97 -->
+          <rect x="122" y="97" width="42" height="48" fill="#1E6FFF" rx="2"/>
+          <text x="143" y="93" text-anchor="middle" font-size="9" fill="#0B0D10" font-family="JetBrains Mono, monospace">152</text>
+          <text x="143" y="158" text-anchor="middle" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">2024</text>
+
+          <!-- 2025: 156 → 64px, top = 81 -->
+          <rect x="179" y="81" width="42" height="64" fill="#1E6FFF" rx="2"/>
+          <text x="200" y="77" text-anchor="middle" font-size="9" fill="#0B0D10" font-family="JetBrains Mono, monospace">156</text>
+          <text x="200" y="158" text-anchor="middle" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">2025</text>
+
+          <!-- 2026F: 159 → 76px, top = 69 — lighter fill (forecast) -->
+          <rect x="236" y="69" width="42" height="76" fill="#93B8FF" rx="2"/>
+          <text x="257" y="65" text-anchor="middle" font-size="9" fill="#0B0D10" font-family="JetBrains Mono, monospace">159F</text>
+          <text x="257" y="158" text-anchor="middle" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">2026F</text>
+
+          <!-- 2027F: 162 → 88px, top = 57 -->
+          <rect x="293" y="57" width="42" height="88" fill="#93B8FF" rx="2"/>
+          <text x="314" y="53" text-anchor="middle" font-size="9" fill="#0B0D10" font-family="JetBrains Mono, monospace">162F</text>
+          <text x="314" y="158" text-anchor="middle" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">2027F</text>
+
+          <!-- legend -->
+          <rect x="358" y="55" width="10" height="10" fill="#1E6FFF" rx="1"/>
+          <text x="372" y="64" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">Actual</text>
+          <rect x="358" y="70" width="10" height="10" fill="#93B8FF" rx="1"/>
+          <text x="372" y="79" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">Forecast</text>
+        </svg>
+        <div class="chart-source">SOURCE: METI COMMERCE SURVEY, KIRA ESTIMATES · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Channel breakdown 2025 vs 2027F</h2>
+      <table class="channel-table">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>2025 JPY tn</th>
+            <th>Share</th>
+            <th>2027F JPY tn</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Convenience stores</td>
+            <td class="mono-cell">12.8</td>
+            <td class="mono-cell">8.2%</td>
+            <td class="mono-cell">13.8</td>
+            <td><span class="trend-up">▲ +3.9%</span></td>
+          </tr>
+          <tr>
+            <td>Supermarkets</td>
+            <td class="mono-cell">16.8</td>
+            <td class="mono-cell">10.8%</td>
+            <td class="mono-cell">17.3</td>
+            <td><span class="trend-up">▲ +1.5%</span></td>
+          </tr>
+          <tr>
+            <td>GMS (incl. AEON, Ito-Yokado)</td>
+            <td class="mono-cell">16.2</td>
+            <td class="mono-cell">10.4%</td>
+            <td class="mono-cell">15.8</td>
+            <td><span class="trend-dn">▼ −1.3%</span></td>
+          </tr>
+          <tr>
+            <td>Department stores</td>
+            <td class="mono-cell">5.5</td>
+            <td class="mono-cell">3.5%</td>
+            <td class="mono-cell">5.1</td>
+            <td><span class="trend-dn">▼ −3.7%</span></td>
+          </tr>
+          <tr>
+            <td>Specialty retail</td>
+            <td class="mono-cell">74.9</td>
+            <td class="mono-cell">48.0%</td>
+            <td class="mono-cell">75.5</td>
+            <td><span class="trend-fl">→ +0.4%</span></td>
+          </tr>
+          <tr>
+            <td>E-commerce</td>
+            <td class="mono-cell">28.0</td>
+            <td class="mono-cell">18.0%</td>
+            <td class="mono-cell">34.4</td>
+            <td><span class="trend-up">▲ +10.8%</span></td>
+          </tr>
+          <tr>
+            <td><strong>Total</strong></td>
+            <td class="mono-cell"><strong>156</strong></td>
+            <td class="mono-cell"><strong>100%</strong></td>
+            <td class="mono-cell"><strong>162</strong></td>
+            <td><span class="trend-up">▲ +1.9%</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:11.5px;color:var(--muted);">
+        <span class="tag tag-estimate">[Kira estimates]</span>
+        Channel splits derived from METI commerce survey data, JRA member filings, and public operator disclosures.
+        E-commerce includes B2C goods transactions; excludes travel and digital services.
+        CAGR values are two-year annualised 2025–2027F.
+      </p>
+
+      <h2 style="margin-top:18px;">Key demand anchors</h2>
+      <div class="highlight-row">
+        <div class="highlight-box">
+          <div class="hl-label">Domestic consumers</div>
+          <div class="hl-value">125 mn</div>
+          <div class="hl-note">Stable but aging. 65+ cohort holds 52% of household wealth. Spending is resilient but tilts toward healthcare, food, and convenience over discretionary. <span class="tag tag-secondary">[Statistics Bureau Japan 2025]</span></div>
+        </div>
+        <div class="highlight-box accent">
+          <div class="hl-label">Inbound visitor spend</div>
+          <div class="hl-value">¥9.5 tn</div>
+          <div class="hl-note">Record in 2025. Shopping accounts for ¥2.5 tn. Composition risk: Chinese arrivals down 55% in early 2026. Korean visitors now the largest source market. <span class="tag tag-secondary">[JNTO 2026]</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 03</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 04 — CONVENIENCE STORE EVOLUTION
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 02 · Convenience store dynamics</div>
+  <div class="page-title">Convenience stores: the micro-platform evolution.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <p>Japan's approximately <strong>56,000 convenience stores</strong> generate an estimated
+      JPY 12.8 trillion in annual retail sales — roughly 8% of total retail despite occupying
+      a physical footprint that is a fraction of GMS or specialty formats
+      <span class="tag tag-estimate">[Kira estimates]</span>
+      <span class="tag tag-secondary">[Statista JP 2026]</span>.
+      The channel is not merely holding ground; it is structurally expanding its economic role
+      beyond product retail into food service, financial services, and logistics intermediation.</p>
+
+      <p>Operating profit performance across the big three in the March–November 2025 period
+      confirms the divergence: <strong>FamilyMart grew operating profit 19.4%</strong>
+      to a record ¥87.6 billion; Lawson rose 9.1% to ¥90.4 billion (also a record);
+      Seven-Eleven Japan's parent group grew 3.1% to ¥325 billion
+      <span class="tag tag-secondary">[Japan Times Jan 2026]</span>.
+      FamilyMart's outperformance reflects the highest organic store productivity improvement
+      among the three.</p>
+
+      <p>The structural driver is <strong>product-mix premiumisation</strong>. Ready-made meals,
+      freshly brewed coffee, hot snacks, and packaged alcohol — categories with higher
+      gross margins than packaged CPG — now account for an estimated 38–42% of konbini revenue
+      <span class="tag tag-estimate">[Kira estimates]</span>.
+      This food-service hybridisation is why Lawson's average daily sales per outlet reached
+      a record ¥584,000 <span class="tag tag-secondary">[Japan Times Nov 2025]</span> — not
+      from footfall growth, but from higher per-transaction value.</p>
+
+      <p>Inbound tourism provides a secondary but meaningful lift. Convenience stores are the first
+      point of contact for most international visitors, and <strong>multilingual self-checkout and
+      QR-code payment acceptance</strong> (PayPay, Alipay, WeChat Pay) have expanded their
+      capture of the ¥2.5 trillion tourist shopping wallet
+      <span class="tag tag-secondary">[JNTO 2026]</span>.</p>
+    </div>
+
+    <div>
+      <!-- Bar chart: operating profit growth -->
+      <div class="chart-panel">
+        <div class="chart-title">Convenience store operating profit, Mar–Nov 2025</div>
+        <div class="chart-subtitle">JPY BILLION · YoY CHANGE % · BIG THREE OPERATORS</div>
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <!-- Seven & i: 325bn, +3.1% -->
+          <text x="0" y="28" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">Seven-Eleven Japan</text>
+          <rect x="0" y="32" width="260" height="16" fill="#E5E7EB" rx="2"/>
+          <rect x="0" y="32" width="260" height="16" fill="#1E6FFF" rx="2"/>
+          <text x="265" y="45" font-size="10" fill="#0B0D10" font-family="JetBrains Mono, monospace">¥325bn +3.1%</text>
+
+          <!-- Lawson: 90.4bn, +9.1% -->
+          <text x="0" y="70" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">Lawson</text>
+          <rect x="0" y="74" width="73" height="16" fill="#00A88B" rx="2"/>
+          <text x="78" y="87" font-size="10" fill="#0B0D10" font-family="JetBrains Mono, monospace">¥90.4bn +9.1%</text>
+
+          <!-- FamilyMart: 87.6bn, +19.4% -->
+          <text x="0" y="112" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">FamilyMart</text>
+          <rect x="0" y="116" width="70" height="16" fill="#D97706" rx="2"/>
+          <text x="75" y="129" font-size="10" fill="#0B0D10" font-family="JetBrains Mono, monospace">¥87.6bn +19.4%</text>
+
+          <text x="0" y="152" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">NOTE: SEVEN-ELEVEN FIGURES ARE GROUP LEVEL (INCLUDES BANKING, OVERSEAS)</text>
+        </svg>
+        <div class="chart-source">SOURCE: JAPAN TIMES JAN 2026, OPERATOR EARNINGS RELEASES · KIRA RESEARCH 2026</div>
+      </div>
+
+      <h2>The micro-platform thesis</h2>
+      <p>The strategic ambition of each of the big three now extends well beyond SKU
+      optimisation. Lawson is piloting AI-driven ordering systems that reduced out-of-stock
+      incidents by ~15% while lifting per-outlet revenue
+      <span class="tag tag-secondary">[Japan Times Nov 2025]</span>.
+      FamilyMart is expanding its in-store media network (Famima TV) into a retail media platform
+      monetising the daily footfall of 8+ million visitors. Seven-Eleven runs a full-scale
+      financial services layer (7Bank, 7Pay successor) that generates fee income structurally
+      uncorrelated to product gross margin.</p>
+
+      <p><strong>Store expansion is slowing domestically</strong> — saturation is real at 56,000
+      locations — so incremental unit economics, not new openings, will determine the next
+      decade of convenience profitability. Operators who own the data layer (loyalty app,
+      payment rail, digital receipt) will extract materially more value per square metre
+      than those who do not.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 04</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 05 — DEPARTMENT STORE DECLINE
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 03 · Department store dynamics</div>
+  <div class="page-title">Department stores: structural contraction, not cyclical softness.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <p>Japan's department store sector — accounting for an estimated JPY 5.5 trillion or 3.5%
+      of total retail in 2025 — has been in structural decline for over a decade
+      <span class="tag tag-estimate">[Kira estimates]</span>. The channel's traditional value
+      proposition (curated luxury assortment, occasion-based gifting, white-glove service)
+      is being eroded simultaneously from above (e-commerce and direct-to-consumer luxury) and
+      from below (convenience and drug-store formats capturing daily spending).</p>
+
+      <p>The 2025 acceleration of that decline has two distinct drivers. The first is a
+      <strong>duty-free sales collapse</strong>: tax-free transactions at department stores fell
+      12.7% YoY in 2025, with May 2025 tax-free sales down 40% following political events
+      that sharply reduced high-spending Chinese tourist arrivals
+      <span class="tag tag-secondary">[Retail Japan 2026]</span>. Chinese visitor numbers fell
+      approximately 40% in December 2025 alone. This is not a recovery story — the structural
+      shift toward Korean and Southeast Asian visitor demographics means the average per-visitor
+      luxury spend at department stores is structurally lower than in the China-driven peak.</p>
+
+      <p>The second driver is domestic demographic pressure. <strong>Nearly 30% of Japan's
+      population is aged 65 or older</strong>
+      <span class="tag tag-secondary">[Statistics Bureau Japan 2025]</span>,
+      holding over half of household wealth. The elderly cohort spends conservatively,
+      preferring food and health categories over apparel and housewares — the core department
+      store categories. Younger cohorts (<35) are migrating to online luxury and specialty retailers.</p>
+
+      <p>Our projection for 2027F: department store sector revenues contract to approximately
+      <strong>JPY 4.9–5.1 trillion</strong>, implying a further 6–11% decline from 2025 levels
+      <span class="tag tag-estimate">[Kira estimates]</span>.
+      The shrinkage is structural, not recoverable by inbound volume alone given the
+      November 2026 tax-free refund system reform.</p>
+    </div>
+
+    <div>
+      <!-- Decline chart -->
+      <div class="chart-panel">
+        <div class="chart-title">Department store sector revenue</div>
+        <div class="chart-subtitle">JPY TRILLION · 2019–2027F · JAPAN NATIONAL</div>
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <!-- axes -->
+          <line x1="40" y1="15" x2="40" y2="130" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="130" x2="330" y2="130" stroke="#E5E7EB" stroke-width="1"/>
+          <!-- grid -->
+          <line x1="40" y1="50" x2="330" y2="50" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="40" y1="80" x2="330" y2="80" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="40" y1="110" x2="330" y2="110" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <!-- Y labels -->
+          <text x="34" y="133" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">3</text>
+          <text x="34" y="113" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">4</text>
+          <text x="34" y="83" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">5</text>
+          <text x="34" y="53" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">6</text>
+          <!-- data points: 2019=6.1, 2020=4.2, 2021=4.5, 2022=5.1, 2023=5.6, 2024=5.7, 2025=5.5, 2026F=5.2, 2027F=5.0 -->
+          <!-- scale: 3 → y=130, 7 → y=10. Range 4. 1 unit = 30px -->
+          <!-- x: start=55, gap=33 -->
+          <polyline points="55,19 88,93 121,84 154,57 187,36 220,33 253,39 286,51 319,57"
+                    fill="none" stroke="#E5E7EB" stroke-width="1.5"/>
+          <!-- actual line -->
+          <polyline points="55,19 88,93 121,84 154,57 187,36 220,33 253,39"
+                    fill="none" stroke="#DC2626" stroke-width="2"/>
+          <!-- forecast line (dashed) -->
+          <polyline points="253,39 286,51 319,57"
+                    fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="4,3"/>
+          <!-- dots -->
+          <circle cx="55" cy="19" r="3" fill="#DC2626"/>
+          <circle cx="88" cy="93" r="3" fill="#DC2626"/>
+          <circle cx="121" cy="84" r="3" fill="#DC2626"/>
+          <circle cx="154" cy="57" r="3" fill="#DC2626"/>
+          <circle cx="187" cy="36" r="3" fill="#DC2626"/>
+          <circle cx="220" cy="33" r="3" fill="#DC2626"/>
+          <circle cx="253" cy="39" r="3" fill="#DC2626"/>
+          <circle cx="286" cy="51" r="3" fill="#DC2626" opacity="0.5"/>
+          <circle cx="319" cy="57" r="3" fill="#DC2626" opacity="0.5"/>
+          <!-- x labels -->
+          <text x="55" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2019</text>
+          <text x="88" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2020</text>
+          <text x="121" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2021</text>
+          <text x="154" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2022</text>
+          <text x="187" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2023</text>
+          <text x="220" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2024</text>
+          <text x="253" y="144" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2025</text>
+          <text x="286" y="144" text-anchor="middle" font-size="8" fill="#DC2626" font-family="JetBrains Mono, monospace">26F</text>
+          <text x="319" y="144" text-anchor="middle" font-size="8" fill="#DC2626" font-family="JetBrains Mono, monospace">27F</text>
+          <!-- legend -->
+          <line x1="240" y1="158" x2="252" y2="158" stroke="#DC2626" stroke-width="2"/>
+          <text x="256" y="162" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">Actual</text>
+          <line x1="285" y1="158" x2="297" y2="158" stroke="#DC2626" stroke-width="2" stroke-dasharray="4,3"/>
+          <text x="301" y="162" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">F'cast</text>
+        </svg>
+        <div class="chart-source">SOURCE: JDA (JAPAN DEPARTMENT STORES ASSOCIATION), KIRA ESTIMATES · KIRA RESEARCH 2026</div>
+      </div>
+
+      <h2>The November 2026 reform inflection</h2>
+      <p>Japan will shift from an exempt-at-point-of-sale model to a
+      <strong>departure-gate refund system</strong> for inbound duty-free purchases effective
+      November 1, 2026 <span class="tag tag-secondary">[Japan Travel 2026]</span>.
+      Visitors will pay full tax-inclusive prices and claim VAT refunds before departure —
+      a procedural friction that modestly discourages impulse luxury purchases in-store
+      but redirects refund volume to airports. Department stores with strong airport-adjacent
+      or inbound-facing formats (Isetan Shinjuku, Takashimaya Osaka) are better positioned
+      to absorb the transition than regional operators.</p>
+
+      <p>Adaptation strategies vary: Isetan Mitsukoshi has invested in digital concierge services
+      targeting high-net-worth domestic consumers; Takashimaya has accelerated its food hall
+      and restaurant-within-store formats; J.Front Retailing (Daimaru Matsuzakaya) is converting
+      underperforming floor space into office and cultural experience use.
+      <strong>None of these shifts arrests the structural revenue decline</strong> — they reduce
+      its velocity.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 05</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 06 — E-COMMERCE & OMNICHANNEL
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 04 · E-commerce &amp; omnichannel</div>
+  <div class="page-title">E-commerce: crossing the 20% threshold by 2027.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <p>Japan's e-commerce channel is estimated at <strong>JPY 28 trillion (USD ~187 billion)</strong>
+      in 2025, representing approximately 18% of total retail by our channel definitions
+      <span class="tag tag-estimate">[Kira estimates]</span>
+      <span class="tag tag-secondary">[METI E-Commerce Survey 2025]</span>.
+      On our 2027F projection of JPY 34.4 trillion, the channel exceeds 21% — crossing the
+      structural threshold at which online becomes the default discovery channel even for
+      purchases ultimately completed in-store.</p>
+
+      <p>Growth is not uniform across sub-categories.
+      <strong>Electronics, apparel, and household goods</strong> are the highest-penetration
+      segments, with electronics estimated at 35–40% online channel share
+      <span class="tag tag-estimate">[Kira estimates]</span>.
+      Grocery remains below 10% online — logistics cost and freshness expectations are
+      structural friction points — but the COVID-era habits of click-and-collect and
+      same-day delivery from supermarket dark stores have raised the ceiling.</p>
+
+      <p>The competitive structure is a two-tier oligopoly. <strong>Amazon Japan holds the largest
+      e-commerce revenue position</strong>, followed by Rakuten Ichiba and LINE Yahoo Shopping
+      <span class="tag tag-secondary">[GlobalNewsWire 2026]</span>. Temu and AliExpress are
+      the structural entrant risk — cross-border price arbitrage targeting value-conscious
+      younger cohorts on categories (apparel, accessories, household basics) where Japanese
+      platforms have historically had weak price competitiveness.</p>
+
+      <p>Logistics capability has become the key differentiator. Sub-one-hour fulfillment is
+      operationally available in Tokyo and Osaka via Amazon Prime Now, Rakuten Express,
+      and convenience-store ship-to-store networks. By 2027, <strong>same-day delivery coverage
+      is projected to expand to 65%+ of the addressable urban population</strong>
+      <span class="tag tag-estimate">[Kira estimates]</span>, raising the competitive bar
+      for GMS and specialty formats that cannot match fulfillment speed.</p>
+    </div>
+
+    <div>
+      <!-- E-com penetration chart -->
+      <div class="chart-panel">
+        <div class="chart-title">E-commerce penetration: share of total retail</div>
+        <div class="chart-subtitle">% SHARE · JAPAN · 2021–2027F</div>
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <!-- area fill -->
+          <polygon points="30,120 83,113 136,106 189,93 242,82 295,74 322,68 322,140 30,140"
+                   fill="#EEF3FF" opacity="0.8"/>
+          <!-- axes -->
+          <line x1="30" y1="20" x2="30" y2="140" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="30" y1="140" x2="330" y2="140" stroke="#E5E7EB" stroke-width="1"/>
+          <!-- y grid -->
+          <line x1="30" y1="105" x2="330" y2="105" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="30" y1="75" x2="330" y2="75" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="30" y1="45" x2="330" y2="45" stroke="#E5E7EB" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <!-- y labels: 0=140, 25=40; 5%=140-(5/25*100)= 140-20=120; 10%=100; 15%=80; 20%=60; 25%=40 -->
+          <text x="24" y="143" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">0%</text>
+          <text x="24" y="108" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">10%</text>
+          <text x="24" y="78" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">16%</text>
+          <text x="24" y="48" text-anchor="end" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">22%</text>
+          <!-- data: 2021=12.5%, 2022=14%, 2023=15.5%, 2024=17%, 2025=18%, 2026F=20%, 2027F=22% -->
+          <!-- y calc: y = 140 - (val/25 * 100) -->
+          <!-- 12.5 → 90; 14 → 84; 15.5 → 78; 17 → 72; 18 → 68; 20 → 60; 22 → 52 -->
+          <polyline points="30,90 83,84 136,78 189,72 242,68 295,60 322,52"
+                    fill="none" stroke="#1E6FFF" stroke-width="2.5"/>
+          <!-- forecast dashed -->
+          <polyline points="242,68 295,60 322,52"
+                    fill="none" stroke="#1E6FFF" stroke-width="2.5" stroke-dasharray="5,3"/>
+          <circle cx="30" cy="90" r="3" fill="#1E6FFF"/>
+          <circle cx="83" cy="84" r="3" fill="#1E6FFF"/>
+          <circle cx="136" cy="78" r="3" fill="#1E6FFF"/>
+          <circle cx="189" cy="72" r="3" fill="#1E6FFF"/>
+          <circle cx="242" cy="68" r="3" fill="#1E6FFF"/>
+          <circle cx="295" cy="60" r="3" fill="#1E6FFF" opacity="0.6"/>
+          <circle cx="322" cy="52" r="3" fill="#1E6FFF" opacity="0.6"/>
+          <!-- labels -->
+          <text x="30" y="154" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2021</text>
+          <text x="83" y="154" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2022</text>
+          <text x="136" y="154" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2023</text>
+          <text x="189" y="154" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2024</text>
+          <text x="242" y="154" text-anchor="middle" font-size="8" fill="#6B7280" font-family="JetBrains Mono, monospace">2025</text>
+          <text x="295" y="154" text-anchor="middle" font-size="8" fill="#1E6FFF" font-family="JetBrains Mono, monospace">26F</text>
+          <text x="322" y="154" text-anchor="middle" font-size="8" fill="#1E6FFF" font-family="JetBrains Mono, monospace">27F</text>
+          <!-- value labels on curve -->
+          <text x="30" y="86" text-anchor="middle" font-size="8" fill="#1E6FFF" font-family="JetBrains Mono, monospace">12.5%</text>
+          <text x="189" y="68" text-anchor="middle" font-size="8" fill="#1E6FFF" font-family="JetBrains Mono, monospace">17%</text>
+          <text x="242" y="64" text-anchor="middle" font-size="8" fill="#1E6FFF" font-family="JetBrains Mono, monospace">18%</text>
+          <text x="322" y="48" text-anchor="middle" font-size="8" fill="#1E6FFF" font-family="JetBrains Mono, monospace">22%</text>
+        </svg>
+        <div class="chart-source">SOURCE: METI E-COMMERCE SURVEY, KIRA ESTIMATES · KIRA RESEARCH 2026</div>
+      </div>
+
+      <h2>Omnichannel: the synthesis layer</h2>
+      <p>Physical and digital are not competing in Japan's mature retail market — they are
+      integrating. A 2023 consumer study found that <strong>74% of Japanese shoppers want a
+      consistent experience across every touchpoint</strong>
+      <span class="tag tag-secondary">[Komoju Research 2025]</span>.
+      The retail chains that are outperforming — AEON, Seven &amp; i, Yodobashi Camera —
+      are precisely those with click-and-collect, in-store pickup lockers, and same-day
+      delivery from urban store locations. The omnichannel retail segment is projected to
+      grow at 11.5% CAGR 2026–2034
+      <span class="tag tag-secondary">[IMARC Group 2026]</span>, generating materially higher
+      revenue per customer than single-channel peers.</p>
+
+      <p>Mobile commerce is the structural engine: smartphone penetration among 60+ year olds
+      is expanding, and mobile is projected to account for <strong>95% of online retail sessions
+      by 2027</strong> <span class="tag tag-secondary">[Komoju Research 2025]</span>.
+      Operators without a mobile-native loyalty experience are structurally disadvantaged
+      in acquiring and retaining the next purchasing cohort.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 06</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 07 — CASHLESS PAYMENTS
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 05 · Cashless payments</div>
+  <div class="page-title">Cashless at 58%: payment data becomes a structural retail asset.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <p>Japan's cashless payment ratio reached <strong>58.0% of total consumer spending in 2025</strong>
+      — equivalent to JPY 162.7 trillion in cashless transaction value —
+      under METI's revised domestic consumption index
+      <span class="tag tag-secondary">[METI 2026]</span>.
+      The government's long-run target of 80% by 2030 is within reach given the current
+      trajectory; METI's mid-term milestone is 65% by 2030 on the domestic index.</p>
+
+      <p>The composition of cashless spending is important context. <strong>Credit cards dominate
+      at 82.7% of cashless value</strong> (JPY 134.6 trillion), with QR code payments (PayPay,
+      Rakuten Pay, LINE Pay, d Barai) accounting for a fast-growing 10.2% (JPY 16.6 trillion)
+      — a 4x increase from their 2020 base <span class="tag tag-secondary">[METI 2026]</span>.
+      Electronic money (Suica, Pasmo, nanaco, WAON) accounts for 3.7%.</p>
+
+      <p>The structural implication for retail operators is that <strong>proprietary payment rails
+      generate first-party transaction data</strong> that can be used for personalization,
+      promotional targeting, and loyalty mechanics. AEON (WAON, AEON Pay), Seven &amp; i
+      (nanaco, 7Pay successor), and Rakuten (Rakuten Pay) have built closed-loop payment
+      ecosystems worth an estimated USD 3.87 billion in combined loyalty-related revenues
+      <span class="tag tag-secondary">[Japan Times 2025]</span>.
+      Independent retailers and second-tier chains that process entirely via third-party
+      credit card networks collect none of this data.</p>
+
+      <p>Transaction volume reached <strong>43.5 billion individual cashless transactions</strong>
+      in 2025, up from 16.2 billion in 2018 <span class="tag tag-secondary">[METI 2026]</span>.
+      The per-transaction value has fallen — signalling that cashless has moved from
+      big-ticket purchases to daily micro-transactions (coffee, convenience, transit) —
+      which concentrates data generation in the high-frequency, low-margin convenience
+      and transit touchpoints.</p>
+    </div>
+
+    <div>
+      <!-- Cashless breakdown donut-style -->
+      <div class="chart-panel">
+        <div class="chart-title">Cashless payment method mix, 2025</div>
+        <div class="chart-subtitle">% OF CASHLESS VALUE · JPY 162.7 TRILLION TOTAL</div>
+        <svg viewBox="0 0 340 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <!-- simplified donut - approximate arc paths -->
+          <!-- credit: 82.7%, debit 3.4%, emoney 3.7%, QR 10.2% -->
+          <!-- outer r=70, inner r=45, center = 120,90 -->
+          <!-- Credit card: 0 to 297.72deg (82.7% of 360) -->
+          <path d="M120,20 A70,70 0 1,1 93.68,153.6 L106.37,131.9 A45,45 0 1,0 120,45 Z" fill="#1E6FFF"/>
+          <!-- Debit: 297.72 to 310.0 deg (3.4%) -->
+          <path d="M93.68,153.6 A70,70 0 0,1 69.6,136.3 L82.9,119.1 A45,45 0 0,0 106.37,131.9 Z" fill="#00A88B"/>
+          <!-- Emoney: 310 to 323.3 (3.7%) -->
+          <path d="M69.6,136.3 A70,70 0 0,1 52.1,108.6 L70.3,105.0 A45,45 0 0,0 82.9,119.1 Z" fill="#D97706"/>
+          <!-- QR: 323.3 to 360 (10.2%) (back to top) -->
+          <path d="M52.1,108.6 A70,70 0 0,1 120,20 L120,45 A45,45 0 0,0 70.3,105.0 Z" fill="#6B7280"/>
+          <!-- center hole fill -->
+          <circle cx="120" cy="90" r="38" fill="white"/>
+          <text x="120" y="87" text-anchor="middle" font-size="13" fill="#0B0D10" font-weight="bold" font-family="JetBrains Mono, monospace">58%</text>
+          <text x="120" y="101" text-anchor="middle" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">cashless</text>
+
+          <!-- legend -->
+          <rect x="210" y="50" width="10" height="10" fill="#1E6FFF" rx="1"/>
+          <text x="224" y="59" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">Credit cards 82.7%</text>
+          <rect x="210" y="68" width="10" height="10" fill="#00A88B" rx="1"/>
+          <text x="224" y="77" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">Debit cards 3.4%</text>
+          <rect x="210" y="86" width="10" height="10" fill="#D97706" rx="1"/>
+          <text x="224" y="95" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">E-money 3.7%</text>
+          <rect x="210" y="104" width="10" height="10" fill="#6B7280" rx="1"/>
+          <text x="224" y="113" font-size="10" fill="#4A5568" font-family="Satoshi, sans-serif">QR codes 10.2%</text>
+          <text x="210" y="135" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">QR volume 4× vs 2020</text>
+          <text x="210" y="147" font-size="9" fill="#6B7280" font-family="JetBrains Mono, monospace">43.5bn transactions</text>
+        </svg>
+        <div class="chart-source">SOURCE: METI CASHLESS PAYMENT RATIO REPORT MARCH 2026 · KIRA RESEARCH 2026</div>
+      </div>
+
+      <h2>QR payments: the insurgent layer</h2>
+      <p>QR code payment volume has grown from negligible to JPY 16.6 trillion in seven years,
+      driven by PayPay (SoftBank/Yahoo Japan), Rakuten Pay, LINE Pay, and d Barai (NTT Docomo).
+      The consumer proposition — scan-and-pay with accumulated loyalty points — is more
+      compelling than credit cards for low-margin, high-frequency transactions.
+      <strong>PayPay alone processes over 600 million transactions monthly</strong> across
+      its 7+ million merchant acceptance network, generating a data asset that rivals
+      the credit card networks in daily transaction granularity
+      <span class="tag tag-secondary">[PayPay Corp filings 2025]</span>.</p>
+
+      <p>For retail operators, QR acceptance is now table stakes — not accepting PayPay
+      or Rakuten Pay in 2027 is equivalent to not accepting cash a decade ago. The strategic
+      question is whether to run a proprietary payment layer on top of acceptance,
+      or cede that margin and data to the aggregators.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 07</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 08 — KEY PLAYERS COMPETITIVE LANDSCAPE
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 06 · Competitive landscape</div>
+  <div class="page-title">Key players: a two-tier landscape consolidating around data ownership.</div>
+  <div class="section-divider"></div>
+
+  <table class="player-table">
+    <thead>
+      <tr>
+        <th>Operator</th>
+        <th>Primary format</th>
+        <th>Revenue (FY2025)</th>
+        <th>Key metrics / position</th>
+        <th>Strategic posture</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="player-name">Seven &amp; i Holdings</span></td>
+        <td>Convenience (7-Eleven), GMS (Ito-Yokado), Finance (7Bank)</td>
+        <td><span class="mono">¥11.97 tn</span></td>
+        <td>Group op. profit ¥325bn (+3.1% YoY) <span class="tag tag-secondary">[Japan Times 2026]</span>. Largest single retailer by revenue. 21,000+ 7-Eleven Japan stores.</td>
+        <td>Asset-lighten GMS; grow convenience profitability; resist MBO privatisation bid. Financial services increasingly core to group economics.</td>
+      </tr>
+      <tr>
+        <td><span class="player-name">AEON Co.</span></td>
+        <td>GMS (AEON Mall), Supermarket, Specialty, Financial services (AEON Financial)</td>
+        <td><span class="mono">¥10.13 tn</span></td>
+        <td>Op. profit ¥144.7bn (+23.1% YoY). Overtook Seven &amp; i in market cap (¥5.19tn vs ¥5.18tn) Aug 2025 <span class="tag tag-secondary">[Japan Times 2025]</span>. WAON + AEON Pay loyalty ecosystem.</td>
+        <td>Diversified format portfolio buffers channel risk. ASEAN retail expansion. AEON Mall development as experience hub vs. online competition.</td>
+      </tr>
+      <tr>
+        <td><span class="player-name">Lawson</span></td>
+        <td>Convenience</td>
+        <td><span class="mono">¥1.17 tn</span></td>
+        <td>Op. profit ¥90.4bn, record high (+9.1%). Avg daily sales/outlet ¥584,000, record <span class="tag tag-secondary">[Japan Times 2026]</span>. Mitsubishi Corp. majority shareholder.</td>
+        <td>AI-driven ordering to reduce waste; expand fresh food/café hybrid; grow Lawson Bank touchpoints; media network monetisation.</td>
+      </tr>
+      <tr>
+        <td><span class="player-name">FamilyMart</span></td>
+        <td>Convenience, In-store media (FamiTV)</td>
+        <td><span class="mono">~¥1.10 tn</span></td>
+        <td>Op. profit ¥87.6bn, record (+19.4%). Itochu Corp. majority. Fastest organic profit growth among big three <span class="tag tag-secondary">[Japan Times Jan 2026]</span>.</td>
+        <td>Retail media platform expansion (FamilyMart TV). Digital payment integration. Asia convenience expansion (Taiwan, Thailand, Vietnam, Indonesia).</td>
+      </tr>
+      <tr>
+        <td><span class="player-name">Amazon Japan</span></td>
+        <td>E-commerce (marketplace + owned), Logistics, Prime ecosystem</td>
+        <td><span class="mono">~¥847 bn</span></td>
+        <td>Largest single e-commerce revenue in Japan. Prime Now sub-hour delivery. Alexa ecosystem deepening household data capture <span class="tag tag-secondary">[Statista 2025]</span>.</td>
+        <td>Logistics infrastructure as moat; AWS Japan data-centre expansion; grocery expansion via Amazon Fresh; Temu cross-border defence.</td>
+      </tr>
+      <tr>
+        <td><span class="player-name">Rakuten Group</span></td>
+        <td>E-commerce (Ichiba), Travel, Finance, Mobile (Rakuten Mobile)</td>
+        <td><span class="mono">~¥2.07 tn (group)</span></td>
+        <td>Second-largest e-commerce platform. Rakuten Pay + point ecosystem creates cross-vertical data loop. Rakuten Mobile losses remain a drag on group profitability <span class="tag tag-estimate">[Kira estimates]</span>.</td>
+        <td>Points-as-currency strategy to deepen ecosystem stickiness. Mobile turnaround as long-run play. LINE Yahoo competitor threat on search/commerce.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="margin-top:14px;">
+    <p><strong>Structural observation:</strong> The competitive divide is not between physical and digital operators — it is between operators who own a closed-loop data layer (payment + loyalty + logistics) and those who do not. AEON, Seven &amp; i, and Amazon occupy the commanding positions; mid-tier operators without proprietary data rails face structural margin compression through 2027.</p>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 08</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 09 — DEMOGRAPHICS & INBOUND TOURISM
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 07 · Demographic &amp; tourism dynamics</div>
+  <div class="page-title">Demographics and inbound tourism: two structural demand levers with opposing risk profiles.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h2>Domestic demographics: affluent but risk-averse</h2>
+      <p>Japan's population of approximately <strong>125 million is shrinking at 0.5% annually</strong>,
+      with the 65+ cohort constituting roughly 30% of the population and holding
+      over 52% of household financial assets
+      <span class="tag tag-secondary">[Statistics Bureau Japan 2025]</span>.
+      The demographic trajectory does not imply aggregate spending collapse — the elderly
+      cohort remains the dominant consumer class — but it does imply a <strong>decisive shift
+      in category allocation</strong>: food, healthcare, and convenience services expand;
+      apparel, electronics, and discretionary durables contract on a per-household basis.</p>
+
+      <p>Retail formats that align with the elderly's shopping patterns — proximity, safety,
+      familiarity, and health adjacency — are structurally favoured. This explains
+      the resilience of convenience stores (12,000–15,000 steps from home) and drug stores
+      (over 28,000 outlets, now carrying food and household goods) versus department stores
+      and large-format GMS that require car access and sustained physical stamina.</p>
+
+      <p>The wealth concentration of the elderly cohort also creates a premium segment:
+      high-end prepared foods, nutraceuticals, and luxury small-format retail are growing
+      faster than their base categories. Department stores targeting domestic luxury buyers
+      (Isetan Shinjuku, Matsuya Ginza) face <strong>less headwind than regional department
+      stores</strong> dependent on inbound tourists and mid-income domestic spending.</p>
+
+      <h2>Inbound tourism: record volume, shifting composition</h2>
+      <p>Total visitor spending reached a record <strong>¥9.5 trillion in 2025</strong>,
+      up 16.4% YoY, with retail shopping accounting for ¥2.5 trillion
+      <span class="tag tag-secondary">[JNTO 2026]</span>.
+      The weak yen (approximately 150–155 JPY/USD through 2025) functions as a structural
+      price subsidy for foreign shoppers — luxury goods, electronics, cosmetics, and
+      food products are meaningfully cheaper for non-JPY earners than at home.</p>
+    </div>
+
+    <div>
+      <h2>Visitor composition shift: the China risk</h2>
+      <p>The key structural risk in 2026–27 is the <strong>collapse in Chinese visitor arrivals</strong>.
+      Chinese tourists historically drove disproportionate high-value spending at department
+      stores and luxury retailers — estimated at 30–35% of duty-free category value at peak.
+      In the first four months of 2026, Chinese arrivals fell 55% YoY
+      <span class="tag tag-secondary">[JNTO 2026]</span>, with political bilateral tensions
+      being the proximate cause.</p>
+
+      <p>South Korea has now become Japan's largest single source market (approximately 4 million
+      visitors in the first four months of 2026), followed by Southeast Asian and Western
+      visitors. The average per-visit spending of Korean and Southeast Asian tourists skews
+      lower than Chinese visitors and tilts more toward food, accommodation, and
+      mid-tier retail — <strong>a structural mix shift that pressures luxury department store
+      economics more than mass-market convenience formats</strong>.</p>
+
+      <!-- Visitor composition bar -->
+      <div class="chart-panel" style="margin-top:16px;">
+        <div class="chart-title">Inbound visitor spending breakdown</div>
+        <div class="chart-subtitle">JPY TRILLION · 2025 FULL YEAR · BY CATEGORY</div>
+        <div class="bar-row">
+          <div class="bar-label">Accommodation</div>
+          <div class="bar-track"><div class="bar-fill" style="width:74%"></div></div>
+          <div class="bar-value">¥3.5 tn</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Shopping (retail)</div>
+          <div class="bar-track"><div class="bar-fill green" style="width:53%"></div></div>
+          <div class="bar-value">¥2.5 tn</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Food &amp; beverage</div>
+          <div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div>
+          <div class="bar-value">¥2.1 tn</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Transportation</div>
+          <div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--muted)"></div></div>
+          <div class="bar-value">¥1.1 tn</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Other</div>
+          <div class="bar-track"><div class="bar-fill" style="width:7%;background:var(--border)"></div></div>
+          <div class="bar-value">¥0.3 tn</div>
+        </div>
+        <div class="chart-source">SOURCE: JNTO INBOUND CONSUMPTION SURVEY 2026 · KIRA RESEARCH 2026</div>
+      </div>
+
+      <p><strong>The November 2026 tax-free refund reform</strong> adds a procedural friction
+      layer. Under the new departure-gate refund system, impulse duty-free purchases in-store
+      will face higher latency on tax reimbursement. Retailers reliant on duty-free volume
+      should expect a 5–8% transactional drag in H1 2027 as visitor behaviour adjusts
+      <span class="tag tag-estimate">[Kira estimates]</span>.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 09</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 10 — STRATEGIC IMPLICATIONS
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 08 · Strategic implications</div>
+  <div class="page-title">Strategic implications for market participants.</div>
+  <div class="section-divider"></div>
+
+  <div class="implications-grid">
+    <div class="impl-card">
+      <div class="impl-verb">Position</div>
+      <div class="impl-title">Build or acquire the payment data layer before 2028</div>
+      <div class="impl-body">
+        With 58% cashless penetration and QR volume growing 4x since 2020, the window
+        to build first-party payment data is narrow. Operators without a proprietary
+        payment rail should partner with or acquire a QR platform (PayPay, Rakuten Pay,
+        or a white-label stack) before aggregators consolidate acceptance.
+        AEON and Seven &amp; i's ¥3.87bn loyalty ecosystems illustrate the revenue delta.
+        <span class="tag tag-secondary">[Japan Times 2025]</span>
+      </div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-verb">Anticipate</div>
+      <div class="impl-title">E-commerce channel-share inflection creates GMS/supermarket pressure</div>
+      <div class="impl-body">
+        E-commerce reaching 21–22% share by 2027 is not a gradual fade — it is an
+        inflection for GMS formats that lack a digital fulfilment arm. Operators should
+        accelerate click-and-collect and same-day dark store capability. The cost
+        of retrofitting in 2027–28 will exceed the cost of investing in 2026.
+        <span class="tag tag-estimate">[Kira estimates]</span>
+      </div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-verb">Hedge</div>
+      <div class="impl-title">Reduce structural dependency on Chinese inbound luxury revenue</div>
+      <div class="impl-body">
+        Department stores and luxury retailers with 25%+ of duty-free revenue from Chinese
+        visitors face a binary risk: political tension recurrence. Diversify visitor
+        capture toward Korean, Southeast Asian, and Western tourists with adapted product
+        mixes and multilingual digital discovery surfaces. The November 2026 refund reform
+        adds a second structural headwind.
+        <span class="tag tag-secondary">[JNTO 2026]</span>
+      </div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-verb">Build</div>
+      <div class="impl-title">Convenience micro-platform capability: logistics, media, financial services</div>
+      <div class="impl-body">
+        Lawson and FamilyMart's record profit growth derives not from store count expansion
+        but from incremental revenue streams per outlet (AI ordering, media monetisation,
+        financial services). Independent franchise operators should evaluate co-op structures
+        that access big-three platform services, as organic build is too capital-intensive
+        at single-operator scale.
+        <span class="tag tag-secondary">[Japan Times Nov 2025]</span>
+      </div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-verb">Sequence</div>
+      <div class="impl-title">Aging demography is a category signal, not a volume headwind</div>
+      <div class="impl-body">
+        The 65+ cohort holds 52% of household wealth and is growing as a share of total
+        population. Retailers who sequence product and service investment toward this cohort —
+        health adjacency, prepared foods, proximity formats, digital-assisted in-store —
+        are capturing spending that would otherwise exit to pharma-adjacent channels.
+        <span class="tag tag-secondary">[Statistics Bureau Japan 2025]</span>
+      </div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-verb">Enter</div>
+      <div class="impl-title">Cross-border e-commerce competition: defend via fulfilment speed</div>
+      <div class="impl-body">
+        Temu and AliExpress are structurally price-competitive on apparel and accessories
+        versus domestic platforms. The defensible moat is not price but <strong>delivery time</strong>:
+        Japanese consumers pay a premium for same-day or next-morning delivery that
+        cross-border platforms cannot match. Logistics investment is the clearest
+        competitive barrier available to domestic operators.
+        <span class="tag tag-secondary">[GlobalNewsWire Jan 2026]</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:20px;">
+    <p>The central strategic question for Japan's retail operators through 2027 is not whether
+    physical retail survives — it will — but <strong>which operators will own the data and
+    logistics infrastructure that determines who captures margin in an omnichannel world</strong>.
+    The reallocation is already underway; the consolidation phase follows.</p>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 10</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 11 — RISKS & WATCH ITEMS
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 09 · Risks &amp; forward watch items</div>
+  <div class="page-title">Risks: five watch items through 2027.</div>
+  <div class="section-divider"></div>
+
+  <div class="three-col">
+    <div>
+      <h3>Risk 01 · Yen appreciation</h3>
+      <p>The weak yen (150 JPY/USD range) has been a structural tailwind for inbound tourism
+      spending and a partial offset to imported goods inflation. Any sharp yen appreciation
+      toward 120–130 JPY/USD would simultaneously reduce inbound retail volumes and
+      compress the imported goods inflation that has been driving up per-basket values
+      at convenience and supermarket formats.
+      <span class="tag tag-estimate">[Kira estimates]</span></p>
+
+      <h3>Risk 02 · Labour cost inflation</h3>
+      <p>Japan's minimum wage has increased 5–6% annually in 2023–2025, driven by
+      government policy. Convenience and supermarket formats are highly labour-intensive;
+      any acceleration beyond the current rate compresses operating margins at formats
+      that have already absorbed multiple rounds of wage hikes. Automation (self-checkout,
+      robot restocking) is the medium-run offset but requires capital outlay.
+      <span class="tag tag-secondary">[MHLW Wage Survey 2025]</span></p>
+    </div>
+
+    <div>
+      <h3>Risk 03 · China visitor normalisation</h3>
+      <p>A geopolitical normalisation between Japan and China would represent a positive
+      risk (upside) for luxury and department store formats, with Chinese inbound spending
+      potentially recovering toward its 2019 peak levels. Operators that have diversified
+      away from Chinese inbound dependency may underperform in a recovery scenario.
+      The probability and timing of normalisation is structurally uncertain.
+      <span class="tag tag-secondary">[JNTO 2026]</span></p>
+
+      <h3>Risk 04 · Cross-border platform acceleration</h3>
+      <p>Temu achieved JPY 400–600 billion in Japan e-commerce GMV within 18 months
+      of launch — a faster ramp than any prior entrant
+      <span class="tag tag-estimate">[Kira estimates]</span>.
+      If cross-border platforms improve fulfilment speed via Japan-side warehousing
+      (both Temu and AliExpress have disclosed domestic warehouse build-out plans),
+      the logistics moat currently protecting domestic operators narrows materially.</p>
+    </div>
+
+    <div>
+      <h3>Risk 05 · Tax-free reform implementation drag</h3>
+      <p>The November 2026 shift to departure-gate refund introduces procedural complexity
+      that smaller retailers (drug stores, specialty shops) lack the staff to administer
+      smoothly. Early adopter confusion could suppress inbound retail purchases in Q4 2026
+      and H1 2027 beyond our base-case 5–8% transactional drag estimate.
+      <span class="tag tag-secondary">[Japan Travel 2026]</span></p>
+
+      <h3>Summary risk matrix</h3>
+      <div class="bar-row">
+        <div class="bar-label" style="font-size:12px;">Yen appreciation</div>
+        <div class="bar-track"><div class="bar-fill amber" style="width:55%"></div></div>
+        <div class="bar-value" style="font-size:11px;">Medium</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" style="font-size:12px;">Labour inflation</div>
+        <div class="bar-track"><div class="bar-fill amber" style="width:70%"></div></div>
+        <div class="bar-value" style="font-size:11px;">High</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" style="font-size:12px;">China visitor risk</div>
+        <div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--red)"></div></div>
+        <div class="bar-value" style="font-size:11px;">High</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" style="font-size:12px;">Cross-border e-com</div>
+        <div class="bar-track"><div class="bar-fill amber" style="width:60%"></div></div>
+        <div class="bar-value" style="font-size:11px;">Medium</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" style="font-size:12px;">Tax-free reform drag</div>
+        <div class="bar-track"><div class="bar-fill amber" style="width:45%"></div></div>
+        <div class="bar-value" style="font-size:11px;">Medium</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 11</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 12 — METHODOLOGY & SOURCE KEY
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-flag">Section 10 · Methodology &amp; sources</div>
+  <div class="page-title">Methodology and source key.</div>
+  <div class="section-divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h2>Methodological approach</h2>
+      <p>This report synthesises public quantitative data from Japanese government statistics,
+      operator financial filings, and industry association reports, triangulated and interpreted
+      by KIRA Research's sector analysts. All market-level aggregates carry a <strong>±5–8%
+      confidence band</strong> reflecting differences in scope definitions across primary sources.</p>
+
+      <p>Forward projections (2026F, 2027F) are model-based estimates. The base case assumes:
+      JPY/USD remaining in the 145–155 range; no acute inbound tourism shock beyond the
+      already-modelled China visitor decline; domestic consumption growth tracking government
+      stimulus modestly above CPI. Scenario analysis has not been formally published in this
+      report but is available on request.</p>
+
+      <p>Channel share definitions follow METI's Commerce Survey methodology where applicable.
+      E-commerce includes B2C goods transactions only (excl. digital services, travel bookings).
+      GMS (general merchandise stores) includes AEON superstores, Ito-Yokado, and comparable
+      formats per the Japan Chain Stores Association definitions.</p>
+
+      <h2>Source key</h2>
+      <div class="source-key">
+        <p><strong>[METI 2026]</strong> = Ministry of Economy, Trade and Industry — Preliminary Report on the Current Survey of Commerce; Cashless Payment Ratio press release, March 2026.</p>
+        <p><strong>[JNTO 2026]</strong> = Japan Tourism Agency / Japan National Tourism Organization — Inbound Consumption Survey; Visitor Arrivals Statistics, January–April 2026.</p>
+        <p><strong>[Japan Times 2026]</strong> = The Japan Times — "Three convenience store operators log March-November profit growth", January 2026; "Lawson taps AI and Asia growth", November 2025.</p>
+        <p><strong>[Japan Times 2025]</strong> = The Japan Times — "Seven &amp; i and Aeon post operating profit growth in March-November", January 2026; capital market commentary August 2025.</p>
+        <p><strong>[Retail Japan 2026]</strong> = RetailJapan.com — 2026 Japan Retailing Market Guide; department store duty-free statistics.</p>
+        <p><strong>[Statista JP 2026]</strong> = Statista — Japan convenience store outlet count data, major operators, 2026.</p>
+        <p><strong>[Statistics Bureau Japan 2025]</strong> = Statistics Bureau of Japan — Population Estimates; National Consumption Survey.</p>
+        <p><strong>[Japan Travel 2026]</strong> = Japan Travel (en.japantravel.com) — "Tax-free shopping in Japan: 2026 changes".</p>
+        <p><strong>[GlobalNewsWire 2026]</strong> = GlobeNewswire — Japan B2C Ecommerce Databook, January 2026. Notes: Rakuten, Amazon Japan, LINE Yahoo leadership positions.</p>
+        <p><strong>[Komoju Research 2025]</strong> = Komoju.com — Japan E-Commerce Omnichannel Trends; cashless shift survey data.</p>
+        <p><strong>[IMARC Group 2026]</strong> = IMARC Group — Japan Omnichannel Retail Market outlook report (CAGR reference only; no firm name in body copy).</p>
+        <p><strong>[PayPay Corp filings 2025]</strong> = PayPay Corporation — investor and press disclosures, transaction volume statistics.</p>
+        <p><strong>[MHLW Wage Survey 2025]</strong> = Ministry of Health, Labour and Welfare — Basic Survey on Wage Structure; Minimum Wage statistics.</p>
+        <p><strong>[Kira estimates]</strong> = KIRA Research analyst synthesis. Market-level aggregates derived by triangulation of METI commerce data, operator public financials, Japan Retail Association member filings, and JNTO consumption data. Channel share splits are estimated; absolute values carry ±5–8% uncertainty band.</p>
+      </div>
+    </div>
+
+    <div>
+      <h2>Coverage summary</h2>
+      <p>This report covers the Japan national retail market with a primary focus on
+      the 2025–2027 forecast horizon. Sector coverage:</p>
+      <ul class="body-list">
+        <li>Convenience stores — store count, revenues, operating profit (big three)</li>
+        <li>Department stores — sector revenue trend, duty-free dynamics</li>
+        <li>E-commerce — channel share, platform landscape, logistics capability</li>
+        <li>GMS/Supermarkets — sector sizing, channel mix</li>
+        <li>Cashless payments — penetration rate, method breakdown, payment platform landscape</li>
+        <li>Inbound tourism retail — visitor spending, composition, tax-free reform</li>
+        <li>Competitive landscape — six key operators</li>
+      </ul>
+
+      <h2>Out of scope</h2>
+      <ul class="body-list">
+        <li>Consumer financial services (banking, insurance) beyond retail payment rails</li>
+        <li>Food &amp; beverage restaurants and food service (excluded from retail total)</li>
+        <li>Wholesale and B2B distribution channels</li>
+        <li>Medical devices, pharmaceutical dispensaries</li>
+        <li>Regional disaggregation below national level (prefecture-level analysis not included)</li>
+      </ul>
+
+      <h2>KIRA Research</h2>
+      <p>KIRA Research is a research house covering Asia-Pacific consumer and industrial markets.
+      Our analysts combine consulting-trained sector knowledge with primary data collection
+      across the region. Institutional clients use our market intelligence for entry, investment,
+      and competitive strategy decisions across Southeast and Northeast Asia.</p>
+      <p>For custom research on Japan retail channels, competitor benchmarking, or
+      consumer survey work, contact our research team via kiraresearch.com/custom-research.</p>
+
+      <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;">
+          KIRA Research · Japan Retail Market 2027 · Published June 2026<br>
+          © KIRA Research. All rights reserved. Not for redistribution without written consent.<br>
+          kiraresearch.com
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer-brand">KIRA Research · Confidential</div>
+    <div class="page-footer-meta">Japan Retail 2027 · Page 12</div>
+  </div>
+</div>
+
+</body>
+</html>
