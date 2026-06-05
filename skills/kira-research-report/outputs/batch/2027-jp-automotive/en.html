@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Japan automotive market 2027 — KIRA Research</title>
+  <style>
+    /* ─── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:           #FFFFFF;
+      --bg-soft:      #F8F9FB;
+      --text:         #0B0D10;
+      --text-mid:     #4A5568;
+      --muted:        #6B7280;
+      --primary:      #1E6FFF;
+      --primary-soft: #EEF3FF;
+      --green:        #00A88B;
+      --amber:        #D97706;
+      --border:       #E5E7EB;
+      --red:          #DC2626;
+    }
+
+    /* ─── Base ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Satoshi', 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-mid);
+      font-size: 14px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ─── Page layout ───────────────────────────────────────────── */
+    .report-page {
+      width: 1280px;
+      min-height: 720px;
+      margin: 0 auto 2px;
+      padding: 36px 56px 28px 56px;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .report-page.dark {
+      background: var(--text);
+      color: #FFFFFF;
+    }
+
+    .report-page + .report-page {
+      border-top: 2px solid var(--border);
+    }
+
+    /* ─── Cover page ────────────────────────────────────────────── */
+    .cover {
+      background: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 720px;
+      padding: 56px;
+    }
+
+    .cover-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .cover-title {
+      font-size: 52px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.05;
+      margin-top: 24px;
+      max-width: 820px;
+    }
+
+    .cover-subtitle {
+      font-size: 18px;
+      color: #94A3B8;
+      margin-top: 16px;
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 40px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid #1E293B;
+    }
+
+    .cover-meta-item .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748B;
+    }
+
+    .cover-meta-item .value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #CBD5E1;
+      margin-top: 4px;
+    }
+
+    .cover-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Section headers ───────────────────────────────────────── */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 8px;
+      margin-top: 18px;
+    }
+
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      margin-top: 14px;
+    }
+
+    p {
+      color: var(--text-mid);
+      margin-bottom: 10px;
+      font-size: 13.5px;
+    }
+
+    strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── KPI cards ─────────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+    }
+
+    .kpi-number {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .kpi-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    .kpi-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .kpi-change {
+      font-size: 11px;
+      color: var(--text-mid);
+      margin-top: 6px;
+    }
+
+    .kpi-change.positive { color: var(--green); }
+    .kpi-change.negative { color: var(--red); }
+    .kpi-change.caution  { color: var(--amber); }
+
+    /* ─── Data source tags ──────────────────────────────────────── */
+    .tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .tag.primary   { background: var(--primary-soft); color: var(--primary); }
+    .tag.secondary { background: #ECFDF5; color: var(--green); }
+    .tag.estimate  { background: #FFFBEB; color: var(--amber); }
+
+    /* ─── Two-column layout ─────────────────────────────────────── */
+    .cols-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .cols-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .cols-60-40 {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 28px;
+    }
+
+    /* ─── Chart panel ────────────────────────────────────────────── */
+    .chart-panel {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .chart-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .chart-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 6px;
+    }
+
+    /* ─── Callout box ────────────────────────────────────────────── */
+    .callout {
+      border-left: 3px solid var(--primary);
+      background: var(--primary-soft);
+      padding: 14px 18px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+    }
+
+    .callout p { color: var(--text); margin: 0; font-size: 13px; font-weight: 500; }
+
+    .callout.amber {
+      border-left-color: var(--amber);
+      background: #FFFBEB;
+    }
+
+    .callout.green {
+      border-left-color: var(--green);
+      background: #ECFDF5;
+    }
+
+    /* ─── Table ─────────────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    thead tr {
+      background: var(--text);
+      color: #FFFFFF;
+    }
+
+    thead th {
+      padding: 8px 12px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:nth-child(even) { background: var(--bg-soft); }
+
+    tbody td {
+      padding: 8px 12px;
+      color: var(--text-mid);
+    }
+
+    tbody td:first-child { color: var(--text); font-weight: 600; }
+
+    /* ─── Implication cards ─────────────────────────────────────── */
+    .impl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .impl-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--primary);
+      border-radius: 0 0 6px 6px;
+      padding: 14px;
+    }
+
+    .impl-verb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .impl-text {
+      font-size: 12px;
+      color: var(--text-mid);
+      line-height: 1.55;
+    }
+
+    /* ─── Competitor profile ────────────────────────────────────── */
+    .player-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+    }
+
+    .player-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .player-share {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 4px 0;
+    }
+
+    .player-note {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    .page-footer {
+      position: absolute;
+      bottom: 16px;
+      left: 56px;
+      right: 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    .footer-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-conf {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-pg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    /* ─── Divider ────────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    /* ─── Badge ──────────────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .badge.blue   { background: var(--primary-soft); color: var(--primary); }
+    .badge.green  { background: #ECFDF5; color: var(--green); }
+    .badge.amber  { background: #FFFBEB; color: var(--amber); }
+    .badge.red    { background: #FEF2F2; color: var(--red); }
+
+    /* ─── Progress bar ───────────────────────────────────────────── */
+    .progress-bar-wrap {
+      background: var(--border);
+      border-radius: 3px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    ul.body-list {
+      padding-left: 18px;
+      margin-bottom: 10px;
+    }
+    ul.body-list li {
+      color: var(--text-mid);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .source-key {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .risk-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+    }
+    .risk-row:last-child { border-bottom: none; }
+    .risk-label { min-width: 160px; font-weight: 600; color: var(--text); }
+    .risk-desc { color: var(--text-mid); }
+
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 1 — COVER
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page cover">
+  <div>
+    <div class="cover-eyebrow">KIRA Research · Market Intelligence</div>
+    <div class="cover-title">Japan automotive market 2027</div>
+    <div class="cover-subtitle">
+      Structural transition, competitive realignment, and the software-defined vehicle horizon.
+      A forward-looking analysis of Japan's ¥33 trillion auto sector.
+    </div>
+  </div>
+
+  <div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Geography</div>
+        <div class="value">Japan (domestic &amp; export context)</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Industry</div>
+        <div class="value">Automotive &amp; Mobility</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Horizon</div>
+        <div class="value">2025–2027</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Published</div>
+        <div class="value">June 2026</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+      <div class="cover-brand">KIRA Research · kiraresearch.com</div>
+      <div style="font-size:11px;color:#475569;margin-top:4px;">
+        For institutional and professional use. Not for redistribution.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 2 — EXECUTIVE SUMMARY
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">01 — Executive summary</div>
+  <div class="page-title">Five structural forces reshaping Japan's auto sector by 2027</div>
+  <div class="page-subtitle">Key findings · Japan · Automotive · June 2026</div>
+
+  <!-- KPI strip -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-number">4.57<span class="kpi-unit">mn units</span></div>
+      <div class="kpi-label">Domestic sales 2025</div>
+      <div class="kpi-change positive">+3.2% YoY, post-scandal recovery <span class="tag secondary">JAMA 2025</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">61<span class="kpi-unit">%</span></div>
+      <div class="kpi-label">HEV share of new registrations</div>
+      <div class="kpi-change caution">Up from 37% in 2020; BEV share &lt;5% <span class="tag secondary">JATO 2025</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">¥1.7<span class="kpi-unit">tn</span></div>
+      <div class="kpi-label">Toyota SDV + EV capex FY2024–26</div>
+      <div class="kpi-change positive">Arene OS + ¥500bn NTT MaaP JV <span class="tag secondary">Toyota IR 2025</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">¥671<span class="kpi-unit">bn</span></div>
+      <div class="kpi-label">Nissan net loss FY2025</div>
+      <div class="kpi-change negative">7 plants closing; 20k jobs cut by FY2027 <span class="tag secondary">Nissan IR 2025</span></div>
+    </div>
+  </div>
+
+  <!-- Five forces narrative -->
+  <div class="cols-2" style="gap:24px;">
+    <div>
+      <h2>Hybrid dominance persists — BEV remains structural laggard</h2>
+      <p>Japan's electrification path diverges materially from Europe and China. <strong>Hybrid electric vehicles commanded 61% of new passenger car registrations in 2024</strong>, up from 37% in 2020 [JATO 2025]. Battery electric vehicles (BEVs) remain below 5% of the mix, constrained by charging infrastructure density, consumer range anxiety, and the demonstrable efficiency of HEV drivetrains in Japan's urban-suburban commute pattern. METI's 100% xEV sales target by 2035 is explicitly technology-neutral — HEVs, PHEVs, and FCEVs all qualify, giving domestic OEMs a structural runway to delay pure BEV conversion.</p>
+
+      <h2>Nissan's financial crisis restructures the domestic supply base</h2>
+      <p>Nissan's ¥671 billion net loss in FY2025 [Nissan IR 2025] — driven by US and China market erosion plus failed integration talks with Honda — has triggered one of Japan's largest post-war automotive restructurings. <strong>Twenty thousand jobs and seven global plants will be eliminated by FY2027</strong>, reducing Nissan's annual production capacity from five million to four million units. The abrupt contraction threatens the multi-tiered Tier 1/2/3 supplier base concentrated in Kanagawa, Tochigi, and Fukuoka prefectures.</p>
+
+      <h2>Toyota's software pivot accelerates competitive separation</h2>
+      <p>Toyota's two-pronged SDV platform — Arene OS (in-vehicle) and the Woven Mobility AI Platform (cloud/edge) — represents a strategic bet that software-defined margins will replace hardware-defined margins by 2030. <strong>A ¥500 billion NTT joint venture</strong>, initiated in 2025 and targeting social implementation around 2028, positions Toyota upstream of the OEM tier in mobility services [Toyota IR 2025]. Japan's METI and MLIT jointly updated the Mobility DX Strategy in June 2025, targeting 30% global SDV market share by 2030 — an industrial-policy backstop that most competing automotive economies cannot match.</p>
+    </div>
+    <div>
+      <h2>Chinese OEM export surge — domestic exposure is limited, but export pressure is real</h2>
+      <p>Chinese automakers' global production and sales are forecast to surpass Japanese automakers for the first time in 2026, at approximately 27 million vs 25 million units [JAMA estimates 2025]. Japan's domestic market remains largely insulated — import-car penetration is structurally low, consumer brand loyalty is entrenched, and Japanese OEMs benefit from kei-car regulation advantages Chinese producers cannot replicate. The threat materialises in third markets: Southeast Asia, the Middle East, and increasingly Latin America, where <strong>Chinese OEMs' overseas manufacturing capacity is expected to reach 4.3 million vehicles by end-2026</strong> [IEA EV Outlook 2025].</p>
+
+      <h2>Safety scandal: reputational damage largely contained, but process reform costs persist</h2>
+      <p>The 2023–2024 certification irregularity scandal — which ensnared Daihatsu (Toyota subsidiary), Honda, Suzuki, Mazda, and Yamaha — forced production halts, leadership changes, and a wholesale review of type-approval processes across the industry. <strong>Daihatsu's domestic market recovery in early 2026 (+6.7% YTD through April)</strong> suggests consumer sentiment has substantially normalised [Focus2Move 2026], though MLIT process re-certification costs and reputational damage in export markets (particularly Southeast Asia) carry a multi-year tail.</p>
+
+      <div class="callout">
+        <p><strong>Central thesis:</strong> Japan's automotive sector is not in structural decline — it is in a deliberate, domestically-sequenced transition. The risk is mistiming: OEMs that over-invest in BEV infrastructure ahead of consumer demand face stranded costs; those that under-invest in SDV software miss the value-capture window that opens with 2027–2030 platform launches.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">2</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 3 — MARKET SIZING & FORECAST
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">02 — Market sizing &amp; forecast</div>
+  <div class="page-title">Domestic sales: 4.5–4.6 mn units through 2027, with modest tail risk</div>
+  <div class="page-subtitle">Passenger + commercial vehicles · Japan domestic retail · 2020–2027F</div>
+
+  <div class="cols-60-40">
+    <div>
+      <!-- SVG bar chart — domestic sales volume -->
+      <div class="chart-panel">
+        <div class="chart-title">Japan domestic auto sales volume</div>
+        <div class="chart-subtitle">Total units (mn) · 2020–2027F · passenger + commercial</div>
+        <svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <!-- Gridlines -->
+          <line x1="60" y1="20" x2="560" y2="20" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="60" y1="68" x2="560" y2="68" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="60" y1="116" x2="560" y2="116" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="60" y1="164" x2="560" y2="164" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="60" y1="212" x2="560" y2="212" stroke="#E5E7EB" stroke-width="1"/>
+          <!-- Y axis labels -->
+          <text x="52" y="24" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">5.0</text>
+          <text x="52" y="72" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">4.5</text>
+          <text x="52" y="120" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">4.0</text>
+          <text x="52" y="168" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">3.5</text>
+          <text x="52" y="216" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">3.0</text>
+
+          <!-- Bars: scale: 3.0mn=212, 5.0mn=20 → range 192px for 2mn → 96px/mn -->
+          <!-- 2020: ~4.6mn → (4.6-3.0)*96=153.6 → top=212-153.6=58.4 → h=153.6 -->
+          <rect x="75"  y="59"  width="44" height="153" fill="#1E6FFF" opacity="0.85" rx="2"/>
+          <!-- 2021: ~4.4mn → h=134 top=78 -->
+          <rect x="131" y="78"  width="44" height="134" fill="#1E6FFF" opacity="0.85" rx="2"/>
+          <!-- 2022: ~4.2mn → h=115 top=97 -->
+          <rect x="187" y="97"  width="44" height="115" fill="#1E6FFF" opacity="0.85" rx="2"/>
+          <!-- 2023: ~4.78mn → h=170 top=42 -->
+          <rect x="243" y="42"  width="44" height="170" fill="#1E6FFF" opacity="0.85" rx="2"/>
+          <!-- 2024: ~3.72mn → h=69 top=143 → 3.72-3=0.72*96=69 -->
+          <rect x="299" y="143" width="44" height="69" fill="#1E6FFF" opacity="0.65" rx="2"/>
+          <!-- 2025: ~4.57mn → h=151 top=61 -->
+          <rect x="355" y="61"  width="44" height="151" fill="#1E6FFF" opacity="0.85" rx="2"/>
+          <!-- 2026F: ~4.52mn → h=116+? → 4.52-3=1.52*96=146 top=66 -->
+          <rect x="411" y="66"  width="44" height="146" fill="#1E6FFF" opacity="0.45" rx="2" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <!-- 2027F: ~4.55mn → h=149 top=63 -->
+          <rect x="467" y="63"  width="44" height="149" fill="#1E6FFF" opacity="0.35" rx="2" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+          <!-- X axis labels -->
+          <text x="97"  y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2020</text>
+          <text x="153" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2021</text>
+          <text x="209" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2022</text>
+          <text x="265" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2023</text>
+          <text x="321" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2024</text>
+          <text x="377" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2025</text>
+          <text x="433" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2026F</text>
+          <text x="489" y="228" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2027F</text>
+
+          <!-- Value labels -->
+          <text x="97"  y="55"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1E6FFF">4.60</text>
+          <text x="153" y="74"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1E6FFF">4.39</text>
+          <text x="209" y="93"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1E6FFF">4.20</text>
+          <text x="265" y="38"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1E6FFF">4.78</text>
+          <text x="321" y="139" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#4A5568">3.72</text>
+          <text x="377" y="57"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1E6FFF">4.57</text>
+          <text x="433" y="62"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#D97706">~4.52</text>
+          <text x="489" y="59"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#D97706">~4.55</text>
+
+          <!-- Forecast legend -->
+          <rect x="380" y="238" width="10" height="10" fill="#1E6FFF" opacity="0.45" rx="1" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3,1"/>
+          <text x="394" y="247" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">Forecast (KIRA estimates)</text>
+          <text x="60" y="247" font-family="JetBrains Mono,monospace" font-size="9" fill="#D97706">2024 = Daihatsu scandal year</text>
+        </svg>
+        <div class="chart-source">SOURCE: JAMA 2025, FOCUS2MOVE 2026 · KIRA ESTIMATES FOR 2026–2027F</div>
+      </div>
+
+      <h2 style="margin-top:16px;">Sizing the sector: from units to yen</h2>
+      <p>Japan's auto manufacturing sector contributed <strong>2.9% of national GDP and 13.9% of manufacturing GDP in 2024</strong> [METI 2025]. Motor vehicle exports reached ¥22.5 trillion in value terms in 2024, the sector's most critical macro lever. The overall automotive industry (including parts, aftermarket, and services) is estimated at ¥32–34 trillion annually [Kira estimates], making it the single largest manufacturing subsector in the Japanese economy. Domestic retail alone — at approximately 4.5 million units at average transaction values of ¥2.8–3.2 million per vehicle — implies a retail market of ¥12.6–14.4 trillion. The remaining value is captured by the export complex, which connects 5,400+ direct suppliers to Toyota, Stellantis-Mitsubishi, Nissan-Renault, and Honda-GM joint ventures.</p>
+    </div>
+
+    <div>
+      <h2>Demand drivers through 2027</h2>
+      <ul class="body-list">
+        <li><strong>Post-scandal restocking:</strong> Daihatsu's forced production halt removed approximately 88,000 units from the 2024 supply. Backorder unwinding drove 2025's 3.2% recovery [JAMA 2025].</li>
+        <li><strong>Model-cycle cadence:</strong> Toyota launches its next-generation BEV platform in 2025–26; Honda rolls out full domain-based architecture by 2026, stimulating trade-in demand.</li>
+        <li><strong>Replacement cycle:</strong> Average vehicle age in Japan was 9.1 years in 2024 — not yet at the 10-year inflection point that typically triggers accelerated replacement demand.</li>
+        <li><strong>Macro headwind:</strong> The Bank of Japan's monetary tightening cycle has compressed consumer credit affordability. The economy contracted at an annualised 2.3% in late 2025 [Cabinet Office 2025].</li>
+        <li><strong>CEV subsidies:</strong> ¥129.1 billion in clean energy vehicle subsidies (FY2024) — up to ¥850,000 per eligible BEV — represent the government's demand-side lever to close the BEV price gap [METI 2025].</li>
+      </ul>
+
+      <div class="callout amber">
+        <p>Our 2027 base case is <strong>4.50–4.60 million domestic units</strong> — flat to modest growth. The downside scenario (4.2–4.3 mn) materialises if BoJ rate normalisation and a stronger yen hit export-sector wages simultaneously. <span class="tag estimate">Kira estimates</span></p>
+      </div>
+
+      <h3 style="margin-top:14px;">Segment forecast (units mn, 2027F)</h3>
+      <table style="font-size:11.5px;">
+        <thead>
+          <tr>
+            <th>Segment</th>
+            <th>2025A</th>
+            <th>2027F</th>
+            <th>Driver</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Passenger cars</td>
+            <td>3.10</td>
+            <td>3.08–3.15</td>
+            <td>HEV upgrade cycle</td>
+          </tr>
+          <tr>
+            <td>Kei cars</td>
+            <td>1.12</td>
+            <td>1.05–1.10</td>
+            <td>Ageing rural demand</td>
+          </tr>
+          <tr>
+            <td>Light trucks / vans</td>
+            <td>0.35</td>
+            <td>0.37–0.40</td>
+            <td>E-commerce last-mile</td>
+          </tr>
+          <tr>
+            <td><strong>Total</strong></td>
+            <td><strong>4.57</strong></td>
+            <td><strong>~4.50–4.55</strong></td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;">Source: JAMA 2025 actuals; KIRA estimates for 2027F <span class="tag estimate">Kira estimates</span></div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">3</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 4 — EV TRANSITION ANALYSIS
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">03 — Electrification trajectory</div>
+  <div class="page-title">Japan's hybrid-first strategy: deliberate divergence or structural lag?</div>
+  <div class="page-subtitle">xEV powertrain mix · Japan · 2020–2027F</div>
+
+  <div class="cols-2">
+    <div>
+      <h2>The hybrid dominance thesis</h2>
+      <p>Japan's electrification trajectory is the most structurally distinctive among major automotive economies. <strong>HEVs accounted for 61.1% of new passenger car registrations in 2024</strong>, rising consistently from 37.1% in 2020 [JATO 2025]. This is not a transitional anomaly — it reflects a deliberate OEM strategy grounded in consumer behaviour, infrastructure realities, and export market economics. Japanese consumers face a home-charging penetration rate below 15% in condominium-heavy urban centres, making BEV ownership impractical for roughly half the addressable market [Kira estimates based on MLIT 2025 housing data].</p>
+
+      <p>METI's 100% xEV mandate by 2035 preserves this strategic optionality. The policy counts HEVs, PHEVs, FCEVs, and BEVs — all as qualifying — so <strong>Japan's OEMs face no regulatory penalty for HEV dominance through at least 2030</strong>. This is structurally different from the EU's 2035 ICE ban, which explicitly excludes HEVs from the compliance pathway. The regulatory asymmetry gives Toyota, Honda, and Suzuki a genuine competitive window that exists nowhere else in the developed-market regulatory landscape.</p>
+
+      <h2>BEV: subsidy-stimulated, not demand-driven</h2>
+      <p>BEV volumes reached 88,099 units in 2023 — a 53% YoY surge — largely attributed to the launch of kei BEVs (notably Nissan Sakura and Mitsubishi eK X EV) at sub-¥3 million price points [JATO 2025]. However, sales entered a visible downward trend in 2024 and early 2025 as post-launch momentum faded. <strong>The ¥129.1 billion CEV subsidy programme (up to ¥850,000 per eligible BEV)</strong> is the primary demand-side lever [METI 2025], but subsidy dependency without infrastructure density creates a structurally unstable growth curve. Our base case assumes BEV share stabilises at 4–7% through 2027, with PHEV adding another 3–5%.</p>
+
+      <div class="callout green">
+        <p><strong>Strategic observation:</strong> Toyota's forthcoming next-generation BEV platform (2025–26 launch) targets 1 million BEV units annually by 2026 globally — but the domestic share of that volume may be modest. Export markets (Europe, North America) carry the compliance load. <span class="tag secondary">Toyota IR 2025</span></p>
+      </div>
+    </div>
+
+    <div>
+      <!-- SVG donut / mix chart -->
+      <div class="chart-panel">
+        <div class="chart-title">Powertrain mix in new passenger car registrations</div>
+        <div class="chart-subtitle">Japan · share (%) · 2024A vs 2027F</div>
+        <svg viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <!-- 2024A pie (center 95,110 r=75) -->
+          <!-- HEV 61%: 0.61*360=219.6° -->
+          <!-- Gasoline 32%: 115.2° -->
+          <!-- BEV 3.5%: 12.6° -->
+          <!-- PHEV 2.5%: 9°   -->
+          <!-- Other 1%: 3.6°  -->
+
+          <!-- Gasoline: start=0 end=115.2° -->
+          <path d="M95,110 L170,110 A75,75 0 0,1 57.8,172.5 Z" fill="#94A3B8"/>
+          <!-- HEV: start=115.2 end=334.8° -->
+          <path d="M95,110 L57.8,172.5 A75,75 0 1,1 161.9,151.4 Z" fill="#1E6FFF"/>
+          <!-- BEV: start=334.8 end=347.4° -->
+          <path d="M95,110 L161.9,151.4 A75,75 0 0,1 155.4,124.2 Z" fill="#00A88B"/>
+          <!-- PHEV: start=347.4 end=356.4° -->
+          <path d="M95,110 L155.4,124.2 A75,75 0 0,1 151.8,110.8 Z" fill="#D97706"/>
+          <!-- Other closes to start -->
+          <path d="M95,110 L151.8,110.8 A75,75 0 0,1 170,110 Z" fill="#E5E7EB"/>
+          <!-- Centre -->
+          <circle cx="95" cy="110" r="38" fill="white"/>
+          <text x="95" y="105" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2024A</text>
+          <text x="95" y="120" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" font-weight="700" fill="#1E6FFF">61%</text>
+          <text x="95" y="132" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">HEV</text>
+
+          <!-- Legend left side -->
+          <rect x="10" y="180" width="9" height="9" fill="#1E6FFF" rx="1"/>
+          <text x="23" y="188" font-family="JetBrains Mono,monospace" font-size="9" fill="#4A5568">HEV 61%</text>
+          <rect x="10" y="194" width="9" height="9" fill="#94A3B8" rx="1"/>
+          <text x="23" y="202" font-family="JetBrains Mono,monospace" font-size="9" fill="#4A5568">Gasoline 32%</text>
+          <rect x="85" y="180" width="9" height="9" fill="#00A88B" rx="1"/>
+          <text x="98" y="188" font-family="JetBrains Mono,monospace" font-size="9" fill="#4A5568">BEV 3.5%</text>
+          <rect x="85" y="194" width="9" height="9" fill="#D97706" rx="1"/>
+          <text x="98" y="202" font-family="JetBrains Mono,monospace" font-size="9" fill="#4A5568">PHEV 2.5%</text>
+
+          <!-- Divider -->
+          <line x1="200" y1="30" x2="200" y2="200" stroke="#E5E7EB" stroke-width="1"/>
+
+          <!-- 2027F bar chart -->
+          <text x="270" y="30" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B7280">2027F ESTIMATE</text>
+          <!-- HEV bar: 55% → 55 * 1.5 = 82.5px -->
+          <rect x="215" y="45"  width="110" height="12" fill="#E5E7EB" rx="2"/>
+          <rect x="215" y="45"  width="83"  height="12" fill="#1E6FFF" rx="2"/>
+          <text x="302" y="55" font-family="JetBrains Mono,monospace" font-size="9" fill="#1E6FFF">~55%</text>
+          <text x="215" y="44" font-family="JetBrains Mono,monospace" font-size="8" fill="#4A5568">HEV</text>
+
+          <!-- Gasoline: 30% → 45px -->
+          <rect x="215" y="70"  width="110" height="12" fill="#E5E7EB" rx="2"/>
+          <rect x="215" y="70"  width="45"  height="12" fill="#94A3B8" rx="2"/>
+          <text x="302" y="80" font-family="JetBrains Mono,monospace" font-size="9" fill="#94A3B8">~30%</text>
+          <text x="215" y="69" font-family="JetBrains Mono,monospace" font-size="8" fill="#4A5568">Gasoline</text>
+
+          <!-- BEV: 7% → 10.5px -->
+          <rect x="215" y="95"  width="110" height="12" fill="#E5E7EB" rx="2"/>
+          <rect x="215" y="95"  width="11"  height="12" fill="#00A88B" rx="2"/>
+          <text x="302" y="105" font-family="JetBrains Mono,monospace" font-size="9" fill="#00A88B">~7%</text>
+          <text x="215" y="94" font-family="JetBrains Mono,monospace" font-size="8" fill="#4A5568">BEV</text>
+
+          <!-- PHEV: 5% -->
+          <rect x="215" y="120" width="110" height="12" fill="#E5E7EB" rx="2"/>
+          <rect x="215" y="120" width="8"   height="12" fill="#D97706" rx="2"/>
+          <text x="302" y="130" font-family="JetBrains Mono,monospace" font-size="9" fill="#D97706">~5%</text>
+          <text x="215" y="119" font-family="JetBrains Mono,monospace" font-size="8" fill="#4A5568">PHEV</text>
+
+          <!-- FCEV: 2% -->
+          <rect x="215" y="145" width="110" height="12" fill="#E5E7EB" rx="2"/>
+          <rect x="215" y="145" width="3"   height="12" fill="#7C3AED" rx="2"/>
+          <text x="302" y="155" font-family="JetBrains Mono,monospace" font-size="9" fill="#7C3AED">~2%</text>
+          <text x="215" y="144" font-family="JetBrains Mono,monospace" font-size="8" fill="#4A5568">FCEV</text>
+
+          <text x="215" y="175" font-family="JetBrains Mono,monospace" font-size="8" fill="#D97706">↑ KIRA estimates — technology-neutral xEV policy</text>
+        </svg>
+        <div class="chart-source">SOURCE: JATO 2025, METI 2025 · KIRA ESTIMATES FOR 2027F</div>
+      </div>
+
+      <h3 style="margin-top:16px;">Infrastructure gap: the structural BEV constraint</h3>
+      <p>Japan had approximately 30,000 public fast-charging points in 2025 against a target of 150,000 by 2030 — a 5× expansion programme in five years [METI EV Infrastructure Guideline 2023]. By comparison, China deployed more fast chargers in 2024 alone than Japan's entire installed base. <strong>Closing this gap is a necessary but not sufficient condition for BEV volume acceleration</strong>; without it, the mass-market BEV case cannot be made credibly before 2028–2030.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">4</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 5 — COMPETITIVE LANDSCAPE
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">04 — Competitive landscape</div>
+  <div class="page-title">Toyota's structural dominance, Nissan's existential restructuring, Honda's solo pivot</div>
+  <div class="page-subtitle">Domestic market share · capability positioning · 2025–2027</div>
+
+  <div class="cols-3" style="margin-bottom:20px;">
+    <div class="player-card">
+      <div class="player-name">Toyota Group</div>
+      <div class="player-share">~47%</div>
+      <div class="player-note">
+        Domestic market share (incl. Daihatsu, Hino) <span class="tag secondary">JAMA 2025</span>.
+        ¥1.7 trillion SDV/EV capex committed. Arene OS + NTT MaaP JV.
+        Post-scandal Daihatsu recovery (+6.7% YTD Apr 2026).
+        Net profit FY2025: ¥4.8 trillion — largest in Japanese corporate history.
+        Risk: over-complex multi-powertrain portfolio creates execution strain.
+      </div>
+    </div>
+    <div class="player-card" style="border-top:3px solid var(--red);">
+      <div class="player-name">Nissan Motor</div>
+      <div class="player-share" style="color:var(--red);">~13%</div>
+      <div class="player-note">
+        Domestic share; global market share under structural pressure <span class="tag secondary">JAMA 2025</span>.
+        ¥671bn net loss FY2025. 20,000 jobs + 7 plants to close by FY2027.
+        CEO transition: Ivan Espinosa from Apr 2025.
+        Honda-Nissan merger collapsed Feb 2025.
+        Toyota reportedly approached Nissan post-merger failure.
+        Scrapped ¥165bn Kyushu EV battery plant.
+        Core risk: shrinking scale erodes supplier terms and R&D capacity.
+      </div>
+    </div>
+    <div class="player-card" style="border-top:3px solid var(--amber);">
+      <div class="player-name">Honda Motor</div>
+      <div class="player-share" style="color:var(--amber);">~17%</div>
+      <div class="player-note">
+        Domestic share <span class="tag secondary">JAMA 2025</span>.
+        Full domain-based architecture launch 2026 for EV models.
+        SDV software platform targeting independent BEV competitiveness post-Nissan merger collapse.
+        US+21.3% Mitsubishi Motors (21% Nissan-owned) shows Mitsubishi rebounding.
+        Honda-Nissan joint product/powertrain development continues at working level.
+        Motorcycle profitability provides balance-sheet buffer absent for Nissan.
+      </div>
+    </div>
+  </div>
+
+  <div class="cols-2">
+    <div>
+      <h2>Toyota's consolidating grip</h2>
+      <p>Toyota's domestic dominance is not merely a function of brand preference — it reflects structural supply chain integration, pricing power across 14 distinct nameplates, and the kei-car anchor provided by Daihatsu (15–20% of the kei segment). <strong>FY2025 net profit of approximately ¥4.8 trillion</strong> — the largest in Japanese corporate history — provides investment headroom that Nissan and Honda cannot match [Toyota IR 2025]. The SDV programme (Arene OS + Woven City + NTT joint venture) is the forward-positioned bet: Toyota is attempting to transition from a ¥10+ trillion vehicle OEM to a platform operator capable of capturing post-sale software and mobility-services revenue. The timeline to monetise that bet extends to 2028–2032 — but the investment is already committed.</p>
+
+      <h2>Nissan: survival mode through 2027</h2>
+      <p>The failed Honda-Nissan merger of February 2025 leaves Nissan structurally exposed. The financial case for the merger was well-established — combined global volumes approaching 8 million units, shared EV platform costs, and complementary geographic exposure (Honda in the US and motorcycles; Nissan in China and Southeast Asia). The collapse on governance grounds — Nissan's board refusing Honda-subsidiary status — was a corporate governance failure with industrial consequences. <strong>The 20,000 job reduction and closure of seven global plants by FY2027 is the minimum viable restructuring plan</strong>; it does not resolve the fundamental question of where Nissan's distinctive competitive position lies in a world where Toyota owns hybrid and Chinese OEMs are moving fast on BEV price.</p>
+
+      <p>Toyota's reported approach to Nissan post-merger collapse [Motor1 2025] could foreshadow a looser technology-sharing alliance — sufficient to backstop Nissan's SDV gap without triggering the ownership questions that derailed the Honda talks. Market participants should treat such an alliance as a meaningful probability by mid-2026.</p>
+    </div>
+
+    <div>
+      <!-- SVG horizontal bar — domestic share -->
+      <div class="chart-panel">
+        <div class="chart-title">Japan domestic sales market share</div>
+        <div class="chart-subtitle">By OEM group · 2025A · % of total domestic volume</div>
+        <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <!-- Toyota: 47% -->
+          <text x="0" y="28" font-family="JetBrains Mono,monospace" font-size="10" fill="#0B0D10" font-weight="700">Toyota Group</text>
+          <rect x="0" y="32" width="220" height="14" fill="#1E6FFF" rx="2"/>
+          <text x="224" y="43" font-family="JetBrains Mono,monospace" font-size="10" fill="#1E6FFF" font-weight="700">47%</text>
+
+          <!-- Honda: 17% -->
+          <text x="0" y="62" font-family="JetBrains Mono,monospace" font-size="10" fill="#0B0D10" font-weight="700">Honda</text>
+          <rect x="0" y="66" width="80" height="14" fill="#D97706" rx="2"/>
+          <text x="84" y="77" font-family="JetBrains Mono,monospace" font-size="10" fill="#D97706" font-weight="700">17%</text>
+
+          <!-- Nissan: 13% -->
+          <text x="0" y="96" font-family="JetBrains Mono,monospace" font-size="10" fill="#0B0D10" font-weight="700">Nissan</text>
+          <rect x="0" y="100" width="61" height="14" fill="#DC2626" rx="2" opacity="0.85"/>
+          <text x="65" y="111" font-family="JetBrains Mono,monospace" font-size="10" fill="#DC2626" font-weight="700">13%</text>
+
+          <!-- Suzuki: 9% -->
+          <text x="0" y="130" font-family="JetBrains Mono,monospace" font-size="10" fill="#0B0D10" font-weight="700">Suzuki</text>
+          <rect x="0" y="134" width="42" height="14" fill="#94A3B8" rx="2"/>
+          <text x="46" y="145" font-family="JetBrains Mono,monospace" font-size="10" fill="#6B7280" font-weight="700">9%</text>
+
+          <!-- Others: 14% -->
+          <text x="0" y="164" font-family="JetBrains Mono,monospace" font-size="10" fill="#0B0D10" font-weight="700">Others (Mazda/Subaru/Mitsubishi)</text>
+          <rect x="0" y="168" width="66" height="14" fill="#E5E7EB" rx="2"/>
+          <text x="70" y="179" font-family="JetBrains Mono,monospace" font-size="10" fill="#6B7280" font-weight="700">~14%</text>
+        </svg>
+        <div class="chart-source">SOURCE: JAMA 2025 · KIRA ESTIMATES</div>
+      </div>
+
+      <h3 style="margin-top:14px;">Honda's independent SDV pivot</h3>
+      <p>Honda's full domain-based vehicle architecture, launching for EV models in 2026, represents the company's bid for software independence. <strong>The architecture enables over-the-air updates and third-party app integration</strong> — capabilities Toyota already has, but which Honda must ship on-schedule to avoid falling behind in the 2027–2030 software monetisation window. Honda's motorcycle cash generation (the highest-margin unit in its portfolio) provides balance-sheet flexibility that Nissan's comparable-sized vehicle business lacks.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">5</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 6 — CHINESE EV THREAT & EXPORT DYNAMICS
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">05 — Competitive threat: Chinese OEMs</div>
+  <div class="page-title">The threat is real — but its geography is export markets, not domestic Japan</div>
+  <div class="page-subtitle">China vs Japan auto competitive dynamics · global + domestic lens · 2025–2027</div>
+
+  <div class="cols-60-40">
+    <div>
+      <h2>Domestic market: structurally insulated</h2>
+      <p>Japan's domestic auto market has historically maintained import-car penetration below 6%, the lowest among G7 economies. Several structural factors preserve this insulation through 2027. <strong>Kei-car regulations (engine ≤660cc, length ≤3.4m) represent approximately 35% of domestic registrations</strong> — a segment Chinese producers have no licensed models for domestically [JAMA 2025]. Japanese consumer brand loyalty scores for domestic OEMs consistently rank among the highest in Asia-Pacific. Road and parking infrastructure dimensions in urban Japan also favour small, low-slung domestic models. BYD has made modest gains — principally in the premium BEV segment (Atto 3, Seal) — with an estimated 10,000–15,000 units in Japan in 2025 [Kira estimates], against a total market of 4.57 million. That is below 0.4% penetration.</p>
+
+      <p>The scenario where Chinese OEMs accelerate Japan penetration rests on two conditions: (1) charging infrastructure closing to 80,000+ points, making BEV ownership practical for the suburban majority; and (2) Chinese OEM brand trust crossing the inflection required in a high-trust consumer culture. Both conditions are 2028–2030 at the earliest. <strong>Domestic threat is low for the 2027 horizon.</strong></p>
+
+      <h2>Export markets: where the competitive battle is lost or won</h2>
+      <p>The genuine threat is in the markets where Japanese OEMs earned the margins that fund their domestic R&D cycles. Southeast Asia — Thailand, Indonesia, Vietnam, Malaysia — collectively absorbed approximately 3.2 million Japanese-brand vehicles in 2024, representing Toyota's and Honda's most profitable export volumes [Kira estimates based on ASEAN Automotive Federation 2025 data]. <strong>Chinese OEM overseas production capacity is expected to roughly double to 4.3 million vehicles annually by end-2026</strong> [IEA EV Outlook 2025], with Thailand and Indonesia as priority assembly hubs.</p>
+
+      <p>BYD's overseas sales in H1 2025 reached 470,000 units — a 130%+ YoY increase — and its announced EV assembly facilities in Thailand (operational 2025), Indonesia (announced 2025), and Brazil signal an industrial-scale commitment to export market displacement. Japanese OEMs' HEV advantage in Southeast Asia is real but eroding: as charging infrastructure builds in Bangkok, Jakarta, and Ho Chi Minh City, the price differential of Chinese BEVs becomes increasingly actionable.</p>
+
+      <div class="callout amber">
+        <p><strong>Material risk for 2027:</strong> If Chinese OEM Southeast Asia share in new car sales reaches 15% (from approximately 7–8% in 2025 [Kira estimates]), Japanese OEMs face a ¥2.0–2.8 trillion cumulative revenue headwind in their most profitable export markets. <span class="tag estimate">Kira estimates</span></p>
+      </div>
+    </div>
+
+    <div>
+      <!-- SVG chart — BYD overseas expansion -->
+      <div class="chart-panel">
+        <div class="chart-title">Chinese OEM overseas production capacity</div>
+        <div class="chart-subtitle">Global · mn vehicles/year · 2023–2026E</div>
+        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <!-- Gridlines -->
+          <line x1="40" y1="20" x2="240" y2="20" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="70" x2="240" y2="70" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="120" x2="240" y2="120" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="170" x2="240" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+
+          <!-- Y axis -->
+          <text x="34" y="23" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">5</text>
+          <text x="34" y="73" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">4</text>
+          <text x="34" y="123" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">3</text>
+          <text x="34" y="173" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2</text>
+
+          <!-- scale: 2mn=170, 5mn=20 → 150px / 3mn → 50px/mn -->
+          <!-- 2023: 2.3mn → (2.3-2)*50=15 → top=170-15=155 h=15 -->
+          <rect x="55"  y="155" width="35" height="15" fill="#DC2626" opacity="0.8" rx="2"/>
+          <text x="72"  y="152" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC2626">2.3</text>
+
+          <!-- 2024: 2.6mn → h=30 top=140 -->
+          <rect x="110" y="140" width="35" height="30" fill="#DC2626" opacity="0.8" rx="2"/>
+          <text x="127" y="137" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC2626">2.6</text>
+
+          <!-- 2025: 3.4mn → h=70 top=100 -->
+          <rect x="165" y="100" width="35" height="70" fill="#DC2626" opacity="0.8" rx="2"/>
+          <text x="182" y="97" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC2626">3.4</text>
+
+          <!-- 2026E: 4.3mn → h=115 top=55 (dashed) -->
+          <rect x="220" y="55" width="35" height="115" fill="#DC2626" opacity="0.45" rx="2" stroke="#DC2626" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="237" y="52" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC2626">~4.3</text>
+
+          <!-- X labels -->
+          <text x="72"  y="183" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2023</text>
+          <text x="127" y="183" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2024</text>
+          <text x="182" y="183" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2025</text>
+          <text x="237" y="183" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2026E</text>
+        </svg>
+        <div class="chart-source">SOURCE: IEA EV OUTLOOK 2025 · KIRA ESTIMATES</div>
+      </div>
+
+      <h3 style="margin-top:14px;">Japan's counter-positioning</h3>
+      <p>Japanese OEMs are not passive. Three counter-strategies are visible:</p>
+      <ul class="body-list">
+        <li><strong>Price compression on compact HEVs:</strong> Toyota's YARIS/RAIZE and Honda's WR-V target the ¥2–3 million price tier where Chinese BEVs are most competitive in Southeast Asia.</li>
+        <li><strong>Local content deepening:</strong> Toyota's Thailand, Indonesia, and Vietnam manufacturing complexes have 60–80% local content — a structural cost floor Chinese entrants importing from China cannot initially undercut.</li>
+        <li><strong>SDV as loyalty anchor:</strong> Connected services, over-the-air updates, and dealer CRM integration create switching costs that a hardware-only price advantage cannot overcome.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">6</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 7 — SOFTWARE-DEFINED VEHICLE
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">06 — Software-defined vehicles &amp; MaaS</div>
+  <div class="page-title">Japan's ¥1.3 tn SDV software market: the hardware-to-software margin transition</div>
+  <div class="page-subtitle">Automotive software investment · Japan · 2025–2030F</div>
+
+  <div class="cols-2">
+    <div>
+      <h2>From metal-bending to code-writing</h2>
+      <p>Japan's automotive software market is projected to grow from approximately ¥870 billion ($5.8 billion) in 2025 to nearly ¥1.95 trillion ($13 billion) by 2030, with SDV-related and vehicle-intelligence solutions accounting for more than half of total market value [Kira estimates based on METI Mobility DX Strategy 2025]. This trajectory represents the most significant structural shift in Japan's automotive economics since mass production displaced craft manufacturing — the per-unit hardware margin is flat to declining while per-unit software and services revenue is compounding.</p>
+
+      <p><strong>Japan's METI and MLIT jointly updated the Mobility DX Strategy in June 2025</strong>, targeting Japan's capture of approximately 30% of the global SDV market by 2030 [METI 2025]. This is an ambitious target given that Japan's consumer software and cloud infrastructure ecosystems have historically lagged the US, but is backstopped by unique hardware advantages: Toyota and Honda sit at the top of the most sophisticated automotive supply chains in the world, providing the sensor fusion, actuator precision, and safety-validation infrastructure on which SDV stacks must ultimately run.</p>
+
+      <h2>Toyota's two-pronged SDV architecture</h2>
+      <p>Toyota's SDV strategy operates on two axes. The first — Arene OS (formerly Toyota Software Platform) — is the in-vehicle operating system targeted at centralized/zonal electrical architecture, replacing the current distributed 30+ ECU approach with a software-abstracted compute model. The second axis is the Woven Mobility AI Platform, built through the NTT joint venture: <strong>Toyota and NTT plan to invest ¥500 billion by 2030</strong>, with Mobility AI Platform development beginning in 2025 and social deployment around 2028 [Toyota IR 2025]. This two-tier stack — vehicle OS at the edge, mobility intelligence in the cloud — mirrors the architecture employed by Tesla's FSD and the leading Chinese SDV players (Huawei, Mobileye-integrated OEMs), but with a hardware manufacturing moat that neither Tesla nor the Chinese ecosystem can immediately replicate.</p>
+
+      <p>Toyota's ¥3.3 billion autonomous driving JV [WardsAuto 2025] targets commercially deployable autonomous mobility on specific Japan urban corridors by 2030 — a domestic-first, infrastructure-co-developed model that reduces the safety-case complexity that has slowed US robotaxi programmes.</p>
+    </div>
+
+    <div>
+      <!-- SVG line chart — software market growth -->
+      <div class="chart-panel">
+        <div class="chart-title">Japan automotive software market</div>
+        <div class="chart-subtitle">¥ trillion · 2025–2030F</div>
+        <svg viewBox="0 0 280 190" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <!-- Grid -->
+          <line x1="40" y1="20" x2="260" y2="20" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="57" x2="260" y2="57" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="94" x2="260" y2="94" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="131" x2="260" y2="131" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="40" y1="168" x2="260" y2="168" stroke="#E5E7EB" stroke-width="1"/>
+
+          <!-- Y labels (¥ tn) -->
+          <text x="34" y="23" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2.0</text>
+          <text x="34" y="60" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">1.6</text>
+          <text x="34" y="97" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">1.2</text>
+          <text x="34" y="134" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">0.8</text>
+          <text x="34" y="171" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">0.4</text>
+
+          <!-- scale: 0.4tn=168, 2.0tn=20 → 148px / 1.6tn → 92.5px/tn -->
+          <!-- Points: 2025=0.87, 2026=1.08, 2027=1.30, 2028=1.55, 2029=1.72, 2030=1.95 -->
+          <!-- y = 168 - (val - 0.4) * 92.5 -->
+          <!-- 2025: y=168-(0.47*92.5)=168-43.5=124.5 x=55 -->
+          <!-- 2026: y=168-(0.68*92.5)=168-62.9=105.1 x=95 -->
+          <!-- 2027: y=168-(0.90*92.5)=168-83.3=84.7 x=135 -->
+          <!-- 2028: y=168-(1.15*92.5)=168-106.4=61.6 x=175 -->
+          <!-- 2029: y=168-(1.32*92.5)=168-122.1=45.9 x=215 -->
+          <!-- 2030: y=168-(1.55*92.5)=168-143.4=24.6 x=255 -->
+
+          <polyline points="55,124 95,105 135,85 175,62 215,46 255,25"
+            fill="none" stroke="#1E6FFF" stroke-width="2.5" stroke-linejoin="round"
+            stroke-dasharray="none"/>
+
+          <!-- Data points -->
+          <circle cx="55"  cy="124" r="4" fill="#1E6FFF"/>
+          <circle cx="95"  cy="105" r="4" fill="#1E6FFF"/>
+          <circle cx="135" cy="85"  r="4" fill="#1E6FFF"/>
+          <circle cx="175" cy="62"  r="4" fill="#1E6FFF" opacity="0.6"/>
+          <circle cx="215" cy="46"  r="4" fill="#1E6FFF" opacity="0.6"/>
+          <circle cx="255" cy="25"  r="4" fill="#1E6FFF" opacity="0.6"/>
+
+          <!-- Value labels -->
+          <text x="55"  y="118" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1E6FFF">¥0.87tn</text>
+          <text x="135" y="79"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1E6FFF">¥1.30tn</text>
+          <text x="255" y="19"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#D97706">~¥1.95tn</text>
+
+          <!-- X labels -->
+          <text x="55"  y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2025</text>
+          <text x="95"  y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2026</text>
+          <text x="135" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2027</text>
+          <text x="175" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2028</text>
+          <text x="215" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2029</text>
+          <text x="255" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B7280">2030</text>
+
+          <!-- Forecast note -->
+          <text x="190" y="170" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#D97706">2028+ = forecast</text>
+        </svg>
+        <div class="chart-source">SOURCE: METI MOBILITY DX STRATEGY 2025 · KIRA ESTIMATES</div>
+      </div>
+
+      <h3 style="margin-top:14px;">Honda's SDV timeline</h3>
+      <p>Honda's full domain-based architecture launch (2026, EV-first) targets software independence but arrives later than Toyota's Arene programme. <strong>The key execution risk is not architecture capability but talent density</strong> — Japan's software engineering labour market is constrained, and Toyota's capital advantage means it attracts the strongest SDV engineering cohorts. Honda's motorcycle and power-products businesses provide cash to fund the transition but cannot substitute for the platform-scale network effects that Toyota's multi-nameplate fleet generates for OTA update validation.</p>
+
+      <h3>Supplier ecosystem implications</h3>
+      <p>Japan's Tier 1 suppliers (Denso, Aisin, JTEKT, Panasonic Automotive) are in a structural transition from electro-mechanical components to software-integrated modules. <strong>Denso and Toyota are co-investing in Arene OS</strong> — which means the most capable Tier 1 is already embedded in the dominant SDV stack. Suppliers without SDV integration partnerships face a commoditisation risk as hardware content per vehicle declines and software content grows.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">7</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 8 — RISKS & STRATEGIC IMPLICATIONS
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">07 — Risk register &amp; strategic implications</div>
+  <div class="page-title">Five implications for market participants</div>
+  <div class="page-subtitle">Risks rated by probability × impact through 2027</div>
+
+  <div class="cols-60-40" style="margin-bottom:20px;">
+    <div>
+      <h2>Risk register</h2>
+      <div class="risk-row">
+        <div class="risk-label">Nissan liquidity spiral <span class="badge red">HIGH PROB</span></div>
+        <div class="risk-desc">If restructuring cost overruns push Nissan toward a credit event, Toyota-Nissan alliance talks accelerate. Disruption to shared components (e.g. Renault-Nissan-Mitsubishi Alliance platforms) ripples to Renault's European operations. <span class="tag secondary">Nissan IR 2025</span></div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-label">BoJ rate tightening <span class="badge amber">MED PROB</span></div>
+        <div class="risk-desc">BoJ normalisation to 1.0–1.5% by 2026 strengthens yen, compressing export-revenue yen conversion and making Japanese vehicles more expensive in USD/EUR-denominated markets. A ¥140/USD yen scenario vs current ¥155 implies a ¥1.5–2.0 trillion annual revenue headwind for Toyota alone. <span class="tag estimate">Kira estimates</span></div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-label">Safety scandal recurrence <span class="badge amber">MED PROB</span></div>
+        <div class="risk-desc">MLIT's mandatory re-certification process increases testing burden across 70+ models. A second certification incident in 2026–2027 would trigger structured media scrutiny that the 2024 Daihatsu episode normalised. Brand trust in Southeast Asia export markets is the most exposed asset. <span class="tag secondary">CNN 2024</span></div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-label">US tariff escalation <span class="badge amber">MED PROB</span></div>
+        <div class="risk-desc">Japan exports approximately 1.8 million vehicle units annually to the US. A 25% tariff regime (from the current 2.5% baseline) adds approximately ¥600,000 per vehicle in cost burden, forcing either price increases (demand destruction) or accelerated US local-content investment (capex pull-forward). <span class="tag secondary">US ITC 2025</span></div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-label">SDV software talent gap <span class="badge blue">MED-LOW</span></div>
+        <div class="risk-desc">Japan faces a structural software engineering shortage. METI estimates a deficit of 800,000 IT engineers by 2030. Automotive OEMs compete with tech sector wages that car-industry legacy compensation structures cannot easily match. <span class="tag secondary">METI ICT White Paper 2025</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Strategic implications for market participants</h2>
+      <div class="impl-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="impl-card">
+          <div class="impl-verb">Position</div>
+          <div class="impl-text">Tier 1 suppliers should accelerate SDV software integration partnerships, particularly with Denso-Toyota Arene ecosystem, before 2027 platform lock-in forecloses independent positioning.</div>
+        </div>
+        <div class="impl-card" style="border-top-color:var(--amber);">
+          <div class="impl-verb" style="color:var(--amber);">Hedge</div>
+          <div class="impl-text">Nissan-dependent suppliers should diversify sourcing relationships before FY2027 plant closure completion reduces Nissan's component volumes by 20%. Tier 2/3 exposure is most acute in Kanagawa and Tochigi.</div>
+        </div>
+        <div class="impl-card" style="border-top-color:var(--green);">
+          <div class="impl-verb" style="color:var(--green);">Enter</div>
+          <div class="impl-text">Southeast Asian mobility investors: the Chinese OEM capacity surge creates opportunities in charging infrastructure, battery service networks, and fleet management software — independent of which OEM wins the hardware war.</div>
+        </div>
+        <div class="impl-card" style="border-top-color:var(--red);">
+          <div class="impl-verb" style="color:var(--red);">Anticipate</div>
+          <div class="impl-text">A Toyota-Nissan capital alliance is a material probability by mid-2026. If confirmed, it reshapes competitive R&D dynamics and offers a partial backstop to Japan's second-largest OEM. Monitor Nissan cash-burn rate as the leading indicator.</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:16px;">
+        <p>The 2027 horizon is defined by two timing risks that cut in opposite directions: <strong>over-investing in BEV infrastructure before demand exists</strong> (stranded capex) versus <strong>under-investing in SDV software before platform lock-in</strong> (missed monetisation window). Japan's hybrid-first strategy navigates the first risk well; the second depends entirely on execution velocity.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Source key -->
+  <hr class="divider"/>
+  <div class="section-label">Source key</div>
+  <div class="source-key" style="columns:2;column-gap:32px;">
+    <div><strong>JAMA 2025</strong> — Japan Automobile Manufacturers Association, Motor Industry of Japan 2025 Edition</div>
+    <div><strong>JATO 2025</strong> — JATO Dynamics, Japan Automotive Electrification Trends H1 2025</div>
+    <div><strong>METI 2025</strong> — Ministry of Economy Trade and Industry, Mobility DX Strategy (June 2025) + CEV Subsidy Programme data</div>
+    <div><strong>MLIT 2025</strong> — Ministry of Land Infrastructure Transport and Tourism, Housing and Vehicle Registration data</div>
+    <div><strong>Toyota IR 2025</strong> — Toyota Motor Corporation Annual Report FY2025; NTT JV press release</div>
+    <div><strong>Nissan IR 2025</strong> — Nissan Motor Co. FY2025 Full-Year Results; restructuring announcement May 2025</div>
+    <div><strong>IEA EV Outlook 2025</strong> — International Energy Agency, Global EV Outlook 2025</div>
+    <div><strong>Focus2Move 2026</strong> — Focus2Move Japan Auto Market YTD April 2026</div>
+    <div><strong>Cabinet Office 2025</strong> — Government of Japan, GDP Flash Estimate Q3 2025</div>
+    <div><strong>CNN 2024</strong> — CNN Business, Toyota/Daihatsu certification scandal coverage, June 2024</div>
+    <div><strong>WardsAuto 2025</strong> — WardsAuto, Toyota $3.3bn autonomous driving JV announcement</div>
+    <div><strong>Kira estimates</strong> — KIRA Research triangulation from public sources above; methodological note on final page</div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">KIRA Research</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">8</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 9 — METHODOLOGY
+════════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="section-label">08 — Methodology &amp; disclaimer</div>
+  <div class="page-title">Research methodology</div>
+  <div class="page-subtitle">Transparency on data sources, triangulation approach, and forward estimate construction</div>
+
+  <div class="cols-2">
+    <div>
+      <h2>Primary and secondary research foundation</h2>
+      <p>This report draws on secondary sources published between January 2024 and June 2026, encompassing official statistics from JAMA (Japan Automobile Manufacturers Association), METI, and MLIT; company investor relations disclosures from Toyota Motor Corporation, Nissan Motor Co., and Honda Motor Co.; and independent market intelligence from JATO Dynamics and the International Energy Agency. No proprietary dealer-level data or consumer survey data was available for this edition — forward estimates should be read as directional rather than precise.</p>
+
+      <h2>Triangulation methodology for KIRA estimates</h2>
+      <p>All figures tagged <code>[Kira estimates]</code> are triangulations from two or more public sources. The domestic market sizing model anchors on JAMA unit registration data (the most reliable primary data point in Japanese auto research), applies average transaction value estimates derived from listed-OEM revenue ÷ domestic volume disclosures, and cross-checks against METI sector GDP contribution figures. The 2027F unit volume range (4.50–4.60 mn) is derived from a three-scenario model: base (replacement cycle normalisation + stable macro); upside (accelerated post-scandal demand recovery + model-cycle pull-through); downside (BoJ tightening + yen appreciation + delayed Nissan recovery). The probability-weighted central estimate is 4.52–4.57 mn.</p>
+
+      <h2>Forward estimates: limitations</h2>
+      <p>All 2027 forecasts carry material uncertainty. The Japanese automotive market is subject to: (1) macro cycles driven by BoJ policy decisions not yet taken; (2) geopolitical tariff dynamics (US-Japan trade framework, ASEAN free trade evolution); (3) Nissan restructuring outcomes that remain fluid as of the report date; and (4) Chinese OEM competitive responses that are accelerating faster than most established analytical frameworks anticipated in 2023–2024. Stakeholders should treat the base-case ranges as decision-relevant brackets, not point forecasts.</p>
+    </div>
+
+    <div>
+      <h2>Coverage limitations</h2>
+      <ul class="body-list">
+        <li>Kei-car subsegment dynamics (rental/sharing fleet vs private ownership split) were not separately modelled due to data gaps in post-2024 registration granularity.</li>
+        <li>Toyota's internal SDV monetisation projections are not publicly disclosed; the software market estimates are KIRA triangulations from METI programme budgets and investor day disclosures.</li>
+        <li>Chinese OEM domestic Japan penetration estimates are directional; BYD does not publish Japan-specific sales volumes by model.</li>
+        <li>Nissan-Toyota alliance probability assessment is based on public reporting through June 2026; no insider confirmation is available or implied.</li>
+      </ul>
+
+      <h2>Update cadence</h2>
+      <p>This report reflects data available through June 2026. The key data triggers that would warrant revision are: (1) JAMA H1 2026 registration data (scheduled July 2026); (2) Nissan FY2026 interim results (October 2026); (3) Toyota Arene OS launch-readiness announcement; and (4) METI/MLIT EV infrastructure mid-term progress report (scheduled Q3 2026).</p>
+
+      <div class="callout" style="margin-top:16px;">
+        <p style="font-size:12px;color:var(--muted);">
+          <strong>Disclaimer:</strong> This report is published by KIRA Research for informational purposes and does not constitute investment advice, a solicitation, or a recommendation to buy or sell any security or financial instrument. The information and opinions expressed herein are based on sources believed to be reliable but are not guaranteed as to accuracy or completeness. KIRA Research accepts no liability for any loss arising from use of this material.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+    <div class="footer-brand">© 2026 KIRA Research · kiraresearch.com · All rights reserved</div>
+    <div class="footer-conf">CONFIDENTIAL · FOR PROFESSIONAL USE ONLY</div>
+    <div class="footer-pg">9</div>
+  </div>
+</div>
+
+</body>
+</html>
