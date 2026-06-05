@@ -442,6 +442,24 @@
   }
   injectVercelScripts();
 
+  // ── instant.page prefetch ──────────────────────────────────
+  // Prefetches pages on hover (~65ms before click), making navigation
+  // feel instant. Skip on admin pages (not useful) and Studio host
+  // (private, no public nav to prefetch). Idempotent via script id.
+  function injectInstantPage() {
+    if (isStudioHost) return;
+    if (window.location.pathname.startsWith('/en/admin/')) return;
+    if (document.getElementById('kira-instant-page')) return;
+    const s = document.createElement('script');
+    s.id = 'kira-instant-page';
+    s.type = 'module';
+    s.src = 'https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.js';
+    s.integrity = 'sha384-+oVCYEOCpcTbL4CsQ1hK+6Prt7+Kx2+ER1RSn5iQ0Ua0B1sBuGONp1jKt8dkcd5n';
+    s.crossOrigin = 'anonymous';
+    document.head.appendChild(s);
+  }
+  injectInstantPage();
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', inject);
   } else {
