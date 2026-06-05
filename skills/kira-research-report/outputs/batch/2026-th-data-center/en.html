@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — Thailand data center 2026 outlook</title>
+<meta name="description" content="Thailand's data center build-out concentrates in the EEC — Chonburi, Rayong, Chachoengsao — behind a multi-billion-dollar hyperscaler pipeline. Firm renewable power, not demand, gates how much energizes by 2027; Direct PPA and the Utility Green Tariff are the unlock.">
+<meta property="og:title" content="KIRA Research — Thailand data center 2026 outlook">
+<meta property="og:description" content="EEC hyperscaler campuses and the renewable-PPA gate — a KIRA Research view to 2027.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "SOURCE KEY · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.md-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.md-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 7px; margin-top: 14px; }
+.md-narrative h3:first-child { margin-top: 0; }
+.md-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.md-narrative p strong { color: var(--text); font-weight: 600; }
+.md-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.fo-chart-wrap { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.fo-scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.fo-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.fo-card.base { border-top: 3px solid var(--primary); }
+.fo-card.bull { border-top: 3px solid var(--green); }
+.fo-card.bear { border-top: 3px solid var(--amber); }
+.fo-card .sc-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.fo-card.base .sc-name { color: var(--primary); }
+.fo-card.bull .sc-name { color: var(--green); }
+.fo-card.bear .sc-name { color: var(--amber); }
+.fo-card .sc-val { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.fo-card .sc-val .unit { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-left: 3px; }
+.fo-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.fo-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.me-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; flex: 1; min-height: 0; }
+.me-method h3, .me-sources h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.me-method p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.me-method p strong { color: var(--text); font-weight: 600; }
+.me-disclaimer { margin-top: 12px; font-size: 9.5px; line-height: 1.5; color: var(--muted); font-style: italic; }
+.me-sources ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+.me-sources li { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; line-height: 1.45; color: var(--text-mid); margin-bottom: 7px; break-inside: avoid; }
+.me-sources li strong { color: var(--text); font-weight: 700; }
+
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 780px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+.cover-logo { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.cover-logo .accent { color: var(--primary); }
+
+.mi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.mi-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.mi-item { margin-bottom: 14px; }
+.mi-item .lbl { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.mi-item .dsc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: grid; grid-template-columns: 34px 1fr 44px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; }
+.toc-row .ttitle { font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); }
+.toc-row .ttitle .tsub { display: block; font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.toc-row .tpage { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 001 — COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">Digital Infrastructure · Thailand · 2026 Outlook</div>
+      <h1>Thailand's data center <span class="accent">EEC bet</span> — hyperscaler builds and the renewable-power gate</h1>
+      <p class="cover-subtitle">A multi-billion-dollar hyperscaler pipeline concentrates in the Eastern Economic Corridor. Firm, clean power — through Direct PPA and the Utility Green Tariff — not demand, decides how much of it energizes by 2027.</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">Country</div><div class="val">Thailand <span class="accent">·</span> TH</div></div>
+        <div class="cover-meta-item"><div class="label">Industry</div><div class="val">Data Centers / Digital Infrastructure</div></div>
+        <div class="cover-meta-item"><div class="label">Horizon</div><div class="val">2024 &#8211; 2031F</div></div>
+        <div class="cover-meta-item"><div class="label">Edition</div><div class="val">2026 <span class="accent">Outlook</span></div></div>
+      </div>
+      <div style="margin-top:24px;" class="cover-confidential"><strong>CONFIDENTIAL</strong> · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 002 — METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Methodology</div>
+      <div class="page-section-counter">002 / 017</div>
+    </div>
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="page-subhead">This view is built from two evidence streams: <strong>primary inputs</strong> &#8212; BOI promotion filings, power-procurement rulings, and analyst synthesis &#8212; and <strong>secondary anchors</strong> &#8212; the national power plan, regulator texts, and triangulated estimates. Every quantitative claim carries an explicit source tag.</p>
+    <div class="mi-body">
+      <div class="mi-col">
+        <h3>Primary inputs</h3>
+        <div class="mi-item"><div class="lbl">Promotion &amp; power filings</div><div class="dsc">BOI data-center promotion approvals, ERC Direct PPA / Third-Party-Access criteria, and EEC zone incentives for campuses in Chonburi, Rayong and Chachoengsao &#8212; surfaces real MW, real capex, real timelines.</div></div>
+        <div class="mi-item"><div class="lbl">Analyst synthesis</div><div class="dsc">KIRA in-house triangulation across multiple disclosed inputs &#8212; pipeline-versus-live capacity, IT load, grid headroom. Tagged inline as [Kira estimates].</div></div>
+        <div class="mi-item"><div class="lbl">Operator &amp; sector reads</div><div class="dsc">Reads of carrier-operator positions, colocation pricing, and cross-border connectivity closer to the demand signal than headline market sizing.</div></div>
+      </div>
+      <div class="mi-col">
+        <h3>Secondary anchors</h3>
+        <div class="mi-item"><div class="lbl">Government plans &amp; regulator texts</div><div class="dsc">The PDP 2024&#8211;2037 power plan, ERC and NEPC resolutions, the Utility Green Tariff scheme, and PDPA / Cloud-First policy &#8212; cited inline by named source.</div></div>
+        <div class="mi-item"><div class="lbl">Market-research datasets</div><div class="dsc">Published Thailand data-center colocation, capacity and revenue datasets, reconciled against operator and BOI disclosure &#8212; cited by dataset and period.</div></div>
+        <div class="mi-item"><div class="lbl">Triangulated estimates</div><div class="dsc">Where no single source covers a figure &#8212; e.g. the live-versus-pipeline gap &#8212; we combine 2&#8211;3 inputs and disclose the method. Tagged [Kira estimates].</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 003 — TOC ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Contents</div>
+      <div class="page-section-counter">003 / 017</div>
+    </div>
+    <h1 class="page-h1">Contents</h1>
+    <p class="page-subhead">Four movements: the demand surge pulling capacity into the EEC, the renewable-power constraint gating what lands, the operators racing to build, and a scenario read to 2027.</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">Executive summary<span class="tsub">The 2027 landing thesis</span></span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">Strategic implications<span class="tsub">Five forces for participants</span></span><span class="tpage">005</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">Market sizing &amp; trajectory<span class="tsub">Capacity and revenue to 2031</span></span><span class="tpage">007</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">Demand drivers<span class="tsub">AI, cloud and localization</span></span><span class="tpage">008</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">Power &amp; the grid<span class="tsub">PDP 2024 vs DC draw</span></span><span class="tpage">010</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">The operational gap<span class="tsub">Live MW vs the pipeline</span></span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">PPA structures &amp; rules<span class="tsub">Direct PPA, UGT, data policy</span></span><span class="tpage">012</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">Competitive structure<span class="tsub">Who lands the capacity</span></span><span class="tpage">014</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">2027 outlook &amp; scenarios<span class="tsub">Base, accelerated, constrained</span></span><span class="tpage">016</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">Methodology &amp; sources<span class="tsub">Tag system and source key</span></span><span class="tpage">017</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 004 — EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">004 / 017</div>
+    </div>
+    <h1 class="page-h1">Thailand's data center market &#8212; a 2027 landing test</h1>
+    <p class="page-subhead">A <strong>~USD 1.9 bn market in 2025</strong> sits beneath a pipeline that drew over THB 728 bn of BOI applications, yet only ~150&#8211;350 MW is live. <strong>Firm renewable power, not demand,</strong> sets the pace at which EEC campuses energize.</p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">Market size 2025</div>
+        <div class="num">1.9<span class="unit">USD bn</span></div>
+        <div class="change">&#8593; to ~4.9 bn by 2031</div>
+        <div class="source-tag sec">DC Portfolio 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">Live IT capacity 2024</div>
+        <div class="num">~350<span class="unit">MW</span></div>
+        <div class="change">&#8593; to ~1 GW by 2027</div>
+        <div class="source-tag sec">Bloomberg 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">BOI DC applications 2025</div>
+        <div class="num">728<span class="unit">THB bn</span></div>
+        <div class="change">36 projects filed</div>
+        <div class="source-tag sec">BOI 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">Direct PPA pilot pool</div>
+        <div class="num">2,000<span class="unit">MW</span></div>
+        <div class="change down">criteria under review</div>
+        <div class="source-tag sec">ERC 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>The setup</h3>
+        <p>Thailand's data center market reached roughly <strong>USD 1.9 bn in 2025</strong>, on a path toward <strong>USD 4.9 bn by 2031</strong> at a ~17% CAGR [DC Portfolio 2025]. Live IT capacity sat near <strong>350 MW exiting 2024</strong> [Bloomberg 2025]. The ambition dwarfs that base: BOI logged 36 data-center applications worth THB 728 bn in 2025 [BOI 2025], with ByteDance alone committing up to USD 8.8 bn across three provinces [DCD 2025].</p>
+        <h3>The constraint</h3>
+        <p>The bottleneck is physical and increasingly green. Hyperscalers tie siting to clean power, so the unlock is the <strong>2,000 MW Direct PPA pilot</strong> and the Utility Green Tariff [ERC 2025]. The PDP 2024&#8211;2037 plans 73 GW of renewables [PDP 2024], but campus energization tracks grid-connection windows and PPA rules &#8212; both of which slipped into review in late 2025.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Live capacity vs the 2027 target</div>
+            <div class="chart-subtitle">Thailand · MW · 2024 live vs 2027 goal</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="200"/>
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="60" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="60" y1="65" x2="460" y2="65"/>
+            <text class="axis-text" x="54" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="54" y="159" text-anchor="end">350</text>
+            <text class="axis-text" x="54" y="114" text-anchor="end">700</text>
+            <text class="axis-text" x="54" y="69" text-anchor="end">1050</text>
+            <rect class="bar-secondary" x="100" y="155" width="70" height="45"/>
+            <text class="label-data" x="135" y="149" text-anchor="middle">~350</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">2024 live</text>
+            <rect class="bar-tertiary" x="220" y="156" width="70" height="44"/>
+            <text class="label-data" x="255" y="150" text-anchor="middle">~347</text>
+            <text class="axis-text" x="255" y="216" text-anchor="middle">Under constr.</text>
+            <rect class="bar-primary" x="340" y="72" width="70" height="128"/>
+            <text class="label-data" x="375" y="66" text-anchor="middle">~1000</text>
+            <text class="axis-text" x="375" y="216" text-anchor="middle">2027 target</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, BOI, DCD, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting (350 MW &#8594; 1 GW) 2025 &#183; BOI 2025 = Thailand Board of Investment data-center promotion applications 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand pipeline reporting 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / TPA pilot criteria 2025 &#183; PDP 2024 = Thailand Power Development Plan 2024&#8211;2037 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 005 — EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">005 / 017</div>
+    </div>
+    <h1 class="page-h1">Five strategic implications for market participants</h1>
+    <p class="page-subhead">Five forces govern who captures Thailand's data center build-out through 2027. Each is anchored to documented data and KIRA synthesis.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · POWER</div>
+        <div class="title">Clean power is the binding constraint</div>
+        <div class="body-text">The PDP 2024&#8211;2037 funds <strong>73 GW of renewables</strong> toward a 51% RE share by 2037 [PDP 2024]. But campuses energize on grid-connection windows; the <strong>2,000 MW Direct PPA pilot</strong> is the mechanism, and its criteria slipped into review. <strong>Power readiness, not demand,</strong> sets the 2027 ceiling.</div>
+        <div class="anchor">Anchor: <span class="num-anchor">2,000 MW</span> PPA pool</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · THE EEC</div>
+        <div class="title">Rayong and Chonburi anchor the build</div>
+        <div class="body-text">In 2025 BOI filings, <strong>Rayong took 33% and Chonburi 32%</strong> of data-center investment, Samut Prakan 12% [BOI 2025]. The EEC pairs 15-year tax holidays and duty-free imports with cable-landing access, cutting project cost by up to <strong>20%</strong> [DCD 2025].</div>
+        <div class="anchor">Anchor: <span class="num-anchor">65%</span> EEC share</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · FOREIGN CAPITAL</div>
+        <div class="title">Hyperscalers shift to self-build</div>
+        <div class="body-text">AWS commits <strong>USD 5 bn through 2037</strong>; Google is building a Chonburi campus; ByteDance pledged up to USD 8.8 bn [DCD 2025]. Hyperscale and self-built capacity now exceed <strong>80% of demand</strong>, displacing pure colocation [DC Portfolio 2025].</div>
+        <div class="anchor">Anchor: <span class="num-anchor">USD 5 bn</span> AWS</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · POLICY</div>
+        <div class="title">Cloud-First builds a demand floor</div>
+        <div class="body-text">The &#8220;Go Cloud First&#8221; policy, effective Oct 2025, mandates cloud priority for government IT [DEPA 2025]; PDPA enforcement and a digital economy targeting <strong>30% of GDP by 2027</strong> anchor structural demand [NESDC 2025] independent of the AI cycle.</div>
+        <div class="anchor">Anchor: <span class="num-anchor">30%</span> GDP target</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · GREEN PPA</div>
+        <div class="title">PPA design decides who lands</div>
+        <div class="body-text">The Utility Green Tariff launched UGT1 in Jan 2025 with <strong>~2,000 GWh</strong> of hydropower-backed supply [UGT 2025]; UGT2 and Direct PPA criteria were paused for restudy [ERC 2025]. Carbon-target tenants commit only where clean supply is contractible.</div>
+        <div class="anchor">Anchor: <span class="num-anchor">2,000 GWh</span> UGT1</div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Thailand Board of Investment data-center promotion applications &amp; province split 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand pipeline &amp; EEC incentive reporting 2025 &#183; DEPA 2025 = Digital Economy Promotion Agency / Go Cloud First policy 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / UGT2 review 2025 &#183; NESDC 2025 = NESDC / digital economy GDP-share target 2025 &#183; PDP 2024 = Thailand Power Development Plan 2024&#8211;2037 &#183; UGT 2025 = Utility Green Tariff UGT1 launch 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 006 — DIVIDER: DEMAND SURGE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">The demand <span class="accent">surge</span></h1>
+    <div class="divider-thesis">Thailand's data center capacity is set to roughly triple in three years. The pull is <strong>AI compute, hyperscaler cloud regions, and a Cloud-First government mandate</strong> &#8212; demand is the easy half of the equation.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1 Market sizing</div>
+      <div class="toc-pill">4.2 Capacity trajectory</div>
+      <div class="toc-pill">4.3 Demand drivers</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 007 — MARKET SIZING ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Market Sizing</div>
+      <div class="page-section-counter">007 / 017</div>
+    </div>
+    <h1 class="page-h1">Capacity roughly triples, revenue more than doubles by 2031</h1>
+    <p class="page-subhead">Two clocks run at different speeds. <strong>Installed capacity</strong> climbs from ~350 MW toward ~1 GW by 2027 and beyond; <strong>market value</strong> compounds as AI-grade racks and hyperscale colocation lift revenue per MW.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>Capacity curve</h3>
+        <p>Live IT capacity was about <strong>350 MW exiting 2024</strong>, with industry power scaling toward <strong>~1 GW by 2027</strong> [Bloomberg 2025]. One dataset models capacity rising from ~0.77 GW in 2025 to ~2.93 GW by 2030, a ~30% CAGR [DC Portfolio 2025] &#8212; the ceiling, not the base case, given grid limits.</p>
+        <h3>Revenue curve</h3>
+        <p>Market value stood near <strong>USD 1.9 bn in 2025</strong>, on track for <strong>USD 4.9 bn by 2031</strong> (~17% CAGR) [DC Portfolio 2025]. Krungsri Research takes a more cautious near-term read of 7.5&#8211;8.5% annual growth over 2025&#8211;2027 [Krungsri 2025].</p>
+        <h3>Footprint</h3>
+        <p>The colocation market spans <strong>39 existing and 27 upcoming facilities across 34 operators</strong> [DC Portfolio 2025]. Bangkok holds the live base, but Rayong, Chonburi and Bangkok account for over <strong>45% of upcoming power capacity</strong> [DC Portfolio 2025].</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Thailand data center &#8212; capacity and market value</div>
+            <div class="chart-subtitle">MW (bars) · USD bn (line) · 2024&#8211;2031F</div>
+          </div>
+          <div class="chart-unit">MW / USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">700</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">1400</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">2100</text>
+            <rect class="bar-primary" x="95" y="183" width="48" height="22"/>
+            <text class="label-data" x="119" y="177" text-anchor="middle">350</text>
+            <text class="axis-text" x="119" y="221" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="240" y="141" width="48" height="64"/>
+            <text class="label-data" x="264" y="135" text-anchor="middle">~1000</text>
+            <text class="axis-text" x="264" y="221" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="385" y="78" width="48" height="127"/>
+            <text class="label-data" x="409" y="72" text-anchor="middle">~2000</text>
+            <text class="axis-text" x="409" y="221" text-anchor="middle">2031F</text>
+            <polyline points="119,188 264,162 409,118" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="119" cy="188" r="4" fill="#D97706"/><text class="label-small" x="119" y="183" text-anchor="middle" style="fill:#D97706">1.6</text>
+            <circle cx="264" cy="162" r="4" fill="#D97706"/><text class="label-small" x="280" y="160" style="fill:#D97706">~2.8</text>
+            <circle cx="409" cy="118" r="4" fill="#D97706"/><text class="label-small" x="409" y="113" text-anchor="middle" style="fill:#D97706">4.9</text>
+            <rect class="bar-primary" x="50" y="232" width="10" height="10"/><text class="label-small" x="64" y="241">Capacity MW</text>
+            <rect x="180" y="232" width="10" height="10" fill="#D97706"/><text class="label-small" x="194" y="241">Market value USD bn</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, DC PORTFOLIO DATASET, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset (39 existing / 27 upcoming, 34 operators) 2025 &#183; Krungsri 2025 = Krungsri Research data-center outlook 2025&#8211;2027 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 008 — DEMAND DRIVERS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Demand Drivers</div>
+      <div class="page-section-counter">008 / 017</div>
+    </div>
+    <h1 class="page-h1">Three demand engines: AI compute, cloud regions, and Cloud-First policy</h1>
+    <p class="page-subhead">Demand is the structurally easy side. An AI-investment wave, hyperscaler cloud-region landings, and a Cloud-First government mandate each pull capacity into the EEC &#8212; and they reinforce each other.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>AI compute</h3>
+        <p>AI-ready infrastructure already accounts for about <strong>28% of Thailand's data center capacity</strong> [Bloomberg 2025]. Hyperscalers and local operators are deploying GPU clusters for sovereign and enterprise AI; these racks draw far more power per cabinet, amplifying the grid question on page 010 and pulling siting toward firm clean power.</p>
+        <h3>Cloud regions</h3>
+        <p>AWS committed <strong>USD 5 bn through 2037</strong> for a Thailand region projected to add USD 10 bn to GDP; Google is building in Chonburi; Microsoft named Thailand for a regional cloud build [DCD 2025]. Hyperscale and self-built demand now exceeds <strong>80% of the total</strong>, shifting the market away from pure colocation [DC Portfolio 2025].</p>
+        <h3>Cloud-First &amp; localization</h3>
+        <p>The &#8220;Go Cloud First&#8221; policy (Oct 2025) mandates cloud priority for government IT [DEPA 2025], and PDPA enforcement plus the 30%-of-GDP digital-economy target convert policy into durable demand independent of the AI cycle [NESDC 2025].</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">What is pulling capacity in</div>
+            <div class="chart-subtitle">Indexed demand contribution · directional</div>
+          </div>
+          <div class="chart-unit">DRIVERS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="20" x2="150" y2="210"/>
+            <rect class="bar-primary" x="150" y="34" width="285" height="34"/>
+            <text class="label-data" x="442" y="56" text-anchor="end" style="fill:#fff">High</text>
+            <text class="label-small" x="146" y="55" text-anchor="end">AI compute</text>
+            <rect class="bar-primary" x="150" y="92" width="255" height="34" opacity="0.85"/>
+            <text class="label-data" x="397" y="114" style="fill:var(--primary)">High</text>
+            <text class="label-small" x="146" y="113" text-anchor="end">Cloud regions</text>
+            <rect class="bar-secondary" x="150" y="150" width="240" height="34"/>
+            <text class="label-data" x="397" y="172" style="fill:var(--green)">Structural</text>
+            <text class="label-small" x="146" y="171" text-anchor="end">Cloud-First</text>
+            <text class="label-small" x="150" y="232">Bar length = directional pull on 2025&#8211;2031 capacity demand</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, DCD, DEPA, KIRA SYNTHESIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center / AI infrastructure reporting 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand hyperscaler-commitment reporting 2025 &#183; DEPA 2025 = Digital Economy Promotion Agency / Go Cloud First policy 2025 &#183; NESDC 2025 = NESDC digital-economy GDP-share target 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 009 — DIVIDER: LANDING CONSTRAINT ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">The landing <span class="accent">constraint</span></h1>
+    <div class="divider-thesis">Announcements are not megawatts. <strong>Grid capacity, PPA design, and a thin live base</strong> &#8212; around 350 MW nationally &#8212; decide how much of the THB-728-billion pipeline actually energizes across the EEC by 2027.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1 Power &amp; grid</div>
+      <div class="toc-pill">5.2 The operational gap</div>
+      <div class="toc-pill">5.3 PPA structures &amp; rules</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 010 — POWER & GRID ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Power &amp; the Grid</div>
+      <div class="page-section-counter">010 / 017</div>
+    </div>
+    <h1 class="page-h1">Power supply is the gate, clean power is the lock</h1>
+    <p class="page-subhead">The PDP 2024&#8211;2037 commits to a large generation build, but the binding question for EEC campuses is <strong>where and when firm, clean load reaches the meter</strong> &#8212; and on what contract.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>The plan</h3>
+        <p>The PDP 2024&#8211;2037 lifts total demand from <strong>~51 GW in 2024 to ~112 GW by 2037</strong>, with renewables rising to a <strong>51% fuel share</strong> &#8212; about 73 GW of RE capacity, over half of it solar [PDP 2024]. Gas and coal fall from ~80% toward 48% across the plan.</p>
+        <h3>The constraint</h3>
+        <p>Headline generation is not the issue; <strong>firm clean supply contractible to a single campus</strong> is. EGAT supplies ~44% of generation and anchors the grid [PDP 2024]. The current retail tariff sits near <strong>THB 4.15 per unit</strong>, and a guaranteed-offtake rule of THB 4.5 mn per MW has been floated to deter speculative filings [BOI 2025].</p>
+        <h3>The clean-power fix</h3>
+        <p>Sustainability is now a campus-design input: tenants with carbon targets pair load with the <strong>Utility Green Tariff and Direct PPA</strong> rather than vanilla grid supply [ERC 2025]. Clean siting, not just raw megawatts, increasingly decides which hyperscale tenants commit.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">PDP 2024&#8211;2037 fuel-mix shift</div>
+            <div class="chart-subtitle">% of fuel use · 2024 vs 2037 target</div>
+          </div>
+          <div class="chart-unit">% MIX</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">30</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">60</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">90</text>
+            <rect class="bar-tertiary" x="95" y="85" width="55" height="120"/>
+            <text class="label-data" x="122" y="79" text-anchor="middle">~80</text>
+            <text class="axis-text" x="122" y="221" text-anchor="middle">Fossil '24</text>
+            <rect class="bar-secondary" x="170" y="175" width="55" height="30"/>
+            <text class="label-data" x="197" y="169" text-anchor="middle">~20</text>
+            <text class="axis-text" x="197" y="221" text-anchor="middle">RE '24</text>
+            <rect class="bar-tertiary" x="285" y="133" width="55" height="72" opacity="0.7"/>
+            <text class="label-data" x="312" y="127" text-anchor="middle">~48</text>
+            <text class="axis-text" x="312" y="221" text-anchor="middle">Fossil '37</text>
+            <rect class="bar-secondary" x="360" y="128" width="55" height="77"/>
+            <text class="label-data" x="387" y="122" text-anchor="middle">~51</text>
+            <text class="axis-text" x="387" y="221" text-anchor="middle">RE '37</text>
+            <text class="label-small" x="257" y="244" text-anchor="middle">73 GW renewables added by 2037 · &gt;50% solar [PDP 2024]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: PDP 2024&#8211;2037, ERC, KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Thailand Board of Investment guaranteed-offtake &amp; tariff reporting 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / UGT criteria 2025 &#183; PDP 2024 = Thailand Power Development Plan (PDP) 2024&#8211;2037 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 011 — OPERATIONAL GAP ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · The Operational Gap</div>
+      <div class="page-section-counter">011 / 017</div>
+    </div>
+    <h1 class="page-h1">The gap between announced and energized</h1>
+    <p class="page-subhead">The pipeline reads in gigawatts of intent; the meter reads in hundreds of megawatts of delivery. <strong>Closing that gap by 2027 is a power-and-PPA problem,</strong> not a demand one.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>What is live</h3>
+        <p>National live IT capacity was about <strong>350 MW exiting 2024</strong> [Bloomberg 2025], with Bangkok carrier-neutral colocation near 105&#8211;113 MW [DC Portfolio 2025]. The base is real but thin against the announced pipeline.</p>
+        <h3>What is announced</h3>
+        <p>The EEC pipeline is large. True IDC plans a <strong>THB 77 bn EEC mega-campus (223 MW IT load)</strong> [BOI 2025]; a Gulf&#8211;Singtel&#8211;AIS JV (GSA) reserves ~120 MW in Rayong [BOI 2025]; Bridge Data Centres is approved for 134 MW and Skyline (DAMAC) for 200 MW [DCD 2025]. BOI logged <strong>36 applications worth THB 728 bn</strong> in 2025 [BOI 2025].</p>
+        <h3>What lands by 2027</h3>
+        <p>Most flagship campuses target <strong>2026&#8211;2028 phased energization</strong>, tied to grid windows and PPA approval. <strong>[Kira estimates]</strong> put realized 2027 live capacity near <strong>0.9&#8211;1.0 GW</strong> &#8212; a large step up, but a fraction of the headline pipeline.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Pipeline funnel &#8212; announced to energized</div>
+            <div class="chart-subtitle">Thailand · MW · stage of delivery</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <rect class="bar-primary" x="80" y="34" width="320" height="34"/>
+            <text class="label-data" x="240" y="56" text-anchor="middle" style="fill:#fff">3000&#43; announced / filed</text>
+            <rect class="bar-primary" x="130" y="86" width="220" height="34" opacity="0.8"/>
+            <text class="label-data" x="240" y="108" text-anchor="middle" style="fill:#fff">~2000 PPA pilot pool</text>
+            <rect class="bar-tertiary" x="175" y="138" width="130" height="34"/>
+            <text class="label-data" x="240" y="160" text-anchor="middle" style="fill:#fff">~900&#8211;1000 live by 2027</text>
+            <rect class="bar-secondary" x="200" y="190" width="80" height="30"/>
+            <text class="label-data" x="240" y="210" text-anchor="middle" style="fill:#fff">~350 live now</text>
+            <text class="label-small" x="240" y="240" text-anchor="middle">Funnel narrows on grid windows &amp; PPA approval [Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, BOI, DCD, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting 2025 &#183; BOI 2025 = Thailand Board of Investment data-center promotion applications (36 projects, THB 728 bn) 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand pipeline tracking 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 012 — PPA STRUCTURES & REGULATION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · PPA Structures &amp; Rules</div>
+      <div class="page-section-counter">012 / 017</div>
+    </div>
+    <h1 class="page-h1">Three routes to clean power; data rules set the demand floor</h1>
+    <p class="page-subhead">Two enablers complete the constraint picture: a <strong>renewable-procurement menu</strong> &#8212; Direct PPA, UGT, on-site &#8212; that decides who can land carbon-target tenants, and a <strong>data-policy regime</strong> that guarantees baseline local demand.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>Direct PPA via Third-Party Access</h3>
+        <p>In June 2024 the NEPC approved a pilot letting data centers procure up to <strong>2,000 MW of renewables directly</strong> from generators over the national grid via Third-Party Access [ERC 2025]. The ERC issued draft criteria in Oct 2025, but the energy policy committee ordered a <strong>restudy</strong> of both Direct PPA and UGT2 rules &#8212; the key 2026 catalyst to watch.</p>
+        <h3>Utility Green Tariff</h3>
+        <p>UGT1 launched in Jan 2025 with about <strong>2,000 GWh/year</strong> of EGAT hydropower-backed supply plus RECs, sold without specifying source; <strong>UGT2</strong> (source-specified) was designed for buyers needing additionality [UGT 2025]. Over 46 data-center projects have signalled green-power demand [ERC 2025].</p>
+        <h3>Data policy</h3>
+        <p>Thailand imposes <strong>no blanket foreign-data localization</strong>, but PDPA (in force since 2022) and the Oct-2025 Cloud-First mandate channel public-sector and regulated data onshore [DEPA 2025] &#8212; anchoring colocation demand beneath the hyperscale layer.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Renewable-procurement routes for campuses</div>
+            <div class="chart-subtitle">Indicative scale &amp; readiness · 2026</div>
+          </div>
+          <div class="chart-unit">MW POOL</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="15" x2="120" y2="200"/>
+            <rect class="bar-primary" x="120" y="28" width="280" height="30"/>
+            <text class="label-data" x="408" y="49">2000 MW</text>
+            <text class="label-small" x="116" y="47" text-anchor="end">Direct PPA (TPA)</text>
+            <rect class="bar-secondary" x="120" y="78" width="230" height="30"/>
+            <text class="label-data" x="358" y="99" style="fill:var(--green)">~2000 GWh</text>
+            <text class="label-small" x="116" y="97" text-anchor="end">UGT1 launched</text>
+            <rect class="bar-secondary" x="120" y="128" width="150" height="30" opacity="0.7"/>
+            <text class="label-data" x="278" y="149" style="fill:var(--green)">restudy</text>
+            <text class="label-small" x="116" y="147" text-anchor="end">UGT2 specified</text>
+            <rect class="bar-tertiary" x="120" y="178" width="120" height="30"/>
+            <text class="label-data" x="248" y="199" style="fill:var(--amber)">on-site</text>
+            <text class="label-small" x="116" y="197" text-anchor="end">Behind-meter solar</text>
+            <text class="label-small" x="120" y="232">Bar = indicative pool / readiness · review pending [ERC 2025]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ERC, UGT SCHEME, NEPC, KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DEPA 2025 = Digital Economy Promotion Agency / PDPA &amp; Go Cloud First policy 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / TPA &amp; UGT2 criteria and restudy 2025 &#183; UGT 2025 = Utility Green Tariff UGT1 launch (EGAT/MEA/PEA, ~2,000 GWh) 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 013 — DIVIDER: WHO LANDS THE CAPACITY ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">Who lands the <span class="accent">capacity</span></h1>
+    <div class="divider-thesis">A carrier-led domestic base meets foreign capital arriving through joint ventures and self-build. <strong>Land in the EEC, grid access, and a clean-power contract</strong> &#8212; not the building itself &#8212; are how megawatts actually energize.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1 Market structure</div>
+      <div class="toc-pill">6.2 Leading operators</div>
+      <div class="toc-pill">6.3 Foreign entry</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 014 — COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Competitive Structure</div>
+      <div class="page-section-counter">014 / 017</div>
+    </div>
+    <h1 class="page-h1">A carrier-led base, with foreign capital arriving through it</h1>
+    <p class="page-subhead">Domestic carriers and listed groups hold the live base; global capital lands through JVs, self-build and EEC campuses. The edge is <strong>EEC land, grid access and a clean-power contract</strong> that let megawatts energize.</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Capacity share by operator group</div>
+            <div class="chart-subtitle">Thailand · indicative share of live IT load · 2025</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="130" y1="15" x2="130" y2="175"/>
+            <rect class="bar-primary" x="130" y="22" width="150" height="22"/><text class="label-data" x="288" y="39">~20%</text><text class="label-small" x="126" y="38" text-anchor="end">True IDC</text>
+            <rect class="bar-primary" x="130" y="56" width="125" height="22" opacity="0.85"/><text class="label-data" x="263" y="73">~16%</text><text class="label-small" x="126" y="72" text-anchor="end">STT GDC Thailand</text>
+            <rect class="bar-secondary" x="130" y="90" width="110" height="22"/><text class="label-data" x="248" y="107">~14%</text><text class="label-small" x="126" y="106" text-anchor="end">SUPERNAP / NTT</text>
+            <rect class="bar-secondary" x="130" y="124" width="80" height="22" opacity="0.8"/><text class="label-data" x="218" y="141">~10%</text><text class="label-small" x="126" y="140" text-anchor="end">GSA (Gulf JV)</text>
+            <rect class="bar-tertiary" x="130" y="158" width="170" height="22"/><text class="label-data" x="308" y="175">~40%</text><text class="label-small" x="126" y="174" text-anchor="end">CSL / others</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DC PORTFOLIO DATASET, OPERATOR DISCLOSURE, KIRA ANALYSIS · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>Mid-concentrated, capital-heavy</h3>
+        <p>No operator dominates; the top five hold an estimated <strong>55&#8211;60% of installed IT load</strong> [DC Portfolio 2025]. Carriers and listed groups anchor the live base; foreign capital arrives through JVs and self-build.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Existing facilities</span><span class="val">39</span></div>
+          <div class="stat-line"><span>Upcoming facilities</span><span class="val">27</span></div>
+          <div class="stat-line"><span>Operators tracked</span><span class="val">34</span></div>
+          <div class="stat-line"><span>Tier III share</span><span class="val">~86%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">True IDC</div>
+        <div class="comp-parent">True Corporation (CP group)</div>
+        <div class="comp-stat-row"><span>Share</span><span class="val">~20%</span></div>
+        <div class="comp-stat-row"><span>EEC plan</span><span class="val">THB 77 bn</span></div>
+        <div class="comp-stat-row"><span>IT load</span><span class="val">223 MW</span></div>
+        <div class="comp-strengths"><strong>Carrier-scale leader.</strong> Largest domestic operator; THB 77 bn EEC mega-campus across Chonburi &amp; Samut Prakan. [BOI 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">STT GDC Thailand</div>
+        <div class="comp-parent">ST Telemedia (Singapore)</div>
+        <div class="comp-stat-row"><span>Share</span><span class="val">~16%</span></div>
+        <div class="comp-stat-row"><span>Tiers</span><span class="val">III / IV</span></div>
+        <div class="comp-stat-row"><span>Edge</span><span class="val">Liquid cool</span></div>
+        <div class="comp-strengths"><strong>Hyperscale-grade builder.</strong> Tier III/IV, early liquid cooling, anchor-tenant contracts. [DC Portfolio 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">SUPERNAP / NTT</div>
+        <div class="comp-parent">Switch JV · NTT GDC</div>
+        <div class="comp-stat-row"><span>Share</span><span class="val">~14%</span></div>
+        <div class="comp-stat-row"><span>Spec</span><span class="val">Tier IV</span></div>
+        <div class="comp-stat-row"><span>Focus</span><span class="val">Wholesale</span></div>
+        <div class="comp-strengths"><strong>Global-spec wholesale.</strong> High-density campuses serving hyperscale &amp; multinational tenants. [DC Portfolio 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">GSA Data Center</div>
+        <div class="comp-parent">Gulf · Singtel · AIS JV</div>
+        <div class="comp-stat-row"><span>Cluster</span><span class="val">Rayong</span></div>
+        <div class="comp-stat-row"><span>IT load</span><span class="val">~120 MW</span></div>
+        <div class="comp-stat-row"><span>Capex</span><span class="val">THB 37 bn</span></div>
+        <div class="comp-strengths"><strong>Power-secured JV.</strong> Gulf energy backing pairs generation with carrier reach in the EEC. [BOI 2025]</div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Thailand Board of Investment data-center promotion approvals (True IDC, GSA) 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset (39 existing / 27 upcoming, 34 operators) 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 015 — DIVIDER: 2027 OUTLOOK ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">2027 <span class="accent">outlook</span></h1>
+    <div class="divider-thesis">Three paths diverge on one variable: <strong>how fast firm, clean power becomes contractible</strong> through Direct PPA and the UGT. Demand is near-certain; the spread between scenarios is almost entirely a power-and-PPA story.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1 Base case</div>
+      <div class="toc-pill">7.2 Accelerated</div>
+      <div class="toc-pill">7.3 Constrained</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 016 — FORECAST / SCENARIOS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · 2027 Outlook</div>
+      <div class="page-section-counter">016 / 017</div>
+    </div>
+    <h1 class="page-h1">Three scenarios for energized capacity by 2027</h1>
+    <p class="page-subhead">The pipeline is fixed; the question is throughput. Each scenario differs mainly on <strong>PPA approval speed and grid-connection windows</strong> across the EEC clusters.</p>
+    <div class="fo-chart-wrap">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Energized data center capacity &#8212; scenario fan to 2027</div>
+          <div class="chart-subtitle">Thailand total live MW · 2024 actual &#183; 2027 scenarios</div>
+        </div>
+        <div class="chart-unit">MW LIVE</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1080 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <line class="axis-line" x1="60" y1="15" x2="60" y2="165"/>
+          <line class="axis-line" x1="60" y1="165" x2="1060" y2="165"/>
+          <line class="grid-line" x1="60" y1="125" x2="1060" y2="125"/>
+          <line class="grid-line" x1="60" y1="85" x2="1060" y2="85"/>
+          <line class="grid-line" x1="60" y1="45" x2="1060" y2="45"/>
+          <text class="axis-text" x="54" y="169" text-anchor="end">300</text>
+          <text class="axis-text" x="54" y="129" text-anchor="end">600</text>
+          <text class="axis-text" x="54" y="89" text-anchor="end">900</text>
+          <text class="axis-text" x="54" y="49" text-anchor="end">1200</text>
+          <circle cx="150" cy="158" r="5" fill="#0B0D10"/>
+          <text class="label-data" x="150" y="150" text-anchor="middle">350</text>
+          <text class="axis-text" x="150" y="182" text-anchor="middle">2024 actual</text>
+          <path d="M 150 158 L 980 55" stroke="#00A88B" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="55" r="5" fill="#00A88B"/>
+          <text class="label-data" x="998" y="53" style="fill:#00A88B">~1150 accel.</text>
+          <path d="M 150 158 L 980 78" stroke="#1E6FFF" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="78" r="5" fill="#1E6FFF"/>
+          <text class="label-data" x="998" y="76" style="fill:#1E6FFF">~950 base</text>
+          <path d="M 150 158 L 980 115" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="980" cy="115" r="5" fill="#D97706"/>
+          <text class="label-data" x="998" y="113" style="fill:#D97706">~700 constr.</text>
+          <text class="axis-text" x="980" y="182" text-anchor="middle">2027F</text>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: BLOOMBERG, BOI, ERC, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="fo-scenarios">
+      <div class="fo-card bull">
+        <div class="sc-name">Accelerated</div>
+        <div class="sc-val">~1150<span class="unit">MW live</span></div>
+        <div class="sc-body">Direct PPA criteria finalize in 2026, UGT2 launches, and grid-connection windows hold. EEC flagship campuses energize on schedule and clean-power deals close ahead of plan. <strong>[Kira estimates]</strong></div>
+      </div>
+      <div class="fo-card base">
+        <div class="sc-name">Base case</div>
+        <div class="sc-val">~950<span class="unit">MW live</span></div>
+        <div class="sc-body">Capacity roughly triples from the 350 MW base; flagship EEC campuses phase partly into 2028 as PPA rules and transmission catch up. Cloud-First keeps colocation full. <strong>[Kira estimates]</strong></div>
+      </div>
+      <div class="fo-card bear">
+        <div class="sc-name">Constrained</div>
+        <div class="sc-val">~700<span class="unit">MW live</span></div>
+        <div class="sc-body">Prolonged PPA restudy and grid limits delay energization; AI campuses phase in behind plan. Demand intact, delivery throttled by approval windows. <strong>[Kira estimates]</strong></div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting 2025 &#183; BOI 2025 = Thailand Board of Investment data-center promotion applications 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / UGT review 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 017 — METHODOLOGY ENDNOTE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Methodology &amp; Sources</div>
+      <div class="page-section-counter">017 / 017</div>
+    </div>
+    <h1 class="page-h1">Methodology &amp; sources</h1>
+    <p class="page-subhead">How the numbers were derived, and the full citation for every named source used in this view.</p>
+    <div class="me-body">
+      <div class="me-method">
+        <h3>Methodology</h3>
+        <p>This view triangulates two evidence streams. Where a figure carries a <strong>named source tag</strong> (e.g. [PDP 2024], [BOI 2025]), the underlying data comes from that source; the full citation appears at right. Where a figure carries <strong>[Kira estimates]</strong>, KIRA analysts derived it from a blend of disclosed inputs &#8212; BOI filings, regulator rulings, the national power plan &#8212; using the method disclosed in the relevant section.</p>
+        <p>Capacity figures reconcile published market datasets against operator and BOI disclosure; the live-versus-pipeline gap and the 2027 scenario fan are KIRA constructions. Approximately <strong>25% of quantitative claims are KIRA-derived</strong>; the remainder are externally cited.</p>
+        <div class="me-disclaimer">This report is provided for licensed reader use only. Forward estimates are scenario-based and not guarantees. © 2026 KIRA Research.</div>
+      </div>
+      <div class="me-sources">
+        <h3>Source key</h3>
+        <ul>
+          <li><strong>DC Portfolio 2025</strong> — Thailand Data Center Colocation Portfolio dataset (39 existing / 27 upcoming, 34 operators) 2025</li>
+          <li><strong>BOI 2025</strong> — Thailand Board of Investment data-center promotion applications &amp; approvals (36 projects, THB 728 bn; province split) 2025</li>
+          <li><strong>PDP 2024</strong> — Thailand Power Development Plan (PDP) 2024&#8211;2037 (51&#8594;112 GW demand; 73 GW renewables)</li>
+          <li><strong>ERC 2025</strong> — Energy Regulatory Commission Direct PPA / Third-Party-Access &amp; UGT2 draft criteria and restudy 2025</li>
+          <li><strong>UGT 2025</strong> — Utility Green Tariff UGT1 launch (EGAT / MEA / PEA, ~2,000 GWh) 2025</li>
+          <li><strong>DCD 2025</strong> — Data Center Dynamics Thailand pipeline, hyperscaler commitments &amp; EEC incentive reporting 2025</li>
+          <li><strong>Bloomberg 2025</strong> — Bloomberg Thai data-center capacity reporting (350 MW &#8594; 1 GW; AI-ready share) 2025</li>
+          <li><strong>Krungsri 2025</strong> — Krungsri Research data-center sector outlook 2025&#8211;2027</li>
+          <li><strong>DEPA 2025</strong> — Digital Economy Promotion Agency / PDPA &amp; Go Cloud First policy 2025</li>
+          <li><strong>NESDC 2025</strong> — NESDC digital-economy GDP-share target (30% by 2027) 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
