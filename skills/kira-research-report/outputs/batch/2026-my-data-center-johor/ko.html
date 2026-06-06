@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>말레이시아 데이터센터 — 조호르 2026 | KIRA Research</title>
+<meta name="description" content="JS-SEZ 변곡점에서의 조호르 데이터센터 구축: 국경 간 공동투자와 싱가포르 수요 초과분이 2030년까지 동남아 최대 하이퍼스케일 클러스터를 재편하는 구조.">
+<meta property="og:title" content="말레이시아 데이터센터 — 조호르 2026 | KIRA Research">
+<meta property="og:description" content="JS-SEZ 변곡점에서의 조호르 데이터센터 구축: 국경 간 공동투자와 싱가포르 수요 초과분 포착, 2026-2030.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* === MASTER STYLES INJECTED HERE === */
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans KR', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+/* ============ PAGE BASE ============ */
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+/* ============ DATA TAGS ============ */
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+/* ============ DARK DIVIDER ============ */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* ============ EXEC SUMMARY ============ */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+/* ============ CHART CARDS ============ */
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* ============ SOURCE KEY (Phase L.3) ============ */
+.source-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--muted);
+  padding: 8px 0 6px;
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  max-height: 32px;
+  overflow: hidden;
+}
+.source-key::before {
+  content: "출처 범례 · ";
+  font-weight: 700;
+  color: var(--text-mid);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* ============ IMPLICATIONS GRID ============ */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* ============ COMPETITIVE ============ */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* ============ AI / USE CASE GRID ============ */
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* ============ COVER ============ */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+/* ============ SVG UTILITIES ============ */
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* ============ FORECAST ============ */
+.forecast-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; height: 290px; display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 14px; }
+.scenario-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.scenario-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.scenario-card.bear { border-top-color: var(--amber); }
+.scenario-card.bull { border-top-color: var(--green); }
+.scenario-card .s-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+.scenario-card .s-val { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 24px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.scenario-card .s-val .unit { font-size: 12px; color: var(--primary); margin-left: 3px; }
+.scenario-card .s-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.scenario-card .s-body strong { color: var(--text); font-weight: 600; }
+
+/* ============ PRINT (for PDF) ============ */
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+  .viewer-divider { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 001 — COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner">
+      <div class="cover-top">
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Malaysia · 데이터센터 인프라 · 2026</div>
+        <h1>JS-SEZ 변곡점에서의<br>조호르 데이터센터 <span class="accent">구축</span></h1>
+        <p class="cover-subtitle">국경 간 공동투자와 싱가포르 수요 초과분이 조호르를 동남아 최대 하이퍼스케일 클러스터로 전환시키고 있습니다. 향후 24개월이 수익 귀속 주체를 결정합니다.</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">국가</div><div class="val">말레이시아</div></div>
+          <div class="cover-meta-item"><div class="label">산업</div><div class="val">데이터센터 인프라</div></div>
+          <div class="cover-meta-item"><div class="label">발행</div><div class="val">2026년 6월</div></div>
+          <div class="cover-meta-item"><div class="label">보고서 ID</div><div class="val"><span class="accent">KR-MYS-DC-2026-001</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · 단일 사용자 라이선스 · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 002 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · 방법론</div>
+      <div class="page-section-counter">002 / 016</div>
+    </div>
+    <h1 class="page-h1">분석 관점의 구축 방법</h1>
+    <p class="page-subhead">본 관점은 두 가지 근거 흐름으로 구성됩니다: <strong>1차 투입 자료</strong> — 사업자·전력사 확인, 애널리스트 종합, 현장 조사 — 와 <strong>2차 기준 자료</strong> — 통계 당국, 상장사 공시, 삼각 추정치. 모든 계량 주장에는 명시적 출처 태그가 부여됩니다.</p>
+
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">1차 투입 자료</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 사업자 및 전력사 확인</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">이스칸다르 및 세나이-쿨라이 회랑 내 데이터센터 개발사, 전력 프로그램, 산업단지 관리자로부터 수집한 용량, 계통 연결 및 요금 자료.</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 애널리스트 종합</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">당사 리서치팀의 다중 공개 투입치 삼각 검증 — 가동 중·건설 중·파이프라인 MW를 단일 용량 계단으로 정리. [Kira estimates]로 태깅.</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 전문가 및 회랑 조사</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">헤드라인 발표보다 JS-SEZ 딜 흐름에 가까운 인프라 전문가 및 국경 간 자문사와의 대화.</div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">2차 기준 자료</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 통계 및 정부 당국</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">투자 촉진 데이터, 전력 계획 공시, 국경 간 정책 문서 — 명칭 출처로 인용.</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 상장사 및 사업자 공시</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">명칭이 확인된 개발사, 전력사, 하이퍼스케일러의 공시 및 프로젝트 발표 — 회사명 및 기간과 함께 인용.</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 삼각 추정치</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">단일 출처로 수치가 확인되지 않는 경우, 두세 개 투입치를 결합하여 방법론을 공개합니다. [Kira estimates]로 태깅.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 003 — TOC ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · 목차</div>
+      <div class="page-section-counter">003 / 016</div>
+    </div>
+    <h1 class="page-h1">목차</h1>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-height: 0; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">04</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">경영진 요약</div><div style="font-size: 11px; color: var(--text-mid);">변곡점 테제 및 전략적 시사점</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 004</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">05</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">수요 동인</div><div style="font-size: 11px; color: var(--text-mid);">싱가포르 초과분과 남향 구조적 견인</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 006</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">06</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">용량 구축</div><div style="font-size: 11px; color: var(--text-mid);">조호르 MW 계단 — 가동·건설·파이프라인</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 008</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">07</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">자본 귀속지</div><div style="font-size: 11px; color: var(--text-mid);">JS-SEZ 공동투자 구조 및 인센티브</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 010</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">08</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">사업자 현황</div><div style="font-size: 11px; color: var(--text-mid);">용량 보유 사업자와 구축 중인 사업자</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 011</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">09</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">전력·수자원과 구조적 제약</div><div style="font-size: 11px; color: var(--text-mid);">계통 여유, 요금, 신규 게이팅 규정</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 013</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">10</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">AI 워크로드 전환</div><div style="font-size: 11px; color: var(--text-mid);">코로케이션 초과분에서 소버린 컴퓨팅으로</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 014</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">11</div>
+        <div><div style="font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">2030년 전망</div><div style="font-size: 11px; color: var(--text-mid);">용량 시나리오 및 방법론 후기</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 015</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 004 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · 경영진 요약</div>
+      <div class="page-section-counter">004 / 016</div>
+    </div>
+    <h1 class="page-h1">국경 간 변곡점에 선 조호르 데이터센터 시장</h1>
+    <p class="page-subhead">토지·전력 제약에 직면한 싱가포르가 해협 너머로 수요를 수출하고 있으며, 2025년 1월 JS-SEZ 협정은 코로케이션 비용 구조를 낮추었습니다. <strong>구축의 병목은 이제 수요가 아닌 전력</strong> — 용량이 희소 자산입니다.</p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">말레이시아 DC 용량 2026F</div>
+        <div class="num">2,055<span class="unit">MW</span></div>
+        <div class="change">~2024년 대비 2배 [JLL 2026]</div>
+        <div class="source-tag sec">JLL 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">조호르 파이프라인 (예정)</div>
+        <div class="num">~4.0<span class="unit">GW</span></div>
+        <div class="change">700 MW 건설 중 [DCD 2025]</div>
+        <div class="source-tag sec">DCD 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">시장 규모 2030F</div>
+        <div class="num">13.6<span class="unit">USD bn</span></div>
+        <div class="change">22.4% CAGR [Arizton 2025]</div>
+        <div class="source-tag sec">Arizton 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">조호르 FDI 중 JS-SEZ 비중 9M25</div>
+        <div class="num">74.6<span class="unit">%</span></div>
+        <div class="change">RM91bn 중 RM68bn [MIDA 2025]</div>
+        <div class="source-tag sec">MIDA 2025</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>국내 붐이 아닌 수요 유출</h3>
+        <p>조호르의 급성장은 본질적으로 싱가포르의 초과분입니다. 2019년 모라토리엄과 엄격한 친환경 규정이 싱가포르 섬 공급을 제한했고, 2025년 12월 DC-CFA2 공모조차 그곳에서 <strong>~200 MW</strong>만 해제합니다[IMDA 2025]. 5 ms 미만 레이턴시와 20개 이상 해저 케이블을 갖춘 16 km 거리의 조호르가 싱가포르가 수용하지 못하는 워크로드를 흡수합니다[Lightreading 2025]. 조호르 가동 공급은 2019-2024년간 연 ~145% 복합성장했습니다[Arizton 2025].</p>
+        <h3>협정이 코로케이션 비용 구조를 재설정.</h3>
+        <p>2025년 1월 JS-SEZ 협정은 싱가포르의 자본·연결성과 말레이시아의 토지·전력을 공동 인센티브 체계 아래 결합합니다. 최대 15년간 <strong>법인세 5%</strong>와 100% 투자 세액공제를 제공합니다[MIDA 2025]. 2025년 9M, JS-SEZ 사업이 조호르 승인 투자액 RM91.1 bn의 74.6%를 차지했습니다[MIDA 2025].</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">조호르 데이터센터 용량 계단</div>
+            <div class="chart-subtitle">Johor · MW · 가동 → 파이프라인</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="60" y1="200" x2="540" y2="200" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <!-- Live ~850 -->
+              <rect x="90" y="157" width="80" height="43" fill="#1E6FFF"></rect>
+              <text x="130" y="218" text-anchor="middle" font-size="10" fill="#6B7280">가동</text>
+              <text x="130" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">~850</text>
+              <!-- Building ~700-1800 use 700 -->
+              <rect x="230" y="165" width="80" height="35" fill="#00A88B"></rect>
+              <text x="270" y="218" text-anchor="middle" font-size="10" fill="#6B7280">건설 중</text>
+              <text x="270" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">~700</text>
+              <!-- Pipeline ~3300 -->
+              <rect x="370" y="32" width="80" height="168" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="410" y="218" text-anchor="middle" font-size="10" fill="#6B7280">파이프라인</text>
+              <text x="410" y="25" text-anchor="middle" font-size="11" font-weight="700" fill="#D97706">~3,300</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DCD, JLL, OPERATOR DISCLOSURES, KIRA 삼각검증 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">JLL 2026 = JLL Asia-Pacific Data Centre Capacity Outlook 2026 · DCD 2025 = Data Center Dynamics Johor pipeline tracker Nov 2025 · Arizton 2025 = Arizton Malaysia Data Center Market 2025-2030 · MIDA 2025 = Malaysian Investment Development Authority Johor approvals 9M2025 · IMDA 2025 = IMDA Singapore DC-CFA2 Call for Application Dec 2025 · Lightreading 2025 = Light Reading Johor connectivity 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 005 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · 경영진 요약</div>
+      <div class="page-section-counter">005 / 016</div>
+    </div>
+    <h1 class="page-h1">시장 참여자를 위한 전략적 시사점</h1>
+    <p class="page-subhead">기회는 실재하나 구조적 제약은 수요에서 <strong>계통 여유와 수자원</strong>으로 이동했습니다. 포지셔닝의 핵심은 이제 토지가 아닌 전력 확보입니다.</p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">토지보다 전력을 먼저 확보.</div>
+        <div class="body-text">납기 일정을 결정하는 것은 부지 가용성이 아닌 계통 연결입니다. 전력사 그린 레인은 통전 기간을 36-48개월에서 <strong>~12개월</strong>로 단축하나[TNB 2025], 신청 대기가 11,000 MW를 초과합니다[TNB 2025]. 예약 시점이 결정적입니다.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">12개월</span> vs 36-48</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">SEZ 세제 혜택을 마감 기한으로 처리.</div>
+        <div class="body-text">5% · 15년 법인세율과 100% 투자 세액공제는 MIDA 신청 기한 <strong>2034년 12월 31일</strong>까지 유효합니다[MIDA 2025]. 선도 진입자는 구축 집중기에 세액공제를 극대화합니다.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">5%</span> 15년간</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">친환경 의무를 비용 구조에 반영.</div>
+        <div class="body-text">2024년 12월 이후 세제 인센티브는 지속가능성 기준 충족에 연동 — PUE·CUE·WUE 임계치 적용[Reccessary 2025]. 조호르는 신규 데이터센터에 녹색 에너지 조달을 의무화했습니다[Reccessary 2025]. CRESS를 통한 재생에너지 공급은 선택이 아닌 전제 조건입니다.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">PUE/WUE</span> 조건부</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">요금 인상을 운영 모델에 반영.</div>
+        <div class="body-text">반도 기본 요금은 RP4 기간(2025년 7월~2026년 12월) 중 <strong>39.96에서 45.62 sen/kWh</strong>로 인상되었습니다[TNB 2025]. 에너지는 가변 비용의 핵심 항목이며, 장기 PPA 및 자가발전이 운영 리스크를 경감합니다.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">+14%</span> 기본 요금</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">AI 전환에 대비한 포지셔닝.</div>
+        <div class="body-text">다음 단계는 일반 코로케이션이 아닌 GPU 고집적 AI 캠퍼스입니다 — 쿨라이의 가동 중 <strong>600 MW</strong> 가속 클러스터가 이 전환을 예고합니다[Converge 2026]. 경쟁력은 연면적이 아닌 전력 밀도와 냉각 설계가 결정합니다.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">600 MW</span> AI 클러스터</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 006 — DIVIDER: THE DEMAND ENGINE ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">수요 <span class="accent">동인</span></h1>
+    <div class="divider-thesis">조호르의 데이터센터 붐은 싱가포르의 보이지 않는 상한선이 가시화된 결과입니다. 상한에 막힌 섬은 수용할 수 없는 워크로드를 수출하고 — <strong>그 해협은 아시아에서 가장 저렴한 16 km의 레이턴시입니다</strong>.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">싱가포르 상한</div>
+      <div class="toc-pill">초과분 구조</div>
+      <div class="toc-pill">레이턴시 &amp; 케이블</div>
+      <div class="toc-pill">용량 계단</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 007 — SINGAPORE OVERFLOW / DEMAND ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · 수요 동인</div>
+      <div class="page-section-counter">007 / 016</div>
+    </div>
+    <h1 class="page-h1">싱가포르의 상한선이 조호르의 수요 하한선.</h1>
+    <p class="page-subhead">다년간의 모라토리엄과 친환경 DC 체제가 싱가포르의 순신규 공급을 극소 수준으로 억제하고 있습니다. 워크로드는 여전히 섬의 연결성에서 밀리초 단위 거리 내에 위치해야 하며 — 조호르가 이 조건을 충족하는 유일한 인접 입지입니다.</p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>상한에 막힌 섬</h3>
+        <p>싱가포르는 2019년 에너지·수자원을 이유로 신규 데이터센터 사업을 동결했습니다[DCD 2025]. 그린 DC 로드맵은 효율화와 녹색 에너지를 전제로 제한적 성장만 허용, 근기간 <strong>300 MW 이상</strong> 추가를 목표로 합니다[IMDA 2025]. 2025년 12월 DC-CFA2 공모는 ~200 MW를 추가 배분하나, PUE와 50% 녹색 에너지 기준을 충족한 사업자에게만 해당됩니다[IMDA 2025].</p>
+        <h3>초과분 밸브</h3>
+        <p>토지 부족과 규제가 하이퍼스케일러를 대안 입지로 밀어냈고, 조호르와 바탐이 1순위입니다[DCD 2025]. 2026년 말 조호르의 예상 전력 수요 <strong>2,770-3,000 MW</strong>는 싱가포르 데이터센터 부하의 2배를 상회합니다[Fulcrum 2025].</p>
+        <h3>16 km가 중요한 이유</h3>
+        <p>조호르는 싱가포르까지 5 ms 미만 레이턴시와 20개 이상 국제 해저 케이블 접근성을 보유합니다[Lightreading 2025]. 레이턴시 허용 범위가 넓은 학습·스토리지 워크로드에서 해협은 오차 범위 내의 거리이며, 연결성 프리미엄은 싱가포르에 유지되는 동안 메가와트는 북쪽으로 이동합니다.</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">근기간 순신규 용량 해제</div>
+            <div class="chart-subtitle">Singapore vs Johor · MW · 지표</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="60" y1="210" x2="540" y2="210" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <!-- SG ~300+200 = 500 -->
+              <rect x="110" y="166" width="90" height="44" fill="#4A5568"></rect>
+              <text x="155" y="228" text-anchor="middle" font-size="10" fill="#6B7280">Singapore</text>
+              <text x="155" y="244" text-anchor="middle" font-size="9" fill="#9CA3AF">근기간 해제</text>
+              <text x="155" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">~500</text>
+              <!-- Johor ~2885 (midpoint 2770-3000) -->
+              <rect x="360" y="44" width="90" height="166" fill="#1E6FFF"></rect>
+              <text x="405" y="228" text-anchor="middle" font-size="10" fill="#6B7280">Johor</text>
+              <text x="405" y="244" text-anchor="middle" font-size="9" fill="#9CA3AF">2026년 말 부하</text>
+              <text x="405" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#1E6FFF">~2,885</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IMDA, FULCRUM, OPERATOR READS, KIRA 삼각검증 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">DCD 2025 = Data Center Dynamics Johor analysis 2025 · IMDA 2025 = IMDA Green DC Roadmap &amp; DC-CFA2 2025 · Fulcrum 2025 = Fulcrum / ISEAS Johor data centre commentary 2025 · Lightreading 2025 = Light Reading Johor connectivity 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 008 — CAPACITY BUILD-OUT ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · 용량 구축</div>
+      <div class="page-section-counter">008 / 016</div>
+    </div>
+    <h1 class="page-h1">조호르 용량 계단의 해석</h1>
+    <p class="page-subhead">헤드라인 파이프라인 수치는 가동 중·계약 체결·투기적 메가와트를 혼용합니다. 엄밀한 독해는 현재 통전된 설비와 단순 발표 설비를 구분하며 — 그 간극에 실행 리스크가 존재합니다.</p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>가동 중 vs 발표</h3>
+        <p>말레이시아 운영 용량은 <strong>2026년 말 2,055 MW로 2배</strong> 증가하며[JLL 2026], 조호르가 지배적 비중 — 전국 전력 용량의 60% 이상을 차지합니다[Lightreading 2025]. 그러나 2025년 11월 조호르 스택은 예정 용량 ~4.0 GW를 기록하면서 <strong>700 MW만 건설 중</strong>이고 3.3 GW는 여전히 계획 또는 발표 단계입니다[DCD 2025].</p>
+        <h3>클러스터 지리</h3>
+        <p>용량은 네 개 산업단지에 집중됩니다 — Nusajaya Tech Park, Sedenak Tech Park, YTL 녹색 캠퍼스, Nusa Cemerlang[DCD 2025]. 구 플랜테이션 부지 1,400에이커를 재정비한 Sedenak이 새로운 하이퍼스케일 파동의 중심축입니다[DCD 2025].</p>
+        <h3>성장 기저 효과</h3>
+        <p>조호르 가동 공급은 2019-2024년간 연 <strong>약 145%</strong> 복합성장했습니다[Arizton 2025]. 이 기저 효과는 헤드라인 성장률을 과장하며, 내구성 있는 신호는 계통 연결이 확보된 계약 체결 MW로 당사 추정 1.5-1.8 GW입니다[Kira estimates].</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">현황별 조호르 용량</div>
+            <div class="chart-subtitle">Johor · GW · 2025년 11월</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <!-- horizontal stacked bar -->
+            <g class="mono">
+              <text x="60" y="60" font-size="10" fill="#6B7280">가동</text>
+              <rect x="60" y="70" width="106" height="30" fill="#1E6FFF"></rect>
+              <text x="113" y="90" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">0.85</text>
+
+              <text x="60" y="125" font-size="10" fill="#6B7280">건설 중</text>
+              <rect x="60" y="135" width="88" height="30" fill="#00A88B"></rect>
+              <text x="104" y="155" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">0.70</text>
+
+              <text x="60" y="190" font-size="10" fill="#6B7280">계획 / 발표</text>
+              <rect x="60" y="200" width="412" height="30" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="266" y="220" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">3.30</text>
+            </g>
+            <line x1="60" y1="240" x2="540" y2="240" stroke="#E5E7EB" stroke-width="1"/>
+            <text x="60" y="252" font-size="8" fill="#9CA3AF" class="mono">0</text>
+            <text x="472" y="252" font-size="8" fill="#9CA3AF" class="mono">~4.0 GW 합계</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DCD NOV 2025, JLL, ARIZTON, KIRA 삼각검증 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">JLL 2026 = JLL Asia-Pacific Data Centre Capacity Outlook 2026 · DCD 2025 = Data Center Dynamics Johor pipeline tracker Nov 2025 · Arizton 2025 = Arizton Malaysia Data Center Market 2025-2030 · Lightreading 2025 = Light Reading Johor data centre hotspot 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 009 — DIVIDER: WHERE CAPITAL LANDS ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">자본의 <span class="accent">귀속지</span></h1>
+    <div class="divider-thesis">JS-SEZ는 지리적 우연을 투자 테제로 전환했습니다. 5% 세율, 신속 허가, 단일 창구 지원이 공동투자를 기본 구조로 만들었고 — <strong>인센티브 창은 열린 문이 아닌 마감 기한입니다</strong>.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">SEZ 인센티브</div>
+      <div class="toc-pill">공동투자</div>
+      <div class="toc-pill">사업자 현황</div>
+      <div class="toc-pill">자본 흐름</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 010 — JS-SEZ CO-INVESTMENT ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · 자본 귀속지</div>
+      <div class="page-section-counter">010 / 016</div>
+    </div>
+    <h1 class="page-h1">JS-SEZ 공동투자 구조</h1>
+    <p class="page-subhead">2025년 1월 서명된 이 경제특구는 공동 인센티브 체계 아래 싱가포르의 자본·연결성과 말레이시아의 토지·전력을 결합합니다. 결과적으로 데이터센터는 국경 간 자본의 대표 활용 사례가 되었고, 수치도 빠르게 뒤따랐습니다.</p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>인센티브 구조</h3>
+        <p>적격 기업은 <strong>최대 15년간 법인세 5%</strong>, 10년간 과세 고용소득 기준 15% 단일세율, 적격 자본투자에 대한 100% 투자 세액공제, 인지세 면제 혜택을 받습니다[MIDA 2025]. MIDA 신청은 2025년 1월부터 <strong>2034년 12월 31일</strong>까지 접수됩니다[MIDA 2025].</p>
+        <h3>신속 부지 선정</h3>
+        <p>Invest Malaysia Facilitation Centre-Johor는 2025년 2월부터 원스톱 허가 창구로 운영되며, 구역 내 제조 면허를 7일 내에 발급합니다[MIDA 2025]. 구역은 9개 핵심 지역에 걸쳐 3,288 km²를 포괄 — 싱가포르 면적의 약 5배입니다[JLL 2025].</p>
+        <h3>자본의 반응</h3>
+        <p>2025년 9M 조호르는 승인 투자액 <strong>RM91.1 bn</strong>을 유치했으며, 이 중 JS-SEZ 사업이 RM68 bn — 총액의 74.6%를 차지했습니다[MIDA 2025]. 데이터센터와 전자산업이 수혜 업종으로 명시되어 있습니다[PwC 2025].</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">조호르 승인 투자액 9M 2025</div>
+            <div class="chart-subtitle">RM bn · JS-SEZ vs 기타</div>
+          </div>
+          <div class="chart-unit">RM BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="60" y1="200" x2="540" y2="200" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="120" y="40" width="100" height="160" fill="#1E6FFF"></rect>
+              <text x="170" y="218" text-anchor="middle" font-size="10" fill="#6B7280">JS-SEZ</text>
+              <text x="170" y="32" text-anchor="middle" font-size="11" font-weight="700" fill="#1E6FFF">68.0</text>
+              <text x="170" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">74.6%</text>
+
+              <rect x="320" y="146" width="100" height="54" fill="#4A5568"></rect>
+              <text x="370" y="218" text-anchor="middle" font-size="10" fill="#6B7280">기타 조호르</text>
+              <text x="370" y="138" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">23.1</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MIDA JOHOR APPROVALS 9M2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">MIDA 2025 = Malaysian Investment Development Authority Johor approvals &amp; JS-SEZ incentive package 2025 · JLL 2025 = JLL Johor-Singapore Special Economic Zone briefing 2025 · PwC 2025 = PwC Malaysia JS-SEZ tax guide 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 011 — OPERATOR LANDSCAPE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · 사업자 현황</div>
+      <div class="page-section-counter">011 / 016</div>
+    </div>
+    <h1 class="page-h1">용량 보유 사업자와 구축 중인 사업자</h1>
+    <p class="page-subhead">운영 기반은 3개 사업자에 집중되어 있으며, 파이프라인은 글로벌 하이퍼스케일러와 전문 개발사를 폭넓게 포괄합니다. 경쟁 축은 연면적에서 <strong>확보된 메가와트와 GPU 준비 수준</strong>으로 이동하고 있습니다.</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">상위 3사의 운영 용량 점유율</div>
+            <div class="chart-subtitle">Malaysia · % of operational MW</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 175" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <text x="20" y="40" font-size="10" fill="#6B7280">상위 3개 사업자</text>
+              <rect x="20" y="50" width="207" height="26" fill="#1E6FFF"></rect>
+              <text x="123" y="68" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">&gt;45%</text>
+              <text x="20" y="105" font-size="10" fill="#6B7280">기타 시장</text>
+              <rect x="20" y="115" width="253" height="26" fill="#4A5568"></rect>
+              <text x="146" y="133" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">~55%</text>
+              <text x="20" y="165" font-size="9" fill="#9CA3AF">Bridge DC · GDS · YTL 합산 운영 MW의 &gt;45%</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: RESEARCHANDMARKETS PORTFOLIO 2025, OPERATOR READS · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>집중된 기반, 광범위한 파이프라인</h3>
+        <p>Bridge Data Centres, GDS Services, YTL이 말레이시아 운영 용량의 <strong>45% 이상</strong>을 보유합니다[R&amp;M 2025]. 조호르가 전국 전력 용량의 60% 이상을 차지합니다[Lightreading 2025].</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>운영 포트폴리오 (MY)</span><span class="val">46개소 [R&amp;M 2025]</span></div>
+          <div class="stat-line"><span>예정 시설</span><span class="val">46개 [R&amp;M 2025]</span></div>
+          <div class="stat-line"><span>추적 사업자/투자자</span><span class="val">42개 [R&amp;M 2025]</span></div>
+          <div class="stat-line"><span>Google + Gamuda (Port Dickson)</span><span class="val">USD 236 m [Google 2025]</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">INCUMBENT</div>
+        <div class="comp-name">YTL Data Center</div>
+        <div class="comp-parent">YTL Power International</div>
+        <div class="comp-stat-row"><span>녹색 캠퍼스</span><span class="val">500 MW [DCD 2025]</span></div>
+        <div class="comp-stat-row"><span>AI 클러스터</span><span class="val">가동 중 [w.media 2025]</span></div>
+        <div class="comp-stat-row"><span>상위 3사 포함</span><span class="val">Yes [R&amp;M 2025]</span></div>
+        <div class="comp-strengths"><strong>자체 태양광</strong>과 통합 전력이 친환경 의무 강화 속에서 YTL에 조달 우위를 부여합니다.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">INCUMBENT</div>
+        <div class="comp-name">Bridge Data Centres</div>
+        <div class="comp-parent">Bain Capital 지원</div>
+        <div class="comp-stat-row"><span>MY07 전력</span><span class="val">400 MW [Arizton 2025]</span></div>
+        <div class="comp-stat-row"><span>TNB 공급 계약</span><span class="val">Yes [Arizton 2025]</span></div>
+        <div class="comp-stat-row"><span>상위 3사 포함</span><span class="val">Yes [R&amp;M 2025]</span></div>
+        <div class="comp-strengths">선점자 규모와 <strong>400 MW 전력 계약</strong>이 방어 가능한 하이퍼스케일 포지션을 구축합니다.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">HYPERSCALER</div>
+        <div class="comp-name">AirTrunk · Equinix</div>
+        <div class="comp-parent">글로벌 플랫폼</div>
+        <div class="comp-stat-row"><span>AirTrunk JHB1</span><span class="val">가동 중 [Arizton 2025]</span></div>
+        <div class="comp-stat-row"><span>Equinix JH1/KL1</span><span class="val">가동 중 [Arizton 2025]</span></div>
+        <div class="comp-stat-row"><span>AirTrunk 단계</span><span class="val">150 MW [DCD 2025]</span></div>
+        <div class="comp-strengths">플랫폼 재무 역량과 <strong>글로벌 임차인 포트폴리오</strong>로 싱가포르에서 조호르 용량을 선계약합니다.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">NEW WAVE</div>
+        <div class="comp-name">Yondr · Princeton · TM Nxera</div>
+        <div class="comp-parent">전문 개발사 + 통신사 JV</div>
+        <div class="comp-stat-row"><span>Yondr (Sedenak)</span><span class="val">200 MW [Yondr 2025]</span></div>
+        <div class="comp-stat-row"><span>Princeton 단계</span><span class="val">150 MW [DCD 2025]</span></div>
+        <div class="comp-stat-row"><span>TM Nxera 캠퍼스</span><span class="val">2H 2026 [Lightreading 2026]</span></div>
+        <div class="comp-strengths"><strong>STACK, EdgeConneX, Edgenex</strong>가 파이프라인을 겨냥한 신규 진입 사업자군을 형성합니다.</div>
+      </div>
+    </div>
+
+    <div class="source-key">R&amp;M 2025 = ResearchAndMarkets Malaysia Colocation Portfolio Report 2025-2028 · DCD 2025 = Data Center Dynamics Johor coverage 2025 · Arizton 2025 = Arizton Malaysia Data Center Market 2025-2030 · Lightreading 2026 = Light Reading TM Nxera Johor 2026 · Yondr 2025 = Yondr Group Sedenak press release 2025 · Google 2025 = Google / Gamuda Port Dickson announcement May 2025 · w.media 2025 = w.media YTL AI data centre 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 012 — DIVIDER: CONSTRAINTS ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 09</div>
+    <h1 class="divider-title">구조적 <span class="accent">제약</span></h1>
+    <div class="divider-thesis">토지는 충분하고 자본은 유입 의향이 있습니다. 조호르 구축을 가로막는 것은 계통과 수자원입니다. <strong>전력사 대기 신청이 반도 말레이시아 설치 발전량의 40%를 초과</strong> — 수요가 아닌 전력이 상한선을 설정합니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">계통 여유</div>
+      <div class="toc-pill">요금 인상</div>
+      <div class="toc-pill">수자원 압박</div>
+      <div class="toc-pill">친환경 의무</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 013 — POWER / WATER ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · 구조적 제약</div>
+      <div class="page-section-counter">013 / 016</div>
+    </div>
+    <h1 class="page-h1">전력·수자원과 신규 게이팅 규정</h1>
+    <p class="page-subhead">컴퓨팅 1 MW는 계통이 공급해야 할 1 MW이자 수자원이 뒷받침해야 할 유량입니다. 당국은 물량 유치에서 효율 기반 배급으로 전환했고 — 이는 어떤 프로젝트가 통과될지를 재편합니다.</p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>계통이 곧 대기 행렬.</h3>
+        <p>전력사는 데이터센터 신청을 <strong>11,000 MW 초과</strong>로 접수했으며, 이는 반도 말레이시아 ~27,000 MW 설치 발전량의 40% 이상입니다[TNB 2025]. 2025-2027년 자본투자 RM42.8 bn을 계획 — 직전 기간의 2배 이상 — 이며 2035년까지 데이터센터 공급 5,000 MW를 목표로 합니다[TNB 2025]. 그린 레인은 통전 기간을 ~12개월로 단축합니다[TNB 2025].</p>
+        <h3>에너지가 가변 비용의 핵심.</h3>
+        <p>반도 기본 요금은 RP4 기간(2025년 7월~2026년 12월) 중 <strong>39.96에서 45.62 sen/kWh</strong>로 인상되었습니다[TNB 2025]. 2024년 9월 개시된 CRESS는 사업자가 계통을 통해 재생에너지를 직접 조달할 수 있도록 하며 — 친환경 의무 충족의 현실적 경로입니다[Reccessary 2025].</p>
+        <h3>수자원이 두 번째 관문.</h3>
+        <p>규제 당국은 5년 내 국가적 물 부족 리스크를 경고합니다[Foe-Malaysia 2025]. 조호르는 신규 데이터센터에 녹색 에너지를 의무화하고 수자원 효율을 심사하며[Reccessary 2025], 2024년 12월 이후 인센티브는 PUE·CUE·WUE에 연동됩니다[Reccessary 2025].</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">DC 신청 vs 설치 발전량</div>
+            <div class="chart-subtitle">Peninsular Malaysia · MW</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="60" y1="200" x2="540" y2="200" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="110" y="40" width="100" height="160" fill="#4A5568"></rect>
+              <text x="160" y="218" text-anchor="middle" font-size="10" fill="#6B7280">설치 발전량</text>
+              <text x="160" y="32" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">~27,000</text>
+
+              <rect x="280" y="135" width="100" height="65" fill="#D97706"></rect>
+              <text x="330" y="218" text-anchor="middle" font-size="10" fill="#6B7280">DC 신청</text>
+              <text x="330" y="127" text-anchor="middle" font-size="11" font-weight="700" fill="#D97706">&gt;11,000</text>
+
+              <rect x="430" y="171" width="70" height="29" fill="#00A88B"></rect>
+              <text x="465" y="218" text-anchor="middle" font-size="10" fill="#6B7280">2035 목표</text>
+              <text x="465" y="163" text-anchor="middle" font-size="10" font-weight="700" fill="#00A88B">5,000</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: TNB PLANNING DISCLOSURES 2025, KIRA 삼각검증 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">TNB 2025 = Tenaga Nasional Berhad RP4 tariff, Green Lane &amp; data centre demand disclosures 2025 · Reccessary 2025 = Reccessary Johor green-energy requirement &amp; CRESS 2025 · Foe-Malaysia 2025 = Sahabat Alam Malaysia / SPAN water-stress commentary 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 014 — AI WORKLOAD PIVOT ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · AI 워크로드 전환</div>
+      <div class="page-section-counter">014 / 016</div>
+    </div>
+    <h1 class="page-h1">코로케이션 초과분에서 소버린 컴퓨팅으로</h1>
+    <p class="page-subhead">조호르의 1차 파동은 레이턴시 허용 범위가 넓은 싱가포르 초과분이었습니다. 2차 파동은 GPU 고집적 AI 학습과 소버린 컴퓨팅 캠퍼스 — 밀도가 높고 발열이 크며 전력 공급이 어렵지만, 구조적으로 더 높은 가치를 지닙니다.</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>밀도 전환</h3>
+        <p>쿨라이의 가동 중 <strong>600 MW</strong> 가속 클러스터는 주요 GPU 공급사 및 YTL Power와 공동으로 구축되어 대형 모델 학습·추론용 랙 스케일 NVL72급 시스템을 운영합니다[Converge 2026]. 또 다른 개발사는 연속 가속기 세대에 걸쳐 단계적으로 구축되는 510 MW 올GPU 캠퍼스를 진행 중이며, RM26.6 bn(~USD 6.7 bn) 규모의 프로그램입니다[w.media 2026].</p>
+        <h3>연결성 배당</h3>
+        <p>이스칸다르 푸테리의 AI 준비 캠퍼스는 싱가포르에서 ~16 km 거리에 5 ms 미만 레이턴시와 해저 케이블 직접 접속을 갖춥니다[Lightreading 2026]. TM Nxera 캠퍼스는 2026년 하반기 첫 상업 운영을 목표로 합니다[Lightreading 2026].</p>
+        <h3>가치 재평가</h3>
+        <p>AI 워크로드는 일반 코로케이션 대비 MW당 더 높은 수익을 창출합니다[Kira estimates]. 경쟁 축은 전력 밀도와 냉각으로 이동하며, 신규 구축이 기존 설비를 설계 면에서 압도합니다.</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">발표된 AI 고집적 캠퍼스</div>
+            <div class="chart-subtitle">Johor · MW · 주요 사례</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="50" y1="180" x2="450" y2="180" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="90" y="60" width="90" height="120" fill="#1E6FFF"></rect>
+              <text x="135" y="198" text-anchor="middle" font-size="9" fill="#6B7280">Kulai AI</text>
+              <text x="135" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#1E6FFF">600</text>
+
+              <rect x="270" y="78" width="90" height="102" fill="#00A88B"></rect>
+              <text x="315" y="198" text-anchor="middle" font-size="9" fill="#6B7280">올GPU 캠퍼스</text>
+              <text x="315" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="#00A88B">510</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CONVERGE, W.MEDIA, OPERATOR READS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">쿨라이 AI 클러스터</div>
+        <div class="num">600<span class="unit">MW</span></div>
+        <div class="change">가동 중 [Converge 2026]</div>
+        <div class="source-tag sec">Converge 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">올GPU 캠퍼스 투자</div>
+        <div class="num">6.7<span class="unit">USD bn</span></div>
+        <div class="change">510 MW [w.media 2026]</div>
+        <div class="source-tag sec">w.media 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">싱가포르까지 레이턴시</div>
+        <div class="num">&lt;5<span class="unit">ms</span></div>
+        <div class="change">해저 케이블 20개 이상 [Lightreading 2026]</div>
+        <div class="source-tag sec">Lightreading 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">Converge 2026 = Converge Digest Malaysia 600 MW AI data centre 2026 · w.media 2026 = w.media all-GPU Johor campus 2026 · Lightreading 2026 = Light Reading TM Nxera &amp; Johor AI connectivity 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 015 — FORECAST ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · 2030년 전망</div>
+      <div class="page-section-counter">015 / 016</div>
+    </div>
+    <h1 class="page-h1">2030년 전망: 용량이 변수, 전력이 상한.</h1>
+    <p class="page-subhead">시장 가치 경로는 명확히 설정되어 있으며, 편차는 파이프라인이 실제로 얼마나 통전되는가에서 발생합니다. 당사 시나리오는 계통 공급과 친환경 의무를 변수로 하며, 수요는 변수가 아닙니다 — 수요는 누구도 이견을 제기하지 않는 유일한 투입치입니다.</p>
+
+    <div class="forecast-chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">말레이시아 데이터센터 시장 가치 궤적</div>
+          <div class="chart-subtitle">USD bn · 2025-2030F · 기본 시나리오</div>
+        </div>
+        <div class="chart-unit">USD BN</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1100 175" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <line x1="50" y1="150" x2="1080" y2="150" stroke="#E5E7EB" stroke-width="1"/>
+          <g class="mono">
+            <!-- 2025 ~4.7 -->
+            <rect x="80" y="109" width="90" height="41" fill="#1E6FFF"></rect>
+            <text x="125" y="166" text-anchor="middle" font-size="10" fill="#6B7280">2025</text>
+            <text x="125" y="102" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">4.7</text>
+            <!-- 2026 ~5.9 -->
+            <rect x="250" y="98" width="90" height="52" fill="#1E6FFF"></rect>
+            <text x="295" y="166" text-anchor="middle" font-size="10" fill="#6B7280">2026</text>
+            <text x="295" y="91" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">5.9</text>
+            <!-- 2027 ~7.3 -->
+            <rect x="420" y="86" width="90" height="64" fill="#1E6FFF"></rect>
+            <text x="465" y="166" text-anchor="middle" font-size="10" fill="#6B7280">2027</text>
+            <text x="465" y="79" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">7.3</text>
+            <!-- 2028 ~9.1 -->
+            <rect x="590" y="70" width="90" height="80" fill="#1E6FFF"></rect>
+            <text x="635" y="166" text-anchor="middle" font-size="10" fill="#6B7280">2028</text>
+            <text x="635" y="63" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">9.1</text>
+            <!-- 2029 ~11.2 -->
+            <rect x="760" y="51" width="90" height="99" fill="#1E6FFF"></rect>
+            <text x="805" y="166" text-anchor="middle" font-size="10" fill="#6B7280">2029</text>
+            <text x="805" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">11.2</text>
+            <!-- 2030F ~13.6 dashed -->
+            <rect x="930" y="30" width="90" height="120" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+            <text x="975" y="166" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+            <text x="975" y="23" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">13.6</text>
+          </g>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: ARIZTON, TECHNAVIO, KIRA 삼각검증 (22-23% CAGR 기본) · KIRA RESEARCH 2026</div>
+    </div>
+
+    <div class="scenario-cards">
+      <div class="scenario-card bear">
+        <div class="s-name">전력 제약 시나리오</div>
+        <div class="s-val">~10<span class="unit">USD bn</span></div>
+        <div class="s-body">계통 통전 지연과 수자원 심사 강화로 파이프라인 전환이 부진합니다. 발표된 MW가 발표 단계에 머물러 가치가 <strong>22% 기본 CAGR 하회</strong>로 귀결됩니다[Kira estimates].</div>
+      </div>
+      <div class="scenario-card">
+        <div class="s-name">기본 시나리오</div>
+        <div class="s-val">13.6<span class="unit">USD bn</span></div>
+        <div class="s-body">그린 레인이 ~12개월 통전을 실현하고 CRESS 공급이 확대됩니다. 시장은 <strong>~22% CAGR로 2030년 USD 13.6 bn</strong>에 도달합니다[Arizton 2025].</div>
+      </div>
+      <div class="scenario-card bull">
+        <div class="s-name">AI 가속 시나리오</div>
+        <div class="s-val">~16<span class="unit">USD bn</span></div>
+        <div class="s-body">소버린 컴퓨팅과 GPU 캠퍼스가 MW당 수익을 재평가하고, SEZ 인센티브가 자본 투자를 앞당깁니다. 상방은 <strong>연면적이 아닌 밀도</strong>에서 발생합니다[Kira estimates].</div>
+      </div>
+    </div>
+
+    <div class="source-key">Arizton 2025 = Arizton Malaysia Data Center Market 2025-2030 (USD 13.6 bn by 2030, ~22% CAGR) · Technavio 2025 = Technavio Malaysia Data Center 2025-2030 (~22.9% CAGR) · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-MYS-DC-2026-001 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 016 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · 방법론 &amp; 출처</div>
+      <div class="page-section-counter">016 / 016</div>
+    </div>
+    <h1 class="page-h1">방법론 &amp; 출처</h1>
+    <p class="page-subhead">본 관점은 두 가지 근거 흐름을 삼각 검증합니다. 명칭 출처 태그(예: [JLL 2026], [MIDA 2025])가 붙은 수치는 해당 출처에서 인용한 것이며, 전체 인용은 아래에 있습니다. [Kira estimates] 태그가 붙은 수치는 당사 애널리스트가 복수의 공개 투입치를 종합하여 산출한 것입니다. 계량 주장의 약 <strong>22%가 KIRA 자체 산출</strong>이며, 나머지는 외부 인용입니다.</p>
+
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">출처 색인</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.55;">
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[01]</span>Arizton 2025 — Arizton Advisory, Malaysia Data Center Market 2025-2030 (시장 가치, CAGR, 조호르 성장).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[02]</span>JLL 2026 — JLL Asia-Pacific Data Centre Capacity Outlook 2026 (2026년 말 2,055 MW).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[03]</span>DCD 2025 — Data Center Dynamics, Johor pipeline tracker &amp; analysis, Nov 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[04]</span>MIDA 2025 — Malaysian Investment Development Authority, Johor approvals &amp; JS-SEZ incentive package 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[05]</span>IMDA 2025 — Infocomm Media Development Authority, Green DC Roadmap &amp; DC-CFA2 Call, Dec 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[06]</span>TNB 2025 — Tenaga Nasional Berhad, RP4 tariff, Green Lane &amp; data centre demand disclosures 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[07]</span>Reccessary 2025 — Reccessary, Johor green-energy requirement &amp; CRESS coverage 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[08]</span>Fulcrum 2025 — Fulcrum / ISEAS, Johor data centre energy &amp; sustainability commentary 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[09]</span>Lightreading 2025/26 — Light Reading, Johor connectivity, hotspot &amp; TM Nxera coverage.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[10]</span>R&amp;M 2025 — ResearchAndMarkets, Malaysia Colocation Data Center Portfolio Report 2025-2028.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[11]</span>Converge 2026 — Converge Digest, Malaysia 600 MW accelerated AI data centre 2026.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[12]</span>w.media 2025/26 — w.media, YTL AI data centre &amp; all-GPU Johor campus coverage.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[13]</span>Yondr 2025 — Yondr Group, Sedenak Tech Park 200 MW hyperscale press release 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[14]</span>Google 2025 — Google / Gamuda DC Infrastructure, Port Dickson hyperscale announcement, May 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[15]</span>JLL 2025 — JLL, Johor-Singapore Special Economic Zone briefing 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[16]</span>PwC 2025 — PwC Malaysia, JS-SEZ tax &amp; incentives guide 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[17]</span>Foe-Malaysia 2025 — Sahabat Alam Malaysia / SPAN, water-stress commentary 2025.</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[18]</span>Technavio 2025 — Technavio, Malaysia Data Center Market 2025-2030 (~22.9% CAGR).</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>© 2026 KIRA Research · 추정치에는 불확실성이 내재됩니다 · 투자 조언이 아닙니다</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
