@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>フィリピン再生可能エネルギー 2027年展望 — 洋上風力パイプラインと系統接続の制約</title>
+<meta name="description" content="フィリピン再生可能エネルギー市場の2027年に向けたコンサルティング水準の分析：50GW超の洋上風力パイプライン、GEA-5入札、そして実際の系統接続を左右する送電制約。">
+<meta property="og:title" content="フィリピン再生可能エネルギー 2027年展望 — 洋上風力パイプラインと系統接続の制約">
+<meta property="og:description" content="フィリピン再生可能エネルギー市場の2027年に向けたコンサルティング水準の分析：50GW超の洋上風力パイプライン、GEA-5入札、そして実際の系統接続を左右する送電制約。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "LEAD DEVELOPER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.forecast-main { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.scenario-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.scenario-card.bear { border-top-color: var(--amber); }
+.scenario-card.bull { border-top-color: var(--green); }
+.scenario-card .sc-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.scenario-card.bear .sc-name { color: var(--amber); }
+.scenario-card.bull .sc-name { color: var(--green); }
+.scenario-card .sc-val { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.scenario-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.scenario-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1050px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 760px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER ============ -->
+<div class="page cover-page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
+      <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">Philippines · Renewable Energy · 2027</div>
+      <h1>フィリピン再生可能エネルギー 2027年展望 — 洋上風力パイプラインと<span class="accent">系統接続の制約</span></h1>
+      <p class="cover-subtitle">50GW超の洋上風力パイプラインが、追いつこうとする送電網と衝突している。今後24か月が、紙上のメガワットを系統上のメガワットに変えられるかを決定する。</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">Country</div><div class="val">Philippines</div></div>
+        <div class="cover-meta-item"><div class="label">Sector</div><div class="val">Renewable Energy</div></div>
+        <div class="cover-meta-item"><div class="label">Published</div><div class="val">June 2026</div></div>
+        <div class="cover-meta-item"><div class="label">Report ID</div><div class="val"><span class="accent">KR-PHL-ENRG-2027-001</span></div></div>
+      </div>
+      <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · シングルユーザーライセンス · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Methodology</div>
+      <div class="page-section-counter">002 / 021</div>
+    </div>
+    <h1 class="page-h1">分析の構築方法</h1>
+    <p class="page-subhead">本分析は2つのエビデンス・ストリームから構築されています。<strong>一次情報</strong>（開発事業者・系統運用者との対話、プロジェクト文書の精読、アナリスト総合分析）と、<strong>二次アンカー</strong>（エネルギー省のリリース、系統運用者の送電計画、上場開発事業者の開示資料）です。すべての定量的主張には明示的な出典タグが付与されています。</p>
+
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">一次情報</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 開発事業者・EPC 精読</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">洋上風力開発事業者、EPCコントラクター、港湾運営者との対話 — 実際のパイプライン・スケジュール、系統接続キュー、実際のコストを把握します。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ アナリスト総合分析</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">開示済みパイプライン、入札、系統データをKIRA社内で三角測量。インラインで [Kira estimates] としてタグ付けしています。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 専門家・運用者 精読</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">系統統合専門家およびサプライチェーン実務者 — 表面的なパイプラインデータよりも系統接続ボトルネックの実態に近い情報源です。</div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">二次アンカー</h3>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ エネルギー省リリース</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">入札公告、サービス契約登録簿、国家エネルギー計画 — 名称付き出典と期間を付してインライン引用しています。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 系統・規制当局 文書</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">系統運用者の送電開発計画および規制当局の入札価格決定 — 名称付き出典で引用しています。</div>
+        </div>
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ 三角測量推計</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">単一の出典で数値をカバーできない場合、2〜3の情報源を組み合わせ、方法論を開示します。[Kira estimates] としてタグ付けしています。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — TABLE OF CONTENTS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Table of Contents</div>
+      <div class="page-section-counter">003 / 021</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-height: 0; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">04</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">エグゼクティブサマリー</div><div style="font-size: 11px; color: var(--text-mid);">パイプラインと系統の乖離を4つの数値で示す</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 004</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">06</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">需要と供給ギャップ</div><div style="font-size: 11px; color: var(--text-mid);">電力需要、再エネ市場規模、発電ミックス</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 006</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">10</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">洋上風力パイプライン</div><div style="font-size: 11px; color: var(--text-mid);">サービス契約、GEA-5入札、プロジェクト経済性、開発事業者</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 010</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">14</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">系統接続の制約</div><div style="font-size: 11px; color: var(--text-mid);">接続キュー、送電投資、規制の枠組み</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 014</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">18</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">2027年展望と戦略的示唆</div><div style="font-size: 11px; color: var(--text-mid);">3シナリオと市場参加者への5つの行動指針</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 018</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700;">21</div>
+        <div><div style="font-weight: 700; font-size: 14px; color: var(--text);">調査手法と出典</div><div style="font-size: 11px; color: var(--text-mid);">エビデンス・ストリームと完全な出典索引</div></div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right;">PG 021</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">004 / 021</div>
+    </div>
+    <h1 class="page-h1">通過すべき送電線を圧倒するパイプライン</h1>
+    <p class="page-subhead">フィリピンは、既設発電容量の合計を上回る洋上風力パイプラインを認可し、外資の完全所有を解禁し、東南アジア初の洋上風力入札を開始しました。<strong>制約はもはや意欲でも資本でもなく、送電です。</strong></p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">洋上風力パイプライン</div>
+        <div class="num">66<span class="unit">GW</span></div>
+        <div class="change">サービス契約92件認可</div>
+        <div class="source-tag">DOE 2024</div>
+      </div>
+      <div class="callout">
+        <div class="label">再エネ設備容量 2025年</div>
+        <div class="num">~7.1<span class="unit">GW</span></div>
+        <div class="change">→ 2035年までに ~30 GW</div>
+        <div class="source-tag sec">GlobalData 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">GEA-5 洋上風力入札</div>
+        <div class="num">3,300<span class="unit">MW</span></div>
+        <div class="change">引渡し 2028–2030年</div>
+        <div class="source-tag">DOE 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">SIS未取得の確約済み案件</div>
+        <div class="num">~30<span class="unit">%</span></div>
+        <div class="change down">スケジュール遅延リスクあり</div>
+        <div class="source-tag est">NGCP 2025</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>パイプラインは実在する。問題は送電線だ。</h3>
+        <p>2025年2月時点で、エネルギー省は約<strong>154 GW</strong>相当のポテンシャルを持つ1,400件超の再エネ・サービス契約を認可しており[DOE 2025]、うち66 GWは92件の洋上風力契約に相当します[DOE 2024]。実際に設置された再エネ容量の約7.1 GWと対比すれば[GlobalData 2026]、紙上と鉄骨の乖離がこの分析の中心課題です。接続こそが、今や建設を左右する制約です。</p>
+        <h3>系統投資は拡大中だが、遅れをとっている。</h3>
+        <p>系統運用者の送電開発計画は約<strong>PHP 485 bn</strong>を確約し、2034年までに23,325 MVAの変換容量を追加します[NGCP 2025]。しかし2025〜2027年に確約されたプロジェクトの約30%はまだ系統影響評価を取得しておらず[NGCP 2025]、競争的再エネゾーンや島間連系は洋上風力の電力を需要地へ届けるまでに数年を要します。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">紙上のパイプラインと設置実績の乖離</div>
+            <div class="chart-subtitle">PHILIPPINES · GW · 2025</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 230" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="120" y1="206" x2="540" y2="206" class="axis-line" />
+            <g class="mono">
+              <!-- RE installed 7.1 -->
+              <rect x="130" y="196" width="380" height="20" fill="#00A88B"></rect>
+              <text x="120" y="190" text-anchor="end" font-size="10" fill="#4A5568">RE 設置済</text>
+              <text x="516" y="191" font-size="10" font-weight="700" fill="#0B0D10">7.1</text>
+              <!-- RE 2035 30 -->
+              <rect x="130" y="158" width="380" height="20" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="120" y="172" text-anchor="end" font-size="10" fill="#4A5568">RE 2035F</text>
+              <text x="516" y="173" font-size="10" font-weight="700" fill="#1E6FFF">~30</text>
+              <!-- OSW pipeline 66 -->
+              <rect x="130" y="118" width="380" height="22" fill="#1E6FFF"></rect>
+              <text x="120" y="133" text-anchor="end" font-size="10" fill="#4A5568">洋上風力パイプライン</text>
+              <text x="516" y="134" font-size="10" font-weight="700" fill="#FFFFFF">66</text>
+              <!-- RE contracts 154 -->
+              <rect x="130" y="78" width="380" height="22" fill="#0B0D10"></rect>
+              <text x="120" y="93" text-anchor="end" font-size="10" fill="#4A5568">RE 契約総量</text>
+              <text x="516" y="94" font-size="10" font-weight="700" fill="#FFFFFF">154</text>
+              <text x="130" y="46" font-size="10" fill="#6B7280">棒グラフは縮尺不同 — パイプライン数値はポテンシャル、確約ではありません</text>
+              <text x="130" y="60" font-size="10" font-weight="700" fill="#D97706">~22倍の乖離（契約 vs 設置済）[Kira estimates]</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DOE SERVICE-CONTRACT REGISTER, GLOBALDATA, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">DOE 2024 = Department of Energy Offshore Wind Service Contract Register, Aug 2024 · DOE 2025 = Department of Energy RE Service Contract Update, Feb 2025 · DOE 2026 = Department of Energy GEA-5 Notice of Auction 2026 · GlobalData 2026 = GlobalData Philippines Power Forecast 2026 · NGCP 2025 = NGCP Transmission Development Plan 2025–50 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">005 / 021</div>
+    </div>
+    <h1 class="page-h1">今後24か月を左右する5つの力</h1>
+    <p class="page-subhead">フィリピンの洋上風力が実現容量へと積み上がるか、接続キューで停滞するかを決める5つの力があります。<strong>いずれも、市場参加者が今すぐ行動できる領域です。</strong></p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">希少資産は系統接続枠であり、ライセンスではない</div>
+        <div class="body-text">66 GWが契約済み[DOE 2024]であるのに対し、系統は2034年までに約23 GVAしか追加されません[NGCP 2025]。確定的な系統接続契約は、追加のサービス契約よりも価値があります。早期に確保すべきです。</div>
+        <div class="anchor"><span class="num-anchor">1.65 GW</span> の接続枠を1コンソーシアムが既に確保</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">第二のボトルネックは送電線の次に来る港湾だ</div>
+        <div class="body-text">ステージング・組立港がなければ、許認可を得ていても建設は不可能です。PambuhanとPulupandanが初期の拠点 — 港湾隣接ポジションが構造的な優位性となります。</div>
+        <div class="anchor"><span class="num-anchor">USD 3–4 bn</span> の設備投資には稼働可能な港が必要</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">GEA-5がセクター全体の価格水準を決定する</div>
+        <div class="body-text">約<strong>PHP 10.4/kWh</strong>の留保価格[ERC 2026]は、洋上風力が下回らなければならない基準を示します。この価格帯がすべてのPPA交渉を再定義します。</div>
+        <div class="anchor"><span class="num-anchor">3,300 MW</span> 固定基礎・第一トランシェ</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">外資の制約はなくなったが、パートナーの価値は増した</div>
+        <div class="body-text">2022年以降、完全外資所有が可能となりましたが[DOE 2025]、希少な投入要素（系統接続、許認可、港湾アクセス）は依然として地場に依存します。適切なパートナーは安価なパートナーより価値があります。</div>
+        <div class="anchor"><span class="num-anchor">20 GW</span> が制限撤廃後に急増</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">2027年はマイルストーンの年であり、引渡し年ではない</div>
+        <div class="body-text">GEA-5の認定証は2027年に発行されますが、鉄骨が海に入るのは2028〜2030年です[DOE 2026]。転換点に向けたポジショニングを取りつつ、遅延を織り込んで審査すべきです。</div>
+        <div class="anchor"><span class="num-anchor">3.5 GW</span> が2つの先行ゾーンに集中</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — DIVIDER: DEMAND ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">需要と<span class="accent">供給ギャップ</span></h1>
+    <div class="divider-thesis">電力需要は<strong>2050年まで年率5.2%で複利成長</strong>し[DOE PDP 2024]、ルソン島のガス田は2027年頃に枯渇します[ICSC 2026]。フィリピンは、これまでにない速さで新たな確実な低炭素容量を必要としており、再生可能エネルギーがスケールアップできる唯一の手段です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">電力需要</div>
+      <div class="toc-pill">再エネ市場規模</div>
+      <div class="toc-pill">発電ミックス</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — POWER DEMAND ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Demand</div>
+      <div class="page-section-counter">007 / 021</div>
+    </div>
+    <h1 class="page-h1">需要の複利成長が構造的な供給ギャップを生み出している</h1>
+    <p class="page-subhead">ピーク需要は2050年までに4倍超に拡大し、予備率はすでに薄く、ルソン島の主要ガス源は2027年に枯渇します。<strong>再エネへの需要は今や理念ではなく、算数の問題です。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>4倍超の需要カーブ</h3>
+        <p>システムのピーク需要は2022年の16,596 MWから2050年には<strong>68,483 MW</strong>へと、年平均5.2%のペースで上昇する見通しです[DOE PDP 2024]。近接した時期においても状況は逼迫しており、ルソン・ビサヤ・ミンダナオの各地域は2026年を通じて需給が拮抗し、乾季ピーク時には予備率が急速に低下します[ICSC 2026]。</p>
+        <h3>2027年のルソン島における供給の崖</h3>
+        <p>マランパヤ・ガス田は2027年頃に枯渇すると推定されており、残存埋蔵量は約4 bcmとされています[ICSC 2026]。これはルソン島の5つの発電所に影響を与えます。需要がピークを迎えるまさにその時に確実な容量が失われ、再エネの建設は気候目標から電力の信頼性確保へと性格が変わります。</p>
+        <h3>なぜギャップが再エネに有利に働くか</h3>
+        <p>太陽光と陸上風力は12〜24か月で展開できます。一方、洋上風力と大規模送電は5年以上を要します[Kira estimates]。供給の崖は近い将来に迫っているため、短期のギャップを高速な再エネが埋め、洋上風力が2028年以降のベースロード代替の主軸となります。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">システムピーク需要の推移</div>
+            <div class="chart-subtitle">PHILIPPINES · GW PEAK · 2022–2050F</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="44" y1="210" x2="540" y2="210" class="axis-line" />
+            <g class="mono">
+              <circle cx="70" cy="167" r="4" fill="#4A5568"></circle>
+              <text x="70" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2022</text>
+              <text x="70" y="157" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">16.6</text>
+              <circle cx="180" cy="153" r="4" fill="#1E6FFF"></circle>
+              <text x="180" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2027</text>
+              <text x="180" y="143" text-anchor="middle" font-size="9" font-weight="700" fill="#1E6FFF">~22</text>
+              <circle cx="320" cy="125" r="4" fill="#4A5568"></circle>
+              <text x="320" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2035</text>
+              <text x="320" y="115" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">~33</text>
+              <circle cx="510" cy="35" r="5" fill="#1E6FFF"></circle>
+              <text x="510" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2050F</text>
+              <text x="510" y="26" text-anchor="middle" font-size="9" font-weight="700" fill="#1E6FFF">68.5</text>
+              <path d="M 70 167 L 180 153 L 320 125 L 510 35" stroke="#1E6FFF" stroke-width="1.5" fill="none" stroke-dasharray="4,3"></path>
+              <text x="250" y="70" font-size="9" font-weight="700" fill="#D97706">CAGR 5.2% [DOE PDP 2024]</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DOE POWER DEVELOPMENT PLAN, ICSC POWER OUTLOOK · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">DOE PDP 2024 = Department of Energy Power Development Plan 2024 · ICSC 2026 = Institute for Climate and Sustainable Cities Power Outlook 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — RE MARKET SIZING ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Market sizing</div>
+      <div class="page-section-counter">008 / 021</div>
+    </div>
+    <h1 class="page-h1">再エネ設備容量：7 GWから30 GWへの軌道</h1>
+    <p class="page-subhead">公式の軌道では再エネ設備容量が2035年までにほぼ4倍となり、近期は太陽光が増分を主導し、洋上風力が2028年以降の段階的な跳躍をもたらします。<strong>変数は資源ではなく、建設ペースです。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>~7 GWから~30 GWへ</h3>
+        <p>再エネ設備容量は<strong>2025年の約7.1 GWから2035年には~30 GW</strong>へと拡大する見通しです[GlobalData 2026]。これを達成するには、これまで断続的にしか達成できなかった増設ペースを継続する必要があり、2025年の基準値がその勢いとギャップの両方を示しています。</p>
+        <h3>近期は太陽光が牽引</h3>
+        <p>太陽光PVは2025年末時点で<strong>~3.6 GW</strong>に達し、年間約899 MWの増設が実現しました。大半がユーティリティスケールです[pv magazine 2026]。2025年には1 GW超の容量が追加されました[DOE 2026]。太陽光のリードタイムの短さが、洋上風力到来前の即時的なギャップ補填を可能にします。</p>
+        <h3>入札制度が軌道を下支えする</h3>
+        <p>10年間の入札プログラムは2027〜2035年の引渡しに向けて<strong>25 GW</strong>を提供し[DOE 2026]、政策目標を契約済み・価格固定の数量へと転換します。これが30 GW予測を希望から資金化可能なパイプラインへと変える仕組みです。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">再エネ設備容量の推移</div>
+            <div class="chart-subtitle">PHILIPPINES · GW INSTALLED · 2025–2035F</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="44" y1="210" x2="540" y2="210" class="axis-line" />
+            <g class="mono">
+              <rect x="70" y="170" width="60" height="40" fill="#00A88B"></rect>
+              <text x="100" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2025</text>
+              <text x="100" y="162" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">7.1</text>
+
+              <rect x="170" y="130" width="60" height="80" fill="#1E6FFF"></rect>
+              <text x="200" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2027F</text>
+              <text x="200" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF">~14</text>
+
+              <rect x="270" y="92" width="60" height="118" fill="#1E6FFF" opacity="0.75"></rect>
+              <text x="300" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2030F</text>
+              <text x="300" y="84" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF">~21</text>
+
+              <rect x="370" y="38" width="60" height="172" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="400" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2035F</text>
+              <text x="400" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">~30</text>
+
+              <text x="455" y="120" font-size="9" fill="#6B7280">2027–30</text>
+              <text x="455" y="133" font-size="9" font-weight="700" fill="#1E6FFF">interim</text>
+              <text x="455" y="146" font-size="9" font-weight="700" fill="#1E6FFF">[Kira est.]</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: GLOBALDATA, DOE, PV MAGAZINE; 2027/2030 INTERIM = KIRA INTERPOLATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">GlobalData 2026 = GlobalData Philippines Renewable Capacity Forecast 2026 · DOE 2026 = Department of Energy Capacity &amp; GEAP Releases 2026 · pv magazine 2026 = pv magazine Philippines Solar Additions Report, Apr 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — GENERATION MIX ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Generation mix</div>
+      <div class="page-section-counter">009 / 021</div>
+    </div>
+    <h1 class="page-h1">再エネは発電量の22%、目標は35%</h1>
+    <p class="page-subhead">2025年に再エネが供給した電力は全体の5分の1強にとどまり、クリーンミックスの中心は依然として水力であり、2030年の目標は35%です。<strong>5年間で13ポイントのギャップを埋めることが建設上の核心課題であり、洋上風力がその鍵を握っています。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>現在のミックス</h3>
+        <p>2025年前半までに発電された約126,941 GWhのうち、再エネは<strong>28,193 GWh、22%</strong>を供給しました[DOE 2025]。水力は再エネ出力の約41%を占めるクリーンミックスの主軸であり[DOE 2025]、ユーティリティスケールの増設を背景に太陽光が急速に追い上げています。</p>
+        <h3>目標とのギャップ</h3>
+        <p>政策は<strong>2030年に35%RE</strong>、2040年に50%を設定しています[PEP 2025]。総需要が年5%超で成長する中で22%から35%へ移行するには、再エネの発電量を絶対値でほぼ倍増させる必要があり、洋上風力の大規模導入なくしては達成できない建設ペースが求められます。</p>
+        <h3>なぜ石炭が依然として視野に入るか</h3>
+        <p>石炭の設備容量は2035年にかけて約13.0 GWから~15.4 GWへと増加する見通しであり[GlobalData 2026]、再エネが拡大する間のベースロードを担います。したがってミックスの変化は近期において代替ではなく付加的なものとなり、系統統合が発電よりも重要な問いであり続けます。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">再エネ発電比率 vs 目標</div>
+            <div class="chart-subtitle">PHILIPPINES · % OF GENERATION · 2025 VS 2030T</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="44" y1="210" x2="540" y2="210" class="axis-line" />
+            <line x1="44" y1="92" x2="540" y2="92" class="grid-line" />
+            <text x="48" y="88" font-size="9" class="mono" fill="#6B7280">35% 目標</text>
+            <g class="mono">
+              <rect x="110" y="136" width="90" height="74" fill="#00A88B"></rect>
+              <text x="155" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2025</text>
+              <text x="155" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">22%</text>
+              <rect x="320" y="92" width="90" height="118" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="365" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2030T</text>
+              <text x="365" y="84" text-anchor="middle" font-size="11" font-weight="700" fill="#1E6FFF">35%</text>
+              <path d="M 220 150 L 300 110" stroke="#D97706" stroke-width="1.5" fill="none" stroke-dasharray="3,2"></path>
+              <polygon points="300,110 291,111 296,118" fill="#D97706"></polygon>
+              <text x="250" y="180" text-anchor="middle" font-size="9" font-weight="700" fill="#D97706">5年で+13 pt</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DOE GENERATION DATA, PHILIPPINE ENERGY PLAN · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">DOE 2025 = Department of Energy Power Statistics, mid-2025 · PEP 2025 = Philippine Energy Plan RE Targets 2025 · GlobalData 2026 = GlobalData Philippines Power Forecast 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — DIVIDER: OFFSHORE WIND ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">洋上風力<span class="accent">パイプライン</span></h1>
+    <div class="divider-thesis">92件のサービス契約。66ギガワット。東南アジア<strong>初の洋上風力入札</strong>。フィリピンは地域最大規模の野心的な洋上風力パイプラインを構築しました。本セクションが答える問いは、そのうちいくらが2027年までに資金化可能かです。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">サービス契約</div>
+      <div class="toc-pill">GEA-5入札</div>
+      <div class="toc-pill">プロジェクト経済性</div>
+      <div class="toc-pill">開発事業者</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — OSW PIPELINE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Pipeline</div>
+      <div class="page-section-counter">011 / 021</div>
+    </div>
+    <h1 class="page-h1">66 GWの契約から、実際に建設可能な3.5 GWへ</h1>
+    <p class="page-subhead">契約済みパイプラインは膨大ですが、系統接続・許認可・港湾整備が揃った第一波はごく僅かです。<strong>GEA-5と2つの基幹ゾーンが資金化可能な近期を規定します。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>契約から鉄骨へのファネル</h3>
+        <p>92件の洋上風力サービス契約が<strong>66 GW</strong>のポテンシャルを保有し[DOE 2024]、GEA-5入札は2028〜2030年引渡しに向けて固定基礎<strong>3,300 MW</strong>を対象とし[DOE 2026]、サンミゲル湾とギマラス海峡の2つの基幹ゾーンが合計約3.5 GWを担います[World Bank 2024]。ライセンスから建設容量へのファネルは、各ゲートで一桁ずつ絞り込まれます。</p>
+        <h3>先行ゾーン</h3>
+        <p>カマリネス・スル州のサンミゲル湾とギマラス海峡は、合わせて年間約<strong>11 TWh</strong>の発電が可能な同国初の大規模ゾーンとして位置づけられています[CleanTechnica 2026]。強風・浅水深・短い系統接続距離・変電所への近接性という条件が揃っているため先行します。</p>
+        <h3>2027年のマイルストーン</h3>
+        <p>GEA-5の認定証は<strong>2027年2月</strong>に発行される予定です[DOE 2026]。2027年は洋上風力が投機的段階から契約段階へと移行する年となりますが、メガワットが実際に届くのは2028〜2030年です。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">洋上風力ファネル</div>
+            <div class="chart-subtitle">PHILIPPINES · GW · 契約から資金化可能まで</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <rect x="60" y="40" width="440" height="34" fill="#0B0D10"></rect>
+              <text x="280" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">66 GW 契約済 [DOE 2024]</text>
+
+              <rect x="130" y="92" width="300" height="34" fill="#1E6FFF"></rect>
+              <text x="280" y="114" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">~17 GW 系統調査済 [Kira est.]</text>
+
+              <rect x="190" y="144" width="180" height="34" fill="#1E6FFF" opacity="0.7"></rect>
+              <text x="280" y="166" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">3.3 GW GEA-5トランシェ</text>
+
+              <rect x="215" y="196" width="130" height="34" fill="#00A88B"></rect>
+              <text x="280" y="218" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">3.5 GW 基幹ゾーン</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DOE, WORLD BANK OSW ROADMAP, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">DOE 2024 = Department of Energy Offshore Wind Service Contract Register, Aug 2024 · DOE 2026 = Department of Energy GEA-5 Notice of Auction 2026 · World Bank 2024 = World Bank Offshore Wind Roadmap for the Philippines 2024 · CleanTechnica 2026 = CleanTechnica Philippine OSW Zones Analysis, May 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — OSW ECONOMICS / GEA-5 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Project economics</div>
+      <div class="page-section-counter">012 / 021</div>
+    </div>
+    <h1 class="page-h1">入札価格が洋上風力の越えるべきハードルを設定する</h1>
+    <p class="page-subhead">PHP 10.4/kWh付近の留保価格、1 GW当たりUSD 3〜4 bnの設備投資、そして形成途上のサプライチェーンが経済性の枠組みを決めています。<strong>ファースト・オブ・ア・カインドのリスクがコストであり、それが忍耐に報酬をもたらす理由です。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>GEA-5の留保価格</h3>
+        <p>規制当局は予備的な<strong>PHP 10.3859/kWh</strong>を基礎としたGEA-5留保価格を設定しました[ERC 2026]。これは港湾賃料、漁業補償、インフレ、為替を反映しており、太陽光・陸上風力を大きく上回ります。大規模な確実な洋上風力の容量に対してシステムが支払うプレミアムです。</p>
+        <h3>設備投資とコスト曲線</h3>
+        <p>1 GWのプロジェクトには水深・離岸距離・港湾の整備状況によって<strong>USD 3〜4 bn</strong>が必要です[GWEC 2026]。洋上風力のLCOEは今日の太陽光を大幅に上回りますが、世界的な動向から将来のLCOEは40〜60%削減される可能性が示されており[GWEC 2026]、投資の順序付けにおいて実物オプション価値が生まれます。</p>
+        <h3>雇用と地域経済への貢献</h3>
+        <p>洋上風力は発電所の稼働期間にわたって<strong>1 GW当たり約17,500人・年</strong>の雇用を生み出し、うち約半数が直接雇用です[GWEC 2026]。改良された港湾は製造、O&amp;M、造船の拠点となり、建設を発電事業にとどまらない数十年規模の沿岸産業として位置づけます。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">技術別LCOE帯の概観</div>
+            <div class="chart-subtitle">PHILIPPINES · RELATIVE · 2026</div>
+          </div>
+          <div class="chart-unit">REL.</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="120" y1="210" x2="540" y2="210" class="axis-line" />
+            <g class="mono">
+              <rect x="130" y="184" width="200" height="20" fill="#00A88B"></rect>
+              <text x="120" y="198" text-anchor="end" font-size="10" fill="#4A5568">太陽光PV</text>
+              <text x="340" y="199" font-size="9" font-weight="700" fill="#00A88B">最低コスト</text>
+
+              <rect x="130" y="150" width="250" height="20" fill="#00A88B" opacity="0.7"></rect>
+              <text x="120" y="164" text-anchor="end" font-size="10" fill="#4A5568">陸上風力</text>
+
+              <rect x="130" y="116" width="280" height="20" fill="#1E6FFF" opacity="0.7"></rect>
+              <text x="120" y="130" text-anchor="end" font-size="10" fill="#4A5568">地熱</text>
+
+              <rect x="130" y="70" width="400" height="24" fill="#1E6FFF"></rect>
+              <text x="120" y="86" text-anchor="end" font-size="10" fill="#4A5568">洋上風力</text>
+              <text x="500" y="86" text-anchor="end" font-size="9" font-weight="700" fill="#FFFFFF">~PHP 10.4/kWh 下限</text>
+
+              <text x="130" y="42" font-size="9" fill="#6B7280">洋上風力は現在プレミアム。規模拡大でLCOE 40〜60%削減の動向</text>
+              <text x="130" y="55" font-size="9" font-weight="700" fill="#D97706">[GWEC 2026]</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ERC GEAR PRICE RESOLUTION, GWEC, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">ERC 2026 = Energy Regulatory Commission GEAR Price Resolution No. 05, Series of 2026 · GWEC 2026 = Global Wind Energy Council Philippines OSW Analysis 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — DEVELOPERS (COMPETITIVE STRUCTURE) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Developer landscape</div>
+      <div class="page-section-counter">013 / 021</div>
+    </div>
+    <h1 class="page-h1">外資・地場の連携が先行するセクター構造</h1>
+    <p class="page-subhead">先行事業者は、国際的な洋上風力資本と工学知見を、地場の系統・許認可・市場アクセスと組み合わせています。<strong>勝利するモデルはパートナーシップであり、単独所有ではありません。</strong></p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">主要プロジェクト別の概算容量</div>
+            <div class="chart-subtitle">PHILIPPINES · GW · 2025–26</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="150" y1="160" x2="460" y2="160" class="axis-line" />
+            <g class="mono">
+              <rect x="160" y="26" width="220" height="22" fill="#1E6FFF"></rect>
+              <text x="150" y="41" text-anchor="end" font-size="10" fill="#4A5568">CIP / COP（3サイト）</text>
+              <text x="386" y="42" font-size="9" font-weight="700" fill="#0B0D10">2.0</text>
+
+              <rect x="160" y="62" width="110" height="22" fill="#1E6FFF" opacity="0.8"></rect>
+              <text x="150" y="77" text-anchor="end" font-size="10" fill="#4A5568">サンミゲル湾</text>
+              <text x="276" y="78" font-size="9" font-weight="700" fill="#0B0D10">1.0</text>
+
+              <rect x="160" y="98" width="180" height="22" fill="#00A88B"></rect>
+              <text x="150" y="113" text-anchor="end" font-size="10" fill="#4A5568">コンソーシアム系統接続</text>
+              <text x="346" y="114" font-size="9" font-weight="700" fill="#0B0D10">1.65</text>
+
+              <rect x="160" y="134" width="80" height="22" fill="#4A5568"></rect>
+              <text x="150" y="149" text-anchor="end" font-size="10" fill="#4A5568">その他（初期段階）</text>
+              <text x="246" y="150" font-size="9" font-weight="700" fill="#0B0D10">var.</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DEVELOPER ANNOUNCEMENTS, NGCP CONNECTION AGREEMENTS · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>連携が優位に立つ理由</h3>
+        <p>完全外資所有が認められましたが、希少な投入要素（系統接続契約、許認可、港湾アクセス）は徹底的に地場依存です。先行事業者はそのため<strong>オフショア資本・工学知見</strong>と地場公益事業の市場ポジションを組み合わせています。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>CIP コミットメント</span><span class="val">USD 3 bn</span></div>
+          <div class="stat-line"><span>ACEN出資比率（サンミゲル湾）</span><span class="val">25%</span></div>
+          <div class="stat-line"><span>COPの開発中サイト</span><span class="val">3 / 2 GW</span></div>
+          <div class="stat-line"><span>確保済み系統接続枠</span><span class="val">1.65 GW</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">FRONTRUNNER</div>
+        <div class="comp-name">Copenhagen Infrastructure Partners</div>
+        <div class="comp-parent">Copenhagen Offshore Partners経由</div>
+        <div class="comp-stat-row"><span>パイプライン</span><span class="val">~2.0 GW</span></div>
+        <div class="comp-stat-row"><span>コミットメント</span><span class="val">USD 3 bn</span></div>
+        <div class="comp-stat-row"><span>主要サイト</span><span class="val">San Miguel Bay</span></div>
+        <div class="comp-strengths">国内初の大規模洋上風力。グローバルな洋上実績。CEPNSおよびプレデブECCを取得済み[CIP 2025]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">LOCAL ANCHOR</div>
+        <div class="comp-name">ACEN</div>
+        <div class="comp-parent">アヤラグループ傘下の上場エネルギー会社</div>
+        <div class="comp-stat-row"><span>出資比率</span><span class="val">25% SMB</span></div>
+        <div class="comp-stat-row"><span>役割</span><span class="val">地場パートナー</span></div>
+        <div class="comp-stat-row"><span>上場区分</span><span class="val">Listed</span></div>
+        <div class="comp-strengths">地場の市場アクセス、系統関係、上場バランスシートをCIPパートナーシップに提供[ACEN 2025]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">GRID-FIRST</div>
+        <div class="comp-name">系統接続確保コンソーシアム</div>
+        <div class="comp-parent">複数社による洋上合弁体</div>
+        <div class="comp-stat-row"><span>接続枠</span><span class="val">1.65 GW</span></div>
+        <div class="comp-stat-row"><span>優位性</span><span class="val">キュー上位</span></div>
+        <div class="comp-stat-row"><span>ステータス</span><span class="val">建設前</span></div>
+        <div class="comp-strengths">ファネルで最も希少な資産である1.65 GWの系統接続枠を確保[Offshore Wind 2026]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">FIELD</div>
+        <div class="comp-name">サービス契約保有者</div>
+        <div class="comp-parent">OWESC認定事業者90社超</div>
+        <div class="comp-stat-row"><span>契約件数</span><span class="val">92</span></div>
+        <div class="comp-stat-row"><span>ポテンシャル</span><span class="val">66 GW</span></div>
+        <div class="comp-stat-row"><span>資金化可能性</span><span class="val">限定的</span></div>
+        <div class="comp-strengths">系統調査や港湾を持たない多数の認定事業者。大半は統合または失効する構造[Kira estimates]。</div>
+      </div>
+    </div>
+
+    <div class="source-key">CIP 2025 = Copenhagen Infrastructure Partners Project Release, May 2025 · ACEN 2025 = ACEN Partnership Disclosure, May 2025 · Offshore Wind 2026 = OffshoreWind.biz Grid Connection Report, Feb 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — DIVIDER: GRID ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">系統接続の<span class="accent">制約</span></h1>
+    <div class="divider-thesis">66 GWのパイプラインも、電力を運ぶ送電線がなければ意味をなしません。<strong>近期に確約されたプロジェクトの約30%が系統影響評価を未取得</strong>[NGCP 2025]であり、島間連系の整備には数年を要する状況では、送電が2027年の結果を左右する唯一の変数です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">接続キュー</div>
+      <div class="toc-pill">送電計画</div>
+      <div class="toc-pill">規制の枠組み</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 — GRID BOTTLENECK ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Connection queue</div>
+      <div class="page-section-counter">015 / 021</div>
+    </div>
+    <h1 class="page-h1">建設を制約するのは資源ではなく接続キューだ</h1>
+    <p class="page-subhead">確約された容量は評価済み容量を上回り、再エネが接続キューを主導し、近期プロジェクトの3割はまだ系統影響評価を受けていません。<strong>送電線が届く場所が、どのメガワットが実現するかを決めます。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>再エネが重い接続キュー</h3>
+        <p>確約された容量は約<strong>17,249 MW</strong>が接続予定であり、そのうち<strong>53%超が再エネ</strong>から構成されています。太陽光5,976 MW、風力2,125 MWが先頭に立っています[NGCP 2024]。パイプラインはクリーンですが、制約はスループットにあります。</p>
+        <h3>系統影響評価のギャップ</h3>
+        <p>2025〜2027年に確約されたプロジェクトの約<strong>30%が系統影響評価（SIS）をまだ取得していません</strong>[NGCP 2025]。SISは系統接続前の技術的ゲートです。これがなければ、資金や許認可が揃っていてもスケジュールが遅延し、紙上の容量が「遅延した容量」へと変わります。</p>
+        <h3>洋上風力が最も困難な理由</h3>
+        <p>洋上風力の発電地点は需要地から遠く、新たな高圧輸出線と陸上補強を必要とします。先行ゾーンは変電所への近接性を考慮して選定されましたが[CIP 2025]、それ以上の規模拡大にはまだ数年かかる島間連系とCREZの整備が不可欠です。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">確約済み接続キューのミックス</div>
+            <div class="chart-subtitle">PHILIPPINES · MW · COMMITTED</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="44" y1="210" x2="540" y2="210" class="axis-line" />
+            <g class="mono">
+              <rect x="80" y="70" width="80" height="140" fill="#1E6FFF"></rect>
+              <text x="120" y="226" text-anchor="middle" font-size="9" fill="#6B7280">太陽光</text>
+              <text x="120" y="62" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF">5,976</text>
+
+              <rect x="200" y="160" width="80" height="50" fill="#00A88B"></rect>
+              <text x="240" y="226" text-anchor="middle" font-size="9" fill="#6B7280">風力</text>
+              <text x="240" y="152" text-anchor="middle" font-size="10" font-weight="700" fill="#00A88B">2,125</text>
+
+              <rect x="320" y="110" width="80" height="100" fill="#4A5568"></rect>
+              <text x="360" y="226" text-anchor="middle" font-size="9" fill="#6B7280">その他RE</text>
+              <text x="360" y="102" text-anchor="middle" font-size="10" font-weight="700" fill="#4A5568">~1,050</text>
+
+              <rect x="440" y="50" width="80" height="160" fill="#D97706" opacity="0.85"></rect>
+              <text x="480" y="226" text-anchor="middle" font-size="9" fill="#6B7280">非RE</text>
+              <text x="480" y="42" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">~8,100</text>
+
+              <text x="80" y="36" font-size="9" font-weight="700" fill="#0B0D10">17,249 MWキューの53%超が再エネ [NGCP 2024]</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NGCP CONNECTION DATA OCT 2024; NON-RE = RESIDUAL [KIRA EST.] · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">NGCP 2024 = NGCP Committed Connection Capacity, Oct 2024 · NGCP 2025 = NGCP Transmission Development Plan 2025–50 · CIP 2025 = Copenhagen Infrastructure Partners Project Release, May 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 — TRANSMISSION INVESTMENT ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Transmission investment</div>
+      <div class="page-section-counter">016 / 021</div>
+    </div>
+    <h1 class="page-h1">PHP 485 bn の送電線、より速いパイプラインを追いかける</h1>
+    <p class="page-subhead">系統運用者の計画は相当な変換容量と島間連系を追加しますが、建設ペースは契約済み発電パイプラインに遅れをとっています。<strong>MVAとGWの競争が本レポートの中心的な緊張関係です。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>送電開発計画</h3>
+        <p>送電開発計画2025〜50は約<strong>PHP 485.2 bn</strong>を確約し、2034年までに2,148回線kmと<strong>23,325 MVA</strong>の変換容量を追加します[NGCP 2025]。より長期の2023〜40計画では約3,871 kmの送電線と34,150 MVAが電圧レベルを問わず対象となっています[NGCP 2025]。</p>
+        <h3>CREZと島間連系</h3>
+        <p>競争的再エネゾーン（CREZ）、ミンダナオ・ビサヤ間連系、計画中のビサヤ・ルソン間補強が、再エネ出力を需要地へ届ける経路です[NGCP 2025]。発電ではなくこれらの基幹プロジェクトが、大規模洋上風力を左右するゲート項目です。</p>
+        <h3>ペースのギャップ</h3>
+        <p>2025年に系統運用者は14か所の変電所増強を通電しました[NGCP 2025]。数十ギガワット規模のパイプラインに対する確かな前進ですが、構造的リスクは時間軸にあります。送電が発電に遅れると、出力抑制と資本の座礁が生じます。これが織り込むべき失敗モードです。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2034年までの送電容量積み上げ</div>
+            <div class="chart-subtitle">PHILIPPINES · MVA ADDED · TDP 2025–50</div>
+          </div>
+          <div class="chart-unit">MVA</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="44" y1="210" x2="540" y2="210" class="axis-line" />
+            <g class="mono">
+              <rect x="70" y="180" width="50" height="30" fill="#1E6FFF"></rect>
+              <text x="95" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2025</text>
+              <rect x="150" y="150" width="50" height="60" fill="#1E6FFF"></rect>
+              <text x="175" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2028</text>
+              <rect x="230" y="110" width="50" height="100" fill="#1E6FFF"></rect>
+              <text x="255" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2031</text>
+              <rect x="310" y="60" width="50" height="150" fill="#1E6FFF" opacity="0.75"></rect>
+              <text x="335" y="226" text-anchor="middle" font-size="9" fill="#6B7280">2034</text>
+              <text x="335" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF">23,325</text>
+
+              <text x="400" y="90" font-size="9" fill="#6B7280">PHP 485.2 bn</text>
+              <text x="400" y="104" font-size="9" font-weight="700" fill="#0B0D10">確約済み [NGCP 2025]</text>
+              <text x="400" y="126" font-size="9" fill="#6B7280">+2,148 回線km</text>
+              <text x="400" y="148" font-size="9" fill="#D97706" font-weight="700">vs 66 GW パイプライン</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NGCP TRANSMISSION DEVELOPMENT PLAN; RAMP = KIRA INTERPOLATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">NGCP 2025 = NGCP Transmission Development Plan 2025–50 (and TDP 2023–40) · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 — POLICY / REGULATORY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Regulatory frame</div>
+      <div class="page-section-counter">017 / 021</div>
+    </div>
+    <h1 class="page-h1">政策は役割を果たした。残る問いは実行だ。</h1>
+    <p class="page-subhead">完全外資所有、引き上げられたポートフォリオ義務、迅速化された許認可、そして入札制度が政策層のリスクを低減しました。<strong>残る課題は実行であり、まだ書かれていない出力抑制ルールです。</strong></p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>資本を解放した改革</h3>
+        <p>2022年11月以降、再エネは<strong>外資100%所有</strong>が可能となり[DOE 2025]、その後プロジェクトが約<strong>20 GW</strong>急増し、契約済みポテンシャルは154 GWに達しています[DOE 2025]。再エネポートフォリオ基準は公益事業者に対してRE調達を<strong>年2.52%</strong>引き上げることを義務づけており、従来の1%から強化されました[DOE 2025]。これが安定した制度的需要を生み出しています。</p>
+        <h3>許認可と入札エンジン</h3>
+        <p>EVOSSとグリーンレーンが許認可を短縮し、グリーンエネルギー入札プログラムが目標を価格固定・契約済み数量へと転換します[DOE 2025]。これらが組み合わさり、この地域で最も投資家に優しい政策層の一つが形成されています。</p>
+        <h3>書かれていないルール</h3>
+        <p>現時点で<strong>系統全体の出力抑制枠組みは存在しません</strong>[Chambers 2025]。混雑は送電計画のみで管理されています。変動性再エネが拡大するにつれ、明確な抑制・補償ルールの欠如が投資家を最も驚かせる可能性の高い政策上のギャップとなります。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">政策改革タイムライン</div>
+            <div class="chart-subtitle">PHILIPPINES · 2022–2027</div>
+          </div>
+          <div class="chart-unit">FRAME</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="60" y1="130" x2="520" y2="130" stroke="#D1D5DB" stroke-width="1.5" />
+            <g class="mono">
+              <circle cx="90" cy="130" r="5" fill="#00A88B"></circle>
+              <text x="90" y="110" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">2022</text>
+              <text x="90" y="152" text-anchor="middle" font-size="8.5" fill="#4A5568">外資100%</text>
+              <text x="90" y="164" text-anchor="middle" font-size="8.5" fill="#4A5568">所有解禁</text>
+
+              <circle cx="220" cy="130" r="5" fill="#1E6FFF"></circle>
+              <text x="220" y="110" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">2024</text>
+              <text x="220" y="152" text-anchor="middle" font-size="8.5" fill="#4A5568">RPS 年2.52%へ</text>
+              <text x="220" y="164" text-anchor="middle" font-size="8.5" fill="#4A5568">154 GW 契約済</text>
+
+              <circle cx="350" cy="130" r="5" fill="#1E6FFF"></circle>
+              <text x="350" y="110" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">2025–26</text>
+              <text x="350" y="152" text-anchor="middle" font-size="8.5" fill="#4A5568">GEA-5 開始</text>
+              <text x="350" y="164" text-anchor="middle" font-size="8.5" fill="#4A5568">3.3 GW OSW</text>
+
+              <circle cx="490" cy="130" r="6" fill="#D97706"></circle>
+              <text x="490" y="110" text-anchor="middle" font-size="9" font-weight="700" fill="#D97706">2027</text>
+              <text x="490" y="152" text-anchor="middle" font-size="8.5" fill="#4A5568">GEA-5 認定発行</text>
+              <text x="490" y="164" text-anchor="middle" font-size="8.5" fill="#D97706">抑制ルール整備？</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DOE, ERC, CHAMBERS PRACTICE GUIDE · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+
+    <div class="source-key">DOE 2025 = Department of Energy RE Policy &amp; Service Contract Update 2025 · Chambers 2025 = Chambers Renewable Energy Practice Guide — Philippines 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 — DIVIDER: OUTLOOK ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08</div>
+    <h1 class="divider-title"><span class="accent">2027年</span>への展望</h1>
+    <div class="divider-thesis">3つのシナリオは一つの変数に懸かっています。<strong>送電線がどれだけ早く整備されるか</strong>。いずれのシナリオでも、2027年は洋上風力がライセンスから契約へと移行するマイルストーン年となりますが、実現容量の結果は送電の進捗によって大きく分岐します。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">3つのシナリオ</div>
+      <div class="toc-pill">戦略的示唆</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 — FORECAST OUTLOOK ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Forecast</div>
+      <div class="page-section-counter">019 / 021</div>
+    </div>
+    <h1 class="page-h1">送電線の整備速度で分岐する2030年への3つの道</h1>
+    <p class="page-subhead">パイプラインと政策はほぼ固定されており、送電の進捗が変動要因です。<strong>当社のベースケースは、2028〜2030年に最初の洋上風力鉄骨が海中に入ることを見込んでおり、幅は系統の整備次第です。</strong></p>
+
+    <div class="forecast-main">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">洋上風力の実現容量 — シナリオ・ファン</div>
+          <div class="chart-subtitle">PHILIPPINES · GW OPERATIONAL · 2027–2032F</div>
+        </div>
+        <div class="chart-unit">GW</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1120 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <line x1="60" y1="170" x2="1080" y2="170" class="axis-line" />
+          <g class="mono">
+            <text x="60" y="188" font-size="9" fill="#6B7280">2027</text>
+            <text x="260" y="188" font-size="9" fill="#6B7280">2028</text>
+            <text x="460" y="188" font-size="9" fill="#6B7280">2029</text>
+            <text x="660" y="188" font-size="9" fill="#6B7280">2030</text>
+            <text x="860" y="188" font-size="9" fill="#6B7280">2031</text>
+            <text x="1060" y="188" font-size="9" fill="#6B7280">2032F</text>
+
+            <!-- Bull (green) -->
+            <path d="M 60 168 L 260 150 L 460 110 L 660 60 L 860 38 L 1060 24" stroke="#00A88B" stroke-width="2" fill="none"></path>
+            <text x="1060" y="20" text-anchor="end" font-size="10" font-weight="700" fill="#00A88B">5.0 GW · 強気</text>
+            <!-- Base (blue) -->
+            <path d="M 60 169 L 260 162 L 460 138 L 660 100 L 860 78 L 1060 62" stroke="#1E6FFF" stroke-width="2.5" fill="none"></path>
+            <text x="1060" y="58" text-anchor="end" font-size="10" font-weight="700" fill="#1E6FFF">3.3 GW · ベース</text>
+            <!-- Bear (amber dashed) -->
+            <path d="M 60 169 L 260 167 L 460 158 L 660 140 L 860 122 L 1060 108" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"></path>
+            <text x="1060" y="104" text-anchor="end" font-size="10" font-weight="700" fill="#D97706">1.2 GW · 弱気</text>
+
+            <line x1="60" y1="30" x2="60" y2="170" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="2,2" />
+            <text x="66" y="40" font-size="9" fill="#6B7280">2027年：認定証発行、稼働容量 ~0 GW</text>
+          </g>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: DOE GEA-5 TIMELINE, NGCP TDP, KIRA SCENARIO MODEL · KIRA RESEARCH 2026</div>
+    </div>
+
+    <div class="scenario-grid">
+      <div class="scenario-card bull">
+        <div class="sc-name">強気 · 送電線が先行</div>
+        <div class="sc-val">~5.0 GW</div>
+        <div class="sc-body">CREZと島間連系が予定通り完成。GEA-5と第2トランシェが接続。洋上風力が<strong>2032年までに5 GW稼働</strong>[Kira estimates]。</div>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-name">ベース · 送電線が並走</div>
+        <div class="sc-val">~3.3 GW</div>
+        <div class="sc-body">GEA-5の3,300 MWが2028〜2030年に引渡し[DOE 2026]。基幹ゾーンが接続。後続トランシェは遅延。<strong>最も蓋然性の高い経路</strong>[Kira estimates]。</div>
+      </div>
+      <div class="scenario-card bear">
+        <div class="sc-name">弱気 · 送電線が遅延</div>
+        <div class="sc-val">~1.2 GW</div>
+        <div class="sc-body">SIS積滞と港湾遅延が引渡しを右にずらし、出力抑制リスクが上昇。2032年までに最優位ゾーンのみが接続[Kira estimates]。</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 — STRATEGIC IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Strategic implications</div>
+      <div class="page-section-counter">020 / 021</div>
+    </div>
+    <h1 class="page-h1">市場参加者への5つの行動指針</h1>
+    <p class="page-subhead">機会は大きく政策は確定しています。今や優位性は、系統制約を回避した順序付けから生まれます。<strong>以下の各指針は、容量を追いかけるのではなく希少性を取りに行く方法です。</strong></p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">ライセンスではなくキュー上位を取得する</div>
+        <div class="body-text">系統接続契約が希少資産です。未加工のサービス契約よりも、既に取得済みの案件や変電所に近接したサイトを対象とすべきです[NGCP 2024]。</div>
+        <div class="anchor"><span class="num-anchor">1.65 GW</span> 早期確保が可能であることを実証</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">競合より先に港湾ポジションを確保する</div>
+        <div class="body-text">ステージング・組立容量が建設を規定します。PambuhanまたはPulupandanの早期ポジション、あるいはO&amp;M拠点が構造的な優位性となります[GWEC 2026]。</div>
+        <div class="anchor"><span class="num-anchor">USD 3–4 bn</span> の設備投資には稼働港が不可欠</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">GEA-5下限で審査し、遅延をヘッジする</div>
+        <div class="body-text">PPAは約<strong>PHP 10.4/kWh</strong>の留保価格帯[ERC 2026]を基準に審査しつつ、スケジュール遅延と為替をモデルに組み込む。ファースト・オブ・ア・カインドのリスクは実在します。</div>
+        <div class="anchor"><span class="num-anchor">2028–30</span> 引渡し、2027年ではない</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">地場層のためにパートナーを組む</div>
+        <div class="body-text">外資出資は制約なしですが、系統・許認可・港湾アクセスは地場依存です。CIP-ACENモデルが雛形 — 資本を市場アクセスと組み合わせる[ACEN 2025]。</div>
+        <div class="anchor"><span class="num-anchor">25%</span> の地場出資はアクセス料、単なる資本ではない</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">出力抑制ルールブックの動向を注視する</div>
+        <div class="body-text">系統全体の出力抑制枠組みはまだ存在しません[Chambers 2025]。最初のバージョンはすべての変動性RE資産の価格を再設定します — 設計段階から早期に関与すべきです。</div>
+        <div class="anchor"><span class="num-anchor">~30%</span> の近期プロジェクトはSIS未取得</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>PHILIPPINES RENEWABLE ENERGY 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Methodology &amp; Sources</div>
+      <div class="page-section-counter">021 / 021</div>
+    </div>
+    <h1 class="page-h1">調査手法と出典</h1>
+    <p class="page-subhead">本分析は2つのエビデンス・ストリームを三角測量しています。名称付き出典タグを持つ数値（例：[NGCP 2025]、[DOE 2026]）はその出典に基づくものであり、完全な引用を下記に示します。[Kira estimates] を持つ数値は、KIRAアナリストがサービス契約登録簿、入札文書、送電計画、開発事業者開示を組み合わせて導出したものです。定量的主張のうち約<strong>25%</strong>はKIRA導出、約75%は外部引用です。</p>
+
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">出典索引</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.6;">
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[1]</span>DOE 2024 — Department of Energy, Offshore Wind Energy Service Contract Register, Aug 2024 (92 OWESCs, 66 GW).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[2]</span>DOE 2025 — Department of Energy, RE Service Contract &amp; Policy Update, Feb 2025 (154 GW contracted; 100% foreign ownership; RPS 2.52%).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[3]</span>DOE 2026 — Department of Energy, GEA-5 Notice of Auction &amp; GEAP Pipeline, 2026 (3,300 MW OSW; 25 GW 2027–2035).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[4]</span>DOE PDP 2024 — Department of Energy, Power Development Plan, 2024 (peak demand 16.6→68.5 GW; 5.2% CAGR).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[5]</span>PEP 2025 — Philippine Energy Plan, RE targets (35% by 2030, 50% by 2040).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[6]</span>NGCP 2024 — National Grid Corporation of the Philippines, Committed Connection Capacity, Oct 2024 (17,249 MW; 53% RES).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[7]</span>NGCP 2025 — NGCP, Transmission Development Plan 2025–50 (PHP 485.2 bn; 23,325 MVA; ~30% projects lack SIS).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[8]</span>ERC 2026 — Energy Regulatory Commission, GEAR Price Resolution No. 05, Series of 2026 (~PHP 10.39/kWh).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[9]</span>GlobalData 2026 — GlobalData, Philippines Renewable Capacity Forecast (7.1→30 GW; coal 13.0→15.4 GW).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[10]</span>pv magazine 2026 — pv magazine, Philippines Solar Additions, Apr 2026 (3.6 GW solar; +899 MW).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[11]</span>GWEC 2026 — Global Wind Energy Council, Philippines OSW Analysis (USD 3–4 bn/GW; 17,500 job-yrs/GW; LCOE trendline).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[12]</span>World Bank 2024 — World Bank, Offshore Wind Roadmap for the Philippines (anchor zones; 3.5 GW).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[13]</span>CIP 2025 / ACEN 2025 — CIP &amp; ACEN project releases, May 2025 (San Miguel Bay 1 GW; USD 3 bn; 25% stake).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[14]</span>Offshore Wind 2026 — OffshoreWind.biz, Grid Connection Report, Feb 2026 (1.65 GW connections).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[15]</span>ICSC 2026 — Institute for Climate and Sustainable Cities, Power Outlook 2026 (reserve margins; Malampaya 2027).</div>
+        <div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">[16]</span>CleanTechnica 2026 / Chambers 2025 — OSW zones output (~11 TWh); RE practice guide (no curtailment framework).</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>© 2026 KIRA RESEARCH · CONFIDENTIAL · 数値には出典タグが付与されています。推計値はアナリスト導出であり、将来の結果を保証するものではありません。</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
