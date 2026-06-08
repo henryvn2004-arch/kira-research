@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 필리핀 부동산 2026년 전망</title>
+<meta name="description" content="필리핀 부동산은 2026년 두 가지 방향으로 분열됩니다: BPO·GCC 주도의 CBD 오피스 회복이 마카티와 BGC를 임대인 우위 시장으로 전환하는 반면, 메트로 마닐라 미분양 콘도미니엄은 약 79,200세대에 달합니다. 해외 수요가 아닌 국내 실수요와 4.5% 기준금리가 시장의 속도를 결정합니다.">
+<meta property="og:title" content="KIRA Research — 필리핀 부동산 2026년 전망">
+<meta property="og:description" content="BPO 주도 CBD 공실률 회복과 콘도미니엄 공급과잉의 교차점 — KIRA Research 분석.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1A66F0; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans KR', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "출처 범례 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.md-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.md-narrative h3 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 7px; margin-top: 14px; }
+.md-narrative h3:first-child { margin-top: 0; }
+.md-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.md-narrative p strong { color: var(--text); font-weight: 600; }
+.md-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.fo-chart-wrap { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.fo-scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.fo-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.fo-card.base { border-top: 3px solid var(--primary); }
+.fo-card.bull { border-top: 3px solid var(--green); }
+.fo-card.bear { border-top: 3px solid var(--amber); }
+.fo-card .sc-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.fo-card.base .sc-name { color: var(--primary); }
+.fo-card.bull .sc-name { color: var(--green); }
+.fo-card.bear .sc-name { color: var(--amber); }
+.fo-card .sc-val { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.fo-card .sc-val .unit { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-left: 3px; }
+.fo-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.fo-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.me-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; flex: 1; min-height: 0; }
+.me-method h3, .me-sources h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.me-method p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.me-method p strong { color: var(--text); font-weight: 600; }
+.me-disclaimer { margin-top: 12px; font-size: 9.5px; line-height: 1.5; color: var(--muted); font-style: italic; }
+.me-sources ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+.me-sources li { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; line-height: 1.45; color: var(--text-mid); margin-bottom: 7px; break-inside: avoid; }
+.me-sources li strong { color: var(--text); font-weight: 700; }
+
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 780px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+.cover-logo { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.cover-logo .accent { color: var(--primary); }
+
+.mi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.mi-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.mi-item { margin-bottom: 14px; }
+.mi-item .lbl { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.mi-item .dsc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: grid; grid-template-columns: 34px 1fr 44px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; }
+.toc-row .ttitle { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); }
+.toc-row .ttitle .tsub { display: block; font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.toc-row .tpage { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 001 — COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">부동산 · 필리핀 · 2026년 전망</div>
+      <h1>필리핀 부동산의 <span class="accent">분열</span> — BPO가 CBD를 끌어올리는 동안 콘도 공급과잉은 지속된다</h1>
+      <p class="cover-subtitle">아웃소싱 및 글로벌 역량 센터가 마카티와 BGC를 임대인 우위 시장으로 전환하는 반면, 메트로 마닐라 미분양 콘도미니엄은 약 79,200세대에 달합니다. 해외 수요가 아닌 국내 실수요 중심의 적정가격대 수요와 기준금리가 2026년 시장의 속도를 결정합니다.</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">국가</div><div class="val">필리핀 <span class="accent">·</span> PH</div></div>
+        <div class="cover-meta-item"><div class="label">산업</div><div class="val">부동산</div></div>
+        <div class="cover-meta-item"><div class="label">분석 기간</div><div class="val">2023 &#8211; 2028F</div></div>
+        <div class="cover-meta-item"><div class="label">에디션</div><div class="val">2026 <span class="accent">전망</span></div></div>
+      </div>
+      <div style="margin-top:24px;" class="cover-confidential"><strong>기밀</strong> · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 002 — METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · 방법론</div>
+      <div class="page-section-counter">002 / 017</div>
+    </div>
+    <h1 class="page-h1">본 보고서의 분석 방법</h1>
+    <p class="page-subhead">본 전망은 두 가지 근거 자료를 기반으로 합니다: <strong>1차 입력 자료</strong> &#8212; 상장 디벨로퍼 공시, 중개 법인의 흡수율·공실 계열 데이터, 당사 애널리스트 분석 &#8212; 와 <strong>2차 준거 자료</strong> &#8212; 중앙은행, IT-BPM 산업협회, 다자기구 거시 데이터. 모든 정량적 수치에는 출처 태그가 명시됩니다.</p>
+    <div class="mi-body">
+      <div class="mi-col">
+        <h3>1차 입력 자료</h3>
+        <div class="mi-item"><div class="lbl">중개 법인 시장 계열 데이터</div><div class="dsc">메트로 마닐라 CBD별 분기 오피스 공실률, 순 흡수면적, 임대 파이프라인 및 콘도미니엄 흡수율 데이터 &#8212; 실질 수요를 파악하기 위해 서브마켓 단위로 조정되었으며, 출시 집계가 아닌 실수요 기준으로 산출됩니다.</div></div>
+        <div class="mi-item"><div class="lbl">상장 디벨로퍼 공시</div><div class="dsc">PSE 상장 디벨로퍼의 예약 판매, 출시 파이프라인 및 주거 상품 구성 &#8212; 공급과잉 속 적정가격대·핵심 주택으로의 전환을 포함한 집계 이면의 사업 현황을 파악합니다.</div></div>
+        <div class="mi-item"><div class="lbl">당사 애널리스트 분석</div><div class="dsc">다수의 공시 자료를 교차 검증하는 KIRA 자체 삼각분석 &#8212; 미분양 재고, 잔여 재고 연수, 등급별·서브마켓별 공실률. [Kira estimates]로 태깅됩니다.</div></div>
+      </div>
+      <div class="mi-col">
+        <h3>2차 준거 자료</h3>
+        <div class="mi-item"><div class="lbl">거시 및 정책 당국</div><div class="dsc">중앙은행 기준금리 경로 및 IMF 성장·물가 전망, 그리고 메트로 마닐라 수요를 재편한 역외 게임 금지 조치 &#8212; 각 출처명 및 해당 시점과 함께 인용됩니다.</div></div>
+        <div class="mi-item"><div class="lbl">산업 및 부문 데이터셋</div><div class="dsc">IT-BPM 산업협회의 매출·인력 로드맵, 프롭테크 시장 데이터셋 &#8212; 중개 법인 흡수 데이터 및 디벨로퍼 공시와 교차 검증하여 출처 및 기간과 함께 인용됩니다.</div></div>
+        <div class="mi-item"><div class="lbl">삼각분석 추정치</div><div class="dsc">단일 출처로 수치를 확보하기 어려운 경우 &#8212; 예: CBD별 공실 경로, 2028년 흡수 시나리오 &#8212; 2&#8211;3개 자료를 결합하고 방법론을 공개합니다. [Kira estimates]로 태깅됩니다.</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 003 — TOC ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · 목차</div>
+      <div class="page-section-counter">003 / 017</div>
+    </div>
+    <h1 class="page-h1">목차</h1>
+    <p class="page-subhead">네 가지 주제: 거시·정책 여건, BPO·GCC 주도의 오피스 회복, 메트로 마닐라 콘도미니엄 공급과잉, 그리고 이 사이클을 헤쳐나가는 디벨로퍼들 &#8212; 그리고 2028년까지의 시나리오 분석.</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">경영진 요약<span class="tsub">2026년의 분열</span></span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">전략적 시사점<span class="tsub">시장 참여자를 위한 5가지 동인</span></span><span class="tpage">005</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">거시 및 정책 여건<span class="tsub">성장, 금리, 해외송금</span></span><span class="tpage">007</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">오피스 및 BPO 회복<span class="tsub">CBD 공실률, 임대인 우위로 전환</span></span><span class="tpage">009</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">콘도 규모 및 추세<span class="tsub">재고와 흡수율</span></span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">주거 공급과잉<span class="tsub">공급 과잉의 집중 지역</span></span><span class="tpage">012</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">경쟁 구조<span class="tsub">사이클을 관리하는 사업자</span></span><span class="tpage">014</span></div>
+      <div class="toc-row"><span class="tnum">10</span><span class="ttitle">유통 채널의 기술<span class="tsub">프롭테크와 AI의 활용</span></span><span class="tpage">015</span></div>
+      <div class="toc-row"><span class="tnum">11</span><span class="ttitle">2028년 전망 및 시나리오<span class="tsub">기본, 가속, 제약 시나리오</span></span><span class="tpage">016</span></div>
+      <div class="toc-row"><span class="tnum">12</span><span class="ttitle">방법론 및 출처<span class="tsub">태그 체계와 출처 범례</span></span><span class="tpage">017</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 004 — EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · 경영진 요약</div>
+      <div class="page-section-counter">004 / 017</div>
+    </div>
+    <h1 class="page-h1">필리핀 부동산 &#8212; 두 속도로 나뉜 2026년</h1>
+    <p class="page-subhead"><strong>BPO·GCC 주도의 오피스 회복</strong>이 핵심 CBD를 타이트하게 조이는 반면, <strong>메트로 마닐라 미분양 콘도미니엄 약 79,200세대</strong>로 인해 주거 공실률은 사상 최고치를 유지하고 있습니다. 시장의 두 축은 정반대 방향으로 움직이고 있습니다.</p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">MM 오피스 공실률 2024</div>
+        <div class="num">19.8<span class="unit">%</span></div>
+        <div class="change">2026년 ~19%로 완화 추세</div>
+        <div class="source-tag sec">Colliers 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">마카티 CBD 공실률</div>
+        <div class="num">~7.2<span class="unit">%</span></div>
+        <div class="change">2026년 ~5.5%로 하락</div>
+        <div class="source-tag sec">Colliers 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">MM 미분양 콘도</div>
+        <div class="num">79.2<span class="unit">k units</span></div>
+        <div class="change down">RIL 6.8년 Q1 2026</div>
+        <div class="source-tag sec">LPC 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">IT-BPM 매출 2025</div>
+        <div class="num">~40<span class="unit">USD bn</span></div>
+        <div class="change">2026년 ~$42 bn 목표</div>
+        <div class="source-tag sec">IBPAP 2026</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>회복 국면</h3>
+        <p>메트로 마닐라 오피스 시장은 2025년 예상을 웃도는 성과를 기록했습니다. 3분기 순 흡수면적이 <strong>215,000 sqm</strong>에 달하며 IT-BPM 부문이 핵심 수요 동인으로 자리잡았습니다[Colliers 2026]. 회복을 선도하는 것은 핵심 CBD입니다 &#8212; 마카티 CBD 공실률은 2026년 <strong>~7.2%에서 ~5.5%</strong>로 하락하고 2028년에는 2.6%까지 낮아질 전망이며, BGC는 2024년 초부터 한 자릿수 공실률을 유지하고 있습니다[Colliers 2026]. 2028년 IT-BPM 로드맵은 <strong>USD 59 bn</strong> 규모 산업과 250만 명 인력을 목표로 합니다[IBPAP 2026].</p>
+        <h3>공급과잉 국면</h3>
+        <p>주거 시장은 정반대 양상을 보입니다. 메트로 마닐라 2차 시장 콘도미니엄 공실률은 2025년 말 사상 최고치인 <strong>~24.7%</strong>로 마감되었으며, 2026년에는 <strong>25.6%</strong> 근방에서 정점을 찍을 것으로 전망됩니다[Colliers 2026]. 역외 게임 이탈과 팬데믹 시기 준공 물량이 누적된 결과입니다. 다만 흡수율은 개선되고 있습니다: 잔여 재고 연수(RIL)는 최고점인 13.4년에서 <strong>Q1 2026 기준 6.8년</strong>으로 축소되었으며[LPC 2026], 적정가격대 물량이 주도하고 있습니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">두 속도의 시장 &#8212; 오피스 vs 콘도 공실률</div>
+            <div class="chart-subtitle">메트로 마닐라 · % 공실률 · 2024&#8211;2026F</div>
+          </div>
+          <div class="chart-unit">% VACANCY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="195"/>
+            <line class="axis-line" x1="55" y1="195" x2="460" y2="195"/>
+            <line class="grid-line" x1="55" y1="153" x2="460" y2="153"/>
+            <line class="grid-line" x1="55" y1="111" x2="460" y2="111"/>
+            <line class="grid-line" x1="55" y1="69" x2="460" y2="69"/>
+            <text class="axis-text" x="49" y="199" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="157" text-anchor="end">10</text>
+            <text class="axis-text" x="49" y="115" text-anchor="end">20</text>
+            <text class="axis-text" x="49" y="73" text-anchor="end">30</text>
+            <rect class="bar-primary" x="90" y="112" width="46" height="83"/>
+            <text class="label-data" x="113" y="106" text-anchor="middle">19.8</text>
+            <text class="axis-text" x="113" y="211" text-anchor="middle">'24 오피스</text>
+            <rect class="bar-primary" x="165" y="115" width="46" height="80" opacity="0.85"/>
+            <text class="label-data" x="188" y="109" text-anchor="middle">~19</text>
+            <text class="axis-text" x="188" y="211" text-anchor="middle">'26 오피스</text>
+            <rect class="bar-tertiary" x="285" y="91" width="46" height="104"/>
+            <text class="label-data" x="308" y="85" text-anchor="middle">24.7</text>
+            <text class="axis-text" x="308" y="211" text-anchor="middle">'25 콘도</text>
+            <rect class="bar-tertiary" x="360" y="87" width="46" height="108" opacity="0.85"/>
+            <text class="label-data" x="383" y="81" text-anchor="middle">25.6</text>
+            <text class="axis-text" x="383" y="211" text-anchor="middle">'26 콘도</text>
+            <rect class="bar-primary" x="55" y="226" width="10" height="10"/><text class="label-small" x="69" y="235">오피스 공실률</text>
+            <rect x="200" y="226" width="10" height="10" fill="#D97706"/><text class="label-small" x="214" y="235">콘도 공실률</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: COLLIERS, LPC, KIRA 삼각분석 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Colliers 2026 = Colliers Philippine property market report &amp; 2026 outlook (office vacancy, net take-up, CBD paths, condo vacancy) &#183; IBPAP 2026 = IT &amp; Business Process Association of the Philippines roadmap &amp; 2025 results &#183; LPC 2026 = Leechiu Property Consultants Metro Manila condominium inventory &amp; RIL data 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 005 — EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · 경영진 요약</div>
+      <div class="page-section-counter">005 / 017</div>
+    </div>
+    <h1 class="page-h1">시장 참여자를 위한 5가지 전략적 시사점</h1>
+    <p class="page-subhead">2028년까지 필리핀 부동산 회복의 수혜를 결정짓는 5가지 동인. 각각 공개 데이터와 KIRA 분석에 근거합니다.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · OFFICE</div>
+        <div class="title">핵심 CBD, 임대인 우위 시장으로 전환</div>
+        <div class="body-text">마카티 CBD 공실률은 2026년 <strong>~7.2%에서 ~5.5%</strong>로 하락하고 BGC 임대료는 공급 감소와 함께 상승할 전망입니다[Colliers 2026]. 2026&#8211;28년 신규 오피스 공급은 <strong>~350,000 sqm</strong>에 불과해[Colliers 2026] &#8212; 핵심 임대인부터 순서대로 가격 결정력이 회복됩니다.</div>
+        <div class="anchor">기준값: <span class="num-anchor">~5.5%</span> 마카티 2026</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · DEMAND</div>
+        <div class="title">수요는 POGO가 아닌 BPO·GCC가 주도</div>
+        <div class="body-text">임대 파이프라인은 <strong>227,000 sqm</strong>으로 IT-BPM과 전통 업종이 거의 균등하게 분할됩니다[Colliers 2026]. IT-BPM 내에서는 글로벌 역량 센터가 <strong>~39%의 공간</strong>을 점유하며 자체 운영 모델이 확대되고 있습니다[Outsource Accelerator 2026] &#8212; 더 높은 부가가치를 창출하는 장기 임차인입니다.</div>
+        <div class="anchor">기준값: <span class="num-anchor">~39%</span> GCC 점유율</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · OVERSUPPLY</div>
+        <div class="title">콘도 공급과잉, 서서히 해소 중</div>
+        <div class="body-text">미분양 재고 <strong>~79,200세대</strong>는 여전히 수년간의 흡수 기간을 시사하며, 베이 에어리어는 POGO 이탈 이후 <strong>~60% 공실</strong>에 달합니다[Colliers 2026]. 그러나 RIL은 13.4년에서 Q1 2026 <strong>6.8년</strong>으로 축소되었습니다[LPC 2026] &#8212; 붕괴가 아닌 재고 소진 과정입니다.</div>
+        <div class="anchor">기준값: <span class="num-anchor">79.2k</span> 미분양</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · MIX</div>
+        <div class="title">반등을 이끄는 것은 고급이 아닌 적정가격대</div>
+        <div class="body-text">Q1 2026 순 선분양 흡수율이 전년 대비 <strong>765% 급등</strong>했으나, <strong>74%는 PHP 1.8&#8211;3.6m 경제·적정가격대</strong> 물량에서 발생했습니다[LPC 2026]. 고급 수요는 냉각되었고, 디벨로퍼들은 핵심 주택 비중을 늘리는 방향으로 포트폴리오를 재편하고 있습니다[Ayala Land 2026].</div>
+        <div class="anchor">기준값: <span class="num-anchor">74%</span> 적정가격대</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · POLICY</div>
+        <div class="title">금리 인하는 보조 수단, 구원투수는 아니다</div>
+        <div class="body-text">기준금리는 5차례 인하 끝에 3년래 최저인 <strong>4.5%</strong>로 낮아졌으며[BSP 2026], 주택담보대출에 우호적 영향을 줍니다. 다만 IMF는 2026년 성장률 전망을 <strong>4&#8211;5%</strong>로 하향 조정했습니다[IMF 2026]. 저금리는 흡수를 지원하지만, POGO 이전의 수요 풀을 복원하지는 못합니다.</div>
+        <div class="anchor">기준값: <span class="num-anchor">4.5%</span> 기준금리</div>
+      </div>
+    </div>
+    <div class="source-key">Ayala Land 2026 = Ayala Land Inc. 2025 reservation-sales &amp; launch disclosure &#183; BSP 2026 = Bangko Sentral ng Pilipinas policy-rate decisions 2025&#8211;26 &#183; Colliers 2026 = Colliers Philippine property market report &amp; 2026 outlook &#183; IMF 2026 = IMF Philippines Article IV growth &amp; inflation outlook &#183; LPC 2026 = Leechiu Property Consultants condominium inventory &amp; preselling data 2026 &#183; Outsource Accelerator 2026 = Outsource Accelerator GCC office-share reporting 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 006 — DIVIDER: MACRO & POLICY ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">성장, 금리 &amp; <span class="accent">해외송금</span></h1>
+    <div class="divider-thesis">인플레이션이 안정된 ~5% 성장 경제는 중앙은행에 완화 여력을 부여합니다. 2026년 부동산을 지지하는 레버는 <strong>3년래 최저 기준금리, 견조한 해외송금, 그리고 구조적으로 확장하는 서비스 수출 기반</strong>입니다 &#8212; 수요를 지지하는 요인이지, 수요를 켜는 스위치가 아닙니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1 성장 &amp; 물가</div>
+      <div class="toc-pill">4.2 기준금리 경로</div>
+      <div class="toc-pill">4.3 서비스 수출</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 007 — MACRO & POLICY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · 거시 및 정책</div>
+      <div class="page-section-counter">007 / 017</div>
+    </div>
+    <h1 class="page-h1">안정적 성장과 완화 사이클이 회복의 기반을 형성한다</h1>
+    <p class="page-subhead">거시 여건은 지지적이나 과열 상태는 아닙니다. <strong>완만한 성장과 안정된 물가</strong>는 중앙은행이 기준금리를 3년래 최저로 인하할 공간을 주며, 주택담보대출 비용을 낮춥니다 &#8212; 구조적으로 성장하는 서비스 수출 기반은 오피스 수요를 견고하게 유지합니다.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>성장 및 물가</h3>
+        <p>필리핀 경제는 2025년 약 <strong>5.1% 성장</strong>할 것으로 전망되며, IMF는 대외 역풍을 감안해 2026년 경로를 <strong>4&#8211;5% 범위</strong>로 하향 조정했습니다[IMF 2026]. 물가는 안정세를 유지했습니다 &#8212; 2025년 <strong>약 1.7%</strong>, 기저효과 소멸로 2026년에는 ~2.8%로 상승할 전망입니다[IMF 2026] &#8212; 정책 당국에 수요 지지 여력을 부여합니다.</p>
+        <h3>완화 사이클</h3>
+        <p>중앙은행은 5차례 연속 25bp 인하를 통해 기준금리를 <strong>4.5%</strong>로 낮췄으며, 완화 사이클이 마무리 단계에 접어들었음을 시사했습니다[BSP 2026]. 정책금리 인하는 점진적으로 주택담보대출 비용에 반영됩니다 &#8212; 대출 거절률이 가장 높았던 금리 민감 적정가격대 및 중간 시장 콘도미니엄 계층에 우호적 영향을 줍니다.</p>
+        <h3>서비스 수출</h3>
+        <p>구조적 지지 기반은 IT-BPM 및 GCC입니다. 산업 매출은 190만 명의 인력과 함께 <strong>2025년 ~USD 40 bn</strong>에 달했으며, 2028년 목표는 <strong>USD 59 bn</strong>과 250만 명 인력입니다[IBPAP 2026]. 이 고부가가치 서비스 일자리 파이프라인은 핵심 오피스 수요의 하방 지지선이자, 간접적으로는 주거 수요의 기반이기도 합니다.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">금리 완화 속에 성장세 유지</div>
+            <div class="chart-subtitle">GDP 성장률 % (막대) · 기준금리 % (선) · 2023&#8211;2026F</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">2.5</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">5.0</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">7.5</text>
+            <rect class="bar-primary" x="90" y="106" width="42" height="99"/>
+            <text class="label-data" x="111" y="100" text-anchor="middle">5.5</text>
+            <text class="axis-text" x="111" y="221" text-anchor="middle">2023</text>
+            <rect class="bar-primary" x="200" y="106" width="42" height="99"/>
+            <text class="label-data" x="221" y="100" text-anchor="middle">5.5</text>
+            <text class="axis-text" x="221" y="221" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="310" y="113" width="42" height="92"/>
+            <text class="label-data" x="331" y="107" text-anchor="middle">5.1</text>
+            <text class="axis-text" x="331" y="221" text-anchor="middle">2025</text>
+            <rect class="bar-tertiary" x="420" y="124" width="42" height="81"/>
+            <text class="label-data" x="441" y="118" text-anchor="middle">~4.5</text>
+            <text class="axis-text" x="441" y="221" text-anchor="middle">2026F</text>
+            <polyline points="111,89 221,89 331,99 441,124" fill="none" stroke="#D97706" stroke-width="2"/>
+            <circle cx="111" cy="89" r="4" fill="#D97706"/><text class="label-small" x="111" y="84" text-anchor="middle" style="fill:#D97706">6.5</text>
+            <circle cx="221" cy="89" r="4" fill="#D97706"/><text class="label-small" x="221" y="84" text-anchor="middle" style="fill:#D97706">6.5</text>
+            <circle cx="331" cy="99" r="4" fill="#D97706"/><text class="label-small" x="331" y="94" text-anchor="middle" style="fill:#D97706">5.75</text>
+            <circle cx="441" cy="124" r="4" fill="#D97706"/><text class="label-small" x="441" y="137" text-anchor="middle" style="fill:#D97706">4.5</text>
+            <rect class="bar-primary" x="50" y="232" width="10" height="10"/><text class="label-small" x="64" y="241">GDP 성장률 %</text>
+            <rect x="200" y="232" width="10" height="10" fill="#D97706"/><text class="label-small" x="214" y="241">기준금리 % (연말)</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IMF, BSP, IBPAP, KIRA 분석 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">BSP 2026 = Bangko Sentral ng Pilipinas policy-rate path (4.5%, five 25bp cuts) 2025&#8211;26 &#183; IBPAP 2026 = IT &amp; Business Process Association of the Philippines revenue &amp; headcount roadmap (USD 40 bn 2025, USD 59 bn 2028 target) &#183; IMF 2026 = IMF Philippines Article IV GDP &amp; inflation outlook &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 008 — DIVIDER: OFFICE & BPO ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">BPO 주도의 <span class="accent">전환</span></h1>
+    <div class="divider-thesis">POGO 이탈로 인한 공실 급등 이후, 오피스 시장은 아웃소싱과 자체 글로벌 역량 센터의 부상을 동력으로 회복 중입니다. <strong>핵심 CBD &#8212; 마카티와 BGC &#8212; 가 가장 먼저 타이트해지며</strong>, 신규 공급 부족으로 2028년까지 임대인에게 가격 결정력이 돌아옵니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1 공실률 회복</div>
+      <div class="toc-pill">5.2 BPO &amp; GCC 수요</div>
+      <div class="toc-pill">5.3 공급 &amp; 임대료</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 009 — OFFICE & BPO RECOVERY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · 오피스 &amp; BPO</div>
+      <div class="page-section-counter">009 / 017</div>
+    </div>
+    <h1 class="page-h1">아웃소싱이 핵심 CBD 공실률을 정점에서 끌어내린다</h1>
+    <p class="page-subhead">오피스 회복세는 실재하나 불균등합니다. <strong>핵심 CBD는 타이트해지는 반면 2차 시장은 여전히 인센티브를 제공하고 있으며</strong> &#8212; 수요는 IT-BPM 임차인과 더 높은 부가가치 공간을 차지하는 글로벌 역량 센터의 비중 확대가 주도합니다.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>공실률 전환점</h3>
+        <p>메트로 마닐라 오피스 공실률은 역외 게임 이탈 이후 <strong>2024년 ~19.8%</strong>로 정점을 찍었으며, Colliers는 2026년 말 공실률을 <strong>~19%, 순 흡수면적 ~400,000 sqm</strong>으로 전망합니다[Colliers 2026]. 회복은 집중적으로 나타납니다: 마카티 CBD는 2026년 <strong>~7.2%에서 ~5.5%</strong>로, 2027년 4%, 2028년 2.6%까지 하락해 임대인 우위 시장이 될 전망입니다[Colliers 2026].</p>
+        <h3>BPO &amp; GCC 수요</h3>
+        <p>활성 임대 파이프라인은 <strong>227,000 sqm</strong>으로 IT-BPM(114,000 sqm)과 전통 임차인(113,000 sqm)이 거의 균등하게 분할됩니다[Colliers 2026]. IT-BPM 내에서 제3자 아웃소서가 61%를 선도하지만, <strong>글로벌 역량 센터는 이제 ~39%를 점유</strong>합니다[Outsource Accelerator 2026] &#8212; 장기 임대 계약을 체결하고 고사양 공간을 사용하는 자체 운영 센터입니다.</p>
+        <h3>공급 및 임대료</h3>
+        <p>2026&#8211;28년 신규 오피스 공급은 약 <strong>350,000 sqm</strong>에 그쳐 팬데믹 이전 공급량을 크게 밑돕니다[Colliers 2026]. 공급이 제한되고 핵심 수요가 강화되면서, <strong>BGC 임대료는 2026년 상승이 예상</strong>되는 반면, 퀘존시티·오르티가스·세부는 여전히 유연한 조건을 제시하고 있습니다[Colliers 2026].</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">CBD 오피스 공실률 &#8212; 핵심 지역이 가장 빠르게 타이트해진다</div>
+            <div class="chart-subtitle">메트로 마닐라 서브마켓 · % 공실률 · 2024&#8211;25</div>
+          </div>
+          <div class="chart-unit">% VACANCY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="135" y1="15" x2="135" y2="210"/>
+            <rect class="bar-secondary" x="135" y="26" width="60" height="26"/>
+            <text class="label-data" x="203" y="44" style="fill:var(--green)">~8%</text>
+            <text class="label-small" x="131" y="43" text-anchor="end">마카티 CBD</text>
+            <rect class="bar-secondary" x="135" y="62" width="68" height="26" opacity="0.85"/>
+            <text class="label-data" x="211" y="80" style="fill:var(--green)">&lt;10%</text>
+            <text class="label-small" x="131" y="79" text-anchor="end">BGC</text>
+            <rect class="bar-tertiary" x="135" y="98" width="100" height="26"/>
+            <text class="label-data" x="243" y="116" style="fill:var(--amber)">~11.9%</text>
+            <text class="label-small" x="131" y="115" text-anchor="end">오르티가스</text>
+            <rect class="bar-tertiary" x="135" y="134" width="133" height="26" opacity="0.85"/>
+            <text class="label-data" x="276" y="152" style="fill:var(--amber)">~15.9%</text>
+            <text class="label-small" x="131" y="151" text-anchor="end">포트 보니파시오</text>
+            <rect class="bar-tertiary" x="135" y="170" width="176" height="26" opacity="0.7"/>
+            <text class="label-data" x="319" y="188" style="fill:var(--amber)">~21.1%</text>
+            <text class="label-small" x="131" y="187" text-anchor="end">퀘존시티</text>
+            <text class="label-small" x="135" y="216">서브마켓별 공실률; 핵심 CBD가 회복 선도 [Colliers 2026]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: COLLIERS, OUTSOURCE ACCELERATOR, KIRA 종합 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Colliers 2026 = Colliers Philippine property market report &amp; 2026 outlook (vacancy by CBD, net take-up, leasing pipeline, new supply) &#183; Outsource Accelerator 2026 = Outsource Accelerator GCC office-share reporting (GCCs ~39% of IT-BPM pipeline) 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 010 — DIVIDER: SIZING & OVERSUPPLY ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">콘도 <span class="accent">공급과잉</span></h1>
+    <div class="divider-thesis">메트로 마닐라는 여전히 약 79,200세대의 미분양 콘도미니엄과 사상 최고의 2차 시장 공실률을 안고 있습니다. <strong>공급과잉은 집중화되어 있습니다 &#8212; 베이 에어리어와 팬데믹 시기의 중간 시장 고층 아파트</strong> &#8212; 반면 적정가격대 수요가 초기의 불균등한 회복을 이끌고 있습니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1 재고 &amp; 흡수율</div>
+      <div class="toc-pill">6.2 공급 과잉 집중 지역</div>
+      <div class="toc-pill">6.3 세그먼트 경제학</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 011 — CONDO SIZING & ABSORPTION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · 시장 규모</div>
+      <div class="page-section-counter">011 / 017</div>
+    </div>
+    <h1 class="page-h1">재고는 여전히 과중하나, 흡수율은 전환점에 접어들고 있다</h1>
+    <p class="page-subhead">두 신호가 엇갈립니다. <strong>미분양 재고는 여전히 크고 공실률은 상승 중</strong>이지만, <strong>잔여 재고 연수는 급격히 감소하고 있으며</strong> 선분양 수요가 돌아오고 있습니다 &#8212; 시장은 높은 기저에서 재고를 소진하는 과정에 있습니다.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>미분양 재고 압박</h3>
+        <p>메트로 마닐라는 약 <strong>79,200세대의 미분양 콘도미니엄</strong>을 보유하고 있으며, 입주 가능한 미분양 물량 약 30,000세대는 쿠바오-뉴 마닐라, 베이 에어리어, 파시그, 알라방-라스 피냐스에 집중되어 있습니다[LPC 2026]. 2차 시장 공실률은 2025년 말 사상 최고치인 <strong>~24.7%</strong>로 마감되었으며, ~13,000세대의 신규 준공과 함께 2026년 <strong>25.6%</strong> 근방에서 정점을 찍을 것으로 전망됩니다[Colliers 2026].</p>
+        <h3>흡수율 전환</h3>
+        <p>재고 소진의 흐름이 가시화되고 있습니다. 잔여 재고 연수(RIL)는 2025년 중반 13.4년 정점에서 <strong>Q1 2026 기준 6.8년</strong>으로 낮아져 6개 분기 중 최저치를 기록했습니다[LPC 2026]. 순 선분양 흡수율은 전년의 약 200세대에서 약 2,000세대로 <strong>~765% 급등</strong>했으며[LPC 2026], 금리 민감 적정가격대 계층이 주도했습니다.</p>
+        <h3>공급 자율 규제</h3>
+        <p>2026년 연간 신규 공급은 약 <strong>13,000세대</strong>로 설정되어 있습니다 &#8212; 2025년보다는 증가했으나 공급과잉을 만든 출시 정점보다는 크게 낮은 수준입니다[Colliers 2026]. 디벨로퍼들은 의도적으로 고층 아파트 파이프라인을 억제하고, 실수요가 실제로 소화되는 핵심·경제형 주택 비중을 늘리는 방향으로 재조정하고 있습니다.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">잔여 재고 연수, 정점에서 하락 중</div>
+            <div class="chart-subtitle">메트로 마닐라 콘도 · 잔여 공급 연수 · 2025&#8211;Q1 2026</div>
+          </div>
+          <div class="chart-unit">YEARS RIL</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">5</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">10</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">15</text>
+            <rect class="bar-tertiary" x="105" y="86" width="55" height="119"/>
+            <text class="label-data" x="132" y="80" text-anchor="middle">13.4</text>
+            <text class="axis-text" x="132" y="221" text-anchor="middle">Q2 2025</text>
+            <rect class="bar-tertiary" x="245" y="134" width="55" height="71" opacity="0.85"/>
+            <text class="label-data" x="272" y="128" text-anchor="middle">7.9</text>
+            <text class="axis-text" x="272" y="221" text-anchor="middle">Q4 2025</text>
+            <rect class="bar-primary" x="385" y="144" width="55" height="61"/>
+            <text class="label-data" x="412" y="138" text-anchor="middle">6.8</text>
+            <text class="axis-text" x="412" y="221" text-anchor="middle">Q1 2026</text>
+            <text class="label-small" x="105" y="240">낮을수록 긍정적; Q1 2026 하락은 적정가격대 수요가 견인 [LPC 2026]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: LEECHIU, COLLIERS, KIRA 삼각분석 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Colliers 2026 = Colliers Philippine property market report &amp; 2026 outlook (condo vacancy, new supply ~13k units) &#183; LPC 2026 = Leechiu Property Consultants Metro Manila condominium inventory, RIL (13.4&#8594;6.8 yrs) &amp; preselling take-up (+765%) data 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 012 — SEGMENT ECONOMICS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · 세그먼트 경제학</div>
+      <div class="page-section-counter">012 / 017</div>
+    </div>
+    <h1 class="page-h1">이분화된 시장: 적정가격대는 흡수되고, 베이 에어리어는 정체된다</h1>
+    <p class="page-subhead">공급과잉은 전반적이 아니라 집중적입니다. <strong>경제·적정가격대 물량이 가장 빠르게 소화되는</strong> 반면, 역외 게임 이탈로 베이 에어리어 공실률은 60%에 육박하고 임대료는 2020년 이전 수준을 크게 밑돌고 있습니다.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>적정가격대 반등</h3>
+        <p>수요가 하위 가격대로 이동했습니다. Q1 2026에는 <strong>PHP 1.8&#8211;3.6m</strong> 가격대 물량이 선분양 활동의 대부분을 견인했으며, 경제·적정가격대 세그먼트가 <strong>순 흡수율의 ~74%</strong>를 차지했습니다[LPC 2026]. 이 계층의 기반은 투자 수요가 아닌 낮아진 기준금리와 실수요이며, 회복의 핵심 동력입니다.</p>
+        <h3>베이 에어리어 재고 압박</h3>
+        <p>압력의 진원지는 POGO 노출이 집중된 베이 에어리어입니다. 해당 지역 공실률은 <strong>~60%</strong> 근방이며, 마닐라 베이 구역 임대료는 <strong>2020년 초 대비 약 52% 하락</strong>했습니다 &#8212; 스튜디오 임대료는 ~PHP 1,200에서 PHP 700/sqm 수준으로 낮아진 상태입니다[Colliers 2026]. 이는 재임차에 수년이 걸릴 국지적·구조적 재고 압박입니다.</p>
+        <h3>고급 시장 냉각</h3>
+        <p>최상위 시장은 붕괴가 아닌 연착륙입니다. 핵심 주택 수요가 회복되는 가운데 고급 수요는 2025년 내내 냉각되었습니다[Ayala Land 2026]. 디벨로퍼들은 현금 보유 고객 및 해외 거주자를 위해 마카티에 초고급 타워를 계속 출시하고 있으나, 신용 사이클이 가장 우호적으로 작동하는 적정가격대로 물량이 집중되고 있습니다.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">가격대별 수요 소화 현황</div>
+            <div class="chart-subtitle">메트로 마닐라 콘도 · Q1 2026 순 흡수율 점유율</div>
+          </div>
+          <div class="chart-unit">% TAKE-UP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="15" x2="150" y2="205"/>
+            <rect class="bar-secondary" x="150" y="30" width="220" height="34"/>
+            <text class="label-data" x="378" y="52" style="fill:var(--green)">~74%</text>
+            <text class="label-small" x="146" y="44" text-anchor="end">경제 &amp; 적정가격대</text>
+            <text class="label-small" x="146" y="56" text-anchor="end" style="font-size:8px">PHP 1.8&#8211;3.6m</text>
+            <rect class="bar-tertiary" x="150" y="82" width="70" height="34"/>
+            <text class="label-data" x="228" y="104" style="fill:var(--amber)">~18%</text>
+            <text class="label-small" x="146" y="96" text-anchor="end">중간 시장</text>
+            <text class="label-small" x="146" y="108" text-anchor="end" style="font-size:8px">PHP 3.6&#8211;7m</text>
+            <rect class="bar-primary" x="150" y="134" width="34" height="34" opacity="0.85"/>
+            <text class="label-data" x="192" y="156" style="fill:var(--primary)">~8%</text>
+            <text class="label-small" x="146" y="148" text-anchor="end">고급 &amp; 럭셔리</text>
+            <text class="label-small" x="146" y="160" text-anchor="end" style="font-size:8px">PHP 7m+</text>
+            <text class="label-small" x="150" y="194">적정가격대 선도; 투자·고급 수요 냉각 [Kira estimates from LPC]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: LEECHIU, COLLIERS, AYALA LAND, KIRA 종합 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Ayala Land 2026 = Ayala Land Inc. 2025 results (upscale cools, core housing picks up) &#183; Colliers 2026 = Colliers Philippine property market report (Bay Area ~60% vacancy, Manila Bay rents &#8722;52% vs 2020) &#183; LPC 2026 = Leechiu Property Consultants Q1 2026 preselling by price band (~74% affordable) &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 013 — DIVIDER: COMPETITIVE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">누가 <span class="accent">이 사이클을</span> 관리하는가</h1>
+    <div class="divider-thesis">소수의 상장 복합 디벨로퍼가 메트로 마닐라 부동산을 지배합니다. 이들의 차별화 요소는 하나입니다: <strong>콘도미니엄 재고를 완만한 흡수 사이클 동안 버텨내면서 오피스와 적정가격대 주택에 집중 투자할 수 있는 통합 토지뱅크와 재무구조의 강건함</strong>입니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1 시장 구조</div>
+      <div class="toc-pill">7.2 주요 디벨로퍼</div>
+      <div class="toc-pill">7.3 전략적 분화</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 014 — COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · 경쟁 구조</div>
+      <div class="page-section-counter">014 / 017</div>
+    </div>
+    <h1 class="page-h1">집중화된 경쟁 구도, 심화되는 우위</h1>
+    <p class="page-subhead">소수의 통합형 디벨로퍼가 시장을 형성합니다. 2026년의 경쟁 우위는 <strong>다각화된 토지뱅크, 오피스·몰 수익, 그리고 적정가격대 주택으로 포트폴리오를 재편할 수 있는 재무구조</strong>에 있으며 &#8212; 상장 선도 기업들은 이 사이클 내내 이 우위를 복리로 쌓아갑니다.</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2025년 예약 판매 기준 주요 상장 디벨로퍼</div>
+            <div class="chart-subtitle">규모 지표 · 주거/통합형 · PHP bn</div>
+          </div>
+          <div class="chart-unit">PHP BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="135" y1="15" x2="135" y2="175"/>
+            <rect class="bar-primary" x="135" y="22" width="200" height="22"/><text class="label-data" x="343" y="39">~111.7</text><text class="label-small" x="131" y="38" text-anchor="end">Ayala Land</text>
+            <rect class="bar-primary" x="135" y="56" width="120" height="22" opacity="0.85"/><text class="label-data" x="263" y="73">대규모</text><text class="label-small" x="131" y="72" text-anchor="end">SM Prime</text>
+            <rect class="bar-secondary" x="135" y="90" width="105" height="22"/><text class="label-data" x="248" y="107">대규모</text><text class="label-small" x="131" y="106" text-anchor="end">Megaworld</text>
+            <rect class="bar-secondary" x="135" y="124" width="72" height="22" opacity="0.8"/><text class="label-data" x="215" y="141">~37</text><text class="label-small" x="131" y="140" text-anchor="end">DMCI Homes</text>
+            <rect class="bar-tertiary" x="135" y="158" width="120" height="22"/><text class="label-data" x="263" y="175">중규모</text><text class="label-small" x="131" y="174" text-anchor="end">Filinvest / RLC</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: Developer disclosure, KIRA 분석 · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>통합형, 규모 우위 구조</h3>
+        <p>Ayala Land의 주거 예약 판매는 2025년 <strong>3% 증가해 PHP 111.7 bn</strong>을 기록했으나, 2024년 17% 급증에 비해 성장세가 둔화되었습니다 &#8212; 고급 수요 냉각과 핵심 주택 확대가 배경입니다[Ayala Land 2026]. 선도 기업들의 통합 모델 &#8212; 오피스, 몰, 토지뱅크 &#8212; 은 BPO 오피스 회복에 편승하면서 콘도미니엄 흡수를 기다리는 구조를 가능케 합니다.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Ayala Land 2025 예약 판매</span><span class="val">PHP 111.7 bn</span></div>
+          <div class="stat-line"><span>ALI 2025 출시</span><span class="val">PHP 51 bn+</span></div>
+          <div class="stat-line"><span>DMCI 2025 목표</span><span class="val">PHP 37 bn</span></div>
+          <div class="stat-line"><span>오피스 REIT 수단</span><span class="val">AREIT/MREIT</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">Ayala Land</div>
+        <div class="comp-parent">Ayala Land Inc. · PSE: ALI</div>
+        <div class="comp-stat-row"><span>2025 예약 판매</span><span class="val">PHP 111.7 bn</span></div>
+        <div class="comp-stat-row"><span>성장률</span><span class="val">+3% YoY</span></div>
+        <div class="comp-stat-row"><span>전략 방향</span><span class="val">핵심 주택 확대</span></div>
+        <div class="comp-strengths"><strong>통합형 선도 기업.</strong> 최대 디벨로퍼; 마카티 초고급 타워와 함께 고급 수요 냉각에 따른 핵심 주택 전환. AREIT를 통한 오피스 수익화. [Ayala Land 2026]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">SM Prime</div>
+        <div class="comp-parent">SM Prime Holdings · PSE: SMPH</div>
+        <div class="comp-stat-row"><span>사업 모델</span><span class="val">몰 + 주거</span></div>
+        <div class="comp-stat-row"><span>전략 집중</span><span class="val">타운십</span></div>
+        <div class="comp-stat-row"><span>경쟁 우위</span><span class="val">몰 현금흐름</span></div>
+        <div class="comp-strengths"><strong>현금흐름 기반.</strong> 몰 주도 복합기업; 통합 단지 내 주거 및 대규모 매립지 토지뱅크. [Developer disclosure]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">Megaworld</div>
+        <div class="comp-parent">Megaworld Corp. · PSE: MEG</div>
+        <div class="comp-stat-row"><span>사업 모델</span><span class="val">타운십</span></div>
+        <div class="comp-stat-row"><span>오피스</span><span class="val">MREIT</span></div>
+        <div class="comp-stat-row"><span>특화 영역</span><span class="val">BPO 주도</span></div>
+        <div class="comp-strengths"><strong>타운십 &amp; 오피스.</strong> BPO 오피스 노출이 깊은 직주근접 타운십을 MREIT로 수익화. [Developer disclosure]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">DMCI Homes</div>
+        <div class="comp-parent">DMCI Holdings · PSE: DMC</div>
+        <div class="comp-stat-row"><span>2025 목표</span><span class="val">PHP 37 bn</span></div>
+        <div class="comp-stat-row"><span>전략 집중</span><span class="val">중간·적정가격대</span></div>
+        <div class="comp-stat-row"><span>경쟁 우위</span><span class="val">자체 시공</span></div>
+        <div class="comp-strengths"><strong>적정가격대 전문.</strong> 자체 시공 방식의 중간·적정가격대 콘도; 2025년 4개 단지 출시로 PHP 37 bn 목표. [DMCI 2025]</div>
+      </div>
+    </div>
+    <div class="source-key">Ayala Land 2026 = Ayala Land Inc. 2025 reservation sales (PHP 111.7 bn, +3%) &amp; launch disclosure &#183; DMCI 2025 = DMCI Homes 2025 launch &amp; reservation-sales target (PHP 37 bn) &#183; Developer disclosure = SM Prime, Megaworld &amp; REIT public filings 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 015 — TECHNOLOGY IN THE CHANNEL ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · 유통 채널의 기술</div>
+      <div class="page-section-counter">015 / 017</div>
+    </div>
+    <h1 class="page-h1">디지털 채널과 AI 도구가 분양 방식을 재편한다</h1>
+    <p class="page-subhead">공급과잉 주거 시장에서는 유통 효율이 흡수율을 결정합니다. <strong>프롭테크 플랫폼과 AI 보조 판매 도구</strong>는 디벨로퍼가 더 낮은 비용으로 실수요자 및 해외 거주 필리핀인(OFW) 수요를 발굴하고 전환할 수 있게 합니다.</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>채널 전환</h3>
+        <p>필리핀 부동산·프롭테크 플랫폼 시장은 메트로 마닐라, 세부, 다바오를 중심으로 <strong>USD 7.5 bn</strong> 규모로 평가됩니다[KenResearch 2025]. 온라인 검색, 가상 투어, 원격 결제는 신기술이 아닌 기본 요건으로 자리잡았습니다 &#8212; OFW 구매자가 원격으로 거래하고 디벨로퍼들이 대규모 미분양 재고를 소화하려는 환경에서 특히 중요합니다.</p>
+        <h3>판매 깔때기 내 AI 활용</h3>
+        <p>도입은 네 가지 활용 사례에 집중됩니다: <strong>AI 기반 리드 스코어링 및 구매자 매칭</strong>, OFW 구매자를 위한 자동화된 다국어 문의 처리, 원격 검토를 위한 가상 투어 및 3D 조감, 그리고 데이터 기반 가격 설정 및 흡수 분석. 검증된 구매자 확보가 어려울수록 각각이 고객 획득 비용을 낮춥니다.</p>
+        <h3>효과가 가장 두드러지는 영역</h3>
+        <p>수익 효과는 마케팅 효율이 흡수 속도를 결정하는 공급과잉 적정가격대 및 중간 시장에서 가장 선명합니다. 분석 도구는 디벨로퍼가 재고를 적체하는 대신 실수요에 맞춰 출시 시점과 가격을 결정할 수 있게 하며, 가상 도구는 OFW 구매층으로 접근 범위를 넓힙니다. 기술은 수요를 만들지 않습니다 &#8212; 수요를 발견하고 전환하는 비용을 낮출 뿐입니다.</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">콘도 판매 깔때기 내 AI 도구 도입 현황</div>
+            <div class="chart-subtitle">도입 강도 지표 · 방향성 참고</div>
+          </div>
+          <div class="chart-unit">USE CASES</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="170" y1="15" x2="170" y2="210"/>
+            <rect class="bar-primary" x="170" y="26" width="250" height="30"/>
+            <text class="label-data" x="412" y="47" text-anchor="end" style="fill:#fff">높음</text>
+            <text class="label-small" x="166" y="45" text-anchor="end">가상 투어 / 3D</text>
+            <rect class="bar-primary" x="170" y="66" width="220" height="30" opacity="0.85"/>
+            <text class="label-data" x="398" y="87" style="fill:var(--primary)">높음</text>
+            <text class="label-small" x="166" y="85" text-anchor="end">리드 스코어링 / 매칭</text>
+            <rect class="bar-secondary" x="170" y="106" width="185" height="30"/>
+            <text class="label-data" x="363" y="127" style="fill:var(--green)">확대 중</text>
+            <text class="label-small" x="166" y="125" text-anchor="end">다국어 / OFW 문의</text>
+            <rect class="bar-secondary" x="170" y="146" width="150" height="30" opacity="0.8"/>
+            <text class="label-data" x="328" y="167" style="fill:var(--green)">도입 초기</text>
+            <text class="label-small" x="166" y="165" text-anchor="end">가격 분석</text>
+            <text class="label-small" x="170" y="196">막대 = 디벨로퍼 및 에이전시 전반의 방향성 도입 수준 [Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KEN RESEARCH, PROPTECH 공시, KIRA 종합 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">KenResearch 2025 = Ken Research Philippines real-estate &amp; proptech platforms market (~USD 7.5 bn) 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 016 — FORECAST / SCENARIOS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · 2028년 전망</div>
+      <div class="page-section-counter">016 / 017</div>
+    </div>
+    <h1 class="page-h1">2028년까지의 콘도 회복 경로: 세 가지 시나리오</h1>
+    <p class="page-subhead">오피스는 어느 시나리오에서도 타이트해집니다. 주거 시장의 관건은 흡수 속도입니다. 각 시나리오의 차이는 주로 <strong>적정가격대 반등의 깊이와 공급이 계속 제한될 때 베이 에어리어 재고가 얼마나 빨리 재임차되는가</strong>에 달려 있습니다.</p>
+    <div class="fo-chart-wrap">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">콘도미니엄 흡수율 &#8212; 2028년까지의 시나리오 범위</div>
+          <div class="chart-subtitle">메트로 마닐라 · 순 흡수율 지수 (2025=100) · 2025 실적 · 2028 시나리오</div>
+        </div>
+        <div class="chart-unit">INDEX 2025=100</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1080 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <line class="axis-line" x1="60" y1="15" x2="60" y2="165"/>
+          <line class="axis-line" x1="60" y1="165" x2="1060" y2="165"/>
+          <line class="grid-line" x1="60" y1="125" x2="1060" y2="125"/>
+          <line class="grid-line" x1="60" y1="85" x2="1060" y2="85"/>
+          <line class="grid-line" x1="60" y1="45" x2="1060" y2="45"/>
+          <text class="axis-text" x="54" y="169" text-anchor="end">85</text>
+          <text class="axis-text" x="54" y="129" text-anchor="end">100</text>
+          <text class="axis-text" x="54" y="89" text-anchor="end">120</text>
+          <text class="axis-text" x="54" y="49" text-anchor="end">140</text>
+          <circle cx="150" cy="125" r="5" fill="#0B0D10"/>
+          <text class="label-data" x="150" y="117" text-anchor="middle">100</text>
+          <text class="axis-text" x="150" y="182" text-anchor="middle">2025 실적</text>
+          <path d="M 150 125 L 980 48" stroke="#00A88B" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="48" r="5" fill="#00A88B"/>
+          <text class="label-data" x="998" y="46" style="fill:#00A88B">~135 가속</text>
+          <path d="M 150 125 L 980 92" stroke="#1E6FFF" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="92" r="5" fill="#1E6FFF"/>
+          <text class="label-data" x="998" y="90" style="fill:#1E6FFF">~118 기본</text>
+          <path d="M 150 125 L 980 145" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="980" cy="145" r="5" fill="#D97706"/>
+          <text class="label-data" x="998" y="143" style="fill:#D97706">~96 제약</text>
+          <text class="axis-text" x="980" y="182" text-anchor="middle">2028F</text>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: LPC, COLLIERS, BSP, KIRA 삼각분석 · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="fo-scenarios">
+      <div class="fo-card bull">
+        <div class="sc-name">가속 시나리오</div>
+        <div class="sc-val">~+35<span class="unit">% by 2028</span></div>
+        <div class="sc-body">추가 금리 인하가 적정가격대·중간 시장을 부양하고, BPO/GCC 기반이 계속 확장되며, 베이 에어리어 재임차가 시작됩니다. 오피스는 빠르게 타이트해지고, RIL은 5년 아래로 하락합니다. <strong>[Kira estimates]</strong></div>
+      </div>
+      <div class="fo-card base">
+        <div class="sc-name">기본 시나리오</div>
+        <div class="sc-val">~+18<span class="unit">% by 2028</span></div>
+        <div class="sc-body">2026년부터 점진적인 적정가격대 주도 회복이 이어지고, 핵심 오피스는 임대인 우위 시장이 되는 반면 콘도 흡수는 수년에 걸쳐 이어지고 베이 에어리어 재고는 완만하게 해소됩니다. <strong>[Kira estimates]</strong></div>
+      </div>
+      <div class="fo-card bear">
+        <div class="sc-name">제약 시나리오</div>
+        <div class="sc-val">~&#8722;4<span class="unit">% by 2028</span></div>
+        <div class="sc-body">대외 충격이 성장을 정체시키고 완화 사이클이 역전되며 주택담보대출 접근성이 악화됩니다. 공실률은 25% 위에 머물고, 베이 에어리어는 공실 상태를 유지하며, 소규모 디벨로퍼들은 사업을 축소합니다. <strong>[Kira estimates]</strong></div>
+      </div>
+    </div>
+    <div class="source-key">BSP 2026 = Bangko Sentral ng Pilipinas policy-rate path 2025&#8211;26 &#183; Colliers 2026 = Colliers Philippine property 2026 outlook (office &amp; condo vacancy paths) &#183; LPC 2026 = Leechiu Property Consultants absorption &amp; RIL data 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 017 — METHODOLOGY ENDNOTE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · 방법론 &amp; 출처</div>
+      <div class="page-section-counter">017 / 017</div>
+    </div>
+    <h1 class="page-h1">방법론 및 출처</h1>
+    <p class="page-subhead">수치 산출 방법과 본 보고서에서 인용된 모든 출처의 전체 서지 정보를 아래에 제시합니다.</p>
+    <div class="me-body">
+      <div class="me-method">
+        <h3>방법론</h3>
+        <p>본 보고서는 두 가지 근거 자료를 삼각분석합니다. <strong>출처명 태그</strong>(예: [Colliers 2026], [LPC 2026])가 붙은 수치는 해당 출처의 데이터를 기반으로 하며, 전체 서지 정보는 우측에 제시됩니다. <strong>[Kira estimates]</strong> 태그가 붙은 수치는 KIRA 애널리스트가 공개된 자료 &#8212; 중개 법인의 공실률·흡수율 계열, 상장 디벨로퍼 공시, 산업 데이터셋 &#8212; 를 조합하여 해당 섹션에서 공개된 방법론으로 산출한 것입니다.</p>
+        <p>서브마켓별 공실 경로, 가격대별 흡수율 분할, 2028년 시나리오 범위는 공개된 시장 데이터와 교차 검증된 KIRA 자체 구성입니다. 전체 정량적 수치의 약 <strong>25%가 KIRA 자체 추정치</strong>이며, 나머지는 외부 출처에서 인용됩니다. 조사는 주로 필리핀의 부동산·비즈니스 언론을 지배하는 영어 자료를 기반으로 했습니다.</p>
+        <div class="me-disclaimer">본 보고서는 라이선스 독자 전용으로 제공됩니다. 전망치는 시나리오 기반이며 보장이 아닙니다. © 2026 KIRA Research.</div>
+      </div>
+      <div class="me-sources">
+        <h3>출처 범례</h3>
+        <ul>
+          <li><strong>Colliers 2026</strong> — Colliers Philippine property market report &amp; 2026 outlook: office vacancy by CBD, net take-up, leasing pipeline, new supply, condominium vacancy &amp; Bay Area data</li>
+          <li><strong>LPC 2026</strong> — Leechiu Property Consultants: Metro Manila unsold condominium inventory (~79,200 units), remaining inventory life (13.4&#8594;6.8 yrs), preselling take-up (+765%) &amp; price-band split 2026</li>
+          <li><strong>IBPAP 2026</strong> — IT &amp; Business Process Association of the Philippines: industry revenue (~USD 40 bn 2025), headcount (1.9m) &amp; 2028 roadmap (USD 59 bn, 2.5m workers)</li>
+          <li><strong>Outsource Accelerator 2026</strong> — Outsource Accelerator reporting: GCCs ~39% of IT-BPM office leasing pipeline</li>
+          <li><strong>BSP 2026</strong> — Bangko Sentral ng Pilipinas: policy rate cut to 4.5% over five consecutive 25bp moves 2025&#8211;26</li>
+          <li><strong>IMF 2026</strong> — IMF Philippines Article IV: GDP growth (~5.1% 2025) &amp; inflation outlook, 2026 forecast revisions</li>
+          <li><strong>Ayala Land 2026</strong> — Ayala Land Inc. 2025 disclosure: reservation sales PHP 111.7 bn (+3%), launches PHP 51 bn+, upscale cooling / core housing shift</li>
+          <li><strong>DMCI 2025</strong> — DMCI Homes 2025 launch programme &amp; PHP 37 bn reservation-sales target</li>
+          <li><strong>Developer disclosure</strong> — SM Prime, Megaworld &amp; REIT (AREIT/MREIT) public filings 2025</li>
+          <li><strong>KenResearch 2025</strong> — Ken Research Philippines real-estate &amp; proptech platforms market (~USD 7.5 bn) 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>기밀 · 라이선스 독자 전용 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
