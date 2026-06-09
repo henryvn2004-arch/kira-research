@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>Singapore payments 2026 — cross-border QR linkage & stablecoin pilots</title>
+<meta name="description" content="KIRA Research analysis of Singapore fintech payments in 2026: cross-border QR linkage scaling to Project Nexus, and the MAS single-currency stablecoin framework and tokenised-settlement pilots.">
+<meta property="og:title" content="Singapore payments 2026 — cross-border QR linkage & stablecoin pilots">
+<meta property="og:description" content="KIRA Research analysis of Singapore fintech payments in 2026: cross-border QR linkage scaling to Project Nexus, and the MAS single-currency stablecoin framework and tokenised-settlement pilots.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* === MASTER STYLES INJECTED HERE === */
+/* ============================================================
+   KIRA Research — Master report styles v1.0
+   All page types use these styles. Do not edit per-report.
+   ============================================================ */
+
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+/* ============ PAGE BASE ============ */
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+/* ============ DATA TAGS ============ */
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+/* ============ DARK DIVIDER ============ */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* ============ EXEC SUMMARY ============ */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+/* ============ CHART CARDS ============ */
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* ============ SOURCE KEY (Phase L.3) ============
+   Per-page footer line resolving inline source aliases to full citations.
+   Renders just above .page-footer; pages may omit if all numbers are
+   [Kira estimates] only. Pattern: alias = full citation · alias = full citation · ... */
+.source-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--muted);
+  padding: 8px 0 6px;
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  max-height: 32px;
+  overflow: hidden;
+}
+.source-key::before {
+  content: "SOURCE KEY · ";
+  font-weight: 700;
+  color: var(--text-mid);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+/* Hide entirely when empty so layout doesn't show an orphan dotted line */
+.source-key:empty { display: none; }
+
+/* ============ IMPLICATIONS GRID ============ */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* ============ COMPETITIVE ============ */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* ============ PROFILE DEEP-DIVE ============ */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+/* ============ AI / USE CASE GRID ============ */
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* ============ COVER ============ */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+/* ============ SVG UTILITIES ============ */
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* ============ PRINT (for PDF) ============ */
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+  .viewer-divider { display: none; }
+}
+
+/* ============================================================
+   === Phase H new page types (2026-05-23) ===
+   5 new page types: persona_profile, policy_timeline,
+   risk_matrix (qualitative), channel_waterfall,
+   price_quality_matrix. All conform to 1280x720 canvas with
+   page-header + body + page-footer chrome inherited from .page.
+   Severity tokens shared across types where useful.
+   ============================================================ */
+
+/* shared severity tokens (risk_matrix + winner/loser chips) */
+:root {
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+
+.severity-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.neutral { background: var(--sev-neutral-soft); color: var(--sev-neutral); }
+.severity-chip.winner { background: var(--green-soft); color: var(--green); }
+.severity-chip.loser { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.mixed { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.pending { background: var(--primary-soft); color: var(--primary); }
+
+/* ============ PERSONA PROFILE (consumer_segmentation) ============ */
+.persona-profile-page .page-inner { padding-top: 30px; }
+.persona-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 14px; flex-shrink: 0; }
+.persona-header .persona-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; }
+.persona-header .persona-headline { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); flex: 1; max-width: 760px; }
+.persona-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex-shrink: 0; margin-bottom: 12px; }
+.persona-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
+.persona-block h4 { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.persona-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-stat { padding: 4px 0; }
+.persona-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.persona-stat .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 18px; line-height: 1; color: var(--text); letter-spacing: -0.02em; }
+.persona-stat .num .unit { font-size: 10px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-stat .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; font-weight: 600; }
+.persona-behavior-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-behavior { padding: 4px 0; }
+.persona-behavior .metric { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 17px; line-height: 1.1; color: var(--text); margin-bottom: 3px; }
+.persona-behavior .label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+.persona-behavior .change { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-behavior .change.down { color: var(--amber); }
+.persona-bottom-row { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; flex: 1; min-height: 0; }
+.persona-quote-block { background: var(--primary-soft); border-left: 3px solid var(--primary); padding: 14px 16px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; justify-content: center; }
+.persona-quote-block .qmark { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 32px; line-height: 0.6; color: var(--primary); margin-bottom: 4px; }
+.persona-quote-block .body { font-size: 13px; line-height: 1.45; color: var(--text); font-style: italic; margin-bottom: 8px; }
+.persona-quote-block .attribution { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.persona-channel-pref { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
+.persona-channel-pref .title { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.persona-channel-row { display: grid; grid-template-columns: 90px 1fr 38px; gap: 8px; align-items: center; font-size: 10.5px; }
+.persona-channel-row .ch-name { color: var(--text-mid); font-weight: 500; }
+.persona-channel-row .ch-bar { height: 8px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.persona-channel-row .ch-bar-fill { height: 100%; background: var(--primary); }
+.persona-channel-row .ch-pct { font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 700; text-align: right; }
+.persona-channel-caption { font-size: 10.5px; color: var(--text-mid); margin-top: 6px; line-height: 1.4; }
+.persona-wtp-anchor { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 10px 14px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+.persona-wtp-anchor .left .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.persona-wtp-anchor .left .change { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-wtp-anchor .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.persona-wtp-anchor .num .unit { font-size: 11px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; }
+
+/* ============ POLICY TIMELINE (regulatory_brief) ============ */
+.policy-timeline-page .page-inner { padding-top: 30px; }
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.policy-timeline-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.policy-timeline-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.policy-timeline-chart .tl-svg { flex: 1; min-height: 0; width: 100%; }
+.policy-timeline-chart .tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.policy-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ RISK MATRIX (entry_strategy, qualitative) ============ */
+.risk-matrix-page .page-inner { padding-top: 30px; }
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-matrix-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.risk-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-cell-bg-empty { fill: var(--surface-alt); stroke: var(--border); stroke-width: 0.5; }
+.risk-cell-bg-low { fill: var(--sev-low-soft); stroke: var(--sev-low); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-med { fill: var(--sev-med-soft); stroke: var(--sev-med); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-high { fill: var(--sev-high-soft); stroke: var(--sev-high); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-label { font-family: 'Satoshi', sans-serif; font-size: 9px; font-weight: 600; fill: var(--text); }
+.risk-axis-label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.risk-axis-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.risk-legend-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; font-weight: 600; flex-shrink: 0; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.risk-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ CHANNEL WATERFALL (distribution_analysis) ============ */
+.channel-waterfall-page .page-inner { padding-top: 30px; }
+.waterfall-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 12px; }
+.waterfall-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.waterfall-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.waterfall-svg-wrap { height: 260px; width: 100%; }
+.waterfall-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.wf-segment-label { font-family: 'Satoshi', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.wf-segment-pct { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--text); font-weight: 700; }
+.wf-segment-note { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.04em; }
+.wf-segment-src { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.wf-axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.wf-segment-fill-1 { fill: var(--primary); }
+.wf-segment-fill-2 { fill: var(--primary-dim); }
+.wf-segment-fill-3 { fill: var(--green); }
+.wf-segment-fill-4 { fill: var(--amber); }
+.wf-segment-fill-5 { fill: #6366F1; }
+.wf-segment-fill-6 { fill: #DB2777; }
+.wf-segment-fill-7 { fill: #0EA5E9; }
+.waterfall-commentary { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.waterfall-commentary h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.waterfall-commentary p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 6px; }
+.waterfall-commentary p strong { color: var(--text); font-weight: 600; }
+.waterfall-commentary ul { list-style: none; padding: 0; margin: 0; }
+.waterfall-commentary li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.waterfall-commentary li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.waterfall-commentary li strong { color: var(--text); font-weight: 600; }
+.waterfall-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ PRICE QUALITY MATRIX (pricing_strategy) ============ */
+.price-quality-page .page-inner { padding-top: 30px; }
+.pq-matrix-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.pq-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-matrix-chart .chart-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.pq-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.pq-svg-wrap { flex: 1; min-height: 0; width: 100%; }
+.pq-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.pq-quadrant-bg { fill: var(--bg); stroke: var(--border); stroke-width: 0.5; }
+.pq-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.pq-grid-line { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 2 2; }
+.pq-axis-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.pq-axis-tick { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.pq-quadrant-label { font-family: 'Satoshi', sans-serif; font-size: 10px; fill: var(--text-mid); font-weight: 700; letter-spacing: -0.005em; text-transform: uppercase; }
+.pq-dot { fill: var(--primary); stroke: var(--bg); stroke-width: 1.5; }
+.pq-dot-label { font-family: 'Satoshi', sans-serif; font-size: 10px; fill: var(--text); font-weight: 700; }
+.pq-sidebar { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-sidebar h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.pq-sidebar p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.pq-sidebar p strong { color: var(--text); font-weight: 600; }
+.pq-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+
+</style>
+</head>
+<body>
+
+<!-- ============ ALL PAGES INJECTED HERE ============ -->
+<!-- ============ 001 COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-eyebrow">KIRA Research · Financial Services</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow" style="margin-bottom:-12px;">Singapore · 2026</div>
+        <h1>Singapore payments at the <span class="accent">settlement turn</span></h1>
+        <div class="cover-subtitle">Cross-border QR linkage scales from bilateral pilots toward a regional default rail, while a finalised stablecoin framework moves Singapore from wallet reach to wholesale settlement.</div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">Singapore</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">Fintech &amp; payments</div></div>
+          <div class="cover-meta-item"><div class="label">Base year</div><div class="val"><span class="accent">2026</span></div></div>
+          <div class="cover-meta-item"><div class="label">Reference</div><div class="val">SG-PAY-2026</div></div>
+        </div>
+      </div>
+      <div class="cover-confidential">Prepared by <strong>our research team</strong> · Strictly for the named recipient · Not for redistribution</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 002 METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">002 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="page-subhead">This view is built from two evidence streams: <strong>primary inputs</strong> — regulator releases, operator disclosures, and analyst synthesis — and <strong>secondary anchors</strong> — central-bank statistics, scheme operator data, and triangulated estimates. Every quantitative claim carries an explicit source tag.</p>
+    <div class="exec-body" style="grid-template-columns:1fr 1fr;">
+      <div class="exec-narrative">
+        <h3>Primary inputs</h3>
+        <p><strong>Regulator &amp; policy reads.</strong> Monetary Authority of Singapore releases on cross-border linkages, the single-currency stablecoin framework, and tokenisation initiatives — the rules that gate every operating decision.</p>
+        <p><strong>Scheme operator reads.</strong> Disclosures from NETS, the Association of Banks in Singapore, and the BIS Innovation Hub on PayNow, SGQR, and Project Nexus throughput and acceptance.</p>
+        <p><strong>Analyst synthesis.</strong> KIRA in-house triangulation across multiple disclosed inputs where no single source covers a figure. Tagged inline as [Kira estimates].</p>
+      </div>
+      <div class="exec-narrative">
+        <h3>Secondary anchors</h3>
+        <p><strong>Statistical authorities.</strong> Central-bank and scheme data on payments volume, QR acceptance, and cross-border settlement — cited inline by named source.</p>
+        <p><strong>Issuer &amp; operator filings.</strong> Disclosures from named stablecoin issuers and payment platforms — cited by entity and period.</p>
+        <p><strong>Triangulated estimates.</strong> Where coverage is partial, we combine two to three inputs and disclose the method. Tagged [Kira estimates]. Singapore's business press leads in English, so this view runs an English-language source base.</p>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 003 TOC ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">003 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Contents</h1>
+    <div class="exec-body" style="grid-template-columns:1fr 1fr; gap:40px;">
+      <div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">01</span>Executive summary</span><span class="mono" style="color:var(--muted);">004</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">02</span>Strategic implications</span><span class="mono" style="color:var(--muted);">005</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">03</span>The payments landscape</span><span class="mono" style="color:var(--muted);">006</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">04</span>Market sizing &amp; mix</span><span class="mono" style="color:var(--muted);">007</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">05</span>Rails &amp; wallets: market structure</span><span class="mono" style="color:var(--muted);">008</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">06</span>Cross-border QR linkage</span><span class="mono" style="color:var(--muted);">009</span></div>
+      </div>
+      <div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">07</span>QR linkage: scaling the network</span><span class="mono" style="color:var(--muted);">010</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">08</span>Project Nexus: the multilateral rail</span><span class="mono" style="color:var(--muted);">011</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">09</span>The stablecoin layer</span><span class="mono" style="color:var(--muted);">012</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">10</span>Stablecoin framework &amp; reserves</span><span class="mono" style="color:var(--muted);">013</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">11</span>Six tokenised-payment pilots</span><span class="mono" style="color:var(--muted);">014</span></div>
+        <div class="toc-row" style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px;"><span><span class="mono" style="color:var(--primary); font-weight:700; margin-right:14px;">12</span>AI impact &amp; 2026-2030 outlook</span><span class="mono" style="color:var(--muted);">015</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 004 EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Executive summary</div>
+      <div class="page-section-counter">004 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Singapore moves from wallet reach to settlement rails</h1>
+    <p class="page-subhead">Domestic acceptance is near-saturated and the consumer-wallet contest is largely settled. <strong>The next leg of value sits in the rails</strong> — cross-border QR linkage scaling toward a regional default, and a finalised single-currency stablecoin framework that positions Singapore as a settlement hub for tokenised payments.</p>
+    <div class="exec-callouts">
+      <div class="callout"><div class="label">Digital payment adoption 2025</div><div class="num">92<span class="unit">%</span></div><div class="change">near-saturated everyday use</div><div class="source-tag">SG Payment Yearbook 2025</div></div>
+      <div class="callout"><div class="label">Cards &amp; payments value 2025</div><div class="num">USD 24<span class="unit">bn</span></div><div class="change">~9-10% CAGR to 2033</div><div class="source-tag est">Kira estimates</div></div>
+      <div class="callout"><div class="label">Live cross-border QR links</div><div class="num">3+</div><div class="change">MY, ID live; Nexus 2026</div><div class="source-tag">MAS 2025</div></div>
+      <div class="callout"><div class="label">SCS framework in force</div><div class="num">2026</div><div class="change">MAS-regulated stablecoin label</div><div class="source-tag">MAS 2025</div></div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>A saturated core, faster edges</h3>
+        <p>Digital payment adoption reached <strong>92% in 2025</strong> [SG Payment Yearbook 2025], with PayNow, FAST, and SGQR carrying everyday volume. Card-and-payments value sits near USD 24 bn [Kira estimates]; growth has migrated from raw acceptance to two faster edges — cross-border linkage and tokenised settlement.</p>
+        <h3>The two contested rails</h3>
+        <p>Singapore has live bilateral QR links with Malaysia and Indonesia [MAS 2025] and joins a five-economy multilateral rail under Project Nexus, targeted to go live in 2026 [BIS 2025]. In parallel, MAS's single-currency stablecoin framework takes full effect, with named issuers already operating under licence [MAS 2025].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Where Singapore payments value migrates</div><div class="chart-subtitle">illustrative · growth contribution</div></div><div class="chart-unit">MIX</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="200" x2="500" y2="200" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="70" y="150" width="90" height="50" fill="#4A5568"></rect>
+              <text x="115" y="218" text-anchor="middle" font-size="10" fill="#6B7280">Domestic core</text>
+              <text x="115" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">Low</text>
+              <rect x="215" y="86" width="90" height="114" fill="#1E6FFF"></rect>
+              <text x="260" y="218" text-anchor="middle" font-size="10" fill="#6B7280">Cross-border QR</text>
+              <text x="260" y="79" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">High</text>
+              <rect x="360" y="60" width="90" height="140" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="405" y="218" text-anchor="middle" font-size="10" fill="#6B7280">Stablecoin / token</text>
+              <text x="405" y="53" text-anchor="middle" font-size="11" font-weight="700" fill="#D97706">Emerging</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA SYNTHESIS — MAS, SCHEME DATA · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">SG Payment Yearbook 2025 = Singapore Digital &amp; Card Payment Yearbook 2025 · MAS 2025 = Monetary Authority of Singapore releases 2025 · BIS 2025 = Bank for International Settlements Project Nexus 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 005 EXEC SUMMARY P2 IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Strategic implications</div>
+      <div class="page-section-counter">005 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Five strategic implications for market participants</h1>
+    <p class="page-subhead">Where the value pool sits in 2026, and how scheme operators, banks, wallet platforms, and stablecoin issuers should position into the cross-border and tokenised-settlement shift.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">Compete on rails, not reach</div>
+        <div class="body-text">Consumer acceptance is saturated at <strong>92% adoption</strong>. The premium now accrues to operators that own cross-border interoperability and merchant economics, not those chasing the last wallet sign-up.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">92%</span> digital payment adoption 2025</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">Treat Nexus as the default plan</div>
+        <div class="body-text">Bilateral QR links do not scale linearly. <strong>Project Nexus collapses N-to-N integration</strong> into a single connection; operators should architect for the multilateral rail going live in 2026, not stack more one-off corridors.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">5 economies</span> in Nexus live phase</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">Win the merchant, not the tourist</div>
+        <div class="body-text">QR linkage value concentrates in <strong>merchant acceptance breadth</strong>, not inbound traveller counts. NETS' ~130,000 touchpoints are the asset; the contest is acceptance depth across hawker, retail, and F&amp;B.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">~130k</span> NETS acceptance touchpoints</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">Build for regulated settlement</div>
+        <div class="body-text">The stablecoin opportunity is <strong>settlement, not speculation</strong>. The MAS-regulated SCS label plus 100% reserves gates entry; issuers and banks should target B2B treasury and wholesale flows, not retail trading.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">100%</span> reserve backing required</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">Bridge QR and token rails</div>
+        <div class="body-text">The two contested rails converge. <strong>BLOOM and Global Layer One</strong> extend settlement into tokenised liabilities and regulated stablecoins; operators that bridge retail QR to wholesale token rails capture the connective margin.</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">GL1 + BLOOM</span> settlement initiatives</div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2025 = Monetary Authority of Singapore releases 2025 · NETS 2025 = NETS acceptance-network disclosure 2025 · BIS 2025 = Bank for International Settlements Project Nexus 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 006 DIVIDER — PAYMENTS LANDSCAPE ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <div class="divider-title">The payments <span class="accent">landscape.</span></div>
+    <div class="divider-thesis">Singapore is among the world's most digitally settled economies, and its domestic acceptance is near-saturated. <strong>The contest has moved from acquiring users to interconnecting rails</strong> — across borders, and across the boundary between bank money and tokenised money.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Market sizing</div>
+      <div class="toc-pill">Payment mix</div>
+      <div class="toc-pill">Rails &amp; wallets</div>
+      <div class="toc-pill">Acceptance</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 007 MARKET SIZING (market_data_chart) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Market sizing</div>
+      <div class="page-section-counter">007 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">A large, near-cashless pool growing into the high single digits</h1>
+    <p class="page-subhead">Singapore's payment value is sizeable and near-saturated on acceptance; the value migration is toward cross-border throughput and tokenised settlement rather than incremental domestic volume.</p>
+    <div class="exec-body" style="grid-template-columns:1fr 1.1fr;">
+      <div class="exec-narrative">
+        <h3>Mature core, compounding edges</h3>
+        <p>The cards-and-payments value pool sits near <strong>USD 24 bn in 2025</strong> [Kira estimates], compounding at roughly 9-10% toward the early 2030s. Digital payment volumes cleared USD 92 bn in 2025 [SG Payment Yearbook 2025]; the core is mature, so growth concentrates at the edges.</p>
+        <h3>Wallets lead, A2A rises</h3>
+        <p>Digital wallets now lead e-commerce, at <strong>39% of online transactions</strong> [SG Payment Yearbook 2025]. Among Gen Z, 68% prefer PayNow account-to-account transfers [SG Payment Yearbook 2025] — the structural pull toward real-time, bank-rail settlement over card interchange.</p>
+        <h3>Where value migrates</h3>
+        <p>Domestic interchange and acceptance are flat-to-declining as a growth source. The rising lines are <strong>cross-border QR throughput and tokenised wholesale settlement</strong> — the two rails this report tracks [Kira estimates].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Singapore cards &amp; payments value</div><div class="chart-subtitle">USD bn · 2024-2030F</div></div><div class="chart-unit">USD BN</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="210" x2="540" y2="210" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="55" y="138" width="48" height="72" fill="#1E6FFF"></rect>
+              <text x="79" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+              <text x="79" y="131" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">22</text>
+              <rect x="125" y="128" width="48" height="82" fill="#1E6FFF"></rect>
+              <text x="149" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2025</text>
+              <text x="149" y="121" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">24</text>
+              <rect x="195" y="116" width="48" height="94" fill="#1E6FFF"></rect>
+              <text x="219" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2026</text>
+              <text x="219" y="109" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">26</text>
+              <rect x="265" y="102" width="48" height="108" fill="#1E6FFF"></rect>
+              <text x="289" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2027</text>
+              <text x="289" y="95" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">29</text>
+              <rect x="335" y="86" width="48" height="124" fill="#1E6FFF"></rect>
+              <text x="359" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2028</text>
+              <text x="359" y="79" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">32</text>
+              <rect x="405" y="68" width="48" height="142" fill="#1E6FFF"></rect>
+              <text x="429" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2029</text>
+              <text x="429" y="61" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">35</text>
+              <rect x="475" y="48" width="48" height="162" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+              <text x="499" y="226" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+              <text x="499" y="41" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">39</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA TRIANGULATION — YEARBOOK + SCHEME DATA · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">SG Payment Yearbook 2025 = Singapore Digital &amp; Card Payment Yearbook 2025 · Kira estimates = KIRA in-house analyst triangulation across payments, scheme, and statistical inputs</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 008 RAILS & WALLETS (competitive_structure) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Market structure</div>
+      <div class="page-section-counter">008 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Four rails, distinct roles, one interoperable label</h1>
+    <p class="page-subhead">Singapore's structure is unusually coordinated: a unified QR standard sits above bank-operated A2A rails, a national acceptance network, and platform wallets — each with a distinct role in the cross-border push.</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header"><div><div class="chart-title">Acceptance &amp; reach by rail</div><div class="chart-subtitle">indicative scale · 2025</div></div><div class="chart-unit">REACH</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 440 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <text x="8" y="32" font-size="10" fill="#6B7280">NETS network</text>
+              <rect x="115" y="22" width="290" height="16" fill="#1E6FFF"></rect>
+              <text x="405" y="34" text-anchor="end" font-size="9" font-weight="700" fill="#FFFFFF">~130k pts</text>
+              <text x="8" y="72" font-size="10" fill="#6B7280">PayNow A2A</text>
+              <rect x="115" y="62" width="250" height="16" fill="#4A5568"></rect>
+              <text x="372" y="74" font-size="9" font-weight="700" fill="#0B0D10">national</text>
+              <text x="8" y="112" font-size="10" fill="#6B7280">Wallets</text>
+              <rect x="115" y="102" width="175" height="16" fill="#00A88B"></rect>
+              <text x="297" y="114" font-size="9" font-weight="700" fill="#0B0D10">~3.2 mn</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NETS, ABS, YEARBOOK · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>Coordinated, not fragmented</h3>
+        <p>SGQR unifies competing QR codes into a single merchant label [MAS 2025]. The structural read: <strong>interoperability is built in</strong>, so the cross-border contest is about which rail extends abroad first.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>NETS merchants</span><span class="val">~39,000</span></div>
+          <div class="stat-line"><span>NETS touchpoints</span><span class="val">~130,000</span></div>
+          <div class="stat-line"><span>Mobile wallet users 2025</span><span class="val">~3.2 mn</span></div>
+          <div class="stat-line"><span>Live cross-border QR links</span><span class="val">MY · ID</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RAIL 01</div>
+        <div class="comp-name">SGQR / SGQR+</div>
+        <div class="comp-parent">MAS · NETS · industry</div>
+        <div class="comp-stat-row"><span>Role</span><span class="val">QR standard</span></div>
+        <div class="comp-stat-row"><span>Cross-border</span><span class="val">link anchor</span></div>
+        <div class="comp-stat-row"><span>Rollout</span><span class="val">F&amp;B, retail</span></div>
+        <div class="comp-strengths"><strong>Unified label.</strong> World-first single QR; SGQR+ extends to hawker, F&amp;B, retail and anchors the bilateral links.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RAIL 02</div>
+        <div class="comp-name">PayNow / FAST</div>
+        <div class="comp-parent">ABS · MAS-backed</div>
+        <div class="comp-stat-row"><span>Role</span><span class="val">A2A real-time</span></div>
+        <div class="comp-stat-row"><span>Gen Z preference</span><span class="val">68%</span></div>
+        <div class="comp-stat-row"><span>Nexus link</span><span class="val">IPS node</span></div>
+        <div class="comp-strengths"><strong>Bank rail.</strong> Instant interbank by mobile/UEN; the domestic IPS that connects into Project Nexus.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RAIL 03</div>
+        <div class="comp-name">NETS</div>
+        <div class="comp-parent">Bank-owned scheme</div>
+        <div class="comp-stat-row"><span>Touchpoints</span><span class="val">~130,000</span></div>
+        <div class="comp-stat-row"><span>QR link</span><span class="val">DuitNow, QRIS</span></div>
+        <div class="comp-stat-row"><span>Merchants</span><span class="val">~39,000</span></div>
+        <div class="comp-strengths"><strong>Acceptance depth.</strong> National touchpoint network; NETS QR anchors the Malaysia and Indonesia corridors.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RAIL 04</div>
+        <div class="comp-name">Platform wallets</div>
+        <div class="comp-parent">GrabPay, DBS PayLah!, etc.</div>
+        <div class="comp-stat-row"><span>GrabPay in-store</span><span class="val">12%</span></div>
+        <div class="comp-stat-row"><span>GrabPay online</span><span class="val">18%</span></div>
+        <div class="comp-stat-row"><span>Wallet users</span><span class="val">~3.2 mn</span></div>
+        <div class="comp-strengths"><strong>Front door.</strong> Consumer reach and cross-sell; the distribution layer that sits atop the shared rails.</div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2025 = Monetary Authority of Singapore releases 2025 · NETS 2025 = NETS acceptance-network disclosure 2025 · SG Payment Yearbook 2025 = Singapore Digital &amp; Card Payment Yearbook 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 009 DIVIDER — CROSS-BORDER QR ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <div class="divider-title">Cross-border <span class="accent">QR linkage.</span></div>
+    <div class="divider-thesis">Bilateral QR corridors with Malaysia and Indonesia proved the model. <strong>The 2026 shift is from N-to-N bilateral links to a single multilateral rail under Project Nexus</strong> — connecting five domestic instant-payment systems through one standard connection.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Bilateral corridors</div>
+      <div class="toc-pill">Network economics</div>
+      <div class="toc-pill">Project Nexus</div>
+      <div class="toc-pill">Settlement</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 010 QR LINKAGE DEEP DIVE (market_data_chart) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Cross-border QR</div>
+      <div class="page-section-counter">010 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Bilateral links proved demand; multilateral scaling is the unlock</h1>
+    <p class="page-subhead">Each bilateral corridor is a one-off integration. The structural problem is that linking N economies pairwise needs N-squared connections — which is precisely why a shared multilateral standard changes the economics.</p>
+    <div class="exec-body" style="grid-template-columns:1fr 1.1fr;">
+      <div class="exec-narrative">
+        <h3>The corridors live today</h3>
+        <p>Singapore runs live QR linkages with <strong>Malaysia (NETS-DuitNow)</strong> and <strong>Indonesia (NETS QR-QRIS)</strong> [MAS 2025], letting travellers scan home-app QR codes at foreign merchants. Thailand's PromptPay and a wider ASEAN set follow the same account-to-account model.</p>
+        <h3>The N-squared problem</h3>
+        <p>Bilateral links do not compound. Connecting <strong>five economies pairwise needs ten integrations</strong> [Kira estimates]; each new corridor adds bespoke build, settlement, and FX arrangements. The model proves demand but caps scale.</p>
+        <h3>The multilateral unlock</h3>
+        <p>A shared rail collapses the count to <strong>one connection per economy</strong> [Kira estimates]. That is the Project Nexus thesis — a single standardised link replacing the corridor stack, with central-bank settlement behind it [BIS 2025].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Integrations needed: bilateral vs multilateral</div><div class="chart-subtitle">connections · 5 economies</div></div><div class="chart-unit">LINKS</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="210" x2="500" y2="210" stroke="#E5E7EB" stroke-width="1"/>
+            <g class="mono">
+              <rect x="110" y="40" width="110" height="170" fill="#D97706"></rect>
+              <text x="165" y="226" text-anchor="middle" font-size="10" fill="#6B7280">Bilateral (N²)</text>
+              <text x="165" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#0B0D10">10</text>
+              <text x="165" y="130" text-anchor="middle" font-size="9" fill="#FFFFFF">pairwise</text>
+              <rect x="300" y="176" width="110" height="34" fill="#1E6FFF"></rect>
+              <text x="355" y="226" text-anchor="middle" font-size="10" fill="#6B7280">Multilateral (Nexus)</text>
+              <text x="355" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#1E6FFF">5</text>
+              <text x="355" y="196" text-anchor="middle" font-size="9" fill="#FFFFFF">1 per node</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA SYNTHESIS — NEXUS BLUEPRINT, MAS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2025 = Monetary Authority of Singapore cross-border linkages 2025 · BIS 2025 = Bank for International Settlements Project Nexus blueprint 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 011 PROJECT NEXUS PROFILE (competitive_profile_deep) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Multilateral rail</div>
+      <div class="page-section-counter">011 · SG-PAY-2026</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Project Nexus</h2>
+        <div class="sub">Multilateral instant-payment rail · Nexus Global Payments, Singapore</div>
+        <div class="tags">
+          <span class="data-tag primary">MULTILATERAL</span>
+          <span class="data-tag estimate">2026 GO-LIVE</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Live-phase economies</div><div class="val">5<span class="unit">IPS</span></div></div>
+        <div class="stat"><div class="label">Target go-live</div><div class="val">2026</div></div>
+        <div class="stat"><div class="label">Operator</div><div class="val">NGP<span class="unit">non-profit</span></div></div>
+        <div class="stat"><div class="label">Special observer</div><div class="val">ID</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>What it is</h3>
+        <p>Project Nexus is a BIS Innovation Hub design that connects domestic instant-payment systems through <strong>one standardised link per country</strong> instead of bilateral corridors [BIS 2025]. Nexus Global Payments, a non-profit incorporated in Singapore, operationalises and manages the rail [BIS 2025].</p>
+        <h3>Who is in</h3>
+        <p>The live-implementation phase covers the IPS operators of <strong>India, Malaysia, the Philippines, Singapore and Thailand</strong>, with Bank Indonesia as special observer [BIS 2025]. A live pilot ran ahead of full implementation targeted for 2026.</p>
+      </div>
+      <div class="profile-col">
+        <h3>Why it matters for Singapore</h3>
+        <ul>
+          <li><strong>PayNow becomes a regional node</strong> — Singapore's IPS plugs into a multi-economy rail through a single connection</li>
+          <li><strong>Corridor stack collapses</strong> — replaces bespoke bilateral integrations with a shared standard</li>
+          <li><strong>Settlement &amp; FX standardised</strong> — central-bank-grade settlement behind retail QR</li>
+          <li><strong>Hub positioning</strong> — NGP's Singapore incorporation anchors governance locally</li>
+        </ul>
+        <h3>The honest read</h3>
+        <p>Go-live timelines for multi-central-bank infrastructure slip. The 2026 target is credible but contingent on each IPS operator's readiness and commercial model [Kira estimates] — the gating risk this report flags.</p>
+      </div>
+    </div>
+    <div class="source-key">BIS 2025 = Bank for International Settlements Project Nexus releases 2025 · MAS 2025 = Monetary Authority of Singapore Nexus updates 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 012 DIVIDER — STABLECOIN LAYER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 09</div>
+    <div class="divider-title">The stablecoin <span class="accent">layer.</span></div>
+    <div class="divider-thesis">Singapore finalised a single-currency stablecoin framework ahead of most peers. <strong>The opportunity is regulated settlement, not retail speculation</strong> — issuers operating under licence, 100% reserves, and a pathway from QR retail rails into tokenised wholesale flows.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">SCS framework</div>
+      <div class="toc-pill">Reserves &amp; redemption</div>
+      <div class="toc-pill">Issuers</div>
+      <div class="toc-pill">Tokenised pilots</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 013 STABLECOIN FRAMEWORK (market_data_chart) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · Stablecoin framework</div>
+      <div class="page-section-counter">013 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">A regulated label that gates entry and rewards reserves</h1>
+    <p class="page-subhead">MAS's single-currency stablecoin framework applies to SGD- and G10-pegged coins issued in Singapore. The bar is deliberately high — and that bar is the moat for licensed issuers.</p>
+    <div class="exec-body" style="grid-template-columns:1.15fr 1fr;">
+      <div class="exec-narrative">
+        <h3>Scope &amp; the MAS-regulated label</h3>
+        <p>The framework covers <strong>single-currency stablecoins pegged to SGD or a G10 currency</strong>, issued in Singapore [MAS 2025]. Only compliant issuers may use the "MAS-regulated stablecoin" label; coins pegged to other assets stay under digital-payment-token rules [MAS 2025].</p>
+        <h3>Reserves &amp; redemption</h3>
+        <p>Issuers must hold <strong>100% reserves</strong> in the peg currency — cash, equivalents, or short government debt — with segregated accounts, published monthly attestations, and redemption at par within five business days [MAS 2025]. The rules take full effect in 2026.</p>
+        <h3>Why the bar is the moat</h3>
+        <p>High capital, custody, and disclosure requirements deter casual entrants. The framework <strong>converts compliance into credibility</strong> — the licensed label is a B2B trust signal that unlicensed coins cannot match [Kira estimates].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">SCS framework: the entry gate</div><div class="chart-subtitle">Singapore · key requirements</div></div><div class="chart-unit">RULES</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <rect x="20" y="20" width="440" height="50" rx="4" fill="#EEF3FF" stroke="#1E6FFF" stroke-width="1"></rect>
+              <text x="34" y="40" font-size="11" font-weight="700" fill="#1850BF">100% reserve backing</text>
+              <text x="34" y="58" font-size="9.5" fill="#4A5568">Cash / equivalents / short gov debt, segregated</text>
+              <rect x="20" y="84" width="440" height="50" rx="4" fill="#E6F7F3" stroke="#00A88B" stroke-width="1"></rect>
+              <text x="34" y="104" font-size="11" font-weight="700" fill="#00786A">Monthly attestation, annual audit</text>
+              <text x="34" y="122" font-size="9.5" fill="#4A5568">Published independent reserve attestations</text>
+              <rect x="20" y="148" width="440" height="50" rx="4" fill="#FEF3E7" stroke="#D97706" stroke-width="1"></rect>
+              <text x="34" y="168" font-size="11" font-weight="700" fill="#B45309">Par redemption in 5 business days</text>
+              <text x="34" y="186" font-size="9.5" fill="#4A5568">Plus base capital and liquidity buffers</text>
+              <rect x="20" y="212" width="440" height="30" rx="4" fill="#F4F6F8" stroke="#D1D5DB" stroke-width="1"></rect>
+              <text x="240" y="231" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF">= MAS-REGULATED STABLECOIN LABEL</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MAS SCS FRAMEWORK · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2025 = Monetary Authority of Singapore single-currency stablecoin framework 2023-2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 014 TOKENISED PILOTS (use_case_grid_6) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Tokenised pilots</div>
+      <div class="page-section-counter">014 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Six stablecoin and tokenised-payment pilots taking shape</h1>
+    <p class="page-subhead">Singapore's tokenised-payments agenda runs through a coordinated set of MAS initiatives and licensed issuers — <strong>settlement-grade, not retail speculation</strong> — spanning issuance, programmability, and wholesale settlement.</p>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">PILOT 01</div>
+        <div class="uc-title">Licensed SGD stablecoin (XSGD)</div>
+        <div class="uc-body">An SGD-backed stablecoin from a licensed major payment institution, one-to-one reserved with bank custodians, now extended onto additional ledgers for ASEAN treasury flows.</div>
+        <div class="uc-example">EXAMPLE · STRAITSX XSGD</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PILOT 02</div>
+        <div class="uc-title">Singapore-issued USD stablecoin</div>
+        <div class="uc-body">A regulated USD stablecoin issuance hub in Singapore, with a major bank as reserve custodian to anchor institutional confidence — planned for 2026 launch.</div>
+        <div class="uc-example">EXAMPLE · PAXOS · DBS CUSTODY</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PILOT 03</div>
+        <div class="uc-title">Purpose-Bound Money</div>
+        <div class="uc-body">A programmability protocol from Project Orchid that <strong>attaches conditions to digital currency</strong> — automated, conditional triggers for tokenised payments such as vouchers and escrow.</div>
+        <div class="uc-example">EXAMPLE · PROJECT ORCHID PBM</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PILOT 04</div>
+        <div class="uc-title">Wholesale CBDC settlement</div>
+        <div class="uc-body">The SGD Testnet lets financial institutions settle tokenised-asset transactions with S$ wholesale CBDC across Project Guardian and Orchid, with named banks participating.</div>
+        <div class="uc-example">EXAMPLE · SGD TESTNET · DBS, UOB</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PILOT 05</div>
+        <div class="uc-title">BLOOM multi-currency settlement</div>
+        <div class="uc-body">MAS's BLOOM initiative extends settlement to <strong>tokenised bank liabilities and well-regulated stablecoins</strong> — bridging bank money and token money across currencies.</div>
+        <div class="uc-example">EXAMPLE · MAS BLOOM</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">PILOT 06</div>
+        <div class="uc-title">Global Layer One (GL1)</div>
+        <div class="uc-body">A shared-infrastructure initiative for cross-border tokenised-asset transactions with standardised governance and <strong>compliance by design</strong> — the wholesale analogue to Nexus.</div>
+        <div class="uc-example">EXAMPLE · GL1 · GUARDIAN WHOLESALE NETWORK</div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2025 = Monetary Authority of Singapore tokenisation initiatives 2024-2025 (Orchid, Guardian, BLOOM, GL1) · Kira estimates = KIRA in-house analyst triangulation across issuer and initiative disclosures</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 015 DIVIDER — AI & OUTLOOK ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 12</div>
+    <div class="divider-title">AI and the <span class="accent">outlook.</span></div>
+    <div class="divider-thesis">AI lands first in fraud, sanctions screening, and FX optimisation across cross-border rails. <strong>The 2026-2030 read: value compounds through cross-border interoperability and regulated tokenised settlement</strong>, with execution risk in multi-party go-live timing.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Fraud &amp; AML</div>
+      <div class="toc-pill">FX optimisation</div>
+      <div class="toc-pill">Scenarios to 2030</div>
+      <div class="toc-pill">Rail convergence</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 016 AI IMPACT (ai_overview) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · AI impact</div>
+      <div class="page-section-counter">015 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">AI lands first in the cross-border risk and FX layer</h1>
+    <p class="page-subhead">For payments, the highest-ROI AI use cases sit in fraud and sanctions screening, FX routing, and compliance automation — exactly the friction points that multilateral and tokenised rails amplify.</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>Fraud &amp; sanctions screening</h3>
+        <p>Cross-border rails widen the attack surface; rule-based monitoring runs high false-positive rates. AI screening cuts cost per alert and tightens detection across multi-economy flows [Kira estimates].</p>
+        <h3>FX &amp; routing optimisation</h3>
+        <p>Multilateral settlement multiplies currency pairs. AI-driven FX routing and liquidity optimisation lower the cost of each cross-border leg — a direct margin lever on Nexus-style volume [Kira estimates].</p>
+        <h3>Compliance by design</h3>
+        <p>Tokenised rails embed compliance into the infrastructure. AI document and transaction understanding automates KYC and reporting — material given Singapore's regulated-settlement posture [Kira estimates].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header"><div><div class="chart-title">Where AI lands first in payments</div><div class="chart-subtitle">relative ROI · KIRA composite</div></div><div class="chart-unit">INDEX</div></div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 440 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="mono">
+              <text x="8" y="30" font-size="10" fill="#6B7280">Fraud / AML</text>
+              <rect x="120" y="20" width="270" height="15" fill="#1E6FFF"></rect>
+              <text x="396" y="32" font-size="9" font-weight="700" fill="#0B0D10">High</text>
+              <text x="8" y="66" font-size="10" fill="#6B7280">FX routing</text>
+              <rect x="120" y="56" width="240" height="15" fill="#1E6FFF"></rect>
+              <text x="366" y="68" font-size="9" font-weight="700" fill="#0B0D10">High</text>
+              <text x="8" y="102" font-size="10" fill="#6B7280">KYC / reporting</text>
+              <rect x="120" y="92" width="200" height="15" fill="#4A5568"></rect>
+              <text x="326" y="104" font-size="9" font-weight="700" fill="#0B0D10">Med</text>
+              <text x="8" y="138" font-size="10" fill="#6B7280">Dispute ops</text>
+              <rect x="120" y="128" width="160" height="15" fill="#4A5568"></rect>
+              <text x="286" y="140" font-size="9" font-weight="700" fill="#0B0D10">Med</text>
+              <text x="8" y="174" font-size="10" fill="#6B7280">Personalisation</text>
+              <rect x="120" y="164" width="125" height="15" fill="#00A88B"></rect>
+              <text x="251" y="176" font-size="9" font-weight="700" fill="#0B0D10">Build</text>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA SYNTHESIS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="ai-callouts">
+      <div class="callout"><div class="label">Highest-ROI use case</div><div class="num">Fraud</div><div class="change">cross-border screening lift</div><div class="source-tag est">Kira estimates</div></div>
+      <div class="callout"><div class="label">Currency pairs at scale</div><div class="num">Nexus</div><div class="change">FX routing margin lever</div><div class="source-tag est">Kira estimates</div></div>
+      <div class="callout"><div class="label">Settlement posture</div><div class="num">Reg.</div><div class="change">compliance-by-design rails</div><div class="source-tag">MAS 2025</div></div>
+    </div>
+    <div class="source-key">MAS 2025 = Monetary Authority of Singapore initiatives 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 017 FORECAST (forecast_outlook) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · Outlook</div>
+      <div class="page-section-counter">016 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Three scenarios for the rail build-out to 2030</h1>
+    <p class="page-subhead">The base case is steady cross-border scaling and a working regulated-stablecoin market. The spread depends on Project Nexus go-live timing and how fast tokenised settlement reaches commercial volume.</p>
+    <div class="exec-chart" style="height:300px; margin-bottom:14px;">
+      <div class="chart-header"><div><div class="chart-title">Cross-border &amp; tokenised throughput index</div><div class="chart-subtitle">Singapore · indexed · 2024-2030F</div></div><div class="chart-unit">INDEX</div></div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1100 230" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <line x1="50" y1="195" x2="1080" y2="195" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="50" y1="30" x2="50" y2="195" stroke="#E5E7EB" stroke-width="1"/>
+          <g class="mono" font-size="10" fill="#6B7280">
+            <text x="40" y="198" text-anchor="end">100</text>
+            <text x="40" y="118" text-anchor="end">200</text>
+            <text x="40" y="38" text-anchor="end">300</text>
+          </g>
+          <g class="mono" font-size="10" fill="#6B7280" text-anchor="middle">
+            <text x="110" y="214">2024</text>
+            <text x="270" y="214">2025</text>
+            <text x="430" y="214">2026</text>
+            <text x="590" y="214">2027</text>
+            <text x="750" y="214">2028</text>
+            <text x="910" y="214">2029</text>
+            <text x="1050" y="214">2030F</text>
+          </g>
+          <path d="M 110 188 L 270 178 L 430 150 L 590 110 L 750 78 L 910 52 L 1050 34" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="4,3"></path>
+          <path d="M 110 188 L 270 178 L 430 162 L 590 138 L 750 116 L 910 96 L 1050 80" stroke="#1E6FFF" stroke-width="2.5" fill="none"></path>
+          <path d="M 110 188 L 270 178 L 430 172 L 590 162 L 750 152 L 910 144 L 1050 138" stroke="#4A5568" stroke-width="2" fill="none" stroke-dasharray="2,2"></path>
+          <circle cx="430" cy="162" r="4" fill="#1E6FFF"></circle>
+          <text x="430" y="154" text-anchor="middle" font-size="10" font-weight="700" fill="#1E6FFF" class="mono">Nexus</text>
+          <g class="mono" font-size="10">
+            <rect x="760" y="32" width="14" height="3" fill="#D97706"></rect><text x="780" y="36" fill="#6B7280">Bull</text>
+            <rect x="840" y="32" width="14" height="3" fill="#1E6FFF"></rect><text x="860" y="36" fill="#6B7280">Base</text>
+            <rect x="920" y="32" width="14" height="3" fill="#4A5568"></rect><text x="940" y="36" fill="#6B7280">Bear</text>
+          </g>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: KIRA TRIANGULATION — NEXUS, MAS INITIATIVES · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="imp-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="imp-card" style="border-top-color:#D97706;">
+        <div class="num" style="color:#D97706;">BULL</div>
+        <div class="title">Nexus on time, tokens scale</div>
+        <div class="body-text">Project Nexus goes live on schedule, regulated stablecoins reach B2B treasury volume, and BLOOM/GL1 bridge retail and wholesale rails ahead of plan.</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">BASE</div>
+        <div class="title">Steady scaling, modest slip</div>
+        <div class="body-text">Bilateral corridors keep growing, Nexus lands with a modest delay, and licensed stablecoins build wholesale flows gradually [Kira estimates].</div>
+      </div>
+      <div class="imp-card" style="border-top-color:#4A5568;">
+        <div class="num" style="color:#4A5568;">BEAR</div>
+        <div class="title">Go-live slips, tokens stall</div>
+        <div class="body-text">Multi-party readiness delays Nexus, tokenised settlement stays in pilot, and growth leans on the maturing bilateral and domestic core.</div>
+      </div>
+    </div>
+    <div class="source-key">BIS 2025 = Bank for International Settlements Project Nexus 2025 · MAS 2025 = Monetary Authority of Singapore initiatives 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 018 METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology &amp; sources</div>
+      <div class="page-section-counter">017 · SG-PAY-2026</div>
+    </div>
+    <h1 class="page-h1">Methodology &amp; sources</h1>
+    <div class="exec-body" style="grid-template-columns:1fr 1.2fr; gap:40px;">
+      <div class="exec-narrative">
+        <h3>How to read the numbers</h3>
+        <p>This view triangulates two evidence streams. Where a figure carries a named source tag — for example [MAS 2025] or [SG Payment Yearbook 2025] — the underlying data comes from that source; the full citation is listed at right.</p>
+        <p>Where a figure carries [Kira estimates], our analysts derived it from a blend of disclosed inputs — regulator releases, scheme operator data, issuer disclosures — using the method noted in the relevant section. Roughly <strong>30% of quantitative claims are KIRA-derived</strong>; the balance are externally cited.</p>
+        <p>Singapore's business press leads in English, so this view runs an English-language source base; cross-border counterpart sources (Bank Indonesia, Bank Negara Malaysia, BIS) are cited via English aliases.</p>
+        <p style="font-size:10.5px; color:var(--muted); margin-top:12px;">This document is prepared for the named recipient and reflects conditions at time of writing. Figures are best estimates and may be revised. Not investment advice.</p>
+      </div>
+      <div class="exec-narrative">
+        <h3>Sources</h3>
+        <div style="font-size:11px; line-height:1.7; color:var(--text-mid);">
+          <p style="margin-bottom:5px;"><strong>MAS 2025</strong> — Monetary Authority of Singapore releases (cross-border linkages, single-currency stablecoin framework, Project Orchid, Guardian, BLOOM, Global Layer One)</p>
+          <p style="margin-bottom:5px;"><strong>BIS 2025</strong> — Bank for International Settlements Innovation Hub, Project Nexus blueprint and live-phase updates</p>
+          <p style="margin-bottom:5px;"><strong>NETS 2025</strong> — NETS acceptance-network and SGQR+ rollout disclosures</p>
+          <p style="margin-bottom:5px;"><strong>SG Payment Yearbook 2025</strong> — Singapore Digital &amp; Card Payment Yearbook 2025 (adoption, wallet share, volumes)</p>
+          <p style="margin-bottom:5px;"><strong>Kira estimates</strong> — KIRA in-house analyst triangulation across regulator, scheme, and issuer inputs</p>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent"> RESEARCH</span></div>
+      <div>Singapore payments 2026 · SG-PAY-2026</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
