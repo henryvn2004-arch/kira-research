@@ -18,20 +18,22 @@
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-async function sb(path) {
+async function sb(path, { countOnly = false } = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       'apikey':        SUPABASE_SERVICE_KEY,
       'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
       'Content-Type':  'application/json',
-      'Prefer':        'count=exact'
+      'Prefer':        'count=exact',
+      ...(countOnly ? { 'Range-Unit': 'items', 'Range': '0-0' } : {})
     }
   });
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
-  const data = await res.json();
   const range = res.headers.get('content-range') || '';
-  const total = parseInt(range.split('/')[1], 10) || data.length || 0;
-  return { rows: data, total };
+  const total = parseInt(range.split('/')[1], 10) || 0;
+  if (countOnly) return { rows: [], total };
+  const data = await res.json();
+  return { rows: data, total: total || data.length };
 }
 
 function cors(res) {
@@ -69,7 +71,7 @@ export default async function handler(req, res) {
   const locale   = SUPPORTED.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
   const category = clean(url.searchParams.get('category'));
   const q        = sanitizeQ(url.searchParams.get('q'));
-  const limit    = int(url.searchParams.get('limit'),  24, 96);
+  const limit    = int(url.searchParams.get('limit'),  24, 200);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
 
   try {
@@ -119,14 +121,18 @@ export default async function handler(req, res) {
       }
       where.push(`id=in.(${Array.from(transIds).join(',')})`);
     }
+    const baseWhere = where.join('&');
     const baseQs =
-      where.join('&') +
+      baseWhere +
       `&order=published_at.desc.nullslast` +
       `&limit=${limit}` +
       `&offset=${offset}` +
       `&select=id,slug,category,country,industry,published_at,featured`;
 
-    const { rows: insights } = await sb(`insights?${baseQs}`);
+    const [{ rows: insights }, { total: dbTotal }] = await Promise.all([
+      sb(`insights?${baseQs}`),
+      sb(`insights?${baseWhere}&select=id`, { countOnly: true })
+    ]);
 
     // 2) Translations in one in() query. We also pull body length so we
     //    can drop stub rows (title+excerpt present but body never written)
@@ -178,10 +184,7 @@ export default async function handler(req, res) {
       })
       .filter(Boolean);
 
-    // Total reflects post-filter count. If callers rely on the pre-filter
-    // total for pagination, they'll see the visible-items count instead —
-    // which is the more honest number anyway.
-    res.status(200).json({ items, total: items.length, limit, offset, locale });
+    res.status(200).json({ items, total: dbTotal, limit, offset, locale });
   } catch (err) {
     console.error('[insights-list] error:', err.message);
     res.status(500).json({ error: 'server_error' });
