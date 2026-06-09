@@ -254,11 +254,14 @@ export default async function handler(req, res) {
 
       // Translation content (may be null if no rows)
       title:          translation?.title    || null,
-      eyebrow:        translation?.eyebrow  || null,  // e.g. "VIETNAM · FINTECH · MARKET ANALYSIS"
-      preview:        translation?.preview  || null,  // first-section HTML/text
-      toc:            translation?.toc      || [],    // [{num,name,pages,locked}]
-      full_content:   null,                            // never served on this endpoint;
-                                                       // post-purchase only via /api/get-purchased-report
+      eyebrow:        translation?.eyebrow  || null,
+      abstract:       translation?.abstract || null,  // public 200-300 word summary, indexed by Google
+      preview:        translation?.preview  || null,
+      toc:            translation?.toc      || [],
+      toc_json:       translation?.toc_json       || null, // [{section, page_ref}]
+      preview_tables: translation?.preview_tables || null, // [{title, source, html}]
+      glossary_json:  translation?.glossary_json  || null, // [{term, definition}]
+      full_content:   null,
       aggregators:    base.aggregators || [],
 
       relatedInsights, // [{slug,title,excerpt,read_time,country,industry,locale}, ...] up to 3

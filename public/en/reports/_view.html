@@ -526,6 +526,23 @@
       el.textContent = JSON.stringify(payload);
     }
 
+    // Renders 1-2 public data tables from preview_tables JSON.
+    // These are fully crawlable by Googlebot and LLM scrapers — no paywall.
+    // Format: [{title: string, source: string, html: string}]
+    function renderPreviewTables(tables) {
+      if (!Array.isArray(tables) || !tables.length) return '';
+      return tables.slice(0, 2).map(t => {
+        if (!t || !t.html) return '';
+        return (
+          '<section class="rpt-section rpt-preview-table">' +
+            (t.title ? '<h3>' + escapeHtml(t.title) + '</h3>' : '') +
+            '<div class="rpt-table-wrap">' + t.html + '</div>' +
+            (t.source ? '<p class="rpt-table-source"><em>Source: ' + escapeHtml(t.source) + '</em></p>' : '') +
+          '</section>'
+        );
+      }).join('');
+    }
+
     function renderChart(c) {
       if (!c || !Array.isArray(c.bars) || !c.bars.length) return '';
       const bars = c.bars.map(b => {
@@ -813,11 +830,20 @@
       }
 
       // ── Preview body ──
-      const lede   = d.preview?.lede ? '<p><strong>' + escapeHtml(d.preview.lede) + '</strong></p>' : '';
-      const paras  = Array.isArray(d.preview?.paragraphs)
+      // abstract (new field, 200-300 words) takes priority over lede+paras.
+      // It is rendered as plain indexable text — no paywall, fully crawlable
+      // by Google and LLM scrapers (Perplexity, ChatGPT).
+      const lede   = d.abstract
+        ? '<p>' + escapeHtml(d.abstract) + '</p>'
+        : (d.preview?.lede ? '<p><strong>' + escapeHtml(d.preview.lede) + '</strong></p>' : '');
+      const paras  = d.abstract ? '' : (Array.isArray(d.preview?.paragraphs)
         ? d.preview.paragraphs.map(p => '<p>' + escapeHtml(p) + '</p>').join('')
-        : '';
+        : '');
       const chart  = renderChart(d.preview?.chart);
+
+      // ── Preview tables (public data tables shown before paywall) ──
+      const previewTablesHtml = renderPreviewTables(d.preview_tables);
+
       const toc    = renderToc(d.toc, !!purchaseState.purchased);
 
       // Full body (only if purchased)
@@ -848,11 +874,13 @@
               '<div class="rpt-meta-item"><div class="label">Analyst</div><div class="val">Our research team</div></div>' +
             '</div>' +
 
-            '<section class="rpt-section">' +
+            '<section class="rpt-section rpt-abstract">' +
               '<h3>Section 01 · Executive Summary</h3>' +
               '<h2>' + (purchaseState.purchased ? 'Overview' : 'Preview') + '</h2>' +
               lede + paras + chart +
             '</section>' +
+
+            previewTablesHtml +
 
             (purchaseState.purchased ? '' : renderPreviewFrame(d, locale)) +
 
