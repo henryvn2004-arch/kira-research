@@ -6,7 +6,25 @@ This prompt picks 1 `living_reports` row and advances its Insight pipeline by 1 
 
 ---
 
-## Mission (Phase Q.2 — 2026-05-25)
+## Mission (Phase Q.6 — 2026-06-09, updated)
+
+For every published report, produce **4 insights × 3 languages = 12 insight_translations rows** in up to 6 fires:
+
+```
+[report published]
+  → Fire 1 (Stage E):  extract 3 narrative insights from en.html → 3 EN translations
+  → Fire 2 (Stage J):  translate to JA → 3 JA translations
+  → Fire 3 (Stage K):  translate to KO → 3 KO translations
+  → Fire 4 (Stage T):  generate 4th data-table insight (EN) → 1 EN translation
+  → Fire 5 (Stage TJ): translate 4th insight to JA → 1 JA translation
+  → Fire 6 (Stage TK): translate 4th insight to KO → 1 KO translation
+```
+
+The 4th insight (`slug: <industry>-<country>-key-data-metrics-<year>`) contains 2–3 HTML comparison tables with `class="kira-data-table"` — pure data, no prose — designed for AI engine citation and infographic creation.
+
+---
+
+## Mission (Phase Q.2 — 2026-05-25, original)
 
 For every published report, produce **3 insights × 3 languages = 9 insight_translations rows** in 3 fires:
 
@@ -93,19 +111,27 @@ SELECT r.id, r.slug, r.country, r.industry, r.year,
          WHEN COALESCE(ic.en_count, 0) < 3 THEN 'stage_en'
          WHEN COALESCE(ic.ja_count, 0) < 3 THEN 'stage_ja'
          WHEN COALESCE(ic.ko_count, 0) < 3 THEN 'stage_ko'
+         -- Phase Q.6: data-table enrichment stages (4th insight per report)
+         WHEN COALESCE(ic.en_count, 0) < 4 THEN 'stage_t'
+         WHEN COALESCE(ic.ja_count, 0) < 4 THEN 'stage_tj'
+         WHEN COALESCE(ic.ko_count, 0) < 4 THEN 'stage_tk'
          ELSE 'done'
        END AS next_stage
 FROM reports r
 LEFT JOIN insight_counts ic ON ic.report_slug = r.slug
-WHERE NOT (COALESCE(ic.en_count, 0) >= 3
-       AND COALESCE(ic.ja_count, 0) >= 3
-       AND COALESCE(ic.ko_count, 0) >= 3)
+WHERE NOT (COALESCE(ic.en_count, 0) >= 4
+       AND COALESCE(ic.ja_count, 0) >= 4
+       AND COALESCE(ic.ko_count, 0) >= 4)
 ORDER BY
   CASE
-    WHEN COALESCE(ic.ko_count, 0) > 0 THEN 1  -- nearly-done first (finish them)
-    WHEN COALESCE(ic.ja_count, 0) > 0 THEN 2
-    WHEN COALESCE(ic.en_count, 0) > 0 THEN 3
-    ELSE 4
+    -- Finish nearly-complete reports first
+    WHEN COALESCE(ic.ko_count, 0) >= 3 AND COALESCE(ic.en_count, 0) >= 4 THEN 1  -- stage_tk
+    WHEN COALESCE(ic.ja_count, 0) >= 3 AND COALESCE(ic.en_count, 0) >= 4 THEN 2  -- stage_tj
+    WHEN COALESCE(ic.ko_count, 0) >= 3 THEN 3  -- stage_t (all 3 langs done, needs 4th)
+    WHEN COALESCE(ic.ko_count, 0) > 0 THEN 4   -- stage_ko
+    WHEN COALESCE(ic.ja_count, 0) > 0 THEN 5   -- stage_ja
+    WHEN COALESCE(ic.en_count, 0) > 0 THEN 6   -- stage_en (continuing)
+    ELSE 7
   END,
   r.created_at ASC
 LIMIT 1;
@@ -337,14 +363,197 @@ After successful INSERT → this report's insight pipeline is **fully done** (9 
 
 ---
 
+---
+
+## Step 3T (Stage T only — Phase Q.6): generate 4th data-table insight (EN)
+
+This stage runs after all 3 core insights are done in all 3 languages (en≥3, ja≥3, ko≥3). It generates ONE additional insight per report whose body is **pure HTML comparison tables** — no narrative prose — designed as source material for infographics and AI citation.
+
+### 3T.1 — Locate en.html (same as Stage E, Step 2)
+
+Use the same en.html lookup logic from Step 2. If not found locally → EXIT `en.html not found, skip stage_t`.
+
+### 3T.2 — Spawn data-table extraction subagent
+
+Spawn `general-purpose` **with `model: "sonnet"`** and this prompt (substitute fields):
+
+> Read the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html`.
+>
+> Generate ONE new Insight article that is a **pure data compilation** — 2–3 HTML comparison tables covering the report's most citable numbers. This article is specifically designed as infographic source material and for AI engine citation.
+>
+> **Structure (strict):**
+> - `title_en`: "[Industry] [Country] [Year]: Key Market Data and Metrics" — sentence case, 60–90 chars
+> - `excerpt_en`: "A data reference covering market size, competitive landscape, and key metrics for [industry] in [country]." (max 280 chars)
+> - `lede_en`: 1–2 sentence introduction only. "Key market metrics from Kira Research's [Industry] [Country] [Year] analysis." (max 300 chars)
+> - `body_en`: Exactly 2 or 3 HTML `<table class="kira-data-table">` blocks. No prose between tables except a short 1-line `<h3>` header for each table. Each table has `<thead>` and `<tbody>`. After the last table, add one `<p class="data-source"><em>Source: Kira Research analysis, [Country] [Industry] [Year]. See full report for methodology.</em></p>`.
+> - `slug_key`: always `"key-data-metrics"`
+> - `read_time`: "3 min read"
+> - `category`: "data-explainer"
+>
+> **Table requirements:**
+> 1. **Market metrics table** — rows: market size (USD), CAGR %, key volume metric (units/tonnes/users), penetration rate. Columns: metric name | 2023 or 2024 | 2025 | 2026E or 2027E. Use data from the report's market sizing and forecast sections. Source tag every number: `[Kira estimates]` or named source in brackets.
+> 2. **Competitive landscape table** — rows: top 3–5 players. Columns: company | est. market share (%) | key strength/segment | headquarters country. If the report has no market share data, use qualitative "Leader / Challenger / Niche" classification.
+> 3. *(Optional)* **Regulatory / supply chain table** — only include if the report has ≥3 data points for this (e.g. tariff rates, compliance deadlines, production capacity). Skip if thin.
+>
+> **Hard rules:**
+> - `<table class="kira-data-table">` — this exact class on every table (used by the CSS + infographic pipeline)
+> - Every number in a table must have a source tag in its cell: append `<span class="src-tag">[Kira estimates]</span>` or `<span class="src-tag">[Source name]</span>`
+> - No Mordor/Frost/Euromonitor/Synovate/Ipsos/IMARC/Claude/McKinsey
+> - No section numbers or references to "Section X" — the article must be standalone
+> - Do NOT rewrite numbers — lift them verbatim from en.html
+>
+> Output JSON with this exact shape (no markdown fences):
+> ```json
+> {
+>   "title_en": "...",
+>   "excerpt_en": "...",
+>   "lede_en": "...",
+>   "body_en": "<h3>Market Metrics</h3><table class=\"kira-data-table\">...</table>...",
+>   "slug_key": "key-data-metrics",
+>   "read_time": "3 min read",
+>   "category": "data-explainer"
+> }
+> ```
+
+**Hard time cap: 20 minutes.**
+
+### 3T.3 — Validation
+
+1. Parse as JSON. Must have all required fields, all non-empty.
+2. `body_en` must contain at least 2 `<table class="kira-data-table">` blocks. If only 1 → fail.
+3. Check `body_en` contains at least 5 `<span class="src-tag">` (source tags on numbers).
+4. Anti-positioning grep: zero hits for forbidden terms.
+5. `slug_key` must be `"key-data-metrics"`.
+
+### 3T.4 — Build slug and check uniqueness
+
+`slug = ${industry-lower}-${country-lower}-key-data-metrics-${year}`
+e.g. `fintech-vietnam-key-data-metrics-2026`
+
+Check uniqueness:
+```sql
+SELECT slug FROM insights WHERE slug = $kbat$<slug>$kbat$;
+```
+If exists → this stage already ran (idempotent). EXIT with `stage_t already done for <report-slug>`.
+
+### 3T.5 — INSERT 4th insight (EN only)
+
+```sql
+WITH new_insight AS (
+  INSERT INTO insights (slug, category, country, industry, featured, related_report_slugs, status, published_at)
+  VALUES (
+    $kbat$<slug>$kbat$,
+    'data-explainer',
+    $kbat$<country-lower>$kbat$,
+    $kbat$<industry-lower>$kbat$,
+    false,
+    ARRAY[$kbat$<report-slug>$kbat$],
+    'published',
+    now()
+  )
+  ON CONFLICT (slug) DO UPDATE SET updated_at = now()
+  RETURNING id, slug
+)
+INSERT INTO insight_translations (insight_id, locale, title, excerpt, lede, body, read_time, status, published_at)
+SELECT ni.id, 'en',
+  $kbat$<title_en>$kbat$,
+  $kbat$<excerpt_en>$kbat$,
+  $kbat$<lede_en>$kbat$,
+  $kbat$<body_en>$kbat$,
+  '3 min read',
+  'published',
+  now()
+FROM new_insight ni
+ON CONFLICT (insight_id, locale) DO UPDATE SET
+  updated_at = now(), published_at = now(),
+  title = EXCLUDED.title, excerpt = EXCLUDED.excerpt,
+  lede = EXCLUDED.lede, body = EXCLUDED.body, status = 'published'
+RETURNING insight_id, locale, title;
+```
+
+Print summary + exit.
+
+---
+
+## Step 4T (Stage TJ only — Phase Q.6): translate 4th insight to JA
+
+### 4T.1 — Fetch the 4th EN insight
+
+```sql
+SELECT i.id, i.slug, it.title, it.excerpt, it.lede, it.body, it.read_time
+FROM insights i
+JOIN insight_translations it ON it.insight_id = i.id AND it.locale = 'en' AND it.status = 'published'
+WHERE i.related_report_slugs && ARRAY[$kbat$<report-slug>$kbat$]::text[]
+  AND i.slug LIKE '%-key-data-metrics-%'
+  AND NOT EXISTS (
+    SELECT 1 FROM insight_translations it2
+    WHERE it2.insight_id = i.id AND it2.locale = 'ja' AND it2.status = 'published'
+  )
+LIMIT 1;
+```
+
+If 0 rows → already done. EXIT.
+
+### 4T.2 — Spawn JA translation subagent (with `model: "sonnet"`)
+
+Same translator_jp.md rules as Step 4.2, but **special instruction for data tables:**
+
+> Translate KIRA Research data-table insight from EN to JA.
+>
+> Special rules for this data-table article:
+> - Translate `<h3>` headers and table `<thead>` column labels to JA
+> - Translate table `<tbody>` row labels (left column) to JA
+> - Keep all numbers, percentages, and year values EXACTLY as-is (do not translate digits)
+> - Keep all `<span class="src-tag">[...]</span>` source tags in English brackets — do NOT translate
+> - Keep `class="kira-data-table"` and `class="src-tag"` attributes unchanged
+> - Translate `title`, `excerpt`, `lede` per translator_jp.md register rules
+> - `read_time`: "3分で読了"
+>
+> Follow `prompts/translator_jp.md` for general register, anti-positioning, and source-tag rules.
+
+### 4T.3 — Validation + INSERT JA
+
+Same validation as Step 4.3. Then INSERT:
+
+```sql
+INSERT INTO insight_translations (insight_id, locale, title, excerpt, lede, body, read_time, status, published_at)
+VALUES (
+  (SELECT id FROM insights WHERE slug = $kbat$<slug>$kbat$),
+  'ja',
+  $kbat$<title_ja>$kbat$,
+  $kbat$<excerpt_ja>$kbat$,
+  $kbat$<lede_ja>$kbat$,
+  $kbat$<body_ja>$kbat$,
+  '3分で読了',
+  'published',
+  now()
+)
+ON CONFLICT (insight_id, locale) DO UPDATE SET
+  updated_at = now(), published_at = now(),
+  title = EXCLUDED.title, excerpt = EXCLUDED.excerpt,
+  lede = EXCLUDED.lede, body = EXCLUDED.body, status = 'published'
+RETURNING insight_id, locale, title;
+```
+
+---
+
+## Step 5T (Stage TK only — Phase Q.6): translate 4th insight to KO
+
+Mirror Step 4T exactly but with `translator_ko.md` rules. `read_time` → "3분 읽기".
+
+After successful INSERT → this report's full insight pipeline is **complete** (12 insight_translations rows: 4 insights × 3 locales).
+
+---
+
 ## Step 6: Summary output
 
 ```
 KIRA insight fire complete.
   Report: <slug> (<country>, <industry>, <year>)
-  Stage advanced: <stage_en | stage_ja | stage_ko>
-  Insights now: <en_count>/3 EN · <ja_count>/3 JA · <ko_count>/3 KO
-  Next pending reports: <count> need stage_en + <count> need stage_ja + <count> need stage_ko
+  Stage advanced: <stage_en | stage_ja | stage_ko | stage_t | stage_tj | stage_tk>
+  Insights now: <en_count>/4 EN · <ja_count>/4 JA · <ko_count>/4 KO
+  Next pending reports: <count> need stage_en · <count> stage_ja · <count> stage_ko
+                        <count> stage_t · <count> stage_tj · <count> stage_tk
 ```
 
 Exit. No second report in same fire.
@@ -380,6 +589,9 @@ Exit non-zero.
 | Extraction returns < 3 insights | Subagent followed the prompt poorly. status=error. |
 | Slug collision (rare) | Append `-2`/`-3` to slug. Don't fail. |
 | Translation subagent returns < 3 insights | status=error. Manually re-trigger. |
+| Stage T: body has < 2 tables | status=error. Subagent didn't follow table instructions. Re-trigger. |
+| Stage T: < 5 src-tag spans in body | Warn but don't fail — tables may legitimately have few tagged numbers. |
+| Stage T: slug already exists | Idempotent exit — stage_t already completed. Move to stage_tj. |
 | Source tag drift (EN tags missing in JA/KO) | status=error with `<lang> source tag drift on <slug>`. |
 | SQL INSERT returns 0 rows | status=error. Manual SQL cleanup may be needed. |
 | anti-positioning leak | status=error. Manual review of the source en.html — leak likely originated there. |
@@ -394,6 +606,14 @@ Exit non-zero.
 - Not a place to ask clarifying questions — log error + exit
 
 ---
+
+## Phase Q.6 changelog (2026-06-09)
+
+- **Stage T** added: after all 3 core insights complete (en≥3, ja≥3, ko≥3), generate a 4th insight per report whose body is 2–3 HTML comparison tables with `class="kira-data-table"`. Purpose: AI citation source + infographic raw material. Slug pattern: `<industry>-<country>-key-data-metrics-<year>`.
+- **Stage TJ / TK** added: translate 4th data-table insight to JA and KO. Special translator instruction preserves table structure (column headers translated, numbers unchanged, src-tag spans in EN).
+- Done condition changed from `en≥3 AND ja≥3 AND ko≥3` → `en≥4 AND ja≥4 AND ko≥4`. Existing reports with 3/3/3 will get the 4th insight on next fire.
+- Priority ORDER BY updated: stage_t/tj/tk reports sorted ahead of fresh stage_en reports so enrichment backlogs drain before new extraction starts.
+- No schema change. State tracked by counting insight_translations rows per locale.
 
 ## Phase Q.2 changelog (2026-05-25)
 
