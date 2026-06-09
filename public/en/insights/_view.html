@@ -139,8 +139,24 @@
     setMetaContent('meta-tw-description', description);
     if (data.published_at) setMeta('property', 'article:published_time', data.published_at);
 
-    // ── JSON-LD: Article + BreadcrumbList ──
-    injectJsonLd('ld-article', {
+    // ── JSON-LD: Article + FAQPage + BreadcrumbList ──
+    // FAQPage schema: when body contains <h2> sections formatted as Q&A
+    // (starting with "Q:" or question words), extract them for Featured Snippet
+    // eligibility. LLMs (Perplexity, ChatGPT) also prioritise pages with FAQ
+    // markup when building cited answers.
+    const faqMatches = [];
+    const bodyHtml = data.body || '';
+    // Extract Q&A pairs: looks for <strong>Q: ...</strong> ... <p>answer</p> pattern
+    const faqRe = /<strong>Q:\s*([^<]+)<\/strong>[^]*?<\/strong>\s*([\s\S]*?)(?=<strong>Q:|$)/g;
+    let fm;
+    while ((fm = faqRe.exec(bodyHtml)) !== null && faqMatches.length < 8) {
+      const q = fm[1].trim();
+      const aRaw = fm[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
+      if (q && aRaw) faqMatches.push({ '@type': 'Question', name: q,
+        acceptedAnswer: { '@type': 'Answer', text: aRaw } });
+    }
+
+    const articleLd = {
       '@context':       'https://schema.org',
       '@type':          'Article',
       headline:         data.title || data.slug,
@@ -151,19 +167,27 @@
       inLanguage:       locale,
       author: {
         '@type': 'Organization',
-        name:    'KIRA RESEARCH'
+        name:    'Kira Research',
+        url:     base + '/'
       },
       publisher: {
         '@type': 'Organization',
-        name:    'KIRA RESEARCH',
-        logo: {
-          '@type': 'ImageObject',
-          url:     base + '/logo.png'
-        }
+        name:    'Kira Research',
+        url:     base + '/',
+        logo: { '@type': 'ImageObject', url: base + '/logo.png' }
       },
-      image:           base + '/logo.png',
+      image:            base + '/logo.png',
       mainEntityOfPage: url
-    });
+    };
+    injectJsonLd('ld-article', articleLd);
+
+    if (faqMatches.length >= 2) {
+      injectJsonLd('ld-faq', {
+        '@context':   'https://schema.org',
+        '@type':      'FAQPage',
+        mainEntity:   faqMatches
+      });
+    }
 
     const crumbs = [
       { name: 'KIRA RESEARCH', item: base + '/' + locale + '/' },

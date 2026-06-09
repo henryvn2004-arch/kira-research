@@ -425,26 +425,68 @@
       xdef.href = base + '/en/reports/' + d.slug;
       document.head.appendChild(xdef);
 
-      // ── JSON-LD: Product + BreadcrumbList ───────────────
+      // ── JSON-LD: Product + Dataset + Paywall spec ────────
+      // Product: signals price/purchase intent to Google Shopping + AI engines.
+      // Dataset: signals high-value structured data — Perplexity/ChatGPT cite pages
+      //          with Dataset markup at higher rates than plain Article.
+      // isAccessibleForFree + hasPart: Google Paywall spec — tells Googlebot the
+      //          .report-full-content block is paywalled so it doesn't flag cloaking,
+      //          while still crawling the preview abstract/TOC/tables above it.
       injectJsonLd('ld-product', {
-        '@context':    'https://schema.org',
-        '@type':       'Product',
-        name:          d.title || d.slug,
-        description,
-        url,
-        sku:           d.slug,
-        category:      [d.industry, d.country].filter(Boolean).join(' · ') || 'Market Research',
-        brand: {
-          '@type': 'Organization',
-          name:    'KIRA RESEARCH'
-        },
-        offers: {
-          '@type':         'Offer',
-          price:           String(d.price || 39),
-          priceCurrency:   'USD',
-          availability:    'https://schema.org/InStock',
-          url
-        }
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type':       'Product',
+            '@id':         url + '#product',
+            name:          d.title || d.slug,
+            description,
+            url,
+            sku:           d.slug,
+            category:      [d.industry, d.country].filter(Boolean).join(' · ') || 'Market Research',
+            brand: {
+              '@type': 'Organization',
+              name:    'Kira Research',
+              url:     base + '/'
+            },
+            publisher: {
+              '@type': 'Organization',
+              name:    'Kira Research',
+              url:     base + '/',
+              logo: { '@type': 'ImageObject', url: base + '/logo.png' }
+            },
+            offers: {
+              '@type':        'Offer',
+              price:          String(d.price || 39),
+              priceCurrency:  'USD',
+              availability:   'https://schema.org/InStock',
+              url
+            },
+            isAccessibleForFree: 'False',
+            hasPart: {
+              '@type':              'WebPageElement',
+              isAccessibleForFree:  'False',
+              cssSelector:          '.report-full-content'
+            }
+          },
+          {
+            '@type':          'Dataset',
+            '@id':            url + '#dataset',
+            name:             (d.title || d.slug) + ' — Market Data',
+            description:      'Primary market intelligence data covering ' +
+                              [d.industry, d.country].filter(Boolean).join(' in ') +
+                              (d.year ? ', ' + d.year : '') +
+                              '. Includes market sizing, competitive landscape, and trend analysis.',
+            creator: {
+              '@type': 'Organization',
+              name:    'Kira Research',
+              url:     base + '/'
+            },
+            spatialCoverage:  d.country  || undefined,
+            keywords:         [d.industry, d.country, 'market research', 'Southeast Asia'].filter(Boolean),
+            license:          base + '/en/methodology',
+            isPartOf:         { '@id': url + '#product' }
+          }
+        ]
       });
 
       const crumbs = [
