@@ -8,7 +8,7 @@
 
 import { createSign } from 'node:crypto';
 
-const BASE_URL = 'https://www.kiraresearch.com';
+const BASE_URL = 'https://kiraresearch.com';
 const INDEXING_API = 'https://indexing.googleapis.com/v3/urlNotifications:publish';
 const QUOTA_PER_DAY = 200;
 
