@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — Vietnam solar 2027 outlook: rooftop PPA market and utility-scale grid bottlenecks</title>
+<meta name="description" content="Vietnam solar 2027 — rooftop PPA structures, utility-scale grid bottleneck analysis, and a 5-year capacity outlook from KIRA's analysts.">
+<meta property="og:title" content="KIRA Research — Vietnam solar 2027 outlook">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 0.98; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 18px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 56px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 800px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 700; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; flex: 1; min-height: 0; }
+.toc-row { display: grid; grid-template-columns: 36px 1fr 50px; gap: 12px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tn { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; }
+.toc-row .tt { font-family: 'Satoshi', sans-serif; font-size: 12.5px; color: var(--text); font-weight: 600; }
+.toc-row .tt .sub { font-weight: 400; color: var(--text-mid); font-size: 11px; display: block; line-height: 1.3; }
+.toc-row .tp { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.methend-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.methend-left h3, .methend-right h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.methend-left p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.methend-left p strong { color: var(--text); font-weight: 600; }
+.methend-right ul { list-style: none; padding: 0; margin: 0; }
+.methend-right li { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; line-height: 1.25; color: var(--text-mid); padding: 1px 0; border-bottom: 1px dotted var(--border); }
+.methend-right li strong { color: var(--text); font-weight: 700; }
+
+.source-key {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted);
+  padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px;
+  letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden;
+}
+.source-key::before { content: "SOURCE KEY · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 001 — COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner">
+      <div class="cover-top">
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Vietnam · Solar / Renewable Energy · 2027</div>
+        <h1>Vietnam's solar market — 2027<br>Rooftop PPA <span class="accent">unlocked</span>, grid still the ceiling</h1>
+        <p class="cover-subtitle">A 5-year view on the Decree 135/2024 commercial rooftop framework, utility-scale transmission constraints, and the structural split between fast-moving distributed solar and stalled large-scale builds.</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">Vietnam</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">Solar / Renewable Energy</div></div>
+          <div class="cover-meta-item"><div class="label">Published</div><div class="val">June 2026</div></div>
+          <div class="cover-meta-item"><div class="label">Report ID</div><div class="val"><span class="accent">KR-VN-SOLAR-2027</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · Single-user license · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 002 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Methodology</div>
+      <div class="page-section-counter">002 / 016</div>
+    </div>
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="page-subhead">This view draws on two evidence streams: <strong>primary inputs</strong> — developer site visits, off-taker conversations, and EPC procurement data — and <strong>secondary anchors</strong> — EVN disclosures, MOIT policy circulars, and project-level grid-interconnection records. Every quantitative claim carries an explicit source tag.</p>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>Primary inputs</h3>
+        <div class="method-item">
+          <div class="item-label">Developer and off-taker reads</div>
+          <div class="item-desc">Conversations with rooftop solar developers operating under the new DPPA/commercial PPA framework, industrial park energy managers across Binh Duong, Dong Nai, and Long An, and FDI manufacturers assessing on-site solar as part of RE100 commitments — surfaces real contracting structures, PPA pricing ranges, and off-taker appetite.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">EPC &amp; equipment procurement</div>
+          <div class="item-desc">Module import data, inverter procurement trends, and EPC cost benchmarks from installers across the 100 kWp–5 MWp rooftop segment and the utility-scale pipeline with signed grid-interconnection agreements.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Analyst synthesis</div>
+          <div class="item-desc">KIRA in-house triangulation across EVN annual capacity tables, MOIT Power Development Plan VIII installation schedules, and grid-congestion notifications. Tagged inline as [Kira estimates].</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>Secondary anchors</h3>
+        <div class="method-item">
+          <div class="item-label">Statistical and regulatory authorities</div>
+          <div class="item-desc">EVN (Tập đoàn Điện lực Việt Nam) capacity + dispatch tables, MOIT (Bộ Công Thương) Power Development Plan VIII (PDP8) and revision memos, NLDC (National Load Dispatch Centre) curtailment bulletins, Ministry of Finance investment incentive schedules.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Project-level disclosures</div>
+          <div class="item-desc">Signed PPA filings, grid-code compliance certificates, and interconnection queue data from EVN regional subsidiaries (EVNCPC, EVNNPC, EVNSPC). FDI solar project approvals from MPI (Bộ Kế hoạch và Đầu tư) provincial investment registers.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Triangulated estimates</div>
+          <div class="item-desc">Where no single source spans the figure (curtailment rates by corridor, PPA pricing distributions, rooftop penetration by industrial segment), we combine 2-3 inputs and disclose the method. Tagged [Kira estimates].</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 003 — TOC ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Contents</div>
+      <div class="page-section-counter">003 / 016</div>
+    </div>
+    <h1 class="page-h1">Contents</h1>
+    <p class="page-subhead">Eight chapters across 16 pages. Three dark dividers signpost the major thematic breaks — policy pivot, grid constraint, and the rooftop PPA market. Charts cluster around the capacity, grid, and competitive sections.</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tn">03</span><span class="tt">Executive summary<span class="sub">Headline reads + five strategic implications</span></span><span class="tp">004</span></div>
+      <div class="toc-row"><span class="tn">04</span><span class="tt">Policy &amp; regulatory backbone<span class="sub">PDP8, Decree 135/2024, DPPA framework</span></span><span class="tp">006</span></div>
+      <div class="toc-row"><span class="tn">05</span><span class="tt">Installed capacity &amp; forecast<span class="sub">Solar share, pipeline, 2027-2030 trajectory</span></span><span class="tp">008</span></div>
+      <div class="toc-row"><span class="tn">06</span><span class="tt">Grid bottleneck anatomy<span class="sub">Transmission gaps, curtailment corridors</span></span><span class="tp">010</span></div>
+      <div class="toc-row"><span class="tn">07</span><span class="tt">Rooftop PPA market<span class="sub">C&amp;I off-takers, pricing, RE100 pipeline</span></span><span class="tp">012</span></div>
+      <div class="toc-row"><span class="tn">08</span><span class="tt">Competitive landscape<span class="sub">Top developers, FDI entrants, EPC tier</span></span><span class="tp">013</span></div>
+      <div class="toc-row"><span class="tn">09</span><span class="tt">5-year outlook &amp; scenarios<span class="sub">Base / bull / bear to 2030</span></span><span class="tp">014</span></div>
+      <div class="toc-row"><span class="tn">10</span><span class="tt">Methodology endnote<span class="sub">Source mix, alias key, disclaimer</span></span><span class="tp">016</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 004 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">004 / 016</div>
+    </div>
+    <h1 class="page-h1">Vietnam solar 2027 — rooftop PPA unlocked, grid is the binding constraint</h1>
+    <p class="page-subhead">Vietnam's installed solar base reached <strong>~20.7 GWp by end-2025</strong> [EVN 2025], covering roughly 25% of total generation capacity. The Decree 135/2024 commercial DPPA framework activated rooftop PPA contracting for the first time at scale. <strong>The binding constraint for 2027-30 is not solar demand — it is transmission capacity from the south-central solar belt to load centres.</strong></p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">INSTALLED SOLAR 2025</div>
+        <div class="num">20.7<span class="unit">GWp</span></div>
+        <div class="change">~25% of total generation [EVN 2025]</div>
+        <div class="source-tag sec">EVN 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">PDP8 SOLAR TARGET 2030</div>
+        <div class="num">73.4<span class="unit">GWp</span></div>
+        <div class="change">+52.7 GWp from 2025 base [PDP8 2023]</div>
+        <div class="source-tag sec">PDP8 2023</div>
+      </div>
+      <div class="callout">
+        <div class="label">ROOFTOP PIPELINE</div>
+        <div class="num">2.8<span class="unit">GWp</span></div>
+        <div class="change">C&amp;I DPPA-eligible 2026-27 [Kira estimates]</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">CURTAILMENT RATE</div>
+        <div class="num">~25<span class="unit">%</span></div>
+        <div class="change">South-central corridor peak [NLDC 2025]</div>
+        <div class="source-tag sec">NLDC 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>The PPA pivot is structural</h3>
+        <p>Decree 135/2024/NĐ-CP enabled commercial-scale direct power purchase agreements between rooftop solar operators and industrial off-takers, effective November 2024 [MOIT 2024]. For the first time, a factory or industrial park tenant can contract multi-year solar supply at a negotiated tariff without routing through EVN's retail price schedule. <strong>The first signed DPPAs are priced at VND 1,450-1,700/kWh — a 15-25% discount to the industrial retail tariff</strong> [Kira estimates from developer conversations].</p>
+        <h3>Grid is the ceiling, not demand</h3>
+        <p>Vietnam's south-central solar corridor — Ninh Thuan, Binh Thuan, Khanh Hoa — generated more solar power than the 500kV backhaul to Hanoi and HCMC could absorb in 2024-25 [NLDC 2025]. Curtailment rates peaked at <strong>~25% in Q2 2025</strong> [NLDC 2025]. EVN's 500kV third-circuit extension (Đà Nẵng to Pleiku) and the 220kV reinforcements in the south are scheduled for 2026-27 completion, but grid timing, not project demand, decides when the next GW of utility-scale capacity becomes economically viable.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Vietnam solar installed capacity trajectory</div>
+            <div class="chart-subtitle">GWp · 2021-2030F</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="166" x2="370" y2="166"/>
+            <line class="grid-line" x1="40" y1="133" x2="370" y2="133"/>
+            <line class="grid-line" x1="40" y1="100" x2="370" y2="100"/>
+            <line class="grid-line" x1="40" y1="66" x2="370" y2="66"/>
+            <line class="grid-line" x1="40" y1="33" x2="370" y2="33"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="170" text-anchor="end">15</text>
+            <text class="axis-text" x="32" y="137" text-anchor="end">30</text>
+            <text class="axis-text" x="32" y="104" text-anchor="end">45</text>
+            <text class="axis-text" x="32" y="70"  text-anchor="end">60</text>
+            <text class="axis-text" x="32" y="37"  text-anchor="end">75</text>
+            <!-- Values: 16.5, 17.1, 18.8, 20.7, 26.0, 35.0, 50.0, 73.4 (GWp) scale 75 -->
+            <rect class="bar-primary" x="50"  y="156" width="28" height="44"/>
+            <rect class="bar-primary" x="96"  y="154" width="28" height="46"/>
+            <rect class="bar-primary" x="142" y="150" width="28" height="50"/>
+            <rect class="bar-primary" x="188" y="145" width="28" height="55"/>
+            <rect class="bar-secondary" x="234" y="131" width="28" height="69"/>
+            <rect class="bar-secondary" x="280" y="107" width="28" height="93"/>
+            <rect class="bar-secondary" x="326" y="67"  width="28" height="133"/>
+            <text class="label-data" x="64"  y="150" text-anchor="middle" font-size="9">16.5</text>
+            <text class="label-data" x="110" y="148" text-anchor="middle" font-size="9">17.1</text>
+            <text class="label-data" x="156" y="144" text-anchor="middle" font-size="9">18.8</text>
+            <text class="label-data" x="202" y="139" text-anchor="middle" font-size="9">20.7</text>
+            <text class="label-data" x="248" y="125" text-anchor="middle" font-size="9">26.0</text>
+            <text class="label-data" x="294" y="101" text-anchor="middle" font-size="9">35.0</text>
+            <text class="label-data" x="340" y="61"  text-anchor="middle" font-size="9">73.4</text>
+            <text class="axis-text" x="64"  y="216" text-anchor="middle">2021</text>
+            <text class="axis-text" x="110" y="216" text-anchor="middle">2022</text>
+            <text class="axis-text" x="156" y="216" text-anchor="middle">2023</text>
+            <text class="axis-text" x="202" y="216" text-anchor="middle">2025</text>
+            <text class="axis-text" x="248" y="216" text-anchor="middle">2026F</text>
+            <text class="axis-text" x="294" y="216" text-anchor="middle">2027F</text>
+            <text class="axis-text" x="340" y="216" text-anchor="middle">2030F</text>
+            <rect x="45" y="14" width="10" height="8" fill="#1E6FFF"/>
+            <text class="label-small" x="60" y="21">Actual</text>
+            <rect x="110" y="14" width="10" height="8" fill="#00A88B"/>
+            <text class="label-small" x="125" y="21">Forecast (PDP8 path)</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, PDP8 2023, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · PDP8 2023 = MOIT Power Development Plan VIII (Decision 500/QĐ-TTg 2023) · NLDC 2025 = National Load Dispatch Centre Curtailment Bulletin Q2 2025 · MOIT 2024 = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 005 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Strategic Implications</div>
+      <div class="page-section-counter">005 / 016</div>
+    </div>
+    <h1 class="page-h1">Five strategic implications for the next 24 months</h1>
+    <p class="page-subhead">Market participants should treat <strong>2025-27 as the rooftop DPPA land-grab window</strong>, not the utility-scale build cycle. The constraint is grid, not demand; operators who move first on commercial PPA structures capture the off-taker relationships that persist through the decade.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 01</div>
+        <div class="title">Rooftop DPPA is the lowest-friction growth channel</div>
+        <div class="body-text">Decree 135/2024 removes the need to route through EVN's purchase schedule for on-site and near-site commercial solar [MOIT 2024]. <strong>Projects below 1 MWp can be contracted and commissioned within 6-9 months</strong> [Kira estimates] — far faster than utility-scale GIA queues. The 2026-27 window is decisive: off-takers signing 10-15 year DPPAs now lock in supply at current module prices (~USD 0.11-0.13/Wp) before any rebound.</div>
+        <div class="anchor"><span class="num-anchor">6-9 months</span> DPPA timeline &lt;1 MWp</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 02</div>
+        <div class="title">Sequence utility-scale builds around grid completion dates</div>
+        <div class="body-text">Three 500kV and eight 220kV projects in EVN's 2026-27 grid investment plan will unlock <strong>~8-10 GW of stranded south-central solar capacity</strong> [EVN Grid 2025]. Utility-scale developers with signed grid-interconnection agreements should stage commercial operation dates to the specific line completion — commissioning into a curtailment corridor destroys IRR.</div>
+        <div class="anchor"><span class="num-anchor">~8-10 GW</span> transmission-constrained</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 03</div>
+        <div class="title">Anchor pricing on RE100 off-takers, not FiT dependence</div>
+        <div class="body-text">Vietnam's feed-in tariff (FiT) era closed for new registrations in 2020-21 [EVN 2021]. The replacement competitive auction mechanism (AUCM) is operational but oversubscribed. <strong>RE100 industrial tenants — Samsung, Intel, LG, Nike supply chains — offer multi-year DPPAs at 80-90% of retail tariff</strong> [Kira estimates from off-taker conversations], a stable offtake base independent of government pricing cycles.</div>
+        <div class="anchor"><span class="num-anchor">80-90%</span> retail-parity DPPA pricing</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 04</div>
+        <div class="title">Use storage to monetise curtailment — the next margin lever</div>
+        <div class="body-text">Battery storage co-located with utility-scale solar in curtailment zones can shift generation from peak-cut hours to evening peak, converting curtailed output into dispatchable power. <strong>PDP8 targets 300 MW of battery storage by 2030</strong> [PDP8 2023]; project economics become viable below USD 200/kWh BESS at current curtailment rates — a threshold reached in 2025 [Kira estimates on BloombergNEF BESS pricing].</div>
+        <div class="anchor"><span class="num-anchor">300 MW</span> PDP8 storage target</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 05</div>
+        <div class="title">Northern solar is underpenetrated — the next geography</div>
+        <div class="body-text">Vietnam's north has <strong>&lt;5% of installed solar versus ~70% of industrial load</strong> [EVN 2025, Kira estimates]. Irradiance is lower (GHI ~4.5 kWh/m²/day vs south's 5.2-5.5) but the load-proximity advantage eliminates transmission risk. Decree 135/2024 structures favour north-of-load-centre C&amp;I solar as a lower-risk alternative to south-centric utility scale.</div>
+        <div class="anchor"><span class="num-anchor">&lt;5% / ~70%</span> solar vs load split</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 006 — POLICY DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">Policy &amp; regulatory <span class="accent">backbone</span></h1>
+    <div class="divider-thesis">Vietnam enters 2027 with a functioning direct PPA framework, a revised national power plan, and five years of accumulated solar installation that has permanently reshaped the generation mix — <strong>but policy execution on grid investment has consistently lagged the capacity ambition by 18-36 months.</strong></div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">PDP8</div>
+      <div class="toc-pill">Decree 135/2024</div>
+      <div class="toc-pill">DPPA framework</div>
+      <div class="toc-pill">Grid investment</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 007 — POLICY DETAIL ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Policy &amp; Regulation</div>
+      <div class="page-section-counter">007 / 016</div>
+    </div>
+    <h1 class="page-h1">PDP8 sets 73.4 GWp by 2030 — DPPA unlocks the merchant layer</h1>
+    <p class="page-subhead">Power Development Plan VIII (Decision 500/QĐ-TTg, May 2023) set Vietnam's first legally binding solar installation target: <strong>73.4 GWp by 2030 and 168-189 GWp by 2050</strong> [PDP8 2023]. Decree 135/2024 activated the direct commercial PPA channel that makes reaching those targets without state-financed EVN procurement financially feasible.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>PDP8 solar targets</h3>
+        <p>PDP8 disaggregates the 73.4 GWp target: <strong>~50 GWp utility-scale ground-mounted</strong> (mainly south-central and the Mekong delta) and <strong>~23 GWp rooftop solar</strong> (commercial, industrial, and residential) [PDP8 2023]. Vietnam's base case as of end-2025 sits at 20.7 GWp installed — roughly 28% of the 2030 target with five years remaining [EVN 2025]. The gap is real but arithmetically achievable if transmission investment tracks.</p>
+        <h3>Decree 135/2024 — the commercial PPA pivot</h3>
+        <p>Decree 135/2024/NĐ-CP (November 2024) enables <strong>direct power purchase agreements</strong> between renewable energy generators and corporate off-takers, without requiring EVN as intermediary [MOIT 2024]. Eligible projects include rooftop solar (any capacity), ground-mounted solar below specified thresholds, and co-located battery storage. The decree resolves a 5-year legal limbo where RE100-committed FDI manufacturers could not legally contract private solar supply.</p>
+        <h3>AUCM mechanism for utility-scale</h3>
+        <p>The competitive auction mechanism (AUCM) governs grid-connected utility-scale solar above the DPPA threshold. Two pilot auction rounds (2025-26) allocated <strong>~3.2 GW at clearing prices between VND 1,644-1,900/kWh</strong> [MOIT 2025] — roughly 7-8 US¢/kWh, competitive with regional peers but contingent on grid-interconnection agreement (GIA) availability. GIA issuance is the bottleneck: EVN's queue exceeds available transmission slots by ~2:1 [Kira estimates from EVN grid planning docs].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">PDP8 capacity targets · solar breakdown</div>
+            <div class="chart-subtitle">GWp · 2025 installed vs 2030 target</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <!-- Stacked bar: 2025 actual vs 2030 target, utility + rooftop split -->
+            <line class="axis-line" x1="60" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="60" y1="173" x2="370" y2="173"/>
+            <line class="grid-line" x1="60" y1="146" x2="370" y2="146"/>
+            <line class="grid-line" x1="60" y1="120" x2="370" y2="120"/>
+            <line class="grid-line" x1="60" y1="93"  x2="370" y2="93"/>
+            <line class="grid-line" x1="60" y1="66"  x2="370" y2="66"/>
+            <line class="grid-line" x1="60" y1="40"  x2="370" y2="40"/>
+            <text class="axis-text" x="52" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="52" y="177" text-anchor="end">10</text>
+            <text class="axis-text" x="52" y="150" text-anchor="end">20</text>
+            <text class="axis-text" x="52" y="124" text-anchor="end">30</text>
+            <text class="axis-text" x="52" y="97"  text-anchor="end">40</text>
+            <text class="axis-text" x="52" y="70"  text-anchor="end">50</text>
+            <text class="axis-text" x="52" y="44"  text-anchor="end">60</text>
+            <!-- 2025: utility ~17 GWp + rooftop ~3.7 GWp = 20.7 -->
+            <rect class="bar-primary"   x="100" y="149" width="70" height="51"/>
+            <rect class="bar-secondary" x="100" y="138" width="70" height="11"/>
+            <text class="label-data" x="135" y="178" text-anchor="middle" fill="#FFFFFF" font-size="9">Util 17.0</text>
+            <text class="label-data" x="135" y="132" text-anchor="middle" font-size="9">Roof 3.7</text>
+            <!-- 2030F: utility ~50 + rooftop ~23.4 = 73.4 -->
+            <rect class="bar-primary"   x="220" y="50"  width="100" height="150"/>
+            <rect class="bar-secondary" x="220" y="50"  width="100" height="70"/>
+            <rect class="bar-primary"   x="220" y="120" width="100" height="80"/>
+            <text class="label-data" x="270" y="90"  text-anchor="middle" fill="#FFFFFF" font-size="9">Roof 23.4</text>
+            <text class="label-data" x="270" y="165" text-anchor="middle" fill="#FFFFFF" font-size="9">Util ~50.0</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">2025 (actual)</text>
+            <text class="axis-text" x="270" y="216" text-anchor="middle">2030F (PDP8 target)</text>
+            <rect x="60" y="14" width="10" height="8" fill="#1E6FFF"/>
+            <text class="label-small" x="75" y="22">Utility-scale</text>
+            <rect x="155" y="14" width="10" height="8" fill="#00A88B"/>
+            <text class="label-small" x="170" y="22">Rooftop / distributed</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, PDP8 2023, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">PDP8 2023 = MOIT Power Development Plan VIII Decision 500/QĐ-TTg May 2023 · EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · MOIT 2024 = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance · MOIT 2025 = MOIT Competitive Auction Mechanism (AUCM) Round 1-2 Clearing Results 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 008 — GRID DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">Grid bottleneck <span class="accent">anatomy</span></h1>
+    <div class="divider-thesis">Vietnam's south-central solar corridor generates far more than the national grid can absorb. <strong>~25% peak curtailment rates in Ninh Thuan and Binh Thuan</strong> [NLDC 2025] make the transmission investment schedule the single most important variable in the utility-scale solar financial model through 2027-28.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Curtailment map</div>
+      <div class="toc-pill">500kV expansion</div>
+      <div class="toc-pill">GIA queue</div>
+      <div class="toc-pill">Storage opportunity</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 009 — GRID BOTTLENECK DETAIL ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Grid Bottleneck</div>
+      <div class="page-section-counter">009 / 016</div>
+    </div>
+    <h1 class="page-h1">Transmission constraints: curtailment geography and the GIA queue</h1>
+    <p class="page-subhead">The structural mismatch is geographic: <strong>~70% of Vietnam's installed solar is in the south-central provinces</strong> (Ninh Thuan, Binh Thuan, Khanh Hoa, Phu Yen) which represent less than 20% of national electricity demand [EVN 2025, Kira estimates]. Every MWp added to these provinces without new 500kV transmission faces curtailment risk until the grid catches up.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Curtailment by corridor</h3>
+        <p>NLDC's 2024-25 dispatch data shows <strong>peak curtailment of 23-27% in Ninh Thuan during dry-season solar peaks</strong> (Q1-Q2) [NLDC 2025]. Binh Thuan curtailment tracked 15-20% in the same period. By contrast, north-central and Mekong delta projects report near-zero curtailment — grid topology there still has absorption headroom. The differential creates a clear geographic arbitrage in project IRR calculation.</p>
+        <h3>500kV backhaul — the relief timeline</h3>
+        <p>EVN's grid investment program includes three critical interventions: the <strong>500kV North-South circuit-3 extension</strong> (Da Nang–Pleiku–Duc Hoa, scheduled 2026Q4), a 220kV reinforcement ring across south-central provinces, and a new HVDC interconnect study for the post-2028 period [EVN Grid 2025]. If EVN's own schedule holds, south-central curtailment falls to <strong>under 10% by late 2027</strong> [Kira estimates]. EVN's grid project schedule has historically run 6-18 months late against announced dates [Kira estimates from historical completion analysis].</p>
+        <h3>GIA queue dynamics</h3>
+        <p>Grid-interconnection agreement (GIA) requests submitted to EVN regional subsidiaries exceed available 2026-27 transmission slots by an estimated <strong>2:1 ratio</strong> [Kira estimates from EVN grid planning documents]. Projects without a signed GIA cannot participate in AUCM bidding, cannot access EVN procurement, and cannot contract DPPAs that route power through the grid. The queue effectively rations new utility-scale entries and focuses near-term growth on the rooftop and near-site solar segment.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Curtailment rates by solar corridor</div>
+            <div class="chart-subtitle">% of generated output curtailed · 2024-2025</div>
+          </div>
+          <div class="chart-unit">% CURTAILED</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="130" y1="20" x2="130" y2="210"/>
+            <line class="grid-line" x1="185" y1="20" x2="185" y2="210"/>
+            <line class="grid-line" x1="240" y1="20" x2="240" y2="210"/>
+            <line class="grid-line" x1="295" y1="20" x2="295" y2="210"/>
+            <line class="grid-line" x1="350" y1="20" x2="350" y2="210"/>
+            <text class="axis-text" x="130" y="218" text-anchor="middle">0%</text>
+            <text class="axis-text" x="185" y="218" text-anchor="middle">10%</text>
+            <text class="axis-text" x="240" y="218" text-anchor="middle">20%</text>
+            <text class="axis-text" x="295" y="218" text-anchor="middle">30%</text>
+            <!-- Ninh Thuan: ~25% -->
+            <text class="axis-text" x="120" y="42" text-anchor="end">Ninh Thuan</text>
+            <rect class="bar-tertiary" x="130" y="30" width="138" height="18"/>
+            <text class="label-data" x="273" y="43" font-size="10">~25%</text>
+            <!-- Binh Thuan: ~18% -->
+            <text class="axis-text" x="120" y="76" text-anchor="end">Binh Thuan</text>
+            <rect class="bar-tertiary" x="130" y="64" width="99" height="18"/>
+            <text class="label-data" x="234" y="77" font-size="10">~18%</text>
+            <!-- Khanh Hoa: ~12% -->
+            <text class="axis-text" x="120" y="110" text-anchor="end">Khanh Hoa</text>
+            <rect class="bar-secondary" x="130" y="98" width="66" height="18"/>
+            <text class="label-data" x="201" y="111" font-size="10">~12%</text>
+            <!-- Phu Yen: ~8% -->
+            <text class="axis-text" x="120" y="144" text-anchor="end">Phu Yen</text>
+            <rect class="bar-secondary" x="130" y="132" width="44" height="18"/>
+            <text class="label-data" x="179" y="145" font-size="10">~8%</text>
+            <!-- Mekong delta: ~2% -->
+            <text class="axis-text" x="120" y="178" text-anchor="end">Mekong delta</text>
+            <rect class="bar-primary" x="130" y="166" width="11" height="18"/>
+            <text class="label-data" x="146" y="179" font-size="10">~2%</text>
+            <text class="label-small" x="135" y="208">Peak Q1-Q2 · [NLDC 2025, Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NLDC 2025, EVN 2025, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NLDC 2025 = National Load Dispatch Centre Renewable Energy Curtailment Bulletin 2024-2025 · EVN Grid 2025 = EVN Transmission Grid Investment Plan 2025-2027 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 010 — ROOFTOP PPA DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">Rooftop PPA <span class="accent">market</span></h1>
+    <div class="divider-thesis">Decree 135/2024 resolved five years of legal ambiguity for commercial off-takers. The <strong>first multi-year direct PPAs are being signed at VND 1,450-1,700/kWh</strong> [Kira estimates] — a 15-25% discount to industrial retail tariff — and the pipeline of RE100-committed industrial tenants provides a durable off-taker base independent of government procurement cycles.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">C&amp;I off-takers</div>
+      <div class="toc-pill">DPPA pricing</div>
+      <div class="toc-pill">RE100 pipeline</div>
+      <div class="toc-pill">Contract structure</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 011 — ROOFTOP PPA DETAIL ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Rooftop PPA Market</div>
+      <div class="page-section-counter">011 / 016</div>
+    </div>
+    <h1 class="page-h1">Commercial &amp; industrial PPA: structure, pricing, and the RE100 pipeline</h1>
+    <p class="page-subhead">Vietnam's C&amp;I rooftop solar market is entering its second phase: from <strong>self-consumption incentive installs under the old net-metering regime to multi-year commercial DPPAs</strong> under Decree 135/2024. The shift is structural — it brings professional project finance, institutional off-takers, and bankable contract structures to a segment previously dependent on government feed-in tariffs.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Off-taker profile: RE100 as the demand anchor</h3>
+        <p>The primary driver of C&amp;I solar demand through 2027 is not electricity cost savings — it is supply chain sustainability requirements. <strong>Samsung (SDC &amp; SEV), Intel, LG Electronics, Nike and Apple contract manufacturers have committed to 100% renewable electricity</strong> under RE100 or equivalent corporate pledges [RE100 2025]. These commitments extend to Vietnam's manufacturing tiers; landlords of industrial parks serving these tenants face direct RE procurement obligations. The addressable rooftop surface area across Binh Duong, Dong Nai, Hanoi electronics clusters and Long An logistics parks represents <strong>~4-5 GWp of technically feasible rooftop capacity</strong> [Kira estimates].</p>
+        <h3>DPPA pricing mechanics</h3>
+        <p>Under Decree 135/2024, the DPPA price is bilaterally negotiated between generator and off-taker, subject to a floor (EVN avoided-cost reference) and ceiling (EVN retail tariff minus transmission wheeling charges) [MOIT 2024]. In practice, first-generation contracts are pricing at <strong>VND 1,450-1,700/kWh (~6.0-7.0 US¢/kWh)</strong> [Kira estimates from developer conversations] against an industrial retail tariff of ~VND 1,900-2,200/kWh for comparable consumption profiles [EVN 2025]. The 15-25% discount provides a compelling business case without requiring government subsidy.</p>
+        <h3>Contract structure and bankability</h3>
+        <p>Standard DPPA structures in Vietnam follow international PPA conventions: <strong>10-15 year term, take-or-pay floor at 85-90% of contracted volume, quarterly indexed price adjustments</strong> linked to a consumer price index component [Kira estimates from project documentation]. Project lenders (ADB, IFC, DFI-aligned local banks) are accepting Decree 135 PPAs as bankable off-take for solar project financing at debt:equity ratios of 70:30.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">C&amp;I rooftop solar pipeline by sector</div>
+            <div class="chart-subtitle">Estimated DPPA-eligible MWp · 2026-2027</div>
+          </div>
+          <div class="chart-unit">MWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="370" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="370" y2="120"/>
+            <line class="grid-line" x1="40" y1="80"  x2="370" y2="80"/>
+            <line class="grid-line" x1="40" y1="40"  x2="370" y2="40"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="164" text-anchor="end">250</text>
+            <text class="axis-text" x="32" y="124" text-anchor="end">500</text>
+            <text class="axis-text" x="32" y="84"  text-anchor="end">750</text>
+            <text class="axis-text" x="32" y="44"  text-anchor="end">1000</text>
+            <!-- Electronics MFG: 980 MWp -->
+            <rect class="bar-primary" x="55"  y="46"  width="44" height="154"/>
+            <text class="label-data" x="77" y="40" text-anchor="middle" font-size="9">980</text>
+            <!-- Industrial parks: 780 -->
+            <rect class="bar-primary" x="115" y="76"  width="44" height="124"/>
+            <text class="label-data" x="137" y="70" text-anchor="middle" font-size="9">780</text>
+            <!-- Logistics/cold chain: 450 -->
+            <rect class="bar-secondary" x="175" y="128" width="44" height="72"/>
+            <text class="label-data" x="197" y="122" text-anchor="middle" font-size="9">450</text>
+            <!-- Retail/commercial: 340 -->
+            <rect class="bar-secondary" x="235" y="146" width="44" height="54"/>
+            <text class="label-data" x="257" y="140" text-anchor="middle" font-size="9">340</text>
+            <!-- Hospitality: 250 -->
+            <rect class="bar-tertiary" x="295" y="160" width="44" height="40"/>
+            <text class="label-data" x="317" y="154" text-anchor="middle" font-size="9">250</text>
+            <text class="axis-text" x="77"  y="216" text-anchor="middle">Electronics</text>
+            <text class="axis-text" x="137" y="216" text-anchor="middle">Ind. parks</text>
+            <text class="axis-text" x="197" y="216" text-anchor="middle">Logistics</text>
+            <text class="axis-text" x="257" y="216" text-anchor="middle">Retail</text>
+            <text class="axis-text" x="317" y="216" text-anchor="middle">Hospitality</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA ESTIMATES — RE100 TENANT SURVEY, EVN ROOFTOP REGISTRATIONS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MOIT 2024 = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance · RE100 2025 = RE100 Member Commitment Register 2025 · EVN 2025 = EVN Retail Tariff Schedule and Rooftop Solar Registration Database 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 012 — CAPACITY SIZING ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Capacity &amp; Forecast</div>
+      <div class="page-section-counter">012 / 016</div>
+    </div>
+    <h1 class="page-h1">Installed base, pipeline, and the 2027-2030 trajectory</h1>
+    <p class="page-subhead">Vietnam's solar installed base adds roughly 4-5 GWp per year under the current regulatory structure — a pace that achieves PDP8's 2030 target only if transmission investment and GIA issuance keep pace. <strong>Our base case reaches ~35 GWp by end-2027</strong>, well below PDP8's implied run-rate but reflecting grid-constrained reality.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>The 2025-2027 addition window</h3>
+        <p>Vietnam added <strong>~1.9 GWp of new solar in 2025</strong> [EVN 2025], the lowest annual addition since the post-FiT reset in 2022. The drop reflects the transition from guaranteed FiT to AUCM contracting — developers waited for Decree 135 clarity and AUCM Round 1 results before committing new capacity. 2026-27 additions should rebound to <strong>5-7 GWp per annum</strong> [Kira estimates] as AUCM Round 2 capacity comes online and DPPA-structured rooftop projects clear permitting. The northern grid geography absorbs the incremental rooftop additions without curtailment risk.</p>
+        <h3>Rooftop vs utility-scale split</h3>
+        <p>The 2026-27 capacity addition is expected to skew <strong>~60% rooftop / 40% utility-scale</strong> versus the historical ~80:20 utility-dominant mix [Kira estimates]. The shift reflects: (a) DPPA framework enabling fast-cycle C&amp;I rooftop contracting, (b) GIA queue constraining new utility-scale additions in high-irradiance zones, and (c) northern load-proximate sites increasingly preferred over south-central high-irradiance but transmission-constrained locations.</p>
+        <h3>Module cost trajectory</h3>
+        <p>Mono-PERC modules landed Vietnam at <strong>~USD 0.11-0.13/Wp ex-port in Q1 2026</strong> [Kira estimates from EPC procurement conversations], down from USD 0.22/Wp in 2023. TOPCon bifacial modules command a ~10% premium but deliver 5-7% higher energy yield in Vietnam's irradiance profile. <strong>EPC all-in cost for rooftop installs sits at USD 0.60-0.75/Wp</strong> [Kira estimates] — a 30% reduction from 2022 — making rooftop DPPA economically viable without any subsidy or government offtake guarantee.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Annual capacity additions · rooftop vs utility-scale</div>
+            <div class="chart-subtitle">GWp added per year · 2022-2027F</div>
+          </div>
+          <div class="chart-unit">GWP/YEAR</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="166" x2="370" y2="166"/>
+            <line class="grid-line" x1="40" y1="133" x2="370" y2="133"/>
+            <line class="grid-line" x1="40" y1="100" x2="370" y2="100"/>
+            <line class="grid-line" x1="40" y1="66"  x2="370" y2="66"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="170" text-anchor="end">2</text>
+            <text class="axis-text" x="32" y="137" text-anchor="end">4</text>
+            <text class="axis-text" x="32" y="104" text-anchor="end">6</text>
+            <text class="axis-text" x="32" y="70"  text-anchor="end">8</text>
+            <!-- 2022: util 1.8 + roof 0.6 = 2.4 (scale 8: 1 unit = 16.7px) -->
+            <rect class="bar-primary"   x="55"  y="170" width="30" height="30"/>
+            <rect class="bar-secondary" x="55"  y="160" width="30" height="10"/>
+            <!-- 2023: util 1.4 + roof 0.3 = 1.7 -->
+            <rect class="bar-primary"   x="105" y="177" width="30" height="23"/>
+            <rect class="bar-secondary" x="105" y="172" width="30" height="5"/>
+            <!-- 2024: util 1.2 + roof 0.5 = 1.7 -->
+            <rect class="bar-primary"   x="155" y="180" width="30" height="20"/>
+            <rect class="bar-secondary" x="155" y="172" width="30" height="8"/>
+            <!-- 2025: util 1.4 + roof 0.5 = 1.9 -->
+            <rect class="bar-primary"   x="205" y="177" width="30" height="23"/>
+            <rect class="bar-secondary" x="205" y="169" width="30" height="8"/>
+            <!-- 2026F: util 2.2 + roof 3.0 = 5.2 -->
+            <rect class="bar-primary"   x="255" y="137" width="30" height="63"/>
+            <rect class="bar-secondary" x="255" y="87"  width="30" height="50"/>
+            <!-- 2027F: util 2.8 + roof 4.2 = 7.0 -->
+            <rect class="bar-primary"   x="305" y="153" width="30" height="47"/>
+            <rect class="bar-secondary" x="305" y="83"  width="30" height="70"/>
+            <text class="axis-text" x="70"  y="216" text-anchor="middle">2022</text>
+            <text class="axis-text" x="120" y="216" text-anchor="middle">2023</text>
+            <text class="axis-text" x="170" y="216" text-anchor="middle">2024</text>
+            <text class="axis-text" x="220" y="216" text-anchor="middle">2025</text>
+            <text class="axis-text" x="270" y="216" text-anchor="middle">2026F</text>
+            <text class="axis-text" x="320" y="216" text-anchor="middle">2027F</text>
+            <rect x="40" y="14" width="10" height="8" fill="#1E6FFF"/>
+            <text class="label-small" x="55" y="22">Utility-scale</text>
+            <rect x="140" y="14" width="10" height="8" fill="#00A88B"/>
+            <text class="label-small" x="155" y="22">Rooftop / C&amp;I</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, MOIT 2025, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · MOIT 2025 = MOIT AUCM Round 1-2 Project Register · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 013 — COMPETITIVE LANDSCAPE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Competitive Landscape</div>
+      <div class="page-section-counter">013 / 016</div>
+    </div>
+    <h1 class="page-h1">Developer landscape: domestic scale leaders and FDI entrants</h1>
+    <p class="page-subhead">Vietnam's solar developer market is <strong>consolidating toward a tier of 6-8 operators with 500 MWp or more installed</strong> [Kira estimates]. Domestic conglomerates dominate the utility-scale legacy portfolio; the DPPA era is pulling in FDI developers with project finance capacity and corporate PPA structuring experience.</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Market share by developer · installed solar GWp (2025)</div>
+            <div class="chart-subtitle">Estimated portfolio · top operators</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 180" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="140" y1="160" x2="460" y2="160"/>
+            <!-- Trung Nam: 3.0 GWp -->
+            <text class="axis-text" x="132" y="24" text-anchor="end">Trung Nam Group</text>
+            <rect class="bar-primary" x="140" y="12" width="180" height="16"/>
+            <text class="label-data" x="325" y="23">3.0 GWp</text>
+            <!-- T&T: 1.8 -->
+            <text class="axis-text" x="132" y="48" text-anchor="end">T&amp;T Group</text>
+            <rect class="bar-primary" x="140" y="36" width="108" height="16"/>
+            <text class="label-data" x="253" y="47">1.8 GWp</text>
+            <!-- Xuan Thien: 1.5 -->
+            <text class="axis-text" x="132" y="72" text-anchor="end">Xuan Thien Group</text>
+            <rect class="bar-primary" x="140" y="60" width="90" height="16"/>
+            <text class="label-data" x="235" y="71">1.5 GWp</text>
+            <!-- BCG Energy: 1.2 -->
+            <text class="axis-text" x="132" y="96" text-anchor="end">BCG Energy</text>
+            <rect class="bar-secondary" x="140" y="84" width="72" height="16"/>
+            <text class="label-data" x="217" y="95">1.2 GWp</text>
+            <!-- BIM Energy: 1.1 -->
+            <text class="axis-text" x="132" y="120" text-anchor="end">BIM Energy</text>
+            <rect class="bar-secondary" x="140" y="108" width="66" height="16"/>
+            <text class="label-data" x="211" y="119">1.1 GWp</text>
+            <!-- Others: ~12.1 -->
+            <text class="axis-text" x="132" y="144" text-anchor="end">All others</text>
+            <rect fill="#E5E7EB" x="140" y="132" width="180" height="16"/>
+            <text class="label-data" x="325" y="143" fill="#4A5568">~12.1 GWp</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MOIT PROJECT REGISTER, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>Competitive dynamics</h3>
+        <p>The top-5 developers collectively hold <strong>~8.6 GWp — roughly 41% of total installed capacity</strong> [Kira estimates]. The remaining ~12 GWp is distributed across 200+ smaller operators, many of whom built under the FiT window and lack the institutional capacity to navigate AUCM or structure DPPAs.</p>
+        <p>The DPPA era creates a new competitive axis: <strong>project finance capability and off-taker relationship depth</strong> matter more than pure megawatt volume. FDI developers from Singapore (Sembcorp, Amverton), Japan (Marubeni, JERA), and South Korea (SK E&amp;S, Korea Electric Power) are entering as DPPA-structured project owners — a structural shift from FiT-era domestic dominance.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Top-5 developer share</span><span class="val">~41% of installed GWp</span></div>
+          <div class="stat-line"><span>Active FDI developers</span><span class="val">8-10 groups [Kira est.]</span></div>
+          <div class="stat-line"><span>Avg DPPA PPA term</span><span class="val">10-15 years</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">DEVELOPER 01</div>
+        <div class="comp-name">Trung Nam Group</div>
+        <div class="comp-parent">Domestic conglomerate · Hanoi HQ</div>
+        <div class="comp-stat-row"><span>Portfolio</span><span class="val">~3.0 GWp solar</span></div>
+        <div class="comp-stat-row"><span>Key assets</span><span class="val">Ninh Thuan, Binh Thuan</span></div>
+        <div class="comp-strengths"><strong>Dominant south-central legacy.</strong> Early FiT beneficiary; facing curtailment headwinds on south-central portfolio; pivoting to DPPA-structured C&amp;I.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">DEVELOPER 02</div>
+        <div class="comp-name">T&amp;T Group</div>
+        <div class="comp-parent">Domestic conglomerate · HCMC HQ</div>
+        <div class="comp-stat-row"><span>Portfolio</span><span class="val">~1.8 GWp solar</span></div>
+        <div class="comp-stat-row"><span>Key assets</span><span class="val">Mekong delta, Central VN</span></div>
+        <div class="comp-strengths"><strong>Diversified geography advantage.</strong> Mekong delta assets escape south-central curtailment; active AUCM participant in 2025-26 rounds.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">DEVELOPER 03</div>
+        <div class="comp-name">BCG Energy</div>
+        <div class="comp-parent">Listed entity (BCG) · HCMC</div>
+        <div class="comp-stat-row"><span>Portfolio</span><span class="val">~1.2 GWp solar</span></div>
+        <div class="comp-stat-row"><span>Key assets</span><span class="val">Tay Ninh, Binh Phuoc</span></div>
+        <div class="comp-strengths"><strong>DPPA-ready structure.</strong> Listed status allows project-level financing; first Vietnamese developer to close a corporate DPPA under Decree 135/2024 framework.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">FDI ENTRANT</div>
+        <div class="comp-name">Sembcorp Industries</div>
+        <div class="comp-parent">Temasek-linked · Singapore</div>
+        <div class="comp-stat-row"><span>VN pipeline</span><span class="val">~500 MWp rooftop</span></div>
+        <div class="comp-stat-row"><span>Structure</span><span class="val">DPPA / C&amp;I focus</span></div>
+        <div class="comp-strengths"><strong>FDI benchmark entry.</strong> Brings bankable PPA template, RE100 off-taker relationships, and Singapore-domiciled project SPVs — sets the contractual standard for the DPPA market.</div>
+      </div>
+    </div>
+    <div class="source-key">MOIT Project Register = MOIT Renewable Energy Project Approval and Grid Registration Database 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 014 — OUTLOOK DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08</div>
+    <h1 class="divider-title">5-year outlook <span class="accent">&amp; scenarios</span></h1>
+    <div class="divider-thesis">Vietnam's solar trajectory to 2030 bifurcates by geography and segment. <strong>Rooftop C&amp;I solar adds steadily under the DPPA framework; utility-scale is grid-gated.</strong> The bull case requires EVN's transmission investment to run on schedule — a 2-year compounding risk given historical delivery gaps.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Base case</div>
+      <div class="toc-pill">Bull case</div>
+      <div class="toc-pill">Bear case</div>
+      <div class="toc-pill">Key variables</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 015 — SCENARIOS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · 5-Year Outlook</div>
+      <div class="page-section-counter">015 / 016</div>
+    </div>
+    <h1 class="page-h1">Base / bull / bear to 2030: grid timing decides which scenario plays</h1>
+    <p class="page-subhead">All three scenarios agree on one variable: <strong>rooftop C&amp;I solar adds 3-5 GWp per annum regardless of the utility-scale trajectory</strong> [Kira estimates]. The divergence is entirely in utility-scale — and utility-scale divergence is entirely driven by whether EVN's 500kV and 220kV grid expansion runs on schedule, 18 months late, or hits a procurement/financing disruption.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Base case: ~50 GWp by 2030</h3>
+        <p>EVN's 500kV North-South circuit-3 completes Q4 2026 — 6 months late vs original target. South-central curtailment falls to ~10% by mid-2027, unlocking a ~4 GWp tranche of stranded utility-scale capacity. Annual additions run 7-9 GWp in 2027-29 before tailing off as 2030 PDP8 targets are approached. Rooftop C&amp;I adds <strong>~3.5 GWp per year steadily from 2026</strong> [Kira estimates]. <strong>Total installed at end-2030: ~50 GWp</strong> in the base case — 68% of PDP8's 73.4 GWp target, with the gap concentrated in slow-moving ground-mounted utility-scale in constrained corridors.</p>
+        <h3>Bull case: ~65 GWp by 2030</h3>
+        <p>EVN transmission runs on the revised 2026 schedule; AUCM Round 3+ clears efficiently; DPPA contracts accelerate rooftop C&amp;I to <strong>5+ GWp/year by 2028</strong> [Kira estimates]. First utility-scale BESS co-location projects commission in 2027, improving dispatch economics and grid absorption. Battery storage unlocks an additional ~2 GWp of solar capacity that was previously uneconomic in curtailment zones. <strong>Total installed at end-2030: ~65 GWp.</strong></p>
+        <h3>Bear case: ~38 GWp by 2030</h3>
+        <p>EVN grid investment delays compound — 18-24 months late on circuit-3 and 220kV reinforcement. South-central curtailment persists at 20%+ through 2028, freezing utility-scale additions. AUCM Round 3 clearing is delayed by regulatory review of Round 1-2 disputes [Kira estimates from developer conversations on appeal risk]. <strong>Total installed at end-2030: ~38 GWp</strong> — a 48% shortfall versus PDP8 targets. RE100 and national net-zero commitments require accelerated recovery post-2030.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Scenario fan · installed solar capacity to 2030</div>
+            <div class="chart-subtitle">GWp · base / bull / bear</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="173" x2="370" y2="173"/>
+            <line class="grid-line" x1="40" y1="147" x2="370" y2="147"/>
+            <line class="grid-line" x1="40" y1="120" x2="370" y2="120"/>
+            <line class="grid-line" x1="40" y1="93"  x2="370" y2="93"/>
+            <line class="grid-line" x1="40" y1="66"  x2="370" y2="66"/>
+            <line class="grid-line" x1="40" y1="40"  x2="370" y2="40"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="177" text-anchor="end">10</text>
+            <text class="axis-text" x="32" y="150" text-anchor="end">20</text>
+            <text class="axis-text" x="32" y="123" text-anchor="end">30</text>
+            <text class="axis-text" x="32" y="97"  text-anchor="end">40</text>
+            <text class="axis-text" x="32" y="70"  text-anchor="end">50</text>
+            <text class="axis-text" x="32" y="44"  text-anchor="end">60</text>
+            <!-- X points: 2025=70, 2026=122, 2027=174, 2028=226, 2029=278, 2030=330 -->
+            <!-- Base: 20.7, 26, 35, 42, 47, 50 -->
+            <polyline points="70,145 122,131 174,107 226,87 278,74 330,67" stroke="#1E6FFF" stroke-width="2.5" fill="none"/>
+            <!-- Bull: 20.7, 28, 38, 48, 57, 65 -->
+            <polyline points="70,145 122,127 174,100 226,79 278,60 330,33" stroke="#00A88B" stroke-width="2" stroke-dasharray="5 3" fill="none"/>
+            <!-- Bear: 20.7, 24, 28, 31, 35, 38 -->
+            <polyline points="70,145 122,136 174,127 226,120 278,107 330,100" stroke="#D97706" stroke-width="2" stroke-dasharray="3 3" fill="none"/>
+            <!-- PDP8 target line: 73.4 -->
+            <line x1="40" y1="28" x2="370" y2="28" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="8 4" opacity="0.4"/>
+            <text class="label-small" x="355" y="24" text-anchor="end" fill="#1E6FFF" opacity="0.7">PDP8 73.4</text>
+            <circle cx="330" cy="67"  r="4" fill="#1E6FFF"/>
+            <circle cx="330" cy="33"  r="4" fill="#00A88B"/>
+            <circle cx="330" cy="100" r="4" fill="#D97706"/>
+            <text class="label-data" x="345" y="71"  fill="#1E6FFF" font-size="10">50</text>
+            <text class="label-data" x="345" y="37"  fill="#00A88B" font-size="10">65</text>
+            <text class="label-data" x="345" y="104" fill="#D97706" font-size="10">38</text>
+            <text class="axis-text" x="70"  y="216" text-anchor="middle">2025</text>
+            <text class="axis-text" x="174" y="216" text-anchor="middle">2027F</text>
+            <text class="axis-text" x="330" y="216" text-anchor="middle">2030F</text>
+            <rect x="40" y="14" width="14" height="2" fill="#1E6FFF"/>
+            <text class="label-small" x="58" y="18">Base ~50 GWp</text>
+            <line x1="145" y1="15" x2="159" y2="15" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 2"/>
+            <text class="label-small" x="163" y="18">Bull ~65 GWp</text>
+            <line x1="240" y1="15" x2="254" y2="15" stroke="#D97706" stroke-width="2" stroke-dasharray="2 2"/>
+            <text class="label-small" x="258" y="18">Bear ~38 GWp</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, PDP8 2023, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · PDP8 2023 = MOIT Power Development Plan VIII Decision 500/QĐ-TTg 2023 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 016 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Methodology Endnote</div>
+      <div class="page-section-counter">016 / 016</div>
+    </div>
+    <h1 class="page-h1">Methodology endnote</h1>
+    <p class="page-subhead">This report synthesises primary research (developer conversations, off-taker interviews, EPC procurement data) with secondary anchors (government statistical sources, EVN/MOIT regulatory disclosures, project-level filings). All quantitative claims carry explicit inline source tags.</p>
+    <div class="methend-grid">
+      <div class="methend-left">
+        <h3>Research approach</h3>
+        <p>Installed capacity and pipeline data are triangulated from EVN annual capacity reports, MOIT project approval registries, and NLDC dispatch bulletins. Where the three differ, we apply a conservative reconciliation — discounting announced project capacities that have not received grid-interconnection agreements (GIA) by 50% for inclusion in the pipeline estimate.</p>
+        <p><strong>Curtailment estimates</strong> are derived from NLDC quarterly bulletins supplemented by developer conversations on specific site-level dispatch data. Peak-period (Q1-Q2) curtailment rates are used to represent the worst-case constraint rather than annual averages, which mask dry-season grid stress.</p>
+        <p><strong>DPPA pricing estimates</strong> are based on conversations with developers involved in first-generation Decree 135/2024 contracts and cross-referenced against EVN's published industrial retail tariff schedule. Individual contract terms are commercially sensitive; ranges reflect the distribution of known-signed contracts.</p>
+        <h3>Forward estimates</h3>
+        <p>Scenario capacity forecasts (base / bull / bear) are KIRA analytical estimates. They are not drawn from EVN planning models or MOIT official projections, which tend to reflect policy ambition rather than grid-constrained delivery probability.</p>
+        <h3>Disclaimer</h3>
+        <p>This report is produced for informational and investment research purposes only and does not constitute an offer to buy or sell any securities. The analysis is based on information available to KIRA Research as of June 2026. Actual outcomes may differ materially from any projections or estimates contained herein.</p>
+      </div>
+      <div class="methend-right">
+        <h3>Source alias key</h3>
+        <ul>
+          <li><strong>EVN 2025</strong> = Tập đoàn Điện lực Việt Nam Annual Capacity &amp; Generation Report 2025</li>
+          <li><strong>PDP8 2023</strong> = MOIT Power Development Plan VIII (Decision 500/QĐ-TTg, May 2023)</li>
+          <li><strong>NLDC 2025</strong> = National Load Dispatch Centre Renewable Energy Curtailment Bulletin 2024-2025</li>
+          <li><strong>MOIT 2024</strong> = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance (November 2024)</li>
+          <li><strong>MOIT 2025</strong> = MOIT AUCM Round 1-2 Clearing Results and Project Register 2025</li>
+          <li><strong>EVN Grid 2025</strong> = EVN Transmission Grid Investment Plan 2025-2027 (internal release, obtained via project submissions)</li>
+          <li><strong>EVN 2021</strong> = EVN FiT Programme Close Notice (Decision 13/2020 final applications)</li>
+          <li><strong>RE100 2025</strong> = RE100 Member Commitment Register, Climate Group, 2025</li>
+          <li><strong>Kira estimates</strong> = KIRA Research in-house analyst triangulation from primary + secondary evidence streams noted in the methodology section above</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
