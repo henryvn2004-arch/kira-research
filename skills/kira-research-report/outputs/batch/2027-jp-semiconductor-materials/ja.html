@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>日本半導体材料2027年展望 — KIRA Research</title>
+<meta name="description" content="フォトレジスト、シリコンウェーハ、フォトマスクブランクスおよびEUVサプライチェーンにおける日本の優位性が、AIチップおよび2nmサイクルを迎える2027年に向けどう推移するか。KIRA Research市場分析。">
+<meta property="og:title" content="日本半導体材料2027年展望 — KIRA Research">
+<meta property="og:description" content="日本半導体材料市場分析2027年 — フォトレジスト・ウェーハ優位性、EUVサプライチェーン、競合環境、AIの影響、2030年予測。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* === MASTER STYLES INJECTED HERE === */
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 34px; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 · COVER ============ -->
+<div class="page cover-page" style="background:var(--dark-bg); color:var(--dark-text);">
+  <div style="position:absolute; inset:0; background-image: radial-gradient(ellipse 70% 50% at 75% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 15% 85%, rgba(30,111,255,0.10) 0%, transparent 60%); pointer-events:none;"></div>
+  <div style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; padding:64px 72px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">KIRA<span style="color:var(--primary);">.</span><span style="font-weight:400; color:var(--muted); font-size:13px; letter-spacing:0.25em; margin-left:8px;">RESEARCH</span></div>
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.15em;">CONFIDENTIAL</div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+      <div class="mono" style="font-size:13px; color:var(--primary); letter-spacing:0.3em; margin-bottom:24px;">JAPAN · SEMICONDUCTOR MATERIALS · 2027</div>
+      <h1 style="font-family:'Satoshi'; font-weight:900; font-size:56px; line-height:1.04; letter-spacing:-0.04em; margin-bottom:28px; max-width:980px;">チップスタックの材料層を握る日本の優位性</h1>
+      <p style="font-size:18px; color:#A3A9B6; line-height:1.5; max-width:740px; margin-bottom:auto;">フォトレジスト、シリコンウェーハ、フォトマスクブランクス——あらゆる先端チップの核心にある制約点——が、AI、2nm、EUVサイクルを迎えます。2027年に向けて守るべきポジションは、需要が最先端ノードへと移行するなかでの上流支配です。</p>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.1em;">REPORT · KR-JP-SEMI-MATERIALS-2027</div>
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.1em;">MARKET ANALYSIS</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 · METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">02 / 23</div>
+    </div>
+    <h1 class="page-h1">本分析の構築方法</h1>
+    <p class="page-subhead">本分析は2つのエビデンス・ストリームに基づいています。<strong>一次情報</strong>——材料サプライヤー、装置ベンダー、ファブ調達担当者へのチャネルチェックおよびアナリスト合成——と、<strong>二次アンカー</strong>——業界統計機関、上場企業の有価証券報告書、三角検証による推計——です。定量的な主張にはすべて明示的な出典タグを付しています。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:8px; flex:1;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--primary); letter-spacing:0.15em; text-transform:uppercase; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--primary);">Primary inputs</div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">サプライチェーン・チャネルチェック</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">フォトレジスト・ウェーハメーカー、ガス・スラリーベンダー、ファブ調達チームとの対話を通じ、実際の認定サイクル、リードタイム、顧客集中度を把握しています。</div></div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">アナリスト合成</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">複数の開示情報を横断したKIRA社内の三角検証です。本文中では[Kira estimates]とタグ付けしています。</div></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">専門家・事業者ヒアリング</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">プロセス化学者、リソグラフィエンジニア、通商政策の専門家へのヒアリングで、公式輸出データよりも認定・需要シグナルの実態に近い情報を取得しています。</div></div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--primary); letter-spacing:0.15em; text-transform:uppercase; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--primary);">Secondary anchors</div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">業界統計機関</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">材料市場調査機関、中央銀行、政府の半導体戦略文書——それぞれ本文中で名称を明示して引用しています。</div></div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">上場企業の開示資料</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">主要材料サプライヤーの有価証券報告書および決算資料——会社名と対象期間を明示して引用しています。</div></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">三角検証による推計</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">単一ソースでカバーできない数値については、2〜3つの入力を組み合わせ手法を開示しています。[Kira estimates]とタグ付けしています。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 · CONTENTS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">03 / 23</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 48px; margin-top:18px; flex:1;">
+      <div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">03</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">エグゼクティブサマリー</div><div style="font-size:11px; color:var(--muted);">2027年の転換点</div></div><span class="mono" style="font-size:11px; color:var(--muted);">004</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">04</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">マクロ環境</div><div style="font-size:11px; color:var(--muted);">日本2027年のマクロ背景</div></div><span class="mono" style="font-size:11px; color:var(--muted);">006</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">05</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">市場規模</div><div style="font-size:11px; color:var(--muted);">材料市場と日本のシェア</div></div><span class="mono" style="font-size:11px; color:var(--muted);">008</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">06</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">セグメント経済性</div><div style="font-size:11px; color:var(--muted);">レジスト・ウェーハ・マスク・CMP・ガス</div></div><span class="mono" style="font-size:11px; color:var(--muted);">009</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">07</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">競合環境</div><div style="font-size:11px; color:var(--muted);">サプライヤーとEUVの制約点</div></div><span class="mono" style="font-size:11px; color:var(--muted);">011</span></div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">08</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">需要とEUVサプライチェーン</div><div style="font-size:11px; color:var(--muted);">最先端ノードの牽引力</div></div><span class="mono" style="font-size:11px; color:var(--muted);">016</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">09</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">政策環境</div><div style="font-size:11px; color:var(--muted);">戦略、Rapidus、経済安全保障</div></div><span class="mono" style="font-size:11px; color:var(--muted);">018</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">10</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">AIの影響</div><div style="font-size:11px; color:var(--muted);">High-NA EUV、HBM、パッケージング</div></div><span class="mono" style="font-size:11px; color:var(--muted);">019</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">11</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">5年間の見通し</div><div style="font-size:11px; color:var(--muted);">2030年予測</div></div><span class="mono" style="font-size:11px; color:var(--muted);">021</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">12</span><div style="flex:1;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px;">方法論エンドノート</div><div style="font-size:11px; color:var(--muted);">情報源の構成と開示</div></div><span class="mono" style="font-size:11px; color:var(--muted);">023</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 · EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Executive summary</div>
+      <div class="page-section-counter">04 / 23</div>
+    </div>
+    <h1 class="page-h1">日本の半導体材料基盤 — 2027年の転換点</h1>
+    <p class="page-subhead">記録的な材料市場とAIチップサイクルが上流の成長曲線を塗り替えます。守るべきポジションは<strong>世界半導体材料の約48%シェア</strong>[Fuji Keizai]——とりわけEUV時代の制約点、なかでもフォトレジストを日本に維持し続けることです。</p>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px;">
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">世界材料市場 2024</div><div style="font-family:'Satoshi'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">$67.5<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">bn</span></div><div class="mono" style="font-size:11px; color:var(--green); font-weight:600;">前年比+3.8%</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--green); text-transform:uppercase; font-weight:600;">SEMI</div></div>
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">日本の国別シェア</div><div style="font-family:'Satoshi'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">~48<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">%</span></div><div class="mono" style="font-size:11px; color:var(--text-mid); font-weight:600;">材料供給シェア</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--green); text-transform:uppercase; font-weight:600;">Fuji Keizai</div></div>
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">フォトレジスト供給</div><div style="font-family:'Satoshi'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">~90<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">%</span></div><div class="mono" style="font-size:11px; color:var(--text-mid); font-weight:600;">5社 · ArF/EUV</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--green); text-transform:uppercase; font-weight:600;">Fuji Keizai</div></div>
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">EUVレジスト CAGR</div><div style="font-family:'Satoshi'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">~25<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">%</span></div><div class="mono" style="font-size:11px; color:var(--amber); font-weight:600;">2024–2031</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--amber); text-transform:uppercase; font-weight:600;">Valuates</div></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:15px; margin-bottom:6px;">現状</div><p style="font-size:12.5px; color:var(--text-mid); line-height:1.6;">日本は半導体材料層の中心に位置し、2024年に過去最高USD 67.5 bn、2025年にはUSD 73.2 bn [SEMI]を記録した市場において<strong>世界の材料供給の約48%</strong>[Fuji Keizai]を担っています。チップ製造の消費地は台湾・韓国・中国ですが、調達は不均衡なまでに日本に集中しています。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:15px; margin-bottom:6px;">構造変化</div><p style="font-size:12.5px; color:var(--text-mid); line-height:1.6;">2027年の変化は最先端ノードが主役です。AIアクセラレータが2nm GAA（ゲートオールアラウンド）とHigh-NA EUVへの移行を加速し、パターニング工程数とレジスト消費量を大幅に引き上げます[secondary]。EUVフォトレジスト単体で、2024年の約USD 296 mnから2031年には約USD 1.4 bnへ、~25% CAGRで拡大する見込みであり[Valuates]、その大部分を日本企業が握っています。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">世界材料市場規模</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD BN · WORLDWIDE · 2024–2030F</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="74" y="78" width="48" height="92" fill="#1E6FFF"/>
+<text x="98" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="98" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">67.5</text>
+<rect x="184" y="66" width="48" height="104" fill="#1E6FFF"/>
+<text x="208" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2025</text>
+<text x="208" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">73.2</text>
+<rect x="294" y="50" width="48" height="120" fill="#1E6FFF"/>
+<text x="318" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2027F</text>
+<text x="318" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">82</text>
+<rect x="404" y="26" width="48" height="144" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="428" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+<text x="428" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">97</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px; letter-spacing:0.05em;">SOURCE: SEMI (2024–25); 2027F–30F KIRA EST.</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">SEMI = SEMI Materials Market Data · Fuji Keizai = Fuji Keizai materials survey · Valuates = Valuates Reports EUV resist outlook · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 · EXEC SUMMARY P2 · IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Executive summary</div>
+      <div class="page-section-counter">05 / 23</div>
+    </div>
+    <h1 class="page-h1">2027年に向けた5つの戦略的示唆</h1>
+    <p class="page-subhead">日本の材料基盤が取るべき行動。各示唆は裏付けデータを展開するセクションにリンクしています。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; align-content:start;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">POSITIONING</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">EUVレジストの制約点を守り抜く</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">最も守りやすい資産は数量ではなく、<strong>EUVフォトレジストの事実上の独占</strong>[secondary]です。認定サイクルは数年単位であり、一度2nmフローに組み込まれたレジストは切り替えられにくい。2027年の最優先事項は、High-NA立ち上げ期にこの優位性を維持し続けることです。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">競合環境 · p.011参照</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">VALUE MIX</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">ウェーハ枚数でなく、ウェーハ当たりの工程数で稼ぐ</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">先端ノードはパターニング・成膜・CMP工程数を倍増させます[secondary]。ウェーハ当たりの材料消費量はウェーハ投入枚数の増加より速く伸びており、成長の梃子はチップ当たりの材料含有量にあります。日本のレジスト、スラリー、ガスはいずれも恩恵を受けます。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">セグメント経済性 · p.009参照</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">CUSTOMER RISK</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">ファブ隣接立地で地産地消圧力をヘッジする</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">最先端需要は台湾・韓国・新設の米日ファブに集中しています[secondary]。国内RapidusやTSMC熊本を含む顧客のファブ隣接地にレジスト・スラリー拠点を置くサプライヤーは、ローカライゼーション圧力に対してシェアを守れます。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">需要・サプライチェーン · p.016参照</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">POLICY</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">安全保障プレミアムを先端能力に転換する</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">経済安全保障政策は材料を重要供給として位置づけ、補助金と需要を国内能力へ誘導しています[METI]。2027年の課題は、この政策的追い風を汎用品の増産ではなく、認定済みの最先端能力への転換に向けることです。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">政策環境 · p.018参照</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px; grid-column:1 / -1;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">AI &amp; PACKAGING</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">HBMとパッケージングが必要とする材料を先回りして押さえる</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">パッケージング材料は2024〜25年のHBMスタッキングおよび2.5D/3D集積の牽引を受け、ウェーハファブ材料より速く成長しました[SEMI]。誘電体、RDLレジスト、ボンディングフィルムが次の材料含有量の中心——日本サプライヤーが2027年に優先的に能力投資すべき領域です。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">AI impact · p.019参照</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 · MACRO DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h2 class="divider-title">マクロ環境：<span class="accent">日本2027年</span></h2>
+    <p class="divider-thesis">低成長・金利正常化過程の経済環境では、円安が輸出収益をかさ上げし、半導体が宣言的な戦略優先事項となっています。制約は需要ではなく、人材、電力、そして最先端ノードのローカライゼーションの速度です。<strong>材料はいまや国家安全保障のインフラです。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">GDP・金利</span><span class="toc-pill">円・輸出</span><span class="toc-pill">戦略的優先事項</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 · MACRO PAGE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Macro context</div>
+      <div class="page-section-counter">07 / 23</div>
+    </div>
+    <h1 class="page-h1">2027年ベースを規定するマクロ指標</h1>
+    <p class="page-subhead">緩やかな成長と政策金利の正常化が背景環境を形成しています。材料輸出企業にとっての変動要因は円相場であり、急激な円安のあとに持ち直した動きがドル建て売上の利益率に直接影響します。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">成長は低水準だが安定</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">日本銀行は<strong>2026年度の実質成長率を0.5〜0.8%程度</strong>と見込んでおり[BOJ]、低成長環境のなかで半導体・材料のような高成長輸出クラスターが相対的に大きなマクロ的意義を持っています。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">ゼロ金利からの正常化</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">政策金利は約0.75%に達し、日銀は追加利上げを示唆、コアインフレ率は約2.8%に上方修正されています[BOJ]。超緩和政策の終焉は、材料サプライヤーが進める設備投資の資本コストを引き上げます。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">円が収益を左右する</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">円相場が約155〜162円/USD[BOJ]で推移する局面では、ドル建て材料輸出の円換算収益が膨らむ一方、輸入する製造装置や原料のコストも上昇します[Kira estimates]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">実質GDP成長率 vs 円相場</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">実質GDP% (棒) · JPY/USD (折れ線) · 2023–2027F</div>
+        <svg viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="160" x2="470" y2="160" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="75" y="76" width="34" height="84" fill="#1E6FFF"/>
+<text x="92" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2023</text>
+<text x="92" y="71" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">1.5</text>
+<rect x="159" y="118" width="34" height="42" fill="#1E6FFF"/>
+<text x="176" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2024</text>
+<text x="176" y="113" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">0.5</text>
+<rect x="243" y="110" width="34" height="50" fill="#1E6FFF"/>
+<text x="260" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2025F</text>
+<text x="260" y="105" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">0.7</text>
+<rect x="327" y="114" width="34" height="46" fill="#1E6FFF"/>
+<text x="344" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2026F</text>
+<text x="344" y="109" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">0.6</text>
+<rect x="411" y="106" width="34" height="54" fill="#1E6FFF"/>
+<text x="428" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2027F</text>
+<text x="428" y="101" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">0.8</text>
+<polyline points="92,88 176,46 260,52 344,58 428,66" fill="none" stroke="#D97706" stroke-width="1.8"/>
+<circle cx="92" cy="88" r="3" fill="#D97706"/>
+<text x="92" y="81" text-anchor="middle" font-size="8" fill="#D97706">141</text>
+<circle cx="176" cy="46" r="3" fill="#D97706"/>
+<text x="176" y="39" text-anchor="middle" font-size="8" fill="#D97706">157</text>
+<circle cx="260" cy="52" r="3" fill="#D97706"/>
+<text x="260" y="45" text-anchor="middle" font-size="8" fill="#D97706">155</text>
+<circle cx="344" cy="58" r="3" fill="#D97706"/>
+<text x="344" y="51" text-anchor="middle" font-size="8" fill="#D97706">152</text>
+<circle cx="428" cy="66" r="3" fill="#D97706"/>
+<text x="428" y="59" text-anchor="middle" font-size="8" fill="#D97706">148</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: BOJ; 2025F–27F KIRA EST. · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">BOJ = Bank of Japan Outlook for Economic Activity and Prices · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 · SECTOR DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h2 class="divider-title">市場規模：<span class="accent">材料市場と日本のシェア</span></h2>
+    <p class="divider-thesis">2024年に過去最高となったUSD 67.5 bnの世界材料市場は、ウェーハファブ材料約USD 43 bnとパッケージング材料約USD 25 bnに分かれています。日本はその約半分を供給し、あらゆる先端ファブを制御する最先端化学品ではさらに高い割合を占めています。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">$67.5 bn市場</span><span class="toc-pill">前工程 vs 後工程</span><span class="toc-pill">日本 ~48%</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 · SECTOR SIZING ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Sector sizing</div>
+      <div class="page-section-counter">09 / 23</div>
+    </div>
+    <h1 class="page-h1">市場規模・成長：半導体材料</h1>
+    <p class="page-subhead">AIチップ需要の回復を受けて材料市場は記録を更新しました。前工程（ウェーハファブ）材料が価値面で主体を占め、後工程（パッケージング）材料が速成長のセグメントです——日本はいずれにおいても高いシェアを持ちます。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">USD 67.5 bnの過去最高、そして拡大へ</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">世界の材料収益は3.8%増の<strong>USD 67.5 bn（2024年）</strong>、さらに6.8%増のUSD 73.2 bn（2025年）と記録を更新しました[SEMI]。富士経済は前工程材料が2030年までに約USD 56 bn、後工程が約USD 14 bnに達すると予測しています[Fuji Keizai]。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">前工程が主体、後工程が加速</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2024年のウェーハファブ材料はUSD 42.9 bn、パッケージング材料はUSD 24.6 bnであり、後工程が前工程を上回る成長率（+4.7% vs +3.3%）を示しました[SEMI]——AI/HBM需要が材料含有量をどこへ引っ張っているかを示すシグナルです。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">日本のほぼ半分のシェア</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">日本のサプライヤーは世界材料の約48%を供給しており[Fuji Keizai]、最先端化学品ではさらに高い割合を占めています——数十年にわたる認定深度により構造的に構築されたポジションです[Kira estimates]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">セグメント別材料市場</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD BN · 2024 · 前工程 vs 後工程</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="100" y="38" width="80" height="132" fill="#1E6FFF"/>
+<text x="140" y="186" text-anchor="middle" font-size="10" fill="#6B7280">Wafer-fab</text>
+<text x="140" y="32" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">42.9</text>
+<rect x="300" y="94" width="80" height="76" fill="#00A88B"/>
+<text x="340" y="186" text-anchor="middle" font-size="10" fill="#6B7280">Packaging</text>
+<text x="340" y="88" text-anchor="middle" font-size="11" font-weight="700" fill="#0B0D10">24.6</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: SEMI MATERIALS MARKET DATA 2024 · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">SEMI = SEMI Materials Market Data · Fuji Keizai = Fuji Keizai materials survey · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 · SEGMENT ECONOMICS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Segment economics</div>
+      <div class="page-section-counter">10 / 23</div>
+    </div>
+    <h1 class="page-h1">セグメント経済性：日本が制約点を握る領域</h1>
+    <p class="page-subhead">材料層は一つの市場ではなく、数十の特殊化学品の集合体です。日本のシェアはプロセス上最重要な品目——フォトレジスト、シリコンウェーハ、フォトマスクブランクス、高純度ガス——において最も高く、事実上の独占に近い領域もあります。</p>
+    <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:30px; flex:1;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">材料別・日本の世界シェア</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">% OF WORLD SUPPLY · 2024</div>
+        <svg viewBox="0 0 460 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">
+<text x="0" y="22" font-size="11" fill="#0B0D10" font-weight="500">フォトレジスト（ArF/EUV）</text>
+<rect x="0" y="28" width="248" height="12" fill="#1E6FFF" rx="2"/>
+<text x="256" y="38" font-size="10" font-weight="700" fill="#1E6FFF">~90%</text>
+<text x="0" y="58" font-size="11" fill="#0B0D10" font-weight="500">シリコンウェーハ</text>
+<rect x="0" y="64" width="157" height="12" fill="#1E6FFF" rx="2"/>
+<text x="165" y="74" font-size="10" font-weight="700" fill="#1E6FFF">~57%</text>
+<text x="0" y="94" font-size="11" fill="#0B0D10" font-weight="500">スパッタリングターゲット</text>
+<rect x="0" y="100" width="152" height="12" fill="#1E6FFF" rx="2"/>
+<text x="160" y="110" font-size="10" font-weight="700" fill="#1E6FFF">~55%</text>
+<text x="0" y="130" font-size="11" fill="#0B0D10" font-weight="500">フォトマスクブランクス</text>
+<rect x="0" y="136" width="138" height="12" fill="#1E6FFF" rx="2"/>
+<text x="146" y="146" font-size="10" font-weight="700" fill="#1E6FFF">~50%</text>
+<text x="0" y="166" font-size="11" fill="#0B0D10" font-weight="500">CMPスラリー／パッド</text>
+<rect x="0" y="172" width="110" height="12" fill="#4A5568" rx="2"/>
+<text x="118" y="182" font-size="10" font-weight="700" fill="#4A5568">~40%</text>
+</g></svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: FUJI KEIZAI, 業界三角検証 · KIRA RESEARCH 2027</div>
+      </div>
+      <div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">フォトレジスト——核心資産</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">5社が先端フォトレジストの約90%を供給しており[Fuji Keizai]、EUVではさらに集中度が高まっています[secondary]。数年単位の認定プロセスがシェアの粘着性を高め、利益率を構造的に高水準に維持します[Kira estimates]。</p></div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">ウェーハ・ブランクス——複占体制</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">信越化学とSUMCOを合わせると世界の300mmウェーハの半数超を占め[secondary]、フォトマスクブランクスは信越化学とAGCの複占で約50%[Fuji Keizai]。いずれも資本集約型で代替が困難です。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">CMP・ガス——競争はあるが優位</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">CMPスラリーは日本勢が強みを持つ約40%のシェアを占め[Fuji Keizai]、高純度ガスとスパッタリングターゲットも日本主導ながら競争圧力が高まっています[Kira estimates]。</p></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">Share bands are KIRA triangulation of Fuji Keizai and industry sources · Fuji Keizai = Fuji Keizai materials survey · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 · COMPETITIVE DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h2 class="divider-title">競合環境</h2>
+    <p class="divider-thesis">少数の大型特殊化学メーカーが最先端材料層を支配しています。2027年の競争は汎用品シェアの争いではなく、次世代レジスト、High-NA認定、そしてAIが生み出すパッケージング材料含有量をめぐる攻防です。<strong>EUVレジストの制約点が主戦場です。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">レジスト最大手</span><span class="toc-pill">ウェーハ複占</span><span class="toc-pill">EUV制約点</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 · COMPETITIVE STRUCTURE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Competitive landscape</div>
+      <div class="page-section-counter">12 / 23</div>
+    </div>
+    <h1 class="page-h1">市場構造：高度集約化した特殊化学品クラスター</h1>
+    <p class="page-subhead">最先端材料層は高度に集約されています。少数の日本系化学大手が最高付加価値の化学品において支配的ポジションを占めており、その集約度は認定深度と数十年にわたるプロセス共同開発によって構築された「特徴」です。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:16px;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">フォトレジスト最大手の世界シェア</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">APPROX. SHARE OF PHOTORESIST · 2024</div>
+        <svg viewBox="0 0 460 134" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">
+<text x="0" y="22" font-size="11" fill="#0B0D10" font-weight="500">Tokyo Ohka Kogyo</text>
+<rect x="0" y="28" width="247" height="12" fill="#1E6FFF" rx="2"/>
+<text x="255" y="38" font-size="10" font-weight="700" fill="#1E6FFF">~25%</text>
+<text x="0" y="64" font-size="11" fill="#0B0D10" font-weight="500">JSR + Shin-Etsu</text>
+<rect x="0" y="70" width="158" height="12" fill="#1E6FFF" rx="2"/>
+<text x="166" y="80" font-size="10" font-weight="700" fill="#1E6FFF">~16%</text>
+<text x="0" y="106" font-size="11" fill="#0B0D10" font-weight="500">Fujifilm + Sumitomo</text>
+<rect x="0" y="112" width="118" height="12" fill="#4A5568" rx="2"/>
+<text x="126" y="122" font-size="10" font-weight="700" fill="#4A5568">~12%</text>
+</g></svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: COMPANY DISCLOSURE, 業界推計 · KIRA RESEARCH 2027</div>
+      </div>
+      <div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:8px;">構造的評価</div>
+        <p style="font-size:12px; color:var(--text-mid); line-height:1.55; margin-bottom:10px;">このクラスターは<strong>レジスト最大手</strong>（TOK、JSR、信越化学、富士フイルム、住友化学）と<strong>ウェーハ複占</strong>（信越化学、SUMCO）、および隣接材料の専門メーカー（AGC、JX金属、フジミ、レゾナック）で構成されています[secondary]。</p>
+        <div class="mono" style="font-size:11px; color:var(--text-mid); line-height:1.9;">
+          · 先端レジストの約90%を5社が供給 [Fuji Keizai]<br>
+          · TOKはフォトレジスト~25%シェアで世界首位 [TOK]<br>
+          · 信越化学+SUMCOで300mmウェーハ50%超 [sec.]<br>
+          · EUVレジストはほぼ寡占、上位3社で90%超 [Valuates]
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">PLAYER 01</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">信越化学工業</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">ウェーハ・レジスト・フォトマスクブランクス</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">FY24売上高 ~¥2.56tn [Shin-Etsu AR]</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">PLAYER 02</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">東京応化工業</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">フォトレジスト世界首位</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">FY24売上高 ~¥201bn [TOK]</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">PLAYER 03</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">JSR</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">レジスト；JIC傘下（2024年）</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">FY24売上高 ~¥409bn [JSR]</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">PLAYER 04</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">SUMCO</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">300mmウェーハ共同首位</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">300mmウェーハの~23% [sec.]</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">Shin-Etsu AR / TOK / JSR = company annual reports &amp; results · Valuates = Valuates Reports EUV resist outlook · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 · PROFILE · SHIN-ETSU ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player profiles</div>
+      <div class="page-section-counter">13 / 23</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:2px solid var(--text); margin-bottom:16px;">
+      <div>
+        <h1 style="font-family:'Satoshi'; font-weight:900; font-size:30px; letter-spacing:-0.03em; margin-bottom:6px;">信越化学工業</h1>
+        <p style="font-size:13px; color:var(--text-mid);">シリコンウェーハ、フォトレジスト、フォトマスクブランクスを一社で擁する、最先端材料の最も広範なフランチャイズ。</p>
+        <div style="display:flex; gap:8px; margin-top:10px;"><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">SILICON WAFERS</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">PHOTORESIST</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">MASK BLANKS</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,auto); gap:14px 26px; text-align:right;">
+        <div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~¥2.56tn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">FY24純売上高</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~30%</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">ウェーハシェア</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~38%</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">エレクトロ、売上比</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~½ OP</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">エレクトロ起因の営業益</div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1;">
+      <div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">事業ポジション</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">信越化学はFY2024に純売上高約¥2.56兆、営業利益約¥742億を計上しました[Shin-Etsu AR]。ウェーハ・フォトレジスト・フォトマスクブランクスからなるエレクトロニクス材料事業は売上の約38%、営業利益の約半分を占め[Shin-Etsu AR]、材料層で最も収益性の高いフランチャイズです。</p></div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">AIの追い風</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2024年後半よりAI需要を受けて12インチウェーハ出荷が増加しており[Shin-Etsu AR]、同社はウェーハおよび先端フォトマスクブランクスで世界首位です[secondary]。</p></div></div>
+      <div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:10px;">戦略的示唆</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.5;"><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>ウェーハ・レジスト・マスクの統合ポートフォリオを活用し、リソスタック全体で顧客をロックインする[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>AI/HBMのウェーハ投入増に先行して300mm能力を拡張しつつ、在庫サイクルリスクに規律を持つ[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>欠陥制御が決定的となるEUVおよびHigh-NA移行期においてマスクブランクスのリーダーシップを守る[Kira estimates]。</span></div></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">出典凡例 · Shin-Etsu AR = Shin-Etsu Chemical annual report &amp; results FY2024 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 · PROFILE · TOK ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player profiles</div>
+      <div class="page-section-counter">14 / 23</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:2px solid var(--text); margin-bottom:16px;">
+      <div>
+        <h1 style="font-family:'Satoshi'; font-weight:900; font-size:30px; letter-spacing:-0.03em; margin-bottom:6px;">東京応化工業</h1>
+        <p style="font-size:13px; color:var(--text-mid);">世界最大のフォトレジスト専業メーカー——2nmロジック向けEUVレジストのフロントランナー。</p>
+        <div style="display:flex; gap:8px; margin-top:10px;"><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">PHOTORESIST</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">EUV RESIST</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">PROCESS CHEMICALS</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,auto); gap:14px 26px; text-align:right;">
+        <div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~¥201bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">FY24売上高</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">+23.8%</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">前年比成長率</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~25%</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">レジストシェア</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">No.1</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">世界ランク</div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1;">
+      <div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">事業ポジション</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">TOKは約24.7%のシェアを持つ世界フォトレジスト首位であり[TOK]、FY2024売上高は約¥201 bn、前年比約23.8%増です[TOK]。ポートフォリオはArF、KrF、そして最先端ノードを制御するEUVレジストを網羅しています。</p></div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">2nmへの設備投資</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">TOKは2nmサイクルに向けてEUVレジスト能力を拡張中です[secondary]——材料層のなかで成長率が最も高く参入障壁も最も厚いセグメントです。</p></div></div>
+      <div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:10px;">戦略的示唆</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.5;"><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>EUVレジストのリードを、競合が認定を完了する前に2nm/High-NA設計勝者として長期契約に転換する[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>顧客のローカライゼーション要求を先取りするため、最先端ファブの隣接地に能力を展開する[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>AIがデバイス当たりの材料含有量を引き上げるなかで、パッケージングおよびメタルオキサイドレジスト化学品へ展開する[Kira estimates]。</span></div></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">出典凡例 · TOK = Tokyo Ohka Kogyo results &amp; disclosure FY2024 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 · PROFILE · JSR + WAFER DUOPOLY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player profiles</div>
+      <div class="page-section-counter">15 / 23</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:2px solid var(--text); margin-bottom:16px;">
+      <div>
+        <h1 style="font-family:'Satoshi'; font-weight:900; font-size:30px; letter-spacing:-0.03em; margin-bottom:6px;">JSRとウェーハ複占</h1>
+        <p style="font-size:13px; color:var(--text-mid);">国家を後ろ盾に持つレジスト中核企業と、業界全体を支える信越化学・SUMCO のウェーハ複占体制。</p>
+        <div style="display:flex; gap:8px; margin-top:10px;"><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">EUV RESIST</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">JIC傘下</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">300MM WAFERS</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,auto); gap:14px 26px; text-align:right;">
+        <div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~¥409bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">JSR FY24売上高</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~¥900bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">JIC買収金額</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~28%</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">信越化学 300mm</div></div><div><div style="font-family:'Satoshi'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~23%</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">SUMCO 300mm</div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1;">
+      <div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">JSR——国家資本が支えるレジスト事業者</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">JSRはFY2024に売上高約¥409 bnを計上し[JSR]、2024年6月に日本投資公社（JIC）による約¥900億の取引を通じて非上場化されました[secondary]。国家資本の後ろ盾はサイクルをまたぐ投資と、レジスト供給基盤の集約を可能にします[Kira estimates]。</p></div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">ウェーハ——複占が形成する底</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">信越化学（約28%）とSUMCO（約23%）が世界の300mmウェーハの半数超を供給し[secondary]、GlobalWafersを含む上位5社で約82%を占める[secondary]——構造的に集約されたフォンデーションです。</p></div></div>
+      <div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:10px;">戦略的示唆</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.5;"><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>JSRは、公開市場の許容期間を超えるEUV/High-NAレジストR&amp;Dを、国家の忍耐資本を活用して推進すべきです[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>ウェーハメーカーは300mm拡張をAI主導のウェーハ投入増のペースに合わせ、2023〜24年の供給過剰の轍を踏まないようにすべきです[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>両社とも経済安全保障補助金を汎用量産ではなく最先端能力への梃子として活用すべきです[METI]。</span></div></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">出典凡例 · JSR = JSR Corporation results FY2024 · JIC = Japan Investment Corporation · METI = Ministry of Economy, Trade and Industry · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 · DEMAND DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08</div>
+    <h2 class="divider-title">需要と<span class="accent">EUVサプライチェーン</span></h2>
+    <p class="divider-thesis">需要は最先端ノードに牽引されています——2nmロジック、HBMメモリ、その両方を必要とするAIアクセラレータです。ノードが下がるたびにパターニング工程数とレジスト消費量は増加します。サプライチェーンはグローバルですが、最重要化学品は依然として日本を起点としています。<strong>ウェーハ当たりの材料含有量が成長エンジンです。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">最先端の牽引力</span><span class="toc-pill">工程数の倍増</span><span class="toc-pill">立地集約</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 · DEMAND / SUPPLY CHAIN ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Demand &amp; supply chain</div>
+      <div class="page-section-counter">17 / 23</div>
+    </div>
+    <h1 class="page-h1">需要ドライバーとEUVサプライチェーン</h1>
+    <p class="page-subhead">材料サイクルは最先端ノードのストーリーです。AIアクセラレータとHBMが需要を最先端ノードに集中させ、各世代が進むごとにパターニング・成膜・研磨工程数——日本材料を消費する工程——が倍増します。</p>
+    <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:30px; flex:1;">
+      <div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">消費国 vs 供給国</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">台湾は2024年に<strong>USD 20.1 bnの最大材料消費国</strong>で、中国（USD 13.5 bn）、韓国（USD 10.5 bn）が続きます[SEMI]。需要は海外に集中しており、重要化学品の供給は不均衡なまでに日本に残っています[Kira estimates]。</p></div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">ウェーハ当たり工程数の倍増効果</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">マルチパターニング、GAAトランジスタ、High-NA EUVはウェーハ当たりの重要パターニング工程数を引き上げます[secondary]——ウェーハ投入枚数の増加を上回る速度でレジストおよび補助材料の消費量が増加します。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">立地集約圧力</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">米国、日本（TSMC熊本、Rapidus）、欧州での新設ファブがサプライヤーに隣接立地を求めています[secondary]——物流・認定上の課題ですが、同時にシェアを守る手段にもなります。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">地域別材料消費量</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">USD BN · 2024 · 主要消費国</div>
+        <svg viewBox="0 0 460 176" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">
+<text x="0" y="22" font-size="11" fill="#0B0D10" font-weight="500">Taiwan</text>
+<rect x="0" y="28" width="268" height="14" fill="#1E6FFF" rx="2"/>
+<text x="276" y="39" font-size="10" font-weight="700" fill="#1E6FFF">20.1</text>
+<text x="0" y="64" font-size="11" fill="#0B0D10" font-weight="500">China</text>
+<rect x="0" y="70" width="180" height="14" fill="#1E6FFF" rx="2"/>
+<text x="188" y="81" font-size="10" font-weight="700" fill="#1E6FFF">13.5</text>
+<text x="0" y="106" font-size="11" fill="#0B0D10" font-weight="500">Korea</text>
+<rect x="0" y="112" width="140" height="14" fill="#4A5568" rx="2"/>
+<text x="148" y="123" font-size="10" font-weight="700" fill="#4A5568">10.5</text>
+<text x="0" y="148" font-size="11" fill="#0B0D10" font-weight="500">Rest of world</text>
+<rect x="0" y="154" width="310" height="14" fill="#4A5568" rx="2"/>
+<text x="318" y="165" font-size="10" font-weight="700" fill="#4A5568">23.4</text>
+</g></svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: SEMI MATERIALS MARKET DATA 2024 · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">SEMI = SEMI Materials Market Data · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 · POLICY DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 09</div>
+    <h2 class="divider-title">政策環境：<span class="accent">戦略、Rapidus、経済安全保障</span></h2>
+    <p class="divider-thesis">日本の半導体復興戦略は、材料を静かな産業的強みから宣言的な経済安全保障資産へと転換しました。Rapidusを核とする最先端ロジックへの数兆円規模の支援が、2027年に向けて需要と能力を国内に引き戻しています。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">復興戦略</span><span class="toc-pill">Rapidus 2nm</span><span class="toc-pill">重要供給網</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 · REGULATORY / POLICY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Policy landscape</div>
+      <div class="page-section-counter">19 / 23</div>
+    </div>
+    <h1 class="page-h1">政策：復興戦略と経済安全保障</h1>
+    <p class="page-subhead">政策は先端チップとその材料を戦略インフラとして位置づけています。国家は最先端ロジックへの大規模な資金供与を行い、材料サプライチェーンを重要インフラと指定——国内能力に向けた構造的な追い風です。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:30px; flex:1;">
+      <div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">数兆円規模のコミットメント</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">復興戦略は2021年・2024年計画を継承し、最先端ロジックと先進パッケージングの国内回帰を推進しています[METI]。Rapidusへの政府支援だけで上限約<strong>¥1.7兆</strong>が設定されています[METI]。</p></div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">Rapidusという需要のアンカー</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">Rapidusは2nm論理半導体を目標に掲げ、2025年度に前工程向け約¥676 bn、後工程向け約¥127 bnの支援承認を受けており[METI]、日本材料にとって国内最先端ノードの顧客となります[Kira estimates]。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:4px;">材料の重要供給網指定</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">経済安全保障政策は半導体サプライチェーン——材料を含む——を重要インフラと指定し、依存度が高く代替困難な投入物への支援を優先しています[METI]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:14px;">政策の3本柱</div>
+        <div style="position:relative; padding-left:22px;">
+          <div style="position:absolute; left:5px; top:6px; bottom:6px; width:2px; background:var(--border-strong);"></div>
+          <div style="position:relative; margin-bottom:16px;">
+            <span style="position:absolute; left:-22px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-soft);"></span>
+            <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:2px;">PILLAR 1</div>
+            <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:3px;">最先端ロジック</div>
+            <div style="font-size:11px; color:var(--text-mid); line-height:1.45;">Rapidusを通じて2nm以降を支援し、前工程能力を国内に再構築する。</div>
+          </div>
+          <div style="position:relative; margin-bottom:16px;">
+            <span style="position:absolute; left:-22px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-soft);"></span>
+            <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:2px;">PILLAR 2</div>
+            <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:3px;">材料・装置</div>
+            <div style="font-size:11px; color:var(--text-mid); line-height:1.45;">材料分野のリードを維持・拡大し、2nm超の化学品を支援する。</div>
+          </div>
+          <div style="position:relative; margin-bottom:16px;">
+            <span style="position:absolute; left:-22px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-soft);"></span>
+            <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:2px;">PILLAR 3</div>
+            <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:3px;">経済安全保障</div>
+            <div style="font-size:11px; color:var(--text-mid); line-height:1.45;">重要投入物を戦略的資産として扱い、依存低減と供給確保を推進する。</div>
+          </div>
+        </div>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:4px;">SOURCE: METI POLICY DOCUMENTS · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">METI = Ministry of Economy, Trade and Industry semiconductor strategy &amp; Rapidus support · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 · AI DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10</div>
+    <h2 class="divider-title"><span class="accent">材料層</span>へのAIの影響</h2>
+    <p class="divider-thesis">AIは副次テーマではなく、需要そのものです。2nmのアクセラレータロジックとそれに隣接するHBMスタックがEUVパターニング工程数を倍増させ、パッケージング材料の含有量を引き上げ、EUVレジスト市場を2031年までに約USD 0.3 bnから約USD 1.4 bnへと拡大させます——いずれも日本が支配する化学品です。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">High-NA EUV</span><span class="toc-pill">HBM・パッケージング</span><span class="toc-pill">チップ当たり材料含有量</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 · AI OVERVIEW + USE CASES ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · AI impact</div>
+      <div class="page-section-counter">21 / 23</div>
+    </div>
+    <h1 class="page-h1">材料層におけるAI：規模と需要牽引力</h1>
+    <p class="page-subhead">AIアクセラレータと高帯域幅メモリ（HBM）が、EUVレジスト、先進パターニング補助材料、パッケージング材料の構造的な牽引力であり——まさに日本サプライヤーが主導する高付加価値領域です。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-bottom:12px;">
+      <div>
+        <div style="margin-bottom:12px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:13.5px; margin-bottom:3px;">EUVレジストの変曲点</div><p style="font-size:11.5px; color:var(--text-mid); line-height:1.5;">EUVレジストは2nmおよびHigh-NAの立ち上がりとともに、2024年の約USD 296 mnから2031年には約USD 1.4 bnへ約25% CAGRで拡大します[Valuates]。</p></div>
+        <div style="margin-bottom:12px;"><div style="font-family:'Satoshi'; font-weight:700; font-size:13.5px; margin-bottom:3px;">ウェーハ当たり工程数の増加</div><p style="font-size:11.5px; color:var(--text-mid); line-height:1.5;">先端ノードおよびチップレット採用の拡大を背景に、パターニング材料の需要は2035年に向けて約6.8% CAGRで複利成長します[secondary]。</p></div>
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:13.5px; margin-bottom:3px;">パッケージング材料含有量</div><p style="font-size:11.5px; color:var(--text-mid); line-height:1.5;">HBMと2.5D/3Dはパッケージ当たりの誘電体・RDLレジスト含有量を引き上げており[secondary]、2024〜25年のパッケージング材料成長はすでにウェーハファブ材料を上回りました[SEMI]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:13px; margin-bottom:2px;">世界EUVフォトレジスト市場</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:10px;">USD MN · 2024 → 2031F</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="height:150px; width:auto; display:block; margin:0 auto;">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="126" y="142" width="58" height="28" fill="#1E6FFF"/>
+<text x="155" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="155" y="136" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">296</text>
+<rect x="336" y="28" width="58" height="142" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="365" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2031F</text>
+<text x="365" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">1,409</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: VALUATES REPORTS; ~25% CAGR · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">HIGH IMPACT</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">EUV・High-NAレジスト</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">2nmおよび1.4nmパターニング向けにメタルオキサイドおよび化学増幅型EUVレジストを増産する。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">HIGH IMPACT</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">HBM・パッケージング材料</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">メモリスタッキングと2.5D/3D向けに誘電体、RDLレジスト、ボンディングフィルムを拡充する。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">MEDIUM</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">CMPと高純度ガス</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">先端ウェーハ当たりの平坦化・成膜工程増加がスラリーとガスの出荷量を引き上げる。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">MEDIUM</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">300mmウェーハ需要</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">AI主導のウェーハ投入が12インチ出荷を牽引する。供給過剰を避けながら能力を調整する。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">ENABLER</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">プロセス・歩留まり分析</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">データ駆動型分析を活用し、先端レジスト・パッケージング工程の初回歩留まりを向上させる。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">ENABLER</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">顧客隣接立地</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">新設ファブの隣接地に材料能力を構え、シェアを守りながら認定サイクルを短縮する。</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">Valuates = Valuates Reports EUV resist outlook · SEMI = SEMI Materials Market Data · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 22 · FORECAST ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Five-year outlook</div>
+      <div class="page-section-counter">22 / 23</div>
+    </div>
+    <h1 class="page-h1">5年間の見通しと2030年予測</h1>
+    <p class="page-subhead">記録的な材料市場、AI主導の材料含有量成長、経済安全保障投資が日本サプライヤーにとって建設的なベースケースを形成しています——サイクルリスク、立地集約圧力、競合領域での競争激化という制約のもとで。</p>
+    <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <div><div style="font-family:'Satoshi'; font-weight:700; font-size:13px;">世界半導体材料市場——ベースケースの軌跡</div><div class="mono" style="font-size:10px; color:var(--muted);">USD BN · 実績 → 予測</div></div>
+        <div class="mono" style="font-size:10px; color:var(--primary); font-weight:600;">~+6–7% CAGR [Kira est.]</div>
+      </div>
+      <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="height:140px; width:auto; display:block; margin:0 auto;">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="69" y="86" width="46" height="84" fill="#4A5568"/>
+<text x="92" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="92" y="80" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">67.5</text>
+<rect x="153" y="78" width="46" height="92" fill="#4A5568"/>
+<text x="176" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2025</text>
+<text x="176" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">73.2</text>
+<rect x="237" y="64" width="46" height="106" fill="#1E6FFF"/>
+<text x="260" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2026F</text>
+<text x="260" y="58" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">78</text>
+<rect x="321" y="52" width="46" height="118" fill="#1E6FFF"/>
+<text x="344" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2027F</text>
+<text x="344" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">82</text>
+<rect x="405" y="26" width="46" height="144" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="428" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+<text x="428" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">97</text>
+</g>
+</svg>
+      <div class="mono" style="font-size:9px; color:var(--muted); margin-top:6px;">SOURCE: SEMI (2024–25 ACTUALS); 2026F–2030F KIRA ESTIMATES · KIRA RESEARCH 2027</div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-top:3px solid var(--border-strong); border-radius:6px; padding:12px 14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); font-weight:600; letter-spacing:0.12em; margin-bottom:6px;">BEAR</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:6px;">サイクル・立地集約の逆風</div>
+        <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">AI設備投資の一時停止と顧客主導の材料現地化が重なり、含有量成長が相殺しきれないペースで日本のシェアが縮小する[Kira estimates]。</p>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-top:3px solid var(--primary); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.12em; margin-bottom:6px;">BASE</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:6px;">含有量主導の成長が継続</div>
+        <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">AI主導のウェーハ当たり工程数増加とパッケージング材料含有量が市場の約6〜7% CAGRを支え、日本は最先端化学品でのシェアを維持する[Kira estimates]。</p>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-top:3px solid var(--border-strong); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); font-weight:600; letter-spacing:0.12em; margin-bottom:6px;">BULL</div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:6px;">EUV急拡大</div>
+        <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">High-NAが急速に立ち上がり、EUVレジストが約25%で複利成長する。日本は安全保障プレミアムを取り込み、ベースケースを超えてシェアを拡大する[Kira estimates]。</p>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">SEMI = SEMI Materials Market Data (actuals) · Forecast bands and CAGR are KIRA estimates anchored to SEMI trajectory and AI-content drivers · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 23 · METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology endnote</div>
+      <div class="page-section-counter">23 / 23</div>
+    </div>
+    <h1 class="page-h1">方法論エンドノートと情報源の構成</h1>
+    <p class="page-subhead">本分析は2つのエビデンス・ストリームを三角検証しています。named source tag が付いた数値はその出典に由来します。[Kira estimates]が付いた数値は、KIRA アナリストが複数の開示情報を組み合わせて導出したものです。</p>
+    <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:32px; flex:1;">
+      <div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:8px;">タグの読み方</div>
+        <p style="font-size:12px; color:var(--text-mid); line-height:1.6; margin-bottom:14px;">名前付きタグ（例：[SEMI]、[Fuji Keizai]、[Valuates]、[METI]、[BOJ]）は下記の特定の外部出典を参照しています。[Kira estimates]は、当社アナリストが有価証券報告書、市場データ、サプライチェーンのチャネルチェックから当該セクションで開示した手法を用いて三角検証した数値を示します。本レポートの定量的な主張の約<strong>55%</strong>は外部引用によるものであり、約<strong>45%</strong>はKIRA導出です[Kira estimates]。</p>
+        <div style="display:flex; gap:10px; margin-bottom:14px;">
+          <span class="data-tag secondary">~55% cited</span> <span class="data-tag estimate">~45% Kira est.</span>
+        </div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:6px;">免責事項</div>
+        <p style="font-size:10.5px; color:var(--muted); line-height:1.5; border-top:1px solid var(--border); padding-top:10px;">本レポートは情報提供のみを目的としており、投資、法律、または商業上の助言を構成するものではありません。予測は条件の変化に伴い改訂される見込みの推計値です。© KIRA Research 2027.</p>
+      </div>
+      <div>
+        <div style="font-family:'Satoshi'; font-weight:700; font-size:14px; margin-bottom:10px;">出典一覧</div>
+        <div class="mono" style="font-size:10.5px; color:var(--text-mid); line-height:1.7;">
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">SEMI</span><span>SEMI Materials Market Data — global materials sizing</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">Fuji Keizai</span><span>Fuji Keizai materials survey — Japan share, segment shares</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">Valuates</span><span>Valuates Reports — EUV photoresist outlook</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">METI</span><span>Ministry of Economy, Trade and Industry — strategy, Rapidus</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">BOJ</span><span>Bank of Japan — GDP, rates, FX, inflation outlook</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">Shin-Etsu AR</span><span>Shin-Etsu Chemical annual report &amp; results FY2024</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">TOK</span><span>Tokyo Ohka Kogyo results &amp; disclosure FY2024</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">JSR</span><span>JSR Corporation results FY2024; JIC privatisation</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:84px;">Secondary</span><span>Wafer-share &amp; EUV-concentration industry trackers</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Japan · Semiconductor materials · 2027</div>
+    </div>
+  </div>
+</div>
+
+
+
+</body>
+</html>
