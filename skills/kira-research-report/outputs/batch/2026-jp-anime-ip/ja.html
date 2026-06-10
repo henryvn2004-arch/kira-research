@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>日本アニメIP 2026 — KIRA Research</title>
+<meta name="description" content="日本のアニメ市場は記録的な3兆8,400億円に達し、収益の半分以上を海外が占める。ストリーミングライセンスとグローバルマーチャンダイズが成長を牽引する一方、製作委員会方式のもとでスタジオが手にする取り分は薄い。">
+<meta property="og:title" content="日本アニメIP 2026 — KIRA Research">
+<meta property="og:description" content="ストリーミングライセンス経済圏、グローバルマーチャンダイズの動向、IP保有者の集約構造、そして誰が日本アニメの海外輸出ブームの果実を獲得するかを決定する製作委員会の価値分配。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto 24px; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 720px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+.two-col-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.text-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.text-col h3:not(:first-child) { margin-top: 16px; }
+.text-col p { font-size: 12px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.text-col p strong { color: var(--text); font-weight: 600; }
+.text-col ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
+.text-col li { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 6px; }
+.text-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.text-col li strong { color: var(--text); font-weight: 600; }
+.chart-half-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.chart-card-full { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; }
+.stat-band { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.stat-band-item { background: var(--bg-soft); border: 1px solid var(--border); padding: 12px 14px; border-radius: 6px; border-top: 2px solid var(--primary); }
+.stat-band-item .lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.stat-band-item .val { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; line-height: 1; color: var(--text); letter-spacing: -0.02em; }
+.stat-band-item .val .unit { font-size: 12px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.stat-band-item .chg { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); font-weight: 600; margin-top: 4px; }
+.stat-band-item .chg.down { color: var(--amber); }
+.stat-band-item .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; font-weight: 600; }
+.toc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; min-height: 0; padding-top: 8px; }
+.toc-col { display: flex; flex-direction: column; gap: 0; }
+.toc-col .toc-section { border-top: 1px solid var(--border); padding: 10px 0; display: flex; align-items: baseline; gap: 14px; }
+.toc-col .toc-section .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; min-width: 24px; }
+.toc-col .toc-section .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); flex: 1; }
+.toc-col .toc-section .page-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+.method-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; flex: 1; min-height: 0; }
+.method-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; }
+.method-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.method-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.method-card .body { font-size: 11px; line-height: 1.55; color: var(--text-mid); flex: 1; }
+.method-card .body strong { color: var(--text); font-weight: 600; }
+.endnote-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col p strong { color: var(--text); font-weight: 600; }
+.src-list { list-style: none; padding: 0; margin: 0; columns: 1; }
+.src-list li { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 5px; padding-left: 12px; position: relative; }
+.src-list li::before { content: "·"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+.src-list li strong { color: var(--text); font-weight: 700; }
+.disclaimer { font-size: 9.5px; line-height: 1.5; color: var(--muted); margin-top: 12px; padding-top: 10px; border-top: 1px dotted var(--border); }
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; margin-bottom: 0; } }
+</style>
+</head>
+<body>
+
+<!-- PAGE 01: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;letter-spacing:0.05em;">KIRA<span style="color:var(--primary)">.</span></span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;">Research &amp; Intelligence</span>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Japan · Anime IP · Market Analysis 2026</div>
+        <h1>日本<br>アニメ<br><span class="accent">IP</span><br>2026</h1>
+        <p class="cover-subtitle">海外収益が国内を上回り、ストリーミングライセンスが拡大し、グローバルマーチャンダイズが価値の帰属先を決める — 作品を生み出すスタジオが手にする取り分は薄い。</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Geography</div><div class="val">Japan <span class="accent">JP</span></div></div>
+          <div class="cover-meta-item"><div class="label">Industry</div><div class="val">Anime IP</div></div>
+          <div class="cover-meta-item"><div class="label">Publication</div><div class="val">2026</div></div>
+          <div class="cover-meta-item"><div class="label">Pages</div><div class="val">15</div></div>
+        </div>
+        <div style="margin-top:16px;" class="cover-confidential">
+          <strong>機密</strong> — 内部利用限定ライセンス · © KIRA Research 2026
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 02: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">調査手法</span>
+      <span class="page-section-counter">02 / 15</span>
+    </div>
+    <div class="page-h1">分析の構築方法</div>
+    <p class="page-subhead">本レポートは二つの証拠ストリームを基盤としています。<strong>一次インプット</strong>（業界団体統計、事業者開示資料、アナリスト合成）と、<strong>二次アンカー</strong>（政府政策文書、上場企業開示、三角検証による推計）です。すべての定量的主張には明示的な出典タグを付与しています。データ期間：2019年〜2026年予測。</p>
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="num">01</div>
+        <div class="title">市場・セグメント規模の算定</div>
+        <div class="body">市場規模の算定は、<strong>日本アニメ産業の年次統計</strong>（TV・映画・ビデオ・配信・マーチャンダイズ・音楽・ライブイベント・海外・パチンコの9商業セグメント）に基づいており、業界市場とスタジオ収益を指す製作市場を区分しています。国内・海外の分類およびセグメントシェアは協会の2024年速報値から取得。金額はJPY表示、USD換算は期中平均レートを使用。</div>
+      </div>
+      <div class="method-card">
+        <div class="num">02</div>
+        <div class="title">ライセンス・事業者情報源</div>
+        <div class="body">ストリーミングおよびライセンス経済圏のデータは、<strong>プラットフォーム事業者開示資料</strong>とIP保有者・販売会社のFY2024〜FY2026決算資料（フランチャイズ収益ランキングとの照合を含む）から取得。製作委員会の価値分配推計は政府の政策審議会文書と協会の証言を合成。単一ベンダーのデータのみが存在する場合は、その数値を引用せずKIRAの三角推計として扱っています。</div>
+      </div>
+      <div class="method-card">
+        <div class="num">03</div>
+        <div class="title">予測・政策モデル</div>
+        <div class="body">見通しは、観測された海外主導の成長軌道を基盤に、ストリーミングライセンスの更改・マーチャンダイズフランチャイズの展開ペース・円相場の変動に対する感度分析を加えて構築しています。<strong>2025年以降の予測</strong>には[Kira estimates]タグを付与し、手法をインラインで開示しています。政策評価は政府コンテンツ輸出戦略と2025年労働条件改革に基づきます。すべての将来数値はシナリオ出力であり、点推計ではありません。</div>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics, 2024 advance figures · <strong>METI 2025</strong> = government entertainment-and-creative policy papers 2025 · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 03: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">目次</span>
+      <span class="page-section-counter">03 / 15</span>
+    </div>
+    <div class="page-h1">目次</div>
+    <div class="toc-wrap">
+      <div class="toc-col">
+        <div class="toc-section"><span class="num">01</span><span class="title">エグゼクティブサマリー — 輸出産業と不均等な価値分配</span><span class="page-num">04</span></div>
+        <div class="toc-section"><span class="num">02</span><span class="title">市場参加者に向けた戦略的示唆</span><span class="page-num">05</span></div>
+        <div class="toc-section"><span class="num">03</span><span class="title">市場規模と9セグメント経済圏</span><span class="page-num">07</span></div>
+        <div class="toc-section"><span class="num">04</span><span class="title">ストリーミングライセンス経済圏</span><span class="page-num">08</span></div>
+        <div class="toc-section"><span class="num">05</span><span class="title">グローバルマーチャンダイズの動向</span><span class="page-num">10</span></div>
+      </div>
+      <div class="toc-col">
+        <div class="toc-section"><span class="num">06</span><span class="title">IP保有者・販売会社の競合環境</span><span class="page-num">11</span></div>
+        <div class="toc-section"><span class="num">07</span><span class="title">製作委員会の経済構造と政策動向</span><span class="page-num">13</span></div>
+        <div class="toc-section"><span class="num">08</span><span class="title">5年間の見通しとリスクシナリオ</span><span class="page-num">14</span></div>
+        <div class="toc-section"><span class="num">09</span><span class="title">調査手法補足と出典凡例</span><span class="page-num">15</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 04: EXECUTIVE SUMMARY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">01 · エグゼクティブサマリー</span>
+      <span class="page-section-counter">04 / 15</span>
+    </div>
+    <div class="page-h1">輸出産業としてのアニメ — 不均等な価値分配。</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">アニメ市場 2024年</div>
+        <div class="num">¥3.84<span class="unit">兆円</span></div>
+        <div class="change">+14.8% 前年比、過去最高</div>
+        <span class="source-tag sec">AJA 2025</span>
+      </div>
+      <div class="callout">
+        <div class="label">海外比率 2024年</div>
+        <div class="num">56.5<span class="unit">%</span></div>
+        <div class="change">¥2.17兆円、+26% 前年比</div>
+        <span class="source-tag sec">AJA 2025</span>
+      </div>
+      <div class="callout">
+        <div class="label">マーチャンダイズセグメント</div>
+        <div class="num">¥749<span class="unit">bn</span></div>
+        <div class="change">最大単一セグメント</div>
+        <span class="source-tag sec">AJA 2025</span>
+      </div>
+      <div class="callout">
+        <div class="label">海外売上のスタジオ取り分</div>
+        <div class="num">~6<span class="unit">%</span></div>
+        <div class="change down">ライセンス益は委員会が保持</div>
+        <span class="source-tag est">Kira est.</span>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>成長は海外へ移行した。</h3>
+        <p>日本のアニメ市場は2024年に<strong>¥3.84兆円という過去最高値</strong>を記録し、前年比14.8%成長しました[AJA 2025]。海外売上は¥2.17兆円（56.5%）と2年連続で国内を上回り、前年比26%増（国内は同2.8%増）。アニメは構造的な<strong>輸出産業</strong>へと転換しており、成長率を規定するのは海外需要であり、ストリーミングライセンスとグローバルマーチャンダイズが二大エンジンです。</p>
+        <h3>価値分配こそが本質的な問題。</h3>
+        <p>マーチャンダイズは¥749億円で最大セグメントを占め、ストリーミングはTV・映画・ビデオの合計を超えました[AJA 2025]。しかし作品を制作するスタジオが受け取るのは、海外売上の推計<strong>約6%、国内で約16%</strong>にとどまります[Kira estimates（METI文書に基づく算出）]。製作委員会とIP保有者がライセンス・マーチャンダイズの利益を押さえており、バリューチェーン上の立ち位置が、今の市場拡大を恩恵とするか逆境とするかを決めています。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">アニメ市場 — 国内vs海外</div>
+            <div class="chart-subtitle">Japan · JPY trn · 2019–2026E</div>
+          </div>
+          <div class="chart-unit">JPY TRN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 210" preserveAspectRatio="xMidYMid meet">
+            <line x1="40" y1="14" x2="40" y2="170" class="axis-line"/>
+            <line x1="40" y1="170" x2="512" y2="170" class="axis-line"/>
+            <line x1="40" y1="132" x2="512" y2="132" class="grid-line"/>
+            <line x1="40" y1="94" x2="512" y2="94" class="grid-line"/>
+            <line x1="40" y1="56" x2="512" y2="56" class="grid-line"/>
+            <text x="36" y="173" class="axis-text" text-anchor="end">0</text>
+            <text x="36" y="135" class="axis-text" text-anchor="end">1</text>
+            <text x="36" y="97" class="axis-text" text-anchor="end">2</text>
+            <text x="36" y="59" class="axis-text" text-anchor="end">3</text>
+            <!-- domestic line ~1.5-1.7 trn, scale 1trn=38px from y=170 -->
+            <polyline fill="none" stroke="var(--text-mid)" stroke-width="2.5" points="70,113 158,109 246,106 334,107 422,107 488,106"/>
+            <circle cx="70" cy="113" r="3" fill="var(--text-mid)"/><circle cx="488" cy="106" r="3" fill="var(--text-mid)"/>
+            <text x="488" y="100" class="label-small" text-anchor="end" style="fill:var(--text-mid);font-weight:700">国内 ~¥1.7兆円</text>
+            <!-- overseas line: 2019 ~1.2, 2024 ~2.17, 2026E ~2.6 -->
+            <polyline fill="none" stroke="var(--primary)" stroke-width="2.5" points="70,124 158,128 246,118 334,99 422,88 488,71"/>
+            <circle cx="70" cy="124" r="3" fill="var(--primary)"/><circle cx="334" cy="99" r="3" fill="var(--primary)"/><circle cx="488" cy="71" r="3" fill="var(--primary)"/>
+            <text x="334" y="93" class="label-small" text-anchor="middle" style="fill:var(--primary);font-weight:700">海外 ¥2.17兆</text>
+            <text x="488" y="65" class="label-small" text-anchor="end" style="fill:var(--primary);font-weight:700">~¥2.6 (2026E)</text>
+            <text x="70" y="184" class="axis-text" text-anchor="middle">2019</text>
+            <text x="246" y="184" class="axis-text" text-anchor="middle">2022</text>
+            <text x="334" y="184" class="axis-text" text-anchor="middle">2024</text>
+            <text x="488" y="184" class="axis-text" text-anchor="middle">2026E</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ANIME-INDUSTRY STATISTICS 2024 · KIRA TRAJECTORY; 2026E KIRA ESTIMATES</div>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics, 2024 advance figures · <strong>METI 2025</strong> = government entertainment-and-creative policy papers 2025 · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 05: STRATEGIC IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">02 · 戦略的示唆</span>
+      <span class="page-section-counter">05 / 15</span>
+    </div>
+    <div class="page-h1">市場参加者に向けた5つの戦略的示唆</div>
+    <p class="page-subhead">本レポートの構造的動向から導出。IP保有者・製作スタジオ・ストリーミング販売会社・マーチャンダイズライセンシー、および日本アニメバリューチェーンで事業を展開する海外パートナーに適用されます。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · ポジション</div>
+        <div class="title">IPを保有する、または窓口を押さえる — 制作だけでは不十分。</div>
+        <div class="body-text">価値は<strong>権利保有者とライセンサー</strong>に集積し、制作能力にはありません。スタジオの海外売上取り分が約6%にとどまる以上[Kira estimates]、エピソード制作のみを担う事業者は構造的な利益率の上限に縛られます。人員を拡充する前に、IPの取得・共同保有、または委員会への出資席の確保を優先してください。</div>
+        <div class="anchor">Anchor: <span class="num-anchor">~6%</span> スタジオの海外売上取り分 [Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · ライセンス</div>
+        <div class="title">ストリーミングを一時的な売り切りではなく、継続的な収益源として構築する。</div>
+        <div class="body-text">ストリーミングは<strong>¥2,660億円に達し、TV・映画・ビデオの合計を超えました</strong>[AJA 2025]。定額ライセンス料から共同制作・最低保証型の取引への移行は、更改時の選択権を保持する権利保有者を有利にします。プラットフォームが同時配信独占権を争う局面で、更改価値を回収できる権利構成を整えてください。</div>
+        <div class="anchor">Anchor: <span class="num-anchor">¥266 bn</span> ストリーミング、TV+映画+ビデオ超え [AJA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · マーチャンダイズ</div>
+        <div class="title">持続力あるIPを軸にマーチャンダイズの好循環を構築する。</div>
+        <div class="body-text">マーチャンダイズは最大セグメントの<strong>¥7,490億円</strong>[AJA 2025]を占め、単一フランチャイズが玩具・ゲーム・ライセンスを合算して年間USD 16億円を超えた例もあります[Bandai Namco FY26]。複数世代にわたる訴求力を持つ多年代IPを核に据えてください。新興タイトルがこの展開ペースを維持することは稀です。</div>
+        <div class="anchor">Anchor: <span class="num-anchor">¥749 bn</span> マーチャンダイズ、最大セグメント [AJA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · 海外展開</div>
+        <div class="title">海外権利を一元化して価値の漏洩を防ぐ。</div>
+        <div class="body-text">海外は前年比26%増の¥2.17兆円に成長しました[AJA 2025]。<strong>単一窓口による再ライセンスの集約</strong>を実現した権利保有者は、ロイヤリティの回収率を高め、仲介業者への価値流出を抑制できます。地域ごとの分散した取引では利益率が低下します。流通権と商品化権を地域単位で統合してください。</div>
+        <div class="anchor">Anchor: <span class="num-anchor">+26%</span> 海外 前年比 [AJA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · 持続性</div>
+        <div class="title">労働・制作能力のコスト制約を価格に織り込む。</div>
+        <div class="body-text">記録的な市場規模の背後には<strong>脆弱な制作基盤</strong>があります。2025年に損失計上したスタジオは約60%に上り、労働力不足も深刻です[METI 2025]。労働条件改革による単価上昇も続いています。スタジオ層への投資が不十分なパートナーは供給途絶リスクを抱えます。長期アウトプット契約には持続可能なコストを適切に価格転嫁してください。</div>
+        <div class="anchor">Anchor: <span class="num-anchor">~60%</span> 損失計上スタジオ 2025年 [METI 2025]</div>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics, 2024 advance figures · <strong>Bandai Namco FY26</strong> = Bandai Namco Holdings FY2026 IP and segment results · <strong>METI 2025</strong> = government entertainment-and-creative policy papers 2025 · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 06: DIVIDER — MARKET & SEGMENTS -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03–04</div>
+    <div class="divider-title">市場規模<br>&amp;<br><span class="accent">ライセンス</span><br>経済圏</div>
+    <div class="divider-thesis"><strong>収益の過半数を海外で稼ぐ3兆8,400億円の市場。マーチャンダイズが最大セグメントを占め、ストリーミングはTV・映画・ビデオの合算を超えた。</strong>今や論点は規模そのものではなく、構成と、どの連鎖が海外需要の果実を収益化するかにあります。</div>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">9セグメント</span>
+      <span class="toc-pill">海外vs国内</span>
+      <span class="toc-pill">ストリーミングライセンス</span>
+      <span class="toc-pill">取引構造</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 07: MARKET SIZE & SEGMENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">03 · 市場規模</span>
+      <span class="page-section-counter">07 / 15</span>
+    </div>
+    <div class="page-h1">9セグメント合計¥3.84兆円 — マーチャンダイズが首位、ストリーミングが台頭。</div>
+    <div class="stat-band">
+      <div class="stat-band-item">
+        <div class="lbl">業界市場 2024年</div>
+        <div class="val">¥3.84<span class="unit">兆円</span></div>
+        <div class="chg">+14.8% 前年比、過去最高</div>
+        <div class="src">[AJA 2025]</div>
+      </div>
+      <div class="stat-band-item">
+        <div class="lbl">製作市場</div>
+        <div class="val">¥466<span class="unit">bn</span></div>
+        <div class="chg">+9.1%；スタジオ側収益</div>
+        <div class="src">[AJA 2025]</div>
+      </div>
+      <div class="stat-band-item">
+        <div class="lbl">マーチャンダイズ</div>
+        <div class="val">¥749<span class="unit">bn</span></div>
+        <div class="chg">+6.8%；最大セグメント</div>
+        <div class="src">[AJA 2025]</div>
+      </div>
+      <div class="stat-band-item">
+        <div class="lbl">ストリーミング</div>
+        <div class="val">¥266<span class="unit">bn</span></div>
+        <div class="chg">&gt; TV + 映画 + ビデオ</div>
+        <div class="src">[AJA 2025]</div>
+      </div>
+    </div>
+    <div class="two-col-body">
+      <div class="text-col">
+        <h3>一つの数字に内包される二つの市場</h3>
+        <p>¥3.84兆円は<strong>業界市場</strong>の広義の数値であり、放送からマーチャンダイズ・イベント・海外ライセンスまでアニメ関連の商取引全般を包含します[AJA 2025]。スタジオ収益を指す<strong>製作市場</strong>は¥4,660億円（+9.1%）にとどまります[AJA 2025]。この差は約8対1であり、産業経済の核心的事実を示しています。収益の大半は、フレームを描く人々の下流で生まれているのです。</p>
+        <p>国内市場の中ではマーチャンダイズが<strong>¥7,490億円</strong>で最大セグメントを占め、ストリーミング・音楽・ライブイベントを上回ります[AJA 2025]。ストリーミングは¥2,660億円に達し、テレビ放送・劇場映画・パッケージビデオの合算を超えました。アニメの流通と収益化に構造的な再編が起きています。</p>
+        <h3>海外への逆転</h3>
+        <p>海外売上は<strong>¥2.17兆円（全体の56.5%）</strong>に達し、国内2.8%増に対して26%増を記録しました[AJA 2025]。2年連続で外需が内需を上回っており、収益ベースでアニメは輸出セクターです。</p>
+      </div>
+      <div class="text-col">
+        <h3>セグメント構成</h3>
+        <div class="chart-card-full" style="height:300px;">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">国内セグメントシェア</div>
+              <div class="chart-subtitle">Japan · JPY bn · 2024</div>
+            </div>
+            <div class="chart-unit">JPY BN</div>
+          </div>
+          <div class="chart-body-flex">
+            <svg viewBox="0 0 460 200" preserveAspectRatio="xMidYMid meet">
+              <line x1="118" y1="8" x2="118" y2="178" class="axis-line"/>
+              <!-- horizontal bars, scale max ~750 over 320px -->
+              <rect x="118" y="16" width="320" height="22" class="bar-primary"/>
+              <text x="442" y="32" class="label-data" text-anchor="end" style="fill:#fff">749</text>
+              <text x="112" y="32" class="label-small" text-anchor="end">マーチャンダイズ</text>
+              <rect x="118" y="48" width="113" height="22" class="bar-secondary"/>
+              <text x="237" y="64" class="label-data" text-anchor="start">266</text>
+              <text x="112" y="64" class="label-small" text-anchor="end">ストリーミング</text>
+              <rect x="118" y="80" width="98" height="22" class="bar-primary" opacity="0.7"/>
+              <text x="222" y="96" class="label-data" text-anchor="start">~230</text>
+              <text x="112" y="96" class="label-small" text-anchor="end">ライブ/イベント</text>
+              <rect x="118" y="112" width="90" height="22" class="bar-primary" opacity="0.55"/>
+              <text x="214" y="128" class="label-data" text-anchor="start">~210</text>
+              <text x="112" y="128" class="label-small" text-anchor="end">音楽</text>
+              <rect x="118" y="144" width="77" height="22" class="bar-tertiary" opacity="0.85"/>
+              <text x="201" y="160" class="label-data" text-anchor="start">~180</text>
+              <text x="112" y="160" class="label-small" text-anchor="end">TV/映画/ビデオ</text>
+            </svg>
+          </div>
+          <div class="chart-source">SOURCE: ANIME-INDUSTRY STATISTICS 2024 · DOMESTIC SEGMENTS · KIRA COMPILATION</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics, 2024 advance figures (segment and domestic/overseas splits) · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 08: STREAMING LICENSING ECONOMICS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">04 · ストリーミングライセンス</span>
+      <span class="page-section-counter">08 / 15</span>
+    </div>
+    <div class="page-h1">ストリーミングライセンス：定額料金から共同制作出資へ。</div>
+    <p class="page-subhead">グローバルプラットフォームが同時配信独占権を争う中、取引構造は<strong>一時的なライセンス料から最低保証・共同制作ファイナンス・制作出資へ</strong>と移行しています。この転換は、更改時の選択権を保持するIP保有者に利益のより大きな取り分をもたらします。</p>
+    <div class="chart-half-body">
+      <div class="chart-card-full">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">プラットフォーム別アニメストリーミング収益</div>
+            <div class="chart-subtitle">Global · USD bn · annualized 2025</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 500 250" preserveAspectRatio="xMidYMid meet">
+            <line x1="120" y1="10" x2="120" y2="210" class="axis-line"/>
+            <!-- scale max ~2.1 over 356px -->
+            <rect x="120" y="22" width="350" height="28" class="bar-primary"/>
+            <text x="466" y="41" class="label-data" text-anchor="end" style="fill:#fff">2.07</text>
+            <text x="114" y="41" class="label-small" text-anchor="end">Netflix (anime)</text>
+            <rect x="120" y="62" width="197" height="28" class="bar-secondary"/>
+            <text x="323" y="81" class="label-data" text-anchor="start">1.16</text>
+            <text x="114" y="81" class="label-small" text-anchor="end">Crunchyroll</text>
+            <rect x="120" y="102" width="153" height="28" class="bar-primary" opacity="0.7"/>
+            <text x="279" y="121" class="label-data" text-anchor="start">0.90</text>
+            <text x="114" y="121" class="label-small" text-anchor="end">Hulu</text>
+            <rect x="120" y="142" width="87" height="28" class="bar-tertiary" opacity="0.85"/>
+            <text x="213" y="161" class="label-data" text-anchor="start">0.52</text>
+            <text x="114" y="161" class="label-small" text-anchor="end">Prime Video</text>
+            <text x="120" y="196" class="label-small" text-anchor="start">日本国内ミックスでストリーミング &gt; TV+映画+ビデオ [AJA 2025]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: PLATFORM STREAMING-REVENUE READS 2025 · ANIME CATEGORY · KIRA COMPILATION</div>
+      </div>
+      <div class="text-col">
+        <h3>プラットフォーム間の競争</h3>
+        <p>アニメストリーミングは二つの事業者が主導しています。総合型プラットフォームのアニメ収益は推計<strong>USD 20億7,000万ドル</strong>、専門型は約USD 11億6,000万ドルです[Streaming reads 2025]。専門型は2025年に有料会員数2,100万人（前年比1,700万人から増加）を突破し、アニメは親会社の最速成長エンターテインメント事業の一つとなっています[Sony FY25]。</p>
+        <p>競争により旧来のリリースウィンドウ優位は消滅しました。2025年に総合型が主要タイトルの<strong>週次同時配信</strong>を拡大し[Streaming reads 2025]、かつて専門型の専売特許だった速度モデルに並ぶことで、両者とも独占権と共同制作を差別化手段として押し出しています。</p>
+        <h3>構造変化が持つ意味</h3>
+        <p>販売会社の親会社は2021年に専門型プラットフォームを約USD 11億7,500万ドルで買収し、2025年にはプラットフォーム独占アニメを制作する<strong>合弁制作レーベル</strong>を設立してスタジオも取得しました[Sony FY25]。垂直統合によりライセンスコストが自社供給に転換され、IPと配信インフラの両方を握る側に交渉力が傾いています。</p>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics 2024 · <strong>Streaming reads 2025</strong> = platform anime-revenue and operations reads 2025 · <strong>Sony FY25</strong> = Sony Group media-networks segment disclosures FY2025 · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 09: DIVIDER — FRANCHISE & PLAYERS -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05–06</div>
+    <div class="divider-title">フランチャイズ<br>&amp;<br><span class="accent">IP保有者</span><br>競合環境</div>
+    <div class="divider-thesis"><strong>マーチャンダイズは最大単一セグメントを占め、ポケモン・ガンダム・ドラゴンボール・ワンピースといった数十年続く一握りのフランチャイズがライセンス価値の大半を支えています。</strong>今や論点は、アニメIPが収益化されるかどうかではなく、その時点で誰が権利を握っているかです。</div>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">フランチャイズ生涯価値</span>
+      <span class="toc-pill">マーチャンダイズの好循環</span>
+      <span class="toc-pill">IP保有者</span>
+      <span class="toc-pill">海外ロイヤリティ</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: MERCHANDISE FRANCHISE DYNAMICS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">05 · マーチャンダイズフランチャイズ</span>
+      <span class="page-section-counter">10 / 15</span>
+    </div>
+    <div class="page-h1">グローバルマーチャンダイズフランチャイズ：生涯価値の所在。</div>
+    <p class="page-subhead">日本IPは全時代フランチャイズランキングを席巻しており、その収益は<strong>興行収入やストリーミングよりもマーチャンダイズが牽引</strong>しています。数十年にわたって玩具・ゲーム・ライセンスで価値を複利的に積み上げるのは、単発のヒットシーズンではなく、持続力ある多世代型フランチャイズという資産です。</p>
+    <div class="chart-half-body">
+      <div class="chart-card-full">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">主要フランチャイズ — 生涯総収益</div>
+            <div class="chart-subtitle">All-time · USD bn · all media incl. merchandise</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 500 250" preserveAspectRatio="xMidYMid meet">
+            <line x1="130" y1="10" x2="130" y2="220" class="axis-line"/>
+            <!-- scale max ~290 over 340px -->
+            <rect x="130" y="20" width="338" height="26" class="bar-primary"/>
+            <text x="462" y="38" class="label-data" text-anchor="end" style="fill:#fff">288</text>
+            <text x="124" y="38" class="label-small" text-anchor="end">Pokémon</text>
+            <rect x="130" y="58" width="104" height="26" class="bar-secondary"/>
+            <text x="240" y="76" class="label-data" text-anchor="start">88.5</text>
+            <text x="124" y="76" class="label-small" text-anchor="end">Hello Kitty</text>
+            <rect x="130" y="96" width="67" height="26" class="bar-primary" opacity="0.7"/>
+            <text x="203" y="114" class="label-data" text-anchor="start">57.3</text>
+            <text x="124" y="114" class="label-small" text-anchor="end">Mario</text>
+            <rect x="130" y="134" width="35" height="26" class="bar-tertiary" opacity="0.85"/>
+            <text x="171" y="152" class="label-data" text-anchor="start">~30</text>
+            <text x="124" y="152" class="label-small" text-anchor="end">Gundam</text>
+            <rect x="130" y="172" width="35" height="26" class="bar-primary" opacity="0.5"/>
+            <text x="171" y="190" class="label-data" text-anchor="start">~30</text>
+            <text x="124" y="190" class="label-small" text-anchor="end">Dragon Ball</text>
+            <text x="130" y="214" class="label-small" text-anchor="start">全時代トップフランチャイズの過半数を日本IPが占有</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ALL-TIME FRANCHISE REVENUE READS 2025 · ALL MEDIA · KIRA COMPILATION</div>
+      </div>
+      <div class="text-col">
+        <h3>興行収入ではなくマーチャンダイズ。</h3>
+        <p>ポケモンは推計生涯収益<strong>USD 2,880億ドル</strong>で全時代最高収益メディアフランチャイズの地位を維持し、ハローキティのUSD 885億ドル、マリオのUSD 573億ドルを上回っています[Franchise reads 2025]。共通するのはマーチャンダイズ主導のモデルです。映画ではなく、玩具・トレーディングカード・ライセンスがフランチャイズ価値の大半を生み出しています。</p>
+        <p>年次の規模も大きいです。あるIP保有者の旗艦フランチャイズが、ゲーム・玩具・アニメ・ライセンスを合わせて<strong>単年でUSD 16億2,000万ドル</strong>を超え、初めて同社の他フランチャイズを上回りました[Bandai Namco FY26]。さらに二つのフランチャイズが同年に¥1,900億円・¥1,400億円を計上しています。</p>
+        <h3>海外展開の乗数効果。</h3>
+        <p>フランチャイズマーチャンダイズは国境を越えて拡大します。有力IP保有者の<strong>米州売上は前年比53.7%増</strong>を記録しており[Bandai Namco FY26]、市場全体の海外牽引が、カタログ全体に均等に分散するのではなく、グローバルに認知された実績ある主要IPに集中していることを示しています。</p>
+      </div>
+    </div>
+    <div class="source-key"><strong>Franchise reads 2025</strong> = all-time media-franchise revenue compilations 2025 · <strong>Bandai Namco FY26</strong> = Bandai Namco Holdings FY2026 IP and segment results · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: IP-HOLDER & DISTRIBUTOR LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">06 · IP保有者の競合環境</span>
+      <span class="page-section-counter">11 / 15</span>
+    </div>
+    <div class="page-h1">IP保有者の競合環境：制作能力より権利と配信窓口。</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">価値の集積箇所</div>
+            <div class="chart-subtitle">Japan · 2024–FY26 · indicative annual scale</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 500 170" preserveAspectRatio="xMidYMid meet">
+            <line x1="40" y1="10" x2="40" y2="140" class="axis-line"/>
+            <line x1="40" y1="140" x2="490" y2="140" class="axis-line"/>
+            <rect x="70" y="44" width="70" height="96" class="bar-primary"/>
+            <text x="105" y="38" class="label-data" text-anchor="middle">~6.7</text>
+            <text x="105" y="154" class="axis-text" text-anchor="middle">Bandai 玩具</text>
+            <rect x="170" y="92" width="70" height="48" class="bar-secondary"/>
+            <text x="205" y="86" class="label-data" text-anchor="middle">~2.1</text>
+            <text x="205" y="154" class="axis-text" text-anchor="middle">Netflix anime</text>
+            <rect x="270" y="110" width="70" height="30" class="bar-primary" opacity="0.7"/>
+            <text x="305" y="104" class="label-data" text-anchor="middle">~1.2</text>
+            <text x="305" y="154" class="axis-text" text-anchor="middle">Crunchyroll</text>
+            <rect x="370" y="125" width="70" height="15" class="bar-tertiary" opacity="0.85"/>
+            <text x="405" y="119" class="label-data" text-anchor="middle">~3.1</text>
+            <text x="405" y="154" class="axis-text" text-anchor="middle">製作市場÷10</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OPERATOR DISCLOSURES FY24–FY26 · INDICATIVE SCALE · KIRA COMPILATION</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>バリューチェーン上位への集中</h3>
+        <p>価値連鎖は直感的な順序を逆転しています。単一の玩具・ホビーIP保有者が年間マーチャンダイズで計上する金額は、主要ストリーミングプラットフォームがアニメから得る収益を上回ります[Bandai Namco FY26]。<strong>権利・ライセンス層が上昇益を獲得</strong>し、全スタジオを合わせた製作市場¥4,660億円はその一桁下に位置します[AJA 2025]。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>玩具/IPトップセグメント</span><span class="val">¥674 bn、利益率18.8%</span></div>
+          <div class="stat-line"><span>主要ストリーミング会員数</span><span class="val">2,100万人（有料）</span></div>
+          <div class="stat-line"><span>全スタジオ製作市場</span><span class="val">¥466 bn</span></div>
+          <div class="stat-line"><span>海外成長率</span><span class="val">+26% 前年比</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01 · IP コングロマリット</div>
+        <div class="comp-name">バンダイナムコ</div>
+        <div class="comp-parent">Bandai Namco Holdings</div>
+        <div class="comp-stat-row"><span>玩具・ホビー</span><span class="val">¥674 bn</span></div>
+        <div class="comp-stat-row"><span>主力IP</span><span class="val">ガンダム、ドラゴンボール</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>自社IP棚卸しの厚さ、玩具利益率約18.8%、フランチャイズマーチャンダイズの米州売上+53.7%。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02 · IP オーナー</div>
+        <div class="comp-name">株式会社ポケモン</div>
+        <div class="comp-parent">Pokémon Co.（任天堂系列）</div>
+        <div class="comp-stat-row"><span>生涯総収益</span><span class="val">~USD 288 bn</span></div>
+        <div class="comp-stat-row"><span>収益エンジン</span><span class="val">カード、玩具、ゲーム</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>全時代最高収益フランチャイズ。グローバル・複数世代にわたるマーチャンダイズ主導モデル。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03 · スタジオ + 権利</div>
+        <div class="comp-name">東映アニメーション</div>
+        <div class="comp-parent">Toei Animation Co.</div>
+        <div class="comp-stat-row"><span>モデル</span><span class="val">ライセンス主導</span></div>
+        <div class="comp-stat-row"><span>主力IP</span><span class="val">ワンピース、ドラゴンボール</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>海外売上比率の上昇が利益率を改善。複数世代に訴求する「エバーグリーン」IP戦略。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04 · 販売会社</div>
+        <div class="comp-name">ソニー / アニプレックス</div>
+        <div class="comp-parent">Sony Group · Crunchyroll · Aniplex</div>
+        <div class="comp-stat-row"><span>会員数</span><span class="val">2,100万人（有料）</span></div>
+        <div class="comp-stat-row"><span>戦略</span><span class="val">合弁レーベル＋スタジオ買収</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>配信と制作を両方保有。垂直統合によりライセンスコストが自社供給に転換。</div>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics 2024 · <strong>Bandai Namco FY26</strong> = Bandai Namco Holdings FY2026 results · <strong>Franchise reads 2025</strong> = all-time franchise revenue compilations · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: DIVIDER — STRUCTURE & POLICY -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <div class="divider-title">委員会の<br><span class="accent">価値分配</span></div>
+    <div class="divider-thesis"><strong>スタジオが受け取るのは海外売上の推計6%、国内で16%にとどまり、ライセンス・マーチャンダイズの利益は製作委員会が保持しています。</strong>記録的な市場の土台にあるのは、過半数のスタジオが損失を計上する制作基盤であり、政策はその解消に向けて動き始めています。</div>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">製作委員会</span>
+      <span class="toc-pill">価値分配</span>
+      <span class="toc-pill">労働改革</span>
+      <span class="toc-pill">輸出政策</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: PRODUCTION-COMMITTEE ECONOMICS & POLICY -->
+<div class="page policy-timeline-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">07 · 委員会の経済構造</span>
+      <span class="page-section-counter">13 / 15</span>
+    </div>
+    <div class="page-h1">製作委員会の経済構造：海外輸出ブームの果実を誰が手にするか。</div>
+    <p class="page-subhead"><strong>製作委員会（製作幹事）方式</strong>は放送局・出版社・マーチャンダイザーにわたって資金を集約し、ライセンス・マーチャンダイズの利益をスタジオではなく委員会に集中させます。グローバルプラットフォームが出資者として参画する中、交渉構造は変わり始めています。</p>
+    <div class="two-col-body">
+      <div class="text-col">
+        <h3>構造的な圧迫</h3>
+        <p>委員会は放送局への販売価格に対して制作予算を設定し、<strong>ライセンス・マーチャンダイズの利益を保持</strong>します。スタジオが受け取るのは海外売上の約6%、国内売上の約16%にとどまると推計されており[Kira estimates（METI文書に基づく算出）]、記録的な¥3.84兆円の市場と損失を計上するスタジオ層が共存する構造的背景はここにあります。</p>
+        <p>この結果は制作基盤に可視化されています。慢性的な人手不足の中、<strong>2025年にアニメスタジオの約60%が損失を計上</strong>しました[METI 2025]。時間外労働規制による労働環境改革は、海外需要が拡大する中でさらに利益率を圧迫しています — 記録的な売上高の裏側に脆弱なコスト基盤があります。</p>
+        <h3>変化の兆し</h3>
+        <p>グローバルOTTプラットフォームが<strong>資本パートナー</strong>として委員会に参画することで交渉力が変化しており、製作だけでなく権利持分を目指すスタジオも出始めています[METI 2025]。IP保有者側でも単一窓口による海外再ライセンスの集約によるロイヤリティ回収率の向上が進んでいます。</p>
+      </div>
+      <div class="text-col">
+        <h3>政策の対応</h3>
+        <ul>
+          <li><strong>労働環境整備機関（2025年）</strong> — スタジオの契約・賃金・労働時間に関する第三者調停機関を政府が設置[METI 2025]。</li>
+          <li><strong>コンテンツ輸出目標</strong> — アニメ・マンガ・ゲームの海外コンテンツ収益を<strong>2033年までに¥20兆円</strong>に引き上げる目標[METI 2025]。</li>
+          <li><strong>委員会の透明性</strong> — 政策審議会が委員会方式のクリエイター報酬への影響を審議中[METI 2025]。</li>
+          <li><strong>流通支援</strong> — 北米・欧州・東南アジアへの展開を拡大するスタジオへの物流・資金援助[METI 2025]。</li>
+        </ul>
+        <h3>示唆</h3>
+        <p>政策の方向性と取引構造の変化は同じベクトルを向いています。<strong>権利と更改時の選択権を保持する側に価値が移行します。</strong>出資または権利持分を持たずに制作能力だけに資金を投じるパートナーは、記録的な市場においても構造的な利益率の上限に縛られ続けます。</p>
+      </div>
+    </div>
+    <div class="source-key"><strong>METI 2025</strong> = government entertainment-and-creative policy papers and content-export strategy 2025 · <strong>Kira estimates</strong> = KIRA in-house analyst triangulation across policy-council papers and association testimony</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: OUTLOOK & SCENARIOS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">08 · 見通し</span>
+      <span class="page-section-counter">14 / 15</span>
+    </div>
+    <div class="page-h1">5年間の見通し：海外主導の成長、スタジオ層での攻防。</div>
+    <p class="page-subhead">記録的な海外主導市場、持続力あるフランチャイズ経済、そして脆弱な制作基盤。ベースケースは<strong>中〜高一桁台の成長継続</strong>であり、上振れ・下振れの鍵はストリーミングライセンスの深化・マーチャンダイズフランチャイズの展開ペース・スタジオ層が生産を維持できるだけの資金確保にかかっています。</p>
+    <div class="chart-half-body">
+      <div class="chart-card-full">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">アニメ業界市場 — シナリオファン</div>
+            <div class="chart-subtitle">Japan · JPY trn · 2024–2030E</div>
+          </div>
+          <div class="chart-unit">JPY TRN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 500 230" preserveAspectRatio="xMidYMid meet">
+            <line x1="44" y1="14" x2="44" y2="190" class="axis-line"/>
+            <line x1="44" y1="190" x2="490" y2="190" class="axis-line"/>
+            <line x1="44" y1="150" x2="490" y2="150" class="grid-line"/>
+            <line x1="44" y1="110" x2="490" y2="110" class="grid-line"/>
+            <line x1="44" y1="70" x2="490" y2="70" class="grid-line"/>
+            <line x1="44" y1="30" x2="490" y2="30" class="grid-line"/>
+            <text x="40" y="193" class="axis-text" text-anchor="end">3</text>
+            <text x="40" y="153" class="axis-text" text-anchor="end">4</text>
+            <text x="40" y="113" class="axis-text" text-anchor="end">5</text>
+            <text x="40" y="73" class="axis-text" text-anchor="end">6</text>
+            <!-- 2024 base ~3.84: y=190-((3.84-3)/1*40)=190-33.6=156 -->
+            <!-- base case ~9% to ~6.0 by 2030 -->
+            <polyline fill="none" stroke="var(--primary)" stroke-width="2.5" points="70,156 138,146 206,135 274,123 342,110 410,97 478,84"/>
+            <text x="478" y="78" class="label-small" text-anchor="end" style="fill:var(--primary);font-weight:700">ベース ~¥6.0兆円</text>
+            <!-- upside -->
+            <polyline fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="5 3" points="70,156 138,142 206,127 274,110 342,92 410,73 478,52"/>
+            <text x="478" y="46" class="label-small" text-anchor="end" style="fill:var(--green);font-weight:700">上振れ（IP輸出加速）</text>
+            <!-- downside -->
+            <polyline fill="none" stroke="var(--amber)" stroke-width="2" stroke-dasharray="5 3" points="70,156 138,150 206,143 274,137 342,131 410,126 478,121"/>
+            <text x="478" y="134" class="label-small" text-anchor="end" style="fill:var(--amber);font-weight:700">下振れ（供給制約/円高）</text>
+            <text x="70" y="204" class="axis-text" text-anchor="middle">2024</text>
+            <text x="274" y="204" class="axis-text" text-anchor="middle">2027E</text>
+            <text x="478" y="204" class="axis-text" text-anchor="middle">2030E</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA SCENARIO MODEL · ANCHOR: ¥3.84 TRN 2024 [AJA 2025]</div>
+      </div>
+      <div class="text-col">
+        <h3>ベースケース — 海外主導の継続</h3>
+        <p>市場は2030年までに約<strong>¥6兆円</strong>に達する見通しです[Kira estimates]。海外ストリーミングとマーチャンダイズが牽引する中〜高一桁台の成長が続きます。グローバルアニメ市場予測（2030年にUSD 約600億ドル、CAGR約9〜10%）と整合しており[Industry forecasts 2025]、マーチャンダイズが最大シェアを占め、ストリーミングが最速成長セグメントとなります。</p>
+        <h3>上振れ — フランチャイズの海外展開加速</h3>
+        <p>IP保有者がストリーミング共同制作を深化させ規律ある海外マーチャンダイズ展開を進め、政策が<strong>¥20兆円のコンテンツ輸出目標</strong>を達成すれば[METI 2025]、国内基盤ではなく輸出に牽引され、ベースを大きく上回る成長が見込めます。</p>
+        <h3>下振れ — スタジオ層の崩壊</h3>
+        <p>損失を抱える制作基盤への資金供給が不十分で人手不足が深刻化すれば、供給制約が生産量を抑制し、円安の反転が報告値の成長を押し下げ、市場は2030年までに<strong>約¥5兆円</strong>にとどまります[Kira estimates]。</p>
+      </div>
+    </div>
+    <div class="source-key"><strong>AJA 2025</strong> = Japanese anime-industry statistics 2024 · <strong>Industry forecasts 2025</strong> = global anime market 2030 forecast compilations · <strong>METI 2025</strong> = government content-export strategy 2025 · <strong>Kira estimates</strong> = KIRA in-house scenario model</div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 15: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <span class="page-section-tag">09 · 調査手法 &amp; 出典</span>
+      <span class="page-section-counter">15 / 15</span>
+    </div>
+    <div class="page-h1">調査手法補足と出典凡例</div>
+    <div class="endnote-grid">
+      <div class="endnote-col">
+        <h3>タグの読み方</h3>
+        <p>本レポートは二つの証拠ストリームを三角検証しています。<strong>名前付き出典タグ</strong>（例：[AJA 2025]、[Bandai Namco FY26]）が付いた数値は当該出典のデータに基づいており、完全な引用は出典リストに記載しています。<strong>[Kira estimates]</strong>タグが付いた数値は、業界団体統計・事業者開示資料・政府政策文書を組み合わせ、該当セクションで開示した手法を用いてKIRAアナリストが算出したものです。</p>
+        <p>定量的主張の約<strong>25%がKIRA算出</strong>であり、75%は外部引用です。価値分配数値（スタジオの売上取り分）と将来シナリオ出力はKIRAの三角推計であり、推計タグを付与しています。USD金額はすべて期中平均換算であり、USD建て報告収益は円相場の影響を受けます。フランチャイズの生涯収益は数十年にわたる全メディアの合算です。</p>
+        <p class="disclaimer">本レポートは情報提供を目的として提供されており、2026年時点のKIRA Research分析を反映しています。数値は推計であり修正される場合があります。投資助言ではありません。機密 — 内部利用限定ライセンス。</p>
+      </div>
+      <div class="endnote-col">
+        <h3>出典凡例</h3>
+        <ul class="src-list">
+          <li><strong>AJA 2025</strong> — Japanese anime-industry statistics, 2024 advance figures (market size, domestic/overseas split, nine-segment breakdown, production market)</li>
+          <li><strong>Bandai Namco FY26</strong> — Bandai Namco Holdings FY2026 IP and segment results (franchise revenue, Toys &amp; Hobby segment, regional sales)</li>
+          <li><strong>Franchise reads 2025</strong> — all-time media-franchise lifetime-revenue compilations, 2025</li>
+          <li><strong>Industry forecasts 2025</strong> — global anime market 2030 forecast compilations (size, CAGR, segment growth)</li>
+          <li><strong>METI 2025</strong> — government entertainment-and-creative policy-council papers, content-export strategy, and 2025 working-conditions reform</li>
+          <li><strong>Sony FY25</strong> — Sony Group media-networks segment disclosures and anime-strategy materials, FY2025</li>
+          <li><strong>Streaming reads 2025</strong> — platform anime-revenue, subscriber, and simulcast-operations reads, 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span class="logo-foot">KIRA<span class="accent">.</span></span>
+      <span>Japan Anime IP 2026 · 機密</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
