@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 韓国造船業2027年展望：LNGキャリア支配と洋上風力設置船</title>
+<meta name="description" content="韓国造船業2027年 — LNGキャリア受注残の優位性、洋上風力設置船の機会、そして2030年に向けた次の成長局面を決定づける商業的枠組み。">
+<meta property="og:title" content="KIRA Research — 韓国造船業2027年展望">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 0.98; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 18px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "ORDER LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 56px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 800px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 700; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; flex: 1; min-height: 0; }
+.toc-row { display: grid; grid-template-columns: 36px 1fr 50px; gap: 12px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tn { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; }
+.toc-row .tt { font-family: 'Satoshi', sans-serif; font-size: 12.5px; color: var(--text); font-weight: 600; }
+.toc-row .tt .sub { font-weight: 400; color: var(--text-mid); font-size: 11px; display: block; line-height: 1.3; }
+.toc-row .tp { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.methend-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.methend-left h3, .methend-right h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.methend-left p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.methend-left p strong { color: var(--text); font-weight: 600; }
+.methend-right ul { list-style: none; padding: 0; margin: 0; }
+.methend-right li { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; line-height: 1.3; color: var(--text-mid); padding: 2px 0; border-bottom: 1px dotted var(--border); }
+.methend-right li strong { color: var(--text); font-weight: 700; }
+
+.source-key {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted);
+  padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px;
+  letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden;
+}
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 001 — COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner">
+      <div class="cover-top">
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">韓国 · 造船業 · 2027年</div>
+        <h1>韓国造船業2027年 — LNGキャリアが受注残を支え、<br><span class="accent">洋上風力設置船</span>が次の成長局面を開く</h1>
+        <p class="cover-subtitle">韓国の大手3造船所がLNGキャリア支配を2028年まで固めた経緯と、欧州・国内の再生可能エネルギー目標に牽引された洋上風力タービン設置船（WTIV）競争が2030年に向けての構造的利益率拡大を左右する構図を5年視点で分析します。</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">対象国</div><div class="val">韓国</div></div>
+          <div class="cover-meta-item"><div class="label">セクター</div><div class="val">造船業</div></div>
+          <div class="cover-meta-item"><div class="label">発行</div><div class="val">2026年6月</div></div>
+          <div class="cover-meta-item"><div class="label">レポートID</div><div class="val"><span class="accent">KR-SHIP-2027</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · 個人利用ライセンス · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 002 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">調査方法</div>
+      <div class="page-section-counter">002 / 014</div>
+    </div>
+    <h1 class="page-h1">本レポートの分析アプローチ</h1>
+    <p class="page-subhead">本レポートは2つのエビデンス・ストリームを基盤とします。<strong>一次情報</strong> — 造船所別受注残開示・事業者との対話・専門家調査 — と<strong>二次的裏付け</strong> — 業界当局・船級協会データ・企業開示資料。定量的主張には明示的な出典タグを付記しています。</p>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>一次情報</h3>
+        <div class="method-item"><div class="item-label">受注残・造船所開示</div><div class="item-desc">HD現代、ハンファオーシャン（旧DSME）、サムスン重工業の四半期・年次決算 — 受注実績、補償総トン数（CGT）ベースの手持工事残高、韓国取引所への開示契約価値。</div></div>
+        <div class="method-item"><div class="item-label">アナリスト合成</div><div class="item-desc">KIRA社内による造船所能力・船台稼働率・鉄鋼価格転嫁、および報告利益率に対する為替（KRW/USD）影響の三角検証。インラインに[Kira estimates]タグを付記。</div></div>
+        <div class="method-item"><div class="item-label">専門家調査</div><div class="item-desc">LNGキャリア技術仕様の進化（Mark III Flex、X-DF推進システム）、洋上風力タービン設置船（WTIV）設計要件：船級協会・プロジェクト開発者の開示資料より。</div></div>
+      </div>
+      <div class="method-col">
+        <h3>二次的裏付け</h3>
+        <div class="method-item"><div class="item-label">業界当局</div><div class="item-desc">韓国造船海洋公業協会（KSA）月次受注・引渡しデータ；クラークソン・リサーチ造船市場レポート；ロイズ・リスト・インテリジェンス船舶追跡データ。</div></div>
+        <div class="method-item"><div class="item-label">船級・規制機関</div><div class="item-desc">DNV、Bureau Veritas、韓国船級（KR）の船隊構成、およびIMO炭素集約度指標（CII）コンプライアンス移行タイムライン。</div></div>
+        <div class="method-item"><div class="item-label">三角推計</div><div class="item-desc">単一ソースでカバーできない数値は2〜3の情報源を組み合わせ、その方法論を開示しています。[Kira estimates]タグを付記。集計業者のみの数値は一次情報源に遡及するか、KIRAの三角推計として扱います。</div></div>
+      </div>
+    </div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 調査方法</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 003 — TOC ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">目次</div>
+      <div class="page-section-counter">003 / 014</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+    <p class="page-subhead">全14ページ構成：LNGキャリア受注残の優位性、利益率の動態、洋上風力設置船の機会、大手3造船所の競争構造、需要ドライバー、規制移行リスク、および2025〜2030年のベース・強気・弱気シナリオ。</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tn">04</span><span class="tt">エグゼクティブサマリー<span class="sub">4つの数値で示す論点</span></span><span class="tp">004</span></div>
+      <div class="toc-row"><span class="tn">05</span><span class="tt">戦略的示唆<span class="sub">今後24ヶ月の5つの行動指針</span></span><span class="tp">005</span></div>
+      <div class="toc-row"><span class="tn">06</span><span class="tt">LNGキャリア支配<span class="sub">セクション区切り</span></span><span class="tp">006</span></div>
+      <div class="toc-row"><span class="tn">07</span><span class="tt">受注残と市場規模<span class="sub">手持工事残高の規模と収益の基盤</span></span><span class="tp">007</span></div>
+      <div class="toc-row"><span class="tn">08</span><span class="tt">利益率と価格動態<span class="sub">鉄鋼・為替・契約構造</span></span><span class="tp">008</span></div>
+      <div class="toc-row"><span class="tn">09</span><span class="tt">洋上風力設置船<span class="sub">セクション区切り</span></span><span class="tp">009</span></div>
+      <div class="toc-row"><span class="tn">10</span><span class="tt">WTIV市場機会<span class="sub">欧州・国内の需要パイプライン</span></span><span class="tp">010</span></div>
+      <div class="toc-row"><span class="tn">11</span><span class="tt">競争構造<span class="sub">セクション区切り</span></span><span class="tp">011</span></div>
+      <div class="toc-row"><span class="tn">12</span><span class="tt">大手3造船所プロフィール<span class="sub">HD現代 · ハンファオーシャン · サムスン重工</span></span><span class="tp">012</span></div>
+      <div class="toc-row"><span class="tn">13</span><span class="tt">規制と脱炭素化<span class="sub">IMO CII・アンモニア推進・グリーンLNG</span></span><span class="tp">013</span></div>
+      <div class="toc-row"><span class="tn">14</span><span class="tt">2025-2030年予測と出典<span class="sub">ベース・強気・弱気 ＋ 出典凡例</span></span><span class="tp">014</span></div>
+    </div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 目次</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 004 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · エグゼクティブサマリー</div>
+      <div class="page-section-counter">004 / 014</div>
+    </div>
+    <h1 class="page-h1">韓国造船業2027年 — LNG受注残が維持され、新造船利益率が拡大。</h1>
+    <p class="page-subhead">韓国大手3造船所はLNGキャリアの受注残を支配し、2028年まで続く大量契約の獲得によってその優位性をさらに強化しています。近期の焦点は歴史的に低調だった2022〜23年サイクルからの利益率回復であり、中期的な本命は洋上風力設置船です。<strong>いずれも循環的ではなく、構造的な動態です。</strong></p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">韓国LNGキャリア受注シェア</div>
+        <div class="num">~73<span class="unit">%</span></div>
+        <div class="change">2025年世界新規受注；中国~24%</div>
+        <div class="source-tag sec">KSA 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">大手3社合計受注残</div>
+        <div class="num">USD ~64<span class="unit">bn</span></div>
+        <div class="change">HD HHI + HO + SHI 合算</div>
+        <div class="source-tag est">Kira est.</div>
+      </div>
+      <div class="callout">
+        <div class="label">LNGキャリア新造船価格</div>
+        <div class="num">USD 262<span class="unit">m</span></div>
+        <div class="change">2021年底値比+38%；なお上昇中</div>
+        <div class="source-tag sec">Clarkson 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">WTIV市場規模 2030年予測</div>
+        <div class="num">USD 8.4<span class="unit">bn</span></div>
+        <div class="change down">韓国が照準；欧州発注が開幕</div>
+        <div class="source-tag est">Kira est.</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>LNG受注残が収益の錨</h3>
+        <p>韓国大手3社 — HD現代重工業（HD HHI）、ハンファオーシャン、サムスン重工業（SHI） — の合計受注残は<strong>USD ~64 bn</strong>と推計され、LNGキャリアが数量ベースで55〜60%を占めます[Kira estimates]。欧州・東アジアの長期LNG供給契約締結に伴い、174,000 cbm LNGキャリアの新造価格は2021年底値USD 189 mから2026年初頭にUSD 262 mまで上昇しました[Clarkson 2026]。</p>
+        <h3>利益率は回復途上、ピークには未達。</h3>
+        <p>2022〜23年サイクルは、鉄鋼コスト急騰時に締結した固定価格の長期契約によって特徴づけられました。HD HHIの造船事業営業利益率は、FY23のほぼ損益分岐点から<strong>FY25に7.4%</strong>まで回復しています[HD HHI FY25]。ハンファオーシャンとSHIも同様の遅行回復軌道を辿っています。3社いずれも受注残の再値付けを完了しており、新規契約にはより優れたコスト転嫁条項が組み込まれています。</p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">LNGキャリア新造船価格の推移</div>
+            <div class="chart-subtitle">USD M / 隻 · 2020-2026年</div>
+          </div>
+          <div class="chart-unit">USD M</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="210" x2="500" y2="210" class="axis-line"></line>
+            <!-- scale: max 280; y = 210 - (v/280*185) -->
+            <!-- 2020: 185 -->
+            <rect x="58" y="88" width="42" height="122" class="bar-primary" opacity="0.4"></rect>
+            <text x="79" y="226" text-anchor="middle" class="axis-text">2020</text>
+            <text x="79" y="81" text-anchor="middle" class="label-data">185</text>
+            <!-- 2021: 189 -->
+            <rect x="122" y="85" width="42" height="125" class="bar-primary" opacity="0.5"></rect>
+            <text x="143" y="226" text-anchor="middle" class="axis-text">2021</text>
+            <text x="143" y="78" text-anchor="middle" class="label-data">189</text>
+            <!-- 2022: 218 -->
+            <rect x="186" y="66" width="42" height="144" class="bar-primary" opacity="0.65"></rect>
+            <text x="207" y="226" text-anchor="middle" class="axis-text">2022</text>
+            <text x="207" y="59" text-anchor="middle" class="label-data">218</text>
+            <!-- 2023: 236 -->
+            <rect x="250" y="54" width="42" height="156" class="bar-primary" opacity="0.8"></rect>
+            <text x="271" y="226" text-anchor="middle" class="axis-text">2023</text>
+            <text x="271" y="47" text-anchor="middle" class="label-data">236</text>
+            <!-- 2024: 251 -->
+            <rect x="314" y="44" width="42" height="166" class="bar-primary" opacity="0.9"></rect>
+            <text x="335" y="226" text-anchor="middle" class="axis-text">2024</text>
+            <text x="335" y="37" text-anchor="middle" class="label-data">251</text>
+            <!-- 2026: 262 -->
+            <rect x="378" y="37" width="42" height="173" class="bar-primary"></rect>
+            <text x="399" y="226" text-anchor="middle" class="axis-text">2026</text>
+            <text x="399" y="30" text-anchor="middle" class="label-data">262</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CLARKSON RESEARCH NEWBUILDING PRICE INDICES · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">KSA 2026 = Korea Shipbuilders' Association order data 2025-2026 · Clarkson 2026 = Clarkson Research newbuilding price index · HD HHI FY25 = HD Hyundai Heavy Industries FY2025 results · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · エグゼクティブサマリー</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 005 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · エグゼクティブサマリー</div>
+      <div class="page-section-counter">005 / 014</div>
+    </div>
+    <h1 class="page-h1">今後24ヶ月の5つの戦略的示唆</h1>
+    <p class="page-subhead">韓国の造船フランチャイズは2つの連動エンジンで動いています：固められたLNGキャリア受注残と、台頭しつつある洋上風力設置船セグメントです。<strong>以下の行動指針は、今後2年間での資本配分とポジショニングの優先順位を示します。</strong></p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">受注残ピーク前に、今すぐ鉄鋼と人材を確保する</div>
+        <div class="body-text">2026〜2028年の引渡しウィンドウは10年で最も高密度です。鉄鋼供給契約と長期熟練工確保プログラムを事前に整備した造船所が利益率を守ります。契約途中でコスト再値付けを迫られる造船所はその圧力を丸ごと吸収します。</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">USD 64 bn</span> 合計受注残</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">新規LNG受注はサイクル高値で契約し、数量圧力に抵抗する</div>
+        <div class="body-text">USD 262 m / 隻という新造価格は数十年来の高値です。2028年以降の船台を埋めるために薄い利益率で受注を積み上げることは、利益率回復を損ないます。選択的な受注規律が価格の床を守ります。</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">USD 262 m</span> 174k cbm キャリア単価</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">今すぐWTIV設計に投資する — 発注は2027〜2028年に開幕</div>
+        <div class="body-text">欧州の洋上風力設置船調達は加速中；米国ジョーンズ法適合WTIVも開発が進んでいます。韓国造船所は鉄鋼加工規模とクレーン能力の遺産から競争力を持ちますが、設計投資はRFP窓口が開く前に行う必要があります。</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">USD 8.4 bn</span> 2030年予測WTIV市場</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">アンモニア・デュアルフュエル推進R&amp;Dを加速する</div>
+        <div class="body-text">IMOのCII規制は毎年強化されます；現在発注するオーナーは2030年以降の燃料柔軟性を求めています。アンモニア対応またはメタノール・デュアルフュエルLNGキャリアを信頼できる引渡し日程で提供できる造船所は、プレミアムを獲得し受注キャンセルリスクを低減します。</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">2030年</span> IMO炭素目標</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">中国の能力増強を注視し、価格でなく品質で応じる</div>
+        <div class="body-text">中国造船所のLNGキャリア新規受注シェアは約24%に達し、2020年の2倍です。韓国の対応策は価格競争であってはなりません。技術的リーダーシップ（貨物格納システム・推進効率・引渡し精度）と大手ガストレーダーとの深い顧客関係が武器です。</div>
+        <div class="anchor">ANCHOR · <span class="num-anchor">~24%</span> 中国LNG受注シェア</div>
+      </div>
+    </div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 戦略的示唆</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 006 — DIVIDER 1 ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <h1 class="divider-title">LNGキャリア <span class="accent">支配</span></h1>
+    <div class="divider-thesis">韓国大手3造船所はLNGキャリアの新規世界受注のおよそ<strong>73%を掌握</strong>し、2028〜2029年にまで及ぶ受注残を積み上げています。この受注実績は、欧州のガス調達先転換・東アジアのLNG輸入依存・そして中国造船所が短期間では模倣できない韓国の貨物格納技術への10年にわたる投資を反映しています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">受注残</div>
+      <div class="toc-pill">価格</div>
+      <div class="toc-pill">利益率回復</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 007 — ORDER BOOK & MARKET SIZE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · 受注残と市場規模</div>
+      <div class="page-section-counter">007 / 014</div>
+    </div>
+    <h1 class="page-h1">受注残と市場規模：手持工事残高こそが事業の本質。</h1>
+    <p class="page-subhead">CGT・契約価値で測る受注残は、造船所の主要な先行収益指標です。韓国の合計受注残は2028年まで完全稼働を支えるに十分な規模であり、その後の動向は新規受注の意思決定が決定します。</p>
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr;">
+      <div class="exec-narrative">
+        <h3>韓国が保有するLNG技術の堀</h3>
+        <p>韓国の3造船所は、GTT社のMark III・NO96メンブレン（ライセンス契約・共同開発）とX-DFデュアルフュエル推進システムを中心に30年かけてLNGキャリア能力を構築してきました。2025年、韓国は隻数ベースで世界LNGキャリア新規受注の<strong>約73%を獲得</strong>しています[KSA 2026]。政府支援のもとで能力拡張を進める中国造船所は、引渡し精度と貨物格納認証のいずれでも後塵を拝しています。</p>
+        <h3>受注残は2028〜2029年まで積み上がっている。</h3>
+        <p>HD HHI・ハンファオーシャン・SHIの合計受注残は<strong>USD ~64 bn</strong>と推計され[Kira estimates]、LNGキャリアが価値ベースで約55〜60%を占めます。主要造船所の引渡し枠は2027年まで完全予約済みで、2028年分も大部分が確定済みです。2026年初頭時点のLNGキャリア世界受注残は<strong>271隻</strong>であり、そのうち200隻以上を韓国が保有しています[Clarkson 2026]。</p>
+        <h3>世界LNG貿易とともに市場規模が拡大。</h3>
+        <p>世界のLNG貿易量は<strong>2025年に412 mt</strong>に達し[IGU 2026]、欧州のロシア産パイプラインガスからの転換が2030年までに180隻超のLNGキャリア新造需要を下支えしています。韓国造船所のアドレサブル市場は、LNGキャリア契約だけで年間USD 8〜10 bnに上ります[Kira estimates]。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">世界LNGキャリア新規受注の国別シェア</div>
+            <div class="chart-subtitle">2025年新規受注 · 隻数比率</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <!-- horizontal bar chart -->
+            <text x="14" y="35" class="label-small">韓国</text>
+            <rect x="90" y="22" width="408" height="22" class="bar-primary"></rect>
+            <text x="506" y="38" class="label-data">73%</text>
+            <text x="14" y="80" class="label-small">中国</text>
+            <rect x="90" y="67" width="134" height="22" fill="#4A5568" opacity="0.7"></rect>
+            <text x="232" y="83" class="label-data">24%</text>
+            <text x="14" y="125" class="label-small">その他</text>
+            <rect x="90" y="112" width="17" height="22" fill="#4A5568" opacity="0.4"></rect>
+            <text x="115" y="128" class="label-data">3%</text>
+            <text x="90" y="175" class="label-small" fill="#1E6FFF">韓国のLNGキャリア受注残：世界271隻中約200隻</text>
+            <text x="90" y="192" class="label-small">Source: KSA, Clarkson Research, KIRA estimates</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KOREA SHIPBUILDERS' ASSOCIATION, CLARKSON RESEARCH · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">KSA 2026 = Korea Shipbuilders' Association monthly order data 2025-2026 · Clarkson 2026 = Clarkson Research LNG carrier orderbook data · IGU 2026 = International Gas Union World LNG Report 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 受注残と市場規模</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 008 — MARGIN & PRICING DYNAMICS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · 利益率と価格</div>
+      <div class="page-section-counter">008 / 014</div>
+    </div>
+    <h1 class="page-h1">利益率と価格動態：回復は構造的であり、一時的な棚ぼたではない。</h1>
+    <p class="page-subhead">3社いずれも、コロナ後の鉄鋼急騰時に締結した低価格・固定コスト契約の遺産を処理中です。それらが引き渡されるにつれ、新規契約はより良好な価格設定とコスト転嫁条項を持ち、営業利益率は予測可能な複数年軌道で回復しています。</p>
+    <div class="exec-body" style="grid-template-columns: 1.05fr 1fr;">
+      <div class="exec-narrative">
+        <h3>2022〜23年の利益率の谷は構造的だった。</h3>
+        <p>韓国造船所は、POSCO製熱延コイルが<strong>2022年上半期にUSD 1,080/tに達した</strong>頃に固定価格で長期受注を積み上げていました[POSCO AR 2022]。コスト上昇が固定収益に対して機械的に利益率を圧迫しました。HD HHIの造船セグメントはFY23にほぼ損益分岐点に達し；ハンファオーシャンは事業再編期の2022〜23年に営業赤字を計上しました。</p>
+        <h3>新規契約はより良い構造を持つ。</h3>
+        <p>2023年末以降に締結した契約は鉄鋼エスカレーション条項を組み込み、絶対水準でも高く価格設定されています — 174,000 cbm LNGキャリアの価格は2021年底値の<strong>USD 189 mからUSD 262 m</strong>に上昇しています[Clarkson 2026]。HD HHIの造船利益率は<strong>FY25に7.4%</strong>まで回復し[HD HHI FY25]；鉄鋼がUSD 700/t以下に留まれば、次の受注残サイクルで9〜11%が射程に入ります[Kira estimates]。</p>
+        <h3>為替は双方向のスウィング要因。</h3>
+        <p>契約はUSD建て；コストはKRW建て。<strong>2025年平均のKRW/USD 1,350</strong>水準は、2019年の1,165近辺と比較して実質的な営業追い風を提供しています[BOK 2026]。地政学的解決または世界的なドル安に起因するKRW急騰が、2027年を通じた主要な利益率逆風として残っています。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">HD HHI造船セグメント営業利益率</div>
+            <div class="chart-subtitle">% · 2021-2025年</div>
+          </div>
+          <div class="chart-unit">OP. MARGIN %</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="180" x2="480" y2="180" class="axis-line"></line>
+            <line x1="40" y1="20" x2="480" y2="20" class="grid-line"></line>
+            <line x1="40" y1="80" x2="480" y2="80" class="grid-line"></line>
+            <line x1="40" y1="130" x2="480" y2="130" class="grid-line"></line>
+            <text x="30" y="185" text-anchor="end" class="axis-text">0%</text>
+            <text x="30" y="135" text-anchor="end" class="axis-text">5%</text>
+            <text x="30" y="85" text-anchor="end" class="axis-text">10%</text>
+            <!-- bars: scale 0-12%; 180px base; height = v/12*160 -->
+            <!-- 2021: 4.2% -->
+            <rect x="70" y="124" width="50" height="56" class="bar-primary" opacity="0.5"></rect>
+            <text x="95" y="226" text-anchor="middle" class="axis-text">2021</text>
+            <text x="95" y="117" text-anchor="middle" class="label-data">4.2%</text>
+            <!-- 2022: 0.8% -->
+            <rect x="160" y="169" width="50" height="11" class="bar-tertiary"></rect>
+            <text x="185" y="226" text-anchor="middle" class="axis-text">2022</text>
+            <text x="185" y="162" text-anchor="middle" class="label-data" fill="#D97706">0.8%</text>
+            <!-- 2023: 1.5% -->
+            <rect x="250" y="160" width="50" height="20" class="bar-primary" opacity="0.5"></rect>
+            <text x="275" y="226" text-anchor="middle" class="axis-text">2023</text>
+            <text x="275" y="153" text-anchor="middle" class="label-data">1.5%</text>
+            <!-- 2024: 5.1% -->
+            <rect x="340" y="112" width="50" height="68" class="bar-primary" opacity="0.75"></rect>
+            <text x="365" y="226" text-anchor="middle" class="axis-text">2024</text>
+            <text x="365" y="105" text-anchor="middle" class="label-data">5.1%</text>
+            <!-- 2025: 7.4% -->
+            <rect x="430" y="81" width="50" height="99" class="bar-primary"></rect>
+            <text x="455" y="226" text-anchor="middle" class="axis-text">2025</text>
+            <text x="455" y="74" text-anchor="middle" class="label-data">7.4%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: HD HYUNDAI HEAVY INDUSTRIES ANNUAL RESULTS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">POSCO AR 2022 = POSCO Holdings FY2022 annual report, HR coil pricing · Clarkson 2026 = Clarkson Research newbuilding price index · HD HHI FY25 = HD Hyundai Heavy Industries FY2025 results · BOK 2026 = Bank of Korea FX rate data · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 利益率と価格</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 009 — DIVIDER 2 ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <h1 class="divider-title">洋上風力 <span class="accent">設置船</span></h1>
+    <div class="divider-thesis">洋上風力タービン設置船（WTIV）は、2027〜2032年の窓口で開幕する新造船タイプの中で最も資本集約的かつ技術要求度の高い船種です。<strong>欧州の洋上風力パイプラインには30〜40隻の新造WTIVが必要</strong>であり、韓国造船所はこれらをスケジュール通りに建造できるジャックアップ技術の遺産と鉄鋼加工規模を持つ唯一の非欧州系競合です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">WTIV需要</div>
+      <div class="toc-pill">欧州パイプライン</div>
+      <div class="toc-pill">韓国のポジション</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 010 — WTIV MARKET OPPORTUNITY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · WTIV機会</div>
+      <div class="page-section-counter">010 / 014</div>
+    </div>
+    <h1 class="page-h1">WTIV市場機会：欧州の洋上風力パイプラインが需要エンジン。</h1>
+    <p class="page-subhead">風力タービン設置船は、次世代洋上風力タービン（15〜20 MW以上）を吊り上げ・設置するために特別設計された複合的かつ高付加価値の資産です。2030年までの建設パイプラインに対して世界船隊は供給不足であり、2029〜2032年の施工窓口に間に合わせるには2026〜2027年の発注が必要です。</p>
+    <div class="exec-body" style="grid-template-columns: 1.1fr 1fr;">
+      <div class="exec-narrative">
+        <h3>世界WTIV船隊は供給不足。</h3>
+        <p>2026年初頭時点で15 MW以上のタービンに対応できる稼働中のWTIV船隊はわずか<strong>12〜14隻</strong>であり、さらに20〜25隻が発注中です[WTIV Fleet 2026]。REPowerEUと各国計画の下での欧州の洋上風力目標は、<strong>2030年までに150 GW以上の洋上設備</strong>の設置を要求しており — そのペースには30〜40隻の追加WTIVが必要です[EWEA 2025]。</p>
+        <h3>韓国は強みを持つ位置から参入する。</h3>
+        <p>HD HHI、ハンファオーシャン、大宇造船の後継事業体（現ハンファオーシャン）はいずれもWTIVコンセプト設計に着手しています。SHIは2020年に韓国初のWTIV輸出案件となる<strong>Deme Orion</strong>を引渡し — 大規模での技術能力を実証しました。半潜水式生産設備から得たクレーン能力とジャックアップ技術がそのまま転用されます[SHI WTIV 2021]。</p>
+        <h3>米国ジョーンズ法が別レーンを開く。</h3>
+        <p>米国の洋上風力にはジョーンズ法適合WTIV — 米国で建造・所有・運航、または米国籍船 — が必要です。Dominion Energyの<strong>Charybdis</strong>（テキサスのSapura建造）が唯一のジョーンズ法WTIV；次の波は韓国造船所が技術パートナーとして参加するか、米国施設でのライセンス建造が可能な米国コンテンツ船を必要としています[BOEM 2025]。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">世界WTIV市場規模</div>
+            <div class="chart-subtitle">USD bn · 2024-2032年予測</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="210" x2="500" y2="210" class="axis-line"></line>
+            <!-- scale: max 10; y = 210 - (v/10*185) -->
+            <!-- 2024: 2.1 -->
+            <rect x="60" y="171" width="42" height="39" class="bar-primary" opacity="0.5"></rect>
+            <text x="81" y="226" text-anchor="middle" class="axis-text">2024</text>
+            <text x="81" y="164" text-anchor="middle" class="label-data">2.1</text>
+            <!-- 2026: 3.8 -->
+            <rect x="120" y="140" width="42" height="70" class="bar-primary" opacity="0.65"></rect>
+            <text x="141" y="226" text-anchor="middle" class="axis-text">2026</text>
+            <text x="141" y="133" text-anchor="middle" class="label-data">3.8</text>
+            <!-- 2028F: 5.9 -->
+            <rect x="180" y="101" width="42" height="109" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+            <text x="201" y="226" text-anchor="middle" class="axis-text">2028F</text>
+            <text x="201" y="94" text-anchor="middle" class="label-data" fill="#1E6FFF">5.9</text>
+            <!-- 2030F: 8.4 -->
+            <rect x="240" y="55" width="42" height="155" fill="none" stroke="#1E6FFF" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+            <text x="261" y="226" text-anchor="middle" class="axis-text">2030F</text>
+            <text x="261" y="48" text-anchor="middle" class="label-data" fill="#1E6FFF">8.4</text>
+            <!-- 2032F: 9.6 -->
+            <rect x="300" y="32" width="42" height="178" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"></rect>
+            <text x="321" y="226" text-anchor="middle" class="axis-text">2032F</text>
+            <text x="321" y="25" text-anchor="middle" class="label-data" fill="#D97706">9.6</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OFFSHORE WIND MARKET COMPILATIONS · KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">WTIV Fleet 2026 = WTIV global fleet capacity review 2026 · EWEA 2025 = European Wind Energy Association offshore capacity pipeline · SHI WTIV 2021 = Samsung Heavy Industries Deme Orion delivery report · BOEM 2025 = US Bureau of Ocean Energy Management offshore wind leasing data · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · WTIV機会</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 011 — DIVIDER 3 ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <h1 class="divider-title">競争 <span class="accent">構造</span></h1>
+    <div class="divider-thesis">3造船所 — HD現代重工業、ハンファオーシャン、サムスン重工業 — が韓国造船業を支配し、合計で国内新規受注実績の<strong>80%超を占めます</strong>。各社はLNGへの注力という点で差別化され、異なる戦略的ポジションからWTIV機会を追求しています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">HD HHI</div>
+      <div class="toc-pill">ハンファオーシャン</div>
+      <div class="toc-pill">サムスン重工</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 012 — BIG THREE YARD PROFILES ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · 競争構造</div>
+      <div class="page-section-counter">012 / 014</div>
+    </div>
+    <h1 class="page-h1">大手3造船所プロフィール：差別化されたポジション、LNGとWTIVへの収束。</h1>
+    <p class="page-subhead">3社の主要造船所はそれぞれ異なるバランスシートの経緯・所有構造・技術特化を持ちますが、いずれもLNGキャリアを中核収益源とし、洋上風力設置船能力の独自開発を進めています。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">造船所別受注残（推計）</div>
+            <div class="chart-subtitle">USD bn · 2026年初頭時点</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 175" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <!-- horizontal bars; scale max 32; factor across 420px -->
+            <text x="10" y="26" class="label-small">HD現代重工業</text>
+            <rect x="155" y="14" width="420" height="18" class="bar-primary"></rect>
+            <text x="530" y="28" class="label-data" fill="#fff">~32</text>
+            <text x="10" y="58" class="label-small">ハンファオーシャン</text>
+            <rect x="155" y="46" width="263" height="18" class="bar-secondary"></rect>
+            <text x="425" y="60" class="label-data">~20</text>
+            <text x="10" y="90" class="label-small">サムスン重工業</text>
+            <rect x="155" y="78" width="158" height="18" fill="#4A5568"></rect>
+            <text x="320" y="92" class="label-data">~12</text>
+            <text x="155" y="130" class="label-small">合計：~USD 64 bn [Kira estimates]</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>HD HHIが圧倒的な優位を保持</h3>
+        <p>HD現代重工業は収益・受注残いずれでも世界最大の造船所 — LNGキャリアは蔚山拠点の主力製品です。米国パートナーとのAvondale JVがジョーンズ法WTIV案件へのポジショニングになります。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>HD HHI FY25売上高</span><span class="val">KRW 13.6 trn</span></div>
+          <div class="stat-line"><span>造船営業利益率</span><span class="val">7.4%</span></div>
+          <div class="stat-line"><span>LNGキャリア受注比率</span><span class="val">~58%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">01 · 蔚山</div>
+        <div class="comp-name">HD現代重工業</div>
+        <div class="comp-parent">HDHyundaiグループ · 蔚山</div>
+        <div class="comp-stat-row"><span>FY25売上高</span><span class="val">KRW 13.6 trn</span></div>
+        <div class="comp-stat-row"><span>受注残</span><span class="val">~USD 32 bn</span></div>
+        <div class="comp-stat-row"><span>営業利益率</span><span class="val">7.4%</span></div>
+        <div class="comp-strengths"><strong>規模と技術の深さ。</strong>世界最大の造船所；GTTライセンスとX-DF推進。米国市場向けWTIV JVが進行中。[HD HHI FY25]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">02 · 巨済</div>
+        <div class="comp-name">ハンファオーシャン</div>
+        <div class="comp-parent">ハンファグループ · 旧DSME · 巨済</div>
+        <div class="comp-stat-row"><span>FY25売上高</span><span class="val">KRW 7.1 trn</span></div>
+        <div class="comp-stat-row"><span>受注残</span><span class="val">~USD 20 bn</span></div>
+        <div class="comp-stat-row"><span>LNG比率</span><span class="val">~60%</span></div>
+        <div class="comp-strengths"><strong>再建後の上昇余地。</strong>ハンファの資本支援で旧債務を解消；コスト構造のリセットが新規受注での高利益率を可能にします。[HO FY25]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">03 · 巨済</div>
+        <div class="comp-name">サムスン重工業</div>
+        <div class="comp-parent">サムスングループ · 巨済</div>
+        <div class="comp-stat-row"><span>FY25売上高</span><span class="val">KRW 8.3 trn</span></div>
+        <div class="comp-stat-row"><span>受注残</span><span class="val">~USD 12 bn</span></div>
+        <div class="comp-stat-row"><span>WTIV実績</span><span class="val">Deme Orion</span></div>
+        <div class="comp-strengths"><strong>WTIVパイオニア。</strong>2020年にDeme Orionを引渡し — 韓国初のWTIV輸出。洋上専門性により3社中最も強いWTIVポジションを持ちます。[SHI FY25]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">新興</div>
+        <div class="comp-name">HJ造船（旧HHI中小型）</div>
+        <div class="comp-parent">中堅 · 群山 · LPG／バルク特化</div>
+        <div class="comp-stat-row"><span>注力分野</span><span class="val">LPG / バルク</span></div>
+        <div class="comp-stat-row"><span>ポジション</span><span class="val">ニッチ受注</span></div>
+        <div class="comp-stat-row"><span>LNG露出度</span><span class="val">限定的</span></div>
+        <div class="comp-strengths"><strong>特定領域での展開。</strong>LPGキャリアとバルクに集中する中堅造船所 — LNGやWTIV契約では大手3社と直接競合しません。大手が見送る数量を取り込みます。[KSA 2026]</div>
+      </div>
+    </div>
+    <div class="source-key">HD HHI FY25 = HD Hyundai Heavy Industries FY2025 results · HO FY25 = Hanwha Ocean FY2025 results · SHI FY25 = Samsung Heavy Industries FY2025 results · KSA 2026 = Korea Shipbuilders' Association data · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 競争構造</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 013 — REGULATORY & DECARBONIZATION ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · 規制と脱炭素化</div>
+      <div class="page-section-counter">013 / 014</div>
+    </div>
+    <h1 class="page-h1">規制と脱炭素化：IMO CIIが強化され、推進システムの選択肢がプレミアムを生む。</h1>
+    <p class="page-subhead">IMOの炭素集約度指標（CII）フレームワークは2030年まで毎年強化され、老朽化した低効率トン数の退役を加速し、新造船仕様のハードルを引き上げています。韓国造船所はデュアルフュエルおよび代替推進船でのプレミアム獲得に適したポジションにあります。</p>
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr;">
+      <div class="exec-narrative">
+        <h3>CIIコンプライアンスが船隊更新を加速。</h3>
+        <p>CII格付けはA（最良）からE（最悪）の5段階；Eを3年連続で取得した船舶は運航制限に直面します。改装や運航変更なしでは世界LNGキャリア船隊の<strong>約30〜35%</strong>が2027年までにC格付けを下回ると推計されます[DNV 2026]。これが代替発注を加速させます — 韓国造船所にとっての構造的需要です。</p>
+        <h3>X-DF推進が現行標準。</h3>
+        <p>WinGDのX-DF（デュアルフュエル・低圧LNG）とMANのME-GI（高圧）が新造LNGキャリアの主流推進選択肢です。<strong>2024年の韓国建造LNGキャリア引渡しのX-DF採用率は85%超</strong>に達しています[KSA 2026]。両システムとも将来的なアンモニア・メタノール混焼に対応する設計 — 2030年以降の推進移行に対するヘッジです。</p>
+        <h3>アンモニア推進：2028年以降の機会。</h3>
+        <p>MANとWinGDいずれもアンモニア対応2ストロークエンジンの開発が最終段階にあり、商業的な実用化は<strong>2028〜2030年</strong>の見通しです[DNV 2026]。HD HHIとハンファオーシャンはアンモニア・バンカリングおよび燃料ハンドリングシステムを共同開発中です。アンモニア対応LNGキャリアの新造仕様が韓国の造船所に入るのは2027年頃と推計されます[Kira estimates]。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">IMO CII規制強化と推進システムタイムライン</div>
+            <div class="chart-subtitle">主要マイルストーン 2024-2030年以降</div>
+          </div>
+          <div class="chart-unit">タイムライン</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="60" y1="230" x2="60" y2="20" class="axis-line"></line>
+            <circle cx="60" cy="210" r="6" class="bar-primary"></circle>
+            <text x="78" y="207" class="label-small" fill="#0B0D10">2024 · CII義務的報告が全船舶に適用開始</text>
+            <circle cx="60" cy="168" r="6" class="bar-primary"></circle>
+            <text x="78" y="165" class="label-small" fill="#0B0D10">2026 · CII強化；船隊の推定30〜35%がC格付け未満に</text>
+            <circle cx="60" cy="126" r="6" class="bar-primary"></circle>
+            <text x="78" y="123" class="label-small" fill="#0B0D10">2027 · 初のアンモニア対応新造仕様が造船所に入る</text>
+            <circle cx="60" cy="84" r="6" class="bar-tertiary"></circle>
+            <text x="78" y="81" class="label-small" fill="#0B0D10">2028-30 · アンモニアエンジン商業的実用化</text>
+            <circle cx="60" cy="42" r="7" fill="#D97706" stroke="#D97706" stroke-dasharray="2,1"></circle>
+            <text x="80" y="39" class="label-data" fill="#D97706">2030 · IMO GHG目標：2008年比40% CII集約度削減</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IMO, DNV, KSA PROPULSION DATA · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DNV 2026 = DNV Maritime Forecast to 2050 and CII fleet-rating analysis · KSA 2026 = Korea Shipbuilders' Association propulsion statistics · IMO = International Maritime Organization GHG reduction strategy · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 規制と脱炭素化</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 014 — FORECAST + METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · 予測と出典</div>
+      <div class="page-section-counter">014 / 014</div>
+    </div>
+    <h1 class="page-h1">2025〜2030年予測：ベース・強気・弱気</h1>
+    <p class="page-subhead">2025〜2030年の韓国造船収益軌道は3つの変数に規定されます：LNGキャリア新造価格の規律、WTIVセグメントの拡大速度、そして利益率回復が鉄鋼コスト・為替逆風に耐えられるか否かです。シナリオの起点は2025年の大手3社合計収益KRW 29 trn前後。</p>
+    <div class="comp-section-wrap" style="grid-template-columns: 1.5fr 1fr; margin-bottom: 12px;">
+      <div class="comp-chart-card" style="height: 210px;">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">韓国大手3社合計収益シナリオ</div>
+            <div class="chart-subtitle">KRW trn · 2025-2030年予測</div>
+          </div>
+          <div class="chart-unit">KRW TRN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="40" y1="120" x2="540" y2="120" class="axis-line"></line>
+            <!-- three lines from 2025 (29 trn) to 2030. scale max 52; y=120-(v/52*100) ; x: 2025=70,2027=240,2030=500 -->
+            <!-- bull (amber) to 50 -->
+            <polyline points="70,44 240,30 500,4" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,2"></polyline>
+            <text x="505" y="7" class="label-small" fill="#D97706">強気 50</text>
+            <!-- base (blue) to 40 -->
+            <polyline points="70,44 240,38 500,43" fill="none" stroke="#1E6FFF" stroke-width="2.5"></polyline>
+            <text x="505" y="46" class="label-small" fill="#1E6FFF">ベース 40</text>
+            <!-- bear (gray) to 31 -->
+            <polyline points="70,44 240,47 500,61" fill="none" stroke="#4A5568" stroke-width="2" stroke-dasharray="2,2"></polyline>
+            <text x="505" y="64" class="label-small" fill="#4A5568">弱気 31</text>
+            <circle cx="70" cy="44" r="4" class="bar-primary"></circle>
+            <text x="70" y="138" text-anchor="middle" class="axis-text">2025</text>
+            <text x="240" y="138" text-anchor="middle" class="axis-text">2027F</text>
+            <text x="500" y="138" text-anchor="middle" class="axis-text">2030F</text>
+            <text x="58" y="39" text-anchor="end" class="label-small" fill="#1E6FFF">29</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>3つのシナリオ</h3>
+        <p><strong>ベース — 2030年KRW 40 trn。</strong>LNGキャリア受注残が予定通り引渡され；利益率8〜10%を維持；WTIV受注が2027〜28年に開始。[Kira estimates]</p>
+        <p><strong>強気 — KRW 50 trn。</strong>LNG新造価格がUSD 270 m超を維持；WTIVセグメントが2030年までにKRW 3 trn超を貢献；アンモニア対応プレミアムを獲得。[Kira estimates]</p>
+        <p><strong>弱気 — KRW 31 trn。</strong>鉄鋼コスト急騰が再値付け後の利益率を侵食；中国がLNG受注の35%超を獲得；WTIV投資リターンが遅延。[Kira estimates]</p>
+      </div>
+    </div>
+    <div class="methend-grid" style="flex: none;">
+      <div class="methend-left">
+        <h3>方法論とタグ</h3>
+        <p>本見解は2つのエビデンス・ストリームを三角検証しています。命名ソースタグ（例：[KSA 2026]、[Clarkson 2026]）はその数値が当該ソース由来であることを意味し、完全引用は凡例に記載されています。[Kira estimates]はKIRAアナリストが開示データから導出した数値 — 受注価格・受注残数量・引渡CGT・為替調整後利益率調整 — にマークされています。定量的主張の<strong>約30〜35%がKIRA導出</strong>；残りは外部引用です。</p>
+        <p>市場集計業者のみが源泉の数値は一次情報源に遡及するか、KIRAの三角推計として扱っています。集計業者名はいかなる引用にも登場しません。</p>
+      </div>
+      <div class="methend-right">
+        <h3>出典凡例</h3>
+        <ul>
+          <li><strong>KSA 2026</strong> — Korea Shipbuilders' Association monthly order &amp; delivery data</li>
+          <li><strong>Clarkson 2026</strong> — Clarkson Research newbuilding price indices 2026</li>
+          <li><strong>HD HHI FY25</strong> — HD Hyundai Heavy Industries FY2025 annual results</li>
+          <li><strong>HO FY25</strong> — Hanwha Ocean FY2025 annual results</li>
+          <li><strong>SHI FY25</strong> — Samsung Heavy Industries FY2025 annual results</li>
+          <li><strong>IGU 2026</strong> — International Gas Union World LNG Report 2026</li>
+          <li><strong>DNV 2026</strong> — DNV Maritime Forecast to 2050; CII fleet analysis</li>
+          <li><strong>EWEA 2025 / BOEM 2025</strong> — European &amp; US offshore wind pipeline data</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer"><span class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</span><span>韓国造船業2027 · 予測と出典 · © 2026 KIRA Research</span></div>
+  </div>
+</div>
+
+</body>
+</html>
