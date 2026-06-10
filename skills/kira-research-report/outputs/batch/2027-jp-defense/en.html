@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — Japan Defense 2027: Export Liberalization and Prime Contractor Capacity Expansion</title>
+<meta name="description" content="KIRA Research analysis of Japan's defense market in 2027: the front-loaded 2% of GDP spending target, the April 2026 revision of the Three Principles on defense-equipment transfer, the Mogami frigate and GCAP export breakthroughs, profit-margin reform, supplier-base attrition, and prime-contractor capacity expansion.">
+<meta property="og:title" content="Japan Defense 2027 — KIRA Research">
+<meta property="og:description" content="Consulting-grade analysis of Japan's defense build-up, export liberalization, and prime-contractor capacity expansion through 2027.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "SOURCE KEY · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; justify-content: space-between; }
+.cover-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 760px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>CONFIDENTIAL</strong> · LICENSED SINGLE USER</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Japan · Defense · Market Analysis</div>
+        <h1 class="cover-title">Japan<br><span class="accent">Defense</span><br>2027</h1>
+        <div class="cover-subtitle">The front-loaded 2% of GDP target, the 2026 revision of the Three Principles on equipment transfer, and the capacity expansion reshaping Japan's prime contractors</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">Market</div>
+          <div class="val">Japan</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Industry</div>
+          <div class="val">Defense</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Year</div>
+          <div class="val"><span class="accent">2027</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">Published</div>
+          <div class="val">June 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Methodology</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">How we built this view</div>
+    <div class="page-subhead">This view draws on two evidence streams: <strong>primary inputs</strong> — practitioner channel checks across primes, sub-tier suppliers, and procurement advisers — and <strong>secondary anchors</strong> — Ministry of Defense and Acquisition, Technology &amp; Logistics Agency (ATLA) publications, METI defense-industry working-group materials, and listed-company filings. Every quantitative claim carries an explicit source tag.</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>Primary inputs</h3>
+        <div class="method-item">
+          <div class="item-label">Practitioner channel checks</div>
+          <div class="item-desc">Conversations with programme managers at prime contractors, tier-2 component suppliers, and procurement advisers — surfacing real capacity-expansion timelines, hiring constraints, and export-pipeline dynamics not visible in published budget tables.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Analyst synthesis</div>
+          <div class="item-desc">KIRA in-house triangulation across disclosed inputs: MOD budget documents, ATLA contract data, prime-contractor segment disclosures, and trade-press reporting on export deals. Tagged inline as [Kira estimates].</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Specialist and operator reads</div>
+          <div class="item-desc">Direct input from defense-industrial advisers, export-control specialists, and capital-goods analysts tracking the Mogami frigate and GCAP fighter programmes and the supplier-base reinforcement effort.</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>Secondary anchors</h3>
+        <div class="method-item">
+          <div class="item-label">Government and regulatory sources</div>
+          <div class="item-desc">MOD FY2026 budget overview, the Defense Buildup Program (FY2023–2027), the Act on Enhancing Defense Production and Technology Bases (2023), the 2026 revision of the Three Principles on Transfer of Defense Equipment and Technology, and METI defense-industry working-group materials — cited inline by named source and date.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Listed company filings</div>
+          <div class="item-desc">Annual securities reports (有価証券報告書) and results presentations of Mitsubishi Heavy Industries, Kawasaki Heavy Industries, Mitsubishi Electric, IHI, and NEC, plus segment disclosures for Aircraft, Defense &amp; Space.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">Triangulated estimates</div>
+          <div class="item-desc">Where no single source covers a figure, we combine 2–3 inputs and disclose the method. Tagged [Kira estimates]. Approximately 44% of quantitative claims are KIRA-derived; 56% are externally cited.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Contents</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">Table of contents</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">Report sections</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">Executive summary</div><div class="toc-sub">Key metrics, strategic implications, the 2027 inflection thesis</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">Budget trajectory and market sizing</div><div class="toc-sub">¥9 tn FY2026 budget, ¥43 tn buildup plan, 2% of GDP target</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">Procurement structure and demand</div><div class="toc-sub">Standoff missiles, integrated air &amp; missile defense, unmanned</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">Policy and regulatory timeline</div><div class="toc-sub">Three Principles revision, production-base law, GCAP export rule</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">Export liberalization</div><div class="toc-sub">Mogami frigate, GCAP fighter, the five-category scrap</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">Industrial-base reform</div><div class="toc-sub">Profit-margin reform, supplier attrition, supply-chain resilience</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">Competitive landscape</div><div class="toc-sub">Prime-contractor structure, top-five profiles, sub-tier base</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">Prime-contractor capacity expansion</div><div class="toc-sub">Nagoya, shipyards, missile lines, hiring and capex vectors</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">GCAP and the next-fighter programme</div><div class="toc-sub">2035 service entry, GIGO, Edgewing JV, export economics</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">AI and autonomy in Japanese defense</div><div class="toc-sub">Unmanned fleets, decision support, six adoption vectors</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">Forecast and strategic implications</div><div class="toc-sub">Scenarios to 2030F, five action vectors for participants</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">Methodology and sources</div><div class="toc-sub">Source mix, coverage notes, estimate disclosure</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Executive summary</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">A market at structural inflection.</div>
+    <div class="page-subhead">Japan's defense budget topped <strong>¥9.04 tn (~USD 58 bn) for FY2026</strong> [MOD 2025] — the first time outlays cross ¥9 tn — as the ¥43 tn five-year buildup plan runs to FY2027. The 2027 inflection is not just budget scale: the 2026 revision of the Three Principles converts a long-dormant export base into a live growth channel, and primes are being asked to expand capacity faster than the supplier base can follow.</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">Defense budget FY2026</div>
+        <div class="num">¥9.04<span class="unit">tn</span></div>
+        <div class="change">+3.8% YoY · ~USD 58 bn</div>
+        <div class="source-tag sec">MOD 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">Five-year buildup plan</div>
+        <div class="num">¥43<span class="unit">tn</span></div>
+        <div class="change">FY2023–2027 · ~USD 275 bn</div>
+        <div class="source-tag sec">MOD 2023</div>
+      </div>
+      <div class="callout">
+        <div class="label">Mogami frigate export</div>
+        <div class="num">11<span class="unit">ships</span></div>
+        <div class="change">~AUD 10 bn · biggest-ever export</div>
+        <div class="source-tag sec">Trade press 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">Suppliers exited / 20 yrs</div>
+        <div class="num">100+<span class="unit">firms</span></div>
+        <div class="change down">Base attrition · margin-driven</div>
+        <div class="source-tag sec">MOF 2024</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>The demand pull is policy, not cycle</h3>
+        <p>Three policy moves have lifted defense demand simultaneously. The <strong>Defense Buildup Program</strong> commits ¥43 tn across FY2023–2027 and targets defense-related spending at 2% of GDP by FY2027 [MOD 2023]. Under PM Takaichi, the government moved to <strong>front-load the 2% level into FY2025</strong> via a roughly ¥1.3 tn supplementary, lifting the ratio from ~1.8% to 2.0% [Nikkei 2025]. And in April 2026 the cabinet revised the <strong>Three Principles on Transfer of Defense Equipment</strong>, scrapping the five-category limit and opening direct export of major platforms [IISS 2026].</p>
+        <h3>Capacity, not orders, is now the constraint</h3>
+        <p>Order visibility is no longer the binding issue. Mitsubishi Heavy Industries alone carried a group order backlog above <strong>¥11 tn</strong>, with Defense &amp; Space the fastest-growing segment [MHI 2026]. The constraint has shifted to production capacity and a supplier base thinned by two decades of exits [MOF 2024]. The 2023 production-base law and profit-margin reform — lifting contract margins from ~5% toward 10% — are the policy response [Breaking Defense 2024].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Japan defense budget trajectory</div>
+            <div class="chart-subtitle">Japan · ¥ tn · FY2022–FY2027F</div>
+          </div>
+          <div class="chart-unit">¥ TN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">4</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">8</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">12</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">16</text>
+            <!-- scale: 160px = 16tn; 1tn = 10px; baseline y=180 -->
+            <!-- FY22=5.40, FY23=6.82, FY24=7.95, FY25=8.70, FY26=9.04, FY27F=9.90 -->
+            <rect x="75" y="126" width="42" height="54" class="bar-primary" rx="2"/>
+            <rect x="140" y="111.8" width="42" height="68.2" class="bar-primary" rx="2"/>
+            <rect x="205" y="100.5" width="42" height="79.5" class="bar-primary" rx="2"/>
+            <rect x="270" y="93" width="42" height="87" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="335" y="89.6" width="42" height="90.4" class="bar-secondary" rx="2"/>
+            <rect x="400" y="81" width="42" height="99" class="bar-secondary" rx="2"/>
+            <text x="96" y="121" class="label-data" text-anchor="middle">5.40</text>
+            <text x="161" y="107" class="label-data" text-anchor="middle">6.82</text>
+            <text x="226" y="95" class="label-data" text-anchor="middle">7.95</text>
+            <text x="291" y="88" class="label-data" text-anchor="middle">8.70</text>
+            <text x="356" y="84" class="label-data" text-anchor="middle">9.04</text>
+            <text x="421" y="76" class="label-data" text-anchor="middle">9.90</text>
+            <text x="96" y="194" class="axis-text" text-anchor="middle">FY22</text>
+            <text x="161" y="194" class="axis-text" text-anchor="middle">FY23</text>
+            <text x="226" y="194" class="axis-text" text-anchor="middle">FY24</text>
+            <text x="291" y="194" class="axis-text" text-anchor="middle">FY25</text>
+            <text x="356" y="194" class="axis-text" text-anchor="middle">FY26</text>
+            <text x="421" y="194" class="axis-text" text-anchor="middle">FY27F</text>
+            <rect x="280" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="294" y="27" class="axis-text">Budget</text>
+            <rect x="380" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="394" y="27" class="axis-text">2% era / est</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MOD BUDGET DOCUMENTS, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MOD 2025 = MOD FY2026 budget overview · MOD 2023 = Defense Buildup Program FY2023–2027 · IISS 2026 = IISS analysis of Three Principles revision · MHI 2026 = MHI Q3 FY2025 results · MOF 2024 = Ministry of Finance defense-industry trend column · Nikkei 2025 = Nikkei defense-budget reporting</div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Strategic implications</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">Five strategic implications for market participants.</div>
+    <div class="page-subhead">Derived from the structural findings in this report. Each implication is anchored to a quantitative data point that market participants should treat as a <strong>directional signal</strong>, not a point forecast.</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">Export is now a primary growth channel, not a side effect</div>
+        <div class="body-text">The April 2026 Three Principles revision scrapped the <strong>five-category limit</strong> on finished-product transfers [IISS 2026]. The Australia Mogami order (11 frigates) and the GCAP fighter export rule open a structural new revenue line. Suppliers that build export-grade documentation and partner relationships early capture first-mover positions [Kira estimates].</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">5-category</span> finished-export limit scrapped Apr 2026 [IISS 2026]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">Capacity is the binding constraint through 2027</div>
+        <div class="body-text">Order backlogs now span 3–5 years; the limiting factor is production capacity and skilled labour, not demand [MHI 2026]. <strong>Primes are expanding missile, shipbuilding, and aircraft lines</strong>, but lead times for machine tools and cleared workers run 18–36 months [Kira estimates]. Capex-readiness, not order-book size, separates winners.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">3–5 yr</span> revenue visibility from backlog [MHI 2026]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">Margin reform finally makes the sub-tier investable</div>
+        <div class="body-text">Contract profit margins move from ~5% toward a possible <strong>10%, scored on quality, cost and delivery (QCD)</strong> [Breaking Defense 2024]. After 100+ firms exited in two decades [MOF 2024], the reform plus the 2023 production-base law re-open the sub-tier to capital. The window to re-enter before primes lock in suppliers is now.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">5→10%</span> contract-margin band, QCD-scored [Breaking Defense 2024]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">GCAP anchors a decade of fighter-grade demand</div>
+        <div class="body-text">The trilateral GCAP fighter targets <strong>service entry in 2035</strong>, with a demonstrator flying around 2027 and a UK-based GIGO and Edgewing JV [GCAP 2025]. Japanese content runs through a Mitsubishi-led consortium. Export availability is built into the unit-cost model, extending demand well beyond domestic fleets [Kira estimates].</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">2035</span> GCAP in-service · demonstrator ~2027 [GCAP 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">Unmanned and standoff are the fastest-growing buckets</div>
+        <div class="body-text">The buildup front-loads <strong>standoff missiles (Type 12 upgrade, ~1,000 km) and unmanned systems</strong> — the SHIELD coastal-defense fleet targets FY2027 [Diplomat 2025]. Unmanned procurement grows fastest across categories [Kira estimates], drawing in non-traditional electronics and software entrants alongside the primes.</div>
+        <div class="anchor">ANCHOR: <span class="num-anchor">~1,000 km</span> Type 12 standoff range [Diplomat 2025]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — BUDGET & MARKET -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <div class="divider-title">Budget &amp;<br>market <span class="accent">sizing</span></div>
+    <div class="divider-thesis">Japan's defense budget — <strong>¥9.04 tn for FY2026</strong> — sits inside a ¥43 tn five-year buildup that targets 2% of GDP by FY2027. The government has front-loaded the 2% level, but a rising nominal GDP keeps moving the goalposts, making the next three-document revision the real sizing variable.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">FY22–FY27 trajectory</div>
+      <div class="toc-pill">¥43 tn buildup plan</div>
+      <div class="toc-pill">2% of GDP target</div>
+      <div class="toc-pill">Procurement mix</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: BUDGET & MARKET SIZING -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Budget &amp; market sizing</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">The 2% target is front-loaded, but a moving GDP keeps it live.</div>
+    <div class="page-subhead">Japan's FY2026 defense budget reached <strong>¥9.04 tn (~USD 58 bn), up 3.8% YoY</strong> and the first to top ¥9 tn [MOD 2025]. The ¥43 tn buildup plan (FY2023–2027) frames the spend, and the government has accelerated the 2% of GDP level into FY2025 via supplementary budgets — yet rising nominal GDP means the 2% line itself keeps climbing [Nikkei 2025 · Kira estimates].</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>From the 1% ceiling to a 2% floor</h3>
+          <p>For decades Japan held defense spending near a <strong>1% of GDP ceiling</strong>. The December 2022 strategy documents set a new path: ¥43 tn across FY2023–2027 and a 2% of GDP target for FY2027, counting MOD outlays plus defense-related items at other agencies [MOD 2023]. Under PM Takaichi the government moved to reach the 2% level in FY2025, adding roughly ¥1.3 tn in supplementary spending to lift the ratio from ~1.8% to 2.0% [Nikkei 2025].</p>
+        </div>
+        <div>
+          <h3>A target that keeps moving</h3>
+          <p>The 2% benchmark was anchored to 2022 GDP, putting it near ¥11 tn. On current GDP projections, 2% would equate to roughly <strong>¥13–13.4 tn</strong> [Kira estimates], which is why the next revision of the three security documents — debated for FY2027 onward — is the real sizing variable, with some discussion of a level above 2%.</p>
+        </div>
+        <div>
+          <h3>Sizing the addressable equipment market</h3>
+          <p>Within the budget, procurement of equipment, R&amp;D, and sustainment — the addressable industrial market — runs an estimated <strong>¥3.5–4.0 tn annually and rising</strong> [Kira estimates], with indigenous production around 60% of equipment value [Kira estimates]. Weapons and ammunition dominate the baseline; unmanned systems grow fastest.</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Defense-related spending vs GDP path</div>
+            <div class="chart-subtitle">Japan · ¥ tn · FY2023–FY2027F</div>
+          </div>
+          <div class="chart-unit">¥ TN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="50" y1="240" x2="440" y2="240" class="axis-line"/>
+            <line x1="50" y1="20" x2="50" y2="240" class="axis-line"/>
+            <line x1="50" y1="180" x2="440" y2="180" class="grid-line"/>
+            <line x1="50" y1="120" x2="440" y2="120" class="grid-line"/>
+            <line x1="50" y1="60" x2="440" y2="60" class="grid-line"/>
+            <text x="44" y="243" class="axis-text" text-anchor="end">0</text>
+            <text x="44" y="183" class="axis-text" text-anchor="end">4</text>
+            <text x="44" y="123" class="axis-text" text-anchor="end">8</text>
+            <text x="44" y="63" class="axis-text" text-anchor="end">12</text>
+            <!-- scale: 180px = 12tn; 1tn=15px; baseline y=240 -->
+            <!-- defense-related spend bars: FY23=6.82 FY24=7.95 FY25=9.0(2% era) FY26=9.04 FY27F=9.90 -->
+            <rect x="70" y="137.7" width="48" height="102.3" class="bar-primary" rx="2"/>
+            <rect x="145" y="120.75" width="48" height="119.25" class="bar-primary" rx="2"/>
+            <rect x="220" y="105" width="48" height="135" class="bar-secondary" rx="2"/>
+            <rect x="295" y="104.4" width="48" height="135.6" class="bar-secondary" rx="2"/>
+            <rect x="370" y="91.5" width="48" height="148.5" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="94" y="132" class="label-data" text-anchor="middle">6.8</text>
+            <text x="169" y="115" class="label-data" text-anchor="middle">8.0</text>
+            <text x="244" y="99" class="label-data" text-anchor="middle">9.0</text>
+            <text x="319" y="98" class="label-data" text-anchor="middle">9.0</text>
+            <text x="394" y="86" class="label-data" text-anchor="middle">9.9</text>
+            <!-- 2% of GDP reference line (~13.4tn → y=39) -->
+            <line x1="50" y1="39" x2="440" y2="39" stroke="#D97706" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <text x="438" y="34" class="label-small" text-anchor="end" fill="#D97706">2% of current GDP ~¥13.4 tn</text>
+            <text x="94" y="256" class="axis-text" text-anchor="middle">FY23</text>
+            <text x="169" y="256" class="axis-text" text-anchor="middle">FY24</text>
+            <text x="244" y="256" class="axis-text" text-anchor="middle">FY25</text>
+            <text x="319" y="256" class="axis-text" text-anchor="middle">FY26</text>
+            <text x="394" y="256" class="axis-text" text-anchor="middle">FY27F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MOD, NIKKEI, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MOD 2025 = MOD FY2026 budget overview (令和8年度予算案) · MOD 2023 = Defense Buildup Program FY2023–2027 · Nikkei 2025 = Nikkei reporting on 2% front-loading and three-document revision</div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — POLICY & EXPORT -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <div class="divider-title">Policy &amp;<br><span class="accent">export</span></div>
+    <div class="divider-thesis">The April 2026 revision of the Three Principles scrapped the <strong>five-category limit</strong> on finished-product transfers; the 2024 GCAP rule already opened fighter exports. Together with the ¥/AUD-scale Mogami frigate order to Australia, these moves convert a dormant export base into a live, strategic growth channel.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Three Principles revision</div>
+      <div class="toc-pill">Production-base law</div>
+      <div class="toc-pill">Mogami frigate</div>
+      <div class="toc-pill">GCAP export rule</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: POLICY / EXPORT TIMELINE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Policy &amp; export timeline</div>
+      <div class="page-section-counter">09 / 14</div>
+    </div>
+    <div class="page-h1">Policy timeline: liberalization compresses a decade of export potential into three years.</div>
+    <div class="page-subhead">Japan's export-control apparatus moved in stages: the 2014 Three Principles ended a near-total ban; the 2023 production-base law re-funded the supplier base; the 2024 GCAP rule allowed fighter exports; and the <strong>April 2026 revision scrapped the five-category limit on finished products</strong> [IISS 2026 · MOD 2023]. Compliance and capacity demands cluster in 2026–2027.</div>
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">JP defense policy &amp; export milestones</div>
+        <div class="chart-subtitle" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">2022–2027 · KEY DATES</div>
+        <div class="tl-svg">
+          <svg viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="30" y1="140" x2="690" y2="140" class="tl-axis-line"/>
+            <!-- 2022-12: 3 documents -->
+            <circle cx="80" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="80" y1="133" x2="80" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="80" y="85" class="tl-marker-date" text-anchor="middle">2022-12</text>
+            <text x="80" y="70" class="tl-marker-label" text-anchor="middle">Three documents</text>
+            <text x="80" y="58" class="tl-marker-body" text-anchor="middle">¥43 tn plan;</text>
+            <text x="80" y="46" class="tl-marker-body" text-anchor="middle">2% by FY2027</text>
+            <!-- 2023-10: production-base law -->
+            <circle cx="200" cy="140" r="7" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="200" y1="147" x2="200" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="200" y="210" class="tl-marker-date" text-anchor="middle">2023-10</text>
+            <text x="200" y="225" class="tl-marker-label" text-anchor="middle">Production-base law</text>
+            <text x="200" y="239" class="tl-marker-body" text-anchor="middle">Supplier-base</text>
+            <text x="200" y="251" class="tl-marker-body" text-anchor="middle">funding in force</text>
+            <!-- 2024-03: GCAP export -->
+            <circle cx="330" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="330" y1="133" x2="330" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="330" y="85" class="tl-marker-date" text-anchor="middle">2024-03</text>
+            <text x="330" y="70" class="tl-marker-label" text-anchor="middle">GCAP export rule</text>
+            <text x="330" y="58" class="tl-marker-body" text-anchor="middle">Fighter export to</text>
+            <text x="330" y="46" class="tl-marker-body" text-anchor="middle">third countries</text>
+            <!-- 2025-08: Mogami selection -->
+            <circle cx="460" cy="140" r="9" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="460" y1="147" x2="460" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="460" y="210" class="tl-marker-date" text-anchor="middle">2025-08</text>
+            <text x="460" y="225" class="tl-marker-label" text-anchor="middle">Mogami selected</text>
+            <text x="460" y="239" class="tl-marker-body" text-anchor="middle">Australia · 11 frigates</text>
+            <text x="460" y="251" class="tl-marker-body" text-anchor="middle">biggest-ever export</text>
+            <!-- 2026-04: Three Principles revision -->
+            <circle cx="590" cy="140" r="9" fill="#B91C1C" class="tl-marker-dot"/>
+            <line x1="590" y1="133" x2="590" y2="90" stroke="#B91C1C" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="590" y="85" class="tl-marker-date" text-anchor="middle">2026-04</text>
+            <text x="590" y="70" class="tl-marker-label" text-anchor="middle" fill="#B91C1C">5-category scrap</text>
+            <text x="590" y="58" class="tl-marker-body" text-anchor="middle">Direct export of</text>
+            <text x="590" y="46" class="tl-marker-body" text-anchor="middle">major platforms</text>
+            <!-- 2027: buildup completes -->
+            <circle cx="670" cy="140" r="7" fill="#D97706" class="tl-marker-dot"/>
+            <line x1="670" y1="147" x2="670" y2="195" stroke="#D97706" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="670" y="210" class="tl-marker-date" text-anchor="middle">2027</text>
+            <text x="670" y="225" class="tl-marker-label" text-anchor="middle">Buildup completes</text>
+            <text x="670" y="239" class="tl-marker-body" text-anchor="middle">Next plan &amp; 2%+</text>
+            <text x="670" y="251" class="tl-marker-body" text-anchor="middle">level debated</text>
+          </svg>
+        </div>
+      </div>
+      <div class="policy-rail">
+        <div class="policy-rail-card">
+          <div class="tag">Liberalization signal</div>
+          <div class="title">Five-category limit scrapped</div>
+          <div class="body">The April 2026 cabinet revision removed the rule limiting finished-product transfers to five non-lethal categories, and permits transfers of jointly developed and licence-produced weapons. <strong>Conflict-zone and GCAP carve-outs remain</strong> [IISS 2026].</div>
+          <div class="src">IISS 2026</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">Base-funding signal</div>
+          <div class="title">Production &amp; technology base law</div>
+          <div class="body">In force since October 2023, the Act funds supply-chain reinforcement, cyber-hardening, and facility nationalisation, and channels cash to troubled suppliers to arrest exits [Breaking Defense 2024].</div>
+          <div class="src">Breaking Defense 2024</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">Demand signal</div>
+          <div class="title">Mogami: the export proof point</div>
+          <div class="body">Australia's selection of 11 upgraded Mogami-class frigates is Japan's biggest defense export since WWII, following the Philippines radar transfer — proof the export base can win competitive tenders [Trade press 2025].</div>
+          <div class="src">Trade press 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">IISS 2026 = IISS analysis of the Three Principles revision (Apr 2026) · MOD 2023 = Defense Buildup Program · Breaking Defense 2024 = production-base reform reporting · Trade press 2025 = reporting on Australia Mogami selection</div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: DIVIDER — INDUSTRIAL BASE & COMPETITION -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <div class="divider-title">Industrial<br>base &amp; <span class="accent">primes</span></div>
+    <div class="divider-thesis">Two decades of weak margins drove <strong>100+ firms out of defense</strong>, hollowing the sub-tier. Profit-margin reform — lifting contract margins from ~5% toward 10% — and the production-base law are re-opening the base just as primes face their largest capacity expansion in a generation.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">Margin reform</div>
+      <div class="toc-pill">Supplier attrition</div>
+      <div class="toc-pill">Prime profiles</div>
+      <div class="toc-pill">Capacity expansion</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: COMPETITIVE LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Competitive landscape</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <div class="page-h1">Competitive structure: prime-led, with one dominant integrator.</div>
+    <div class="page-subhead">Japan's defense market is <strong>led by a handful of heavy-industry and electronics primes</strong>, with Mitsubishi Heavy Industries the single largest contractor by award value and the GCAP and Mogami lead [Statista 2024 · MHI 2026]. The sub-tier beneath them is thin after two decades of exits — the structural vulnerability the production-base law and margin reform now target [MOF 2024].</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">JP defense award share (indicative)</div>
+            <div class="chart-subtitle">Leading primes · FY2024 · estimated</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="160" x2="520" y2="160" class="axis-line"/>
+            <line x1="60" y1="10" x2="60" y2="160" class="axis-line"/>
+            <line x1="160" y1="10" x2="160" y2="160" class="grid-line"/>
+            <line x1="260" y1="10" x2="260" y2="160" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="160" class="grid-line"/>
+            <line x1="460" y1="10" x2="460" y2="160" class="grid-line"/>
+            <text x="160" y="174" class="axis-text" text-anchor="middle">10%</text>
+            <text x="260" y="174" class="axis-text" text-anchor="middle">20%</text>
+            <text x="360" y="174" class="axis-text" text-anchor="middle">30%</text>
+            <text x="460" y="174" class="axis-text" text-anchor="middle">40%</text>
+            <!-- scale: 10px per 1% from x=60 -->
+            <!-- MHI 30% → 300px -->
+            <rect x="61" y="16" width="300" height="20" class="bar-primary" rx="2"/>
+            <text x="365" y="31" class="label-data">~30%</text>
+            <!-- Mitsubishi Electric 11% → 110px -->
+            <rect x="61" y="44" width="110" height="20" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="175" y="59" class="label-data">~11%</text>
+            <!-- Kawasaki 9% → 90px -->
+            <rect x="61" y="72" width="90" height="20" class="bar-secondary" rx="2"/>
+            <text x="155" y="87" class="label-data">~9%</text>
+            <!-- NEC 6% → 60px -->
+            <rect x="61" y="100" width="60" height="20" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="125" y="115" class="label-data">~6%</text>
+            <!-- Others 44% -->
+            <rect x="61" y="128" width="200" height="16" fill="var(--border)" rx="2"/>
+            <text x="265" y="141" class="label-small">~44% — IHI, shipyards, sub-tier</text>
+            <text x="55" y="31" class="axis-text" text-anchor="end">MHI</text>
+            <text x="55" y="59" class="axis-text" text-anchor="end">Mitsubishi Elec.</text>
+            <text x="55" y="87" class="axis-text" text-anchor="end">Kawasaki HI</text>
+            <text x="55" y="115" class="axis-text" text-anchor="end">NEC</text>
+            <text x="55" y="141" class="axis-text" text-anchor="end">Others</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>Market structure thesis</h3>
+        <p>The market is <strong>concentrated at the prime tier and fragile below it</strong>. MHI takes the largest share of award value, with Mitsubishi Electric, Kawasaki, IHI, and NEC rounding out the top tier [Statista 2024 · Kira estimates]. The moat is integration capability and security clearance, not price — foreign vendors enter mainly via FMS and licence production.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>Top 4 combined share</span><span class="val">~56% [Kira estimates]</span></div>
+          <div class="stat-line"><span>Indigenous production</span><span class="val">~60% of value [Kira estimates]</span></div>
+          <div class="stat-line"><span>Firms exited / 20 yrs</span><span class="val">100+ [MOF 2024]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid" style="flex:1;min-height:0;">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01 · PRIME</div>
+        <div class="comp-name">Mitsubishi Heavy Industries</div>
+        <div class="comp-parent">TSE-listed · GCAP &amp; Mogami lead · land/sea/air</div>
+        <div class="comp-stat-row"><span>Group backlog</span><span class="val">~¥11.5 tn [MHI 2026]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">Fighter, frigate, missile</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Broadest platform portfolio; Defense &amp; Space the fastest-growing segment; leads GCAP via the Japanese consortium and the Mogami export; Nagoya capacity expansion underway.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">Mitsubishi Electric</div>
+        <div class="comp-parent">TSE-listed · radar, missiles, EW, space</div>
+        <div class="comp-stat-row"><span>Defense target</span><span class="val">~¥600 bn by 2031 [ME 2025]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">Radar, EW, guidance</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Japan's largest domestic EW and radar vendor; airborne and ground sensors for the JASDF; missile-seeker and space adjacency; export-grade radar already transferred to the Philippines.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">Kawasaki Heavy Industries</div>
+        <div class="comp-parent">TSE-listed · aircraft, submarines, missiles</div>
+        <div class="comp-stat-row"><span>Position</span><span class="val">No. 3 prime [Statista 2024]</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">P-1, C-2, submarines</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> Maritime patrol and transport aircraft; submarine co-builder with MHI; expanding into standoff missiles and unmanned; strong systems-integration and propulsion depth.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">IHI &amp; NEC</div>
+        <div class="comp-parent">TSE-listed · engines, C4ISR, cyber</div>
+        <div class="comp-stat-row"><span>Position</span><span class="val">Engine + electronics tier</span></div>
+        <div class="comp-stat-row"><span>Key wedge</span><span class="val">Jet engines · networks</span></div>
+        <div class="comp-strengths"><strong>Strengths:</strong> IHI leads jet-engine and GCAP propulsion work; NEC anchors C4ISR, radar, and defense cyber. Both gain from the unmanned and network-centric buildout priorities.</div>
+      </div>
+    </div>
+    <div class="source-key">Share and revenue figures are KIRA triangulations from disclosed award data and segment reporting — not company-confirmed totals. Statista 2024 = leading suppliers by contract value · MHI 2026 = MHI results · ME 2025 = Mitsubishi Electric defense target · MOF 2024 = supplier-attrition data</div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: CAPACITY EXPANSION + AI/AUTONOMY (USE CASE GRID) -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Capacity &amp; autonomy</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <div class="page-h1">Capacity expansion and autonomy: where the next-cycle spend concentrates.</div>
+    <div class="page-subhead">With order visibility secured, the binding question is whether primes can expand production and whether the sub-tier can supply it — while unmanned systems and decision-support autonomy emerge as the fastest-growing demand buckets in the buildup [Diplomat 2025 · MHI 2026 · Kira estimates].</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-num">CAPACITY · 01</div>
+        <div class="uc-title">Missile and standoff lines</div>
+        <div class="uc-body">The buildup front-loads <strong>standoff missiles — the upgraded Type 12 SSM at ~1,000 km range</strong> [Diplomat 2025]. Primes are adding mass-production missile lines, a step-change from low-rate domestic output; long-lead components (seekers, propellant) are the supplier bottleneck.</div>
+        <div class="uc-example">SOURCE: Diplomat 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">CAPACITY · 02</div>
+        <div class="uc-title">Aircraft and Nagoya buildout</div>
+        <div class="uc-body">MHI is expanding aircraft and defense production in <strong>Nagoya</strong> to absorb buildup and GCAP work alongside Boeing 787 wing production [MHI 2026]. Aircraft, Defense &amp; Space revenue jumped sharply on backlog execution; floor space and cleared labour are the constraints.</div>
+        <div class="uc-example">SOURCE: MHI 2026 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">CAPACITY · 03</div>
+        <div class="uc-title">Shipyard throughput for export</div>
+        <div class="uc-body">The Australia Mogami order forces a decision on <strong>building for export alongside JMSDF hulls</strong> [Trade press 2025]. Yard capacity, local-content arrangements in Australia, and a sustainment footprint abroad are new operational demands for a base built for domestic supply.</div>
+        <div class="uc-example">SOURCE: Trade press 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">AUTONOMY · 04</div>
+        <div class="uc-title">Unmanned: the fastest-growing bucket</div>
+        <div class="uc-body">The SHIELD coastal-defense concept targets <strong>a large fleet of UAVs, USVs and UUVs by FY2027</strong> [Diplomat 2025]. Unmanned procurement grows fastest across categories [Kira estimates], opening the base to electronics, software, and dual-use entrants beyond the primes.</div>
+        <div class="uc-example">SOURCE: Diplomat 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">AUTONOMY · 05</div>
+        <div class="uc-title">AI-enabled detection and C4ISR</div>
+        <div class="uc-body">AI threat-detection is being embedded in <strong>NEC's 5G-era C4ISR and sensor networks</strong>, and in next-fighter mission systems [Kira estimates]. Network-centric warfare priorities pull AI/ML demand into radar fusion, electronic warfare, and maritime-domain awareness.</div>
+        <div class="uc-example">SOURCE: Kira estimates · vendor disclosures</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">BASE · 06</div>
+        <div class="uc-title">Sub-tier re-entry economics</div>
+        <div class="uc-body">Margin reform (5%→10%, QCD-scored) plus the production-base law re-open the sub-tier to investment after <strong>100+ exits in two decades</strong> [Breaking Defense 2024 · MOF 2024]. The window to re-enter before primes lock supplier panels for the next plan is now.</div>
+        <div class="uc-example">SOURCE: Breaking Defense 2024 · MOF 2024</div>
+      </div>
+    </div>
+    <div class="source-key">Diplomat 2025 = reporting on FY2026 budget, standoff missiles and SHIELD · MHI 2026 = MHI results and Nagoya capacity · Trade press 2025 = Mogami export reporting · Breaking Defense 2024 = margin reform · MOF 2024 = supplier attrition</div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: FORECAST & OUTLOOK -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Forecast &amp; outlook</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <div class="page-h1">Outlook to 2030: the next plan, not FY2027, sets the ceiling.</div>
+    <div class="page-subhead">The FY2023–2027 buildup is largely committed; the variable now is the <strong>successor plan and whether the level rises above 2% of GDP</strong> [Nikkei 2025 · Kira estimates]. Our base case holds defense-related spending near ¥10 tn through FY2027 and rising thereafter, with export revenue an increasing share of industrial-base income.</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>Base case — committed buildup, rising floor</h3>
+          <p>Defense-related spending holds near <strong>¥9.9–10.5 tn by FY2027</strong> as the ¥43 tn plan completes, with a successor plan lifting the floor toward the 2%-of-current-GDP level (~¥13 tn) over the following years [Kira estimates]. Industrial-base revenue grows on backlog execution and the first material export tranches.</p>
+        </div>
+        <div>
+          <h3>Bull case — export multiplier engages</h3>
+          <p>If the Mogami and GCAP pipelines convert and the five-category scrap unlocks further finished-platform deals, <strong>export becomes a double-digit share of prime defense revenue by the early 2030s</strong> [Kira estimates], and the next plan adopts an above-2% level, pulling sub-tier investment forward.</p>
+        </div>
+        <div>
+          <h3>Bear case — capacity and fiscal drag</h3>
+          <p>Downside risks are supply-side and fiscal: <strong>capacity bottlenecks, skilled-labour shortages, and unresolved funding sources</strong> for the 2% level could slow execution and cap the successor plan [Toyo Keizai 2025 · Kira estimates]. A yen reversal or GDP surprise would also move the 2% line.</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Defense-related spend scenarios</div>
+            <div class="chart-subtitle">Japan · ¥ tn · FY2025–FY2030F</div>
+          </div>
+          <div class="chart-unit">¥ TN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="50" y1="240" x2="440" y2="240" class="axis-line"/>
+            <line x1="50" y1="20" x2="50" y2="240" class="axis-line"/>
+            <line x1="50" y1="180" x2="440" y2="180" class="grid-line"/>
+            <line x1="50" y1="120" x2="440" y2="120" class="grid-line"/>
+            <line x1="50" y1="60" x2="440" y2="60" class="grid-line"/>
+            <text x="44" y="243" class="axis-text" text-anchor="end">6</text>
+            <text x="44" y="183" class="axis-text" text-anchor="end">9</text>
+            <text x="44" y="123" class="axis-text" text-anchor="end">12</text>
+            <text x="44" y="63" class="axis-text" text-anchor="end">15</text>
+            <!-- scale: y = 240 - (val-6)*20 -->
+            <!-- x: FY25=70 FY26=144 FY27=218 FY28=292 FY29=366 FY30=414 -->
+            <!-- bull -->
+            <polyline points="70,180 144,172 218,162 292,140 366,116 414,96" fill="none" stroke="#00A88B" stroke-width="2.5"/>
+            <!-- base -->
+            <polyline points="70,180 144,179.2 218,162 292,150 366,138 414,128" fill="none" stroke="#1E6FFF" stroke-width="2.5"/>
+            <!-- bear -->
+            <polyline points="70,180 144,179.2 218,170 292,166 366,162 414,158" fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="5 3"/>
+            <circle cx="414" cy="96" r="3.5" fill="#00A88B"/>
+            <circle cx="414" cy="128" r="3.5" fill="#1E6FFF"/>
+            <circle cx="414" cy="158" r="3.5" fill="#D97706"/>
+            <text x="420" y="94" class="label-small" fill="#00A88B">Bull ~13.2</text>
+            <text x="420" y="131" class="label-small" fill="#1E6FFF">Base ~11.6</text>
+            <text x="420" y="161" class="label-small" fill="#D97706">Bear ~10.1</text>
+            <text x="70" y="256" class="axis-text" text-anchor="middle">FY25</text>
+            <text x="144" y="256" class="axis-text" text-anchor="middle">FY26</text>
+            <text x="218" y="256" class="axis-text" text-anchor="middle">FY27</text>
+            <text x="292" y="256" class="axis-text" text-anchor="middle">FY28F</text>
+            <text x="366" y="256" class="axis-text" text-anchor="middle">FY29F</text>
+            <text x="414" y="256" class="axis-text" text-anchor="middle">FY30F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MOD, NIKKEI, KIRA SCENARIO MODEL · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Scenario paths are KIRA estimates built on MOD budget documents and the ¥43 tn plan; FY2028F+ assume a successor plan. Nikkei 2025 = three-document revision reporting · Toyo Keizai 2025 = sustainability and funding analysis</div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Sources &amp; methodology</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <div class="page-h1">Methodology and sources</div>
+    <div class="endnote-body">
+      <div class="endnote-col">
+        <h3>Methodology summary</h3>
+        <p>This view triangulates two evidence streams. Where a figure carries a named source tag (e.g. [MOD 2025], [MHI 2026], [IISS 2026]), the underlying data comes from that source; the full citation is given in the sources list. Where a figure carries [Kira estimates], KIRA analysts derived the number from a blend of disclosed inputs — government budget documents, ATLA and METI materials, prime-contractor filings, channel checks, and trade-press reporting — using methodology disclosed in the relevant section. Approximately 44% of quantitative claims in this report are KIRA-derived; 56% are externally cited. Market and award-share figures are estimates and should be treated as directional bounds, not audited accounts. Forecast figures assume current regulatory timelines hold and no major macroeconomic or geopolitical disruption to Japanese defense procurement.</p>
+        <h3>Source list</h3>
+        <ul>
+          <li><strong>MOD 2025</strong> — Ministry of Defense, FY2026 (令和8年度) budget overview, December 2025. mod.go.jp.</li>
+          <li><strong>MOD 2023</strong> — Defense Buildup Program (FY2023–2027), ¥43 tn five-year plan; National Security Strategy 2022. mod.go.jp.</li>
+          <li><strong>IISS 2026</strong> — International Institute for Strategic Studies, analysis of the April 2026 revision of the Three Principles on Transfer of Defense Equipment and Technology. iiss.org.</li>
+          <li><strong>Breaking Defense 2024</strong> — reporting on the Act on Enhancing Defense Production and Technology Bases and contract-margin reform (5%→10%, QCD-scored).</li>
+          <li><strong>MHI 2026</strong> — Mitsubishi Heavy Industries, FY2025 results presentations and order-backlog disclosures; Aircraft, Defense &amp; Space segment. mhi.com.</li>
+        </ul>
+      </div>
+      <div class="endnote-col">
+        <h3>Additional references</h3>
+        <ul>
+          <li><strong>GCAP 2025</strong> — Global Combat Air Programme materials; GIGO treaty, Edgewing JV (BAE / Leonardo / JAIEC), 2035 service entry. mod.go.jp.</li>
+          <li><strong>Diplomat 2025</strong> — The Diplomat, FY2026 budget, standoff missiles (Type 12 upgrade), and the SHIELD unmanned coastal-defense concept.</li>
+          <li><strong>Trade press 2025</strong> — reporting on Australia's selection of 11 Mogami-class frigates and the Philippines air-surveillance radar transfer.</li>
+          <li><strong>Statista 2024</strong> — leading Japanese defense suppliers by contract value, FY2024.</li>
+          <li><strong>MOF 2024</strong> — Ministry of Finance economic-trend column on the future of Japan's domestic defense industry (100+ supplier exits over 20 years).</li>
+          <li><strong>Toyo Keizai 2025 · Nikkei 2025</strong> — sustainability of defense spending, the 2% front-loading, and the three-document revision.</li>
+        </ul>
+        <h3>Coverage notes</h3>
+        <p>Market sizing covers Japan's defense-related budget, defined per the Defense Buildup Program (MOD outlays plus complementary defense-related items at other agencies), and the addressable industrial market for equipment procurement, R&amp;D, and sustainment. Export figures cover government-approved transfers under the revised Three Principles. Domestic figures are in JPY; selected export values are stated in their deal currency (AUD/USD). Currency conversions use an indicative JPY 155 = USD 1 reference rate. Prime-contractor shares are estimates of defense award value, not total corporate revenue.</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <p>DISCLAIMER · This report is produced by KIRA Research for informational and strategic orientation purposes only. It does not constitute investment advice, legal advice, or a solicitation of any kind. Market and award-share figures are estimates derived from analyst triangulation and publicly available data; they carry inherent uncertainty. Recipients should conduct independent verification before making decisions based on this material. Figures in JPY unless otherwise stated; USD/AUD equivalents are indicative. © 2026 KIRA Research. All rights reserved. Reproduction or redistribution without written consent is prohibited.</p>
+    </div>
+    <div class="page-footer">
+      <span>JAPAN DEFENSE 2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
