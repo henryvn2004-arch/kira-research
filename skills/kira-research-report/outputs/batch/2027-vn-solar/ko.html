@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 베트남 태양광 2027 전망: 옥상 PPA 시장 및 대규모 계통 병목 분석</title>
+<meta name="description" content="베트남 태양광 2027 — 옥상 DPPA 구조, 대규모 계통 병목 분석, KIRA 리서치팀의 5개년 설비용량 전망.">
+<meta property="og:title" content="KIRA Research — 베트남 태양광 2027 전망">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 0.98; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 18px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 56px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 800px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 700; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; flex: 1; min-height: 0; }
+.toc-row { display: grid; grid-template-columns: 36px 1fr 50px; gap: 12px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tn { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; }
+.toc-row .tt { font-family: 'Satoshi', sans-serif; font-size: 12.5px; color: var(--text); font-weight: 600; }
+.toc-row .tt .sub { font-weight: 400; color: var(--text-mid); font-size: 11px; display: block; line-height: 1.3; }
+.toc-row .tp { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.methend-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.methend-left h3, .methend-right h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.methend-left p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.methend-left p strong { color: var(--text); font-weight: 600; }
+.methend-right ul { list-style: none; padding: 0; margin: 0; }
+.methend-right li { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; line-height: 1.25; color: var(--text-mid); padding: 1px 0; border-bottom: 1px dotted var(--border); }
+.methend-right li strong { color: var(--text); font-weight: 700; }
+
+.source-key {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted);
+  padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px;
+  letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden;
+}
+.source-key::before { content: "출처 범례 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print { body { background: white; padding: 0; } .page { box-shadow: none; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 001 — COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner">
+      <div class="cover-top">
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">Vietnam · Solar / Renewable Energy · 2027</div>
+        <h1>베트남 태양광 시장 — 2027<br>옥상 PPA <span class="accent">개방</span>, 계통망이 여전히 상한선</h1>
+        <p class="cover-subtitle">Decree 135/2024 상업용 옥상 프레임워크, 대규모 송전 제약, 그리고 빠르게 성장하는 분산형 태양광과 정체된 대규모 건설 간 구조적 분기를 다룬 5개년 전망 보고서.</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">Vietnam</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">Solar / Renewable Energy</div></div>
+          <div class="cover-meta-item"><div class="label">Published</div><div class="val">June 2026</div></div>
+          <div class="cover-meta-item"><div class="label">Report ID</div><div class="val"><span class="accent">KR-VN-SOLAR-2027</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · 단일 사용자 라이선스 · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 002 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Methodology</div>
+      <div class="page-section-counter">002 / 016</div>
+    </div>
+    <h1 class="page-h1">당사의 분석 방법론</h1>
+    <p class="page-subhead">본 보고서는 두 가지 증거 흐름을 기반으로 합니다: <strong>1차 자료</strong> — 개발사 현장 방문, 전력 구매자 인터뷰, EPC 조달 데이터 — 와 <strong>2차 기준점</strong> — EVN 공시, MOIT 정책 회람, 프로젝트 단위 계통 연계 기록. 모든 정량적 주장에는 명시적 출처 태그가 첨부되어 있습니다.</p>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>Primary inputs</h3>
+        <div class="method-item">
+          <div class="item-label">개발사 및 전력 구매자 인터뷰</div>
+          <div class="item-desc">신규 DPPA/상업용 PPA 프레임워크 하에 운영 중인 옥상 태양광 개발사, 빈즈엉·동나이·롱안 소재 산업단지 에너지 관리자, RE100 공약 이행을 위해 현장 태양광을 검토 중인 외국인 직접투자(FDI) 제조업체와의 대화 — 실제 계약 구조, PPA 가격 범위, 전력 구매자 수요를 파악합니다.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">EPC 및 기자재 조달</div>
+          <div class="item-desc">100 kWp–5 MWp 옥상 구간 및 계통 연계 협약(GIA)이 체결된 대규모 파이프라인 시공사들의 모듈 수입 데이터, 인버터 조달 추세, EPC 비용 기준치.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">당사 리서치팀 종합 분석</div>
+          <div class="item-desc">EVN 연간 설비용량 표, MOIT 전력개발계획 VIII(PDP8) 설치 일정, 계통 혼잡 통보를 교차 검증하여 도출한 KIRA 자체 추정치. 인라인 [Kira estimates] 태그로 표시됩니다.</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>Secondary anchors</h3>
+        <div class="method-item">
+          <div class="item-label">통계 및 규제 기관</div>
+          <div class="item-desc">EVN(Tập đoàn Điện lực Việt Nam) 설비용량·급전 표, MOIT(Bộ Công Thương) 전력개발계획 VIII(PDP8) 및 개정 메모, NLDC(국가전력급전센터) 출력 제한 공보, 기획재정부 투자 인센티브 일정.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">프로젝트 단위 공시</div>
+          <div class="item-desc">EVN 지역 자회사(EVNCPC, EVNNPC, EVNSPC)의 서명된 PPA 파일링, 계통 규정 준수 인증서, 계통 연계 대기 데이터. MPI(Bộ Kế hoạch và Đầu tư) 지방 투자 등록부의 FDI 태양광 프로젝트 승인 내역.</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">삼각 추정</div>
+          <div class="item-desc">단일 출처로 수치를 도출할 수 없는 경우(회랑별 출력 제한율, PPA 가격 분포, 산업 부문별 옥상 보급률), 2~3개 자료를 결합하고 방법론을 공개합니다. [Kira estimates] 태그로 표시됩니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 003 — TOC ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Contents</div>
+      <div class="page-section-counter">003 / 016</div>
+    </div>
+    <h1 class="page-h1">목차</h1>
+    <p class="page-subhead">16페이지에 걸친 8개 챕터. 정책 전환, 계통 제약, 옥상 PPA 시장이라는 세 가지 주요 주제 구분을 세 개의 다크 구분 페이지로 표시합니다. 차트는 설비용량, 계통, 경쟁 구도 섹션에 집중 배치되어 있습니다.</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tn">03</span><span class="tt">핵심 요약<span class="sub">주요 결론 및 5가지 전략적 시사점</span></span><span class="tp">004</span></div>
+      <div class="toc-row"><span class="tn">04</span><span class="tt">정책·규제 기반<span class="sub">PDP8, Decree 135/2024, DPPA 프레임워크</span></span><span class="tp">006</span></div>
+      <div class="toc-row"><span class="tn">05</span><span class="tt">설치 설비용량 및 전망<span class="sub">태양광 비중, 파이프라인, 2027-2030 궤적</span></span><span class="tp">008</span></div>
+      <div class="toc-row"><span class="tn">06</span><span class="tt">계통 병목 구조 분석<span class="sub">송전 격차, 출력 제한 회랑</span></span><span class="tp">010</span></div>
+      <div class="toc-row"><span class="tn">07</span><span class="tt">옥상 PPA 시장<span class="sub">C&amp;I 전력 구매자, 가격, RE100 파이프라인</span></span><span class="tp">012</span></div>
+      <div class="toc-row"><span class="tn">08</span><span class="tt">경쟁 구도<span class="sub">주요 개발사, FDI 진입자, EPC 계층</span></span><span class="tp">013</span></div>
+      <div class="toc-row"><span class="tn">09</span><span class="tt">5개년 전망 및 시나리오<span class="sub">기본/낙관/비관 시나리오 2030년까지</span></span><span class="tp">014</span></div>
+      <div class="toc-row"><span class="tn">10</span><span class="tt">방법론 후기<span class="sub">출처 구성, 별칭 키, 면책 조항</span></span><span class="tp">016</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 004 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">004 / 016</div>
+    </div>
+    <h1 class="page-h1">베트남 태양광 2027 — 옥상 PPA 개방, 계통망이 구속 제약</h1>
+    <p class="page-subhead">베트남의 태양광 설치 기반은 <strong>2025년 말 기준 ~20.7 GWp</strong>에 달했으며[EVN 2025], 총 발전 설비용량의 약 25%를 점유합니다. Decree 135/2024 상업용 DPPA 프레임워크는 옥상 PPA 계약을 처음으로 대규모로 가능하게 했습니다. <strong>2027-30년의 구속 제약은 태양광 수요가 아니라, 남중부 태양광 벨트에서 부하 중심지로의 송전 용량입니다.</strong></p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">설치 태양광 2025</div>
+        <div class="num">20.7<span class="unit">GWp</span></div>
+        <div class="change">총 발전 설비용량의 ~25% [EVN 2025]</div>
+        <div class="source-tag sec">EVN 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">PDP8 태양광 목표 2030</div>
+        <div class="num">73.4<span class="unit">GWp</span></div>
+        <div class="change">2025년 기준 대비 +52.7 GWp [PDP8 2023]</div>
+        <div class="source-tag sec">PDP8 2023</div>
+      </div>
+      <div class="callout">
+        <div class="label">옥상 파이프라인</div>
+        <div class="num">2.8<span class="unit">GWp</span></div>
+        <div class="change">C&amp;I DPPA 대상 2026-27 [Kira estimates]</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">출력 제한율</div>
+        <div class="num">~25<span class="unit">%</span></div>
+        <div class="change">남중부 회랑 피크 [NLDC 2025]</div>
+        <div class="source-tag sec">NLDC 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>PPA 전환은 구조적이다.</h3>
+        <p>Decree 135/2024/NĐ-CP는 2024년 11월 발효되어 옥상 태양광 운영자와 산업 전력 구매자 간 상업 규모 직접 전력구매계약(DPPA)을 가능하게 했습니다[MOIT 2024]. 처음으로, 공장이나 산업단지 입주자가 EVN의 소매 가격표를 거치지 않고 협상 요금으로 다년간 태양광 공급을 계약할 수 있게 됐습니다. <strong>최초 서명된 DPPA의 가격은 VND 1,450-1,700/kWh — 산업용 소매 요금 대비 15-25% 할인 수준</strong>입니다[Kira estimates from developer conversations].</p>
+        <h3>계통망이 상한선이지, 수요가 아니다.</h3>
+        <p>베트남의 남중부 태양광 회랑 — 닌투언, 빈투언, 칸호아 — 은 2024-25년 500kV 하노이·호찌민시 송전선이 흡수할 수 있는 것보다 더 많은 태양광 전력을 생산했습니다[NLDC 2025]. 출력 제한율은 <strong>2025년 2분기 ~25% 피크</strong>를 기록했습니다[NLDC 2025]. EVN의 500kV 3회선 연장(다낭-플레이쿠) 및 남부 220kV 보강 공사는 2026-27년 완공 예정이나, 계통 타이밍이 — 프로젝트 수요가 아닌 — 차세대 GW급 대규모 설비용량의 경제적 실현 가능성을 결정합니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">베트남 태양광 설치 설비용량 추이</div>
+            <div class="chart-subtitle">GWp · 2021-2030F</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="166" x2="370" y2="166"/>
+            <line class="grid-line" x1="40" y1="133" x2="370" y2="133"/>
+            <line class="grid-line" x1="40" y1="100" x2="370" y2="100"/>
+            <line class="grid-line" x1="40" y1="66" x2="370" y2="66"/>
+            <line class="grid-line" x1="40" y1="33" x2="370" y2="33"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="170" text-anchor="end">15</text>
+            <text class="axis-text" x="32" y="137" text-anchor="end">30</text>
+            <text class="axis-text" x="32" y="104" text-anchor="end">45</text>
+            <text class="axis-text" x="32" y="70"  text-anchor="end">60</text>
+            <text class="axis-text" x="32" y="37"  text-anchor="end">75</text>
+            <rect class="bar-primary" x="50"  y="156" width="28" height="44"/>
+            <rect class="bar-primary" x="96"  y="154" width="28" height="46"/>
+            <rect class="bar-primary" x="142" y="150" width="28" height="50"/>
+            <rect class="bar-primary" x="188" y="145" width="28" height="55"/>
+            <rect class="bar-secondary" x="234" y="131" width="28" height="69"/>
+            <rect class="bar-secondary" x="280" y="107" width="28" height="93"/>
+            <rect class="bar-secondary" x="326" y="67"  width="28" height="133"/>
+            <text class="label-data" x="64"  y="150" text-anchor="middle" font-size="9">16.5</text>
+            <text class="label-data" x="110" y="148" text-anchor="middle" font-size="9">17.1</text>
+            <text class="label-data" x="156" y="144" text-anchor="middle" font-size="9">18.8</text>
+            <text class="label-data" x="202" y="139" text-anchor="middle" font-size="9">20.7</text>
+            <text class="label-data" x="248" y="125" text-anchor="middle" font-size="9">26.0</text>
+            <text class="label-data" x="294" y="101" text-anchor="middle" font-size="9">35.0</text>
+            <text class="label-data" x="340" y="61"  text-anchor="middle" font-size="9">73.4</text>
+            <text class="axis-text" x="64"  y="216" text-anchor="middle">2021</text>
+            <text class="axis-text" x="110" y="216" text-anchor="middle">2022</text>
+            <text class="axis-text" x="156" y="216" text-anchor="middle">2023</text>
+            <text class="axis-text" x="202" y="216" text-anchor="middle">2025</text>
+            <text class="axis-text" x="248" y="216" text-anchor="middle">2026F</text>
+            <text class="axis-text" x="294" y="216" text-anchor="middle">2027F</text>
+            <text class="axis-text" x="340" y="216" text-anchor="middle">2030F</text>
+            <rect x="45" y="14" width="10" height="8" fill="#1E6FFF"/>
+            <text class="label-small" x="60" y="21">실적치</text>
+            <rect x="110" y="14" width="10" height="8" fill="#00A88B"/>
+            <text class="label-small" x="125" y="21">전망치 (PDP8 경로)</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, PDP8 2023, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · PDP8 2023 = MOIT Power Development Plan VIII (Decision 500/QĐ-TTg 2023) · NLDC 2025 = National Load Dispatch Centre Curtailment Bulletin Q2 2025 · MOIT 2024 = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 005 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Strategic Implications</div>
+      <div class="page-section-counter">005 / 016</div>
+    </div>
+    <h1 class="page-h1">향후 24개월을 위한 5가지 전략적 시사점</h1>
+    <p class="page-subhead">시장 참여자는 <strong>2025-27년을 대규모 건설 사이클이 아닌 옥상 DPPA 선점 창(window)으로</strong> 인식해야 합니다. 제약은 계통이지 수요가 아닙니다. 상업 PPA 구조를 먼저 확보한 사업자가 10년간 지속될 전력 구매자 관계를 선점합니다.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 01</div>
+        <div class="title">옥상 DPPA가 마찰이 가장 적은 성장 채널</div>
+        <div class="body-text">Decree 135/2024는 현장 및 근접 상업 태양광에서 EVN 매입 일정을 통하지 않아도 되도록 했습니다[MOIT 2024]. <strong>1 MWp 미만 프로젝트는 6-9개월 내 계약·준공 가능</strong>[Kira estimates] — 대규모 GIA 대기열에 비해 훨씬 빠릅니다. 2026-27년 창(window)이 결정적입니다: 지금 10-15년 DPPA를 체결하는 전력 구매자는 현 모듈 가격(~USD 0.11-0.13/Wp)으로 공급을 고정합니다.</div>
+        <div class="anchor"><span class="num-anchor">6-9개월</span> 1 MWp 미만 DPPA 타임라인</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 02</div>
+        <div class="title">계통 완공일 기준으로 대규모 건설 단계화</div>
+        <div class="body-text">EVN의 2026-27년 계통 투자 계획 내 500kV 3개, 220kV 8개 프로젝트가 <strong>~8-10 GW의 남중부 고립 태양광 용량</strong>을 해소합니다[EVN Grid 2025]. GIA를 확보한 대규모 개발사는 상업 운전 일정을 해당 송전선 완공일에 맞춰 단계화해야 합니다 — 출력 제한 회랑에 준공하면 IRR이 훼손됩니다.</div>
+        <div class="anchor"><span class="num-anchor">~8-10 GW</span> 송전 제약 용량</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 03</div>
+        <div class="title">RE100 전력 구매자 중심으로 가격 기준 설정</div>
+        <div class="body-text">베트남의 발전 차액 지원제도(FiT)는 2020-21년 신규 등록이 종료됐습니다[EVN 2021]. 대체 경쟁 입찰 메커니즘(AUCM)은 운영 중이나 수요 초과 상태입니다. <strong>RE100 산업 입주자 — 삼성, 인텔, LG, 나이키 공급망 — 은 소매 요금의 80-90%에 다년간 DPPA를 제공</strong>[Kira estimates from off-taker conversations], 정부 가격 사이클과 무관한 안정적 매입 기반입니다.</div>
+        <div class="anchor"><span class="num-anchor">80-90%</span> 소매 요금 기준 DPPA 가격</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 04</div>
+        <div class="title">출력 제한 수익화에 저장 설비 활용</div>
+        <div class="body-text">출력 제한 지역의 대규모 태양광에 병설하는 배터리 저장 설비는 피크 삭감 시간의 발전량을 저녁 피크로 이전, 제한된 출력을 급전 가능한 전력으로 전환합니다. <strong>PDP8은 2030년까지 300 MW의 배터리 저장 목표</strong>[PDP8 2023]를 설정했으며, 현 출력 제한율 하에서 BESS USD 200/kWh 이하 시 프로젝트 경제성이 확보됩니다 — 2025년 달성된 임계값입니다[Kira estimates on BloombergNEF BESS pricing].</div>
+        <div class="anchor"><span class="num-anchor">300 MW</span> PDP8 저장 설비 목표</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">IMPLICATION · 05</div>
+        <div class="title">북부 태양광은 보급 부족 — 차기 지역</div>
+        <div class="body-text">베트남 북부는 <strong>설치 태양광의 &lt;5% 대비 산업 부하의 ~70%</strong>를 차지합니다[EVN 2025, Kira estimates]. 일사량은 낮지만(GHI ~4.5 kWh/m²/일 대 남부 5.2-5.5) 부하 근접성 우위로 송전 리스크가 해소됩니다. Decree 135/2024 구조는 남중부 집중 대규모 사업 대비 저리스크 대안으로 부하 중심 북부 C&amp;I 태양광에 유리합니다.</div>
+        <div class="anchor"><span class="num-anchor">&lt;5% / ~70%</span> 태양광 대 부하 비율</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 006 — POLICY DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">정책·규제 <span class="accent">기반</span></h1>
+    <div class="divider-thesis">베트남은 2027년을 앞두고 작동하는 직접 PPA 프레임워크, 개정된 국가 전력 계획, 발전 믹스를 구조적으로 재편한 5년간의 태양광 설치 실적을 보유하고 있습니다 — <strong>그러나 계통 투자에 대한 정책 집행은 일관되게 설비용량 목표보다 18-36개월 지연됩니다.</strong></div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">PDP8</div>
+      <div class="toc-pill">Decree 135/2024</div>
+      <div class="toc-pill">DPPA 프레임워크</div>
+      <div class="toc-pill">계통 투자</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 007 — POLICY DETAIL ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Policy &amp; Regulation</div>
+      <div class="page-section-counter">007 / 016</div>
+    </div>
+    <h1 class="page-h1">PDP8 2030년 73.4 GWp 목표 — DPPA가 민간 계층을 개방</h1>
+    <p class="page-subhead">전력개발계획 VIII(Decision 500/QĐ-TTg, 2023년 5월)는 베트남 최초의 법적 구속력 있는 태양광 설치 목표를 설정했습니다: <strong>2030년까지 73.4 GWp, 2050년까지 168-189 GWp</strong>[PDP8 2023]. Decree 135/2024는 국가 재정 EVN 조달 없이도 그 목표 달성을 재정적으로 가능하게 하는 직접 상업 PPA 채널을 개방했습니다.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>PDP8 태양광 목표</h3>
+        <p>PDP8은 73.4 GWp 목표를 세분화합니다: <strong>~50 GWp 대규모 지상 설치</strong>(주로 남중부 및 메콩 삼각주)와 <strong>~23 GWp 옥상 태양광</strong>(상업·산업·주거용)[PDP8 2023]. 2025년 말 기준 베트남의 설치 실적은 20.7 GWp — 2030년 목표의 약 28%이며 5년이 남아 있습니다[EVN 2025]. 격차는 현실이지만 송전 투자가 병행된다면 산술적으로 달성 가능합니다.</p>
+        <h3>Decree 135/2024 — 상업 PPA 전환</h3>
+        <p>Decree 135/2024/NĐ-CP(2024년 11월)는 EVN을 중개자로 두지 않고 재생에너지 발전사와 기업 전력 구매자 간 <strong>직접 전력구매계약</strong>을 가능하게 합니다[MOIT 2024]. 대상 프로젝트는 옥상 태양광(용량 무관), 기준 임계치 이하의 지상 태양광, 병설 배터리 저장을 포함합니다. 본 법령은 RE100을 공약한 FDI 제조업체가 민간 태양광 공급을 합법적으로 계약할 수 없었던 5년간의 법적 공백을 해소합니다.</p>
+        <h3>대규모 설비를 위한 AUCM 메커니즘</h3>
+        <p>경쟁 입찰 메커니즘(AUCM)은 DPPA 임계치를 초과하는 계통 연계 대규모 태양광을 관할합니다. 2차례의 시범 입찰(2025-26)에서 <strong>~3.2 GW가 VND 1,644-1,900/kWh의 낙찰 가격</strong>[MOIT 2025] — 약 7-8 US¢/kWh으로 역내 비교 대상과 경쟁력 있으나 계통 연계 협약(GIA) 가용 여부에 종속됩니다. GIA 발급이 병목입니다: EVN의 대기열은 가용 송전 슬롯의 약 2:1을 초과합니다[Kira estimates from EVN grid planning docs].</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">PDP8 설비용량 목표 · 태양광 세분화</div>
+            <div class="chart-subtitle">GWp · 2025년 설치 실적 대비 2030년 목표</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="60" y1="173" x2="370" y2="173"/>
+            <line class="grid-line" x1="60" y1="146" x2="370" y2="146"/>
+            <line class="grid-line" x1="60" y1="120" x2="370" y2="120"/>
+            <line class="grid-line" x1="60" y1="93"  x2="370" y2="93"/>
+            <line class="grid-line" x1="60" y1="66"  x2="370" y2="66"/>
+            <line class="grid-line" x1="60" y1="40"  x2="370" y2="40"/>
+            <text class="axis-text" x="52" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="52" y="177" text-anchor="end">10</text>
+            <text class="axis-text" x="52" y="150" text-anchor="end">20</text>
+            <text class="axis-text" x="52" y="124" text-anchor="end">30</text>
+            <text class="axis-text" x="52" y="97"  text-anchor="end">40</text>
+            <text class="axis-text" x="52" y="70"  text-anchor="end">50</text>
+            <text class="axis-text" x="52" y="44"  text-anchor="end">60</text>
+            <rect class="bar-primary"   x="100" y="149" width="70" height="51"/>
+            <rect class="bar-secondary" x="100" y="138" width="70" height="11"/>
+            <text class="label-data" x="135" y="178" text-anchor="middle" fill="#FFFFFF" font-size="9">Util 17.0</text>
+            <text class="label-data" x="135" y="132" text-anchor="middle" font-size="9">Roof 3.7</text>
+            <rect class="bar-primary"   x="220" y="50"  width="100" height="150"/>
+            <rect class="bar-secondary" x="220" y="50"  width="100" height="70"/>
+            <rect class="bar-primary"   x="220" y="120" width="100" height="80"/>
+            <text class="label-data" x="270" y="90"  text-anchor="middle" fill="#FFFFFF" font-size="9">Roof 23.4</text>
+            <text class="label-data" x="270" y="165" text-anchor="middle" fill="#FFFFFF" font-size="9">Util ~50.0</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">2025 (실적)</text>
+            <text class="axis-text" x="270" y="216" text-anchor="middle">2030F (PDP8 목표)</text>
+            <rect x="60" y="14" width="10" height="8" fill="#1E6FFF"/>
+            <text class="label-small" x="75" y="22">대규모</text>
+            <rect x="155" y="14" width="10" height="8" fill="#00A88B"/>
+            <text class="label-small" x="170" y="22">옥상 / 분산형</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, PDP8 2023, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">PDP8 2023 = MOIT Power Development Plan VIII Decision 500/QĐ-TTg May 2023 · EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · MOIT 2024 = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance · MOIT 2025 = MOIT Competitive Auction Mechanism (AUCM) Round 1-2 Clearing Results 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 008 — GRID DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">계통 병목 <span class="accent">구조 분석</span></h1>
+    <div class="divider-thesis">베트남의 남중부 태양광 회랑은 국가 계통이 흡수할 수 있는 것보다 훨씬 많은 전력을 생산합니다. 닌투언·빈투언의 <strong>~25% 피크 출력 제한율</strong>[NLDC 2025]은 2027-28년까지 대규모 태양광 재무 모델에서 가장 중요한 단일 변수를 송전 투자 일정으로 만듭니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">출력 제한 지도</div>
+      <div class="toc-pill">500kV 확장</div>
+      <div class="toc-pill">GIA 대기열</div>
+      <div class="toc-pill">저장 기회</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 009 — GRID BOTTLENECK DETAIL ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Grid Bottleneck</div>
+      <div class="page-section-counter">009 / 016</div>
+    </div>
+    <h1 class="page-h1">송전 제약: 출력 제한 지리와 GIA 대기열</h1>
+    <p class="page-subhead">구조적 불일치는 지리적입니다: <strong>베트남 설치 태양광의 ~70%가 남중부 성</strong>(닌투언, 빈투언, 칸호아, 푸옌)에 집중되어 있으며, 이 지역은 전국 전력 수요의 20% 미만을 차지합니다[EVN 2025, Kira estimates]. 신규 500kV 송전 없이 이 성들에 추가되는 모든 MWp는 계통이 따라잡기 전까지 출력 제한 리스크에 노출됩니다.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>회랑별 출력 제한</h3>
+        <p>NLDC의 2024-25년 급전 데이터는 닌투언에서 <strong>건기 태양광 피크(1-2분기) 동안 23-27%의 피크 출력 제한</strong>을 보여줍니다[NLDC 2025]. 빈투언의 출력 제한은 동 기간 15-20%를 추적했습니다. 반면 북중부와 메콩 삼각주 프로젝트는 거의 제로 수준의 출력 제한을 보고합니다 — 계통 위상학상 여전히 흡수 여유가 있기 때문입니다. 이 차이는 프로젝트 IRR 계산에서 명확한 지역별 차익거래를 만들어냅니다.</p>
+        <h3>500kV 역송 — 해소 타임라인</h3>
+        <p>EVN의 계통 투자 프로그램에는 세 가지 핵심 개입이 포함됩니다: <strong>500kV 남북 3회선 연장</strong>(다낭-플레이쿠-득화, 2026년 4분기 예정), 남중부 성에 걸친 220kV 보강 링, 2028년 이후를 위한 신규 HVDC 상호 연계 연구[EVN Grid 2025]. EVN 자체 일정이 지켜진다면 남중부 출력 제한은 <strong>2027년 말 10% 미만으로 하락</strong>할 것입니다[Kira estimates]. EVN의 계통 프로젝트 일정은 역사적으로 발표 일정 대비 6-18개월 지연된 바 있습니다[Kira estimates from historical completion analysis].</p>
+        <h3>GIA 대기열 역학</h3>
+        <p>EVN 지역 자회사에 제출된 계통 연계 협약(GIA) 신청은 2026-27년 가용 송전 슬롯을 추정 <strong>2:1 비율</strong>로 초과합니다[Kira estimates from EVN grid planning documents]. GIA 미체결 프로젝트는 AUCM 입찰에 참여할 수 없고, EVN 조달에도 접근할 수 없으며, 계통을 통해 전력을 공급하는 DPPA도 계약할 수 없습니다. 이 대기열은 사실상 신규 대규모 진입을 제한하고 단기 성장을 옥상 및 근접 태양광 부문으로 집중시킵니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">태양광 회랑별 출력 제한율</div>
+            <div class="chart-subtitle">발전량 대비 출력 제한 비율 · 2024-2025</div>
+          </div>
+          <div class="chart-unit">% 출력 제한</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="130" y1="20" x2="130" y2="210"/>
+            <line class="grid-line" x1="185" y1="20" x2="185" y2="210"/>
+            <line class="grid-line" x1="240" y1="20" x2="240" y2="210"/>
+            <line class="grid-line" x1="295" y1="20" x2="295" y2="210"/>
+            <line class="grid-line" x1="350" y1="20" x2="350" y2="210"/>
+            <text class="axis-text" x="130" y="218" text-anchor="middle">0%</text>
+            <text class="axis-text" x="185" y="218" text-anchor="middle">10%</text>
+            <text class="axis-text" x="240" y="218" text-anchor="middle">20%</text>
+            <text class="axis-text" x="295" y="218" text-anchor="middle">30%</text>
+            <text class="axis-text" x="120" y="42" text-anchor="end">닌투언</text>
+            <rect class="bar-tertiary" x="130" y="30" width="138" height="18"/>
+            <text class="label-data" x="273" y="43" font-size="10">~25%</text>
+            <text class="axis-text" x="120" y="76" text-anchor="end">빈투언</text>
+            <rect class="bar-tertiary" x="130" y="64" width="99" height="18"/>
+            <text class="label-data" x="234" y="77" font-size="10">~18%</text>
+            <text class="axis-text" x="120" y="110" text-anchor="end">칸호아</text>
+            <rect class="bar-secondary" x="130" y="98" width="66" height="18"/>
+            <text class="label-data" x="201" y="111" font-size="10">~12%</text>
+            <text class="axis-text" x="120" y="144" text-anchor="end">푸옌</text>
+            <rect class="bar-secondary" x="130" y="132" width="44" height="18"/>
+            <text class="label-data" x="179" y="145" font-size="10">~8%</text>
+            <text class="axis-text" x="120" y="178" text-anchor="end">메콩 삼각주</text>
+            <rect class="bar-primary" x="130" y="166" width="11" height="18"/>
+            <text class="label-data" x="146" y="179" font-size="10">~2%</text>
+            <text class="label-small" x="135" y="208">1-2분기 피크 · [NLDC 2025, Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NLDC 2025, EVN 2025, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NLDC 2025 = National Load Dispatch Centre Renewable Energy Curtailment Bulletin 2024-2025 · EVN Grid 2025 = EVN Transmission Grid Investment Plan 2025-2027 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 010 — ROOFTOP PPA DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 06</div>
+    <h1 class="divider-title">옥상 PPA <span class="accent">시장</span></h1>
+    <div class="divider-thesis">Decree 135/2024는 상업 전력 구매자의 5년간 법적 불확실성을 해소했습니다. <strong>최초 다년간 직접 PPA가 VND 1,450-1,700/kWh에 서명되고 있으며</strong>[Kira estimates] — 산업용 소매 요금 대비 15-25% 할인 — RE100을 공약한 산업 입주자들의 파이프라인은 정부 조달 사이클과 무관한 내구성 있는 전력 구매 기반을 제공합니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">C&amp;I 전력 구매자</div>
+      <div class="toc-pill">DPPA 가격</div>
+      <div class="toc-pill">RE100 파이프라인</div>
+      <div class="toc-pill">계약 구조</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 011 — ROOFTOP PPA DETAIL ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Rooftop PPA Market</div>
+      <div class="page-section-counter">011 / 016</div>
+    </div>
+    <h1 class="page-h1">상업·산업용 PPA: 구조, 가격, RE100 파이프라인</h1>
+    <p class="page-subhead">베트남 C&amp;I 옥상 태양광 시장은 제2단계로 진입하고 있습니다: <strong>구 상계 제도 하의 자가소비 인센티브 설치에서 Decree 135/2024의 다년간 상업 DPPA로</strong>의 전환입니다. 이 변화는 구조적 — 정부 발전 차액 지원제도에 의존하던 부문에 전문 프로젝트 파이낸스, 기관 전력 구매자, 금융 가능한 계약 구조를 도입합니다.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>전력 구매자 프로필: RE100이 수요 닻</h3>
+        <p>2027년까지 C&amp;I 태양광 수요의 주요 동인은 전기료 절감이 아니라 공급망 지속가능성 요건입니다. <strong>삼성(SDC 및 SEV), 인텔, LG 전자, 나이키, 애플 계약 제조업체는 RE100 또는 동등한 기업 공약에 따라 100% 재생에너지 전기를 공약</strong>했습니다[RE100 2025]. 이 공약은 베트남 제조 공급망으로 확대됩니다. 이 입주자들에게 서비스하는 산업단지 임대인은 직접 재생에너지 조달 의무에 직면합니다. 빈즈엉, 동나이, 하노이 전자 클러스터, 롱안 물류 단지의 주소 가능 옥상 표면적은 <strong>기술적으로 실현 가능한 옥상 용량 ~4-5 GWp</strong>를 나타냅니다[Kira estimates].</p>
+        <h3>DPPA 가격 메커니즘</h3>
+        <p>Decree 135/2024 하에서 DPPA 가격은 발전사와 전력 구매자 간 양자 협상으로 결정되며, 하한(EVN 회피 비용 기준)과 상한(EVN 소매 요금 - 송전 이용료) 내에 있습니다[MOIT 2024]. 실제로 1세대 계약은 <strong>VND 1,450-1,700/kWh(~6.0-7.0 US¢/kWh)</strong>[Kira estimates from developer conversations]에 가격이 책정되고 있으며, 유사 소비 프로파일의 산업용 소매 요금 ~VND 1,900-2,200/kWh[EVN 2025]와 비교됩니다. 15-25% 할인은 정부 보조금 없이도 설득력 있는 사업 논거를 제공합니다.</p>
+        <h3>계약 구조와 금융 가능성</h3>
+        <p>베트남의 표준 DPPA 구조는 국제 PPA 관행을 따릅니다: <strong>10-15년 계약 기간, 계약 물량의 85-90%에 대한 최소 인수 조항, 소비자 물가 지수 연계 분기별 가격 조정</strong>[Kira estimates from project documentation]. 대출 기관(ADB, IFC, DFI 연계 국내 은행)은 Decree 135 PPA를 70:30 부채:자기자본 비율의 태양광 프로젝트 파이낸싱의 금융 가능한 매출 근거로 수용하고 있습니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">섹터별 C&amp;I 옥상 태양광 파이프라인</div>
+            <div class="chart-subtitle">DPPA 대상 추정 MWp · 2026-2027</div>
+          </div>
+          <div class="chart-unit">MWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="370" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="370" y2="120"/>
+            <line class="grid-line" x1="40" y1="80"  x2="370" y2="80"/>
+            <line class="grid-line" x1="40" y1="40"  x2="370" y2="40"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="164" text-anchor="end">250</text>
+            <text class="axis-text" x="32" y="124" text-anchor="end">500</text>
+            <text class="axis-text" x="32" y="84"  text-anchor="end">750</text>
+            <text class="axis-text" x="32" y="44"  text-anchor="end">1000</text>
+            <rect class="bar-primary" x="55"  y="46"  width="44" height="154"/>
+            <text class="label-data" x="77" y="40" text-anchor="middle" font-size="9">980</text>
+            <rect class="bar-primary" x="115" y="76"  width="44" height="124"/>
+            <text class="label-data" x="137" y="70" text-anchor="middle" font-size="9">780</text>
+            <rect class="bar-secondary" x="175" y="128" width="44" height="72"/>
+            <text class="label-data" x="197" y="122" text-anchor="middle" font-size="9">450</text>
+            <rect class="bar-secondary" x="235" y="146" width="44" height="54"/>
+            <text class="label-data" x="257" y="140" text-anchor="middle" font-size="9">340</text>
+            <rect class="bar-tertiary" x="295" y="160" width="44" height="40"/>
+            <text class="label-data" x="317" y="154" text-anchor="middle" font-size="9">250</text>
+            <text class="axis-text" x="77"  y="216" text-anchor="middle">전자제조</text>
+            <text class="axis-text" x="137" y="216" text-anchor="middle">산업단지</text>
+            <text class="axis-text" x="197" y="216" text-anchor="middle">물류</text>
+            <text class="axis-text" x="257" y="216" text-anchor="middle">상업·유통</text>
+            <text class="axis-text" x="317" y="216" text-anchor="middle">호스피탈리티</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA ESTIMATES — RE100 TENANT SURVEY, EVN ROOFTOP REGISTRATIONS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MOIT 2024 = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance · RE100 2025 = RE100 Member Commitment Register 2025 · EVN 2025 = EVN Retail Tariff Schedule and Rooftop Solar Registration Database 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 012 — CAPACITY SIZING ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Capacity &amp; Forecast</div>
+      <div class="page-section-counter">012 / 016</div>
+    </div>
+    <h1 class="page-h1">설치 기반, 파이프라인, 2027-2030 궤적</h1>
+    <p class="page-subhead">베트남의 태양광 설치 기반은 현행 규제 구조 하에서 연간 약 4-5 GWp를 추가합니다 — 송전 투자와 GIA 발급이 병행될 때만 PDP8의 2030년 목표를 달성할 수 있는 속도입니다. <strong>당사의 기본 시나리오는 2027년 말 ~35 GWp에 도달</strong>하는 것으로, PDP8의 암시적 진행률을 하회하지만 계통 제약 현실을 반영합니다.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>2025-2027 추가 창(window)</h3>
+        <p>베트남은 <strong>2025년 ~1.9 GWp의 신규 태양광을 추가</strong>했으며[EVN 2025], 2022년 FiT 종료 이후 가장 낮은 연간 추가량입니다. 이 하락은 보장 FiT에서 AUCM 계약으로의 전환을 반영합니다 — 개발사들은 Decree 135 명확성과 AUCM 1차 결과를 기다린 후 신규 설비용량을 확정했습니다. 2026-27년 추가량은 AUCM 2차 용량 준공과 DPPA 구조 옥상 프로젝트의 허가 통과에 따라 <strong>연간 5-7 GWp로 반등</strong>할 것으로 예상됩니다[Kira estimates]. 북부 계통 지역은 출력 제한 리스크 없이 증분 옥상 추가를 흡수합니다.</p>
+        <h3>옥상 대 대규모 비율</h3>
+        <p>2026-27년 설비용량 추가는 역사적 ~80:20 대규모 지배적 믹스 대비 <strong>~60% 옥상 / 40% 대규모</strong>로 편중될 것으로 예상됩니다[Kira estimates]. 이 변화는 다음을 반영합니다: (a) DPPA 프레임워크로 빠른 주기의 C&amp;I 옥상 계약 가능, (b) GIA 대기열이 고일사량 지역의 신규 대규모 추가를 제한, (c) 북부 부하 근접 부지가 남중부 고일사량·송전 제약 지역 대비 점점 선호.</p>
+        <h3>모듈 비용 추이</h3>
+        <p>Mono-PERC 모듈은 <strong>2026년 1분기 베트남 항구 도착가 ~USD 0.11-0.13/Wp</strong>[Kira estimates from EPC procurement conversations]으로, 2023년 USD 0.22/Wp에서 하락했습니다. TOPCon 양면 모듈은 ~10% 프리미엄이나 베트남의 일사 프로파일에서 5-7% 높은 에너지 수확량을 제공합니다. <strong>옥상 설치의 EPC 전체 비용은 USD 0.60-0.75/Wp</strong>[Kira estimates] — 2022년 대비 30% 절감 — 로, 옥상 DPPA가 보조금이나 정부 매입 보장 없이도 경제적으로 실현 가능합니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">연간 설비용량 추가 · 옥상 대 대규모</div>
+            <div class="chart-subtitle">연간 추가 GWp · 2022-2027F</div>
+          </div>
+          <div class="chart-unit">GWP/년</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="166" x2="370" y2="166"/>
+            <line class="grid-line" x1="40" y1="133" x2="370" y2="133"/>
+            <line class="grid-line" x1="40" y1="100" x2="370" y2="100"/>
+            <line class="grid-line" x1="40" y1="66"  x2="370" y2="66"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="170" text-anchor="end">2</text>
+            <text class="axis-text" x="32" y="137" text-anchor="end">4</text>
+            <text class="axis-text" x="32" y="104" text-anchor="end">6</text>
+            <text class="axis-text" x="32" y="70"  text-anchor="end">8</text>
+            <rect class="bar-primary"   x="55"  y="170" width="30" height="30"/>
+            <rect class="bar-secondary" x="55"  y="160" width="30" height="10"/>
+            <rect class="bar-primary"   x="105" y="177" width="30" height="23"/>
+            <rect class="bar-secondary" x="105" y="172" width="30" height="5"/>
+            <rect class="bar-primary"   x="155" y="180" width="30" height="20"/>
+            <rect class="bar-secondary" x="155" y="172" width="30" height="8"/>
+            <rect class="bar-primary"   x="205" y="177" width="30" height="23"/>
+            <rect class="bar-secondary" x="205" y="169" width="30" height="8"/>
+            <rect class="bar-primary"   x="255" y="137" width="30" height="63"/>
+            <rect class="bar-secondary" x="255" y="87"  width="30" height="50"/>
+            <rect class="bar-primary"   x="305" y="153" width="30" height="47"/>
+            <rect class="bar-secondary" x="305" y="83"  width="30" height="70"/>
+            <text class="axis-text" x="70"  y="216" text-anchor="middle">2022</text>
+            <text class="axis-text" x="120" y="216" text-anchor="middle">2023</text>
+            <text class="axis-text" x="170" y="216" text-anchor="middle">2024</text>
+            <text class="axis-text" x="220" y="216" text-anchor="middle">2025</text>
+            <text class="axis-text" x="270" y="216" text-anchor="middle">2026F</text>
+            <text class="axis-text" x="320" y="216" text-anchor="middle">2027F</text>
+            <rect x="40" y="14" width="10" height="8" fill="#1E6FFF"/>
+            <text class="label-small" x="55" y="22">대규모</text>
+            <rect x="140" y="14" width="10" height="8" fill="#00A88B"/>
+            <text class="label-small" x="155" y="22">옥상 / C&amp;I</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, MOIT 2025, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · MOIT 2025 = MOIT AUCM Round 1-2 Project Register · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 013 — COMPETITIVE LANDSCAPE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Competitive Landscape</div>
+      <div class="page-section-counter">013 / 016</div>
+    </div>
+    <h1 class="page-h1">개발사 구도: 국내 규모 선도 사업자와 FDI 진입자</h1>
+    <p class="page-subhead">베트남 태양광 개발사 시장은 <strong>500 MWp 이상 설치를 보유한 6-8개 사업자 계층으로 집중화</strong>되고 있습니다[Kira estimates]. 국내 대기업이 대규모 레거시 포트폴리오를 지배하며, DPPA 시대는 프로젝트 파이낸스 역량과 기업 PPA 구조화 경험을 보유한 FDI 개발사들을 유인하고 있습니다.</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">개발사별 시장 점유율 · 설치 태양광 GWp (2025)</div>
+            <div class="chart-subtitle">추정 포트폴리오 · 주요 사업자</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 180" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="140" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="132" y="24" text-anchor="end">Trung Nam Group</text>
+            <rect class="bar-primary" x="140" y="12" width="180" height="16"/>
+            <text class="label-data" x="325" y="23">3.0 GWp</text>
+            <text class="axis-text" x="132" y="48" text-anchor="end">T&amp;T Group</text>
+            <rect class="bar-primary" x="140" y="36" width="108" height="16"/>
+            <text class="label-data" x="253" y="47">1.8 GWp</text>
+            <text class="axis-text" x="132" y="72" text-anchor="end">Xuan Thien Group</text>
+            <rect class="bar-primary" x="140" y="60" width="90" height="16"/>
+            <text class="label-data" x="235" y="71">1.5 GWp</text>
+            <text class="axis-text" x="132" y="96" text-anchor="end">BCG Energy</text>
+            <rect class="bar-secondary" x="140" y="84" width="72" height="16"/>
+            <text class="label-data" x="217" y="95">1.2 GWp</text>
+            <text class="axis-text" x="132" y="120" text-anchor="end">BIM Energy</text>
+            <rect class="bar-secondary" x="140" y="108" width="66" height="16"/>
+            <text class="label-data" x="211" y="119">1.1 GWp</text>
+            <text class="axis-text" x="132" y="144" text-anchor="end">기타 전체</text>
+            <rect fill="#E5E7EB" x="140" y="132" width="180" height="16"/>
+            <text class="label-data" x="325" y="143" fill="#4A5568">~12.1 GWp</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: MOIT PROJECT REGISTER, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>경쟁 역학</h3>
+        <p>상위 5개 개발사는 합산 <strong>~8.6 GWp — 총 설치 설비용량의 약 41%</strong>를 보유합니다[Kira estimates]. 나머지 ~12 GWp는 200개 이상의 소규모 사업자에 분산되어 있으며, 상당수는 FiT 창에서 건설했으나 AUCM 참여나 DPPA 구조화를 위한 기관 역량이 부족합니다.</p>
+        <p>DPPA 시대는 새로운 경쟁 축을 형성합니다: <strong>프로젝트 파이낸스 역량과 전력 구매자 관계 깊이</strong>가 순수한 메가와트 물량보다 중요합니다. 싱가포르(Sembcorp, Amverton), 일본(Marubeni, JERA), 한국(SK E&amp;S, 한국전력)의 FDI 개발사들이 DPPA 구조 프로젝트 소유자로 진입하고 있습니다 — FiT 시대 국내 지배에서의 구조적 전환입니다.</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>상위 5개 개발사 점유율</span><span class="val">설치 GWp의 ~41%</span></div>
+          <div class="stat-line"><span>활성 FDI 개발사</span><span class="val">8-10개 그룹 [Kira est.]</span></div>
+          <div class="stat-line"><span>평균 DPPA 계약 기간</span><span class="val">10-15년</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">DEVELOPER 01</div>
+        <div class="comp-name">Trung Nam Group</div>
+        <div class="comp-parent">국내 대기업 · 하노이 HQ</div>
+        <div class="comp-stat-row"><span>포트폴리오</span><span class="val">~3.0 GWp 태양광</span></div>
+        <div class="comp-stat-row"><span>핵심 자산</span><span class="val">닌투언, 빈투언</span></div>
+        <div class="comp-strengths"><strong>남중부 레거시 지배.</strong> 초기 FiT 수혜자; 남중부 포트폴리오의 출력 제한 역풍에 직면; DPPA 구조 C&amp;I로 전환 중.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">DEVELOPER 02</div>
+        <div class="comp-name">T&amp;T Group</div>
+        <div class="comp-parent">국내 대기업 · 호찌민시 HQ</div>
+        <div class="comp-stat-row"><span>포트폴리오</span><span class="val">~1.8 GWp 태양광</span></div>
+        <div class="comp-stat-row"><span>핵심 자산</span><span class="val">메콩 삼각주, 중부 베트남</span></div>
+        <div class="comp-strengths"><strong>분산된 지역 우위.</strong> 메콩 삼각주 자산이 남중부 출력 제한을 회피; 2025-26년 AUCM 적극 참여.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">DEVELOPER 03</div>
+        <div class="comp-name">BCG Energy</div>
+        <div class="comp-parent">상장사(BCG) · 호찌민시</div>
+        <div class="comp-stat-row"><span>포트폴리오</span><span class="val">~1.2 GWp 태양광</span></div>
+        <div class="comp-stat-row"><span>핵심 자산</span><span class="val">떠이닌, 빈프억</span></div>
+        <div class="comp-strengths"><strong>DPPA 준비 구조.</strong> 상장 지위로 프로젝트 파이낸스 가능; Decree 135/2024 프레임워크 하에서 기업 DPPA를 최초 체결한 베트남 개발사.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">FDI ENTRANT</div>
+        <div class="comp-name">Sembcorp Industries</div>
+        <div class="comp-parent">Temasek 연계 · 싱가포르</div>
+        <div class="comp-stat-row"><span>베트남 파이프라인</span><span class="val">~500 MWp 옥상</span></div>
+        <div class="comp-stat-row"><span>구조</span><span class="val">DPPA / C&amp;I 집중</span></div>
+        <div class="comp-strengths"><strong>FDI 기준 진입.</strong> 금융 가능한 PPA 템플릿, RE100 전력 구매자 관계, 싱가포르 소재 프로젝트 SPV 도입 — DPPA 시장의 계약 표준을 설정합니다.</div>
+      </div>
+    </div>
+    <div class="source-key">MOIT Project Register = MOIT Renewable Energy Project Approval and Grid Registration Database 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 014 — OUTLOOK DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08</div>
+    <h1 class="divider-title">5개년 전망 <span class="accent">&amp; 시나리오</span></h1>
+    <div class="divider-thesis">베트남의 2030년 태양광 궤적은 지역과 부문에 따라 두 갈래로 나뉩니다. <strong>옥상 C&amp;I 태양광은 DPPA 프레임워크 하에서 꾸준히 추가되고, 대규모는 계통에 종속됩니다.</strong> 낙관 시나리오는 EVN의 송전 투자가 일정대로 진행되기를 요구합니다 — 역사적 납기 격차를 고려하면 2년간의 복합 리스크입니다.</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">기본 시나리오</div>
+      <div class="toc-pill">낙관 시나리오</div>
+      <div class="toc-pill">비관 시나리오</div>
+      <div class="toc-pill">핵심 변수</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 015 — SCENARIOS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · 5-Year Outlook</div>
+      <div class="page-section-counter">015 / 016</div>
+    </div>
+    <h1 class="page-h1">기본/낙관/비관 2030: 계통 타이밍이 어느 시나리오가 실현될지 결정</h1>
+    <p class="page-subhead">세 시나리오 모두 하나의 변수에 동의합니다: <strong>옥상 C&amp;I 태양광은 대규모 궤적과 무관하게 연간 3-5 GWp를 추가합니다</strong>[Kira estimates]. 분기는 전적으로 대규모에 있으며, 대규모 분기는 전적으로 EVN의 500kV 및 220kV 계통 확장이 일정대로 진행될지, 18개월 지연될지, 또는 조달/금융 중단에 부딪힐지에 달려 있습니다.</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>기본 시나리오: 2030년 ~50 GWp</h3>
+        <p>EVN의 500kV 남북 3회선이 2026년 4분기에 완공 — 원래 목표보다 6개월 지연. 남중부 출력 제한이 2027년 중반 ~10%로 하락해 ~4 GWp의 고립된 대규모 설비용량을 해소합니다. 2027-29년 연간 추가량은 7-9 GWp 운영 후 2030년 PDP8 목표 접근 시 둔화됩니다. 옥상 C&amp;I는 <strong>2026년부터 연간 ~3.5 GWp를 꾸준히 추가</strong>합니다[Kira estimates]. <strong>2030년 말 총 설치 기본 시나리오: ~50 GWp</strong> — PDP8 73.4 GWp 목표의 68%, 격차는 제약 회랑의 느린 지상 대규모에 집중됩니다.</p>
+        <h3>낙관 시나리오: 2030년 ~65 GWp</h3>
+        <p>EVN 송전이 개정 2026년 일정대로 진행; AUCM 3차 이후 효율적 낙찰; DPPA 계약이 옥상 C&amp;I를 <strong>2028년까지 연간 5+ GWp로 가속화</strong>[Kira estimates]. 대규모 BESS 병설 프로젝트가 2027년 준공해 급전 경제성과 계통 흡수를 개선합니다. 배터리 저장이 출력 제한 지역에서 이전에는 비경제적이었던 ~2 GWp의 추가 태양광 설비용량을 해소합니다. <strong>2030년 말 총 설치 낙관 시나리오: ~65 GWp.</strong></p>
+        <h3>비관 시나리오: 2030년 ~38 GWp</h3>
+        <p>EVN 계통 투자 지연 복합 — 3회선과 220kV 보강 모두 18-24개월 지연. 남중부 출력 제한이 2028년까지 20%+로 지속되어 대규모 추가가 동결됩니다. AUCM 3차 낙찰은 1-2차 분쟁에 대한 규제 검토로 지연됩니다[Kira estimates from developer conversations on appeal risk]. <strong>2030년 말 총 설치 비관 시나리오: ~38 GWp</strong> — PDP8 목표 대비 48% 미달. RE100 및 국가 탄소 중립 공약은 2030년 이후 가속 회복을 요구합니다.</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">시나리오 부채꼴 · 2030년까지 설치 태양광 설비용량</div>
+            <div class="chart-subtitle">GWp · 기본 / 낙관 / 비관</div>
+          </div>
+          <div class="chart-unit">GWP</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="370" y2="200"/>
+            <line class="grid-line" x1="40" y1="173" x2="370" y2="173"/>
+            <line class="grid-line" x1="40" y1="147" x2="370" y2="147"/>
+            <line class="grid-line" x1="40" y1="120" x2="370" y2="120"/>
+            <line class="grid-line" x1="40" y1="93"  x2="370" y2="93"/>
+            <line class="grid-line" x1="40" y1="66"  x2="370" y2="66"/>
+            <line class="grid-line" x1="40" y1="40"  x2="370" y2="40"/>
+            <text class="axis-text" x="32" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="32" y="177" text-anchor="end">10</text>
+            <text class="axis-text" x="32" y="150" text-anchor="end">20</text>
+            <text class="axis-text" x="32" y="123" text-anchor="end">30</text>
+            <text class="axis-text" x="32" y="97"  text-anchor="end">40</text>
+            <text class="axis-text" x="32" y="70"  text-anchor="end">50</text>
+            <text class="axis-text" x="32" y="44"  text-anchor="end">60</text>
+            <polyline points="70,145 122,131 174,107 226,87 278,74 330,67" stroke="#1E6FFF" stroke-width="2.5" fill="none"/>
+            <polyline points="70,145 122,127 174,100 226,79 278,60 330,33" stroke="#00A88B" stroke-width="2" stroke-dasharray="5 3" fill="none"/>
+            <polyline points="70,145 122,136 174,127 226,120 278,107 330,100" stroke="#D97706" stroke-width="2" stroke-dasharray="3 3" fill="none"/>
+            <line x1="40" y1="28" x2="370" y2="28" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="8 4" opacity="0.4"/>
+            <text class="label-small" x="355" y="24" text-anchor="end" fill="#1E6FFF" opacity="0.7">PDP8 73.4</text>
+            <circle cx="330" cy="67"  r="4" fill="#1E6FFF"/>
+            <circle cx="330" cy="33"  r="4" fill="#00A88B"/>
+            <circle cx="330" cy="100" r="4" fill="#D97706"/>
+            <text class="label-data" x="345" y="71"  fill="#1E6FFF" font-size="10">50</text>
+            <text class="label-data" x="345" y="37"  fill="#00A88B" font-size="10">65</text>
+            <text class="label-data" x="345" y="104" fill="#D97706" font-size="10">38</text>
+            <text class="axis-text" x="70"  y="216" text-anchor="middle">2025</text>
+            <text class="axis-text" x="174" y="216" text-anchor="middle">2027F</text>
+            <text class="axis-text" x="330" y="216" text-anchor="middle">2030F</text>
+            <rect x="40" y="14" width="14" height="2" fill="#1E6FFF"/>
+            <text class="label-small" x="58" y="18">기본 ~50 GWp</text>
+            <line x1="145" y1="15" x2="159" y2="15" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 2"/>
+            <text class="label-small" x="163" y="18">낙관 ~65 GWp</text>
+            <line x1="240" y1="15" x2="254" y2="15" stroke="#D97706" stroke-width="2" stroke-dasharray="2 2"/>
+            <text class="label-small" x="258" y="18">비관 ~38 GWp</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: EVN 2025, PDP8 2023, KIRA TRIANGULATION · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EVN 2025 = Tập đoàn Điện lực Việt Nam Annual Capacity Report 2025 · PDP8 2023 = MOIT Power Development Plan VIII Decision 500/QĐ-TTg 2023 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 016 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Methodology Endnote</div>
+      <div class="page-section-counter">016 / 016</div>
+    </div>
+    <h1 class="page-h1">방법론 후기</h1>
+    <p class="page-subhead">본 보고서는 1차 조사(개발사 대화, 전력 구매자 인터뷰, EPC 조달 데이터)와 2차 기준점(정부 통계 출처, EVN/MOIT 규제 공시, 프로젝트 단위 파일링)을 종합합니다. 모든 정량적 주장에는 명시적 인라인 출처 태그가 첨부되어 있습니다.</p>
+    <div class="methend-grid">
+      <div class="methend-left">
+        <h3>Research approach</h3>
+        <p>설치 설비용량 및 파이프라인 데이터는 EVN 연간 설비용량 보고서, MOIT 프로젝트 승인 등록부, NLDC 급전 공보를 교차 검증하여 도출합니다. 세 출처가 상이한 경우 보수적 조정을 적용합니다 — 계통 연계 협약(GIA)을 취득하지 못한 발표 프로젝트 설비용량은 파이프라인 추정에 50% 할인 적용.</p>
+        <p><strong>출력 제한 추정치</strong>는 NLDC 분기 공보에서 도출하되 특정 부지 단위 급전 데이터에 관한 개발사 대화로 보완합니다. 연간 평균(건기 계통 스트레스를 마스킹)이 아닌 최악 조건을 대표하기 위해 피크 기간(1-2분기) 출력 제한율을 사용합니다.</p>
+        <p><strong>DPPA 가격 추정치</strong>는 1세대 Decree 135/2024 계약에 참여한 개발사들과의 대화를 바탕으로 EVN의 공개 산업용 소매 요금표와 교차 검증합니다. 개별 계약 조건은 상업적으로 민감하며, 범위는 알려진 서명 계약의 분포를 반영합니다.</p>
+        <h3>전망 추정치</h3>
+        <p>시나리오 설비용량 전망(기본/낙관/비관)은 KIRA 분석 추정치입니다. EVN 계획 모델이나 MOIT 공식 예측에서 도출한 것이 아니며, 이들은 계통 제약 납기 확률보다 정책 목표를 반영하는 경향이 있습니다.</p>
+        <h3>면책 조항</h3>
+        <p>본 보고서는 정보 및 투자 조사 목적으로만 작성되었으며 어떠한 증권의 매매 청약을 구성하지 않습니다. 분석은 2026년 6월 기준 KIRA Research에 이용 가능한 정보를 기반으로 합니다. 실제 결과는 본 보고서에 포함된 예상치나 추정치와 실질적으로 다를 수 있습니다.</p>
+      </div>
+      <div class="methend-right">
+        <h3>Source alias key</h3>
+        <ul>
+          <li><strong>EVN 2025</strong> = Tập đoàn Điện lực Việt Nam Annual Capacity &amp; Generation Report 2025</li>
+          <li><strong>PDP8 2023</strong> = MOIT Power Development Plan VIII (Decision 500/QĐ-TTg, May 2023)</li>
+          <li><strong>NLDC 2025</strong> = National Load Dispatch Centre Renewable Energy Curtailment Bulletin 2024-2025</li>
+          <li><strong>MOIT 2024</strong> = Bộ Công Thương Decree 135/2024/NĐ-CP DPPA Implementation Guidance (November 2024)</li>
+          <li><strong>MOIT 2025</strong> = MOIT AUCM Round 1-2 Clearing Results and Project Register 2025</li>
+          <li><strong>EVN Grid 2025</strong> = EVN Transmission Grid Investment Plan 2025-2027 (internal release, obtained via project submissions)</li>
+          <li><strong>EVN 2021</strong> = EVN FiT Programme Close Notice (Decision 13/2020 final applications)</li>
+          <li><strong>RE100 2025</strong> = RE100 Member Commitment Register, Climate Group, 2025</li>
+          <li><strong>Kira estimates</strong> = KIRA Research in-house analyst triangulation from primary + secondary evidence streams noted in the methodology section above</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>KR-VN-SOLAR-2027 · CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
