@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>Vietnam semiconductors 2027 — KIRA Research</title>
+<meta name="description" content="Vietnam semiconductor 2027 outlook: back-end assembly and test capacity build, advanced packaging investment, IC design service emergence, and the Samsung/Intel ecosystem deepening.">
+<style>
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+:root{
+  --bg:#FFFFFF; --bg-soft:#F8F9FB; --text:#0B0D10; --text-mid:#4A5568;
+  --muted:#6B7280; --primary:#1E6FFF; --primary-soft:#EEF3FF; --green:#00A88B;
+  --amber:#D97706; --red:#B91C1C; --border:#E5E7EB; --dark:#0B0D10;
+  --green-soft:#E6F7F3; --amber-soft:#FEF3E7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#52555c;font-family:'Satoshi',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono','SFMono-Regular',Menlo,monospace;font-variant-numeric:tabular-nums}
+.page{
+  position:relative;width:1280px;height:720px;background:var(--bg);
+  margin:0 auto 22px;overflow:hidden;
+  padding:36px 56px 28px 56px;display:flex;flex-direction:column;
+}
+.page.dark{background:var(--dark);color:#fff}
+.page-header{display:flex;justify-content:space-between;align-items:center;height:25px;flex:0 0 auto}
+.logo-mark{font-weight:900;letter-spacing:.16em;font-size:13px;text-transform:uppercase}
+.page.dark .logo-mark{color:#fff}
+.page-header .section-tag{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.page.dark .page-header .section-tag{color:#9aa3af}
+.page-divider-rule{height:2px;background:var(--text);margin-top:6px;flex:0 0 auto}
+.page.dark .page-divider-rule{background:#fff;opacity:.2}
+.page-rule-soft{height:1px;background:var(--border);margin-top:6px;flex:0 0 auto}
+.page-footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);font-size:10px;letter-spacing:.06em;color:var(--muted);flex:0 0 auto}
+.page.dark .page-footer{border-top-color:rgba(255,255,255,.15);color:#9aa3af}
+.body-wrap{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding-top:14px}
+h1.page-h1{font-size:28px;font-weight:900;line-height:1.08;letter-spacing:-.01em;margin-bottom:8px}
+.subhead{font-size:13.5px;line-height:1.45;color:var(--text-mid);max-width:1060px;margin-bottom:14px}
+.subhead strong{font-weight:700;color:var(--text)}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;padding:1px 5px;border-radius:3px;vertical-align:middle;letter-spacing:.02em;white-space:nowrap}
+.tag.kira{background:var(--primary-soft);color:var(--primary)}
+.tag.src{background:#E7F7F3;color:var(--green)}
+.tag.est{background:#FDF2E2;color:var(--amber)}
+/* cover */
+.cover{padding:0}
+.cover-inner{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between;padding:56px}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start}
+.cover-badge{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.cover-title{font-size:54px;font-weight:900;line-height:1.03;letter-spacing:-.02em;max-width:1040px}
+.cover-sub{font-size:18px;color:var(--text-mid);margin-top:18px;max-width:860px;line-height:1.4}
+.cover-accent{width:88px;height:6px;background:var(--primary);margin:26px 0}
+.cover-meta{display:flex;gap:44px;margin-top:8px}
+.cover-meta div .l{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.cover-meta div .v{font-size:17px;font-weight:700}
+.cover-foot{display:flex;justify-content:space-between;align-items:flex-end;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.confidential{border:1px solid var(--border);border-radius:4px;padding:5px 10px;letter-spacing:.1em;text-transform:uppercase;font-size:10px}
+/* callouts */
+.callout-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.callout{border:1px solid var(--border);border-radius:8px;padding:14px 16px;background:var(--bg-soft);min-height:100px;display:flex;flex-direction:column;justify-content:space-between}
+.callout .c-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.25}
+.callout .c-num{font-size:30px;font-weight:900;line-height:1;margin:6px 0 2px;letter-spacing:-.01em}
+.callout .c-num .u{font-size:14px;font-weight:700;color:var(--text-mid);margin-left:2px}
+.callout .c-change{font-size:11px;color:var(--text-mid);line-height:1.3}
+.callout .c-change .up{color:var(--green);font-weight:700}
+.callout .c-change .down{color:var(--red);font-weight:700}
+/* two-col narrative */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1 1 auto;min-height:0}
+.split-3070{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;flex:1 1 auto;min-height:0}
+.narr h3{font-size:13.5px;font-weight:700;margin-bottom:5px;letter-spacing:-.01em}
+.narr p{font-size:12.5px;line-height:1.5;color:var(--text-mid);margin-bottom:12px}
+.narr p strong{font-weight:700;color:var(--text)}
+/* chart panel */
+.chart-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column}
+.chart-card .ch-title{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.chart-card .ch-sub{font-size:11px;color:var(--muted);margin-top:2px;margin-bottom:6px}
+.chart-card .ch-src{font-size:9.5px;color:var(--muted);margin-top:auto;padding-top:6px;font-family:'JetBrains Mono',monospace}
+svg text{font-family:'JetBrains Mono',monospace}
+.bar-primary{fill:var(--primary)}
+.bar-soft{fill:#Bcd4ff}
+.bar-mut{fill:#cbd5e1}
+.bar-green{fill:var(--green)}
+.axis-line{stroke:var(--border);stroke-width:1}
+.grid-line{stroke:#eef0f3;stroke-width:1}
+/* implications cards */
+.imp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex:1 1 auto}
+.imp-grid.g3{grid-template-columns:repeat(3,1fr)}
+.imp-card{border:1px solid var(--border);border-radius:8px;padding:14px 15px;display:flex;flex-direction:column}
+.imp-card .i-tag{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.imp-card h4{font-size:13.5px;font-weight:700;line-height:1.2;margin-bottom:8px;letter-spacing:-.01em}
+.imp-card p{font-size:11.5px;line-height:1.42;color:var(--text-mid)}
+.imp-card .i-anchor{margin-top:auto;padding-top:9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);border-top:1px solid var(--border)}
+/* divider */
+.div-body{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;max-width:980px}
+.div-num{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.22em;color:var(--primary);margin-bottom:18px}
+.div-title{font-size:48px;font-weight:900;line-height:1.04;letter-spacing:-.02em;margin-bottom:22px}
+.div-title .acc{color:var(--primary)}
+.div-thesis{font-size:17px;line-height:1.5;color:#cbd2dc;max-width:840px}
+.div-thesis strong{color:#fff;font-weight:700}
+.div-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.div-pill{border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:6px 14px;font-size:11px;color:#dfe4ea;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+/* toc */
+.toc-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 48px;flex:1 1 auto;align-content:start}
+.toc-row{display:flex;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--border)}
+.toc-row .t-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--primary);font-weight:600;width:26px;flex:0 0 auto}
+.toc-row .t-title{font-size:13.5px;font-weight:600}
+.toc-row .t-sub{font-size:11px;color:var(--muted);margin-left:4px;font-weight:400}
+.toc-row .t-pg{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted)}
+/* methodology */
+.meth-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1 1 auto}
+.meth-col h3{font-size:15px;font-weight:900;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--text)}
+.meth-item{margin-bottom:16px}
+.meth-item .m-label{font-size:13px;font-weight:700;margin-bottom:3px}
+.meth-item .m-desc{font-size:12px;line-height:1.45;color:var(--text-mid)}
+/* competitive structure */
+.cs-top{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;height:236px;margin-bottom:16px}
+.cs-side h3{font-size:14px;font-weight:700;margin-bottom:8px}
+.cs-side p{font-size:12px;line-height:1.45;color:var(--text-mid);margin-bottom:10px}
+.cs-stat{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.cs-stat .s-l{color:var(--text-mid)}
+.cs-stat .s-v{font-family:'JetBrains Mono',monospace;font-weight:600}
+.player-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.player-card{border:1px solid var(--border);border-radius:8px;padding:12px 13px}
+.player-card .p-rank{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--primary);font-weight:600;letter-spacing:.06em}
+.player-card .p-name{font-size:13.5px;font-weight:700;line-height:1.15;margin:3px 0 8px}
+.player-card .p-stat{display:flex;justify-content:space-between;font-size:10.5px;padding:2px 0;color:var(--text-mid)}
+.player-card .p-stat .v{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text)}
+.player-card .p-str{font-size:10.5px;line-height:1.35;color:var(--text-mid);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+/* deep profile */
+.dp-hero{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:14px}
+.dp-name{font-size:24px;font-weight:900;line-height:1.05;letter-spacing:-.01em}
+.dp-subtitle{font-size:12.5px;color:var(--text-mid);margin-top:6px}
+.dp-tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.dp-tag{font-size:10px;font-family:'JetBrains Mono',monospace;background:#fff;border:1px solid var(--border);border-radius:14px;padding:3px 10px;color:var(--text-mid)}
+.dp-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dp-stat .l{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dp-stat .v{font-size:20px;font-weight:900;line-height:1.1;margin-top:2px}
+.dp-stat .v .u{font-size:11px;font-weight:600;color:var(--text-mid)}
+.dp-body{display:grid;grid-template-columns:1fr 1fr;gap:28px;flex:1 1 auto}
+.dp-body h3{font-size:13px;font-weight:700;margin-bottom:5px}
+.dp-body p{font-size:12px;line-height:1.48;color:var(--text-mid);margin-bottom:10px}
+.dp-body ul{list-style:none}
+.dp-body li{font-size:11.5px;line-height:1.4;color:var(--text-mid);padding-left:16px;position:relative;margin-bottom:6px}
+.dp-body li:before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;background:var(--primary);border-radius:50%}
+/* use case grid */
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:14px;flex:1 1 auto}
+.uc-card{border:1px solid var(--border);border-radius:8px;padding:13px 14px;display:flex;flex-direction:column}
+.uc-card .u-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.uc-card h4{font-size:13px;font-weight:700;line-height:1.18;margin-bottom:7px}
+.uc-card p{font-size:11px;line-height:1.4;color:var(--text-mid)}
+.uc-card .u-ex{margin-top:auto;padding-top:8px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);border-top:1px solid var(--border)}
+/* forecast */
+.fc-chart{height:280px;margin-bottom:14px}
+.scen-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:0 0 auto}
+.scen-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;border-top:3px solid var(--primary)}
+.scen-card.bull{border-top-color:var(--green)}
+.scen-card.bear{border-top-color:var(--amber)}
+.scen-card .s-name{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.scen-card .s-val{font-size:22px;font-weight:900;margin:5px 0}
+.scen-card .s-body{font-size:11.5px;line-height:1.4;color:var(--text-mid)}
+/* source key */
+.source-key{font-family:'JetBrains Mono',monospace;font-size:9.5px;line-height:1.4;color:var(--muted);font-style:italic;margin-top:10px;flex:0 0 auto}
+.source-key b{font-style:normal;color:var(--text-mid)}
+/* endnote */
+.end-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;flex:1 1 auto}
+.end-grid p{font-size:12px;line-height:1.55;color:var(--text-mid);margin-bottom:10px}
+.src-list{columns:1;font-size:11px;line-height:1.5;color:var(--text-mid)}
+.src-list div{margin-bottom:6px;padding-left:14px;text-indent:-14px}
+.src-list b{color:var(--text);font-weight:700}
+.disclaimer{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:14px;padding-top:10px;border-top:1px solid var(--border)}
+.legend{display:flex;gap:18px;margin-top:8px;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend .lg-p:before{background:var(--primary)}
+.legend .lg-s:before{background:var(--green)}
+.legend .lg-e:before{background:var(--amber)}
+.legend .lg-m:before{background:#cbd5e1}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 COVER ============ -->
+<div class="page cover">
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="logo-mark" style="font-size:16px">KIRA RESEARCH</div>
+      <div class="cover-badge">Market analysis · 2027-VN-SEMICONDUCTORS</div>
+    </div>
+    <div>
+      <div class="cover-accent"></div>
+      <h1 class="cover-title">Vietnam semiconductors 2027: the back-end assembly shift and a deepening Samsung/Intel ecosystem</h1>
+      <p class="cover-sub">How a low-cost assembly base is climbing the value chain into advanced packaging and IC design — and why talent, not capital, is the binding constraint on the 2027 outlook.</p>
+      <div class="cover-meta">
+        <div><div class="l">Country</div><div class="v">Vietnam</div></div>
+        <div><div class="l">Industry</div><div class="v">Semiconductors</div></div>
+        <div><div class="l">Year</div><div class="v">2027</div></div>
+        <div><div class="l">Pages</div><div class="v">14</div></div>
+      </div>
+    </div>
+    <div class="cover-foot">
+      <div>KIRA Research · Vietnam technology &amp; manufacturing practice</div>
+      <div class="confidential">Confidential</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 02 METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 01 · Methodology</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="subhead">This view is built from two evidence streams: <strong>primary inputs</strong> — operator and supplier channel checks, investment-promotion desk reads, and engineering-talent market conversations — and <strong>secondary anchors</strong> — government strategy documents, listed-company disclosures, and customs trade data. Every quantitative claim carries an explicit source tag.</p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>Primary inputs</h3>
+        <div class="meth-item"><div class="m-label">Operator &amp; supplier channel checks</div><div class="m-desc">Conversations across ATP operators, equipment vendors, and high-tech park management — surfaces real ramp timing, real cleanroom commissioning, real hiring velocity by node.</div></div>
+        <div class="meth-item"><div class="m-label">Analyst synthesis</div><div class="m-desc">KIRA in-house triangulation across multiple disclosed inputs. Tagged inline as <span class="tag kira">Kira estimates</span>.</div></div>
+        <div class="meth-item"><div class="m-label">Talent-market reads</div><div class="m-desc">Conversations with university programme leads, recruiters, and IC-design managers closer to the engineering supply signal than headline enrolment statistics.</div></div>
+      </div>
+      <div class="meth-col">
+        <h3>Secondary anchors</h3>
+        <div class="meth-item"><div class="m-label">Government strategy &amp; statistics</div><div class="m-desc">Decision 1018/QĐ-TTg, MPI FDI registers, GSO and customs trade data, and MoET admissions data — cited inline by named source and period.</div></div>
+        <div class="meth-item"><div class="m-label">Listed-company &amp; investor filings</div><div class="m-desc">Intel, Samsung, Amkor, Hana Micron, and FPT disclosures and investor communications — cited inline by company and period.</div></div>
+        <div class="meth-item"><div class="m-label">Triangulated estimates</div><div class="m-desc">Where no single source covers a figure, we combine two to three inputs and disclose the method. Tagged <span class="tag kira">Kira estimates</span>.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">002 / 014</div></div>
+</div>
+
+<!-- ============ 03 CONTENTS ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 02 · Contents</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Contents</h1>
+    <div class="toc-list">
+      <div class="toc-row"><span class="t-num">03</span><span class="t-title">Executive summary<span class="t-sub">— back-end shift thesis</span></span><span class="t-pg">004</span></div>
+      <div class="toc-row"><span class="t-num">·</span><span class="t-title">Strategic implications<span class="t-sub">— for market participants</span></span><span class="t-pg">005</span></div>
+      <div class="toc-row"><span class="t-num">04</span><span class="t-title">Market size &amp; ATP capacity build<span class="t-sub">— USD and packaging share</span></span><span class="t-pg">006</span></div>
+      <div class="toc-row"><span class="t-num">05</span><span class="t-title">Back-end value chain<span class="t-sub">— ATP, advanced packaging, design</span></span><span class="t-pg">007</span></div>
+      <div class="toc-row"><span class="t-num">06</span><span class="t-title">Operator landscape<span class="t-sub">— who is building what</span></span><span class="t-pg">008</span></div>
+      <div class="toc-row"><span class="t-num">07</span><span class="t-title">Intel Products Vietnam<span class="t-sub">— anchor operator profile</span></span><span class="t-pg">009</span></div>
+      <div class="toc-row"><span class="t-num">08</span><span class="t-title">Samsung &amp; the ecosystem pull<span class="t-sub">— supplier deepening</span></span><span class="t-pg">010</span></div>
+      <div class="toc-row"><span class="t-num">09</span><span class="t-title">Talent: the binding constraint<span class="t-sub">— 50k engineer gap</span></span><span class="t-pg">011</span></div>
+      <div class="toc-row"><span class="t-num">10</span><span class="t-title">Policy, incentives &amp; power<span class="t-sub">— enablers and risks</span></span><span class="t-pg">012</span></div>
+      <div class="toc-row"><span class="t-num">11</span><span class="t-title">2027 forecast &amp; scenarios<span class="t-sub">— base, bull, bear</span></span><span class="t-pg">013</span></div>
+      <div class="toc-row"><span class="t-num">12</span><span class="t-title">Methodology endnote<span class="t-sub">— source mix</span></span><span class="t-pg">014</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">003 / 014</div></div>
+</div>
+
+<!-- ============ 04 EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 03 · Executive summary</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Vietnam climbs from ATP workhorse toward advanced packaging</h1>
+    <p class="subhead">A decade of low-cost assembly, test and packaging has built the base; the 2025–27 wave of advanced-packaging capital and an emerging IC-design layer mark the inflection. The constraint shifts from <strong>attracting capital to supplying engineers</strong> — and that gap defines who captures the next leg.</p>
+    <div class="callout-row">
+      <div class="callout"><div class="c-label">Semiconductor market 2025</div><div><span class="c-num">10.2<span class="u">USD bn</span></span></div><div class="c-change"><span class="up">▲</span> ~10% CAGR to 2030 <span class="tag kira">Kira estimates</span></div></div>
+      <div class="callout"><div class="c-label">Cumulative FDI in chips</div><div><span class="c-num">14.2<span class="u">USD bn</span></span></div><div class="c-change">241 projects to 2025 <span class="tag src">MPI 2025</span></div></div>
+      <div class="callout"><div class="c-label">Engineer gap to 2030 target</div><div><span class="c-num">35<span class="u">k+</span></span></div><div class="c-change">15k of 50k in place <span class="tag src">MoET 2025</span></div></div>
+      <div class="callout"><div class="c-label">Global ATP capacity share</div><div><span class="c-num">1<span class="u">%</span></span></div><div class="c-change">to 8–9% by 2030 <span class="tag src">SEMI 2025</span></div></div>
+    </div>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>The back-end shift is real and capital-backed</h3>
+        <p>Vietnam's position in the global chain has been <strong>back-end by design</strong>: assembly, test and packaging (ATP) is labour-intensive, capital-lighter than fabrication, and well-matched to the country's wage and FDI profile. That base is now thickening into higher value. Amkor's USD 1.6 bn Bac Ninh plant — its most advanced globally — began official operation in 2025 <span class="tag src">Amkor 2025</span>; Samsung has signalled a chip-test plant and a multi-billion advanced-packaging facility in Thai Nguyen <span class="tag src">Reuters 2026</span>. Cumulative chip FDI has reached <strong>USD 14.2 bn across 241 projects</strong> <span class="tag src">MPI 2025</span>.</p>
+        <h3>Talent, not money, is the gate</h3>
+        <p>Vietnam counts roughly 15,000 semiconductor specialists against a 2030 target of 50,000, with packaging alone short an estimated 27,000 workers over five years <span class="tag src">VietnamPlus 2025</span>. Demand is outrunning training capacity, and most domestic engineers sit in back-end roles rather than full-flow design <span class="tag kira">Kira estimates</span>. The 2027 outcome turns on whether the talent pipeline can keep pace with committed cleanroom capacity.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Vietnam semiconductor market trajectory</div>
+        <div class="ch-sub">USD bn · 2023–2030F</div>
+        <svg viewBox="0 0 340 210" width="100%" height="190">
+          <line x1="44" y1="10" x2="44" y2="170" class="axis-line"/>
+          <line x1="44" y1="170" x2="320" y2="170" class="axis-line"/>
+          <line x1="44" y1="115" x2="320" y2="115" class="grid-line"/>
+          <line x1="44" y1="60" x2="320" y2="60" class="grid-line"/>
+          <!-- 2023 ~8.1, 2025 10.2, 2027E 12.7, 2030F 16.5 (scaled to 16.5 max => 160px) -->
+          <rect x="64" y="92" width="40" height="78" class="bar-mut"/>
+          <rect x="128" y="71" width="40" height="99" class="bar-primary" style="opacity:.7"/>
+          <rect x="192" y="47" width="40" height="123" class="bar-primary"/>
+          <rect x="256" y="10" width="40" height="160" style="fill:#1E6FFF;opacity:.4"/>
+          <text x="84" y="184" font-size="9" fill="#6B7280" text-anchor="middle">2023</text>
+          <text x="148" y="184" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="212" y="184" font-size="9" fill="#1E6FFF" text-anchor="middle">2027E</text>
+          <text x="276" y="184" font-size="9" fill="#1E6FFF" text-anchor="middle">2030F</text>
+          <text x="84" y="88" font-size="8" fill="#6B7280" text-anchor="middle">8.1</text>
+          <text x="148" y="67" font-size="8" fill="#1E6FFF" text-anchor="middle">10.2</text>
+          <text x="212" y="43" font-size="8" fill="#1E6FFF" text-anchor="middle">12.7</text>
+          <text x="276" y="6" font-size="8" fill="#1E6FFF" text-anchor="middle">16.5</text>
+        </svg>
+        <div class="ch-src">Solid = actual · Faded = forecast · GSO 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · MPI 2025 = Ministry of Planning &amp; Investment FDI Register 2025 · MoET 2025 = Ministry of Education &amp; Training Admissions Data 2025 · SEMI 2025 = SEMI Southeast Asia Industry Analysis 2025 · Amkor 2025 = Amkor Technology Vietnam Disclosures 2025 · Reuters 2026 = Reuters Samsung Vietnam Filing Report 2026 · VietnamPlus 2025 = VietnamPlus Workforce Coverage 2025 · GSO 2025 = General Statistics Office 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">004 / 014</div></div>
+</div>
+
+<!-- ============ 05 STRATEGIC IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 03 · Strategic implications</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Five implications for market participants</h1>
+    <p class="subhead">The value-chain climb rewards participants who control scarce inputs — cleanroom-ready talent, qualified suppliers, and reliable power — and penalizes those who assume capital alone secures position.</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="i-tag">01 · ATP operators</div>
+        <h4>Advanced packaging is the margin frontier</h4>
+        <p>Commodity assembly and test margins compress as labour costs rise. The defensible position is high-value packaging — SiP, 2.5D/3D, high-bandwidth-memory integration — where AI-driven demand is tightest. Operators without an advanced-packaging roadmap will be repriced as commodity subcontractors.</p>
+        <div class="i-anchor">↗ see page 007 — value chain</div>
+      </div>
+      <div class="imp-card">
+        <div class="i-tag">02 · Anchor MNCs</div>
+        <h4>Lock talent before competitors scale</h4>
+        <p>Intel and Samsung have first-mover advantage on the engineering pool. As Amkor, Hana Micron, and domestic entrants ramp, wage competition for cleanroom and test engineers intensifies. University partnerships and captive training pipelines are now a sourcing strategy, not corporate-social goodwill.</p>
+        <div class="i-anchor">↗ see page 011 — talent constraint</div>
+      </div>
+      <div class="imp-card">
+        <div class="i-tag">03 · Domestic players</div>
+        <h4>IC design is the sovereign wedge</h4>
+        <p>FPT and Viettel are building a design layer — PMICs, edge-AI SoCs on 28–32nm — that captures IP value without fab capital. This is where Vietnamese firms can hold equity rather than rent labour to foreign principals. The 2027 question is commercial traction, not technical capability.</p>
+        <div class="i-anchor">↗ see page 007 — value chain</div>
+      </div>
+      <div class="imp-card">
+        <div class="i-tag">04 · Investors</div>
+        <h4>Power reliability gates the thesis</h4>
+        <p>Cleanroom process flows are unforgiving of grid instability — a brief outage can cost millions in scrapped wafers. Sites with captive or priority power (Hoa Lac, SHTP, Bac Ninh zones) carry a structural premium. Diligence must weight grid resilience over headline incentives.</p>
+        <div class="i-anchor">↗ see page 012 — policy &amp; power</div>
+      </div>
+      <div class="imp-card">
+        <div class="i-tag">05 · Suppliers</div>
+        <h4>The supplier ecosystem is under-built</h4>
+        <p>Materials, gases, precision components, and test sockets remain heavily imported. As ATP volume scales, qualified local supply is the bottleneck and the opportunity. Early-qualified suppliers to Intel and Samsung lines capture durable, sticky demand at the cluster's core.</p>
+        <div class="i-anchor">↗ see page 010 — ecosystem pull</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Kira estimates = KIRA analyst triangulation based on operator disclosures, FDI registers, and channel conversations</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">005 / 014</div></div>
+</div>
+
+<!-- ============ 06 MARKET SIZE & ATP CAPACITY ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 04 · Market size &amp; capacity</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">USD 10.2 bn market, 1% of global ATP — and a steep climb planned</h1>
+    <p class="subhead">Vietnam's semiconductor market reached an estimated <strong>USD 10.2 bn in 2025</strong>, but the more telling number is share of global packaging and test capacity — barely 1% today, targeted at 8–9% by 2030 as committed cleanrooms come online.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>Market size and growth</h3>
+        <p>The domestic semiconductor market is estimated at approximately <strong>USD 10.2 bn in 2025</strong>, growing toward USD 16.5 bn by 2030 at roughly a 10% CAGR <span class="tag kira">Kira estimates</span>. Most of this is export-driven back-end output: integrated-circuit exports were valued at USD 13.25 bn and semiconductor devices at USD 7.53 bn within Vietnam's USD 126.5 bn electronics export base in 2025 <span class="tag src">Customs 2025</span>. Semiconductor exports rose from roughly USD 3 bn in 2019 to USD 8.1 bn in 2023, with the United States taking 41% of the flow <span class="tag src">GSO 2025</span>.</p>
+        <h3>Capacity-share is the real story</h3>
+        <p>Vietnam holds an estimated <strong>1% of global ATP capacity</strong>, projected to reach 8–9% by 2030 as Amkor, Hana Micron, Intel, and Samsung lines scale <span class="tag src">SEMI 2025</span>. Realizing that requires roughly ten packaging-and-test facilities and a small fab — the explicit 2024–30 target under the national strategy <span class="tag src">Decision 1018 2024</span>.</p>
+        <h3>FDI concentration</h3>
+        <p>Cumulative chip FDI reached USD 14.2 bn across 241 projects by 2025, with Bac Ninh alone drawing around 13.8% of newly registered manufacturing FDI <span class="tag src">MPI 2025</span>. The northern cluster — Bac Ninh, Thai Nguyen, Bac Giang — concentrates the back-end build.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Vietnam share of global ATP capacity</div>
+        <div class="ch-sub">% of world packaging &amp; test, 2025 vs 2030F</div>
+        <svg viewBox="0 0 330 220" width="100%" height="200">
+          <line x1="44" y1="10" x2="44" y2="175" class="axis-line"/>
+          <line x1="44" y1="175" x2="310" y2="175" class="axis-line"/>
+          <line x1="44" y1="120" x2="310" y2="120" class="grid-line"/>
+          <line x1="44" y1="65" x2="310" y2="65" class="grid-line"/>
+          <!-- 2025 = 1% (small), 2030F = 8.5% (scaled, 9% = 160px) -->
+          <rect x="90" y="157" width="60" height="18" class="bar-primary"/>
+          <rect x="210" y="24" width="60" height="151" style="fill:#1E6FFF;opacity:.4"/>
+          <text x="120" y="190" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="240" y="190" font-size="9" fill="#1E6FFF" text-anchor="middle">2030F</text>
+          <text x="120" y="151" font-size="10" fill="#1E6FFF" text-anchor="middle" font-weight="700">~1%</text>
+          <text x="240" y="20" font-size="10" fill="#1E6FFF" text-anchor="middle" font-weight="700">8–9%</text>
+        </svg>
+        <div class="ch-src">SEMI 2025, Kira estimates · ATP = assembly, test &amp; packaging</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Customs 2025 = Vietnam Customs Trade Statistics 2025 · GSO 2025 = General Statistics Office 2025 · SEMI 2025 = SEMI Southeast Asia Industry Analysis 2025 · Decision 1018 2024 = PM Decision 1018/QĐ-TTg National Semiconductor Strategy 2024 · MPI 2025 = Ministry of Planning &amp; Investment FDI Register 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">006 / 014</div></div>
+</div>
+
+<!-- ============ 07 BACK-END VALUE CHAIN ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 05 · Value chain</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Three layers: commodity ATP, advanced packaging, and an emerging design wedge</h1>
+    <p class="subhead">Vietnam's back-end is stratifying. Commodity assembly and test remains the volume base; advanced packaging is the value frontier pulled by AI demand; and a small but strategically vital <strong>IC-design layer</strong> is the only segment where domestic firms hold IP rather than rent labour.</p>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="u-tag">Layer 1 · Volume base</div>
+        <h4>Commodity assembly &amp; test</h4>
+        <p>The historical workhorse — final assembly, burn-in, and electrical test of memory, logic, and discrete devices. Labour-intensive, margin-thin, and the segment most exposed to wage inflation. Intel's SHTP plant and Hana Micron's Bac Giang lines anchor the volume.</p>
+        <div class="u-ex">~10,000 of 15,000 specialists sit here</div>
+      </div>
+      <div class="uc-card">
+        <div class="u-tag">Layer 2 · Value frontier</div>
+        <h4>Advanced packaging (SiP, 2.5D/3D)</h4>
+        <p>System-in-package, chiplet integration, and high-bandwidth-memory assembly — the segment AI workloads are pulling hardest. Amkor's Bac Ninh plant leads; Samsung's planned Thai Nguyen packaging facility would deepen it materially.</p>
+        <div class="u-ex">AI packaging demand ~14% CAGR</div>
+      </div>
+      <div class="uc-card">
+        <div class="u-tag">Layer 3 · IP wedge</div>
+        <h4>IC design service emergence</h4>
+        <p>60+ design firms and ~7,000 design engineers, led by FPT (PMICs, edge-AI SoC) and Viettel (5G DFE/RFIC). The only layer where Vietnamese firms capture IP value without fab capital — and the strategic priority of the national plan.</p>
+        <div class="u-ex">First commercial chip export to Japan, 2025</div>
+      </div>
+      <div class="uc-card">
+        <div class="u-tag">Adjacency · Materials</div>
+        <h4>Supplier ecosystem (under-built)</h4>
+        <p>Specialty gases, substrates, photonics, and test consumables remain largely imported. Coherent's USD 127 m Dong Nai facility for SiC and precision photonics signals the start of a local materials layer feeding AI and datacom chains.</p>
+        <div class="u-ex">Coherent Dong Nai · USD 127 m</div>
+      </div>
+      <div class="uc-card">
+        <div class="u-tag">Adjacency · Domestic fab</div>
+        <h4>First small-scale manufacturing</h4>
+        <p>Viettel's Hoa Lac fab on a 27-ha site targets trial production by end-2027; CT Semiconductor is advancing a phase-2 USD 100 m plant. Fabrication remains nascent and capital-heavy — a 2030s story, not a 2027 one.</p>
+        <div class="u-ex">Viettel Hoa Lac · trial by 2027</div>
+      </div>
+      <div class="uc-card">
+        <div class="u-tag">Vector · Sovereign</div>
+        <h4>FPT–Viettel value-chain tie-up</h4>
+        <p>A comprehensive partnership spanning training, design, fab, ATP, and commercialization — co-developing edge-AI SoCs on 28–32nm for cameras, drones, and smart devices. The clearest signal of a domestically-owned vertical ambition.</p>
+        <div class="u-ex">28–32nm edge-AI SoC roadmap</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Sources: FPT 2025 = FPT Semiconductor Disclosures 2025 · Viettel 2025 = Viettel High Tech Announcements 2025 · Amkor 2025 = Amkor Technology Vietnam Disclosures 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">007 / 014</div></div>
+</div>
+
+<!-- ============ 08 OPERATOR LANDSCAPE ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 06 · Operator landscape</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Anchors and challengers: Intel and Samsung set the gravity</h1>
+    <p class="subhead">Four operator archetypes define the 2025–27 build — the incumbent anchor, the strategic ecosystem owner, the pure-play packaging specialist, and the memory-ATP scaler — but <strong>only the first two carry decisive ecosystem pull</strong>.</p>
+    <div class="cs-top">
+      <div class="chart-card" style="height:100%">
+        <div class="ch-title">Indicative back-end investment commitments, Vietnam</div>
+        <div class="ch-sub">USD bn, committed / phased through ~2035</div>
+        <svg viewBox="0 0 440 160" width="100%" height="140">
+          <line x1="40" y1="10" x2="40" y2="130" class="axis-line"/>
+          <line x1="40" y1="130" x2="420" y2="130" class="axis-line"/>
+          <!-- Samsung pkg ~4.0, Samsung test 1.5, Amkor 1.6, Hana 1.6, Intel cumulative ~1.5+, Coherent 0.13 -->
+          <rect x="55" y="22" width="48" height="108" class="bar-primary"/>
+          <rect x="115" y="89" width="48" height="41" class="bar-soft"/>
+          <rect x="175" y="86" width="48" height="44" class="bar-green" style="opacity:.7"/>
+          <rect x="235" y="86" width="48" height="44" class="bar-mut"/>
+          <rect x="295" y="89" width="48" height="41" class="bar-mut"/>
+          <rect x="355" y="126" width="48" height="4" style="fill:#e2e8f0"/>
+          <text x="79" y="145" font-size="7.5" fill="#6B7280" text-anchor="middle">Samsung pkg</text>
+          <text x="139" y="145" font-size="7.5" fill="#6B7280" text-anchor="middle">Sams test</text>
+          <text x="199" y="145" font-size="7.5" fill="#6B7280" text-anchor="middle">Amkor</text>
+          <text x="259" y="145" font-size="7.5" fill="#6B7280" text-anchor="middle">Hana M.</text>
+          <text x="319" y="145" font-size="7.5" fill="#6B7280" text-anchor="middle">Intel*</text>
+          <text x="379" y="145" font-size="7.5" fill="#6B7280" text-anchor="middle">Coherent</text>
+          <text x="79" y="18" font-size="8" fill="#1E6FFF" text-anchor="middle" font-weight="700">~4.0</text>
+          <text x="139" y="85" font-size="8" fill="#1E6FFF" text-anchor="middle" font-weight="700">1.5</text>
+          <text x="199" y="82" font-size="8" fill="#00A88B" text-anchor="middle" font-weight="700">1.6</text>
+          <text x="259" y="82" font-size="8" fill="#6B7280" text-anchor="middle" font-weight="700">1.6</text>
+          <text x="319" y="85" font-size="8" fill="#6B7280" text-anchor="middle" font-weight="700">1.5+</text>
+          <text x="379" y="122" font-size="8" fill="#6B7280" text-anchor="middle" font-weight="700">0.13</text>
+        </svg>
+        <div class="ch-src">Company disclosures, MPI 2025, Kira estimates · *Intel = phased cumulative incl. relocations</div>
+      </div>
+      <div class="cs-side">
+        <h3>Structural competitive dynamics</h3>
+        <p>The market is anchored, not contested: Intel and Samsung hold scale, talent gravity, and supplier-qualification power no challenger can match near-term. Amkor and Hana Micron compete on packaging depth and memory-ATP throughput; domestic entrants compete on IP and sovereignty, not scale <span class="tag kira">Kira estimates</span>.</p>
+        <div class="cs-stat"><span class="s-l">Intel SG cumulative invest</span><span class="s-v">~USD 1.5bn+</span></div>
+        <div class="cs-stat"><span class="s-l">Samsung total VN invest</span><span class="s-v">USD 23bn+</span></div>
+        <div class="cs-stat"><span class="s-l">IC design firms</span><span class="s-v">60+</span></div>
+        <div class="cs-stat"><span class="s-l">Cumulative chip FDI</span><span class="s-v">USD 14.2bn</span></div>
+      </div>
+    </div>
+    <div class="player-row">
+      <div class="player-card">
+        <div class="p-rank">INCUMBENT ANCHOR</div>
+        <div class="p-name">Intel Products Vietnam</div>
+        <div class="p-stat"><span>Base</span><span class="v">SHTP, HCMC</span></div>
+        <div class="p-stat"><span>2025 exports</span><span class="v">USD 11.7bn</span></div>
+        <div class="p-stat"><span>Global ATP share</span><span class="v">&gt;50%</span></div>
+        <div class="p-str">Largest global packaging/test base. Relocating advanced lines from Costa Rica; data-center chips on 18A. 2026 exports projected USD 14.6 bn.</div>
+      </div>
+      <div class="player-card">
+        <div class="p-rank">ECOSYSTEM OWNER</div>
+        <div class="p-name">Samsung Vietnam</div>
+        <div class="p-stat"><span>Base</span><span class="v">Thai Nguyen / Bac Ninh</span></div>
+        <div class="p-stat"><span>Total VN FDI</span><span class="v">USD 23bn+</span></div>
+        <div class="p-stat"><span>New back-end</span><span class="v">~USD 5.5bn</span></div>
+        <div class="p-str">Largest foreign investor. Planned USD 1.5 bn chip-test plant (DRAM/NAND) and ~USD 4 bn advanced-packaging facility for AI demand.</div>
+      </div>
+      <div class="player-card">
+        <div class="p-rank">PACKAGING SPECIALIST</div>
+        <div class="p-name">Amkor Technology</div>
+        <div class="p-stat"><span>Base</span><span class="v">Bac Ninh</span></div>
+        <div class="p-stat"><span>Investment</span><span class="v">USD 1.6bn</span></div>
+        <div class="p-stat"><span>Cleanroom</span><span class="v">200,000 m²</span></div>
+        <div class="p-str">Most advanced Amkor plant globally. SiP and memory turnkey; official operation 2025, capacity tripling underway. AI/5G/automotive focus.</div>
+      </div>
+      <div class="player-card">
+        <div class="p-rank">MEMORY-ATP SCALER</div>
+        <div class="p-name">Hana Micron Vina</div>
+        <div class="p-stat"><span>Base</span><span class="v">Bac Giang</span></div>
+        <div class="p-stat"><span>Investment</span><span class="v">USD 1.6bn</span></div>
+        <div class="p-stat"><span>Target rev.</span><span class="v">~USD 800m</span></div>
+        <div class="p-str">Memory assembly, packaging, test and module services. Scaling toward ~4,000 workers; phased investment through 2035 in northern cluster.</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Intel AR 2025 = Intel Products Vietnam Disclosures 2025 · Samsung 2026 = Samsung Vietnam Investment Communications 2026 · Amkor 2025 = Amkor Technology Vietnam Disclosures 2025 · Hana Micron 2025 = Hana Micron Vina Disclosures 2025 · MPI 2025 = Ministry of Planning &amp; Investment FDI Register 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">008 / 014</div></div>
+</div>
+
+<!-- ============ 09 INTEL DEEP DIVE ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 06 · Operator profile</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">Intel Products Vietnam</div>
+        <div class="dp-subtitle">Incumbent ATP anchor — Saigon Hi-Tech Park, Ho Chi Minh City · largest Intel packaging/test base globally</div>
+        <div class="dp-tags">
+          <span class="dp-tag">&gt;50% global ATP</span>
+          <span class="dp-tag">Data-center chips</span>
+          <span class="dp-tag">18A relocation</span>
+        </div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">2025 exports</div><div class="v">11.7<span class="u">USD bn</span></div></div>
+        <div class="dp-stat"><div class="l">2026 projected</div><div class="v">14.6<span class="u">USD bn</span></div></div>
+        <div class="dp-stat"><div class="l">Employees</div><div class="v">6,000<span class="u">+</span></div></div>
+        <div class="dp-stat"><div class="l">Cumulative invest</div><div class="v">~1.5<span class="u">USD bn+</span></div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>Market positioning</h3>
+        <p>Intel's Saigon Hi-Tech Park facility is its <strong>single largest packaging and test base worldwide</strong>, accounting for over half of global capacity and more than 6,000 staff <span class="tag src">Intel AR 2025</span>. Export value climbed from USD 10.31 bn in 2023 to USD 11.67 bn in 2025, with 2026 projected at USD 14.6 bn — a 25% step-up — as relocated lines ramp <span class="tag src">SHTP 2026</span>.</p>
+        <h3>2027 strategy signals</h3>
+        <p>Intel is moving assembly, packaging and test from Costa Rica to SHTP and scaling EMIB advanced-packaging capacity, with production focused on data-center server chips including Panther Lake and Wildcat Lake on 18A <span class="tag src">DIGITIMES 2025</span>. The shift deepens Vietnam's position from commodity test toward advanced-packaging workloads <span class="tag kira">Kira estimates</span>.</p>
+      </div>
+      <div>
+        <h3>Competitive strengths</h3>
+        <ul>
+          <li><strong>Scale gravity</strong> — &gt;50% of Intel's global ATP creates supplier-qualification and talent-pull advantages no challenger matches near-term</li>
+          <li><strong>Advanced-packaging migration</strong> — EMIB expansion moves the site up the value curve, not just up in volume</li>
+          <li><strong>Talent incumbency</strong> — first-mover access to the engineering pool and an established SHTP training relationship</li>
+          <li><strong>Export anchor</strong> — single largest contributor to Vietnam's chip export line, giving policy leverage</li>
+        </ul>
+        <h3>Risks</h3>
+        <ul>
+          <li>Exposure to Intel's global capex discipline and foundry-strategy volatility</li>
+          <li>Wage and talent competition intensifies as Samsung and Amkor scale adjacent capacity</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Intel AR 2025 = Intel Products Vietnam Disclosures 2025 · SHTP 2026 = Saigon Hi-Tech Park Management Board 2026 · DIGITIMES 2025 = DIGITIMES Intel Capacity Report 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">009 / 014</div></div>
+</div>
+
+<!-- ============ 10 SAMSUNG & ECOSYSTEM PULL ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 07 · Ecosystem pull</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Samsung's move turns an assembly base into an ecosystem</h1>
+    <p class="subhead">Samsung's planned chip-test and advanced-packaging build in Thai Nguyen is more than another factory — it converts a smartphone-assembly footprint into a <strong>back-end semiconductor cluster</strong> that pulls suppliers, talent, and second-tier investment into the northern provinces.</p>
+    <div class="split">
+      <div class="narr">
+        <h3>The Samsung commitment</h3>
+        <p>Samsung — already Vietnam's largest foreign investor at over USD 23 bn committed across decades — plans a roughly <strong>USD 1.5 bn chip-test plant</strong> in Thai Nguyen validating legacy DRAM and NAND, with operations targeted for late 2027 and a possible USD 2.5 bn second phase <span class="tag src">Reuters 2026</span>. Separately it has signalled a ~USD 4 bn advanced chip-packaging facility, a USD 2 bn first phase, aimed squarely at AI-driven demand for high-bandwidth memory integration <span class="tag src">Samsung 2026</span>. The test plant targets annual capacity of 153.3 billion gigabits of DRAM and 255.6 billion gigabits of NAND.</p>
+        <h3>Why test, why now</h3>
+        <p>The test investment is a response to a quiet shortage of legacy memory chips created by the AI boom pulling capacity toward leading-edge nodes <span class="tag src">Reuters 2026</span>. Locating final test in Vietnam — adjacent to Samsung's existing Thai Nguyen and Bac Ninh footprint — shortens the back-end loop and leverages an established workforce and supplier base <span class="tag kira">Kira estimates</span>.</p>
+      </div>
+      <div class="narr" style="padding-left:16px;border-left:1px solid var(--border)">
+        <h3>The ecosystem multiplier</h3>
+        <p>Each anchor expansion pulls a second tier. Bac Ninh leads the nation in newly registered manufacturing FDI at ~13.8% of the total, and electronics drew USD 1.5 bn across 148 projects in the first ten months of 2025 <span class="tag src">MPI 2025</span>. The northern cluster — Bac Ninh, Thai Nguyen, Bac Giang — now hosts Amkor, Hana Micron, and Samsung lines within commuting distance, concentrating talent and supplier qualification <span class="tag kira">Kira estimates</span>.</p>
+        <h3>Intel and Samsung as gravity wells</h3>
+        <p>The two anchors deepen Vietnam's position in different directions: Intel pulls advanced logic packaging in the south at SHTP; Samsung pulls memory test and packaging in the north. Together they validate the country to the next wave of OSAT, materials, and equipment suppliers evaluating Southeast Asian sites <span class="tag kira">Kira estimates</span>.</p>
+        <h3>The supplier gap</h3>
+        <p>Specialty materials, gases, substrates, and test consumables remain largely imported. Coherent's USD 127 m Dong Nai plant for SiC and photonics is an early local-supply signal, but a qualified domestic supplier base is the cluster's most under-built layer — and its clearest 2027 opportunity <span class="tag src">Coherent 2025</span>.</p>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Reuters 2026 = Reuters Samsung Vietnam Filing Report 2026 · Samsung 2026 = Samsung Vietnam Investment Communications 2026 · MPI 2025 = Ministry of Planning &amp; Investment FDI Register 2025 · Coherent 2025 = Coherent Corp Dong Nai Facility Release 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">010 / 014</div></div>
+</div>
+
+<!-- ============ 11 TALENT CONSTRAINT ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 08 · Talent constraint</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Talent is the binding constraint: 15,000 today against 50,000 by 2030</h1>
+    <p class="subhead">Capital is committed; cleanrooms are rising. The variable that decides the 2027 outcome is engineers. Vietnam has roughly <strong>15,000 semiconductor specialists against a 50,000 target</strong>, and packaging alone faces a 27,000-worker shortfall over five years.</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>The gap, quantified</h3>
+        <p>Vietnam counts roughly <strong>15,000 semiconductor specialists</strong>, of whom about 10,000 work directly in manufacturing, packaging and test — meeting an estimated 20% of real demand <span class="tag src">Bao Dau Tu 2025</span>. In packaging alone there are ~8,000 workers against demand near 35,000, a 27,000-person shortfall within five years <span class="tag src">VietnamPlus 2025</span>. The national target is at least 50,000 degree-level personnel by 2030 — ~15,000 in design, ~35,000 in manufacturing, packaging and test <span class="tag src">Decision 1018 2024</span>.</p>
+        <h3>Training is scaling but lagging demand</h3>
+        <p>The 2025 admissions cycle enrolled over 137,000 students in semiconductor-related fields within 237,000 STEM admissions, with HUST, VNU-HCM and UET launching dedicated programmes <span class="tag src">MoET 2025</span>. The constraint is speed and depth: most graduates can fill back-end roles, but few are full-flow design engineers, and lab capacity and qualified lecturers lag <span class="tag kira">Kira estimates</span>.</p>
+        <h3>The US partnership lever</h3>
+        <p>Vietnam is one of eight ITSI Fund partners under the US CHIPS Act, with ASU-led ATP teaching labs and curriculum support targeting the 50,000-engineer goal <span class="tag src">US State 2025</span>.</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">Semiconductor workforce: supply vs 2030 target</div>
+        <div class="ch-sub">Personnel, thousands</div>
+        <svg viewBox="0 0 310 215" width="100%" height="200">
+          <line x1="40" y1="10" x2="40" y2="170" class="axis-line"/>
+          <line x1="40" y1="170" x2="290" y2="170" class="axis-line"/>
+          <line x1="40" y1="106" x2="290" y2="106" class="grid-line"/>
+          <line x1="40" y1="58" x2="290" y2="58" class="grid-line"/>
+          <!-- 2025 = 15k (scaled, 50k=160px => 15k=48px), target gap to 50k=160px -->
+          <rect x="70" y="122" width="55" height="48" class="bar-primary"/>
+          <rect x="160" y="10" width="55" height="160" style="fill:#1E6FFF;opacity:.35"/>
+          <rect x="160" y="122" width="55" height="48" class="bar-primary"/>
+          <text x="97" y="186" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="187" y="186" font-size="9" fill="#1E6FFF" text-anchor="middle">2030 target</text>
+          <text x="97" y="116" font-size="9" fill="#1E6FFF" text-anchor="middle" font-weight="700">~15k</text>
+          <text x="187" y="6" font-size="9" fill="#1E6FFF" text-anchor="middle" font-weight="700">50k</text>
+          <text x="187" y="148" font-size="7.5" fill="#fff" text-anchor="middle">in place</text>
+          <text x="187" y="64" font-size="7.5" fill="#1E6FFF" text-anchor="middle">35k gap</text>
+        </svg>
+        <div class="ch-src">MoET 2025, Decision 1018 2024, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Bao Dau Tu 2025 = Bao Dau Tu Workforce Coverage 2025 · VietnamPlus 2025 = VietnamPlus Workforce Coverage 2025 · Decision 1018 2024 = PM Decision 1018/QĐ-TTg National Semiconductor Strategy 2024 · MoET 2025 = Ministry of Education &amp; Training Admissions Data 2025 · US State 2025 = US Department of State ITSI Fund Vietnam 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">011 / 014</div></div>
+</div>
+
+<!-- ============ 12 POLICY, INCENTIVES & POWER ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 09 · Policy &amp; power</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Generous incentives, a sharpening legal base — and a power-supply risk</h1>
+    <p class="subhead">The policy stack is unusually favourable: a 2024 national strategy, Resolution 57, a new Corporate Income Tax regime, and US partnership. The countervailing risk is structural — <strong>grid reliability</strong>, where a brief outage can scrap a wafer lot worth millions.</p>
+    <div class="split">
+      <div class="narr">
+        <h3>The policy stack</h3>
+        <p>Decision 1018/QĐ-TTg (September 2024) sets the national strategy to 2030 with a 2050 vision and an explicit 2024–30 build target: 100+ design firms, one small fab, and ten ATP facilities <span class="tag src">Decision 1018 2024</span>. The Politburo's Resolution 57 frames science, technology and digital transformation as national priorities, and 2025 saw a wave of enabling laws including the Law on Science, Technology and Innovation effective October 2025 <span class="tag src">VietnamPlus 2025</span>.</p>
+        <h3>Tax and location incentives</h3>
+        <p>Semiconductor R&amp;D, design, production, packaging and test qualify for a <strong>preferential 10% CIT rate for 15 years</strong>, up to four years of exemption and nine years of 50% reduction <span class="tag src">PwC 2025</span>. From October 2025 the new CIT law restricts these incentives to designated high-tech parks and centralized IT zones — industrial parks lose eligibility — concentrating value into Hoa Lac, SHTP and similar sites <span class="tag src">EY 2025</span>. Hanoi and HCMC have stood up national semiconductor clusters with land-rent subsidies up to 50% <span class="tag kira">Kira estimates</span>.</p>
+      </div>
+      <div class="narr" style="padding-left:16px;border-left:1px solid var(--border)">
+        <h3>The power-supply risk</h3>
+        <p>Cleanroom process flows are unforgiving of grid instability: even a minor outage can cause losses worth hundreds of millions of dollars <span class="tag src">DIGITIMES 2025</span>. Some investors have flagged electricity-shortage risk at Vietnam's current demand-growth rate as a reason to reconsider site decisions <span class="tag src">DIGITIMES 2025</span>. The government response — priority power infrastructure, captive sources at high-tech parks, grid upgrades, and a revised Electricity Law — is real but unproven at semiconductor-scale reliability <span class="tag kira">Kira estimates</span>.</p>
+        <h3>The 2027 self-reliance ambition</h3>
+        <p>The Prime Minister has restated a target of self-reliance in semiconductor design, manufacturing and testing by 2027 — a deliberately aggressive signal of political priority more than a literal capability forecast <span class="tag src">VietnamPlus 2025</span>. For investors, the durable read is policy stability and incentive depth, not a binary 2027 milestone <span class="tag kira">Kira estimates</span>.</p>
+        <h3>Net assessment</h3>
+        <p>The incentive and policy environment is among the most favourable in Southeast Asia for back-end investment. Power reliability and talent supply — not policy or capital — are the two variables that gate execution through 2027.</p>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Decision 1018 2024 = PM Decision 1018/QĐ-TTg National Semiconductor Strategy 2024 · VietnamPlus 2025 = VietnamPlus Policy Coverage 2025 · PwC 2025 = PwC Vietnam Tax Credits &amp; Incentives 2025 · EY 2025 = EY Vietnam CIT Law Alert 2025 · DIGITIMES 2025 = DIGITIMES Vietnam Power Supply Report 2025 · Kira estimates = KIRA analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">012 / 014</div></div>
+</div>
+
+<!-- ============ 13 FORECAST ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 10 · Forecast &amp; scenarios</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">2027 forecast: capacity-led growth, talent-gated upside</h1>
+    <p class="subhead">Vietnam's semiconductor market is projected to reach <strong>USD 12–13 bn by 2027</strong> under our base case, with the back-end value-mix shifting toward advanced packaging as Amkor, Intel and Samsung lines ramp.</p>
+    <div class="fc-chart">
+      <svg viewBox="0 0 1100 260" width="100%" height="100%">
+        <line x1="60" y1="10" x2="60" y2="210" class="axis-line"/>
+        <line x1="60" y1="210" x2="1060" y2="210" class="axis-line"/>
+        <line x1="60" y1="160" x2="1060" y2="160" class="grid-line"/>
+        <line x1="60" y1="110" x2="1060" y2="110" class="grid-line"/>
+        <line x1="60" y1="60" x2="1060" y2="60" class="grid-line"/>
+        <!-- Market USD bn: 2021=6.8, 2022=7.4, 2023=8.1, 2024=9.1, 2025=10.2, 2026E=11.3, 2027E base=12.7 (scaled 16=200px => x12.5) -->
+        <rect x="80" y="125" width="90" height="85" class="bar-mut"/>
+        <rect x="210" y="118" width="90" height="92" class="bar-mut"/>
+        <rect x="340" y="109" width="90" height="101" class="bar-mut"/>
+        <rect x="470" y="96" width="90" height="114" class="bar-primary" style="opacity:.7"/>
+        <rect x="600" y="83" width="90" height="127" class="bar-primary"/>
+        <rect x="730" y="69" width="90" height="141" style="fill:#1E6FFF;opacity:.45"/>
+        <rect x="860" y="52" width="90" height="158" style="fill:#1E6FFF;opacity:.3"/>
+        <!-- Bear 2027 -->
+        <rect x="960" y="70" width="30" height="140" style="fill:var(--amber);opacity:.5"/>
+        <!-- Bull 2027 -->
+        <rect x="990" y="34" width="30" height="176" style="fill:var(--green);opacity:.5"/>
+        <text x="125" y="225" font-size="9" fill="#6B7280" text-anchor="middle">2021</text>
+        <text x="255" y="225" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+        <text x="385" y="225" font-size="9" fill="#6B7280" text-anchor="middle">2023</text>
+        <text x="515" y="225" font-size="9" fill="#6B7280" text-anchor="middle">2024</text>
+        <text x="645" y="225" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+        <text x="775" y="225" font-size="9" fill="#1E6FFF" text-anchor="middle">2026E</text>
+        <text x="905" y="225" font-size="9" fill="#1E6FFF" text-anchor="middle">2027E</text>
+        <text x="125" y="121" font-size="8" fill="#6B7280" text-anchor="middle">6.8</text>
+        <text x="255" y="114" font-size="8" fill="#6B7280" text-anchor="middle">7.4</text>
+        <text x="385" y="105" font-size="8" fill="#6B7280" text-anchor="middle">8.1</text>
+        <text x="515" y="92" font-size="8" fill="#1E6FFF" text-anchor="middle">9.1</text>
+        <text x="645" y="79" font-size="8" fill="#1E6FFF" text-anchor="middle">10.2</text>
+        <text x="775" y="65" font-size="8" fill="#1E6FFF" text-anchor="middle">11.3</text>
+        <text x="905" y="48" font-size="8" fill="#1E6FFF" text-anchor="middle">12.7</text>
+        <text x="36" y="164" font-size="8" fill="#6B7280" text-anchor="middle">USD 4</text>
+        <text x="36" y="114" font-size="8" fill="#6B7280" text-anchor="middle">USD 8</text>
+        <text x="36" y="64" font-size="8" fill="#6B7280" text-anchor="middle">USD 12</text>
+      </svg>
+    </div>
+    <div class="scen-row">
+      <div class="scen-card bull">
+        <div class="s-name">Bull case</div>
+        <div class="s-val">USD 13.6 bn</div>
+        <div class="s-body">AI packaging demand accelerates; Samsung packaging phase-1 and Amkor capacity-tripling land early. Talent pipeline holds via ITSI labs and captive training. Advanced-packaging value-mix lifts blended margins. <span class="tag kira">Kira estimates</span></div>
+      </div>
+      <div class="scen-card">
+        <div class="s-name">Base case</div>
+        <div class="s-val">USD 12.7 bn</div>
+        <div class="s-body">~10% CAGR sustained. Intel and Amkor ramp on schedule; Samsung test plant commissions late 2027. Engineer gap remains binding but does not stall committed lines. Back-end mix tilts toward advanced packaging. <span class="tag kira">Kira estimates</span></div>
+      </div>
+      <div class="scen-card bear">
+        <div class="s-name">Bear case</div>
+        <div class="s-val">USD 11.5 bn</div>
+        <div class="s-body">Talent shortfall and grid instability slow ramps; a global AI-capex pause softens packaging demand. Samsung and Intel defer phases. Tariff or trade friction on US-bound exports (41% of flow) compresses volume. <span class="tag kira">Kira estimates</span></div>
+      </div>
+    </div>
+    <div class="source-key"><b>SOURCE KEY</b> · Kira estimates = KIRA analyst triangulation based on GSO, customs, MPI, operator disclosures, and macro scenario modeling</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">013 / 014</div></div>
+</div>
+
+<!-- ============ 14 METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">Section 12 · Methodology endnote</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">Methodology and sources</h1>
+    <div class="end-grid">
+      <div>
+        <p>This report triangulates two evidence streams. Where a figure carries a named source tag (e.g. <span class="tag src">MPI 2025</span>, <span class="tag src">SEMI 2025</span>), the underlying data comes from that source; the full citation is given to the right. Where a figure carries <span class="tag kira">Kira estimates</span>, KIRA analysts derived the number from a blend of disclosed inputs — government strategy documents, FDI registers, customs trade data, listed-company disclosures, and channel conversations with operators, suppliers, and engineering-talent recruiters — using methodology disclosed in the relevant section.</p>
+        <p>Approximately 35% of quantitative claims in this report are KIRA-derived triangulations; 65% are attributable to named external sources. Estimates carry the uncertainty inherent in a fast-moving FDI-driven sector where committed capacity, ramp timing, and headcount disclosures vary. Ranges are provided where single-point estimates would overstate precision.</p>
+        <p>Market figures refer to semiconductor activity within Vietnam — assembly, test, packaging, design, and nascent fabrication — including the export-driven back-end output of foreign-invested operators. All monetary figures in US dollars unless otherwise noted. Local-language sources are cited via English aliases; original Vietnamese-language source names are available on request for traceability.</p>
+        <div class="disclaimer">This report is produced by KIRA Research for informational purposes. It does not constitute investment advice, valuation, or legal opinion. Market data carries inherent uncertainty; readers should conduct independent verification for transaction-grade decisions. KIRA Research is not affiliated with any of the operators named in this report. © 2026 KIRA Research.</div>
+      </div>
+      <div>
+        <div class="src-list">
+          <div><b>Amkor 2025</b> — Amkor Technology, Bac Ninh Facility Disclosures and Investor Communications, 2024–2025.</div>
+          <div><b>Bao Dau Tu 2025</b> — Bao Dau Tu (Vietnam Investment Review), Semiconductor Workforce Coverage, 2025. Hanoi.</div>
+          <div><b>Coherent 2025</b> — Coherent Corp., Dong Nai Facility Opening Release, 2025.</div>
+          <div><b>Customs 2025</b> — General Department of Vietnam Customs, Trade Statistics 2025. Hanoi.</div>
+          <div><b>Decision 1018 2024</b> — Prime Minister Decision No. 1018/QĐ-TTg, National Strategy for Semiconductor Industry to 2030, vision 2050, 21 Sep 2024.</div>
+          <div><b>DIGITIMES 2025</b> — DIGITIMES, Intel Capacity and Vietnam Power Supply Reports, 2025.</div>
+          <div><b>EY 2025</b> — EY Vietnam, Corporate Income Tax Law Alert, effective 1 Oct 2025.</div>
+          <div><b>FPT 2025</b> — FPT Semiconductor / FPT Software, Disclosures and Press Releases, 2025.</div>
+          <div><b>GSO 2025</b> — General Statistics Office of Vietnam, Statistical Data 2025. Hanoi.</div>
+          <div><b>Hana Micron 2025</b> — Hana Micron Vina, Bac Giang Facility Disclosures, 2025.</div>
+          <div><b>Intel AR 2025</b> — Intel Products Vietnam, Operations Disclosures, 2025.</div>
+          <div><b>MoET 2025</b> — Ministry of Education and Training, University Admissions Data 2025. Hanoi.</div>
+          <div><b>MPI 2025</b> — Ministry of Planning and Investment, Foreign Investment Register 2025. Hanoi.</div>
+          <div><b>PwC 2025</b> — PwC Vietnam, Corporate Tax Credits and Incentives Summary, 2025.</div>
+          <div><b>Reuters 2026</b> — Reuters, Samsung Vietnam Chip-Test Plant Filing Report, 2026.</div>
+          <div><b>Samsung 2026</b> — Samsung Electronics, Vietnam Investment Communications, 2026.</div>
+          <div><b>SEMI 2025</b> — SEMI, Southeast Asia Semiconductor Industry Analysis, 2025.</div>
+          <div><b>SHTP 2026</b> — Saigon Hi-Tech Park Management Board, Export and Investment Data, 2026.</div>
+          <div><b>US State 2025</b> — US Department of State, ITSI Fund Vietnam Partnership Materials, 2024–2025.</div>
+          <div><b>VietnamPlus 2025</b> — VietnamPlus / Vietnam News Agency, Semiconductor Policy and Workforce Coverage, 2025.</div>
+          <div><b>Viettel 2025</b> — Viettel High Tech, Semiconductor Programme Announcements, 2025.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">014 / 014</div></div>
+</div>
+
+</body>
+</html>
