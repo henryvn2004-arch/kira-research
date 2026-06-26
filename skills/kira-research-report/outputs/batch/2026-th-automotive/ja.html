@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — タイ自動車産業2026：日系OEMの再配置とEVサプライチェーンの現地化</title>
+<meta name="description" content="タイの自動車市場2026年を分析。中国系EV勢力の台頭に直面する日系OEMの再配置、EV 3.5政策下のEVサプライチェーン現地化、市場構造、主要プレーヤー動向、AIの影響、5ヵ年見通しを網羅した調査報告。">
+<meta property="og:title" content="KIRA Research — タイ自動車産業2026">
+<meta property="og:description" content="タイ自動車市場における日系OEMの再配置とEVサプライチェーンの現地化。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "出典凡例 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 760px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+.logo-mark { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.03em; color: var(--text); }
+.logo-mark .accent { color: var(--primary); }
+
+.axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.meth-item { margin-bottom: 16px; }
+.meth-item .lab { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.meth-item .desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: flex; align-items: baseline; gap: 12px; padding: 7px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); font-weight: 700; width: 28px; flex-shrink: 0; }
+.toc-row .ttitle { font-size: 13px; color: var(--text); font-weight: 600; flex: 1; }
+.toc-row .tsub { font-size: 10.5px; color: var(--muted); }
+.toc-row .tpage { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-left: auto; }
+.mdc-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.mdc-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 14px; }
+.mdc-narrative h3:first-child { margin-top: 0; }
+.mdc-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.mdc-narrative p strong { color: var(--text); font-weight: 600; }
+.mdc-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.meth-end-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 36px; flex: 1; min-height: 0; }
+.meth-end-left p { font-size: 12px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.meth-end-left p strong { color: var(--text); font-weight: 600; }
+.meth-end-left .mix-bar { display: flex; height: 26px; border-radius: 4px; overflow: hidden; margin: 14px 0 6px; }
+.meth-end-left .mix-seg { display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #fff; font-weight: 700; letter-spacing: 0.05em; }
+.meth-end-left .mix-cap { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.src-list h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.src-list .src-item { font-size: 10.5px; line-height: 1.45; color: var(--text-mid); padding: 4px 0; border-bottom: 1px dotted var(--border); }
+.src-list .src-item .alias { font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 700; }
+.disclaimer { font-size: 9.5px; line-height: 1.5; color: var(--muted); margin-top: 12px; font-style: italic; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== PAGE 001 — COVER ===================== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="logo-mark">KIRA<span class="accent">.</span> RESEARCH</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">市場分析 · 東南アジア · 自動車</div>
+        <h1>タイ自動車産業 <span class="accent">2026</span>：日系OEMの再配置とEVサプライチェーンの現地化</h1>
+        <p class="cover-subtitle">転換期を迎えた生産拠点。日系メーカーが生産能力を集約するなか、中国系EV参入企業は現地化を加速させ、政策は2027年に向けて現地調達の締め付けを強化している。</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">対象国</div><div class="val">タイ <span class="accent">(TH)</span></div></div>
+          <div class="cover-meta-item"><div class="label">産業</div><div class="val">自動車・EVサプライチェーン</div></div>
+          <div class="cover-meta-item"><div class="label">対象年</div><div class="val">2026 <span class="accent">· 5ヵ年展望</span></div></div>
+          <div class="cover-meta-item"><div class="label">レポートID</div><div class="val">KR-THA-AUTO-2026</div></div>
+        </div>
+        <div style="margin-top:24px;" class="cover-confidential">機密 · 許諾読者限定 · <strong>© 2026 KIRA Research</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 002 — METHODOLOGY ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 01 · Methodology</div>
+      <div class="page-section-counter">002 / 024</div>
+    </div>
+    <h1 class="page-h1">本レポートの分析手法</h1>
+    <p class="page-subhead">本レポートは2つのエビデンスストリームに基づいて構築されています。<strong>一次情報</strong>——現地チャネルチェック、アナリスト統合、専門オペレーター取材——と、<strong>二次情報アンカー</strong>——統計当局、上場企業開示書類、三角測定による推計——です。すべての定量的主張には明示的な出典タグを付しています。</p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>一次情報</h3>
+        <div class="meth-item"><div class="lab">現地チャネルチェック</div><div class="desc">ディーラー訪問、輸入業者およびTier-1サプライヤーとの対話、ラヨン・チョンブリ工業団地の実態把握——実際の受注状況、現地調達ポジション、ライン稼働率を把握します。</div></div>
+        <div class="meth-item"><div class="lab">アナリスト統合</div><div class="desc">複数の開示済み情報を横断したKIRA独自の三角測定。インライン表記は[Kira estimates]。</div></div>
+        <div class="meth-item"><div class="lab">専門家・オペレーター取材</div><div class="desc">自動車クラスター専門家およびコンポーネント事業者との対話。EV移行シグナルを新車登録データより早く捉えます。</div></div>
+      </div>
+      <div class="meth-col">
+        <h3>二次情報アンカー</h3>
+        <div class="meth-item"><div class="lab">統計当局</div><div class="desc">タイ工業連盟自動車部会、NESDC、タイ中央銀行、BOI申請書類——出典名を明示してインライン引用します。</div></div>
+        <div class="meth-item"><div class="lab">上場企業開示書類</div><div class="desc">主要OEMの年次報告書、投資家向け資料、工場設備投資発表——企業名と期間を明示してインライン引用します。</div></div>
+        <div class="meth-item"><div class="lab">三角測定推計</div><div class="desc">単一情報源で数値を網羅できない場合は2〜3情報源を組み合わせ、手法を開示します。[Kira estimates]と表記します。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 003 — CONTENTS ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Contents</div>
+      <div class="page-section-counter">003 / 024</div>
+    </div>
+    <h1 class="page-h1">目次</h1>
+    <p class="page-subhead">マクロ背景、市場規模、競争構造、需要とチャネル、規制環境、AIの影響、5ヵ年見通しを網羅した12セクション構成。</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">エグゼクティブサマリー</span><span class="tsub">— 転換点と戦略的示唆</span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">マクロ環境</span><span class="tsub">— 需要と政策の背景</span><span class="tpage">006</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">セクター規模</span><span class="tsub">— 生産量と市場価値</span><span class="tpage">009</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">パワートレイン別セグメント経済</span><span class="tsub">— ICE・HEV・BEV</span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">競争環境</span><span class="tsub">— 市場構造と主要事業者</span><span class="tpage">013</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">事業者プロファイル</span><span class="tsub">— トヨタ・いすゞ・BYD・MG</span><span class="tpage">015</span></div>
+      <div class="toc-row"><span class="tnum">08</span><span class="ttitle">需要要因とチャネル</span><span class="tsub">— 国内需要と輸出</span><span class="tpage">020</span></div>
+      <div class="toc-row"><span class="tnum">09</span><span class="ttitle">規制・政策</span><span class="tsub">— EV 3.5と現地調達</span><span class="tpage">022</span></div>
+      <div class="toc-row"><span class="tnum">10</span><span class="ttitle">AIの影響</span><span class="tsub">— スマート工場の普及</span><span class="tpage">023</span></div>
+      <div class="toc-row"><span class="tnum">11</span><span class="ttitle">5ヵ年見通し</span><span class="tsub">— シナリオと感度分析</span><span class="tpage">025</span></div>
+      <div class="toc-row"><span class="tnum">12</span><span class="ttitle">調査手法後記</span><span class="tsub">— 情報源構成と出典凡例</span><span class="tpage">024</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 004 — EXEC SUMMARY p1 ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">004 / 024</div>
+    </div>
+    <h1 class="page-h1">タイの自動車生産拠点 — 2026年の転換点</h1>
+    <p class="page-subhead"><strong>150万台規模の生産拠点</strong>がパワートレイン再編の局面を迎えています。中国系BEV参入企業がラヨンで現地化を進める一方、日系メーカーはICE生産能力を集約しています。<strong>現地調達の締め付けは2027年に3:1オフセットへ強化</strong>され、サプライチェーンが残存者を決定します。</p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">車両生産台数 2026年予測</div>
+        <div class="num">1.50<span class="unit">m units</span></div>
+        <div class="change">前年比+3.1%（軟調な2025年から回復）[FTI 2025]</div>
+        <div class="source-tag sec">FTI</div>
+      </div>
+      <div class="callout">
+        <div class="label">日系OEMシェア 2025年</div>
+        <div class="num">69.3<span class="unit">%</span></div>
+        <div class="change down">↓ 2024年の76.7%から低下 [Nikkei 2025]</div>
+        <div class="source-tag sec">Nikkei</div>
+      </div>
+      <div class="callout">
+        <div class="label">BEV生産台数 2025年</div>
+        <div class="num">70,914<span class="unit">units</span></div>
+        <div class="change">前年比+632%（低い基準から急伸）[FTI 2025]</div>
+        <div class="source-tag sec">FTI</div>
+      </div>
+      <div class="callout">
+        <div class="label">EVチェーン投資額</div>
+        <div class="num">140<span class="unit">THB bn</span></div>
+        <div class="change">2025年10月時点のBOI累積承認額 [BOI 2025]</div>
+        <div class="source-tag sec">BOI</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>需要ではなく生産拠点の話</h3>
+        <p>タイは東南アジア最大の車両生産国であり、<strong>2025年の生産台数は145万6,000台</strong>で、その約3分の2が輸出向けです[FTI 2025]。2026年の論点は循環的ではなく構造的なものです。タイが自動車を作り続けるかどうかではなく、<strong>どのパワートレインとどのサプライヤー</strong>が生産拠点に残るかが問われています。2025年のEV販売台数は12万301台で市場シェア19.4%に達しました[FTI 2025]。</p>
+        <h3>再配置は非対称に進む</h3>
+        <p>日系OEMのシェアは<strong>2025年に69.3%へ低下し、前年の76.7%から7.4ポイント下落</strong>しました[Nikkei 2025]。スズキとスバルは現地組み立てから撤退し、ホンダは生産能力を27万台へ半減させています[Just Auto 2025]。BYD、MG、GWMを中心とする中国系参入企業は市場の約22.6%を獲得し、純EV数量の約85%を供給しています[Proliance 2025]。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">乗用車生産のパワートレイン再編</div>
+            <div class="chart-subtitle">タイ · 2025年生産台数 · 前年比変化</div>
+          </div>
+          <div class="chart-unit">UNITS · YoY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="210"/>
+            <line class="axis-line" x1="60" y1="210" x2="460" y2="210"/>
+            <line class="grid-line" x1="60" y1="60" x2="460" y2="60"/>
+            <line class="grid-line" x1="60" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="60" y1="160" x2="460" y2="160"/>
+            <text class="axis-text" x="55" y="214" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="164" text-anchor="end">75k</text>
+            <text class="axis-text" x="55" y="114" text-anchor="end">150k</text>
+            <text class="axis-text" x="55" y="64" text-anchor="end">225k</text>
+            <!-- ICE passenger 247,929 -->
+            <rect class="bar-tertiary" x="95" y="45" width="60" height="165"/>
+            <text class="label-data" x="125" y="39" text-anchor="middle" style="fill:#D97706">248k</text>
+            <text class="axis-text" x="125" y="226" text-anchor="middle">ICE car</text>
+            <text class="label-small" x="125" y="238" text-anchor="middle" style="fill:#D97706">−29.1%</text>
+            <!-- HEV 214,317 -->
+            <rect class="bar-primary" x="215" y="67" width="60" height="143"/>
+            <text class="label-data" x="245" y="61" text-anchor="middle">214k</text>
+            <text class="axis-text" x="245" y="226" text-anchor="middle">HEV</text>
+            <text class="label-small" x="245" y="238" text-anchor="middle" style="fill:#00A88B">+12.3%</text>
+            <!-- BEV 70,914 -->
+            <rect class="bar-secondary" x="335" y="163" width="60" height="47"/>
+            <text class="label-data" x="365" y="157" text-anchor="middle" style="fill:#00A88B">71k</text>
+            <text class="axis-text" x="365" y="226" text-anchor="middle">BEV</text>
+            <text class="label-small" x="365" y="238" text-anchor="middle" style="fill:#00A88B">+632%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FEDERATION OF THAI INDUSTRIES AUTO CLUB 2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">FTI 2025 = Federation of Thai Industries — Automotive Club monthly production &amp; sales bulletins 2025 · Nikkei 2025 = Nikkei Asia — Japan automakers lose share in Thailand 2025 · Just Auto 2025 = Just Auto — Thailand automotive transition coverage 2025 · Proliance 2025 = Proliance Thailand market-share analysis 2025 · BOI 2025 = Board of Investment of Thailand EV investment summary 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 005 — EXEC SUMMARY p2 (implications) ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Executive Summary</div>
+      <div class="page-section-counter">005 / 024</div>
+    </div>
+    <h1 class="page-h1">市場参加者に向けた5つの戦略的示唆</h1>
+    <p class="page-subhead">2031年に向けて生産拠点を再編する5つの力。いずれも文書化されたデータとタイ自動車クラスターを横断したKIRAの分析に基づいています。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · 現地化</div>
+        <div class="title">現地調達は選択肢ではなく関門となる。</div>
+        <div class="body-text">BEV向け40%現地調達率ルールに加え、<strong>2026年の2:1生産オフセットが2027年には3:1へ引き上げ</strong>られ[BOI 2025]、輸入・販売モデルはペナルティ返済リスクを抱えます。輸入電池セルは2026年6月以降、現地調達率のカウント対象外となります[Just Auto 2025]。セルおよびモジュールを現地化しなければインセンティブを失います。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">3:1</span> 2027年オフセット比率</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · 集約化</div>
+        <div class="title">日系の生産能力はハイブリッドを軸に合理化される。</div>
+        <div class="body-text">スズキとスバルは現地組み立てから撤退し、ホンダは生産能力を<strong>27万台</strong>へ半減させました[Just Auto 2025]。残存メーカーはピックアップを守りつつHEVに軸足を移し、2025年の同セグメント生産台数は12.3%増の21万4,317台を記録しています[FTI 2025]。ハイブリッドは日系の橋渡し戦略であり、完全なBEV転換ではありません。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">−7.4 pp</span> 日系シェアの1年間の下落幅</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · 構造変化</div>
+        <div class="title">中国系参入企業がサプライヤー基盤を再編する。</div>
+        <div class="body-text">中国系OEMは<strong>純EV数量の約85%</strong>を獲得し[Proliance 2025]、地場Tier-2/3企業を迂回する垂直統合型サプライモデルを持ち込んでいます。<strong>816社のコンポーネント企業と約32万6,400人の労働者</strong>が移行の影響圏に置かれています[ISEAS 2025]。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">326k</span> 移行影響圏の労働者数</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · AI・デジタル</div>
+        <div class="title">スマート工場の導入がコスト競争力を守る。</div>
+        <div class="body-text"><strong>タイの大手製造企業の40%超</strong>がIndustry 4.0技術を少なくとも1つ導入済みです[MOI 2025]。予知保全と視覚品質管理は、中国の垂直統合ラインとのコスト格差を縮小します。対応が遅れれば単位コスト競争力を失います。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">40%+</span> Industry 4.0導入率</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · 輸出</div>
+        <div class="title">輸出が2027年の崖を越えるまで生産基盤を支える。</div>
+        <div class="body-text"><strong>2025年の輸出台数93万5,750台</strong>[FTI 2025]が、国内需要の軟化下でもラインを稼働させています。中東向けにはピックアップが63%を占めています[FTI 2025]。政策上、輸出EVをオフセット義務のカウント対象とすることが認められており、輸出が現地化の圧力逃し弁となります。</div>
+        <div class="anchor">アンカー: <span class="num-anchor">~64%</span> 生産台数の輸出比率</div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Board of Investment of Thailand EV 3.5 policy &amp; offset rules 2025 · Just Auto 2025 = Just Auto — Thailand BEV incentive &amp; capacity coverage 2025 · FTI 2025 = Federation of Thai Industries Auto Club bulletins 2025 · Proliance 2025 = Proliance Thailand market-share analysis 2025 · ISEAS 2025 = ISEAS-Yusof Ishak Institute — Thai automotive in troubled transition 2025 · MOI 2025 = Thailand Ministry of Industry / Thailand 4.0 adoption data 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 006 — MACRO DIVIDER ===================== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">マクロ <span class="accent">環境</span></h1>
+    <div class="divider-thesis">タイの2026年マクロ環境は<strong>低成長かつ外部リスクに晒された</strong>状態にあります。GDPは推計1.5〜2.5%の成長にとどまり、民間信用は軟調、輸出は関税リスクにさらされています。自動車産業は需要の追い風ではなく、生産規律と政策を拠りどころに運営されます。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1 成長とインフレ</div>
+      <div class="toc-pill">4.2 政策と貿易</div>
+      <div class="toc-pill">4.3 需要の下限</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 007 — MACRO PAGE 1 ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Macro Context</div>
+      <div class="page-section-counter">007 / 024</div>
+    </div>
+    <h1 class="page-h1">自動車需要を規定するマクロ指標</h1>
+    <p class="page-subhead"><strong>2025年の2.4%成長が2026年には約2.0%へ鈍化する</strong>見通し[NESDC 2026]が、需要制約の年を示しています。観光とインフラ投資が景気を下支えする一方、家計信用と輸出が車両販売の変動要因となります。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>成長は2026年に向けて減速</h3>
+        <p>経済は<strong>2025年に2.4%</strong>成長し予測を上回りましたが、勢いは冷却しています[Nation 2025]。NESECは2026年の予測レンジを1.5〜2.5%（中央値2.0%）に設定し[NESDC 2026]、世界銀行はさらに低い1.3%と読んでいます[World Bank 2025]。自動車需要はこのレンジの軟弱な側に位置します。</p>
+        <h3>インフレは上振れ、信用は引き締まり継続</h3>
+        <p>タイ中央銀行はエネルギーコストの転嫁により<strong>2026年のヘッドラインインフレを2.9%</strong>と予測し、2027年には1.5%へ緩和されるとしています[BOT 2026]。家計信用の引き締まりと自動車ローンの高い否決率が、ピックアップおよび乗用車の購買力を構造的に下押しする逆風となっています。</p>
+        <h3>設備投資と観光が下支え</h3>
+        <p>個人消費の回復、観光の持ち直し、政府の資本支出の積み増しが2026年の成長を下支えします[NESDC 2026]。いずれも車両需要を直接牽引するものではなく、自動車産業は輸出と政策誘導によるEV普及に依存しています。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">GDP成長率とインフレ動向</div>
+            <div class="chart-subtitle">タイ · % · 2024–2027年予測</div>
+          </div>
+          <div class="chart-unit">% CHANGE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="230"/>
+            <line class="axis-line" x1="50" y1="230" x2="460" y2="230"/>
+            <line class="grid-line" x1="50" y1="180" x2="460" y2="180"/>
+            <line class="grid-line" x1="50" y1="130" x2="460" y2="130"/>
+            <line class="grid-line" x1="50" y1="80" x2="460" y2="80"/>
+            <text class="axis-text" x="45" y="234" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="184" text-anchor="end">1.0</text>
+            <text class="axis-text" x="45" y="134" text-anchor="end">2.0</text>
+            <text class="axis-text" x="45" y="84" text-anchor="end">3.0</text>
+            <polyline points="100,130 220,110 340,130 440,130" fill="none" stroke="#1E6FFF" stroke-width="2.5"/>
+            <circle cx="100" cy="130" r="4" fill="#1E6FFF"/><circle cx="220" cy="110" r="4" fill="#1E6FFF"/><circle cx="340" cy="130" r="4" fill="#1E6FFF"/><circle cx="440" cy="130" r="4" fill="#1E6FFF"/>
+            <text class="label-data" x="220" y="102" text-anchor="middle">2.4</text>
+            <text class="label-data" x="340" y="148" text-anchor="middle">2.0</text>
+            <polyline points="100,210 220,215 340,85 440,155" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="100" cy="210" r="3.5" fill="#D97706"/><circle cx="220" cy="215" r="3.5" fill="#D97706"/><circle cx="340" cy="85" r="3.5" fill="#D97706"/><circle cx="440" cy="155" r="3.5" fill="#D97706"/>
+            <text class="label-small" x="340" y="77" text-anchor="middle" style="fill:#D97706">2.9</text>
+            <text class="axis-text" x="100" y="246" text-anchor="middle">2024</text>
+            <text class="axis-text" x="220" y="246" text-anchor="middle">2025</text>
+            <text class="axis-text" x="340" y="246" text-anchor="middle">2026F</text>
+            <text class="axis-text" x="440" y="246" text-anchor="middle">2027F</text>
+            <rect x="60" y="258" width="10" height="10" fill="#1E6FFF"/><text class="label-small" x="74" y="267">実質GDP</text>
+            <rect x="150" y="258" width="10" height="10" fill="#D97706"/><text class="label-small" x="164" y="267">ヘッドラインインフレ（BOT）</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NESDC, BANK OF THAILAND, WORLD BANK · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NESDC 2026 = National Economic &amp; Social Development Council — Thai Economic Outlook 2026 · Nation 2025 = The Nation Thailand — 2025 GDP coverage · World Bank 2025 = World Bank Thailand Macro Poverty Outlook 2025 · BOT 2026 = Bank of Thailand Economic Outlook / Monetary Policy Report 2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 008 — MACRO PAGE 2 (policy timeline) ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Macro Context</div>
+      <div class="page-section-counter">008 / 024</div>
+    </div>
+    <h1 class="page-h1">自動車産業を形成する政策と貿易の動き</h1>
+    <p class="page-subhead">自動車産業へのマクロレバーは金融政策ではなく産業政策です。<strong>EV 3.5インセンティブ、現地調達規制の強化、米国関税リスク</strong>がGDP以上に2026年の事業環境を規定します。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>産業政策が主導</h3>
+        <p>EV 3.5（2024〜2027年）はBEV普及を後押しするため物品税を<strong>2%</strong>に引き下げ、消費者補助金を2026年に5万THBへ段階的に縮小します[EY 2024]。2026年からは輸入1台につき国内で2台を組み立てる義務が課され[BOI 2025]、需要支援から現地化義務へと政策が転換します。</p>
+        <h3>貿易リスクが拡大</h3>
+        <p>米国の関税措置とグローバルな貿易摩擦により、2026年の輸出成長は鈍化が見込まれます[NESDC 2026]。タイの第3位の自動車輸出市場である中東向けは<strong>2025年に20万1台</strong>[FTI 2025]でホルムズ海峡の混乱で既に減少しており、輸出依存モデルの脆弱性が露呈しています。</p>
+        <h3>4つの注目リスク</h3>
+        <p>NESECは外部需要、家計債務、地政学的貿易リスク、構造的競争力を2026年のリスク要因として挙げています[NESDC 2026]。自動車産業においてはいずれも同じ問いに収束します：EVへの再装備を進めながら輸出数量を維持できるか。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">EV政策と現地調達規制のタイムライン</div>
+            <div class="chart-subtitle">タイ · 2024–2027年</div>
+          </div>
+          <div class="chart-unit">POLICY</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line x1="70" y1="30" x2="70" y2="250" stroke="#D1D5DB" stroke-width="1.5"/>
+            <circle cx="70" cy="50" r="5" fill="#1E6FFF"/>
+            <text class="tl-marker-date label-small" x="86" y="44" style="fill:#1E6FFF; font-weight:700">2024年</text>
+            <text class="label-data" x="86" y="58" style="font-size:10px">EV 3.5開始 · 物品税2%</text>
+            <circle cx="70" cy="105" r="5" fill="#1E6FFF"/>
+            <text class="label-small" x="86" y="99" style="fill:#1E6FFF; font-weight:700">2026年1月</text>
+            <text class="label-data" x="86" y="113" style="font-size:10px">2:1生産オフセット開始</text>
+            <circle cx="70" cy="160" r="5" fill="#D97706"/>
+            <text class="label-small" x="86" y="154" style="fill:#D97706; font-weight:700">2026年6月</text>
+            <text class="label-data" x="86" y="168" style="font-size:10px">輸入セルの現地調達率算入停止</text>
+            <circle cx="70" cy="215" r="5" fill="#B91C1C"/>
+            <text class="label-small" x="86" y="209" style="fill:#B91C1C; font-weight:700">2027年</text>
+            <text class="label-data" x="86" y="223" style="font-size:10px">3:1オフセット · EV 3.5支援終了</text>
+            <text class="label-small" x="86" y="237" style="fill:#6B7280">「生産の崖」リスク</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BOI, EXCISE DEPARTMENT, EY THAILAND · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EY 2024 = EY Global Tax Alert — Thailand BEV 3.5 excise &amp; subsidy rules 2024 · BOI 2025 = Board of Investment of Thailand EV 3.5 offset &amp; local-content rules 2025 · NESDC 2026 = NESDC Thai Economic Outlook 2026 risk signals · FTI 2025 = Federation of Thai Industries Auto Club export bulletins 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 009 — SECTOR DIVIDER ===================== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">セクター <span class="accent">規模</span></h1>
+    <div class="divider-thesis">生産数量は不均一な回復を示す一方、付加価値はシフトしています。<strong>総生産台数が150万台へ向けて緩やかに回復</strong>するなか、構成比はICEからハイブリッド・BEVへ移行しており、数量の話と価値の話が乖離しつつあります。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1 生産数量</div>
+      <div class="toc-pill">5.2 市場価値</div>
+      <div class="toc-pill">5.3 生産能力動向</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 010 — SECTOR SIZING p1 ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Sector Sizing</div>
+      <div class="page-section-counter">010 / 024</div>
+    </div>
+    <h1 class="page-h1">生産数量：低い基準から150万台へ向けた回復</h1>
+    <p class="page-subhead">生産台数は<strong>2025年に0.9%減の145万6,000台</strong>[FTI 2025]と5年来の低水準付近に落ち込んだ後、2026年は3.1%増が見込まれています。回復は輸出主導かつEV構成比変化によるものであり、国内需要の急増ではありません。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>2025年：底打ち、崩壊ではない</h3>
+        <p>生産台数は<strong>2025年に145万5,569台</strong>と0.9%減ながら年間目標を上回りました[FTI 2025]。輸出は8.2%減の93万5,750台・THB 6,220億相当[FTI 2025]。ピックアップ生産は71万2,579台（−3.0%）と底堅く、ICE乗用車が−29.1%と大半の落ち込みを受けました。</p>
+        <h3>2026年：輸出主導の回復</h3>
+        <p>FTIは<strong>2026年の目標を150万台（+3.1%）</strong>——輸出95万台・国内50万台——と設定しています[FTI 2025]。2026年1〜4月の生産台数は4%増の47万3,545台で、そのうち66.9%が輸出向けとなっており[FTI 2026]、輸出が生産拠点の安定化装置として機能していることが確認されます。</p>
+        <h3>生産能力の過剰</h3>
+        <p>設置済み生産能力は約255万台で、2028年には<strong>約298万台</strong>に達する見込みです[Intellify 2025]。150万台の生産に対して稼働率は55〜60%程度[Kira estimates]——この構造的なギャップが日系の集約化を促し、EVで生産ラインを埋める事業者に報いる構造です。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">車両生産台数の推移</div>
+            <div class="chart-subtitle">タイ · 百万台 · 2023–2028年予測</div>
+          </div>
+          <div class="chart-unit">M UNITS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="230"/>
+            <line class="axis-line" x1="50" y1="230" x2="465" y2="230"/>
+            <line class="grid-line" x1="50" y1="180" x2="465" y2="180"/>
+            <line class="grid-line" x1="50" y1="130" x2="465" y2="130"/>
+            <line class="grid-line" x1="50" y1="80" x2="465" y2="80"/>
+            <text class="axis-text" x="45" y="234" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="184" text-anchor="end">0.5</text>
+            <text class="axis-text" x="45" y="134" text-anchor="end">1.0</text>
+            <text class="axis-text" x="45" y="84" text-anchor="end">1.5</text>
+            <rect class="bar-primary" x="70" y="83" width="48" height="147"/><text class="label-data" x="94" y="77" text-anchor="middle">1.47</text><text class="axis-text" x="94" y="246" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="155" y="84" width="48" height="146"/><text class="label-data" x="179" y="78" text-anchor="middle">1.46</text><text class="axis-text" x="179" y="246" text-anchor="middle">2025</text>
+            <rect class="bar-tertiary" x="240" y="80" width="48" height="150" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/><text class="label-data" x="264" y="74" text-anchor="middle" style="fill:#D97706">1.50</text><text class="axis-text" x="264" y="246" text-anchor="middle">2026F</text>
+            <line x1="50" y1="-25" x2="465" y2="-25" stroke="#6B7280"/>
+            <rect class="bar-tertiary" x="370" y="68" width="48" height="162" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/><text class="label-data" x="394" y="62" text-anchor="middle" style="fill:#D97706">~1.7</text><text class="axis-text" x="394" y="246" text-anchor="middle">2028F</text>
+            <text class="label-small" x="258" y="258" style="fill:#6B7280">設置能力 ~2.55m → ~2.98m（2028年）：稼働率ギャップ</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FTI AUTO CLUB, INTELLIFY OUTLOOK · KIRA 稼働率三角測定 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">FTI 2025 = Federation of Thai Industries Auto Club 2025 bulletins · FTI 2026 = FTI Auto Club Jan–Apr 2026 production data · Intellify 2025 = Intellify Thailand Automotive Industry Outlook 2025–2030 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 011 — SECTOR SIZING p2 (value) ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 05 · Sector Sizing</div>
+      <div class="page-section-counter">011 / 024</div>
+    </div>
+    <h1 class="page-h1">市場価値：国内販売は安定し、EVシェアが拡大。</h1>
+    <p class="page-subhead">国内乗用車市場は<strong>2025年にUSD 178億</strong>[Statista 2025]と低一桁台の成長が続くなか、EV普及率は数量以上の速度で付加価値を電動パワートレインへ移行させています。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>低成長の価値プール</h3>
+        <p>タイの乗用車市場規模は<strong>2025年にUSD 178億</strong>、2029年には約USD 198億（CAGR約2.7%）に達すると見込まれています[Statista 2025]。2025年の新車販売台数は59万2,608台[Intellify 2025]と軟調な国内市場が続き、パワートレイン構成比の変化を増幅させています。</p>
+        <h3>EV価値シェアが加速</h3>
+        <p>EVは<strong>2025年に12万301台・販売シェア19.4%</strong>を記録しました[FTI 2025]。業界団体は2026年のEVシェアを20〜25%と予測しています[Thansettakij 2026]。BEVの取引価格は量産ICEを上回るため、EV価値シェアはユニットシェアを上回って推移します。</p>
+        <h3>ピックアップが価値の下限を守る</h3>
+        <p>1トンピックアップは引き続き価値と輸出の中核であり、タイの構造的優位性として日系OEMが最も守りを固めるセグメントです。2026年の価値面の問いは、乗用車の価値が中国系BEVに傾くなかで、ピックアップ電動化（いすゞ・トヨタ）が価値の下限を守れるかどうかです。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">国内市場のEV販売シェア</div>
+            <div class="chart-subtitle">タイ · %シェア · 2023–2026年予測</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="230"/>
+            <line class="axis-line" x1="50" y1="230" x2="465" y2="230"/>
+            <line class="grid-line" x1="50" y1="180" x2="465" y2="180"/>
+            <line class="grid-line" x1="50" y1="130" x2="465" y2="130"/>
+            <line class="grid-line" x1="50" y1="80" x2="465" y2="80"/>
+            <text class="axis-text" x="45" y="234" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="184" text-anchor="end">10</text>
+            <text class="axis-text" x="45" y="134" text-anchor="end">20</text>
+            <text class="axis-text" x="45" y="84" text-anchor="end">30</text>
+            <rect class="bar-secondary" x="70" y="170" width="48" height="60"/><text class="label-data" x="94" y="164" text-anchor="middle">~12</text><text class="axis-text" x="94" y="246" text-anchor="middle">2023</text>
+            <rect class="bar-secondary" x="160" y="165" width="48" height="65"/><text class="label-data" x="184" y="159" text-anchor="middle">~13</text><text class="axis-text" x="184" y="246" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="250" y="133" width="48" height="97"/><text class="label-data" x="274" y="127" text-anchor="middle">19.4</text><text class="axis-text" x="274" y="246" text-anchor="middle">2025</text>
+            <rect class="bar-tertiary" x="340" y="118" width="48" height="112" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/><text class="label-data" x="364" y="112" text-anchor="middle" style="fill:#D97706">~22.5</text><text class="axis-text" x="364" y="246" text-anchor="middle">2026F</text>
+            <text class="label-small" x="258" y="262" style="fill:#6B7280">EV価値シェアはBEVの高単価によりユニットシェアを上回って推移</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FTI AUTO CLUB, STATISTA OUTLOOK, THANSETTAKIJ · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Statista 2025 = Statista Market Forecast — Thailand Passenger Cars 2025 · Intellify 2025 = Intellify Thailand Automotive Outlook 2025–2030 · FTI 2025 = Federation of Thai Industries Auto Club EV sales 2025 · Thansettakij 2026 = Thansettakij — Thai auto industry 2026 EV share outlook</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 012 — SEGMENT ECONOMICS p1 ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Segment Economics</div>
+      <div class="page-section-counter">012 / 024</div>
+    </div>
+    <h1 class="page-h1">パワートレイン別経済：ICE縮小、ハイブリッド橋渡し、BEV拡大。</h1>
+    <p class="page-subhead">3つのパワートレイン、3つの軌跡。2025年は<strong>ICE乗用車生産が29.1%減、ハイブリッドが12.3%増、BEVが632%急増</strong>[FTI 2025]——それぞれ異なるサプライヤー基盤と利益率プロファイルを持ちます。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>ICE：管理された縮退</h3>
+        <p>ICE乗用車生産は2025年に<strong>24万7,929台（−29.1%）</strong>へ落ち込みました[FTI 2025]。ICEは最も深い地場サプライヤー基盤——BEVにより大半が陳腐化するエンジン・トランスミッション生態系——を持ちます。ピックアップ（−3.0%）がディーゼルICEの存在意義を保ち、縮退を価値端で緩和しています。</p>
+        <h3>ハイブリッド：日系の橋渡し戦略</h3>
+        <p>HEV生産は12.3%増の<strong>21万4,317台</strong>、PHEVは116.7%増の1万7,296台を記録しました[FTI 2025]。ハイブリッドにより日系OEMはICEサプライヤー基盤の大半を再活用しながら電動化を進めることができ、BEVの価格競争が純電動経済を圧縮するなかで最も利益率の高い防衛ポジションとなっています。</p>
+        <h3>BEV：規模拡大、薄い利益率</h3>
+        <p>BEV生産は<strong>7万914台・632%増</strong>に達しました[FTI 2025]。中国主導、垂直統合型、かつ利益率を侵食する価格競争に突入しています[Just Auto 2025]。数量は本物ですが、1台当たり利益は実質的にゼロに近く——だからこそ表面上のEVシェアではなく現地化経済が生き残りを決定します。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">乗用車パワートレイン別生産台数と成長率</div>
+            <div class="chart-subtitle">タイ · 2025年台数 · 前年比%</div>
+          </div>
+          <div class="chart-unit">UNITS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="230" x2="465" y2="230"/>
+            <text class="label-small" x="58" y="58" text-anchor="end">ICE car</text>
+            <rect class="bar-tertiary" x="62" y="46" width="340" height="22"/><text class="wf-segment-pct label-data" x="408" y="62">248k · −29.1%</text>
+            <text class="label-small" x="58" y="103" text-anchor="end">HEV</text>
+            <rect class="bar-primary" x="62" y="91" width="293" height="22"/><text class="label-data" x="361" y="107" style="fill:#00A88B">214k · +12.3%</text>
+            <text class="label-small" x="58" y="148" text-anchor="end">BEV</text>
+            <rect class="bar-secondary" x="62" y="136" width="97" height="22"/><text class="label-data" x="165" y="152" style="fill:#00A88B">71k · +632%</text>
+            <text class="label-small" x="58" y="193" text-anchor="end">PHEV</text>
+            <rect class="bar-secondary" x="62" y="181" width="24" height="22" opacity="0.6"/><text class="label-data" x="92" y="197" style="fill:#00A88B">17k · +116.7%</text>
+            <text class="label-small" x="62" y="222" style="fill:#6B7280">ICEは最も深い地場サプライヤー基盤を持ち、BEVは最も薄い</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FEDERATION OF THAI INDUSTRIES AUTO CLUB 2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">FTI 2025 = Federation of Thai Industries Auto Club — 2025 powertrain production data · Just Auto 2025 = Just Auto — Thai BEV price-war &amp; margin coverage 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 013 — SEGMENT ECONOMICS p2 (supply chain) ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Segment Economics</div>
+      <div class="page-section-counter">013 / 024</div>
+    </div>
+    <h1 class="page-h1">移行の打撃が最も深刻なのはサプライヤー基盤。</h1>
+    <p class="page-subhead">ICE車には<strong>約3万点の部品が使われるが、BEVは約3,000点</strong>[ISEAS 2025]。部品カテゴリ全体が消滅し、タイが蓄積してきた深いTier-2/3基盤こそがパワートレイン転換に最も晒された資産です。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>部品点数の断崖</h3>
+        <p>エンジン、トランスミッション、排気系を陳腐化させる部品点数の10分の1への縮減が中核リスクです。<strong>816社のコンポーネント企業と約32万6,400人の労働者</strong>が移行の直接的影響圏に置かれています[ISEAS 2025]。これがタイのEV転換がもたらす最大の社会・産業コストです。</p>
+        <h3>Tier-1は適応、Tier-2/3は圧迫</h3>
+        <p>Tier-1サプライヤーは新たなEV技術の共同開発が可能で移行に概ね耐えられますが、<strong>Tier-2・Tier-3企業</strong>——財務基盤の薄いエンジン部品専業メーカー——は集約化か撤退を迫られています[Thai News 2025]。中国系の「垂直統合輸入」モデルが地場企業を迂回し、圧迫をさらに深めています。</p>
+        <h3>組み立て拠点化のリスク</h3>
+        <p>中国系OEMが現地調達率の閾値をクリアするためだけに国内調達を行い、技術移転を最小化するならば、タイは付加価値ハブではなく<strong>単純な組み立て拠点</strong>に転落するリスクがあります[ISEAS 2025]。現地化ルールは、まさに2027年の崖を前に、より深い現地調達を強制するために設計されています。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">部品点数：ICE対BEV</div>
+            <div class="chart-subtitle">1台当たりの部品点数（概算）</div>
+          </div>
+          <div class="chart-unit">~PARTS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="70" y1="20" x2="70" y2="200"/>
+            <line class="axis-line" x1="70" y1="200" x2="450" y2="200"/>
+            <rect class="bar-tertiary" x="120" y="40" width="90" height="160"/>
+            <text class="label-data" x="165" y="34" text-anchor="middle" style="fill:#D97706">~30,000</text>
+            <text class="axis-text" x="165" y="216" text-anchor="middle">ICE車</text>
+            <rect class="bar-secondary" x="290" y="184" width="90" height="16"/>
+            <text class="label-data" x="335" y="178" text-anchor="middle" style="fill:#00A88B">~3,000</text>
+            <text class="axis-text" x="335" y="216" text-anchor="middle">BEV</text>
+            <text class="label-small" x="120" y="240" style="fill:#6B7280">816社 · 32万6,400人が影響圏</text>
+            <text class="label-small" x="120" y="254" style="fill:#6B7280">Tier-1は適応；Tier-2/3は集約化に直面</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ISEAS-YUSOF ISHAK, THAILAND BUSINESS NEWS · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">ISEAS 2025 = ISEAS-Yusof Ishak Institute — The Thai Automotive Industry in Troubled Transition 2025 · Thai News 2025 = Thailand Business News — auto-parts supply-chain risk 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 014 — COMPETITIVE DIVIDER ===================== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 07</div>
+    <h1 class="divider-title">競争 <span class="accent">環境</span></h1>
+    <div class="divider-thesis">かつて安定していた寡占構造が<strong>パワートレイン軸で亀裂を生じています</strong>。日系シェアは中国系BEV参入企業が市場の約22.6%を獲得するなか2025年に69.3%へ低下——生産拠点の歴史上、最も急速な競争再編です。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1 市場構造</div>
+      <div class="toc-pill">7.2 日系既存メーカー</div>
+      <div class="toc-pill">7.3 中国系参入企業</div>
+      <div class="toc-pill">7.4 事業者プロファイル</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 015 — COMPETITIVE STRUCTURE ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Competitive Landscape</div>
+      <div class="page-section-counter">015 / 024</div>
+    </div>
+    <h1 class="page-h1">市場構造：パワートレイン軸で亀裂が生じる日系寡占。</h1>
+    <p class="page-subhead">日系ブランドは依然として市場の大半を握っていますが、<strong>1年間で7.4ポイントのシェア低下</strong>[Nikkei 2025]は過去最大の下落幅です。中国系参入企業がEVセグメントを完全に掌握する一方、日系はICEとハイブリッドのピックアップを守る構図です。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">OEM出身国別市場シェア — 2024年対2025年</div>
+            <div class="chart-subtitle">車両市場全体 · %シェア</div>
+          </div>
+          <div class="chart-unit">% SHARE</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="170" x2="580" y2="170"/>
+            <text class="label-small" x="55" y="55" text-anchor="end">2024</text>
+            <rect class="bar-primary" x="62" y="44" width="394" height="20"/><text class="label-data" x="462" y="59">JP 76.7%</text>
+            <rect class="bar-secondary" x="62" y="68" width="67" height="12" opacity="0.85"/><text class="label-small" x="135" y="78">CN ~13%</text>
+            <text class="label-small" x="55" y="120" text-anchor="end">2025</text>
+            <rect class="bar-primary" x="62" y="109" width="356" height="20"/><text class="label-data" x="424" y="124">JP 69.3%</text>
+            <rect class="bar-secondary" x="62" y="133" width="116" height="12" opacity="0.85"/><text class="label-small" x="184" y="143">CN ~22.6%</text>
+            <text class="label-small" x="62" y="190" style="fill:#6B7280">日系 −7.4 pp · 中国系 +~9.6 pp（1年間）</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NIKKEI ASIA, PROLIANCE, FTI · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>亀裂、崩壊ではない</h3>
+        <p>日系OEMはピックアップとハイブリッドの牙城を維持していますが、<strong>BEVセグメントを中国系に明け渡し</strong>、中国系ブランドが約85%を握っています[Proliance 2025]。この分断は構造的なもの——既存メーカーは輸出ピックアップ事業を守り、参入企業は都市部EVを植民地化しています。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>日系シェア変化 24→25</span><span class="val">−7.4 pp</span></div>
+          <div class="stat-line"><span>中国系市場シェア 2025年</span><span class="val">~22.6%</span></div>
+          <div class="stat-line"><span>中国系BEVシェア</span><span class="val">~85%</span></div>
+          <div class="stat-line"><span>BYD ブランド順位</span><span class="val">#4 (~6.9%)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01 · ICE/HEV</div>
+        <div class="comp-name">Toyota Motor Thailand</div>
+        <div class="comp-parent">Toyota Motor Corporation（日本）</div>
+        <div class="comp-stat-row"><span>主力</span><span class="val">Hilux · IMV</span></div>
+        <div class="comp-stat-row"><span>EV戦略</span><span class="val">マルチパスウェイ</span></div>
+        <div class="comp-stat-row"><span>2025年</span><span class="val">HEV主導の防衛</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>ピックアップ事業、ハイブリッド規模、最も深い地場サプライヤー関係、輸出基盤の要。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02 · PICKUP</div>
+        <div class="comp-name">Isuzu（タイ）</div>
+        <div class="comp-parent">いすゞ自動車（日本）</div>
+        <div class="comp-stat-row"><span>主力</span><span class="val">D-Maxディーゼル</span></div>
+        <div class="comp-stat-row"><span>EV戦略</span><span class="val">D-Max EV（EU向け）</span></div>
+        <div class="comp-stat-row"><span>輸出先</span><span class="val">120カ国以上</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>ピックアップ首位、300万台超の輸出実績、ディーゼルを手放さずに電動化。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03 · BEV</div>
+        <div class="comp-name">BYD（ラヨン）</div>
+        <div class="comp-parent">BYD Co.（中国）</div>
+        <div class="comp-stat-row"><span>生産能力</span><span class="val">150k/yr</span></div>
+        <div class="comp-stat-row"><span>BEVシェア</span><span class="val">~38.5%</span></div>
+        <div class="comp-stat-row"><span>総合順位</span><span class="val">#4ブランド</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>先行現地工場、垂直統合、価格主導権、ASEAN輸出ハブ構想。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04 · BEV</div>
+        <div class="comp-name">MG · SAIC Motor-CP</div>
+        <div class="comp-parent">SAIC Motor + CP（中国/タイJV）</div>
+        <div class="comp-stat-row"><span>生産能力</span><span class="val">100k/yr</span></div>
+        <div class="comp-stat-row"><span>工場</span><span class="val">チョンブリ</span></div>
+        <div class="comp-stat-row"><span>輸出先</span><span class="val">VN · ID · MY</span></div>
+        <div class="comp-strengths"><strong>強み：</strong>早期現地JV基盤、ICE+PHEV+EV全方位ラインナップ、ASEAN域内輸出チャネル。</div>
+      </div>
+    </div>
+    <div class="source-key">Nikkei 2025 = Nikkei Asia — Japan automakers lose share in Thailand 2025 · Proliance 2025 = Proliance — China vs Japan car market Thailand 2025 · FTI 2025 = Federation of Thai Industries Auto Club 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 016 — PLAYER PROFILE 1: TOYOTA ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player Profiles</div>
+      <div class="page-section-counter">016 / 024</div>
+    </div>
+    <h1 class="page-h1">トヨタ：マルチパスウェイ転換でピックアップ基盤を守る。</h1>
+    <p class="page-subhead">市場リーダーは<strong>ピックアップ事業を手放さずに</strong>再配置を進めています。新型ハイラックスにICEとBEVの両バリアントを設定し、ハイブリッドを活用しながら、注目すべきことにタイ事業向けに中国系サプライヤーの採用も始めています。</p>
+    <div class="profile-hero">
+      <div>
+        <h2>Toyota Motor Thailand</h2>
+        <div class="sub">Toyota Motor Corporation（日本）· IMV / ハイラックス旗艦</div>
+        <div class="tags">
+          <span class="data-tag primary">市場リーダー</span>
+          <span class="data-tag secondary">マルチパスウェイ</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">ハイラックス基盤</div><div class="val">IMV<span class="unit">2004年〜</span></div></div>
+        <div class="stat"><div class="label">新型ハイラックス</div><div class="val">ICE+BEV<span class="unit">2025年11月</span></div></div>
+        <div class="stat"><div class="label">ハイラックスBEV</div><div class="val">59.2<span class="unit">kWh · 300km+</span></div></div>
+        <div class="stat"><div class="label">BEV投資計画</div><div class="val">~50<span class="unit">THB bn（5年）</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>トヨタはタイを東南アジア最大の生産拠点として位置づけています。2025年11月に発表された9代目ハイラックスは、IMV後継プラットフォーム上にICEとBEVの両バリアントを設定する<strong>マルチパスウェイ戦略</strong>を示し、FY2026から段階的なグローバル展開が予定されています[Toyota Asia 2025]。</p>
+        <p>ハイラックスBEVは<strong>59.2 kWhバッテリー、航続300km超、デュアルモーターAWD</strong>を搭載し[InsideEVs 2025]、ピックアップ事業を放棄するのではなく電動化します。タイ・オーストラリア共同開発は輸出基盤の継続を示します。</p>
+        <h3>再配置の証左</h3>
+        <p>トヨタはタイ事業向けに<strong>中国系サプライヤーからの部品調達を開始</strong>します[Syntax 2025]——これは、市場リーダーでさえ中国のコスト曲線が今やベンチマークであることを認める防御的なコスト対応です。</p>
+      </div>
+      <div class="profile-col">
+        <h3>強み</h3>
+        <ul>
+          <li><strong>ピックアップ事業：</strong>ハイラックスはタイの国民車として位置づけられ、最も深いディーラーネットワークと輸出リーチを持ちます。</li>
+          <li><strong>ハイブリッド規模：</strong>HEVの勢い（2025年セグメント+12.3%）がトヨタの橋渡し戦略に追い風となっています。</li>
+          <li><strong>サプライヤー関係：</strong>いかなるOEMより深い地場Tier-1/2との関係を構築しています。</li>
+        </ul>
+        <h3>注目点</h3>
+        <ul>
+          <li><strong>BEVのタイミング：</strong>中国系競合より純EV参入が遅れており、ハイラックスBEVが量産体制に入る必要があります。</li>
+          <li><strong>利益率圧迫：</strong>中国系サプライヤー採用はコストを守るが、現地調達のナラティブを損ないます。</li>
+          <li><strong>オフセットリスク：</strong>EV 3.5の経済性を維持するためにEVコンテンツの現地化が必要です。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key">Toyota Asia 2025 = Toyota Motor Asia — new Hilux multi-pathway announcement Nov 2025 · InsideEVs 2025 = InsideEVs — Toyota Hilux BEV specifications 2025 · Syntax 2025 = Syntax Partners — Toyota Thailand EV pivot &amp; Chinese-supplier adoption 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 017 — PLAYER PROFILE 2: ISUZU ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player Profiles</div>
+      <div class="page-section-counter">017 / 024</div>
+    </div>
+    <h1 class="page-h1">いすゞ：ディーゼルを手放さずにピックアップを電動化。</h1>
+    <p class="page-subhead">タイのピックアップ最大手は、グローバルな1トン拠点を活用して<strong>欧州輸出向けD-Max EVを投入</strong>——国内ではディーゼル事業を守りながら、海外では高付加価値の電動チャネルを開拓しています。</p>
+    <div class="profile-hero">
+      <div>
+        <h2>Isuzu（タイ）</h2>
+        <div class="sub">いすゞ自動車（日本）· 2002年以来のグローバル1トンピックアップ生産拠点</div>
+        <div class="tags">
+          <span class="data-tag primary">ピックアップ首位</span>
+          <span class="data-tag secondary">輸出主導</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">輸出実績</div><div class="val">3m+<span class="unit">台（累計）</span></div></div>
+        <div class="stat"><div class="label">輸出先</div><div class="val">120+<span class="unit">カ国</span></div></div>
+        <div class="stat"><div class="label">D-Max EV</div><div class="val">2025<span class="unit">EU向け発売</span></div></div>
+        <div class="stat"><div class="label">右ハンドルEV</div><div class="val">2026<span class="unit">英国販売開始</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>いすゞは2002年にピックアップのグローバル生産をタイに移管し、現在では<strong>120カ国以上に向けてタイ生産のD-MaxとMU-Xの累計300万台超を輸出</strong>しています[MarkLines 2025]。この拠点がブランド事業の根幹です。</p>
+        <p>2025年4月、いすゞは<strong>D-Max EV——同社初の完全電動1トンピックアップ——の量産を開始</strong>し、2025年第3四半期から左ハンドル仕様を欧州へ出荷、2026年からは右ハンドル仕様を英国で販売します[Isuzu 2025]。</p>
+        <h3>二線戦略の論理</h3>
+        <p>いすゞはプレミアム輸出市場向けに電動化を進めながら、国内および新興市場向けにはディーゼルD-Maxを中核に据え続けます——ディーゼルサプライヤー基盤を棄損せずにEV需要を収益化する<strong>段階的な移行</strong>です。</p>
+      </div>
+      <div class="profile-col">
+        <h3>強み</h3>
+        <ul>
+          <li><strong>ピックアップ首位：</strong>タイにおける1トン基準ブランドであり、深いグローバルディーラーネットワークを持ちます。</li>
+          <li><strong>輸出規模：</strong>累計300万台超の輸出実績が国内軟化に関わらずライン稼働率を支えます。</li>
+          <li><strong>EVオプション性：</strong>D-Max EVが国内ディーゼル撤退を強制せずに欧州市場を開拓します。</li>
+        </ul>
+        <h3>注目点</h3>
+        <ul>
+          <li><strong>国内EVの空白：</strong>国内向け大衆BEVがなく、都市EVを中国系に譲渡しています。</li>
+          <li><strong>ディーゼル規制：</strong>海外の排ガス規制強化がディーゼル輸出の窓口を狭める可能性があります。</li>
+          <li><strong>現地調達：</strong>BOIのEVインセンティブを維持するためにEVコンポーネントの現地化が必要です。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key">MarkLines 2025 = MarkLines — Isuzu Thailand 3-million export milestone &amp; D-Max EV 2025 · Isuzu 2025 = Isuzu Motors — D-Max EV Thailand production announcement Apr 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 018 — PLAYER PROFILE 3: BYD ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player Profiles</div>
+      <div class="page-section-counter">018 / 024</div>
+    </div>
+    <h1 class="page-h1">BYD：必要になる前に拠点を築いた参入企業。</h1>
+    <p class="page-subhead">BYDのラヨン工場——16ヵ月で完成——は<strong>年間15万台の現地生産能力とBEVセグメントの約38.5%のシェア</strong>をもたらし、全ブランドランキングでトップ4入りした最初の中国系OEMとなりました。</p>
+    <div class="profile-hero">
+      <div>
+        <h2>BYD（ラヨン）</h2>
+        <div class="sub">BYD Co.（中国）· 中国外初の工場、WHA Rayong 36</div>
+        <div class="tags">
+          <span class="data-tag secondary">BEV首位</span>
+          <span class="data-tag primary">垂直統合</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">工場生産能力</div><div class="val">150k<span class="unit">台/年</span></div></div>
+        <div class="stat"><div class="label">投資額</div><div class="val">35+<span class="unit">THB bn</span></div></div>
+        <div class="stat"><div class="label">BEVシェア</div><div class="val">~38.5<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">タイ累計販売</div><div class="val">100k<span class="unit">台（2025年10月時点）</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>戦略的ポジション</h3>
+        <p>BYDのラヨン工場——中国外初——は約96万平方メートルの敷地に<strong>年間15万台の生産能力</strong>とTHB 350億超の投資を擁しています[Nation 2025]。2025年10月までにタイ累計出荷10万台を達成し[CnEVPost 2025]、いかなる参入企業よりも速い現地立ち上がりを見せました。</p>
+        <p>BYDは<strong>BEVセグメントの約38.5%——2位の約3倍</strong>のシェアを持ち[Proliance 2025]、三菱やフォードなどの老舗メーカーを抜いて全ブランドで4位（約6.9%）につけています。ラヨン拠点はASEAN輸出ハブとしても機能します。</p>
+        <h3>現地化戦略</h3>
+        <p>オフセットルールが効力を持つ前に工場を建設したことで、BYDは関税優遇を確保し、<strong>ペナルティ返済リスクを回避</strong>しました——2:1から3:1への比率引き上げが遅れた参入企業に課す構造的優位性です。</p>
+      </div>
+      <div class="profile-col">
+        <h3>強み</h3>
+        <ul>
+          <li><strong>先行現地拠点：</strong>競合他社に先駆けて工場が稼働し、垂直統合型バッテリー生産を持ちます。</li>
+          <li><strong>価格主導権：</strong>全競合の利益率を圧迫するEV価格競争を牽引します。</li>
+          <li><strong>輸出オプション性：</strong>ラヨンが右ハンドルASEAN輸出ハブとして位置づけられています。</li>
+        </ul>
+        <h3>注目点</h3>
+        <ul>
+          <li><strong>電池セルの現地化：</strong>輸入セルは2026年6月以降、現地調達率のカウント対象外となります。</li>
+          <li><strong>価格競争の利益圧縮：</strong>自ら主導する価格競争が自社の単位経済性も侵食します。</li>
+          <li><strong>サプライヤー基盤の深さ：</strong>輸入モジュールへの依存が現地付加価値クレジットを制限します。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key">Nation 2025 = The Nation Thailand — BYD Rayong plant 2025 · CnEVPost 2025 = CnEVPost — BYD Thailand production milestones 2025 · Proliance 2025 = Proliance — Thailand BEV share analysis 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 019 — PLAYER PROFILE 4: MG/GWM ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 07 · Player Profiles</div>
+      <div class="page-section-counter">019 / 024</div>
+    </div>
+    <h1 class="page-h1">MGとGWM：中国系現地化の第二波。</h1>
+    <p class="page-subhead">BYDの後に続く<strong>SAICのMGとGreat Wall Motorが第二層の中国系現地生産を形成</strong>——合計約18万台のラヨン・チョンブリ生産能力とASEAN域内輸出チャネルを追加しています。</p>
+    <div class="profile-hero">
+      <div>
+        <h2>MG（SAIC-CP）&amp; GWM</h2>
+        <div class="sub">SAIC Motor + CP JV · Great Wall Motor（中国）</div>
+        <div class="tags">
+          <span class="data-tag secondary">EV+PHEVラインナップ</span>
+          <span class="data-tag primary">ASEAN輸出</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">MG生産能力</div><div class="val">100k<span class="unit">台/年</span></div></div>
+        <div class="stat"><div class="label">GWM生産能力</div><div class="val">80k<span class="unit">台/年</span></div></div>
+        <div class="stat"><div class="label">GWM投資額</div><div class="val">22.6<span class="unit">THB bn</span></div></div>
+        <div class="stat"><div class="label">MG輸出先</div><div class="val">VN·ID·MY</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>MG · SAIC Motor-CP</h3>
+        <p>MGのチョンブリ工場は<strong>年間10万台の生産能力</strong>を持ち、MG5・MG ZS・MG HS PHEVを生産しています[Yicai 2025]。ベトナムとインドネシアに輸出し、マレーシアも次の展開先として控えています——タイ最初期の中国系現地JV基盤であり、最も幅広いICEからEVへの製品ラインナップを誇ります。</p>
+        <h3>GWM · Great Wall Motor</h3>
+        <p>GWMのラヨン工場は<strong>年間最大8万台</strong>の生産が可能で、EVおよびHEVハブへの発展に向けてさらに約THB 226億の投資が予定されています[Bangkok Post 2024]。GWMはBYDと並んで手頃な価格帯でのEV価格競争を主導しています。</p>
+        <h3>集合効果</h3>
+        <p>BYDと合わせた第二波により、中国系ブランドはBEVセグメントの<strong>約85%を構造的に掌握</strong>しています[Proliance 2025]——そして政策体制が深化を促そうとしている現地化数量の供給源となっています。</p>
+      </div>
+      <div class="profile-col">
+        <h3>強み</h3>
+        <ul>
+          <li><strong>ラインナップの幅：</strong>MGはICE・PHEV・BEVを網羅し、純BEV専業の参入企業にはないヘッジを持ちます。</li>
+          <li><strong>輸出チャネル：</strong>ASEAN域内輸出によりオフセット義務へのカウントが可能です。</li>
+          <li><strong>価格競争力：</strong>GWMとMGが日系既存メーカーに対して価格主導の数量優位を維持します。</li>
+        </ul>
+        <h3>注目点</h3>
+        <ul>
+          <li><strong>BYD対比の規模：</strong>BEVにおけるBYDの現地立ち上がりとブランド力に双方とも及びません。</li>
+          <li><strong>現地調達：</strong>同じ2026年6月の電池セル調達テストが適用されます。</li>
+          <li><strong>価格競争の利益圧縮：</strong>自ら推進する値引きによって収益性が圧迫されます。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key">Yicai 2025 = Yicai Global — SAIC-CP MG Chonburi plant 2025 · Bangkok Post 2024 = Bangkok Post — GWM Thailand EV investment 2024 · Proliance 2025 = Proliance — Thailand BEV segment share 2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 020 — DEMAND DIVIDER ===================== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 08</div>
+    <h1 class="divider-title">需要と <span class="accent">チャネル</span></h1>
+    <div class="divider-thesis">タイの自動車産業は<strong>国内需要ではなく輸出</strong>で成立しています。生産台数の約3分の2が中東・オーストラリア向けのピックアップを中心に海外へ出荷され、ショールームではなくチャネルの構成比が真の需要エンジンとなっています。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">8.1 国内対輸出</div>
+      <div class="toc-pill">8.2 輸出先</div>
+      <div class="toc-pill">8.3 チャネル経済</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 021 — DEMAND & CHANNELS p1 ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 08 · Demand &amp; Channels</div>
+      <div class="page-section-counter">021 / 024</div>
+    </div>
+    <h1 class="page-h1">需要構造：輸出主導、ピックアップ基軸。</h1>
+    <p class="page-subhead"><strong>2025年の輸出台数93万5,750台</strong>[FTI 2025]に対し国内販売は約50万台と、タイはまず輸出プラットフォームです。中東・オーストラリア・ASEANがピックアップ主導の数量を吸収し、国内需要の軟化下でもラインを稼働させています。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>輸出チャネルが支配的</h3>
+        <p>2025年の輸出台数は<strong>93万5,750台（−8.2%）・THB 6,220億相当</strong>[FTI 2025]で、国内販売の約2倍となっています。2026年1〜4月は生産台数の66.9%が輸出向け[FTI 2026]——生産拠点をタイ国内の軟調サイクルから切り離すチャネルです。</p>
+        <h3>中東とオーストラリアが牽引</h3>
+        <p>中東は2025年に<strong>20万1台（輸出の21.2%）</strong>を吸収した第3位の輸出市場で、ピックアップが63.4%を占めています[FTI 2025]。オーストラリアは乗用車・ピックアップともに主要輸出先で、約USD 29億相当に及びます[Trading Economics 2024]。EV輸出はまだ初期段階ですが台頭しつつあります。</p>
+        <h3>国内チャネルの再編</h3>
+        <p>国内では中国系EV参入企業が<strong>直販およびブランドストアチャネル</strong>を構築し、従来の日系アライアンスのディーラーネットワークを迂回しています。パワートレイン構成が変わるなかでショールームモデルが断片化しており——既存流通経済への二重の打撃となっています。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">生産台数の内訳：輸出対国内</div>
+            <div class="chart-subtitle">タイ · 2026年予測目標 · 台数</div>
+          </div>
+          <div class="chart-unit">UNITS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <circle cx="160" cy="130" r="80" fill="none" stroke="#E5E7EB" stroke-width="34"/>
+            <circle cx="160" cy="130" r="80" fill="none" stroke="#1E6FFF" stroke-width="34" stroke-dasharray="318 503" transform="rotate(-90 160 130)"/>
+            <text class="label-data" x="160" y="124" text-anchor="middle" style="font-size:20px">1.50m</text>
+            <text class="label-small" x="160" y="142" text-anchor="middle">2026年予測目標</text>
+            <rect x="300" y="95" width="14" height="14" fill="#1E6FFF"/><text class="label-data" x="322" y="106">輸出 950k</text>
+            <text class="label-small" x="322" y="120">63% · ピックアップ主導</text>
+            <rect x="300" y="150" width="14" height="14" fill="#E5E7EB"/><text class="label-data" x="322" y="161">国内 550k</text>
+            <text class="label-small" x="322" y="175">37% · 信用制約下</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FTI AUTO CLUB 2026 PRODUCTION TARGET · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">FTI 2025 = Federation of Thai Industries Auto Club — 2025 export bulletins · FTI 2026 = FTI Auto Club — Jan–Apr 2026 production split &amp; 2026 target · Trading Economics 2024 = Trading Economics — Thailand vehicle exports to Australia 2024</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 022 — REGULATORY ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Regulatory &amp; Policy</div>
+      <div class="page-section-counter">022 / 024</div>
+    </div>
+    <h1 class="page-h1">規制環境：2027年の崖に向けて現地化規制が強化される。</h1>
+    <p class="page-subhead">EV 3.5が支配的な政策レバーです。消費者補助金ではなく、<strong>現地調達率の閾値、生産オフセット比率、電池セル調達期限</strong>——これらがどのOEMがインセンティブ経済性を維持できるかを決定します。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>補助金から現地化義務へ</h3>
+        <p>EV 3.5（2024〜2027年）は物品税を<strong>2%</strong>に引き下げ、補助金を2026年にTHB 5万へ段階縮小します[EY 2024]。拘束力を持つ条件は構造的なもの：BEV向け40%現地調達率、PHEV向け45%、2026年の2:1生産オフセットが2027年には3:1に上昇します[BOI 2025]。</p>
+        <h3>電池セルの締め付け</h3>
+        <p>40%ルールに算入できる輸入電池セルの比率は2026年1月に15%から<strong>10%へ、そして2026年6月以降はゼロ</strong>へと低下します[Just Auto 2025]。製造業者は国内調達計画の提出が義務付けられます。しかしタイにはいまだ国内セルメーカーが存在しません[ASEAN Briefing 2025]——この政策の核心的矛盾です。</p>
+        <h3>2027年の崖と救済論争</h3>
+        <p>EVチェーンへの累計投資額は2025年10月時点で43社合計<strong>THB 1,400億</strong>に達しました[BOI 2025]。EV 3.5の支援が2027年に終了するとメーカーが関税無税輸入に回帰するリスクがあるとして、自動車業界団体は後継スキームを求めています——サプライヤー基盤を空洞化させる「生産の崖」です[Nation 2026]。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">現地調達オフセット比率の推移</div>
+            <div class="chart-subtitle">輸入1台に対する国内組み立て台数</div>
+          </div>
+          <div class="chart-unit">RATIO</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="220"/>
+            <line class="axis-line" x1="60" y1="220" x2="460" y2="220"/>
+            <line class="grid-line" x1="60" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="60" y1="100" x2="460" y2="100"/>
+            <text class="axis-text" x="55" y="224" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="164" text-anchor="end">1:1</text>
+            <text class="axis-text" x="55" y="104" text-anchor="end">2:1</text>
+            <text class="axis-text" x="55" y="44" text-anchor="end">3:1</text>
+            <rect class="bar-secondary" x="100" y="160" width="60" height="60"/><text class="label-data" x="130" y="154" text-anchor="middle">1:1</text><text class="axis-text" x="130" y="236" text-anchor="middle">2024–25年</text>
+            <rect class="bar-primary" x="220" y="100" width="60" height="120"/><text class="label-data" x="250" y="94" text-anchor="middle">2:1</text><text class="axis-text" x="250" y="236" text-anchor="middle">2026年</text>
+            <rect class="bar-tertiary" x="340" y="40" width="60" height="180"/><text class="label-data" x="370" y="34" text-anchor="middle" style="fill:#D97706">3:1</text><text class="axis-text" x="370" y="236" text-anchor="middle">2027年</text>
+            <text class="label-small" x="100" y="256" style="fill:#6B7280">輸入電池セルは2026年6月以降、現地調達率算入不可</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BOI, EXCISE DEPARTMENT, EV POLICY BOARD · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EY 2024 = EY Global Tax Alert — Thailand BEV 3.5 excise &amp; subsidy 2024 · BOI 2025 = Board of Investment of Thailand EV 3.5 local-content &amp; investment summary 2025 · Just Auto 2025 = Just Auto — Thailand BEV incentive update 2025 · ASEAN Briefing 2025 = ASEAN Briefing — BOI EV 3.5 battery investment 2025 · Nation 2026 = The Nation Thailand — auto groups' EV rescue-plan coverage 2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 023 — AI DIVIDER ===================== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 10</div>
+    <h1 class="divider-title">AI <span class="accent">の影響</span></h1>
+    <div class="divider-thesis">タイの自動車産業にとってAIは<strong>コスト防衛のレバーであり、未来への賭けではありません</strong>。予知保全と視覚品質管理が中国の垂直統合ラインとの単位コスト格差を縮小し、契約を維持するか失うかを分けます。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1 普及状況</div>
+      <div class="toc-pill">10.2 活用事例</div>
+      <div class="toc-pill">10.3 コスト効果</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 024 — AI OVERVIEW p1 ===================== -->
+<style>
+.ai-page .ai-overview-top { height: 244px; margin-bottom: 12px; }
+.ai-page .ai-callouts { margin-bottom: 12px; }
+.ai-page .page-subhead { margin-bottom: 12px; }
+.ai-page .ai-usecase { padding: 11px 13px; }
+.ai-page .source-key { margin-top: 8px; padding: 6px 0 4px; }
+</style>
+<div class="page ai-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 10 · AI Impact</div>
+      <div class="page-section-counter">024 / 024</div>
+    </div>
+    <h1 class="page-h1">タイ自動車製造におけるAI：パイロットを超え、本格展開の手前。</h1>
+    <p class="page-subhead">普及はパイロットと統合の中間段階にあります。<strong>タイの大手製造企業の40%超がIndustry 4.0技術を少なくとも1つ導入</strong>しており[MOI 2025]、自動車はThailand 4.0の牽引セクターの一つです。</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>普及の現状</h3>
+        <p>Thailand 4.0は予知保全と品質検査向けのAI導入を加速させており、<strong>大手製造企業の40%超</strong>がIndustry 4.0技術を少なくとも1つ稼働中——2026年に向けて急速に拡大しています[MOI 2025]。</p>
+        <h3>競争上の論理</h3>
+        <p>AIは中国のコスト曲線に対する利益率防衛ツールです。タイのOEM工場では<strong>予知保全の精度92%、突発停止を最大35%削減</strong>との報告があります[BytePlus 2025]。</p>
+        <h3>AIが解決しないこと</h3>
+        <p>AIは単位コストを縮小しますが、部品点数10分の1の格差や国内セル不在を補うことはできません。生産基盤を守るためのツールであり、EV現地化競争に勝つ手段ではありません。</p>
+      </div>
+      <div class="ai-callouts">
+        <div class="callout">
+          <div class="label">Industry 4.0 導入率</div>
+          <div class="num">40<span class="unit">%+</span></div>
+          <div class="change">大手製造企業、2026年に向け上昇 [MOI 2025]</div>
+          <div class="source-tag sec">MOI</div>
+        </div>
+        <div class="callout">
+          <div class="label">予知保全精度</div>
+          <div class="num">92<span class="unit">%</span></div>
+          <div class="change">突発停止−35% [BytePlus 2025]</div>
+          <div class="source-tag sec">BytePlus</div>
+        </div>
+        <div class="callout">
+          <div class="label">視覚QC不良削減率</div>
+          <div class="num">~40<span class="unit">%</span></div>
+          <div class="change">同業工場ベンチマーク [Kira estimates]</div>
+          <div class="source-tag est">KIRA Est.</div>
+        </div>
+      </div>
+    </div>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">UC 01</div>
+        <div class="uc-title">予知保全</div>
+        <div class="uc-body">センサー解析がライン設備の故障を停止前に検知——タイのOEM工場で実証済みの最も普及した事例。</div>
+        <div class="uc-example">導入済み · 近期ROI最高</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC 02</div>
+        <div class="uc-title">視覚品質管理</div>
+        <div class="uc-body">コンピュータービジョンによる不良検出が車体・塗装・溶接ラインのサンプル検査を代替し、初回合格率を向上。</div>
+        <div class="uc-example">導入済み · 12〜18ヵ月回収</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC 03</div>
+        <div class="uc-title">需要センシング</div>
+        <div class="uc-body">受注書とディーラー在庫シグナルにより変動する輸出構成に対して生産計画を最適化し、完成車在庫日数を削減。</div>
+        <div class="uc-example">パイロット中 · 輸出構成で重要</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC 04</div>
+        <div class="uc-title">サプライヤーリスク把握</div>
+        <div class="uc-body">AIがTier-2/3のEV移行リスクをマッピングし、支援・再装備・代替が必要なサプライヤーを優先順位付け。</div>
+        <div class="uc-example">新興 · 移行特有</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC 05</div>
+        <div class="uc-title">エネルギー最適化</div>
+        <div class="uc-body">プロセスAIが塗装工程・プレス加工のエネルギー消費を削減——2026年のエネルギーコスト転嫁下で実質的な効果。</div>
+        <div class="uc-example">パイロット中 · 2〜5%省エネ</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC 06</div>
+        <div class="uc-title">電池解析</div>
+        <div class="uc-body">セル品質・BMS解析が現地化推進を支援——組み立てから付加価値EVコンテンツへの橋渡し。</div>
+        <div class="uc-example">初期段階 · 現地化連動</div>
+      </div>
+    </div>
+    <div class="source-key">MOI 2025 = Thailand Ministry of Industry / Thailand 4.0 — Industry 4.0 adoption data 2025 · BytePlus 2025 = BytePlus — AI in Thailand manufacturing case data 2025 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 025 — FORECAST p1 ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Five-Year Outlook</div>
+      <div class="page-section-counter">025 / 024</div>
+    </div>
+    <h1 class="page-h1">5ヵ年見通し：EVシェアが30%超へ拡大するなかで生産台数が回復。</h1>
+    <p class="page-subhead">総生産台数は<strong>2030年までに約200万台へ緩やかに回復</strong>し[Kira estimates]、EV販売シェアは30%超へ上昇します[Intellify 2025]。生産拠点は存続しますが、パワートレインとサプライヤーの構成は大きく変わります。</p>
+    <div class="mdc-body">
+      <div class="mdc-narrative">
+        <h3>ベースケース：管理された移行</h3>
+        <p>生産台数は2026年の150万台から<strong>2030年には約190〜200万台</strong>へ回復し[Kira estimates]、EV販売は市場の31.3%に達し、EV生産目標は2030年までに年間75万台に近づきます[Intellify 2025]。輸出が引き続き基盤を支え、ピックアップが価値の下限を守ります。</p>
+        <h3>強気ケース：現地化の定着</h3>
+        <p>2027年以降の後継インセンティブが整備され<strong>国内電池セル生産能力が実現</strong>すれば、タイはASEANのEV輸出ハブとして確立されます——生産台数は210万台超、サプライヤー基盤はEVコンポーネントへ再スキルし、空洞化を免れます。</p>
+        <h3>弱気ケース：2027年の崖</h3>
+        <p>EV 3.5の後継策がなければ、メーカーは関税無税輸入に回帰し地場サプライヤー基盤が侵食されます[Nation 2026]。生産台数は150万台付近で停滞し、タイは価値が中国の統合サプライチェーンへ移転する<strong>薄い組み立て拠点</strong>へ退行します。</p>
+      </div>
+      <div class="mdc-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">EVシェアを重ねた生産見通し</div>
+            <div class="chart-subtitle">タイ · 百万台・EV% · 2025–2030年予測</div>
+          </div>
+          <div class="chart-unit">M UNITS / %</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="220"/>
+            <line class="axis-line" x1="50" y1="220" x2="460" y2="220"/>
+            <line class="grid-line" x1="50" y1="170" x2="460" y2="170"/>
+            <line class="grid-line" x1="50" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="50" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="45" y="224" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="174" text-anchor="end">0.7</text>
+            <text class="axis-text" x="45" y="124" text-anchor="end">1.4</text>
+            <text class="axis-text" x="45" y="74" text-anchor="end">2.1</text>
+            <rect class="bar-primary" x="70" y="116" width="42" height="104"/><text class="label-data" x="91" y="110" text-anchor="middle">1.46</text><text class="axis-text" x="91" y="236" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="160" y="113" width="42" height="107"/><text class="label-data" x="181" y="107" text-anchor="middle">1.50</text><text class="axis-text" x="181" y="236" text-anchor="middle">2026F</text>
+            <rect class="bar-tertiary" x="250" y="99" width="42" height="121" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/><text class="label-data" x="271" y="93" text-anchor="middle" style="fill:#D97706">~1.7</text><text class="axis-text" x="271" y="236" text-anchor="middle">2028F</text>
+            <rect class="bar-tertiary" x="340" y="81" width="42" height="139" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/><text class="label-data" x="361" y="75" text-anchor="middle" style="fill:#D97706">~1.95</text><text class="axis-text" x="361" y="236" text-anchor="middle">2030F</text>
+            <polyline points="91,150 181,140 271,124 361,108" fill="none" stroke="#1E6FFF" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="91" cy="150" r="3" fill="#1E6FFF"/><circle cx="181" cy="140" r="3" fill="#1E6FFF"/><circle cx="271" cy="124" r="3" fill="#1E6FFF"/><circle cx="361" cy="108" r="3" fill="#1E6FFF"/>
+            <text class="label-small" x="361" y="100" text-anchor="middle" style="fill:#1E6FFF">31% EV</text>
+            <text class="label-small" x="70" y="258" style="fill:#6B7280">棒グラフ＝生産台数（点線＝予測）· 折れ線＝販売EVシェア</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: FTI, INTELLIFY OUTLOOK · KIRA シナリオ三角測定 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Intellify 2025 = Intellify Thailand Automotive Industry Outlook 2025–2030 · Nation 2026 = The Nation Thailand — EV rescue-plan / 2027 cliff coverage 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 026 — FORECAST p2 (scenarios) ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 11 · Five-Year Outlook</div>
+      <div class="page-section-counter">026 / 024</div>
+    </div>
+    <h1 class="page-h1">2030年に向けたシナリオと感度分析。</h1>
+    <p class="page-subhead">結果は<strong>3つの感度要因</strong>に左右されます：2027年以降の後継政策、国内電池セル生産能力の実現、地場サプライヤー基盤が再スキルするか空洞化するか。同じレバーが強気と弱気を分けます。</p>
+    <div class="imp-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="imp-card" style="border-top-color: var(--green);">
+        <div class="num" style="color: var(--green);">強気 · ~210万台超</div>
+        <div class="title">現地化が定着し、ハブとして確立。</div>
+        <div class="body-text">EV 3.5の後継策が2027年以前に整備され、<strong>国内セル生産能力が立ち上がります</strong>。タイはASEANのEV輸出ハブとなり、サプライヤー基盤は電池・電動駆動コンポーネントへ再スキルします。EVシェアは31%超、輸出EVはオーストラリアと中東へ拡大。</div>
+        <div class="anchor">原動力: <span class="num-anchor">750k</span> EV/年 2030年目標</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">ベース · ~190〜200万台</div>
+        <div class="title">管理された移行、混合基盤。</div>
+        <div class="body-text">ICEがHEV・BEVに置き換わりながら生産台数が緩やかに回復。<strong>日系OEMはピックアップとハイブリッドを維持</strong>し、中国系ブランドが都市部BEVを掌握。サプライヤー基盤は部分的に適応・集約化。輸出が引き続き基盤を支え、価値は電動パワートレインへ着実にシフト。</div>
+        <div class="anchor">原動力: EVシェア <span class="num-anchor">~31%</span> 2030年</div>
+      </div>
+      <div class="imp-card" style="border-top-color: var(--amber);">
+        <div class="num" style="color: var(--amber);">弱気 · ~150万台 停滞</div>
+        <div class="title">2027年の生産の崖。</div>
+        <div class="body-text">後継インセンティブなし。メーカーが<strong>関税無税輸入へ回帰</strong>しTier-2/3基盤が侵食されます[Nation 2026]。タイは価値が中国の統合サプライチェーンへ移転する薄い組み立て拠点へ退行。816社のコンポーネント企業と32万6,400人の労働者が調整を負担。</div>
+        <div class="anchor">リスク: <span class="num-anchor">326k</span> 人の労働者が影響圏</div>
+      </div>
+    </div>
+    <div class="source-key">Nation 2026 = The Nation Thailand — auto-industry 2027 production-cliff &amp; rescue-plan coverage 2026 · Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 027 — METHODOLOGY ENDNOTE ===================== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 12 · Methodology Endnote</div>
+      <div class="page-section-counter">027 / 024</div>
+    </div>
+    <h1 class="page-h1">調査手法後記・情報源構成</h1>
+    <p class="page-subhead">本レポートの構築方法——エビデンスストリーム、出典タグシステム、レポート全体で使用したすべての出典の完全引用キー——の透明な説明です。</p>
+    <div class="meth-end-grid">
+      <div class="meth-end-left">
+        <p>本レポートは2つのエビデンスストリームを三角測定しています。<strong>出典名タグ</strong>（例：[FTI 2025]、[BOI 2025]）が付いた数値は該当出典からのデータであり、完全な引用を右欄に掲載しています。<strong>[Kira estimates]</strong>が付いた数値は、KIRAアナリストが政府統計・OEM開示書類・チャネル情報の組み合わせから算出したものであり、該当セクションに手法を開示しています。</p>
+        <p>定量的主張の約<strong>78%が外部引用</strong>、<strong>約22%がKIRA独自算出</strong>です[Kira estimates]。データが豊富な生産市場を対象とした本レポートの二次情報主導の情報源構成と整合しています。</p>
+        <div class="mix-bar">
+          <div class="mix-seg" style="background: var(--green); width: 78%;">二次情報 78%</div>
+          <div class="mix-seg" style="background: var(--amber); width: 22%;">KIRA 22%</div>
+        </div>
+        <div class="mix-cap">本レポート内のタグ付き数値全体にわたる情報源構成の集計。</div>
+        <p class="disclaimer">本レポートは許諾読者限定で提供されるものであり、2026年6月時点のKIRA Researchの独自分析を反映しています。数値は公式統計の更新に伴い修正される場合があります。予測はシナリオに基づくものであり、投資助言ではありません。</p>
+      </div>
+      <div class="src-list">
+        <h3>出典凡例 — 完全引用</h3>
+        <div class="src-item"><span class="alias">FTI</span> — Federation of Thai Industries, Automotive Club: monthly production, sales &amp; export bulletins, 2025–2026.</div>
+        <div class="src-item"><span class="alias">BOI</span> — Board of Investment of Thailand: EV 3.5 policy, local-content rules &amp; investment summaries, 2025.</div>
+        <div class="src-item"><span class="alias">NESDC</span> — National Economic &amp; Social Development Council: Thai Economic Outlook 2026.</div>
+        <div class="src-item"><span class="alias">BOT</span> — Bank of Thailand: Economic Outlook / Monetary Policy Report, 2026.</div>
+        <div class="src-item"><span class="alias">Nikkei</span> — Nikkei Asia: Japan automakers lose share in Thailand, 2025.</div>
+        <div class="src-item"><span class="alias">Proliance</span> — Proliance: China vs Japan car-market Thailand share analysis, 2025.</div>
+        <div class="src-item"><span class="alias">Just Auto</span> — Just Auto: Thailand BEV incentive &amp; capacity coverage, 2025.</div>
+        <div class="src-item"><span class="alias">ISEAS</span> — ISEAS-Yusof Ishak Institute: The Thai Automotive Industry in Troubled Transition, 2025.</div>
+        <div class="src-item"><span class="alias">Intellify</span> — Intellify: Thailand Automotive Industry Outlook 2025–2030.</div>
+        <div class="src-item"><span class="alias">Statista</span> — Statista Market Forecast: Thailand Passenger Cars, 2025.</div>
+        <div class="src-item"><span class="alias">Toyota Asia / Isuzu / MarkLines / InsideEVs / Syntax</span> — OEM &amp; trade filings on plant, model &amp; export moves, 2025.</div>
+        <div class="src-item"><span class="alias">Nation / CnEVPost / Yicai / Bangkok Post / EY / ASEAN Briefing / Thansettakij / MOI / BytePlus / Trading Economics</span> — supporting trade-press, policy &amp; macro sources, 2024–2026.</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>機密 · 許諾読者限定 · © 2026 KIRA Research · KR-THA-AUTO-2026</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
