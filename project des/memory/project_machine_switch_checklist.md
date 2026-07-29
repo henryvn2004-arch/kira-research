@@ -91,20 +91,24 @@ The `project des/memory/*.md` files in the repo travel via git, but Claude Code 
 
 See `project des/memory/README.md` in the repo for the canonical sync rationale.
 
-### 5. Verify 18 scheduled tasks exist (Phase Q.3)
+### 5. Verify 2 scheduled tasks exist (Phase Q.7 — 2026-07-29)
 
-vnc-f4 had **13 tasks** as of 2026-05-26 (missing the 5 Q.3 bridge fires: 1930/2030/2130/2230/2330). DELL state TBD. Check on the new machine:
+Q.7 gom 22 task (`kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4) về **2**. Check on the new machine:
 
 **Click-through:**
 1. Open File Explorer → `C:\Users\<new-user>\.claude\scheduled-tasks\`
-2. Count `kira-batch-*` folders. Should be 18 of these:
-   - Evening (3): `kira-batch-1700`, `1745`, `1830`
-   - Bridge (5): `kira-batch-1930`, `2030`, `2130`, `2230`, `2330`
-   - Overnight (10): `kira-batch-0000`, `0045`, `0130`, `0215`, `0300`, `0345`, `0430`, `0515`, `0600`, `0645`
-3. PLUS the 4 insight tasks (Q.2): `kira-insight-0700`, `1100`, `1500`, `2100`
-4. Disabled history (can ignore or delete): `kira-batch-01am`, `05am`, `05pm`, `1215pm`
+2. Chỉ nên có 2 folder KIRA:
+   - `kira-batch` — cron `0 0-17 * * *` (18 fires/ngày, hourly 07:00–00:00 ICT) → `batch_runner.md`
+   - `kira-insight` — cron `0 7,11,15,21 * * *` (4 fires/ngày) → `insight_runner.md`
+3. Còn sót folder `kira-batch-HHMM` / `kira-insight-HHMM` kiểu cũ → máy này chưa chạy Q.7.
 
-**If any missing:** in Claude Code → ask Claude something like "create scheduled task kira-batch-1930 with cron `30 19 * * *`, prompt body identical to kira-batch-0000 (delegate to batch_runner.md)". Claude uses `mcp__scheduled-tasks__create_scheduled_task`. Cron list from [[project_batch_cron_system]].
+**Nếu thiếu / còn kiểu cũ:** trong Claude Code trên máy đó → "Đọc
+`skills/kira-research-report/prompts/routines_consolidate.md` rồi làm theo".
+Runbook tự kiểm kê, tạo 2 task, verify, rồi xoá task cũ.
+
+**Bắt buộc** trong SKILL.md của cả 2: hardcode đường dẫn repo của máy này +
+câu "BỎ QUA bước `git rev-parse --show-toplevel`" — thiếu là fire nào cũng chết
+ở dòng đầu playbook. [[feedback_scheduled_task_cwd_parent]]
 
 ### 6. Open Claude Code → click "Run now" on 1 task → verify no prompts
 
@@ -159,7 +163,7 @@ See [[project_batch_cron_system]] for the full cron architecture + [[feedback_sc
 
 - `C:\Users\<user>\.claude\settings.json` — user-level allowlist + defaultMode auto (Step 3)
 - `C:\Users\<user>\.claude\projects\<sanitized>\memory\` — mirrored from repo (Step 4)
-- `C:\Users\<user>\.claude\scheduled-tasks\kira-*\SKILL.md` — 22 tasks total (Step 5)
+- `C:\Users\<user>\.claude\scheduled-tasks\kira-*\SKILL.md` — 2 tasks post-Q.7 (Step 5)
 - Windows User-scope env vars (Step 2)
 - Git config (Step 1 sub-step)
 
@@ -176,7 +180,7 @@ The folder `C:\Users\vnc-f4\Rira Research\` was created with a typo — brand is
 1. Close Claude Code completely (all windows including any paused cron-fire windows).
 2. Wait for any in-progress fire to finish (or accept the dropped fire — claim row resets to error, manual `git checkout -- data/report_queue.csv` to recover).
 3. File Explorer: rename `C:\Users\vnc-f4\Rira Research\` → `C:\Users\vnc-f4\Kira Research\`.
-4. Bulk-update 18 batch + 4 insight SKILL.md files at `C:\Users\vnc-f4\.claude\scheduled-tasks\kira-*\SKILL.md`. The "Working directory:" line currently says `C:\Users\vnc-f4\Rira Research\kira-research` — change `Rira` → `Kira` in each.
+4. Update the SKILL.md files at `C:\Users\vnc-f4\.claude\scheduled-tasks\kira-*\SKILL.md` (2 files post-Q.7, 22 before). The "Working directory:" line currently says `C:\Users\vnc-f4\Rira Research\kira-research` — change `Rira` → `Kira` in each.
    - Or have Claude do it via Glob+Edit once the new Claude Code session opens.
 5. Rename Claude Code project memory dir: `C:\Users\vnc-f4\.claude\projects\C--Users-vnc-f4-Rira-Research\` → `C--Users-vnc-f4-Kira-Research\`.
 6. Reopen Claude Code in the new folder location.

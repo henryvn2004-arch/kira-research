@@ -141,6 +141,26 @@ Phase R (companies directory) — Henry brainstormed Mordor's playbook with me b
 
 ---
 
+## Scheduled routines (Phase Q.7 — 2026-07-29)
+
+Batch gen + dịch chạy bằng **2 scheduled task** trên máy Windows của Henry
+(trước Q.7 là 22 task, prompt body giống hệt nhau, chỉ khác giờ cron):
+
+| Task | Cron | Fires/ngày | Playbook |
+|---|---|---|---|
+| `kira-batch` | `0 0-17 * * *` | 18 | `skills/kira-research-report/prompts/batch_runner.md` |
+| `kira-insight` | `0 7,11,15,21 * * *` | 4 | `skills/kira-research-report/prompts/insight_runner.md` |
+
+Mỗi fire = 1 hàng × 1 stage. **"Gen" và "dịch" không phải 2 task riêng** — runner
+đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate + publish.
+
+Task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\` (ngoài repo, không theo git).
+Runbook tạo/di chuyển: `skills/kira-research-report/prompts/routines_consolidate.md`
+— phải chạy từ Claude Code **trên chính máy đó**, session web/mobile không với tới được.
+Chi tiết + rủi ro throughput: `project des/memory/project_batch_cron_system.md`.
+
+---
+
 ## Workplan progress by phase
 
 Source of truth for phase/sprint structure is `project des/workplan.md`
@@ -538,4 +558,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-30 — Fix: company detail page "unable to load" bug resolved (PR #26, `a32cf52`). Sprint R.10 complete (`4b8c754`). **Code blocker = 0**. Next: Wikidata bulk seeder to auto-import companies for all countries.*
+*Last updated: 2026-07-29 — Phase Q.7: 22 scheduled task (`kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4) gom về 2 (`kira-batch` + `kira-insight`), cùng số fire cùng giờ. Runbook `prompts/routines_consolidate.md` — Henry chạy trên máy Windows. Trước đó: company detail page fix (PR #26, `a32cf52`), Sprint R.10 (`4b8c754`). **Code blocker = 0**.*
