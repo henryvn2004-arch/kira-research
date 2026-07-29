@@ -144,7 +144,8 @@ Phase R (companies directory) — Henry brainstormed Mordor's playbook with me b
 ## Scheduled routines (Phase Q.7 — 2026-07-29)
 
 Batch gen + dịch chạy bằng scheduled tasks (panel "Routines") trên máy Windows
-của Henry. Kế hoạch Q.7 — Henry chốt 2026-07-29: gom **22 routine → 1**.
+của Henry. Q.7 — Henry chốt 2026-07-29: gom **22 routine → 1**. **ĐÃ THỰC THI
+XONG 2026-07-29 trên máy DELL** — panel Routines giờ chỉ còn 1 dòng `kira`.
 
 | | Trước | Sau |
 |---|---|---|
@@ -160,14 +161,21 @@ runner đọc trạng thái queue rồi tự route sang EN gen / JA translate / 
 + publish. Nên 1 report = 3 fire. Không được gộp 3 stage vào 1 fire (subagent dịch
 vượt output cap → treo; đây là lý do Q.1 tách ra).
 
-**Trạng thái 2026-07-29: CHƯA gom, và pipeline đang DỪNG.** Commit `batch:` cuối
-là 2026-07-21 (8 ngày), queue còn 60 hàng `pending` + 3 hàng kẹt `*_in_progress`.
-Panel Routines hiện `Paused` trên mọi dòng. Bỏ pause trước, gom sau.
+**Trạng thái 2026-07-29 sau khi gom:** pipeline đã chạy lại (từng dừng 8 ngày
+07-21 → 07-29 do routine Paused + máy tắt). Queue: 59 `pending` · 16 `error` ·
+106 `done`. Step 6 của runbook — đo `git log --since="7 days ago" | grep -c
+'batch: complete'`, kỳ vọng ~7 — **còn mở, đo lại ~2026-08-05**.
 
-Task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\` (ngoài repo, không theo git).
-Runbook tạo/di chuyển: `skills/kira-research-report/prompts/routines_consolidate.md`
-— phải chạy từ Claude Code **trên chính máy đó**, session web/mobile không với tới được.
-Chi tiết + rủi ro throughput: `project des/memory/project_batch_cron_system.md`.
+⚠️ **Cron của scheduled tasks là giờ LOCAL (ICT), không phải UTC** — đo trực tiếp
+2026-07-29, sửa lại ghi chú cũ. Viết cron thẳng bằng giờ Việt Nam, đừng +7.
+Có thêm jitter 0–10 phút mỗi fire.
+
+Task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\kira\` (ngoài repo, không theo
+git) → **đổi máy là mất, phải tạo lại**. Runbook:
+`skills/kira-research-report/prompts/routines_consolidate.md` — phải chạy từ Claude
+Code **trên chính máy đó**, session web/mobile không với tới được. Backup 22 routine
+cũ để rollback: `data/routines_backup_2026-07-29.md`.
+Chi tiết + gotcha: `project des/memory/project_batch_cron_system.md`.
 
 ---
 
@@ -568,4 +576,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-07-29 — Phase Q.7: 22 scheduled task (`kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4) gom về 2 (`kira-batch` + `kira-insight`), cùng số fire cùng giờ. Runbook `prompts/routines_consolidate.md` — Henry chạy trên máy Windows. Trước đó: company detail page fix (PR #26, `a32cf52`), Sprint R.10 (`4b8c754`). **Code blocker = 0**.*
+*Last updated: 2026-07-29 — Phase Q.7 **ĐÃ THỰC THI**: 22 scheduled task (`kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4) gom về **1** (`kira`, cron `0 18,21,0,3 * * *` — 3 fire batch + 1 fire insight/ngày, ~1 report/ngày). Runbook `prompts/routines_consolidate.md` chạy xong trên máy DELL; Step 6 (đo throughput 1 tuần) còn mở tới ~2026-08-05. Trước đó: company detail page fix (PR #26, `a32cf52`), Sprint R.10 (`4b8c754`). **Code blocker = 0**.*

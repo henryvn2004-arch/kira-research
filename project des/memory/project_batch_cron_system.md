@@ -1,6 +1,6 @@
 ---
 name: kira-batch-cron-system
-description: "Phase Q.6: 18 daily scheduled tasks, hourly 07:00–00:00 ICT (00:00–17:00 UTC). Cron times are UTC — task names reflect UTC hour. Redesigned 2026-05-31 after discovering old schedule clustered 10 fires at 07:00–13:45 ICT + 8 fires at 00:00–06:30 ICT (useless when machine off overnight)."
+description: "Phase Q.7 (executed 2026-07-29): 22 scheduled tasks consolidated into 1 routine `kira`, cron `0 18,21,0,3 * * *` (4 fires/day, LOCAL time) — 3 batch fires + 1 insight fire, dispatched by `date +%H` inside SKILL.md. Steady state = 1 full report/day (EN+JA+KO)."
 metadata:
   node_type: memory
   type: project
@@ -11,13 +11,25 @@ metadata:
 
 Henry's KIRA Research has a daily batch report generation system built on top of the `kira-research-report` skill ("[[project_tool_gen_report|tool gen report]]"). Scheduled tasks (`mcp__scheduled-tasks`) fire daily and pull 1 pending topic per fire from `data/report_queue.csv`, gen it as a 3-language report (EN + JA + KO), auto-publish to Supabase, commit results.
 
-## IMPORTANT: Cron times are UTC
+## IMPORTANT: Cron times are LOCAL, not UTC
 
-Task names like `kira-batch-0000` mean **00:00 UTC = 07:00 ICT**. All cron expressions are UTC. Add 7 hours to get Vietnam time.
+**Đính chính 2026-07-29 (đo trực tiếp, thay cho ghi chú "cron là UTC" cũ).**
+`mcp__scheduled-tasks` đánh giá cron theo **giờ local của máy** (ICT trên máy Henry).
+Bằng chứng: `kira` cron `0 18,21,0,3 * * *` → `nextRunAt` = `2026-07-29T11:01:52Z`
+= 18:01 ICT. Tương tự `kira-batch-1700` cron `0 17 * * *` → `nextRunAt` 10:07Z
+= 17:07 ICT. Viết cron thẳng bằng giờ Việt Nam, **đừng +7**.
 
-## Current schedule (Phase Q.7 — 2026-07-29) — 22 routine gom về 1
+Ghi chú "cron times are UTC" trước đây đến từ thời Q.6 — mà Q.6 chưa từng được
+áp lên máy nào, nên sai chưa bao giờ bị lộ. Bảng Q.6 phía dưới (0000 = 07:00 ICT)
+vì thế cũng sai; bảng Q.3 (1745 = 05:45 PM) mới đúng.
+
+Hệ quả cho scheduler: có thêm **jitter 0–10 phút** cộng vào mỗi fire
+(`jitterSeconds` trong `list_scheduled_tasks`) — 18:00 thực tế nổ ~18:00–18:10.
+
+## Current schedule (Phase Q.7 — executed 2026-07-29) — 22 routine gom về 1
 
 **Henry chốt 2026-07-29: 1 routine duy nhất, 4 fire/ngày, ra 1 report/ngày (EN+JA+KO).**
+**Đã thực thi xong 2026-07-29 ~11:55 ICT** — panel Routines chỉ còn `kira`.
 
 | | Trước | Sau |
 |---|---|---|
@@ -37,6 +49,22 @@ pending → runway ~60 ngày. Insight của một report cần 6 fire → ~6 ng�
 4 bài × 3 thứ tiếng. Muốn nhanh hơn: thêm giờ vào cron, vẫn 1 routine.
 
 Runbook: `skills/kira-research-report/prompts/routines_consolidate.md`.
+Backup 22 routine cũ (rollback): `data/routines_backup_2026-07-29.md`.
+
+### Kết quả thực thi runbook (2026-07-29)
+
+- **Step 1** — 22 routine, tất cả `enabled: true` (KHÔNG Paused như runbook dự đoán;
+  chúng đã được bật lại trước đó và đang chạy bù hàng loạt fire lỡ, ~2 phút/fire).
+- **Step 3** — tạo `kira`, cron `0 18,21,0,3 * * *`, SKILL.md hardcode path DELL +
+  câu "BỎ QUA `git rev-parse`" + env guard + dispatch `date +%H`.
+- **Step 4** — "Run now" xanh: dispatch chọn đúng batch runner (giờ 11 ≠ 03), env
+  guard qua, **không dính permission prompt** (allowlist user-level đã đủ), phát
+  hiện 2 claim live dưới 90 phút → thoát sạch, không claim/commit/spawn.
+- **Step 5** — xoá 22 routine. `delete_scheduled_task` chỉ gỡ khỏi scheduler:
+  **SKILL.md cũ vẫn nằm trên đĩa** ở `~/.claude/scheduled-tasks/<taskId>/` (recover
+  prompt được), và **session đang chạy dở KHÔNG bị giết** — fire cũ vẫn commit
+  `batch: EN done for 2027-sg-digital-assets` lúc 11:54 sau khi task đã bị xoá.
+- **Step 6** — chờ đo 1 tuần (xem mục dưới).
 
 ### Phương án 2-routine (đã cân nhắc, không chọn)
 
@@ -84,12 +112,13 @@ insight), không phải 2 **loại việc**.
 trên web/mobile KHÔNG làm được: task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\`,
 ngoài repo). Tạo 2 task mới → Run now verify → mới xoá 22 task cũ.
 
-**Pipeline đang DỪNG (phát hiện 2026-07-29)**: commit `batch:` cuối cùng là
-2026-07-21 — 8 ngày không chạy, trong khi queue còn **60 hàng `pending`** +
-3 hàng kẹt `*_in_progress` + 13 `error`. Panel Routines hiện chip `Paused` trên
-mọi dòng `Kira batch *`. Routine `Local` chỉ chạy khi máy thức + online.
-→ **Bỏ pause / bật máy trước, gom sau** (Step 0 của runbook). Gom một cỗ máy đang
-tắt thì sau đó không phân biệt được throughput tụt là do gom hay do vốn đã tắt.
+**Pipeline từng DỪNG 8 ngày (07-21 → 07-29), đã chạy lại**: commit `batch:` cuối
+cùng là 2026-07-21 trong khi queue còn hàng. Nguyên nhân: routine bị Paused +
+máy tắt. Đã bỏ pause trước khi gom (Step 0). Queue lúc gom: **59 pending** ·
+1 `en_in_progress` · 16 `error` · 106 `done`.
+
+Bài học: gom một cỗ máy đang tắt thì sau đó không phân biệt được throughput tụt
+là do gom hay do vốn đã tắt — luôn chạy Step 0 trước.
 
 **Rủi ro đã biết, cần đo sau 48h**: 18 task riêng thì 2 fire chồng nhau là 2 job
 độc lập; gom về 1 task, nếu scheduler skip fire khi lần chạy trước còn sống thì
@@ -126,15 +155,32 @@ nữa thì tách batch làm 2 task lệch pha (tổng 3, vẫn gọn hơn 22).
 
 ## Setup on machine (recreate tasks) — Q.7
 
-Chỉ còn 2 task. Trong Claude Code trên máy đó:
+Chỉ còn **1 task**. Trong Claude Code trên máy đó:
 > "Đọc `skills/kira-research-report/prompts/routines_consolidate.md` trong repo kira-research rồi làm theo."
 
-Runbook lo hết: kiểm kê task đang có → tính cron gộp từ tập giờ **thật** (không
-tin trí nhớ) → tạo `kira-batch` + `kira-insight` → Run now verify → xoá task cũ.
+Runbook lo hết: kiểm kê task đang có → chọn 4 giờ fire trong cửa sổ máy bật →
+tạo `kira` → Run now verify → xoá task cũ.
 
-Bắt buộc trong SKILL.md của cả 2 task: hardcode đường dẫn repo + câu "BỎ QUA
-bước `git rev-parse --show-toplevel`". Thiếu là mọi fire chết ở dòng đầu playbook
+Bắt buộc trong SKILL.md: hardcode đường dẫn repo + câu "BỎ QUA bước
+`git rev-parse --show-toplevel`". Thiếu là mọi fire chết ở dòng đầu playbook
 với `not in git, no-op` — xem [[feedback_scheduled_task_cwd_parent]].
+
+Đường dẫn trên DELL: `C:\Users\DELL\Kira Research\kira-research`
+(bash `/c/Users/DELL/Kira Research/kira-research`).
+
+## Step 6 — theo dõi (mở, bắt đầu 2026-07-29)
+
+Kỳ vọng: **1 commit `batch: complete <id> (EN+JA+KO, published)` mỗi ngày**.
+Đo sau 7 ngày (≈ 2026-08-05):
+
+```bash
+git log --since="7 days ago" --format='%s' | grep -c 'batch: complete'
+```
+
+~7 là đúng. Thấp hơn nhiều → kiểm theo thứ tự: máy có bật lúc 18/21/00/03 không →
+có hàng `*_in_progress` kẹt không → fire có bị permission prompt chặn không.
+Muốn nhanh hơn: thêm giờ vào cron (vd `0 18,20,22,0,2,4 * * *` = 6 fire = 2
+report/ngày), vẫn 1 routine, sửa đúng 1 dòng.
 
 ## Current schedule (Phase Q.3 — 2026-05-25, SUPERSEDED)
 
@@ -242,11 +288,12 @@ If queue is empty when a fire triggers → fire exits cleanly with "No pending w
 
 ## Files NOT committed (live in user's Claude Code config)
 
-Post-Q.7: **2 task directories** — `C:\Users\<user>\.claude\scheduled-tasks\{kira-batch,kira-insight}\SKILL.md`.
-(Pre-Q.7 là 22: `kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4.)
+Post-Q.7: **1 task directory** — `C:\Users\<user>\.claude\scheduled-tasks\kira\SKILL.md`.
+(Pre-Q.7 là 22: `kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4. 22 thư mục cũ vẫn
+còn trên đĩa DELL sau khi delete — tool không xoá file, chỉ gỡ khỏi scheduler.)
 
 → **If Henry switches machines, scheduled tasks won't follow.** Recreate on the new machine
-by running `prompts/routines_consolidate.md` — 2 `create_scheduled_task` calls thay vì 22.
+by running `prompts/routines_consolidate.md` — **1** `create_scheduled_task` call thay vì 22.
 
 ## Per-machine env vars
 
@@ -353,7 +400,13 @@ Cost: ~4 × 150K tokens/day = 600K/day Insight (~10% of batch quota).
 
 Commit: `012bb31`.
 
-## Phase Q.7 changelog (2026-07-29) — 22 scheduled task gom về 2
+## Phase Q.7 changelog (2026-07-29) — 22 scheduled task gom về 1
+
+**Chốt cuối: 1 routine `kira`, 4 fire/ngày, ~1 report/ngày. Đã thực thi xong.**
+Mục dưới đây là bản nháp giữa chừng (gom về 2, giữ nguyên số fire) — giữ lại để
+thấy đường đi của quyết định, KHÔNG phải trạng thái hiện tại.
+
+### Bản nháp giữa chừng (gom về 2 — superseded trong cùng ngày)
 
 **Lý do**: Henry mở panel Routines/Scheduled thấy 22 dòng `kira-batch-*` +
 `kira-insight-*`, mỗi dòng prompt body giống hệt nhau, chỉ khác giờ. Không đọc
@@ -383,5 +436,22 @@ gì". Sai — máy chạy layout Q.3 nhịp 45 phút, phút lệch nhau, **khôn
 trạng được**. Runbook đã bổ sung Case A (cùng phút → gộp không đổi) / Case B
 (lệch phút → buộc regularize, phải báo số fire trước/sau và hỏi Henry). Bài học:
 memory note ghi "current schedule" không phải bằng chứng — panel Routines mới là.
+
+### Gotcha phát hiện lúc thực thi (2026-07-29)
+
+- **Tool approval lưu theo từng routine, không theo máy.** Routine mới tạo bắt
+  đầu với 0 approval — đó là lý do Step 4 "Run now" bắt buộc, không bỏ qua được.
+  (Ở đây `kira` chạy trót lọt vì allowlist user-level `~/.claude/settings.json`
+  đã phủ Bash/Read/git — xem [[feedback_scheduled_task_cwd_parent]].)
+- **Bật lại routine sau khi Paused → scheduler chạy bù dồn dập.** 22 routine nổ
+  liên tiếp cách nhau ~2 phút, nhiều fire chồng nhau trong cùng working tree.
+  Cơ chế detect-concurrent-fire (xem [[feedback_batch_fire_shared_workdir_overlap]])
+  gánh được phần batch, nhưng **insight thì không có claim** — 2 fire insight cùng
+  chạy có thể sinh dư insight, phải dọn về đúng 3
+  (xem [[feedback_insight_fires_no_claim_race]]). Gom về 1 routine giãn 3 tiếng
+  xoá hẳn lớp rủi ro này.
+- **`delete_scheduled_task` là thao tác an toàn**: chỉ gỡ khỏi scheduler + archive
+  run session cũ. SKILL.md ở lại trên đĩa, session đang chạy dở vẫn chạy tới xong
+  và vẫn commit bình thường.
 
 See also: [[project_tool_gen_report]] · [[reference_kira_research]] · [[feedback_sparticuz_chromium_vercel]] · [[project_o_studio_credits]] · [[project_q_insight_runner]]
