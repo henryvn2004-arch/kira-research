@@ -38,6 +38,36 @@ pending → runway ~60 ngày. Insight của một report cần 6 fire → ~6 ng�
 
 Runbook: `skills/kira-research-report/prompts/routines_consolidate.md`.
 
+### Trạng thái thực thi runbook
+
+| Step | Trạng thái |
+|---|---|
+| 0 — kiểm pipeline + gỡ hàng kẹt | ✅ chạy 2026-07-29 từ session web |
+| 1–6 — gom routine | ⛔ chưa chạy được (cần máy Windows) |
+
+**Step 0 (2026-07-29, session Claude Code trên web):**
+`node skills/kira-research-report/scripts/audit-queue.mjs` → `recovered=3`.
+Cả 3 hàng đều **second-strike** (đã auto-recover một lần ngày 2026-07-21 rồi
+kẹt lại) nên script không trả về `pending` mà đánh `error` + `manual review`:
+
+- `2026-sg-family-office-2` — `ja_in_progress` re-stale (claim 2026-07-21T01:20Z)
+- `2027-sg-marine-bunkering` — `en_in_progress` re-stale (claim 2026-07-21T01:08Z)
+- `2026-sg-logistics` — `en_in_progress` re-stale (claim 2026-07-21T01:10Z)
+
+Queue sau khi gỡ: **182 hàng — done 106 · pending 60 · error 16 · in_progress 0.**
+Không còn hàng nào chặn claim. 3 hàng trên cần review tay (xem output/log có gì
+cứu được không, hoặc reset về `pending` để gen lại từ đầu).
+
+Nguyên nhân gốc pipeline dừng vẫn **chưa xử**: commit `batch:` cuối là
+2026-07-21, panel Routines đang `Paused` hết. Bỏ pause là việc trên máy Windows.
+
+**Steps 1–6 không chạy được từ session web/mobile.** Routine nằm ở
+`C:\Users\<user>\.claude\scheduled-tasks\`, ngoài repo, và cần MCP
+`mcp__scheduled-tasks` — session web không có server này (đã kiểm 2026-07-29:
+chỉ có `CronCreate`/`CronList`, là cron in-memory của chính session, container
+ephemeral, không liên quan panel Routines của Henry). Phải mở Claude Code trên
+chính máy Windows đang giữ routine rồi chạy runbook từ Step 1.
+
 ### Phương án 2-routine (đã cân nhắc, không chọn)
 
 Giữ 2 routine tách theo pipeline (`kira-batch` + `kira-insight`), gộp nguyên tập
