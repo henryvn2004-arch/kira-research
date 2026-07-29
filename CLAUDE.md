@@ -143,16 +143,26 @@ Phase R (companies directory) — Henry brainstormed Mordor's playbook with me b
 
 ## Scheduled routines (Phase Q.7 — 2026-07-29)
 
-Batch gen + dịch chạy bằng **2 scheduled task** trên máy Windows của Henry
-(trước Q.7 là 22 task, prompt body giống hệt nhau, chỉ khác giờ cron):
+Batch gen + dịch chạy bằng scheduled tasks (panel "Routines") trên máy Windows
+của Henry. Kế hoạch Q.7 — Henry chốt 2026-07-29: gom **22 routine → 1**.
 
-| Task | Cron | Fires/ngày | Playbook |
-|---|---|---|---|
-| `kira-batch` | `0 0-17 * * *` | 18 | `skills/kira-research-report/prompts/batch_runner.md` |
-| `kira-insight` | `0 7,11,15,21 * * *` | 4 | `skills/kira-research-report/prompts/insight_runner.md` |
+| | Trước | Sau |
+|---|---|---|
+| Routine | 22 | **1** (`kira`) |
+| Fires/ngày | 22 | **4** — cron `0 18,21,0,3 * * *` |
+| Report/ngày | ~6 | **1** (EN+JA+KO đầy đủ) |
 
-Mỗi fire = 1 hàng × 1 stage. **"Gen" và "dịch" không phải 2 task riêng** — runner
-đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate + publish.
+3 fire chạy `batch_runner.md`, fire 03:00 chạy `insight_runner.md` — dispatch
+bằng `date +%H` trong SKILL.md.
+
+**Mỗi fire = 1 hàng × 1 stage.** "Gen" và "dịch" không phải 2 routine riêng —
+runner đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate
++ publish. Nên 1 report = 3 fire. Không được gộp 3 stage vào 1 fire (subagent dịch
+vượt output cap → treo; đây là lý do Q.1 tách ra).
+
+**Trạng thái 2026-07-29: CHƯA gom, và pipeline đang DỪNG.** Commit `batch:` cuối
+là 2026-07-21 (8 ngày), queue còn 60 hàng `pending` + 3 hàng kẹt `*_in_progress`.
+Panel Routines hiện `Paused` trên mọi dòng. Bỏ pause trước, gom sau.
 
 Task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\` (ngoài repo, không theo git).
 Runbook tạo/di chuyển: `skills/kira-research-report/prompts/routines_consolidate.md`
