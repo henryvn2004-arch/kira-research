@@ -15,7 +15,37 @@ Henry's KIRA Research has a daily batch report generation system built on top of
 
 Task names like `kira-batch-0000` mean **00:00 UTC = 07:00 ICT**. All cron expressions are UTC. Add 7 hours to get Vietnam time.
 
-## Current schedule (Phase Q.6 — 2026-05-31)
+## Current schedule (Phase Q.7 — 2026-07-29) — 22 task gom về 2
+
+**22 task → 2 task. Cùng số fire/ngày, cùng giờ, throughput không đổi.**
+
+18 `kira-batch-HHMM` dùng chung một prompt body, chỉ khác giờ trong cron → gộp
+thành **1 task với cron nhiều giờ**. Tương tự 4 `kira-insight-HHMM` → 1 task.
+
+| Task | Cron | Fires/ngày | Playbook |
+|---|---|---|---|
+| `kira-batch` | `0 0-17 * * *` (UTC) = hourly 07:00–00:00 ICT | 18 | `prompts/batch_runner.md` |
+| `kira-insight` | `0 7,11,15,21 * * *` | 4 | `prompts/insight_runner.md` |
+
+**"Gen" và "dịch" KHÔNG phải 2 task riêng.** Mỗi fire đọc trạng thái (queue.csv
+status với batch, số dòng `insight_translations` với insight) rồi tự route sang
+stage kế tiếp — EN gen, JA translate, hay KO translate + publish. Tách theo đồng
+hồ sẽ làm pipeline nghẽn (task "dịch" fire khi chưa có gì để dịch, task "gen"
+fire khi queue đã dồn ở stage dịch). Vì vậy 2 task = 2 **pipeline** (report /
+insight), không phải 2 **loại việc**.
+
+**Runbook thực thi**: `skills/kira-research-report/prompts/routines_consolidate.md`
+— tự chứa, chạy trên máy Windows đang giữ scheduled tasks (session Claude Code
+trên web/mobile KHÔNG làm được: task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\`,
+ngoài repo). Tạo 2 task mới → Run now verify → mới xoá 22 task cũ.
+
+**Rủi ro đã biết, cần đo sau 48h**: 18 task riêng thì 2 fire chồng nhau là 2 job
+độc lập; gom về 1 task, nếu scheduler skip fire khi lần chạy trước còn sống thì
+throughput tụt (fire batch chạy 30–90 phút, cron hàng giờ). Đo bằng số commit
+`batch:` mỗi ngày trước/sau. Nếu giảm >30% → cron `0,30 0-17 * * *`, không được
+nữa thì tách batch làm 2 task lệch pha (tổng 3, vẫn gọn hơn 22).
+
+## Previous schedule (Phase Q.6 — 2026-05-31, SUPERSEDED by Q.7)
 
 **18 active tasks**, hourly on-the-hour from 00:00–17:00 UTC = **07:00–00:00 ICT**. Gap: 00:00–07:00 ICT (7h overnight).
 
@@ -42,12 +72,17 @@ Task names like `kira-batch-0000` mean **00:00 UTC = 07:00 ICT**. All cron expre
 
 **Daytime gap: 00:00–07:00 ICT** (17:00–24:00 UTC) — 7h overnight. Acceptable since machine typically off after midnight.
 
-## Setup on machine (recreate all tasks)
+## Setup on machine (recreate tasks) — Q.7
 
-Delete all old `kira-batch-*` tasks. Create 18 new ones via Claude Code:
-> "Create scheduled task `kira-batch-0000` with cron `0 0 * * *`, prompt: delegate to `skills/kira-research-report/prompts/batch_runner.md`"
+Chỉ còn 2 task. Trong Claude Code trên máy đó:
+> "Đọc `skills/kira-research-report/prompts/routines_consolidate.md` trong repo kira-research rồi làm theo."
 
-Repeat for each row above. Prompt body is identical for all 18.
+Runbook lo hết: kiểm kê task đang có → tính cron gộp từ tập giờ **thật** (không
+tin trí nhớ) → tạo `kira-batch` + `kira-insight` → Run now verify → xoá task cũ.
+
+Bắt buộc trong SKILL.md của cả 2 task: hardcode đường dẫn repo + câu "BỎ QUA
+bước `git rev-parse --show-toplevel`". Thiếu là mọi fire chết ở dòng đầu playbook
+với `not in git, no-op` — xem [[feedback_scheduled_task_cwd_parent]].
 
 ## Current schedule (Phase Q.3 — 2026-05-25, SUPERSEDED)
 
@@ -155,9 +190,11 @@ If queue is empty when a fire triggers → fire exits cleanly with "No pending w
 
 ## Files NOT committed (live in user's Claude Code config)
 
-13 task directories: `C:\Users\vnc-f4\.claude\scheduled-tasks\kira-batch-{0000,0045,0130,0215,0300,0345,0430,0515,0600,0645,1700,1745,1830}\SKILL.md`
+Post-Q.7: **2 task directories** — `C:\Users\<user>\.claude\scheduled-tasks\{kira-batch,kira-insight}\SKILL.md`.
+(Pre-Q.7 là 22: `kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4.)
 
-→ **If Henry switches machines, scheduled tasks won't follow.** They need to be recreated on the new machine. To recreate: call `mcp__scheduled-tasks__create_scheduled_task` 13 times with the cron expressions above. The prompt body is identical for all 13 — just delegate to `batch_runner.md` in repo.
+→ **If Henry switches machines, scheduled tasks won't follow.** Recreate on the new machine
+by running `prompts/routines_consolidate.md` — 2 `create_scheduled_task` calls thay vì 22.
 
 ## Per-machine env vars
 
@@ -263,5 +300,29 @@ Cost: ~4 × 150K tokens/day = 600K/day Insight (~10% of batch quota).
 **Implication for throughput**: a fire that would previously have wasted hours on a stuck slug now self-heals on the next fire. Theoretical worst case before Q.4 = stuck row consumed slot indefinitely; after Q.4 = stuck row consumed 1 wasted fire (the one that died) + auto-recover commit on the next, then retries on the fire after that. Net loss = ~1 fire (~45 min) instead of unbounded.
 
 Commit: `012bb31`.
+
+## Phase Q.7 changelog (2026-07-29) — 22 scheduled task gom về 2
+
+**Lý do**: Henry mở panel Routines/Scheduled thấy 22 dòng `kira-batch-*` +
+`kira-insight-*`, mỗi dòng prompt body giống hệt nhau, chỉ khác giờ. Không đọc
+được, không sửa được hàng loạt, và mỗi lần đổi playbook path phải sửa 22 file
+SKILL.md tay.
+
+**Cái gì đổi**: chỉ là *biểu thức cron* — 18 dòng `0 H * * *` (H = 0..17) gộp
+thành `0 0-17 * * *`; 4 dòng insight gộp thành `0 7,11,15,21 * * *`. Số fire, giờ
+fire, prompt, playbook, throughput đều giữ nguyên. Không đụng gì trong repo pipeline.
+
+**Cái gì KHÔNG đổi được**: không tách được thành task "gen" và task "dịch" như
+mental model ban đầu — stage routing phụ thuộc trạng thái queue, không phụ thuộc
+đồng hồ. Tách theo giờ sẽ làm 1 trong 2 task fire rỗng còn task kia dồn việc.
+2 task hiện tại chia theo **pipeline** (report / insight), mỗi cái đã tự làm cả
+gen lẫn dịch.
+
+**Runbook**: `skills/kira-research-report/prompts/routines_consolidate.md`.
+Phải chạy từ Claude Code trên máy Windows giữ scheduled tasks — session trên
+web/mobile không truy cập được `C:\Users\<user>\.claude\scheduled-tasks\`.
+
+**Chưa đo**: throughput sau khi gom (Step 6 của runbook). Nếu scheduler skip fire
+khi lần chạy trước của cùng task còn sống thì phải bù bằng cron dày hơn.
 
 See also: [[project_tool_gen_report]] · [[reference_kira_research]] · [[feedback_sparticuz_chromium_vercel]] · [[project_o_studio_credits]] · [[project_q_insight_runner]]
