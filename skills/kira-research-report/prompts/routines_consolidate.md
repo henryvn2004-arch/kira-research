@@ -176,15 +176,46 @@ Xong: panel Routines chỉ còn `kira` (+ routine ngoài KIRA nếu có).
 
 ## Step 6 — Theo dõi 1 tuần
 
-Kỳ vọng: **1 report `done` mỗi ngày**, tức mỗi ngày có 1 commit
+**Đo baseline TRƯỚC khi kết luận.** Chạy ngay sau Step 5:
+
+```bash
+git log --format='%ad %s' --date=format:'%Y-W%V' | grep 'batch: complete' | awk '{print $1}' | sort | uniq -c
+```
+
+Lý do: layout 22 routine có thể đã không đạt thiết kế từ lâu. Đo 2026-07-29 cho
+thấy nó chỉ ra ~4–5 report/ngày trong 3 tuần W22–W24, còn 6 tuần W25–W29 tụt về
+**~0.3–0.6/ngày**. So 7 ngày sau khi gom với con số *thiết kế* (~6/ngày) sẽ kết
+luận sai là "gom làm tụt throughput", trong khi 1/ngày là **tăng ~2 lần** so với
+thực tế ngay trước đó.
+
+Kỳ vọng sau khi gom: **1 report `done` mỗi ngày**, tức mỗi ngày 1 commit
 `batch: complete <id> (EN+JA+KO, published)`.
 
 ```bash
 git log --since="7 days ago" --format='%s' | grep -c 'batch: complete'
 ```
 
-Ra ~7 là đúng. Thấp hơn nhiều thì kiểm theo thứ tự: máy có bật đúng 4 giờ đó
-không → có hàng `*_in_progress` kẹt không → fire có bị permission prompt chặn không.
+Chuỗi này đúng — khớp `batch_runner.md:430`. (Đừng gom nhóm message bằng `sed`
+trước khi grep: `(EN+JA+KO, published)` không có chữ `for` nên các pipeline
+`sed 's/for .*/for <id>/'` sẽ làm mỗi dòng thành một nhóm riêng và `head` cắt mất
+— đã hố một lần vì chuyện này rồi kết luận sai là "chuỗi không tồn tại".)
+
+**Đếm số fire thực sự nổ** để phân biệt nguyên nhân — đây là bước hay bị bỏ:
+
+```bash
+git log --since="7 days ago" --format='%s' | grep -c '^batch:'
+```
+
+Kỳ vọng ~21 (3 fire batch/ngày × 7). Ít fire nổ → máy tắt lúc 4 giờ đó, hoặc fire
+bị permission prompt chặn — **không phải lỗi của việc gom**. Đủ fire nổ mà ít
+report done → nghẽn thật trong pipeline (hàng `*_in_progress` kẹt, `error`,
+subagent timeout).
+
+**Tự động hoá thay vì nhờ owner nhắc**: tạo 1 task một lần bằng
+`create_scheduled_task` với `fireAt` = ngày gom + 7 ngày (giờ nằm trong cửa sổ máy
+bật), prompt chứa sẵn các lệnh trên + bảng baseline + yêu cầu tự ghi kết quả vào
+memory rồi commit. Task tự tắt sau khi nổ. Bản 2026-07-29 dùng taskId
+`kira-q7-measure`, fire 2026-08-05 19:30 ICT.
 
 Ghi kết quả vào `project des/memory/project_batch_cron_system.md` mục Q.7.
 

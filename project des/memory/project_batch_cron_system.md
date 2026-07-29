@@ -168,9 +168,50 @@ với `not in git, no-op` — xem [[feedback_scheduled_task_cwd_parent]].
 Đường dẫn trên DELL: `C:\Users\DELL\Kira Research\kira-research`
 (bash `/c/Users/DELL/Kira Research/kira-research`).
 
+## Baseline throughput đo lúc gom (2026-07-29) — QUAN TRỌNG khi đọc Step 6
+
+Số report `done` mỗi tuần (`git log --format='%ad %s' --date=format:'%Y-W%V' | grep 'batch: complete'`):
+
+| Tuần | done | /ngày |
+|---|---|---|
+| W21 | 1 | 0.1 |
+| W22 | 31 | **4.4** |
+| W23 | 36 | **5.1** |
+| W24 | 21 | 3.0 |
+| W25 | 4 | 0.6 |
+| W26 | 2 | 0.3 |
+| W27 | 2 | 0.3 |
+| W28 | 4 | 0.6 |
+| W29 | 2 | 0.3 |
+
+**Hệ 22 routine chỉ chạy đúng thiết kế trong 3 tuần W22–W24.** Từ giữa tháng 6
+(W25) trở đi throughput tụt về ~0.3–0.6/ngày và ở đó suốt 6 tuần: 22 fire/ngày ×
+42 ngày ≈ 900 fire mà chỉ ra ~14 report.
+
+→ **Mục tiêu 1 report/ngày của Q.7 là tăng ~2 lần so với thực tế 6 tuần trước khi
+gom, không phải giảm 6 lần.** Câu "throughput giảm còn ~1/ngày" trong runbook so
+với con số *thiết kế* (~6/ngày) chứ không phải con số *thực*. Đừng đọc Step 6 như
+một phép so với 6/ngày.
+
+Nguyên nhân nghi nhất cho cú tụt W25: **máy tắt / Claude Code không mở** phần lớn
+thời gian (routine `Local` chỉ chạy khi máy thức + online) — bằng chứng: `lastRunAt`
+của hàng loạt task cũ đứng ở 2026-07-21, và pipeline dừng hẳn 8 ngày 07-21 → 07-29.
+Cộng thêm 16 hàng `error` tích lại từ các đợt second-strike 06-11/06-12/06-18.
+Chưa xác minh dứt điểm.
+
 ## Step 6 — theo dõi (mở, bắt đầu 2026-07-29)
 
+**Đã tự động hoá**: task một lần `kira-q7-measure` nổ **2026-08-05 19:30 ICT**,
+tự đo + báo cáo + commit kết quả vào note này rồi tự tắt. Không cần Henry nhắc.
+
 Kỳ vọng: **1 commit `batch: complete <id> (EN+JA+KO, published)` mỗi ngày**.
+Chuỗi grep này đã xác minh là đúng (khớp `batch_runner.md:430`, xuất hiện 102 lần
+trong history) — đừng đổi.
+
+**Chỉ số phân biệt nguyên nhân**: đếm số commit `^batch:` trong 7 ngày (kỳ vọng
+~21 = 3 fire/ngày × 7). Ít fire nổ → máy tắt hoặc permission prompt, KHÔNG phải
+lỗi của việc gom. Đủ fire nổ mà ít report done → nghẽn trong pipeline.
+
 Đo sau 7 ngày (≈ 2026-08-05):
 
 ```bash
