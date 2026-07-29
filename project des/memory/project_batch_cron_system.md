@@ -15,9 +15,39 @@ Henry's KIRA Research has a daily batch report generation system built on top of
 
 Task names like `kira-batch-0000` mean **00:00 UTC = 07:00 ICT**. All cron expressions are UTC. Add 7 hours to get Vietnam time.
 
-## Current schedule (Phase Q.7 — 2026-07-29) — 22 task gom về 2
+## Current schedule (Phase Q.7 — 2026-07-29) — 22 routine gom về 1
 
-**22 task → 2 task. Cùng số fire/ngày, cùng giờ, throughput không đổi.**
+**Henry chốt 2026-07-29: 1 routine duy nhất, 4 fire/ngày, ra 1 report/ngày (EN+JA+KO).**
+
+| | Trước | Sau |
+|---|---|---|
+| Routine | 22 | **1** (`kira`) |
+| Fires/ngày | 22 | **4** — `0 18,21,0,3 * * *` |
+| Report/ngày | ~6 (thiết kế) | **1** |
+
+3 fire chạy `batch_runner.md` (1 report = 3 stage: gen EN → dịch JA → dịch KO +
+publish), fire 03:00 chạy `insight_runner.md`. Dispatch bằng `date +%H` ngay
+trong SKILL.md — vẫn 1 routine.
+
+**Fire giãn 3 tiếng** (stage chạy 30–90 phút) nên không bao giờ có 2 fire chồng
+nhau → né luôn rủi ro scheduler skip fire khi lần chạy trước còn sống.
+
+**Hệ quả có chủ đích**: throughput ~1 report/ngày thay vì ~6. Queue 60 hàng
+pending → runway ~60 ngày. Insight của một report cần 6 fire → ~6 ngày mới đủ
+4 bài × 3 thứ tiếng. Muốn nhanh hơn: thêm giờ vào cron, vẫn 1 routine.
+
+Runbook: `skills/kira-research-report/prompts/routines_consolidate.md`.
+
+### Phương án 2-routine (đã cân nhắc, không chọn)
+
+Giữ 2 routine tách theo pipeline (`kira-batch` + `kira-insight`), gộp nguyên tập
+giờ cũ. Vướng: layout đang chạy là Q.3 nhịp 45 phút, phút lệch nhau, mà cron là
+tích chéo minute × hour nên **không có biểu thức nào khớp đúng** — vẫn phải
+regularize. Đã regularize thì gom thẳng về 1 routine gọn hơn.
+
+---
+
+## Phương án cũ (2026-07-29 sáng, superseded) — gom về 2, giữ nguyên số fire
 
 18 `kira-batch-HHMM` dùng chung một prompt body, chỉ khác giờ trong cron → gộp
 thành **1 task với cron nhiều giờ**. Tương tự 4 `kira-insight-HHMM` → 1 task.

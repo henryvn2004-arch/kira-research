@@ -143,20 +143,26 @@ Phase R (companies directory) — Henry brainstormed Mordor's playbook with me b
 
 ## Scheduled routines (Phase Q.7 — 2026-07-29)
 
-Batch gen + dịch chạy bằng scheduled tasks trên máy Windows của Henry. Kế hoạch
-Q.7: gom **22 task → 2** (`kira-batch` → `batch_runner.md`, `kira-insight` →
-`insight_runner.md`) — 22 task chỉ khác nhau đúng giờ trong cron.
+Batch gen + dịch chạy bằng scheduled tasks (panel "Routines") trên máy Windows
+của Henry. Kế hoạch Q.7 — Henry chốt 2026-07-29: gom **22 routine → 1**.
+
+| | Trước | Sau |
+|---|---|---|
+| Routine | 22 | **1** (`kira`) |
+| Fires/ngày | 22 | **4** — cron `0 18,21,0,3 * * *` |
+| Report/ngày | ~6 | **1** (EN+JA+KO đầy đủ) |
+
+3 fire chạy `batch_runner.md`, fire 03:00 chạy `insight_runner.md` — dispatch
+bằng `date +%H` trong SKILL.md.
+
+**Mỗi fire = 1 hàng × 1 stage.** "Gen" và "dịch" không phải 2 routine riêng —
+runner đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate
++ publish. Nên 1 report = 3 fire. Không được gộp 3 stage vào 1 fire (subagent dịch
+vượt output cap → treo; đây là lý do Q.1 tách ra).
 
 **Trạng thái 2026-07-29: CHƯA gom, và pipeline đang DỪNG.** Commit `batch:` cuối
 là 2026-07-21 (8 ngày), queue còn 60 hàng `pending` + 3 hàng kẹt `*_in_progress`.
 Panel Routines hiện `Paused` trên mọi dòng. Bỏ pause trước, gom sau.
-
-Cron gộp **không hardcode được** — máy đang chạy layout Q.3 (nhịp 45 phút, phút
-lệch nhau) nên không có biểu thức cron nào khớp đúng; phải regularize sang nhịp
-đều và Henry chọn `0 17-23,0-6 * * *` (14 fire/ngày) hay `0,30 …` (28 fire/ngày).
-
-Mỗi fire = 1 hàng × 1 stage. **"Gen" và "dịch" không phải 2 task riêng** — runner
-đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate + publish.
 
 Task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\` (ngoài repo, không theo git).
 Runbook tạo/di chuyển: `skills/kira-research-report/prompts/routines_consolidate.md`
