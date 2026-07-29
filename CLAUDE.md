@@ -143,13 +143,17 @@ Phase R (companies directory) — Henry brainstormed Mordor's playbook with me b
 
 ## Scheduled routines (Phase Q.7 — 2026-07-29)
 
-Batch gen + dịch chạy bằng **2 scheduled task** trên máy Windows của Henry
-(trước Q.7 là 22 task, prompt body giống hệt nhau, chỉ khác giờ cron):
+Batch gen + dịch chạy bằng scheduled tasks trên máy Windows của Henry. Kế hoạch
+Q.7: gom **22 task → 2** (`kira-batch` → `batch_runner.md`, `kira-insight` →
+`insight_runner.md`) — 22 task chỉ khác nhau đúng giờ trong cron.
 
-| Task | Cron | Fires/ngày | Playbook |
-|---|---|---|---|
-| `kira-batch` | `0 0-17 * * *` | 18 | `skills/kira-research-report/prompts/batch_runner.md` |
-| `kira-insight` | `0 7,11,15,21 * * *` | 4 | `skills/kira-research-report/prompts/insight_runner.md` |
+**Trạng thái 2026-07-29: CHƯA gom, và pipeline đang DỪNG.** Commit `batch:` cuối
+là 2026-07-21 (8 ngày), queue còn 60 hàng `pending` + 3 hàng kẹt `*_in_progress`.
+Panel Routines hiện `Paused` trên mọi dòng. Bỏ pause trước, gom sau.
+
+Cron gộp **không hardcode được** — máy đang chạy layout Q.3 (nhịp 45 phút, phút
+lệch nhau) nên không có biểu thức cron nào khớp đúng; phải regularize sang nhịp
+đều và Henry chọn `0 17-23,0-6 * * *` (14 fire/ngày) hay `0,30 …` (28 fire/ngày).
 
 Mỗi fire = 1 hàng × 1 stage. **"Gen" và "dịch" không phải 2 task riêng** — runner
 đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate + publish.

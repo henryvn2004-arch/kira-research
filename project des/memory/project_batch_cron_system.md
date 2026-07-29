@@ -22,10 +22,25 @@ Task names like `kira-batch-0000` mean **00:00 UTC = 07:00 ICT**. All cron expre
 18 `kira-batch-HHMM` dùng chung một prompt body, chỉ khác giờ trong cron → gộp
 thành **1 task với cron nhiều giờ**. Tương tự 4 `kira-insight-HHMM` → 1 task.
 
-| Task | Cron | Fires/ngày | Playbook |
+**⚠️ Cron gộp cụ thể phụ thuộc layout đang chạy trên máy — không hardcode.**
+Xác minh 2026-07-29 qua ảnh panel Routines: máy đang chạy **layout Q.3** (nhịp
+45 phút, phút chạy vòng 00→45→30→15), **không phải Q.6 hourly** như note này
+từng ghi. Q.6 rõ ràng chưa từng được áp lên máy này.
+
+Hệ quả: **Q.3 không gộp nguyên trạng được.** Cron là tích chéo minute × hour, nên
+một nhịp lệch phút (00:00 / 00:45 / 01:30 / 02:15…) không có biểu thức cron nào
+khớp đúng. Muốn gom phải regularize sang nhịp đều, tức **đổi giờ fire thật sự**:
+
+| Phương án | Cron | Fires/ngày | So với 18 hiện tại |
 |---|---|---|---|
-| `kira-batch` | `0 0-17 * * *` (UTC) = hourly 07:00–00:00 ICT | 18 | `prompts/batch_runner.md` |
-| `kira-insight` | `0 7,11,15,21 * * *` | 4 | `prompts/insight_runner.md` |
+| Hourly, giữ cửa sổ 17:00→06:00 | `0 17-23,0-6 * * *` | 14 | −4 |
+| Mỗi 30 phút, cùng cửa sổ | `0,30 17-23,0-6 * * *` | 28 | +10 (ngốn quota) |
+
+Không có nghiệm giữ đúng 18 fire trong 1 task — 18 fire trong cửa sổ 14 tiếng
+không chia được bằng nhịp đều. Henry chọn phương án trước khi chạy runbook.
+
+Nếu sau này máy được đưa về layout Q.6 (hourly, cùng phút 0) thì gộp thành
+`0 0-17 * * *` là **không đổi gì cả** — đó là Case A trong runbook.
 
 **"Gen" và "dịch" KHÔNG phải 2 task riêng.** Mỗi fire đọc trạng thái (queue.csv
 status với batch, số dòng `insight_translations` với insight) rồi tự route sang
@@ -38,6 +53,13 @@ insight), không phải 2 **loại việc**.
 — tự chứa, chạy trên máy Windows đang giữ scheduled tasks (session Claude Code
 trên web/mobile KHÔNG làm được: task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\`,
 ngoài repo). Tạo 2 task mới → Run now verify → mới xoá 22 task cũ.
+
+**Pipeline đang DỪNG (phát hiện 2026-07-29)**: commit `batch:` cuối cùng là
+2026-07-21 — 8 ngày không chạy, trong khi queue còn **60 hàng `pending`** +
+3 hàng kẹt `*_in_progress` + 13 `error`. Panel Routines hiện chip `Paused` trên
+mọi dòng `Kira batch *`. Routine `Local` chỉ chạy khi máy thức + online.
+→ **Bỏ pause / bật máy trước, gom sau** (Step 0 của runbook). Gom một cỗ máy đang
+tắt thì sau đó không phân biệt được throughput tụt là do gom hay do vốn đã tắt.
 
 **Rủi ro đã biết, cần đo sau 48h**: 18 task riêng thì 2 fire chồng nhau là 2 job
 độc lập; gom về 1 task, nếu scheduler skip fire khi lần chạy trước còn sống thì
@@ -324,5 +346,12 @@ web/mobile không truy cập được `C:\Users\<user>\.claude\scheduled-tasks\`
 
 **Chưa đo**: throughput sau khi gom (Step 6 của runbook). Nếu scheduler skip fire
 khi lần chạy trước của cùng task còn sống thì phải bù bằng cron dày hơn.
+
+**Đính chính 2026-07-29 (sau khi thấy ảnh panel Routines)**: bản Q.7 đầu tiên giả
+định máy đang chạy layout Q.6 (hourly, cùng phút 0) nên kết luận "gom = không đổi
+gì". Sai — máy chạy layout Q.3 nhịp 45 phút, phút lệch nhau, **không gộp nguyên
+trạng được**. Runbook đã bổ sung Case A (cùng phút → gộp không đổi) / Case B
+(lệch phút → buộc regularize, phải báo số fire trước/sau và hỏi Henry). Bài học:
+memory note ghi "current schedule" không phải bằng chứng — panel Routines mới là.
 
 See also: [[project_tool_gen_report]] · [[reference_kira_research]] · [[feedback_sparticuz_chromium_vercel]] · [[project_o_studio_credits]] · [[project_q_insight_runner]]

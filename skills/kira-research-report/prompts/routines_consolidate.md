@@ -27,11 +27,54 @@ Sau Q.7: **2 task**, cùng số lần fire/ngày, cùng giờ, không đổi thr
 
 ---
 
-## Nguyên tắc bắt buộc: KHÔNG được đổi giờ fire
+## Step 0 — Kiểm tra pipeline có đang chạy không
 
-Gom = hợp nhất tập giờ đang có vào một biểu thức cron, **giữ nguyên từng giờ**.
-Không "làm tròn", không đổi timezone, không thêm/bớt fire. Nếu số fire/ngày sau
-khi gom khác trước khi gom → dừng lại, báo Henry, đừng tự sửa.
+Trước khi gom, xem hệ thống có sống không — gom một cỗ máy đã tắt thì không phát
+hiện được là nó tắt.
+
+```bash
+git log origin/main --format='%ad %s' --date=short | grep -m5 'batch:'
+```
+
+Commit `batch:` gần nhất cách hôm nay > 2 ngày trong khi queue còn hàng `pending`
+→ pipeline đang dừng. Nguyên nhân hay gặp, kiểm theo thứ tự:
+
+1. **Routine bị Paused** — panel Routines hiện chip `Paused` trên từng dòng. Bấm bỏ pause.
+2. **Máy tắt / offline** — routine `Local` chỉ chạy khi máy thức và online.
+3. **Cửa sổ Claude Code đang treo ở permission prompt** — chặn mọi fire sau đó.
+   Xem `feedback_scheduled_task_cwd_parent.md` phần recovery.
+4. **Hàng kẹt `*_in_progress`** — `node skills/kira-research-report/scripts/audit-queue.mjs`
+   sẽ revert; nhưng script này chỉ chạy trong fire, mà fire thì đang không chạy.
+
+Ghi trạng thái tìm được vào output. **Fix cái này trước, gom sau** — nếu không thì
+sau khi gom sẽ không biết throughput tụt là do gom hay do máy vốn đã tắt.
+
+---
+
+## Nguyên tắc: giữ nguyên giờ fire nếu gộp được; nếu không, nói rõ đã đổi gì
+
+Gom = hợp nhất tập giờ đang có vào một biểu thức cron. Có 2 trường hợp, kiểm ở
+Step 2 rồi mới quyết:
+
+**Case A — mọi fire cùng một phút** (vd tất cả đều `0 H * * *`): gộp được nguyên
+trạng. Hợp tập giờ lại, số fire và giờ fire không đổi một giây nào.
+
+**Case B — phút khác nhau** (vd nhịp 45 phút: `0 0`, `45 0`, `30 1`, `15 2`…):
+**không gộp nguyên trạng được.** Cron là **tích chéo** minute × hour — viết
+`0,15,30,45 0-6 * * *` sẽ ra 28 fire chứ không phải 10 fire đúng giờ cũ. Không có
+cách nào diễn tả một nhịp lệch phút bằng một dòng cron.
+
+Case B bắt buộc phải **regularize** (đổi sang nhịp đều). Quy tắc:
+
+- Giữ nguyên **cửa sổ giờ** (giờ sớm nhất → giờ muộn nhất của tập hiện tại).
+  Cron hỗ trợ range bắc cầu qua nửa đêm dạng liệt kê: `0 17-23,0-6 * * *`.
+- Chọn cadence đều gần nhất về **số fire/ngày**: hourly `0 <hours>`, hoặc mỗi 30
+  phút `0,30 <hours>` nếu hourly làm tụt > 20% số fire.
+- **Báo rõ số fire trước/sau** trong output — đây là thay đổi hành vi thật, không
+  được im lặng nuốt.
+
+Nếu số fire sau khi regularize lệch > 20% so với trước → dừng, hỏi Henry chọn
+cadence, đừng tự quyết.
 
 ---
 
@@ -55,19 +98,37 @@ DELL, `C:\Users\vnc-f4\Rira Research\kira-research` trên vnc-f4). Lấy đúng 
 
 ## Step 2 — Tính cron gộp
 
-Gom theo họ, lấy **hợp của các giờ đang bật** (bỏ qua task `enabled: false`),
-minute giữ nguyên.
+Gom theo họ, lấy **hợp của các giờ đang bật** (bỏ qua task `enabled: false`).
+Trước hết phân loại Case A hay Case B (xem mục trên): **tập phút của họ đó có
+đúng 1 giá trị không?**
 
-Trạng thái kỳ vọng (theo Q.6, xác nhận lại bằng Step 1):
+### Case A — cùng một phút
 
-| Họ | Cron đang có | Cron gộp |
-|---|---|---|
-| batch | `0 0 * * *` … `0 17 * * *` (18 dòng, hourly) | `0 0-17 * * *` |
-| insight | 4 dòng tại giờ `7,11,15,21` | `0 7,11,15,21 * * *` |
+Hợp tập giờ, giữ nguyên phút. Dạng liệt kê `0 h1,h2,h3 * * *` luôn an toàn hơn
+dạng range khi tập giờ không liên tục.
 
-Nếu Step 1 cho ra tập giờ khác bảng này (task bị xoá/thêm tay từ 2026-05-31) →
-dùng tập giờ **thật**, viết dạng liệt kê `0 h1,h2,h3 * * *`. Dạng liệt kê luôn
-an toàn hơn dạng range khi tập giờ không liên tục.
+Ví dụ (layout Q.6): batch 18 dòng `0 0 * * *` … `0 17 * * *` → `0 0-17 * * *`.
+
+### Case B — nhiều phút khác nhau (layout Q.3, nhịp 45 phút)
+
+Quan sát 2026-07-29: máy đang chạy **layout Q.3**, không phải Q.6 như memory ghi.
+Batch overnight fire lúc 00:00 / 00:45 / 01:30 / 02:15 / 03:00 / 03:45 / 04:30 /
+05:15 / 06:00 / 06:45 + block tối 17:00 / 17:45 / 18:30 + bridge 19:30–23:30.
+Phút chạy vòng 00→45→30→15 nên **không có biểu thức cron nào khớp đúng**.
+
+Cách làm:
+
+1. Lấy giờ sớm nhất và muộn nhất của cửa sổ (vd 17:00 → 06:45 hôm sau).
+2. Viết dạng liệt kê bắc cầu nửa đêm: `0 17-23,0-6 * * *` → **14 fire/ngày**.
+3. So với số fire cũ (18). Lệch 22% → theo quy tắc, **hỏi Henry** chọn:
+   - `0 17-23,0-6 * * *` = 14 fire/ngày (ít hơn 4, tiết kiệm quota)
+   - `0,30 17-23,0-6 * * *` = 28 fire/ngày (nhiều hơn 10, ngốn quota hơn hẳn)
+   - Giữ 18 fire mà vẫn 1 task thì không có nghiệm đẹp — cron không chia được 18
+     fire vào cửa sổ 14 tiếng bằng nhịp đều.
+4. Ghi số fire trước/sau vào output và vào memory note.
+
+Nếu Step 1 cho ra tập giờ khác hoàn toàn hai kịch bản trên (task bị sửa tay) →
+dùng tập giờ **thật**, áp lại quy tắc Case A / Case B.
 
 ## Step 3 — Tạo 2 task mới
 
@@ -75,7 +136,7 @@ Tạo TRƯỚC, xoá task cũ SAU (Step 5) — nếu tạo lỗi thì lịch cũ
 
 ### Task 1 — `kira-batch`
 
-- cron: kết quả Step 2 (kỳ vọng `0 0-17 * * *`)
+- cron: kết quả Step 2 (KHÔNG hardcode — phụ thuộc Case A hay Case B)
 - SKILL.md body:
 
 ```markdown
@@ -99,7 +160,7 @@ Playbook đó tự chứa: audit queue (Step 0.5) → claim 1 hàng → advance 
 
 ### Task 2 — `kira-insight`
 
-- cron: kết quả Step 2 (kỳ vọng `0 7,11,15,21 * * *`)
+- cron: kết quả Step 2 (KHÔNG hardcode — 4 task insight cũng phải kiểm Case A/B)
 - SKILL.md body: y hệt trên, đổi 2 chỗ — tiêu đề và dòng playbook:
 
 ```markdown
