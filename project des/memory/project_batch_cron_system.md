@@ -201,6 +201,44 @@ Chưa xác minh dứt điểm.
 
 ## Step 6 — theo dõi (mở, bắt đầu 2026-07-29)
 
+### Kết quả Step 6 (đo 2026-08-06, task `kira-q7-measure`)
+
+**Đo cửa sổ 7 ngày (`--since="7 days ago"` tại thời điểm đo = 2026-07-30 → 2026-08-06):**
+
+- **1 report `done`** — `batch: complete 2027-sg-digital-assets (EN+JA+KO, published)` lúc 08-03 08:30.
+- **Chỉ 6 commit `batch:`** trong cả tuần (kỳ vọng ~21 = 3 fire/ngày × 7) —
+  đạt **~29%** kỳ vọng.
+- **Chỉ 3/7 ngày có bất kỳ fire nào nổ**: 07-30, 08-03, 08-04. **4 ngày còn lại
+  (07-31, 08-01, 08-02, 08-05) hoàn toàn không có commit** — không phải 1 fire lỗi,
+  mà là **không fire nào nổ cả** trong cả 4 khung giờ (18/21/0/3) suốt 4 ngày liền.
+- Queue: `pending` 59→58, `error` 16→16 (**không đổi**), `done` 106→107,
+  1 hàng `ja_done` (2026-sg-private-equity, JA xong 08-04, chờ fire KO translate + publish).
+- `audit-queue.mjs`: `recovered=0` — không có hàng `*_in_progress` kẹt.
+- Routine `kira`: vẫn `enabled: true`, cron `0 18,21,0,3 * * *` nguyên vẹn,
+  `lastRunAt` trong vòng 24h (máy đang bật tại thời điểm đo).
+
+**Kết luận — nguyên nhân đúng thứ tự chẩn đoán của Step 6**: **máy tắt/Claude
+Code không mở** là nguyên nhân chính, KHÔNG phải nghẽn pipeline. Bằng chứng:
+(a) error count đứng yên tuyệt đối 16→16 — không có lỗi mới phát sinh; (b) khi
+fire có nổ, pipeline chạy trót lọt không kẹt (audit=0, không có strike);
+(c) bằng chứng trực tiếp nhất — 4/7 ngày có 0 commit ở CẢ 4 khung giờ, không
+phải rải rác 1-2 fire lẻ tẻ mà là cả ngày im lặng. Đây là hoa văn "máy tắt cả
+ngày", không phải "permission prompt chặn 1 fire" (permission prompt chặn thì
+vẫn còn 1 session mở ra và log lại có prompt, không phải 0 commit tuyệt đối).
+
+**Không đọc con số 1/7 report này như thất bại của việc gom.** So với baseline
+thực tế 6 tuần trước khi gom (0.3–0.6/ngày ≈ 2–4 report/7 ngày), tuần này còn
+thấp hơn cả baseline — nhưng khớp với cùng nguyên nhân gốc (máy tắt), không phải
+do kiến trúc 1-routine tệ hơn 22-routine. Bằng chứng: khi 6 commit thực sự nổ,
+zero lỗi zero kẹt — cơ chế chạy đúng như thiết kế mỗi khi máy có bật.
+
+**Đề xuất duy nhất cho Henry**: đừng thêm giờ cron (sẽ không giúp nếu máy vẫn
+tắt); thay vào đó cần máy bật ổn định trong ít nhất 1 trong 4 khung giờ
+18h/21h/0h/3h mỗi ngày. Nếu Henry có 1 khung giờ chắc chắn máy đang mở (vd đang
+làm việc buổi tối), dồn ưu tiên vào khung đó.
+
+---
+
 **Đã tự động hoá**: task một lần `kira-q7-measure` nổ **2026-08-05 19:30 ICT**,
 tự đo + báo cáo + commit kết quả vào note này rồi tự tắt. Không cần Henry nhắc.
 
