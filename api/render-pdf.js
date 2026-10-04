@@ -12,7 +12,7 @@
 //              overflow_detected, overflow_pages, rendered_at }
 // ============================================================
 
-/* global document */ // used inside page.evaluate() callbacks (Chromium ctx)
+/* global document, getComputedStyle */ // used inside page.evaluate() callbacks (Chromium ctx)
 
 // CRITICAL: @sparticuz/chromium-min runs Lambda-environment detection at
 // MODULE LOAD time — its index.js body calls setupLambdaEnvironment() which
@@ -101,12 +101,20 @@ export default async function handler(req, res) {
       const overflows = [];
       pages.forEach((p, i) => {
         const actualHeight = p.scrollHeight;
-        if (actualHeight > 720) {
+        // Text clipped inside an overflow:hidden box (cards, source keys)
+        // never grows the page itself, so check those boxes too.
+        const clipped = [...p.querySelectorAll('*')].filter(el => {
+          const cs = getComputedStyle(el);
+          return (cs.overflow === 'hidden' || cs.overflowY === 'hidden')
+            && el.scrollHeight > el.clientHeight + 4;
+        }).map(el => ({ class_name: el.getAttribute('class'), overflow_px: el.scrollHeight - el.clientHeight }));
+        if (actualHeight > 720 || clipped.length) {
           overflows.push({
             page_index: i,
             page_num: i + 1,
             actual_height_px: actualHeight,
-            overflow_px: actualHeight - 720,
+            overflow_px: Math.max(0, actualHeight - 720),
+            clipped_elements: clipped,
           });
         }
       });

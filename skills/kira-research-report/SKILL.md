@@ -18,7 +18,7 @@ Read `references/brand_guideline.md` in full. The bullets below are the absolute
 1. **Never** mention these in any output (HTML, PDF, code, metadata, filenames): `Claude`, `McKinsey`, `Mordor`, `Frost`, `Euromonitor`, `Synovate`, `Ipsos`, `IMARC`, or the internal source-archive R-numbers (R0152 etc.).
 2. **Never** position KIRA as an "AI-powered platform / SaaS / app". KIRA is a *research house*. Authorial voice: "our analysts", "our research team", "we" — never "our platform".
 3. **Never** lead with "AI" in headlines or marketing copy. AI mentions belong inside dedicated AI-impact sections.
-4. **Every quantitative claim carries a source tag** inline: `[primary]`, `[secondary]`, `[estimate]`, or `[user-input]` (UC3 only). The render pipeline will refuse pages with un-tagged numbers.
+4. **Every quantitative claim carries a source tag** inline (Phase L.3): `[Kira estimates]` for KIRA-derived figures, `[<Source Alias> <Year>]` for cited sources (full citation in the page-bottom source key), or `[user-input]` (UC3 only). The old `[primary]` / `[secondary]` / `[estimate]` tags are retired. Spec: `prompts/content_per_section.md` Step 5.
 5. **Headlines use sentence case.** "A market at inflection." not "A Market At Inflection".
 6. **Char budgets in `schemas/page_schemas.json` are hard caps.** If content exceeds budget, regenerate the offending section at -15% and retry. Max 3 retries before flagging.
 7. **No filler.** Drop "It is worth noting", "In conclusion", "It goes without saying". Every sentence carries weight.

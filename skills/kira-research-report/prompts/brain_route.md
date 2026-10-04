@@ -5,7 +5,7 @@ The BRAIN route turns a topic into a **buyer question**, lets the KIRA brain pic
 ## Where the brain lives — and what never leaves it
 
 - The brain is in the **private** repo `kira-pipeline`, folder `brain/`. Path: env `KIRA_BRAIN_DIR` if set, else `<repo root>/../kira-pipeline/brain`. If neither exists, this route is unavailable and the orchestrator falls back to UC1/UC2.
-- Write every brain artifact (framing, context pack, plan notes, brain trace) to a scratch folder **outside this repo**: `<os temp dir>/kira-brain/<report_id>/`. Never write them under this repo, never commit them, never paste their contents into a commit message.
+- Write every brain artifact (framing, context pack, plan notes, brain trace) to a scratch folder **outside this repo**: env `KIRA_BRAIN_SCRATCH` if set, else the folder the caller names, else `<os temp dir>/kira-brain/<report_id>/`. Never write them under this repo, never commit them, never paste their contents into a commit message.
 - The report itself never mentions the brain, modules, the archive, past projects or clients, framework names, or process reference models. It speaks as "our analysts".
 
 ## Step A — Frame the buyer question
@@ -45,19 +45,21 @@ Produce `section_plan.json` in the **same format as `design_mode_planner.md` out
 
 | # | Section | Page type | Content |
 |---|---|---|---|
-| 1 | Cover | `cover` | Title = the topic angle; subtitle = the buyer question |
+| 1 | Cover | `cover` | Title = the topic angle; subtitle = the buyer question shortened to ≤80 chars (the full question goes in the exec-summary subhead) |
 | 2 | Methodology | `methodology_inline` | Standard |
 | 3 | Contents | `toc` | Standard |
-| 4 | Executive summary | `exec_summary_p1` | The answer (go / no-go / conditional, with the one-line reason), 4 callouts = the numbers that decide it |
+| 4 | Executive summary | `exec_summary_p1` | Subhead = the full buyer question + the answer (go / no-go / conditional, with the one-line reason); 4 callouts = the numbers that decide it |
 | 5 | Why — implications | `exec_summary_p2_implications` | 5 cards: the 3–5 supporting arguments + recommended move |
 | 6–N | One chapter per spine analysis (dividers for 3–5 chapter breaks max) | see mapping below | Each section: what it shows, key numbers (sourced, dated), the "so what" for the buyer |
-| | What would have to be true | `use_case_grid_6` | 4–6 conditions for success, each with how sure we are and how to test it |
+| | What would have to be true | `use_case_grid_6` (6 conditions) or the 5-card `exec_summary_p2_implications` layout (5 conditions) | Conditions for success; each card: the condition, how sure we are (tag label: HIGH / MEDIUM / LOW confidence) and how to test it |
 | | Risks | `risk_matrix` | 8–12 risks, qualitative only |
 | | Options compared (when the question has real alternatives: entry mode, partner type, format, segment, location) | `decision_scorecard` | 3–5 options × 4–6 criteria, recommended row highlighted |
 | | Recommended path | `stage_gate_plan` | 3–4 gates with budget ranges, durations, go/no-go tests + first-90-days actions |
 | last | Methodology & sources | `methodology_endnote` | Standard |
 
-Target 17–22 pages total, same as other routes.
+Target 17–22 pages total, same as other routes. Dividers: 3–5 in total, counting the one that opens the decision chapter (conditions → path). The TOC lists chapters (dividers) with their sub-sections as rows; it may run to 2 pages.
+
+Treaty and tariff checks (buyer home country vs market) go on the `policy_timeline` page; a landed-cost build-up goes on a `market_data_chart` (stacked bar).
 
 ### Mapping an analysis to a page type
 
@@ -69,7 +71,7 @@ Pick by what the analysis outputs, not by its name:
 | Who competes, how concentrated, positions | `competitive_structure`; 1–3 key players → `competitive_profile_deep` |
 | Segments, personas, buyer needs | `persona_profile` or `use_case_grid_6` |
 | Channel structure, margins along the chain | `channel_waterfall` |
-| Price tiers, price vs quality positioning | `price_quality_matrix` |
+| Price tiers, price vs quality positioning | `price_quality_matrix` only if a defensible quality axis exists (rating, spec, review score); otherwise a price ladder on `market_data_chart` (price-range bars per brand / pack) |
 | Regulation, policy changes and dates | `policy_timeline` |
 | Partner / distributor / option scoring | `decision_scorecard` |
 | How the industry operates (process flow, value chain) | `market_data_chart` with the flow drawn as an SVG diagram (use the pack's process flow; describe today's practice, not the 2010 model) |
@@ -77,19 +79,30 @@ Pick by what the analysis outputs, not by its name:
 
 ### Section entry
 
-Each body section carries the usual fields plus:
+Each body section carries the usual fields (see `design_mode_planner.md` Step 5) plus these two, inside `section_plan.json`:
 - `analysis_brief`: 2–4 sentences in plain words — the method, the decision rule to apply, the pitfall to avoid, and the facts it needs. Write it in your own words: no module slugs, card IDs or framework names.
 - `research_inputs_expected`: the 2–4 facts and where to find them.
 
+```json
+{"id": "09_channel_margins", "section_num": "05", "title_pattern": "Where the margin sits between factory and sari-sari shelf",
+ "page_type": "channel_waterfall", "page_count": 1, "purpose": "...",
+ "analysis_brief": "Build the margin stack layer by layer from ex-factory to shelf price for one or two reference packs. Separate front-end margin from back-end income (rebates, listing and display fees). Decision rule: a layer keeping >15% without a service it performs is the one to bypass. Pitfall: list prices are not transaction prices.",
+ "research_inputs_expected": ["distributor margin bands (trade press, distributor filings)", "retail mark-up on sachets (store checks reported in press)"]}
+```
+
+Decision pages (`decision_scorecard`, `stage_gate_plan`, the conditions grid) are not chart-bearing: the pre-render "chart_data populated" check skips them.
+
 ### Query strategy
 
-Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English queries, bucketed by section. Add local-language queries for tier-1 markets using the pack's **industry glossary** (the `vi` / `ja` / `ko` / `zh` practitioner terms) on top of `references/local_lang_query_glossary.md`. If the buyer is an incumbent, add the baseline queries (its filings, local subsidiaries) first.
+Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English queries, bucketed by section. Local-language queries follow topic_parser's `local_search_priority` (this rule wins over the brain's own "always search locally" line): for tier-1 / tier-2 markets, use the pack's **industry glossary** (`vi` / `ja` / `ko` / `zh` practitioner terms) on top of `references/local_lang_query_glossary.md`; for `skip` markets (English-dominant, e.g. SG, PH), add only 2–4 queries with local trade slang where it finds data English misses (e.g. Filipino retail terms for mark-ups or store types). If the buyer is an incumbent, add the baseline queries (its filings, local subsidiaries) first.
 
 ## Rules carried into Stages 4–7
 
 - Archive analogues in the pack give structure and hypotheses only. **Never** present a number from them as current; every number in the report comes from Stage 4 research and carries a source tag.
 - Source tags follow `content_per_section.md` Step 5 (`[Kira estimates]` / `[<Alias> <Year>]`), not the numbered [n] style of the brain's chat format.
 - Be decisive where evidence allows; state what is uncertain. Estimates are ranges with the logic shown.
+- "Platform" may describe a third party's service in plain words (e.g. "an eB2B ordering network", "a marketplace"); never describe KIRA or its work as a platform.
+- The caller may override `default_output_mode` (e.g. `draft` for a test run).
 
 ## Checklist before returning
 

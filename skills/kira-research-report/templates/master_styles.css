@@ -90,7 +90,7 @@ body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-u
   margin-top: 10px;
   letter-spacing: 0.02em;
   flex-shrink: 0;
-  max-height: 32px;
+  max-height: 40px;
   overflow: hidden;
 }
 .source-key::before {
@@ -377,7 +377,7 @@ body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-u
 /* ============================================================
    === Decision-brief page types (2026-10) ===
    decision_scorecard + stage_gate_plan. Used by the BRAIN route
-   (prompts/brain_planner.md) for question-led reports.
+   (prompts/brain_route.md) for question-led reports.
    ============================================================ */
 
 /* ============ DECISION SCORECARD ============ */
@@ -401,10 +401,12 @@ body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-u
 /* ============ STAGE-GATE PLAN ============ */
 .gate-wrap { display: grid; grid-template-columns: 2.1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
 .gate-wrap .kira-table td.gate-name { color: var(--text); font-weight: 700; width: 20%; }
-.gate-wrap .kira-table td .mono { color: var(--text); font-weight: 600; }
+.gate-wrap .kira-table td .mono { color: var(--text); font-weight: 600; white-space: nowrap; }
+.scorecard-wrap .kira-table, .gate-wrap .kira-table { align-self: start; }
+.kira-table tr.recommended td.row-label::after { content: " · RECOMMENDED"; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; }
 .action-list { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
 .action-list h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
 .action-list ol { margin: 0; padding-left: 18px; }
 .action-list li { font-size: 11px; line-height: 1.5; color: var(--text-mid); margin-bottom: 5px; }
 .action-list li strong { color: var(--text); font-weight: 600; }
-.decision-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+.decision-source-strip { /* unused since source-key replaced it; kept for older drafts */ font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
