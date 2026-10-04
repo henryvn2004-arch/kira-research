@@ -179,6 +179,20 @@ Chi tiết + gotcha: `project des/memory/project_batch_cron_system.md`.
 
 ---
 
+## Report pipeline — BRAIN route (2026-10-04, PR #40)
+
+Stage A (EN gen) now plans each report as an answer to a **buyer question** instead of a generic market overview. The default buyer is a Japanese or Korean company. Prompt: `skills/kira-research-report/prompts/brain_route.md`.
+- **How it plans:** the brain (private repo `kira-pipeline`) picks the analyses, so its plan replaces the blueprint (UC1) and design-mode (UC2) planning. Research, content, render, JA/KO and publish are unchanged.
+- **New page types:** `decision_scorecard` and `stage_gate_plan`.
+- **Pilot:** blind-judged on one topic, the new route scored 61/80 against 49/80 for the old pipeline.
+- **Batch machine setup:** clone `kira-pipeline` next to `kira-research`, or set env `KIRA_BRAIN_DIR`. Without it, Stage A silently falls back to UC1/UC2.
+- **Never commit brain artifacts here.** They live in an OS temp folder, and the batch runner greps `en.html` for leaks.
+- **Methodology page:** the boilerplate no longer claims field checks or interviews, because the pipeline is desk-only.
+- **`/api/render-pdf` overflow check:** it now also reports text clipped inside boxes. Older published reports have clipped competitor cards and source keys; worth a re-render pass.
+- **Routines:** paused since 2026-10. Operations are being revamped in a separate session.
+
+---
+
 ## Workplan progress by phase
 
 Source of truth for phase/sprint structure is `project des/workplan.md`
