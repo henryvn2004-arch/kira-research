@@ -862,6 +862,111 @@
 
 
 <!-- ============================================================
-     END OF TEMPLATES — 15 page types defined (10 original + 5 Phase H).
+     TEMPLATE: decision_scorecard  (BRAIN route)
+     Options x criteria table with STRONG / FAIR / WEAK ratings
+     (no numeric scores). 3-5 options (rows), 4-6 criteria
+     (columns). Recommended option row highlighted. Right rail:
+     the verdict and what would change it.
+     ============================================================ -->
+<!-- TEMPLATE_START: decision_scorecard -->
+<div class="page decision-scorecard-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="scorecard-wrap">
+      <table class="kira-table">
+        <thead>
+          <tr><th>{{OPTION_COLUMN_LABEL}}</th><!-- LOOP criteria --><th>{{CRITERION_LABEL}}</th><!-- END LOOP --></tr>
+        </thead>
+        <tbody>
+          <!-- LOOP: 3-5 options. Add class="recommended" to the chosen row. -->
+          <tr class="{{ROW_CLASS}}">
+            <td class="row-label">{{OPTION_NAME}}</td>
+            <!-- LOOP criteria -->
+            <td><span class="rating {{RATING_CLASS}}">{{RATING_LABEL}}</span><br>{{CELL_NOTE_HTML}}</td>
+            <!-- END LOOP -->
+          </tr>
+          <!-- END LOOP -->
+        </tbody>
+      </table>
+
+      <div class="scorecard-rail">
+        <h3>{{RAIL_HEADING}}</h3>
+        {{RAIL_BODY_HTML}}
+      </div>
+    </div>
+
+    <div class="decision-source-strip">{{SOURCE_STRIP}}</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: decision_scorecard -->
+
+
+<!-- ============================================================
+     TEMPLATE: stage_gate_plan  (BRAIN route)
+     Left: 3-4 gates table (gate / scope / budget / duration /
+     go-no-go test). Right: first-90-days action list (5-7).
+     ============================================================ -->
+<!-- TEMPLATE_START: stage_gate_plan -->
+<div class="page stage-gate-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="gate-wrap">
+      <table class="kira-table">
+        <thead>
+          <tr><th>Gate</th><th>What happens</th><th>Budget</th><th>Duration</th><th>Go / no-go test</th></tr>
+        </thead>
+        <tbody>
+          <!-- LOOP: 3-4 gates -->
+          <tr>
+            <td class="gate-name">{{GATE_NAME}}</td>
+            <td>{{GATE_SCOPE_HTML}}</td>
+            <td><span class="mono">{{GATE_BUDGET}}</span></td>
+            <td><span class="mono">{{GATE_DURATION}}</span></td>
+            <td>{{GATE_TEST_HTML}}</td>
+          </tr>
+          <!-- END LOOP -->
+        </tbody>
+      </table>
+
+      <div class="action-list">
+        <h3>{{ACTION_LIST_HEADING}}</h3>
+        <ol>
+          <!-- LOOP: 5-7 actions -->
+          <li>{{ACTION_HTML}}</li>
+          <!-- END LOOP -->
+        </ol>
+      </div>
+    </div>
+
+    <div class="decision-source-strip">{{SOURCE_STRIP}}</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: stage_gate_plan -->
+
+
+<!-- ============================================================
+     END OF TEMPLATES — 17 page types defined (10 original + 5 Phase H + 2 decision-brief).
      Pipeline reads this file, extracts by markers, fills placeholders.
      ============================================================ -->

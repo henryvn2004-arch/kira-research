@@ -373,3 +373,38 @@ body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-u
 .pq-sidebar p strong { color: var(--text); font-weight: 600; }
 .pq-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
 
+
+/* ============================================================
+   === Decision-brief page types (2026-10) ===
+   decision_scorecard + stage_gate_plan. Used by the BRAIN route
+   (prompts/brain_planner.md) for question-led reports.
+   ============================================================ */
+
+/* ============ DECISION SCORECARD ============ */
+.scorecard-wrap { display: grid; grid-template-columns: 2.3fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.kira-table { width: 100%; border-collapse: collapse; font-size: 11px; color: var(--text-mid); }
+.kira-table th { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border-strong); background: var(--bg-soft); }
+.kira-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.4; }
+.kira-table td.row-label { color: var(--text); font-weight: 700; }
+.kira-table td.criterion { color: var(--text); font-weight: 600; width: 22%; }
+.kira-table tr.recommended td { background: var(--primary-soft); }
+.kira-table tr.recommended td.row-label { color: var(--primary); }
+.rating { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; display: inline-block; margin-bottom: 3px; }
+.rating.strong { background: var(--green-soft); color: var(--green); }
+.rating.fair { background: var(--sev-med-soft); color: var(--sev-med); }
+.rating.weak { background: var(--sev-high-soft); color: var(--sev-high); }
+.scorecard-rail { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.scorecard-rail h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.scorecard-rail p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.scorecard-rail p strong { color: var(--text); font-weight: 600; }
+
+/* ============ STAGE-GATE PLAN ============ */
+.gate-wrap { display: grid; grid-template-columns: 2.1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.gate-wrap .kira-table td.gate-name { color: var(--text); font-weight: 700; width: 20%; }
+.gate-wrap .kira-table td .mono { color: var(--text); font-weight: 600; }
+.action-list { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.action-list h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.action-list ol { margin: 0; padding-left: 18px; }
+.action-list li { font-size: 11px; line-height: 1.5; color: var(--text-mid); margin-bottom: 5px; }
+.action-list li strong { color: var(--text); font-weight: 600; }
+.decision-source-strip { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
