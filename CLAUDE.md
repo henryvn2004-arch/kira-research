@@ -12,6 +12,10 @@
 > memory dir (`~/.claude/projects/.../memory/`) for runtime pickup. See
 > `project des/memory/README.md` for the sync pattern.
 
+> **KIRA brain** (research method library, industry knowledge, SME process method) lives in the
+> **private** repo `kira-pipeline`. Its progress is tracked in that repo's `CLAUDE.md` — read it when
+> the work is about the brain. Never copy brain content into this public repo.
+
 ---
 
 ## Quick facts
