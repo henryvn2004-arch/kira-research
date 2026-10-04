@@ -85,7 +85,7 @@ fire automatically reclaims any orphaned slug.
 
 `scripts/audit-queue.mjs` scans `data/report_queue.csv` for rows where
 `status` ends in `_in_progress` AND `claimed_at` is empty OR older than
-**90 minutes** ago (2× the 45-min hard stage timeout — wide margin to
+**150 minutes** ago (well above the 90-min EN stage timeout — wide margin to
 never kill a legitimately-running stage).
 
 For each stale row:
@@ -220,7 +220,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 >
 > Return: absolute paths to en.html + en.pdf, count of sections planned vs generated (e.g. "14 planned, 14 generated"), count of EN vs local queries fired.
 
-**Hard time cap: 45 minutes** — if the subagent has not returned by then, treat as timeout: jump to failure path (Step 7) with `error_log: EN gen timeout 45m`.
+**Hard time cap: 90 minutes** (BRAIN-route reports have no page cap and run longer) — if the subagent has not returned by then, treat as timeout: jump to failure path (Step 7) with `error_log: EN gen timeout 90m`.
 
 **Parent-side validation (post-return)**:
 
@@ -293,7 +293,7 @@ Spawn ONE subagent for JA translation **with `model: "sonnet"`** (translation �
 >
 > Pre-Write each page: confirm publisher aliases inside source tags are NOT translated (`[Kira estimates]` must NOT become `[KIRA推計]`; `[BPS 2024]` must NOT become `[インドネシア統計庁 2024]`). Inline English descriptive clauses inside tags (e.g. `[Kira estimates · computed from active-user-share above]`) MAY have the descriptive tail translated to Japanese while preserving the `[<Alias>` prefix — the alias still resolves against the SOURCE KEY.
 
-**Hard time cap: 45 minutes.** If subagent has not returned by then → failure path with `error_log: JA translate timeout 45m`. Partial ja.html (if exists) stays on disk for inspection.
+**Hard time cap: 75 minutes** (longer reports = more page chunks). If subagent has not returned by then → failure path with `error_log: JA translate timeout 75m`. Partial ja.html (if exists) stays on disk for inspection.
 
 ### 4.3 — Parent-side validation gate (post-return)
 
@@ -461,7 +461,7 @@ Update queue row:
 - status → `error`
 - output_paths → any PDFs that DID get generated (partial)
 - date_completed → today's ISO date
-- error_log → one-line summary including the stage (`EN gen timeout 45m` / `JA section count 15/22` / `KO render-pdf 500` / etc.)
+- error_log → one-line summary including the stage (`EN gen timeout 90m` / `JA section count 15/22` / `KO render-pdf 500` / etc.)
 - `claimed_at` → empty (terminal failure; clears the in-flight marker so Step 0.5 doesn't try to re-recover an `error` row)
 
 ```bash
@@ -487,7 +487,7 @@ Print 1-line error summary + exit.
 | EN section count mismatch | Set status=error with `EN section count <Y>/<X>`. Do NOT advance to JA. PDF (if any) stays on disk for inspection. |
 | JA/KO page count mismatch | Means subagent dropped pages mid-translation (output cap hit). Set status=error with `<lang> page count <Y>/<X>`. Manually re-run after chunking fix. |
 | JA/KO source tag set is not superset of EN | Translator localized a tag (e.g. `[BPS 2024]` → `[インドネシア統計庁 2024]`). status=error with `<lang> source tag drift`. |
-| Timeout 45m on any stage | Subagent likely hung on API call. status=error with `<stage> timeout 45m`. |
+| Timeout (90m EN, 75m JA/KO) | Subagent likely hung on API call. status=error with `<stage> timeout <N>m`. |
 | Stage B picked but en.html missing | Edge case (someone deleted file). status=error with `en.html missing for ja stage`. |
 
 ---

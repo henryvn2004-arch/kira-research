@@ -37,60 +37,70 @@ python3 "<brain>/runner/retrieve.py" --q <question_types...> --offering <offerin
 ```
 Then read `<brain>/runner/expert_prompt.md` and follow its **Procedure steps 1–3** (frame, select modules, plan evidence) on the pack. Keep the spine at 6–10 analyses. Record selections, drops and swaps in `<scratch>/brain_trace.md` (internal only).
 
-## Step C — Turn the spine into a report plan
+## Step C — Turn the spine into a story and a page plan
 
-Produce `section_plan.json` in the **same format as `design_mode_planner.md` output** (so Stages 4–7 run unchanged), with `route: "BRAIN"`, `buyer_question`, `thesis_one_paragraph` (your working answer — a hypothesis to test in research, not a conclusion), `default_output_mode: "publish"` and `requires_confirm_step: false`.
+Read `prompts/storytelling.md` (arc, page grammar, hooks) and `docs/exhibit_library.md` (16 exhibit types, layouts) first.
 
-### Storyline (pyramid — answer first)
+Produce `section_plan.json` in the design-mode format (so Stages 4–7 run unchanged) with `route: "BRAIN"`, `buyer_question`, `thesis_one_paragraph` (working answer: a hypothesis to test, not a conclusion), `storyline` (the action titles of all body pages in order; read alone, they must tell the story), `default_output_mode: "publish"` and `requires_confirm_step: false`.
 
-| # | Section | Page type | Content |
-|---|---|---|---|
-| 1 | Cover | `cover` | Title = the topic angle; subtitle = the buyer question shortened to ≤80 chars (the full question goes in the exec-summary subhead) |
-| 2 | Methodology | `methodology_inline` | Standard |
-| 3 | Contents | `toc` | Standard |
-| 4 | Executive summary | `exec_summary_p1` | Subhead = the full buyer question + the answer (go / no-go / conditional, with the one-line reason); 4 callouts = the numbers that decide it |
-| 5 | Why — implications | `exec_summary_p2_implications` | 5 cards: the 3–5 supporting arguments + recommended move |
-| 6–N | One chapter per spine analysis (dividers for 3–5 chapter breaks max) | see mapping below | Each section: what it shows, key numbers (sourced, dated), the "so what" for the buyer |
-| | What would have to be true | `use_case_grid_6` (6 conditions) or the 5-card `exec_summary_p2_implications` layout (5 conditions) | Conditions for success; each card: the condition, how sure we are (tag label: HIGH / MEDIUM / LOW confidence) and how to test it |
-| | Risks | `risk_matrix` | 8–12 risks, qualitative only |
-| | Options compared (when the question has real alternatives: entry mode, partner type, format, segment, location) | `decision_scorecard` | 3–5 options × 4–6 criteria, recommended row highlighted |
-| | Recommended path | `stage_gate_plan` | 3–4 gates with budget ranges, durations, go/no-go tests + first-90-days actions |
-| last | Methodology & sources | `methodology_endnote` | Standard |
+### 1. Build the arc before the pages
 
-Target 17–22 pages total, same as other routes. Dividers: 3–5 in total, counting the one that opens the decision chapter (conditions → path). The TOC lists chapters (dividers) with their sub-sections as rows; it may run to 2 pages.
+Map the spine analyses onto the arc in `storytelling.md` §2 (Hook → Situation → Complication → Resolution → Proof of action).
+- Decide the **complication**: the one tension the report resolves. It is usually where the obvious move fails.
+- Give that complication the most pages.
+- Group analyses into 4–7 chapters; each chapter title is a claim.
 
-Treaty and tariff checks (buyer home country vs market) go on the `policy_timeline` page; a landed-cost build-up goes on a `market_data_chart` (stacked bar).
+### 2. Give each analysis the pages it earns
 
-### Mapping an analysis to a page type
+**There is no page target.** Each analysis gets 1–3 exhibit pages, depending on how many distinct claims its evidence supports. A 30–40 page report is normal when the evidence is rich.
 
-Pick by what the analysis outputs, not by its name:
+The pack lists each analysis's expected exhibits with a `type`, under `exhibits`. Use them as the menu:
+- pick the 1–3 exhibits per page that prove that page's claim;
+- prefer the module's listed types;
+- add a `big_number` breather page where a single number carries a chapter.
 
-| Analysis output | Page type |
-|---|---|
-| Size, growth, share, a trend over time | `market_data_chart` (forecast → `forecast_outlook`) |
-| Who competes, how concentrated, positions | `competitive_structure`; 1–3 key players → `competitive_profile_deep` |
-| Segments, personas, buyer needs | `persona_profile` or `use_case_grid_6` |
-| Channel structure, margins along the chain | `channel_waterfall` |
-| Price tiers, price vs quality positioning | `price_quality_matrix` only if a defensible quality axis exists (rating, spec, review score); otherwise a price ladder on `market_data_chart` (price-range bars per brand / pack) |
-| Regulation, policy changes and dates | `policy_timeline` |
-| Partner / distributor / option scoring | `decision_scorecard` |
-| How the industry operates (process flow, value chain) | `market_data_chart` with the flow drawn as an SVG diagram (use the pack's process flow; describe today's practice, not the 2010 model) |
-| Technology / AI shift | `ai_overview` |
+The anti-padding rule is the only cut: a page with no new data-backed claim is dropped.
 
-### Section entry
+### 3. Fixed pages
 
-Each body section carries the usual fields (see `design_mode_planner.md` Step 5) plus these two, inside `section_plan.json`:
-- `analysis_brief`: 2–4 sentences in plain words — the method, the decision rule to apply, the pitfall to avoid, and the facts it needs. Write it in your own words: no module slugs, card IDs or framework names.
-- `research_inputs_expected`: the 2–4 facts and where to find them.
+| Position | Page | Page type |
+|---|---|---|
+| Opening | Cover | `cover`. Subtitle = the buyer question, ≤80 chars. |
+| Opening | Methodology | `methodology_inline` |
+| Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
+| Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-hero` or `layout-main-side`. Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. Content: a `big_number` or chart with the deciding fact, plus 3 reasons in the commentary. |
+| Executive summary, page 2 | Why | `exhibit_page`. The supporting arguments as a `comparison_table` or short cards, and the recommended move in the takeaway. |
+| Chapter openers | Dividers | `divider`. Title = the chapter's claim; thesis = the tension it resolves. |
+| Body | One or more pages per analysis | `exhibit_page` by default. The older specialised types (`competitive_profile_deep`, `channel_waterfall`, `policy_timeline`, `persona_profile`) may be used when they fit better. |
+| Decision chapter | Conditions to win | `exhibit_page` with a `comparison_table`: condition / how sure we are / how to test it. Any number of conditions. |
+| Decision chapter | Risks | `risk_matrix`, or `exhibit_page` with a `heatmap`. |
+| Decision chapter | Options compared | `decision_scorecard`, or `exhibit_page` with a `comparison_table`. Use when real alternatives exist. |
+| Decision chapter | Recommended path | `stage_gate_plan`, or `exhibit_page` with a `timeline` (Gantt with gates) plus a `comparison_table` of gate tests and budgets. Then a first-90-days page if it does not fit. |
+| Last | Methodology & sources | `methodology_endnote` (may run to 2 pages) |
+
+Treaty and tariff checks go on a `timeline` or `comparison_table` page. A landed-cost build-up is a `waterfall`. How the industry operates is a `flow` exhibit; use the pack's process flow but describe today's practice, not the 2010 model.
+
+### 4. Page entry
+
+Each body page in `section_plan.json` carries:
 
 ```json
-{"id": "09_channel_margins", "section_num": "05", "title_pattern": "Where the margin sits between factory and sari-sari shelf",
- "page_type": "channel_waterfall", "page_count": 1, "purpose": "...",
- "analysis_brief": "Build the margin stack layer by layer from ex-factory to shelf price for one or two reference packs. Separate front-end margin from back-end income (rebates, listing and display fees). Decision rule: a layer keeping >15% without a service it performs is the one to bypass. Pitfall: list prices are not transaction prices.",
- "research_inputs_expected": ["distributor margin bands (trade press, distributor filings)", "retail mark-up on sachets (store checks reported in press)"]}
+{"id": "05_channel_margins_p1", "chapter": "Who controls the route", "section_num": "05",
+ "page_type": "exhibit_page", "layout": "layout-main-side",
+ "action_title": "A sachet loses 40% of its shelf price before it reaches the store owner's hand",
+ "exhibits": [{"type": "waterfall", "shows": "ex-factory to shelf price build-up for a PHP 10 sachet, by layer"}],
+ "companion": "commentary",
+ "takeaway_intent": "the layer to squeeze is the second-tier wholesaler, not the retailer",
+ "hook": "concrete scene",
+ "analysis_brief": "Build the margin stack layer by layer for one or two reference packs. Separate front-end margin from back-end income (rebates, listing and display fees). Decision rule: a layer keeping >15% without a service it performs is the one to bypass. Pitfall: list prices are not transaction prices.",
+ "research_inputs_expected": ["distributor margin bands (trade press, distributor filings)", "retail mark-up on sachets (press reports of store checks)"]}
 ```
 
-Decision pages (`decision_scorecard`, `stage_gate_plan`, the conditions grid) are not chart-bearing: the pre-render "chart_data populated" check skips them.
+- `action_title` is a hypothesis; Stage 5 rewrites it to what the evidence shows.
+- `analysis_brief` is in plain words: no module slugs, card IDs or framework names.
+- `companion` is one of `commentary`, `big_number`, `callout`, `second exhibit`.
+- `hook` is a technique from storytelling §4, used on chapter openers and on 1 page in 3.
+- Decision pages are not chart-bearing for the pre-render "chart_data populated" check.
 
 ### Query strategy
 
@@ -109,8 +119,10 @@ Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English 
 
 - [ ] `framing.json`, `pack.md`, `brain_trace.md` are in the scratch folder outside the repo
 - [ ] Exec summary states the answer to the buyer question, not a market description
-- [ ] Every body section has a page type from `schemas/page_schemas.json` and an `analysis_brief`
-- [ ] `stage_gate_plan` and `risk_matrix` present; `decision_scorecard` present when options exist
+- [ ] `storyline` (all action titles in order) reads as an argument on its own
+- [ ] Every body page has a page type, a layout, its exhibit types, a takeaway intent and an `analysis_brief`
+- [ ] Exhibit variety: no single type on more than a third of body pages; at least one breather page per two chapters
+- [ ] Conditions, risks, path (and options when alternatives exist) are present
 - [ ] No brain-internal names anywhere in `section_plan.json` titles or briefs
 
 Return `section_plan.json`.

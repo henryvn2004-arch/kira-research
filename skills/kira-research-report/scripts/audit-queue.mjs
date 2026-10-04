@@ -9,7 +9,7 @@
 // commit needed).
 //
 // Recovery rules:
-//   - Threshold = 90 minutes (2× the 45-min hard stage timeout).
+//   - Threshold = 150 minutes (above the 90-min EN stage timeout).
 //   - Strike-1 (first time stuck): revert status to prior stage, clear
 //     claimed_at, append `auto-recovered <iso>` note to error_log.
 //   - Strike-2 (error_log already contains "auto-recovered"): row already
@@ -28,7 +28,7 @@ import fs from 'fs';
 import path from 'path';
 
 const QUEUE_PATH = path.resolve('data/report_queue.csv');
-const STALE_MINUTES = 90;
+const STALE_MINUTES = 150;
 const NOW = new Date();
 
 const PRIOR_STAGE = {
