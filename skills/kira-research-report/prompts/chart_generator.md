@@ -11,6 +11,8 @@ For each chart:
   - `data.periods`
 - The page type (determines SVG viewBox height — typically 240 for exec_summary_p1, 280 for market_data_chart, 360 for forecast_outlook)
 
+> **Exhibit layer (2026-10):** the full set of 16 exhibit types (bar, stacked bar, line, waterfall, 2×2 / bubble, heatmap, comparison table, driver tree, funnel, range, timeline / Gantt, flow, tile map, big number, donut, marimekko) lives in `templates/exhibits.html` with rules in `docs/exhibit_library.md`. Use those for `exhibit_page`s and whenever an analysis needs a type not listed below. Design rules there win over this file.
+
 ## Patterns to support (Phase 1)
 
 Pick the closest pattern. Worked SVG examples for each are documented in `docs/chart_patterns.md`.

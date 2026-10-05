@@ -11,7 +11,8 @@ For each section to generate:
 - The page-type schema from `schemas/page_schemas.json`
 - The voice rules from `prompts/voice_guide.md` (refresh in context if you've drifted)
 - **The active industry overlay** (if any), loaded from `overlays/<id>.yaml` per orchestrator output
-- **BRAIN route only:** the plan's `buyer_question` and the section's `analysis_brief`. Draft the section to answer its part of the buyer question: apply the brief's method and decision rule, end with the "so what" for the buyer. The executive summary states the answer (go / no-go / conditional and why), not a market description. Never mention the brain, analyses by internal name, the archive, past projects or clients.
+- **Writing craft (all routes, required for BRAIN):** `prompts/storytelling.md` — arc, page grammar (action title → exhibit → commentary → takeaway), hook techniques. For `exhibit_page`s, draw exhibits from `templates/exhibits.html` following `docs/exhibit_library.md`.
+- **BRAIN route only:** the plan's `buyer_question`, `storyline` and each page's `analysis_brief`, `action_title`, exhibits and `takeaway_intent`. Rewrite the action title to what the evidence actually shows. Draft the section to answer its part of the buyer question: apply the brief's method and decision rule, end with the "so what" for the buyer. The executive summary states the answer (go / no-go / conditional and why), not a market description. Never mention the brain, analyses by internal name, the archive, past projects or clients.
 
 ## Execution pattern (CRITICAL — do not deviate)
 
@@ -134,7 +135,7 @@ Generate text in this order per page:
 For every slot:
 - Count actual chars (use the runtime `String.length` equivalent — not word count)
 - Compare to `max_chars`
-- If over: regenerate the slot at -15% target. Max 3 retries.
+- If over: for `exhibit_page` (and any BRAIN-route page) **split the content into two pages** — a second exhibit page that carries the overflow as its own claim — instead of cutting the insight; trim only filler. For other page types: regenerate the slot at -15% target. Max 3 retries.
 - If a slot consistently overflows even at -15% × 3, flag for orchestrator with `overflow_at_content_gen: true` and which slot
 
 ### Step 5 — Apply source tags (NEW SYSTEM as of Phase L.3)

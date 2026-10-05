@@ -81,6 +81,10 @@ Follow the stages in order. Each stage has a dedicated prompt file in `prompts/`
 - Tag every quantitative claim inline
 - Validate char counts. Over budget → regen at -15%. Max 3 retries.
 
+### Writing craft and exhibits (all stages)
+- `prompts/storytelling.md` — report arc (hook → situation → complication → resolution → proof of action), page grammar (action title, exhibit, commentary, takeaway), hook techniques, no page cap.
+- `templates/exhibits.html` + `docs/exhibit_library.md` — 16 exhibit types and 7 flexible layouts used by `exhibit_page`.
+
 ### Stage 6 — Charts (inline SVG)
 - Prompt: [`prompts/chart_generator.md`](prompts/chart_generator.md)
 - Use utility classes from `templates/master_styles.css` (`.bar-primary`, `.axis-line`, etc.). Real data only — no placeholders. Patterns documented in [`docs/chart_patterns.md`](docs/chart_patterns.md).

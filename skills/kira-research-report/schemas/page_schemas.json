@@ -700,6 +700,52 @@
         }
       },
       "char_budget_envelope_total": 1500
+    },
+    "exhibit_page": {
+      "description": "Flexible exhibit page (exhibit layer, 2026-10). Action title + optional kicker + 1-3 exhibits arranged in a layout + optional commentary / big number / callout + takeaway bar. Default body page for the BRAIN route; usable by any route. Exhibit snippets: templates/exhibits.html; rules: docs/exhibit_library.md; writing: prompts/storytelling.md.",
+      "slots": {
+        "h1": {
+          "max_chars": 120,
+          "lines_max": 2,
+          "note": "Action title: the page's conclusion as a sentence."
+        },
+        "kicker": {
+          "max_chars": 240,
+          "lines_max": 2,
+          "optional": true
+        },
+        "layout": {
+          "one_of": [
+            "layout-full",
+            "layout-split",
+            "layout-main-side",
+            "layout-side-main",
+            "layout-trio",
+            "layout-stack",
+            "layout-hero"
+          ]
+        },
+        "exhibits": {
+          "count_min": 1,
+          "count_max": 3,
+          "types": "see docs/exhibit_library.md (16 types)"
+        },
+        "commentary": {
+          "optional": true,
+          "paragraphs_max": 4,
+          "each_max_chars": 300
+        },
+        "takeaway": {
+          "max_chars": 160,
+          "lines_max": 2,
+          "note": "The so-what for the buyer; never restates the title."
+        },
+        "source_key": {
+          "char_cap": 320,
+          "lines_max": 2
+        }
+      },
+      "fit_rule": "Caps are physical fit only. If content does not fit, split into two exhibit pages instead of trimming the insight."
     }
 
   },

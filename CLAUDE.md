@@ -188,6 +188,13 @@ Chi tiết + gotcha: `project des/memory/project_batch_cron_system.md`.
 Stage A (EN gen) now plans each report as an answer to a **buyer question** instead of a generic market overview. The default buyer is a Japanese or Korean company. Prompt: `skills/kira-research-report/prompts/brain_route.md`.
 - **How it plans:** the brain (private repo `kira-pipeline`) picks the analyses, so its plan replaces the blueprint (UC1) and design-mode (UC2) planning. Research, content, render, JA/KO and publish are unchanged.
 - **New page types:** `decision_scorecard` and `stage_gate_plan`.
+- **Exhibit layer (PR #41):**
+  - `prompts/storytelling.md` sets the arc and hooks.
+  - `templates/exhibits.html` and `docs/exhibit_library.md` hold the 16 exhibit types.
+  - `exhibit_page` has 7 layouts; overflow splits the page.
+  - There is no page cap.
+  - Pilot v2 vs v1: 77 vs 56 /90.
+  - Batch caps: EN 90 min, JA/KO 75 min, stale claim after 150 min.
 - **Pilot:** blind-judged on one topic, the new route scored 61/80 against 49/80 for the old pipeline.
 - **Batch machine setup:** clone `kira-pipeline` next to `kira-research`, or set env `KIRA_BRAIN_DIR`. Without it, Stage A silently falls back to UC1/UC2.
 - **Never commit brain artifacts here.** They live in an OS temp folder, and the batch runner greps `en.html` for leaks.

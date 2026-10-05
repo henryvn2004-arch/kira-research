@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA exhibit library</title>
+<!--
+  KIRA Research — Exhibit library gallery (2026-10). ILLUSTRATIVE DATA ONLY.
+  16 exhibit types. Each reusable snippet is wrapped in
+    <!- - EXHIBIT_START: <type> - -> ... <!- - EXHIBIT_END: <type> - ->
+  (the .exhibit div with its inline SVG / HTML). Some types appear more than once
+  (bar: ranked + period; stacked_bar: absolute, 100%, split; range: football field + tornado;
+  timeline: events + Gantt). Rules, data shapes and coordinate maths: docs/exhibit_library.md.
+  Page skeleton = .page > .page-inner > header, .page-h1 (action title), .page-kicker,
+  .layout.<layout-*>, .takeaway, .page-footer. Styles: master_styles.css (Exhibit layer).
+  Generated once from a coordinate script, then maintained by hand.
+-->
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="master_styles.css">
+</head>
+<body>
+
+<!-- ============================ PAGE 01 · Index ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit library · index</div>
+      <div class="page-section-counter">01 / 18</div>
+    </div>
+    <h1 class="page-h1">Sixteen exhibit types, seven layouts, one rule: every page states its so-what first</h1>
+    <p class="page-kicker">Gallery of reusable exhibit snippets for KIRA reports. <strong>All data on these pages is illustrative.</strong> Copy any block between EXHIBIT_START and EXHIBIT_END markers; see docs/exhibit_library.md for rules and coordinate maths.</p>
+    <div class="layout layout-stack ex-top-auto">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><table class="kira-table ex-compact"><thead><tr><th>Type id</th><th>Covers</th><th>Layouts shown</th><th class="ex-c">Page</th></tr></thead><tbody>
+<tr><td class="row-label"><span class="mono">bar</span></td><td>Ranked or period bars, one highlight</td><td>main-side, hero</td><td class="ex-c"><span class="mono">2-3</span></td></tr>
+<tr><td class="row-label"><span class="mono">stacked_bar</span></td><td>Composition, 100% mix, split</td><td>split, stack</td><td class="ex-c"><span class="mono">4, 17</span></td></tr>
+<tr><td class="row-label"><span class="mono">line</span></td><td>Trend, forecast range, events</td><td>main-side</td><td class="ex-c"><span class="mono">5</span></td></tr>
+<tr><td class="row-label"><span class="mono">waterfall</span></td><td>Bridge, price build-up</td><td>side-main</td><td class="ex-c"><span class="mono">6</span></td></tr>
+<tr><td class="row-label"><span class="mono">matrix_2x2</span></td><td>Quadrants, bubble scatter</td><td>main-side</td><td class="ex-c"><span class="mono">7</span></td></tr>
+<tr><td class="row-label"><span class="mono">heatmap</span></td><td>Rows x columns scoring</td><td>main-side</td><td class="ex-c"><span class="mono">8</span></td></tr>
+<tr><td class="row-label"><span class="mono">comparison_table</span></td><td>Options x criteria ratings</td><td>main-side</td><td class="ex-c"><span class="mono">9</span></td></tr>
+<tr><td class="row-label"><span class="mono">driver_tree</span></td><td>Value driver tree</td><td>main-side</td><td class="ex-c"><span class="mono">10</span></td></tr>
+</tbody></table><table class="kira-table ex-compact"><thead><tr><th>Type id</th><th>Covers</th><th>Layouts shown</th><th class="ex-c">Page</th></tr></thead><tbody>
+<tr><td class="row-label"><span class="mono">funnel</span></td><td>TAM-SAM-SOM, conversion</td><td>trio</td><td class="ex-c"><span class="mono">11</span></td></tr>
+<tr><td class="row-label"><span class="mono">donut</span></td><td>Single snapshot share</td><td>trio</td><td class="ex-c"><span class="mono">11</span></td></tr>
+<tr><td class="row-label"><span class="mono">range</span></td><td>Football field, tornado</td><td>split</td><td class="ex-c"><span class="mono">12</span></td></tr>
+<tr><td class="row-label"><span class="mono">timeline</span></td><td>Events, Gantt roadmap</td><td>main-side, full</td><td class="ex-c"><span class="mono">13-14</span></td></tr>
+<tr><td class="row-label"><span class="mono">flow</span></td><td>Value chain, journey, swimlanes</td><td>full</td><td class="ex-c"><span class="mono">15</span></td></tr>
+<tr><td class="row-label"><span class="mono">tile_map</span></td><td>Regions as tiles</td><td>main-side</td><td class="ex-c"><span class="mono">16</span></td></tr>
+<tr><td class="row-label"><span class="mono">big_number</span></td><td>Hero stats, 1-4</td><td>hero, stack</td><td class="ex-c"><span class="mono">3, 17</span></td></tr>
+<tr><td class="row-label"><span class="mono">marimekko</span></td><td>Size x share market map</td><td>main-side</td><td class="ex-c"><span class="mono">18</span></td></tr>
+</tbody></table></div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:14px;align-content:end">
+<div><div class="layout layout-full" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary);opacity:.85;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">full</div><div style="font-size:10.5px;color:var(--text-mid)">1 big exhibit</div></div>
+<div><div class="layout layout-split" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary);opacity:.85;border-radius:2px"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">split</div><div style="font-size:10.5px;color:var(--text-mid)">2 equal exhibits</div></div>
+<div><div class="layout layout-main-side" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary);opacity:.85;border-radius:2px"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">main-side</div><div style="font-size:10.5px;color:var(--text-mid)">chart + commentary</div></div>
+<div><div class="layout layout-side-main" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary);opacity:.85;border-radius:2px"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">side-main</div><div style="font-size:10.5px;color:var(--text-mid)">commentary first</div></div>
+<div><div class="layout layout-trio" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary);opacity:.85;border-radius:2px"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">trio</div><div style="font-size:10.5px;color:var(--text-mid)">3 exhibits / 2 + text</div></div>
+<div><div class="layout layout-stack" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary);opacity:.85;border-radius:2px"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">stack</div><div style="font-size:10.5px;color:var(--text-mid)">numbers row + chart</div></div>
+<div><div class="layout layout-hero" style="gap:4px;height:64px;flex:none;padding:6px;border:1px solid var(--border);border-radius:4px"><i style="display:block;background:var(--primary-soft);border-left:3px solid var(--primary)"></i><i style="display:block;background:#DCE2EC;border-radius:2px"></i></div><div class="mono" style="font-size:10px;font-weight:700;margin-top:6px">hero</div><div style="font-size:10.5px;color:var(--text-mid)">big number + chart</div></div>
+</div>
+    </div>
+    <div class="takeaway"><span>Pick the exhibit from the message, not the data: say what the reader should conclude, then choose the form that proves it.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Index · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 02 · Bar · ranked horizontal ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · bar</div>
+      <div class="page-section-counter">02 / 18</div>
+    </div>
+    <h1 class="page-h1">The Philippines is growing RTD tea value at 1.7x the regional pace, ahead of Vietnam</h1>
+    <p class="page-kicker">Ranked horizontal bars: one highlight bar, a dashed reference line for the benchmark, the so-what written on the chart.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: bar -->
+<div class="exhibit">
+  <div class="exhibit-title">RTD tea retail value growth by market</div>
+  <div class="exhibit-sub">CAGR 2022-25 · % · local currency</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ranked horizontal bar chart of RTD tea value growth by market">
+  <!-- scale: x = 120 + value*32 ; bar i: y = 34 + i*46, height 26 -->
+  <line class="ex-ref" x1="350.4" y1="24" x2="350.4" y2="296"/>
+  <text class="ex-axis-title" x="354.4" y="20">SEA average 7.2%</text>
+  <text class="svg-label ex-label-strong" x="110" y="51" text-anchor="end">Philippines</text>
+  <rect class="hl-fill" x="120" y="34" width="403.2" height="26" rx="2"/>
+  <text class="svg-value ex-label-hl" x="529.2" y="51">12.6%</text>
+  <line class="annot-line" x1="569.2" y1="47" x2="581.2" y2="47"/>
+  <text class="annot-text" x="587.2" y="45">1.7x the regional</text>
+  <text class="annot-text" x="587.2" y="58">average</text>
+  <text class="svg-label" x="110" y="97" text-anchor="end">Vietnam</text>
+  <rect class="base-fill" x="120" y="80" width="348.8" height="26" rx="2"/>
+  <text class="svg-value" x="474.8" y="97">10.9%</text>
+  <text class="svg-label" x="110" y="143" text-anchor="end">Indonesia</text>
+  <rect class="base-fill" x="120" y="126" width="268.8" height="26" rx="2"/>
+  <text class="svg-value" x="394.8" y="143">8.4%</text>
+  <text class="svg-label" x="110" y="189" text-anchor="end">Thailand</text>
+  <rect class="base-fill" x="120" y="172" width="163.2" height="26" rx="2"/>
+  <text class="svg-value" x="289.2" y="189">5.1%</text>
+  <text class="svg-label" x="110" y="235" text-anchor="end">Malaysia</text>
+  <rect class="base-fill" x="120" y="218" width="137.6" height="26" rx="2"/>
+  <text class="svg-value" x="263.6" y="235">4.3%</text>
+  <text class="svg-label" x="110" y="281" text-anchor="end">Singapore</text>
+  <rect class="base-fill" x="120" y="264" width="70.4" height="26" rx="2"/>
+  <text class="svg-value" x="196.4" y="281">2.2%</text>
+  <line class="ex-zero" x1="120" y1="28" x2="120" y2="296"/>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Retail audit 2025] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: bar -->
+<div class="commentary">
+  <h3>What it means</h3>
+  <p><strong>Growth is concentrated in two markets.</strong> The Philippines and Vietnam together add 64% of the region's new RTD tea value.</p>
+  <p>Thailand and Malaysia are now replacement markets: shelf space is won from incumbents, not from new drinkers.</p>
+  <div class="callout-box"><span class="tag">Read-across</span>Sequence entry by growth, not by size: Indonesia is larger but grows at two-thirds the Philippine rate.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Lead with the Philippines; treat Thailand and Malaysia as share fights, not growth plays.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Bar · ranked horizontal · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 03 · Bar · vertical with forecast · hero ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · bar + big number</div>
+      <div class="page-section-counter">03 / 18</div>
+    </div>
+    <h1 class="page-h1">Philippine RTD tea is on track to nearly double, to PHP 41 bn, by 2030</h1>
+    <p class="page-kicker">Hero layout: one big number carries the headline, the chart proves it. Actuals solid, forecast dashed, the CAGR bracketed on the chart.</p>
+    <div class="layout layout-hero">
+<!-- EXHIBIT_START: big_number -->
+<div class="big-number">
+  <div class="label">Market value, 2030F vs 2024</div>
+  <div class="value">1.9x</div>
+  <div class="context">PHP 21.6 bn in 2024 rises to <strong>PHP 41.0 bn</strong> by 2030F, an 11.3% CAGR. Convenience and modern trade add 60% of the increment.</div>
+  <div class="ex-src">[Kira estimates] · illustrative</div>
+</div>
+<!-- EXHIBIT_END: big_number -->
+<!-- EXHIBIT_START: bar -->
+<div class="exhibit">
+  <div class="exhibit-title">Philippine RTD tea retail sales value</div>
+  <div class="exhibit-sub">PHP bn · 2020-2030F · forecast bars dashed</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vertical bar chart of RTD tea market value 2020-2030F">
+  <!-- scale: bar top y = 292 - value*5.2 ; bar i: x = 20 + i*64 + 13, width 38 -->
+  <line class="ex-event" x1="340" y1="40" x2="340" y2="292"/>
+  <text class="ex-axis-title" x="24" y="50">ACTUAL</text>
+  <text class="ex-axis-title" x="346" y="50">FORECAST</text>
+  <rect class="base-fill" x="33" y="218.7" width="38" height="73.3"/>
+  <text class="svg-value" x="52" y="212.7" text-anchor="middle">14.1</text>
+  <text class="axis-text" x="52" y="307" text-anchor="middle">2020</text>
+  <rect class="base-fill" x="97" y="214" width="38" height="78"/>
+  <text class="svg-value" x="116" y="208" text-anchor="middle">15.0</text>
+  <text class="axis-text" x="116" y="307" text-anchor="middle">2021</text>
+  <rect class="base-fill" x="161" y="204.6" width="38" height="87.4"/>
+  <text class="svg-value" x="180" y="198.6" text-anchor="middle">16.8</text>
+  <text class="axis-text" x="180" y="307" text-anchor="middle">2022</text>
+  <rect class="base-fill" x="225" y="192.2" width="38" height="99.8"/>
+  <text class="svg-value" x="244" y="186.2" text-anchor="middle">19.2</text>
+  <text class="axis-text" x="244" y="307" text-anchor="middle">2023</text>
+  <rect class="hl-fill" x="289" y="179.7" width="38" height="112.3"/>
+  <text class="svg-value ex-label-hl" x="308" y="173.7" text-anchor="middle">21.6</text>
+  <text class="axis-text" x="308" y="307" text-anchor="middle">2024</text>
+  <rect class="ex-bar-fc" x="353" y="167.2" width="38" height="124.8"/>
+  <text class="svg-value" x="372" y="161.2" text-anchor="middle">24.0</text>
+  <text class="axis-text" x="372" y="307" text-anchor="middle">2025E</text>
+  <rect class="ex-bar-fc" x="417" y="153.2" width="38" height="138.8"/>
+  <text class="svg-value" x="436" y="147.2" text-anchor="middle">26.7</text>
+  <text class="axis-text" x="436" y="307" text-anchor="middle">2026F</text>
+  <rect class="ex-bar-fc" x="481" y="137.6" width="38" height="154.4"/>
+  <text class="svg-value" x="500" y="131.6" text-anchor="middle">29.7</text>
+  <text class="axis-text" x="500" y="307" text-anchor="middle">2027F</text>
+  <rect class="ex-bar-fc" x="545" y="120.4" width="38" height="171.6"/>
+  <text class="svg-value" x="564" y="114.4" text-anchor="middle">33.0</text>
+  <text class="axis-text" x="564" y="307" text-anchor="middle">2028F</text>
+  <rect class="ex-bar-fc" x="609" y="100.6" width="38" height="191.4"/>
+  <text class="svg-value" x="628" y="94.6" text-anchor="middle">36.8</text>
+  <text class="axis-text" x="628" y="307" text-anchor="middle">2029F</text>
+  <rect class="ex-bar-fc" x="673" y="78.8" width="38" height="213.2"/>
+  <text class="svg-value ex-label-hl" x="692" y="72.8" text-anchor="middle">41.0</text>
+  <text class="axis-text" x="692" y="307" text-anchor="middle">2030F</text>
+  <line class="ex-zero" x1="20" y1="292" x2="724" y2="292"/>
+  <path class="annot-line" d="M308 157.68 V30 H692 V56.8"/>
+  <rect x="422" y="21" width="156" height="18" fill="#F8F9FB"/>
+  <text class="annot-text" x="500" y="34" text-anchor="middle">+11.3% CAGR 2024-30F</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] for 2025E-2030F; [Retail audit 2025] for actuals · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: bar -->
+    </div>
+    <div class="takeaway"><span>A market doubling in six years leaves room for a new brand without a price war, if it enters before 2027.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Bar · vertical with forecast · hero · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 04 · Stacked bar · absolute and 100% ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · stacked bar</div>
+      <div class="page-section-counter">04 / 18</div>
+    </div>
+    <h1 class="page-h1">E-commerce is the only channel gaining real share in Indonesian snacks</h1>
+    <p class="page-kicker">Split layout: absolute stack shows the market grows; the 100% stack shows who takes the growth. The highlight segment sits on the baseline so it can be compared.</p>
+    <div class="layout layout-split">
+<!-- EXHIBIT_START: stacked_bar -->
+<div class="exhibit">
+  <div class="exhibit-title">Snack retail sales by channel</div>
+  <div class="exhibit-sub">Indonesia · IDR tn · 2027F at 75% opacity = forecast</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 480 316" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stacked column chart of snack sales by channel">
+  <!-- scale: segment height = value*1.75, stacked upward from y=296; column i: x = 16 + i*74 + 14 -->
+  <rect class="hl-fill" x="30" y="292.5" width="46" height="1.5"/>
+  <text class="svg-value ex-label-hl" x="26" y="297.2" text-anchor="end">2</text>
+  <rect class="ex-g1" x="30" y="254" width="46" height="36.5"/>
+  <text class="ex-in-dark" x="53" y="276.2" text-anchor="middle">22</text>
+  <rect class="ex-g2" x="30" y="233" width="46" height="19"/>
+  <text class="ex-in-dark" x="53" y="246.5" text-anchor="middle">12</text>
+  <rect class="ex-g3" x="30" y="131.5" width="46" height="99.5"/>
+  <text class="ex-in-dark" x="53" y="185.2" text-anchor="middle">58</text>
+  <text class="svg-value" x="53" y="124.5" text-anchor="middle">94</text>
+  <text class="axis-text" x="53" y="311" text-anchor="middle">2019</text>
+  <rect class="hl-fill" x="104" y="287.2" width="46" height="6.8"/>
+  <text class="svg-value ex-label-hl" x="100" y="294.6" text-anchor="end">5</text>
+  <rect class="ex-g1" x="104" y="241.8" width="46" height="43.5"/>
+  <text class="ex-in-dark" x="127" y="267.5" text-anchor="middle">26</text>
+  <rect class="ex-g2" x="104" y="222.5" width="46" height="17.2"/>
+  <text class="ex-in-dark" x="127" y="235.1" text-anchor="middle">11</text>
+  <rect class="ex-g3" x="104" y="117.5" width="46" height="103"/>
+  <text class="ex-in-dark" x="127" y="173" text-anchor="middle">60</text>
+  <text class="svg-value" x="127" y="110.5" text-anchor="middle">102</text>
+  <text class="axis-text" x="127" y="311" text-anchor="middle">2021</text>
+  <rect class="hl-fill" x="178" y="280.2" width="46" height="13.8"/>
+  <text class="svg-value ex-label-hl" x="174" y="291.1" text-anchor="end">9</text>
+  <rect class="ex-g1" x="178" y="226" width="46" height="52.2"/>
+  <text class="ex-in-dark" x="201" y="256.1" text-anchor="middle">31</text>
+  <rect class="ex-g2" x="178" y="205" width="46" height="19"/>
+  <text class="ex-in-dark" x="201" y="218.5" text-anchor="middle">12</text>
+  <rect class="ex-g3" x="178" y="94.8" width="46" height="108.2"/>
+  <text class="ex-in-dark" x="201" y="152.9" text-anchor="middle">63</text>
+  <text class="svg-value" x="201" y="87.8" text-anchor="middle">115</text>
+  <text class="axis-text" x="201" y="311" text-anchor="middle">2023</text>
+  <rect class="hl-fill" x="252" y="271.5" width="46" height="22.5" fill-opacity="0.75"/>
+  <text class="ex-in-label" x="275" y="286.8" text-anchor="middle">14</text>
+  <rect class="ex-g1" x="252" y="210.2" width="46" height="59.2" fill-opacity="0.75"/>
+  <text class="ex-in-dark" x="275" y="243.9" text-anchor="middle">35</text>
+  <rect class="ex-g2" x="252" y="187.5" width="46" height="20.8" fill-opacity="0.75"/>
+  <text class="ex-in-dark" x="275" y="201.9" text-anchor="middle">13</text>
+  <rect class="ex-g3" x="252" y="73.8" width="46" height="111.8" fill-opacity="0.75"/>
+  <text class="ex-in-dark" x="275" y="133.6" text-anchor="middle">65</text>
+  <text class="svg-value" x="275" y="66.8" text-anchor="middle">127</text>
+  <text class="axis-text" x="275" y="311" text-anchor="middle">2025E</text>
+  <rect class="hl-fill" x="326" y="261" width="46" height="33" fill-opacity="0.75"/>
+  <text class="ex-in-label" x="349" y="281.5" text-anchor="middle">20</text>
+  <rect class="ex-g1" x="326" y="192.8" width="46" height="66.2" fill-opacity="0.75"/>
+  <text class="ex-in-dark" x="349" y="229.9" text-anchor="middle">39</text>
+  <rect class="ex-g2" x="326" y="168.2" width="46" height="22.5" fill-opacity="0.75"/>
+  <text class="ex-in-dark" x="349" y="183.5" text-anchor="middle">14</text>
+  <rect class="ex-g3" x="326" y="52.8" width="46" height="113.5" fill-opacity="0.75"/>
+  <text class="ex-in-dark" x="349" y="113.5" text-anchor="middle">66</text>
+  <text class="svg-value" x="349" y="45.8" text-anchor="middle">139</text>
+  <text class="axis-text" x="349" y="311" text-anchor="middle">2027F</text>
+  <text class="svg-label ex-label-hl" x="382" y="281.5">E-commerce</text>
+  <text class="svg-label" x="382" y="229.9">Minimarket</text>
+  <text class="svg-label" x="382" y="183.5">Super / hyper</text>
+  <text class="svg-label" x="382" y="113.5">Traditional</text>
+  <line class="ex-zero" x1="16" y1="296" x2="386" y2="296"/>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Retail audit 2025] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: stacked_bar -->
+<!-- EXHIBIT_START: stacked_bar -->
+<div class="exhibit">
+  <div class="exhibit-title">Channel mix of snack sales</div>
+  <div class="exhibit-sub">Indonesia · % of value · 100% stacked</div>
+  <div class="ex-legend"><span class="k"><i class="hl"></i>E-commerce</span><span class="k"><i class="g1"></i>Minimarket</span><span class="k"><i class="g2"></i>Super / hyper</span><span class="k"><i class="g3"></i>Traditional trade</span></div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="100 percent stacked bar chart of channel mix">
+  <!-- scale: x = 64 + share_pct*4.0; row i: y = 30 + i*92, height 40 -->
+  <text class="svg-label ex-label-strong" x="54" y="54" text-anchor="end">2019</text>
+  <rect class="hl-fill" x="64" y="30" width="6.5" height="40"/>
+  <text class="svg-value ex-label-hl" x="64" y="83">2%</text>
+  <rect class="ex-g1" x="72.5" y="30" width="91.6" height="40"/>
+  <text class="ex-in-dark" x="118.3" y="54" text-anchor="middle">23%</text>
+  <rect class="ex-g2" x="166.1" y="30" width="49.1" height="40"/>
+  <text class="ex-in-dark" x="190.7" y="54" text-anchor="middle">13%</text>
+  <rect class="ex-g3" x="217.2" y="30" width="244.8" height="40"/>
+  <text class="ex-in-dark" x="339.6" y="54" text-anchor="middle">62%</text>
+  <text class="svg-label ex-label-strong" x="54" y="146" text-anchor="end">2023</text>
+  <rect class="hl-fill" x="64" y="122" width="29.3" height="40"/>
+  <text class="svg-value ex-label-hl" x="64" y="175">8%</text>
+  <rect class="ex-g1" x="95.3" y="122" width="105.8" height="40"/>
+  <text class="ex-in-dark" x="148.2" y="146" text-anchor="middle">27%</text>
+  <rect class="ex-g2" x="203.1" y="122" width="39.7" height="40"/>
+  <text class="ex-in-dark" x="223" y="146" text-anchor="middle">10%</text>
+  <rect class="ex-g3" x="244.9" y="122" width="217.1" height="40"/>
+  <text class="ex-in-dark" x="353.4" y="146" text-anchor="middle">55%</text>
+  <text class="svg-label ex-label-strong" x="54" y="238" text-anchor="end">2027F</text>
+  <rect class="hl-fill" x="64" y="214" width="55.6" height="40"/>
+  <text class="ex-in-label" x="91.8" y="238" text-anchor="middle">14%</text>
+  <rect class="ex-g1" x="121.6" y="214" width="110.2" height="40"/>
+  <text class="ex-in-dark" x="176.7" y="238" text-anchor="middle">28%</text>
+  <rect class="ex-g2" x="233.8" y="214" width="38.3" height="40"/>
+  <text class="ex-in-dark" x="252.9" y="238" text-anchor="middle">10%</text>
+  <rect class="ex-g3" x="274.1" y="214" width="187.9" height="40"/>
+  <text class="ex-in-dark" x="368" y="238" text-anchor="middle">47%</text>
+  <text class="annot-text" x="64" y="284">E-commerce share up 7x in eight years; traditional trade</text>
+  <text class="annot-text" x="64" y="298">loses 14 pts but still sells almost half of all snacks</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: stacked_bar -->
+    </div>
+    <div class="takeaway"><span>Plan the digital route now: it adds 18 of the 45 trillion rupiah of new snack sales to 2027F.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Stacked bar · absolute and 100% · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 05 · Line · forecast range ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · line</div>
+      <div class="page-section-counter">05 / 18</div>
+    </div>
+    <h1 class="page-h1">Vietnam's dairy consumption per person is set to overtake Thailand's by 2028</h1>
+    <p class="page-kicker">Multi-series line: the subject in blue, comparators in grey, forecast dashed with a shaded low-high range, events annotated in place.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: line -->
+<div class="exhibit">
+  <div class="exhibit-title">Per-capita dairy consumption</div>
+  <div class="exhibit-sub">Litres per person per year · 2015-2030F · shaded = Vietnam low-high range</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 304" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Line chart of per-capita dairy consumption, three markets">
+  <!-- scale: x = 44 + (year-2015)*37.07 ; y = 286 - value*5.600 (axis 0-45) -->
+  <line class="grid-line" x1="44" y1="230" x2="600" y2="230"/>
+  <text class="axis-text" x="38" y="233" text-anchor="end">10</text>
+  <line class="grid-line" x1="44" y1="174" x2="600" y2="174"/>
+  <text class="axis-text" x="38" y="177" text-anchor="end">20</text>
+  <line class="grid-line" x1="44" y1="118" x2="600" y2="118"/>
+  <text class="axis-text" x="38" y="121" text-anchor="end">30</text>
+  <line class="grid-line" x1="44" y1="62" x2="600" y2="62"/>
+  <text class="axis-text" x="38" y="65" text-anchor="end">40</text>
+  <line class="axis-line" x1="44" y1="286" x2="600" y2="286"/>
+  <text class="axis-text" x="38" y="289" text-anchor="end">0</text>
+  <text class="axis-text" x="44" y="301" text-anchor="middle">2015</text>
+  <text class="axis-text" x="155.2" y="301" text-anchor="middle">2018</text>
+  <text class="axis-text" x="266.4" y="301" text-anchor="middle">2021</text>
+  <text class="axis-text" x="377.6" y="301" text-anchor="middle">2024</text>
+  <text class="axis-text" x="488.8" y="301" text-anchor="middle">2027F</text>
+  <text class="axis-text" x="600" y="301" text-anchor="middle">2030F</text>
+  <line class="ex-event" x1="377.6" y1="26" x2="377.6" y2="286"/>
+  <text class="ex-axis-title" x="382.6" y="32">FORECAST</text>
+  <polygon class="ex-band" points="377.6,123.6 414.7,112.4 451.7,101.2 488.8,90 525.9,78.8 562.9,67.6 600,56.4 600,101.2 562.9,104.9 525.9,108.7 488.8,112.4 451.7,116.1 414.7,119.9 377.6,123.6"/>
+  <path class="ex-line-base" d="M44 118 L81.1 115.2 L118.1 112.4 L155.2 111.3 L192.3 109.6 L229.3 113.5 L266.4 110.7 L303.5 107.9 L340.5 105.7 L377.6 104"/>
+  <path class="ex-line-base ex-line-fc" d="M377.6 104 L414.7 102.3 L451.7 100.6 L488.8 99 L525.9 97.8 L562.9 96.7 L600 95.6"/>
+  <path class="ex-line-base" d="M44 218.8 L81.1 216 L118.1 213.2 L155.2 209.8 L192.3 206.5 L229.3 208.7 L266.4 204.8 L303.5 200.9 L340.5 197 L377.6 193.6"/>
+  <path class="ex-line-base ex-line-fc" d="M377.6 193.6 L414.7 189.7 L451.7 185.8 L488.8 181.8 L525.9 177.9 L562.9 174 L600 170.1"/>
+  <path class="ex-line-hl" d="M44 185.2 L81.1 176.8 L118.1 168.4 L155.2 160 L192.3 151.6 L229.3 156.1 L266.4 147.1 L303.5 137.6 L340.5 130.3 L377.6 123.6"/>
+  <path class="ex-line-hl ex-line-fc" d="M377.6 123.6 L414.7 116.3 L451.7 108.5 L488.8 100.6 L525.9 92.8 L562.9 85.5 L600 78.8"/>
+  <text class="ex-small" x="608" y="59.4">range 33-41</text>
+  <text class="svg-value ex-label-hl" x="608" y="82.8">Vietnam 37.0</text>
+  <text class="svg-value" x="608" y="101.6">Thailand 34.0</text>
+  <text class="svg-value" x="608" y="174.1">Indonesia 20.7</text>
+  <line class="annot-line" x1="99.6" y1="167.3" x2="99.6" y2="148.9"/>
+  <text class="annot-text" x="99.6" y="144.9" text-anchor="middle">School milk scheme</text>
+  <line class="annot-line" x1="229.3" y1="161.1" x2="229.3" y2="177.4"/>
+  <text class="annot-text" x="229.3" y="187.4" text-anchor="middle">Pandemic dip</text>
+  <circle cx="511" cy="95.6" r="4.5" class="ex-dot-hl"/>
+  <line class="annot-line" x1="511" y1="89.6" x2="481" y2="54.8"/>
+  <text class="annot-text" x="481" y="50.8" text-anchor="end">Overtakes Thailand ~2028F</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] for 2025-30F; [Trade association 2024] for actuals · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: line -->
+<div class="commentary">
+  <h3>Why the gap closes</h3>
+  <p><strong>Urban incomes, not population,</strong> drive the climb: per-capita use rose 5% a year since 2015, against 1% in Thailand.</p>
+  <p>The forecast range is wide (33-41 litres). The low case assumes school milk funding stays flat after 2026.</p>
+  <div class="callout-box"><span class="tag">Watch</span>If the 2028 crossover slips, it will show first in the 2026 UHT volume data.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Vietnam becomes the larger dairy market per head in the decade; build capacity for 2028, not 2025.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Line · forecast range · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 06 · Waterfall · price build-up ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · waterfall</div>
+      <div class="page-section-counter">06 / 18</div>
+    </div>
+    <h1 class="page-h1">Taxes take 22% of the shelf price, more than the whole distribution chain</h1>
+    <p class="page-kicker">Side-main layout: commentary leads on the left, the price build-up bridge on the right. Totals in dark grey, the insight bars in blue.</p>
+    <div class="layout layout-side-main">
+<div class="commentary">
+  <h3>Reading the bridge</h3>
+  <p><strong>PHP 18.0 ex-factory becomes PHP 32.9 on shelf.</strong> Excise and VAT add PHP 7.1; distributors and wholesalers together add PHP 3.7.</p>
+  <p>The retailer keeps PHP 4.1, the largest single trade margin, because sari-sari stores sell by the bottle and carry credit risk.</p>
+  <div class="callout-box"><span class="tag">Implication</span>A 4% excise indexation in 2026 costs more per bottle than the wholesaler's entire margin.</div>
+</div>
+<!-- EXHIBIT_START: waterfall -->
+<div class="exhibit">
+  <div class="exhibit-title">Price build-up, 500 ml RTD tea, ex-factory to shelf</div>
+  <div class="exhibit-sub">Philippines · PHP per bottle · 2025</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 316" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Waterfall chart of price build-up from ex-factory to shelf">
+  <!-- scale: y = 282 - value*7.2 ; bar i: x = 10 + i*100 + 19, width 62; floating bar spans running total before -> after -->
+  <rect class="ex-total-fill" x="29" y="152.4" width="62" height="129.6"/>
+  <text class="svg-value" x="60" y="146.4" text-anchor="middle">18.0</text>
+  <text class="svg-label ex-label-strong" x="60" y="297" text-anchor="middle">Ex-factory</text>
+  <line class="ex-conn" x1="91" y1="152.4" x2="129" y2="152.4"/>
+  <rect class="hl-fill" x="129" y="126.5" width="62" height="25.9"/>
+  <text class="svg-value ex-label-hl" x="160" y="120.5" text-anchor="middle">+3.6</text>
+  <text class="svg-label" x="160" y="297" text-anchor="middle">Sugar excise</text>
+  <text class="axis-text" x="160" y="309" text-anchor="middle">11% of shelf</text>
+  <line class="ex-conn" x1="191" y1="126.5" x2="229" y2="126.5"/>
+  <rect class="base-fill" x="229" y="110.6" width="62" height="15.8"/>
+  <text class="svg-value" x="260" y="104.6" text-anchor="middle">+2.2</text>
+  <text class="svg-label" x="260" y="297" text-anchor="middle">Distributor</text>
+  <text class="axis-text" x="260" y="309" text-anchor="middle">7% of shelf</text>
+  <line class="ex-conn" x1="291" y1="110.6" x2="329" y2="110.6"/>
+  <rect class="base-fill" x="329" y="99.8" width="62" height="10.8"/>
+  <text class="svg-value" x="360" y="93.8" text-anchor="middle">+1.5</text>
+  <text class="svg-label" x="360" y="297" text-anchor="middle">Wholesaler</text>
+  <text class="axis-text" x="360" y="309" text-anchor="middle">5% of shelf</text>
+  <line class="ex-conn" x1="391" y1="99.8" x2="429" y2="99.8"/>
+  <rect class="base-fill" x="429" y="70.3" width="62" height="29.5"/>
+  <text class="svg-value" x="460" y="64.3" text-anchor="middle">+4.1</text>
+  <text class="svg-label" x="460" y="297" text-anchor="middle">Retailer</text>
+  <text class="axis-text" x="460" y="309" text-anchor="middle">12% of shelf</text>
+  <line class="ex-conn" x1="491" y1="70.3" x2="529" y2="70.3"/>
+  <rect class="hl-fill" x="529" y="45.1" width="62" height="25.2"/>
+  <text class="svg-value ex-label-hl" x="560" y="39.1" text-anchor="middle">+3.5</text>
+  <text class="svg-label" x="560" y="297" text-anchor="middle">VAT 12%</text>
+  <text class="axis-text" x="560" y="309" text-anchor="middle">11% of shelf</text>
+  <line class="ex-conn" x1="591" y1="45.1" x2="629" y2="45.1"/>
+  <rect class="ex-total-fill" x="629" y="45.1" width="62" height="236.9"/>
+  <text class="svg-value" x="660" y="39.1" text-anchor="middle">32.9</text>
+  <text class="svg-label ex-label-strong" x="660" y="297" text-anchor="middle">Shelf price</text>
+  <line class="ex-zero" x1="10" y1="282" x2="710" y2="282"/>
+  <text class="annot-text" x="129" y="40">Taxes = PHP 7.1, or 22% of the shelf price</text>
+  <line class="annot-line" x1="160" y1="46" x2="160" y2="106.5"/>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Trade survey 2025] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: waterfall -->
+    </div>
+    <div class="takeaway"><span>Price architecture must absorb excise steps; trade margins leave little room to cut.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Waterfall · price build-up · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 07 · Matrix 2x2 · bubble ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · matrix 2x2</div>
+      <div class="page-section-counter">07 / 18</div>
+    </div>
+    <h1 class="page-h1">Four categories sit in the build quadrant, and RTD coffee is the largest of them</h1>
+    <p class="page-kicker">Bubble 2x2: axes split at the market average, the target quadrant tinted, bubbles sized by market value and labelled directly.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: matrix_2x2 -->
+<div class="exhibit">
+  <div class="exhibit-title">Packaged food and drink categories: growth vs margin</div>
+  <div class="exhibit-sub">Vietnam · bubble area = 2024 market size (USD bn)</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 316" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bubble matrix of categories by growth and margin">
+  <!-- scale: x = 64 + growth*42.40 (0-15%) ; y = 278 - (margin-20)*8.73 (20-50%) ; r = 13*sqrt(size USD bn) -->
+  <rect class="ex-quad" x="64" y="16" width="318" height="131"/>
+  <rect class="ex-quad-hl" x="382" y="16" width="318" height="131"/>
+  <rect class="ex-quad" x="64" y="147" width="318" height="131"/>
+  <rect class="ex-quad" x="382" y="147" width="318" height="131"/>
+  <text class="ex-quad-label hl" x="692" y="31" text-anchor="end">Build · invest to lead</text>
+  <text class="ex-quad-label" x="72" y="31">Defend margin</text>
+  <text class="ex-quad-label" x="72" y="270">Harvest</text>
+  <text class="ex-quad-label" x="692" y="270" text-anchor="end">Scale for share</text>
+  <text class="axis-text" x="64" y="292" text-anchor="middle">0%</text>
+  <text class="axis-text" x="276" y="292" text-anchor="middle">5%</text>
+  <text class="axis-text" x="488" y="292" text-anchor="middle">10%</text>
+  <text class="axis-text" x="700" y="292" text-anchor="middle">15%</text>
+  <text class="axis-text" x="58" y="281" text-anchor="end">20%</text>
+  <text class="axis-text" x="58" y="193.7" text-anchor="end">30%</text>
+  <text class="axis-text" x="58" y="106.3" text-anchor="end">40%</text>
+  <text class="axis-text" x="58" y="19" text-anchor="end">50%</text>
+  <text class="ex-axis-title" x="382" y="308" text-anchor="middle">Value CAGR 2024-29F</text>
+  <text class="ex-axis-title" transform="translate(14 147) rotate(-90)" text-anchor="middle">Gross margin</text>
+  <circle class="ex-bubble-base" cx="293" cy="181.9" r="21"/>
+  <text class="svg-label" x="318.9" y="185.4">UHT milk</text>
+  <circle class="ex-bubble-base" cx="195.4" cy="243.1" r="17.4"/>
+  <text class="svg-label" x="217.9" y="246.6">Instant noodles</text>
+  <circle class="ex-bubble-base" cx="127.6" cy="216.9" r="15.4"/>
+  <text class="svg-label" x="148" y="220.4">Carbonates</text>
+  <circle class="ex-bubble-base" cx="326.9" cy="103.3" r="14.2"/>
+  <text class="svg-label" x="307.6" y="106.8" text-anchor="end">Snacks</text>
+  <circle class="ex-bubble-hl" cx="454.1" cy="68.4" r="13.6"/>
+  <text class="svg-label ex-label-strong" x="435.4" y="71.9" text-anchor="end">Yogurt</text>
+  <circle class="ex-bubble-hl" cx="407.4" cy="129.5" r="12.3"/>
+  <text class="svg-label ex-label-strong" x="424.8" y="133">RTD tea</text>
+  <circle class="ex-bubble-base" cx="233.6" cy="164.5" r="11.6"/>
+  <text class="svg-label" x="250.2" y="168">Biscuits</text>
+  <circle class="ex-bubble-hl" cx="594" cy="85.9" r="10.1"/>
+  <text class="svg-label ex-label-strong" x="594" y="70.8" text-anchor="middle">RTD coffee</text>
+  <circle class="ex-bubble-base" cx="157.3" cy="85.9" r="9.2"/>
+  <text class="svg-label" x="171.5" y="89.4">Confectionery</text>
+  <circle class="ex-bubble-hl" cx="649.1" cy="120.8" r="7.1"/>
+  <text class="svg-label ex-label-strong" x="649.1" y="139.9" text-anchor="middle">Plant-based milk</text>
+  <text class="ex-small" x="385" y="256">avg growth 7.5%</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Listed company filings 2024] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: matrix_2x2 -->
+<div class="commentary">
+  <h3>How to read it</h3>
+  <p><strong>Top right = invest to lead:</strong> growth above 7.5% and gross margin above 35%. RTD coffee, plant-based milk, yogurt and RTD tea qualify.</p>
+  <p>UHT milk is the biggest bubble but sits in the scale quadrant: growth is real, margins are thin.</p>
+  <div class="callout-box"><span class="tag">Caveat</span>Margins are category averages; private label pulls snacks and biscuits down by 3-5 pts.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Shortlist RTD coffee and yogurt; plant-based milk is attractive but still small at USD 0.3 bn.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Matrix 2x2 · bubble · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 08 · Heatmap · segment x market ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · heatmap</div>
+      <div class="page-section-counter">08 / 18</div>
+    </div>
+    <h1 class="page-h1">RTD coffee in Vietnam and RTD tea in the Philippines are the two standout entry cells</h1>
+    <p class="page-kicker">Heatmap: rows sorted by average score, one sequential blue scale, scores printed in every cell, the priority cells outlined.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: heatmap -->
+<div class="exhibit">
+  <div class="exhibit-title">Segment attractiveness by market</div>
+  <div class="exhibit-sub">Score 1-5 · growth, margin, competitive intensity, route-to-market ease</div>
+  <div class="exhibit-body ex-html" style="display:flex;flex-direction:column">
+<table class="ex-heat">
+<thead><tr><th class="row">Segment</th><th>VN</th><th>PH</th><th>ID</th><th>TH</th><th>MY</th><th>Avg</th></tr></thead>
+<tbody>
+<tr><th class="row">RTD coffee</th><td class="h5 hl">5</td><td class="h4">4</td><td class="h4">4</td><td class="h3">3</td><td class="h2">2</td><td class="sum">3.6</td></tr>
+<tr><th class="row">Plant-based milk</th><td class="h4">4</td><td class="h3">3</td><td class="h3">3</td><td class="h4">4</td><td class="h3">3</td><td class="sum">3.4</td></tr>
+<tr><th class="row">RTD tea</th><td class="h3">3</td><td class="h5 hl">5</td><td class="h3">3</td><td class="h2">2</td><td class="h2">2</td><td class="sum">3.0</td></tr>
+<tr><th class="row">Yogurt</th><td class="h4">4</td><td class="h3">3</td><td class="h2">2</td><td class="h3">3</td><td class="h2">2</td><td class="sum">2.8</td></tr>
+<tr><th class="row">Savoury snacks</th><td class="h3">3</td><td class="h4">4</td><td class="h3">3</td><td class="h2">2</td><td class="h2">2</td><td class="sum">2.8</td></tr>
+<tr><th class="row">UHT milk</th><td class="h2">2</td><td class="h3">3</td><td class="h3">3</td><td class="h1">1</td><td class="h1">1</td><td class="sum">2.0</td></tr>
+<tr><th class="row">Instant noodles</th><td class="h1">1</td><td class="h2">2</td><td class="h2">2</td><td class="h1">1</td><td class="h1">1</td><td class="sum">1.4</td></tr>
+</tbody></table>
+<div class="ex-scale">1 = low<i style="background:#EEF2F8"></i><i style="background:#DCE7FB"></i><i style="background:#B3CBF7"></i><i style="background:#6F9DF4"></i><i style="background:#1E5BD6"></i>5 = high · outlined = priority cells</div>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] scoring model, equal weights · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: heatmap -->
+<div class="commentary">
+  <h3>Scoring logic</h3>
+  <p>Each cell averages four 1-5 scores: <strong>growth, margin, competitive intensity and route-to-market ease</strong>.</p>
+  <p>Only two cells score 5. Both pair a fast-growing segment with a fragmented shelf where no brand holds more than 25%.</p>
+  <div class="callout-box"><span class="tag">Sensitivity</span>Weighting margin double moves yogurt in Vietnam into the top three; the two leaders hold.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Concentrate the first wave on two cells rather than spreading across five markets.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Heatmap · segment x market · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 09 · Comparison table · options ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · comparison table</div>
+      <div class="page-section-counter">09 / 18</div>
+    </div>
+    <h1 class="page-h1">A joint venture with a local bottler is the only route that is fair or better on every criterion</h1>
+    <p class="page-kicker">Comparison table: options as rows, criteria as columns, Strong / Fair / Weak chips with a number where it matters, the recommended row highlighted.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: comparison_table -->
+<div class="exhibit plain">
+  <div class="exhibit-title">Five entry routes against the four criteria that decide the case</div>
+  <div class="exhibit-sub">Rating vs a mid-size Japanese beverage entrant · Harvey ball = overall fit</div>
+  <div class="exhibit-body">
+<table class="kira-table">
+<thead><tr><th>Entry route</th><th>Speed to shelf</th><th>Upfront capital</th><th>Brand control</th><th>Distribution reach</th><th class=ex-c>Overall fit</th><th>Key risk</th></tr></thead>
+<tbody>
+<tr><td class="row-label">Import via distributor</td><td><span class="rating strong">Strong</span><br><span class="mono">3-4 months</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating weak">Weak</span></td><td><span class="rating fair">Fair</span></td><td class="ex-c"><span class="ex-harvey" style="--v:50" title="50%"></span></td><td>Distributor deprioritises the brand</td></tr>
+<tr><td class="row-label">Contract manufacturing</td><td><span class="rating fair">Fair</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating weak">Weak</span></td><td class="ex-c"><span class="ex-harvey" style="--v:50" title="50%"></span></td><td>Shelf access still to be won</td></tr>
+<tr class="recommended"><td class="row-label">JV with local bottler</td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">Fair</span><br><span class="mono">USD 24-33 m</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating strong">Strong</span><br><span class="mono">70k outlets day one</span></td><td class="ex-c"><span class="ex-harvey" style="--v:75" title="75%"></span></td><td>Partner governance and exit terms</td></tr>
+<tr><td class="row-label">Acquire local player</td><td><span class="rating weak">Weak</span></td><td><span class="rating weak">Weak</span><br><span class="mono">USD 62-84 m</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating strong">Strong</span></td><td class="ex-c"><span class="ex-harvey" style="--v:50" title="50%"></span></td><td>Overpaying; integration</td></tr>
+<tr><td class="row-label">Greenfield plant</td><td><span class="rating weak">Weak</span><br><span class="mono">24+ months</span></td><td><span class="rating weak">Weak</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating weak">Weak</span></td><td class="ex-c"><span class="ex-harvey" style="--v:25" title="25%"></span></td><td>Capacity idle for 2-3 years</td></tr>
+</tbody></table>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; capital ranges from exhibit range p.12 · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: comparison_table -->
+<div class="commentary">
+  <h3>Why the JV wins</h3>
+  <p><strong>Reach decides the case.</strong> A bottler partner brings 70,000 outlets on day one; building that alone takes four years.</p>
+  <p>Import is fastest and cheapest but gives up brand control to the distributor.</p>
+  <div class="callout-box"><span class="tag">What would change it</span>A local target priced below 9x EBITDA would make acquisition the better route.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Open JV talks with two bottlers in parallel; keep import as the 2027 bridge.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Comparison table · options · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 10 · Driver tree · revenue ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · driver tree</div>
+      <div class="page-section-counter">10 / 18</div>
+    </div>
+    <h1 class="page-h1">Coverage is the lever: closing half the gap to peers adds more revenue than any price move</h1>
+    <p class="page-kicker">Value driver tree: three levels left to right, each node shows its value and formula, the lever highlighted and sized on the chart.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: driver_tree -->
+<div class="exhibit">
+  <div class="exhibit-title">Revenue driver tree, general-trade route</div>
+  <div class="exhibit-sub">Philippines · Year-3 run-rate · highlighted = the lever to pull</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 316" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Value driver tree of revenue">
+  <!-- level columns x = [0, 200, 410], widths [160, 170, 196]; box height 44; parent y = mean of its children's y; elbow links from parent right edge to child left edge -->
+  <path class="ex-link" d="M160 159 H180 V51 H200"/>
+  <path class="ex-link" d="M370 51 H390 V26 H410"/>
+  <path class="ex-link" d="M370 51 H390 V76 H410"/>
+  <path class="ex-link" d="M160 159 H180 V159 H200"/>
+  <path class="ex-link" d="M370 159 H390 V134 H410"/>
+  <path class="ex-link" d="M370 159 H390 V184 H410"/>
+  <path class="ex-link" d="M160 159 H180 V267 H200"/>
+  <path class="ex-link" d="M370 267 H390 V242 H410"/>
+  <path class="ex-link" d="M370 267 H390 V292 H410"/>
+  <rect class="ex-node" x="0" y="127" width="160" height="64" rx="4"/>
+  <text class="ex-node-title" x="10" y="143">Annual revenue</text>
+  <text class="ex-node-value" x="10" y="165" style="font-size:16px">PHP 2.4 bn</text>
+  <text class="ex-node-note" x="10" y="183">= outlets x drop x orders</text>
+  <rect class="ex-node-hl" x="200" y="29" width="170" height="44" rx="4"/>
+  <text class="ex-node-title" x="210" y="45">Active outlets</text>
+  <text class="ex-node-value ex-label-hl" x="360" y="45" text-anchor="end">48k</text>
+  <text class="ex-node-note" x="210" y="62">= universe x coverage</text>
+  <rect class="ex-node" x="200" y="137" width="170" height="44" rx="4"/>
+  <text class="ex-node-title" x="210" y="153">Drop size</text>
+  <text class="ex-node-value" x="360" y="153" text-anchor="end">PHP 1,250</text>
+  <text class="ex-node-note" x="210" y="170">= SKUs x price</text>
+  <rect class="ex-node" x="200" y="245" width="170" height="44" rx="4"/>
+  <text class="ex-node-title" x="210" y="261">Orders per outlet</text>
+  <text class="ex-node-value" x="360" y="261" text-anchor="end">40 / yr</text>
+  <text class="ex-node-note" x="210" y="278">= visits x strike rate</text>
+  <rect class="ex-node" x="410" y="4" width="196" height="44" rx="4"/>
+  <text class="ex-node-title" x="420" y="20">Store universe</text>
+  <text class="ex-node-value" x="596" y="20" text-anchor="end">160k</text>
+  <text class="ex-node-note" x="420" y="37">sari-sari + mini</text>
+  <rect class="ex-node-hl" x="410" y="54" width="196" height="44" rx="4"/>
+  <text class="ex-node-title" x="420" y="70">Coverage</text>
+  <text class="ex-node-value ex-label-hl" x="596" y="70" text-anchor="end">30%</text>
+  <text class="ex-node-note" x="420" y="87">peer best 45%</text>
+  <rect class="ex-node" x="410" y="112" width="196" height="44" rx="4"/>
+  <text class="ex-node-title" x="420" y="128">SKUs per order</text>
+  <text class="ex-node-value" x="596" y="128" text-anchor="end">5.0</text>
+  <text class="ex-node-note" x="420" y="145">lines</text>
+  <rect class="ex-node" x="410" y="162" width="196" height="44" rx="4"/>
+  <text class="ex-node-title" x="420" y="178">Price per line</text>
+  <text class="ex-node-value" x="596" y="178" text-anchor="end">PHP 250</text>
+  <text class="ex-node-note" x="420" y="195">net of discount</text>
+  <rect class="ex-node" x="410" y="220" width="196" height="44" rx="4"/>
+  <text class="ex-node-title" x="420" y="236">Visits per year</text>
+  <text class="ex-node-value" x="596" y="236" text-anchor="end">52</text>
+  <text class="ex-node-note" x="420" y="253">weekly route</text>
+  <rect class="ex-node" x="410" y="270" width="196" height="44" rx="4"/>
+  <text class="ex-node-title" x="420" y="286">Strike rate</text>
+  <text class="ex-node-value" x="596" y="286" text-anchor="end">77%</text>
+  <text class="ex-node-note" x="420" y="303">orders / visits</text>
+  <line class="annot-line" x1="610" y1="76" x2="622" y2="76"/>
+  <text class="annot-text" x="626" y="72">+15 pts to peer</text>
+  <text class="annot-text ex-label-hl" x="626" y="85">= +PHP 1.2 bn</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; outlet universe [Store census 2024] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: driver_tree -->
+<div class="commentary">
+  <h3>Where the money is</h3>
+  <p><strong>Revenue = outlets x drop size x orders.</strong> Outlets is the only driver far below peer level: 30% coverage against a best-in-class 45%.</p>
+  <p>A 10% price rise adds PHP 0.24 bn; full coverage parity adds PHP 1.2 bn.</p>
+  <div class="callout-box"><span class="tag">Cost to pull it</span>Each extra coverage point needs about 1,600 more outlets per sales rep cycle.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Fund outlet coverage before price or range: it is five times the prize.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Driver tree · revenue · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 11 · Funnel · donut · trio ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · funnel + donut</div>
+      <div class="page-section-counter">11 / 18</div>
+    </div>
+    <h1 class="page-h1">A realistic Year-5 prize is PHP 1.5 bn, and convenience stores are the way in</h1>
+    <p class="page-kicker">Trio layout: funnel for the addressable market, donut for today's channel snapshot, commentary in the third column.</p>
+    <div class="layout layout-trio">
+<!-- EXHIBIT_START: funnel -->
+<div class="exhibit">
+  <div class="exhibit-title">Addressable market, premium RTD tea</div>
+  <div class="exhibit-sub">Philippines · PHP bn · 2030F · not to scale</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 300 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TAM SAM SOM funnel">
+  <!-- stylised (not to scale) funnel: step i is a trapezoid from width w[i] to w[i+1], centred at cx; values and drop-off labelled directly -->
+  <polygon class="ex-g3" points="5,10 295,10 250,94 50,94"/>
+  <text class="ex-in-dark" x="150" y="38" text-anchor="middle">TAM</text>
+  <text class="ex-in-dark" x="150" y="58" text-anchor="middle" style="font-size:15px">41.0</text>
+  <polygon class="ex-g2" points="50,100 250,100 205,184 95,184"/>
+  <text class="ex-in-dark" x="150" y="128" text-anchor="middle">SAM</text>
+  <text class="ex-in-dark" x="150" y="148" text-anchor="middle" style="font-size:15px">9.8</text>
+  <polygon class="hl-fill" points="95,190 205,190 180,274 120,274"/>
+  <text class="ex-in-label" x="150" y="218" text-anchor="middle">SOM</text>
+  <text class="ex-in-label" x="150" y="238" text-anchor="middle" style="font-size:15px">1.5</text>
+  <text class="svg-value" x="10" y="286">TAM</text>
+  <text class="ex-small" x="46" y="286">All RTD tea, 2030F</text>
+  <text class="svg-value" x="10" y="301">SAM</text>
+  <text class="ex-small" x="46" y="301">Premium, Luzon modern trade</text>
+  <text class="svg-value ex-label-hl" x="10" y="316">SOM</text>
+  <text class="ex-small" x="46" y="316">15% of SAM by Year 5</text>
+  <text class="svg-value" x="264" y="101">-76%</text>
+  <text class="svg-value" x="219" y="191">-85%</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] · illustrative</div>
+</div>
+<!-- EXHIBIT_END: funnel -->
+<!-- EXHIBIT_START: donut -->
+<div class="exhibit">
+  <div class="exhibit-title">Where RTD tea is bought</div>
+  <div class="exhibit-sub">Philippines · % of value · 2024</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 300 296" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Donut chart of channel share">
+  <!-- donut: circle r=72, stroke-width 26, circumference C = 2*pi*r = 452.39. Each segment: stroke-dasharray = '(share*C - 2) C', stroke-dashoffset = -(cumulative share*C). Group rotated -90deg so 0% starts at 12 o'clock. -->
+  <g transform="rotate(-90 150 100)">
+    <circle cx="150" cy="100" r="72" fill="none" stroke="#DCE2EC" stroke-width="26" stroke-dasharray="260.39 452.39" stroke-dashoffset="0.00"/>
+    <circle cx="150" cy="100" r="72" fill="none" stroke="var(--primary)" stroke-width="26" stroke-dasharray="74.91 452.39" stroke-dashoffset="-262.39"/>
+    <circle cx="150" cy="100" r="72" fill="none" stroke="#B4BFD0" stroke-width="26" stroke-dasharray="65.86 452.39" stroke-dashoffset="-339.29"/>
+    <circle cx="150" cy="100" r="72" fill="none" stroke="#8E9BB0" stroke-width="26" stroke-dasharray="25.14 452.39" stroke-dashoffset="-407.15"/>
+    <circle cx="150" cy="100" r="72" fill="none" stroke="#8E9BB0" stroke-width="26" stroke-dasharray="16.10 452.39" stroke-dashoffset="-434.29"/>
+  </g>
+  <text class="ex-node-value" x="150" y="98" text-anchor="middle" style="font-size:17px">PHP 21.6 bn</text>
+  <text class="ex-small" x="150" y="115" text-anchor="middle">2024 retail value</text>
+  <rect class="ex-g3" x="40" y="193" width="10" height="10" rx="2"/>
+  <text class="svg-label" x="58" y="202">Sari-sari / general trade</text>
+  <text class="svg-value" x="262" y="202" text-anchor="end">58%</text>
+  <rect class="hl-fill" x="40" y="212" width="10" height="10" rx="2"/>
+  <text class="svg-label ex-label-strong" x="58" y="221">Convenience stores</text>
+  <text class="svg-value ex-label-hl" x="262" y="221" text-anchor="end">17%</text>
+  <rect class="ex-g2" x="40" y="231" width="10" height="10" rx="2"/>
+  <text class="svg-label" x="58" y="240">Super / hyper</text>
+  <text class="svg-value" x="262" y="240" text-anchor="end">15%</text>
+  <rect class="ex-g1" x="40" y="250" width="10" height="10" rx="2"/>
+  <text class="svg-label" x="58" y="259">Other</text>
+  <text class="svg-value" x="262" y="259" text-anchor="end">6%</text>
+  <rect class="ex-g1" x="40" y="269" width="10" height="10" rx="2"/>
+  <text class="svg-label" x="58" y="278">E-commerce</text>
+  <text class="svg-value" x="262" y="278" text-anchor="end">4%</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Retail audit 2025] · illustrative</div>
+</div>
+<!-- EXHIBIT_END: donut -->
+<div class="commentary">
+  <h3>Sizing the prize</h3>
+  <p><strong>The serviceable market is a quarter of the total:</strong> premium tea is a modern-trade, Luzon-centred purchase today.</p>
+  <p>Convenience stores sell 17% of RTD tea value but over 40% of premium packs.</p>
+  <div class="callout-box"><span class="tag">Assumption</span>SOM assumes 15% of SAM by Year 5, in line with the last two successful entrants.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Size the plan on PHP 1.5 bn, not PHP 41 bn, and build it around convenience stores.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Funnel · donut · trio · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 12 · Range · football field · tornado ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · range</div>
+      <div class="page-section-counter">12 / 18</div>
+    </div>
+    <h1 class="page-h1">The JV costs 40% of an acquisition, and price and volume, not cost, decide the return</h1>
+    <p class="page-kicker">Split layout: football field for cost ranges by option, tornado for sensitivity, both sorted and both with the key bar highlighted.</p>
+    <div class="layout layout-split">
+<!-- EXHIBIT_START: range -->
+<div class="exhibit">
+  <div class="exhibit-title">Up-front cost by entry route</div>
+  <div class="exhibit-sub">USD m · low / base / high case</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Football field chart of entry cost ranges">
+  <!-- scale: x = 150 + value*3.6 (USD m, axis 0-90); row i: y = 30 + i*62; bar spans low..high, tick = base case -->
+  <line class="grid-line" x1="150" y1="20" x2="150" y2="258"/>
+  <text class="axis-text" x="150" y="272" text-anchor="middle">0</text>
+  <line class="grid-line" x1="258" y1="20" x2="258" y2="258"/>
+  <text class="axis-text" x="258" y="272" text-anchor="middle">30</text>
+  <line class="grid-line" x1="366" y1="20" x2="366" y2="258"/>
+  <text class="axis-text" x="366" y="272" text-anchor="middle">60</text>
+  <line class="grid-line" x1="474" y1="20" x2="474" y2="258"/>
+  <text class="axis-text" x="474" y="272" text-anchor="middle">90</text>
+  <text class="svg-label" x="140" y="46" text-anchor="end">Contract mfg + brand build</text>
+  <rect class="base-fill" x="193.2" y="30" width="25.2" height="24" rx="2"/>
+  <line class="ex-zero" x1="204" y1="26" x2="204" y2="58"/>
+  <text class="svg-value" x="188.2" y="46" text-anchor="end">12</text>
+  <text class="svg-value" x="223.4" y="46">19</text>
+  <text class="svg-label ex-label-strong" x="140" y="108" text-anchor="end">JV, 50% stake</text>
+  <rect class="hl-fill" x="236.4" y="92" width="32.4" height="24" rx="2"/>
+  <line class="ex-zero" x1="250.8" y1="88" x2="250.8" y2="120"/>
+  <text class="svg-value" x="231.4" y="108" text-anchor="end">24</text>
+  <text class="svg-value" x="273.8" y="108">33</text>
+  <text class="svg-label" x="140" y="170" text-anchor="end">Greenfield plant</text>
+  <rect class="base-fill" x="286.8" y="154" width="61.2" height="24" rx="2"/>
+  <line class="ex-zero" x1="312" y1="150" x2="312" y2="182"/>
+  <text class="svg-value" x="281.8" y="170" text-anchor="end">38</text>
+  <text class="svg-value" x="353" y="170">55</text>
+  <text class="svg-label" x="140" y="232" text-anchor="end">Acquire local player</text>
+  <rect class="base-fill" x="373.2" y="216" width="79.2" height="24" rx="2"/>
+  <line class="ex-zero" x1="409.2" y1="212" x2="409.2" y2="244"/>
+  <text class="svg-value" x="368.2" y="232" text-anchor="end">62</text>
+  <text class="svg-value" x="457.4" y="232">84</text>
+  <text class="ex-axis-title" x="474" y="286" text-anchor="end">USD m</text>
+  <text class="ex-small" x="150" y="304">Bar = low-high case · tick = base case</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Deal database 2025] · illustrative</div>
+</div>
+<!-- EXHIBIT_END: range -->
+<!-- EXHIBIT_START: range -->
+<div class="exhibit">
+  <div class="exhibit-title">NPV sensitivity to key assumptions</div>
+  <div class="exhibit-sub">USD m · 10-year NPV · one variable at a time</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tornado chart of NPV sensitivity">
+  <!-- scale: x = 290 + delta_USDm*7.0; centre line = base case NPV 42; sort rows by total swing, widest on top -->
+  <text class="ex-axis-title" x="164" y="14">Downside case</text>
+  <text class="ex-axis-title" x="416" y="14" text-anchor="end">Upside case</text>
+  <text class="svg-label ex-label-strong" x="123" y="50" text-anchor="end">Shelf price ±10%</text>
+  <rect class="hl-fill" x="157" y="34" width="133" height="24"/>
+  <rect class="hl-fill" x="290" y="34" width="126" height="24" fill-opacity="0.45"/>
+  <text class="svg-value" x="152" y="50" text-anchor="end">23</text>
+  <text class="svg-value" x="421" y="50">60</text>
+  <text class="svg-label" x="151" y="96" text-anchor="end">Volume ±20%</text>
+  <rect class="ex-g1" x="185" y="80" width="105" height="24"/>
+  <rect class="ex-g1" x="290" y="80" width="98" height="24" fill-opacity="0.45"/>
+  <text class="svg-value" x="180" y="96" text-anchor="end">27</text>
+  <text class="svg-value" x="393" y="96">56</text>
+  <text class="svg-label" x="186" y="142" text-anchor="end">COGS ±10%</text>
+  <rect class="ex-g1" x="220" y="126" width="70" height="24"/>
+  <rect class="ex-g1" x="290" y="126" width="63" height="24" fill-opacity="0.45"/>
+  <text class="svg-value" x="215" y="142" text-anchor="end">32</text>
+  <text class="svg-value" x="358" y="142">51</text>
+  <text class="svg-label" x="214" y="188" text-anchor="end">Distribution cost ±15%</text>
+  <rect class="ex-g1" x="248" y="172" width="42" height="24"/>
+  <rect class="ex-g1" x="290" y="172" width="35" height="24" fill-opacity="0.45"/>
+  <text class="svg-value" x="243" y="188" text-anchor="end">36</text>
+  <text class="svg-value" x="330" y="188">47</text>
+  <text class="svg-label" x="235" y="234" text-anchor="end">FX (JPY/PHP) ±10%</text>
+  <rect class="ex-g1" x="269" y="218" width="21" height="24"/>
+  <rect class="ex-g1" x="290" y="218" width="21" height="24" fill-opacity="0.45"/>
+  <text class="svg-value" x="264" y="234" text-anchor="end">39</text>
+  <text class="svg-value" x="316" y="234">45</text>
+  <line class="ex-zero" x1="290" y1="26" x2="290" y2="250"/>
+  <text class="svg-value" x="290" y="266" text-anchor="middle">Base NPV 42</text>
+  <text class="annot-text" x="164" y="286">Price and volume swing NPV more than all</text>
+  <text class="annot-text" x="164" y="300">cost lines combined</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] business-case model · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: range -->
+    </div>
+    <div class="takeaway"><span>Commit USD 24-33 m to the JV and spend diligence time on price and volume assumptions.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Range · football field · tornado · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 13 · Timeline · events ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · timeline</div>
+      <div class="page-section-counter">13 / 18</div>
+    </div>
+    <h1 class="page-h1">Regulation has tightened every two years, and the next excise step lands in 2026</h1>
+    <p class="page-kicker">Event timeline: policy above the axis in blue, market entries and exits below in grey, a today marker, labels staggered on two tiers.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: timeline -->
+<div class="exhibit">
+  <div class="exhibit-title">Policy and market events, Philippine sweetened beverages</div>
+  <div class="exhibit-sub">2018-2027 · policy above the line, entries / exits below</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Event timeline of policy and market events">
+  <!-- scale: x = 30 + (year_decimal-2018)*73.33; axis y = 160; labels on 2 tiers each side (tier 1 = 46px, tier 2 = 100px from axis) -->
+  <rect class="ex-g3" x="30" y="157" width="660" height="6" rx="3"/>
+  <line class="axis-line" x1="30" y1="157" x2="30" y2="163"/>
+  <text class="axis-text" x="30" y="177" text-anchor="middle">2018</text>
+  <line class="axis-line" x1="103.3" y1="157" x2="103.3" y2="163"/>
+  <text class="axis-text" x="103.3" y="177" text-anchor="middle">2019</text>
+  <line class="axis-line" x1="176.7" y1="157" x2="176.7" y2="163"/>
+  <text class="axis-text" x="176.7" y="177" text-anchor="middle">2020</text>
+  <line class="axis-line" x1="250" y1="157" x2="250" y2="163"/>
+  <text class="axis-text" x="250" y="177" text-anchor="middle">2021</text>
+  <line class="axis-line" x1="323.3" y1="157" x2="323.3" y2="163"/>
+  <text class="axis-text" x="323.3" y="177" text-anchor="middle">2022</text>
+  <line class="axis-line" x1="396.7" y1="157" x2="396.7" y2="163"/>
+  <text class="axis-text" x="396.7" y="177" text-anchor="middle">2023</text>
+  <line class="axis-line" x1="470" y1="157" x2="470" y2="163"/>
+  <text class="axis-text" x="470" y="177" text-anchor="middle">2024</text>
+  <line class="axis-line" x1="543.3" y1="157" x2="543.3" y2="163"/>
+  <text class="axis-text" x="543.3" y="177" text-anchor="middle">2025</text>
+  <line class="axis-line" x1="616.7" y1="157" x2="616.7" y2="163"/>
+  <text class="axis-text" x="616.7" y="177" text-anchor="middle">2026</text>
+  <line class="axis-line" x1="690" y1="157" x2="690" y2="163"/>
+  <text class="axis-text" x="690" y="177" text-anchor="middle">2027</text>
+  <line class="ex-today" x1="598.3" y1="138" x2="598.3" y2="166"/>
+  <text class="ex-axis-title" x="598.3" y="134" text-anchor="middle">TODAY</text>
+  <text class="ex-axis-title ex-label-hl" x="4" y="14">POLICY</text>
+  <text class="ex-axis-title" x="4" y="312">MARKET ENTRIES / EXITS</text>
+  <line class="annot-line" x1="30" y1="155" x2="30" y2="60"/>
+  <circle cx="30" cy="160" r="5" class="ex-dot-hl"/>
+  <text class="tl-marker-date" x="35" y="30">JAN 2018</text>
+  <text class="tl-marker-label" x="35" y="43">Sweetened-drink excise</text>
+  <text class="tl-marker-body" x="35" y="55">PHP 6-12 per litre</text>
+  <line class="annot-line" x1="147.3" y1="155" x2="147.3" y2="114"/>
+  <circle cx="147.3" cy="160" r="5" class="ex-dot-hl"/>
+  <text class="tl-marker-date" x="152.3" y="84">AUG 2019</text>
+  <text class="tl-marker-label" x="152.3" y="97">Excise review panel</text>
+  <text class="tl-marker-body" x="152.3" y="109">rate hike shelved</text>
+  <line class="annot-line" x1="360" y1="155" x2="360" y2="60"/>
+  <circle cx="360" cy="160" r="5" class="ex-dot-hl"/>
+  <text class="tl-marker-date" x="365" y="30">JUL 2022</text>
+  <text class="tl-marker-label" x="365" y="43">Plastic EPR law</text>
+  <text class="tl-marker-body" x="365" y="55">packaging recovery targets</text>
+  <line class="annot-line" x1="528.7" y1="155" x2="528.7" y2="114"/>
+  <circle cx="528.7" cy="160" r="5" class="ex-dot-hl"/>
+  <text class="tl-marker-date" x="533.7" y="84">OCT 2024</text>
+  <text class="tl-marker-label" x="533.7" y="97">Front-of-pack labels</text>
+  <text class="tl-marker-body" x="533.7" y="109">draft rules published</text>
+  <line class="annot-line" x1="646" y1="155" x2="646" y2="60"/>
+  <circle cx="646" cy="160" r="5" class="ex-dot-hl"/>
+  <text class="tl-marker-date" x="641" y="30" text-anchor="end">2026F</text>
+  <text class="tl-marker-label" x="641" y="43" text-anchor="end">Excise indexation</text>
+  <text class="tl-marker-body" x="641" y="55" text-anchor="end">expected +4% a year</text>
+  <line class="ex-conn" x1="96" y1="165" x2="96" y2="194"/>
+  <circle cx="96" cy="160" r="5" class="ex-dot-base"/>
+  <text class="axis-text" x="101" y="206">NOV 2018</text>
+  <text class="tl-marker-label" x="101" y="219">Regional juice brand exits</text>
+  <line class="ex-conn" x1="264.7" y1="165" x2="264.7" y2="248"/>
+  <circle cx="264.7" cy="160" r="5" class="ex-dot-base"/>
+  <text class="axis-text" x="269.7" y="260">MAR 2021</text>
+  <text class="tl-marker-label" x="269.7" y="273">Local challenger launches</text>
+  <text class="tl-marker-body" x="269.7" y="285">PHP 15 sachet tea</text>
+  <line class="ex-conn" x1="426" y1="165" x2="426" y2="194"/>
+  <circle cx="426" cy="160" r="5" class="ex-dot-base"/>
+  <text class="axis-text" x="431" y="206">MAY 2023</text>
+  <text class="tl-marker-label" x="431" y="219">Japanese brand enters</text>
+  <text class="tl-marker-body" x="431" y="231">via bottling JV</text>
+  <line class="ex-conn" x1="565.3" y1="165" x2="565.3" y2="248"/>
+  <circle cx="565.3" cy="160" r="5" class="ex-dot-base"/>
+  <text class="axis-text" x="560.3" y="260" text-anchor="end">APR 2025</text>
+  <text class="tl-marker-label" x="560.3" y="273" text-anchor="end">Convenience chain hits</text>
+  <text class="tl-marker-body" x="560.3" y="285" text-anchor="end">5,000 stores</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Gazette 2018-25] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: timeline -->
+<div class="commentary">
+  <h3>Pattern</h3>
+  <p><strong>Five policy moves in eight years</strong>, each followed within 12 months by a portfolio exit or reformulation.</p>
+  <p>The 2023 entrant came in through a bottling JV, not imports, and was the only entry of the period to scale.</p>
+  <div class="callout-box"><span class="tag">Next 18 months</span>Excise indexation and front-of-pack labels both bite in 2026F; low-sugar SKUs should be ready at launch.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Launch with a low-sugar range; the policy direction is one-way.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Timeline · events · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 14 · Timeline · Gantt roadmap ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · timeline (roadmap)</div>
+      <div class="page-section-counter">14 / 18</div>
+    </div>
+    <h1 class="page-h1">Three decision gates keep the downside of entry below USD 5 m until scale-up</h1>
+    <p class="page-kicker">Full-width roadmap: workstreams as rows, quarters as columns, the critical-path phase highlighted, gates as diamonds, conditional work dashed.</p>
+    <div class="layout layout-full ex-rows">
+<!-- EXHIBIT_START: timeline -->
+<div class="exhibit">
+  <div class="exhibit-title">Entry roadmap with decision gates</div>
+  <div class="exhibit-sub">Workstreams by quarter · 2027-2028 · dashed = conditional on G3</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 1110 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gantt roadmap with phases and gates">
+  <!-- scale: quarter q starts at x = 200 + q*113.75; row i: y = 30 + i*38, bar height 18; gates = diamonds on the gate line -->
+  <rect class="ex-g3" x="200" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="256.9" y="19" text-anchor="middle">Q1 27</text>
+  <rect class="ex-g3" x="313.8" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="370.6" y="19" text-anchor="middle">Q2 27</text>
+  <rect class="ex-g3" x="427.5" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="484.4" y="19" text-anchor="middle">Q3 27</text>
+  <rect class="ex-g3" x="541.2" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="598.1" y="19" text-anchor="middle">Q4 27</text>
+  <rect class="ex-s0" x="655" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="711.9" y="19" text-anchor="middle">Q1 28</text>
+  <rect class="ex-s0" x="768.8" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="825.6" y="19" text-anchor="middle">Q2 28</text>
+  <rect class="ex-s0" x="882.5" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="939.4" y="19" text-anchor="middle">Q3 28</text>
+  <rect class="ex-s0" x="996.2" y="8" width="111.8" height="16"/>
+  <text class="axis-text" x="1053.1" y="19" text-anchor="middle">Q4 28</text>
+  <line class="grid-line" x1="200" y1="26" x2="200" y2="224"/>
+  <line class="grid-line" x1="313.8" y1="26" x2="313.8" y2="224"/>
+  <line class="grid-line" x1="427.5" y1="26" x2="427.5" y2="224"/>
+  <line class="grid-line" x1="541.2" y1="26" x2="541.2" y2="224"/>
+  <line class="grid-line" x1="655" y1="26" x2="655" y2="224"/>
+  <line class="grid-line" x1="768.8" y1="26" x2="768.8" y2="224"/>
+  <line class="grid-line" x1="882.5" y1="26" x2="882.5" y2="224"/>
+  <line class="grid-line" x1="996.2" y1="26" x2="996.2" y2="224"/>
+  <line class="grid-line" x1="1110" y1="26" x2="1110" y2="224"/>
+  <text class="svg-label ex-label-strong" x="0" y="53">Market validation</text>
+  <rect class="ex-g1" x="202" y="40" width="166.6" height="18" rx="3"/>
+  <text class="ex-in-label" x="210" y="52.5" style="font-family:Satoshi,sans-serif;font-size:10px">Consumer + trade tests</text>
+  <text class="svg-label ex-label-strong" x="0" y="91">Partner selection</text>
+  <rect class="ex-g1" x="315.8" y="78" width="166.6" height="18" rx="3"/>
+  <text class="ex-in-label" x="323.8" y="90.5" style="font-family:Satoshi,sans-serif;font-size:10px">Long-list to term sheet</text>
+  <text class="svg-label ex-label-strong" x="0" y="129">Registration & labels</text>
+  <rect class="ex-g1" x="372.6" y="116" width="223.5" height="18" rx="3"/>
+  <text class="ex-in-label" x="380.6" y="128.5" style="font-family:Satoshi,sans-serif;font-size:10px">FDA filing, labels</text>
+  <text class="svg-label ex-label-strong" x="0" y="167">Pilot launch, Luzon MT</text>
+  <rect class="hl-fill" x="600.1" y="154" width="223.5" height="18" rx="3"/>
+  <text class="ex-in-label" x="608.1" y="166.5" style="font-family:Satoshi,sans-serif;font-size:10px">800 stores, 6 SKUs</text>
+  <text class="svg-label ex-label-strong" x="0" y="205">Scale-up, national GT</text>
+  <rect class="ex-bar-fc" x="856.1" y="192" width="251.9" height="18" rx="3"/>
+  <text class="ex-in-dark" x="864.1" y="204.5" style="font-family:Satoshi,sans-serif;font-size:10px">Sub-distributors, 40k outlets</text>
+  <line class="axis-line" x1="200" y1="234" x2="1110" y2="234"/>
+  <text class="svg-label ex-label-strong" x="0" y="238">Decision gates</text>
+  <path class="ex-gate" d="M484.4 227 L491.4 234 L484.4 241 L477.4 234 Z"/>
+  <line class="ex-event" x1="484.4" y1="26" x2="484.4" y2="226"/>
+  <text class="svg-value" x="484.4" y="254" text-anchor="middle">G1 Partner go / no-go</text>
+  <path class="ex-gate" d="M598.1 227 L605.1 234 L598.1 241 L591.1 234 Z"/>
+  <line class="ex-event" x1="598.1" y1="26" x2="598.1" y2="226"/>
+  <text class="svg-value" x="598.1" y="268" text-anchor="middle">G2 Launch readiness</text>
+  <path class="ex-gate" d="M825.6 227 L832.6 234 L825.6 241 L818.6 234 Z"/>
+  <line class="ex-event" x1="825.6" y1="26" x2="825.6" y2="226"/>
+  <text class="svg-value" x="825.6" y="254" text-anchor="middle">G3 Scale decision</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: timeline -->
+<div class="callout-box"><span class="tag">Gate logic</span>Spend before G1 is limited to market tests and legal work (USD 1.2 m). Nothing irreversible, such as plant or long-term distributor contracts, is signed before G3.</div>
+    </div>
+    <div class="takeaway"><span>Approve phase one and the G1 gate now; defer the scale-up decision to mid-2028 data.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Timeline · Gantt roadmap · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 15 · Flow · value chain with swimlanes ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · flow</div>
+      <div class="page-section-counter">15 / 18</div>
+    </div>
+    <h1 class="page-h1">The sub-distributor is the weak link: two in three outer-island stores are never visited</h1>
+    <p class="page-kicker">Full-width flow: stages as chevrons, swimlanes for margin, lead time and pain points, the problem stage highlighted.</p>
+    <div class="layout layout-full ex-rows">
+<!-- EXHIBIT_START: flow -->
+<div class="exhibit">
+  <div class="exhibit-title">General-trade route to market, port to consumer</div>
+  <div class="exhibit-sub">Philippines · six stages × four swimlanes · red markers = pain points</div>
+  <div class="exhibit-body">
+<div class="ex-flow" style="--cols:6">
+<div></div>
+<div class="stage"><span class="n">01</span>Importer / brand owner</div>
+<div class="stage"><span class="n">02</span>National distributor</div>
+<div class="stage hl"><span class="n">03</span>Sub-distributor</div>
+<div class="stage"><span class="n">04</span>Wholesaler</div>
+<div class="stage"><span class="n">05</span>Sari-sari store</div>
+<div class="stage"><span class="n">06</span>Consumer</div>
+<div class="lane">Margin taken</div>
+<div class="cell"><span class=mono>-</span> landed cost</div>
+<div class="cell"><span class=mono>8-10%</span></div>
+<div class="cell hl"><span class=mono>6-8%</span></div>
+<div class="cell"><span class=mono>4-5%</span></div>
+<div class="cell"><span class=mono>12-15%</span></div>
+<div class="cell">pays <span class=mono>PHP 32.9</span></div>
+<div class="lane">Lead time</div>
+<div class="cell"><span class=mono>35 d</span> sea freight</div>
+<div class="cell"><span class=mono>5-7 d</span></div>
+<div class="cell hl"><span class=mono>3-5 d</span></div>
+<div class="cell">cash & carry</div>
+<div class="cell">daily top-up</div>
+<div class="cell">-</div>
+<div class="lane">Pain points</div>
+<div class="cell"></div>
+<div class="cell"><span class=ex-pain>1</span>Credit terms cap stock depth</div>
+<div class="cell hl"><span class=ex-pain>2</span><strong>Patchy outer-island coverage; 2 of 3 stores missed</strong></div>
+<div class="cell"></div>
+<div class="cell"><span class=ex-pain>3</span>Chiller space owned by rivals</div>
+<div class="cell"><span class=ex-pain>4</span>Out-of-stock on 1 in 5 visits</div>
+<div class="lane">Lever</div>
+<div class="cell">Bonded stock in Cebu cuts 2 weeks</div>
+<div class="cell">Extend terms to 45 d for top 20 SKUs</div>
+<div class="cell hl"><strong>Direct van sales to top 6,000 stores</strong></div>
+<div class="cell">Pack-size price points</div>
+<div class="cell">Branded chiller loan</div>
+<div class="cell">Sachet + 350 ml entry packs</div>
+</div>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Distributor interviews 2025] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: flow -->
+<div class="callout-box"><span class="tag">Fix to test</span>A direct van-sales pilot in two Visayas provinces would bypass stage 03 for the 6,000 highest-volume stores and cut out-of-stocks by an estimated half.</div>
+    </div>
+    <div class="takeaway"><span>Own the last mile in the top outer-island provinces instead of adding another sub-distributor layer.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Flow · value chain with swimlanes · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 16 · Tile map · regions ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · tile map</div>
+      <div class="page-section-counter">16 / 18</div>
+    </div>
+    <h1 class="page-h1">Mega Manila is where modern trade works today: three regions, 61% of modern-trade sales</h1>
+    <p class="page-kicker">Tile map: one equal tile per region in roughly geographic position, a sequential blue scale, the target cluster outlined and annotated.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: tile_map -->
+<div class="exhibit">
+  <div class="exhibit-title">Modern-trade share of FMCG sales by region</div>
+  <div class="exhibit-sub">Philippines · 17 regions as tiles · % of value · 2025</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 352" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tile grid map of the Philippines by region">
+  <!-- tile (col,row) at x = 80 + col*50, y = 4 + row*50, size 46; fill = sequential bin .ex-s1..s5 (<10,10-15,15-20,20-30,>=30) -->
+  <line class="axis-line" x1="66" y1="6" x2="66" y2="198"/>
+  <text class="ex-axis-title" transform="translate(60 102) rotate(-90)" text-anchor="middle">LUZON</text>
+  <line class="axis-line" x1="66" y1="206" x2="66" y2="248"/>
+  <text class="ex-axis-title" transform="translate(60 227) rotate(-90)" text-anchor="middle">VISAYAS</text>
+  <line class="axis-line" x1="66" y1="256" x2="66" y2="348"/>
+  <text class="ex-axis-title" transform="translate(60 302) rotate(-90)" text-anchor="middle">MINDANAO</text>
+  <rect class="ex-s3" x="130" y="4" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="136" y="20" fill="var(--text)">I</text>
+  <text class="ex-tile-val" x="136" y="42" fill="var(--text)">18%</text>
+  <rect class="ex-s3" x="180" y="4" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="186" y="20" fill="var(--text)">CAR</text>
+  <text class="ex-tile-val" x="186" y="42" fill="var(--text)">16%</text>
+  <rect class="ex-s2" x="230" y="4" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="236" y="20" fill="var(--text)">II</text>
+  <text class="ex-tile-val" x="236" y="42" fill="var(--text)">14%</text>
+  <rect class="ex-s5" x="180" y="54" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="186" y="70" fill="#FFFFFF">III</text>
+  <text class="ex-tile-val" x="186" y="92" fill="#FFFFFF">31%</text>
+  <rect class="ex-s5" x="180" y="104" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="186" y="120" fill="#FFFFFF">NCR</text>
+  <text class="ex-tile-val" x="186" y="142" fill="#FFFFFF">48%</text>
+  <rect class="ex-s5" x="230" y="104" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="236" y="120" fill="#FFFFFF">IV-A</text>
+  <text class="ex-tile-val" x="236" y="142" fill="#FFFFFF">34%</text>
+  <rect class="ex-s2" x="130" y="154" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="136" y="170" fill="var(--text)">IV-B</text>
+  <text class="ex-tile-val" x="136" y="192" fill="var(--text)">10%</text>
+  <rect class="ex-s2" x="280" y="154" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="286" y="170" fill="var(--text)">V</text>
+  <text class="ex-tile-val" x="286" y="192" fill="var(--text)">13%</text>
+  <rect class="ex-s4" x="180" y="204" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="186" y="220" fill="#FFFFFF">VI</text>
+  <text class="ex-tile-val" x="186" y="242" fill="#FFFFFF">21%</text>
+  <rect class="ex-s4" x="230" y="204" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="236" y="220" fill="#FFFFFF">VII</text>
+  <text class="ex-tile-val" x="236" y="242" fill="#FFFFFF">29%</text>
+  <rect class="ex-s2" x="280" y="204" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="286" y="220" fill="var(--text)">VIII</text>
+  <text class="ex-tile-val" x="286" y="242" fill="var(--text)">11%</text>
+  <rect class="ex-s2" x="130" y="254" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="136" y="270" fill="var(--text)">IX</text>
+  <text class="ex-tile-val" x="136" y="292" fill="var(--text)">12%</text>
+  <rect class="ex-s3" x="180" y="254" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="186" y="270" fill="var(--text)">X</text>
+  <text class="ex-tile-val" x="186" y="292" fill="var(--text)">19%</text>
+  <rect class="ex-s2" x="230" y="254" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="236" y="270" fill="var(--text)">XIII</text>
+  <text class="ex-tile-val" x="236" y="292" fill="var(--text)">10%</text>
+  <rect class="ex-s1" x="130" y="304" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="136" y="320" fill="var(--text)">BARMM</text>
+  <text class="ex-tile-val" x="136" y="342" fill="var(--text)">6%</text>
+  <rect class="ex-s3" x="180" y="304" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="186" y="320" fill="var(--text)">XII</text>
+  <text class="ex-tile-val" x="186" y="342" fill="var(--text)">15%</text>
+  <rect class="ex-s4" x="230" y="304" width="46" height="46" rx="3"/>
+  <text class="ex-tile-code" x="236" y="320" fill="#FFFFFF">XI</text>
+  <text class="ex-tile-val" x="236" y="342" fill="#FFFFFF">24%</text>
+  <path class="ex-tile-outline" d="M177 51 H229 V101 H279 V153 H177 Z"/>
+  <line class="annot-line" x1="282" y1="114" x2="318" y2="114"/>
+  <text class="annot-text" x="324" y="112">Mega Manila: 3 regions,</text>
+  <text class="annot-text" x="324" y="126">38% of population,</text>
+  <text class="annot-text" x="324" y="140">61% of modern-trade sales</text>
+  <text class="ex-axis-title" x="500" y="240">Modern-trade share of FMCG</text>
+  <rect class="ex-s1" x="500" y="250" width="34" height="10"/>
+  <text class="axis-text" x="517" y="273" text-anchor="middle"><10</text>
+  <rect class="ex-s2" x="536" y="250" width="34" height="10"/>
+  <text class="axis-text" x="553" y="273" text-anchor="middle">10-15</text>
+  <rect class="ex-s3" x="572" y="250" width="34" height="10"/>
+  <text class="axis-text" x="589" y="273" text-anchor="middle">15-20</text>
+  <rect class="ex-s4" x="608" y="250" width="34" height="10"/>
+  <text class="axis-text" x="625" y="273" text-anchor="middle">20-30</text>
+  <rect class="ex-s5" x="644" y="250" width="34" height="10"/>
+  <text class="axis-text" x="661" y="273" text-anchor="middle">30+</text>
+  <text class="ex-axis-title" x="500" y="26">REGION KEY (selected)</text>
+  <text class="svg-value" x="500" y="44">NCR</text>
+  <text class="ex-small" x="540" y="44">Metro Manila</text>
+  <text class="svg-value" x="500" y="59">IV-A</text>
+  <text class="ex-small" x="540" y="59">Calabarzon</text>
+  <text class="svg-value" x="500" y="74">III</text>
+  <text class="ex-small" x="540" y="74">Central Luzon</text>
+  <text class="svg-value" x="500" y="89">VII</text>
+  <text class="ex-small" x="540" y="89">Central Visayas</text>
+  <text class="svg-value" x="500" y="104">XI</text>
+  <text class="ex-small" x="540" y="104">Davao</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; population [Census 2020] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: tile_map -->
+<div class="commentary">
+  <h3>Regional read</h3>
+  <p><strong>Only four regions pass 25% modern-trade share</strong>, and three of them are contiguous around Manila.</p>
+  <p>Cebu (VII) and Davao (XI) are the second wave: both above 20% and growing four points a year.</p>
+  <div class="callout-box"><span class="tag">Why tiles</span>Equal tiles stop large but sparse regions such as Mimaropa from dominating the picture.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Launch in Mega Manila modern trade; add Cebu and Davao once the convenience network is proven.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Tile map · regions · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 17 · Big number · segment split ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · big number + stacked bar</div>
+      <div class="page-section-counter">17 / 18</div>
+    </div>
+    <h1 class="page-h1">Southeast Asian RTD tea is a USD 4.2 bn market still sold mainly through small stores</h1>
+    <p class="page-kicker">Stack layout: a row of hero numbers (one highlighted) on top, a supporting segment-split exhibit underneath.</p>
+    <div class="layout layout-stack ex-top-auto">
+<!-- EXHIBIT_START: big_number -->
+<div class="ex-bn-row" style="--n:4">
+  <div class="big-number muted"><div class="value">USD 4.2 bn</div><div class="label">SEA RTD tea retail value, 2025</div><div class="ex-src">[Kira estimates]</div></div>
+  <div class="big-number muted"><div class="value">11%</div><div class="label">Value CAGR 2025-30F, fastest in soft drinks</div><div class="ex-src">[Kira estimates]</div></div>
+  <div class="big-number"><div class="value">58%</div><div class="label">Sold through traditional trade</div><div class="ex-src">[Retail audit 2025]</div></div>
+  <div class="big-number muted"><div class="value">3 of 5</div><div class="label">Top-five brands are local</div><div class="ex-src">[Retail audit 2025]</div></div>
+</div>
+<!-- EXHIBIT_END: big_number -->
+<!-- EXHIBIT_START: stacked_bar -->
+<div class="exhibit">
+  <div class="exhibit-title">Price-tier split of RTD tea value</div>
+  <div class="exhibit-sub">% of value · 2025 · sorted by premium share</div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 1100 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Horizontal 100 percent bars of price tiers by country">
+  <!-- scale: x = 90 + share_pct*10; row i: y = 20 + i*36 -->
+  <text class="ex-axis-title" x="94" y="11">ECONOMY</text>
+  <text class="ex-axis-title" x="454" y="11">MAINSTREAM</text>
+  <text class="ex-axis-title ex-label-hl" x="874" y="11">PREMIUM</text>
+  <text class="svg-label ex-label-strong" x="80" y="38" text-anchor="end">Thailand</text>
+  <rect class="ex-g3" x="90" y="20" width="358" height="28"/>
+  <text class="ex-in-dark" x="270" y="38" text-anchor="middle">36%</text>
+  <rect class="ex-g2" x="450" y="20" width="418" height="28"/>
+  <text class="ex-in-dark" x="660" y="38" text-anchor="middle">42%</text>
+  <rect class="hl-fill" x="870" y="20" width="218" height="28"/>
+  <text class="ex-in-label" x="980" y="38" text-anchor="middle">22%</text>
+  <text class="svg-label" x="80" y="74" text-anchor="end">Vietnam</text>
+  <rect class="ex-g3" x="90" y="56" width="438" height="28"/>
+  <text class="ex-in-dark" x="310" y="74" text-anchor="middle">44%</text>
+  <rect class="ex-g2" x="530" y="56" width="378" height="28"/>
+  <text class="ex-in-dark" x="720" y="74" text-anchor="middle">38%</text>
+  <rect class="hl-fill" x="910" y="56" width="178" height="28"/>
+  <text class="ex-in-label" x="1000" y="74" text-anchor="middle">18%</text>
+  <text class="svg-label" x="80" y="110" text-anchor="end">Philippines</text>
+  <rect class="ex-g3" x="90" y="92" width="518" height="28"/>
+  <text class="ex-in-dark" x="350" y="110" text-anchor="middle">52%</text>
+  <rect class="ex-g2" x="610" y="92" width="358" height="28"/>
+  <text class="ex-in-dark" x="790" y="110" text-anchor="middle">36%</text>
+  <rect class="hl-fill" x="970" y="92" width="118" height="28"/>
+  <text class="ex-in-label" x="1030" y="110" text-anchor="middle">12%</text>
+  <text class="svg-label" x="80" y="146" text-anchor="end">Indonesia</text>
+  <rect class="ex-g3" x="90" y="128" width="578" height="28"/>
+  <text class="ex-in-dark" x="380" y="146" text-anchor="middle">58%</text>
+  <rect class="ex-g2" x="670" y="128" width="328" height="28"/>
+  <text class="ex-in-dark" x="835" y="146" text-anchor="middle">33%</text>
+  <rect class="hl-fill" x="1000" y="128" width="88" height="28"/>
+  <text class="ex-in-label" x="1045" y="146" text-anchor="middle">9%</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; tiers by price per 100 ml · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: stacked_bar -->
+    </div>
+    <div class="takeaway"><span>Premium is over a fifth of Thai value but under a tenth in Indonesia; enter premium where it already exists.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Big number · segment split · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ PAGE 18 · Marimekko · market map ============================ -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Exhibit · marimekko</div>
+      <div class="page-section-counter">18 / 18</div>
+    </div>
+    <h1 class="page-h1">The local leader owns nuts and savoury snacks but is almost absent from confectionery</h1>
+    <p class="page-kicker">Marimekko: column width is segment size, the stack is player share, the subject player on the baseline in blue so its share reads across segments.</p>
+    <div class="layout layout-main-side">
+<!-- EXHIBIT_START: marimekko -->
+<div class="exhibit">
+  <div class="exhibit-title">Snack market map: segment size × player share</div>
+  <div class="exhibit-sub">Vietnam · USD 2.4 bn · 2025</div>
+  <div class="ex-legend"><span class="k"><i class="hl"></i>Local leader</span><span class="k"><i class="g1"></i>Multinational A</span><span class="k"><i class="g2"></i>Multinational B</span><span class="k"><i class="g3"></i>Others / private label</span></div>
+  <div class="exhibit-body">
+<svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Marimekko chart of snack segments by player share">
+  <!-- column width = size/total*700; cell height = share%*2.5; stack from y=290 upward; 2px gaps; label a cell only if it is >= 34 px wide and >= 16 px tall -->
+  <rect class="hl-fill" x="10" y="212.5" width="263.8" height="75.5"/>
+  <text class="ex-in-label" x="141.9" y="254.2" text-anchor="middle">31%</text>
+  <rect class="ex-g1" x="10" y="157.5" width="263.8" height="53"/>
+  <text class="ex-in-dark" x="141.9" y="188" text-anchor="middle">22%</text>
+  <rect class="ex-g2" x="10" y="127.5" width="263.8" height="28"/>
+  <text class="ex-in-dark" x="141.9" y="145.5" text-anchor="middle">12%</text>
+  <rect class="ex-g3" x="10" y="40" width="263.8" height="85.5"/>
+  <text class="ex-in-dark" x="141.9" y="86.8" text-anchor="middle">35%</text>
+  <text class="svg-label ex-label-strong" x="12" y="18">Savoury snacks</text>
+  <text class="axis-text" x="12" y="32">USD 0.9 bn · 38%</text>
+  <rect class="hl-fill" x="275.8" y="245" width="187" height="43"/>
+  <text class="ex-in-label" x="369.3" y="270.5" text-anchor="middle">18%</text>
+  <rect class="ex-g1" x="275.8" y="180" width="187" height="63"/>
+  <text class="ex-in-dark" x="369.3" y="215.5" text-anchor="middle">26%</text>
+  <rect class="ex-g2" x="275.8" y="130" width="187" height="48"/>
+  <text class="ex-in-dark" x="369.3" y="158" text-anchor="middle">20%</text>
+  <rect class="ex-g3" x="275.8" y="40" width="187" height="88"/>
+  <text class="ex-in-dark" x="369.3" y="88" text-anchor="middle">36%</text>
+  <text class="svg-label ex-label-strong" x="277.8" y="18">Biscuits</text>
+  <text class="axis-text" x="277.8" y="32">USD 0.64 bn · 27%</text>
+  <rect class="hl-fill" x="464.9" y="267.5" width="136.8" height="20.5"/>
+  <text class="ex-in-label" x="533.3" y="281.8" text-anchor="middle">9%</text>
+  <rect class="ex-g1" x="464.9" y="197.5" width="136.8" height="68"/>
+  <text class="ex-in-dark" x="533.3" y="235.5" text-anchor="middle">28%</text>
+  <rect class="ex-g2" x="464.9" y="137.5" width="136.8" height="58"/>
+  <text class="ex-in-dark" x="533.3" y="170.5" text-anchor="middle">24%</text>
+  <rect class="ex-g3" x="464.9" y="40" width="136.8" height="95.5"/>
+  <text class="ex-in-dark" x="533.3" y="91.8" text-anchor="middle">39%</text>
+  <text class="svg-label ex-label-strong" x="466.9" y="18">Confectionery</text>
+  <text class="axis-text" x="466.9" y="32">USD 0.47 bn · 20%</text>
+  <rect class="hl-fill" x="603.7" y="185" width="104.3" height="103"/>
+  <text class="ex-in-label" x="655.8" y="240.5" text-anchor="middle">42%</text>
+  <rect class="ex-g1" x="603.7" y="170" width="104.3" height="13"/>
+  <rect class="ex-g2" x="603.7" y="160" width="104.3" height="8"/>
+  <rect class="ex-g3" x="603.7" y="40" width="104.3" height="118"/>
+  <text class="ex-in-dark" x="655.8" y="103" text-anchor="middle">48%</text>
+  <text class="svg-label ex-label-strong" x="605.7" y="18">Nuts & seeds</text>
+  <text class="axis-text" x="605.7" y="32">USD 0.36 bn · 15%</text>
+  <text class="ex-small" x="10" y="308">Column width = segment size (USD bn, 2025); stack = brand-owner share of segment value</text>
+</svg>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates]; [Retail audit 2025] · Illustrative data for the exhibit library</div>
+</div>
+<!-- EXHIBIT_END: marimekko -->
+<div class="commentary">
+  <h3>White space</h3>
+  <p><strong>Confectionery is the open flank:</strong> the leader has 9% there against 31-42% in its strong segments.</p>
+  <p>Multinationals are strongest in biscuits and confectionery, where brand and imported formats still matter.</p>
+  <div class="callout-box"><span class="tag">Use with care</span>Marimekko needs 3-6 columns; a segment under 8% of the market is too thin to label.</div>
+</div>
+    </div>
+    <div class="takeaway"><span>A partner for savoury snacks is the leader; a partner for confectionery is anyone but.</span></div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Exhibit library · Marimekko · market map · illustrative data</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

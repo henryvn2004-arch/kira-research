@@ -106,7 +106,7 @@ Or on failure:
 If `overflow_detected: true`, `overflow_pages` lists the offending page indexes with `actual_height_px` and `overflow_px`. Walk through them:
 
 1. Map each overflow_page back to its source section (via the page-number-to-section index you built in Step 2)
-2. For each offending section: regenerate with `char_budget × 0.85` (i.e. -15% of all schema char caps)
+2. For each offending section: if it is an `exhibit_page` (or the report is BRAIN-route), split the page into two pages and renumber; otherwise regenerate with `char_budget × 0.85` (i.e. -15% of all schema char caps). Overflow now includes `clipped_elements` (text cut inside cards / source keys) — treat those the same way
 3. Recompose, re-render
 4. Max 3 overflow-retry cycles. After the 3rd, publish the result as-is with a `quality_flag: "overflow_unresolved"` annotation in metadata.
 

@@ -967,6 +967,43 @@
 
 
 <!-- ============================================================
-     END OF TEMPLATES — 17 page types defined (10 original + 5 Phase H + 2 decision-brief).
+     TEMPLATE: exhibit_page  (exhibit layer — default body page)
+     Action title + kicker + LAYOUT of 1-3 exhibits (+ commentary /
+     big number / callout) + takeaway. Pick the layout class from
+     master_styles.css; paste exhibit snippets from exhibits.html.
+     ============================================================ -->
+<!-- TEMPLATE_START: exhibit_page -->
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{ACTION_TITLE}}</h1>
+    <p class="page-kicker">{{KICKER_HTML}}</p>
+
+    <div class="layout {{LAYOUT_CLASS}}">
+      <!-- 1-3 cells. Each cell is one of:
+           an exhibit snippet (<div class="exhibit">…</div>) from templates/exhibits.html,
+           <div class="commentary"><h3>…</h3><p>…</p></div>,
+           <div class="big-number"><div class="value">…</div><div class="label">…</div><div class="context">…</div></div>,
+           <div class="callout-box"><span class="tag">…</span>…</div>, <div class="pull-quote">…</div> -->
+      {{LAYOUT_CELLS_HTML}}
+    </div>
+
+    <div class="takeaway">{{TAKEAWAY_HTML}}</div>
+    <div class="source-key">{{SOURCE_KEY_HTML}}</div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: exhibit_page -->
+
+
+<!-- ============================================================
+     END OF TEMPLATES — 18 page types defined (10 original + 5 Phase H + 2 decision-brief + exhibit_page).
      Pipeline reads this file, extracts by markers, fills placeholders.
      ============================================================ -->
