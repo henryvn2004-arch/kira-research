@@ -128,7 +128,7 @@
         <a class="logo" href="${localPath('/')}">
           <span class="logo-mark"><img class="logo-img" src="/logo.png" alt="KIRA Research" width="176" height="22"></span>
         </a>
-        <p class="footer-tag" data-i18n="footer.tagline">Market-entry research on Southeast Asia, Australia, New Zealand and Taiwan.</p>
+        <p class="footer-tag" data-i18n="footer.tagline">Market-entry research on Southeast Asia, Japan, South Korea, Taiwan, Australia and New Zealand.</p>
       </div>
       <div class="footer-col">
         <h3 data-i18n="footer.libraryCol">Library</h3>
@@ -178,7 +178,7 @@
       alternateName: 'KIRA Research',
       url:        origin + '/',
       logo:       origin + '/logo.png',
-      description: 'Market-entry research on Southeast Asia, Australia, New Zealand and Taiwan.',
+      description: 'Market-entry research on Southeast Asia, Japan, South Korea, Taiwan, Australia and New Zealand.',
       foundingLocation: {
         '@type': 'Place',
         address: { '@type': 'PostalAddress', addressLocality: 'Ho Chi Minh City', addressCountry: 'VN' }

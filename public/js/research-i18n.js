@@ -46,7 +46,7 @@
       emailPh: 'Your work email', subscribe: 'Subscribe', subscribed: 'Thank you. We will be in touch.', subscribeErr: 'Please enter a valid email.',
       exploreLib: 'Explore the research library', exploreLibBody: 'Every market we cover, with free executive summaries.', browseLib: 'Browse the library',
       getFull: 'From the report', getFullBody: 'This field note draws on a published report. The report adds the full data, segment views and our analysis.',
-      openReport: 'Open the report', relatedInsights: 'Related insights', latestReports: 'Latest reports', more: 'More', viewAll: 'View all insights',
+      openReport: 'Open the report', relatedInsights: 'Related insights', latestReports: 'Latest reports', moreSectors: 'All sectors', sectorsCount: n => n + ' sectors', regionAsean: 'Southeast Asia', regionApac: 'Wider Asia-Pacific', featuredReport: 'Featured report', more: 'More', viewAll: 'View all insights',
       onThisPage: 'On this page',
       nPages: n => n + ' pages', sector_food: 'Food & agriculture', sector_consumer: 'Consumer & retail', sector_finance: 'Financial services', sector_tech: 'Technology & media', sector_health: 'Healthcare', sector_property: 'Real estate & construction', sector_auto: 'Automotive & mobility', sector_logistics: 'Transport & logistics', sector_energy: 'Energy & resources', sector_industrial: 'Industrials', sector_travel: 'Tourism & hospitality', sector_services: 'Education & services'
     },
@@ -86,7 +86,7 @@
       emailPh: '勤務先のメールアドレス', subscribe: '登録する', subscribed: 'ご登録ありがとうございます。', subscribeErr: '有効なメールアドレスを入力してください。',
       exploreLib: 'リサーチライブラリ', exploreLibBody: '対象のすべての市場を、無料のエグゼクティブサマリー付きで。', browseLib: 'ライブラリを見る',
       getFull: 'レポートより', getFullBody: 'この記事は公開済みのレポートに基づいています。レポートでは詳細なデータ、セグメント別の分析、当社の見解をご覧いただけます。',
-      openReport: 'レポートを開く', relatedInsights: '関連インサイト', latestReports: '最新のレポート', more: 'その他', viewAll: 'すべてのインサイト',
+      openReport: 'レポートを開く', relatedInsights: '関連インサイト', latestReports: '最新のレポート', moreSectors: 'すべての業界', sectorsCount: n => n + ' 業界', regionAsean: '東南アジア', regionApac: 'アジア太平洋', featuredReport: '注目のレポート', more: 'その他', viewAll: 'すべてのインサイト',
       onThisPage: 'このページの内容',
       nPages: n => n + ' ページ', sector_food: '食品・農業', sector_consumer: '消費財・小売', sector_finance: '金融サービス', sector_tech: 'テクノロジー・メディア', sector_health: 'ヘルスケア', sector_property: '不動産・建設', sector_auto: '自動車・モビリティ', sector_logistics: '運輸・物流', sector_energy: 'エネルギー・資源', sector_industrial: '製造業', sector_travel: '観光・ホスピタリティ', sector_services: '教育・専門サービス'
     },
@@ -126,7 +126,7 @@
       emailPh: '업무용 이메일', subscribe: '구독하기', subscribed: '감사합니다. 곧 연락드리겠습니다.', subscribeErr: '유효한 이메일을 입력해 주십시오.',
       exploreLib: '리서치 라이브러리', exploreLibBody: '당사가 다루는 모든 시장을 무료 요약과 함께 확인하십시오.', browseLib: '라이브러리 보기',
       getFull: '보고서에서', getFullBody: '이 인사이트는 발행된 보고서를 바탕으로 합니다. 보고서에는 상세 데이터, 세그먼트별 분석과 당사의 견해가 담겨 있습니다.',
-      openReport: '보고서 열기', relatedInsights: '관련 인사이트', latestReports: '최신 보고서', more: '더보기', viewAll: '전체 인사이트',
+      openReport: '보고서 열기', relatedInsights: '관련 인사이트', latestReports: '최신 보고서', moreSectors: '전체 산업', sectorsCount: n => n + '개 산업', regionAsean: '동남아시아', regionApac: '아시아태평양', featuredReport: '주목할 보고서', more: '더보기', viewAll: '전체 인사이트',
       onThisPage: '이 페이지의 내용',
       nPages: n => n + '페이지', sector_food: '식품·농업', sector_consumer: '소비재·유통', sector_finance: '금융 서비스', sector_tech: '기술·미디어', sector_health: '헬스케어', sector_property: '부동산·건설', sector_auto: '자동차·모빌리티', sector_logistics: '운송·물류', sector_energy: '에너지·자원', sector_industrial: '제조업', sector_travel: '관광·숙박', sector_services: '교육·전문 서비스'
     },
@@ -166,7 +166,7 @@
       emailPh: '您的工作邮箱', subscribe: '订阅', subscribed: '感谢订阅，我们会与您联系。', subscribeErr: '请输入有效的邮箱地址。',
       exploreLib: '研究报告库', exploreLibBody: '我们覆盖的所有市场，均附免费执行摘要。', browseLib: '浏览报告库',
       getFull: '出自报告', getFullBody: '本文基于一份已发布的报告。完整报告提供详细数据、细分市场分析和我们的观点。',
-      openReport: '打开报告', relatedInsights: '相关洞察', latestReports: '最新报告', more: '更多', viewAll: '查看全部洞察',
+      openReport: '打开报告', relatedInsights: '相关洞察', latestReports: '最新报告', moreSectors: '全部行业', sectorsCount: n => n + ' 个行业', regionAsean: '东南亚', regionApac: '亚太其他市场', featuredReport: '精选报告', more: '更多', viewAll: '查看全部洞察',
       onThisPage: '本页内容',
       nPages: n => n + ' 页', sector_food: '食品与农业', sector_consumer: '消费品与零售', sector_finance: '金融服务', sector_tech: '科技与传媒', sector_health: '医疗健康', sector_property: '房地产与建筑', sector_auto: '汽车与出行', sector_logistics: '运输与物流', sector_energy: '能源与资源', sector_industrial: '工业制造', sector_travel: '旅游与酒店', sector_services: '教育与专业服务'
     }
