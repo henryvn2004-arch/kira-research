@@ -73,7 +73,7 @@ After all pages exist, walk them in order and assign:
 
 ### Cover and closing pages (all routes)
 
-- **Cover:** the `cover` template. Fill 3 short title lines (the middle one is the accent), a report kind ("Industry report", "Market entry brief"…), the subtitle (the buyer question or angle, ≤110 chars), the year and an optional two-line tagline.
+- **Cover:** the `cover` template. Fill 3 short title lines (the middle one is the accent), a report kind ("Industry report", "Market entry brief"…), the subtitle (the buyer question or angle, ≤110 chars), and the year. The tagline "Know first. / Move first." is fixed in the template; never change it.
 - **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}`, `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
 - Neither page carries a page number or source key.
 
