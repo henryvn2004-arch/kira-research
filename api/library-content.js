@@ -97,7 +97,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'private, no-store');
 }
 
-const LOCALES = new Set(['en','ja','ko']);
+const LOCALES = new Set(['en', 'ja', 'ko', 'zh']);
 
 export default async function handler(req, res) {
   cors(res);

@@ -6,7 +6,7 @@ import fs from 'node:fs';
 
 const [, , localPath, reportId, locale] = process.argv;
 if (!localPath || !reportId || !locale) {
-  console.error('usage: upload-pdf.mjs <pdf-local-path> <report-id> <locale-en|ja|ko>');
+  console.error('usage: upload-pdf.mjs <pdf-local-path> <report-id> <locale-en|ja|ko|zh>');
   process.exit(2);
 }
 const url = process.env.SUPABASE_URL;

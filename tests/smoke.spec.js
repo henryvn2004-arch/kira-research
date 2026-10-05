@@ -29,7 +29,10 @@ const STATIC_PAGES = [
   '/insights/'                                  // folder route
 ];
 
-for (const locale of ['en', 'ja', 'ko']) {
+// <html lang> value per locale (Simplified Chinese is zh-Hans; URL prefix is /zh/).
+const HTML_LANG = { en: 'en', ja: 'ja', ko: 'ko', zh: 'zh-Hans' };
+
+for (const locale of ['en', 'ja', 'ko', 'zh']) {
   test.describe(`${locale} static pages`, () => {
     for (const path of STATIC_PAGES) {
       const url = `/${locale}${path}`;
@@ -40,7 +43,7 @@ for (const locale of ['en', 'ja', 'ko']) {
 
         // <html lang> must be set correctly (locale detection works).
         const lang = await page.locator('html').getAttribute('lang');
-        expect(lang).toBe(locale);
+        expect(lang).toBe(HTML_LANG[locale]);
 
         // nav.js injects .logo-mark in BOTH the top nav and the footer.
         // We scope to .nav-wrap so the locator is unambiguous — its presence
@@ -126,11 +129,11 @@ test.describe('dynamic report page (rewrite)', () => {
 // ── 3) Root redirect respects user language ──
 test('root / redirects to a supported locale', async ({ page }) => {
   await page.goto('/', { waitUntil: 'load' });
-  // After the JS redirect runs, URL must end in /en/, /ja/, or /ko/.
+  // After the JS redirect runs, URL must end in /en/, /ja/, /ko/, or /zh/.
   // Give the redirect a moment to fire.
-  await page.waitForURL(/\/(en|ja|ko)\/?$/, { timeout: 8_000 });
+  await page.waitForURL(/\/(en|ja|ko|zh)\/?$/, { timeout: 8_000 });
   const url = new URL(page.url());
-  expect(url.pathname).toMatch(/^\/(en|ja|ko)\/?$/);
+  expect(url.pathname).toMatch(/^\/(en|ja|ko|zh)\/?$/);
 });
 
 // ── 4) Legacy URL redirects ──
@@ -178,6 +181,11 @@ test.describe('branded 404', () => {
   test('/ja/missing-page swaps title to Japanese', async ({ page }) => {
     await page.goto('/ja/missing-page', { waitUntil: 'load' });
     await expect(page.locator('#err-title')).toHaveText('ページが見つかりません。');
+  });
+
+  test('/zh/missing-page swaps title to Simplified Chinese', async ({ page }) => {
+    await page.goto('/zh/missing-page', { waitUntil: 'load' });
+    await expect(page.locator('#err-title')).toHaveText('页面不存在。');
   });
 });
 
@@ -381,13 +389,14 @@ test.describe('SEO surface', () => {
     expect(ct).toMatch(/xml/i);
     const body = await r.text();
     expect(body).toContain('<sitemapindex');
-    // Must reference all 3 per-locale sitemaps.
+    // Must reference all 4 per-locale sitemaps.
     expect(body).toContain('sitemap-en.xml');
     expect(body).toContain('sitemap-ja.xml');
     expect(body).toContain('sitemap-ko.xml');
+    expect(body).toContain('sitemap-zh.xml');
   });
 
-  for (const locale of ['en', 'ja', 'ko']) {
+  for (const locale of ['en', 'ja', 'ko', 'zh']) {
     test(`/sitemap-${locale}.xml returns a urlset with hreflang annotations`, async ({ request }) => {
       const r = await request.get(`/sitemap-${locale}.xml`);
       expect(r.status()).toBe(200);

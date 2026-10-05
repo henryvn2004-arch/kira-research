@@ -25,7 +25,7 @@
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const BUCKET = 'reports-html';
-const SUPPORTED = new Set(['en', 'ja', 'ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 
 async function sb(path) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {

@@ -10,6 +10,7 @@
   <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/" />
   <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/" />
   <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://kiraresearch.com/zh/" />
   <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/" />
 
   <!-- Default redirect for crawlers / no-JS clients -->
@@ -57,13 +58,14 @@
     <p style="margin-top:24px;font-size:12px;">
       <a href="/en/">English</a> ·
       <a href="/ja/">日本語</a> ·
-      <a href="/ko/">한국어</a>
+      <a href="/ko/">한국어</a> ·
+      <a href="/zh/">简体中文</a>
     </p>
   </div>
 
   <script>
     (function () {
-      var SUPPORTED = ['en', 'ja', 'ko'];
+      var SUPPORTED = ['en', 'ja', 'ko', 'zh'];
 
       // 1) Honor an explicit ?lang= override (used by lang-switch links).
       var qs = new URLSearchParams(window.location.search);
@@ -88,6 +90,8 @@
 
       var picked = 'en';
       for (var i = 0; i < langs.length; i++) {
+        // 2-letter prefix: zh-CN / zh-SG / zh-Hans → zh. zh-TW / zh-HK /
+        // zh-Hant also map to zh (Simplified) — Traditional isn't offered.
         var two = (langs[i] || '').slice(0, 2).toLowerCase();
         if (SUPPORTED.indexOf(two) !== -1) { picked = two; break; }
       }

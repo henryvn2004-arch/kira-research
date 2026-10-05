@@ -334,7 +334,7 @@
 
     // Locale detection from path (mirrors nav.js logic).
     const parts  = window.location.pathname.split('/').filter(Boolean);
-    const locale = ['en','ja','ko'].includes(parts[0]) ? parts[0] : 'en';
+    const locale = ['en','ja','ko','zh'].includes(parts[0]) ? parts[0] : 'en';
 
     // Localized copy. i18n.js will overlay JSON values where data-i18n is set,
     // but we use these for JS-rendered strings.
@@ -413,6 +413,31 @@
         gateSub:     '구매한 보고서를 보고 PDF를 다운로드하려면 계정이 필요합니다.',
         gateCta:     '로그인 / 계정 만들기',
         loadErr:     '라이브러리를 불러올 수 없습니다. 다시 시도해주세요.'
+      },
+      zh: {
+        title:       '我的报告',
+        accountLbl:  '当前登录账户',
+        signOut:     '退出登录',
+        countLabel:  n => n + '份报告',
+        purchasedOn: d => '购买日期：' + d,
+        open:        '打开报告 →',
+        download:    '下载PDF ↓',
+        downloading: '准备中…',
+        noPdf:       'PDF准备中',
+        resend:      '重新发送收据',
+        resending:   '发送中…',
+        resendOk:    '收据已发送 ✓',
+        resendErr:   '发送失败，请重试。',
+        statsReports:  '已购报告',
+        statsSpent:    '累计消费',
+        statsMember:   '注册时间',
+        emptyTitle:  '您尚未购买任何报告。',
+        emptySub:    '欢迎浏览报告库——每份报告均以精排版PDF及完整网页版交付。',
+        emptyCta:    '浏览报告库',
+        gateTitle:   '请登录以查看您的报告',
+        gateSub:     '查看已购报告及下载PDF需要登录账户。',
+        gateCta:     '登录 / 注册账户',
+        loadErr:     '无法加载您的报告，请重试。'
       }
     };
     const c = COPY[locale] || COPY.en;
@@ -468,7 +493,7 @@
       // Locale-aware short date — server gives ISO, we format per page locale.
       try {
         return d.toLocaleDateString(
-          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : 'en-US',
+          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : locale === 'zh' ? 'zh-CN' : 'en-US',
           { year: 'numeric', month: 'short', day: 'numeric' }
         );
       } catch { return iso.slice(0, 10); }
@@ -479,7 +504,7 @@
       if (isNaN(d.getTime())) return '—';
       try {
         return d.toLocaleDateString(
-          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : 'en-US',
+          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : locale === 'zh' ? 'zh-CN' : 'en-US',
           { year: 'numeric', month: 'long' }
         );
       } catch { return iso.slice(0, 7); }
@@ -807,10 +832,21 @@
         promoTitle:  '나만의 보고서 생성',
         promoSub:    '시장을 설명하고 문서를 첨부하면 잘 다듬어진 PDF가 개인 라이브러리에 저장됩니다.',
         openStudio:  'Studio 열기 →'
+      },
+      zh: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: '点数',
+        reportsLeft: n => '约可生成' + n + '份报告',
+        shortBy:     n => '生成1份报告还需' + n + '点数',
+        topUp:       '充值点数 →',
+        newReport:   '新建报告 →',
+        promoTitle:  '生成您专属的报告',
+        promoSub:    '描述任意市场并附上文件，即可在您的专属报告库中获得一份精排版PDF。',
+        openStudio:  '打开Studio →'
       }
     };
     const _parts  = window.location.pathname.split('/').filter(Boolean);
-    const _locale = ['en','ja','ko'].includes(_parts[0]) ? _parts[0] : 'en';
+    const _locale = ['en','ja','ko','zh'].includes(_parts[0]) ? _parts[0] : 'en';
     const _c = STUDIO_COPY[_locale] || STUDIO_COPY.en;
 
     const STUDIO_BASE   = 'https://studio.kiraresearch.com';

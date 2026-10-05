@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Name a report by the rules in docs/naming_convention.md: report code, slug,
-// title, SEO title, eyebrow (EN/JA/KO), cover lines and search keywords.
+// title, SEO title, eyebrow (EN/JA/KO/ZH), cover lines and search keywords.
 //
 // Usage:
 //   node skills/kira-research-report/scripts/report-name.mjs \

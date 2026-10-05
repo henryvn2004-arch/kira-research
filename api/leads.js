@@ -42,7 +42,7 @@ function cors(res) {
 
 // ── Validation ─────────────────────────────────────────────
 const EMAIL_RE   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const LOCALES    = new Set(['en', 'ja', 'ko']);
+const LOCALES    = new Set(['en', 'ja', 'ko', 'zh']);
 const TIERS      = new Set(['briefing', 'custom', 'retainer', 'not-sure']);
 const DEADLINES  = new Set(['2w', 'month', 'quarter', 'flex']);
 

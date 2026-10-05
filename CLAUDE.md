@@ -30,7 +30,7 @@
 | Backend | Supabase Postgres + Auth + Storage |
 | Payments | PayPal (USD, Year 1 sole) |
 | CI | GitHub Actions + Playwright smoke tests (free since repo is public) |
-| Locales | EN (default) · JA · KO — all live · ZH (Simplified) planned, Sprint S4 |
+| Locales | EN (default) · JA · KO — all live · ZH (Simplified, `/zh/`) in review, Sprint S4 |
 
 ---
 
@@ -38,7 +38,7 @@
 
 Business direction changed 2026-10-05 — full decisions + sprint table in `project des/workplan.md` → **Phase S**. Short version: subscription library for the teams that serve foreign investors in ASEAN; market-seeking-FDI industries only; Topic Planner module with owner approval; ZH added; custom research parked; Studio frozen. "No subscription" and "never claim volume" constraints dropped.
 
-Sprint S1 (cloud pipeline) merged (#46); Sprint S2 taxonomy approved (13 countries, 171 industries, 15 competencies, in private `kira-pipeline/taxonomy`); Sprint S3 (topic planner + `/en/admin/topics`, migration 023, `sync-approved-topics.mjs` in runner Step 0.6) in review. S1 detail: old queue cleaned (16 error rows deleted, 57 pending → `hold`), admin dashboard shows pipeline health, batch runner becomes a cloud Routine instead of the DELL scheduled task. The report pipeline itself (BRAIN route, exhibit layer, cover art) is finished in its own sessions and merged (PRs #40, #41, #43).
+Sprint S1 (cloud pipeline) merged (#46); Sprint S2 taxonomy approved (13 countries, 171 industries, 15 competencies, in private `kira-pipeline/taxonomy`); Sprint S3 (topic planner + `/en/admin/topics`, migration 023, `sync-approved-topics.mjs` in runner Step 0.6) merged (#48); first lot of 18 topics + 13 level-2 splits approved. Sprint S4 (Simplified Chinese: migration 024, `/zh/` site, ZH stage in the batch runner, `translator_zh.md`) in review. S1 detail: old queue cleaned (16 error rows deleted, 57 pending → `hold`), admin dashboard shows pipeline health, batch runner becomes a cloud Routine instead of the DELL scheduled task. The report pipeline itself (BRAIN route, exhibit layer, cover art) is finished in its own sessions and merged (PRs #40, #41, #43).
 
 ---
 

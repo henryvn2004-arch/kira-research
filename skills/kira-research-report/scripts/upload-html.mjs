@@ -18,7 +18,7 @@ import { inlineAssets } from './lib/inline-assets.mjs';
 
 const [, , localPath, reportId, locale, pageCountArg] = process.argv;
 if (!localPath || !reportId || !locale) {
-  console.error('usage: upload-html.mjs <html-local-path> <report-id> <locale-en|ja|ko> [page-count]');
+  console.error('usage: upload-html.mjs <html-local-path> <report-id> <locale-en|ja|ko|zh> [page-count]');
   process.exit(2);
 }
 const pageCount = Number(pageCountArg) || 5;

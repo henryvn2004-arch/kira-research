@@ -88,7 +88,8 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   [`${country.en} ${segment}`, segment, country.en, industry.en, st.en, ...(input.keywords || [])]
     .map(k => String(k).trim()).filter(Boolean).forEach(k => { if (!kw.has(k.toLowerCase())) kw.set(k.toLowerCase(), k); });
 
-  const eyebrow = Object.fromEntries(['en', 'ja', 'ko'].map(l => [l,
+  const LOCALES = ['en', 'ja', 'ko', 'zh'];
+  const eyebrow = Object.fromEntries(LOCALES.map(l => [l,
     l === 'en' ? `${country.en} · ${industry.en} · ${st.en}`.toUpperCase()
                : `${country[l]} · ${industry[l]} · ${st[l]}`]));
 
@@ -98,6 +99,7 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
       code, slug, title, canonical, angle, seo_title,
       short_title: `${country.en} ${segment}`,
       report_kind: st.en,
+      report_kind_i18n: Object.fromEntries(LOCALES.map(l => [l, st[l]])),
       eyebrow,
       cover: { line1: country.en, line2_accent: cap(segment), line3_max_chars: LIMITS.line3 },
       country_code: cc, country: country.en, industry_code: ind, industry: industry.en,

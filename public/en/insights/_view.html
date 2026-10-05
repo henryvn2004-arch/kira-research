@@ -67,10 +67,12 @@
   <script type="module">
     // ── 1) Parse slug + locale from URL ──────────────────
     const parts  = window.location.pathname.split('/').filter(Boolean);
-    const locale = ['en','ja','ko'].includes(parts[0]) ? parts[0] : 'en';
+    const locale = ['en','ja','ko','zh'].includes(parts[0]) ? parts[0] : 'en';
+    // BCP-47 tag for <html lang>, hreflang and JSON-LD inLanguage (Chinese is Simplified-only).
+    const langTag = l => (l === 'zh' ? 'zh-Hans' : l);
     const slug   = parts[2] ? parts[2].replace(/\/$/, '') : '';
 
-    document.documentElement.setAttribute('lang', locale);
+    document.documentElement.setAttribute('lang', langTag(locale));
 
     const root = document.getElementById('art-root');
 
@@ -108,7 +110,7 @@
     const url  = base + '/' + locale + '/insights/' + data.slug;
     const fullTitle   = (data.title || 'Insight') + ' — KIRA RESEARCH';
     const description = (data.excerpt || data.lede || 'Field notes from KIRA RESEARCH.').slice(0, 200);
-    const ogLocale    = { en: 'en_US', ja: 'ja_JP', ko: 'ko_KR' }[locale] || 'en_US';
+    const ogLocale    = { en: 'en_US', ja: 'ja_JP', ko: 'ko_KR', zh: 'zh_CN' }[locale] || 'en_US';
 
     document.title = fullTitle;
     document.getElementById('meta-canonical').href = url;
@@ -116,11 +118,11 @@
     if (metaDesc) metaDesc.setAttribute('content', description);
 
     const head = document.head;
-    ['en','ja','ko'].forEach(loc => {
+    ['en','ja','ko','zh'].forEach(loc => {
       if (data.availableLocales.includes(loc)) {
         const link = document.createElement('link');
         link.rel  = 'alternate';
-        link.hreflang = loc;
+        link.hreflang = langTag(loc);
         link.href = base + '/' + loc + '/insights/' + data.slug;
         head.appendChild(link);
       }
@@ -164,7 +166,7 @@
       url,
       datePublished:    data.published_at || undefined,
       dateModified:     data.published_at || undefined,
-      inLanguage:       locale,
+      inLanguage:       langTag(locale),
       author: {
         '@type': 'Organization',
         name:    'Kira Research',
@@ -291,7 +293,8 @@
       const heading = ({
         en: 'Continue reading',
         ja: '関連インサイト',
-        ko: '관련 인사이트'
+        ko: '관련 인사이트',
+        zh: '相关洞察'
       })[locale] || 'Continue reading';
       const cards = items.map(it => {
         const tags = [it.country, it.industry].filter(Boolean).map(s => s.toUpperCase()).join(' · ');

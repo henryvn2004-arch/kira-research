@@ -15,6 +15,15 @@
 //   - Strike-2 (error_log already contains "auto-recovered"): row already
 //     recovered once and got stuck AGAIN → real bug. Set status = `error`,
 //     leave for manual inspection.
+//   - `zh_in_progress` (Phase S4) has two possible prior stages: `ko_done`
+//     (Fire D, normal ZH translate + publish) or `zh_backfill` (Fire E,
+//     ZH-only backfill of an already-published report). A row is a backfill
+//     when its error_log carries the `zh-backfill` token (Fire E writes it at
+//     claim time) OR its output_paths is already filled (only published rows
+//     have output_paths; a Fire D row gets them at publish).
+//
+// Queue path: argv[2] or env KIRA_QUEUE_PATH, default data/report_queue.csv
+// (relative to cwd). Use a temp copy to dry-run.
 //
 // Also migrates the CSV schema in-place: if the `claimed_at` column is
 // missing, append it to the header and pad every row with an empty value.
@@ -27,7 +36,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const QUEUE_PATH = path.resolve('data/report_queue.csv');
+const QUEUE_PATH = path.resolve(process.argv[2] || process.env.KIRA_QUEUE_PATH || 'data/report_queue.csv');
 const STALE_MINUTES = 150;
 const NOW = new Date();
 
@@ -35,7 +44,19 @@ const PRIOR_STAGE = {
   en_in_progress: 'pending',
   ja_in_progress: 'en_done',
   ko_in_progress: 'ja_done',
+  zh_in_progress: 'ko_done',            // or 'zh_backfill', see priorStage()
 };
+
+// Backfill marker (Phase S4): see header comment.
+const BACKFILL_TOKEN = /\bzh-backfill\b/;
+function priorStage(status, f, idx) {
+  if (status === 'zh_in_progress') {
+    const isBackfill = BACKFILL_TOKEN.test(f[idx.error_log] || '')
+      || (idx.output_paths !== undefined && (f[idx.output_paths] || '').trim() !== '');
+    if (isBackfill) return 'zh_backfill';
+  }
+  return PRIOR_STAGE[status];
+}
 
 // ---- minimal CSV parser (handles double-quoted fields) ----
 function parseLine(line) {
@@ -116,7 +137,7 @@ for (let i = 1; i < lines.length; i++) {
       f[idx.error_log] = (prevLog ? prevLog + ' · ' : '') +
         `second-strike auto-recover skipped ${nowIso}: ${status} re-stale (claimed ${claimRef}); manual review`;
     } else {
-      f[idx.status] = PRIOR_STAGE[status];
+      f[idx.status] = priorStage(status, f, idx);
       f[idx.error_log] = (prevLog ? prevLog + ' · ' : '') +
         `auto-recovered ${nowIso}: ${status} stale > ${STALE_MINUTES}min (claimed ${claimRef})`;
     }

@@ -22,13 +22,13 @@
   // populated dynamically from DB), but don't surface on the homepage.
   //
   // Keep this comment in sync with `data-industry-key` attrs in
-  // public/{en,ja,ko}/index.html `.ind-cell` blocks.
+  // public/{en,ja,ko,zh}/index.html `.ind-cell` blocks.
 
   function norm(s) { return String(s || '').trim().toLowerCase(); }
 
   function getLocale() {
     if (window.kira && window.kira.locale) return window.kira.locale;
-    const m = window.location.pathname.match(/^\/(en|ja|ko)\//);
+    const m = window.location.pathname.match(/^\/(en|ja|ko|zh)\//);
     return m ? m[1] : 'en';
   }
 
@@ -224,7 +224,7 @@
           const safeTitle = escapeHtml(it.title);
           const excerpt = it.excerpt ? escapeHtml(String(it.excerpt).slice(0, 240)) + (String(it.excerpt).length > 240 ? '…' : '') : '';
           // Localized CTA labels — match the labels the rest of the page uses.
-          const ctaLabel = locale === 'ja' ? 'プレビュー →' : locale === 'ko' ? '미리보기 →' : 'Preview →';
+          const ctaLabel = locale === 'ja' ? 'プレビュー →' : locale === 'ko' ? '미리보기 →' : locale === 'zh' ? '预览 →' : 'Preview →';
           return (
             '<a href="/' + locale + '/reports/' + escapeAttr(it.slug) + '" class="report-card">' +
               '<div class="report-meta">' +

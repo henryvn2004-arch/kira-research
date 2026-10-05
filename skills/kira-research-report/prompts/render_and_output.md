@@ -31,7 +31,7 @@ node skills/kira-research-report/scripts/gen-cover.mjs --id <report_id> --countr
 
 ## Step 1c — Images stay as relative references
 
-Keep `src="cover.jpg"` and `src="brand/logo.png"` / `brand/logo-white.png` relative in the HTML you write (en.html, ja.html, ko.html). This keeps the files small for page-by-page translation. `render-one.mjs`, `render-local.mjs` and `upload-html.mjs` inline them as data URIs automatically (`scripts/lib/inline-assets.mjs`).
+Keep `src="cover.jpg"` and `src="brand/logo.png"` / `brand/logo-white.png` relative in the HTML you write (en.html, ja.html, ko.html, zh.html). This keeps the files small for page-by-page translation. `render-one.mjs`, `render-local.mjs` and `upload-html.mjs` inline them as data URIs automatically (`scripts/lib/inline-assets.mjs`).
 
 ## Step 2 — Compose each page
 

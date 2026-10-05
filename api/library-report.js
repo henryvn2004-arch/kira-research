@@ -39,7 +39,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=86400');
 }
 
-const SUPPORTED = new Set(['en', 'ja', 'ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 
 function clean(s, max = 2000) {
   return typeof s === 'string' ? s.trim().slice(0, max) : '';

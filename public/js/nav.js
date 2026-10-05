@@ -29,7 +29,11 @@
   // don't have a locale segment — treat the locale as 'en' and force
   // an empty subPath so locale-switcher links route to the main-domain
   // locale ROOT, not to a non-existent /{locale}/jobs path.
-  const SUPPORTED_LOCALES = ['en', 'ja', 'ko'];
+  const SUPPORTED_LOCALES = ['en', 'ja', 'ko', 'zh'];
+  // Switcher labels (each locale named in its own script).
+  const LOCALE_LABELS = { en: 'EN', ja: '日本語', ko: '한국어', zh: '简体中文' };
+  // BCP-47 tags for hreflang. Chinese is Simplified-only → 'zh-Hans'.
+  const HREFLANG = { en: 'en', ja: 'ja', ko: 'ko', zh: 'zh-Hans' };
   const pathParts = window.location.pathname.split('/').filter(Boolean);
   const locale = isStudioHost
     ? 'en'
@@ -60,7 +64,7 @@
 
   // ── Locale switcher links ──────────────────────────────────
   const localeLinks = SUPPORTED_LOCALES.map(loc => {
-    const labels = { en: 'EN', ja: '日本語', ko: '한국어' };
+    const labels = LOCALE_LABELS;
     const cls = 'lang-' + loc + (loc === locale ? ' active' : '');
     return `<a href="${localeHref(loc)}" class="${cls}" data-locale="${loc}">${labels[loc]}</a>`;
   }).join('');
@@ -100,7 +104,7 @@
   <div class="mobile-nav-inner">
     <div class="mobile-locales">
       ${SUPPORTED_LOCALES.map(loc => {
-        const labels = { en: 'EN', ja: '日本語', ko: '한국어' };
+        const labels = LOCALE_LABELS;
         const cls = 'lang-' + loc + (loc === locale ? ' active' : '');
         return `<a href="${localeHref(loc)}" class="${cls}">${labels[loc]}</a>`;
       }).join('')}
@@ -232,7 +236,7 @@
     SUPPORTED_LOCALES.forEach(loc => {
       const link = document.createElement('link');
       link.rel = 'alternate';
-      link.hreflang = loc;
+      link.hreflang = HREFLANG[loc] || loc;
       link.href = `${origin}/${loc}/${sub}${suffix}`;
       link.setAttribute('data-kira-hreflang', '1');
       document.head.appendChild(link);

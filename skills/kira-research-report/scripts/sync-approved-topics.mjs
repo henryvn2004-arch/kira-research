@@ -23,7 +23,7 @@ import path from 'path';
 const QUEUE_PATH = path.resolve('data/report_queue.csv');
 const URL = process.env.SUPABASE_URL;
 const KEY = process.env.SUPABASE_SERVICE_KEY;
-const LANGS = process.env.QUEUE_TARGET_LANGUAGES || 'en,ja,ko';
+const LANGS = process.env.QUEUE_TARGET_LANGUAGES || 'en,ja,ko,zh';  // Phase S4: ZH is the 4th locale
 
 function done(n, note) {
   if (note) console.error(note);

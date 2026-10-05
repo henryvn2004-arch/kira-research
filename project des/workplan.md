@@ -28,8 +28,8 @@
 |---|---|---|
 | **S1** | Pipeline to cloud routine (routine itself created by Henry in the claude.ai Routines UI, repos attached there); queue cleanup; admin "Pipeline health" | 🟡 merged (#46); owner still adds 3 env vars + creates the routine |
 | **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage (Henry approves) | ✅ approved 2026-10-05 (13 countries, 171 industries, 15 competencies; data in private repo `kira-pipeline/taxonomy`) |
-| **S3** | Topic Planner module + `/en/admin/topics` approval screen; approved topics flow into the queue | 🟡 in review: tables (migration 023), planner prompt (private), admin screen + API, runner sync; first lot of 18 topics + 13 level-2 splits waiting for approval |
-| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | 🔴 |
+| **S3** | Topic Planner module + `/en/admin/topics` approval screen; approved topics flow into the queue | ✅ merged (#48): tables (migration 023), planner prompt (private), admin screen + API, runner sync; first lot of 18 topics + 13 level-2 splits approved 2026-10-05 |
+| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | 🟡 code done (PR in review); backfill of published reports to ZH not started |
 | **S5** | Website repositioning: hero, competency/stage filters, pricing + waitlist, free exec summaries | 🔴 |
 | **S6** | Snapshot layer (3-5 page template) | 🔴 |
 | **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps) — only if waitlist shows demand | 🔴 |

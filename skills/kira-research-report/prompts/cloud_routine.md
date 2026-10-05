@@ -6,7 +6,7 @@ The Routine is created in the claude.ai Routines UI (the API tool cannot attach 
 - **Repositories:** `henryvn2004-arch/kira-research` and `henryvn2004-arch/kira-pipeline` (private brain). Both are cloned side by side under `/home/user/` in the fired session. If the form offers an option to push to branches other than `claude/*`, turn it on for `kira-research`: the runner commits `batch:` messages straight to `main`.
 - **Environment:** `OpenAI Key` (`env_01Khi54Dffp38bzpmjYSGrYg`). It must define `PDF_RENDER_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` and `OPENAI_API_KEY` (cover art; optional) and allow outbound to kiraresearch.com, `*.supabase.co`, `api.openai.com`.
 - **Schedule:** Custom cron, 3 fires/day at 01:53, 03:53 and 05:53 ICT (night only, 2 h apart so fires never overlap; EN gen can run 90 min). Cron `53 1,3,5 * * *` if the form reads it in local time (GMT+7), `53 18,20,22 * * *` if it reads UTC; check the form's "Runs at" preview. One fire = one stage of one queue row (see `batch_runner.md`), so 3 fires = 1 report/day. The insight pipeline is paused (library reports first); to restart it, add a separate routine that follows `insight_runner.md`.
-- **Model:** Sonnet 5.5 is enough. The fire only does file work, validation and commits; `batch_runner.md` picks the model for the heavy subagents (opus for EN gen, sonnet for JA/KO).
+- **Model:** Sonnet 5.5 is enough. The fire only does file work, validation and commits; `batch_runner.md` picks the model for the heavy subagents (opus for EN gen, sonnet for JA/KO/ZH).
 
 ---
 
