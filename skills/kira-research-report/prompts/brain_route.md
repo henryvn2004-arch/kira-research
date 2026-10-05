@@ -69,7 +69,7 @@ The anti-padding rule is the only cut: a page with no new data-backed claim is d
 Follow `docs/naming_convention.md`. Pick from the framing:
 - **Stage:** `XPL` when the question is whether the market is worth a look (size, growth, structure). `ENT` when it is how to get in (entry mode, partner, channel, pricing, go/no-go). `XPN` when the buyer already operates there.
 - **Segment:** the 1–4 word noun a buyer would type (`coffee chains`, `cold chain`).
-- **Angle:** the working answer or tension in ≤ 60 characters, as a statement.
+- **Angle:** in ≤ 60 characters. Prefer a question the report answers, in the owner's hook style (`How to win…?`, `Where to play…?`, `How to enter…?`, `How to expand…?`, `What are the key impacts of…?`); start from the approved brief's title when there is one. A statement (the working answer or tension) is allowed when a question would not fit.
 
 Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen the angle once the evidence is in; rerun the script if it does.
 

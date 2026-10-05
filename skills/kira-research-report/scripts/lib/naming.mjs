@@ -55,7 +55,6 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   if (segment !== segment.toLowerCase() && !/[A-Z]{2}/.test(segment))
     errors.push('segment is sentence case: lowercase unless an acronym or proper noun (e.g. "coffee chains", "EV charging")');
   if (!angle || angle.length > LIMITS.angle) errors.push(`angle is required, <= ${LIMITS.angle} chars (got ${angle.length})`);
-  if (/\?$/.test(angle)) errors.push('angle is a statement, not a question');
   if (HYPE.test(angle) || HYPE.test(segment)) errors.push('no hype words in titles (voice_guide)');
   if (cc && segment.toLowerCase().includes(VOCAB.countries[cc].en.toLowerCase())) errors.push('segment must not repeat the country');
   if (errors.length) return { naming: null, errors };

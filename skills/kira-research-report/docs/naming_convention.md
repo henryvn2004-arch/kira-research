@@ -12,7 +12,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 | Type | `D` deep report · `S` industry snapshot | `D` |
 | Year | 4 digits | `2026` |
 | Segment | 1–4 words, sentence case, ≤ 28 chars, the noun a buyer would type | `coffee chains` |
-| Angle | ≤ 60 chars, a statement (no question mark, no hype words): the answer or the tension | `how a foreign brand wins the food-led gap` |
+| Angle | ≤ 60 chars, no hype words. A question the report answers is preferred (owner preference, not a rule): `How to win…?` · `Where to play…?` · `How to enter…?` · `How to expand…?` · `What are the key impacts of…?`. A statement (the answer or the tension) is also accepted | `how can a foreign brand win the food-led gap?` |
 
 ## What the script produces
 
@@ -40,7 +40,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 
 - Country and industry must be in the vocabulary. To cover a new one, add it to `naming_vocab.json` (code + EN/JA/KO labels + aliases); never invent a code in a title. Codes are never reused or renamed.
 - Segment: 1–4 words, sentence case (acronyms and proper nouns allowed), must not repeat the country.
-- Angle: required, ≤ 60 characters, a statement, no hype words (`voice_guide.md`).
+- Angle: required, ≤ 60 characters (a trailing `?` counts), no hype words (`voice_guide.md`). Question form preferred, statement allowed.
 - Slugs and codes are unique against Supabase `living_reports` (when `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` are set) and every `outputs/batch/*/naming.json` in progress.
 
 ## Where it is used in the pipeline
