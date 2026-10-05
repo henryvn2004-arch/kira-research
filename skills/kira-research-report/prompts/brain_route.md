@@ -12,6 +12,7 @@ The BRAIN route turns a topic into a **buyer question**, lets the KIRA brain pic
 
 Input: Stage 1 topic JSON + the queue row (`id`, `topic`, `country`, `industry`, `year`).
 
+0. Fetch the owner-approved topic brief (a planner output the owner reviewed): `node skills/kira-research-report/scripts/fetch-topic-brief.mjs "<id>" > "<scratch>/topic_brief.json"`. If the file is non-empty, read it. Its `buyer_question` is the question to answer, its `guiding_questions` (3-5) are **questions the report must answer** (put them in `framing.json` as `guiding_questions`), and `competency_label` + `stage` tell you which kind of analysis the buyer is at (explore, enter or expand). Still classify with the brain's `question_types` (step 4) and keep the owner's wording of the questions. An empty file means no brief: continue with step 1.
 1. If `data/report_framing.json` exists and has an entry for this `id`, use it as-is (owner-reviewed framing) and skip to Step B.
 2. Otherwise frame it yourself. **Default buyer:** a Japanese or Korean company (strategy / corporate-development / country-launch lead) deciding whether and how to enter, expand in, invest in or partner in this market. Adjust when the market is the buyer's home: JP market → Korean or other foreign entrant; KR market → Japanese entrant; AU resources → Japanese or Korean offtaker / investor. If the topic is about an incumbent's moves (e.g. "Jollibee dominance"), the buyer is a foreign challenger or a would-be partner of the incumbent.
 3. Write the question in one sentence a buyer would actually ask, keeping the topic's angle (e.g. "Philippines FMCG 2026: sari-sari modernization…" → "How should a Japanese FMCG brand win distribution in the Philippines as sari-sari stores modernise and modern trade hits its ceiling?").
@@ -40,6 +41,8 @@ Then read `<brain>/runner/expert_prompt.md` and follow its **Procedure steps 1�
 ## Step C — Turn the spine into a story and a page plan
 
 Read `prompts/storytelling.md` (arc, page grammar, hooks) and `docs/exhibit_library.md` (16 exhibit types, layouts) first.
+
+When a topic brief exists, every `guiding_questions` entry must be answered by at least one page, and the storyline's action titles must make the answers findable; list the mapping (question → page) in `brain_trace.md`.
 
 Produce `section_plan.json` in the design-mode format (so Stages 4–7 run unchanged) with `route: "BRAIN"`, `buyer_question`, `thesis_one_paragraph` (working answer: a hypothesis to test, not a conclusion), `storyline` (the action titles of all body pages in order; read alone, they must tell the story), `default_output_mode: "publish"` and `requires_confirm_step: false`.
 
