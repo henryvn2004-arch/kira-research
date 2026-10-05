@@ -193,7 +193,7 @@ test.describe('branded 404', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -239,6 +239,25 @@ test.describe('public APIs', () => {
     for (const it of items) expect(it.code).toMatch(/^VN-/);
   });
 
+  // Sprint S5 — library filters by investor stage + report type.
+  test('/api/library-list accepts ?stage=ENT', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&stage=ENT&limit=4');
+    expect(r.status()).toBe(200);
+    expect(r.headers()['content-type'] || '').toContain('application/json');
+    const body = await r.json();
+    expect(Array.isArray(body.items)).toBe(true);
+    for (const it of body.items) expect(it.stage).toBe('ENT');
+  });
+
+  test('/api/library-list accepts ?type=D', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&type=D&limit=4');
+    expect(r.status()).toBe(200);
+    expect(r.headers()['content-type'] || '').toContain('application/json');
+    const body = await r.json();
+    expect(Array.isArray(body.items)).toBe(true);
+    for (const it of body.items) expect(it.type).toBe('D');
+  });
+
   test('/api/insights-list returns JSON', async ({ request }) => {
     const r = await request.get('/api/insights-list?locale=en&limit=4');
     expect(r.status()).toBeLessThan(600);
@@ -249,6 +268,37 @@ test.describe('public APIs', () => {
   test('/api/leads rejects GET (POST only)', async ({ request }) => {
     const r = await request.get('/api/leads');
     expect(r.status()).toBe(405);
+  });
+
+  // Sprint S5 — subscription waitlist.
+  test('/api/waitlist rejects GET (POST only)', async ({ request }) => {
+    const r = await request.get('/api/waitlist');
+    expect(r.status()).toBe(405);
+  });
+
+  // Honeypot path: exercises the handler + email-helper import without writing a row.
+  test('/api/waitlist POST honeypot path returns 200 JSON', async ({ request }) => {
+    const r = await request.post('/api/waitlist', {
+      data: { email: 'ci@example.com', plan: 'month', hp: 'bot' },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    const body = await r.json();
+    expect(body.ok).toBe(true);
+  });
+
+  test('/api/admin-waitlist rejects unauthenticated', async ({ request }) => {
+    const r = await request.get('/api/admin-waitlist');
+    expect(r.status()).toBe(401);
+  });
+
+  test('/en/pricing has the waitlist form and no per-report price', async ({ page }) => {
+    await page.goto('/en/pricing', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#waitlist form#wl-form')).toHaveCount(1);
+    await expect(page.locator('#wl-form input[name="email"]')).toHaveCount(1);
+    await expect(page.locator('#wl-form input[name="hp"]')).toHaveCount(1);
+    const html = await page.content();
+    expect(html).not.toContain('$39');
   });
 
   test('/api/admin-leads rejects unauthenticated', async ({ request }) => {
@@ -466,7 +516,9 @@ test.describe('SEO surface', () => {
     // The page emits a @graph (Product + Dataset); older shape was a bare Product.
     const product = productLd['@graph'] ? productLd['@graph'].find(n => n['@type'] === 'Product') : productLd;
     expect(product['@type']).toBe('Product');
-    expect(product.offers.priceCurrency).toBe('USD');
+    // Sprint S5: the single-report Offer is only emitted while
+    // PER_REPORT_PURCHASE is on in _view.html (subscription model hides it).
+    if (product.offers) expect(product.offers.priceCurrency).toBe('USD');
 
     // BreadcrumbList JSON-LD
     await page.waitForSelector('script#ld-breadcrumb', { state: 'attached', timeout: 5_000 });

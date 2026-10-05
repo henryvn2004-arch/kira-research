@@ -87,6 +87,7 @@
         <div class="nav-links" id="kira-nav-links">
           <a href="${localPath('/library')}"          class="${('library'        + activeIf('library')).trim()}"        data-i18n="nav.library">Library</a>
           <a href="${localPath('/insights')}"         class="${('insights'       + activeIf('insights')).trim()}"       data-i18n="nav.insights">Insights</a>
+          <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
           <a href="${localPath('/custom-research/')}" class="${('nav-dropdown'   + activeIf('custom-research')).trim()}" data-i18n="nav.customResearch">Custom Research</a>
           <a href="${localPath('/profile')}" class="${('kira-my-library'   + activeIf('profile')).trim()}" data-i18n="nav.myLibrary" style="display:none">My Library</a>
           <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
@@ -111,6 +112,7 @@
     </div>
     <a href="${localPath('/library')}"          data-i18n="nav.library">Library</a>
     <a href="${localPath('/insights')}"         data-i18n="nav.insights">Insights</a>
+    <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
     <a href="${localPath('/custom-research/')}" data-i18n="nav.customResearch">Custom Research</a>
     <a href="${localPath('/profile')}" class="kira-my-library" data-i18n="nav.myLibrary" style="display:none">My Library</a>
     <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
@@ -126,7 +128,7 @@
         <a class="logo" href="${localPath('/')}">
           <span class="logo-mark"><img class="logo-img" src="/logo.png" alt="KIRA Research" width="176" height="22"></span>
         </a>
-        <p class="footer-tag" data-i18n="footer.tagline">Southeast Asia's specialized market research firm. Senior analysts, modern delivery.</p>
+        <p class="footer-tag" data-i18n="footer.tagline">ASEAN market-entry research for the teams that serve foreign investors.</p>
       </div>
       <div class="footer-col">
         <h3 data-i18n="footer.libraryCol">Library</h3>

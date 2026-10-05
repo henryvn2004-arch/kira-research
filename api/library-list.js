@@ -7,6 +7,8 @@
 //       &country=vietnam            (lowercase, optional)
 //       &industry=fintech           (lowercase, optional)
 //       &year=2026                  (optional)
+//       &stage=XPL|ENT|XPN          (optional; investor stage — explore / enter / expand)
+//       &type=D|S                   (optional; report type — deep report / snapshot)
 //       &q=VN-FSV | coffee chain    (optional; report-code prefix, or text in
 //                                    slug / segment / industry — see
 //                                    skills/kira-research-report/docs/naming_convention.md)
@@ -16,7 +18,7 @@
 // Returns { items: [...], total, facets } where each item carries enough
 // data to render a report-card (slug, title, country, industry, year, price,
 // preview excerpt). facets are { countries: {code: count, ...}, industries: {...} }
-// for the sidebar filter counts.
+// for the sidebar filter counts (plus years, stages, types).
 // ============================================================
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
@@ -53,6 +55,15 @@ const SORTS = {
   'price-desc': 'price.desc'
 };
 
+// Whitelists for the S5 library filters (living_reports.stage / report_type,
+// constrained the same way in migration 023). Case-insensitive input.
+const STAGES = new Set(['XPL', 'ENT', 'XPN']);
+const TYPES  = new Set(['D', 'S']);
+function upperPick(s, allowed) {
+  const v = typeof s === 'string' ? s.trim().toUpperCase() : '';
+  return allowed.has(v) ? v : '';
+}
+
 function clean(s) { return typeof s === 'string' ? s.trim().toLowerCase() : ''; }
 function int(s, def, max) {
   const n = parseInt(s, 10);
@@ -70,6 +81,8 @@ export default async function handler(req, res) {
   const country  = clean(url.searchParams.get('country'));
   const industry = clean(url.searchParams.get('industry'));
   const year     = url.searchParams.get('year');
+  const stage    = upperPick(url.searchParams.get('stage'), STAGES);
+  const type     = upperPick(url.searchParams.get('type'),  TYPES);
   const q        = (url.searchParams.get('q') || '').trim().slice(0, 60);
   const sort     = SORTS[url.searchParams.get('sort')] || SORTS.recent;
   const limit    = int(url.searchParams.get('limit'),  24, 96);
@@ -81,6 +94,8 @@ export default async function handler(req, res) {
     if (country)  where.push(`country=ilike.${encodeURIComponent(country)}`);
     if (industry) where.push(`industry=ilike.${encodeURIComponent(industry)}`);
     if (year && /^\d{4}$/.test(year)) where.push(`year=eq.${year}`);
+    if (stage) where.push(`stage=eq.${stage}`);
+    if (type)  where.push(`report_type=eq.${type}`);
     if (q) {
       // Code prefix (VN, VN-FSV, VN-FSV-ENT-D26-01) or text in slug / segment /
       // industry / country. Characters PostgREST treats as syntax are dropped.
@@ -100,7 +115,7 @@ export default async function handler(req, res) {
       `&order=${sort}` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,code,slug,country,industry,year,pages,price`;
+      `&select=id,code,slug,country,industry,year,pages,price,stage,report_type`;
 
     const { rows: reports, total } = await sb(`living_reports?${baseQs}`);
 
@@ -140,6 +155,8 @@ export default async function handler(req, res) {
         year:     r.year,
         pages:    r.pages,
         price:    r.price,
+        stage:    r.stage || null,
+        type:     r.report_type || null,
         title:    (t && t.title) || null,
         excerpt:  (lede ? String(lede).slice(0, 240) : null),
         locale:   t ? t.locale : null,
@@ -150,9 +167,9 @@ export default async function handler(req, res) {
     // ── 4) Facets (counts for sidebar) ─────────────────────────
     // One query, no filters except status=published, just to know totals.
     const { rows: all } = await sb(
-      'living_reports?status=eq.published&select=country,industry,year&limit=2000'
+      'living_reports?status=eq.published&select=country,industry,year,stage,report_type&limit=2000'
     );
-    const facets = { countries: {}, industries: {}, years: {} };
+    const facets = { countries: {}, industries: {}, years: {}, stages: {}, types: {} };
     all.forEach(r => {
       const c = (r.country || '').toLowerCase();
       const i = (r.industry || '').toLowerCase();
@@ -160,6 +177,8 @@ export default async function handler(req, res) {
       if (c) facets.countries[c]  = (facets.countries[c]  || 0) + 1;
       if (i) facets.industries[i] = (facets.industries[i] || 0) + 1;
       if (y) facets.years[y]      = (facets.years[y]      || 0) + 1;
+      if (r.stage)       facets.stages[r.stage]      = (facets.stages[r.stage]      || 0) + 1;
+      if (r.report_type) facets.types[r.report_type] = (facets.types[r.report_type] || 0) + 1;
     });
     facets.totalPublished = all.length;
 

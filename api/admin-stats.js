@@ -11,6 +11,7 @@
 //     reports:     { total, by_status: { draft, published } },
 //     insights:    { total, by_status: { draft, published } },
 //     purchases:   { count, revenue_usd },
+//     waitlist:    { total, by_plan: { week, month, annual, not-sure }, by_status: {...} },
 //     recent_leads:     [ { id, name, company, status, created_at }, ... up to 5 ],
 //     recent_purchases: [ { id, slug, locale, amount, currency, created_at }, ... up to 5 ],
 //     pipeline:    { state, by_status, work_left, completed_7d, last_batch_at, hours_since } | null
@@ -159,7 +160,8 @@ export default async function handler(req, res) {
       purchasesAll,
       recentLeads,
       recentPurchases,
-      pipeline
+      pipeline,
+      waitlistAll
     ] = await Promise.all([
       sb('leads?select=status&limit=10000'),
       sb('living_reports?select=status&limit=10000'),
@@ -167,7 +169,8 @@ export default async function handler(req, res) {
       sb('purchases?select=amount,currency,status&status=eq.completed&limit=10000'),
       sb('leads?select=id,name,company,status,created_at,locale&order=created_at.desc&limit=5'),
       sb('purchases?select=id,slug,locale,amount,currency,created_at,status&status=eq.completed&order=created_at.desc&limit=5'),
-      pipelineHealth()
+      pipelineHealth(),
+      sb('waitlist?select=plan,status&limit=10000')   // migration 025; zero until applied
     ]);
 
     // Aggregate revenue (sum amount of completed purchases). All Year 1 prices
@@ -191,6 +194,11 @@ export default async function handler(req, res) {
       purchases: {
         count:        purchasesAll.rows.length,
         revenue_usd:  Math.round(revenue * 100) / 100   // 2dp
+      },
+      waitlist: {
+        total:   waitlistAll.rows.length,
+        by_plan: tally(waitlistAll.rows, 'plan'),
+        by_status: tally(waitlistAll.rows, 'status')
       },
       recent_leads:     recentLeads.rows,
       recent_purchases: recentPurchases.rows,

@@ -49,10 +49,11 @@
     /* KPI grid — 4 cards across desktop, 2x2 tablet, 1-col mobile */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       margin-bottom: 48px;
     }
+    @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 520px) { .kpi-grid { grid-template-columns: 1fr; } }
 
@@ -202,6 +203,7 @@
       <span class="label">ADMIN</span>
       <a href="/en/admin/" class="active">Dashboard</a>
       <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
       <a href="/en/admin/reports">Reports</a>
       <a href="/en/admin/insights">Insights</a>
       <a href="/en/admin/transactions">Transactions</a>
@@ -356,6 +358,15 @@
           <div class="kpi-sub">
             <strong>${stats.purchases.count}</strong> purchase${stats.purchases.count === 1 ? '' : 's'}
           </div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">WAITLIST</span>
+          <div class="kpi-value">${(stats.waitlist && stats.waitlist.total) || 0}</div>
+          <div class="kpi-sub">
+            <strong>${(stats.waitlist && stats.waitlist.by_status && stats.waitlist.by_status.new) || 0}</strong> new ·
+            <strong>${(stats.waitlist && stats.waitlist.by_plan && stats.waitlist.by_plan.annual) || 0}</strong> annual
+          </div>
+          <a href="/en/admin/waitlist">View all →</a>
         </div>
       </div>`;
 
