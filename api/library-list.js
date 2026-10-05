@@ -12,7 +12,7 @@
 //       &q=VN-FSV | coffee chain    (optional; report-code prefix, or text in
 //                                    slug / segment / industry — see
 //                                    skills/kira-research-report/docs/naming_convention.md)
-//       &sort=recent|price-asc|price-desc  (default: recent)
+//       &sort=recent|oldest|price-asc|price-desc  (default: recent)
 //       &limit=24&offset=0
 //
 // Returns { items: [...], total, facets } where each item carries enough
@@ -53,6 +53,7 @@ function cors(res) {
 const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 const SORTS = {
   'recent':     'published_at.desc.nullslast',
+  'oldest':     'published_at.asc.nullslast',
   'price-asc':  'price.asc',
   'price-desc': 'price.desc'
 };

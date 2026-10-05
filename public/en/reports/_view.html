@@ -34,171 +34,31 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js"></script>
 
-  <style>
-    .rpt-loading, .rpt-404 { padding: 96px 0; text-align: center; color: var(--muted); }
-    .rpt-404 h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 800; font-size: 28px;
-      color: var(--text); margin-bottom: 14px;
-    }
-
-    .rpt-fallback-banner {
-      background: rgba(30,111,255,0.08);
-      border: 1px solid rgba(30,111,255,0.25);
-      border-radius: 6px;
-      padding: 12px 16px;
-      font-size: 13px; color: var(--muted);
-      margin-bottom: 32px;
-    }
-    .rpt-fallback-banner strong { color: var(--text); }
-
-    .rpt-cancel-banner {
-      background: rgba(180, 100, 50, 0.1);
-      border: 1px solid rgba(180, 100, 50, 0.3);
-      border-radius: 6px;
-      padding: 12px 16px;
-      font-size: 13px; color: var(--muted);
-      margin-bottom: 24px;
-    }
-    .rpt-capturing {
-      padding: 28px;
-      background: var(--surface);
-      border: 1px solid var(--primary);
-      border-radius: 8px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 32px;
-    }
-
-    /* Owned state — full content section + download */
-    .rpt-owned-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      background: rgba(30,111,255,0.12);
-      color: var(--primary);
-      border-radius: 100px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-    .rpt-owned-tag::before {
-      content: "";
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--primary);
-    }
-    .rpt-full-body {
-      margin-top: 40px;
-      padding-top: 32px;
-      border-top: 1px solid var(--border);
-    }
-    .rpt-full-body h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 800;
-      font-size: 26px;
-      line-height: 1.2;
-      letter-spacing: -0.015em;
-      color: var(--text);
-      margin: 40px 0 16px;
-    }
-    .rpt-full-body h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--text);
-      margin: 32px 0 12px;
-    }
-    .rpt-full-body p {
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.8;
-      margin-bottom: 20px;
-    }
-    .rpt-full-body p strong { color: var(--text); }
-    .pdf-download-btn {
-      display: block;
-      width: 100%;
-      padding: 14px 18px;
-      text-align: center;
-      background: var(--surface-2);
-      border: 1px solid var(--primary);
-      border-radius: 4px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      transition: all 0.2s;
-    }
-    .pdf-download-btn:hover { background: var(--primary); }
-    .pdf-pending {
-      padding: 14px;
-      background: var(--surface-2);
-      border: 1px dashed var(--border-strong);
-      border-radius: 4px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .buy-btn:disabled { opacity: 0.5; cursor: wait; }
-
-    /* Sprint S5 — free executive summary + subscription box */
-    .rpt-free-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      background: rgba(30,111,255,0.10);
-      color: var(--primary);
-      border-radius: 100px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-    .rpt-free-note { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-    .sub-box-lede { font-size: 14px; line-height: 1.55; color: var(--text); margin: 6px 0 18px; }
-    .sub-box-note { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 10px 0 4px; text-align: center; }
-    .sub-box-plans { display: block; margin-top: 14px; font-size: 13px; color: var(--primary); text-decoration: none; }
-    .rpt-glossary { margin: 40px 0; }
-    .rpt-glossary h4 {
-      font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 11px;
-      color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;
-    }
-    .rpt-glossary dl { margin: 0; }
-    .rpt-gloss-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .rpt-gloss-row dt { font-weight: 600; color: var(--text); font-size: 14px; margin-bottom: 4px; }
-    .rpt-gloss-row dd { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-  </style>
+  <link rel="stylesheet" href="/css/research.css" />
 </head>
 <body>
 
   <!-- nav + footer injected by /js/nav.js -->
 
-  <div class="container rpt-page" id="rpt-root">
-    <div class="rpt-loading">Loading report…</div>
+  <div id="rpt-root">
+    <div class="r-container" style="padding-block:96px;text-align:center;color:var(--muted)">…</div>
   </div>
 
-  <!-- Unlock modal — shown when user clicks a LOCKED section in the TOC. -->
-  <div id="unlock-modal" class="unlock-modal-overlay" hidden>
-    <div class="unlock-modal-card" role="dialog" aria-modal="true" aria-labelledby="unlock-modal-title">
-      <button class="unlock-modal-close" id="unlock-modal-close" aria-label="Close">×</button>
-      <div class="unlock-modal-eyebrow">Locked Section</div>
+  <!-- Locked-section dialog: opened from a locked row in the contents. -->
+  <div id="unlock-modal" class="rd-modal" hidden>
+    <div class="rd-modal-card" role="dialog" aria-modal="true" aria-labelledby="unlock-modal-title">
+      <button class="x" id="unlock-modal-close" aria-label="Close"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="rd-eyebrow" id="unlock-modal-eyebrow"></div>
       <h3 id="unlock-modal-title">Section</h3>
-      <p id="unlock-modal-body">This section is part of the full report.</p>
-      <button class="buy-btn" id="unlock-modal-buy">Unlock full report →</button>
-      <div class="unlock-modal-footnote">Single-user license · Free updates for 12 months</div>
+      <p id="unlock-modal-body"></p>
+      <button class="r-btn r-btn-primary r-btn-block" id="unlock-modal-buy"></button>
+      <p class="unlock-modal-footnote" style="font-size:12px;color:var(--muted-dim);text-align:center;margin:10px 0 0"></p>
     </div>
   </div>
 
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
+  <script src="/js/research-i18n.js" defer></script>
 
   <script type="module">
     // ── 1) URL parsing ───────────────────────────────────
@@ -229,9 +89,11 @@
     const PREVIEW_PAGES  = 5;
 
     const root = document.getElementById('rpt-root');
+    const R = window.kiraR, t = R.t;   // /js/research-i18n.js (deferred, runs before this module)
+    const msg = (title, body) => '<div class="r-container"><div class="r-empty"><h3>' + escapeHtml(title) + '</h3>' + (body ? '<p>' + body + '</p>' : '') + '<a class="r-btn r-btn-outline" href="/' + locale + '/library">' + escapeHtml(t('backLibrary')) + '</a></div></div>';
 
     if (!slug) {
-      root.innerHTML = '<div class="rpt-404"><h2>No report selected</h2><p><a href="/' + locale + '/library" style="color:var(--primary)">Back to library →</a></p></div>';
+      root.innerHTML = msg(t('notFound'));
       // Stop module execution.
       throw new Error('halt');
     }
@@ -244,7 +106,7 @@
     // instead of seeing the preview flash, then a swap.
     let captureResult = null;
     if (paypalReturn === 'success' && paypalToken) {
-      root.innerHTML = '<div class="rpt-capturing"><strong style="color:var(--text);">Finalising your purchase…</strong><br/>Please don\'t close this tab.</div>';
+      root.innerHTML = msg('Finalising your purchase…', 'Please do not close this tab.');
       captureResult = await capturePurchase(paypalToken);
       // Strip query string from URL so refresh doesn't re-capture.
       const cleanUrl = window.location.pathname;
@@ -256,19 +118,14 @@
     try {
       const r = await fetch('/api/library-report?slug=' + encodeURIComponent(slug) + '&locale=' + locale);
       if (r.status === 404) {
-        root.innerHTML =
-          '<div class="rpt-404">' +
-            '<h2>Report not found</h2>' +
-            '<p>The report <code style="color:var(--primary)">' + escapeHtml(slug) + '</code> isn\'t in the library yet.</p>' +
-            '<p style="margin-top:18px;"><a href="/' + locale + '/library" style="color:var(--primary)">Back to library →</a></p>' +
-          '</div>';
+        root.innerHTML = msg(t('notFound'), escapeHtml(t('notFoundBody')));
         throw new Error('halt');
       }
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
     } catch (err) {
       if (err && err.message === 'halt') throw err;
-      root.innerHTML = '<div class="rpt-404"><h2>Couldn\'t load report</h2><p>Please retry or browse the <a href="/' + locale + '/library" style="color:var(--primary)">library</a>.</p></div>';
+      root.innerHTML = msg(t('loadError'));
       throw new Error('halt');
     }
 
@@ -420,7 +277,7 @@
     // ══════════════════════════════════════════════════════
     function escapeHtml(s) {
       return String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     function updateHead(d) {
@@ -565,494 +422,308 @@
       el.textContent = JSON.stringify(payload);
     }
 
-    // Renders 1-2 public data tables from preview_tables JSON.
-    // These are fully crawlable by Googlebot and LLM scrapers — no paywall.
-    // Format: [{title: string, source: string, html: string}]
+
+    // ══════════════════════════════════════════════════════
+    //  Page sections (library redesign, 2026-10)
+    // ══════════════════════════════════════════════════════
+    // Public data tables from preview_tables JSON ([{title, source, html}]);
+    // fully crawlable, shown before the paywall.
     function renderPreviewTables(tables) {
       if (!Array.isArray(tables) || !tables.length) return '';
-      return tables.slice(0, 2).map(t => {
-        if (!t || !t.html) return '';
-        return (
-          '<section class="rpt-section rpt-preview-table">' +
-            (t.title ? '<h3>' + escapeHtml(t.title) + '</h3>' : '') +
-            '<div class="rpt-table-wrap">' + t.html + '</div>' +
-            (t.source ? '<p class="rpt-table-source"><em>Source: ' + escapeHtml(t.source) + '</em></p>' : '') +
-          '</section>'
-        );
+      return tables.slice(0, 2).map(tb => {
+        if (!tb || !tb.html) return '';
+        return '<div class="rd-card">' +
+          (tb.title ? '<h3>' + escapeHtml(tb.title) + '</h3>' : '') +
+          '<div class="rd-table">' + tb.html + '</div>' +
+          (tb.source ? '<p class="src">' + escapeHtml(t('source')) + ': ' + escapeHtml(tb.source) + '</p>' : '') +
+        '</div>';
       }).join('');
     }
 
     function renderChart(c) {
       if (!c || !Array.isArray(c.bars) || !c.bars.length) return '';
       const bars = c.bars.map(b => {
-        const pct = Math.max(0, Math.min(100, Number(b.pct) || 0));
-        return '<div class="chart-bar" data-label="' + escapeHtml(b.label) +
-               '" data-value="' + escapeHtml(b.value) +
-               '" style="height:' + pct + '%;"></div>';
+        const pct = Math.max(2, Math.min(100, Number(b.pct) || 0));
+        return '<div class="bar" style="height:' + pct + '%"><span class="v">' + escapeHtml(b.value) + '</span><span class="l">' + escapeHtml(b.label) + '</span></div>';
       }).join('');
-      return (
-        '<div class="chart-card">' +
-          '<div class="chart-head">' +
-            '<span class="chart-title">' + escapeHtml(c.title || '') + '</span>' +
-            (c.subtitle ? '<span class="chart-subtitle">' + escapeHtml(c.subtitle) + '</span>' : '') +
-          '</div>' +
-          '<div class="chart-bars">' + bars + '</div>' +
-        '</div>'
-      );
+      return '<div class="rd-card">' +
+        '<h3>' + escapeHtml(c.title || '') + '</h3>' +
+        (c.subtitle ? '<p class="rd-note" style="margin:0">' + escapeHtml(c.subtitle) + '</p>' : '') +
+        '<div class="rd-chart">' + bars + '</div>' +
+      '</div>';
     }
 
-    // Sprint 8 — internal linking. Show up to 3 related insights at the bottom of
-    // the report. Drives discovery + extra organic surface area. Cards link to
-    // /<locale>/insights/<slug> via the same path users get from /insights/.
-    function renderRelatedInsights(items) {
-      if (!Array.isArray(items) || !items.length) return '';
-      const cards = items.map(it => {
-        const tagLabel = [it.country, it.industry].filter(Boolean)
-          .map(s => s.toUpperCase()).join(' · ');
-        return (
-          '<a href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '" class="rpt-insight-card">' +
-            '<div class="rpt-insight-meta">' +
-              '<span class="cat">' + escapeHtml(tagLabel || 'FIELD NOTE') + '</span>' +
-              (it.read_time ? '<span>' + escapeHtml(it.read_time.toUpperCase()) + '</span>' : '') +
-            '</div>' +
-            '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
-            (it.excerpt ? '<p>' + escapeHtml(it.excerpt) + '</p>' : '') +
-            '<div class="rpt-insight-cta">Read field note →</div>' +
-          '</a>'
-        );
-      }).join('');
-      const intro = items.length > 1
-        ? "Short reads from our analyst desk on the topics this report covers — sourced field signals, not generated content."
-        : "A short read from our analyst desk on a topic this report covers.";
-      return (
-        '<section class="rpt-related-insights">' +
-          '<h4>Field notes from this market</h4>' +
-          '<p class="rpt-related-intro">' + intro + '</p>' +
-          '<div class="rpt-related-grid">' + cards + '</div>' +
-        '</section>'
-      );
+    function cardImg(cover) {
+      return '<div class="img">' + (cover ? '<img src="' + escapeHtml(cover.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">' : '') + '</div>';
+    }
+    // "Continue reading": related insights first, then related reports, max 3.
+    function renderContinue(d) {
+      const ins = (d.relatedInsights || []).map(it => (
+        '<a class="rcard" href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '">' + cardImg(it.cover) +
+          '<div class="body"><div class="kick"><span>' + escapeHtml([R.country(it.country), it.industry].filter(Boolean).join(' · ')) + '</span>' +
+            (it.read_time ? '<span class="d">' + escapeHtml(it.read_time) + '</span>' : '') + '</div>' +
+          '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
+          (it.excerpt ? '<p>' + escapeHtml(it.excerpt) + '</p>' : '') +
+          '<div class="foot"><span></span><span class="go">' + escapeHtml(t('readArticle')) + R.icon('arrow') + '</span></div></div></a>'));
+      const reps = (d.relatedReports || []).map(it => (
+        '<a class="rcard" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' + cardImg(it.cover) +
+          '<div class="body"><div class="kick"><span>' + escapeHtml([R.country(it.country), it.industry].filter(Boolean).join(' · ')) + '</span>' +
+            (it.year ? '<span class="d">' + escapeHtml(it.year) + '</span>' : '') + '</div>' +
+          '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
+          '<div class="foot"><span></span><span class="go">' + escapeHtml(t('viewReport')) + R.icon('arrow') + '</span></div></div></a>'));
+      const cards = ins.slice(0, 3).concat(reps).slice(0, 3);
+      if (!cards.length) return '';
+      return '<section class="rd-sec" id="related"><h2 class="rd-sec-h"><span class="ib">' + R.icon('book') + '</span>' + escapeHtml(t('continueReading')) + '</h2>' +
+        '<div class="rcards">' + cards.join('') + '</div></section>';
     }
 
-    // Glossary — part of the free executive summary. glossary_json is
-    // [{term, definition}] from /api/library-report (migration 022).
     function renderGlossary(list) {
       if (!Array.isArray(list) || !list.length) return '';
       const rows = list.filter(g => g && g.term).map(g =>
-        '<div class="rpt-gloss-row"><dt>' + escapeHtml(g.term) + '</dt><dd>' + escapeHtml(g.definition || '') + '</dd></div>'
-      ).join('');
-      if (!rows) return '';
-      return (
-        '<section class="rpt-section rpt-glossary">' +
-          '<h4>Glossary</h4>' +
-          '<dl>' + rows + '</dl>' +
-        '</section>'
-      );
+        '<div><dt>' + escapeHtml(g.term) + '</dt><dd>' + escapeHtml(g.definition || '') + '</dd></div>').join('');
+      return rows ? '<div class="rd-card"><h3>' + escapeHtml(t('glossary')) + '</h3><dl class="rd-gloss">' + rows + '</dl></div>' : '';
     }
 
-    function renderToc(toc, ownsContent) {
+    // Contents list (main column) and the sticky "In this report" rail.
+    // Free sections scroll to the preview; locked ones open the dialog.
+    function tocAttrs(row, owns) {
+      if (owns) return '';
+      return row.locked === false ? ' data-preview' : ' data-locked="' + escapeHtml(row.name) + '"';
+    }
+    function renderContents(toc, owns) {
       if (!Array.isArray(toc) || !toc.length) return '';
-      const items = toc.map(t => {
-        const isPreview        = t.locked === false;
-        const isLockable       = !ownsContent && !isPreview;
-        const isPreviewScroll  = !ownsContent && isPreview;
-        const interactive      = isLockable || isPreviewScroll;
-        // .preview = blue-tinted (free or owned); .lockable = clickable, opens modal;
-        // .preview-scroll = clickable, scrolls to the iframe preview above.
-        let cls = '';
-        if (ownsContent || isPreview) cls += ' preview';
-        if (isLockable)               cls += ' lockable';
-        if (isPreviewScroll)          cls += ' preview-scroll';
-        const tag = interactive ? 'button' : 'div';
-        const typeAttr = interactive ? ' type="button"' : '';
-        const dataAttr = isLockable
-          ? ' data-section="' + escapeHtml(t.name) + '"'
-          : '';
-        return '<' + tag + ' class="toc-item' + cls + '"' + typeAttr + dataAttr + '>' +
-                 '<span class="num">' + escapeHtml(t.num) + '</span>' +
-                 '<span class="name">' + escapeHtml(t.name) + '</span>' +
-                 '<span class="pages">' + escapeHtml(t.pages || '') + '</span>' +
-               '</' + tag + '>';
-      }).join('');
-      return (
-        '<div class="toc">' +
-          '<h4>Table of Contents · ' + toc.length + ' Sections</h4>' +
-          items +
-        '</div>'
-      );
+      return '<div class="rd-card"><h3>' + escapeHtml(t('contents', toc.length)) + '</h3><ol class="rd-contents">' +
+        toc.map(r => {
+          const free = owns || r.locked === false;
+          return '<li class="' + (free ? 'free' : '') + '"><span class="num">' + escapeHtml(r.num) + '</span>' +
+            '<button type="button"' + tocAttrs(r, owns) + '>' + escapeHtml(r.name) + '</button>' +
+            (free ? '<span style="font-size:12px;color:var(--muted-dim)">' + escapeHtml(r.pages || '') + '</span>' : R.icon('lock')) + '</li>';
+        }).join('') + '</ol></div>';
+    }
+    function renderRail(toc, owns) {
+      if (!Array.isArray(toc) || !toc.length) return '<aside class="rd-toc" hidden></aside>';
+      return '<aside class="rd-toc" aria-label="' + escapeHtml(t('inThisReport')) + '"><h2>' + escapeHtml(t('inThisReport')) + '</h2><ol>' +
+        toc.map(r => '<li><button type="button" class="' + ((owns || r.locked === false) ? 'free' : '') + '"' + tocAttrs(r, owns) + '>' +
+          '<span class="num">' + escapeHtml(r.num) + '</span><span>' + escapeHtml(r.name) + '</span></button></li>').join('') +
+        '</ol></aside>';
     }
 
+    // Preview iframe: source HTML is 1280×720 per page, scaled to the column.
     function renderPreviewFrame(d, currentLocale) {
-      const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) +
-                  '&locale=' + encodeURIComponent(currentLocale);
-      const totalH = PREVIEW_PAGE_H * PREVIEW_PAGES;
-      const price  = d.price || 39;
-      return (
-        '<section class="rpt-preview-section">' +
-          '<div class="rpt-preview-eyebrow">Inside the report · Pages 1–' + PREVIEW_PAGES + '</div>' +
-          '<div class="rpt-preview-frame" data-w="' + PREVIEW_PAGE_W +
-                                       '" data-h="' + totalH + '">' +
-            '<iframe src="' + src + '" ' +
-                    'title="Report preview — first ' + PREVIEW_PAGES + ' pages" ' +
-                    'loading="lazy" ' +
-                    'referrerpolicy="same-origin"></iframe>' +
-            '<div class="rpt-preview-fade" aria-hidden="true"></div>' +
-            '<div class="rpt-preview-cta">' +
-              (PER_REPORT_PURCHASE
-                ? '<div class="rpt-preview-cta-lede">Continue reading the full report</div>' +
-                  '<button class="buy-btn" id="preview-buy-btn">' +
-                    'Unlock full report — $' + price + ' →' +
-                  '</button>'
-                : '<div class="rpt-preview-cta-lede">The full report is part of the subscription</div>' +
-                  '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Request early access →</a>') +
-            '</div>' +
+      const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
+      const cta = PER_REPORT_PURCHASE
+        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 39) + '</button>'
+        : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
+      return '<section class="rd-sec rpt-preview-section" id="preview">' +
+        '<h2 class="rd-sec-h"><span class="ib">' + R.icon('pages') + '</span>' + escapeHtml(t('previewTitle')) + '</h2>' +
+        '<div class="rd-preview">' +
+          '<div class="rd-preview-frame" data-w="' + PREVIEW_PAGE_W + '" data-h="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '">' +
+            '<iframe src="' + src + '" title="' + escapeHtml(t('previewTitle')) + '" loading="lazy" referrerpolicy="same-origin" width="' + PREVIEW_PAGE_W + '" height="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '"></iframe>' +
           '</div>' +
-        '</section>'
-      );
+          '<div class="rd-preview-bar"><span>' + escapeHtml(t('previewPages', PREVIEW_PAGES)) + (d.pages ? ' / ' + d.pages : '') + '</span>' + cta + '</div>' +
+        '</div></section>';
     }
-
     function fitPreviewFrame() {
-      document.querySelectorAll('.rpt-preview-frame').forEach(wrap => {
+      document.querySelectorAll('.rd-preview-frame').forEach(wrap => {
         const iframe = wrap.querySelector('iframe');
         if (!iframe) return;
-        const w = Number(wrap.dataset.w) || PREVIEW_PAGE_W;
-        const scale = wrap.clientWidth / w;
+        const scale = wrap.clientWidth / (Number(wrap.dataset.w) || PREVIEW_PAGE_W);
         iframe.style.transform = 'scale(' + scale + ')';
+        wrap.style.height = Math.round((Number(wrap.dataset.h) || PREVIEW_PAGE_H) * scale) + 'px';
       });
     }
 
-    // Cross-sell: up to 3 other reports matching country/industry/year. Loaded
-    // from /api/library-report (relatedReports key). Cards link to the full
-    // report page in the same locale.
-    function renderRelatedReports(items) {
-      if (!Array.isArray(items) || !items.length) return '';
-      const cards = items.map(it => {
-        const tagLabel = [it.country, it.industry].filter(Boolean)
-          .map(s => s.toUpperCase()).join(' · ');
-        const yearStr  = it.year ? String(it.year) : '';
-        return (
-          '<a href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '" class="rpt-report-card">' +
-            '<div class="rpt-report-meta">' +
-              '<span class="cat">' + escapeHtml(tagLabel || 'REPORT') + '</span>' +
-              (yearStr ? '<span>' + escapeHtml(yearStr) + '</span>' : '') +
-            '</div>' +
-            '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
-            '<div class="rpt-report-foot">' +
-              (PER_REPORT_PURCHASE
-                ? '<span class="rpt-report-price">$' + (it.price || 39) + '</span>'
-                : '<span class="rpt-report-price">Free summary</span>') +
-              '<span class="rpt-report-cta">Read report →</span>' +
-            '</div>' +
-          '</a>'
-        );
-      }).join('');
-      const intro = items.length > 1
-        ? "Adjacent markets and years our analysts cover — same depth, different angles."
-        : "Another market our analysts cover at the same depth.";
-      return (
-        '<section class="rpt-related-reports">' +
-          '<h4>Related reports</h4>' +
-          '<p class="rpt-related-intro">' + intro + '</p>' +
-          '<div class="rpt-related-grid">' + cards + '</div>' +
-        '</section>'
-      );
+    function renderLangLinks(slug, currentLocale, available) {
+      const labels = { en: 'English', ja: '日本語', ko: '한국어', zh: '简体中文' };
+      return '<div class="rd-langs">' + ['en', 'ja', 'ko', 'zh'].map(loc => {
+        const ok = available.includes(loc);
+        return '<a href="' + (ok ? '/' + loc + '/reports/' + encodeURIComponent(slug) : '#') + '" class="' + (loc === currentLocale ? 'on' : '') + (ok ? '' : ' off') + '"' +
+          (ok ? '' : ' aria-disabled="true" title="' + escapeHtml(t('notAvailable')) + '"') + ' hreflang="' + (loc === 'zh' ? 'zh-Hans' : loc) + '">' + labels[loc] + '</a>';
+      }).join('') + '</div>';
     }
 
-    function renderLangSwitcher(slug, currentLocale, available) {
-      const labels = { en: 'EN', ja: '日本語', ko: '한국어', zh: '简体中文' };
-      const links = ['en','ja','ko','zh'].map(loc => {
-        const isActive = loc === currentLocale;
-        const isPublished = available.includes(loc);
-        const cls =
-          (loc === 'en' ? '' : 'lang-' + loc) +
-          (isActive ? ' active' : '') +
-          (!isPublished ? ' disabled' : '');
-        const href = isPublished ? ('/' + loc + '/reports/' + slug) : '#';
-        const titleAttr = isPublished ? '' : ' title="Not yet available in this language"';
-        return '<a href="' + href + '" class="' + cls.trim() + '"' +
-               (isPublished ? '' : ' aria-disabled="true" onclick="return false"') +
-               titleAttr + '>' + labels[loc] + '</a>';
-      }).join('');
-      return '<span class="label">Lang</span>' + links;
+    // Access box: owned copy → download; per-report sale on → price + buy;
+    // otherwise the subscription waitlist (S5 default).
+    function renderAccessBox(d, state) {
+      const incl = '<ul class="rd-incl">' + ['incl1', 'incl2', 'incl3', 'incl4'].map(k => '<li>' + R.icon('check') + escapeHtml(t(k)) + '</li>').join('') + '</ul>';
+      if (state.purchased) {
+        return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('owned')) + '</h3>' +
+          (state.pdfUrl ? '<a class="r-btn r-btn-primary r-btn-block" href="' + escapeHtml(state.pdfUrl) + '" download>' + escapeHtml(t('downloadPdf')) + '</a>'
+                        : '<p>' + escapeHtml(t('pdfPending')) + '</p>') + '</div>';
+      }
+      if (PER_REPORT_PURCHASE) {
+        return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
+          '<p style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 39) + '</p>' +
+          (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
+          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' + incl + '</div>';
+      }
+      return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3><p>' + escapeHtml(t('accessBody')) + '</p>' +
+        (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
+        '<a class="r-btn r-btn-primary r-btn-block" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>' +
+        '<p class="small">' + escapeHtml(t('nothingCharged')) + '</p>' + incl +
+        '<p style="margin:14px 0 0"><a class="r-link" href="/' + locale + '/pricing">' + escapeHtml(t('seePlans')) + ' →</a></p></div>';
     }
 
     function renderFullBody(full) {
       if (!full) return '';
-
-      // full_content is JSONB. Shape: { sections: [{ heading, body_html }, ...] }
-      // OR a single HTML blob. Be defensive against both.
-      if (typeof full === 'string') {
-        return '<section class="rpt-full-body">' + full + '</section>';
-      }
+      if (typeof full === 'string') return '<section class="rd-sec rd-prose report-full-content">' + full + '</section>';
       const sections = Array.isArray(full.sections) ? full.sections : [];
-      if (!sections.length) {
-        return '<section class="rpt-full-body"><p style="color:var(--muted-dim);font-style:italic;">' +
-               'Full content is being prepared. The PDF download (if available) contains the complete report.' +
-               '</p></section>';
-      }
-      const blocks = sections.map(s => {
-        const heading = s.heading ? '<h2>' + escapeHtml(s.heading) + '</h2>' : '';
-        // body_html is admin-trusted (writable only via service-key).
-        const body = s.body_html || '';
-        return '<section>' + heading + body + '</section>';
-      }).join('');
-      return '<div class="rpt-full-body">' + blocks + '</div>';
+      if (!sections.length) return '<section class="rd-sec rd-prose report-full-content"><p>' + escapeHtml(t('pdfPending')) + '</p></section>';
+      // body_html is admin-trusted (writable only with the service key).
+      return '<div class="rd-sec rd-prose report-full-content">' + sections.map(s =>
+        '<section>' + (s.heading ? '<h2 class="rd-sec-h">' + escapeHtml(s.heading) + '</h2>' : '') + (s.body_html || '') + '</section>').join('') + '</div>';
     }
 
-    // Subscription box shown instead of the $39 buy box while
-    // PER_REPORT_PURCHASE is false. Owners of a purchased copy still get
-    // the original owned-state box (download link) via renderBuyBox().
-    function renderSubscribeBox(d, state) {
-      const ownedNote = state.anyLocale
-        ? '<div class="pdf-pending" style="margin-bottom:12px;">You already own this report in <strong style="color:var(--primary);text-transform:uppercase;">' + escapeHtml(state.ownedLocale || 'EN') + '</strong>.</div>'
-        : '';
-      return (
-        '<aside class="buy-box">' +
-          '<div class="buy-tag">Executive summary · free</div>' +
-          '<p class="sub-box-lede">The executive summary is free to read. The full report is part of the KIRA Research subscription.</p>' +
-          '<div class="buy-lang-select" aria-label="Report language">' +
-            renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
-          '</div>' +
-          ownedNote +
-          '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Request early access →</a>' +
-          '<div class="sub-box-note">Subscriptions are not yet open. Nothing is charged now.</div>' +
-          '<div class="buy-includes">' +
-            '<h6>The subscription includes</h6>' +
-            '<div class="include-item">Unlimited online reading</div>' +
-            '<div class="include-item">PDF downloads (monthly allowance)</div>' +
-            '<div class="include-item">All charts &amp; data tables</div>' +
-            '<div class="include-item">Updates as reports are refreshed</div>' +
-          '</div>' +
-          '<a class="sub-box-plans" href="/en/pricing">See plans: Week · Month · Annual →</a>' +
-        '</aside>'
-      );
-    }
-
-    function renderBuyBox(d, state) {
-      if (!PER_REPORT_PURCHASE && !state.purchased) return renderSubscribeBox(d, state);
-      const pages = d.pages || 78;
-      const aggregators = (d.aggregators || []).slice(0, 5);
-
-      // State variants:
-      //   purchased            → green tag, PDF download (if pdf_url), no buy button
-      //   anyLocale (not this) → "switch language" notice + buy locale button
-      //   default (anon/new)   → normal buy button
-      let mainCta;
-      if (state.purchased) {
-        mainCta =
-          (state.pdfUrl
-            ? '<a class="pdf-download-btn" href="' + escapeHtml(state.pdfUrl) + '" download>Download PDF →</a>'
-            : '<div class="pdf-pending">PDF is being prepared.<br/>You\'ll see a download link here once it\'s ready — your online access is active now.</div>'
-          );
-      } else if (state.anyLocale) {
-        mainCta =
-          '<div class="pdf-pending" style="margin-bottom:12px;">You already own this report in <strong style="color:var(--primary);text-transform:uppercase;">' + escapeHtml(state.ownedLocale || 'EN') + '</strong>.</div>' +
-          '<button class="buy-btn" id="buy-btn">Add ' + locale.toUpperCase() + ' version — $' + (d.price || 39) + ' →</button>';
-      } else {
-        mainCta = '<button class="buy-btn" id="buy-btn">Purchase report →</button>';
-      }
-
-      const tag = state.purchased
-        ? '<div class="rpt-owned-tag">You own this report</div>'
-        : '<div class="buy-tag">Single report · PDF + online access</div>';
-
-      return (
-        '<aside class="buy-box">' +
-          tag +
-          '<div class="buy-price"><span class="currency">$</span>' + (d.price || 39) + '</div>' +
-          '<div class="buy-lang-select" aria-label="Report language">' +
-            renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
-          '</div>' +
-          mainCta +
-          (state.purchased ? '' : '<button class="buy-btn-secondary">Add to library bundle</button>') +
-          '<div class="buy-includes">' +
-            '<h6>What\'s included</h6>' +
-            '<div class="include-item">' + pages + '-page PDF download</div>' +
-            '<div class="include-item">Online reader access</div>' +
-            '<div class="include-item">All charts &amp; data tables</div>' +
-            '<div class="include-item">Free updates for 12 months</div>' +
-            '<div class="include-item">Single-user license</div>' +
-          '</div>' +
-          (aggregators.length
-            ? '<div class="buy-includes"><h6>Also available on</h6><div class="buy-aggregators">' +
-                aggregators.map(escapeHtml).join('<br />') +
-              '</div></div>'
-            : '') +
-        '</aside>'
-      );
+    // toc rows are {num, name, pages, locked} objects, or plain strings
+    // ("Name — what it covers") in older reports; strings count as locked.
+    function normToc(toc) {
+      if (!Array.isArray(toc)) return [];
+      return toc.map((r, i) => {
+        if (r && typeof r === 'object') return { num: r.num || String(i + 1).padStart(2, '0'), name: r.name || '', pages: r.pages || '', locked: r.locked };
+        const str = String(r || '');
+        return { num: String(i + 1).padStart(2, '0'), name: str.split(/\s+—\s+/)[0], pages: '', locked: undefined };
+      }).filter(r => r.name);
     }
 
     function render(d, purchaseState, fullContent, captureResult) {
-      const baseCountry = (d.country || '').toUpperCase();
-      const breadcrumb = (
-        '<div class="rpt-breadcrumb">' +
-          '<a href="/' + locale + '/library">Library</a> → ' +
-          (d.country ? '<a href="/' + locale + '/library?country=' + d.country.toLowerCase() + '">' + escapeHtml(d.country) + '</a> → ' : '') +
-          (d.industry ? '<a href="/' + locale + '/library?industry=' + d.industry.toLowerCase().replace(/[^a-z0-9]+/g,'-') + '">' + escapeHtml(d.industry) + '</a> → ' : '') +
-          '<span>' + escapeHtml(d.title || d.slug) + '</span>' +
-        '</div>'
-      );
+      const owns = !!purchaseState.purchased;
+      d.toc = normToc(d.toc);
+      const crumbs = '<nav class="r-crumbs" aria-label="Breadcrumb">' +
+        '<a href="/' + locale + '/library">' + escapeHtml(t('library')) + '</a>' +
+        (d.country ? '<span class="sep">›</span><a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
+        (d.industry ? '<span class="sep">›</span><a href="/' + locale + '/library?industry=' + encodeURIComponent(d.industry.toLowerCase()) + '">' + escapeHtml(d.industry) + '</a>' : '') +
+      '</nav>';
+      const eyebrow = d.eyebrow || [R.country(d.country), d.industry].filter(Boolean).join(' · ');
 
-      const eyebrow = d.eyebrow ||
-        [baseCountry, (d.industry || '').toUpperCase(), 'MARKET ANALYSIS']
-          .filter(Boolean).join(' · ');
-
-      // ── Banners ──
       let banners = '';
       if (captureResult) {
-        if (captureResult.ok) {
-          banners += '<div class="rpt-fallback-banner" style="background:rgba(30,111,255,0.12);border-color:rgba(30,111,255,0.4);">' +
-                       '<strong>Purchase complete.</strong> Your full report is unlocked below.' +
-                     '</div>';
-        } else {
-          banners += '<div class="rpt-cancel-banner">' +
-                       '<strong style="color:var(--text);">We couldn\'t finalise your purchase.</strong> ' +
-                       'Please retry from the buy box on the right, or email <a href="mailto:hello@kiraresearch.com" style="color:var(--primary);">hello@kiraresearch.com</a> with your PayPal receipt.' +
-                     '</div>';
-        }
+        banners += captureResult.ok
+          ? '<div class="rd-banner"><strong>Purchase complete.</strong> Your full report is unlocked below.</div>'
+          : '<div class="rd-banner warn"><strong>We could not finalise your purchase.</strong> Please retry, or email hello@kiraresearch.com with your PayPal receipt.</div>';
       } else if (paypalReturn === 'cancel') {
-        banners += '<div class="rpt-cancel-banner">Checkout cancelled — your card was not charged.</div>';
+        banners += '<div class="rd-banner warn">Checkout cancelled. Your card was not charged.</div>';
       }
-      if (d.isFallback) {
-        banners += '<div class="rpt-fallback-banner">This report isn\'t published in your selected language yet — showing the <strong>English version</strong>.</div>';
-      }
-      if (purchaseState.anyLocale && !purchaseState.purchased) {
-        // Already owned in another locale message lives in the buy box; nothing here.
-      }
+      if (d.isFallback) banners += '<div class="rd-banner">' + escapeHtml(t('fallback')) + '</div>';
 
-      // ── Preview body ──
-      // abstract (new field, 200-300 words) takes priority over lede+paras.
-      // It is rendered as plain indexable text — no paywall, fully crawlable
-      // by Google and LLM scrapers (Perplexity, ChatGPT).
-      const lede   = d.abstract
+      // abstract (200-300 words, indexable) wins over lede + paragraphs.
+      const lede = d.preview && d.preview.lede ? d.preview.lede : '';
+      const prose = d.abstract
         ? '<p>' + escapeHtml(d.abstract) + '</p>'
-        : (d.preview?.lede ? '<p><strong>' + escapeHtml(d.preview.lede) + '</strong></p>' : '');
-      const paras  = d.abstract ? '' : (Array.isArray(d.preview?.paragraphs)
-        ? d.preview.paragraphs.map(p => '<p>' + escapeHtml(p) + '</p>').join('')
-        : '');
-      const chart  = renderChart(d.preview?.chart);
+        : (lede ? '<p><strong>' + escapeHtml(lede) + '</strong></p>' : '') +
+          (Array.isArray(d.preview && d.preview.paragraphs) ? d.preview.paragraphs.map(p => '<p>' + escapeHtml(p) + '</p>').join('') : '');
+      const dataBlock = renderChart(d.preview && d.preview.chart) + renderPreviewTables(d.preview_tables);
+      const sectionsN = (d.toc && d.toc.length) || null;
+      const fact = (icon, k, v) => v ? '<div class="rd-fact">' + R.icon(icon) + '<div><div class="k">' + escapeHtml(k) + '</div><div class="v">' + escapeHtml(v) + '</div></div></div>' : '';
+      const continueHtml = renderContinue(d);
 
-      // ── Preview tables (public data tables shown before paywall) ──
-      const previewTablesHtml = renderPreviewTables(d.preview_tables);
+      const tabs = [['overview', 'tabOverview'], dataBlock ? ['data', 'tabFindings'] : null, owns ? null : ['preview', 'tabPreview'],
+        (d.toc && d.toc.length) ? ['contents', 'tabContents'] : null, continueHtml ? ['related', 'tabRelated'] : null].filter(Boolean);
 
-      const toc    = renderToc(d.toc, !!purchaseState.purchased);
+      const cover = d.cover
+        ? '<div class="rd-cover"><img src="' + escapeHtml(d.cover.full) + '" alt="" width="1536" height="1024" decoding="async" fetchpriority="high"></div>'
+        : '';
+      const pageUrl = 'https://kiraresearch.com/' + locale + '/reports/' + encodeURIComponent(d.slug);
 
-      // Full body (only if purchased)
-      const fullBody = purchaseState.purchased ? renderFullBody(fullContent && fullContent.full_content) : '';
-
-      const pages    = d.pages || 78;
-      const sections = (d.toc && d.toc.length) || 12;
-      const refresh  = d.last_refresh
-        ? new Date(d.last_refresh).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
-        : '—';
-      const published = d.published_at
-        ? new Date(d.published_at).toLocaleDateString('en-GB', { month:'long', year:'numeric' })
-        : '—';
-
-      root.innerHTML = (
-        breadcrumb +
-        '<div class="rpt-grid">' +
-          '<article class="rpt-main">' +
-            banners +
-            '<div class="hero-eyebrow" style="margin-bottom:20px;">' + escapeHtml(eyebrow) + '</div>' +
+      root.innerHTML =
+        '<div class="r-band"><div class="r-container" style="padding-block:14px 0">' + crumbs + '</div></div>' +
+        '<div class="r-container"><div class="rd">' +
+          renderRail(d.toc, owns) +
+          '<article class="rd-main">' + banners +
+            (d.cover ? '<div class="rd-mcover"><img src="' + escapeHtml(d.cover.wide) + '" alt="" width="800" height="500" decoding="async"></div>' : '') +
+            '<div class="rd-eyebrow">' + escapeHtml(eyebrow) + '</div>' +
             '<h1>' + escapeHtml(d.title || d.slug) + '</h1>' +
-            '<div class="rpt-meta">' +
-              '<div class="rpt-meta-item"><div class="label">Published</div><div class="val">' + escapeHtml(published) + '</div></div>' +
-              '<div class="rpt-meta-item"><div class="label">Pages</div><div class="val">' + pages + '</div></div>' +
-              '<div class="rpt-meta-item"><div class="label">Format</div><div class="val">PDF</div></div>' +
-              '<div class="rpt-meta-item"><div class="label">Sections</div><div class="val">' + sections + '</div></div>' +
-              '<div class="rpt-meta-item"><div class="label">Last Refresh</div><div class="val">' + escapeHtml(refresh) + '</div></div>' +
-              '<div class="rpt-meta-item"><div class="label">Analyst</div><div class="val">Our research team</div></div>' +
+            (lede && d.abstract ? '<p class="rd-lede">' + escapeHtml(lede) + '</p>' : '') +
+            '<div class="rd-facts">' +
+              fact('cal', t('published'), R.date(d.published_at)) +
+              fact('pages', t('pages'), d.pages ? String(d.pages) : '') +
+              fact('doc', t('format'), 'PDF') +
+              fact('layers', t('sections'), sectionsN ? String(sectionsN) : '') +
+              fact('clock', t('updated'), R.date(d.last_refresh, 'long')) +
+              fact('user', t('analyst'), t('ourTeam')) +
             '</div>' +
-
-            '<section class="rpt-section rpt-abstract">' +
-              (purchaseState.purchased
-                ? '<h3>Section 01 · Executive Summary</h3><h2>Overview</h2>'
-                : '<div class="rpt-free-badge">Free to read</div>' +
-                  '<h2>Executive summary</h2>' +
-                  '<p class="rpt-free-note">The overview, selected data tables, the table of contents and the glossary are open to all readers.</p>') +
-              lede + paras + chart +
+            '<nav class="rd-tabs" aria-label="' + escapeHtml(t('inThisReport')) + '">' + tabs.map(([id, k], i) => '<a href="#' + id + '"' + (i ? '' : ' class="on"') + '>' + escapeHtml(t(k)) + '</a>').join('') + '</nav>' +
+            '<section class="rd-sec" id="overview">' +
+              '<h2 class="rd-sec-h"><span class="ib">' + R.icon('doc') + '</span>' + escapeHtml(t('execSummary')) + (owns ? '' : '<span class="rd-badge">' + escapeHtml(t('freeToRead')) + '</span>') + '</h2>' +
+              (owns ? '' : '<p class="rd-note">' + escapeHtml(t('freeNote')) + '</p>') +
+              '<div class="rd-prose">' + prose + '</div>' +
             '</section>' +
-
-            previewTablesHtml +
-
-            (purchaseState.purchased ? '' : renderPreviewFrame(d, locale)) +
-
-            toc +
-
-            renderGlossary(d.glossary_json) +
-
-            fullBody +
-
+            (dataBlock ? '<section class="rd-sec" id="data"><h2 class="rd-sec-h"><span class="ib">' + R.icon('layers') + '</span>' + escapeHtml(t('tabFindings')) + '</h2>' + dataBlock + '</section>' : '') +
+            (owns ? '' : renderPreviewFrame(d, locale)) +
+            ((d.toc && d.toc.length) || (d.glossary_json && d.glossary_json.length)
+              ? '<section class="rd-sec" id="contents">' + renderContents(d.toc, owns) + renderGlossary(d.glossary_json) + '</section>' : '') +
+            (owns ? renderFullBody(fullContent && fullContent.full_content) : '') +
             '<div id="rpt-key-players-slot"></div>' +
-
-            renderRelatedInsights(d.relatedInsights) +
-
-            renderRelatedReports(d.relatedReports) +
+            continueHtml +
           '</article>' +
+          '<aside class="rd-aside">' + cover +
+            renderAccessBox(d, { purchased: owns, anyLocale: purchaseState.anyLocale, ownedLocale: purchaseState.ownedLocale, pdfUrl: fullContent && fullContent.pdf_url }) +
+            '<div class="rd-box"><h3>' + escapeHtml(t('reportDetails')) + '</h3><dl class="rd-dl">' +
+              (d.published_at ? '<dt>' + escapeHtml(t('published')) + '</dt><dd>' + escapeHtml(R.date(d.published_at)) + '</dd>' : '') +
+              (d.pages ? '<dt>' + escapeHtml(t('pages')) + '</dt><dd>' + d.pages + '</dd>' : '') +
+              '<dt>' + escapeHtml(t('format')) + '</dt><dd>PDF</dd>' +
+              (d.code ? '<dt>' + escapeHtml(t('reportCode')) + '</dt><dd>' + escapeHtml(d.code) + '</dd>' : '') +
+              (d.stage ? '<dt>' + escapeHtml(t('stage')) + '</dt><dd>' + escapeHtml(t(d.stage)) + '</dd>' : '') +
+            '</dl><h3 style="margin-top:16px">' + escapeHtml(t('language')) + '</h3>' + renderLangLinks(d.slug, locale, d.availableLocales || []) + '</div>' +
+            '<div class="rd-box"><div class="rd-tags">' +
+              (d.industry ? '<a href="/' + locale + '/library?industry=' + encodeURIComponent(d.industry.toLowerCase()) + '">' + escapeHtml(d.industry) + '</a>' : '') +
+              (d.country ? '<a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
+            '</div></div>' +
+            '<div class="rd-box"><h3>' + escapeHtml(t('share')) + '</h3><div class="rd-share">' +
+              '<button type="button" id="rd-copy">' + R.icon('link') + escapeHtml(t('copyLink')) + '</button>' +
+              '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener">LinkedIn</a>' +
+              '<a href="https://x.com/intent/post?url=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener">X</a>' +
+            '</div></div>' +
+          '</aside>' +
+        '</div></div>';
 
-          renderBuyBox(d, {
-            purchased:   purchaseState.purchased,
-            anyLocale:   purchaseState.anyLocale,
-            ownedLocale: purchaseState.ownedLocale,
-            pdfUrl:      fullContent && fullContent.pdf_url
-          }) +
-        '</div>'
-      );
-
-      // Wire purchase button (only if not already owned).
       const buyBtn = document.getElementById('buy-btn');
-      if (buyBtn) {
-        buyBtn.addEventListener('click', () => {
-          buyBtn.disabled = true;
-          buyBtn.textContent = 'Opening checkout…';
-          startCheckout(d.slug, locale);
-        });
-      }
+      if (buyBtn) buyBtn.addEventListener('click', () => { buyBtn.disabled = true; startCheckout(d.slug, locale); });
+      const previewBuyBtn = document.getElementById('preview-buy-btn');
+      if (previewBuyBtn) previewBuyBtn.addEventListener('click', () => { previewBuyBtn.disabled = true; startCheckout(d.slug, locale); });
+      const copyBtn = document.getElementById('rd-copy');
+      if (copyBtn) copyBtn.addEventListener('click', () => {
+        const done = () => { copyBtn.lastChild.textContent = t('copied'); };
+        (navigator.clipboard ? navigator.clipboard.writeText(pageUrl) : Promise.reject()).then(done, () => { prompt('', pageUrl); });
+      });
 
-      // Wire LOCKED TOC rows → unlock modal. PREVIEW rows stay as plain text
-      // (rendered as <div>, not <button>) so they don't intercept clicks.
       wireUnlockModal(d, purchaseState);
-
-      // Wire preview iframe scale-fit + the inline CTA button under it.
+      wireTabs();
       fitPreviewFrame();
       window.addEventListener('resize', fitPreviewFrame);
-      const previewBuyBtn = document.getElementById('preview-buy-btn');
-      if (previewBuyBtn) {
-        previewBuyBtn.addEventListener('click', () => {
-          previewBuyBtn.disabled = true;
-          previewBuyBtn.textContent = 'Opening checkout…';
-          startCheckout(d.slug, locale);
+    }
+
+    // Tabs + rail highlight the section in view; rail clicks scroll.
+    function wireTabs() {
+      const tabs = [...document.querySelectorAll('.rd-tabs a')];
+      const secs = tabs.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+      if (!('IntersectionObserver' in window) || !secs.length) return;
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (!en.isIntersecting) return;
+          tabs.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
         });
-      }
+      }, { rootMargin: '-140px 0px -60% 0px' });
+      secs.forEach(s => io.observe(s));
     }
 
     function wireUnlockModal(d, purchaseState) {
-      const modal     = document.getElementById('unlock-modal');
-      const closeBtn  = document.getElementById('unlock-modal-close');
-      const buyBtn    = document.getElementById('unlock-modal-buy');
-      const titleEl   = document.getElementById('unlock-modal-title');
-      const bodyEl    = document.getElementById('unlock-modal-body');
+      const modal = document.getElementById('unlock-modal');
+      const closeBtn = document.getElementById('unlock-modal-close');
+      const buyBtn = document.getElementById('unlock-modal-buy');
+      const titleEl = document.getElementById('unlock-modal-title');
+      const bodyEl = document.getElementById('unlock-modal-body');
       if (!modal || !closeBtn || !buyBtn || !titleEl || !bodyEl) return;
+      document.getElementById('unlock-modal-eyebrow').textContent = t('lockedTitle');
+      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 39) : t('requestAccess');
+      closeBtn.setAttribute('aria-label', t('close'));
+      const foot = modal.querySelector('.unlock-modal-footnote');
+      if (foot) foot.textContent = PER_REPORT_PURCHASE ? '' : t('nothingCharged');
+      let opener = null;
 
-      const price = d.price || 39;
-      const pages = d.pages || 78;
-
-      // Subscription mode: the modal button links to the waitlist instead of
-      // opening PayPal checkout. Footnote copy changes with it.
-      if (!PER_REPORT_PURCHASE) {
-        buyBtn.textContent = 'Request early access →';
-        const foot = modal.querySelector('.unlock-modal-footnote');
-        if (foot) foot.textContent = 'Subscriptions are not yet open · Nothing is charged now';
-      }
-
-      function openModal(sectionName) {
-        titleEl.textContent = sectionName || 'Locked section';
-        bodyEl.innerHTML = PER_REPORT_PURCHASE
-          ? 'This section is part of the full report. Unlock the complete <strong>' +
-            pages + '-page PDF</strong> + online reader access for <strong>$' +
-            price + '</strong>.'
-          : 'This section is part of the full report, available with the KIRA Research subscription. ' +
-            'The executive summary on this page is free to read.';
+      function openModal(name, el) {
+        opener = el;
+        titleEl.textContent = name || t('lockedTitle');
+        bodyEl.textContent = t('lockedBody');
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
         closeBtn.focus();
@@ -1060,31 +731,20 @@
       function closeModal() {
         modal.hidden = true;
         document.body.style.overflow = '';
+        if (opener) opener.focus();
       }
-
-      document.querySelectorAll('.toc-item.lockable').forEach(el => {
-        el.addEventListener('click', () => openModal(el.dataset.section));
-      });
-      // Preview rows scroll up to the iframe preview block.
-      document.querySelectorAll('.toc-item.preview-scroll').forEach(el => {
-        el.addEventListener('click', () => {
-          const target = document.querySelector('.rpt-preview-section');
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      });
+      document.querySelectorAll('[data-locked]').forEach(el => el.addEventListener('click', () => openModal(el.dataset.locked, el)));
+      document.querySelectorAll('[data-preview]').forEach(el => el.addEventListener('click', () => {
+        const target = document.getElementById('preview');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }));
       closeBtn.addEventListener('click', closeModal);
-      modal.addEventListener('click', e => {
-        if (e.target === modal) closeModal();
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && !modal.hidden) closeModal();
-      });
-
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
       buyBtn.addEventListener('click', () => {
         if (purchaseState.purchased) { closeModal(); return; }
         if (!PER_REPORT_PURCHASE) { window.location.href = WAITLIST_URL; return; }
         buyBtn.disabled = true;
-        buyBtn.textContent = 'Opening checkout…';
         startCheckout(d.slug, locale);
       });
     }
