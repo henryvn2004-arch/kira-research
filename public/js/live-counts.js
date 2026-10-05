@@ -69,6 +69,12 @@
         countEl.textContent = total + (total === 1 ? ' report' : ' reports');
       }
     });
+
+    // If no cell has a published report, hide the whole section rather than
+    // leave an empty heading.
+    const anyVisible = Array.from(cells).some(c => c.style.display !== 'none');
+    const section = cells[0].closest('section');
+    if (!anyVisible && section) section.style.display = 'none';
   }
 
   // ── Library page ────────────────────────────────────────────
