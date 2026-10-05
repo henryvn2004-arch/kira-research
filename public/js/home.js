@@ -1,7 +1,7 @@
 // Homepage (all locales). Needs /js/research-i18n.js first.
 // Everything shown is live: report and insight cards, counts per sector and
-// per market, the featured report and the hero covers all come from the
-// library and insights APIs. Nothing is invented while loading: numbers stay
+// per market and the featured report all come from the library and insights
+// APIs. Nothing is invented while loading: numbers stay
 // "—" until the data arrives.
 (function () {
   const R = window.kiraR, t = R.t, esc = R.esc, ic = R.icon, locale = R.locale;
@@ -65,15 +65,6 @@
       const total = f.totalPublished != null ? f.totalPublished : d.total;
       document.querySelectorAll('[data-stat="reports"]').forEach(el => { el.textContent = total; });
       const withCover = items.filter(i => i.cover);
-
-      // Hero: three latest covers, stacked
-      const stack = $('#home-covers');
-      if (stack && withCover.length) {
-        stack.innerHTML = withCover.slice(0, 3).map((it, i) =>
-          '<a class="hc hc' + i + '" href="' + reportHref(it) + '" aria-label="' + esc(it.title || it.slug) + '">' +
-            '<img src="' + esc(it.cover.thumb) + '" alt="" width="360" height="480" decoding="async"' + (i ? ' loading="lazy"' : '') + '>' +
-            '<span class="hc-t"><b>KIRA</b>' + esc(it.title || '') + '</span></a>').join('');
-      }
 
       // Latest reports: newest four
       const grid = $('#home-reports');
