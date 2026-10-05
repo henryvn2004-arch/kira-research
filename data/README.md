@@ -36,6 +36,8 @@ pending
   → error          (any stage failed — terminal; reset to pending to retry)
 ```
 
+Side status: `hold` — parked by the owner (2026-10-05: the 57 pre-taxonomy rows wait for the new topic planner, Sprint S3). The runner never picks it; flip to `pending` to release.
+
 Legacy single-stage statuses (still seen in older rows or rows from before Q.1):
 - `in_progress` — legacy single-fire format; the new batch_runner.md treats as `error` and skips. Manually reset to `pending` to retry.
 
