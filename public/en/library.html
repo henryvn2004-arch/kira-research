@@ -266,7 +266,7 @@
         if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choose(el); }
       });
       clearEl.addEventListener('click', () => {
-        Object.keys(state).forEach(k => { state[k] = ''; });
+        state.stage = state.type = state.country = state.industry = state.year = state.q = '';
         if (searchEl) searchEl.value = '';
         fetchAndRender();
       });
