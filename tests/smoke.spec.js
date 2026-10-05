@@ -745,7 +745,7 @@ test.describe('library and insights pages', () => {
   });
 
   test('homepage headline numbers come from the live library', async ({ page, request }) => {
-    const body = await (await request.get('/api/library-list?locale=en&limit=1')).json();
+    const body = await (await request.get('/api/library-list?locale=en&limit=24&sort=recent')).json();
     await page.goto('/en/');
     await expect(page.locator('[data-stat="reports"]')).toHaveText(String(body.facets.totalPublished), { timeout: 10000 });
   });
