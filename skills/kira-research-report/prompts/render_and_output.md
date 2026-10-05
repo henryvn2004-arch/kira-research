@@ -25,7 +25,7 @@ node skills/kira-research-report/scripts/gen-cover.mjs --id <report_id> --countr
   --angle "<topic angle or buyer question, short>" --out <report output dir>/cover.jpg
 ```
 
-- The style rotates per report automatically (5 house styles, stable by report id). Pass `--style` only to override.
+- The style rotates per report automatically (15 house styles, stable by report id). Pass `--style` only to override.
 - Exit 0 → use the `cover` template as is (`<img class="cv-art" src="cover.jpg">`).
 - Exit 3 (no `OPENAI_API_KEY` or API error) → keep going: set `{{COVER_VARIANT}}` to `plain` and drop the `<img class="cv-art">` line. Note it in the run summary. Never block a report on cover art.
 

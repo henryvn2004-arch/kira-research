@@ -12,6 +12,9 @@
 // Falls back gracefully when only one of the two rows exists.
 // ============================================================
 
+import { coverUrls } from './_lib/cover.js';
+import { sectorOf } from './_lib/sectors.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -123,7 +126,7 @@ export default async function handler(req, res) {
         `&status=eq.published` +
         `&published_at=lte.${encodeURIComponent(nowIso)}` +
         `&order=published_at.desc&limit=12` +
-        `&select=id,slug,country,industry,published_at,related_report_slugs`
+        `&select=id,slug,country,industry,published_at,related_report_slugs,cover_url,cover_thumb_url`
       );
 
       const scored = (candidates || []).map(i => {
@@ -164,6 +167,8 @@ export default async function handler(req, res) {
             title:     t.title,
             excerpt:   t.excerpt,
             read_time: t.read_time,
+            published_at: i.published_at,
+            cover:     coverUrls(i),
             locale:    t.locale
           };
         }).filter(Boolean);
@@ -191,7 +196,7 @@ export default async function handler(req, res) {
       const candidates = await sb(
         `living_reports?or=(${orParts.join(',')})` +
         `&status=eq.published&id=neq.${base.id}` +
-        `&select=id,slug,country,industry,year,price` +
+        `&select=id,slug,country,industry,year,price,cover_url,cover_thumb_url` +
         `&limit=24`
       );
 
@@ -230,6 +235,7 @@ export default async function handler(req, res) {
             price:    r.price || 39,
             title:    t.title,
             eyebrow:  t.eyebrow,
+            cover:    coverUrls(r),
             locale:   t.locale
           };
         }).filter(Boolean);
@@ -245,6 +251,11 @@ export default async function handler(req, res) {
       year:           base.year || null,
       price:          base.price || 39,
       pages:          base.pages || null,
+      code:           base.code || null,
+      sector:         sectorOf(base.industry_code),
+      stage:          base.stage || null,
+      type:           base.report_type || null,
+      cover:          coverUrls(base),
       published_at:   translation?.published_at || base.published_at || null,
       last_refresh:   translation?.updated_at   || base.updated_at   || null,
 

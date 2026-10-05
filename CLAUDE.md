@@ -214,7 +214,7 @@ Stage A (EN gen) now plans each report as an answer to a **buyer question** inst
 - **Methodology page:** the boilerplate no longer claims field checks or interviews, because the pipeline is desk-only.
 - **`/api/render-pdf` overflow check:** it now also reports text clipped inside boxes. Older published reports have clipped competitor cards and source keys; worth a re-render pass.
 - **Cover art and closing (PR #43):**
-  - `scripts/gen-cover.mjs` draws each report's cover with the OpenAI Images API (`gpt-image-1`); 5 house styles rotate by report id.
+  - `scripts/gen-cover.mjs` draws each report's cover with the OpenAI Images API (`gpt-image-2`, high for reports, medium for insights); 15 house styles rotate by report id. `scripts/upload-cover.mjs` puts it in the public `covers` bucket (migration 026) for the library and insights pages; `scripts/backfill-covers.mjs` covers older reports and insights.
   - The batch machine needs `OPENAI_API_KEY`. Without it the cover renders plain.
   - A fixed closing page ends every report.
   - Images stay relative in the HTML; the render and upload scripts inline them.

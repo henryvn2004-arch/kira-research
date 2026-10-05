@@ -29,40 +29,20 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
 
   <link rel="stylesheet" href="/css/kira.css" />
+  <link rel="stylesheet" href="/css/research.css" />
 
-  <style>
-    .art-loading, .art-404 { padding: 96px 0; text-align: center; color: var(--muted); }
-    .art-404 h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 800;
-      font-size: 28px;
-      color: var(--text);
-      margin-bottom: 14px;
-    }
-    .art-fallback-banner {
-      background: rgba(30,111,255,0.08);
-      border: 1px solid rgba(30,111,255,0.25);
-      border-radius: 6px;
-      padding: 12px 16px;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 32px;
-    }
-    .art-fallback-banner strong { color: var(--text); }
-  </style>
 </head>
 <body>
 
   <!-- nav + footer injected by /js/nav.js -->
 
-  <div class="container">
-    <article class="article-page" id="art-root">
-      <div class="art-loading">Loading article…</div>
-    </article>
+  <div id="art-root">
+    <div class="r-container art-loading" style="padding-block:96px;text-align:center;color:var(--muted)">…</div>
   </div>
 
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
+  <script src="/js/research-i18n.js" defer></script>
 
   <script type="module">
     // ── 1) Parse slug + locale from URL ──────────────────
@@ -75,9 +55,11 @@
     document.documentElement.setAttribute('lang', langTag(locale));
 
     const root = document.getElementById('art-root');
+    const R = window.kiraR, t = R.t;   // /js/research-i18n.js (deferred, runs before this module)
+    const msg = (title, body) => '<div class="r-container"><div class="r-empty"><h3>' + escapeHtml(title) + '</h3>' + (body ? '<p>' + body + '</p>' : '') + '<a class="r-btn r-btn-outline" href="/' + locale + '/insights/">' + escapeHtml(t('viewAll')) + '</a></div></div>';
 
     if (!slug) {
-      root.innerHTML = '<div class="art-404"><h2>No insight selected</h2><p><a href="/' + locale + '/insights/" style="color:var(--primary)">Back to insights →</a></p></div>';
+      root.innerHTML = msg(t('noInsights'));
       throw new Error('halt');
     }
 
@@ -87,21 +69,14 @@
       const r = await fetch('/api/insight?slug=' + encodeURIComponent(slug) + '&locale=' + locale);
       if (r.status === 404) {
         const body = await r.json().catch(() => ({}));
-        const msg = body.error === 'translation_missing'
-          ? 'This article is still being translated. It will appear here once it\'s ready.'
-          : 'The article <code style="color:var(--primary)">' + escapeHtml(slug) + '</code> isn\'t published yet.';
-        root.innerHTML =
-          '<div class="art-404"><h2>Not available</h2>' +
-          '<p>' + msg + '</p>' +
-          '<p style="margin-top:18px;"><a href="/' + locale + '/insights/" style="color:var(--primary)">Back to insights →</a></p>' +
-          '</div>';
+        root.innerHTML = msg(body.error === 'translation_missing' ? t('fallback') : t('noInsights'));
         throw new Error('halt');
       }
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
     } catch (err) {
       if (err && err.message === 'halt') throw err;
-      root.innerHTML = '<div class="art-404"><h2>Couldn\'t load article</h2><p>Please retry or browse the <a href="/' + locale + '/insights/" style="color:var(--primary)">insights index</a>.</p></div>';
+      root.innerHTML = msg(t('loadError'));
       throw new Error('halt');
     }
 
@@ -140,6 +115,7 @@
     setMetaContent('meta-tw-title',       fullTitle);
     setMetaContent('meta-tw-description', description);
     if (data.published_at) setMeta('property', 'article:published_time', data.published_at);
+    if (data.cover) { setMetaContent('meta-og-image', data.cover.full); setMetaContent('meta-tw-image', data.cover.full); }
 
     // ── JSON-LD: Article + FAQPage + BreadcrumbList ──
     // FAQPage schema: when body contains <h2> sections formatted as Q&A
@@ -178,7 +154,7 @@
         url:     base + '/',
         logo: { '@type': 'ImageObject', url: base + '/logo.png' }
       },
-      image:            base + '/logo.png',
+      image:            (data.cover && data.cover.full) || base + '/logo.png',
       mainEntityOfPage: url
     };
     injectJsonLd('ld-article', articleLd);
@@ -222,7 +198,7 @@
     // ── helpers ──────────────────────────────────────────
     function escapeHtml(s) {
       return String(s == null ? '' : s)
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function setMeta(attr, name, content) {
       let el = document.querySelector('meta[' + attr + '="' + name + '"]');
@@ -245,108 +221,88 @@
       }
       el.textContent = JSON.stringify(clean);
     }
-    function formatDate(iso) {
-      if (!iso) return '—';
-      return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    function renderReportBox(r) {
+      if (!r) return '';
+      return '<div class="art-report">' +
+        '<div class="cover-thumb">' + (r.cover ? '<img src="' + escapeHtml(r.cover.thumb) + '" alt="" loading="lazy" width="360" height="480">' : '<div class="ph"><b>KIRA</b><span>' + escapeHtml(r.title || '') + '</span></div>') + '</div>' +
+        '<div><div class="k">' + escapeHtml(t('getFull')) + ' · ' + escapeHtml([R.country(r.country), r.industry, r.year].filter(Boolean).join(' · ')) + '</div>' +
+          '<h3>' + escapeHtml(r.title || r.slug) + '</h3>' +
+          '<p>' + escapeHtml(t('getFullBody')) + '</p>' +
+          '<a class="r-btn r-btn-primary" href="/' + locale + '/reports/' + encodeURIComponent(r.slug) + '">' + escapeHtml(t('openReport')) + R.icon('arrow') + '</a></div>' +
+      '</div>';
     }
-    function buildCatLabel(d) {
-      const parts = [];
-      if (d.category) parts.push(d.category.toUpperCase().replace(/-/g, ' '));
-      if (d.country)  parts.push(d.country.toUpperCase());
-      if (d.industry) parts.push(d.industry.toUpperCase());
-      return parts.join(' · ');
-    }
-    function renderRelated(items) {
+    function renderContinue(items) {
       if (!Array.isArray(items) || !items.length) return '';
-      const cards = items.map(it => {
-        const country  = (it.country  || '').toUpperCase();
-        const industry = (it.industry || '').toUpperCase();
-        const meta     = [industry, it.year].filter(Boolean).join(' · ');
-        return (
-          '<a href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '" class="report-card">' +
-            '<div class="report-meta">' +
-              '<span class="country">' + escapeHtml(country) + '</span>' +
-              '<span>' + escapeHtml(meta) + '</span>' +
-            '</div>' +
-            '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
-            (it.excerpt ? '<p class="report-desc">' + escapeHtml(it.excerpt) + '</p>' : '') +
-            '<div class="report-footer">' +
-              '<span class="report-price">$' + (it.price || 39) + '</span>' +
-              '<span class="report-cta">Get the full report →</span>' +
-            '</div>' +
-          '</a>'
-        );
-      }).join('');
-      const intro = items.length > 1
-        ? "This field note draws on reports our analysts have published. Each one expands the picture with sourced data, segment-by-segment view, and the analyst's read."
-        : "This field note draws on a published research report. It expands the picture with sourced data, segment-by-segment view, and the analyst's read.";
-      return (
-        '<div class="related-reports">' +
-          '<h4>Get the full report</h4>' +
-          '<p class="related-intro">' + intro + '</p>' +
-          '<div class="related-grid">' + cards + '</div>' +
-        '</div>'
-      );
+      return '<section class="rd-sec" style="margin-top:36px"><h2 class="rd-sec-h"><span class="ib">' + R.icon('book') + '</span>' + escapeHtml(t('continueReading')) + '</h2><div class="rcards">' +
+        items.slice(0, 3).map(it => '<a class="rcard" href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '">' +
+          '<div class="img">' + (it.cover ? '<img src="' + escapeHtml(it.cover.wide) + '" alt="" loading="lazy" width="800" height="500">' : '') + '</div>' +
+          '<div class="body"><div class="kick"><span>' + escapeHtml([R.country(it.country), R.sector(it.industry)].filter(Boolean).join(' · ')) + '</span>' +
+            (it.published_at ? '<span class="d">' + escapeHtml(R.date(it.published_at)) + '</span>' : '') + '</div>' +
+          '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
+          '<div class="foot"><span></span><span class="go">' + escapeHtml(t('readArticle')) + R.icon('arrow') + '</span></div></div></a>').join('') +
+        '</div></section>';
     }
-    function renderRelatedInsights(items) {
-      if (!Array.isArray(items) || !items.length) return '';
-      const heading = ({
-        en: 'Continue reading',
-        ja: '関連インサイト',
-        ko: '관련 인사이트',
-        zh: '相关洞察'
-      })[locale] || 'Continue reading';
-      const cards = items.map(it => {
-        const tags = [it.country, it.industry].filter(Boolean).map(s => s.toUpperCase()).join(' · ');
-        return (
-          '<a href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '" class="related-insight-card">' +
-            (tags ? '<div class="ri-meta">' + escapeHtml(tags) + '</div>' : '') +
-            '<h5>' + escapeHtml(it.title || it.slug) + '</h5>' +
-          '</a>'
-        );
-      }).join('');
-      return (
-        '<div class="related-insights">' +
-          '<h4>' + escapeHtml(heading) + '</h4>' +
-          '<div class="related-insights-grid">' + cards + '</div>' +
-        '</div>'
-      );
+    // Number the article's top-level sections (01, 02 …): h2, or h3 when the
+    // body has no h2 (bodies converted from markdown start at ###).
+    function numberSections(html) {
+      const tag = /<h2[\s>]/i.test(html) ? 'h2' : 'h3';
+      let n = 0;
+      return html.replace(new RegExp('<' + tag + '(\\s[^>]*)?>', 'gi'), (m, attrs) => '<' + tag + (attrs || '') + '><span class="n">' + String(++n).padStart(2, '0') + '</span>');
     }
     function render(d) {
-      const cat = buildCatLabel(d);
-      const date = formatDate(d.published_at);
-      const fallbackBanner = d.isFallback
-        ? '<div class="art-fallback-banner">This article isn\'t published in your selected language yet — showing the <strong>English version</strong>.</div>'
-        : '';
+      const report = (d.relatedReports || [])[0] || null;
+      const minutes = (String(d.read_time || '').match(/\d+/) || [])[0];
+      const catLabel = d.category ? d.category.replace(/-/g, ' ') : t('insights');
+      const pageUrl = 'https://kiraresearch.com/' + locale + '/insights/' + encodeURIComponent(d.slug);
+      const fallbackBanner = d.isFallback ? '<div class="rd-banner">' + escapeHtml(t('fallback')) + '</div>' : '';
+      // body is HTML stored in the DB (admin-trusted: written only with the service key).
+      const body = numberSections(d.body || '');
 
-      // body is HTML stored in DB (admin-trusted source).
-      // We do NOT sanitize here because the DB column is only writable via
-      // the service-key (admin tooling). If you ever expose body writes to
-      // anon clients, sanitize.
-      const body = d.body || '<p style="color:var(--muted-dim);font-style:italic;">Full article body is being written. The excerpt above summarises the key idea.</p>';
+      root.innerHTML =
+        '<div class="r-band"><div class="r-container" style="padding-block:14px 32px">' +
+          '<nav class="r-crumbs" aria-label="Breadcrumb"><a href="/' + locale + '/insights/">' + escapeHtml(t('insights')) + '</a>' +
+            (d.country ? '<span class="sep">›</span><a href="/' + locale + '/insights/?cat=' + encodeURIComponent(String(d.country).toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') + '</nav>' +
+          fallbackBanner +
+          '<div class="art-hero">' +
+            '<div>' +
+              '<div class="kick"><span class="chip">' + escapeHtml(catLabel) + '</span>' +
+                (d.country ? '<span>' + escapeHtml(R.country(d.country)) + '</span>' : '') +
+                (d.industry ? '<span>' + escapeHtml(R.sector(d.industry)) + '</span>' : '') +
+                (d.published_at ? '<span>' + escapeHtml(R.date(d.published_at, 'long')) + '</span>' : '') +
+                (minutes ? '<span>' + escapeHtml(minutes + ' ' + t('minRead')) + '</span>' : '') + '</div>' +
+              '<h1>' + escapeHtml(d.title || d.slug) + '</h1>' +
+              (d.lede || d.excerpt ? '<p class="lede">' + escapeHtml(d.lede || d.excerpt) + '</p>' : '') +
+              '<div class="meta"><span>' + R.icon('user') + escapeHtml(t('byTeam')) + '</span>' +
+                (report ? '<span>' + R.icon('doc') + '<a class="r-link" href="/' + locale + '/reports/' + encodeURIComponent(report.slug) + '">' + escapeHtml(t('getFull')) + '</a></span>' : '') + '</div>' +
+            '</div>' +
+            (d.cover ? '<div class="img"><img src="' + escapeHtml(d.cover.full) + '" alt="" width="1536" height="1024" decoding="async" fetchpriority="high">' +
+              (d.country || d.industry ? '<span class="pill">' + escapeHtml([R.country(d.country), R.sector(d.industry)].filter(Boolean).join(' · ')) + '</span>' : '') + '</div>' : '') +
+          '</div>' +
+        '</div></div>' +
+        '<div class="r-container"><div class="art">' +
+          '<div style="min-width:0">' +
+            '<div class="art-body"><div class="article-body">' + body + '</div>' + renderReportBox(report) + '</div>' +
+            renderContinue(d.relatedInsights) +
+          '</div>' +
+          '<aside class="ins-side">' +
+            '<div class="ins-box"><h3>' + escapeHtml(t('share')) + '</h3><div class="rd-share">' +
+              '<button type="button" id="art-copy">' + R.icon('link') + '<span>' + escapeHtml(t('copyLink')) + '</span></button>' +
+              '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener">LinkedIn</a>' +
+              '<a href="https://x.com/intent/post?url=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener">X</a></div></div>' +
+            (report ? '<div class="ins-box soft"><div class="ib">' + R.icon('book') + '</div><h3>' + escapeHtml(report.title || report.slug) + '</h3><p>' + escapeHtml(t('getFullBody')) + '</p>' +
+              '<a class="r-btn r-btn-primary r-btn-block" href="/' + locale + '/reports/' + encodeURIComponent(report.slug) + '">' + escapeHtml(t('openReport')) + R.icon('arrow') + '</a></div>' : '') +
+            '<div class="ins-box soft"><div class="ib">' + R.icon('layers') + '</div><h3>' + escapeHtml(t('exploreLib')) + '</h3><p>' + escapeHtml(t('exploreLibBody')) + '</p>' +
+              '<a class="r-btn r-btn-outline r-btn-block" href="/' + locale + '/library">' + escapeHtml(t('browseLib')) + R.icon('arrow') + '</a>' +
+              '<p style="margin:12px 0 0"><a class="r-link" href="/' + locale + '/insights/">' + escapeHtml(t('viewAll')) + ' →</a></p></div>' +
+          '</aside>' +
+        '</div></div>';
 
-      root.innerHTML = (
-        '<div class="article-breadcrumb">' +
-          '<a href="/' + locale + '/insights/">Insights</a> → ' +
-          (d.country ? '<a href="/' + locale + '/insights/?cat=' + encodeURIComponent(d.country) + '">' + escapeHtml(d.country.charAt(0).toUpperCase() + d.country.slice(1)) + '</a> → ' : '') +
-          '<span>' + escapeHtml(d.title || d.slug) + '</span>' +
-        '</div>' +
-
-        fallbackBanner +
-
-        '<div class="article-eyebrow">' +
-          '<span class="cat">' + escapeHtml(cat || 'INSIGHT') + '</span>' +
-          '<span>' + escapeHtml(date) + (d.read_time ? ' · ' + escapeHtml(d.read_time.toUpperCase()) : '') + '</span>' +
-        '</div>' +
-
-        '<h1>' + escapeHtml(d.title || d.slug) + '</h1>' +
-        (d.lede ? '<p class="article-lede">' + escapeHtml(d.lede) + '</p>' : '') +
-
-        '<div class="article-body">' + body + '</div>' +
-
-        renderRelated(d.relatedReports) +
-        renderRelatedInsights(d.relatedInsights)
-      );
+      const copyBtn = document.getElementById('art-copy');
+      if (copyBtn) copyBtn.addEventListener('click', () => {
+        const label = copyBtn.querySelector('span');
+        (navigator.clipboard ? navigator.clipboard.writeText(pageUrl) : Promise.reject()).then(
+          () => { label.textContent = t('copied'); }, () => { prompt('', pageUrl); });
+      });
     }
   </script>
 </body>

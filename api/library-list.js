@@ -6,13 +6,14 @@
 //       locale=en
 //       &country=vietnam            (lowercase, optional)
 //       &industry=fintech           (lowercase, optional)
+//       &sector=finance             (optional; one of the 12 groups in _lib/sectors.js)
 //       &year=2026                  (optional)
 //       &stage=XPL|ENT|XPN          (optional; investor stage — explore / enter / expand)
 //       &type=D|S                   (optional; report type — deep report / snapshot)
 //       &q=VN-FSV | coffee chain    (optional; report-code prefix, or text in
 //                                    slug / segment / industry — see
 //                                    skills/kira-research-report/docs/naming_convention.md)
-//       &sort=recent|price-asc|price-desc  (default: recent)
+//       &sort=recent|oldest|price-asc|price-desc  (default: recent)
 //       &limit=24&offset=0
 //
 // Returns { items: [...], total, facets } where each item carries enough
@@ -20,6 +21,9 @@
 // preview excerpt). facets are { countries: {code: count, ...}, industries: {...} }
 // for the sidebar filter counts (plus years, stages, types).
 // ============================================================
+
+import { coverUrls } from './_lib/cover.js';
+import { SECTORS, sectorOf } from './_lib/sectors.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -51,6 +55,7 @@ function cors(res) {
 const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 const SORTS = {
   'recent':     'published_at.desc.nullslast',
+  'oldest':     'published_at.asc.nullslast',
   'price-asc':  'price.asc',
   'price-desc': 'price.desc'
 };
@@ -80,6 +85,8 @@ export default async function handler(req, res) {
   const locale   = SUPPORTED.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
   const country  = clean(url.searchParams.get('country'));
   const industry = clean(url.searchParams.get('industry'));
+  const sectorIn = clean(url.searchParams.get('sector'));
+  const sector   = Object.prototype.hasOwnProperty.call(SECTORS, sectorIn) ? sectorIn : '';
   const year     = url.searchParams.get('year');
   const stage    = upperPick(url.searchParams.get('stage'), STAGES);
   const type     = upperPick(url.searchParams.get('type'),  TYPES);
@@ -93,6 +100,7 @@ export default async function handler(req, res) {
     const where = ['status=eq.published'];
     if (country)  where.push(`country=ilike.${encodeURIComponent(country)}`);
     if (industry) where.push(`industry=ilike.${encodeURIComponent(industry)}`);
+    if (sector)   where.push(`industry_code=in.(${SECTORS[sector].join(',')})`);
     if (year && /^\d{4}$/.test(year)) where.push(`year=eq.${year}`);
     if (stage) where.push(`stage=eq.${stage}`);
     if (type)  where.push(`report_type=eq.${type}`);
@@ -115,7 +123,7 @@ export default async function handler(req, res) {
       `&order=${sort}` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,code,slug,country,industry,year,pages,price,stage,report_type`;
+      `&select=id,code,slug,country,industry,industry_code,year,pages,price,stage,report_type,published_at,cover_url,cover_thumb_url`;
 
     const { rows: reports, total } = await sb(`living_reports?${baseQs}`);
 
@@ -152,11 +160,14 @@ export default async function handler(req, res) {
         slug:     r.slug,
         country:  r.country,
         industry: r.industry,
+        sector:   sectorOf(r.industry_code),
         year:     r.year,
         pages:    r.pages,
         price:    r.price,
         stage:    r.stage || null,
         type:     r.report_type || null,
+        published_at: r.published_at || null,
+        cover:    coverUrls(r),
         title:    (t && t.title) || null,
         excerpt:  (lede ? String(lede).slice(0, 240) : null),
         locale:   t ? t.locale : null,
@@ -167,9 +178,9 @@ export default async function handler(req, res) {
     // ── 4) Facets (counts for sidebar) ─────────────────────────
     // One query, no filters except status=published, just to know totals.
     const { rows: all } = await sb(
-      'living_reports?status=eq.published&select=country,industry,year,stage,report_type&limit=2000'
+      'living_reports?status=eq.published&select=country,industry,industry_code,year,stage,report_type&limit=2000'
     );
-    const facets = { countries: {}, industries: {}, years: {}, stages: {}, types: {} };
+    const facets = { countries: {}, industries: {}, sectors: {}, years: {}, stages: {}, types: {} };
     all.forEach(r => {
       const c = (r.country || '').toLowerCase();
       const i = (r.industry || '').toLowerCase();
@@ -179,6 +190,8 @@ export default async function handler(req, res) {
       if (y) facets.years[y]      = (facets.years[y]      || 0) + 1;
       if (r.stage)       facets.stages[r.stage]      = (facets.stages[r.stage]      || 0) + 1;
       if (r.report_type) facets.types[r.report_type] = (facets.types[r.report_type] || 0) + 1;
+      const sg = sectorOf(r.industry_code);
+      if (sg) facets.sectors[sg] = (facets.sectors[sg] || 0) + 1;
     });
     facets.totalPublished = all.length;
 
