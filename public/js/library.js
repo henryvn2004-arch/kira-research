@@ -228,7 +228,7 @@
       app.querySelector('[data-showres]').textContent = t('showResults', lastTotal);
       rowsEl.innerHTML = (d.items || []).length ? d.items.map(rowHtml).join('') : emptyHtml();
       pagerEl.innerHTML = pagerHtml(pages);
-    } catch (e) {
+    } catch (_e) {
       if (my !== seq) return;
       rowsEl.innerHTML = '<div class="r-empty"><p>' + esc(t('loadError')) + '</p></div>';
     } finally {
