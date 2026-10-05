@@ -306,6 +306,20 @@
     const reportsPublished = stats.reports.by_status.published || 0;
     const insightsPublished = stats.insights.by_status.published || 0;
 
+
+    const pl = stats.pipeline;
+    const plColor = !pl ? '' : pl.state === 'stalled' ? '#B42318' : pl.state === 'running' ? '#067647' : 'var(--muted)';
+    const pipelineHtml = !pl ? '' : `
+      <div class="recent-card" style="margin-bottom:24px">
+        <h3>Report pipeline
+          <span style="color:${plColor};font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.08em">${esc(pl.state)}</span>
+        </h3>
+        <div class="recent-row"><div><div class="title">${pl.completed_7d} reports completed in the last 7 days</div>
+          <div class="sub">${pl.work_left} in the work queue · ${pl.by_status.hold || 0} on hold · ${pl.by_status.done || 0} done in total</div></div>
+          <span class="meta">${pl.hours_since == null ? 'no runs yet' : 'last run ' + pl.hours_since + 'h ago'}</span></div>
+        ${pl.state === 'stalled' ? '<div class="recent-empty" style="color:#B42318">Work is waiting but the runner has not committed for over 30 hours. Check the cloud routine.</div>' : ''}
+      </div>`;
+
     const kpiHtml = `
       <div class="kpi-grid">
         <div class="kpi-card">
@@ -362,7 +376,7 @@
         <span class="meta">${fmtDate(p.created_at)}</span>
       </div>`).join('') || '<div class="recent-empty">No purchases yet.</div>';
 
-    wrap.innerHTML = kpiHtml + `
+    wrap.innerHTML = kpiHtml + pipelineHtml + `
       <div class="recent-grid">
         <div class="recent-card">
           <h3>Recent leads <a href="/en/admin/leads">All leads →</a></h3>

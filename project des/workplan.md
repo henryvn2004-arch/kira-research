@@ -7,6 +7,38 @@
 
 ---
 
+## 🟣 Phase S — Library + Expert platform (decided 2026-10-05) — CURRENT
+
+**Positioning:** ASEAN market-entry intelligence for the teams that serve foreign investors (industrial-park sales, FDI law/accounting, banks' FDI desks, consultants, M&A/PE scouts, investment-promotion agencies). Not a "report publisher", not a custom-research shop (custom research is parked), not an AI tool.
+
+**Decisions locked with Henry (2026-10-05):**
+- Business: subscription library (not per-report) + expert-ebook platform later. Custom research → contact form only. Studio (self-serve gen) frozen as a product; code kept for the expert-interview tool.
+- Pricing (validate with waitlist first): **Week $49 · Month $99 · Annual $499**. Unlimited online reading; PDF download caps (Week 5, Month 20, Annual 30/month) to stop "subscribe, download everything, cancel". Per-report $39 purchase hidden (code kept).
+- Hard constraints "no subscription" and "never claim volume" are **dropped**.
+- Locales: EN + JA + KO + **ZH (Simplified)**.
+- Countries: 10 ASEAN + Australia + New Zealand + Taiwan (extensible). Per-country industry list, different size and priority per country (big/hot markets many industries, small ones a few).
+- Industry = **market-seeking FDI** only: sectors where foreign firms (JP/KR/CN/TW/…) want to sell into the *domestic* market. Export-oriented/efficiency-seeking FDI (e.g. Samsung assembling in VN to export) is out of scope.
+- Competency follows industry and investor stage (explore → enter → expand). A dedicated **Topic Planner** module proposes topics + guiding questions; **Henry approves** before anything enters the queue.
+- Content layers: Deep report (300-500/yr) · Industry snapshot (1,000-2,000/yr) · Company profile (company DB).
+- Old queue: 16 `error` rows deleted, 57 `pending` rows set to `hold` (2026-10-05). Reports already published stay.
+- Distribution: KDP (US + JP), Google Play Books, Apple Books via EPUB export; expert ebooks fit KDP best. Do NOT enrol in KDP Select (exclusivity).
+
+| Sprint | Scope | Status |
+|---|---|---|
+| **S1** | Pipeline to cloud routine (routine itself created by Henry in the claude.ai Routines UI, repos attached there); queue cleanup; admin "Pipeline health" | 🟡 code done, waiting on owner steps |
+| **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage (Henry approves) | 🔴 |
+| **S3** | Topic Planner module + `/en/admin/topics` approval screen; queue moves from CSV to DB | 🔴 |
+| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | 🔴 |
+| **S5** | Website repositioning: hero, competency/stage filters, pricing + waitlist, free exec summaries | 🔴 |
+| **S6** | Snapshot layer (3-5 page template) | 🔴 |
+| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps) — only if waitlist shows demand | 🔴 |
+| **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books, country guides | 🔴 |
+| **S9** | Expert program: profiles, Expert Insights, interview → ebook pipeline | 🔴 |
+
+Parallel owner work: interview 15-20 intermediaries (industrial parks, FDI law/accounting, bank FDI desks, consultants) with one question — how often a month they research an industry/market and how; recruit experts (manager/director level is fine).
+
+---
+
 ## Status snapshot (2026-05-20)
 
 Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked

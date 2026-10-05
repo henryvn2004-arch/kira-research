@@ -30,11 +30,19 @@
 | Backend | Supabase Postgres + Auth + Storage |
 | Payments | PayPal (USD, Year 1 sole) |
 | CI | GitHub Actions + Playwright smoke tests (free since repo is public) |
-| Locales | EN (default) · JA · KO — all live |
+| Locales | EN (default) · JA · KO — all live · ZH (Simplified) planned, Sprint S4 |
 
 ---
 
-## Current state (2026-05-30 — Company Intelligence Sprints 2–9 DONE)
+## Current state (2026-10-05 — Phase S: library + expert platform)
+
+Business direction changed 2026-10-05 — full decisions + sprint table in `project des/workplan.md` → **Phase S**. Short version: subscription library for the teams that serve foreign investors in ASEAN; market-seeking-FDI industries only; Topic Planner module with owner approval; ZH added; custom research parked; Studio frozen. "No subscription" and "never claim volume" constraints dropped.
+
+Sprint S1 (cloud pipeline) in progress: old queue cleaned (16 error rows deleted, 57 pending → `hold`), admin dashboard shows pipeline health, batch runner becomes a cloud Routine instead of the DELL scheduled task. The report pipeline itself (BRAIN route, exhibit layer, cover art) is finished in its own sessions and merged (PRs #40, #41, #43).
+
+---
+
+## Previous state (2026-05-30 — Company Intelligence Sprints 2–9 DONE)
 
 **Phase R: Company Intelligence engine — Sprints 0–9 complete. 250 companies live on prod. Unified search landing page live.**
 
@@ -534,14 +542,14 @@ or polish that can wait for actual signal from production traffic.
 From `project des/CLAUDE.md` — repeated here so a new session sees them immediately:
 
 - ❌ Never position as "AI-powered platform / SaaS / app" — we are a **research house**
-- ❌ Never claim volume ("1000+ reports", "thousands of studies")
+- ~~Never claim volume~~ — dropped 2026-10-05 (library model); still no invented numbers, only real counts
 - ❌ Never lead with "AI" in marketing copy — only mentioned on `/methodology`
 - ❌ Never use competitor names in copy: Mordor, Frost, Euromonitor, Synovate, Ipsos
 - ❌ Never use "Claude" or "McKinsey" in UI copy
 - ❌ Never give CLI instructions to owner — always click-through (Vercel/Supabase/GitHub UI)
 - ❌ Never use Next.js syntax in `vercel.json` (no `beforeFiles` / `afterFiles`)
 - ✅ Brand voice: "our analysts" / "our research team" / "we" — never "our platform"
-- ✅ Trilingual EN/JA/KO from Day 1, flat $39 pricing Year 1
+- ✅ Trilingual EN/JA/KO from Day 1 (+ ZH Simplified from Sprint S4). Pricing: flat $39/report until Sprint S7 ships subscriptions (Week $49 · Month $99 · Annual $499)
 
 ---
 

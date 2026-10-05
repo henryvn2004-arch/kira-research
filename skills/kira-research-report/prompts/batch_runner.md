@@ -1,8 +1,8 @@
 # batch_runner.md — self-contained prompt for scheduled batch report generation
 
-Fired by `mcp__scheduled-tasks` crons (currently 13 fires/day, 45-min cadence, in two blocks). Each fire is a **fresh Claude session with no memory** of any prior conversation — everything needed is in this prompt + the files it references.
+Fired by a **cloud Routine** (Phase S1, 2026-10-05; before that by `mcp__scheduled-tasks` crons on the DELL). Each fire is a **fresh Claude session with no memory** of any prior conversation — everything needed is in this prompt + the files it references.
 
-This prompt is **machine-agnostic**: it derives its working directory from git, so the same prompt runs on any laptop where the repo is cloned (vnc-f4, DELL, future machines).
+This prompt is **machine-agnostic**: it derives its working directory from git, so the same prompt runs on any machine or cloud session where the repo is cloned. In a cloud Routine session the repos are not checked out yet: the Routine prompt clones `kira-research` and `kira-pipeline` (brain) side by side, runs `npm ci`, and exports `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium` before handing over to this file.
 
 ---
 
@@ -52,7 +52,7 @@ Bash uses forward slashes; for `Read`/`Write` tool calls use the platform-native
 
 ## Step 0: Pre-flight env check
 
-These 3 env vars must be present (set in Windows User scope, mirrored from Vercel project env):
+These 3 env vars must be present (cloud: the Routine environment's variables; local Windows: User scope; both mirrored from the Vercel project env):
 
 - `PDF_RENDER_SECRET` — `X-Api-Key` header on POST /api/render-pdf
 - `SUPABASE_URL` — `https://iygoynbnscednfzdsflc.supabase.co`
@@ -141,6 +141,7 @@ Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose stat
 | status | meaning |
 |---|---|
 | `pending` | not yet started |
+| `hold` | parked by the owner; the runner never picks it. Flip to `pending` to release |
 | `en_in_progress` | a fire is generating EN (or claimed and died — see `claimed_at`) |
 | `en_done` | EN HTML+PDF generated + committed; awaiting JA |
 | `ja_in_progress` | a fire is translating JA (or claimed and died) |
