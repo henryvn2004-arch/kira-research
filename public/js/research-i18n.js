@@ -47,7 +47,8 @@
       exploreLib: 'Explore the research library', exploreLibBody: 'Every market we cover, with free executive summaries.', browseLib: 'Browse the library',
       getFull: 'From the report', getFullBody: 'This field note draws on a published report. The report adds the full data, segment views and our analysis.',
       openReport: 'Open the report', relatedInsights: 'Related insights', latestReports: 'Latest reports', more: 'More', viewAll: 'View all insights',
-      onThisPage: 'On this page'
+      onThisPage: 'On this page',
+      nPages: n => n + ' pages', sector_food: 'Food & agriculture', sector_consumer: 'Consumer & retail', sector_finance: 'Financial services', sector_tech: 'Technology & media', sector_health: 'Healthcare', sector_property: 'Real estate & construction', sector_auto: 'Automotive & mobility', sector_logistics: 'Transport & logistics', sector_energy: 'Energy & resources', sector_industrial: 'Industrials', sector_travel: 'Tourism & hospitality', sector_services: 'Education & services'
     },
     ja: {
       all: 'すべて', clearAll: 'すべて解除', refineBy: '絞り込み', filters: '絞り込み', sort: '並び替え',
@@ -86,7 +87,8 @@
       exploreLib: 'リサーチライブラリ', exploreLibBody: '対象のすべての市場を、無料のエグゼクティブサマリー付きで。', browseLib: 'ライブラリを見る',
       getFull: 'レポートより', getFullBody: 'この記事は公開済みのレポートに基づいています。レポートでは詳細なデータ、セグメント別の分析、当社の見解をご覧いただけます。',
       openReport: 'レポートを開く', relatedInsights: '関連インサイト', latestReports: '最新のレポート', more: 'その他', viewAll: 'すべてのインサイト',
-      onThisPage: 'このページの内容'
+      onThisPage: 'このページの内容',
+      nPages: n => n + ' ページ', sector_food: '食品・農業', sector_consumer: '消費財・小売', sector_finance: '金融サービス', sector_tech: 'テクノロジー・メディア', sector_health: 'ヘルスケア', sector_property: '不動産・建設', sector_auto: '自動車・モビリティ', sector_logistics: '運輸・物流', sector_energy: 'エネルギー・資源', sector_industrial: '製造業', sector_travel: '観光・ホスピタリティ', sector_services: '教育・専門サービス'
     },
     ko: {
       all: '전체', clearAll: '모두 해제', refineBy: '필터', filters: '필터', sort: '정렬',
@@ -125,7 +127,8 @@
       exploreLib: '리서치 라이브러리', exploreLibBody: '당사가 다루는 모든 시장을 무료 요약과 함께 확인하십시오.', browseLib: '라이브러리 보기',
       getFull: '보고서에서', getFullBody: '이 인사이트는 발행된 보고서를 바탕으로 합니다. 보고서에는 상세 데이터, 세그먼트별 분석과 당사의 견해가 담겨 있습니다.',
       openReport: '보고서 열기', relatedInsights: '관련 인사이트', latestReports: '최신 보고서', more: '더보기', viewAll: '전체 인사이트',
-      onThisPage: '이 페이지의 내용'
+      onThisPage: '이 페이지의 내용',
+      nPages: n => n + '페이지', sector_food: '식품·농업', sector_consumer: '소비재·유통', sector_finance: '금융 서비스', sector_tech: '기술·미디어', sector_health: '헬스케어', sector_property: '부동산·건설', sector_auto: '자동차·모빌리티', sector_logistics: '운송·물류', sector_energy: '에너지·자원', sector_industrial: '제조업', sector_travel: '관광·숙박', sector_services: '교육·전문 서비스'
     },
     zh: {
       all: '全部', clearAll: '全部清除', refineBy: '筛选', filters: '筛选', sort: '排序',
@@ -164,7 +167,8 @@
       exploreLib: '研究报告库', exploreLibBody: '我们覆盖的所有市场，均附免费执行摘要。', browseLib: '浏览报告库',
       getFull: '出自报告', getFullBody: '本文基于一份已发布的报告。完整报告提供详细数据、细分市场分析和我们的观点。',
       openReport: '打开报告', relatedInsights: '相关洞察', latestReports: '最新报告', more: '更多', viewAll: '查看全部洞察',
-      onThisPage: '本页内容'
+      onThisPage: '本页内容',
+      nPages: n => n + ' 页', sector_food: '食品与农业', sector_consumer: '消费品与零售', sector_finance: '金融服务', sector_tech: '科技与传媒', sector_health: '医疗健康', sector_property: '房地产与建筑', sector_auto: '汽车与出行', sector_logistics: '运输与物流', sector_energy: '能源与资源', sector_industrial: '工业制造', sector_travel: '旅游与酒店', sector_services: '教育与专业服务'
     }
   };
 
@@ -209,6 +213,7 @@
         check: '<path d="M5 12l5 5 9-10"/>',
         mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M4 7l8 6 8-6"/>',
         user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>',
+        expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
         book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/>'
       };
       return '<svg class="ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[name] || '') + '</svg>';

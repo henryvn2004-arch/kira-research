@@ -4,7 +4,9 @@
 (function () {
   const R = window.kiraR, t = R.t, esc = R.esc, ic = R.icon, locale = R.locale;
   const PAGE = 20;
-  const GROUPS = ['stage', 'type', 'country', 'industry', 'year'];
+  const GROUPS = ['stage', 'type', 'country', 'sector', 'year'];          // sidebar groups
+  const FILTERS = ['stage', 'type', 'country', 'sector', 'industry', 'year']; // + industry, set from links
+  const SECTOR_KEYS = ['food', 'consumer', 'finance', 'tech', 'health', 'property', 'auto', 'logistics', 'energy', 'industrial', 'travel', 'services'];
   const STAGES = ['XPL', 'ENT', 'XPN'], TYPES = ['D', 'S'];
   const LIST_LIMIT = 8;               // options shown before "Show more"
 
@@ -13,7 +15,7 @@
   const searchForm = document.getElementById('lib-search-form');
   if (!app) return;
 
-  const state = { stage: '', type: '', country: '', industry: '', year: '', q: '', sort: 'recent', page: 1 };
+  const state = { stage: '', type: '', country: '', sector: '', industry: '', year: '', q: '', sort: 'recent', page: 1 };
   const ui = { expanded: {}, collapsed: {}, find: {} };
   let facets = null, lastTotal = 0;
 
@@ -23,6 +25,7 @@
   const ty = (u0.get('type') || '').toUpperCase(); if (TYPES.includes(ty)) state.type = ty;
   if (u0.get('country')) state.country = u0.get('country').toLowerCase().slice(0, 60);
   if (u0.get('industry')) state.industry = u0.get('industry').toLowerCase().slice(0, 60);
+  if (SECTOR_KEYS.includes(u0.get('sector'))) state.sector = u0.get('sector');
   if (/^\d{4}$/.test(u0.get('year') || '')) state.year = u0.get('year');
   if (u0.get('q')) state.q = u0.get('q').slice(0, 60);
   if (u0.get('sort') === 'oldest') state.sort = 'oldest';
@@ -31,34 +34,36 @@
 
   function syncUrl() {
     const u = new URL(location.href);
-    ['stage', 'type', 'country', 'industry', 'year', 'q'].forEach(k => { if (state[k]) u.searchParams.set(k, state[k]); else u.searchParams.delete(k); });
+    ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) u.searchParams.set(k, state[k]); else u.searchParams.delete(k); });
     if (state.sort !== 'recent') u.searchParams.set('sort', state.sort); else u.searchParams.delete('sort');
     if (state.page > 1) u.searchParams.set('page', state.page); else u.searchParams.delete('page');
     u.searchParams.delete('filter');
     history.replaceState(null, '', u.pathname + u.search);
   }
   function setFilter(group, value) {
-    if (!GROUPS.includes(group)) return;
+    if (!FILTERS.includes(group)) return;
     const v = state[group] === value ? '' : value;
     if (group === 'stage') state.stage = v; else if (group === 'type') state.type = v;
     else if (group === 'country') state.country = v; else if (group === 'industry') state.industry = v;
+    else if (group === 'sector') state.sector = SECTOR_KEYS.includes(v) ? v : '';
     else state.year = v;
     state.page = 1;
     load();
   }
   function clearAll() {
-    state.stage = state.type = state.country = state.industry = state.year = state.q = '';
+    state.stage = state.type = state.country = state.sector = state.industry = state.year = state.q = '';
     state.page = 1;
     if (searchEl) searchEl.value = '';
     load();
   }
-  const anyFilter = () => ['stage', 'type', 'country', 'industry', 'year', 'q'].some(k => state[k]);
+  const anyFilter = () => ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].some(k => state[k]);
 
   // ── Facets ──
   function labelFor(group, value) {
     if (group === 'stage' || group === 'type') return t(value);
     if (group === 'country') return R.country(value);
     if (group === 'industry') return R.sector(value);
+    if (group === 'sector') return t('sector_' + value);
     return String(value);
   }
   function options(group) {
@@ -67,13 +72,13 @@
     if (group === 'stage') list = STAGES.map(v => [v, (f.stages || {})[v] || 0]);
     else if (group === 'type') list = TYPES.map(v => [v, (f.types || {})[v] || 0]);
     else if (group === 'country') list = Object.entries(f.countries || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    else if (group === 'industry') list = Object.entries(f.industries || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    else if (group === 'sector') list = SECTOR_KEYS.map(k => [k, (f.sectors || {})[k] || 0]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
     else list = Object.entries(f.years || {}).sort((a, b) => String(b[0]).localeCompare(String(a[0])));
     list = list.map(([v, n]) => ({ value: String(v), n, label: labelFor(group, v) }));
     if (state[group] && !list.some(o => o.value === state[group])) list.unshift({ value: state[group], n: 0, label: labelFor(group, state[group]) });
     return list;
   }
-  const GROUP_LABEL = { stage: 'stage', type: 'type', country: 'market', industry: 'sector', year: 'year' };
+  const GROUP_LABEL = { stage: 'stage', type: 'type', country: 'market', sector: 'sector', year: 'year' };
   function groupHtml(group, where) {
     const all = options(group);
     if (!all.length) return '';
@@ -81,7 +86,7 @@
     let opts = find ? all.filter(o => o.label.toLowerCase().includes(find) || o.value.includes(find)) : all;
     const long = !find && opts.length > LIST_LIMIT && !ui.expanded[group];
     if (long) opts = opts.filter((o, i) => i < LIST_LIMIT || o.value === state[group]);
-    const searchable = (group === 'country' || group === 'industry') && all.length > LIST_LIMIT;
+    const searchable = group === 'country' && all.length > LIST_LIMIT;
     const id = where + '-' + group;
     return '<div class="fgrp' + (ui.collapsed[group] ? ' collapsed' : '') + '" data-group="' + group + '">' +
       '<button type="button" class="fgrp-head" aria-expanded="' + !ui.collapsed[group] + '" aria-controls="' + id + '">' +
@@ -152,9 +157,9 @@
     });
     const on = anyFilter();
     app.querySelectorAll('[data-clear]').forEach(b => { b.hidden = !on; });
-    const nSel = GROUPS.filter(g => state[g]).length;
+    const nSel = FILTERS.filter(g => state[g]).length;
     $('.fcount').textContent = nSel ? ' (' + nSel + ')' : '';
-    $('.lib2-active').innerHTML = GROUPS.filter(g => state[g]).map(g =>
+    $('.lib2-active').innerHTML = FILTERS.filter(g => state[g]).map(g =>
       '<button type="button" data-filter="' + g + '" value="' + esc(state[g]) + '">' + esc(labelFor(g, state[g])) + ic('x') + '</button>').join('');
     $('[data-sort]').value = state.sort;
   }
@@ -171,6 +176,7 @@
     const isNew = it.published_at && (Date.now() - new Date(it.published_at).getTime()) < 30 * 864e5;
     const title = it.title || String(it.slug || '').replace(/-/g, ' ');
     const chips = [it.industry ? R.sector(it.industry) : '', it.stage ? t(it.stage) : ''].filter(Boolean);
+    const pages = it.pages ? '<span>' + ic('pages') + esc(t('nPages', it.pages)) + '</span>' : '';
     return '<a class="lrow" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' +
       coverHtml(it, isNew) +
       '<div class="lrow-body">' +
@@ -178,7 +184,7 @@
         '<h3>' + esc(title) + '</h3>' +
         (it.excerpt ? '<p>' + esc(it.excerpt) + '</p>' : '') +
         '<div class="meta">' +
-          '<span>' + ic('doc') + esc(t(it.type || 'D')) + '</span>' +
+          '<span>' + ic('doc') + esc(t(it.type || 'D')) + '</span>' + pages +
           (it.published_at ? '<span>' + ic('cal') + esc(R.date(it.published_at)) + '</span>' : '') +
           (it.country ? '<span>' + ic('globe') + esc(R.country(it.country)) + '</span>' : '') +
         '</div>' +
@@ -212,7 +218,7 @@
     renderFilters();
     rowsEl.style.opacity = '.55';
     const qs = new URLSearchParams({ locale, sort: state.sort, limit: String(PAGE), offset: String((state.page - 1) * PAGE) });
-    ['stage', 'type', 'country', 'industry', 'year', 'q'].forEach(k => { if (state[k]) qs.set(k, state[k]); });
+    ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) qs.set(k, state[k]); });
     try {
       const r = await fetch('/api/library-list?' + qs);
       if (!r.ok) throw new Error('http ' + r.status);

@@ -13,6 +13,7 @@
 // ============================================================
 
 import { coverUrls } from './_lib/cover.js';
+import { sectorOf } from './_lib/sectors.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -251,6 +252,7 @@ export default async function handler(req, res) {
       price:          base.price || 39,
       pages:          base.pages || null,
       code:           base.code || null,
+      sector:         sectorOf(base.industry_code),
       stage:          base.stage || null,
       type:           base.report_type || null,
       cover:          coverUrls(base),

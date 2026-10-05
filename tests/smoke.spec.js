@@ -730,6 +730,13 @@ test.describe('library and insights pages', () => {
     await expect(page.locator('.sheet.open .sheet-panel')).toBeVisible();
   });
 
+  test('/api/library-list filters by sector group', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&sector=finance&limit=6');
+    const body = await r.json();
+    expect(typeof body.facets.sectors).toBe('object');
+    for (const it of body.items) expect(it.sector).toBe('finance');
+  });
+
   test('/api/library-list items carry a cover field', async ({ request }) => {
     const r = await request.get('/api/library-list?locale=en&limit=4');
     const body = await r.json();

@@ -509,29 +509,86 @@
         '</ol></aside>';
     }
 
-    // Preview iframe: source HTML is 1280×720 per page, scaled to the column.
+    // Preview viewer: the source HTML is 1280×720 per page. One page at a time,
+    // scaled to the full content width (and to the viewport height), with
+    // previous / next and full screen.
     function renderPreviewFrame(d, currentLocale) {
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
       const cta = PER_REPORT_PURCHASE
         ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 39) + '</button>'
         : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
+      const navBtn = (dir, label) => '<button type="button" class="rd-pv-nav" data-pv="' + dir + '" aria-label="' + escapeHtml(label) + '">' +
+        (dir < 0 ? '<span style="transform:scaleX(-1);display:inline-flex">' + R.icon('chev') + '</span>' : R.icon('chev')) + '</button>';
       return '<section class="rd-sec rpt-preview-section" id="preview">' +
         '<h2 class="rd-sec-h"><span class="ib">' + R.icon('pages') + '</span>' + escapeHtml(t('previewTitle')) + '</h2>' +
-        '<div class="rd-preview">' +
-          '<div class="rd-preview-frame" data-w="' + PREVIEW_PAGE_W + '" data-h="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '">' +
-            '<iframe src="' + src + '" title="' + escapeHtml(t('previewTitle')) + '" loading="lazy" referrerpolicy="same-origin" width="' + PREVIEW_PAGE_W + '" height="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '"></iframe>' +
+        '<div class="rd-preview" tabindex="0" aria-label="' + escapeHtml(t('previewTitle')) + '">' +
+          '<div class="rd-preview-frame" data-page="0">' +
+            '<iframe src="' + src + '" title="' + escapeHtml(t('previewTitle')) + '" loading="lazy" referrerpolicy="same-origin" width="' + PREVIEW_PAGE_W + '" height="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '" scrolling="no"></iframe>' +
           '</div>' +
-          '<div class="rd-preview-bar"><span>' + escapeHtml(t('previewPages', PREVIEW_PAGES)) + (d.pages ? ' / ' + d.pages : '') + '</span>' + cta + '</div>' +
+          '<div class="rd-preview-bar">' +
+            '<div class="rd-pv-ctl">' + navBtn(-1, t('prev')) + '<span class="rd-pv-pg">1 / ' + PREVIEW_PAGES + '</span>' + navBtn(1, t('next')) +
+              '<span class="rd-pv-note">' + escapeHtml(t('previewPages', PREVIEW_PAGES)) + (d.pages ? ' · ' + escapeHtml(t('nPages', d.pages)) : '') + '</span></div>' +
+            '<div class="rd-pv-ctl"><button type="button" class="rd-pv-nav" data-pv="fs" aria-label="Full screen">' + R.icon('expand') + '</button>' + cta + '</div>' +
+          '</div>' +
         '</div></section>';
     }
     function fitPreviewFrame() {
       document.querySelectorAll('.rd-preview-frame').forEach(wrap => {
         const iframe = wrap.querySelector('iframe');
         if (!iframe) return;
-        const scale = wrap.clientWidth / (Number(wrap.dataset.w) || PREVIEW_PAGE_W);
-        iframe.style.transform = 'scale(' + scale + ')';
-        wrap.style.height = Math.round((Number(wrap.dataset.h) || PREVIEW_PAGE_H) * scale) + 'px';
+        const box = wrap.parentElement;
+        const full = document.fullscreenElement === box;
+        const maxH = (full ? window.innerHeight : window.innerHeight * 0.9) - 70;
+        const scale = Math.min(box.clientWidth / PREVIEW_PAGE_W, maxH / PREVIEW_PAGE_H);
+        const page = Number(wrap.dataset.page) || 0;
+        const tops = wrap._tops || [];
+        const top = tops[page] != null ? tops[page] : page * PREVIEW_PAGE_H;
+        wrap.style.width = Math.round(PREVIEW_PAGE_W * scale) + 'px';
+        wrap.style.height = Math.round(PREVIEW_PAGE_H * scale) + 'px';
+        iframe.style.transform = 'translateY(' + (-top * scale) + 'px) scale(' + scale + ')';
+        const pg = box.querySelector('.rd-pv-pg');
+        if (pg) pg.textContent = (page + 1) + ' / ' + PREVIEW_PAGES;
+        box.querySelectorAll('[data-pv="-1"]').forEach(b => { b.disabled = page === 0; });
+        box.querySelectorAll('[data-pv="1"]').forEach(b => { b.disabled = page === PREVIEW_PAGES - 1; });
       });
+    }
+    function wirePreview() {
+      const box = document.querySelector('.rd-preview');
+      if (!box) return;
+      const wrap = box.querySelector('.rd-preview-frame');
+      // Page tops come from the preview document itself (same origin): some
+      // templates pad the body, so pages do not always start at n × 720.
+      const iframe = wrap.querySelector('iframe');
+      iframe.addEventListener('load', () => {
+        try {
+          const doc = iframe.contentDocument;
+          const pages = [...doc.querySelectorAll('.page')].filter(el => !el.parentElement.closest('.page'));
+          if (pages.length) {
+            wrap._tops = pages.map(el => el.getBoundingClientRect().top + doc.defaultView.scrollY);
+            iframe.height = String(doc.documentElement.scrollHeight);
+          }
+        } catch (_) { /* cross-origin or blocked: fall back to n × 720 */ }
+        fitPreviewFrame();
+      });
+      const go = step => {
+        wrap.dataset.page = String(Math.max(0, Math.min(PREVIEW_PAGES - 1, (Number(wrap.dataset.page) || 0) + step)));
+        fitPreviewFrame();
+      };
+      box.addEventListener('click', e => {
+        const b = e.target.closest('[data-pv]');
+        if (!b) return;
+        if (b.dataset.pv === 'fs') {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else if (box.requestFullscreen) box.requestFullscreen().catch(() => {});
+          return;
+        }
+        go(Number(b.dataset.pv));
+      });
+      box.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      });
+      document.addEventListener('fullscreenchange', fitPreviewFrame);
     }
 
     function renderLangLinks(slug, currentLocale, available) {
@@ -592,7 +649,7 @@
       const crumbs = '<nav class="r-crumbs" aria-label="Breadcrumb">' +
         '<a href="/' + locale + '/library">' + escapeHtml(t('library')) + '</a>' +
         (d.country ? '<span class="sep">›</span><a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
-        (d.industry ? '<span class="sep">›</span><a href="/' + locale + '/library?industry=' + encodeURIComponent(d.industry.toLowerCase()) + '">' + escapeHtml(d.industry) + '</a>' : '') +
+        (d.sector ? '<span class="sep">›</span><a href="/' + locale + '/library?sector=' + encodeURIComponent(d.sector) + '">' + escapeHtml(t('sector_' + d.sector)) + '</a>' : '') +
       '</nav>';
       const eyebrow = d.eyebrow || [R.country(d.country), d.industry].filter(Boolean).join(' · ');
 
@@ -649,12 +706,6 @@
               '<div class="rd-prose">' + prose + '</div>' +
             '</section>' +
             (dataBlock ? '<section class="rd-sec" id="data"><h2 class="rd-sec-h"><span class="ib">' + R.icon('layers') + '</span>' + escapeHtml(t('tabFindings')) + '</h2>' + dataBlock + '</section>' : '') +
-            (owns ? '' : renderPreviewFrame(d, locale)) +
-            ((d.toc && d.toc.length) || (d.glossary_json && d.glossary_json.length)
-              ? '<section class="rd-sec" id="contents">' + renderContents(d.toc, owns) + renderGlossary(d.glossary_json) + '</section>' : '') +
-            (owns ? renderFullBody(fullContent && fullContent.full_content) : '') +
-            '<div id="rpt-key-players-slot"></div>' +
-            continueHtml +
           '</article>' +
           '<aside class="rd-aside">' + cover +
             renderAccessBox(d, { purchased: owns, anyLocale: purchaseState.anyLocale, ownedLocale: purchaseState.ownedLocale, pdfUrl: fullContent && fullContent.pdf_url }) +
@@ -666,7 +717,7 @@
               (d.stage ? '<dt>' + escapeHtml(t('stage')) + '</dt><dd>' + escapeHtml(t(d.stage)) + '</dd>' : '') +
             '</dl><h3 style="margin-top:16px">' + escapeHtml(t('language')) + '</h3>' + renderLangLinks(d.slug, locale, d.availableLocales || []) + '</div>' +
             '<div class="rd-box"><div class="rd-tags">' +
-              (d.industry ? '<a href="/' + locale + '/library?industry=' + encodeURIComponent(d.industry.toLowerCase()) + '">' + escapeHtml(d.industry) + '</a>' : '') +
+              (d.sector ? '<a href="/' + locale + '/library?sector=' + encodeURIComponent(d.sector) + '">' + escapeHtml(t('sector_' + d.sector)) + '</a>' : '') +
               (d.country ? '<a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
             '</div></div>' +
             '<div class="rd-box"><h3>' + escapeHtml(t('share')) + '</h3><div class="rd-share">' +
@@ -675,7 +726,15 @@
               '<a href="https://x.com/intent/post?url=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener">X</a>' +
             '</div></div>' +
           '</aside>' +
-        '</div></div>';
+        '</div>' +
+        (owns ? '' : renderPreviewFrame(d, locale)) +
+        '<div class="rd rd-lower"><div class="rd-pad"></div><div class="rd-main">' +
+            ((d.toc && d.toc.length) || (d.glossary_json && d.glossary_json.length)
+              ? '<section class="rd-sec" id="contents">' + renderContents(d.toc, owns) + renderGlossary(d.glossary_json) + '</section>' : '') +
+            (owns ? renderFullBody(fullContent && fullContent.full_content) : '') +
+            '<div id="rpt-key-players-slot"></div>' +
+            continueHtml +
+        '</div><div></div></div></div>';
 
       const buyBtn = document.getElementById('buy-btn');
       if (buyBtn) buyBtn.addEventListener('click', () => { buyBtn.disabled = true; startCheckout(d.slug, locale); });
@@ -689,6 +748,7 @@
 
       wireUnlockModal(d, purchaseState);
       wireTabs();
+      wirePreview();
       fitPreviewFrame();
       window.addEventListener('resize', fitPreviewFrame);
     }
