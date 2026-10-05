@@ -66,7 +66,10 @@
         return;
       }
       if (countEl) {
-        countEl.textContent = total + (total === 1 ? ' report' : ' reports');
+        const loc = getLocale();
+        const unit = { ja: ' 件', ko: '건', zh: ' 份报告' }[loc];
+        countEl.textContent = unit ? total + unit
+                                   : total + (total === 1 ? ' report' : ' reports');
       }
     });
 
