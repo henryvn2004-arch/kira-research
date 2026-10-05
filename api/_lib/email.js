@@ -9,6 +9,9 @@
 //   sendLeadNotification({ leadId, name, email, company, role, tier, deadline, brief, locale, source })
 //     → Notify admins about a new Custom Research inquiry.
 //
+//   sendWaitlistNotification({ email, name, company, role, plan, locale, source, repeat })
+//     → Notify admins about a subscription-waitlist sign-up (Sprint S5).
+//
 // Both functions:
 //   • Return false silently if RESEND_API_KEY is unset (lets dev / unconfigured
 //     prod environments work without erroring out).
@@ -242,4 +245,52 @@ export async function sendLeadNotification(lead) {
 
   // Use the lead's email as reply-to so the admin can reply directly.
   return resendSend({ to: ADMIN_EMAILS, subject, html, text, replyTo: email });
+}
+
+// ── Waitlist notification (Sprint S5) ────────────────────
+//   sendWaitlistNotification({ id, email, name, company, role, plan, locale, source, repeat })
+//     → Tell admins someone joined (or re-joined) the subscription waitlist.
+export async function sendWaitlistNotification(entry) {
+  if (ADMIN_EMAILS.length === 0) {
+    console.warn('[email] ADMIN_EMAILS empty — skipping waitlist notification');
+    return false;
+  }
+  const email   = entry.email   || '(no email)';
+  const name    = entry.name    || '';
+  const company = entry.company || '';
+  const role    = entry.role    || '';
+  const plan    = entry.plan    || 'not-sure';
+  const locale  = entry.locale  || 'en';
+  const source  = entry.source  || 'pricing';
+  const repeat  = !!entry.repeat;
+
+  const subject = `${repeat ? 'Waitlist update' : 'New waitlist sign-up'}: ${email} (${plan})`;
+  const text = [
+    `${repeat ? 'Existing waitlist entry updated' : 'New waitlist sign-up'} from ${source} (${locale}).`,
+    ``,
+    `Email:   ${email}`,
+    name    ? `Name:    ${name}`    : '',
+    company ? `Company: ${company}` : '',
+    role    ? `Role:    ${role}`    : '',
+    `Plan:    ${plan}`,
+    ``,
+    `Manage: ${APP_URL}/en/admin/waitlist`
+  ].filter(Boolean).join('\n');
+
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#111;max-width:600px;margin:0 auto;padding:24px;">
+  <p style="margin:0 0 4px;font-size:12px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH — ${repeat ? 'waitlist update' : 'new waitlist sign-up'}</p>
+  <h1 style="font-size:18px;margin:0 0 18px;font-weight:600;">${esc(email)}</h1>
+  <table style="border-collapse:collapse;font-size:13px;margin:0 0 18px;">
+    ${name    ? `<tr><td style="padding:3px 16px 3px 0;color:#666;">Name</td><td style="padding:3px 0;">${esc(name)}</td></tr>` : ''}
+    ${company ? `<tr><td style="padding:3px 16px 3px 0;color:#666;">Company</td><td style="padding:3px 0;">${esc(company)}</td></tr>` : ''}
+    ${role    ? `<tr><td style="padding:3px 16px 3px 0;color:#666;">Role</td><td style="padding:3px 0;">${esc(role)}</td></tr>` : ''}
+    <tr><td style="padding:3px 16px 3px 0;color:#666;">Plan</td><td style="padding:3px 0;">${esc(plan)}</td></tr>
+    <tr><td style="padding:3px 16px 3px 0;color:#666;">Locale</td><td style="padding:3px 0;">${esc(locale)}</td></tr>
+    <tr><td style="padding:3px 16px 3px 0;color:#666;">Source</td><td style="padding:3px 0;">${esc(source)}</td></tr>
+  </table>
+  <p style="margin:18px 0 0;font-size:12px;color:#666;"><a href="${esc(APP_URL)}/en/admin/waitlist">Open the waitlist admin</a></p>
+</body></html>`.trim();
+
+  return resendSend({ to: ADMIN_EMAILS, subject, html, text, replyTo: entry.email || undefined });
 }

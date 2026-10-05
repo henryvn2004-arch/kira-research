@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kira Experts — KIRA Research</title>
+  <meta name="description" content="Kira Experts는 당사가 다루는 시장을 직접 경험한 현업 운영자, 경영진, 전문가, 자문가와의 대화를 질문에 맞추어 주선합니다.">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/experts/">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/experts/">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/experts/">
+  <link rel="alternate" hreflang="zh-Hans"   href="https://kiraresearch.com/zh/experts/">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/experts/">
+  <link rel="canonical" href="https://kiraresearch.com/ko/experts/">
+
+  <meta property="og:title"       content="Kira Experts — KIRA Research">
+  <meta property="og:description" content="시장을 아는 사람과의 직접 대화. 동남아시아, 호주, 뉴질랜드, 대만의 전문가와의 대화를 질문에 맞추어 주선합니다.">
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://kiraresearch.com/ko/experts/">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    /* ko: Hangul font fallback; keep Korean words intact when wrapping */
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
+    body { word-break: keep-all; overflow-wrap: break-word; }
+    .nav-wrap, .locale-switcher { word-break: normal; }
+    .page-hero {
+      padding-top: 80px; padding-bottom: 64px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 880px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 span { display: block; }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 660px;
+      margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .ex-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .ex-h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin: 12px 0 20px;
+    }
+
+    /* The service */
+    .ex-what {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      padding: 96px 0 24px;
+      align-items: start;
+    }
+    .ex-what h2 { margin-top: 0; }
+    .ex-what p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 680px;
+    }
+
+    /* How it works */
+    .ex-how { padding-top: 96px; }
+    .ex-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .ex-step { background: var(--bg); padding: 32px 28px; }
+    .ex-step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      margin-bottom: 18px;
+    }
+    .ex-step h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .ex-step p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+
+    /* Typical questions */
+    .ex-questions { padding-top: 96px; }
+    .ex-q-list { margin-top: 32px; border-top: 1px solid var(--border); }
+    .ex-q {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 40px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .ex-q h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .ex-q p { font-size: 15px; line-height: 1.65; color: var(--muted); }
+
+    /* Terms */
+    .ex-terms {
+      margin-top: 96px;
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 2fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .ex-terms h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .ex-terms p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+
+    /* Request form */
+    .ex-form-section { padding-top: 96px; scroll-margin-top: 80px; }
+    .ex-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .ex-form-grid .intro p { color: var(--muted); font-size: 16px; line-height: 1.65; }
+    .cr-form-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px;
+    }
+    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cr-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .cr-field.full { grid-column: 1 / -1; }
+    .cr-field label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cr-field input,
+    .cr-field textarea,
+    .cr-field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      width: 100%;
+    }
+    .cr-field input:focus,
+    .cr-field textarea:focus,
+    .cr-field select:focus { outline: none; border-color: var(--primary); }
+    .cr-field textarea { min-height: 140px; resize: vertical; }
+    .cr-submit { justify-content: center; }
+    .cr-error { display: none; margin-top: 12px; color: #B42318; font-size: 13px; }
+    .cr-success {
+      display: none;
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.3);
+      border-radius: 8px;
+      padding: 24px;
+      color: var(--text);
+    }
+    .cr-success.show { display: block; }
+    .cr-success p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    @media (max-width: 968px) {
+      .ex-what, .ex-form-grid { grid-template-columns: 1fr; gap: 32px; }
+      .ex-steps { grid-template-columns: 1fr; }
+      .ex-terms { grid-template-columns: 1fr; gap: 24px; }
+      .ex-q { grid-template-columns: 1fr; gap: 6px; }
+    }
+    @media (max-width: 560px) {
+      .cr-form { grid-template-columns: 1fr; }
+      .cr-form-wrap { padding: 24px; }
+      .ex-terms { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow" data-i18n="experts.eyebrow">KIRA EXPERTS</div>
+    <h1>
+      <span data-i18n="experts.heroLine1">시장을 아는 사람과의</span>
+      <span class="accent" data-i18n="experts.heroLine2">직접 대화.</span>
+    </h1>
+    <p class="lead" data-i18n="experts.heroSub">Kira Experts는 당사가 다루는 시장을 직접 경험한 현업 운영자, 경영진, 전문가, 자문가와의 대화를 당면한 질문에 맞추어 주선합니다.</p>
+    <div class="hero-actions">
+      <a href="#request" class="btn btn-primary">
+        <span data-i18n="experts.heroCta">전문가 요청</span>
+        <span class="btn-arrow">→</span>
+      </a>
+      <a href="/ko/library" class="btn btn-secondary" data-i18n="experts.heroCta2">라이브러리 둘러보기</a>
+    </div>
+  </section>
+
+  <!-- The service -->
+  <section class="container">
+    <div class="ex-what">
+      <div class="ex-label" data-i18n="experts.whatLabel">— 서비스</div>
+      <div>
+        <h2 class="ex-h2" data-i18n="experts.whatHeading">직접 경험을, 필요한 때에.</h2>
+        <p data-i18n="experts.whatP1">발간된 리서치는 시장을 설명합니다. 그 시장에서 일해 본 사람은 시장이 실제로 어떻게 움직이는지를 설명합니다. Kira Experts는 동남아시아, 호주, 뉴질랜드, 대만에 걸쳐 그러한 경험에 직접 접근할 수 있도록 합니다.</p>
+        <p data-i18n="experts.whatP2">각 대화는 구체적인 질문을 중심으로 마련되므로, 꼭 알아야 할 내용에 시간을 집중할 수 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="container ex-how">
+    <div class="ex-label" data-i18n="experts.howEyebrow">진행 방식</div>
+    <h2 class="ex-h2" data-i18n="experts.howHeading">질문에서 대화까지.</h2>
+    <div class="ex-steps">
+      <div class="ex-step">
+        <div class="ex-step-num">01</div>
+        <h3 data-i18n="experts.step1Title">질문 공유</h3>
+        <p data-i18n="experts.step1Body">시장, 산업, 파악하고자 하는 내용을 알려 주십시오. 간단한 개요만으로 시작할 수 있습니다.</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">02</div>
+        <h3 data-i18n="experts.step2Title">전문가 선정 및 사전 브리핑</h3>
+        <p data-i18n="experts.step2Body">질문에 맞는 경험을 갖춘 인물을 찾고, 다루고자 하는 내용을 사전에 전달합니다.</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">03</div>
+        <h3 data-i18n="experts.step3Title">전문가와 대화</h3>
+        <p data-i18n="experts.step3Body">대화는 직접 진행합니다. 요청 시 논의 내용의 서면 요약을 제공합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typical questions -->
+  <section class="container ex-questions">
+    <div class="ex-label" data-i18n="experts.qEyebrow">주요 질문 유형</div>
+    <h2 class="ex-h2" data-i18n="experts.qHeading">직접 경험이 가장 중요한 영역.</h2>
+    <div class="ex-q-list">
+      <div class="ex-q">
+        <h3 data-i18n="experts.q1Title">시장 진출 타당성</h3>
+        <p data-i18n="experts.q1Body">기회가 서류상으로 보이는 만큼 실제로도 큰지, 그리고 신규 진입자의 발목을 잡는 요인은 무엇인지.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q2Title">규제의 실제 운용</h3>
+        <p data-i18n="experts.q2Body">규정 문언을 넘어, 규칙·인허가·승인이 실제로 어떻게 적용되는지.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q3Title">파트너와 채널</h3>
+        <p data-i18n="experts.q3Body">신뢰할 수 있는 유통업체, 파트너, 중개자는 누구이며, 이들과의 관계는 통상 어떻게 운영되는지.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q4Title">경쟁사의 대응</h3>
+        <p data-i18n="experts.q4Body">기존 사업자가 가격, 채널, 인재 측면에서 신규 진입자에 어떻게 대응하는지.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q5Title">운영 비용과 가격 책정</h3>
+        <p data-i18n="experts.q5Body">현지에서 사업을 운영하는 데 실제로 드는 비용, 그리고 시장 전반에서 가격이 어떻게 정해지는지.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terms -->
+  <section class="container">
+    <div class="ex-terms">
+      <div class="ex-label" data-i18n="experts.termsLabel">— 조건</div>
+      <div>
+        <h3 data-i18n="experts.termsPricingTitle">요금</h3>
+        <p data-i18n="experts.termsPricing">요금은 건별로 협의합니다.</p>
+      </div>
+      <div>
+        <h3 data-i18n="experts.termsComplianceTitle">준법 원칙</h3>
+        <p data-i18n="experts.termsCompliance">전문가는 일반적인 지식과 경험을 바탕으로 참여합니다. Kira Experts는 기밀 정보 또는 미공개 중요 정보의 공개를 매개하지 않습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Request form -->
+  <section class="container ex-form-section" id="request">
+    <div class="ex-form-grid">
+      <div class="intro">
+        <div class="hero-eyebrow" data-i18n="experts.formEyebrow">전문가 요청</div>
+        <h2 class="ex-h2" data-i18n="experts.formTitle">알고자 하는 내용을 알려 주십시오.</h2>
+        <p data-i18n="experts.formSub">시장과 질문을 기재해 주십시오. 다음 단계를 논의하기 위해 이메일로 회신드리겠습니다.</p>
+      </div>
+
+      <div class="cr-form-wrap">
+        <form class="cr-form" id="cr-lead-form" novalidate>
+          <div class="cr-field">
+            <label for="cr-name" data-i18n="experts.fieldName">이름</label>
+            <input type="text" id="cr-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-email" data-i18n="experts.fieldEmail">업무용 이메일</label>
+            <input type="email" id="cr-email" name="email" required autocomplete="email" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-company" data-i18n="experts.fieldCompany">회사</label>
+            <input type="text" id="cr-company" name="company" autocomplete="organization" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-role" data-i18n="experts.fieldRole">직책</label>
+            <input type="text" id="cr-role" name="role" autocomplete="organization-title" />
+          </div>
+          <div class="cr-field full">
+            <label for="cr-deadline" data-i18n="experts.fieldDeadline">희망 시기</label>
+            <select id="cr-deadline" name="deadline">
+              <option value="2w" data-i18n="experts.deadline2w">2주 이내</option>
+              <option value="month" selected data-i18n="experts.deadlineMonth">1개월 이내</option>
+              <option value="quarter" data-i18n="experts.deadlineQuarter">분기 이내</option>
+              <option value="flex" data-i18n="experts.deadlineFlex">유동적</option>
+            </select>
+          </div>
+          <div class="cr-field full">
+            <label for="cr-brief" data-i18n="experts.fieldBrief">질문 내용</label>
+            <textarea id="cr-brief" name="brief" required minlength="10"
+              data-i18n-attr="placeholder:experts.briefPlaceholder"
+              placeholder="시장과 산업, 검토 중인 의사결정, 그리고 직접 경험을 가진 인물에게서 알고 싶은 내용."></textarea>
+          </div>
+
+          <!-- Honeypot: hidden from humans, bots fill it. -->
+          <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="cr-hp">비워 두십시오</label>
+            <input type="text" id="cr-hp" name="hp" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="cr-field full">
+            <button type="submit" class="btn btn-primary cr-submit" data-i18n="experts.submitCta">전문가 요청 →</button>
+            <div class="cr-error" id="cr-error" role="alert"></div>
+          </div>
+        </form>
+
+        <div class="cr-success" id="cr-success" role="status">
+          <strong data-i18n="experts.successTitle">요청이 접수되었습니다.</strong>
+          <p data-i18n="experts.successBody">감사합니다. 질문을 검토한 후 이메일로 회신드리겠습니다. 그사이 추가로 전달할 내용이 있으면 hello@kiraresearch.com으로 보내 주십시오.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script defer>
+    // Expert request form → POST /api/leads (source 'experts').
+    document.addEventListener('DOMContentLoaded', () => {
+      const form    = document.getElementById('cr-lead-form');
+      const success = document.getElementById('cr-success');
+      const errBox  = document.getElementById('cr-error');
+      const submit  = form && form.querySelector('button[type="submit"]');
+      if (!form) return;
+
+      function showError(msg) {
+        errBox.textContent = msg;
+        errBox.style.display = 'block';
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errBox.style.display = 'none';
+        errBox.textContent   = '';
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.locale = (window.kira && window.kira.locale) || 'ko';
+        data.source = 'experts';
+        data.tier   = 'not-sure';
+
+        const originalLabel = submit.textContent;
+        submit.disabled = true;
+        submit.textContent = '전송 중…';
+
+        try {
+          const res = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            showError(({
+              name_required:   '이름을 입력해 주십시오.',
+              email_invalid:   '유효한 이메일 주소를 입력해 주십시오.',
+              brief_too_short: '질문 내용을 조금 더 자세히 기재해 주십시오.',
+              insert_failed:   '당사 측에서 오류가 발생했습니다. 다시 시도하시거나 hello@kiraresearch.com으로 연락해 주십시오.',
+              invalid_json:    '양식 제출에 실패했습니다. 다시 시도해 주십시오.'
+            })[body.error] || '제출에 실패했습니다. 다시 시도하시거나 hello@kiraresearch.com으로 연락해 주십시오.');
+            submit.disabled = false;
+            submit.textContent = originalLabel;
+            return;
+          }
+          form.style.display = 'none';
+          success.classList.add('show');
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          showError('네트워크 오류가 발생했습니다. 다시 시도하시거나 hello@kiraresearch.com으로 연락해 주십시오.');
+          submit.disabled = false;
+          submit.textContent = originalLabel;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

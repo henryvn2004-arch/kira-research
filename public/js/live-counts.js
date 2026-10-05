@@ -66,15 +66,27 @@
         return;
       }
       if (countEl) {
-        countEl.textContent = total + (total === 1 ? ' report' : ' reports');
+        const loc = getLocale();
+        const unit = { ja: ' 件', ko: '건', zh: ' 份报告' }[loc];
+        countEl.textContent = unit ? total + unit
+                                   : total + (total === 1 ? ' report' : ' reports');
       }
     });
+
+    // If no cell has a published report, hide the whole section rather than
+    // leave an empty heading.
+    const anyVisible = Array.from(cells).some(c => c.style.display !== 'none');
+    const section = cells[0].closest('section');
+    if (!anyVisible && section) section.style.display = 'none';
   }
 
   // ── Library page ────────────────────────────────────────────
   async function applyLibraryCounts() {
     const filters = document.querySelector('.filters');
     if (!filters) return;
+    // Sprint S5: the EN library builds its own facets from /api/library-list
+    // (country / industry / stage / type / year). Skip the legacy overlay there.
+    if (filters.getAttribute('data-facets') === 'dynamic') return;
 
     let items;
     try { items = await fetchAll(getLocale()); }
@@ -171,6 +183,9 @@
   // the DB. The hardcoded markup that ships in the static HTML serves as
   // a skeleton — visible during the brief fetch window, replaced on success.
   // Containers must carry `data-live-reports="panel"` or `data-live-reports="grid"`.
+  // Optional `data-show-price="false"` on a container (Sprint S5, subscription
+  // model) replaces the per-report $ price with the year (panel) or a
+  // "Free summary" label (grid). Pages without the attribute keep the price.
   async function applyHomeFeaturedReports() {
     const panel = document.querySelector('[data-live-reports="panel"]');
     const grid  = document.querySelector('[data-live-reports="grid"]');
@@ -186,10 +201,13 @@
       .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
 
     const locale = getLocale();
+    const freeLabel = locale === 'ja' ? '要約は無料' : locale === 'ko' ? '요약 무료' : locale === 'zh' ? '摘要免费' : 'Free summary';
+    function showPrice(el) { return el.getAttribute('data-show-price') !== 'false'; }
 
     // ── Hero panel (compact rows, max 4) ──
     if (panel) {
       const top = items.slice(0, 4);
+      const withPrice = showPrice(panel);
       if (top.length) {
         const rowsHtml = top.map(it => {
           const country  = (it.country  || '').toUpperCase();
@@ -202,7 +220,9 @@
                 '<div class="panel-label">' + safeTitle + '</div>' +
                 '<div class="panel-meta">' + escapeHtml([country, industry].filter(Boolean).join(' · ')) + '</div>' +
               '</div>' +
-              '<div class="panel-value">$' + Number(price) + '</div>' +
+              (withPrice
+                ? '<div class="panel-value">$' + Number(price) + '</div>'
+                : '<div class="panel-value">' + escapeHtml(it.year || '') + '</div>') +
             '</a>'
           );
         }).join('');
@@ -215,6 +235,7 @@
     // ── Featured grid (3 cards, prefer newer ones not already in panel) ──
     if (grid) {
       const top = items.slice(0, 3);
+      const withPrice = showPrice(grid);
       if (top.length) {
         const cardsHtml = top.map(it => {
           const country  = (it.country  || '').toUpperCase();
@@ -234,7 +255,9 @@
               '<h3>' + safeTitle + '</h3>' +
               (excerpt ? '<p class="report-desc">' + excerpt + '</p>' : '') +
               '<div class="report-footer">' +
-                '<span class="report-price">$' + Number(price) + '</span>' +
+                (withPrice
+                  ? '<span class="report-price">$' + Number(price) + '</span>'
+                  : '<span class="report-price">' + escapeHtml(freeLabel) + '</span>') +
                 '<span class="report-cta">' + ctaLabel + '</span>' +
               '</div>' +
             '</a>'

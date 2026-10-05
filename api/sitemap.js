@@ -44,9 +44,7 @@ const STATIC_PAGES = [
   { path: 'about',                                changefreq: 'monthly', priority: '0.6' },
   { path: 'methodology',                          changefreq: 'monthly', priority: '0.6' },
   { path: 'pricing',                              changefreq: 'monthly', priority: '0.6' },
-  { path: 'custom-research/',                     changefreq: 'monthly', priority: '0.7' },
-  { path: 'custom-research/market-analysis/',     changefreq: 'monthly', priority: '0.7' },
-  { path: 'custom-research/strategy-builder/',    changefreq: 'monthly', priority: '0.7' }
+  { path: 'experts/',                             changefreq: 'monthly', priority: '0.7' }
 ];
 
 // ── Supabase helper (read-only, anon-safe with service key) ──

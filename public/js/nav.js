@@ -87,10 +87,11 @@
         <div class="nav-links" id="kira-nav-links">
           <a href="${localPath('/library')}"          class="${('library'        + activeIf('library')).trim()}"        data-i18n="nav.library">Library</a>
           <a href="${localPath('/insights')}"         class="${('insights'       + activeIf('insights')).trim()}"       data-i18n="nav.insights">Insights</a>
-          <a href="${localPath('/custom-research/')}" class="${('nav-dropdown'   + activeIf('custom-research')).trim()}" data-i18n="nav.customResearch">Custom Research</a>
+          <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
+          <a href="${localPath('/experts/')}"         class="${('experts'        + activeIf('experts')).trim()}"        data-i18n="nav.experts">Kira Experts</a>
           <a href="${localPath('/profile')}" class="${('kira-my-library'   + activeIf('profile')).trim()}" data-i18n="nav.myLibrary" style="display:none">My Library</a>
           <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
-          <a href="${localPath('/library')}" class="nav-cta" data-i18n="nav.browseCta">Browse Library →</a>
+          <a href="${localPath('/library')}" class="nav-cta" data-i18n="nav.browseCta">Explore the library →</a>
         </div>
         <button class="nav-burger" id="kira-nav-burger" aria-label="Toggle menu">
           <span></span><span></span><span></span>
@@ -111,7 +112,8 @@
     </div>
     <a href="${localPath('/library')}"          data-i18n="nav.library">Library</a>
     <a href="${localPath('/insights')}"         data-i18n="nav.insights">Insights</a>
-    <a href="${localPath('/custom-research/')}" data-i18n="nav.customResearch">Custom Research</a>
+    <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
+    <a href="${localPath('/experts/')}"         data-i18n="nav.experts">Kira Experts</a>
     <a href="${localPath('/profile')}" class="kira-my-library" data-i18n="nav.myLibrary" style="display:none">My Library</a>
     <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
   </div>
@@ -126,7 +128,7 @@
         <a class="logo" href="${localPath('/')}">
           <span class="logo-mark"><img class="logo-img" src="/logo.png" alt="KIRA Research" width="176" height="22"></span>
         </a>
-        <p class="footer-tag" data-i18n="footer.tagline">Southeast Asia's specialized market research firm. Senior analysts, modern delivery.</p>
+        <p class="footer-tag" data-i18n="footer.tagline">Market-entry research on Southeast Asia, Australia, New Zealand and Taiwan.</p>
       </div>
       <div class="footer-col">
         <h3 data-i18n="footer.libraryCol">Library</h3>
@@ -139,8 +141,8 @@
         <h3 data-i18n="footer.firmCol">Firm</h3>
         <a href="${localPath('/about')}"            data-i18n="footer.about">About</a>
         <a href="${localPath('/methodology')}"      data-i18n="footer.methodology">Methodology</a>
-        <a href="${localPath('/custom-research/')}" data-i18n="footer.customResearch">Custom Research</a>
-        <a href="${localPath('/contact')}"          data-i18n="footer.contact">Contact</a>
+        <a href="${localPath('/experts/')}"         data-i18n="footer.experts">Kira Experts</a>
+        <a href="mailto:hello@kiraresearch.com"     data-i18n="footer.contact">Contact</a>
       </div>
       <div class="footer-col">
         <h3 data-i18n="footer.resourcesCol">Resources</h3>
@@ -152,7 +154,7 @@
     </div>
     <div class="footer-bottom">
       <span data-i18n="footer.copyright">© 2026 KIRA RESEARCH</span>
-      <span data-i18n="footer.cities">HO CHI MINH CITY · SINGAPORE</span>
+      <span data-i18n="footer.cities">HO CHI MINH CITY · SINGAPORE · BANGKOK</span>
     </div>
   </div>
 </footer>`;
@@ -176,7 +178,7 @@
       alternateName: 'KIRA Research',
       url:        origin + '/',
       logo:       origin + '/logo.png',
-      description: 'Southeast Asia market intelligence firm. Senior analysts, modern delivery.',
+      description: 'Market-entry research on Southeast Asia, Australia, New Zealand and Taiwan.',
       foundingLocation: {
         '@type': 'Place',
         address: { '@type': 'PostalAddress', addressLocality: 'Ho Chi Minh City', addressCountry: 'VN' }

@@ -148,6 +148,33 @@
     }
 
     .buy-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    /* Sprint S5 — free executive summary + subscription box */
+    .rpt-free-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(30,111,255,0.10);
+      color: var(--primary);
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .rpt-free-note { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .sub-box-lede { font-size: 14px; line-height: 1.55; color: var(--text); margin: 6px 0 18px; }
+    .sub-box-note { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 10px 0 4px; text-align: center; }
+    .sub-box-plans { display: block; margin-top: 14px; font-size: 13px; color: var(--primary); text-decoration: none; }
+    .rpt-glossary { margin: 40px 0; }
+    .rpt-glossary h4 {
+      font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 11px;
+      color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .rpt-glossary dl { margin: 0; }
+    .rpt-gloss-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .rpt-gloss-row dt { font-weight: 600; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+    .rpt-gloss-row dd { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -164,7 +191,7 @@
       <button class="unlock-modal-close" id="unlock-modal-close" aria-label="Close">×</button>
       <div class="unlock-modal-eyebrow">Locked Section</div>
       <h3 id="unlock-modal-title">Section</h3>
-      <p id="unlock-modal-body">This section is part of the full report. Unlock the complete PDF + online reader access.</p>
+      <p id="unlock-modal-body">This section is part of the full report.</p>
       <button class="buy-btn" id="unlock-modal-buy">Unlock full report →</button>
       <div class="unlock-modal-footnote">Single-user license · Free updates for 12 months</div>
     </div>
@@ -184,6 +211,14 @@
 
     // <html lang>: Chinese is Simplified-only → BCP-47 'zh-Hans'.
     document.documentElement.setAttribute('lang', locale === 'zh' ? 'zh-Hans' : locale);
+
+    // ── Per-report purchase switch (Sprint S5) ──────────────
+    // false → the $39 single-report checkout is hidden; the buy box, preview
+    // CTA and locked-section modal point to the subscription waitlist instead.
+    // true  → restores the original PayPal per-report flow (all payment code
+    // below is kept intact). Existing buyers keep full access either way.
+    const PER_REPORT_PURCHASE = false;
+    const WAITLIST_URL = '/en/pricing#waitlist';
 
     // Preview iframe geometry. Source HTML is authored at 1280×720 per page
     // (matches the PDF). 5 pages × 720px = 3600px tall. Declared up here so
@@ -455,13 +490,16 @@
               url:     base + '/',
               logo: { '@type': 'ImageObject', url: base + '/logo.png' }
             },
-            offers: {
-              '@type':        'Offer',
-              price:          String(d.price || 39),
-              priceCurrency:  'USD',
-              availability:   'https://schema.org/InStock',
-              url
-            },
+            // Single-report offer only while per-report purchase is on.
+            ...(PER_REPORT_PURCHASE ? {
+              offers: {
+                '@type':        'Offer',
+                price:          String(d.price || 39),
+                priceCurrency:  'USD',
+                availability:   'https://schema.org/InStock',
+                url
+              }
+            } : {}),
             isAccessibleForFree: 'False',
             hasPart: {
               '@type':              'WebPageElement',
@@ -473,7 +511,7 @@
             '@type':          'Dataset',
             '@id':            url + '#dataset',
             name:             (d.title || d.slug) + ' — Market Data',
-            description:      'Primary market intelligence data covering ' +
+            description:      'Market intelligence from desk research covering ' +
                               [d.industry, d.country].filter(Boolean).join(' in ') +
                               (d.year ? ', ' + d.year : '') +
                               '. Includes market sizing, competitive landscape, and trend analysis.',
@@ -595,6 +633,22 @@
       );
     }
 
+    // Glossary — part of the free executive summary. glossary_json is
+    // [{term, definition}] from /api/library-report (migration 022).
+    function renderGlossary(list) {
+      if (!Array.isArray(list) || !list.length) return '';
+      const rows = list.filter(g => g && g.term).map(g =>
+        '<div class="rpt-gloss-row"><dt>' + escapeHtml(g.term) + '</dt><dd>' + escapeHtml(g.definition || '') + '</dd></div>'
+      ).join('');
+      if (!rows) return '';
+      return (
+        '<section class="rpt-section rpt-glossary">' +
+          '<h4>Glossary</h4>' +
+          '<dl>' + rows + '</dl>' +
+        '</section>'
+      );
+    }
+
     function renderToc(toc, ownsContent) {
       if (!Array.isArray(toc) || !toc.length) return '';
       const items = toc.map(t => {
@@ -643,10 +697,13 @@
                     'referrerpolicy="same-origin"></iframe>' +
             '<div class="rpt-preview-fade" aria-hidden="true"></div>' +
             '<div class="rpt-preview-cta">' +
-              '<div class="rpt-preview-cta-lede">Continue reading the full report</div>' +
-              '<button class="buy-btn" id="preview-buy-btn">' +
-                'Unlock full report — $' + price + ' →' +
-              '</button>' +
+              (PER_REPORT_PURCHASE
+                ? '<div class="rpt-preview-cta-lede">Continue reading the full report</div>' +
+                  '<button class="buy-btn" id="preview-buy-btn">' +
+                    'Unlock full report — $' + price + ' →' +
+                  '</button>'
+                : '<div class="rpt-preview-cta-lede">The full report is part of the subscription</div>' +
+                  '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Request early access →</a>') +
             '</div>' +
           '</div>' +
         '</section>'
@@ -680,7 +737,9 @@
             '</div>' +
             '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
             '<div class="rpt-report-foot">' +
-              '<span class="rpt-report-price">$' + (it.price || 39) + '</span>' +
+              (PER_REPORT_PURCHASE
+                ? '<span class="rpt-report-price">$' + (it.price || 39) + '</span>'
+                : '<span class="rpt-report-price">Free summary</span>') +
               '<span class="rpt-report-cta">Read report →</span>' +
             '</div>' +
           '</a>'
@@ -739,7 +798,37 @@
       return '<div class="rpt-full-body">' + blocks + '</div>';
     }
 
+    // Subscription box shown instead of the $39 buy box while
+    // PER_REPORT_PURCHASE is false. Owners of a purchased copy still get
+    // the original owned-state box (download link) via renderBuyBox().
+    function renderSubscribeBox(d, state) {
+      const ownedNote = state.anyLocale
+        ? '<div class="pdf-pending" style="margin-bottom:12px;">You already own this report in <strong style="color:var(--primary);text-transform:uppercase;">' + escapeHtml(state.ownedLocale || 'EN') + '</strong>.</div>'
+        : '';
+      return (
+        '<aside class="buy-box">' +
+          '<div class="buy-tag">Executive summary · free</div>' +
+          '<p class="sub-box-lede">The executive summary is free to read. The full report is part of the KIRA Research subscription.</p>' +
+          '<div class="buy-lang-select" aria-label="Report language">' +
+            renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
+          '</div>' +
+          ownedNote +
+          '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Request early access →</a>' +
+          '<div class="sub-box-note">Subscriptions are not yet open. Nothing is charged now.</div>' +
+          '<div class="buy-includes">' +
+            '<h6>The subscription includes</h6>' +
+            '<div class="include-item">Unlimited online reading</div>' +
+            '<div class="include-item">PDF downloads (monthly allowance)</div>' +
+            '<div class="include-item">All charts &amp; data tables</div>' +
+            '<div class="include-item">Updates as reports are refreshed</div>' +
+          '</div>' +
+          '<a class="sub-box-plans" href="/en/pricing">See plans: Week · Month · Annual →</a>' +
+        '</aside>'
+      );
+    }
+
     function renderBuyBox(d, state) {
+      if (!PER_REPORT_PURCHASE && !state.purchased) return renderSubscribeBox(d, state);
       const pages = d.pages || 78;
       const aggregators = (d.aggregators || []).slice(0, 5);
 
@@ -876,8 +965,11 @@
             '</div>' +
 
             '<section class="rpt-section rpt-abstract">' +
-              '<h3>Section 01 · Executive Summary</h3>' +
-              '<h2>' + (purchaseState.purchased ? 'Overview' : 'Preview') + '</h2>' +
+              (purchaseState.purchased
+                ? '<h3>Section 01 · Executive Summary</h3><h2>Overview</h2>'
+                : '<div class="rpt-free-badge">Free to read</div>' +
+                  '<h2>Executive summary</h2>' +
+                  '<p class="rpt-free-note">The overview, selected data tables, the table of contents and the glossary are open to all readers.</p>') +
               lede + paras + chart +
             '</section>' +
 
@@ -886,6 +978,8 @@
             (purchaseState.purchased ? '' : renderPreviewFrame(d, locale)) +
 
             toc +
+
+            renderGlossary(d.glossary_json) +
 
             fullBody +
 
@@ -943,12 +1037,22 @@
       const price = d.price || 39;
       const pages = d.pages || 78;
 
+      // Subscription mode: the modal button links to the waitlist instead of
+      // opening PayPal checkout. Footnote copy changes with it.
+      if (!PER_REPORT_PURCHASE) {
+        buyBtn.textContent = 'Request early access →';
+        const foot = modal.querySelector('.unlock-modal-footnote');
+        if (foot) foot.textContent = 'Subscriptions are not yet open · Nothing is charged now';
+      }
+
       function openModal(sectionName) {
         titleEl.textContent = sectionName || 'Locked section';
-        bodyEl.innerHTML =
-          'This section is part of the full report. Unlock the complete <strong>' +
-          pages + '-page PDF</strong> + online reader access for <strong>$' +
-          price + '</strong>.';
+        bodyEl.innerHTML = PER_REPORT_PURCHASE
+          ? 'This section is part of the full report. Unlock the complete <strong>' +
+            pages + '-page PDF</strong> + online reader access for <strong>$' +
+            price + '</strong>.'
+          : 'This section is part of the full report, available with the KIRA Research subscription. ' +
+            'The executive summary on this page is free to read.';
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
         closeBtn.focus();
@@ -978,6 +1082,7 @@
 
       buyBtn.addEventListener('click', () => {
         if (purchaseState.purchased) { closeModal(); return; }
+        if (!PER_REPORT_PURCHASE) { window.location.href = WAITLIST_URL; return; }
         buyBtn.disabled = true;
         buyBtn.textContent = 'Opening checkout…';
         startCheckout(d.slug, locale);

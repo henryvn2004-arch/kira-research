@@ -4,19 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>インサイト — KIRA RESEARCH</title>
-  <meta name="description" content="東南アジア各市場に関するアナリストのフィールドノートと解説 — フィンテック、FMCG、物流、ヘルステック、エネルギー。" />
+  <meta name="description" content="東南アジア市場に関する短い分析と解説 — 決済、FMCG、物流、ヘルステック、エネルギー。" />
 
+  <!-- hreflang -->
   <link rel="alternate" hreflang="en" href="https://kiraresearch.com/en/insights/" />
   <link rel="alternate" hreflang="ja" href="https://kiraresearch.com/ja/insights/" />
   <link rel="alternate" hreflang="ko" href="https://kiraresearch.com/ko/insights/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://kiraresearch.com/zh/insights/" />
   <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/insights/" />
   <link rel="canonical" href="https://kiraresearch.com/ja/insights/" />
 
+  <!-- Open Graph -->
   <meta property="og:title" content="インサイト — KIRA RESEARCH" />
-  <meta property="og:description" content="東南アジア市場をカバーするシニアアナリストのフィールドノート。" />
+  <meta property="og:description" content="東南アジア市場の変化を読み解く、当社リサーチチームの分析。" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://kiraresearch.com/ja/insights/" />
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://api.fontshare.com" />
@@ -24,27 +28,37 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" />
 
   <link rel="stylesheet" href="/css/kira.css" />
+  <!-- ja: Japanese typography (Noto Sans JP fallback, CJK line-height) -->
   <style>
-    body, h1, h2, h3, h4 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; }
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; }
+    html:lang(ja) body { line-break: strict; }
+    html:lang(ja) h1 { line-height: 1.25; letter-spacing: -0.01em; }
+    html:lang(ja) h2, html:lang(ja) h3 { line-height: 1.4; letter-spacing: 0; }
   </style>
 </head>
 <body>
 
+  <!-- nav + footer injected by /js/nav.js -->
+
   <div class="container">
+
+    <!-- ── PAGE HERO ───────────────────────────────────── -->
     <header class="lib-header">
       <div class="hero-eyebrow" data-i18n="insights.eyebrow">インサイト</div>
-      <h1 data-i18n="insights.title">アナリストデスクからのフィールドノート。</h1>
-      <p data-i18n="insights.sub">東南アジアで起きている変化に関する短い読み物 — 私たちがカバーする市場、追っているシグナル、使用する手法。無料公開。</p>
+      <h1 data-i18n="insights.title">変化する地域を読み解く。</h1>
+      <p data-i18n="insights.sub">東南アジアで起きている動きを短く分析します。市場の変化、政策の兆し、調査手法に関する覚え書き。無料で閲覧できます。</p>
     </header>
 
+    <!-- ── SEARCH ──────────────────────────────────────── -->
     <div class="insights-search-wrap">
       <svg class="insights-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       <input id="insights-search" class="insights-search" type="search" autocomplete="off"
-             placeholder="トピック、国、産業で検索…" aria-label="インサイトを検索" />
+             placeholder="トピック、国、業界で検索…" aria-label="インサイトを検索" />
     </div>
 
+    <!-- ── CATEGORY FILTER ─────────────────────────────── -->
     <nav class="insights-cats" aria-label="カテゴリー">
       <a href="#" class="active" data-i18n="insights.catAll">すべて</a>
       <a href="#" data-cat="vietnam">ベトナム</a>
@@ -57,14 +71,31 @@
       <a href="#" data-cat="methodology" data-i18n="insights.catMethod">調査手法</a>
     </nav>
 
+    <!-- ── FEATURED + GRID (rendered dynamically) ──────── -->
     <div id="insights-root">
       <div class="insight-empty">読み込み中…</div>
     </div>
+
   </div>
 
   <style>
-    .insight-empty { padding: 96px 24px; text-align: center; color: var(--muted); font-size: 14px; }
-    .insight-card.disabled, .insight-featured.disabled { pointer-events: none; opacity: 0.6; }
+    .insight-empty {
+      padding: 96px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .insight-card.disabled, .insight-featured.disabled {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .insight-card .badge-cs {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
   </style>
 
   <script src="/js/nav.js" defer></script>
@@ -81,6 +112,7 @@
       let page      = 1;
       let searchTimer = null;
 
+      // ── Hydrate active category + page + query from URL (?cat=foo&q=bar&page=N) ──
       const params = new URLSearchParams(window.location.search);
       const initCat = params.get('cat');
       if (initCat) {
@@ -99,6 +131,7 @@
       const initPage = parseInt(params.get('page'), 10);
       if (initPage && initPage > 0) page = initPage;
 
+      // ── Chip clicks (reset to page 1) ──
       cats.forEach(a => {
         a.addEventListener('click', (e) => {
           e.preventDefault();
@@ -111,6 +144,7 @@
         });
       });
 
+      // ── Search input (debounced) ──
       if (searchEl) {
         searchEl.addEventListener('input', () => {
           clearTimeout(searchTimer);
@@ -123,6 +157,7 @@
         });
       }
 
+      // ── Back/forward navigation ──
       window.addEventListener('popstate', () => {
         const p = new URLSearchParams(window.location.search);
         activeCat = (p.get('cat') || '').toLowerCase();
@@ -143,7 +178,8 @@
         if (searchQ)   p.set('q',   searchQ);
         if (page > 1)  p.set('page', String(page));
         const qs = p.toString();
-        window.history.pushState({}, '', window.location.pathname + (qs ? '?' + qs : ''));
+        const url = window.location.pathname + (qs ? '?' + qs : '');
+        window.history.pushState({}, '', url);
       }
 
       async function fetchAndRender() {
@@ -154,26 +190,30 @@
         qs.set('offset', String((page - 1) * PAGE_SIZE));
         if (activeCat) qs.set('category', activeCat);
         if (searchQ)   qs.set('q', searchQ);
+
         try {
           const r = await fetch('/api/insights-list?' + qs.toString());
           if (!r.ok) throw new Error('http ' + r.status);
           const data = await r.json();
           render(data.items || [], data.total || 0);
         } catch (err) {
-          root.innerHTML = '<div class="insight-empty">インサイトを読み込めませんでした。再試行してください。</div>';
+          root.innerHTML = '<div class="insight-empty">インサイトを読み込めませんでした。もう一度お試しください。</div>';
         }
       }
 
       function render(items, total) {
         if (!items.length) {
           const msg = searchQ
-            ? '「' + escapeHtml(searchQ) + '」に該当するインサイトがありません。別のキーワードをお試しください。'
-            : 'このフィルターに該当するインサイトがありません。';
+            ? '「' + escapeHtml(searchQ) + '」に該当するインサイトはありません。より広いキーワードでお試しください。'
+            : 'この条件に該当するインサイトはまだありません。';
           root.innerHTML = '<div class="insight-empty">' + msg + '</div>';
           return;
         }
+
         const html = [];
+
         if (page === 1 && !searchQ) {
+          // Page 1 (no search): featured + rest as grid.
           const featured = items.find(it => it.featured) || items[0];
           const rest     = items.filter(it => it.slug !== featured.slug);
           html.push(renderFeatured(featured));
@@ -183,14 +223,18 @@
             html.push('</div>');
           }
         } else {
+          // Page 2+: plain grid, no featured.
           html.push('<div class="insights-grid">');
           items.forEach(it => html.push(renderCard(it)));
           html.push('</div>');
         }
+
         const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
         if (totalPages > 1) html.push(renderPager(totalPages));
+
         root.innerHTML = html.join('');
 
+        // Wire pager buttons.
         const prev = root.querySelector('.insights-pager .pager-prev');
         const next = root.querySelector('.insights-pager .pager-next');
         if (prev) prev.addEventListener('click', (e) => { e.preventDefault(); goTo(page - 1); });
@@ -208,7 +252,7 @@
         const prevDisabled = page <= 1 ? ' disabled' : '';
         const nextDisabled = page >= totalPages ? ' disabled' : '';
         return (
-          '<nav class="insights-pager" aria-label="ページネーション">' +
+          '<nav class="insights-pager" aria-label="ページ送り">' +
             '<a href="#" class="pager-prev' + prevDisabled + '"' +
               (prevDisabled ? ' aria-disabled="true"' : '') + '>← 前へ</a>' +
             '<span class="pager-status">' + page + ' / ' + totalPages + ' ページ</span>' +
@@ -225,7 +269,9 @@
         const excerpt = it.excerpt || '';
         return (
           '<a href="' + articleHref(it.slug) + '" class="insight-featured' + (it.hasTranslation ? '' : ' disabled') + '">' +
-            '<div class="insight-featured-img"><span class="ifi-tag">' + escapeHtml(cat || 'INSIGHT') + '</span></div>' +
+            '<div class="insight-featured-img">' +
+              '<span class="ifi-tag">' + escapeHtml(cat || 'INSIGHT') + '</span>' +
+            '</div>' +
             '<div class="insight-featured-body">' +
               '<div class="insight-meta">' +
                 '<span class="cat">注目</span>' +
@@ -234,7 +280,7 @@
               '<h2>' + escapeHtml(title) + '</h2>' +
               (excerpt ? '<p class="insight-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
               '<div class="insight-footer">' +
-                '<span>リサーチチーム</span>' +
+                '<span>当社リサーチチーム</span>' +
                 '<span class="read">' + (it.hasTranslation ? '読む →' : '翻訳中…') + '</span>' +
               '</div>' +
             '</div>' +
@@ -264,7 +310,10 @@
         );
       }
 
-      function articleHref(slug) { return '/' + locale + '/insights/' + encodeURIComponent(slug); }
+      function articleHref(slug) {
+        return '/' + locale + '/insights/' + encodeURIComponent(slug);
+      }
+
       function buildCatLabel(it) {
         const parts = [];
         if (it.country)  parts.push(it.country.toUpperCase());
@@ -272,15 +321,21 @@
         if (!parts.length && it.category) parts.push(it.category.toUpperCase());
         return parts.join(' · ');
       }
+
       function formatDate(iso) {
         if (!iso) return '';
-        const d = new Date(iso);
-        return `${d.getFullYear()}年${d.getMonth() + 1}月`;
+        return new Date(iso).toLocaleDateString('ja-JP', { month: 'long', year: 'numeric' });
       }
-      function humanize(slug) { return String(slug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+
+      function humanize(slug) {
+        return String(slug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      }
+
       function escapeHtml(s) {
-        return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return String(s == null ? '' : s)
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       }
+
       fetchAndRender();
     });
   </script>

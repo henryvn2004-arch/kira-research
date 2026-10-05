@@ -3,221 +3,590 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KIRA Research — 동남아시아 마켓 인텔리전스</title>
-  <meta name="description" content="KIRA Research는 동남아시아 전문 리서치 펌입니다. 시니어 분석가가 20년의 현장 리서치를 현대적인 방식으로 제공하며, 지속적으로 업데이트되는 리빙 도큐먼트로 전달합니다.">
+  <title>KIRA Research — 동남아시아 시장 진출 리서치</title>
+  <meta name="description" content="동남아시아, 호주, 뉴질랜드, 대만의 시장·산업·진출 경로에 관한 리서치입니다. 모든 수치에 출처를 명기하며, 핵심 요약은 무료로 열람할 수 있습니다.">
 
+  <!-- hreflang -->
   <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/">
   <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/">
   <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/">
+  <link rel="alternate" hreflang="zh-Hans"   href="https://kiraresearch.com/zh/">
   <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/">
   <link rel="canonical" href="https://kiraresearch.com/ko/">
 
-  <meta property="og:title"       content="KIRA Research — 동남아시아 마켓 인텔리전스">
-  <meta property="og:description" content="우리가 살고 있는 시장에 대한 심층 리서치. 시니어 분석가가 작성한 동남아시아 전문 마켓 인텔리전스.">
+  <!-- Open Graph -->
+  <meta property="og:title"       content="KIRA Research — 동남아시아 시장 진출 리서치">
+  <meta property="og:description" content="동남아시아에서 어디에 투자하고, 어떻게 진출하며, 누구와 경쟁할 것인가. 핵심 요약은 무료로 열람할 수 있습니다.">
   <meta property="og:url"         content="https://kiraresearch.com/ko/">
   <meta property="og:type"        content="website">
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://api.fontshare.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 
+  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheet -->
   <link rel="stylesheet" href="/css/kira.css">
 
+  <!-- Page-specific styles -->
   <style>
+    /* ko: Hangul font fallback; keep Korean words intact when wrapping */
     body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
-    .hero { position: relative; padding: 100px 0 120px; overflow: hidden; }
-    .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 2; }
+    body { word-break: keep-all; overflow-wrap: break-word; }
+    .nav-wrap, .locale-switcher { word-break: normal; }
+    .hero { position: relative; padding: 96px 0 104px; overflow: hidden; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
     .hero h1 {
       font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
       font-weight: 700;
-      font-size: clamp(40px, 5.5vw, 64px);
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin-bottom: 32px;
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
     }
+    .hero h1 span { display: block; }
     .hero h1 .accent { color: var(--primary); }
-    .hero-sub { font-size: 18px; line-height: 1.7; color: var(--muted); margin-bottom: 44px; max-width: 540px; }
-    .hero-actions { display: flex; gap: 14px; margin-bottom: 56px; flex-wrap: wrap; }
+    .hero-sub {
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 560px;
+    }
+    .hero-actions { display: flex; gap: 14px; margin-bottom: 40px; flex-wrap: wrap; }
+    .hero-coverage {
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 560px;
+    }
+    .hero-coverage strong {
+      display: block;
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .panel-empty { padding: 14px 0; font-size: 13px; color: var(--muted); }
+    .panel-empty a { color: var(--primary); text-decoration: none; }
+
+    /* Coverage */
+    .cov-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 64px;
+      align-items: start;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .kicker {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .kicker::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+    .cov-grid h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin: 12px 0 20px;
+    }
+    .cov-grid p { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 520px; }
+    .cov-note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+    .cov-group + .cov-group { margin-top: 32px; }
+    .cov-group h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .cov-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 32px;
+    }
+    .cov-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* The decision: three stages */
+    .dec-intro { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 560px; margin-top: 12px; }
+    .dec-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .dec-card {
+      background: var(--bg);
+      padding: 32px 28px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.2s;
+    }
+    .dec-card:hover { background: var(--surface); }
+    .dec-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .dec-card h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .dec-card p { font-size: 14px; line-height: 1.65; color: var(--muted); margin-bottom: 24px; }
+    .dec-link { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--primary); }
+
+    /* Kira Experts band */
+    .experts-band { padding-top: 100px; }
+    .experts-inner {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 48px;
+      align-items: center;
+      padding: 48px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+    .experts-inner h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: clamp(26px, 2.6vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 12px 0 14px;
+    }
+    .experts-inner p { font-size: 16px; line-height: 1.65; color: var(--muted); }
+    .experts-inner .actions { display: flex; justify-content: flex-end; }
+
+    /* What you get */
+    .get-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .get-cell { background: var(--bg); padding: 28px 24px; }
+    .get-cell h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+    .get-cell p { font-size: 14px; line-height: 1.6; color: var(--muted); }
+    .get-note { margin-top: 18px; font-size: 14px; color: var(--muted); }
+    .get-note a { color: var(--primary); text-decoration: none; }
+
     .reports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
     .industries { padding-top: 0; }
-    .methodology-preview { padding: 100px 0 0; }
-    .distrib { padding: 80px 0 0; }
+
+    .methodology-preview { padding-top: 100px; }
+
+    .closing { padding-top: 100px; }
+    .closing-cta {
+      padding: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .closing-cta h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+    .closing-cta p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 28px; line-height: 1.6; }
+    .closing-cta .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
     @media (max-width: 968px) {
       .hero-grid { grid-template-columns: 1fr; gap: 48px; }
       .reports-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 36px; }
-      .hero { padding: 64px 0 80px; }
+      .hero h1 { font-size: 38px; }
+      .hero { padding: 56px 0 72px; }
+      .cov-grid { grid-template-columns: 1fr; gap: 32px; }
+      .dec-grid { grid-template-columns: 1fr; }
+      .experts-inner { grid-template-columns: 1fr; gap: 24px; padding: 36px; }
+      .experts-inner .actions { justify-content: flex-start; }
+      .get-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .cov-list { grid-template-columns: 1fr 1fr; column-gap: 20px; }
+      .cov-list li { font-size: 15px; }
+      .experts-inner { padding: 28px 20px; }
+      .get-grid { grid-template-columns: 1fr; }
+      .closing-cta { padding: 36px 20px; }
+      .hero h1 { font-size: 34px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- nav + footer injected by /js/nav.js -->
 
   <section class="hero">
     <div class="grid-pattern"></div>
     <div class="container">
       <div class="hero-grid">
         <div>
-          <div class="hero-eyebrow">동남아시아 · 마켓 인텔리전스</div>
+          <div class="hero-eyebrow" data-i18n="home.heroEyebrow">동남아시아 · 시장 진출 리서치</div>
           <h1>
-            <span>우리가 살고 있는</span><br>
-            <span>시장에 대한,</span><br>
-            <span class="accent">심층 리서치.</span>
+            <span data-i18n="home.heroTitleLine1">어디에 투자할 것인가.</span>
+            <span data-i18n="home.heroTitleLine2">어떻게 진출할 것인가.</span>
+            <span class="accent" data-i18n="home.heroTitleLine3">누구와 경쟁할 것인가.</span>
           </h1>
-          <p class="hero-sub">
-            KIRA Research는 동남아시아 전문 리서치 펌입니다. 시니어 분석가가 20년의 현장 경험을 현대적인 방식으로 제공 — 지속적으로 업데이트되는 리빙 도큐먼트.
-          </p>
+          <p class="hero-sub" data-i18n="home.heroSub">동남아시아, 호주, 뉴질랜드, 대만의 시장·산업·진출 경로에 관한 리서치입니다. 모든 수치에 출처를 명기합니다. 핵심 요약(Executive Summary)은 무료로 열람할 수 있습니다.</p>
           <div class="hero-actions">
             <a href="/ko/library" class="btn btn-primary">
-              <span>라이브러리 보기</span>
+              <span data-i18n="home.ctaPrimary">라이브러리 둘러보기</span>
               <span class="btn-arrow">→</span>
             </a>
-            <a href="/ko/custom-research/" class="btn btn-secondary">
-              맞춤 조사 의뢰
-            </a>
+            <a href="/ko/pricing#waitlist" class="btn btn-secondary" data-i18n="home.ctaSecondary">조기 이용 신청</a>
           </div>
-          <div class="hero-trust">
-            <div class="trust-item"><div class="num">20+</div><div class="label">동남아 활동 연수</div></div>
-            <div class="trust-item"><div class="num">11</div><div class="label">조사 대상국</div></div>
-            <div class="trust-item"><div class="num">38</div><div class="label">조사 산업</div></div>
+          <div class="hero-coverage">
+            <strong data-i18n="home.coverageLabel">조사 범위</strong>
+            <span data-i18n="home.coverageBody">동남아시아 10개 시장과 호주, 뉴질랜드, 대만.</span>
           </div>
         </div>
 
-        <div class="hero-panel" data-live-reports="panel">
+        <div class="hero-panel" data-live-reports="panel" data-show-price="false">
           <div class="panel-header">
-            <span class="panel-title">최신 리서치</span>
-            <span class="panel-status"><span class="status-dot"></span><span>실시간</span></span>
+            <span class="panel-title" data-i18n="home.panelTitle">최신 리서치</span>
+            <span class="panel-status"><span class="status-dot"></span><span data-i18n="home.panelStatus">실시간</span></span>
           </div>
-          <a href="/ko/reports/vietnam-fintech-2026" class="panel-row" style="text-decoration:none;color:inherit;">
-            <div><div class="panel-label">베트남 핀테크 2026</div><div class="panel-meta">VN · 금융 · 78 PG</div></div>
-            <div class="panel-value">$39</div>
-          </a>
-          <a href="/ko/reports/indonesia-fmcg-2027" class="panel-row" style="text-decoration:none;color:inherit;">
-            <div><div class="panel-label">인도네시아 FMCG 유통</div><div class="panel-meta">ID · 소비재 · 92 PG</div></div>
-            <div class="panel-value">$39</div>
-          </a>
-          <a href="/ko/reports/thailand-automotive-2027" class="panel-row" style="text-decoration:none;color:inherit;">
-            <div><div class="panel-label">태국 자동차 2027</div><div class="panel-meta">TH · 자동차 · 78 PG</div></div>
-            <div class="panel-value">$39</div>
-          </a>
-          <a href="/ko/reports/philippines-retail-2026" class="panel-row" style="text-decoration:none;color:inherit;">
-            <div><div class="panel-label">필리핀 소매 2026</div><div class="panel-meta">PH · 소매 · 78 PG</div></div>
-            <div class="panel-value">$39</div>
-          </a>
+          <div class="panel-empty"><span data-i18n="home.panelLoading">최신 보고서를 불러오는 중…</span> <a href="/ko/library" data-i18n="home.panelLibraryLink">라이브러리 열기 →</a></div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Coverage -->
+  <section class="container">
+    <div class="cov-grid">
+      <div>
+        <div class="kicker" data-i18n="home.covEyebrow">조사 범위</div>
+        <h2 data-i18n="home.covHeading">13개 시장, 하나의 근거 기준.</h2>
+        <p data-i18n="home.covBody">당사는 기업들이 현지 수요를 두고 경쟁하는 산업을 조사합니다. 소비재·유통, 금융 서비스, 헬스케어, 물류, 에너지, 기술, 부동산입니다. 모든 보고서에 동일한 구성과 출처 규칙을 적용하므로, 시장을 나란히 비교할 수 있습니다.</p>
+        <p class="cov-note" data-i18n="home.covNote">신규 보고서는 지속적으로 추가됩니다.</p>
+      </div>
+      <div>
+        <div class="cov-group">
+          <h3 data-i18n="home.covGroup1">동남아시아</h3>
+          <ul class="cov-list">
+            <li data-i18n="home.mktVN">베트남</li>
+            <li data-i18n="home.mktTH">태국</li>
+            <li data-i18n="home.mktID">인도네시아</li>
+            <li data-i18n="home.mktMY">말레이시아</li>
+            <li data-i18n="home.mktSG">싱가포르</li>
+            <li data-i18n="home.mktPH">필리핀</li>
+            <li data-i18n="home.mktKH">캄보디아</li>
+            <li data-i18n="home.mktLA">라오스</li>
+            <li data-i18n="home.mktMM">미얀마</li>
+            <li data-i18n="home.mktBN">브루나이</li>
+          </ul>
+        </div>
+        <div class="cov-group">
+          <h3 data-i18n="home.covGroup2">동남아시아 외 지역</h3>
+          <ul class="cov-list">
+            <li data-i18n="home.mktAU">호주</li>
+            <li data-i18n="home.mktNZ">뉴질랜드</li>
+            <li data-i18n="home.mktTW">대만</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The decision: three stages -->
   <section class="container">
     <div class="section-head">
       <div>
-        <div class="label">주요 보고서</div>
-        <h2>최근 업데이트</h2>
+        <div class="label" data-i18n="home.decEyebrow">의사결정</div>
+        <h2 data-i18n="home.decHeading">세 가지 질문, 제기되는 순서대로.</h2>
+        <p class="dec-intro" data-i18n="home.decBody">시장 진출은 일정한 순서를 따라 진행됩니다. 각 보고서는 그중 한 시점을 위해 작성됩니다.</p>
       </div>
-      <a href="/ko/library" class="more">라이브러리 보기 →</a>
+      <a href="/ko/library" class="more" data-i18n="home.decMore">단계별로 보기 →</a>
     </div>
-
-    <div class="reports-grid" data-live-reports="grid">
-      <a href="/ko/reports/vietnam-fintech-2026" class="report-card">
-        <div class="report-meta"><span class="country">베트남</span><span>핀테크 · 2026</span></div>
-        <h3>베트남 핀테크 환경: 결제, 대출, 경쟁 역학</h3>
-        <p class="report-desc">베트남의 디지털 뱅킹, BNPL 도입, SBV 규제 환경, 그리고 MoMo와 ZaloPay부터 신흥 네오뱅크까지 주요 운영사의 동향을 12개 섹션으로 심층 분석.</p>
-        <div class="report-footer"><span class="report-price">$39</span><span class="report-cta">미리보기 →</span></div>
+    <div class="dec-grid">
+      <a class="dec-card" href="/ko/library?stage=XPL">
+        <div class="dec-num"><span>01 · </span><span data-i18n="home.stageAssessName">평가</span></div>
+        <h3 data-i18n="home.stageAssessQ">추진할 가치가 있는 시장인가?</h3>
+        <p data-i18n="home.stageAssessBody">시장 규모, 성장성, 수요, 경쟁 구조를 대안과 비교하여 평가합니다.</p>
+        <span class="dec-link" data-i18n="home.stageLink">보고서 보기 →</span>
       </a>
-
-      <a href="/ko/reports/indonesia-fmcg-2027" class="report-card">
-        <div class="report-meta"><span class="country">인도네시아</span><span>소비재 · 2026</span></div>
-        <h3>인도네시아 FMCG 유통: 채널, 마진, 이커머스 전환</h3>
-        <p class="report-desc">현대식 유통, 전통 와룽, 퀵커머스가 인도네시아 소비재 시장을 어떻게 재구성하고 있는지. 채널 마진, 소매 동향, 카테고리 경제성.</p>
-        <div class="report-footer"><span class="report-price">$39</span><span class="report-cta">미리보기 →</span></div>
+      <a class="dec-card" href="/ko/library?stage=ENT">
+        <div class="dec-num"><span>02 · </span><span data-i18n="home.stageEnterName">진출</span></div>
+        <h3 data-i18n="home.stageEnterQ">어떻게 진입할 것인가?</h3>
+        <p data-i18n="home.stageEnterBody">진출 경로, 파트너, 규제, 비용, 그리고 초기 수년간의 사업 경제성을 다룹니다.</p>
+        <span class="dec-link" data-i18n="home.stageLink">보고서 보기 →</span>
       </a>
-
-      <a href="/ko/reports/thailand-automotive-2027" class="report-card">
-        <div class="report-meta"><span class="country">태국</span><span>자동차 · 2027</span></div>
-        <h3>태국 자동차 산업 2027: EV 전환, 중국 OEM 진입, 공급망 재편</h3>
-        <p class="report-desc">EV30@30 정책 아래 BYD·GWM 등 중국 전기차 브랜드가 공세를 펼치는 태국 시장. 일본 OEM의 대응 전략, 부품 업계 영향, 동남아 최대 자동차 생산 거점의 향방을 분석.</p>
-        <div class="report-footer"><span class="report-price">$39</span><span class="report-cta">미리보기 →</span></div>
+      <a class="dec-card" href="/ko/library?stage=XPN">
+        <div class="dec-num"><span>03 · </span><span data-i18n="home.stageExpandName">확장</span></div>
+        <h3 data-i18n="home.stageExpandQ">다음 성장은 어디에서 오는가?</h3>
+        <p data-i18n="home.stageExpandBody">신규 부문, 도시, 채널, 그리고 이를 앞당길 수 있는 인수를 다룹니다.</p>
+        <span class="dec-link" data-i18n="home.stageLink">보고서 보기 →</span>
       </a>
     </div>
   </section>
 
+  <!-- What you get -->
+  <section class="container">
+    <div class="section-head">
+      <div>
+        <div class="label" data-i18n="home.getEyebrow">구독</div>
+        <h2 data-i18n="home.getHeading">하나의 구독으로 라이브러리 전체를.</h2>
+      </div>
+      <a href="/ko/pricing" class="more" data-i18n="home.getMore">요금제 보기 →</a>
+    </div>
+    <div class="get-grid">
+      <div class="get-cell">
+        <h3 data-i18n="home.get1Title">핵심 요약은 누구나 열람</h3>
+        <p data-i18n="home.get1Body">모든 보고서의 개요, 주요 데이터 표, 목차, 용어집을 제공합니다. 계정이 필요하지 않습니다.</p>
+      </div>
+      <div class="get-cell">
+        <h3 data-i18n="home.get2Title">전체 보고서 온라인 열람</h3>
+        <p data-i18n="home.get2Body">구독자는 모든 보고서의 전문을 브라우저에서 제한 없이 열람할 수 있습니다.</p>
+      </div>
+      <div class="get-cell">
+        <h3 data-i18n="home.get3Title">PDF판</h3>
+        <p data-i18n="home.get3Body">요금제별 한도 내에서 보고서를 PDF로 내려받을 수 있습니다. 같은 보고서를 다시 내려받는 경우 중복 집계되지 않습니다.</p>
+      </div>
+      <div class="get-cell">
+        <h3 data-i18n="home.get4Title">최신판 제공</h3>
+        <p data-i18n="home.get4Body">각 보고서에는 최종 갱신일이 표시되며, 구독자는 항상 최신판을 열람합니다.</p>
+      </div>
+    </div>
+    <p class="get-note"><span data-i18n="home.getNote">구독은 아직 시작되지 않았으며, 현재 청구되는 비용은 없습니다.</span> <a href="/ko/pricing#waitlist" data-i18n="home.getNoteLink">조기 이용 신청 →</a></p>
+  </section>
+
+  <!-- Latest reports (live) -->
+  <section class="container">
+    <div class="section-head">
+      <div>
+        <div class="label" data-i18n="home.featuredEyebrow">최신 리서치</div>
+        <h2 data-i18n="home.featuredHeading">최근 발간 보고서</h2>
+      </div>
+      <a href="/ko/library" class="more" data-i18n="home.viewLibrary">라이브러리 보기 →</a>
+    </div>
+
+    <div class="reports-grid" data-live-reports="grid" data-show-price="false">
+      <a href="/ko/library" class="report-card">
+        <div class="report-meta"><span class="country" data-i18n="home.gridSkeletonEyebrow">라이브러리</span></div>
+        <h3 data-i18n="home.gridSkeletonTitle">최신 보고서를 불러오는 중…</h3>
+        <div class="report-footer"><span class="report-cta" data-i18n="home.gridSkeletonCta">라이브러리 열기 →</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Industries (live counts — cells with 0 reports are hidden by live-counts.js) -->
   <section class="container industries">
     <div class="section-head">
       <div>
-        <div class="label">커버리지</div>
-        <h2>추적 산업</h2>
+        <div class="label" data-i18n="home.industriesEyebrow">산업</div>
+        <h2 data-i18n="home.industriesHeading">라이브러리 수록 산업</h2>
       </div>
-      <a href="/ko/library" class="more">전체 산업 →</a>
+      <a href="/ko/library" class="more" data-i18n="home.allIndustries">전체 산업 →</a>
     </div>
 
     <div class="industries-grid">
-      <div class="ind-cell" data-industry-key="fintech"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg><div class="ind-label">핀테크</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="fmcg"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg><div class="ind-label">FMCG</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="logistics"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 23a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9 14l8-3"/><path d="M9 14l8 3"/></svg><div class="ind-label">물류</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="healthtech,pharma"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="ind-label">헬스테크</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="energy,ev"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="ind-label">에너지·EV</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="media"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><div class="ind-label">미디어</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="real estate"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="ind-label">부동산</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="telecom"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><div class="ind-label">통신</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="hospitality"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><div class="ind-label">호스피탈리티</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="retail,e-commerce,saas"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="ind-label">소매·테크</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="manufacturing"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><div class="ind-label">제조</div><div class="ind-count">— 보고서</div></div>
-      <div class="ind-cell" data-industry-key="f&b,coffee,aquaculture"><svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><div class="ind-label">F&amp;B</div><div class="ind-count">— 보고서</div></div>
+      <div class="ind-cell" data-industry-key="fintech">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div class="ind-label">핀테크</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="fmcg">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        <div class="ind-label">FMCG</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="logistics">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 23a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9 14l8-3"/><path d="M9 14l8 3"/></svg>
+        <div class="ind-label">물류</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="healthtech,pharma">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <div class="ind-label">헬스테크</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="energy,ev">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <div class="ind-label">에너지·EV</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="media">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <div class="ind-label">미디어</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="real estate">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <div class="ind-label">부동산</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="telecom">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="ind-label">통신</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="hospitality">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="ind-label">관광·숙박</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="retail,e-commerce,saas">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+        <div class="ind-label">유통·테크</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="manufacturing">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <div class="ind-label">제조</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
+      <div class="ind-cell" data-industry-key="f&b,coffee,aquaculture">
+        <svg class="ind-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <div class="ind-label">F&amp;B</div>
+        <div class="ind-count">— 보고서</div>
+      </div>
     </div>
   </section>
 
+  <!-- Methodology preview -->
   <section class="container methodology-preview">
     <div class="meth-grid">
       <div class="meth-left">
-        <div class="hero-eyebrow" style="margin-bottom: 16px;">조사 방법론</div>
-        <h2>시니어 분석가,<br>현대적 전달.</h2>
-        <p>
-          우리 팀은 동남아시아에서 1차 마켓 리서치를 20년간 수행해왔습니다. 컨설팅 수준의 방법론과 AI를 포함한 현대 도구를 결합해, 최신성과 합리적인 가격을 동시에 제공합니다.
-        </p>
-        <p>
-          우리가 발간하는 모든 보고서는 분석가의 검토를 거칩니다. 프로세스를 투명하게 공개합니다.
-        </p>
+        <div class="hero-eyebrow" style="margin-bottom: 16px;" data-i18n="home.methEyebrow">조사 방법론</div>
+        <h2 data-i18n="home.methHeading">출처를 밝히고 검토를 거친 데스크 리서치.</h2>
+        <p data-i18n="home.methBody1">각 보고서는 하나의 의사결정을 중심으로 구성되며, 공개 자료와 라이선스 자료를 바탕으로 조사합니다. 모든 수치에 출처를 명기하고, 당사 리서치팀이 발간 전 모든 보고서를 검토합니다.</p>
+        <p data-i18n="home.methBody2">추정치는 추정치로 표기하며, 출처 간 내용이 다를 경우 보고서에 그 사실을 밝힙니다.</p>
         <a href="/ko/methodology" class="btn btn-secondary" style="margin-top: 8px;">
-          <span>전체 방법론 보기</span>
+          <span data-i18n="home.methCta">조사 방법론 보기</span>
           <span class="btn-arrow">→</span>
         </a>
       </div>
 
       <div class="meth-steps">
-        <div class="meth-step"><div class="meth-num">01</div><div>
-          <h3>1차 조사의 기반</h3>
-          <p>동남아시아 전역에서 20년에 걸친 현장 조사가 기반이 되어, 채널 구조·소비자 패턴·규제 환경을 이해합니다.</p>
-        </div></div>
-        <div class="meth-step"><div class="meth-num">02</div><div>
-          <h3>최신 데이터 업데이트</h3>
-          <p>각 보고서 발간 전, 시장 규모·주요 플레이어·최근 변화를 2차 조사와 검증된 출처를 통해 갱신합니다.</p>
-        </div></div>
-        <div class="meth-step"><div class="meth-num">03</div><div>
-          <h3>AI 활용 분석</h3>
-          <p>현대 AI 도구를 종합·구조화·패턴 추출에 활용합니다. 분석가의 판단을 대체하지 않고, 작업을 가속화합니다.</p>
-        </div></div>
-        <div class="meth-step"><div class="meth-num">04</div><div>
-          <h3>분석가 큐레이션</h3>
-          <p>발간 전에 시니어 분석가가 반드시 검토합니다. AI가 놓치는 오류를 잡아내고, 중요한 전략적 맥락을 추가합니다.</p>
-        </div></div>
+        <div class="meth-step">
+          <div class="meth-num">01</div>
+          <div>
+            <h3 data-i18n="home.meth1Title">의사결정 중심의 설계</h3>
+            <p data-i18n="home.meth1Body">각 보고서는 해당 단계(평가, 진출, 확장)에서 중요한 질문을 중심으로 기획됩니다.</p>
+          </div>
+        </div>
+        <div class="meth-step">
+          <div class="meth-num">02</div>
+          <div>
+            <h3 data-i18n="home.meth2Title">데스크 리서치</h3>
+            <p data-i18n="home.meth2Body">정부 통계, 규제 기관, 기업 공시, 업계 단체, 뉴스, 라이선스 데이터.</p>
+          </div>
+        </div>
+        <div class="meth-step">
+          <div class="meth-num">03</div>
+          <div>
+            <h3 data-i18n="home.meth3Title">모든 수치에 출처</h3>
+            <p data-i18n="home.meth3Body">모든 수치에 출처 태그가 붙어 있어, 확인하고 인용할 수 있습니다.</p>
+          </div>
+        </div>
+        <div class="meth-step">
+          <div class="meth-num">04</div>
+          <div>
+            <h3 data-i18n="home.meth4Title">발간 전 검토</h3>
+            <p data-i18n="home.meth4Body">당사 리서치팀이 보고서 공개 전 출처, 구성, 결론을 점검합니다.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="container distrib">
-    <div class="distrib-bar">
-      <div class="distrib-label">이용 가능 플랫폼</div>
-      <div class="distrib-channels">
-        <div class="distrib-channel">ResearchAndMarkets</div>
-        <div class="distrib-channel">MarketResearch.com</div>
-        <div class="distrib-channel">GIIResearch</div>
-        <div class="distrib-channel">ASDReports</div>
+  <!-- Kira Experts -->
+  <section class="container experts-band">
+    <div class="experts-inner">
+      <div>
+        <div class="kicker" data-i18n="home.expEyebrow">Kira Experts</div>
+        <h2 data-i18n="home.expHeading">직접 경험이 필요한 질문이라면.</h2>
+        <p data-i18n="home.expBody">Kira Experts는 당사가 다루는 시장을 잘 아는 현업 운영자, 경영진, 전문가, 자문가와의 대화를 질문에 맞추어 주선합니다.</p>
+      </div>
+      <div class="actions">
+        <a href="/ko/experts/" class="btn btn-secondary">
+          <span data-i18n="home.expCta">전문가와 대화하기</span>
+          <span class="btn-arrow">→</span>
+        </a>
       </div>
     </div>
   </section>
 
+  <!-- Closing CTA -->
+  <section class="container closing">
+    <div class="closing-cta">
+      <h2 data-i18n="home.closingHeading">먼저, 핵심 요약부터.</h2>
+      <p data-i18n="home.closingBody">전체 분석이 필요한지 판단하기 전에, 모든 보고서의 개요, 주요 데이터, 목차를 먼저 확인할 수 있습니다.</p>
+      <div class="actions">
+        <a href="/ko/library" class="btn btn-primary">
+          <span data-i18n="home.closingCta1">라이브러리 둘러보기</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/ko/pricing#waitlist" class="btn btn-secondary" data-i18n="home.closingCta2">조기 이용 신청</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nav + footer injected here -->
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script src="/js/live-counts.js" defer></script>

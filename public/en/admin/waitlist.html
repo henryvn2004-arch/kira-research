@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Leads — Admin · KIRA RESEARCH</title>
+  <title>Waitlist — Admin · KIRA RESEARCH</title>
   <meta name="robots" content="noindex,nofollow" />
 
   <!-- Fonts -->
@@ -185,6 +185,25 @@
       font-size: 12px;
       color: var(--primary);
     }
+
+    /* Waitlist-specific */
+    .wl-counts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 28px; }
+    .wl-count { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+    .wl-count .k { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .wl-count .v { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 24px; margin-top: 4px; }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .lead-notes textarea {
+      width: 100%; min-width: 180px; min-height: 38px; resize: vertical;
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 3px; padding: 6px 8px; font-family: inherit; font-size: 12px;
+    }
+    @media (max-width: 720px) {
+      .wl-counts { grid-template-columns: repeat(2, 1fr); }
+      .leads-table thead { display: none; }
+      .leads-table, .leads-table tbody, .leads-table tr, .leads-table td { display: block; width: 100%; }
+      .leads-table tr { border-bottom: 1px solid var(--border); padding: 10px 0; }
+      .leads-table td { border-bottom: none; padding: 6px 4px; }
+    }
   </style>
 </head>
 <body>
@@ -197,8 +216,8 @@
     <nav class="admin-sub-nav">
       <span class="label">ADMIN</span>
       <a href="/en/admin/">Dashboard</a>
-      <a href="/en/admin/leads" class="active">Leads</a>
-      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist" class="active">Waitlist</a>
       <a href="/en/admin/reports">Reports</a>
       <a href="/en/admin/insights">Insights</a>
       <a href="/en/admin/transactions">Transactions</a>
@@ -213,18 +232,19 @@
 
     <div class="admin-head">
       <div>
-        <h1>Leads</h1>
-        <p style="color:var(--muted);font-size:13px;margin-top:6px;">Requests from the Kira Experts form (/experts/) and earlier Custom Research forms.</p>
+        <h1>Subscription waitlist</h1>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;">Sign-ups from the /pricing waitlist form. Nothing has been charged.</p>
       </div>
     </div>
+
+    <div class="wl-counts" id="wl-counts"></div>
 
     <div class="admin-filters" id="admin-filters">
       <button data-status=""          class="active">All</button>
       <button data-status="new">New</button>
       <button data-status="contacted">Contacted</button>
-      <button data-status="qualified">Qualified</button>
-      <button data-status="closed">Closed</button>
-      <button data-status="rejected">Rejected</button>
+      <button data-status="converted">Converted</button>
+      <button data-status="spam">Spam</button>
       <div class="spacer"></div>
       <span class="count" id="admin-count"></span>
     </div>
@@ -237,7 +257,6 @@
   <script src="/js/nav.js" defer></script>
 
   <script type="module">
-    // Wait for kiraAuth (loaded by /auth.js as a classic script).
     async function ready() {
       while (!window.kiraAuth) await new Promise(r => setTimeout(r, 30));
     }
@@ -245,10 +264,16 @@
 
     const wrap     = document.getElementById('admin-content');
     const countEl  = document.getElementById('admin-count');
+    const countsEl = document.getElementById('wl-counts');
     const meEl     = document.getElementById('admin-me');
     const filters  = document.getElementById('admin-filters');
+    const STATUSES = ['new', 'contacted', 'converted', 'spam'];
+    const PLAN_LABEL = { week: 'Week', month: 'Month', annual: 'Annual', 'not-sure': 'Not sure' };
     let currentStatus = '';
     let session = null;
+
+    const esc = s => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
     // 1) Require auth.
     const user = await window.kiraAuth.getUser();
@@ -257,83 +282,71 @@
       window.location.href = '/auth.html';
     }
     session = (await window.db.auth.getSession()).data.session;
-    meEl.innerHTML = user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    meEl.innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
     document.getElementById('signout-link').addEventListener('click', (e) => {
       e.preventDefault();
       window.kiraAuth.signOut();
     });
 
-    // 2) Fetch leads via secure API.
-    async function fetchLeads() {
-      wrap.innerHTML = '<div class="admin-empty">Loading…</div>';
-      const qs = currentStatus ? `?status=${currentStatus}` : '';
-      const r = await fetch('/api/admin-leads' + qs, {
-        headers: { 'Authorization': 'Bearer ' + session.access_token }
-      });
-      if (r.status === 401) {
-        wrap.innerHTML = `<div class="admin-gate">
-          <h1>Session expired</h1>
-          <p>Please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.</p>
-        </div>`;
-        return;
-      }
-      if (r.status === 403) {
-        wrap.innerHTML = `<div class="admin-gate">
-          <h1>Not an admin</h1>
-          <p>Your email <code>${user.email}</code> is not on the admin allowlist. Ask the platform owner to add it to <code>ADMIN_EMAILS</code>.</p>
-        </div>`;
-        return;
-      }
-      if (r.status === 500) {
-        const body = await r.json().catch(() => ({}));
-        if (body.error === 'admin_not_configured') {
-          wrap.innerHTML = `<div class="admin-gate">
-            <h1>Admin not configured</h1>
-            <p>The server has no <code>ADMIN_EMAILS</code> set. Add a comma-separated list to your Vercel env vars and redeploy.</p>
-          </div>`;
-          return;
-        }
-      }
-      if (!r.ok) {
-        wrap.innerHTML = `<div class="admin-empty">Failed to load (${r.status}).</div>`;
-        return;
-      }
-      const { leads } = await r.json();
-      renderLeads(leads || []);
+    function gate(title, html) {
+      wrap.innerHTML = `<div class="admin-gate"><h1>${title}</h1><p>${html}</p></div>`;
     }
 
-    function renderLeads(leads) {
-      countEl.textContent = leads.length + (currentStatus ? ` ${currentStatus.toUpperCase()}` : '') + ' · MAX 200';
-      if (!leads.length) {
-        wrap.innerHTML = '<div class="admin-empty">No leads yet.</div>';
+    // 2) Fetch entries via secure API.
+    async function fetchEntries() {
+      wrap.innerHTML = '<div class="admin-empty">Loading…</div>';
+      const qs = currentStatus ? `?status=${currentStatus}` : '';
+      const r = await fetch('/api/admin-waitlist' + qs, {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 401) return gate('Session expired', 'Please <a href="/auth.html" style="color:var(--primary)">sign in</a> again.');
+      if (r.status === 403) return gate('Not an admin', `Your email <code>${esc(user.email)}</code> is not on the admin allowlist (<code>ADMIN_EMAILS</code>).`);
+      if (r.status === 500) {
+        const body = await r.json().catch(() => ({}));
+        if (body.error === 'admin_not_configured') return gate('Admin not configured', 'The server has no <code>ADMIN_EMAILS</code> set.');
+      }
+      if (!r.ok) { wrap.innerHTML = `<div class="admin-empty">Failed to load (${r.status}).</div>`; return; }
+      const { entries, counts } = await r.json();
+      renderCounts(counts || {});
+      renderEntries(entries || []);
+    }
+
+    function renderCounts(c) {
+      const bp = c.byPlan || {};
+      const cells = [['Total', c.total || 0]].concat(
+        ['week', 'month', 'annual', 'not-sure'].map(p => [PLAN_LABEL[p], bp[p] || 0])
+      );
+      countsEl.innerHTML = cells.map(([k, v]) =>
+        `<div class="wl-count"><div class="k">${esc(k)}</div><div class="v">${Number(v)}</div></div>`
+      ).join('');
+    }
+
+    function renderEntries(entries) {
+      countEl.textContent = entries.length + (currentStatus ? ` ${currentStatus.toUpperCase()}` : '') + ' · MAX 500';
+      if (!entries.length) {
+        wrap.innerHTML = '<div class="admin-empty">No sign-ups yet.</div>';
         return;
       }
-      const rows = leads.map(l => {
-        const when = new Date(l.created_at).toLocaleString('en-GB', {
-          year: 'numeric', month: 'short', day: '2-digit',
-          hour: '2-digit', minute: '2-digit'
+      const rows = entries.map(e => {
+        const when = new Date(e.created_at).toLocaleString('en-GB', {
+          year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
         });
-        const tier = (l.tier || 'not-sure').replace('not-sure', 'unsure');
-        const deadline = (l.deadline || 'flex');
-        const briefEsc = (l.brief || '').replace(/</g, '&lt;');
         return `
-          <tr data-id="${l.id}">
-            <td class="lead-when">${when}<div style="margin-top:6px;"><span class="lead-tier">${tier}</span></div></td>
+          <tr data-id="${esc(e.id)}">
+            <td class="lead-when">${when}<div style="margin-top:6px;"><span class="lead-tier">${esc(PLAN_LABEL[e.plan] || e.plan)}</span></div></td>
             <td>
-              <div class="lead-name">${(l.name || '').replace(/</g,'&lt;')}</div>
-              <div class="lead-email">${(l.email || '').replace(/</g,'&lt;')}</div>
+              <div class="lead-name">${esc(e.name || '—')}</div>
+              <div class="lead-email">${esc(e.email)}</div>
             </td>
             <td>
-              <div class="lead-company">${(l.company || '—').replace(/</g,'&lt;')}</div>
-              <div class="lead-role">${(l.role || '').replace(/</g,'&lt;')}</div>
+              <div class="lead-company">${esc(e.company || '—')}</div>
+              <div class="lead-role">${esc(e.role || '')}</div>
             </td>
-            <td><span class="lead-deadline">${deadline}</span><div style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">${(l.locale || 'en').toUpperCase()} · ${(l.source || '').replace(/</g,'&lt;')}</div></td>
-            <td><div class="lead-brief" onclick="this.classList.toggle('expanded')">${briefEsc}</div></td>
+            <td><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">${esc((e.locale || 'en').toUpperCase())} · ${esc(e.source || '')}</div></td>
+            <td class="lead-notes"><textarea data-id="${esc(e.id)}" placeholder="Notes" aria-label="Notes">${esc(e.notes || '')}</textarea></td>
             <td class="lead-status">
-              <select data-id="${l.id}">
-                ${['new','contacted','qualified','closed','rejected'].map(s =>
-                  `<option value="${s}"${s===l.status?' selected':''}>${s}</option>`
-                ).join('')}
+              <select data-id="${esc(e.id)}" aria-label="Status">
+                ${STATUSES.map(s => `<option value="${s}"${s === e.status ? ' selected' : ''}>${s}</option>`).join('')}
               </select>
               <span class="saved">SAVED</span>
             </td>
@@ -341,43 +354,48 @@
       }).join('');
 
       wrap.innerHTML = `
+        <div class="table-scroll">
         <table class="leads-table">
           <thead><tr>
-            <th>When · Tier</th>
+            <th>When · Plan</th>
             <th>Contact</th>
             <th>Company · Role</th>
-            <th>Deadline · Origin</th>
-            <th>Brief</th>
+            <th>Origin</th>
+            <th>Notes</th>
             <th>Status</th>
           </tr></thead>
           <tbody>${rows}</tbody>
-        </table>`;
+        </table>
+        </div>`;
 
-      // Wire status selects.
+      async function patch(id, body, savedSpan) {
+        const r = await fetch('/api/admin-waitlist?id=' + encodeURIComponent(id), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+          body: JSON.stringify(body)
+        });
+        if (r.ok) {
+          savedSpan.classList.add('show');
+          setTimeout(() => savedSpan.classList.remove('show'), 1400);
+        } else {
+          alert('Update failed (' + r.status + ')');
+        }
+      }
+
       wrap.querySelectorAll('.lead-status select').forEach(sel => {
         sel.addEventListener('change', async () => {
-          const id     = sel.dataset.id;
-          const status = sel.value;
-          const savedSpan = sel.parentElement.querySelector('.saved');
           sel.disabled = true;
-          try {
-            const r = await fetch('/api/admin-leads?id=' + encodeURIComponent(id), {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + session.access_token
-              },
-              body: JSON.stringify({ status })
-            });
-            if (r.ok) {
-              savedSpan.classList.add('show');
-              setTimeout(() => savedSpan.classList.remove('show'), 1400);
-            } else {
-              alert('Update failed (' + r.status + ')');
-            }
-          } finally {
-            sel.disabled = false;
-          }
+          try { await patch(sel.dataset.id, { status: sel.value }, sel.parentElement.querySelector('.saved')); }
+          finally { sel.disabled = false; }
+        });
+      });
+      wrap.querySelectorAll('.lead-notes textarea').forEach(ta => {
+        let last = ta.value;
+        ta.addEventListener('blur', async () => {
+          if (ta.value === last) return;
+          last = ta.value;
+          const saved = ta.closest('tr').querySelector('.lead-status .saved');
+          await patch(ta.dataset.id, { notes: ta.value }, saved);
         });
       });
     }
@@ -388,11 +406,11 @@
         filters.querySelectorAll('button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentStatus = btn.dataset.status;
-        fetchLeads();
+        fetchEntries();
       });
     });
 
-    fetchLeads();
+    fetchEntries();
   </script>
 </body>
 </html>
