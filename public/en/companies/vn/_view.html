@@ -247,7 +247,7 @@
     const slug = parts[parts.length - 1];
 
     if (!slug || slug === '_view') {
-      renderError('No company specified.', 'Browse our <a href="/en/library">report library</a> or <a href="/en/custom-research/">request custom research</a>.');
+      renderError('No company specified.', 'Explore the <a href="/en/library">research library</a> or <a href="/en/experts/">speak with an expert</a>.');
       return;
     }
 
@@ -275,7 +275,7 @@
       })
       .catch(err => {
         if (err.is404) {
-          renderError('Company not found.', 'We may not have data for this company yet. <a href="/en/custom-research/">Request custom research →</a>');
+          renderError('Company not found.', 'We may not have data for this company yet. <a href="/en/experts/">Speak with an expert →</a>');
         } else {
           renderError('Unable to load company data.', 'Please try again in a moment.');
         }

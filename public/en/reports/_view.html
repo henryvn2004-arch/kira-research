@@ -702,8 +702,8 @@
                   '<button class="buy-btn" id="preview-buy-btn">' +
                     'Unlock full report — $' + price + ' →' +
                   '</button>'
-                : '<div class="rpt-preview-cta-lede">The full report is included in the subscription</div>' +
-                  '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Join the waitlist →</a>') +
+                : '<div class="rpt-preview-cta-lede">The full report is part of the subscription</div>' +
+                  '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Request early access →</a>') +
             '</div>' +
           '</div>' +
         '</section>'
@@ -808,13 +808,13 @@
       return (
         '<aside class="buy-box">' +
           '<div class="buy-tag">Executive summary · free</div>' +
-          '<p class="sub-box-lede">Read the executive summary free. The full report is included in the KIRA Research subscription.</p>' +
+          '<p class="sub-box-lede">The executive summary is free to read. The full report is part of the KIRA Research subscription.</p>' +
           '<div class="buy-lang-select" aria-label="Report language">' +
             renderLangSwitcher(d.slug, locale, d.availableLocales || []) +
           '</div>' +
           ownedNote +
-          '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Join the waitlist →</a>' +
-          '<div class="sub-box-note">Subscriptions are not open yet. Nothing is charged when you join.</div>' +
+          '<a class="buy-btn" href="' + WAITLIST_URL + '" style="display:block;text-align:center;text-decoration:none;">Request early access →</a>' +
+          '<div class="sub-box-note">Subscriptions are not yet open. Nothing is charged now.</div>' +
           '<div class="buy-includes">' +
             '<h6>The subscription includes</h6>' +
             '<div class="include-item">Unlimited online reading</div>' +
@@ -967,9 +967,9 @@
             '<section class="rpt-section rpt-abstract">' +
               (purchaseState.purchased
                 ? '<h3>Section 01 · Executive Summary</h3><h2>Overview</h2>'
-                : '<div class="rpt-free-badge">Executive summary (free)</div>' +
-                  '<h2>Executive summary (free)</h2>' +
-                  '<p class="rpt-free-note">Free to read: the overview, selected data tables, the table of contents and the glossary.</p>') +
+                : '<div class="rpt-free-badge">Free to read</div>' +
+                  '<h2>Executive summary</h2>' +
+                  '<p class="rpt-free-note">The overview, selected data tables, the table of contents and the glossary are open to all readers.</p>') +
               lede + paras + chart +
             '</section>' +
 
@@ -1040,9 +1040,9 @@
       // Subscription mode: the modal button links to the waitlist instead of
       // opening PayPal checkout. Footnote copy changes with it.
       if (!PER_REPORT_PURCHASE) {
-        buyBtn.textContent = 'Join the waitlist →';
+        buyBtn.textContent = 'Request early access →';
         const foot = modal.querySelector('.unlock-modal-footnote');
-        if (foot) foot.textContent = 'Subscriptions are not open yet · Nothing is charged when you join';
+        if (foot) foot.textContent = 'Subscriptions are not yet open · Nothing is charged now';
       }
 
       function openModal(sectionName) {
@@ -1051,7 +1051,7 @@
           ? 'This section is part of the full report. Unlock the complete <strong>' +
             pages + '-page PDF</strong> + online reader access for <strong>$' +
             price + '</strong>.'
-          : 'This section is part of the full report, which is included in the KIRA Research subscription. ' +
+          : 'This section is part of the full report, available with the KIRA Research subscription. ' +
             'The executive summary on this page is free to read.';
         modal.hidden = false;
         document.body.style.overflow = 'hidden';

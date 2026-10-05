@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KIRA Research — ASEAN Market-Entry Intelligence</title>
-  <meta name="description" content="Market-entry research on Southeast Asia, Australia, New Zealand and Taiwan for the teams that serve foreign investors. Organised by country, industry and investor stage. Executive summaries are free.">
+  <title>KIRA Research — Market-entry research on Southeast Asia</title>
+  <meta name="description" content="Research on the markets, sectors and entry routes of Southeast Asia, Australia, New Zealand and Taiwan, with a source on every figure. Executive summaries are free to read.">
 
   <!-- hreflang -->
   <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/">
@@ -14,8 +14,8 @@
   <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/">
 
   <!-- Open Graph -->
-  <meta property="og:title"       content="KIRA Research — ASEAN Market-Entry Intelligence">
-  <meta property="og:description" content="Market-entry research for the teams that serve foreign investors in ASEAN. Executive summaries are free.">
+  <meta property="og:title"       content="KIRA Research — Market-entry research on Southeast Asia">
+  <meta property="og:description" content="Where to invest, how to enter and who you will compete with, across Southeast Asia. Executive summaries are free to read.">
   <meta property="og:url"         content="https://kiraresearch.com/en/">
   <meta property="og:type"        content="website">
 
@@ -51,6 +51,7 @@
       letter-spacing: -0.03em;
       margin-bottom: 28px;
     }
+    .hero h1 span { display: block; }
     .hero h1 .accent { color: var(--primary); }
     .hero-sub {
       font-size: 18px;
@@ -81,76 +82,127 @@
     .panel-empty { padding: 14px 0; font-size: 13px; color: var(--muted); }
     .panel-empty a { color: var(--primary); text-decoration: none; }
 
-    /* Who it is for */
-    .audience-grid {
+    /* Coverage */
+    .cov-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 64px;
+      align-items: start;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
     }
-    .aud-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 24px;
+    .kicker {
+      font-family: 'Satoshi', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .aud-card h3 {
+    .kicker::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+    .cov-grid h2 {
       font-family: 'Satoshi', sans-serif;
       font-weight: 700;
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin: 12px 0 20px;
+    }
+    .cov-grid p { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 520px; }
+    .cov-note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+    .cov-group + .cov-group { margin-top: 32px; }
+    .cov-group h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .cov-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 32px;
+    }
+    .cov-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Satoshi', sans-serif;
       font-size: 17px;
-      letter-spacing: -0.01em;
-      margin-bottom: 8px;
+      font-weight: 500;
       color: var(--text);
     }
-    .aud-card p { font-size: 14px; line-height: 1.6; color: var(--muted); }
 
-    /* How the library is organised */
-    .org-grid {
+    /* The decision: three stages */
+    .dec-intro { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 560px; margin-top: 12px; }
+    .dec-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1.4fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-    .org-card {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 28px;
-      background: var(--bg);
+      overflow: hidden;
     }
-    .org-key {
+    .dec-card {
+      background: var(--bg);
+      padding: 32px 28px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.2s;
+    }
+    .dec-card:hover { background: var(--surface); }
+    .dec-num {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--primary);
-      margin-bottom: 12px;
+      margin-bottom: 20px;
     }
-    .org-card h3 {
+    .dec-card h3 {
       font-family: 'Satoshi', sans-serif;
       font-weight: 700;
       font-size: 22px;
+      line-height: 1.25;
       letter-spacing: -0.015em;
-      margin-bottom: 10px;
-    }
-    .org-card p { font-size: 14px; line-height: 1.6; color: var(--muted); }
-    .stage-list { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
-    .stage-row {
-      display: grid;
-      grid-template-columns: 92px 1fr;
-      gap: 12px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-      text-decoration: none;
-      color: inherit;
-    }
-    .stage-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .stage-row:hover .stage-name { color: var(--primary); }
-    .stage-name {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
+      margin-bottom: 12px;
       color: var(--text);
     }
-    .stage-desc { font-size: 14px; line-height: 1.55; color: var(--muted); }
+    .dec-card p { font-size: 14px; line-height: 1.65; color: var(--muted); margin-bottom: 24px; }
+    .dec-link { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--primary); }
+
+    /* Kira Experts band */
+    .experts-band { padding-top: 100px; }
+    .experts-inner {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 48px;
+      align-items: center;
+      padding: 48px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+    .experts-inner h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(26px, 2.6vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 12px 0 14px;
+    }
+    .experts-inner p { font-size: 16px; line-height: 1.65; color: var(--muted); }
+    .experts-inner .actions { display: flex; justify-content: flex-end; }
 
     /* What you get */
     .get-grid {
@@ -202,14 +254,17 @@
       .reports-grid { grid-template-columns: 1fr; }
       .hero h1 { font-size: 38px; }
       .hero { padding: 56px 0 72px; }
-      .audience-grid { grid-template-columns: 1fr 1fr; }
-      .org-grid { grid-template-columns: 1fr; }
+      .cov-grid { grid-template-columns: 1fr; gap: 32px; }
+      .dec-grid { grid-template-columns: 1fr; }
+      .experts-inner { grid-template-columns: 1fr; gap: 24px; padding: 36px; }
+      .experts-inner .actions { justify-content: flex-start; }
       .get-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 560px) {
-      .audience-grid { grid-template-columns: 1fr; }
+      .cov-list { grid-template-columns: 1fr 1fr; column-gap: 20px; }
+      .cov-list li { font-size: 15px; }
+      .experts-inner { padding: 28px 20px; }
       .get-grid { grid-template-columns: 1fr; }
-      .stage-row { grid-template-columns: 1fr; gap: 4px; }
       .closing-cta { padding: 36px 20px; }
       .hero h1 { font-size: 34px; }
     }
@@ -224,29 +279,29 @@
     <div class="container">
       <div class="hero-grid">
         <div>
-          <div class="hero-eyebrow" data-i18n="home.heroEyebrow">ASEAN · MARKET-ENTRY INTELLIGENCE</div>
+          <div class="hero-eyebrow" data-i18n="home.heroEyebrow">SOUTHEAST ASIA · MARKET-ENTRY RESEARCH</div>
           <h1>
-            <span data-i18n="home.heroTitleLine1">Market-entry research</span>
-            <span data-i18n="home.heroTitleLine2">for the teams that serve</span>
-            <span class="accent" data-i18n="home.heroTitleLine3">foreign investors in ASEAN.</span>
+            <span data-i18n="home.heroTitleLine1">Where to invest.</span>
+            <span data-i18n="home.heroTitleLine2">How to enter.</span>
+            <span class="accent" data-i18n="home.heroTitleLine3">Who you will compete with.</span>
           </h1>
-          <p class="hero-sub" data-i18n="home.heroSub">Your clients ask where to invest, how to enter and who they will compete with. Our reports answer those questions by country, industry and investor stage. Executive summaries are free to read.</p>
+          <p class="hero-sub" data-i18n="home.heroSub">Research on the markets, sectors and entry routes of Southeast Asia, Australia, New Zealand and Taiwan, with a source on every figure. Executive summaries are free to read.</p>
           <div class="hero-actions">
             <a href="/en/library" class="btn btn-primary">
-              <span data-i18n="home.ctaPrimary">Browse the library</span>
+              <span data-i18n="home.ctaPrimary">Explore the library</span>
               <span class="btn-arrow">→</span>
             </a>
-            <a href="/en/pricing#waitlist" class="btn btn-secondary" data-i18n="home.ctaSecondary">Join the waitlist</a>
+            <a href="/en/pricing#waitlist" class="btn btn-secondary" data-i18n="home.ctaSecondary">Request early access</a>
           </div>
           <div class="hero-coverage">
             <strong data-i18n="home.coverageLabel">Coverage</strong>
-            <span data-i18n="home.coverageBody">Southeast Asia, Australia, New Zealand and Taiwan. Industries where foreign companies come to sell into the local market.</span>
+            <span data-i18n="home.coverageBody">Ten markets of Southeast Asia, together with Australia, New Zealand and Taiwan.</span>
           </div>
         </div>
 
         <div class="hero-panel" data-live-reports="panel" data-show-price="false">
           <div class="panel-header">
-            <span class="panel-title" data-i18n="home.panelTitle">Latest Research</span>
+            <span class="panel-title" data-i18n="home.panelTitle">Latest research</span>
             <span class="panel-status"><span class="status-dot"></span><span data-i18n="home.panelStatus">LIVE</span></span>
           </div>
           <div class="panel-empty"><span data-i18n="home.panelLoading">Loading the latest reports…</span> <a href="/en/library" data-i18n="home.panelLibraryLink">Open the library →</a></div>
@@ -255,80 +310,72 @@
     </div>
   </section>
 
-  <!-- Who it is for -->
+  <!-- Coverage -->
   <section class="container">
-    <div class="section-head" style="padding-top:40px;">
+    <div class="cov-grid">
       <div>
-        <div class="label" data-i18n="home.audienceEyebrow">Who it is for</div>
-        <h2 data-i18n="home.audienceHeading">Built for the people foreign investors ask first.</h2>
+        <div class="kicker" data-i18n="home.covEyebrow">Coverage</div>
+        <h2 data-i18n="home.covHeading">Thirteen markets, held to one standard of evidence.</h2>
+        <p data-i18n="home.covBody">We follow the sectors where companies compete for local demand: consumer goods and retail, financial services, healthcare, logistics, energy, technology and real estate. Every report applies the same structure and the same sourcing rules, so markets can be compared side by side.</p>
+        <p class="cov-note" data-i18n="home.covNote">New reports are added continuously.</p>
       </div>
-    </div>
-    <div class="audience-grid">
-      <div class="aud-card">
-        <h3 data-i18n="home.aud1Title">Industrial-park sales teams</h3>
-        <p data-i18n="home.aud1Body">Show a prospect the demand side of the market, not only land, power and incentives.</p>
-      </div>
-      <div class="aud-card">
-        <h3 data-i18n="home.aud2Title">FDI law and accounting firms</h3>
-        <p data-i18n="home.aud2Body">Brief a new client on the market they are entering, alongside the legal and tax set-up.</p>
-      </div>
-      <div class="aud-card">
-        <h3 data-i18n="home.aud3Title">Banks' FDI desks</h3>
-        <p data-i18n="home.aud3Body">Understand a client's sector and local competitors before the first credit conversation.</p>
-      </div>
-      <div class="aud-card">
-        <h3 data-i18n="home.aud4Title">Consultants</h3>
-        <p data-i18n="home.aud4Body">Start an entry study from a sourced baseline instead of a blank page.</p>
-      </div>
-      <div class="aud-card">
-        <h3 data-i18n="home.aud5Title">M&amp;A and PE scouts</h3>
-        <p data-i18n="home.aud5Body">Screen sectors and spot local players worth a closer look.</p>
-      </div>
-      <div class="aud-card">
-        <h3 data-i18n="home.aud6Title">Investment-promotion agencies</h3>
-        <p data-i18n="home.aud6Body">Answer investor questions on demand, competition and entry routes with a report to hand over.</p>
+      <div>
+        <div class="cov-group">
+          <h3 data-i18n="home.covGroup1">Southeast Asia</h3>
+          <ul class="cov-list">
+            <li data-i18n="home.mktVN">Vietnam</li>
+            <li data-i18n="home.mktTH">Thailand</li>
+            <li data-i18n="home.mktID">Indonesia</li>
+            <li data-i18n="home.mktMY">Malaysia</li>
+            <li data-i18n="home.mktSG">Singapore</li>
+            <li data-i18n="home.mktPH">Philippines</li>
+            <li data-i18n="home.mktKH">Cambodia</li>
+            <li data-i18n="home.mktLA">Laos</li>
+            <li data-i18n="home.mktMM">Myanmar</li>
+            <li data-i18n="home.mktBN">Brunei</li>
+          </ul>
+        </div>
+        <div class="cov-group">
+          <h3 data-i18n="home.covGroup2">Beyond Southeast Asia</h3>
+          <ul class="cov-list">
+            <li data-i18n="home.mktAU">Australia</li>
+            <li data-i18n="home.mktNZ">New Zealand</li>
+            <li data-i18n="home.mktTW">Taiwan</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- How the library is organised -->
+  <!-- The decision: three stages -->
   <section class="container">
     <div class="section-head">
       <div>
-        <div class="label" data-i18n="home.orgEyebrow">How the library is organised</div>
-        <h2 data-i18n="home.orgHeading">Country × industry × investor stage.</h2>
+        <div class="label" data-i18n="home.decEyebrow">The decision</div>
+        <h2 data-i18n="home.decHeading">Three questions, in the order they are asked.</h2>
+        <p class="dec-intro" data-i18n="home.decBody">A market entry moves through a familiar sequence. Each report is written for one moment in it.</p>
       </div>
-      <a href="/en/library" class="more" data-i18n="home.orgMore">Filter the library →</a>
+      <a href="/en/library" class="more" data-i18n="home.decMore">Browse by stage →</a>
     </div>
-    <div class="org-grid">
-      <div class="org-card">
-        <div class="org-key" data-i18n="home.orgCountryKey">01 · Country</div>
-        <h3 data-i18n="home.orgCountryTitle">Where</h3>
-        <p data-i18n="home.orgCountryBody">Vietnam, Thailand, Indonesia, Malaysia, Singapore, the Philippines, Cambodia, Laos, Myanmar and Brunei, plus Australia, New Zealand and Taiwan.</p>
-      </div>
-      <div class="org-card">
-        <div class="org-key" data-i18n="home.orgIndustryKey">02 · Industry</div>
-        <h3 data-i18n="home.orgIndustryTitle">What</h3>
-        <p data-i18n="home.orgIndustryBody">Sectors where foreign firms want to sell into the domestic market. Export-only manufacturing bases are out of scope.</p>
-      </div>
-      <div class="org-card">
-        <div class="org-key" data-i18n="home.orgStageKey">03 · Investor stage</div>
-        <h3 data-i18n="home.orgStageTitle">When</h3>
-        <div class="stage-list">
-          <a class="stage-row" href="/en/library?stage=XPL">
-            <span class="stage-name" data-i18n="home.stageExploreName">Explore</span>
-            <span class="stage-desc" data-i18n="home.stageExploreBody">Is this market worth a closer look? Size, growth, demand and who already competes.</span>
-          </a>
-          <a class="stage-row" href="/en/library?stage=ENT">
-            <span class="stage-name" data-i18n="home.stageEnterName">Enter</span>
-            <span class="stage-desc" data-i18n="home.stageEnterBody">How to get in: entry routes, partners, rules, costs and the first year.</span>
-          </a>
-          <a class="stage-row" href="/en/library?stage=XPN">
-            <span class="stage-name" data-i18n="home.stageExpandName">Expand</span>
-            <span class="stage-desc" data-i18n="home.stageExpandBody">How to grow after entry: new segments, cities, channels and acquisitions.</span>
-          </a>
-        </div>
-      </div>
+    <div class="dec-grid">
+      <a class="dec-card" href="/en/library?stage=XPL">
+        <div class="dec-num"><span>01 · </span><span data-i18n="home.stageAssessName">Assess</span></div>
+        <h3 data-i18n="home.stageAssessQ">Is the market worth pursuing?</h3>
+        <p data-i18n="home.stageAssessBody">Size, growth, demand and the structure of competition, weighed against the alternatives.</p>
+        <span class="dec-link" data-i18n="home.stageLink">View reports →</span>
+      </a>
+      <a class="dec-card" href="/en/library?stage=ENT">
+        <div class="dec-num"><span>02 · </span><span data-i18n="home.stageEnterName">Enter</span></div>
+        <h3 data-i18n="home.stageEnterQ">How do we get in?</h3>
+        <p data-i18n="home.stageEnterBody">Entry routes, partners, regulation, costs and the economics of the first years.</p>
+        <span class="dec-link" data-i18n="home.stageLink">View reports →</span>
+      </a>
+      <a class="dec-card" href="/en/library?stage=XPN">
+        <div class="dec-num"><span>03 · </span><span data-i18n="home.stageExpandName">Expand</span></div>
+        <h3 data-i18n="home.stageExpandQ">Where does growth come from next?</h3>
+        <p data-i18n="home.stageExpandBody">New segments, cities and channels, and the acquisitions that can accelerate them.</p>
+        <span class="dec-link" data-i18n="home.stageLink">View reports →</span>
+      </a>
     </div>
   </section>
 
@@ -336,40 +383,40 @@
   <section class="container">
     <div class="section-head">
       <div>
-        <div class="label" data-i18n="home.getEyebrow">What you get</div>
-        <h2 data-i18n="home.getHeading">One subscription, the whole library.</h2>
+        <div class="label" data-i18n="home.getEyebrow">The subscription</div>
+        <h2 data-i18n="home.getHeading">One subscription, the full library.</h2>
       </div>
       <a href="/en/pricing" class="more" data-i18n="home.getMore">See plans →</a>
     </div>
     <div class="get-grid">
       <div class="get-cell">
-        <h3 data-i18n="home.get1Title">Free executive summaries</h3>
-        <p data-i18n="home.get1Body">The overview, key tables, contents and glossary of every report. No account needed.</p>
+        <h3 data-i18n="home.get1Title">Executive summaries, open to all</h3>
+        <p data-i18n="home.get1Body">The overview, key data tables, contents and glossary of every report. No account required.</p>
       </div>
       <div class="get-cell">
-        <h3 data-i18n="home.get2Title">Unlimited online reading</h3>
-        <p data-i18n="home.get2Body">Subscribers read every full report in the browser, with no limit.</p>
+        <h3 data-i18n="home.get2Title">Full reports online</h3>
+        <p data-i18n="home.get2Body">Subscribers read every report in full, in the browser, without limit.</p>
       </div>
       <div class="get-cell">
-        <h3 data-i18n="home.get3Title">PDF downloads</h3>
-        <p data-i18n="home.get3Body">Download reports as PDF to share with a client, within your plan's allowance.</p>
+        <h3 data-i18n="home.get3Title">PDF editions</h3>
+        <p data-i18n="home.get3Body">Download reports as PDF within your plan's allowance. Downloading the same report again does not count twice.</p>
       </div>
       <div class="get-cell">
-        <h3 data-i18n="home.get4Title">Updates</h3>
-        <p data-i18n="home.get4Body">Each report shows its last-refresh date. Subscribers always read the current edition.</p>
+        <h3 data-i18n="home.get4Title">Current editions</h3>
+        <p data-i18n="home.get4Body">Each report carries its last-refresh date, and subscribers always read the latest edition.</p>
       </div>
     </div>
-    <p class="get-note"><span data-i18n="home.getNote">Subscriptions are not open yet. Join the waitlist and we will email you before anything is charged.</span> <a href="/en/pricing#waitlist" data-i18n="home.getNoteLink">Join the waitlist →</a></p>
+    <p class="get-note"><span data-i18n="home.getNote">Subscriptions are not yet open, and nothing is charged now.</span> <a href="/en/pricing#waitlist" data-i18n="home.getNoteLink">Request early access →</a></p>
   </section>
 
   <!-- Latest reports (live) -->
   <section class="container">
     <div class="section-head">
       <div>
-        <div class="label" data-i18n="home.featuredEyebrow">Latest reports</div>
+        <div class="label" data-i18n="home.featuredEyebrow">Latest research</div>
         <h2 data-i18n="home.featuredHeading">Recently published</h2>
       </div>
-      <a href="/en/library" class="more" data-i18n="home.viewLibrary">View library →</a>
+      <a href="/en/library" class="more" data-i18n="home.viewLibrary">View the library →</a>
     </div>
 
     <div class="reports-grid" data-live-reports="grid" data-show-price="false">
@@ -385,10 +432,10 @@
   <section class="container industries">
     <div class="section-head">
       <div>
-        <div class="label" data-i18n="home.industriesEyebrow">Coverage</div>
-        <h2 data-i18n="home.industriesHeading">Industries in the library</h2>
+        <div class="label" data-i18n="home.industriesEyebrow">Sectors</div>
+        <h2 data-i18n="home.industriesHeading">Sectors in the library</h2>
       </div>
-      <a href="/en/library" class="more" data-i18n="home.allIndustries">All industries →</a>
+      <a href="/en/library" class="more" data-i18n="home.allIndustries">All sectors →</a>
     </div>
 
     <div class="industries-grid">
@@ -461,8 +508,8 @@
       <div class="meth-left">
         <div class="hero-eyebrow" style="margin-bottom: 16px;" data-i18n="home.methEyebrow">Methodology</div>
         <h2 data-i18n="home.methHeading">Desk research, sourced and reviewed.</h2>
-        <p data-i18n="home.methBody1">Every report starts from the questions a foreign investor asks at that stage. We answer them from public and licensed sources, tag the source of every figure, and review the report before it is published.</p>
-        <p data-i18n="home.methBody2">We say what we did and what we did not do. Read the full method before you rely on a number.</p>
+        <p data-i18n="home.methBody1">Each report is built around a single decision and researched from public and licensed sources. Every figure carries its source, and our research team reviews each report before it is published.</p>
+        <p data-i18n="home.methBody2">Estimates are labelled as estimates, and where sources disagree, the report says so.</p>
         <a href="/en/methodology" class="btn btn-secondary" style="margin-top: 8px;">
           <span data-i18n="home.methCta">Read the methodology</span>
           <span class="btn-arrow">→</span>
@@ -473,8 +520,8 @@
         <div class="meth-step">
           <div class="meth-num">01</div>
           <div>
-            <h3 data-i18n="home.meth1Title">Start from the investor's question</h3>
-            <p data-i18n="home.meth1Body">Each report is planned around the decision a foreign investor faces at their stage: explore, enter or expand.</p>
+            <h3 data-i18n="home.meth1Title">Framed around a decision</h3>
+            <p data-i18n="home.meth1Body">Each report is planned around the questions that matter at its stage: assess, enter or expand.</p>
           </div>
         </div>
         <div class="meth-step">
@@ -488,16 +535,33 @@
           <div class="meth-num">03</div>
           <div>
             <h3 data-i18n="home.meth3Title">A source on every figure</h3>
-            <p data-i18n="home.meth3Body">Numbers carry a source tag, so you can check them and cite them to a client.</p>
+            <p data-i18n="home.meth3Body">Every number carries a source tag, so it can be checked and cited.</p>
           </div>
         </div>
         <div class="meth-step">
           <div class="meth-num">04</div>
           <div>
-            <h3 data-i18n="home.meth4Title">Review before publication</h3>
-            <p data-i18n="home.meth4Body">Our research team checks structure, sources and conclusions before a report goes live.</p>
+            <h3 data-i18n="home.meth4Title">Reviewed before publication</h3>
+            <p data-i18n="home.meth4Body">Our research team checks sources, structure and conclusions before a report is released.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kira Experts -->
+  <section class="container experts-band">
+    <div class="experts-inner">
+      <div>
+        <div class="kicker" data-i18n="home.expEyebrow">Kira Experts</div>
+        <h2 data-i18n="home.expHeading">When the question calls for first-hand experience.</h2>
+        <p data-i18n="home.expBody">Kira Experts arranges conversations with operators, executives, specialists and advisers who know the markets we cover, matched to your question.</p>
+      </div>
+      <div class="actions">
+        <a href="/en/experts/" class="btn btn-secondary">
+          <span data-i18n="home.expCta">Speak with an expert</span>
+          <span class="btn-arrow">→</span>
+        </a>
       </div>
     </div>
   </section>
@@ -505,14 +569,14 @@
   <!-- Closing CTA -->
   <section class="container closing">
     <div class="closing-cta">
-      <h2 data-i18n="home.closingHeading">Start with a free executive summary.</h2>
-      <p data-i18n="home.closingBody">Pick a country and an industry, read the summary, and decide if the full report is worth it.</p>
+      <h2 data-i18n="home.closingHeading">Begin with the executive summary.</h2>
+      <p data-i18n="home.closingBody">Read the overview, key data and contents of any report before deciding whether you need the full analysis.</p>
       <div class="actions">
         <a href="/en/library" class="btn btn-primary">
-          <span data-i18n="home.closingCta1">Browse the library</span>
+          <span data-i18n="home.closingCta1">Explore the library</span>
           <span class="btn-arrow">→</span>
         </a>
-        <a href="/en/pricing#waitlist" class="btn btn-secondary" data-i18n="home.closingCta2">Join the waitlist</a>
+        <a href="/en/pricing#waitlist" class="btn btn-secondary" data-i18n="home.closingCta2">Request early access</a>
       </div>
     </div>
   </section>

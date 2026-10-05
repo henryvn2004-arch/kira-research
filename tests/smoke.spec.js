@@ -23,9 +23,7 @@ const STATIC_PAGES = [
   '/about',
   '/methodology',
   '/pricing',
-  '/custom-research/',                          // landing
-  '/custom-research/market-analysis/',          // Sprint 5.1 service line
-  '/custom-research/strategy-builder/',         // Sprint 5.1 service line
+  '/experts/',                                  // Kira Experts (replaces Custom Research, S5)
   '/insights/'                                  // folder route
 ];
 
@@ -143,16 +141,22 @@ test('root / redirects to a supported locale', async ({ page }) => {
 // rewrite-then-redirect sequences. We use page.url() with waitUntil:'load'
 // to read the browser's final landing URL, which is the user-facing truth.
 test.describe('legacy redirects (vercel.json)', () => {
-  test('/report.html → /en/custom-research/market-analysis/', async ({ page }) => {
-    // Sprint 5.1: legacy /report now lands on the dedicated service-line page,
-    // not the parent. More relevant context for the user, slightly better SEO.
+  test('/report.html → /en/library', async ({ page }) => {
+    // Sprint S5: Custom Research is retired; legacy /report lands on the library.
     await page.goto('/report.html', { waitUntil: 'load' });
-    expect(page.url()).toContain('/en/custom-research/market-analysis');
+    expect(page.url()).toContain('/en/library');
   });
-  test('/strategy-builder.html → /en/custom-research/strategy-builder/', async ({ page }) => {
+  test('/strategy-builder.html → /en/experts/', async ({ page }) => {
     await page.goto('/strategy-builder.html', { waitUntil: 'load' });
-    expect(page.url()).toContain('/en/custom-research/strategy-builder');
+    expect(page.url()).toContain('/en/experts');
   });
+  // Sprint S5: Custom Research pages (all locales, all subpages) → Kira Experts.
+  for (const path of ['/en/custom-research/', '/ja/custom-research/market-analysis/', '/ko/custom-research/strategy-builder']) {
+    test(`${path} → Kira Experts`, async ({ page }) => {
+      await page.goto(path, { waitUntil: 'load' });
+      expect(page.url()).toMatch(/\/(en|ja|ko|zh)\/experts\/?/);
+    });
+  }
   test('/library.html → /en/library', async ({ page }) => {
     await page.goto('/library.html', { waitUntil: 'load' });
     expect(page.url()).toContain('/en/library');
@@ -454,9 +458,9 @@ test.describe('SEO surface', () => {
       expect(body).toContain('<urlset');
       // Static pages always present even when DB is empty/unmigrated.
       expect(body).toContain(`/${locale}/library`);
-      // Sprint 5.1 service-line landings — must surface for SEO.
-      expect(body).toContain(`/${locale}/custom-research/market-analysis/`);
-      expect(body).toContain(`/${locale}/custom-research/strategy-builder/`);
+      // Kira Experts landing (S5, replaces the custom-research pages).
+      expect(body).toContain(`/${locale}/experts/`);
+      expect(body).not.toContain('/custom-research/');
       // hreflang alternates must be declared inline for every URL.
       expect(body).toMatch(/xhtml:link[^>]*hreflang=/);
     });

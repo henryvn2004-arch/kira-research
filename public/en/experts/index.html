@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kira Experts — KIRA Research</title>
+  <meta name="description" content="Kira Experts arranges conversations with operators, executives, specialists and advisers who have first-hand experience of the markets we cover, matched to your question.">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/experts/">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/experts/">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/experts/">
+  <link rel="alternate" hreflang="zh-Hans"   href="https://kiraresearch.com/zh/experts/">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/experts/">
+
+  <meta property="og:title"       content="Kira Experts — KIRA Research">
+  <meta property="og:description" content="Speak with people who know the market. Conversations with experts in Southeast Asia, Australia, New Zealand and Taiwan, matched to your question.">
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://kiraresearch.com/en/experts/">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    .page-hero {
+      padding-top: 80px; padding-bottom: 64px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 880px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 span { display: block; }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 660px;
+      margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .ex-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .ex-h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin: 12px 0 20px;
+    }
+
+    /* The service */
+    .ex-what {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      padding: 96px 0 24px;
+      align-items: start;
+    }
+    .ex-what h2 { margin-top: 0; }
+    .ex-what p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 680px;
+    }
+
+    /* How it works */
+    .ex-how { padding-top: 96px; }
+    .ex-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .ex-step { background: var(--bg); padding: 32px 28px; }
+    .ex-step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      margin-bottom: 18px;
+    }
+    .ex-step h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .ex-step p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+
+    /* Typical questions */
+    .ex-questions { padding-top: 96px; }
+    .ex-q-list { margin-top: 32px; border-top: 1px solid var(--border); }
+    .ex-q {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 40px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .ex-q h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .ex-q p { font-size: 15px; line-height: 1.65; color: var(--muted); }
+
+    /* Terms */
+    .ex-terms {
+      margin-top: 96px;
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 2fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .ex-terms h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .ex-terms p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+
+    /* Request form */
+    .ex-form-section { padding-top: 96px; scroll-margin-top: 80px; }
+    .ex-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .ex-form-grid .intro p { color: var(--muted); font-size: 16px; line-height: 1.65; }
+    .cr-form-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px;
+    }
+    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cr-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .cr-field.full { grid-column: 1 / -1; }
+    .cr-field label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cr-field input,
+    .cr-field textarea,
+    .cr-field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      width: 100%;
+    }
+    .cr-field input:focus,
+    .cr-field textarea:focus,
+    .cr-field select:focus { outline: none; border-color: var(--primary); }
+    .cr-field textarea { min-height: 140px; resize: vertical; }
+    .cr-submit { justify-content: center; }
+    .cr-error { display: none; margin-top: 12px; color: #B42318; font-size: 13px; }
+    .cr-success {
+      display: none;
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.3);
+      border-radius: 8px;
+      padding: 24px;
+      color: var(--text);
+    }
+    .cr-success.show { display: block; }
+    .cr-success p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    @media (max-width: 968px) {
+      .ex-what, .ex-form-grid { grid-template-columns: 1fr; gap: 32px; }
+      .ex-steps { grid-template-columns: 1fr; }
+      .ex-terms { grid-template-columns: 1fr; gap: 24px; }
+      .ex-q { grid-template-columns: 1fr; gap: 6px; }
+    }
+    @media (max-width: 560px) {
+      .cr-form { grid-template-columns: 1fr; }
+      .cr-form-wrap { padding: 24px; }
+      .ex-terms { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow" data-i18n="experts.eyebrow">KIRA EXPERTS</div>
+    <h1>
+      <span data-i18n="experts.heroLine1">Speak with people</span>
+      <span class="accent" data-i18n="experts.heroLine2">who know the market.</span>
+    </h1>
+    <p class="lead" data-i18n="experts.heroSub">Kira Experts arranges conversations with operators, executives, specialists and advisers who have first-hand experience of the markets we cover, matched to the question in front of you.</p>
+    <div class="hero-actions">
+      <a href="#request" class="btn btn-primary">
+        <span data-i18n="experts.heroCta">Request an expert</span>
+        <span class="btn-arrow">→</span>
+      </a>
+      <a href="/en/library" class="btn btn-secondary" data-i18n="experts.heroCta2">Explore the library</a>
+    </div>
+  </section>
+
+  <!-- The service -->
+  <section class="container">
+    <div class="ex-what">
+      <div class="ex-label" data-i18n="experts.whatLabel">— The service</div>
+      <div>
+        <h2 class="ex-h2" data-i18n="experts.whatHeading">First-hand experience, on demand.</h2>
+        <p data-i18n="experts.whatP1">Published research explains a market. People who have worked in it explain how it behaves. Kira Experts gives you direct access to that experience across Southeast Asia, Australia, New Zealand and Taiwan.</p>
+        <p data-i18n="experts.whatP2">Each conversation is arranged around a specific question, so the time is spent on what you need to know.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="container ex-how">
+    <div class="ex-label" data-i18n="experts.howEyebrow">How it works</div>
+    <h2 class="ex-h2" data-i18n="experts.howHeading">From question to conversation.</h2>
+    <div class="ex-steps">
+      <div class="ex-step">
+        <div class="ex-step-num">01</div>
+        <h3 data-i18n="experts.step1Title">Share your question</h3>
+        <p data-i18n="experts.step1Body">Tell us the market, the sector and what you need to understand. A short brief is enough to begin.</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">02</div>
+        <h3 data-i18n="experts.step2Title">We identify and brief the expert</h3>
+        <p data-i18n="experts.step2Body">We look for a person whose experience fits the question and brief them on what you want to cover.</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">03</div>
+        <h3 data-i18n="experts.step3Title">Speak with them</h3>
+        <p data-i18n="experts.step3Body">You hold the conversation directly. A written summary of the discussion is available on request.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typical questions -->
+  <section class="container ex-questions">
+    <div class="ex-label" data-i18n="experts.qEyebrow">Typical questions</div>
+    <h2 class="ex-h2" data-i18n="experts.qHeading">Where first-hand experience matters most.</h2>
+    <div class="ex-q-list">
+      <div class="ex-q">
+        <h3 data-i18n="experts.q1Title">Market-entry feasibility</h3>
+        <p data-i18n="experts.q1Body">Whether the opportunity is as large in practice as it appears on paper, and what tends to slow new entrants.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q2Title">Regulation in practice</h3>
+        <p data-i18n="experts.q2Body">How rules, licences and approvals are applied in practice, beyond the text of the regulation.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q3Title">Partners and channels</h3>
+        <p data-i18n="experts.q3Body">Who the credible distributors, partners and intermediaries are, and how relationships with them typically work.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q4Title">Competitor behaviour</h3>
+        <p data-i18n="experts.q4Body">How established players respond to new entrants on price, channels and talent.</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="experts.q5Title">Operating costs and pricing</h3>
+        <p data-i18n="experts.q5Body">What it realistically costs to operate locally, and how prices are set across the market.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terms -->
+  <section class="container">
+    <div class="ex-terms">
+      <div class="ex-label" data-i18n="experts.termsLabel">— Terms</div>
+      <div>
+        <h3 data-i18n="experts.termsPricingTitle">Pricing</h3>
+        <p data-i18n="experts.termsPricing">Pricing is agreed per engagement.</p>
+      </div>
+      <div>
+        <h3 data-i18n="experts.termsComplianceTitle">Compliance</h3>
+        <p data-i18n="experts.termsCompliance">Experts are engaged for their general knowledge and experience. Kira Experts does not facilitate the disclosure of confidential or material non-public information.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Request form -->
+  <section class="container ex-form-section" id="request">
+    <div class="ex-form-grid">
+      <div class="intro">
+        <div class="hero-eyebrow" data-i18n="experts.formEyebrow">REQUEST AN EXPERT</div>
+        <h2 class="ex-h2" data-i18n="experts.formTitle">Tell us what you need to know.</h2>
+        <p data-i18n="experts.formSub">Describe the market and the question. We will reply by email to discuss the next step.</p>
+      </div>
+
+      <div class="cr-form-wrap">
+        <form class="cr-form" id="cr-lead-form" novalidate>
+          <div class="cr-field">
+            <label for="cr-name" data-i18n="experts.fieldName">Name</label>
+            <input type="text" id="cr-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-email" data-i18n="experts.fieldEmail">Work email</label>
+            <input type="email" id="cr-email" name="email" required autocomplete="email" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-company" data-i18n="experts.fieldCompany">Company</label>
+            <input type="text" id="cr-company" name="company" autocomplete="organization" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-role" data-i18n="experts.fieldRole">Role</label>
+            <input type="text" id="cr-role" name="role" autocomplete="organization-title" />
+          </div>
+          <div class="cr-field full">
+            <label for="cr-deadline" data-i18n="experts.fieldDeadline">Timing</label>
+            <select id="cr-deadline" name="deadline">
+              <option value="2w" data-i18n="experts.deadline2w">Within two weeks</option>
+              <option value="month" selected data-i18n="experts.deadlineMonth">Within a month</option>
+              <option value="quarter" data-i18n="experts.deadlineQuarter">Within a quarter</option>
+              <option value="flex" data-i18n="experts.deadlineFlex">Flexible</option>
+            </select>
+          </div>
+          <div class="cr-field full">
+            <label for="cr-brief" data-i18n="experts.fieldBrief">Your question</label>
+            <textarea id="cr-brief" name="brief" required minlength="10"
+              data-i18n-attr="placeholder:experts.briefPlaceholder"
+              placeholder="The market and sector, the decision you are working on, and what you would like to learn from someone with first-hand experience."></textarea>
+          </div>
+
+          <!-- Honeypot: hidden from humans, bots fill it. -->
+          <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="cr-hp">Leave this empty</label>
+            <input type="text" id="cr-hp" name="hp" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="cr-field full">
+            <button type="submit" class="btn btn-primary cr-submit" data-i18n="experts.submitCta">Request an expert →</button>
+            <div class="cr-error" id="cr-error" role="alert"></div>
+          </div>
+        </form>
+
+        <div class="cr-success" id="cr-success" role="status">
+          <strong data-i18n="experts.successTitle">Your request has been received.</strong>
+          <p data-i18n="experts.successBody">Thank you. We will review your question and reply by email. To add context in the meantime, write to hello@kiraresearch.com.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script defer>
+    // Expert request form → POST /api/leads (source 'experts').
+    document.addEventListener('DOMContentLoaded', () => {
+      const form    = document.getElementById('cr-lead-form');
+      const success = document.getElementById('cr-success');
+      const errBox  = document.getElementById('cr-error');
+      const submit  = form && form.querySelector('button[type="submit"]');
+      if (!form) return;
+
+      function showError(msg) {
+        errBox.textContent = msg;
+        errBox.style.display = 'block';
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errBox.style.display = 'none';
+        errBox.textContent   = '';
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.locale = (window.kira && window.kira.locale) || 'en';
+        data.source = 'experts';
+        data.tier   = 'not-sure';
+
+        const originalLabel = submit.textContent;
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+
+        try {
+          const res = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            showError(({
+              name_required:   'Please enter your name.',
+              email_invalid:   'Please enter a valid email.',
+              brief_too_short: 'Please add a little more detail about your question.',
+              insert_failed:   'Something went wrong on our side. Please retry, or email hello@kiraresearch.com.',
+              invalid_json:    'Form submission failed. Please retry.'
+            })[body.error] || 'Submission failed. Please retry, or email hello@kiraresearch.com.');
+            submit.disabled = false;
+            submit.textContent = originalLabel;
+            return;
+          }
+          form.style.display = 'none';
+          success.classList.add('show');
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          showError('Network error. Please retry, or email hello@kiraresearch.com.');
+          submit.disabled = false;
+          submit.textContent = originalLabel;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
