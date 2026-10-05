@@ -25,7 +25,7 @@
 
 | Sprint | Scope | Status |
 |---|---|---|
-| **S1** | Pipeline to cloud routine; queue cleanup; admin "Pipeline health" | 🟡 in progress |
+| **S1** | Pipeline to cloud routine (routine itself created by Henry in the claude.ai Routines UI, repos attached there); queue cleanup; admin "Pipeline health" | 🟡 code done, waiting on owner steps |
 | **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage (Henry approves) | 🔴 |
 | **S3** | Topic Planner module + `/en/admin/topics` approval screen; queue moves from CSV to DB | 🔴 |
 | **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | 🔴 |
