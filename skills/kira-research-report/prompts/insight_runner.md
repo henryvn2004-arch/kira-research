@@ -198,6 +198,7 @@ Spawn `general-purpose` **with `model: "sonnet"`** (insight pipeline → Sonnet 
 > - Slug rule: final slug will be `<industry-lower>-<country-lower>-<slug_key>-<year>`. Make `slug_key` 2-4 words, kebab-case.
 > - Question H2 templates per `prompts/question_templates.md` Section A.
 > - Charts: if you include an SVG, copy the entire `<svg>…</svg>` element verbatim including styles. Do not modify dimensions.
+> - `body_en` is HTML (`<h2>`, `<h3>`, `<p>`, `<ul>`, `<table>`), never Markdown: no `##`, `**` or `- ` list markers. Do not repeat the title as the first heading; the page shows it already.
 >
 > Return ONLY the JSON. No markdown fences, no commentary.
 
@@ -209,6 +210,7 @@ Spawn `general-purpose` **with `model: "sonnet"`** (insight pipeline → Sonnet 
 2. Must have exactly 3 insights. If not → failure.
 3. For each insight: required fields all non-empty (`question_h2_en`, `slug_key`, `title_en`, `excerpt_en`, `lede_en`, `body_en`, `read_time`).
 4. Grep all 3 body_en for forbidden terms (`Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey`). Zero hits required.
+4b. Each body_en must start with `<` and contain no Markdown markers (`grep -E '(^|\n)#{1,4} |\*\*'` → zero hits). A Markdown body renders as raw `##` / `**` on the site → failure path with `error_log: insight body is Markdown`.
 5. Char limits: `excerpt_en` ≤ 320 chars, `lede_en` ≤ 500 chars, `title_en` ≤ 100 chars. Warn but don't fail on over.
 
 ### 3.3 — Build slugs and check uniqueness
@@ -225,15 +227,17 @@ If any slug already exists → append `-2`, `-3` until unique. (Rare edge case; 
 
 ### 3.4 — INSERT insights + insight_translations EN (3 + 3 rows, idempotent)
 
+`<country-slug>` = the report's English country name, lowercase, spaces → hyphens (`vietnam`, `south-korea`). Never an ISO code (`VN`, `KR`): the insights filters match on this value.
+
 Build and execute SQL via Supabase MCP:
 
 ```sql
 WITH new_insights AS (
   INSERT INTO insights (slug, category, country, industry, featured, related_report_slugs, status, published_at)
   VALUES
-    ($kbat$<slug1>$kbat$, 'data-explainer', $kbat$<country-lower>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now()),
-    ($kbat$<slug2>$kbat$, 'data-explainer', $kbat$<country-lower>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now()),
-    ($kbat$<slug3>$kbat$, 'data-explainer', $kbat$<country-lower>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now())
+    ($kbat$<slug1>$kbat$, 'data-explainer', $kbat$<country-slug>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now()),
+    ($kbat$<slug2>$kbat$, 'data-explainer', $kbat$<country-slug>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now()),
+    ($kbat$<slug3>$kbat$, 'data-explainer', $kbat$<country-slug>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now())
   ON CONFLICT (slug) DO UPDATE SET
     updated_at = now(),
     published_at = now(),
@@ -266,6 +270,30 @@ curl -s "https://kiraresearch.com/api/insights-list?_t=$(date +%s)" | grep -o "<
 ```
 
 Should return at least 1 match for each slug_key. Soft check; warn but don't fail.
+
+### 3.6 — Cover image (every insight carries one)
+
+Insights from a report use that report's cover (the library and insights pages show it on cards and at the top of the article). Copy it in SQL:
+
+```sql
+UPDATE insights i SET cover_url = lr.cover_url, cover_thumb_url = lr.cover_thumb_url
+FROM living_reports lr
+WHERE lr.slug = $kbat$<report-slug>$kbat$ AND lr.cover_url IS NOT NULL
+  AND i.slug = ANY(ARRAY[$kbat$<slug1>$kbat$, $kbat$<slug2>$kbat$, $kbat$<slug3>$kbat$])
+RETURNING i.slug;
+```
+
+If it returns 0 rows (the report has no cover yet), generate one per insight at web quality and upload it:
+
+```bash
+for s in <slug1> <slug2> <slug3>; do
+  node skills/kira-research-report/scripts/gen-cover.mjs --id "$s" --country "<country>" --industry "<industry>" \
+    --angle "<title_en of that insight>" --quality medium --out "/tmp/$s.jpg" \
+    && node skills/kira-research-report/scripts/upload-cover.mjs --kind insight --slug "$s" --in "/tmp/$s.jpg"
+done
+```
+
+A cover failure is not fatal; note it in the summary.
 
 No git commit needed for Stage E (insights live in DB, not files). Just print summary + exit.
 
@@ -444,7 +472,7 @@ WITH new_insight AS (
   VALUES (
     $kbat$<slug>$kbat$,
     'data-explainer',
-    $kbat$<country-lower>$kbat$,
+    $kbat$<country-slug>$kbat$,
     $kbat$<industry-lower>$kbat$,
     false,
     ARRAY[$kbat$<report-slug>$kbat$],
@@ -470,6 +498,8 @@ ON CONFLICT (insight_id, locale) DO UPDATE SET
   lede = EXCLUDED.lede, body = EXCLUDED.body, status = 'published'
 RETURNING insight_id, locale, title;
 ```
+
+Then give it a cover exactly as in **3.6** (copy the report's cover; generate one at `--quality medium` only if the report has none), with `<slug>` as the only slug.
 
 Print summary + exit.
 

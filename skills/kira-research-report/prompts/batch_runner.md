@@ -76,7 +76,7 @@ node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>
 
 Also check the brain (private repo `kira-pipeline`, cloned next to this repo or at env `KIRA_BRAIN_DIR`): `node -e "const p=require('path'),f=require('fs');const b=process.env.KIRA_BRAIN_DIR||p.resolve('..','kira-pipeline','brain');console.log('BRAIN='+(f.existsSync(p.join(b,'runner','retrieve.py'))?b:'MISSING'))"`. A missing brain is NOT fatal: Stage A falls back to UC1/UC2. Note it in the fire summary.
 
-Cover art needs `OPENAI_API_KEY` (optional `OPENAI_IMAGE_MODEL`, default `gpt-image-1`). Missing key is NOT fatal either: the cover renders without an illustration (`plain` variant). Note it in the fire summary.
+Cover art needs `OPENAI_API_KEY` (optional `OPENAI_IMAGE_MODEL`, default `gpt-image-2`; 15 house styles rotate by report id). Missing key is NOT fatal either: the cover renders without an illustration (`plain` variant). Note it in the fire summary.
 
 If ANY of the 3 env vars prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
 
@@ -490,6 +490,24 @@ done
 ```
 
 Expects HTTP 200 + `{"Key": "reports-html/<report_id>/<locale>.html", "Id": "<uuid>"}`. Any non-200 → bail to failure path.
+
+**5.3b-3 — Upload the cover image (library thumbnail + report page).**
+
+The library list and the report page show the cover illustration from the public `covers` bucket (migration 026). `upload-cover.mjs` writes the full image, a portrait thumbnail and a wide crop, sets `living_reports.cover_url` / `cover_thumb_url`, and gives the same cover to insights linked to this report:
+
+```bash
+C=skills/kira-research-report/outputs/batch/${id}/cover.jpg
+if [ -s "$C" ]; then
+  node skills/kira-research-report/scripts/upload-cover.mjs --kind report --slug "<slug>" --in "$C"
+else
+  # No cover (OPENAI_API_KEY was missing at EN gen): generate one now, then upload.
+  node skills/kira-research-report/scripts/gen-cover.mjs --id "<slug>" --country "<country>" --industry "<industry>" \
+    --angle "<title>" --out "$C" --quality high \
+    && node skills/kira-research-report/scripts/upload-cover.mjs --kind report --slug "<slug>" --in "$C"
+fi
+```
+
+Prints one JSON line; `"ok": true` expected. A cover failure is NOT fatal (the page falls back to a plain thumbnail): note it in the fire summary and continue.
 
 **5.3c — Verify (3 cache-busted curls):**
 
