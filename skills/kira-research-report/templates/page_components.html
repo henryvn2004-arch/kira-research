@@ -25,27 +25,25 @@
      Usage: Section 01 — Report cover page
      ============================================================ -->
 <!-- TEMPLATE_START: cover -->
-<div class="page cover">
-  <div class="cover-grid"></div>
-  <div class="cover-content">
-    <div class="page-inner">
-      <div class="cover-top">
-        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
-        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
-      </div>
-      <div class="cover-main">
-        <div class="cover-eyebrow">{{COUNTRY}} · {{INDUSTRY}} · {{YEAR}}</div>
-        <h1>{{REPORT_TITLE_LINE_1}}<br>{{REPORT_TITLE_LINE_2}} <span class="accent">{{REPORT_TITLE_ACCENT}}</span></h1>
-        <p class="cover-subtitle">{{COVER_SUBTITLE}}</p>
-      </div>
-      <div>
-        <div class="cover-meta-grid">
-          <div class="cover-meta-item"><div class="label">Country</div><div class="val">{{COUNTRY}}</div></div>
-          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">{{INDUSTRY_SHORT}}</div></div>
-          <div class="cover-meta-item"><div class="label">Published</div><div class="val">{{PUBLISH_DATE}}</div></div>
-          <div class="cover-meta-item"><div class="label">Report ID</div><div class="val"><span class="accent">{{REPORT_ID}}</span></div></div>
-        </div>
-        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · Single-user license · © 2026 KIRA Research</div>
+<!-- Illustration: cover.jpg next to the report HTML (scripts/gen-cover.mjs).
+     If generation failed, add class "plain" to the page and drop the <img>. -->
+<div class="page cover2 {{COVER_VARIANT}}">
+  <img class="cv-art" src="cover.jpg" alt="">
+  <div class="cv-wrap">
+    <div class="cv-top">
+      <img class="cv-logo" src="brand/logo.png" alt="KIRA Research">
+      <div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div>
+    </div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <!-- 3 short lines; the middle line carries the accent. Add class "long" if any line exceeds ~14 characters. -->
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    </div>
+    <div class="cv-bottom">
+      <div class="cv-year-row">
+        <div class="cv-year">{{YEAR}}</div>
+        <div class="cv-tag">{{TAGLINE_LINE_1}}<br>{{TAGLINE_LINE_2}}</div>
       </div>
     </div>
   </div>
@@ -1004,6 +1002,34 @@
 
 
 <!-- ============================================================
-     END OF TEMPLATES — 18 page types defined (10 original + 5 Phase H + 2 decision-brief + exhibit_page).
+     TEMPLATE: closing  (last page of every report, all routes)
+     Identical on every report except the report name in the top-right.
+     ============================================================ -->
+<!-- TEMPLATE_START: closing -->
+<div class="page closing-page">
+  <div class="cl-wrap">
+    <div class="cl-top">
+      <img class="cl-logo" src="brand/logo-white.png" alt="KIRA Research">
+      <div class="cl-meta">{{REPORT_SHORT_TITLE}} &nbsp;|&nbsp; {{REPORT_KIND}} {{YEAR}}</div>
+    </div>
+    <div class="cl-eyebrow">Thank you</div>
+    <div class="cl-title">Thank you<br><span class="soft">for your time.</span></div>
+    <p class="cl-body">We hope this report gives your team a clear view of the market and the decisions ahead. For further discussion, custom research or partnership opportunities, please get in touch with our research team.</p>
+    <div class="cl-contacts">
+      <div class="cl-contact"><div class="cl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg></div><div><div class="k">Email</div><div class="v">hello@kiraresearch.com</div></div></div>
+      <div class="cl-contact"><div class="cl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 2.6 15.2 0 18M12 3c-2.6 2.8-2.6 15.2 0 18"/></svg></div><div><div class="k">Website</div><div class="v">www.kiraresearch.com</div></div></div>
+      <div class="cl-contact"><div class="cl-icon"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.5 9.5h-3v11h3v-11zM5 4a1.75 1.75 0 100 3.5A1.75 1.75 0 005 4zm15.5 9.9c0-3-1.6-4.6-3.9-4.6-1.6 0-2.5.9-2.9 1.6V9.5h-3v11h3v-6c0-1.4.6-2.6 2-2.6s1.8 1.2 1.8 2.6v6h3v-6.6z"/></svg></div><div><div class="k">LinkedIn</div><div class="v">KIRA Research</div></div></div>
+    </div>
+    <div class="cl-bottom">
+      <div class="cl-tag">Market intelligence<br>for confident decisions.</div>
+      <div class="cl-legal">Single-user licence · © {{YEAR}} KIRA Research<br>Desk research; figures tagged with their sources</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: closing -->
+
+
+<!-- ============================================================
+     END OF TEMPLATES — 19 page types defined (10 original + 5 Phase H + 2 decision-brief + exhibit_page + closing).
      Pipeline reads this file, extracts by markers, fills placeholders.
      ============================================================ -->

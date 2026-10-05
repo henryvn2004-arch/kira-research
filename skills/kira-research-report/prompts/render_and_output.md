@@ -16,6 +16,23 @@ Load into context:
 - `templates/master_wrapper.html` — HTML doc shell with two placeholders: `{{MASTER_STYLES_CSS}}` and `{{PAGES_HTML}}`
 - `templates/page_components.html` — 10 starter page templates (use as base; substitute the placeholders specific to each section)
 
+## Step 1b — Cover illustration (every report)
+
+Generate the cover art before composing pages:
+
+```bash
+node skills/kira-research-report/scripts/gen-cover.mjs --id <report_id> --country "<country>" --industry "<industry>" \
+  --angle "<topic angle or buyer question, short>" --out <report output dir>/cover.jpg
+```
+
+- The style rotates per report automatically (5 house styles, stable by report id). Pass `--style` only to override.
+- Exit 0 → use the `cover` template as is (`<img class="cv-art" src="cover.jpg">`).
+- Exit 3 (no `OPENAI_API_KEY` or API error) → keep going: set `{{COVER_VARIANT}}` to `plain` and drop the `<img class="cv-art">` line. Note it in the run summary. Never block a report on cover art.
+
+## Step 1c — Images stay as relative references
+
+Keep `src="cover.jpg"` and `src="brand/logo.png"` / `brand/logo-white.png` relative in the HTML you write (en.html, ja.html, ko.html). This keeps the files small for page-by-page translation. `render-one.mjs`, `render-local.mjs` and `upload-html.mjs` inline them as data URIs automatically (`scripts/lib/inline-assets.mjs`).
+
 ## Step 2 — Compose each page
 
 For each section in the report plan:
@@ -53,6 +70,12 @@ After all pages exist, walk them in order and assign:
 - `{{total_pages}}` = the final count (NN)
 - `{{section_num}}` carries through all pages of a section ("Section 04" repeated across exec_summary p1 + p2)
 - Dividers ("page divider-page") inherit the section_num of the chapter they introduce
+
+### Cover and closing pages (all routes)
+
+- **Cover:** the `cover` template. Fill 3 short title lines (the middle one is the accent), a report kind ("Industry report", "Market entry brief"…), the subtitle (the buyer question or angle, ≤110 chars), the year and an optional two-line tagline.
+- **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}`, `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
+- Neither page carries a page number or source key.
 
 ## Step 3 — Assemble final HTML
 

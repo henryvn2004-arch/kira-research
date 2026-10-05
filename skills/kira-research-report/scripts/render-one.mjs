@@ -2,6 +2,7 @@
 // Render one HTML file to PDF via the Vercel /api/render-pdf endpoint.
 // Usage: PDF_RENDER_SECRET=... node skills/kira-research-report/scripts/render-one.mjs <html-path> <pdf-out-path> [filename-for-response]
 import fs from 'node:fs';
+import { inlineAssets } from './lib/inline-assets.mjs';
 
 const [, , htmlPath, pdfPath, filename] = process.argv;
 if (!htmlPath || !pdfPath) {
@@ -14,7 +15,7 @@ if (!secret) {
   process.exit(2);
 }
 
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = inlineAssets(fs.readFileSync(htmlPath, 'utf8'), htmlPath);
 const r = await fetch('https://kiraresearch.com/api/render-pdf', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', 'X-Api-Key': secret },

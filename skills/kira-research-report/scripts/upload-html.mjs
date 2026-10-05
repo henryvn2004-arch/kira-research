@@ -14,6 +14,7 @@
 //
 //   page-count defaults to 5.
 import fs from 'node:fs';
+import { inlineAssets } from './lib/inline-assets.mjs';
 
 const [, , localPath, reportId, locale, pageCountArg] = process.argv;
 if (!localPath || !reportId || !locale) {
@@ -28,7 +29,7 @@ if (!url || !key) {
   process.exit(2);
 }
 
-const fullHtml = fs.readFileSync(localPath, 'utf8');
+const fullHtml = inlineAssets(fs.readFileSync(localPath, 'utf8'), localPath);
 const preview  = slicePreview(fullHtml, pageCount);
 if (!preview) {
   console.error(`could not extract ${pageCount} pages from ${localPath}`);
