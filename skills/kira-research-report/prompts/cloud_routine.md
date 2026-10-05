@@ -5,7 +5,8 @@ The Routine is created in the claude.ai Routines UI (the API tool cannot attach 
 **Routine settings**
 - **Repositories:** `henryvn2004-arch/kira-research` and `henryvn2004-arch/kira-pipeline` (private brain). Both are cloned side by side under `/home/user/` in the fired session. If the form offers an option to push to branches other than `claude/*`, turn it on for `kira-research`: the runner commits `batch:` messages straight to `main`.
 - **Environment:** `OpenAI Key` (`env_01Khi54Dffp38bzpmjYSGrYg`). It must define `PDF_RENDER_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` and `OPENAI_API_KEY` (cover art; optional) and allow outbound to kiraresearch.com, `*.supabase.co`, `api.openai.com`.
-- **Schedule (UTC):** `53 11,14,17,20 * * *` = 18:53, 21:53, 00:53, 03:53 ICT. 3 batch fires + 1 insight fire per day. One fire = one stage of one queue row (see `batch_runner.md`).
+- **Schedule:** Custom cron, 3 fires/day at 01:53, 03:53 and 05:53 ICT (night only, 2 h apart so fires never overlap; EN gen can run 90 min). Cron `53 1,3,5 * * *` if the form reads it in local time (GMT+7), `53 18,20,22 * * *` if it reads UTC; check the form's "Runs at" preview. One fire = one stage of one queue row (see `batch_runner.md`), so 3 fires = 1 report/day. The insight pipeline is paused (library reports first); to restart it, add a separate routine that follows `insight_runner.md`.
+- **Model:** Sonnet 5.5 is enough. The fire only does file work, validation and commits; `batch_runner.md` picks the model for the heavy subagents (opus for EN gen, sonnet for JA/KO).
 
 ---
 
@@ -26,7 +27,7 @@ export KIRA_BRAIN_DIR=/home/user/kira-pipeline/brain
 ```
 (Re-export both variables in every later shell call; shell state does not persist.)
 
-**3. Dispatch by Vietnam hour.** `TZ=Asia/Ho_Chi_Minh date +%H`: `03` → follow `skills/kira-research-report/prompts/insight_runner.md`; anything else → follow `skills/kira-research-report/prompts/batch_runner.md`. Treat the chosen file as your full instructions from here on (ignore its `git rev-parse` working-directory step: you are already in the repo root). Never print the values of `PDF_RENDER_SECRET`, `SUPABASE_SERVICE_KEY` or `OPENAI_API_KEY`.
+**3. Run the batch runner.** Follow `skills/kira-research-report/prompts/batch_runner.md` and treat it as your full instructions from here on (ignore its `git rev-parse` working-directory step: you are already in the repo root). Never print the values of `PDF_RENDER_SECRET`, `SUPABASE_SERVICE_KEY` or `OPENAI_API_KEY`.
 
 **4. If a step cannot run** (missing env var, push rejected), stop, change nothing else, and end with one line: `no-op: <reason>`. Never skip a quality gate to finish a stage.
 
