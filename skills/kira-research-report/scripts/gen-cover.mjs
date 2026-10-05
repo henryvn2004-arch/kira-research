@@ -65,8 +65,13 @@ try {
   const j = await r.json();
   const b64 = j?.data?.[0]?.b64_json;
   if (!r.ok || !b64) throw new Error(`HTTP ${r.status}: ${j?.error?.message || 'no image returned'}`);
+  // Only ever write a real JPEG of sane size to the requested .jpg path.
+  const img = Buffer.from(b64, 'base64');
+  const isJpeg = img.length > 3 && img[0] === 0xff && img[1] === 0xd8 && img[2] === 0xff;
+  if (!isJpeg || img.length > 8 * 1024 * 1024) throw new Error('API did not return a JPEG under 8 MB');
+  if (!/\.jpe?g$/i.test(out)) throw new Error('--out must end in .jpg');
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, Buffer.from(b64, 'base64'));
+  fs.writeFileSync(out, img);
   console.log(JSON.stringify({ ok: true, style, model, out, bytes: fs.statSync(out).size, prompt }));
 } catch (e) {
   console.log(JSON.stringify({ ok: false, error: String(e.message || e), style, model }));
