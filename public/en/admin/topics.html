@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Topics — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .tp-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:20px; }
+    .tp-head h1 { margin:0; font-size:28px; }
+    .tp-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+    @media (max-width:560px) { .tp-kpis { grid-template-columns:repeat(2,1fr); } }
+    .tp-kpi { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+    .tp-kpi b { display:block; font-size:24px; font-family:'Satoshi',sans-serif; }
+    .tp-kpi span { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .tp-filters { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:20px; }
+    .tp-chip { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:999px; padding:8px 14px; font-size:14px; cursor:pointer; }
+    .tp-chip.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .tp-filters select { padding:8px 10px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--text); font-size:14px; }
+    .tp-section { margin:28px 0 12px; font-size:18px; }
+    .tp-section small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .tp-card { border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; background:var(--bg); }
+    .tp-card h3 { margin:0 0 6px; font-size:17px; line-height:1.35; }
+    .tp-meta { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+    .tp-tag { font-size:12px; background:var(--surface-2); border-radius:6px; padding:3px 8px; color:var(--muted); }
+    .tp-tag.p1 { background:#E3EEFF; color:var(--primary-dim); font-weight:600; }
+    .tp-q { margin:8px 0; font-size:15px; }
+    .tp-card ol { margin:8px 0 8px 20px; padding:0; font-size:14.5px; }
+    .tp-card li { margin:3px 0; }
+    .tp-why { font-size:13.5px; color:var(--muted); margin:8px 0; }
+    .tp-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .tp-btn { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:8px; padding:10px 16px; font-size:14px; cursor:pointer; min-height:42px; }
+    .tp-btn.go { background:var(--primary); border-color:var(--primary); color:#fff; font-weight:600; }
+    .tp-btn.no { color:#B42318; border-color:#F2C4BE; }
+    .tp-btn:disabled { opacity:.5; cursor:wait; }
+    .tp-edit input, .tp-edit textarea { width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--border-strong); border-radius:8px; font:inherit; font-size:15px; margin:4px 0 10px; background:var(--bg); color:var(--text); }
+    .tp-edit label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .tp-state { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+    .tp-state.approved { color:#067647; } .tp-state.rejected { color:#B42318; } .tp-state.queued { color:var(--primary); }
+    .tp-empty { color:var(--muted); padding:24px 0; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/topics" class="active">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="tp-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+    const state = { status: 'proposed', country: '', data: null, editing: null };
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    async function api(path, opts = {}) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, {
+        ...opts,
+        headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' }
+      });
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        throw new Error(d.error || String(r.status));
+      }
+      return r.json();
+    }
+
+    async function load() {
+      const qs = new URLSearchParams({ status: state.status });
+      if (state.country) qs.set('country', state.country);
+      state.data = await api('/api/admin-topics?' + qs.toString());
+      render();
+    }
+
+    async function decide(kind, id, action, extra = {}, btn) {
+      if (btn) btn.disabled = true;
+      try {
+        await api('/api/admin-topics', { method: 'PATCH', body: JSON.stringify({ kind, id, action, ...extra }) });
+        state.editing = null;
+        await load();
+      } catch (e) {
+        alert('Could not save: ' + e.message);
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function topicCard(t) {
+      const ind = t.industry ? t.industry.name : '?';
+      const comp = t.competency ? t.competency.label : (t.kind === 'snapshot' ? 'Snapshot' : '');
+      const sig = t.signals || {};
+      const qs = Array.isArray(t.questions) ? t.questions : [];
+      const stateLabel = t.status === 'proposed' ? '' : `<span class="tp-state ${esc(t.status)}">${esc(t.status)}</span>`;
+
+      if (state.editing === t.id) {
+        return `<div class="tp-card tp-edit" data-id="${esc(t.id)}">
+          <label>Title</label><input id="ed-title" value="${esc(t.title)}" />
+          <label>Guiding questions (one per line)</label><textarea id="ed-q" rows="7">${esc(qs.join('\n'))}</textarea>
+          <label>Note (optional)</label><input id="ed-note" value="${esc(t.note || '')}" />
+          <div class="tp-actions">
+            <button class="tp-btn go" data-act="save-approve">Save and approve</button>
+            <button class="tp-btn" data-act="save">Save only</button>
+            <button class="tp-btn" data-act="cancel">Cancel</button>
+          </div></div>`;
+      }
+
+      const buttons = t.status === 'proposed'
+        ? `<button class="tp-btn go" data-act="approve">Approve</button>
+           <button class="tp-btn" data-act="edit">Edit</button>
+           <button class="tp-btn no" data-act="reject">Reject</button>`
+        : t.status === 'queued'
+          ? ''
+          : `<button class="tp-btn" data-act="reopen">Back to proposed</button>`;
+
+      return `<div class="tp-card" data-id="${esc(t.id)}">
+        <div class="tp-meta">
+          <span class="tp-tag">${esc(t.country_code)}</span>
+          <span class="tp-tag">${esc(ind)}</span>
+          ${comp ? `<span class="tp-tag">${esc(comp)}</span>` : ''}
+          ${sig.priority ? `<span class="tp-tag ${sig.priority === 'P1' ? 'p1' : ''}">${esc(sig.priority)}</span>` : ''}
+          ${sig.heat ? `<span class="tp-tag">heat ${esc(sig.heat)}</span>` : ''}
+          ${sig.verified === false ? `<span class="tp-tag">evidence thin</span>` : ''}
+          ${stateLabel}
+        </div>
+        <h3>${esc(t.title)}</h3>
+        ${t.buyer_question ? `<div class="tp-q"><b>Buyer asks:</b> ${esc(t.buyer_question)}</div>` : ''}
+        ${qs.length ? `<ol>${qs.map(q => `<li>${esc(q)}</li>`).join('')}</ol>` : ''}
+        ${t.rationale ? `<div class="tp-why">${esc(t.rationale)}</div>` : ''}
+        ${t.note ? `<div class="tp-why"><b>Your note:</b> ${esc(t.note)}</div>` : ''}
+        <div class="tp-actions">${buttons}</div>
+      </div>`;
+    }
+
+    function splitCard(s) {
+      const sig = s.signals || {};
+      const players = Array.isArray(sig.foreign_players_named) ? sig.foreign_players_named.join(', ') : '';
+      const parent = s.industry && s.industry.parent ? s.industry.parent.name : '';
+      return `<div class="tp-card" data-split="${esc(s.id)}">
+        <div class="tp-meta">
+          <span class="tp-tag">${esc(s.country_code)}</span>
+          <span class="tp-tag">${esc(parent)}</span>
+          <span class="tp-tag">level 2</span>
+        </div>
+        <h3>${esc(s.industry ? s.industry.name : '?')}</h3>
+        ${s.evidence ? `<div class="tp-why">${esc(s.evidence)}</div>` : ''}
+        ${players ? `<div class="tp-why"><b>Foreign players named:</b> ${esc(players)}</div>` : ''}
+        ${sig.demand_proxy ? `<div class="tp-why"><b>Why buyers care:</b> ${esc(sig.demand_proxy)}</div>` : ''}
+        <div class="tp-actions">
+          <button class="tp-btn go" data-act="split-approve">Approve split</button>
+          <button class="tp-btn no" data-act="split-reject">Reject</button>
+        </div></div>`;
+    }
+
+    function render() {
+      const { stats, topics, splits, countries } = state.data;
+      const statuses = ['proposed', 'approved', 'rejected', 'queued', 'all'];
+      root.innerHTML = `
+        <div class="tp-head"><h1>Topics</h1></div>
+        <div class="tp-kpis">
+          <div class="tp-kpi"><b>${stats.proposed}</b><span>Proposed</span></div>
+          <div class="tp-kpi"><b>${stats.approved}</b><span>Approved</span></div>
+          <div class="tp-kpi"><b>${stats.queued}</b><span>In queue</span></div>
+          <div class="tp-kpi"><b>${stats.splits_proposed}</b><span>Splits to review</span></div>
+        </div>
+        <div class="tp-filters">
+          ${statuses.map(s => `<button class="tp-chip ${state.status === s ? 'on' : ''}" data-status="${s}">${s[0].toUpperCase() + s.slice(1)}</button>`).join('')}
+          <select id="f-country"><option value="">All countries</option>
+            ${countries.map(c => `<option value="${esc(c.code)}" ${state.country === c.code ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
+          </select>
+        </div>
+        ${splits.length ? `<h2 class="tp-section">Level-2 split proposals<small>narrower segments, approve the ones worth their own reports</small></h2>${splits.map(splitCard).join('')}` : ''}
+        <h2 class="tp-section">Topics<small>${topics.length} shown</small>
+          ${state.status === 'proposed' && topics.length > 1 ? '<button class="tp-btn" style="float:right" id="approve-all">Approve all shown</button>' : ''}</h2>
+        ${topics.length ? topics.map(topicCard).join('') : '<div class="tp-empty">Nothing here.</div>'}`;
+    }
+
+    root.addEventListener('click', async (e) => {
+      const chip = e.target.closest('[data-status]');
+      if (chip) { state.status = chip.dataset.status; state.editing = null; return load(); }
+
+      if (e.target.id === 'approve-all') {
+        const list = state.data.topics.filter(t => t.status === 'proposed');
+        if (!confirm(`Approve all ${list.length} shown topics?`)) return;
+        e.target.disabled = true;
+        for (const t of list) {
+          try { await api('/api/admin-topics', { method: 'PATCH', body: JSON.stringify({ kind: 'topic', id: t.id, action: 'approve' }) }); }
+          catch (err) { alert('Stopped: ' + err.message); break; }
+        }
+        return load();
+      }
+
+      const btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      const card = btn.closest('.tp-card');
+      const act = btn.dataset.act;
+      if (card.dataset.split) {
+        return decide('split', card.dataset.split, act === 'split-approve' ? 'approve' : 'reject', {}, btn);
+      }
+      const id = card.dataset.id;
+      if (act === 'approve' || act === 'reject' || act === 'reopen') return decide('topic', id, act, {}, btn);
+      if (act === 'edit') { state.editing = id; return render(); }
+      if (act === 'cancel') { state.editing = null; return render(); }
+      if (act === 'save' || act === 'save-approve') {
+        const extra = {
+          title: document.getElementById('ed-title').value,
+          questions: document.getElementById('ed-q').value.split('\n'),
+          note: document.getElementById('ed-note').value
+        };
+        return decide('topic', id, act === 'save' ? 'reopen' : 'approve', extra, btn);
+      }
+    });
+
+    root.addEventListener('change', (e) => {
+      if (e.target.id === 'f-country') { state.country = e.target.value; state.editing = null; load(); }
+    });
+
+    try {
+      await load();
+    } catch (e) {
+      root.innerHTML = `<div class="tp-empty">${e.message === '403' || e.message === 'not_admin'
+        ? 'Your account is not on the admin whitelist.' : 'Could not load topics (' + esc(e.message) + ').'}</div>`;
+    }
+  </script>
+</body>
+</html>

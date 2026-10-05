@@ -125,6 +125,24 @@ fresh. Do NOT proceed to Step 1 with un-pushed recovery state.
 
 ---
 
+## Step 0.6: Pull approved topics into the queue (Phase S — Sprint S3)
+
+Topics the owner approved in `/en/admin/topics` live in Supabase (`topics.status = 'approved'`). Before routing, append them to the CSV as `pending` rows:
+
+```bash
+ADDED=$(node skills/kira-research-report/scripts/sync-approved-topics.mjs | awk -F= '/^added=/{print $2}')
+if [ "${ADDED:-0}" -gt 0 ]; then
+  git add data/report_queue.csv
+  git commit -m "batch: queue ${ADDED} approved topic(s)"
+  git pull --rebase origin main 2>/dev/null || true
+  git push origin main
+fi
+```
+
+The script is idempotent and never fails the fire: without Supabase access it prints `added=0`. If the push fails after a successful append, EXIT with `topic sync commit collided, no-op`; the next fire sees the rows in the CSV (or re-appends nothing) and retries the push.
+
+---
+
 ## Step 1: Find work — stage routing
 
 Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose status is one of `pending | en_done | ja_done` (in priority order — pick the most-advanced first):

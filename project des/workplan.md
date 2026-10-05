@@ -20,14 +20,15 @@
 - Industry = **market-seeking FDI** only: sectors where foreign firms (JP/KR/CN/TW/…) want to sell into the *domestic* market. Export-oriented/efficiency-seeking FDI (e.g. Samsung assembling in VN to export) is out of scope.
 - Competency follows industry and investor stage (explore → enter → expand). A dedicated **Topic Planner** module proposes topics + guiding questions; **Henry approves** before anything enters the queue.
 - Content layers: Deep report (300-500/yr) · Industry snapshot (1,000-2,000/yr) · Company profile (company DB).
+- Industry levels (owner, 2026-10-05): level 1 = the 171 industries; **level 2 = narrower segments**, added where demand justifies (named foreign players, deals, later real search demand), proposed by the planner and approved by the owner; level-1 and level-2 reports are interleaved. Approving a split makes it a level-2 industry; reports on it follow.
 - Old queue: 16 `error` rows deleted, 57 `pending` rows set to `hold` (2026-10-05). Reports already published stay.
 - Distribution: KDP (US + JP), Google Play Books, Apple Books via EPUB export; expert ebooks fit KDP best. Do NOT enrol in KDP Select (exclusivity).
 
 | Sprint | Scope | Status |
 |---|---|---|
-| **S1** | Pipeline to cloud routine (routine itself created by Henry in the claude.ai Routines UI, repos attached there); queue cleanup; admin "Pipeline health" | 🟡 code done, waiting on owner steps |
-| **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage (Henry approves) | 🔴 |
-| **S3** | Topic Planner module + `/en/admin/topics` approval screen; queue moves from CSV to DB | 🔴 |
+| **S1** | Pipeline to cloud routine (routine itself created by Henry in the claude.ai Routines UI, repos attached there); queue cleanup; admin "Pipeline health" | 🟡 merged (#46); owner still adds 3 env vars + creates the routine |
+| **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage (Henry approves) | ✅ approved 2026-10-05 (13 countries, 171 industries, 15 competencies; data in private repo `kira-pipeline/taxonomy`) |
+| **S3** | Topic Planner module + `/en/admin/topics` approval screen; approved topics flow into the queue | 🟡 in review: tables (migration 023), planner prompt (private), admin screen + API, runner sync; first lot of 18 topics + 13 level-2 splits waiting for approval |
 | **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | 🔴 |
 | **S5** | Website repositioning: hero, competency/stage filters, pricing + waitlist, free exec summaries | 🔴 |
 | **S6** | Snapshot layer (3-5 page template) | 🔴 |
