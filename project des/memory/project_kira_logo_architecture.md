@@ -7,6 +7,15 @@ metadata:
   originSessionId: 410f69cb-ce7f-4d63-9185-96f74b3a4f41
 ---
 
+> **Update 2026-10-05 (PR #43):**
+> - The nav and footer now render the owner-supplied wordmark as `<img class="logo-img" src="/logo.png">` inside `.logo-mark`. The span is kept so the smoke tests' `.nav-wrap .logo-mark` check still holds.
+> - Sizing lives in `kira.css` (`.logo-mark .logo-img`: 22px, or 15px under 480px).
+> - `logo-white.png` is the white version for blue or dark backgrounds.
+> - Social shares use `og-image.png` (1200×630).
+> - Report templates use copies in `skills/kira-research-report/templates/brand/`.
+> - The text and CSS rendering described below is history.
+
+
 The kira-research brand wordmark in the nav header + footer is rendered as **HTML text styled by CSS**, not as an `<img>`. The `.logo-mark` span contains `KIR<span class="a-accent">A</span>` with `font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 22px`. The blue parallelogram accent next to "A" is drawn by `.logo-mark .a-accent::after` — a 9×5px `--primary`-filled rectangle skewed -15° absolutely-positioned at the bottom-right of the A glyph.
 
 `logo.png` (2 MB raster at `public/logo.png`) exists for three specific consumers — NOT the nav:
