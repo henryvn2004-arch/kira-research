@@ -183,7 +183,12 @@ Chi tiết + gotcha: `project des/memory/project_batch_cron_system.md`.
 
 ---
 
-## Report pipeline — BRAIN route (2026-10-04, PR #40)
+## Report pipeline — BRAIN route (2026-10-04, PR #40) — ✅ REVAMP DONE 2026-10-05
+
+> **Status:** the writing pipeline revamp is finished (PR #40, #41, #43, #44 merged). Next work moves to the
+> "Kira Research business model" session (operations workplan). Memory note: `project des/memory/project_brain_report_pipeline.md`.
+> Before routines restart, the batch machine needs `kira-pipeline` cloned alongside and `OPENAI_API_KEY` set.
+
 
 Stage A (EN gen) now plans each report as an answer to a **buyer question** instead of a generic market overview. The default buyer is a Japanese or Korean company. Prompt: `skills/kira-research-report/prompts/brain_route.md`.
 - **How it plans:** the brain (private repo `kira-pipeline`) picks the analyses, so its plan replaces the blueprint (UC1) and design-mode (UC2) planning. Research, content, render, JA/KO and publish are unchanged.
@@ -205,6 +210,7 @@ Stage A (EN gen) now plans each report as an answer to a **buyer question** inst
   - The batch machine needs `OPENAI_API_KEY`. Without it the cover renders plain.
   - A fixed closing page ends every report.
   - Images stay relative in the HTML; the render and upload scripts inline them.
+- **Tagline (PR #44):** "Know first. Move first." is fixed on the cover and closing pages; it is not set per report.
 - **Routines:** paused since 2026-10. Operations are being revamped in a separate session.
 
 ---
@@ -606,4 +612,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-07-29 — Phase Q.7 **ĐÃ THỰC THI**: 22 scheduled task (`kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4) gom về **1** (`kira`, cron `0 18,21,0,3 * * *` — 3 fire batch + 1 fire insight/ngày, ~1 report/ngày). Runbook `prompts/routines_consolidate.md` chạy xong trên máy DELL; Step 6 (đo throughput 1 tuần) còn mở tới ~2026-08-05. Trước đó: company detail page fix (PR #26, `a32cf52`), Sprint R.10 (`4b8c754`). **Code blocker = 0**.*
+*Last updated: 2026-10-05 — Writing pipeline revamp **DONE** (BRAIN route #40, exhibit layer #41, cover/closing/logo #43, tagline "Know first. Move first." #44). Owner-side before routines restart: clone `kira-pipeline` next to kira-research + set `OPENAI_API_KEY` on the batch machine. Operations workplan continues in the "Kira Research business model" session. **Code blocker = 0**.*
