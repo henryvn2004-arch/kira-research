@@ -51,18 +51,46 @@
   "page_types": {
 
     "cover": {
-      "description": "Report cover page — title, scope, meta, KIRA branding",
+      "description": "Report cover (2026-10): left text column + per-report illustration (cover.jpg from scripts/gen-cover.mjs, gpt-image, style rotated per report) faded into white on the right. Variant 'plain' when no illustration is available.",
       "slots": {
-        "kira_logo": {"required": true, "position": "top-left"},
-        "report_title": {"max_chars": 90, "lines_max": 3},
-        "subtitle": {"max_chars": 80, "lines_max": 2},
-        "scope_meta": {
-          "country": {"max_chars": 16},
-          "industry": {"max_chars": 60},
-          "year": {"format": "YYYY"},
-          "report_id": {"max_chars": 20}
+        "kira_logo": {
+          "required": true,
+          "src": "brand/logo.png"
         },
-        "confidential_tag": {"required": true}
+        "region_or_country": {
+          "max_chars": 24
+        },
+        "report_kind": {
+          "max_chars": 28,
+          "examples": [
+            "Industry report",
+            "Market entry brief",
+            "Distribution brief"
+          ]
+        },
+        "title_lines": {
+          "count": 3,
+          "each_max_chars": 18,
+          "accent": "line 2",
+          "note": "Short, punchy lines (e.g. 'Philippines' / 'Sari-sari route' / 'to FMCG growth'); add class long if any line > 14 chars."
+        },
+        "subtitle": {
+          "max_chars": 110,
+          "lines_max": 2,
+          "note": "The buyer question in plain words (BRAIN route) or the angle."
+        },
+        "year": {
+          "format": "YYYY"
+        },
+        "tagline": {
+          "lines": 2,
+          "each_max_chars": 28,
+          "note": "Optional industry-flavoured line pair; default 'Market intelligence / for confident decisions'."
+        },
+        "cover_image": {
+          "src": "cover.jpg",
+          "generated_by": "scripts/gen-cover.mjs"
+        }
       }
     },
 
@@ -746,6 +774,21 @@
         }
       },
       "fit_rule": "Caps are physical fit only. If content does not fit, split into two exhibit pages instead of trimming the insight."
+    },
+    "closing": {
+      "description": "Closing page (2026-10): identical brand page on every report (blue, thank-you, contacts). No image generation. Always the last page, after the methodology endnote, in every route.",
+      "slots": {
+        "report_short_title": {
+          "max_chars": 32
+        },
+        "report_kind": {
+          "max_chars": 28
+        },
+        "year": {
+          "format": "YYYY"
+        }
+      },
+      "is_boilerplate": true
     }
 
   },

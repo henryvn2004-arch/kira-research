@@ -8,6 +8,7 @@
 // Usage: node skills/kira-research-report/scripts/render-local.mjs <html-path> <pdf-out-path>
 import fs from 'node:fs';
 import { chromium } from 'playwright';
+import { inlineAssets } from './lib/inline-assets.mjs';
 
 const [, , htmlPath, pdfPath] = process.argv;
 if (!htmlPath || !pdfPath) {
@@ -15,7 +16,7 @@ if (!htmlPath || !pdfPath) {
   process.exit(2);
 }
 
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = inlineAssets(fs.readFileSync(htmlPath, 'utf8'), htmlPath);
 const pageCount = (html.match(/<div class="page(?=["\s])(?:[^"]*)?"/g) || []).length;
 
 const launchOpts = { args: ['--font-render-hinting=none', '--disable-web-security'] };

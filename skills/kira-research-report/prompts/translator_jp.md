@@ -21,6 +21,7 @@ This prompt is the canonical JP voice guide for this skill. Whenever you ship JP
 - **Source key footer line** (`SOURCE KEY · alias = ...`): translate only the LABEL `SOURCE KEY` → `出典凡例`; keep all aliases + full citations in their original English form. The full citations are proper nouns of source documents (e.g. "Badan Pusat Statistik Construction Materials Census 2024") — these are NOT translated, like company names.
 - Numbers and units: `USD 2.3 bn`, `5.03%`, `IDR 116 trn` — preserve verbatim (USD/IDR stay as ISO codes, "bn"/"%"/"pp" stay English; the JP reader recognizes them)
 - HTML tags, class names, IDs
+- Image references: `<img src="cover.jpg">`, `src="brand/logo.png"`, `src="brand/logo-white.png"` stay exactly as written (the render script inlines them). Translate the cover and closing page text normally; keep the contact details (email, website, LinkedIn name) verbatim.
 - Chart SOURCE lines: keep mono-uppercase format, only translate the descriptor part (`industry trade press` → `業界専門誌`); leave `KIRA RESEARCH 2026` and dataset names (`BPS`, `BANK INDONESIA`) as-is
 
 ---

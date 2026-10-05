@@ -66,6 +66,8 @@ node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>
 
 Also check the brain (private repo `kira-pipeline`, cloned next to this repo or at env `KIRA_BRAIN_DIR`): `node -e "const p=require('path'),f=require('fs');const b=process.env.KIRA_BRAIN_DIR||p.resolve('..','kira-pipeline','brain');console.log('BRAIN='+(f.existsSync(p.join(b,'runner','retrieve.py'))?b:'MISSING'))"`. A missing brain is NOT fatal: Stage A falls back to UC1/UC2. Note it in the fire summary.
 
+Cover art needs `OPENAI_API_KEY` (optional `OPENAI_IMAGE_MODEL`, default `gpt-image-1`). Missing key is NOT fatal either: the cover renders without an illustration (`plain` variant). Note it in the fire summary.
+
 If ANY of the 3 env vars prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
 
 ---
@@ -203,6 +205,8 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 >
 > BRAIN route: keep framing, context pack and brain trace in `<os temp dir>/kira-brain/${id}/` — never inside this repo.
 >
+> Cover art: run `scripts/gen-cover.mjs` (render_and_output Step 1b) writing `outputs/batch/${id}/cover.jpg`; end the report with the `closing` page. Keep image `src` values relative (`cover.jpg`, `brand/logo.png`).
+>
 > Write HTML to `skills/kira-research-report/outputs/batch/${id}/en.html`, PDF to `…/en.pdf` (render via `/api/render-pdf` with `PDF_RENDER_SECRET`).
 >
 > Hard rules (the skill enforces these; mentioning for safety):
@@ -243,6 +247,7 @@ If all pass → set queue row status to `en_done`, **clear `claimed_at`** (this 
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/en.html
+git add skills/kira-research-report/outputs/batch/${id}/cover.jpg 2>/dev/null || true
 git commit -m "batch: EN done for ${id}"
 git push origin main
 ```
