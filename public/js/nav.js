@@ -74,8 +74,7 @@
   <div class="container">
     <nav class="nav">
       <a class="logo" href="${localPath('/')}" aria-label="KIRA RESEARCH home">
-        <span class="logo-mark">KIR<span class="a-accent">A</span></span>
-        <span class="logo-sub">Research</span>
+        <img class="logo-mark" src="/logo-wordmark.png" alt="KIRA Research" width="246" height="28">
       </a>
       <div class="nav-right">
         <div class="locale-switcher" aria-label="Language">
@@ -121,8 +120,7 @@
     <div class="footer-grid">
       <div class="footer-col">
         <a class="logo" href="${localPath('/')}">
-          <span class="logo-mark">KIR<span class="a-accent">A</span></span>
-          <span class="logo-sub">Research</span>
+          <img class="logo-mark" src="/logo-wordmark.png" alt="KIRA Research" width="246" height="28">
         </a>
         <p class="footer-tag" data-i18n="footer.tagline">Southeast Asia's specialized market research firm. Senior analysts, modern delivery.</p>
       </div>
@@ -311,12 +309,12 @@
       document.head.appendChild(manifest);
     }
 
-    // Theme color matches the brand-dark background of the icon — affects
+    // Theme color matches the white background of the icon — affects
     // mobile browser chrome (Android Chrome address bar, etc.).
     if (!document.querySelector('meta[name="theme-color"]')) {
       const theme = document.createElement('meta');
       theme.name = 'theme-color';
-      theme.content = '#0B0D10';
+      theme.content = '#FFFFFF';
       theme.setAttribute('data-kira-theme-color', '1');
       document.head.appendChild(theme);
     }
