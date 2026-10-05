@@ -23,7 +23,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 | **Title** | `Country segment year: angle` (≤ 95 chars) | `Vietnam coffee chains 2026: how a foreign brand wins the food-led gap` |
 | Canonical title | `Country segment year` (≤ 45 chars) | `Vietnam coffee chains 2026` |
 | SEO title | Canonical + report kind + brand, cut from the right to fit 60 chars | `Vietnam coffee chains 2026 — Market entry brief` |
-| Eyebrow (EN/JA/KO) | `COUNTRY · INDUSTRY · REPORT KIND` | `VIETNAM · FOOD SERVICE · MARKET ENTRY BRIEF` |
+| Eyebrow (EN/JA/KO/ZH) | `COUNTRY · INDUSTRY · REPORT KIND` | `VIETNAM · FOOD SERVICE · MARKET ENTRY BRIEF` |
 | Cover lines | Line 1 country, line 2 (accent) segment, optional line 3 ≤ 18 chars | Vietnam / Coffee chains |
 | Short title | `Country segment` (closing page) | `Vietnam coffee chains` |
 | Keywords | Country + segment, industry, report kind, plus the synonyms and local-language terms passed with `--keywords` | `chuỗi cà phê`, `cafe chain` |
@@ -38,7 +38,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 
 ## Rules the script enforces
 
-- Country and industry must be in the vocabulary. To cover a new one, add it to `naming_vocab.json` (code + EN/JA/KO labels + aliases); never invent a code in a title. Codes are never reused or renamed.
+- Country and industry must be in the vocabulary. To cover a new one, add it to `naming_vocab.json` (code + EN/JA/KO/ZH labels + aliases); never invent a code in a title. Codes are never reused or renamed.
 - Segment: 1–4 words, sentence case (acronyms and proper nouns allowed), must not repeat the country.
 - Angle: required, ≤ 60 characters (a trailing `?` counts), no hype words (`voice_guide.md`). Question form preferred, statement allowed.
 - Slugs and codes are unique against Supabase `living_reports` (when `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` are set) and every `outputs/batch/*/naming.json` in progress.
@@ -48,7 +48,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 1. **Planning** (`brain_route.md` Step C, or the orchestrator for the other routes): pick stage, segment and angle; run the script; save `outputs/batch/<id>/naming.json`.
 2. **Render** (`render_and_output.md`): cover lines, report kind, `<title>` and closing short title come from `naming.json`.
 3. **Translation**: translators translate `<title>`; eyebrows come pre-translated from the vocabulary.
-4. **Publish** (`batch_runner.md` 5.3a): slug, code, stage, type, segment, keywords and the EN eyebrow come from `naming.json`; the JA/KO title is the translated `<title>`.
+4. **Publish** (`batch_runner.md` 5.3a): slug, code, stage, type, segment, keywords and the EN eyebrow come from `naming.json`; the JA/KO/ZH title is the translated `<title>`; JA/KO/ZH eyebrows come from `naming.eyebrow.<locale>`.
 
 ## Search
 

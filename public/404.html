@@ -121,10 +121,10 @@
       // holds the original URL the user typed/clicked.
       const path = window.location.pathname || '';
       const seg  = path.split('/').filter(Boolean)[0];
-      const locale = ['en', 'ja', 'ko'].includes(seg) ? seg : 'en';
+      const locale = ['en', 'ja', 'ko', 'zh'].includes(seg) ? seg : 'en';
 
       // <html lang> for screen readers + SEO.
-      document.documentElement.setAttribute('lang', locale);
+      document.documentElement.setAttribute('lang', locale === 'zh' ? 'zh-Hans' : locale);
 
       // Locale-specific copy. Kept inline since this page must render
       // standalone — i18n.js may load slower than the user re-clicking.
@@ -155,6 +155,15 @@
             { href: '/ko/insights/',       meta: '필드 노트',         name: '인사이트 읽기',         body: '동남아 변화에 대한 분석가의 해설 — 무료.' },
             { href: '/ko/custom-research/',meta: '맞춤 조사',         name: '조사 의뢰',             body: '라이브러리에서 다루지 않는 질문, 시니어 분석가가 답합니다.' }
           ]
+        },
+        zh: {
+          title: "页面不存在。",
+          sub:   "您访问的链接可能已过期、输入有误或已迁移。请从以下主要入口继续浏览。",
+          links: [
+            { href: '/zh/library',         meta: '研究报告库', name: '浏览报告库', body: '覆盖东南亚11个国家、38个行业的市场研究报告。' },
+            { href: '/zh/insights/',       meta: '实地观察',   name: '阅读洞察',   body: '分析师对东南亚市场变化的解读——免费阅读。' },
+            { href: '/zh/custom-research/',meta: '定制研究',   name: '委托研究',   body: '报告库未能解答的问题，由资深分析师为您研究。' }
+          ]
         }
       };
 
@@ -163,6 +172,7 @@
       document.getElementById('err-sub').textContent   = c.sub;
       const fontFamily = locale === 'ja' ? "'Satoshi', 'Noto Sans JP', sans-serif"
                        : locale === 'ko' ? "'Satoshi', 'Noto Sans KR', sans-serif"
+                       : locale === 'zh' ? "'Satoshi', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif"
                        : "'Satoshi', sans-serif";
       document.body.style.fontFamily = fontFamily;
 

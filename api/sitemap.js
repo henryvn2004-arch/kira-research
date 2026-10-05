@@ -3,16 +3,18 @@
 //
 // Dynamic sitemap endpoint backing /sitemap.xml + /sitemap-{locale}.xml.
 //
-//   GET /api/sitemap                  → sitemap index listing 3 per-locale sitemaps
+//   GET /api/sitemap                  → sitemap index listing 4 per-locale sitemaps
 //   GET /api/sitemap?locale=en        → full urlset for EN (static + reports + insights)
 //   GET /api/sitemap?locale=ja        → full urlset for JA
 //   GET /api/sitemap?locale=ko        → full urlset for KO
+//   GET /api/sitemap?locale=zh        → full urlset for ZH (Simplified Chinese)
 //
 // Wired up via vercel.json rewrites:
 //   /sitemap.xml         → /api/sitemap
 //   /sitemap-en.xml      → /api/sitemap?locale=en
 //   /sitemap-ja.xml      → /api/sitemap?locale=ja
 //   /sitemap-ko.xml      → /api/sitemap?locale=ko
+//   /sitemap-zh.xml      → /api/sitemap?locale=zh
 //
 // Each <url> entry in a per-locale sitemap carries <xhtml:link rel="alternate"
 // hreflang="..."> annotations pointing to the equivalent URL in the other
@@ -27,8 +29,10 @@ const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 const ORIGIN     = 'https://kiraresearch.com';
-const LOCALES    = ['en', 'ja', 'ko'];
+const LOCALES    = ['en', 'ja', 'ko', 'zh'];
 const SUPPORTED  = new Set(LOCALES);
+// hreflang value per locale (Simplified Chinese is zh-Hans; the URL prefix stays /zh/).
+const HREFLANG   = { en: 'en', ja: 'ja', ko: 'ko', zh: 'zh-Hans' };
 const X_DEFAULT  = 'en';
 
 // Static pages present in every locale. Path is relative to /<locale>.
@@ -80,7 +84,7 @@ function xmlEscape(s) {
 function urlEntry({ subPath, locale, lastmod, changefreq, priority }) {
   const loc = `${ORIGIN}/${locale}/${subPath}`;
   const alternates = LOCALES
-    .map(l => `    <xhtml:link rel="alternate" hreflang="${l}" href="${xmlEscape(`${ORIGIN}/${l}/${subPath}`)}"/>`)
+    .map(l => `    <xhtml:link rel="alternate" hreflang="${HREFLANG[l]}" href="${xmlEscape(`${ORIGIN}/${l}/${subPath}`)}"/>`)
     .join('\n');
   const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(`${ORIGIN}/${X_DEFAULT}/${subPath}`)}"/>`;
   const lastmodTag = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : '';

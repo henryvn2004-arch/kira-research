@@ -51,7 +51,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'private, no-store');
 }
 
-const LOCALES = new Set(['en', 'ja', 'ko']);
+const LOCALES = new Set(['en', 'ja', 'ko', 'zh']);
 function isSlug(s) { return typeof s === 'string' && /^[a-z0-9][a-z0-9-]+$/.test(s); }
 
 export default async function handler(req, res) {

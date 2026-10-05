@@ -46,7 +46,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
 }
 
-const SUPPORTED = new Set(['en', 'ja', 'ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 const SORTS = {
   'recent':     'published_at.desc.nullslast',
   'price-asc':  'price.asc',

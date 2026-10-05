@@ -75,7 +75,7 @@ function cors(res) {
 }
 
 // ── Validation ───────────────────────────────────────────
-const LOCALES   = new Set(['en', 'ja', 'ko']);
+const LOCALES   = new Set(['en', 'ja', 'ko', 'zh']);
 const STATUSES  = new Set(['pending', 'approved', 'rejected', 'live']);
 // Loose slug for aggregator names — kebab-case, allows numbers. Owner
 // types these; we don't enforce a closed enum because adding partners

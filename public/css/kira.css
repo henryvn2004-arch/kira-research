@@ -48,6 +48,61 @@ button { font-family: inherit; cursor: pointer; }
 .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
 .lang-ja { font-family: 'Noto Sans JP', sans-serif; }
 .lang-ko { font-family: 'Noto Sans KR', sans-serif; }
+.lang-zh { font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif; }
+
+/* ── Simplified Chinese (/zh/, <html lang="zh-Hans">) ─────────
+   System SC fonts (no webfont download — SC webfonts are multi-MB).
+   Satoshi stays first so Latin + digits keep the brand face; Han
+   glyphs fall through to the SC stack. Chinese breaks between any
+   two Han characters, so no `word-break: keep-all` (that is a
+   Korean-only rule); `line-break: strict` keeps closing punctuation
+   off line starts. Wide tracking on uppercase eyebrows is a Latin
+   device — on Han glyphs it reads as gappy, so it is tightened. */
+html:lang(zh) body,
+html:lang(zh) h1, html:lang(zh) h2, html:lang(zh) h3,
+html:lang(zh) h4, html:lang(zh) h5, html:lang(zh) h6 {
+  font-family: 'Satoshi', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif;
+}
+html:lang(zh) body {
+  line-height: 1.7;
+  line-break: strict;
+  overflow-wrap: anywhere;
+}
+html:lang(zh) h1, html:lang(zh) h2, html:lang(zh) h3 {
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+html:lang(zh) .hero-eyebrow,
+html:lang(zh) .section-head .label,
+html:lang(zh) .report-meta,
+html:lang(zh) .report-cta,
+html:lang(zh) .panel-title,
+html:lang(zh) .panel-status,
+html:lang(zh) .trust-item .label,
+html:lang(zh) .distrib-label,
+html:lang(zh) .footer-col h3,
+html:lang(zh) .footer-bottom,
+html:lang(zh) .filter-group h2,
+html:lang(zh) .rpt-meta-item .label,
+html:lang(zh) .rpt-section h3,
+html:lang(zh) .toc h4,
+html:lang(zh) .unlock-modal-eyebrow,
+html:lang(zh) .rpt-preview-eyebrow,
+html:lang(zh) .rpt-report-meta,
+html:lang(zh) .rpt-report-cta,
+html:lang(zh) .buy-tag,
+html:lang(zh) .buy-lang-select .label,
+html:lang(zh) .buy-includes h6,
+html:lang(zh) .rpt-insight-meta,
+html:lang(zh) .rpt-insight-cta,
+html:lang(zh) .rpt-key-players h4,
+html:lang(zh) .insight-featured-img .ifi-tag,
+html:lang(zh) .insight-meta,
+html:lang(zh) .insight-footer,
+html:lang(zh) .article-eyebrow,
+html:lang(zh) .related-insight-card .ri-meta {
+  letter-spacing: 0.06em;
+}
 
 /* ── Layout ──────────────────────────────────────────────── */
 .container {
@@ -142,7 +197,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .nav-links a:hover { color: var(--text); }
 .nav-links a.active { color: var(--text); }
-.nav-cta {
+.nav-cta,
+.nav-links a.nav-cta {
   background: var(--primary);
   color: #fff;
   padding: 10px 20px;

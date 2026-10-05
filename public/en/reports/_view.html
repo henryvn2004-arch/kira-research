@@ -176,13 +176,14 @@
   <script type="module">
     // ── 1) URL parsing ───────────────────────────────────
     const parts  = window.location.pathname.split('/').filter(Boolean);
-    const locale = ['en','ja','ko'].includes(parts[0]) ? parts[0] : 'en';
+    const locale = ['en','ja','ko','zh'].includes(parts[0]) ? parts[0] : 'en';
     const slug   = parts[2] ? parts[2].replace(/\/$/, '') : '';
     const qs     = new URLSearchParams(window.location.search);
     const paypalReturn = qs.get('paypal');     // 'success' or 'cancel'
     const paypalToken  = qs.get('token');      // PayPal order id when returning
 
-    document.documentElement.setAttribute('lang', locale);
+    // <html lang>: Chinese is Simplified-only → BCP-47 'zh-Hans'.
+    document.documentElement.setAttribute('lang', locale === 'zh' ? 'zh-Hans' : locale);
 
     // Preview iframe geometry. Source HTML is authored at 1280×720 per page
     // (matches the PDF). 5 pages × 720px = 3600px tall. Declared up here so
@@ -395,7 +396,7 @@
         ? d.preview.lede.slice(0, 200)
         : 'Market intelligence report from KIRA RESEARCH.';
       // og:locale uses underscore region format. x-default reports → en_US.
-      const ogLocale = { en: 'en_US', ja: 'ja_JP', ko: 'ko_KR' }[locale] || 'en_US';
+      const ogLocale = { en: 'en_US', ja: 'ja_JP', ko: 'ko_KR', zh: 'zh_CN' }[locale] || 'en_US';
 
       document.title = fullTitle;
       document.getElementById('meta-canonical').href = url;
@@ -412,10 +413,10 @@
       setMetaContent('meta-tw-description', description);
 
       // ── hreflang ────────────────────────────────────────
-      ['en','ja','ko'].forEach(loc => {
+      ['en','ja','ko','zh'].forEach(loc => {
         if (d.availableLocales.includes(loc)) {
           const link = document.createElement('link');
-          link.rel = 'alternate'; link.hreflang = loc;
+          link.rel = 'alternate'; link.hreflang = loc === 'zh' ? 'zh-Hans' : loc;
           link.href = base + '/' + loc + '/reports/' + d.slug;
           document.head.appendChild(link);
         }
@@ -698,12 +699,12 @@
     }
 
     function renderLangSwitcher(slug, currentLocale, available) {
-      const labels = { en: 'EN', ja: '日本語', ko: '한국어' };
-      const links = ['en','ja','ko'].map(loc => {
+      const labels = { en: 'EN', ja: '日本語', ko: '한국어', zh: '简体中文' };
+      const links = ['en','ja','ko','zh'].map(loc => {
         const isActive = loc === currentLocale;
         const isPublished = available.includes(loc);
         const cls =
-          (loc === 'ja' ? 'lang-ja' : loc === 'ko' ? 'lang-ko' : '') +
+          (loc === 'en' ? '' : 'lang-' + loc) +
           (isActive ? ' active' : '') +
           (!isPublished ? ' disabled' : '');
         const href = isPublished ? ('/' + loc + '/reports/' + slug) : '#';

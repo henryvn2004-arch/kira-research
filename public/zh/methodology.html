@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>研究方法 — KIRA Research</title>
+  <meta name="description" content="我们如何研究、撰写并审阅每一份报告：一手研究基础、数据时效更新、AI辅助分析、分析师把关。">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/methodology">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/methodology">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/methodology">
+  <link rel="alternate" hreflang="zh-Hans" href="https://kiraresearch.com/zh/methodology">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/methodology">
+
+  <link rel="canonical" href="https://kiraresearch.com/zh/methodology">
+
+  <meta property="og:title"       content="研究方法 — KIRA Research">
+  <meta property="og:description" content="一手研究、最新数据、AI辅助分析、分析师把关。">
+  <meta property="og:type"        content="website">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; }
+    h1 { line-height: 1.15 !important; letter-spacing: -0.01em !important; }
+    p, li { line-height: 1.8; }
+    .page-hero {
+      padding: 80px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 680px;
+    }
+
+    /* Principles strip */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .principle {
+      padding: 40px 32px;
+      border-right: 1px solid var(--border);
+    }
+    .principle:last-child { border-right: none; }
+    .principle .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .principle .body {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Step blocks */
+    .step-block {
+      padding: 96px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-block:last-child { border-bottom: none; }
+    .step-grid {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .step-num-large {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      padding-top: 8px;
+    }
+    .step-num-large::after {
+      content: "";
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--primary);
+      margin-top: 12px;
+    }
+    .step-content h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .step-content p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 720px;
+    }
+    .step-content p strong { color: var(--text); font-weight: 600; }
+    .step-detail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-top: 32px;
+      max-width: 720px;
+    }
+    .step-detail h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .step-detail ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step-detail li {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .step-detail li::before {
+      content: "→";
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Transparency block */
+    .transparency {
+      padding: 96px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .transparency h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+    .transparency .lead {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 48px;
+      line-height: 1.65;
+    }
+    .trans-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .trans-col {
+      padding: 32px;
+      border-right: 1px solid var(--border);
+    }
+    .trans-col:last-child { border-right: none; }
+    .trans-col h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trans-col h3::before {
+      content: "";
+      width: 20px;
+      height: 1px;
+      background: var(--primary);
+    }
+    .trans-col ul { list-style: none; padding: 0; }
+    .trans-col li {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .trans-col li:last-child { border-bottom: none; }
+
+    /* QA flow */
+    .qa-flow {
+      padding: 96px 0;
+    }
+    .qa-flow h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 48px;
+    }
+    .qa-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .qa-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      position: relative;
+    }
+    .qa-step::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 40px; height: 1px;
+      background: var(--primary);
+    }
+    .qa-step .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .qa-step h4 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .qa-step p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Closing CTA */
+    .closing-cta {
+      margin: 64px 0 0;
+      padding: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .closing-cta::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 1px;
+      background: var(--primary);
+    }
+    .closing-cta h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .closing-cta p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 28px;
+    }
+    .closing-cta .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 968px) {
+      .principles  { grid-template-columns: 1fr; }
+      .principle   { border-right: none; border-bottom: 1px solid var(--border); }
+      .step-grid   { grid-template-columns: 1fr; gap: 24px; }
+      .step-content h2 { font-size: 32px; }
+      .trans-grid  { grid-template-columns: 1fr; }
+      .trans-col   { border-right: none; border-bottom: 1px solid var(--border); }
+      .qa-steps    { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .qa-steps { grid-template-columns: 1fr; }
+      .closing-cta { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow" data-i18n="meth.eyebrow">研究方法</div>
+    <h1 data-i18n="meth.title">
+      每份报告如何<br>研究、撰写，<br>并<span class="accent">审阅。</span>
+    </h1>
+    <p class="lead" data-i18n="meth.lead">
+      我们以传统定价的一小部分，提供易于获取的市场情报。每份报告背后的工作，既让这样的成本结构成为可能，也让我们敢于为报告署上自己的名字。
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="principles">
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle1Key">— 基础</div>
+        <div class="body" data-i18n="meth.principle1Body">
+          东南亚二十年的一手实地研究。以结构性认知为本，而非仅仅汇总二手资料。
+        </div>
+      </div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle2Key">— 透明</div>
+        <div class="body" data-i18n="meth.principle2Body">
+          我们明确说明数据来自何处、哪些部分属于估算，以及不确定性存在于何处。
+        </div>
+      </div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle3Key">— 人工审阅</div>
+        <div class="body" data-i18n="meth.principle3Body">
+          每份报告（包括译文）在发布前均由资深分析师审阅，无一例外。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 01 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">01</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step1Title">一手研究基础。</h2>
+        <p data-i18n="meth.step1P1">
+          我们的分析师在区域内从事一手市场研究已有二十年，包括访谈、渠道审查、消费者研究、经销商图谱绘制和零售门店走访。这些一线工作是我们撰写每份报告时回溯的基础。
+        </p>
+        <p data-i18n="meth.step1P2">
+          为何重要：结构性洞察，即<strong>渠道实际如何运作、价格带为何存在、利润究竟掌握在谁手中</strong>，并不会逐季变化。这类洞察需要多年一线工作才能建立，也正是有用的报告与统计数据罗列之间的区别所在。
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step1DetailLabel">我们依托的资源</h4>
+          <ul>
+            <li data-i18n="meth.step1Detail1">在东南亚各市场开展的行业人士与消费者访谈</li>
+            <li data-i18n="meth.step1Detail2">经多个研究周期积累的渠道图谱与经销商关系</li>
+            <li data-i18n="meth.step1Detail3">在反复服务客户的过程中不断完善的行业分析框架</li>
+            <li data-i18n="meth.step1Detail4">熟悉当地语言信息源（新闻、监管备案文件、行业协会）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 02 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">02</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step2Title">数据时效更新。</h2>
+        <p data-i18n="meth.step2P1">
+          结构性洞察是基础，<strong>最新数据</strong>则使报告在当下真正可用。每次发布之前，我们都会更新市场规模、竞争地位、监管动态和近期动向。
+        </p>
+        <p data-i18n="meth.step2P2">
+          我们综合使用二手资料、当地语言媒体、政府统计、行业协会数据以及经核实的公开备案文件。数据存在争议之处，我们会注明；属于估算之处，我们同样会注明。
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step2DetailLabel">信息来源标准</h4>
+          <ul>
+            <li data-i18n="meth.step2Detail1">在来源允许的情况下，每项数据均标明原始出处</li>
+            <li data-i18n="meth.step2Detail2">当地数据优先采用当地语言信息源（越南语、泰语、印度尼西亚语、菲律宾语、马来语，以及日语和韩语）</li>
+            <li data-i18n="meth.step2Detail3">重要数据至少经两个独立来源交叉核对</li>
+            <li data-i18n="meth.step2Detail4">分析师模型测算的数据明确标注“est.”（估算）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 03 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">03</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step3Title">AI辅助分析。</h2>
+        <p data-i18n="meth.step3P1">
+          我们使用现代AI工具加快工作，包括归纳来源资料、起草初稿章节、整理数据表格，以及在英文、日文和韩文之间翻译。这使我们能够在不牺牲深度的前提下，以亲民的价格发布报告。
+        </p>
+        <p data-i18n="meth.step3P2">
+          AI对我们<strong>擅长</strong>的方面：稳定地概括大量来源资料、识别跨文档的规律、梳理信息结构，以及生成供分析师进一步打磨的初稿。
+        </p>
+        <p data-i18n="meth.step3P3">
+          AI <strong>不能</strong>做的事：替代判断、凭空创造洞察，或为数据签字确认。每个由AI生成的章节，在发布前都由资深分析师审阅、修改并核实。
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step3DetailLabel">AI的使用范围</h4>
+          <ul>
+            <li data-i18n="meth.step3Detail1">将来源资料归纳为结构化的分析章节</li>
+            <li data-i18n="meth.step3Detail2">在分析师设定的框架下撰写初稿</li>
+            <li data-i18n="meth.step3Detail3">在我们的研究库内进行交叉比对与规律识别</li>
+            <li data-i18n="meth.step3Detail4">英文、日文、韩文之间的翻译（随后由母语人士审校）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 04 -->
+  <section class="container step-block">
+    <div class="step-grid">
+      <div class="step-num-large">04</div>
+      <div class="step-content">
+        <h2 data-i18n="meth.step4Title">分析师把关。</h2>
+        <p data-i18n="meth.step4P1">
+          每份报告在发布前都由资深分析师审阅。分析师会纠正AI遗漏的错误，补充战略背景，打磨论述框架，并决定删减哪些内容。<strong>未经人工签发，任何内容都不会发布。</strong>
+        </p>
+        <p data-i18n="meth.step4P2">
+          日文版和韩文版另由母语审校人员检查文化语感、术语准确性和语气。衡量标准是：东京或首尔的资深买家读完后，是否会认为它出自了解该市场的人之手。
+        </p>
+        <div class="step-detail">
+          <h4 data-i18n="meth.step4DetailLabel">分析师审阅清单</h4>
+          <ul>
+            <li data-i18n="meth.step4Detail1">对照来源逐项核实每个数据</li>
+            <li data-i18n="meth.step4Detail2">结合分析师的专业认知，核实有关竞争地位的论断</li>
+            <li data-i18n="meth.step4Detail3">结合现状，确认有关监管与渠道的论断</li>
+            <li data-i18n="meth.step4Detail4">日文版和韩文版在发布前经母语人士审校</li>
+            <li data-i18n="meth.step4Detail5">最后通读，检查语气、论述框架与战略清晰度</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transparency -->
+  <section class="transparency">
+    <div class="container">
+      <h2 data-i18n="meth.transHeading">我们对哪些事项保持透明。</h2>
+      <p class="lead" data-i18n="meth.transLead">
+        我们不会宣称自己无法做到的AI精度。以下坦率说明我们研究流程中每个环节的长处，以及它的局限所在。
+      </p>
+      <div class="trans-grid">
+        <div class="trans-col">
+          <h3 data-i18n="meth.transStrongLabel">我们的长处</h3>
+          <ul>
+            <li data-i18n="meth.transStrong1">对东南亚市场的结构性认知：渠道、产业链、监管环境</li>
+            <li data-i18n="meth.transStrong2">覆盖国家主要行业的竞争格局梳理</li>
+            <li data-i18n="meth.transStrong3">基于一手研究积累的消费者行为规律</li>
+            <li data-i18n="meth.transStrong4">需要分析师判断、而非单纯查询数据的跨市场比较</li>
+          </ul>
+        </div>
+        <div class="trans-col">
+          <h3 data-i18n="meth.transLimitLabel">我们承认的局限</h3>
+          <ul>
+            <li data-i18n="meth.transLimit1">前瞻性预测属于估算，反映方向，并非精确到一个百分点</li>
+            <li data-i18n="meth.transLimit2">非上市公司的财务数据可能无法完全获得，我们会清楚标注估算部分</li>
+            <li data-i18n="meth.transLimit3">高度分散行业的不确定性区间比集中度高的行业更宽</li>
+            <li data-i18n="meth.transLimit4">发布之后出现的实时事件需要通过更新来反映，我们会明确标注最近一次更新日期</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QA Flow -->
+  <section class="container qa-flow">
+    <h2 data-i18n="meth.qaHeading">每份报告均经全流程质量检查。</h2>
+    <div class="qa-steps">
+      <div class="qa-step">
+        <div class="key">QA · 01</div>
+        <h4 data-i18n="meth.qa1Title">来源核实</h4>
+        <p data-i18n="meth.qa1Body">每个数据均追溯至来源，在起草之前标记不一致之处。</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 02</div>
+        <h4 data-i18n="meth.qa2Title">分析师审阅</h4>
+        <p data-i18n="meth.qa2Body">资深分析师通读全文，打磨或删除战略论断。</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 03</div>
+        <h4 data-i18n="meth.qa3Title">母语审校</h4>
+        <p data-i18n="meth.qa3Body">日文版和韩文版由母语人士审校，确保准确与语气得当。</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 04</div>
+        <h4 data-i18n="meth.qa4Title">更新周期</h4>
+        <p data-i18n="meth.qa4Body">已发布的报告在购买后12个月内，随市场变化免费获得更新。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="closing-cta">
+      <h3 data-i18n="meth.closingHeading">阅读我们的成果。</h3>
+      <p data-i18n="meth.closingBody">
+        研究方法的意义，取决于报告能否经得起检验。欢迎浏览研究库，或委托我们按同一标准开展定制研究。
+      </p>
+      <div class="actions">
+        <a href="/zh/library" class="btn btn-primary">
+          <span data-i18n="meth.closingCta1">浏览研究库</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/zh/custom-research/" class="btn btn-secondary" data-i18n="meth.closingCta2">委托定制研究</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+</body>
+</html>

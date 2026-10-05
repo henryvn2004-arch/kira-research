@@ -8,11 +8,18 @@ This prompt is **machine-agnostic**: it derives its working directory from git, 
 
 ## Mission (Phase Q.1 — 2026-05-25)
 
-**1 fire = 1 stage = 1 row.** Pick the most-advanced row in the queue and advance it ONE stage. Three stages per row before publish:
+**1 fire = 1 stage = 1 row.** Pick the most-advanced row in the queue and advance it ONE stage. Three stages per row before publish (four when `target_languages` includes `zh` — Phase S4):
 
 ```
-pending → [Fire A: EN gen]    → en_done → [Fire B: JA translate] → ja_done → [Fire C: KO translate + publish] → done
-                                                                                                              ↘ error (any fire)
+target_languages without zh (legacy "en,ja,ko"):
+pending → [Fire A: EN gen] → en_done → [Fire B: JA translate] → ja_done → [Fire C: KO translate + publish] → done
+
+target_languages with zh (default "en,ja,ko,zh" since 2026-10-05):
+pending → [Fire A] → en_done → [Fire B] → ja_done → [Fire C: KO translate, NO publish] → ko_done → [Fire D: ZH translate + publish all 4] → done
+
+ZH backfill of an already-published report (owner sets status zh_backfill):
+zh_backfill → [Fire E: ZH translate + publish ZH only, en/ja/ko untouched] → done
+                                                                              ↘ error (any fire)
 ```
 
 Why split: a single fire that did EN + JA + KO + publish was running 60-150 min on heavy topics. JA and KO translation subagents are **output-cap bound** (a 67KB en.html ≈ 18K tokens, sat trên Sonnet's 32K per-response output cap). Splitting per locale + chunking the translation per top-level `<div class="page">` (Section 4 + 5 below) makes each fire <30 min and survivable.
@@ -25,11 +32,14 @@ Hard cap: **1 row × 1 stage per fire** to stay safely within Sonnet context bud
 
 The cron fire itself (this orchestrating session) runs on the account-default model — it only does file ops, claims, validation greps, and commits, so its model doesn't matter much. **The token-heavy work is the spawned `general-purpose` subagent, and THAT is where the model is chosen explicitly via the `Agent` tool's `model` parameter.** Policy:
 
-| Stage | Subagent work | `model` to pass | Why |
-|---|---|---|---|
-| A (EN gen) | Step 3 | **`opus`** | EN report is the sellable product — synthesis depth matters, keep top model |
-| B (JA translate) | Step 4 | **`sonnet`** | Translation is mechanical; Sonnet is near-parity and the chunked protocol was designed for its output cap |
-| C (KO translate) | Step 5 | **`sonnet`** | Same as JA |
+| Stage | Subagent work | `model` to pass | Time cap | Why |
+|---|---|---|---|---|
+| A (EN gen) | Step 3 | **`opus`** | 90 min | EN report is the sellable product — synthesis depth matters, keep top model |
+| B (JA translate) | Step 4 | **`sonnet`** | 75 min | Translation is mechanical; Sonnet is near-parity and the chunked protocol was designed for its output cap |
+| C (KO translate) | Step 5 | **`sonnet`** | 75 min | Same as JA |
+| D (ZH translate + publish) / E (ZH backfill) | Step 5Z | **`sonnet`** | 75 min | Same as JA; same chunked per-page protocol and output-cap reasoning |
+
+Stale-claim threshold (Step 0.5) stays 150 min — above every cap.
 
 When the spawn step below says "spawn a `general-purpose` subagent", pass the `model` from this table in the `Agent` tool call. If for any reason the `model` param is unavailable, proceed with the default model (do NOT fail the fire over it) and note it in the summary.
 
@@ -98,6 +108,11 @@ For each stale row:
   - `en_in_progress` → `pending`
   - `ja_in_progress` → `en_done`
   - `ko_in_progress` → `ja_done`
+  - `zh_in_progress` → `ko_done` (Fire D), or → `zh_backfill` when the row
+    is a backfill (Fire E). Backfill marker: `error_log` contains the token
+    `zh-backfill` (Fire E guarantees it at claim, Step 2) OR `output_paths`
+    is already filled (only published rows have it; Fire D rows get it at
+    publish).
 - **Strike-2** (already auto-recovered once and got stuck again): real
   bug, do NOT auto-recover again. Set status = `error`, append
   `second-strike auto-recover skipped` to error_log for manual review.
@@ -145,14 +160,18 @@ The script is idempotent and never fails the fire: without Supabase access it pr
 
 ## Step 1: Find work — stage routing
 
-Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose status is one of `pending | en_done | ja_done` (in priority order — pick the most-advanced first):
+Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose status is one of `ko_done | ja_done | en_done | pending | zh_backfill` (in priority order — pick the most-advanced first; backfill last):
 
-1. If a `ja_done` row exists → branch **Stage C (KO + publish)**
-2. Else if an `en_done` row exists → branch **Stage B (JA translate)**
-3. Else if a `pending` row exists → branch **Stage A (EN gen)**
-4. Else → output `No work in queue` and EXIT cleanly.
+1. If a `ko_done` row exists → branch **Stage D (ZH translate + publish all languages)**
+2. Else if a `ja_done` row exists → branch **Stage C (KO translate; + publish only when `zh` is NOT in `target_languages`)**
+3. Else if an `en_done` row exists → branch **Stage B (JA translate)**
+4. Else if a `pending` row exists → branch **Stage A (EN gen)**
+5. Else if a `zh_backfill` row exists → branch **Stage E (ZH backfill: translate + publish ZH only)**
+6. Else → output `No work in queue` and EXIT cleanly.
 
-**Why most-advanced first**: drains rows toward `done` instead of starting new EN gens while half-done rows sit around. Also gives a natural pipeline — once steady-state, every 3 consecutive fires complete 1 report.
+**Why most-advanced first**: drains rows toward `done` instead of starting new EN gens while half-done rows sit around. Also gives a natural pipeline — once steady-state, every 4 consecutive fires complete 1 four-language report (3 for legacy `en,ja,ko` rows). Backfill is lowest priority: it only uses fires the new-report pipeline leaves idle.
+
+**`zh` in `target_languages`** = the comma-split list contains `zh` (e.g. `"en,ja,ko,zh"`). Read it once here as `HAS_ZH=true|false`; Stage C branches on it.
 
 **Status values in queue.csv** (no DB constraint — the CSV is the source of truth; just keep the strings exact):
 
@@ -163,18 +182,21 @@ Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose stat
 | `en_in_progress` | a fire is generating EN (or claimed and died — see `claimed_at`) |
 | `en_done` | EN HTML+PDF generated + committed; awaiting JA |
 | `ja_in_progress` | a fire is translating JA (or claimed and died) |
-| `ja_done` | JA HTML+PDF generated + committed; awaiting KO + publish |
-| `ko_in_progress` | a fire is translating KO + publishing (or claimed and died) |
-| `done` | all 3 langs + Supabase published; terminal success |
-| `error` | a stage failed (or strike-2 auto-recovery escalated); see `error_log`; terminal failure (manual reset to `pending` / `en_done` / `ja_done` to retry) |
+| `ja_done` | JA HTML+PDF generated + committed; awaiting KO (+ publish when no `zh`) |
+| `ko_in_progress` | a fire is translating KO (+ publishing when no `zh`) (or claimed and died) |
+| `ko_done` | (`zh` rows only) KO HTML generated + committed, nothing published yet; awaiting ZH + publish |
+| `zh_in_progress` | a fire is translating ZH + publishing (Fire D), or backfilling ZH (Fire E) (or claimed and died) |
+| `zh_backfill` | already-published report queued for a ZH-only backfill (set by the owner/script; `target_languages` gets `,zh` appended, `error_log` gets the `zh-backfill` marker, `output_paths` stays filled) |
+| `done` | every language in `target_languages` + Supabase published; terminal success |
+| `error` | a stage failed (or strike-2 auto-recovery escalated); see `error_log`; terminal failure (manual reset to `pending` / `en_done` / `ja_done` / `ko_done` / `zh_backfill` to retry) |
 | `in_progress` | (legacy) treat as `error` and skip — old single-fire-all-stages format |
 
 **Companion column `claimed_at`** (Phase Q.4): ISO 8601 UTC timestamp set
 at claim time, cleared on success / failure / auto-recovery. If a row
-has `*_in_progress` status with a `claimed_at` more than 90 minutes ago
+has `*_in_progress` status with a `claimed_at` more than 150 minutes ago
 (or empty), Step 0.5 of the next fire automatically reverts it.
 
-Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `target_languages`, current `status`.
+Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `target_languages`, current `status` (and `output_paths` for a `zh_backfill` row — it holds the published `report_id`).
 
 ---
 
@@ -188,7 +210,11 @@ Update the row in-place — set TWO fields:
    |---|---|---|
    | `pending` | `en_in_progress` | `batch: claim ${id} for EN gen` |
    | `en_done` | `ja_in_progress` | `batch: claim ${id} for JA translate` |
-   | `ja_done` | `ko_in_progress` | `batch: claim ${id} for KO translate + publish` |
+   | `ja_done` | `ko_in_progress` | `batch: claim ${id} for KO translate + publish` (`… for KO translate` when `HAS_ZH`) |
+   | `ko_done` | `zh_in_progress` | `batch: claim ${id} for ZH translate + publish` |
+   | `zh_backfill` | `zh_in_progress` | `batch: claim ${id} for ZH backfill` |
+
+   For a `zh_backfill` claim, also make sure `error_log` contains the token `zh-backfill` (append ` · zh-backfill` if missing; never delete existing text — strike-2 detection reads it). That token is how Step 0.5 knows to revert this row to `zh_backfill` and not `ko_done`.
 
 2. `claimed_at` → current UTC ISO 8601 timestamp. Compute with:
 
@@ -347,7 +373,7 @@ Go to Step 6 — do NOT proceed to KO in same fire.
 
 ---
 
-## Step 5 (Stage C only): KO translate + auto-publish
+## Step 5 (Stage C only): KO translate (+ auto-publish when no `zh`)
 
 ### 5.1 — KO chunked translation
 
@@ -357,13 +383,25 @@ Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specifi
 
 ### 5.2 — KO validation gate (same as 4.3 with ja→ko)
 
-If passes, proceed to publish. Do NOT commit yet — publish in same fire.
+If it fails → failure path. If it passes:
+
+- **`HAS_ZH` (row's `target_languages` contains `zh`)** → Fire C ends here, **nothing is published** (all 4 languages go live together in Fire D). Set status `ko_done`, clear `claimed_at`, commit + push, go to Step 6:
+
+  ```bash
+  git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/ko.html
+  git commit -m "batch: KO done for ${id}"
+  git push origin main
+  ```
+
+- **No `zh`** (legacy `en,ja,ko` rows) → proceed to 5.3 publish with `PUBLISH_LANGS="en ja ko"`. Do NOT commit yet — publish in same fire.
 
 ### 5.3 — Auto-publish to Supabase
 
-This is the original Step 6a/6b/6c/6d from pre-Q.1 — unchanged. Reproduced here for self-containment.
+This is the original Step 6a/6b/6c/6d from pre-Q.1, generalized to a locale list (Phase S4). Reproduced here for self-containment. Used by Fire C (no `zh`, `PUBLISH_LANGS="en ja ko"`) and Fire D (`PUBLISH_LANGS="en ja ko zh"`). Fire E (ZH backfill) publishes through **5Z.4** instead — it must not touch `living_reports` or the other locales.
 
-**5.3a — INSERT living_reports + 3 report_translations rows.**
+Every write below is idempotent per `(report, locale)`: the SQL upserts on `living_reports.slug` and `report_translations (report_id, locale)`, and the Storage uploads use `x-upsert: true`. Re-running a publish (after a partial failure, or for one extra locale) overwrites, never duplicates.
+
+**5.3a — INSERT living_reports + one report_translations row per locale in `PUBLISH_LANGS`.**
 
 Build the SQL via a per-topic Node script. Reference template: `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` — copy to `_build_<id>_sql.mjs` and fill constants + META blocks. Key fields per locale, extracted from each language's HTML:
 
@@ -402,7 +440,7 @@ SELECT new_report.id, t.locale, t.title, t.eyebrow, t.preview::jsonb, t.toc::jso
        new_report.id::text || '/' || t.locale || '.pdf',
        'published', now()
 FROM new_report
-CROSS JOIN (VALUES ('en', ...), ('ja', ...), ('ko', ...)) AS t(locale, title, eyebrow, preview, toc)
+CROSS JOIN (VALUES ('en', ...), ('ja', ...), ('ko', ...), ('zh', ...)) AS t(locale, title, eyebrow, preview, toc)  -- one tuple per locale in PUBLISH_LANGS ('zh' only in Fire D)
 ON CONFLICT (report_id, locale) DO UPDATE SET
   title = EXCLUDED.title, eyebrow = EXCLUDED.eyebrow,
   preview = EXCLUDED.preview, toc = EXCLUDED.toc,
@@ -412,12 +450,21 @@ RETURNING report_id, locale, title;
 
 Capture the `report_id` UUID — needed for 5.3b.
 
-**5.3b — Upload 3 PDFs to Supabase Storage bucket `reports-pdfs`.**
+**5.3b — Upload one PDF per locale to Supabase Storage bucket `reports-pdfs`.**
 
-Path: `<report_id>/<locale>.pdf`. Use helper:
+Path: `<report_id>/<locale>.pdf`. PDFs are gitignored, so a fresh (cloud) session only has the PDF rendered in THIS fire. Re-render any missing one from its committed HTML first (same endpoint, idempotent):
 
 ```bash
-for loc in en ja ko; do
+for loc in ${PUBLISH_LANGS}; do
+  D=skills/kira-research-report/outputs/batch/${id}
+  [ -s "$D/${loc}.pdf" ] || node skills/kira-research-report/scripts/render-one.mjs "$D/${loc}.html" "$D/${loc}.pdf" "${loc}.pdf"
+done
+```
+
+Then upload with the helper:
+
+```bash
+for loc in ${PUBLISH_LANGS}; do   # "en ja ko" (Fire C) or "en ja ko zh" (Fire D)
   node skills/kira-research-report/scripts/upload-pdf.mjs \
     "skills/kira-research-report/outputs/batch/${id}/${loc}.pdf" \
     "${REPORT_ID}" \
@@ -427,14 +474,14 @@ done
 
 Expects HTTP 200 + `{"Key": "reports-pdfs/<report_id>/<locale>.pdf", "Id": "<uuid>"}`. Any non-200 → bail to failure path.
 
-**5.3b-2 — Upload 3 preview HTML files to Supabase Storage bucket `reports-html`.**
+**5.3b-2 — Upload one preview HTML file per locale to Supabase Storage bucket `reports-html`.**
 
 The report page on /<locale>/reports/<slug> embeds an iframe showing the first 5 pages of the source HTML. Without this step, the iframe loads empty and the page looks broken.
 
 Path: `<report_id>/<locale>.html`. The script slices the first 5 `<div class="page">` blocks before upload, so only preview-safe content lands in the bucket.
 
 ```bash
-for loc in en ja ko; do
+for loc in ${PUBLISH_LANGS}; do
   node skills/kira-research-report/scripts/upload-html.mjs \
     "skills/kira-research-report/outputs/batch/${id}/${loc}.html" \
     "${REPORT_ID}" \
@@ -447,22 +494,117 @@ Expects HTTP 200 + `{"Key": "reports-html/<report_id>/<locale>.html", "Id": "<uu
 **5.3c — Verify (3 cache-busted curls):**
 
 1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` contains the new slug
-2. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all 200
-3. `for loc in en ja ko; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/api/preview-html?slug=<slug>&locale=$loc&_t=$(date +%s)"; done` — all 200, confirms the preview iframe HTML is uploaded for every locale
+2. `for loc in ${PUBLISH_LANGS}; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all 200
+3. `for loc in ${PUBLISH_LANGS}; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/api/preview-html?slug=<slug>&locale=$loc&_t=$(date +%s)"; done` — all 200, confirms the preview iframe HTML is uploaded for every locale
 
 **5.3d — Finalize queue row + commit + push.**
 
 - status → `done`
-- output_paths → `reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf`
+- output_paths → one `reports-pdfs/<report_id>/<locale>.pdf` per locale in `PUBLISH_LANGS`, pipe-separated (e.g. `reports-pdfs/<id>/en.pdf|reports-pdfs/<id>/ja.pdf|reports-pdfs/<id>/ko.pdf|reports-pdfs/<id>/zh.pdf`)
 - date_completed → today (YYYY-MM-DD)
 - error_log → empty
 - `claimed_at` → empty (terminal success; clears the in-flight marker)
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
-git commit -m "batch: complete ${id} (EN+JA+KO, published)"
+git commit -m "batch: complete ${id} (EN+JA+KO, published)"      # Fire C
+git commit -m "batch: complete ${id} (EN+JA+KO+ZH, published)"   # Fire D (use instead)
 git push origin main
 ```
+
+Keep the `batch: complete ${id} (` prefix exactly: throughput is measured with `git log | grep -c 'batch: complete'`.
+
+---
+
+## Step 5Z (Stage D and Stage E): ZH translate + publish
+
+Stage D = a `ko_done` row (new report; EN/JA/KO are committed, nothing published yet) → translate ZH, then publish all four languages via 5.3. Stage E = a `zh_backfill` row (report already published in EN/JA/KO) → translate ZH, then publish ZH only via 5Z.4. **Steps 5Z.0-5Z.2 (inputs, translation, validation) are identical for D and E; only the publish branch (5Z.3) differs.**
+
+### 5Z.0 — Inputs (Stage E pre-checks)
+
+- `skills/kira-research-report/outputs/batch/${id}/en.html` must exist (committed). Missing → failure path with `error_log: en.html missing for zh stage`.
+- Stage E only: `REPORT_ID` = the UUID segment of the first path in the row's `output_paths` (`reports-pdfs/<report_id>/en.pdf`). If `output_paths` is empty, look the report up by `naming.json`'s `slug` (`SELECT id FROM living_reports WHERE slug = …`). Neither available → failure path with `error_log: zh backfill: report_id unknown`. Never create a new `living_reports` row in Stage E.
+- Count `PAGE_COUNT` on en.html exactly as §4.1 (same 8-40 bounds).
+
+### 5Z.1 — ZH chunked translation
+
+Spawn ONE `general-purpose` subagent **with `model: "sonnet"`** (translation → Sonnet per Model routing). Prompt = the §4.2 prompt with `ja` → `zh` everywhere, `translator_jp.md` → **`translator_zh.md`**, "to Japanese" → "to Simplified Chinese (简体中文)", and these additions:
+
+> - In the shell Write, set `<html lang="zh-Hans">`, add the Noto Sans SC Google Fonts `<link>`, set `.source-key::before` to `来源说明 · `, and if the inlined CSS has no `--font-cjk`, add `'Noto Sans SC', ` after every `'Satoshi', ` / `'JetBrains Mono', ` in font stacks (translator_zh.md §0).
+> - Translate the `<title>`; keep it a question when the EN title is a question.
+> - Forbidden-term grep to report back: `Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드|麦肯锡|克劳德|弗若斯特|欧睿|益普索`.
+> - Source tags: `[Kira estimates]` must NOT become `[KIRA估算]`; `[BPS 2024]` must NOT become `[印尼统计局 2024]`.
+
+Same chunked protocol (one Write for the shell, one Edit per top-level page, `<div class="page[" ]`), same PDF render (body `{"html": <zh.html>, "filename": "zh.pdf"}` via `scripts/render-one.mjs`), output `${id}/zh.html` + `${id}/zh.pdf`.
+
+**Hard time cap: 75 minutes.** Not returned by then → failure path with `error_log: ZH translate timeout 75m`. Partial zh.html stays on disk.
+
+### 5Z.2 — ZH validation gate (post-return)
+
+1. `ls -la …/zh.html …/zh.pdf` — both exist + non-empty (> 1KB)
+2. Top-level page count in zh.html (regex `<div class="page[" ]`) == `$PAGE_COUNT` of en.html
+3. Competitor / name grep — zero hits:
+   `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드|麦肯锡|克劳德|弗若斯特|欧睿|益普索)' zh.html`
+4. Anti-positioning grep (ZH) — zero hits:
+   `grep -E '(本平台|我们的平台|KIRA ?平台|研究平台|AI ?驱动|人工智能驱动|AI ?赋能|人工智能赋能|贵公司|贵司|亲们|亲，)' zh.html`
+   (A bare `平台` is NOT a hit — e-commerce / payment platforms are legitimate report subjects.)
+5. Source-tag superset — same rule as §4.3 #4 with ja→zh (aliases untranslated; translated descriptive tails OK, log them).
+6. `<title>` translated: `node -e "const f=require('fs');const t=p=>(f.readFileSync(p,'utf8').match(/<title>([\s\S]*?)<\/title>/)||[])[1]||'';const e=t(process.argv[1]),z=t(process.argv[2]);if(!/[一-鿿]/.test(z)||z===e){console.log('title_fail');process.exit(1)}" skills/kira-research-report/outputs/batch/${id}/en.html skills/kira-research-report/outputs/batch/${id}/zh.html` — prints `title_fail` and exits 1 when the zh `<title>` has no Han characters or equals the EN title
+7. Shell: `<html lang="zh-Hans"` present and `Noto+Sans+SC` link present.
+8. Script hygiene — no kana / hangul, and at most 5 Traditional-only characters (a handful can survive inside official HK names in citations; more means the translator drifted — fail). Use Node, not `grep -P` (fails on non-UTF-8 locales):
+
+   ```bash
+   node -e "const h=require('fs').readFileSync(process.argv[1],'utf8');const k=(h.match(/[぀-ヿ가-힯]/g)||[]).length,t=(h.match(/[們這為國經產業資場發關說戰與來會對學]/g)||[]).length;console.log('kana_hangul='+k+' traditional='+t);process.exit(k>0||t>5?1:0)" skills/kira-research-report/outputs/batch/${id}/zh.html
+   ```
+9. Leftover English sentences — strip `<style>`, `<script>`, `.source-key` and `.chart-source` blocks, all tags and all `[…]` tags, then flag runs of 8+ consecutive Latin words:
+
+   ```bash
+   node -e "const h=require('fs').readFileSync(process.argv[1],'utf8').replace(/<(style|script)[\s\S]*?<\/\1>/gi,' ').replace(/<div class=\"(source-key|chart-source)\"[\s\S]*?<\/div>/g,' ').replace(/<[^>]+>/g,' ').replace(/\[[^\]]*\]/g,' ').replace(/&[a-z#0-9]+;/gi,' ');const m=h.match(/(?:[A-Za-z][A-Za-z'’.-]*[ ,]+){7,}[A-Za-z][A-Za-z'’.-]*/g)||[];console.log('latin_runs='+m.length);m.slice(0,5).forEach(x=>console.log('  '+x.slice(0,120)))" skills/kira-research-report/outputs/batch/${id}/zh.html
+   ```
+
+   `latin_runs` 0-3 → pass (long English law / company names, contact lines); list them in the commit message. `> 3` → failure path with `error_log: zh untranslated English (${latin_runs} runs)`.
+
+Any other check failing → failure path (`error_log: zh page count Y/X`, `zh source tag drift`, `zh anti-positioning: <match>`, `zh title untranslated`, …).
+
+### 5Z.3 — Publish branch
+
+- **Stage D** → run **5.3** (5.3a-5.3d) with `PUBLISH_LANGS="en ja ko zh"`. The ZH tuple: `title` ← zh `<title>`, `eyebrow` ← `naming.eyebrow.zh`, `preview` / `toc` from zh.html, exactly like the other locales. Commit message `batch: complete ${id} (EN+JA+KO+ZH, published)`.
+- **Stage E** → run **5Z.4** below.
+
+### 5Z.4 — ZH-only publish (Stage E backfill)
+
+`PUBLISH_LANGS="zh"`. Touches only the `zh` translation, the zh PDF and the zh preview; `living_reports` and the en/ja/ko rows stay exactly as they are (no `published_at` bump).
+
+**a — Upsert the single `report_translations` row** (Supabase MCP `execute_sql`, same project; build it with a per-topic script like 5.3a):
+
+```sql
+INSERT INTO report_translations (report_id, locale, title, eyebrow, preview, toc, pdf_url, status, published_at)
+SELECT lr.id, 'zh', $kbat$<zh title>$kbat$, $kbat$<zh eyebrow>$kbat$, $kbat$<preview json>$kbat$::jsonb, $kbat$<toc json>$kbat$::jsonb,
+       lr.id::text || '/zh.pdf', 'published', now()
+FROM living_reports lr
+WHERE lr.id = '<REPORT_ID>'::uuid
+ON CONFLICT (report_id, locale) DO UPDATE SET
+  title = EXCLUDED.title, eyebrow = EXCLUDED.eyebrow,
+  preview = EXCLUDED.preview, toc = EXCLUDED.toc,
+  pdf_url = EXCLUDED.pdf_url, status = 'published', published_at = now()
+RETURNING report_id, locale, title;
+```
+
+Zero rows returned → the report id does not exist → failure path (`zh backfill: report not found`). Eyebrow: `naming.eyebrow.zh` when `naming.json` exists; otherwise build `<country> · <industry> · <report kind>` from the `zh` labels in `references/naming_vocab.json`, matching the EN eyebrow of the published `en` row.
+
+**b — Upload** `zh.pdf` and the zh preview: the 5.3b / 5.3b-2 loops with `PUBLISH_LANGS="zh"`.
+
+**c — Verify**: 5.3c curls 2 + 3 with `loc=zh` only (`/zh/reports/<slug>` and `preview-html?…&locale=zh` → 200).
+
+**d — Finalize**: status → `done`; append `|reports-pdfs/<report_id>/zh.pdf` to `output_paths` (unless already present); `date_completed` unchanged (it records the first publish); `error_log` → empty; `claimed_at` → empty.
+
+```bash
+git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/zh.html
+git commit -m "batch: ZH backfill published for ${id}"
+git push origin main
+```
+
+(Deliberately not `batch: complete` — a backfill is not a new report and must not inflate the throughput count.)
 
 `.gitignore` excludes `outputs/batch/*/*.pdf` so PDFs stay out of the public repo (Supabase Storage is canonical for PDFs).
 
@@ -473,10 +615,11 @@ git push origin main
 ```
 KIRA batch fire complete.
   ID: ${id}
-  Stage advanced: <pending→en_done | en_done→ja_done | ja_done→done>
+  Stage advanced: <pending→en_done | en_done→ja_done | ja_done→done | ja_done→ko_done | ko_done→done | zh_backfill→done>
   Topic: ${topic}
-  Status now: <en_done | ja_done | done>
-  Next pending: ${count} pending + ${count} en_done + ${count} ja_done in queue
+  Status now: <en_done | ja_done | ko_done | done>
+  Published locales: <none | en ja ko | en ja ko zh | zh (backfill)>
+  Next pending: ${count} pending + ${count} en_done + ${count} ja_done + ${count} ko_done + ${count} zh_backfill in queue
 ```
 
 Then exit. Do not start a second stage in the same fire — that's by design.
@@ -489,12 +632,12 @@ Update queue row:
 - status → `error`
 - output_paths → any PDFs that DID get generated (partial)
 - date_completed → today's ISO date
-- error_log → one-line summary including the stage (`EN gen timeout 90m` / `JA section count 15/22` / `KO render-pdf 500` / etc.)
+- error_log → one-line summary including the stage (`EN gen timeout 90m` / `JA section count 15/22` / `KO render-pdf 500` / `ZH translate timeout 75m` / etc.). For a Stage E row keep the existing `zh-backfill` token in front (append, don't overwrite) and leave `output_paths` as it was (the EN/JA/KO paths are still live)
 - `claimed_at` → empty (terminal failure; clears the in-flight marker so Step 0.5 doesn't try to re-recover an `error` row)
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
-git commit -m "batch: error on ${id} stage <A|B|C> — see error_log"
+git commit -m "batch: error on ${id} stage <A|B|C|D|E> — see error_log"
 git push origin main
 ```
 
@@ -510,13 +653,15 @@ Print 1-line error summary + exit.
 | `/api/render-pdf` returns 500 | Vercel function timeout / chromium boot issue. Save HTML, set status=error, record HTTP code. Don't retry in same fire. |
 | `/api/render-pdf` returns 401 | PDF_RENDER_SECRET missing or wrong. Set status=error with `render-pdf 401 (check env)`. |
 | Skill fails at orchestrator (no blueprint match) | Topic is malformed. status=error with `no route from orchestrator`. |
-| Translator overflows page char cap | Per translator_jp/ko.md, trim カタカナ padding + adverbs; if still over, drop a `<strong>` not a number/source tag. Validation gate doesn't enforce char caps — that's the translator's job. |
-| Anti-positioning leak found | Validation gate in Step 4.3/5.2 catches this — sets status=error, flag for manual review. |
+| Translator overflows page char cap | Per translator_jp/ko/zh.md, trim padding + adverbs; if still over, drop a `<strong>` not a number/source tag. Validation gate doesn't enforce char caps — that's the translator's job. |
+| Anti-positioning leak found | Validation gate in Step 4.3/5.2/5Z.2 catches this — sets status=error, flag for manual review. |
 | EN section count mismatch | Set status=error with `EN section count <Y>/<X>`. Do NOT advance to JA. PDF (if any) stays on disk for inspection. |
-| JA/KO page count mismatch | Means subagent dropped pages mid-translation (output cap hit). Set status=error with `<lang> page count <Y>/<X>`. Manually re-run after chunking fix. |
-| JA/KO source tag set is not superset of EN | Translator localized a tag (e.g. `[BPS 2024]` → `[インドネシア統計庁 2024]`). status=error with `<lang> source tag drift`. |
-| Timeout (90m EN, 75m JA/KO) | Subagent likely hung on API call. status=error with `<stage> timeout <N>m`. |
-| Stage B picked but en.html missing | Edge case (someone deleted file). status=error with `en.html missing for ja stage`. |
+| JA/KO/ZH page count mismatch | Means subagent dropped pages mid-translation (output cap hit). Set status=error with `<lang> page count <Y>/<X>`. Manually re-run after chunking fix. |
+| JA/KO/ZH source tag set is not superset of EN | Translator localized a tag (e.g. `[BPS 2024]` → `[インドネシア統計庁 2024]` / `[印尼统计局 2024]`). status=error with `<lang> source tag drift`. |
+| ZH renders as boxes / Japanese glyph shapes | zh.html is missing `lang="zh-Hans"` or the Noto Sans SC `<link>` (translator_zh.md §0). Gate 5Z.2 #7 should have caught it; fix the shell and re-render. |
+| Timeout (90m EN, 75m JA/KO/ZH) | Subagent likely hung on API call. status=error with `<stage> timeout <N>m`. |
+| Stage B/D/E picked but en.html missing | Edge case (someone deleted file). status=error with `en.html missing for <ja|zh> stage`. |
+| Stage D picked but ko.html missing | status=error with `ko.html missing for zh stage`; reset to `ja_done` after checking. |
 
 ---
 
@@ -530,7 +675,7 @@ Print 1-line error summary + exit.
 
 ## When run manually for testing
 
-If Henry clicks "Run now" on a task or runs this prompt manually outside the cron, behavior is identical. To force a single row through all 3 stages back-to-back for testing, click "Run now" on the relevant task 3 times in a row (each fire advances 1 stage as long as it picks the same row).
+If Henry clicks "Run now" on a task or runs this prompt manually outside the cron, behavior is identical. To force a single row through all stages back-to-back for testing, click "Run now" on the relevant task 4 times in a row (3 for a legacy `en,ja,ko` row; each fire advances 1 stage as long as it picks the same row).
 
 ---
 
@@ -543,6 +688,17 @@ Fixed in §4.1 (count), §4.2 (subagent prompt), §4.3 (validation regex), §5.1
 Also clarified §4.3 validation #4 (source-tag superset) — a descriptive tail translation inside a tag that preserves the publisher alias is acceptable; only a localized publisher alias or a missing alias entirely fails the gate. Real example: `[Kira estimates · computed from active-user-share above]` → `[Kira estimates · 上記アクティブ利用者シェアから算出]` is acceptable.
 
 ---
+
+## Phase S4 changelog (2026-10-05) — Simplified Chinese (`zh`)
+
+- **4th language.** New rows default to `target_languages = "en,ja,ko,zh"` (`sync-approved-topics.mjs`, env `QUEUE_TARGET_LANGUAGES` overrides). Rows without `zh` keep the 3-fire flow unchanged.
+- **New statuses:** `ko_done` (zh rows: KO committed, nothing published), `zh_in_progress`, `zh_backfill`.
+- **Fire C** for a zh row ends at `ko_done` and does NOT publish. **Fire D** (`ko_done`) translates ZH with `translator_zh.md` (sonnet, 75 min, same chunked per-page protocol) and publishes all four languages (5.3 with `PUBLISH_LANGS="en ja ko zh"`).
+- **Fire E** (`zh_backfill`) translates ZH for an already-published report and publishes only the `zh` translation + zh PDF + zh preview (5Z.4, idempotent upsert), leaving `living_reports` and en/ja/ko untouched. Lowest priority.
+- **Routing:** `ko_done > ja_done > en_done > pending > zh_backfill`.
+- **ZH gate (5Z.2):** page count == EN, competitor grep incl. Chinese names, ZH anti-positioning grep (本平台, AI驱动, 贵公司 …), source-tag superset, `<title>` translated, `lang="zh-Hans"` + Noto Sans SC link, no kana/hangul, ≤ 5 Traditional characters, ≤ 3 leftover 8+-word English runs.
+- **Auto-recovery:** `zh_in_progress` → `ko_done`, or → `zh_backfill` when `error_log` carries the `zh-backfill` token or `output_paths` is filled.
+- **Fonts:** `master_styles.css` puts `var(--font-cjk)` in every font stack; `html:lang(ja|ko|zh)` sets Noto Sans JP / KR / SC. Each translated file still loads its Noto webfont via a Google Fonts `<link>`.
 
 ## Phase Q.4 changelog (2026-05-28)
 
