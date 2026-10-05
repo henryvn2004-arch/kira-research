@@ -64,11 +64,20 @@ The pack lists each analysis's expected exhibits with a `type`, under `exhibits`
 
 The anti-padding rule is the only cut: a page with no new data-backed claim is dropped.
 
-### 3. Fixed pages
+### 3. Name the report
+
+Follow `docs/naming_convention.md`. Pick from the framing:
+- **Stage:** `XPL` when the question is whether the market is worth a look (size, growth, structure). `ENT` when it is how to get in (entry mode, partner, channel, pricing, go/no-go). `XPN` when the buyer already operates there.
+- **Segment:** the 1–4 word noun a buyer would type (`coffee chains`, `cold chain`).
+- **Angle:** the working answer or tension in ≤ 60 characters, as a statement.
+
+Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen the angle once the evidence is in; rerun the script if it does.
+
+### 4. Fixed pages
 
 | Position | Page | Page type |
 |---|---|---|
-| Opening | Cover | `cover` with the generated illustration (render_and_output Step 1b). Three short title lines, subtitle = the buyer question (≤110 chars). |
+| Opening | Cover | `cover` with the generated illustration (render_and_output Step 1b). Title lines and report kind from `naming.json`; subtitle = the buyer question (≤110 chars). |
 | Opening | Methodology | `methodology_inline` |
 | Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
 | Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-main-side` (exhibit or `big_number` + commentary with the 3 reasons) or `layout-hero` (big number + chart, reasons in the takeaway and on page 2). Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. |
@@ -84,7 +93,7 @@ The anti-padding rule is the only cut: a page with no new data-backed claim is d
 
 Treaty and tariff checks go on a `timeline` or `comparison_table` page. A landed-cost build-up is a `waterfall`. How the industry operates is a `flow` exhibit; use the pack's process flow but describe today's practice, not the 2010 model.
 
-### 4. Page entry
+### 5. Page entry
 
 Each body page in `section_plan.json` carries:
 
@@ -129,5 +138,6 @@ Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English 
 - [ ] Exhibit variety: no single type on more than a third of body pages; at least one breather page per two chapters
 - [ ] Conditions, risks, path (and options when alternatives exist) are present
 - [ ] No brain-internal names anywhere in `section_plan.json` titles or briefs
+- [ ] `naming.json` written by `scripts/report-name.mjs` (exit 0) and copied into `section_plan.json`
 
 Return `section_plan.json`.

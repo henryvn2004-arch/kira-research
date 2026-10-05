@@ -226,6 +226,8 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 >
 > Cover art: run `scripts/gen-cover.mjs` (render_and_output Step 1b) writing `outputs/batch/${id}/cover.jpg`; end the report with the `closing` page. Keep image `src` values relative (`cover.jpg`, `brand/logo.png`).
 >
+> Naming: run `scripts/report-name.mjs` (SKILL.md Stage 3e, `docs/naming_convention.md`) and save `skills/kira-research-report/outputs/batch/${id}/naming.json`. Cover lines, report kind, `<title>` and closing short title come from it.
+>
 > Write HTML to `skills/kira-research-report/outputs/batch/${id}/en.html`, PDF to `…/en.pdf` (render via `/api/render-pdf` with `PDF_RENDER_SECRET`).
 >
 > Hard rules (the skill enforces these; mentioning for safety):
@@ -248,7 +250,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 **Parent-side validation (post-return)**:
 
 1. Parse return message for "X planned, Y generated" — if `X != Y` → failure path with `error_log: EN section count mismatch X/Y`
-2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf` — both must exist and be non-empty (> 1KB)
+2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf naming.json` — all must exist; HTML and PDF non-empty (> 1KB); `naming.json` parses and its `title` equals the `<title>` of `en.html`
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
 4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `data/report_queue.csv` and `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
 
@@ -266,6 +268,7 @@ If all pass → set queue row status to `en_done`, **clear `claimed_at`** (this 
 
 ```bash
 git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/en.html
+git add skills/kira-research-report/outputs/batch/${id}/naming.json
 git add skills/kira-research-report/outputs/batch/${id}/cover.jpg 2>/dev/null || true
 git commit -m "batch: EN done for ${id}"
 git push origin main
@@ -364,12 +367,12 @@ This is the original Step 6a/6b/6c/6d from pre-Q.1 — unchanged. Reproduced her
 
 Build the SQL via a per-topic Node script. Reference template: `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` — copy to `_build_<id>_sql.mjs` and fill constants + META blocks. Key fields per locale, extracted from each language's HTML:
 
-- `title` ← `<h1 class="cover-title">` text per locale's HTML
-- `eyebrow` ← `<p class="cover-eyebrow">` (or rebuild `<COUNTRY UPPER> · <INDUSTRY UPPER> · MARKET ANALYSIS` translated per locale)
+- `title` ← the `<title>` element of each locale's HTML (EN = `naming.title`; translators translate it)
+- `eyebrow` ← `naming.eyebrow.<locale>` from `outputs/batch/${id}/naming.json`
 - `preview` JSONB: `lede` (~400 chars), `paragraphs` (2 × ~300 chars), `chart` (`{title, subtitle, bars[{pct,label,value}]}` from exec-chart page 4)
 - `toc` JSONB array from `.toc-col li` elements
 
-**Slug rule**: `slug = <industry-lower>-<country-full-english>-<year>` (e.g. queue `id=2026-vn-coffee` → `slug=vietnam-coffee-2026`). Country is full English name, not ISO code.
+**Naming**: slug, code, country (English name), industry, stage, report type, segment and keywords all come from `outputs/batch/${id}/naming.json` (`docs/naming_convention.md`). Never derive a slug from the queue id. If `naming.json` is missing (a row started before the convention), create it with `scripts/report-name.mjs` before publishing.
 
 **Pages**: top-level page count from EN HTML (already known from Step 4.1 / 5.1 via regex `<div class="page[" ]`).
 
@@ -387,10 +390,11 @@ SQL pattern (CTE + cross-join VALUES, idempotent UPSERT on both tables, returns 
 
 ```sql
 WITH new_report AS (
-  INSERT INTO living_reports (slug, country, industry, year, pages, price, currency, status, published_at)
-  VALUES ($kbat$<slug>$kbat$, $kbat$<country>$kbat$, $kbat$<industry>$kbat$, <year>, <pages>, 39, 'USD', 'published', now())
+  INSERT INTO living_reports (slug, code, country, industry, industry_code, stage, report_type, segment, keywords, year, pages, price, currency, status, published_at)
+  VALUES ($kbat$<slug>$kbat$, $kbat$<code>$kbat$, $kbat$<country>$kbat$, $kbat$<industry>$kbat$, $kbat$<industry_code>$kbat$, $kbat$<stage>$kbat$, $kbat$<type>$kbat$, $kbat$<segment>$kbat$, ARRAY[<keywords as $kbat$…$kbat$ literals>]::text[], <year>, <pages>, 39, 'USD', 'published', now())
   ON CONFLICT (slug) DO UPDATE SET
-    updated_at = now(), published_at = now(), pages = EXCLUDED.pages, status = 'published'
+    updated_at = now(), published_at = now(), pages = EXCLUDED.pages, status = 'published',
+    code = coalesce(living_reports.code, EXCLUDED.code), keywords = EXCLUDED.keywords
   RETURNING id
 )
 INSERT INTO report_translations (report_id, locale, title, eyebrow, preview, toc, pdf_url, status, published_at)

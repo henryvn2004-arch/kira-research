@@ -7,6 +7,9 @@
 //       &country=vietnam            (lowercase, optional)
 //       &industry=fintech           (lowercase, optional)
 //       &year=2026                  (optional)
+//       &q=VN-FSV | coffee chain    (optional; report-code prefix, or text in
+//                                    slug / segment / industry — see
+//                                    skills/kira-research-report/docs/naming_convention.md)
 //       &sort=recent|price-asc|price-desc  (default: recent)
 //       &limit=24&offset=0
 //
@@ -67,6 +70,7 @@ export default async function handler(req, res) {
   const country  = clean(url.searchParams.get('country'));
   const industry = clean(url.searchParams.get('industry'));
   const year     = url.searchParams.get('year');
+  const q        = (url.searchParams.get('q') || '').trim().slice(0, 60);
   const sort     = SORTS[url.searchParams.get('sort')] || SORTS.recent;
   const limit    = int(url.searchParams.get('limit'),  24, 96);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
@@ -77,13 +81,26 @@ export default async function handler(req, res) {
     if (country)  where.push(`country=ilike.${encodeURIComponent(country)}`);
     if (industry) where.push(`industry=ilike.${encodeURIComponent(industry)}`);
     if (year && /^\d{4}$/.test(year)) where.push(`year=eq.${year}`);
+    if (q) {
+      // Code prefix (VN, VN-FSV, VN-FSV-ENT-D26-01) or text in slug / segment /
+      // industry / country. Characters PostgREST treats as syntax are dropped.
+      const term = q.replace(/[^\p{L}\p{N} &-]/gu, ' ').trim();
+      const ors = [];
+      if (/^[A-Za-z]{2}(-[A-Za-z0-9]{1,4})*-?$/.test(q)) ors.push(`code.like.${encodeURIComponent(q.toUpperCase())}*`);
+      if (term) {
+        const t = encodeURIComponent(`*${term}*`);
+        const ts = encodeURIComponent(`*${term.replace(/[ &]+/g, '-')}*`);   // slugs use hyphens
+        ors.push(`slug.ilike.${ts}`, `segment.ilike.${t}`, `industry.ilike.${t}`, `country.ilike.${t}`);
+      }
+      if (ors.length) where.push(`or=(${ors.join(',')})`);
+    }
 
     const baseQs =
       where.join('&') +
       `&order=${sort}` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,slug,country,industry,year,pages,price`;
+      `&select=id,code,slug,country,industry,year,pages,price`;
 
     const { rows: reports, total } = await sb(`living_reports?${baseQs}`);
 
@@ -116,6 +133,7 @@ export default async function handler(req, res) {
       const t = byId.get(r.id) || null;
       const lede = t && t.preview && typeof t.preview === 'object' ? t.preview.lede : null;
       return {
+        code:     r.code || null,
         slug:     r.slug,
         country:  r.country,
         industry: r.industry,

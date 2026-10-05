@@ -223,6 +223,14 @@ test.describe('public APIs', () => {
     expect(ct).toContain('application/json');
   });
 
+  test('/api/library-list?q= finds reports by code prefix', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&q=VN&limit=4');
+    expect(r.status()).toBe(200);
+    const { items } = await r.json();
+    expect(items.length).toBeGreaterThan(0);
+    for (const it of items) expect(it.code).toMatch(/^VN-/);
+  });
+
   test('/api/insights-list returns JSON', async ({ request }) => {
     const r = await request.get('/api/insights-list?locale=en&limit=4');
     expect(r.status()).toBeLessThan(600);

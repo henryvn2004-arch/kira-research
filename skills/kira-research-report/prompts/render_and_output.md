@@ -73,9 +73,10 @@ After all pages exist, walk them in order and assign:
 
 ### Cover and closing pages (all routes)
 
-- **Cover:** the `cover` template. Fill 3 short title lines (the middle one is the accent), a report kind ("Industry report", "Market entry brief"…), the subtitle (the buyer question or angle, ≤110 chars), and the year. The tagline "Know first. / Move first." is fixed in the template; never change it.
-- **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}`, `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
+- **Cover:** the `cover` template, filled from `naming.json` (`docs/naming_convention.md`): line 1 = `cover.line1`, accent line = `cover.line2_accent`, optional line 3 ≤ `cover.line3_max_chars`; `{{REPORT_KIND}}` = `report_kind`; `{{REGION_OR_COUNTRY}}` = `country`. Subtitle = the buyer question or angle (≤110 chars). Year as usual. The tagline "Know first. / Move first." is fixed in the template; never change it.
+- **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}` (= `naming.short_title`), `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
 - Neither page carries a page number or source key.
+- `{{REPORT_TITLE}}` in `master_wrapper.html` (the HTML `<title>`) = `naming.title`. Translators translate it; publish reads each locale's title from it.
 
 ## Step 3 — Assemble final HTML
 
@@ -197,7 +198,7 @@ Requires Supabase MCP available. Steps:
    ON CONFLICT (id) DO NOTHING;
    ```
 
-   Slug format: kebab-case `<country>-<industry-key>-<year>` (e.g. `indonesia-construction-materials-2026`). Strip diacritics, lowercase, single hyphens.
+   Slug, code, stage, type, segment and keywords come from `naming.json` (`docs/naming_convention.md`); never build a slug by hand.
 
 4. **Insert `report_translations` row:**
    ```sql
