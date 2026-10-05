@@ -28,6 +28,22 @@
   const svg = p => '<svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
   const reportHref = it => '/' + locale + '/reports/' + encodeURIComponent(it.slug);
 
+  // Headline numbers count up to the live value (no motion if the reader asked for less)
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function setStat(key, n) {
+    document.querySelectorAll('[data-stat="' + key + '"]').forEach(el => {
+      if (still || !n || !window.requestAnimationFrame) { el.textContent = n; return; }
+      const t0 = performance.now(), dur = 900;
+      const step = now => {
+        const p = Math.min(1, (now - t0) / dur);
+        el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  setStat('markets', MARKETS.asean.length + MARKETS.apac.length);
+
   // Hero search → library
   const form = $('#home-search');
   if (form) form.addEventListener('submit', e => {
@@ -63,7 +79,7 @@
       const d = await r.json();
       const items = d.items || [], f = d.facets || {};
       const total = f.totalPublished != null ? f.totalPublished : d.total;
-      document.querySelectorAll('[data-stat="reports"]').forEach(el => { el.textContent = total; });
+      setStat('reports', total);
       const withCover = items.filter(i => i.cover);
 
       // Latest reports: newest four
@@ -77,7 +93,7 @@
         '<a class="home-tile" href="/' + locale + '/library?sector=' + encodeURIComponent(k) + '">' +
           '<span class="ib">' + svg(SECTOR_ICON[k] || '') + '</span><b>' + esc(t('sector_' + k)) + '</b><span>' + esc(t('reports', n)) + '</span></a>').join('') +
         '<a class="home-tile more" href="/' + locale + '/library"><span class="ib">' + ic('arrow') + '</span><b>' + esc(t('moreSectors')) + '</b><span>' + esc(t('sectorsCount', sectors.length)) + '</span></a>';
-      document.querySelectorAll('[data-stat="sectors"]').forEach(el => { el.textContent = sectors.length; });
+      setStat('sectors', sectors.length);
 
       // Markets with live counts
       const counts = f.countries || {};
