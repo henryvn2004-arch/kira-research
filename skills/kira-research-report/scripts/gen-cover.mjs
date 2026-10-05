@@ -11,7 +11,7 @@
 // The style rotates across reports (stable hash of --id) unless --style is set.
 // Prints one JSON line {ok, style, model, out, prompt}. Exit 3 = no key / API
 // failure: the caller keeps the cover without an illustration (cover--plain).
-// Env: OPENAI_API_KEY (required), OPENAI_IMAGE_MODEL (default gpt-image-1),
+// Env: OPENAI_API_KEY (required), OPENAI_IMAGE_MODEL (default gpt-image-2),
 //      OPENAI_IMAGE_QUALITY (low | medium | high, default high).
 import fs from 'node:fs';
 import path from 'node:path';
@@ -31,7 +31,10 @@ const STYLES = {
   isometric: 'Crisp isometric 3D illustration of a miniature diorama, soft studio lighting, matte materials, slight depth of field.',
   line_wash: 'Fine ink line drawing with flat blue watercolour washes, architectural-sketch feel, generous white paper.',
   paper_cut: 'Layered paper-cut diorama in shades of blue and white, soft drop shadows between layers, tactile and elegant.',
-  geometric: 'Minimal geometric composition of simple shapes, subtle grid lines and data-like motifs that evoke the industry; Swiss-design restraint.',
+  geometric: 'Not a photograph: abstract flat geometric composition built from circles, arcs, rectangles and thin grid lines, with simplified silhouettes of the industry and skyline made of those shapes; Swiss-poster restraint, no people.',
+  aerial_photo: 'High-key editorial aerial photograph from a drone, early-morning soft light, cool blue colour grade, crisp detail, airy and bright, like a premium annual-report photograph.',
+  risograph: 'Two-colour risograph print in KIRA blue and navy on off-white paper, visible grain and halftone texture, slight ink overlap, bold simplified shapes.',
+  clay_3d: 'Soft 3D clay render of a small stylised scene, rounded forms, pastel blue and white materials, gentle global illumination, playful but polished.',
 };
 const names = Object.keys(STYLES);
 const hash = [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -43,13 +46,13 @@ const prompt = [
   `Show a recognisable, respectful scene of how this industry works in ${country} today (its places, products, people at work, local setting or skyline), not generic stock imagery.`,
   STYLES[style],
   PALETTE,
-  'Composition: the scene fills the right two-thirds; the left third fades to plain white empty space (a title will be placed there). Subject never touches the left edge.',
-  'Absolutely no text, letters, numbers, signage words, logos, brand names, flags with text or watermarks anywhere in the image. No close-up faces.',
+  'Composition: the scene fills the right two-thirds; the left third fades to plain white empty space with no objects or people in it (a title will be placed there). Subject never touches the left edge.',
+  'Absolutely no text, letters, numbers, signage words, logos, brand names, national flags or watermarks anywhere in the image; ships, vehicles, tanks, packages and buildings carry blank surfaces. No close-up faces.',
 ].join(' ');
 
 if (flag('dry-run')) { console.log(JSON.stringify({ ok: true, dry_run: true, style, prompt })); process.exit(0); }
 const key = process.env.OPENAI_API_KEY;
-const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1';
+const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-2';
 if (!key) { console.log(JSON.stringify({ ok: false, error: 'OPENAI_API_KEY missing', style })); process.exit(3); }
 
 try {
