@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------
 
 import fs from 'fs';
+import path from 'path';
 
 const [, , id, out] = process.argv;
 const URL = process.env.SUPABASE_URL;
@@ -30,10 +31,14 @@ try {
   if (!t) { console.log('brief=none'); process.exit(0); }
   const [ind] = await sb(`tax_industries?id=eq.${t.industry_id}&select=name,slug&limit=1`);
   const comp = t.competency_key ? (await sb(`tax_competencies?key=eq.${t.competency_key}&select=label,stage&limit=1`))[0] : null;
-  fs.writeFileSync(out, JSON.stringify({
-    id: t.slug, country: t.country_code, industry: ind ? ind.name : null, kind: t.kind,
-    competency: t.competency_key, competency_label: comp ? comp.label : null, stage: comp ? comp.stage : null,
-    title: t.title, buyer_question: t.buyer_question, guiding_questions: t.questions, rationale: t.rationale, owner_note: t.note
+  // Every field is coerced to a bounded string: the brief is plain data for the
+  // brain route to read, never anything executable.
+  const s = (v, n = 1500) => (v == null ? null : String(v).slice(0, n));
+  const qs = Array.isArray(t.questions) ? t.questions.slice(0, 8).map(q => s(q, 600)) : [];
+  fs.writeFileSync(path.resolve(out), JSON.stringify({
+    id: s(t.slug, 120), country: s(t.country_code, 2), industry: ind ? s(ind.name, 200) : null, kind: s(t.kind, 20),
+    competency: s(t.competency_key, 60), competency_label: comp ? s(comp.label, 200) : null, stage: comp ? s(comp.stage, 60) : null,
+    title: s(t.title, 240), buyer_question: s(t.buyer_question), guiding_questions: qs, rationale: s(t.rationale), owner_note: s(t.note, 1000)
   }, null, 2));
   console.log('brief=written');
 } catch (e) {
