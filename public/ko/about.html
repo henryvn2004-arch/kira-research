@@ -4,66 +4,251 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회사 소개 — KIRA Research</title>
-  <meta name="description" content="KIRA Research는 동남아시아 전문 리서치 펌입니다. 20년의 지역 현장 경험, 시니어 분석가, 현대적 전달.">
+  <meta name="description" content="KIRA Research는 동남아시아, 호주, 뉴질랜드, 대만의 시장·산업·진출 경로에 관한 리서치를 발간합니다.">
 
   <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/about">
   <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/about">
   <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/about">
+  <link rel="alternate" hreflang="zh-Hans"   href="https://kiraresearch.com/zh/about">
   <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/about">
   <link rel="canonical" href="https://kiraresearch.com/ko/about">
 
   <meta property="og:title"       content="회사 소개 — KIRA Research">
-  <meta property="og:description" content="동남아시아 전문 리서치 펌. 시니어 분석가, 현대적 전달.">
+  <meta property="og:description" content="동남아시아의 의사결정을 위한 명확한 근거.">
   <meta property="og:type"        content="website">
 
   <link rel="preconnect" href="https://api.fontshare.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/kira.css">
 
   <style>
-    body, h1, h2, h3, h4 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
-    .page-hero { padding: 80px 0 56px; border-bottom: 1px solid var(--border); position: relative; }
-    .page-hero h1 { font-weight: 700; font-size: clamp(38px, 5vw, 56px); line-height: 1.1; letter-spacing: -0.025em; max-width: 880px; margin-bottom: 24px; }
+    /* ko: Hangul font fallback; keep Korean words intact when wrapping */
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
+    body { word-break: keep-all; overflow-wrap: break-word; }
+    .page-hero {
+      padding-top: 80px; padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 880px;
+      margin-bottom: 24px;
+    }
     .page-hero h1 .accent { color: var(--primary); }
-    .page-hero .lead { font-size: 18px; line-height: 1.7; color: var(--muted); max-width: 640px; }
-    .story-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; padding: 96px 0 24px; align-items: start; }
-    .story-grid .label-col { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; }
-    .story-grid h2 { font-weight: 700; font-size: 34px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 24px; }
-    .story-grid p { font-size: 16px; line-height: 1.85; color: var(--muted); margin-bottom: 20px; max-width: 680px; }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      padding: 96px 0 24px;
+      align-items: start;
+    }
+    .story-grid .label-col {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .story-grid h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .story-grid p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 680px;
+    }
     .story-grid p strong { color: var(--text); font-weight: 600; }
-    .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 64px 0; }
-    .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; position: relative; }
-    .pillar::before { content: ""; position: absolute; top: 0; left: 0; width: 40px; height: 1px; background: var(--primary); }
-    .pillar .num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.15em; margin-bottom: 16px; }
-    .pillar h3 { font-weight: 700; font-size: 19px; letter-spacing: -0.01em; margin-bottom: 12px; line-height: 1.4; }
-    .pillar p { font-size: 14px; color: var(--muted); line-height: 1.75; }
-    .stance { padding: 96px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .stance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
-    .stance-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--primary); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
-    .stance-col h3::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
-    .stance-col ul { list-style: none; padding: 0; }
-    .stance-col li { padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 15px; line-height: 1.6; color: var(--text); }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 64px 0;
+    }
+    .pillar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      position: relative;
+    }
+    .pillar::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 40px; height: 1px;
+      background: var(--primary);
+    }
+    .pillar .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+    }
+    .pillar h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.015em;
+      margin-bottom: 12px;
+    }
+    .pillar p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .stance {
+      padding: 96px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+    .stance-col h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stance-col h3::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      background: var(--primary);
+    }
+    .stance-col ul {
+      list-style: none;
+      padding: 0;
+    }
+    .stance-col li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text);
+    }
     .stance-col li:last-child { border-bottom: none; }
     .stance-col li .lede { font-weight: 600; display: block; margin-bottom: 4px; }
     .stance-col li .body { color: var(--muted); font-size: 14px; }
-    .team { padding: 96px 0 0; }
-    .team-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
-    .team h2 { font-weight: 700; font-size: 34px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 24px; }
-    .team .lead { font-size: 16px; line-height: 1.85; color: var(--muted); margin-bottom: 24px; }
-    .team-facts { display: flex; flex-direction: column; gap: 0; }
-    .team-fact { display: grid; grid-template-columns: 140px 1fr; padding: 20px 0; border-bottom: 1px solid var(--border); align-items: start; }
+
+    .team {
+      padding-top: 96px;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .team h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .team .lead {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .team-facts {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .team-fact {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
     .team-fact:last-child { border-bottom: none; }
-    .team-fact .key { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; padding-top: 2px; }
-    .team-fact .val { font-size: 15px; line-height: 1.7; color: var(--text); }
-    .closing-cta { margin: 96px 0 0; padding: 56px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; text-align: center; position: relative; overflow: hidden; }
-    .closing-cta::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: var(--primary); }
-    .closing-cta h3 { font-weight: 700; font-size: 28px; letter-spacing: -0.015em; margin-bottom: 16px; }
-    .closing-cta p { font-size: 16px; color: var(--muted); max-width: 520px; margin: 0 auto 28px; line-height: 1.7; }
-    .closing-cta .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .team-fact .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding-top: 2px;
+    }
+    .team-fact .val { font-size: 15px; line-height: 1.6; color: var(--text); }
+
+    .closing-cta {
+      margin: 96px 0 0;
+      padding: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .closing-cta::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 1px;
+      background: var(--primary);
+    }
+    .closing-cta h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .closing-cta p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+    .closing-cta .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 968px) {
       .story-grid, .team-grid { grid-template-columns: 1fr; gap: 32px; }
       .pillars { grid-template-columns: 1fr; }
@@ -75,21 +260,22 @@
 <body>
 
   <section class="container page-hero">
-    <div class="hero-eyebrow">회사 소개</div>
-    <h1>동남아시아에 특화된, <span class="accent">전문 리서치.</span></h1>
-    <p class="lead">
-      KIRA Research는 20년의 지역 현장 경험을 기반으로 합니다. 동남아시아에서 의사결정을 내리는 기업, 투자자, 운영자를 위해 합리적인 가격의 마켓 인텔리전스를 발간합니다.
-    </p>
+    <div class="hero-eyebrow" data-i18n="about.eyebrow">회사 소개</div>
+    <h1>
+      <span data-i18n="about.titleLine1">동남아시아의 의사결정을 위한</span>
+      <span class="accent" data-i18n="about.titleLine2">명확한 근거.</span>
+    </h1>
+    <p class="lead" data-i18n="about.lead">KIRA Research는 동남아시아, 호주, 뉴질랜드, 대만의 시장·산업·진출 경로에 관한 리서치를 발간합니다. 각 보고서는 하나의 투자 또는 진출 의사결정을 보다 충분한 정보에 근거해 내릴 수 있도록 작성됩니다.</p>
   </section>
 
   <section class="container">
     <div class="story-grid">
-      <div class="label-col">— 우리의 기반</div>
+      <div class="label-col" data-i18n="about.storyLabel">— 하는 일</div>
       <div>
-        <h2>20년의 1차 현장 조사.</h2>
-        <p><strong>우리의 리서치 역사는 현장에서 시작되었습니다</strong> — 베트남, 인도네시아, 태국, 필리핀, 말레이시아, 그 외 지역 전반에 걸친 인터뷰, 채널 감사, 소비자 조사, 유통업체 매핑.</p>
-        <p>이 축적이 분석가가 각 보고서를 작성할 때 돌아가는 기반입니다. 그래서 채널이 왜 그렇게 움직이는지, 왜 그 가격대가 존재하는지, 규제 변화가 문서대로 적용될지 여부를 <strong>"왜"</strong> 수준에서 설명할 수 있습니다.</p>
-        <p>오늘 우리가 발간하는 보고서는 그러한 구조적 이해 위에 구축됩니다 — 최신 데이터로 갱신하고, 현대 도구로 강화하며, 고객에게 도달하기 전에 시니어 분석가가 검토합니다.</p>
+        <h2 data-i18n="about.storyHeading">먼저 의사결정, 그다음 시장.</h2>
+        <p data-i18n="about.storyP1">각 보고서는 뒷받침할 의사결정에서 출발합니다. 추진할 가치가 있는 시장인지, 어떻게 진출할 것인지, 자리 잡은 뒤 어디에서 성장할 것인지입니다.</p>
+        <p data-i18n="about.storyP2">당사는 동남아시아, 호주, 뉴질랜드, 대만을 다루며, 수출 전용 제조업보다는 기업들이 현지 수요를 두고 경쟁하는 산업에 집중합니다.</p>
+        <p data-i18n="about.storyP3">당사 보고서는 공개 자료와 라이선스 자료에 기반한 데스크 리서치입니다. 모든 수치에 출처를 명기하며, 당사 리서치팀이 발간 전 모든 보고서를 검토합니다.</p>
       </div>
     </div>
   </section>
@@ -98,18 +284,18 @@
     <div class="pillars">
       <div class="pillar">
         <div class="num">01</div>
-        <h3>전문적, 일반적이지 않음.</h3>
-        <p>동남아시아를 깊이 다룹니다. 글로벌 템플릿을 국가별로 재포장하지 않으며, 각 보고서는 해당 시장이 실제로 어떻게 작동하는지에 기반합니다.</p>
+        <h3 data-i18n="about.pillar1Title">의사결정을 중심으로 설계.</h3>
+        <p data-i18n="about.pillar1Body">각 보고서는 시장 평가, 진출, 시장 내 확장 등 명확히 정의된 시점을 위해 작성되며, 그 시점에 제기되는 질문에 답합니다.</p>
       </div>
       <div class="pillar">
         <div class="num">02</div>
-        <h3>시니어 분석가, 데이터 스크래퍼가 아님.</h3>
-        <p>우리 분석가는 컨설팅 출신이며 이 지역에서 오랜 1차 조사 경력을 쌓아왔습니다. 구조적 통찰이 고객이 지불하는 가치입니다.</p>
+        <h3 data-i18n="about.pillar2Title">인용할 수 있도록, 출처를 명기.</h3>
+        <p data-i18n="about.pillar2Body">모든 수치에 출처 태그가 붙어 있습니다. 출처가 분명하므로 확인하고, 인용하고, 공유할 수 있습니다.</p>
       </div>
       <div class="pillar">
         <div class="num">03</div>
-        <h3>합리적 가격, 빠른 업데이트.</h3>
-        <p>현대적 전달 방식으로 기존 가격의 일부로 발간할 수 있고, 더 자주 업데이트할 수 있습니다. 같은 깊이, 더 낮은 마찰.</p>
+        <h3 data-i18n="about.pillar3Title">구독 전에 먼저 열람.</h3>
+        <p data-i18n="about.pillar3Body">모든 보고서의 핵심 요약은 무료로 열람할 수 있습니다. 전체 보고서와 PDF판은 구독에 포함됩니다.</p>
       </div>
     </div>
   </section>
@@ -118,36 +304,36 @@
     <div class="container">
       <div class="stance-grid">
         <div class="stance-col">
-          <h3>우리는</h3>
+          <h3 data-i18n="about.weAreLabel">당사의 정체성</h3>
           <ul>
             <li>
-              <span class="lede">전문 리서치 펌</span>
-              <span class="body">시니어 분석가가 동남아시아 마켓 인텔리전스 보고서를 발간합니다.</span>
+              <span class="lede" data-i18n="about.weAre1Title">리서치 하우스.</span>
+              <span class="body"   data-i18n="about.weAre1Body">조사하고, 집필하고, 발간합니다. 분석 그 자체가 당사의 상품입니다.</span>
             </li>
             <li>
-              <span class="lede">다국어 발행자</span>
-              <span class="body">영어, 일본어, 한국어로 발간 — 도쿄, 서울, 싱가포르 및 그 외 엔터프라이즈 바이어를 위해 설계.</span>
+              <span class="lede" data-i18n="about.weAre2Title">구독형 라이브러리.</span>
+              <span class="body"   data-i18n="about.weAre2Body">하나의 구독으로 라이브러리 전체를 온라인으로 열람할 수 있으며, PDF판은 일정 한도 내에서 제공됩니다. 구독은 곧 시작되며, 조기 이용은 신청을 통해 가능합니다.</span>
             </li>
             <li>
-              <span class="lede">기존 라이브러리 + 맞춤 조사</span>
-              <span class="body">셀프 서브용 합리적 가격의 기존 보고서. 맞춤형이 필요한 바이어를 위한 의뢰 조사.</span>
+              <span class="lede" data-i18n="about.weAre3Title">독자의 언어로 발간.</span>
+              <span class="body"   data-i18n="about.weAre3Body">영어, 일본어, 한국어로 발간하며, 중국어 간체판을 추가하고 있습니다. 수치와 출처는 모든 언어판에서 동일합니다.</span>
             </li>
           </ul>
         </div>
         <div class="stance-col">
-          <h3>우리는 아닙니다</h3>
+          <h3 data-i18n="about.weAreNotLabel">당사가 아닌 것</h3>
           <ul>
             <li>
-              <span class="lede">SaaS 앱이 아닙니다</span>
-              <span class="body">우리는 리서치 펌입니다. 고객은 보고서를 구매하지, 좌석을 구매하지 않습니다.</span>
+              <span class="lede" data-i18n="about.weAreNot1Title">현장 조사 기관이 아닙니다.</span>
+              <span class="body"   data-i18n="about.weAreNot1Body">당사 보고서는 설문이나 매장 조사가 아닌, 공개 자료와 라이선스 자료를 바탕으로 작성됩니다. 현장의 직접적인 관점은 Kira Experts를 통해 별도로 제공됩니다.</span>
             </li>
             <li>
-              <span class="lede">일반 데이터베이스가 아닙니다</span>
-              <span class="body">글로벌 템플릿을 집계하지 않습니다. 분석가가 책임질 수 있는 것만 발간합니다.</span>
+              <span class="lede" data-i18n="about.weAreNot2Title">시장 규모 데이터베이스가 아닙니다.</span>
+              <span class="body"   data-i18n="about.weAreNot2Body">각 보고서는 특정 시장의 특정 질문을 다루며, 그 논거를 함께 제시합니다.</span>
             </li>
             <li>
-              <span class="lede">물량 승부가 아닙니다</span>
-              <span class="body">품질 기준이 허용하는 속도로 발간합니다. 바이어가 보고서 한 편을 근거로 수백만을 결정할 때, 폭보다 깊이가 이깁니다.</span>
+              <span class="lede" data-i18n="about.weAreNot3Title">컨설팅 회사가 아닙니다.</span>
+              <span class="body"   data-i18n="about.weAreNot3Body">당사의 결과물은 발간된 리서치입니다. 직접 경험이 필요한 질문에는 Kira Experts가 그러한 경험을 갖춘 인물과의 대화를 주선합니다.</span>
             </li>
           </ul>
         </div>
@@ -158,33 +344,49 @@
   <section class="container team">
     <div class="team-grid">
       <div>
-        <h2>팀</h2>
-        <p class="lead">호치민시와 싱가포르를 기반으로 한 시니어 분석가. 컨설팅 출신, 수십 년의 지역 리서치 경력.</p>
-        <a href="/ko/custom-research/" class="btn btn-secondary">
-          <span>팀과 협업하기</span>
+        <h2 data-i18n="about.teamHeading">한눈에 보기.</h2>
+        <p class="lead" data-i18n="about.teamLead">당사는 누구이며, 무엇을 다루는가.</p>
+        <a href="mailto:hello@kiraresearch.com" class="btn btn-secondary">
+          <span data-i18n="about.teamCta">문의하기</span>
           <span class="btn-arrow">→</span>
         </a>
       </div>
       <div class="team-facts">
-        <div class="team-fact"><div class="key">본사</div><div class="val">호치민시 · 싱가포르</div></div>
-        <div class="team-fact"><div class="key">커버리지</div><div class="val">베트남, 인도네시아, 태국, 필리핀, 말레이시아, 싱가포르, 미얀마, 캄보디아, 라오스, 인도, 방글라데시</div></div>
-        <div class="team-fact"><div class="key">지원 언어</div><div class="val">English · 日本語 · 한국어 — 모든 JA/KO 발간물에 원어민 검토</div></div>
-        <div class="team-fact"><div class="key">유통</div><div class="val">kiraresearch.com 직판 외에 ResearchAndMarkets, MarketResearch.com, GIIResearch, ASDReports</div></div>
-        <div class="team-fact"><div class="key">연락처</div><div class="val">hello@kiraresearch.com</div></div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factCoverage">조사 범위</div>
+          <div class="val" data-i18n="about.factCoverageVal">베트남, 태국, 인도네시아, 말레이시아, 싱가포르, 필리핀, 캄보디아, 라오스, 미얀마, 브루나이, 호주, 뉴질랜드, 대만</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factFocus">중점 분야</div>
+          <div class="val" data-i18n="about.factFocusVal">기업들이 현지 수요를 두고 경쟁하는 산업</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factLanguages">언어</div>
+          <div class="val" data-i18n="about.factLanguagesVal">English · 日本語 · 한국어 · 简体中文 (추가 중)</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factMethod">방법</div>
+          <div class="val" data-i18n="about.factMethodVal">공개 자료와 라이선스 자료에 기반한 데스크 리서치, 출처 태그 부착, 발간 전 검토</div>
+        </div>
+        <div class="team-fact">
+          <div class="key" data-i18n="about.factContact">연락처</div>
+          <div class="val">hello@kiraresearch.com</div>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="container">
     <div class="closing-cta">
-      <h3>작업물을 보세요.</h3>
-      <p>라이브러리를 탐색하거나, 조사 방법론을 자세히 읽거나, 의뢰 조사에 대해 분석가와 이야기하세요.</p>
+      <h3 data-i18n="about.closingHeading">결과물을 직접 확인하십시오.</h3>
+      <p data-i18n="about.closingBody">핵심 요약을 읽어 보거나, 당사의 조사 방식을 확인하거나, 라이브러리 전체에 대한 조기 이용을 신청할 수 있습니다.</p>
       <div class="actions">
         <a href="/ko/library" class="btn btn-primary">
-          <span>라이브러리 보기</span>
+          <span data-i18n="about.closingCta1">라이브러리 둘러보기</span>
           <span class="btn-arrow">→</span>
         </a>
-        <a href="/ko/methodology" class="btn btn-secondary">방법론 읽기</a>
+        <a href="/ko/methodology" class="btn btn-secondary" data-i18n="about.closingCta2">조사 방법론 보기</a>
+        <a href="/ko/pricing#waitlist" class="btn btn-secondary" data-i18n="about.closingCta3">조기 이용 신청</a>
       </div>
     </div>
   </section>

@@ -4,82 +4,321 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>조사 방법론 — KIRA Research</title>
-  <meta name="description" content="모든 보고서를 조사·작성·검토하는 방법. 1차 조사 기반, 최신 데이터 갱신, AI 활용 분석, 분석가 큐레이션.">
+  <meta name="description" content="당사 리서치의 작성과 검토 방식: 공개 자료와 라이선스 자료에 기반한 데스크 리서치, 모든 수치에 출처 태그, AI를 활용한 초안 작성, 발간 전 검토.">
 
   <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/methodology">
   <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/methodology">
   <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/methodology">
+  <link rel="alternate" hreflang="zh-Hans"   href="https://kiraresearch.com/zh/methodology">
   <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/methodology">
   <link rel="canonical" href="https://kiraresearch.com/ko/methodology">
 
   <meta property="og:title"       content="조사 방법론 — KIRA Research">
-  <meta property="og:description" content="1차 조사, 최신 데이터, AI 활용 분석, 분석가 큐레이션.">
+  <meta property="og:description" content="데스크 리서치, 출처 태그를 붙인 수치, AI를 활용한 초안 작성, 발간 전 검토.">
   <meta property="og:type"        content="website">
 
   <link rel="preconnect" href="https://api.fontshare.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/kira.css">
 
   <style>
-    body, h1, h2, h3, h4 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
-    .page-hero { padding: 80px 0 56px; border-bottom: 1px solid var(--border); }
-    .page-hero h1 { font-weight: 700; font-size: clamp(38px, 5vw, 56px); line-height: 1.1; letter-spacing: -0.025em; max-width: 900px; margin-bottom: 24px; }
+    /* ko: Hangul font fallback; keep Korean words intact when wrapping */
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
+    body { word-break: keep-all; overflow-wrap: break-word; }
+    .page-hero {
+      padding-top: 80px; padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
     .page-hero h1 .accent { color: var(--primary); }
-    .page-hero .lead { font-size: 18px; line-height: 1.85; color: var(--muted); max-width: 680px; }
-    .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 1px solid var(--border); }
-    .principle { padding: 40px 32px; border-right: 1px solid var(--border); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 680px;
+    }
+
+    /* Principles strip */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .principle {
+      padding: 40px 32px;
+      border-right: 1px solid var(--border);
+    }
     .principle:last-child { border-right: none; }
-    .principle .key { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
-    .principle .body { font-size: 15px; color: var(--text); line-height: 1.7; }
-    .step-block { padding: 96px 0; border-bottom: 1px solid var(--border); }
+    .principle .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .principle .body {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Step blocks */
+    .step-block {
+      padding-top: 96px; padding-bottom: 96px;
+      border-bottom: 1px solid var(--border);
+    }
     .step-block:last-child { border-bottom: none; }
-    .step-grid { display: grid; grid-template-columns: 160px 1fr; gap: 64px; align-items: start; }
-    .step-num-large { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px; color: var(--primary); letter-spacing: 0.2em; padding-top: 8px; }
-    .step-num-large::after { content: ""; display: block; width: 32px; height: 1px; background: var(--primary); margin-top: 12px; }
-    .step-content h2 { font-weight: 700; font-size: 36px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 24px; }
-    .step-content p { font-size: 16px; line-height: 1.85; color: var(--muted); margin-bottom: 20px; max-width: 720px; }
+    .step-grid {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .step-num-large {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      padding-top: 8px;
+    }
+    .step-num-large::after {
+      content: "";
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--primary);
+      margin-top: 12px;
+    }
+    .step-content h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .step-content p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 720px;
+    }
     .step-content p strong { color: var(--text); font-weight: 600; }
-    .step-detail { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px 32px; margin-top: 32px; max-width: 720px; }
-    .step-detail h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
-    .step-detail ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-    .step-detail li { display: grid; grid-template-columns: 24px 1fr; gap: 12px; font-size: 14px; color: var(--text); line-height: 1.6; }
-    .step-detail li::before { content: "→"; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
-    .transparency { padding: 96px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .transparency h2 { font-weight: 700; font-size: 34px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 16px; }
-    .transparency .lead { font-size: 16px; color: var(--muted); max-width: 640px; margin-bottom: 48px; line-height: 1.85; }
-    .trans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--bg); }
-    .trans-col { padding: 32px; border-right: 1px solid var(--border); }
+    .step-detail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-top: 32px;
+      max-width: 720px;
+    }
+    .step-detail h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .step-detail ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step-detail li {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .step-detail li::before {
+      content: "→";
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Transparency block */
+    .transparency {
+      padding: 96px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .transparency h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+    .transparency .lead {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 48px;
+      line-height: 1.65;
+    }
+    .trans-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .trans-col {
+      padding: 32px;
+      border-right: 1px solid var(--border);
+    }
     .trans-col:last-child { border-right: none; }
-    .trans-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-    .trans-col h3::before { content: ""; width: 20px; height: 1px; background: var(--primary); }
+    .trans-col h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trans-col h3::before {
+      content: "";
+      width: 20px;
+      height: 1px;
+      background: var(--primary);
+    }
     .trans-col ul { list-style: none; padding: 0; }
-    .trans-col li { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.7; color: var(--text); }
+    .trans-col li {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
     .trans-col li:last-child { border-bottom: none; }
-    .qa-flow { padding: 96px 0; }
-    .qa-flow h2 { font-weight: 700; font-size: 34px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 48px; }
-    .qa-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .qa-step { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px; position: relative; }
-    .qa-step::before { content: ""; position: absolute; top: 0; left: 0; width: 40px; height: 1px; background: var(--primary); }
-    .qa-step .key { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--primary); margin-bottom: 12px; }
-    .qa-step h4 { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; margin-bottom: 8px; }
-    .qa-step p { font-size: 13px; color: var(--muted); line-height: 1.65; }
-    .closing-cta { margin: 64px 0 0; padding: 56px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; text-align: center; position: relative; overflow: hidden; }
-    .closing-cta::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: var(--primary); }
-    .closing-cta h3 { font-weight: 700; font-size: 28px; letter-spacing: -0.015em; margin-bottom: 16px; }
-    .closing-cta p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 28px; line-height: 1.75; }
-    .closing-cta .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* QA flow */
+    .qa-flow {
+      padding-top: 96px; padding-bottom: 96px;
+    }
+    .qa-flow h2 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 48px;
+    }
+    .qa-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .qa-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      position: relative;
+    }
+    .qa-step::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 40px; height: 1px;
+      background: var(--primary);
+    }
+    .qa-step .key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .qa-step h4 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .qa-step p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Closing CTA */
+    .closing-cta {
+      margin: 64px 0 0;
+      padding: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .closing-cta::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 1px;
+      background: var(--primary);
+    }
+    .closing-cta h3 {
+      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .closing-cta p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 28px;
+    }
+    .closing-cta .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 968px) {
-      .principles { grid-template-columns: 1fr; }
-      .principle { border-right: none; border-bottom: 1px solid var(--border); }
-      .step-grid { grid-template-columns: 1fr; gap: 24px; }
-      .step-content h2 { font-size: 28px; }
-      .trans-grid { grid-template-columns: 1fr; }
-      .trans-col { border-right: none; border-bottom: 1px solid var(--border); }
-      .qa-steps { grid-template-columns: 1fr 1fr; }
+      .principles  { grid-template-columns: 1fr; }
+      .principle   { border-right: none; border-bottom: 1px solid var(--border); }
+      .step-grid   { grid-template-columns: 1fr; gap: 24px; }
+      .step-content h2 { font-size: 32px; }
+      .trans-grid  { grid-template-columns: 1fr; }
+      .trans-col   { border-right: none; border-bottom: 1px solid var(--border); }
+      .qa-steps    { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 560px) {
       .qa-steps { grid-template-columns: 1fr; }
@@ -90,150 +329,181 @@
 <body>
 
   <section class="container page-hero">
-    <div class="hero-eyebrow">조사 방법론</div>
-    <h1>모든 보고서가, 어떻게<br>조사·작성·<span class="accent">검토</span>되는가.</h1>
-    <p class="lead">
-      우리는 기존 가격의 일부로 합리적인 마켓 인텔리전스를 발간합니다. 각 보고서 뒤의 작업이 그 경제성을 가능하게 하며, 우리가 자사 이름을 걸 수 있는 근거가 됩니다.
-    </p>
+    <div class="hero-eyebrow" data-i18n="meth.eyebrow">조사 방법론</div>
+    <h1>
+      <span data-i18n="meth.titleLine1">당사 리서치의 작성과</span>
+      <span class="accent" data-i18n="meth.titleLine2">검토 방식.</span>
+    </h1>
+    <p class="lead" data-i18n="meth.lead">당사 보고서는 데스크 리서치입니다. 공개 자료와 라이선스 자료를 바탕으로 작업하고, 모든 수치에 출처를 부기하며, 발간 전 모든 보고서를 검토합니다. 이 페이지에서는 각 단계와 그 한계를 설명합니다.</p>
   </section>
 
   <section class="container">
     <div class="principles">
-      <div class="principle"><div class="key">— 기반</div><div class="body">동남아시아에서 20년에 걸친 1차 현장 조사. 2차 집계가 아닌 구조적 이해.</div></div>
-      <div class="principle"><div class="key">— 투명성</div><div class="body">데이터 출처, 추정 부분, 불확실성의 소재를 명시합니다.</div></div>
-      <div class="principle"><div class="key">— 인간 검토</div><div class="body">번역본 포함 모든 보고서는 발간 전 시니어 분석가가 검토합니다. 예외 없음.</div></div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle1Key">— 데스크 리서치</div>
+        <div class="body" data-i18n="meth.principle1Body">현장 조사, 설문, 인터뷰가 아닌 공개 자료와 라이선스 자료를 바탕으로 작업합니다.</div>
+      </div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle2Key">— 투명성</div>
+        <div class="body" data-i18n="meth.principle2Body">각 수치가 어디에서 왔는지, 어디가 추정치인지, 어디에서 근거가 부족한지를 보여 줍니다.</div>
+      </div>
+      <div class="principle">
+        <div class="key" data-i18n="meth.principle3Key">— 검토</div>
+        <div class="body" data-i18n="meth.principle3Body">모든 보고서는 발간 전 당사 리서치팀의 검토를 거칩니다.</div>
+      </div>
     </div>
   </section>
 
+  <!-- Step 01 -->
   <section class="container step-block">
     <div class="step-grid">
       <div class="step-num-large">01</div>
       <div class="step-content">
-        <h2>1차 조사의 기반.</h2>
-        <p>우리 분석가는 지역에서 20년에 걸쳐 1차 마켓 리서치를 수행해왔습니다 — 인터뷰, 채널 감사, 소비자 조사, 유통업체 매핑, 매장 방문. 각 보고서를 작성할 때 돌아가는 곳이 바로 이 현장 축적입니다.</p>
-        <p>중요한 이유: 구조적 통찰 — <strong>채널이 실제로 어떻게 움직이는지, 왜 특정 가격대가 존재하는지, 누가 진짜 마진을 쥐고 있는지</strong> — 는 분기마다 바뀌지 않습니다. 수년의 현장 경험이 필요하며, 유용한 보고서와 통계 목록을 구분하는 핵심입니다.</p>
+        <h2 data-i18n="meth.step1Title">의사결정을 중심으로 설계.</h2>
+        <p data-i18n="meth.step1P1">각 보고서는 하나의 시장, 하나의 산업에서 하나의 의사결정을 중심으로 기획됩니다. 단계에 따라 질문이 정해집니다. 평가(추진할 가치가 있는 시장인가?), 진출(어떻게 진입할 것인가?), 확장(다음 성장은 어디에서 오는가?)입니다.</p>
+        <p data-i18n="meth.step1P2">주제는 당사의 커버리지 계획에서 선정되며, 조사 착수 전 당사 팀의 승인을 거칩니다. 계획에는 보고서가 답해야 할 질문이 명시되고, 보고서는 그 질문에 답하도록 구성됩니다.</p>
         <div class="step-detail">
-          <h4>활용 자원</h4>
+          <h4 data-i18n="meth.step1DetailLabel">계획 단계에서 확정하는 사항</h4>
           <ul>
-            <li>동남아시아 각 시장에서 수행한 업계·소비자 인터뷰</li>
-            <li>여러 조사 사이클에 걸쳐 구축한 채널 매핑 및 유통업체 관계</li>
-            <li>반복적 고객 프로젝트를 통해 정교화한 업계 프레임워크</li>
-            <li>현지 언어 출처에 대한 정통성 (뉴스, 규제 문서, 업계 협회)</li>
+            <li data-i18n="meth.step1Detail1">단계, 그리고 보고서가 뒷받침할 의사결정</li>
+            <li data-i18n="meth.step1Detail2">각 섹션이 답해야 할 핵심 질문</li>
+            <li data-i18n="meth.step1Detail3">이에 답하기 위한 분석(시장 규모 산정, 경쟁, 진출 경로, 규제, 비용)</li>
+            <li data-i18n="meth.step1Detail4">범위: 시장, 산업, 그리고 필요한 경우 보다 좁은 세부 부문</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Step 02 -->
   <section class="container step-block">
     <div class="step-grid">
       <div class="step-num-large">02</div>
       <div class="step-content">
-        <h2>최신 데이터 업데이트.</h2>
-        <p>구조적 통찰이 기반입니다. <strong>최신 데이터</strong>가 보고서를 오늘 유용하게 만듭니다. 각 발간 시 시장 규모, 경쟁 위치, 규제 업데이트, 최근 동향을 갱신합니다.</p>
-        <p>2차 출처, 현지 언어 미디어, 정부 통계, 업계 협회 데이터, 검증된 공개 자료의 혼합을 사용합니다. 데이터가 논쟁적인 부분, 추정한 부분은 명시합니다.</p>
+        <h2 data-i18n="meth.step2Title">공개 자료와 라이선스 자료에 기반한 데스크 리서치.</h2>
+        <p data-i18n="meth.step2P1">각 보고서를 작성하기 전에 시장 규모, 수요, 경쟁사, 규제, 최근 거래에 관한 최신 데이터를 수집합니다. 출처에는 정부 통계, 규제 기관, 기업 공시 및 발표, 업계 단체, 업계지 및 현지어 언론, 라이선스 데이터가 포함됩니다.</p>
+        <p data-i18n="meth.step2P2">출처 간 내용이 다르면 보고서에 그 사실을 밝힙니다. 추정한 경우에는 추정치임을 표기하고 그 근거를 제시합니다.</p>
         <div class="step-detail">
-          <h4>출처 기준</h4>
+          <h4 data-i18n="meth.step2DetailLabel">출처 기준</h4>
           <ul>
-            <li>출처가 허용하는 한 보고된 모든 숫자에 1차 귀속</li>
-            <li>국내 데이터는 현지 언어 출처 우선 (베트남어, 태국어, 인도네시아어, 필리핀어, 말레이어, 일본어와 한국어 포함)</li>
-            <li>중요한 수치는 최소 2개의 독립 출처로 교차 확인</li>
-            <li>분석가 모델링 숫자에는 "추정" 표기를 명시</li>
+            <li data-i18n="meth.step2Detail1">보고된 모든 수치에 출처 태그 부착</li>
+            <li data-i18n="meth.step2Detail2">가능한 경우, 현지 데이터에는 현지어 출처 활용</li>
+            <li data-i18n="meth.step2Detail3">출처가 둘 이상인 주요 수치는 출처 간 비교</li>
+            <li data-i18n="meth.step2Detail4">당사가 자체 산출한 수치에는 "est."(추정) 표기 명시</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Step 03 -->
   <section class="container step-block">
     <div class="step-grid">
       <div class="step-num-large">03</div>
       <div class="step-content">
-        <h2>AI 활용 분석.</h2>
-        <p>현대 AI 도구를 활용해 작업을 가속합니다 — 출처 자료 종합, 초안 작성, 데이터 표 구조화, 영·일·한 간 번역. 이를 통해 깊이를 손상시키지 않고 합리적인 가격으로 발간할 수 있습니다.</p>
-        <p>AI가 <strong>잘하는 것</strong>: 대량의 출처 자료를 일관되게 요약, 문서 전반의 패턴 식별, 정보 구조화, 분석가가 정교화할 수 있는 초안 생성.</p>
-        <p>AI가 <strong>하지 않는 것</strong>: 판단의 대체, 통찰의 창출, 수치에 대한 사인오프. AI가 생성한 모든 섹션은 발간 전 시니어 분석가가 검토·편집·검증합니다.</p>
+        <h2 data-i18n="meth.step3Title">AI를 활용한 초안 작성.</h2>
+        <p data-i18n="meth.step3P1">당사는 업무 과정에서 AI 도구를 사용합니다. 출처 자료의 검색과 요약, 데이터 표 구성, 조사 계획에 따른 섹션 초안 작성, 그리고 영어·일본어·한국어·중국어 간 번역입니다.</p>
+        <p data-i18n="meth.step3P2">AI는 작업 속도를 높입니다. 그러나 수치를 결정하지는 않습니다. 모든 수치는 태그된 출처로 거슬러 확인할 수 있어야 하며, 출처를 확인할 수 없는 내용은 삭제하거나 추정치로 표기합니다.</p>
         <div class="step-detail">
-          <h4>AI 활용 영역</h4>
+          <h4 data-i18n="meth.step3DetailLabel">AI 활용 영역</h4>
           <ul>
-            <li>출처 자료를 구조화된 분석 섹션으로 종합</li>
-            <li>분석가가 정의한 프레임워크 하의 초안 작성</li>
-            <li>리서치 라이브러리 전반의 교차 참조 및 패턴 인식</li>
-            <li>영어·일본어·한국어 간 번역 (이후 원어민 검토 진행)</li>
+            <li data-i18n="meth.step3Detail1">공개 자료의 검색과 요약</li>
+            <li data-i18n="meth.step3Detail2">조사 계획에 따른 섹션 초안 작성</li>
+            <li data-i18n="meth.step3Detail3">출처가 확인된 데이터로 표와 차트 작성</li>
+            <li data-i18n="meth.step3Detail4">영어판을 일본어·한국어·중국어로 번역</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Step 04 -->
   <section class="container step-block">
     <div class="step-grid">
       <div class="step-num-large">04</div>
       <div class="step-content">
-        <h2>분석가 큐레이션.</h2>
-        <p>모든 보고서는 발간 전에 시니어 분석가가 검토합니다. AI가 놓치는 오류를 잡고, 전략적 맥락을 더하고, 프레이밍을 다듬고, 무엇을 제거할지 판단합니다. <strong>인간의 사인오프 없이 발간되는 것은 없습니다.</strong></p>
-        <p>일본어와 한국어 판본의 경우, 원어민 검토자가 문화적 뉘앙스, 용어 정확성, 톤을 추가로 확인합니다. 기준은 도쿄나 서울의 시니어 바이어가 읽고 시장을 이해하는 사람이 작성했다고 느끼는지입니다.</p>
+        <h2 data-i18n="meth.step4Title">발간 전 검토.</h2>
+        <p data-i18n="meth.step4P1">모든 보고서는 공개 전 당사 리서치팀의 검토를 거칩니다. 수치가 출처와 일치하는지, 결론이 근거에서 도출되는지, 보고서가 처음 제기한 질문에 답하고 있는지를 확인합니다.</p>
+        <p data-i18n="meth.step4P2">일본어·한국어·중국어판은 검토를 마친 영어판을 번역한 것입니다. 수치, 명칭, 출처는 모든 언어에서 동일합니다.</p>
         <div class="step-detail">
-          <h4>분석가 검토 체크리스트</h4>
+          <h4 data-i18n="meth.step4DetailLabel">검토 체크리스트</h4>
           <ul>
-            <li>보고된 모든 수치를 출처에 대해 팩트체크</li>
-            <li>경쟁 포지셔닝 주장을 분석가 지식과 대조</li>
-            <li>규제·채널 주장을 현재 상황 맥락에서 확인</li>
-            <li>JA·KO 판본은 발간 전 원어민 검토</li>
-            <li>톤·프레이밍·전략적 명확성의 최종 검토</li>
+            <li data-i18n="meth.step4Detail1">보고된 수치를 태그된 출처와 대조</li>
+            <li data-i18n="meth.step4Detail2">출처 없는 주장은 삭제하거나 추정치로 표기</li>
+            <li data-i18n="meth.step4Detail3">규제 및 시장 관련 서술의 최신성 확인</li>
+            <li data-i18n="meth.step4Detail4">핵심 질문에 대한 답변, 결론의 근거 확인</li>
+            <li data-i18n="meth.step4Detail5">명료성과 어조에 대한 최종 검독</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Transparency -->
   <section class="transparency">
     <div class="container">
-      <h2>우리가 투명하게 공개하는 것.</h2>
-      <p class="lead">전달할 수 없는 AI 기반 정밀성은 주장하지 않습니다. 프로세스의 각 부분이 무엇에 강하고, 한계가 어디인지 정직하게 말씀드립니다.</p>
+      <h2 data-i18n="meth.transHeading">강점과 한계.</h2>
+      <p class="lead" data-i18n="meth.transLead">데스크 리서치에는 강점이 있는 영역과 한계가 있는 영역이 있습니다. 아래 구분은 보고서에 의존할 수 있는 경우와 추가 확인이 바람직한 경우를 보여 줍니다.</p>
       <div class="trans-grid">
         <div class="trans-col">
-          <h3>강점 영역</h3>
+          <h3 data-i18n="meth.transStrongLabel">데스크 리서치가 강한 영역</h3>
           <ul>
-            <li>동남아시아 시장의 구조적 이해 — 채널, 밸류체인, 규제 환경</li>
-            <li>커버 국가 주요 산업의 경쟁 환경 매핑</li>
-            <li>1차 조사 경력에 기반한 소비자 행동 패턴</li>
-            <li>데이터 조회뿐 아니라 분석가 판단이 필요한 교차 시장 비교</li>
+            <li data-i18n="meth.transStrong1">진출 관련 질문에 대한 구조화된 답변: 규모, 수요, 경쟁사, 규제, 시장 진입 경로</li>
+            <li data-i18n="meth.transStrong2">공시, 발표, 공개 데이터로 구성한 경쟁 구도</li>
+            <li data-i18n="meth.transStrong3">추적 가능한 수치, 각 수치마다 확인할 수 있는 출처</li>
+            <li data-i18n="meth.transStrong4">국가 간 일관된 구성으로 시장 비교 가능</li>
           </ul>
         </div>
         <div class="trans-col">
-          <h3>한계를 인정하는 영역</h3>
+          <h3 data-i18n="meth.transLimitLabel">한계가 있는 영역</h3>
           <ul>
-            <li>미래 예측은 추정 — 방향성이지 퍼센트포인트 정밀도가 아님</li>
-            <li>비공개 기업 재무는 완전히 보이지 않을 수 있음 — 추정은 명시</li>
-            <li>분산된 섹터는 집중된 섹터보다 불확실성 범위가 넓음</li>
-            <li>발간 후 실시간 사건은 업데이트 필요 — 마지막 갱신일을 명시</li>
+            <li data-i18n="meth.transLimit1">1차 현장 조사 없음: 보고서는 인터뷰, 설문, 채널 점검에 기반하지 않으므로, 현장의 세부 사항은 공개된 자료의 범위에 따라 달라집니다. 현장의 직접적인 관점은 Kira Experts를 통해 별도로 제공됩니다.</li>
+            <li data-i18n="meth.transLimit2">전망치는 추정치: 방향성을 보여 주며, 퍼센트포인트 단위까지 정확하지는 않음</li>
+            <li data-i18n="meth.transLimit3">비상장 기업의 재무 정보는 공개되지 않는 경우가 많음. 추정치는 명확히 표기</li>
+            <li data-i18n="meth.transLimit4">최종 갱신일 이후의 사건은 보고서가 갱신될 때까지 반영되지 않음</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- QA Flow -->
   <section class="container qa-flow">
-    <h2>모든 보고서의 엔드투엔드 QA.</h2>
+    <h2 data-i18n="meth.qaHeading">모든 보고서에 적용하는 품질 점검.</h2>
     <div class="qa-steps">
-      <div class="qa-step"><div class="key">QA · 01</div><h4>출처 검증</h4><p>보고된 모든 수치를 출처까지 추적. 불일치는 작성 전 표시.</p></div>
-      <div class="qa-step"><div class="key">QA · 02</div><h4>분석가 검토</h4><p>시니어 분석가가 전체 보고서를 읽음. 전략적 주장은 다듬거나 제거.</p></div>
-      <div class="qa-step"><div class="key">QA · 03</div><h4>원어민 검토</h4><p>JA·KO 판본은 원어민이 정확성과 톤을 검토.</p></div>
-      <div class="qa-step"><div class="key">QA · 04</div><h4>업데이트 사이클</h4><p>시장 변화에 따라 구매 후 12개월 내 무료 업데이트를 발간된 보고서에 제공.</p></div>
+      <div class="qa-step">
+        <div class="key">QA · 01</div>
+        <h4 data-i18n="meth.qa1Title">출처 태그</h4>
+        <p data-i18n="meth.qa1Body">보고된 모든 수치에 출처 태그를 붙입니다. 추적할 수 없는 수치는 사실로 내보내지 않습니다.</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 02</div>
+        <h4 data-i18n="meth.qa2Title">팀 검토</h4>
+        <p data-i18n="meth.qa2Body">당사 리서치팀이 발간 전 보고서를 읽습니다. 근거가 약한 주장은 보완하거나 삭제합니다.</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 03</div>
+        <h4 data-i18n="meth.qa3Title">일관된 번역</h4>
+        <p data-i18n="meth.qa3Body">각 언어판은 검토를 마친 영어판에서 번역되며, 수치와 출처가 동일합니다.</p>
+      </div>
+      <div class="qa-step">
+        <div class="key">QA · 04</div>
+        <h4 data-i18n="meth.qa4Title">갱신일 표시</h4>
+        <p data-i18n="meth.qa4Body">각 보고서에 최종 갱신일을 표시하여, 정보가 얼마나 최신인지 알 수 있습니다.</p>
+      </div>
     </div>
   </section>
 
   <section class="container">
     <div class="closing-cta">
-      <h3>작업물을 읽어보세요.</h3>
-      <p>방법론은 보고서가 그 기준에 부합해야만 의미가 있습니다. 라이브러리를 탐색하거나, 동일한 기준으로 구축된 맞춤 조사를 의뢰하세요.</p>
+      <h3 data-i18n="meth.closingHeading">결과물로 판단하십시오.</h3>
+      <p data-i18n="meth.closingBody">방법론은 보고서가 그 기준을 충족할 때에만 의미가 있습니다. 어떤 핵심 요약이든 읽어 보고 직접 판단하십시오.</p>
       <div class="actions">
         <a href="/ko/library" class="btn btn-primary">
-          <span>라이브러리 보기</span>
+          <span data-i18n="meth.closingCta1">라이브러리 둘러보기</span>
           <span class="btn-arrow">→</span>
         </a>
-        <a href="/ko/custom-research/" class="btn btn-secondary">맞춤 조사 의뢰</a>
+        <a href="/ko/pricing#waitlist" class="btn btn-secondary" data-i18n="meth.closingCta2">조기 이용 신청</a>
       </div>
     </div>
   </section>
