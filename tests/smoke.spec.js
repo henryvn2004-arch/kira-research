@@ -743,4 +743,10 @@ test.describe('library and insights pages', () => {
     expect(body.items.length).toBeGreaterThan(0);
     expect('cover' in body.items[0]).toBe(true);
   });
+
+  test('homepage headline numbers come from the live library', async ({ page, request }) => {
+    const body = await (await request.get('/api/library-list?locale=en&limit=1')).json();
+    await page.goto('/en/');
+    await expect(page.locator('[data-stat="reports"]')).toHaveText(String(body.facets.totalPublished), { timeout: 10000 });
+  });
 });
