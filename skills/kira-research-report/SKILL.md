@@ -60,6 +60,11 @@ Follow the stages in order. Each stage has a dedicated prompt file in `prompts/`
 - Prompt: [`prompts/confirm_step.md`](prompts/confirm_step.md)
 - Show user the section plan, estimated pages, source-tag distribution, data-integration plan (UC3). Wait for `APPROVE / EDIT [edits] / REJECT`.
 
+### Stage 3e — Naming (all routes)
+- Rules: [`docs/naming_convention.md`](docs/naming_convention.md). Vocabulary: `references/naming_vocab.json`.
+- Choose stage (`XPL` / `ENT` / `XPN`), segment and angle, then run `scripts/report-name.mjs`. Save its output as `outputs/batch/<id>/naming.json` (or next to the draft for UC2/UC3).
+- The code, slug, title, eyebrow, cover lines and keywords come from that file only. Never hand-write a slug or title.
+
 ### Stage 4 — Research (dual-language since M.1, LLM-inferred since M.4)
 - Use the native WebSearch tool. Don't fabricate citations.
 - **Dual-language pattern:** Fire English queries (from `query_strategy.json` etc.) AND local-language queries in parallel, then merge.
