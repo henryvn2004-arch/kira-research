@@ -519,15 +519,21 @@
         : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
       const navBtn = (dir, label) => '<button type="button" class="rd-pv-nav" data-pv="' + dir + '" aria-label="' + escapeHtml(label) + '">' +
         (dir < 0 ? '<span style="transform:scaleX(-1);display:inline-flex">' + R.icon('chev') + '</span>' : R.icon('chev')) + '</button>';
+      // Every page of the report can be paged through; pages after the free
+      // preview show a blurred free page under a lock (no locked content is
+      // ever sent to the browser).
+      const total = Math.max(PREVIEW_PAGES, Number(d.pages) || 0);
       return '<section class="rd-sec rpt-preview-section" id="preview">' +
         '<h2 class="rd-sec-h"><span class="ib">' + R.icon('pages') + '</span>' + escapeHtml(t('previewTitle')) + '</h2>' +
         '<div class="rd-preview" tabindex="0" aria-label="' + escapeHtml(t('previewTitle')) + '">' +
-          '<div class="rd-preview-frame" data-page="0">' +
+          '<div class="rd-preview-frame" data-page="0" data-total="' + total + '">' +
             '<iframe src="' + src + '" title="' + escapeHtml(t('previewTitle')) + '" loading="lazy" referrerpolicy="same-origin" width="' + PREVIEW_PAGE_W + '" height="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '" scrolling="no"></iframe>' +
+            '<div class="rd-pv-lock" hidden><div class="rd-pv-lock-card">' + R.icon('lock') +
+              '<div class="k"></div><h3>' + escapeHtml(t('lockedTitle')) + '</h3><p>' + escapeHtml(t('lockedPage')) + '</p>' + cta + '</div></div>' +
           '</div>' +
           '<div class="rd-preview-bar">' +
-            '<div class="rd-pv-ctl">' + navBtn(-1, t('prev')) + '<span class="rd-pv-pg">1 / ' + PREVIEW_PAGES + '</span>' + navBtn(1, t('next')) +
-              '<span class="rd-pv-note">' + escapeHtml(t('previewPages', PREVIEW_PAGES)) + (d.pages ? ' · ' + escapeHtml(t('nPages', d.pages)) : '') + '</span></div>' +
+            '<div class="rd-pv-ctl">' + navBtn(-1, t('prev')) + '<span class="rd-pv-pg">1 / ' + total + '</span>' + navBtn(1, t('next')) +
+              '<span class="rd-pv-note">' + escapeHtml(t('freePages', PREVIEW_PAGES)) + '</span></div>' +
             '<div class="rd-pv-ctl"><button type="button" class="rd-pv-nav" data-pv="fs" aria-label="Full screen">' + R.icon('expand') + '</button>' + cta + '</div>' +
           '</div>' +
         '</div></section>';
@@ -541,15 +547,22 @@
         const maxH = (full ? window.innerHeight : window.innerHeight * 0.9) - 70;
         const scale = Math.min(box.clientWidth / PREVIEW_PAGE_W, maxH / PREVIEW_PAGE_H);
         const page = Number(wrap.dataset.page) || 0;
+        const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
+        const locked = page >= PREVIEW_PAGES;
+        // A locked page shows one of the free pages 2–5, blurred, under the lock card.
+        const shown = locked ? 1 + ((page - PREVIEW_PAGES) % (PREVIEW_PAGES - 1)) : page;
         const tops = wrap._tops || [];
-        const top = tops[page] != null ? tops[page] : page * PREVIEW_PAGE_H;
+        const top = tops[shown] != null ? tops[shown] : shown * PREVIEW_PAGE_H;
+        iframe.style.filter = locked ? 'blur(7px)' : '';
+        const lock = wrap.querySelector('.rd-pv-lock');
+        if (lock) { lock.hidden = !locked; lock.querySelector('.k').textContent = t('pageOf', page + 1, total); }
         wrap.style.width = Math.round(PREVIEW_PAGE_W * scale) + 'px';
         wrap.style.height = Math.round(PREVIEW_PAGE_H * scale) + 'px';
         iframe.style.transform = 'translateY(' + (-top * scale) + 'px) scale(' + scale + ')';
         const pg = box.querySelector('.rd-pv-pg');
-        if (pg) pg.textContent = (page + 1) + ' / ' + PREVIEW_PAGES;
+        if (pg) pg.textContent = (page + 1) + ' / ' + total;
         box.querySelectorAll('[data-pv="-1"]').forEach(b => { b.disabled = page === 0; });
-        box.querySelectorAll('[data-pv="1"]').forEach(b => { b.disabled = page === PREVIEW_PAGES - 1; });
+        box.querySelectorAll('[data-pv="1"]').forEach(b => { b.disabled = page === total - 1; });
       });
     }
     function wirePreview() {
@@ -571,7 +584,8 @@
         fitPreviewFrame();
       });
       const go = step => {
-        wrap.dataset.page = String(Math.max(0, Math.min(PREVIEW_PAGES - 1, (Number(wrap.dataset.page) || 0) + step)));
+        const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
+        wrap.dataset.page = String(Math.max(0, Math.min(total - 1, (Number(wrap.dataset.page) || 0) + step)));
         fitPreviewFrame();
       };
       box.addEventListener('click', e => {
@@ -730,7 +744,7 @@
         (owns ? '' : renderPreviewFrame(d, locale)) +
         '<div class="rd rd-lower"><div class="rd-pad"></div><div class="rd-main">' +
             ((d.toc && d.toc.length) || (d.glossary_json && d.glossary_json.length)
-              ? '<section class="rd-sec" id="contents">' + renderContents(d.toc, owns) + renderGlossary(d.glossary_json) + '</section>' : '') +
+              ? '<section class="rd-sec" id="contents"><div class="rd-contents-narrow">' + renderContents(d.toc, owns) + '</div>' + renderGlossary(d.glossary_json) + '</section>' : '') +
             (owns ? renderFullBody(fullContent && fullContent.full_content) : '') +
             '<div id="rpt-key-players-slot"></div>' +
             continueHtml +
