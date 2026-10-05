@@ -555,6 +555,8 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 
 ## Gotchas learned the hard way
 
+0. **Static asset caching (2026-10-05).** `vercel.json` headers: HTML, `/css`, `/js` and `/locales` are `max-age=0, must-revalidate` (the browser revalidates, a 304 is cheap). With a browser cache of minutes, a deploy that changed HTML and CSS together showed new pages with the old stylesheet ("broken layout") until the cache expired. Header rules: the LAST matching source wins, so the `/(.*)` catch-all goes first. Functions under `/api` keep the Cache-Control they set themselves.
+
 1. **Vercel blocks deploys if commit author email isn't matched to a GitHub account.**
    - First-time setup on a new machine, MUST run:
      ```
