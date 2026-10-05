@@ -453,7 +453,9 @@ test.describe('SEO surface', () => {
     // Product JSON-LD
     await page.waitForSelector('script#ld-product', { state: 'attached', timeout: 5_000 });
     const productText = await page.locator('script#ld-product').textContent();
-    const product = JSON.parse(productText);
+    const productLd = JSON.parse(productText);
+    // The page emits a @graph (Product + Dataset); older shape was a bare Product.
+    const product = productLd['@graph'] ? productLd['@graph'].find(n => n['@type'] === 'Product') : productLd;
     expect(product['@type']).toBe('Product');
     expect(product.offers.priceCurrency).toBe('USD');
 
