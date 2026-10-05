@@ -251,6 +251,8 @@
       // Event delegation — options are re-rendered on every fetch.
       function choose(el) {
         const group = el.dataset.filter;
+        // Only known filter groups may be written (the attribute comes from the DOM).
+        if (!['stage', 'type', 'country', 'industry', 'year'].includes(group)) return;
         const value = el.dataset.value || '';
         state[group] = (state[group] === value) ? '' : value;
         fetchAndRender();
