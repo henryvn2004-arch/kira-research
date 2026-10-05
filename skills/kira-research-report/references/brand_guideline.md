@@ -41,6 +41,8 @@ In all copy, code, comments, and metadata produced by this skill:
 
 ## Source tagging (mandatory on every quantitative claim)
 
+> **Superseded by Phase L.3.** Use `[Kira estimates]` for KIRA-derived figures and `[<Source Alias> <Year>]` for cited sources, with the full citation in the page-bottom source key (spec: `prompts/content_per_section.md` Step 5). The table below is kept for history only; do not use `[primary]` / `[secondary]` / `[estimate]` in new reports.
+
 Inline tags in content. The renderer maps them to colored chips via `master_styles.css` (`.data-tag.primary` blue / `.secondary` green / `.estimate` amber).
 
 | Tag | Meaning | When to use |

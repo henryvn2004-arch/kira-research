@@ -18,7 +18,7 @@ Read `references/brand_guideline.md` in full. The bullets below are the absolute
 1. **Never** mention these in any output (HTML, PDF, code, metadata, filenames): `Claude`, `McKinsey`, `Mordor`, `Frost`, `Euromonitor`, `Synovate`, `Ipsos`, `IMARC`, or the internal source-archive R-numbers (R0152 etc.).
 2. **Never** position KIRA as an "AI-powered platform / SaaS / app". KIRA is a *research house*. Authorial voice: "our analysts", "our research team", "we" — never "our platform".
 3. **Never** lead with "AI" in headlines or marketing copy. AI mentions belong inside dedicated AI-impact sections.
-4. **Every quantitative claim carries a source tag** inline: `[primary]`, `[secondary]`, `[estimate]`, or `[user-input]` (UC3 only). The render pipeline will refuse pages with un-tagged numbers.
+4. **Every quantitative claim carries a source tag** inline (Phase L.3): `[Kira estimates]` for KIRA-derived figures, `[<Source Alias> <Year>]` for cited sources (full citation in the page-bottom source key), or `[user-input]` (UC3 only). The old `[primary]` / `[secondary]` / `[estimate]` tags are retired. Spec: `prompts/content_per_section.md` Step 5.
 5. **Headlines use sentence case.** "A market at inflection." not "A Market At Inflection".
 6. **Char budgets in `schemas/page_schemas.json` are hard caps.** If content exceeds budget, regenerate the offending section at -15% and retry. Max 3 retries before flagging.
 7. **No filler.** Drop "It is worth noting", "In conclusion", "It goes without saying". Every sentence carries weight.
@@ -36,8 +36,13 @@ Follow the stages in order. Each stage has a dedicated prompt file in `prompts/`
 
 ### Stage 2 — Orchestrator / mode router
 - Prompt: [`prompts/orchestrator.md`](prompts/orchestrator.md)
-- Decides: UC1 (template match), UC2 (design mode), or UC3 (data-grounded)
+- Decides: BRAIN (question-led, default when the brain is available), UC1 (template match), UC2 (design mode), or UC3 (data-grounded)
 - Reads `schemas/template_registry.yaml` to score blueprint matches
+
+### Stage 3d — BRAIN path: question-led plan (default when the brain is available)
+- Prompt: [`prompts/brain_route.md`](prompts/brain_route.md)
+- Frames the topic as a buyer question (default buyer: a Japanese or Korean company), runs the KIRA brain (private repo `kira-pipeline`, env `KIRA_BRAIN_DIR`) to pick the analyses, and emits a `section_plan.json` in the design-mode format: answer first, one chapter per analysis, conditions to win, risks, options scorecard, stage-gate plan.
+- Brain artifacts stay in a temp folder outside this repo — never commit them.
 
 ### Stage 3a — UC1 path: template binding
 - Reads `templates/blueprints/<blueprint_id>/manifest.yaml` + `section_structure.json` + `query_strategy.json`
@@ -96,6 +101,7 @@ Follow the stages in order. Each stage has a dedicated prompt file in `prompts/`
 |---|---|---|---|
 | User uploaded files | **UC3** | Draft | Yes |
 | `--design` flag | **UC2** | Draft | Yes |
+| Brain available (no flag forcing another mode) | **BRAIN** | Publish | No |
 | `--template <id>` flag | **UC1** | Publish | No |
 | Topic matches a blueprint w/ confidence ≥ 0.7 | **UC1** | Publish | No |
 | Otherwise | **UC2** | Draft | Yes |
@@ -136,6 +142,7 @@ templates/
 prompts/
 ├── topic_parser.md
 ├── orchestrator.md
+├── brain_route.md                          ← BRAIN (question-led, default)
 ├── design_mode_planner.md                  ← UC2
 ├── data_ingestion.md                       ← UC3
 ├── confirm_step.md

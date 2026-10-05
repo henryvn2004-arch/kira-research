@@ -64,7 +64,9 @@ These 3 env vars must be present (set in Windows User scope, mirrored from Verce
 node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>{const v=process.env[k];console.log(k+'='+(v&&v.length?'SET':'MISSING'))})"
 ```
 
-If ANY prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
+Also check the brain (private repo `kira-pipeline`, cloned next to this repo or at env `KIRA_BRAIN_DIR`): `node -e "const p=require('path'),f=require('fs');const b=process.env.KIRA_BRAIN_DIR||p.resolve('..','kira-pipeline','brain');console.log('BRAIN='+(f.existsSync(p.join(b,'runner','retrieve.py'))?b:'MISSING'))"`. A missing brain is NOT fatal: Stage A falls back to UC1/UC2. Note it in the fire summary.
+
+If ANY of the 3 env vars prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
 
 ---
 
@@ -195,9 +197,11 @@ If push fails (remote ahead): `git pull --rebase origin main` → re-read CSV (i
 
 Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sellable core — see Model routing) and this prompt (substitute `${...}` fields):
 
-> Generate a KIRA Research market analysis report. Load the skill at `skills/kira-research-report/SKILL.md` and follow its standard pipeline: topic_parser → orchestrator → content_per_section → chart_generator → render_and_output. Use UC1 (template) or UC2 (design mode) — whichever the orchestrator selects.
+> Generate a KIRA Research report. Load the skill at `skills/kira-research-report/SKILL.md` and follow its standard pipeline: topic_parser → orchestrator → (brain_route | blueprint | design mode) → research → content_per_section → chart_generator → render_and_output. Use the route the orchestrator selects (BRAIN when the brain is available at `${brain_dir}`).
 >
-> Topic: `${topic}` · Country: `${country}` · Industry: `${industry}` · Year: `${year}`
+> Queue id: `${id}` · Topic: `${topic}` · Country: `${country}` · Industry: `${industry}` · Year: `${year}`
+>
+> BRAIN route: keep framing, context pack and brain trace in `<os temp dir>/kira-brain/${id}/` — never inside this repo.
 >
 > Write HTML to `skills/kira-research-report/outputs/batch/${id}/en.html`, PDF to `…/en.pdf` (render via `/api/render-pdf` with `PDF_RENDER_SECRET`).
 >
@@ -223,6 +227,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 1. Parse return message for "X planned, Y generated" — if `X != Y` → failure path with `error_log: EN section count mismatch X/Y`
 2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf` — both must exist and be non-empty (> 1KB)
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
+4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `data/report_queue.csv` and `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
 
 **Step 3 retry path** (anti-positioning leaks specifically — not the other failures): if grep returns hits, do NOT immediately fail. Instead, spawn one more `general-purpose` subagent fire with this prompt:
 

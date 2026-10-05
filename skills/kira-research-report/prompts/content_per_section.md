@@ -11,6 +11,7 @@ For each section to generate:
 - The page-type schema from `schemas/page_schemas.json`
 - The voice rules from `prompts/voice_guide.md` (refresh in context if you've drifted)
 - **The active industry overlay** (if any), loaded from `overlays/<id>.yaml` per orchestrator output
+- **BRAIN route only:** the plan's `buyer_question` and the section's `analysis_brief`. Draft the section to answer its part of the buyer question: apply the brief's method and decision rule, end with the "so what" for the buyer. The executive summary states the answer (go / no-go / conditional and why), not a market description. Never mention the brain, analyses by internal name, the archive, past projects or clients.
 
 ## Execution pattern (CRITICAL — do not deviate)
 
