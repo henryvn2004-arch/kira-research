@@ -6,13 +6,15 @@
 //     --id 2026-ph-fmcg --country "Philippines" --industry "FMCG" \
 //     --angle "sari-sari store modernisation and modern-trade ceiling" \
 //     --out skills/kira-research-report/outputs/batch/2026-ph-fmcg/cover.jpg \
-//     [--style flat_editorial] [--dry-run]
+//     [--style flat_editorial] [--quality high|medium|low] [--dry-run]
 //
 // The style rotates across reports (stable hash of --id) unless --style is set.
 // Prints one JSON line {ok, style, model, out, prompt}. Exit 3 = no key / API
 // failure: the caller keeps the cover without an illustration (cover--plain).
 // Env: OPENAI_API_KEY (required), OPENAI_IMAGE_MODEL (default gpt-image-2),
-//      OPENAI_IMAGE_QUALITY (low | medium | high, default high).
+//      OPENAI_IMAGE_QUALITY (low | medium | high, default high; --quality wins).
+// Report covers are printed on the PDF cover: high (~5,500 image tokens).
+// Insight images are web-only: medium (~1,400 tokens, about a quarter of the cost).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -35,6 +37,13 @@ const STYLES = {
   aerial_photo: 'High-key editorial aerial photograph from a drone, early-morning soft light, cool blue colour grade, crisp detail, airy and bright, like a premium annual-report photograph.',
   risograph: 'Two-colour risograph print in KIRA blue and navy on off-white paper, visible grain and halftone texture, slight ink overlap, bold simplified shapes.',
   clay_3d: 'Soft 3D clay render of a small stylised scene, rounded forms, pastel blue and white materials, gentle global illumination, playful but polished.',
+  blueprint: 'Technical blueprint drawing: precise fine blue linework, dimension-free construction lines and cutaway details on pale blue-white drafting paper; engineering-plate elegance.',
+  linocut: 'Linocut relief print in deep blue ink on white paper, bold carved lines and hatching, hand-printed texture, strong silhouettes.',
+  midcentury_poster: 'Mid-century travel-poster illustration in gouache, simplified forms, flat blue tonal layers, subtle paper texture, confident graphic composition.',
+  low_poly: 'Faceted low-poly 3D illustration, crisp triangular facets in graded blues and white, soft ambient light, clean and modern.',
+  tilt_shift_photo: 'Tilt-shift miniature-effect photograph from a high viewpoint, shallow focus band across the scene, bright daylight, cool blue grading, toy-like detail.',
+  duotone_photo: 'Editorial documentary photograph rendered as a navy-and-KIRA-blue duotone, rich contrast, fine grain, magazine-feature feel.',
+  glass_3d: 'Glossy 3D render of the scene built from frosted glass and soft blue translucent materials, subtle refraction, white studio background, premium tech-report feel.',
 };
 const names = Object.keys(STYLES);
 const hash = [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -61,7 +70,7 @@ try {
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
     body: JSON.stringify({
       model, prompt, n: 1, size: '1536x1024',
-      quality: process.env.OPENAI_IMAGE_QUALITY || 'high',
+      quality: arg('quality') || process.env.OPENAI_IMAGE_QUALITY || 'high',
       output_format: 'jpeg', output_compression: 85,
     }),
   });
@@ -75,7 +84,7 @@ try {
   if (!/\.jpe?g$/i.test(out)) throw new Error('--out must end in .jpg');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, img);
-  console.log(JSON.stringify({ ok: true, style, model, out, bytes: fs.statSync(out).size, prompt }));
+  console.log(JSON.stringify({ ok: true, style, model, out, bytes: fs.statSync(out).size, usage: j.usage || null, prompt }));
 } catch (e) {
   console.log(JSON.stringify({ ok: false, error: String(e.message || e), style, model }));
   process.exit(3);
