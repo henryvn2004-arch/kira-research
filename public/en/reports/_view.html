@@ -41,7 +41,7 @@
   <!-- nav + footer injected by /js/nav.js -->
 
   <div id="rpt-root">
-    <div class="r-container" style="padding-block:96px;text-align:center;color:var(--muted)">…</div>
+    <div class="r-container rd-loading" style="padding-block:96px;text-align:center;color:var(--muted)">…</div>
   </div>
 
   <!-- Locked-section dialog: opened from a locked row in the contents. -->
@@ -303,6 +303,7 @@
       setMetaContent('meta-og-locale',      ogLocale);
       setMetaContent('meta-tw-title',       fullTitle);
       setMetaContent('meta-tw-description', description);
+      if (d.cover) { setMetaContent('meta-og-image', d.cover.full); setMetaContent('meta-tw-image', d.cover.full); }
 
       // ── hreflang ────────────────────────────────────────
       ['en','ja','ko','zh'].forEach(loc => {

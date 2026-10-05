@@ -46,7 +46,7 @@
       emailPh: 'Your work email', subscribe: 'Subscribe', subscribed: 'Thank you. We will be in touch.', subscribeErr: 'Please enter a valid email.',
       exploreLib: 'Explore the research library', exploreLibBody: 'Every market we cover, with free executive summaries.', browseLib: 'Browse the library',
       getFull: 'From the report', getFullBody: 'This field note draws on a published report. The report adds the full data, segment views and our analysis.',
-      openReport: 'Open the report', relatedInsights: 'Related insights', more: 'More', viewAll: 'View all insights',
+      openReport: 'Open the report', relatedInsights: 'Related insights', latestReports: 'Latest reports', more: 'More', viewAll: 'View all insights',
       onThisPage: 'On this page'
     },
     ja: {
@@ -85,7 +85,7 @@
       emailPh: '勤務先のメールアドレス', subscribe: '登録する', subscribed: 'ご登録ありがとうございます。', subscribeErr: '有効なメールアドレスを入力してください。',
       exploreLib: 'リサーチライブラリ', exploreLibBody: '対象のすべての市場を、無料のエグゼクティブサマリー付きで。', browseLib: 'ライブラリを見る',
       getFull: 'レポートより', getFullBody: 'この記事は公開済みのレポートに基づいています。レポートでは詳細なデータ、セグメント別の分析、当社の見解をご覧いただけます。',
-      openReport: 'レポートを開く', relatedInsights: '関連インサイト', more: 'その他', viewAll: 'すべてのインサイト',
+      openReport: 'レポートを開く', relatedInsights: '関連インサイト', latestReports: '最新のレポート', more: 'その他', viewAll: 'すべてのインサイト',
       onThisPage: 'このページの内容'
     },
     ko: {
@@ -124,7 +124,7 @@
       emailPh: '업무용 이메일', subscribe: '구독하기', subscribed: '감사합니다. 곧 연락드리겠습니다.', subscribeErr: '유효한 이메일을 입력해 주십시오.',
       exploreLib: '리서치 라이브러리', exploreLibBody: '당사가 다루는 모든 시장을 무료 요약과 함께 확인하십시오.', browseLib: '라이브러리 보기',
       getFull: '보고서에서', getFullBody: '이 인사이트는 발행된 보고서를 바탕으로 합니다. 보고서에는 상세 데이터, 세그먼트별 분석과 당사의 견해가 담겨 있습니다.',
-      openReport: '보고서 열기', relatedInsights: '관련 인사이트', more: '더보기', viewAll: '전체 인사이트',
+      openReport: '보고서 열기', relatedInsights: '관련 인사이트', latestReports: '최신 보고서', more: '더보기', viewAll: '전체 인사이트',
       onThisPage: '이 페이지의 내용'
     },
     zh: {
@@ -163,7 +163,7 @@
       emailPh: '您的工作邮箱', subscribe: '订阅', subscribed: '感谢订阅，我们会与您联系。', subscribeErr: '请输入有效的邮箱地址。',
       exploreLib: '研究报告库', exploreLibBody: '我们覆盖的所有市场，均附免费执行摘要。', browseLib: '浏览报告库',
       getFull: '出自报告', getFullBody: '本文基于一份已发布的报告。完整报告提供详细数据、细分市场分析和我们的观点。',
-      openReport: '打开报告', relatedInsights: '相关洞察', more: '更多', viewAll: '查看全部洞察',
+      openReport: '打开报告', relatedInsights: '相关洞察', latestReports: '最新报告', more: '更多', viewAll: '查看全部洞察',
       onThisPage: '本页内容'
     }
   };
@@ -180,8 +180,8 @@
   window.kiraR = {
     locale,
     t(key, ...a) { const v = (S[locale] && S[locale][key]) ?? S.en[key]; return typeof v === 'function' ? v(...a) : (v ?? key); },
-    country(name) { const k = String(name || '').toLowerCase(); return (COUNTRY[locale] || {})[k] || titleCase(name); },
-    sector(name) { return titleCase(name); },
+    country(name) { const k = String(name || '').toLowerCase().replace(/-/g, ' '); return (COUNTRY[locale] || {})[k] || titleCase(k); },
+    sector(name) { return titleCase(String(name || '').replace(/-/g, ' ')); },
     date(iso, style) {
       if (!iso) return '';
       const d = new Date(iso); if (isNaN(d)) return '';

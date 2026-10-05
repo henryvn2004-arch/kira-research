@@ -68,7 +68,7 @@ test.describe('dynamic report page (rewrite)', () => {
     // _view.html always renders the breadcrumb container first.
     // Multi-selector matches whichever state the page is in (loaded, 404,
     // or loading). .first() avoids strict-mode if more than one is in the DOM.
-    await expect(page.locator('.rpt-breadcrumb, .rpt-404, .rpt-loading').first()).toBeVisible();
+    await expect(page.locator('.r-crumbs, .r-empty, .rd-loading').first()).toBeVisible();
 
     // Confirm we landed on _view's HTML (not a 404 page from Vercel).
     // Title casing is "KIRA Research" (mixed case) — match case-insensitively.
@@ -81,7 +81,7 @@ test.describe('dynamic report page (rewrite)', () => {
     // the page should still render its 404 message (still proves rewrite works).
     const res = await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
     expect(res.status()).toBeLessThan(400);
-    await expect(page.locator('.article-breadcrumb, .art-404, .art-loading').first()).toBeVisible();
+    await expect(page.locator('.r-crumbs, .r-empty, .art-loading').first()).toBeVisible();
   });
 
   // Dynamic templates use <script type="module"> + top-level await. A latent
@@ -506,7 +506,7 @@ test.describe('SEO surface', () => {
     // page enters the 404 branch — in that case the schema injection never
     // runs, so we condition the assertions on the loaded-state breadcrumb.
     await page.goto('/en/reports/vietnam-fintech-2026', { waitUntil: 'networkidle' });
-    const loaded = await page.locator('.rpt-breadcrumb').count();
+    const loaded = await page.locator('.rd-main').count();
     test.skip(loaded === 0, 'report data not available in this environment');
 
     // OG tags filled by updateHead()
@@ -534,7 +534,7 @@ test.describe('SEO surface', () => {
 
   test('/en/insights/<slug> injects OG + Article JSON-LD when data loads', async ({ page }) => {
     await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
-    const loaded = await page.locator('.article-breadcrumb').count();
+    const loaded = await page.locator('.art-hero').count();
     test.skip(loaded === 0, 'insight data not available in this environment');
 
     const ogType = await page.locator('meta[property="og:type"]').getAttribute('content');
@@ -701,5 +701,39 @@ test.describe('mobile viewport sanity (375×667)', () => {
     await expect(page.locator('.nav-burger')).toBeVisible();
     // Desktop .nav-links is display:none at this width.
     await expect(page.locator('.nav-wrap .nav-links')).toBeHidden();
+  });
+});
+
+// ── Library + insights redesign (covers, compact rows) ──
+test.describe('library and insights pages', () => {
+  for (const locale of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${locale}/library renders report rows`, async ({ page }) => {
+      const errors = [];
+      page.on('pageerror', e => errors.push(e.message));
+      await page.goto(`/${locale}/library`, { waitUntil: 'networkidle' });
+      await expect(page.locator('.lrow, .r-empty').first()).toBeVisible();
+      expect(errors, errors.join(' | ')).toEqual([]);
+    });
+    test(`/${locale}/insights/ renders article cards`, async ({ page }) => {
+      const errors = [];
+      page.on('pageerror', e => errors.push(e.message));
+      await page.goto(`/${locale}/insights/`, { waitUntil: 'networkidle' });
+      await expect(page.locator('.ins-feature, .rcard, .r-empty').first()).toBeVisible();
+      expect(errors, errors.join(' | ')).toEqual([]);
+    });
+  }
+
+  test('library filter sheet opens on a phone', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/en/library', { waitUntil: 'networkidle' });
+    await page.click('[data-open="filters"]');
+    await expect(page.locator('.sheet.open .sheet-panel')).toBeVisible();
+  });
+
+  test('/api/library-list items carry a cover field', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&limit=4');
+    const body = await r.json();
+    expect(body.items.length).toBeGreaterThan(0);
+    expect('cover' in body.items[0]).toBe(true);
   });
 });
