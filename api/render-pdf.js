@@ -108,6 +108,17 @@ export default async function handler(req, res) {
           return (cs.overflow === 'hidden' || cs.overflowY === 'hidden')
             && el.scrollHeight > el.clientHeight + 4;
         }).map(el => ({ class_name: el.getAttribute('class'), overflow_px: el.scrollHeight - el.clientHeight }));
+        // Content spilling out of a layout grid cell over the next block
+        // (e.g. a flow diagram running into the takeaway bar).
+        p.querySelectorAll('.layout').forEach(lay => {
+          const box = lay.getBoundingClientRect();
+          lay.querySelectorAll('*').forEach(el => {
+            const r = el.getBoundingClientRect();
+            if (r.height && (r.bottom > box.bottom + 4 || r.right > box.right + 4)) {
+              clipped.push({ class_name: el.getAttribute('class') || el.tagName, overflow_px: Math.round(Math.max(r.bottom - box.bottom, r.right - box.right)) });
+            }
+          });
+        });
         if (actualHeight > 720 || clipped.length) {
           overflows.push({
             page_index: i,

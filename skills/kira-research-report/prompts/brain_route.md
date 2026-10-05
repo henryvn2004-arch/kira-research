@@ -68,13 +68,13 @@ The anti-padding rule is the only cut: a page with no new data-backed claim is d
 | Opening | Cover | `cover`. Subtitle = the buyer question, ≤80 chars. |
 | Opening | Methodology | `methodology_inline` |
 | Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
-| Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-hero` or `layout-main-side`. Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. Content: a `big_number` or chart with the deciding fact, plus 3 reasons in the commentary. |
+| Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-main-side` (exhibit or `big_number` + commentary with the 3 reasons) or `layout-hero` (big number + chart, reasons in the takeaway and on page 2). Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. |
 | Executive summary, page 2 | Why | `exhibit_page`. The supporting arguments as a `comparison_table` or short cards, and the recommended move in the takeaway. |
 | Chapter openers | Dividers | `divider`. Title = the chapter's claim; thesis = the tension it resolves. |
 | Body | One or more pages per analysis | `exhibit_page` by default. The older specialised types (`competitive_profile_deep`, `channel_waterfall`, `policy_timeline`, `persona_profile`) may be used when they fit better. |
 | Decision chapter | Conditions to win | `exhibit_page` with a `comparison_table`: condition / how sure we are / how to test it. Any number of conditions. |
 | Decision chapter | Risks | `risk_matrix`, or `exhibit_page` with a `heatmap`. |
-| Decision chapter | Options compared | `decision_scorecard`, or `exhibit_page` with a `comparison_table`. Use when real alternatives exist. |
+| Decision chapter | Options compared | `decision_scorecard` (use it here, and do not repeat the same grid as a `comparison_table` elsewhere; a `matrix_2x2` of the options in the body complements it). Use when real alternatives exist. |
 | Decision chapter | Recommended path | `stage_gate_plan`, or `exhibit_page` with a `timeline` (Gantt with gates) plus a `comparison_table` of gate tests and budgets. Then a first-90-days page if it does not fit. |
 | Last | Methodology & sources | `methodology_endnote` (may run to 2 pages) |
 

@@ -51,7 +51,7 @@ The exhibit frame:
 ```
 
 **Writing rules for the words on the page.**
-- Action title: one sentence of 70-90 characters that states the conclusion, e.g. "Taxes take 22% of the shelf price, more than the whole distribution chain". Do not write a topic label like "Price build-up". One line is best and two lines is the maximum.
+- Action title: one sentence that states the conclusion — aim for one line (≤90 characters), two lines (≤120) at most, e.g. "Taxes take 22% of the shelf price, more than the whole distribution chain". Do not write a topic label like "Price build-up". One line is best and two lines is the maximum.
 - Kicker: one line of context or reading guidance. The exhibit title names *what* is shown. The page title says *so what*.
 - Commentary: an `h3` heading, two short paragraphs that each open with a bold claim, and at most one `.callout-box` (Watch / Caveat / Implication / What would change it).
 - Takeaway: one sentence that says what the reader should do. Do not repeat the title.
@@ -74,6 +74,12 @@ The exhibit frame:
 11. **Limit the clutter.** Show at most 3 series per line chart, 4-5 segments per stack, 6 donut slices and 8-10 bars. Fold the rest into "Other" or split the data into small multiples.
 
 ---
+
+**Source key on exhibit pages.** The page-bottom `.source-key` uses short citations (`alias = publisher, title, year`) and stays within 2 lines. Full citations go only in the methodology endnote. A page citing more than 6 sources should be split, or should move secondary citations into `.exhibit-note`.
+
+**Dumbbell variant of `range`.** When each row compares two points (before and after, or this market against a peer), draw a `range` row as a dumbbell: two dots joined by a line, with the value and its year at each end. Rows with different start years are fine if each end is labelled.
+
+**Tile maps use current administrative regions.** Check the latest regional list before drawing; the gallery grids are illustrative (the Philippine grid there predates the Negros Island Region).
 
 ## 3. Layouts and space budget
 
