@@ -111,6 +111,7 @@ Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English 
 - Archive analogues in the pack give structure and hypotheses only. **Never** present a number from them as current; every number in the report comes from Stage 4 research and carries a source tag.
 - Source tags follow `content_per_section.md` Step 5 (`[Kira estimates]` / `[<Alias> <Year>]`), not the numbered [n] style of the brain's chat format.
 - Check labels before writing (brain procedure step 6): every number keeps its source's scope — country, category, year, currency, list vs actual. A chart or comparison uses one measurement base and one period; never set "grocery spend" against "FMCG value", or 2024 against 2026, without saying so on the chart.
+- Deals and rules have dates: say "agreed" vs "completed" (a stake increase that closes next year is not done yet), and quote legal thresholds in the law's own currency (e.g. PHP 25 mn, with a USD conversion in brackets if useful).
 - Be decisive where evidence allows; state what is uncertain. Estimates are ranges with the logic shown.
 - "Platform" may describe a third party's service in plain words (e.g. "an eB2B ordering network", "a marketplace"); never describe KIRA or its work as a platform.
 - The caller may override `default_output_mode` (e.g. `draft` for a test run).
