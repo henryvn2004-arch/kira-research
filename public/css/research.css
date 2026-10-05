@@ -204,6 +204,14 @@
 .rd-pv-nav:disabled { opacity: .35; cursor: default; }
 .rd-pv-pg { font-variant-numeric: tabular-nums; min-width: 44px; text-align: center; }
 .rd-pv-note { color: rgba(255,255,255,.7); margin-left: 6px; }
+.rd-pv-lock { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(15,23,42,.18); }
+.rd-pv-lock[hidden] { display: none; }
+.rd-pv-lock-card { background: #fff; border-radius: 12px; padding: 22px 24px; max-width: 360px; width: calc(100% - 32px); text-align: center; box-shadow: 0 10px 40px rgba(15,23,42,.25); display: grid; justify-items: center; gap: 8px; }
+.rd-pv-lock-card .ic { width: 26px; height: 26px; color: var(--primary); }
+.rd-pv-lock-card .k { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-dim); }
+.rd-pv-lock-card h3 { margin: 0; font-size: 18px; }
+.rd-pv-lock-card p { margin: 0 0 6px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+@media (min-width: 1181px) { .rd-contents-narrow { display: none; } }
 .rd + .rpt-preview-section { margin-top: -24px; }
 .rd-lower { padding-block: 32px 72px; }
 
@@ -369,4 +377,9 @@
 }
 @media (prefers-reduced-motion: reduce) { .rcard, .fgrp > button.fgrp-head .ic { transition: none; } }
 
-@media (max-width: 640px) { .rd-pv-note { display: none; } }
+@media (max-width: 640px) {
+  .rd-pv-note { display: none; }
+  .rd-pv-lock-card { padding: 12px 14px; gap: 4px; }
+  .rd-pv-lock-card p, .rd-pv-lock-card .r-btn { display: none; }
+  .rd-pv-lock-card h3 { font-size: 15px; }
+}
