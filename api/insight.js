@@ -9,6 +9,8 @@
 // related reports so the article page can link them.
 // ============================================================
 
+import { coverUrls } from './_lib/cover.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -115,7 +117,7 @@ export default async function handler(req, res) {
     if (Array.isArray(base.related_report_slugs) && base.related_report_slugs.length) {
       const slugList = encodeURIComponent('(' + base.related_report_slugs.join(',') + ')');
       const reportRows = await sb(
-        `living_reports?slug=in.${slugList}&status=eq.published&select=id,slug,country,industry,year,price`
+        `living_reports?slug=in.${slugList}&status=eq.published&select=id,slug,country,industry,year,price,pages,cover_url,cover_thumb_url`
       );
       const reportIds = (reportRows || []).map(r => r.id);
       let titleByReport = new Map();
@@ -141,6 +143,8 @@ export default async function handler(req, res) {
           industry: r.industry,
           year:     r.year,
           price:    r.price,
+          pages:    r.pages || null,
+          cover:    coverUrls(r),
           title:    (t && t.title) || null,
           excerpt:  lede ? String(lede).slice(0, 180) : null
         };
@@ -164,7 +168,7 @@ export default async function handler(req, res) {
           `&status=eq.published` +
           `&published_at=lte.${encodeURIComponent(nowIso)}` +
           `&id=neq.${base.id}` +
-          `&select=id,slug,country,industry,category,published_at` +
+          `&select=id,slug,country,industry,category,published_at,cover_url,cover_thumb_url` +
           `&limit=24`;
         const candRows = await sb(`insights?${candWhere}`);
         const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
@@ -200,6 +204,8 @@ export default async function handler(req, res) {
               country:  c.country,
               industry: c.industry,
               category: c.category,
+              published_at: c.published_at,
+              cover:    coverUrls(c),
               title:    (t && t.title) || null
             };
           }).filter(x => x.title); // hide rows we couldn't get a title for
@@ -217,6 +223,7 @@ export default async function handler(req, res) {
       industry:       base.industry,
       published_at:   base.published_at,
       featured:       !!base.featured,
+      cover:          coverUrls(base) || (relatedReports.find(r => r.cover) || {}).cover || null,
 
       locale:         effectiveLocale,
       isFallback,

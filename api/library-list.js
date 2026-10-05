@@ -21,6 +21,8 @@
 // for the sidebar filter counts (plus years, stages, types).
 // ============================================================
 
+import { coverUrls } from './_lib/cover.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -115,7 +117,7 @@ export default async function handler(req, res) {
       `&order=${sort}` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,code,slug,country,industry,year,pages,price,stage,report_type`;
+      `&select=id,code,slug,country,industry,year,pages,price,stage,report_type,published_at,cover_url,cover_thumb_url`;
 
     const { rows: reports, total } = await sb(`living_reports?${baseQs}`);
 
@@ -157,6 +159,8 @@ export default async function handler(req, res) {
         price:    r.price,
         stage:    r.stage || null,
         type:     r.report_type || null,
+        published_at: r.published_at || null,
+        cover:    coverUrls(r),
         title:    (t && t.title) || null,
         excerpt:  (lede ? String(lede).slice(0, 240) : null),
         locale:   t ? t.locale : null,
