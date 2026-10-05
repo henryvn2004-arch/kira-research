@@ -10,9 +10,10 @@
 - [kira-research external resources](reference_kira_research.md) — prod URL, repo, Supabase, Vercel, GH Actions, raw URL pattern
 - [Year 1 = free-tier only, no paid SaaS](project_kira_paid_tools_year1.md) — owner declined Speed Insights; pattern: skip paid upgrades until revenue
 - [Don't hand-trace SVG glyphs](feedback_dont_hand_trace_svg_glyphs.md) — owner rejected hand-coded SVG as "xấu vãi"; ask for exported SVG or propose webfont swap instead
-- [Nav logo = text+CSS, logo.png ≠ nav](project_kira_logo_architecture.md) — `.logo-mark` is Satoshi 900 text + ::after parallelogram; logo.png only for og:image / JSON-LD / /auth
+- [Nav logo = image since PR #43](project_kira_logo_architecture.md) — `.logo-mark` now wraps `<img class="logo-img" src="/logo.png">` (22px / 15px mobile); `logo-white.png` for dark bg; `og-image.png` for shares. Old text+CSS render is history
 - [@sparticuz/chromium on Vercel: 3 non-obvious tweaks](feedback_sparticuz_chromium_vercel.md) — AWS_EXECUTION_ENV spoof, dynamic import, Buffer.from() wrap for base64
 - ["tool gen report" = the kira-research-report skill](project_tool_gen_report.md) — Henry's internal shorthand
+- [Writing pipeline revamp — DONE 2026-10-05](project_brain_report_pipeline.md) — BRAIN route + exhibit layer + gpt-image cover + closing + tagline "Know first. Move first." (PR #40/41/43/44). Batch machine needs `kira-pipeline` cloned alongside + `OPENAI_API_KEY` before routines restart
 - [KIRA batch cron system](project_batch_cron_system.md) — **Phase Q.7 (2026-07-29): 22 routine → 1** (`kira`, cron `0 18,21,0,3 * * *` = 3 batch + 1 insight fire/ngày, ~1 report/ngày). Cron là giờ LOCAL, không phải UTC
 - [PowerShell 5.1 ConvertTo-Json wraps long strings](feedback_powershell_convertto_json_string_wrap.md) — use Node for JSON-API bodies with big string fields
 - [KIRA A+ blueprint flex layer](project_a_plus_flex.md) — 3 customization layers (expand_slots + chart_options + industry overlays) so reports adapt per topic while preserving brand consistency

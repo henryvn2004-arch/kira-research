@@ -42,6 +42,13 @@ Source of truth: Vercel project env (kira-research → Settings → Environment 
 | `SUPABASE_URL` | `https://iygoynbnscednfzdsflc.supabase.co` |
 | `SUPABASE_SERVICE_KEY` | Bearer token for Supabase Storage + signed-URL gen |
 
+Since 2026-10-05 the writing pipeline also needs (see [[kira-brain-report-pipeline]]):
+
+| Var | Used for |
+|---|---|
+| `OPENAI_API_KEY` | Cover illustration (`scripts/gen-cover.mjs`). Without it, covers render plain. |
+| `KIRA_BRAIN_DIR` (optional) | Path to `kira-pipeline/brain`. Not needed if the private repo `kira-pipeline` is cloned in the same folder as `kira-research`. Without the brain, reports fall back to the old planning. |
+
 **Set via Windows UI (click-through):**
 1. Start menu → search "environment variables" → "Edit environment variables for your account"
 2. New → enter name + value for each of the 3
