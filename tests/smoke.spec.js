@@ -757,4 +757,14 @@ test.describe('library and insights pages', () => {
       await expect(page.locator('#home-stories .st-card')).toHaveCount(15, { timeout: 10000 });
     }
   });
+
+  test('use-case slider on library, experts and survey shows only that product', async ({ page }) => {
+    const want = { library: ['library.html', 5], experts: ['experts/', 5], survey: ['survey/', 4] };
+    for (const locale of ['en', 'ja', 'ko', 'zh']) {
+      for (const [prod, [path, n]] of Object.entries(want)) {
+        await page.goto('/' + locale + '/' + path.replace('.html', ''));
+        await expect(page.locator('#home-stories[data-product="' + prod + '"] .st-card')).toHaveCount(n, { timeout: 10000 });
+      }
+    }
+  });
 });
