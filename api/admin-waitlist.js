@@ -60,7 +60,7 @@ function cors(res) {
 }
 
 const STATUSES = ['new', 'contacted', 'converted', 'spam'];
-const PLANS    = ['week', 'month', 'annual', 'not-sure'];
+const PLANS    = ['report', 'week', 'month', 'annual', 'not-sure'];
 const UUID_RE  = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // ── Handler ────────────────────────────────────────────────

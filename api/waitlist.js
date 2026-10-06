@@ -6,7 +6,7 @@
 //   { email, name?, company?, role?, plan?, locale?, source?, hp }
 // → { ok: true }
 //
-//   plan    week | month | annual | not-sure   (default not-sure)
+//   plan    report | month | annual | not-sure (default not-sure; legacy 'week' still accepted)
 //   locale  en | ja | ko | zh                  (default en)
 //
 // Honeypot field `hp` should be empty; bots filling it get a fake success.
@@ -51,7 +51,7 @@ function cors(res) {
 // ── Validation ─────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOCALES  = new Set(['en', 'ja', 'ko', 'zh']);
-const PLANS    = new Set(['week', 'month', 'annual', 'not-sure']);
+const PLANS    = new Set(['report', 'week', 'month', 'annual', 'not-sure']);
 
 function pick(val, allowed, fallback) {
   return allowed.has(val) ? val : fallback;

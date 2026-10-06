@@ -4,18 +4,18 @@
 //
 // GET /api/topic?slug=2027-vn-modern-retail-convenience-stores-market-assessment
 //   → 200 { slug, title, buyer_question, questions[], country, country_code, industry,
-//           competency, year, kind, state, eta_days }
+//           competency, year, kind, state }
 //   → 200 { published: '<report slug>' }   the report exists now — page redirects
 //   → 404 { error: 'not_found' }
 //
-//   state     scoping | requested | approved | in_production
-//   eta_days  only for in_production: position in the queue / REPORTS_PER_DAY,
-//             rounded up. null otherwise (no date is promised before approval).
+//   state     scoping | approved | in_production
+//             proposed and requested (a reader-created topic nobody has reviewed)
+//             and any status not listed here read as scoping. No date is
+//             promised for any state: the queue moves at the pipeline's pace.
 // ============================================================
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const REPORTS_PER_DAY = 1;   // batch pipeline throughput (Q.7: one report per day)
 
 async function sb(path) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
   try {
     const rows = await sb(
       `topics?slug=eq.${encodeURIComponent(slug)}&status=neq.rejected&limit=1` +
-      '&select=slug,kind,year,title,buyer_question,questions,status,queued_at,report_id,' +
+      '&select=slug,kind,year,title,buyer_question,questions,status,report_id,' +
       'country:tax_countries(code,name),industry:tax_industries(name),competency:tax_competencies(label)'
     );
     if (!rows.length) return res.status(404).json({ error: 'not_found' });
@@ -51,12 +51,6 @@ export default async function handler(req, res) {
       }
     }
 
-    let etaDays = null;
-    if (t.status === 'queued' && t.queued_at) {
-      const ahead = await sb(`topics?status=eq.queued&report_id=is.null&queued_at=lt.${encodeURIComponent(t.queued_at)}&select=id&limit=1000`);
-      etaDays = Math.max(1, Math.ceil((ahead.length + 1) / REPORTS_PER_DAY));
-    }
-
     res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
     return res.status(200).json({
       slug: t.slug, title: t.title, buyer_question: t.buyer_question,
@@ -64,8 +58,7 @@ export default async function handler(req, res) {
       country: t.country ? t.country.name : null, country_code: t.country ? t.country.code : null,
       industry: t.industry ? t.industry.name : null, competency: t.competency ? t.competency.label : null,
       year: t.year, kind: t.kind,
-      state: t.status === 'proposed' ? 'scoping' : t.status === 'requested' ? 'requested' : t.status === 'approved' ? 'approved' : 'in_production',
-      eta_days: etaDays
+      state: t.status === 'queued' ? 'in_production' : t.status === 'approved' ? 'approved' : 'scoping'
     });
   } catch (err) {
     console.error('[topic]', err.message);

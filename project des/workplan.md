@@ -7,36 +7,166 @@
 
 ---
 
-## 🟣 Phase S — Library + Expert platform (decided 2026-10-05) — CURRENT
+## 🟣 Phase S — Library + Expert platform (decided 2026-10-05, revised 2026-10-06) — CURRENT
 
-**Positioning:** ASEAN market-entry intelligence for the teams that serve foreign investors (industrial-park sales, FDI law/accounting, banks' FDI desks, consultants, M&A/PE scouts, investment-promotion agencies). Not a "report publisher", not a custom-research shop (custom research is parked), not an AI tool.
+**Goal (owner, 2026-10-06):** a business that runs itself. Machines run the production loop; the owner approves and handles exceptions. Only a self-running model can scale.
 
-**Decisions locked with Henry (2026-10-05):**
-- Business: subscription library (not per-report) + expert-ebook platform later. Custom research → contact form only. Studio (self-serve gen) frozen as a product; code kept for the expert-interview tool.
-- Pricing (validate with waitlist first): **Week $49 · Month $99 · Annual $499**. Unlimited online reading; PDF download caps (Week 5, Month 20, Annual 30/month) to stop "subscribe, download everything, cancel". Per-report $39 purchase hidden (code kept).
+**Positioning:** ASEAN market-entry intelligence for foreign companies entering ASEAN domestic markets (JP/KR/CN/TW first) and the teams that serve them (industrial-park sales, FDI law/accounting, banks' FDI desks, consultants, M&A/PE scouts, investment-promotion agencies). Not a custom-research shop, not an AI tool.
+
+**Competitive view (2026-10-06):**
+- Buyers accept $2,000–3,000 syndicated studies because project-based research (JETRO, KOTRA, local agencies) is slow, expensive and not much more accurate.
+- The weakness of syndicated studies is fit: it is hard to find the exact product × market × country.
+- AI deep research (ChatGPT, Claude) solves fit. **It is KIRA Library's main competitor**, more than other research houses.
+
+**Why a buyer picks KIRA over their own deep research:**
+1. **Citable.** "Source: KIRA Research 2026" can go in a board deck or ringi (稟議) approval paper; "Source: ChatGPT" cannot.
+2. **Exact fit, fast.** A search with no report lands on a coming-soon page; the report is produced on demand.
+3. **No effort.** No prompting, no fact-checking. Exhibits download to PPT/Excel.
+4. **Data their AI cannot reach.** Vietnamese-language and provincial/ministry sources, customs data, Kira Chain.
+5. **Native JA/KO/ZH**, refreshed on a schedule.
+
+**Trust:**
+- Early trust comes from the brand plus visible proof: sample pages, every number sourced and dated, a methodology page, partners and press. Named analysts are not needed.
+- Do not look like a "report mill" (high-volume template publishers selling $3–7k list-price reports through aggregators).
+
+**Decisions locked with Henry:**
+
+General (2026-10-05)
+- Business: subscription library + expert platform. Custom research is parked as a separate product; within the library it is replaced by on-demand reports. Studio (self-serve generation) is frozen as a product; its code is kept for the expert-interview tool.
 - Hard constraints "no subscription" and "never claim volume" are **dropped**.
 - Locales: EN + JA + KO + **ZH (Simplified)**.
-- Countries: 10 ASEAN + Australia + New Zealand + Taiwan (extensible). Per-country industry list, different size and priority per country (big/hot markets many industries, small ones a few).
-- Industry = **market-seeking FDI** only: sectors where foreign firms (JP/KR/CN/TW/…) want to sell into the *domestic* market. Export-oriented/efficiency-seeking FDI (e.g. Samsung assembling in VN to export) is out of scope.
-- Competency follows industry and investor stage (explore → enter → expand). A dedicated **Topic Planner** module proposes topics + guiding questions; **Henry approves** before anything enters the queue.
-- Content layers: Deep report (300-500/yr) · Industry snapshot (1,000-2,000/yr) · Company profile (company DB).
-- Industry levels (owner, 2026-10-05): level 1 = the 171 industries; **level 2 = narrower segments**, added where demand justifies (named foreign players, deals, later real search demand), proposed by the planner and approved by the owner; level-1 and level-2 reports are interleaved. Approving a split makes it a level-2 industry; reports on it follow.
-- Old queue: 16 `error` rows deleted, 57 `pending` rows set to `hold` (2026-10-05). Reports already published stay.
-- Distribution: KDP (US + JP), Google Play Books, Apple Books via EPUB export; expert ebooks fit KDP best. Do NOT enrol in KDP Select (exclusivity).
+- Countries: 10 ASEAN + Australia + New Zealand + Taiwan (extensible; site shows 15 markets). Each country has its own industry list, sized and prioritised by market (big/hot markets many industries, small ones a few).
+- Industry = **market-seeking FDI** only: sectors where foreign firms want to sell into the *domestic* market. Export-oriented FDI is out of scope.
+
+Topics and content (2026-10-05, updated 2026-10-06)
+- Competency follows industry and investor stage (explore → enter → expand).
+- The **Topic Planner** proposes topics + guiding questions. Reader demand also creates topics automatically (see the self-running loop below). The owner approves before anything enters the queue.
+- Industry levels: level 1 = the 171 industries; **level 2 = narrower segments**, added where demand justifies, proposed by the planner and approved by the owner.
+- Content layers: Deep report · Industry snapshot · Company data (Kira Chain).
+- Old queue: 16 `error` rows deleted, 57 `pending` rows set to `hold`. Reports already published stay.
+
+Pricing (revised 2026-10-06; validate with the waitlist before S7)
+
+| Plan | Price | Includes |
+|---|---|---|
+| Single report | **$299** | 1 PDF + Excel data |
+| Month | **$149** | Unlimited online reading + **5 PDF/month** |
+| Annual | **$1,190** | Unlimited online reading + **60 PDF/year** + **Kira Chain** |
+| Expert call (S9) | **$500–800/hour** | — |
+
+- Week plan and the $39 single report are dropped.
+- The single price anchors value, so buyers needing 2+ reports choose Month. Download caps stop "subscribe, download everything, cancel".
+- Kira Chain sits in Annual as the retention reason.
+- Live on the pricing pages (EN/JA/KO/ZH, waitlist only) since S5b (PR #66). Waitlist plan values: `report` · `month` · `annual` · `not-sure` (`week` kept for old rows, migration 030).
+
+Distribution (2026-10-05)
+- KDP (US + JP), Google Play Books, Apple Books via EPUB export.
+- Do NOT enrol in KDP Select (exclusivity).
+
+### Three products
+
+| Product | What | How it runs |
+|---|---|---|
+| **Kira Library** | Deep reports + snapshots in 4 languages, coming-soon pages, on-demand production | Self-running: demand → topic → pipeline → translate → publish → email requesters. Owner approves topics |
+| **Kira Chain** | Product explorer company database, Capital IQ / Bloomberg style | Collection and refresh automated; owner spot-checks samples |
+| **Kira Experts** | (a) Private expert calls: page live since S5, priced per engagement. (b) **New:** KIRA-owned transcript library | See expert decisions below |
+
+**Kira Chain** (name chosen 2026-10-06; "Kira Explore" kept as an alternative):
+- A company database organised by a product's value chain.
+- Example: a user searches "laptop" in Vietnam and sees the manufacturers, importers, distributors and retailers, shown as a linked map.
+- Built on the Phase R tables (`entities`, `relationships`, `company_graph_bfs()`, 250 companies).
+- Candidate sources: customs import/export data, business registry, distributor websites, e-commerce shops.
+- Linked from reports (a click on a product or company name opens its chain).
+- **UX not designed yet**: brainstorm with the owner when the sprint starts.
+
+**Expert transcript library** (proposed 2026-10-06; confirm at S9 start):
+- KIRA runs the interviews itself and owns the transcripts (Third Bridge / Arches model).
+- Client calls stay private, as with standard expert networks, and are never published.
+- Order: **AI-led interviews first** (pilot ~20 transcripts, transcribed + translated into 4 languages). Then a **self-matching marketplace**, VisasQ-lite style: the client posts a question, experts apply, the client picks, and KIRA keeps ~30% of the fee.
+- Expert pay: one-off fee per call (~$100–300/hour for VN/ASEAN mid-senior), no revenue share.
+- Transcripts: about 60 min, 8–12k words. Expert anonymised by role, the company discussed is named, published after an embargo.
+- Compliance:
+  - Recorded consent; no material non-public information (MNPI).
+  - No serving officials and no current SOE staff.
+  - Vietnam personal data protection law (Law 91/2025, Decree 356/2025, in force 2026-01-01).
+- Estimated cost: ~$250–500 per transcript in EN, +$120–300 for JA/KO/ZH; ~15–30 transcripts per industry for a useful library.
+
+### Self-running loop (live, PRs #62 + #64)
+
+```
+reader searches → published report?            → report page
+                → planned topic?                → coming-soon page + "email me when published"
+                → covered market + industry?    → auto placeholder topic (proposed) → coming-soon page
+                → anything else                 → counted in search_misses (keywords shown in admin)
+demand = 3 per email request + 1 per search → /en/admin/topics → owner approves
+→ sync-approved-topics.mjs orders the queue by demand → batch runner (EN → JA → KO → ZH → publish)
+→ topics.report_id linked → daily cron emails requesters
+```
+
+- Topics are filtered automatically: one placeholder per active market × industry pair, so typed strings cannot create pages. The queue is ordered by demand automatically.
+- Remaining manual steps:
+  - Owner approval of topics (one click; could become automatic above a demand threshold).
+  - Kira Chain sample checks.
+  - Expert compliance.
+  - B2B selling.
+
+### Sprints
 
 | Sprint | Scope | Status |
 |---|---|---|
-| **S1** | Pipeline to cloud routine (routine itself created by Henry in the claude.ai Routines UI, repos attached there); queue cleanup; admin "Pipeline health" | 🟡 merged (#46); owner still adds 3 env vars + creates the routine |
-| **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage (Henry approves) | ✅ approved 2026-10-05 (13 countries, 171 industries, 15 competencies; data in private repo `kira-pipeline/taxonomy`) |
-| **S3** | Topic Planner module + `/en/admin/topics` approval screen; approved topics flow into the queue | ✅ merged (#48): tables (migration 023), planner prompt (private), admin screen + API, runner sync; first lot of 18 topics + 13 level-2 splits approved 2026-10-05 |
-| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | 🟡 code done (PR in review); backfill of published reports to ZH not started |
-| **S5** | Website repositioning: hero, competency/stage filters, pricing + waitlist, free exec summaries | 🔴 |
-| **S6** | Snapshot layer (3-5 page template) | 🔴 |
-| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps) — only if waitlist shows demand | 🔴 |
-| **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books, country guides | 🔴 |
-| **S9** | Expert program: profiles, Expert Insights, interview → ebook pipeline | 🔴 |
+| **S1** | Pipeline to cloud routine; queue cleanup; admin "Pipeline health" | 🟡 merged (#46, #50); owner still adds 3 env vars + creates the routine |
+| **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage | ✅ approved 2026-10-05 (13 countries, 171 industries, 15 competencies; private `kira-pipeline/taxonomy`) |
+| **S3** | Topic Planner + `/en/admin/topics` approval; approved topics flow into the queue | ✅ merged (#48); first lot of 18 topics + 13 level-2 splits approved |
+| **S3b** | Self-running loop: coming-soon pages, notify-me, auto placeholder topics, demand-ordered queue | ✅ merged (#62, #64; migrations 027–029) |
+| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | ✅ merged (#51); backfill of older published reports to ZH not started |
+| **S5** | Website repositioning, Kira Experts + Kira Survey pages, pricing + waitlist, library filters, redesign | ✅ merged (#52–#61) |
+| **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | ✅ merged (#66); PPT/Excel left for S12 |
+| **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🔴 later |
+| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last): brainstorm UX first, then data model on Phase R tables; ~10 priority VN industries; product → value-chain map; links from reports | 🔴 last |
+| **S11** | On-demand production, revised 2026-10-06 (owner: no delivery date on pages; reader-requested topics approve themselves, no human step). Mine: coming-soon pages and the topic API show no ETA, and every status maps to an explicit state (a reader-created `requested` topic was wrongly shown as "in production"). **Owned by the session "Report search with placeholders":** auto-approval of reader topics and the `requested` / `source` schema | ✅ PR #68 (rest with the search session) |
+| **S13** | **Topic queue review** (owner, 2026-10-06): current topics are too high level, so reports read as generic and nobody opens them. For every country × industry, break the topic down one more level, and build topics from the keywords readers search most. Inputs: `topics.search_count`, `search_misses`, `topic_requests` (almost empty today, so keyword research outside the site is needed at first), the 18 queued and 57 held topics. Output: a re-planned queue the owner approves. Starts once the search session's auto-approval has landed | 🔴 next |
+| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🔴 |
+| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🔴 |
+| **S6** | Snapshot layer (3–5 page template) | 🔴 later |
+| **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
-Parallel owner work: interview 15-20 intermediaries (industrial parks, FDI law/accounting, bank FDI desks, consultants) with one question — how often a month they research an industry/market and how; recruit experts (manager/director level is fine).
+Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → **S13 topic queue review** → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
+
+Open issue (found 2026-10-06): the production database has a `topics.source` column (`planner` | `reader`) and a `requested` topic status that no migration in `main` defines; main's code only knows `proposed`. The session "Report search with placeholders" owns this work and must commit that migration and teach `admin-topics`, `sync-approved-topics` and `topic-search` about `requested`.
+
+Note: the Annual plan on the pricing pages says "Kira Chain, as it launches"; with Kira Chain last, revisit that line.
+
+**Parallel owner work:**
+- Ask ~10 corporate-planning (経営企画) / new-business staff at JP/KR firms looking at Vietnam whether they would pay $299 per report and $149/month, and which products they would look up in Kira Chain.
+- Recruit experts (manager/director level is fine).
+- Cheap checks:
+  - A free AlphaSense / Third Bridge trial to count existing Vietnam transcripts.
+  - Price requests to Arches and Konnect.
+
+### Market evidence (research 2026-10-06)
+
+Prices are list prices found online; many are secondary sources.
+
+| Channel | Price |
+|---|---|
+| JETRO / KOTRA / MOFCOM country and industry reports | Free |
+| JETRO mini survey | ¥11,000/unit, ~2 months |
+| KOTRA market research | ₩150,000 per item |
+| VIRAC VN quarterly industry report | $260–460 |
+| B&Company 10–20 pp report | ~VND 15M, made to order |
+| FiinResearch sector report | $2,500–3,000 |
+| Yano ASEAN-4 food (JA) | ¥198,000 |
+| Mordor / IRL / BRG VN titles via GII (JA storefront) | ¥330k–1M ($2,100–6,350) |
+| NNA POWER ASIA, Vietnam edition (news only) | ¥21,800/month |
+| SPEEDA | ~¥1.6M/ID/year |
+| Statista | $2,388–7,788/year |
+| Custom VN desk research for JP firms | ¥100k–1M ("over ¥1M is expensive") |
+| Expert calls | GLG / AlphaSights / Guidepoint ~$1,200–1,450/hour; VisasQ ~¥100k/hour full service, ~¥30k/hour self-matching (lite, 70% to the expert) |
+| Transcript library seats (Tegus / AlphaSense) | $13–65k/user/year |
+
+- Japanese SMEs (SMRJ 2024, n=310) rank "no reliable local partner" (32%) and "sales channels" (27%) above "don't know demand" (16%). This supports Kira Chain.
+- Syndicated research and advisory are under AI pressure: Forrester revenue −8% in 2025, Gartner stock −71% from its peak.
+- Vietnam transcripts on the global libraries look very thin. Arches (Tokyo, HCMC office) sells a transcript library on Bloomberg, focused on Japan.
 
 ---
 

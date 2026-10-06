@@ -22,8 +22,7 @@
 //   The market + covered-industry requirement, the model's judgement, a hard
 //   denylist and a daily call budget are the spam bound; no human review needed.
 //
-//   state  scoping       proposed — not approved yet, no date promised
-//          requested     created from a reader search, not reviewed — no date promised
+//   state  scoping       proposed or requested — not approved yet, no date promised
 //          in_progress   approved or queued — in the production queue
 // ============================================================
 
@@ -50,7 +49,7 @@ function cleanQuery(raw) {
 const item = t => ({
   slug: t.slug, title: t.title, country: t.country_name, country_code: t.country_code,
   industry: t.industry, competency: t.competency, year: t.year,
-  state: t.status === 'proposed' ? 'scoping' : t.status === 'requested' ? 'requested' : 'in_progress'
+  state: t.status === 'approved' || t.status === 'queued' ? 'in_progress' : 'scoping'
 });
 
 // The reader's own wording as the title, only when every word is part of the
@@ -116,7 +115,7 @@ export default async function handler(req, res) {
           await rpc('bump_topic_search', { p_slug: made.o_slug });
           return res.status(200).json({ items: [{
             slug: made.o_slug, title: made.o_title, country: pair.country_name, country_code: pair.country_code,
-            industry: pair.industry_name, competency: null, year: 2027, state: 'requested'
+            industry: pair.industry_name, competency: null, year: 2027, state: 'scoping'
           }] });
         }
       }
@@ -133,7 +132,7 @@ export default async function handler(req, res) {
             await rpc('bump_topic_search', { p_slug: made.o_slug });
             return res.status(200).json({ items: [{
               slug: made.o_slug, title: made.o_title, country: ctry.country_name, country_code: ctry.country_code,
-              industry: verdict.industryName, competency: null, year: 2027, state: 'requested'
+              industry: verdict.industryName, competency: null, year: 2027, state: 'scoping'
             }] });
           }
         }
