@@ -11,7 +11,7 @@
 //     reports:     { total, by_status: { draft, published } },
 //     insights:    { total, by_status: { draft, published } },
 //     purchases:   { count, revenue_usd },
-//     waitlist:    { total, by_plan: { week, month, annual, not-sure }, by_status: {...} },
+//     waitlist:    { total, by_plan: { report, week, month, annual, not-sure }, by_status: {...} },
 //     recent_leads:     [ { id, name, company, status, created_at }, ... up to 5 ],
 //     recent_purchases: [ { id, slug, locale, amount, currency, created_at }, ... up to 5 ],
 //     pipeline:    { state, by_status, work_left, completed_7d, last_batch_at, hours_since } | null

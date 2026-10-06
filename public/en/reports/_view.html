@@ -704,6 +704,7 @@
         ? '<div class="rd-cover"><img src="' + escapeHtml(d.cover.full) + '" alt="" width="1536" height="1024" decoding="async" fetchpriority="high"></div>'
         : '';
       const pageUrl = 'https://kiraresearch.com/' + locale + '/reports/' + encodeURIComponent(d.slug);
+      const citation = 'KIRA Research, \u201C' + (d.title || d.slug) + '\u201D, ' + R.date(d.last_refresh || d.published_at) + '. ' + pageUrl;
 
       root.innerHTML =
         '<div class="r-band"><div class="r-container" style="padding-block:14px 0">' + crumbs + '</div></div>' +
@@ -743,6 +744,9 @@
               (d.sector ? '<a href="/' + locale + '/library?sector=' + encodeURIComponent(d.sector) + '">' + escapeHtml(t('sector_' + d.sector)) + '</a>' : '') +
               (d.country ? '<a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
             '</div></div>' +
+            '<div class="rd-box"><h3>' + escapeHtml(t('citeThis')) + '</h3><p class="rd-cite">' + escapeHtml(citation) + '</p><div class="rd-share">' +
+              '<button type="button" id="rd-cite-copy">' + R.icon('link') + escapeHtml(t('copyCitation')) + '</button>' +
+            '</div></div>' +
             '<div class="rd-box"><h3>' + escapeHtml(t('share')) + '</h3><div class="rd-share">' +
               '<button type="button" id="rd-copy">' + R.icon('link') + escapeHtml(t('copyLink')) + '</button>' +
               '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener">LinkedIn</a>' +
@@ -767,6 +771,11 @@
       if (copyBtn) copyBtn.addEventListener('click', () => {
         const done = () => { copyBtn.lastChild.textContent = t('copied'); };
         (navigator.clipboard ? navigator.clipboard.writeText(pageUrl) : Promise.reject()).then(done, () => { prompt('', pageUrl); });
+      });
+      const citeBtn = document.getElementById('rd-cite-copy');
+      if (citeBtn) citeBtn.addEventListener('click', () => {
+        const done = () => { citeBtn.lastChild.textContent = t('copied'); };
+        (navigator.clipboard ? navigator.clipboard.writeText(citation) : Promise.reject()).then(done, () => { prompt('', citation); });
       });
 
       wireUnlockModal(d, purchaseState);
