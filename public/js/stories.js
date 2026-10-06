@@ -1,10 +1,9 @@
 // Homepage "How teams use KIRA Research" slider (all locales). Needs /js/research-i18n.js first.
 //
-// The cards below are ILLUSTRATIVE SCENARIOS, not client quotes: no company names, logos or
-// quotation marks, and the section says so under the slider. To show real testimonials, add
-// an item of kind 'testimonial' (only with the client's written permission) and the slider
-// renders it with a quote, a name and a company; the "illustrative" note disappears on its
-// own once no scenario is left. Keep either kind of item in this array, in the order shown.
+// The cards below are use-case SCENARIOS, not client quotes: no company names, logos or
+// quotation marks. To show real testimonials, add an item of kind 'testimonial' (only with
+// the client's written permission); the slider renders it with a quote, a name and a company.
+// Keep either kind of item in this array, in the order shown.
 //
 //   { kind: 'testimonial', product: 'library' | 'experts' | 'survey' | 'combined',
 //     quote:   { en: '...', ja: '...', ko: '...', zh: '...' },
@@ -35,12 +34,6 @@
     "ko": "보고서, 전문가 대화, 고객 설문을 시장개발·사업개발·전략 팀이 마주하는 의사결정에 적용하는 장면입니다.",
     "zh": "把研究报告、专家交流与客户调研，用于市场开拓、业务拓展与战略团队面对的决策。"
   },
-  "note": {
-    "en": "Illustrative scenarios based on how teams typically use KIRA Research. They are not client quotes.",
-    "ja": "KIRA Researchの典型的な使い方に基づくイメージです。お客様の声ではありません。",
-    "ko": "KIRA Research의 일반적인 활용 방식을 바탕으로 한 예시입니다. 고객의 실제 발언이 아닙니다.",
-    "zh": "以下为基于团队常见用法的示意场景，并非客户原话。"
-  },
   "prev": {
     "en": "Previous",
     "ja": "前へ",
@@ -52,12 +45,6 @@
     "ja": "次へ",
     "ko": "다음",
     "zh": "下一张"
-  },
-  "tag": {
-    "en": "Illustrative",
-    "ja": "イメージ",
-    "ko": "예시",
-    "zh": "示意"
   }
 };
   const PRODUCT = {
@@ -526,19 +513,17 @@
         '<p class="st-quote">' + esc(pick(it.quote)) + '</p>' +
         '<footer><b>' + esc(it.name) + '</b><span>' + esc(pick(it.role)) + '</span><span>' + esc(it.company) + (it.country ? ' · ' + esc(pick(it.country)) : '') + '</span></footer></article>';
     }
-    return '<article class="st-card">' + '<div class="st-top">' + chip + '<span class="st-tag">' + esc(pick(HEAD.tag)) + '</span></div>' +
+    return '<article class="st-card">' + chip +
       '<h3>' + esc(pick(it.title)) + '</h3><p>' + esc(pick(it.body)) + '</p>' +
       '<footer><b>' + esc(pick(it.role)) + '</b><span>' + esc(pick(it.org)) + '</span></footer></article>';
   }
 
-  const scenarios = ITEMS.some(i => i.kind !== 'testimonial');
   root.innerHTML =
     '<div class="home-sec-h st-head"><div><div class="st-eyebrow">' + esc(pick(HEAD.eyebrow)) + '</div><h2>' + esc(pick(HEAD.title)) + '</h2><p>' + esc(pick(HEAD.sub)) + '</p></div>' +
       '<div class="st-nav"><button type="button" class="st-prev" aria-label="' + esc(pick(HEAD.prev)) + '">' + chevron('M15 6l-6 6 6 6') + '</button>' +
       '<button type="button" class="st-next" aria-label="' + esc(pick(HEAD.next)) + '">' + chevron('M9 6l6 6-6 6') + '</button></div></div>' +
     '<div class="st-track" tabindex="0" role="region" aria-label="' + esc(pick(HEAD.title)) + '">' + ITEMS.map(card).join('') + '</div>' +
-    '<div class="st-dots" aria-hidden="true"></div>' +
-    (scenarios ? '<p class="st-note">' + esc(pick(HEAD.note)) + '</p>' : '');
+    '<div class="st-dots" aria-hidden="true"></div>';
 
   const track = root.querySelector('.st-track'), prev = root.querySelector('.st-prev'), next = root.querySelector('.st-next'), dots = root.querySelector('.st-dots');
   const pages = () => Math.max(1, Math.round(track.scrollWidth / track.clientWidth));

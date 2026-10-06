@@ -755,7 +755,6 @@ test.describe('library and insights pages', () => {
     for (const locale of ['en', 'ja', 'ko', 'zh']) {
       await page.goto('/' + locale + '/');
       await expect(page.locator('#home-stories .st-card')).toHaveCount(15, { timeout: 10000 });
-      await expect(page.locator('#home-stories .st-note')).toBeVisible();
     }
   });
 });
