@@ -344,6 +344,9 @@ test.describe('public APIs', () => {
     await expect(page.locator('#waitlist form#wl-form')).toHaveCount(1);
     await expect(page.locator('#wl-form input[name="email"]')).toHaveCount(1);
     await expect(page.locator('#wl-form input[name="hp"]')).toHaveCount(1);
+    // Plans: single report, month, annual (the Week plan was dropped in S5b).
+    await expect(page.locator('#wl-form input[name="plan"][value="report"]')).toHaveCount(1);
+    await expect(page.locator('#wl-form input[name="plan"][value="week"]')).toHaveCount(0);
     const html = await page.content();
     expect(html).not.toContain('$39');
   });

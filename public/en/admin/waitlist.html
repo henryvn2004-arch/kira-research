@@ -268,7 +268,7 @@
     const meEl     = document.getElementById('admin-me');
     const filters  = document.getElementById('admin-filters');
     const STATUSES = ['new', 'contacted', 'converted', 'spam'];
-    const PLAN_LABEL = { week: 'Week', month: 'Month', annual: 'Annual', 'not-sure': 'Not sure' };
+    const PLAN_LABEL = { report: 'Single report', week: 'Week (legacy)', month: 'Month', annual: 'Annual', 'not-sure': 'Not sure' };
     let currentStatus = '';
     let session = null;
 
@@ -314,7 +314,7 @@
     function renderCounts(c) {
       const bp = c.byPlan || {};
       const cells = [['Total', c.total || 0]].concat(
-        ['week', 'month', 'annual', 'not-sure'].map(p => [PLAN_LABEL[p], bp[p] || 0])
+        ['report', 'week', 'month', 'annual', 'not-sure'].map(p => [PLAN_LABEL[p], bp[p] || 0])
       );
       countsEl.innerHTML = cells.map(([k, v]) =>
         `<div class="wl-count"><div class="k">${esc(k)}</div><div class="v">${Number(v)}</div></div>`
