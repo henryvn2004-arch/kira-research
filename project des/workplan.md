@@ -123,7 +123,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | 🟡 PR #66 |
 | **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🔴 later |
 | **S10** | **Kira Chain v1**: brainstorm UX first, then data model on Phase R tables; ~10 priority VN industries; product → value-chain map; links from reports | 🔴 |
-| **S11** | On-demand production: coming-soon page promises a delivery window (target 48–72h) for demand-approved topics; runner priority lane | 🔴 |
+| **S11** | On-demand production, revised 2026-10-06 (owner: no delivery date on pages). **Done:** coming-soon pages and the topic API show no ETA; every status maps to an explicit state (a reader-created `requested` topic was wrongly shown as "in production"). **Left:** auto-approve a topic once 3 different emails have requested it (owner decision; build after the reader-topic schema below is in `main`) | 🟡 PR in review |
 | **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🔴 |
 | **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🔴 |
 | **S6** | Snapshot layer (3–5 page template) | 🔴 later |

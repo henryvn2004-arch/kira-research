@@ -13,7 +13,7 @@
     en: {
       soon: 'Coming soon', crumbLib: 'Library', answer: 'What this report will answer',
       scoping: 'We are scoping this report', approved: 'Approved — joining the production queue',
-      queued: n => 'In the production queue — estimated ' + (n > 1 ? 'about ' + n + ' days' : 'within a day'),
+      queued: 'In the production queue',
       steps: ['Scoped', 'Approved', 'In production', 'Review', 'Published'],
       emailPh: 'Work email', notify: 'Email me when it is published',
       fine: 'One email, the day it is published. Requests from readers move a report up our schedule.',
@@ -26,7 +26,7 @@
     ja: {
       soon: '近日公開', crumbLib: 'ライブラリ', answer: 'このレポートで答える問い',
       scoping: 'このレポートは企画中です', approved: '承認済み — 制作キューに入ります',
-      queued: n => '制作キューに入っています — 公開まで約' + n + '日の見込み',
+      queued: '制作キューに入っています',
       steps: ['企画', '承認', '制作中', 'レビュー', '公開'],
       emailPh: '勤務先メールアドレス', notify: '公開時にメールで通知',
       fine: '公開当日に1通だけお送りします。ご要望の多いレポートは優先して制作します。',
@@ -39,7 +39,7 @@
     ko: {
       soon: '곧 공개', crumbLib: '라이브러리', answer: '이 보고서가 답하는 질문',
       scoping: '이 보고서는 기획 중입니다', approved: '승인됨 — 제작 대기열에 들어갑니다',
-      queued: n => '제작 대기열에 있습니다 — 공개까지 약 ' + n + '일 예상',
+      queued: '제작 대기열에 있습니다',
       steps: ['기획', '승인', '제작 중', '검토', '공개'],
       emailPh: '업무용 이메일', notify: '공개되면 이메일로 알림',
       fine: '공개 당일 한 번만 보내드립니다. 독자 요청이 많은 보고서를 우선 제작합니다.',
@@ -52,7 +52,7 @@
     zh: {
       soon: '即将发布', crumbLib: '资料库', answer: '本报告将回答的问题',
       scoping: '本报告正在策划中', approved: '已批准 — 即将进入制作队列',
-      queued: n => '已在制作队列中 — 预计约 ' + n + ' 天',
+      queued: '已在制作队列中',
       steps: ['策划', '批准', '制作中', '审校', '发布'],
       emailPh: '工作邮箱', notify: '发布时邮件通知我',
       fine: '发布当天只发送一封邮件。读者的请求会让报告优先制作。',
@@ -74,7 +74,7 @@
   }
 
   function stateLine(t) {
-    if (t.state === 'in_production' || t.state === 'queued') return s('queued')(t.eta_days || 1);
+    if (t.state === 'in_production' || t.state === 'queued') return s('queued');
     return s(t.state === 'approved' ? 'approved' : 'scoping');
   }
 
