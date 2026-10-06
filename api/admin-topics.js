@@ -5,7 +5,7 @@
 // Auth: Authorization: Bearer <supabase-jwt>; email must be in ADMIN_EMAILS.
 //
 //   GET  /api/admin-topics[?status=proposed|approved|rejected|queued|all][&country=VN]
-//        → { stats, topics, splits, countries }
+//        → { stats, topics, splits, countries }   (topics carry `requests`: readers waiting on it)
 //   PATCH /api/admin-topics   body:
 //        { kind: 'topic', id, action: 'approve'|'reject'|'reopen', title?, questions?, note? }
 //        { kind: 'split', id, action: 'approve'|'reject'|'reopen' }
@@ -130,14 +130,18 @@ export default async function handler(req, res) {
     let sPath = 'tax_country_industry?status=eq.proposed&select=id,country_code,industry_id,priority,heat,origins,evidence,signals&order=country_code.asc&limit=300';
     if (country) sPath += `&country_code=eq.${country}`;
 
-    const [topicRows, splitRows, counts, countries, industries, competencies] = await Promise.all([
+    const [topicRows, splitRows, counts, countries, industries, competencies, reqRows] = await Promise.all([
       sb(tPath),
       sb(sPath),
       sb('topics?select=status&limit=5000'),
       sb('tax_countries?select=code,name,tier&order=ord.asc'),
       sb('tax_industries?select=id,slug,name,level,parent_id&limit=1000'),
-      sb('tax_competencies?select=key,label,stage&order=ord.asc')
+      sb('tax_competencies?select=key,label,stage&order=ord.asc'),
+      sb('topic_requests?select=topic_id&topic_id=not.is.null&limit=10000')   // reader demand (migration 027)
     ]);
+
+    const demand = new Map();
+    for (const r of reqRows) demand.set(r.topic_id, (demand.get(r.topic_id) || 0) + 1);
 
     const indById = new Map(industries.map(i => [i.id, i]));
     const compByKey = new Map(competencies.map(c => [c.key, c]));
@@ -146,7 +150,9 @@ export default async function handler(req, res) {
       const parent = ind && ind.parent_id ? indById.get(ind.parent_id) : null;
       return { ...r, industry: ind ? { slug: ind.slug, name: ind.name, level: ind.level, parent: parent ? { name: parent.name, slug: parent.slug } : null } : null };
     };
-    const topics = topicRows.map(r => ({ ...withIndustry(r), competency: r.competency_key ? (compByKey.get(r.competency_key) || null) : null }));
+    const topics = topicRows
+      .map(r => ({ ...withIndustry(r), competency: r.competency_key ? (compByKey.get(r.competency_key) || null) : null, requests: demand.get(r.id) || 0 }))
+      .sort((a, b) => b.requests - a.requests);   // most-requested first; ties keep newest-first
     const splits = splitRows.map(withIndustry);
 
     const stats = { proposed: 0, approved: 0, rejected: 0, queued: 0, splits_proposed: splits.length };

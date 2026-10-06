@@ -14,7 +14,12 @@
 // is unreachable) it prints `added=0` and exits 0: the queue just keeps
 // working on what it already has.
 //
-// Prints `added=<N>` on stdout. Caller commits the CSV when N > 0.
+// Reader demand (migration 027): approved topics are appended most-requested
+// first, and `pending` rows whose topic readers asked for are moved to the front
+// of the pending block (stable, so equal demand keeps its order). The runner
+// picks the first pending row top-down, so requested topics are produced first.
+//
+// Prints `added=<N>` on stdout (rows appended + rows moved). Caller commits the CSV when N > 0.
 // ---------------------------------------------------------------
 
 import fs from 'fs';
@@ -49,13 +54,20 @@ const csvCell = (v) => {
 if (!URL || !KEY) done(0, 'sync-approved-topics: no Supabase env, skipping');
 
 let approved, industries;
+const demand = new Map();   // topic slug → number of reader requests
 try {
   approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title&order=decided_at.asc&limit=200');
-  if (!approved.length) done(0);
   industries = await sb('tax_industries?select=id,name&limit=1000');
 } catch (e) {
   done(0, `sync-approved-topics: ${e.message}`);
 }
+try {
+  const reqs = await sb('topic_requests?select=topic:topics(slug)&topic_id=not.is.null&limit=10000');
+  for (const r of reqs) if (r.topic && r.topic.slug) demand.set(r.topic.slug, (demand.get(r.topic.slug) || 0) + 1);
+} catch (e) {
+  console.error(`sync-approved-topics: demand unavailable (${e.message}), keeping queue order`);
+}
+approved.sort((a, b) => (demand.get(b.slug) || 0) - (demand.get(a.slug) || 0));   // stable: ties keep decided_at order
 
 const indName = new Map(industries.map(i => [i.id, i.name]));
 const text = fs.readFileSync(QUEUE_PATH, 'utf8');
@@ -78,10 +90,35 @@ for (const t of approved) {
   lines.push(header.map(c => csvCell(row[c])).join(','));
 }
 
+let out = text;
 if (lines.length) {
   const sep = text.endsWith('\n') ? '' : '\n';
-  fs.writeFileSync(QUEUE_PATH, text + sep + lines.join('\n') + '\n');
+  out = text + sep + lines.join('\n') + '\n';
 }
+
+// Move requested pending rows to the front of the pending block.
+const csvFirstCell = (l) => l.split(',', 1)[0].replace(/^"|"$/g, '');
+const statusOf = (l) => {   // minimal CSV split: quoted cells may contain commas
+  const cells = []; let cur = '', q = false;
+  for (const ch of l) { if (ch === '"') q = !q; else if (ch === ',' && !q) { cells.push(cur); cur = ''; } else cur += ch; }
+  cells.push(cur);
+  return cells[header.indexOf('status')];
+};
+let moved = 0;
+if (demand.size) {
+  const all = out.split('\n');
+  const trail = all[all.length - 1] === '' ? all.pop() : null;
+  const body = all.slice(1);
+  const pendingIdx = body.map((l, i) => (l && statusOf(l) === 'pending' ? i : -1)).filter(i => i >= 0);
+  const pending = pendingIdx.map(i => body[i]);
+  const sorted = pending.map((l, i) => ({ l, i })).sort((a, b) => (demand.get(csvFirstCell(b.l)) || 0) - (demand.get(csvFirstCell(a.l)) || 0) || a.i - b.i).map(x => x.l);
+  moved = sorted.filter((l, i) => l !== pending[i]).length;
+  if (moved) {
+    pendingIdx.forEach((bi, k) => { body[bi] = sorted[k]; });
+    out = [all[0], ...body].join('\n') + (trail !== null ? '\n' : '');
+  }
+}
+if (out !== text) fs.writeFileSync(QUEUE_PATH, out);
 
 try {
   const now = new Date().toISOString();
@@ -91,4 +128,4 @@ try {
 } catch (e) {
   console.error(`sync-approved-topics: rows written, status update failed (${e.message}); next run is idempotent`);
 }
-done(lines.length);
+done(lines.length + moved);

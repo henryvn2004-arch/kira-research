@@ -59,6 +59,7 @@
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script src="/js/research-i18n.js" defer></script>
+  <script src="/js/coming-soon.js" defer></script>
 
   <script type="module">
     // ── 1) URL parsing ───────────────────────────────────
@@ -118,6 +119,14 @@
     try {
       const r = await fetch('/api/library-report?slug=' + encodeURIComponent(slug) + '&locale=' + locale);
       if (r.status === 404) {
+        // Not a published report — maybe a planned topic (coming-soon page, migration 027).
+        const tr = await fetch('/api/topic?slug=' + encodeURIComponent(slug)).catch(() => null);
+        if (tr && tr.ok && window.kiraComingSoon) {
+          const tp = await tr.json();
+          if (tp.published) window.location.replace('/' + locale + '/reports/' + encodeURIComponent(tp.published));
+          else window.kiraComingSoon.page(root, tp);
+          throw new Error('halt');
+        }
         root.innerHTML = msg(t('notFound'), escapeHtml(t('notFoundBody')));
         throw new Error('halt');
       }
