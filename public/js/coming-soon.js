@@ -12,7 +12,7 @@
   const S = {
     en: {
       soon: 'Coming soon', crumbLib: 'Library', answer: 'What this report will answer',
-      scoping: 'We are scoping this report', approved: 'Approved — joining the production queue',
+      scoping: 'We are scoping this report', requested: 'Requested by readers — we are reviewing it', approved: 'Approved — joining the production queue',
       queued: n => 'In the production queue — estimated ' + (n > 1 ? 'about ' + n + ' days' : 'within a day'),
       steps: ['Scoped', 'Approved', 'In production', 'Review', 'Published'],
       emailPh: 'Work email', notify: 'Email me when it is published',
@@ -25,7 +25,7 @@
     },
     ja: {
       soon: '近日公開', crumbLib: 'ライブラリ', answer: 'このレポートで答える問い',
-      scoping: 'このレポートは企画中です', approved: '承認済み — 制作キューに入ります',
+      scoping: 'このレポートは企画中です', requested: '読者からのご要望 — 内容を検討しています', approved: '承認済み — 制作キューに入ります',
       queued: n => '制作キューに入っています — 公開まで約' + n + '日の見込み',
       steps: ['企画', '承認', '制作中', 'レビュー', '公開'],
       emailPh: '勤務先メールアドレス', notify: '公開時にメールで通知',
@@ -38,7 +38,7 @@
     },
     ko: {
       soon: '곧 공개', crumbLib: '라이브러리', answer: '이 보고서가 답하는 질문',
-      scoping: '이 보고서는 기획 중입니다', approved: '승인됨 — 제작 대기열에 들어갑니다',
+      scoping: '이 보고서는 기획 중입니다', requested: '독자 요청 접수 — 검토 중입니다', approved: '승인됨 — 제작 대기열에 들어갑니다',
       queued: n => '제작 대기열에 있습니다 — 공개까지 약 ' + n + '일 예상',
       steps: ['기획', '승인', '제작 중', '검토', '공개'],
       emailPh: '업무용 이메일', notify: '공개되면 이메일로 알림',
@@ -51,7 +51,7 @@
     },
     zh: {
       soon: '即将发布', crumbLib: '资料库', answer: '本报告将回答的问题',
-      scoping: '本报告正在策划中', approved: '已批准 — 即将进入制作队列',
+      scoping: '本报告正在策划中', requested: '读者提出的需求 — 正在评估', approved: '已批准 — 即将进入制作队列',
       queued: n => '已在制作队列中 — 预计约 ' + n + ' 天',
       steps: ['策划', '批准', '制作中', '审校', '发布'],
       emailPh: '工作邮箱', notify: '发布时邮件通知我',
@@ -75,11 +75,11 @@
 
   function stateLine(t) {
     if (t.state === 'in_production' || t.state === 'queued') return s('queued')(t.eta_days || 1);
-    return s(t.state === 'approved' ? 'approved' : 'scoping');
+    return s(t.state === 'approved' ? 'approved' : t.state === 'requested' ? 'requested' : 'scoping');
   }
 
   function page(root, t) {
-    const done = t.state === 'scoping' ? 1 : t.state === 'approved' ? 2 : 3;
+    const done = t.state === 'requested' ? 0 : t.state === 'scoping' ? 1 : t.state === 'approved' ? 2 : 3;
     const chips = [t.country, t.industry, t.competency, t.year].filter(Boolean);
     document.title = t.title + ' — KIRA RESEARCH';
     const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex,follow'; document.head.appendChild(m);

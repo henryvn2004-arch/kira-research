@@ -8,7 +8,7 @@
 //   → 200 { published: '<report slug>' }   the report exists now — page redirects
 //   → 404 { error: 'not_found' }
 //
-//   state     scoping | approved | in_production
+//   state     scoping | requested | approved | in_production
 //   eta_days  only for in_production: position in the queue / REPORTS_PER_DAY,
 //             rounded up. null otherwise (no date is promised before approval).
 // ============================================================
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       country: t.country ? t.country.name : null, country_code: t.country ? t.country.code : null,
       industry: t.industry ? t.industry.name : null, competency: t.competency ? t.competency.label : null,
       year: t.year, kind: t.kind,
-      state: t.status === 'proposed' ? 'scoping' : t.status === 'approved' ? 'approved' : 'in_production',
+      state: t.status === 'proposed' ? 'scoping' : t.status === 'requested' ? 'requested' : t.status === 'approved' ? 'approved' : 'in_production',
       eta_days: etaDays
     });
   } catch (err) {

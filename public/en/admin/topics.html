@@ -45,7 +45,7 @@
     .tp-edit input, .tp-edit textarea { width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--border-strong); border-radius:8px; font:inherit; font-size:15px; margin:4px 0 10px; background:var(--bg); color:var(--text); }
     .tp-edit label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
     .tp-state { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
-    .tp-state.approved { color:#067647; } .tp-state.rejected { color:#B42318; } .tp-state.queued { color:var(--primary); }
+    .tp-state.requested { color:#B54708; } .tp-state.approved { color:#067647; } .tp-state.rejected { color:#B42318; } .tp-state.queued { color:var(--primary); }
     .tp-empty { color:var(--muted); padding:24px 0; }
   </style>
 
@@ -156,7 +156,7 @@
           </div></div>`;
       }
 
-      const buttons = t.status === 'proposed'
+      const buttons = (t.status === 'proposed' || t.status === 'requested')
         ? `<button class="tp-btn go" data-act="approve">Approve</button>
            <button class="tp-btn" data-act="edit">Edit</button>
            <button class="tp-btn no" data-act="reject">Reject</button>`
@@ -208,11 +208,12 @@
 
     function render() {
       const { stats, topics, splits, countries, misses = [] } = state.data;
-      const statuses = ['proposed', 'approved', 'rejected', 'queued', 'all'];
+      const statuses = ['proposed', 'requested', 'approved', 'rejected', 'queued', 'all'];
       root.innerHTML = `
         <div class="tp-head"><h1>Topics</h1></div>
         <div class="tp-kpis">
           <div class="tp-kpi"><b>${stats.proposed}</b><span>Proposed</span></div>
+          <div class="tp-kpi"><b>${stats.requested || 0}</b><span>Requested by readers</span></div>
           <div class="tp-kpi"><b>${stats.approved}</b><span>Approved</span></div>
           <div class="tp-kpi"><b>${stats.queued}</b><span>In queue</span></div>
           <div class="tp-kpi"><b>${stats.splits_proposed}</b><span>Splits to review</span></div>
