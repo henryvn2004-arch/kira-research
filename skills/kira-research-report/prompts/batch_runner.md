@@ -403,7 +403,7 @@ Every write below is idempotent per `(report, locale)`: the SQL upserts on `livi
 
 **5.3a — INSERT living_reports + one report_translations row per locale in `PUBLISH_LANGS`.**
 
-Build the SQL via a per-topic Node script. Reference template: `skills/kira-research-report/scripts/_build_vn_coffee_sql.mjs` — copy to `_build_<id>_sql.mjs` and fill constants + META blocks. Key fields per locale, extracted from each language's HTML:
+Build the SQL with `node skills/kira-research-report/scripts/build-publish-sql.mjs --id ${id} --langs "${PUBLISH_LANGS}" [--chart-page N] > /tmp/insert.sql` (no per-topic script needed; `--chart-page N` takes the preview chart from a 3-bar exhibit page, and without it the preview has no chart). It reads `naming.json` and each locale's HTML and prints the statement below. Read the output before running it. Key fields per locale, extracted from each language's HTML:
 
 - `title` ← the `<title>` element of each locale's HTML (EN = `naming.title`; translators translate it)
 - `eyebrow` ← `naming.eyebrow.<locale>` from `outputs/batch/${id}/naming.json`
