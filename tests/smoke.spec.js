@@ -297,6 +297,39 @@ test.describe('public APIs', () => {
     expect(r.status()).toBe(401);
   });
 
+  // Coming-soon topics (migration 027): search fallback, request form, topic page.
+  test('/api/topic-request rejects GET and accepts the honeypot path', async ({ request }) => {
+    expect((await request.get('/api/topic-request')).status()).toBe(405);
+    const r = await request.post('/api/topic-request', {
+      data: { email: 'ci@example.com', keyword: 'ci probe', hp: 'bot' },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).ok).toBe(true);
+  });
+
+  test('/api/topic-search returns an items array; short queries are empty', async ({ request }) => {
+    const short = await request.get('/api/topic-search?q=ab');
+    expect(short.status()).toBe(200);
+    expect((await short.json()).items).toEqual([]);
+    const r = await request.get('/api/topic-search?q=vietnam%20retail');
+    expect(r.status()).toBe(200);
+    expect(Array.isArray((await r.json()).items)).toBe(true);
+  });
+
+  test('/api/topic 404s for an unknown slug', async ({ request }) => {
+    expect((await request.get('/api/topic?slug=no-such-topic-xyz')).status()).toBe(404);
+  });
+
+  test('a coming-soon topic renders as a placeholder report page', async ({ page, request }) => {
+    const found = await (await request.get('/api/topic-search?q=convenience%20stores')).json();
+    test.skip(!found.items.length, 'no unpublished convenience-store topic left');
+    await page.goto('/en/reports/' + found.items[0].slug);
+    await expect(page.locator('.cs-cover')).toBeVisible();
+    await expect(page.locator('#cs-req form[data-cs-form]')).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"][content^="noindex"]')).toHaveCount(1);
+  });
+
   test('/en/pricing has the waitlist form and no per-report price', async ({ page }) => {
     await page.goto('/en/pricing', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#waitlist form#wl-form')).toHaveCount(1);

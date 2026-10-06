@@ -450,6 +450,12 @@ RETURNING report_id, locale, title;
 
 Capture the `report_id` UUID — needed for 5.3b.
 
+**Link the topic to its report** (so readers who asked for the topic get the "now published" email and its coming-soon page redirects). Run once right after the upsert; a row that did not come from a topic simply updates 0 rows:
+
+```sql
+UPDATE topics SET report_id = '<report_id>' WHERE slug = $kbat$<id>$kbat$ AND report_id IS NULL;
+```
+
 **5.3b — Upload one PDF per locale to Supabase Storage bucket `reports-pdfs`.**
 
 Path: `<report_id>/<locale>.pdf`. PDFs are gitignored, so a fresh (cloud) session only has the PDF rendered in THIS fire. Re-render any missing one from its committed HTML first (same endpoint, idempotent):

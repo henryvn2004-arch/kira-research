@@ -211,6 +211,21 @@
     return out + '<button type="button" data-page="' + (p + 1) + '"' + (p === pages ? ' disabled' : '') + ' aria-label="' + esc(t('next')) + '">' + ic('chev') + '</button>';
   }
 
+  // Search with no (or few) library hits: show matching coming-soon topics, or a
+  // request form when nothing matches (api/topic-search, migration 027).
+  async function addSoon(my, empty) {
+    const cs = window.kiraComingSoon;
+    if (!cs || state.q.length < 3 || state.page > 1) return;
+    let items = [];
+    try {
+      const r = await fetch('/api/topic-search?q=' + encodeURIComponent(state.q));
+      if (r.ok) items = (await r.json()).items || [];
+    } catch (_e) { /* the library list stays usable without it */ }
+    if (my !== seq) return;
+    const html = items.length ? cs.strip(items) : (empty ? cs.requestBox(state.q) : '');
+    if (html) rowsEl.insertAdjacentHTML('beforeend', html);
+  }
+
   let seq = 0;
   async function load() {
     const my = ++seq;
@@ -234,6 +249,7 @@
       app.querySelector('[data-showres]').textContent = t('showResults', lastTotal);
       rowsEl.innerHTML = (d.items || []).length ? d.items.map(rowHtml).join('') : emptyHtml();
       pagerEl.innerHTML = pagerHtml(pages);
+      if (state.q) addSoon(my, !(d.items || []).length);
     } catch (_e) {
       if (my !== seq) return;
       rowsEl.innerHTML = '<div class="r-empty"><p>' + esc(t('loadError')) + '</p></div>';

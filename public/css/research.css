@@ -514,3 +514,41 @@
 
 /* Korean breaks between words, not inside them */
 :lang(ko) h1, :lang(ko) h2, :lang(ko) h3, :lang(ko) p { word-break: keep-all; overflow-wrap: anywhere; }
+
+/* ── Coming-soon report pages + library search fallback (migration 027) ── */
+.cs-grid { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
+@media (max-width: 800px) { .cs-grid { grid-template-columns: 1fr; } .cs-cover { max-width: 260px; } }
+.cs-cover { position: relative; overflow: hidden; aspect-ratio: 3 / 4; border-radius: 6px; padding: 24px 20px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(160deg, #0B1B3F, #1558CC); box-shadow: 0 12px 30px rgba(15, 23, 42, .22); }
+.cs-cover small { letter-spacing: .14em; font-size: 11px; opacity: .8; }
+.cs-cover b { font-size: 20px; line-height: 1.2; letter-spacing: -.01em; }
+.cs-cover i { font-style: normal; font-size: 12px; opacity: .85; }
+.cs-ribbon { position: absolute; top: 16px; right: -38px; transform: rotate(35deg); background: #F59E0B; color: #1a1200; font-size: 11px; font-weight: 800; padding: 4px 44px; letter-spacing: .06em; }
+.cs-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.cs-grid h1 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 900; font-size: clamp(26px, 3.8vw, 38px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 14px; text-wrap: balance; }
+.cs-q { color: var(--muted); font-size: 17px; margin: 0 0 20px; border-left: 3px solid var(--primary); padding-left: 14px; }
+.cs-status { display: flex; gap: 10px; align-items: center; background: #E6F6F3; color: #0F766E; border: 1px solid #B7E4DD; border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+.cs-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: #0F766E; animation: cs-pulse 1.6s infinite; }
+@keyframes cs-pulse { 50% { opacity: .35; } }
+.cs-steps { display: flex; gap: 6px; list-style: none; margin: 0 0 22px; padding: 0; font-size: 12px; color: var(--muted-dim); }
+.cs-steps li { flex: 1; border-top: 3px solid var(--border); padding-top: 6px; }
+.cs-steps li.on { border-color: #0F766E; color: var(--text); font-weight: 700; }
+.cs-form { display: flex; gap: 8px; flex-wrap: wrap; position: relative; }
+.cs-form input[type=email] { flex: 1; min-width: 220px; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: 8px; font: inherit; }
+.cs-fine { font-size: 12.5px; color: var(--muted-dim); margin: 8px 0 0; }
+.cs-done { background: #E6F6F3; color: #0F766E; padding: 12px 14px; border-radius: 8px; font-weight: 600; }
+.cs-err { color: #B42318; font-size: 13px; margin: 8px 0 0; }
+.cs-body { padding-block: 32px 56px; }
+.cs-body h2 { font-size: 20px; letter-spacing: -.02em; margin: 0 0 12px; }
+.cs-toc { margin: 0 0 24px; padding: 0; list-style: none; counter-reset: cs; }
+.cs-toc li { counter-increment: cs; display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--border); }
+.cs-toc li::before { content: counter(cs, decimal-leading-zero); font-weight: 900; color: var(--primary); min-width: 28px; }
+.cs-exec { color: var(--muted-dim); font-size: 14px; }
+.cs-strip { margin-top: 28px; padding: 18px 20px; border: 1px dashed var(--border-strong); border-radius: 10px; background: var(--band); }
+.cs-strip h3 { margin: 0 0 4px; font-size: 17px; }
+.cs-strip > p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+.cs-kw { margin: 0 0 12px !important; }
+.cs-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--border); color: inherit; text-decoration: none; }
+.cs-row b { font-weight: 600; }
+.cs-row:hover b { color: var(--primary); }
+.cs-tag { font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; background: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 99px; }
+.cs-meta { font-size: 13px; color: var(--muted-dim); flex-basis: 100%; }
