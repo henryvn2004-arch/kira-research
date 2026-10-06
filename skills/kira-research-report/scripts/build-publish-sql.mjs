@@ -29,7 +29,8 @@ const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../outputs/
 const need = f => { const p = path.join(dir, f); if (!fs.existsSync(p)) { console.error('missing ' + p); process.exit(2); } return fs.readFileSync(p, 'utf8'); };
 
 const naming = JSON.parse(need('naming.json'));
-const decode = s => s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "'");
+// &amp; goes last so that "&amp;lt;" decodes once, to "&lt;", not twice.
+const decode = s => s.replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "'").replace(/&amp;/g, '&');
 const text = h => decode(h.replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 const noTags = s => s.replace(/\s*\[[^\]]*\]/g, '').replace(/\s+([,.;:。、，；：])/g, '$1').trim();
 // Japanese and Chinese are set without spaces next to CJK characters or punctuation.
