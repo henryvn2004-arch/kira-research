@@ -1,4 +1,5 @@
-// Homepage "How teams use KIRA Research" slider (all locales). Needs /js/research-i18n.js first.
+// Use-case slider (all locales). Homepage: all cards. Other pages: set data-product="library|experts|survey" on the
+// #home-stories element to show only that product's cards. Works with or without /js/research-i18n.js.
 //
 // The cards below are use-case SCENARIOS, not client quotes: no company names, logos or
 // quotation marks. To show real testimonials, add an item of kind 'testimonial' (only with
@@ -12,9 +13,13 @@
 //     company: 'Company name',
 //     country: { en: 'Japan', ja: '日本', ko: '일본', zh: '日本' } }
 (function () {
-  const R = window.kiraR, esc = R.esc, locale = R.locale;
   const root = document.getElementById('home-stories');
   if (!root) return;
+  const R = window.kiraR || {};
+  const esc = R.esc || (s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+  const first = location.pathname.split('/')[1];
+  const locale = R.locale || (['en', 'ja', 'ko', 'zh'].includes(first) ? first : 'en');
+  const prod = root.dataset.product || '';
   const HEAD = {
   "eyebrow": {
     "en": "USE CASES",
@@ -495,6 +500,52 @@
     }
   }
 ];
+  const PAGE_HEAD = {
+    "library": {
+      "title": {
+        "en": "How teams use our reports",
+        "ja": "チームはレポートをこう使う",
+        "ko": "팀은 보고서를 이렇게 씁니다",
+        "zh": "团队如何使用我们的报告"
+      },
+      "sub": {
+        "en": "Where the library fits in market-development, business-development and strategy work.",
+        "ja": "市場開発・事業開発・戦略の業務で、ライブラリが役立つ場面です。",
+        "ko": "시장개발·사업개발·전략 업무에서 라이브러리가 쓰이는 장면입니다.",
+        "zh": "资料库在市场开拓、业务拓展与战略工作中的应用场景。"
+      }
+    },
+    "experts": {
+      "title": {
+        "en": "How teams use Kira Experts",
+        "ja": "チームはKira Expertsをこう使う",
+        "ko": "팀은 Kira Experts를 이렇게 씁니다",
+        "zh": "团队如何使用Kira Experts"
+      },
+      "sub": {
+        "en": "Conversations with people who know the market, applied to the questions teams are weighing.",
+        "ja": "市場を知る人との対話を、チームが検討中の問いに生かす場面です。",
+        "ko": "시장을 아는 사람과의 대화를 팀이 고민하는 질문에 적용하는 장면입니다.",
+        "zh": "与熟悉市场的人交流，用于团队正在权衡的问题。"
+      }
+    },
+    "survey": {
+      "title": {
+        "en": "How teams use Kira Survey",
+        "ja": "チームはKira Surveyをこう使う",
+        "ko": "팀은 Kira Survey를 이렇게 씁니다",
+        "zh": "团队如何使用Kira Survey"
+      },
+      "sub": {
+        "en": "Customer surveys and interviews in the local market, applied to the decisions teams are making.",
+        "ja": "現地市場での顧客調査とインタビューを、チームの意思決定に生かす場面です。",
+        "ko": "현지 시장의 고객 설문과 인터뷰를 팀의 의사결정에 적용하는 장면입니다.",
+        "zh": "在本地市场开展的客户调研与访谈，用于团队的决策。"
+      }
+    }
+  };
+  if (PAGE_HEAD[prod]) Object.assign(HEAD, PAGE_HEAD[prod]);
+  const LIST = prod ? ITEMS.filter(i => i.product === prod) : ITEMS;
   const pick = o => (o && (o[locale] || o.en)) || '';
   const ICON = {
     library: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
@@ -518,18 +569,21 @@
       '<footer><b>' + esc(pick(it.role)) + '</b><span>' + esc(pick(it.org)) + '</span></footer></article>';
   }
 
+  root.classList.add('st-sec');
+  if (prod) root.classList.add('st-solo');
   root.innerHTML =
-    '<div class="home-sec-h st-head"><div><div class="st-eyebrow">' + esc(pick(HEAD.eyebrow)) + '</div><h2>' + esc(pick(HEAD.title)) + '</h2><p>' + esc(pick(HEAD.sub)) + '</p></div>' +
+    '<div class="st-head"><div><div class="st-eyebrow">' + esc(pick(HEAD.eyebrow)) + '</div><h2>' + esc(pick(HEAD.title)) + '</h2><p>' + esc(pick(HEAD.sub)) + '</p></div>' +
       '<div class="st-nav"><button type="button" class="st-prev" aria-label="' + esc(pick(HEAD.prev)) + '">' + chevron('M15 6l-6 6 6 6') + '</button>' +
       '<button type="button" class="st-next" aria-label="' + esc(pick(HEAD.next)) + '">' + chevron('M9 6l6 6-6 6') + '</button></div></div>' +
-    '<div class="st-track" tabindex="0" role="region" aria-label="' + esc(pick(HEAD.title)) + '">' + ITEMS.map(card).join('') + '</div>' +
+    '<div class="st-track" tabindex="0" role="region" aria-label="' + esc(pick(HEAD.title)) + '">' + LIST.map(card).join('') + '</div>' +
     '<div class="st-dots" aria-hidden="true"></div>';
 
   const track = root.querySelector('.st-track'), prev = root.querySelector('.st-prev'), next = root.querySelector('.st-next'), dots = root.querySelector('.st-dots');
-  const pages = () => Math.max(1, Math.round(track.scrollWidth / track.clientWidth));
+  const pages = () => Math.max(1, Math.ceil((track.scrollWidth - 4) / track.clientWidth));
   const page = () => Math.round(track.scrollLeft / Math.max(1, track.scrollWidth - track.clientWidth) * (pages() - 1));
   function sync() {
     const n = pages();
+    root.classList.toggle('st-static', n < 2);
     if (dots.children.length !== n) dots.innerHTML = Array.from({ length: n }, (_, i) => '<i data-i="' + i + '"></i>').join('');
     const p = page();
     Array.from(dots.children).forEach((d, i) => d.classList.toggle('on', i === p));
