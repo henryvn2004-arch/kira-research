@@ -5,7 +5,7 @@
 // Auth: Authorization: Bearer <supabase-jwt>; email must be in ADMIN_EMAILS.
 //
 //   GET  /api/admin-topics[?status=proposed|approved|rejected|queued|all][&country=VN]
-//        → { stats, topics, splits, countries }   (topics carry `requests`: readers waiting on it)
+//        → { stats, topics, splits, countries }   (topics carry `requests` = emails waiting and `search_count`; `misses` = top searches that matched nothing)
 //   PATCH /api/admin-topics   body:
 //        { kind: 'topic', id, action: 'approve'|'reject'|'reopen', title?, questions?, note? }
 //        { kind: 'split', id, action: 'approve'|'reject'|'reopen' }
@@ -122,7 +122,7 @@ export default async function handler(req, res) {
     const status  = q.status && TOPIC_STATUSES.includes(q.status) ? q.status : (q.status === 'all' ? null : 'proposed');
     const country = q.country && COUNTRY_RE.test(String(q.country).toUpperCase()) ? String(q.country).toUpperCase() : null;
 
-    let tPath = 'topics?select=id,slug,country_code,industry_id,competency_key,kind,year,title,buyer_question,questions,rationale,signals,status,note,created_at,decided_at'
+    let tPath = 'topics?select=id,slug,country_code,industry_id,competency_key,kind,year,title,buyer_question,questions,rationale,signals,status,note,created_at,decided_at,search_count'
               + '&order=created_at.desc&limit=500';
     if (status)  tPath += `&status=eq.${status}`;
     if (country) tPath += `&country_code=eq.${country}`;
@@ -130,14 +130,15 @@ export default async function handler(req, res) {
     let sPath = 'tax_country_industry?status=eq.proposed&select=id,country_code,industry_id,priority,heat,origins,evidence,signals&order=country_code.asc&limit=300';
     if (country) sPath += `&country_code=eq.${country}`;
 
-    const [topicRows, splitRows, counts, countries, industries, competencies, reqRows] = await Promise.all([
+    const [topicRows, splitRows, counts, countries, industries, competencies, reqRows, misses] = await Promise.all([
       sb(tPath),
       sb(sPath),
       sb('topics?select=status&limit=5000'),
       sb('tax_countries?select=code,name,tier&order=ord.asc'),
       sb('tax_industries?select=id,slug,name,level,parent_id&limit=1000'),
       sb('tax_competencies?select=key,label,stage&order=ord.asc'),
-      sb('topic_requests?select=topic_id&topic_id=not.is.null&limit=10000')   // reader demand (migration 027)
+      sb('topic_requests?select=topic_id&topic_id=not.is.null&limit=10000'),   // reader demand (migration 027)
+      sb('search_misses?select=keyword,searches,last_at&order=searches.desc,last_at.desc&limit=20')   // unplanned searches (029)
     ]);
 
     const demand = new Map();
@@ -152,13 +153,13 @@ export default async function handler(req, res) {
     };
     const topics = topicRows
       .map(r => ({ ...withIndustry(r), competency: r.competency_key ? (compByKey.get(r.competency_key) || null) : null, requests: demand.get(r.id) || 0 }))
-      .sort((a, b) => b.requests - a.requests);   // most-requested first; ties keep newest-first
+      .sort((a, b) => (b.requests * 3 + (b.search_count || 0)) - (a.requests * 3 + (a.search_count || 0)));   // highest demand first (email 3, search 1); ties keep newest-first
     const splits = splitRows.map(withIndustry);
 
     const stats = { proposed: 0, approved: 0, rejected: 0, queued: 0, splits_proposed: splits.length };
     for (const r of counts) if (stats[r.status] !== undefined) stats[r.status]++;
 
-    return res.status(200).json({ stats, topics, splits, countries });
+    return res.status(200).json({ stats, topics, splits, countries, misses });
   } catch (err) {
     console.error('[admin-topics]', err.message);
     return res.status(500).json({ error: 'server_error' });

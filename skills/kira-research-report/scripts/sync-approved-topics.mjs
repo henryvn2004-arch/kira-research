@@ -14,7 +14,7 @@
 // is unreachable) it prints `added=0` and exits 0: the queue just keeps
 // working on what it already has.
 //
-// Reader demand (migration 027): approved topics are appended most-requested
+// Reader demand (migrations 027 + 029): approved topics are appended highest-demand
 // first, and `pending` rows whose topic readers asked for are moved to the front
 // of the pending block (stable, so equal demand keeps its order). The runner
 // picks the first pending row top-down, so requested topics are produced first.
@@ -54,7 +54,7 @@ const csvCell = (v) => {
 if (!URL || !KEY) done(0, 'sync-approved-topics: no Supabase env, skipping');
 
 let approved, industries;
-const demand = new Map();   // topic slug → number of reader requests
+const demand = new Map();   // topic slug → demand score (3 per email request + 1 per unmet search)
 try {
   approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title&order=decided_at.asc&limit=200');
   industries = await sb('tax_industries?select=id,name&limit=1000');
@@ -62,8 +62,11 @@ try {
   done(0, `sync-approved-topics: ${e.message}`);
 }
 try {
+  // Demand score: an email request counts 3, a search that found no published report counts 1.
   const reqs = await sb('topic_requests?select=topic:topics(slug)&topic_id=not.is.null&limit=10000');
-  for (const r of reqs) if (r.topic && r.topic.slug) demand.set(r.topic.slug, (demand.get(r.topic.slug) || 0) + 1);
+  for (const r of reqs) if (r.topic && r.topic.slug) demand.set(r.topic.slug, (demand.get(r.topic.slug) || 0) + 3);
+  const searched = await sb('topics?select=slug,search_count&search_count=gt.0&limit=10000');
+  for (const t of searched) demand.set(t.slug, (demand.get(t.slug) || 0) + t.search_count);
 } catch (e) {
   console.error(`sync-approved-topics: demand unavailable (${e.message}), keeping queue order`);
 }
