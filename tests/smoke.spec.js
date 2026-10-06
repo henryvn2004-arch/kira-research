@@ -759,7 +759,7 @@ test.describe('library and insights pages', () => {
   });
 
   test('use-case slider on library, experts and survey shows only that product', async ({ page }) => {
-    const want = { library: ['library.html', 5], experts: ['experts/', 5], survey: ['survey/', 4] };
+    const want = { library: ['library.html', 15], experts: ['experts/', 15], survey: ['survey/', 15] };
     for (const locale of ['en', 'ja', 'ko', 'zh']) {
       for (const [prod, [path, n]] of Object.entries(want)) {
         await page.goto('/' + locale + '/' + path.replace('.html', ''));
