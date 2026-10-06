@@ -18,7 +18,7 @@
 //   The market + industry requirement is the spam bound: at most one
 //   placeholder per covered pair, never one per typed string.
 //
-//   state  scoping       proposed — not approved yet, no date promised
+//   state  scoping       proposed or requested — not approved yet, no date promised
 //          in_progress   approved or queued — in the production queue
 // ============================================================
 
@@ -43,7 +43,7 @@ function cleanQuery(raw) {
 const item = t => ({
   slug: t.slug, title: t.title, country: t.country_name, country_code: t.country_code,
   industry: t.industry, competency: t.competency, year: t.year,
-  state: t.status === 'proposed' ? 'scoping' : 'in_progress'
+  state: t.status === 'approved' || t.status === 'queued' ? 'in_progress' : 'scoping'
 });
 
 // The reader's own wording as the title, only when every word is part of the
