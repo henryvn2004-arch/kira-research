@@ -24,6 +24,7 @@ const STATIC_PAGES = [
   '/methodology',
   '/pricing',
   '/experts/',                                  // Kira Experts (replaces Custom Research, S5)
+  '/survey/',                                   // Kira Survey (customer surveys + in-depth interviews)
   '/insights/'                                  // folder route
 ];
 
