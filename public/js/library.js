@@ -211,14 +211,26 @@
     return out + '<button type="button" data-page="' + (p + 1) + '"' + (p === pages ? ' disabled' : '') + ' aria-label="' + esc(t('next')) + '">' + ic('chev') + '</button>';
   }
 
-  // Search with no (or few) library hits: show matching coming-soon topics, or a
-  // request form when nothing matches (api/topic-search, migration 027).
+  // Search with no (or few) library hits: planned topics, or a placeholder topic for a
+  // market + industry KIRA covers, or a request form (api/topic-search, migration 029).
+  // Only the first no-hit search of a query per tab session counts as demand.
+  function firstTime(q) {
+    try {
+      const seen = JSON.parse(sessionStorage.getItem('kiraSearched') || '[]');
+      if (seen.includes(q)) return false;
+      seen.push(q); sessionStorage.setItem('kiraSearched', JSON.stringify(seen.slice(-50)));
+    } catch (_e) { /* storage blocked: count it */ }
+    return true;
+  }
   async function addSoon(my, empty) {
     const cs = window.kiraComingSoon;
     if (!cs || state.q.length < 3 || state.page > 1) return;
     let items = [];
     try {
-      const r = await fetch('/api/topic-search?q=' + encodeURIComponent(state.q));
+      const r = await fetch('/api/topic-search', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: state.q, unmet: empty && firstTime(state.q.toLowerCase()) })
+      });
       if (r.ok) items = (await r.json()).items || [];
     } catch (_e) { /* the library list stays usable without it */ }
     if (my !== seq) return;

@@ -173,6 +173,8 @@
           ${sig.heat ? `<span class="tp-tag">heat ${esc(sig.heat)}</span>` : ''}
           ${sig.verified === false ? `<span class="tp-tag">evidence thin</span>` : ''}
           ${t.requests ? `<span class="tp-tag p1">${t.requests} reader request${t.requests > 1 ? 's' : ''}</span>` : ''}
+          ${t.search_count ? `<span class="tp-tag">${t.search_count} search${t.search_count > 1 ? 'es' : ''}</span>` : ''}
+          ${t.note === 'created from a reader search' ? `<span class="tp-tag">from search</span>` : ''}
           ${stateLabel}
         </div>
         <h3>${esc(t.title)}</h3>
@@ -205,7 +207,7 @@
     }
 
     function render() {
-      const { stats, topics, splits, countries } = state.data;
+      const { stats, topics, splits, countries, misses = [] } = state.data;
       const statuses = ['proposed', 'approved', 'rejected', 'queued', 'all'];
       root.innerHTML = `
         <div class="tp-head"><h1>Topics</h1></div>
@@ -224,7 +226,9 @@
         ${splits.length ? `<h2 class="tp-section">Level-2 split proposals<small>narrower segments, approve the ones worth their own reports</small></h2>${splits.map(splitCard).join('')}` : ''}
         <h2 class="tp-section">Topics<small>${topics.length} shown</small>
           ${state.status === 'proposed' && topics.length > 1 ? '<button class="tp-btn" style="float:right" id="approve-all">Approve all shown</button>' : ''}</h2>
-        ${topics.length ? topics.map(topicCard).join('') : '<div class="tp-empty">Nothing here.</div>'}`;
+        ${topics.length ? topics.map(topicCard).join('') : '<div class="tp-empty">Nothing here.</div>'}
+        ${misses.length ? `<h2 class="tp-section">Searched, nothing matched<small>top keywords readers typed that no report or topic fits (a market + covered industry becomes a topic automatically)</small></h2>
+          <div class="tp-card">${misses.map(m => `<div class="tp-meta"><span class="tp-tag p1">${m.searches}×</span> ${esc(m.keyword)}</div>`).join('')}</div>` : ''}`;
     }
 
     root.addEventListener('click', async (e) => {

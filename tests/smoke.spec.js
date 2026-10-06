@@ -317,6 +317,15 @@ test.describe('public APIs', () => {
     expect(Array.isArray((await r.json()).items)).toBe(true);
   });
 
+  // unmet:false never writes; nonsense matches nothing, so this leaves no row behind.
+  test('/api/topic-search POST answers, and a nonsense query yields no topic', async ({ request }) => {
+    const r = await request.post('/api/topic-search', {
+      data: { q: 'zzqx wvkp', unmet: false }, headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).items).toEqual([]);
+  });
+
   test('/api/topic 404s for an unknown slug', async ({ request }) => {
     expect((await request.get('/api/topic?slug=no-such-topic-xyz')).status()).toBe(404);
   });
