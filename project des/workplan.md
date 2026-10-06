@@ -57,7 +57,7 @@ Pricing (revised 2026-10-06; validate with the waitlist before S7)
 - Week plan and the $39 single report are dropped.
 - The single price anchors value, so buyers needing 2+ reports choose Month. Download caps stop "subscribe, download everything, cancel".
 - Kira Chain sits in Annual as the retention reason.
-- The site still shows Week $49 · Month $99 · Annual $499 (S5) → change in S5b.
+- Live on the pricing pages (EN/JA/KO/ZH, waitlist only) since S5b (PR #66). Waitlist plan values: `report` · `month` · `annual` · `not-sure` (`week` kept for old rows, migration 030).
 
 Distribution (2026-10-05)
 - KDP (US + JP), Google Play Books, Apple Books via EPUB export.
@@ -120,7 +120,8 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S3b** | Self-running loop: coming-soon pages, notify-me, auto placeholder topics, demand-ordered queue | ✅ merged (#62, #64; migrations 027–029) |
 | **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | ✅ merged (#51); backfill of older published reports to ZH not started |
 | **S5** | Website repositioning, Kira Experts + Kira Survey pages, pricing + waitlist, library filters, redesign | ✅ merged (#52–#61) |
-| **S5b** | New pricing (table above) on site + waitlist; "why KIRA vs your own AI research" copy (5 reasons); sources + dates visible on report pages; PPT/Excel exhibit download; Annual plan names Kira Chain | 🔴 next |
+| **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | 🟡 PR #66 |
+| **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🔴 later |
 | **S10** | **Kira Chain v1**: brainstorm UX first, then data model on Phase R tables; ~10 priority VN industries; product → value-chain map; links from reports | 🔴 |
 | **S11** | On-demand production: coming-soon page promises a delivery window (target 48–72h) for demand-approved topics; runner priority lane | 🔴 |
 | **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🔴 |
@@ -128,7 +129,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S6** | Snapshot layer (3–5 page template) | 🔴 later |
 | **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
-Build order: S5b → S10 → S11 → S7 → S9 → S6 → S8.
+Build order: S5b → S10 → S11 → S7 → S9 → S12 → S6 → S8.
 
 **Parallel owner work:**
 - Ask ~10 corporate-planning (経営企画) / new-business staff at JP/KR firms looking at Vietnam whether they would pay $299 per report and $149/month, and which products they would look up in Kira Chain.
