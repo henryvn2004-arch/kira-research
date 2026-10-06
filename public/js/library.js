@@ -167,7 +167,7 @@
   function coverHtml(it, isNew) {
     const c = it.cover;
     return '<div class="cover-thumb">' +
-      (c ? '<img src="' + esc(c.thumb) + '" alt="" loading="lazy" decoding="async" width="360" height="480">'
+      (c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" onerror="this.onerror=null;this.src=\'' + esc(c.thumb) + '\'">'
          : '<div class="ph"><b>KIRA</b><span>' + esc(R.country(it.country)) + ' ' + esc(R.sector(it.industry)) + '</span></div>') +
       (isNew ? '<span class="tag-new">' + esc(t('newTag')) + '</span>' : '') +
     '</div>';

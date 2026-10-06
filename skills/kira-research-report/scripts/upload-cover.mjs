@@ -5,8 +5,8 @@
 //   node skills/kira-research-report/scripts/upload-cover.mjs \
 //     --kind report|insight --slug <slug> --in <cover.jpg>
 //
-// Writes three files: <slug>.jpg (1536 wide), <slug>-thumb.jpg (360x480
-// portrait crop for library rows) and <slug>-wide.jpg (800x500 crop for
+// Writes four files: <slug>.jpg (1536 wide), <slug>-thumb.jpg (360x480
+// portrait crop), <slug>-sm.jpg (228x304, small library-list thumbnail) and <slug>-wide.jpg (800x500 crop for
 // insight cards). The art keeps its left third empty for the PDF title, so
 // both crops sit on the right of the image. Then sets cover_url and
 // cover_thumb_url on living_reports / insights (matched by slug).
@@ -56,11 +56,13 @@ try {
   const ww = Math.min(w, Math.round(w * 0.68)), wh = Math.min(h, Math.round(ww * 5 / 8));
   const full = await src.clone().resize({ width: 1536, withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
   const thumb = await src.clone().extract({ left: tx, top: 0, width: tw, height: h }).resize(360, 480).jpeg({ quality: 78, mozjpeg: true }).toBuffer();
+  const sm = await sharp(thumb).resize(228, 304).jpeg({ quality: 72, mozjpeg: true }).toBuffer();
   const wide = await src.clone().extract({ left: w - ww, top: Math.round((h - wh) / 2), width: ww, height: wh }).resize(800, 500).jpeg({ quality: 78, mozjpeg: true }).toBuffer();
 
   const v = `?v=${Date.now().toString(36)}`;
   const cover_url = (await put(`${slug}.jpg`, full)) + v;
   const cover_thumb_url = (await put(`${slug}-thumb.jpg`, thumb)) + v;
+  await put(`${slug}-sm.jpg`, sm);
   await put(`${slug}-wide.jpg`, wide);
 
   const rows = await patch(`${table}?slug=eq.${slug}`, { cover_url, cover_thumb_url });

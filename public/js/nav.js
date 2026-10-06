@@ -78,7 +78,7 @@
   <div class="container">
     <nav class="nav">
       <a class="logo" href="${localPath('/')}" aria-label="KIRA RESEARCH home">
-        <span class="logo-mark"><img class="logo-img" src="/logo.png" alt="KIRA Research" width="176" height="22"></span>
+        <span class="logo-mark"><img class="logo-img" src="/logo-nav.webp" alt="KIRA Research" width="176" height="22"></span>
       </a>
       <div class="nav-right">
         <div class="locale-switcher" aria-label="Language">
@@ -128,7 +128,7 @@
     <div class="footer-grid">
       <div class="footer-col">
         <a class="logo" href="${localPath('/')}">
-          <span class="logo-mark"><img class="logo-img" src="/logo.png" alt="KIRA Research" width="176" height="22"></span>
+          <span class="logo-mark"><img class="logo-img" src="/logo-nav.webp" alt="KIRA Research" width="176" height="22"></span>
         </a>
         <p class="footer-tag" data-i18n="footer.tagline">Market-entry research on Southeast Asia, Japan, South Korea, Taiwan, Australia and New Zealand.</p>
       </div>
