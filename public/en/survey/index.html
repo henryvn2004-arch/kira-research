@@ -25,241 +25,56 @@
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/kira.css">
+  <link rel="stylesheet" href="/css/service.css">
 
-  <style>
-    .page-hero {
-      padding-top: 80px; padding-bottom: 64px;
-      border-bottom: 1px solid var(--border);
-    }
-    .page-hero h1 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: clamp(40px, 5.5vw, 64px);
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      max-width: 880px;
-      margin-bottom: 24px;
-    }
-    .page-hero h1 span { display: block; }
-    .page-hero h1 .accent { color: var(--primary); }
-    .page-hero .lead {
-      font-size: 19px;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 660px;
-      margin-bottom: 36px;
-    }
-    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-
-    .ex-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--primary);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .ex-h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: clamp(28px, 3vw, 38px);
-      line-height: 1.12;
-      letter-spacing: -0.025em;
-      margin: 12px 0 20px;
-    }
-
-    /* The service */
-    .ex-what {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 80px;
-      padding: 96px 0 24px;
-      align-items: start;
-    }
-    .ex-what h2 { margin-top: 0; }
-    .ex-what p {
-      font-size: 17px;
-      line-height: 1.7;
-      color: var(--muted);
-      margin-bottom: 20px;
-      max-width: 680px;
-    }
-
-    /* How it works */
-    .ex-how { padding-top: 96px; }
-    .ex-steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 40px;
-    }
-    .ex-step { background: var(--bg); padding: 32px 28px; }
-    .ex-step-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--primary);
-      letter-spacing: 0.15em;
-      margin-bottom: 18px;
-    }
-    .ex-step h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 19px;
-      letter-spacing: -0.01em;
-      margin-bottom: 10px;
-    }
-    .ex-step p { font-size: 14px; line-height: 1.65; color: var(--muted); }
-
-    /* Typical questions */
-    .ex-questions { padding-top: 96px; }
-    .ex-q-list { margin-top: 32px; border-top: 1px solid var(--border); }
-    .ex-q {
-      display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 40px;
-      padding: 22px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .ex-q h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 17px;
-      letter-spacing: -0.01em;
-      color: var(--text);
-    }
-    .ex-q p { font-size: 15px; line-height: 1.65; color: var(--muted); }
-
-    /* Terms */
-    .ex-terms {
-      margin-top: 96px;
-      padding: 40px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      display: grid;
-      grid-template-columns: 1fr 1.2fr 2fr;
-      gap: 40px;
-      align-items: start;
-    }
-    .ex-terms h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-    .ex-terms p { font-size: 14px; line-height: 1.65; color: var(--muted); }
-
-    /* Request form */
-    .ex-form-section { padding-top: 96px; scroll-margin-top: 80px; }
-    .ex-form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .ex-form-grid .intro p { color: var(--muted); font-size: 16px; line-height: 1.65; }
-    .cr-form-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 40px;
-    }
-    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .cr-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-    .cr-field.full { grid-column: 1 / -1; }
-    .cr-field label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .cr-field input,
-    .cr-field textarea,
-    .cr-field select {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 12px 14px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 14px;
-      width: 100%;
-    }
-    .cr-field input:focus,
-    .cr-field textarea:focus,
-    .cr-field select:focus { outline: none; border-color: var(--primary); }
-    .cr-field textarea { min-height: 140px; resize: vertical; }
-    .cr-submit { justify-content: center; }
-    .cr-error { display: none; margin-top: 12px; color: #B42318; font-size: 13px; }
-    .cr-success {
-      display: none;
-      background: rgba(30,111,255,0.08);
-      border: 1px solid rgba(30,111,255,0.3);
-      border-radius: 8px;
-      padding: 24px;
-      color: var(--text);
-    }
-    .cr-success.show { display: block; }
-    .cr-success p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-    @media (max-width: 968px) {
-      .ex-what, .ex-form-grid { grid-template-columns: 1fr; gap: 32px; }
-      .ex-steps { grid-template-columns: 1fr; }
-      .ex-terms { grid-template-columns: 1fr; gap: 24px; }
-      .ex-q { grid-template-columns: 1fr; gap: 6px; }
-    }
-    @media (max-width: 560px) {
-      .cr-form { grid-template-columns: 1fr; }
-      .cr-form-wrap { padding: 24px; }
-      .ex-terms { padding: 28px 20px; }
-    }
-    .ex-steps.s4 { grid-template-columns: repeat(4, 1fr); }
-    @media (max-width: 1100px) { .ex-steps.s4 { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 968px) { .ex-steps.s4 { grid-template-columns: 1fr; } }
-  </style>
 </head>
 <body>
 
   <!-- nav + footer injected by /js/nav.js -->
 
-  <section class="container page-hero">
-    <div class="hero-eyebrow" data-i18n="survey.eyebrow">KIRA SURVEY</div>
-    <h1>
-      <span data-i18n="survey.heroLine1">Hear it from the</span>
-      <span class="accent" data-i18n="survey.heroLine2">customers themselves.</span>
-    </h1>
-    <p class="lead" data-i18n="survey.heroSub">Kira Survey is primary research in the local market. Our research team designs and runs customer surveys and in-depth interviews in the local language, so you can see how buyers in the market think, choose and decide.</p>
-    <div class="hero-actions">
-      <a href="#request" class="btn btn-primary">
-        <span data-i18n="survey.heroCta">Request a survey</span>
-        <span class="btn-arrow">→</span>
-      </a>
-      <a href="/en/library" class="btn btn-secondary" data-i18n="survey.heroCta2">Explore the library</a>
+  <section class="sv-hero">
+    <div class="sv-hero-bg"><img src="/img/svc/srv.webp" alt="" width="1500" height="1000" fetchpriority="high"></div>
+    <div class="sv-w">
+      <div class="sv-copy">
+      <div class="hero-eyebrow" data-i18n="survey.eyebrow">KIRA SURVEY</div>
+      <h1>
+        <span data-i18n="survey.heroLine1">Hear it from the</span>
+        <span class="accent" data-i18n="survey.heroLine2">customers themselves.</span>
+      </h1>
+      <p class="lead" data-i18n="survey.heroSub">Kira Survey is primary research in the local market. Our research team designs and runs customer surveys and in-depth interviews in the local language, so you can see how buyers in the market think, choose and decide.</p>
+      <div class="hero-actions">
+        <a href="#request" class="btn btn-primary">
+          <span data-i18n="survey.heroCta">Request a survey</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/en/library" class="btn btn-secondary" data-i18n="survey.heroCta2">Explore the library</a>
+      </div>
+      </div>
+      <p class="sv-tag tr" data-i18n="survey.heroTag">Real customer insights in Southeast Asia and beyond.</p>
     </div>
   </section>
 
   <!-- The service -->
-  <section class="container">
+  <section class="sv-w">
     <div class="ex-what">
-      <div class="ex-label" data-i18n="survey.whatLabel">— The service</div>
-      <div>
+      <div class="txt">
+        <div class="ex-label" data-i18n="survey.whatLabel">The service</div>
         <h2 class="ex-h2" data-i18n="survey.whatHeading">Customer insight, from the source.</h2>
         <p data-i18n="survey.whatP1">Published research tells you how a market is structured. Customers tell you why they buy, what they pay and what they would change. Kira Survey puts that conversation within reach for companies entering or expanding across Southeast Asia, Japan, South Korea, Taiwan, Australia and New Zealand.</p>
         <p data-i18n="survey.whatP2">Every study starts from the decision you need to make, so the questions, the respondents and the reporting are built around it.</p>
+      </div>
+      <div class="sv-duo">
+        <div class="sv-duo-map"><p data-i18n="survey.panelTag">Local perspectives for smarter decisions.</p></div>
+        <div class="sv-duo-photo"><img src="/img/svc/plaza.webp" alt="" width="1000" height="667" loading="lazy"></div>
       </div>
     </div>
   </section>
 
   <!-- Methods -->
-  <section class="container ex-questions">
+  <section class="sv-w ex-questions">
     <div class="ex-label" data-i18n="survey.mEyebrow">Methods</div>
     <h2 class="ex-h2" data-i18n="survey.mHeading">Two ways to hear from customers.</h2>
-    <div class="ex-q-list">
+    <div class="ex-q-list sv-cols">
       <div class="ex-q">
         <h3 data-i18n="survey.m1Title">Customer surveys</h3>
         <p data-i18n="survey.m1Body">Structured questionnaires to a defined group of consumers, business buyers or channel partners, in the local language, for results you can compare across segments and markets.</p>
@@ -276,27 +91,27 @@
   </section>
 
   <!-- How it works -->
-  <section class="container ex-how">
+  <section class="sv-w ex-how">
     <div class="ex-label" data-i18n="survey.howEyebrow">How it works</div>
     <h2 class="ex-h2" data-i18n="survey.howHeading">From question to customer voice.</h2>
     <div class="ex-steps s4">
       <div class="ex-step">
-        <div class="ex-step-num">01</div>
+        <div class="ex-step-top"><div class="ex-step-num">01</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg></div></div>
         <h3 data-i18n="survey.step1Title">Share your question</h3>
         <p data-i18n="survey.step1Body">Tell us the market, the customers you want to hear from and the decision you are weighing. A short brief is enough to begin.</p>
       </div>
       <div class="ex-step">
-        <div class="ex-step-num">02</div>
+        <div class="ex-step-top"><div class="ex-step-num">02</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div></div>
         <h3 data-i18n="survey.step2Title">We design the study</h3>
         <p data-i18n="survey.step2Body">We propose the questionnaire or interview guide and the respondent profile, and you approve them before fieldwork starts.</p>
       </div>
       <div class="ex-step">
-        <div class="ex-step-num">03</div>
+        <div class="ex-step-top"><div class="ex-step-num">03</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V7M18 17v-8"/></svg></div></div>
         <h3 data-i18n="survey.step3Title">We run it in the market</h3>
         <p data-i18n="survey.step3Body">We reach respondents who match the profile and carry out the survey or interviews in the local language.</p>
       </div>
       <div class="ex-step">
-        <div class="ex-step-num">04</div>
+        <div class="ex-step-top"><div class="ex-step-num">04</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg></div></div>
         <h3 data-i18n="survey.step4Title">You receive the findings</h3>
         <p data-i18n="survey.step4Body">A written report with the evidence behind each finding. Interview summaries are available on request.</p>
       </div>
@@ -304,7 +119,7 @@
   </section>
 
   <!-- Typical questions -->
-  <section class="container ex-questions">
+  <section class="sv-w ex-questions">
     <div class="ex-label" data-i18n="survey.qEyebrow">Typical questions</div>
     <h2 class="ex-h2" data-i18n="survey.qHeading">Where asking customers directly matters most.</h2>
     <div class="ex-q-list">
@@ -332,9 +147,9 @@
   </section>
 
   <!-- Terms -->
-  <section class="container">
+  <section class="sv-w">
     <div class="ex-terms">
-      <div class="ex-label" data-i18n="survey.termsLabel">— Terms</div>
+      <div class="ex-label" data-i18n="survey.termsLabel">Terms</div>
       <div>
         <h3 data-i18n="survey.termsPricingTitle">Pricing</h3>
         <p data-i18n="survey.termsPricing">Pricing is agreed per study.</p>
@@ -347,7 +162,7 @@
   </section>
 
   <!-- Request form -->
-  <section class="container ex-form-section" id="request">
+  <section class="sv-w ex-form-section" id="request">
     <div class="ex-form-grid">
       <div class="intro">
         <div class="hero-eyebrow" data-i18n="survey.formEyebrow">REQUEST A SURVEY</div>

@@ -25,338 +25,55 @@
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/kira.css">
+  <link rel="stylesheet" href="/css/service.css">
 
-  <style>
-    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; }
-    h1 { line-height: 1.15 !important; letter-spacing: -0.01em !important; }
-    p, li { line-height: 1.8; }
-    h1 span { display: inline-block; }
-    .page-hero {
-      padding-top: 80px; padding-bottom: 56px;
-      border-bottom: 1px solid var(--border);
-    }
-    .page-hero h1 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: clamp(40px, 5.5vw, 64px);
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      max-width: 900px;
-      margin-bottom: 24px;
-    }
-    .page-hero h1 .accent { color: var(--primary); }
-    .page-hero .lead {
-      font-size: 19px;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 680px;
-    }
-
-    /* Principles strip */
-    .principles {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .principle {
-      padding: 40px 32px;
-      border-right: 1px solid var(--border);
-    }
-    .principle:last-child { border-right: none; }
-    .principle .key {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--primary);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    .principle .body {
-      font-size: 15px;
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    /* Step blocks */
-    .step-block {
-      padding-top: 96px; padding-bottom: 96px;
-      border-bottom: 1px solid var(--border);
-    }
-    .step-block:last-child { border-bottom: none; }
-    .step-grid {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .step-num-large {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--primary);
-      letter-spacing: 0.2em;
-      padding-top: 8px;
-    }
-    .step-num-large::after {
-      content: "";
-      display: block;
-      width: 32px;
-      height: 1px;
-      background: var(--primary);
-      margin-top: 12px;
-    }
-    .step-content h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 40px;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin-bottom: 24px;
-    }
-    .step-content p {
-      font-size: 17px;
-      line-height: 1.7;
-      color: var(--muted);
-      margin-bottom: 20px;
-      max-width: 720px;
-    }
-    .step-content p strong { color: var(--text); font-weight: 600; }
-    .step-detail {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 28px 32px;
-      margin-top: 32px;
-      max-width: 720px;
-    }
-    .step-detail h4 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-    .step-detail ul {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .step-detail li {
-      display: grid;
-      grid-template-columns: 24px 1fr;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--text);
-      line-height: 1.55;
-    }
-    .step-detail li::before {
-      content: "→";
-      color: var(--primary);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Transparency block */
-    .transparency {
-      padding: 96px 0;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .transparency h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 40px;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin-bottom: 16px;
-    }
-    .transparency .lead {
-      font-size: 17px;
-      color: var(--muted);
-      max-width: 640px;
-      margin-bottom: 48px;
-      line-height: 1.65;
-    }
-    .trans-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      background: var(--bg);
-    }
-    .trans-col {
-      padding: 32px;
-      border-right: 1px solid var(--border);
-    }
-    .trans-col:last-child { border-right: none; }
-    .trans-col h3 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .trans-col h3::before {
-      content: "";
-      width: 20px;
-      height: 1px;
-      background: var(--primary);
-    }
-    .trans-col ul { list-style: none; padding: 0; }
-    .trans-col li {
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--text);
-    }
-    .trans-col li:last-child { border-bottom: none; }
-
-    /* QA flow */
-    .qa-flow {
-      padding-top: 96px; padding-bottom: 96px;
-    }
-    .qa-flow h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 40px;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin-bottom: 48px;
-    }
-    .qa-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-    .qa-step {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 28px;
-      position: relative;
-    }
-    .qa-step::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 40px; height: 1px;
-      background: var(--primary);
-    }
-    .qa-step .key {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-    .qa-step h4 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      letter-spacing: -0.01em;
-      margin-bottom: 8px;
-    }
-    .qa-step p {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    /* Closing CTA */
-    .closing-cta {
-      margin: 64px 0 0;
-      padding: 56px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .closing-cta::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 80px; height: 1px;
-      background: var(--primary);
-    }
-    .closing-cta h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 32px;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-    }
-    .closing-cta p {
-      font-size: 16px;
-      color: var(--muted);
-      max-width: 520px;
-      margin: 0 auto 28px;
-    }
-    .closing-cta .actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    @media (max-width: 968px) {
-      .principles  { grid-template-columns: 1fr; }
-      .principle   { border-right: none; border-bottom: 1px solid var(--border); }
-      .step-grid   { grid-template-columns: 1fr; gap: 24px; }
-      .step-content h2 { font-size: 32px; }
-      .trans-grid  { grid-template-columns: 1fr; }
-      .trans-col   { border-right: none; border-bottom: 1px solid var(--border); }
-      .qa-steps    { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 560px) {
-      .qa-steps { grid-template-columns: 1fr; }
-      .closing-cta { padding: 36px 24px; }
-    }
-  </style>
 </head>
 <body>
 
-  <section class="container page-hero">
-    <div class="hero-eyebrow" data-i18n="meth.eyebrow">研究方法</div>
-    <h1>
-      <span data-i18n="meth.titleLine1">我们的研究如何构建</span>
-      <span class="accent" data-i18n="meth.titleLine2">与审核。</span>
-    </h1>
-    <p class="lead" data-i18n="meth.lead">我们的报告属于案头研究。我们基于公开及授权来源开展工作，为每项数据注明来源，并在发布前审核每份报告。本页逐一说明各个步骤及其局限。</p>
+  <section class="sv-hero">
+    <div class="sv-hero-bg"><img src="/img/svc/meth.webp" alt="" width="1500" height="1000" fetchpriority="high"></div>
+    <div class="sv-w">
+      <div class="sv-copy">
+      <div class="hero-eyebrow" data-i18n="meth.eyebrow">研究方法</div>
+      <h1>
+        <span data-i18n="meth.titleLine1">我们的研究如何构建</span>
+        <span class="accent" data-i18n="meth.titleLine2">与审核。</span>
+      </h1>
+      <p class="lead" data-i18n="meth.lead">我们的报告属于案头研究。我们基于公开及授权来源开展工作，为每项数据注明来源，并在发布前审核每份报告。本页逐一说明各个步骤及其局限。</p>
+      </div>
+      <p class="sv-tag br" data-i18n="meth.heroTag">清晰的流程，成就可信的洞察。</p>
+    </div>
   </section>
 
-  <section class="container">
+  <section class="sv-w">
     <div class="principles">
       <div class="principle">
-        <div class="key" data-i18n="meth.principle1Key">— 案头研究</div>
+        <div class="pic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg></div>
+        <div>
+        <div class="key" data-i18n="meth.principle1Key">案头研究</div>
         <div class="body" data-i18n="meth.principle1Body">我们基于已发布及授权来源开展研究，而非实地调研、问卷调查或访谈。</div>
+        </div>
       </div>
       <div class="principle">
-        <div class="key" data-i18n="meth.principle2Key">— 透明</div>
+        <div class="pic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg></div>
+        <div>
+        <div class="key" data-i18n="meth.principle2Key">透明</div>
         <div class="body" data-i18n="meth.principle2Body">每个数字均说明其出处、哪些属于估算，以及哪些方面证据不足。</div>
+        </div>
       </div>
       <div class="principle">
-        <div class="key" data-i18n="meth.principle3Key">— 审核</div>
+        <div class="pic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></div>
+        <div>
+        <div class="key" data-i18n="meth.principle3Key">审核</div>
         <div class="body" data-i18n="meth.principle3Body">每份报告在发布前均经本公司研究团队审核。</div>
+        </div>
       </div>
     </div>
   </section>
 
+  <div class="sv-w sv-steps">
   <!-- Step 01 -->
-  <section class="container step-block">
+  <div class="step-block">
     <div class="step-grid">
       <div class="step-num-large">01</div>
       <div class="step-content">
@@ -374,10 +91,10 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Step 02 -->
-  <section class="container step-block">
+  <div class="step-block">
     <div class="step-grid">
       <div class="step-num-large">02</div>
       <div class="step-content">
@@ -395,10 +112,10 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Step 03 -->
-  <section class="container step-block">
+  <div class="step-block">
     <div class="step-grid">
       <div class="step-num-large">03</div>
       <div class="step-content">
@@ -416,10 +133,10 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Step 04 -->
-  <section class="container step-block">
+  <div class="step-block">
     <div class="step-grid">
       <div class="step-num-large">04</div>
       <div class="step-content">
@@ -438,11 +155,12 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
+  </div>
 
   <!-- Transparency -->
   <section class="transparency">
-    <div class="container">
+    <div class="sv-w">
       <h2 data-i18n="meth.transHeading">优势与局限。</h2>
       <p class="lead" data-i18n="meth.transLead">案头研究在某些方面具有优势，在另一些方面存在局限。以下区分有助于判断何时可以依赖报告，何时宜进一步核实。</p>
       <div class="trans-grid">
@@ -469,33 +187,33 @@
   </section>
 
   <!-- QA Flow -->
-  <section class="container qa-flow">
+  <section class="sv-w qa-flow">
     <h2 data-i18n="meth.qaHeading">每份报告的质量核查。</h2>
     <div class="qa-steps">
       <div class="qa-step">
-        <div class="key">QA · 01</div>
+        <div class="key">01</div>
         <h4 data-i18n="meth.qa1Title">来源标注</h4>
         <p data-i18n="meth.qa1Body">报告中的每个数字均附来源标注。无法追溯的数据不会作为事实发布。</p>
       </div>
       <div class="qa-step">
-        <div class="key">QA · 02</div>
+        <div class="key">02</div>
         <h4 data-i18n="meth.qa2Title">团队审核</h4>
         <p data-i18n="meth.qa2Body">本公司研究团队在发布前通读报告。论据薄弱之处将被强化或删除。</p>
       </div>
       <div class="qa-step">
-        <div class="key">QA · 03</div>
+        <div class="key">03</div>
         <h4 data-i18n="meth.qa3Title">翻译一致</h4>
         <p data-i18n="meth.qa3Body">各语言版本均译自经审核的英文版，数据与来源相同。</p>
       </div>
       <div class="qa-step">
-        <div class="key">QA · 04</div>
+        <div class="key">04</div>
         <h4 data-i18n="meth.qa4Title">更新日期</h4>
         <p data-i18n="meth.qa4Body">每份报告均显示最近更新日期，便于判断其时效性。</p>
       </div>
     </div>
   </section>
 
-  <section class="container">
+  <section class="sv-w">
     <div class="closing-cta">
       <h3 data-i18n="meth.closingHeading">请检验我们的研究。</h3>
       <p data-i18n="meth.closingBody">方法是否有价值，取决于报告能否经得起检验。阅读任一执行摘要，自行判断。</p>

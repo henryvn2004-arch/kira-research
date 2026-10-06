@@ -26,254 +26,52 @@
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/kira.css">
+  <link rel="stylesheet" href="/css/service.css">
 
-  <style>
-    /* ko: Hangul font fallback; keep Korean words intact when wrapping */
-    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans KR', sans-serif; }
-    body { word-break: keep-all; overflow-wrap: break-word; }
-    .nav-wrap, .locale-switcher { word-break: normal; }
-    .page-hero {
-      padding-top: 80px; padding-bottom: 64px;
-      border-bottom: 1px solid var(--border);
-    }
-    .page-hero h1 {
-      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
-      font-weight: 700;
-      font-size: clamp(40px, 5.5vw, 64px);
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      max-width: 880px;
-      margin-bottom: 24px;
-    }
-    .page-hero h1 span { display: block; }
-    .page-hero h1 .accent { color: var(--primary); }
-    .page-hero .lead {
-      font-size: 19px;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 660px;
-      margin-bottom: 36px;
-    }
-    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-
-    .ex-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--primary);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .ex-h2 {
-      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
-      font-weight: 700;
-      font-size: clamp(28px, 3vw, 38px);
-      line-height: 1.12;
-      letter-spacing: -0.025em;
-      margin: 12px 0 20px;
-    }
-
-    /* The service */
-    .ex-what {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 80px;
-      padding: 96px 0 24px;
-      align-items: start;
-    }
-    .ex-what h2 { margin-top: 0; }
-    .ex-what p {
-      font-size: 17px;
-      line-height: 1.7;
-      color: var(--muted);
-      margin-bottom: 20px;
-      max-width: 680px;
-    }
-
-    /* How it works */
-    .ex-how { padding-top: 96px; }
-    .ex-steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 40px;
-    }
-    .ex-step { background: var(--bg); padding: 32px 28px; }
-    .ex-step-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--primary);
-      letter-spacing: 0.15em;
-      margin-bottom: 18px;
-    }
-    .ex-step h3 {
-      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
-      font-weight: 700;
-      font-size: 19px;
-      letter-spacing: -0.01em;
-      margin-bottom: 10px;
-    }
-    .ex-step p { font-size: 14px; line-height: 1.65; color: var(--muted); }
-
-    /* Typical questions */
-    .ex-questions { padding-top: 96px; }
-    .ex-q-list { margin-top: 32px; border-top: 1px solid var(--border); }
-    .ex-q {
-      display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 40px;
-      padding: 22px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .ex-q h3 {
-      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
-      font-weight: 700;
-      font-size: 17px;
-      letter-spacing: -0.01em;
-      color: var(--text);
-    }
-    .ex-q p { font-size: 15px; line-height: 1.65; color: var(--muted); }
-
-    /* Terms */
-    .ex-terms {
-      margin-top: 96px;
-      padding: 40px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      display: grid;
-      grid-template-columns: 1fr 1.2fr 2fr;
-      gap: 40px;
-      align-items: start;
-    }
-    .ex-terms h3 {
-      font-family: 'Satoshi', 'Noto Sans KR', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-    .ex-terms p { font-size: 14px; line-height: 1.65; color: var(--muted); }
-
-    /* Request form */
-    .ex-form-section { padding-top: 96px; scroll-margin-top: 80px; }
-    .ex-form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .ex-form-grid .intro p { color: var(--muted); font-size: 16px; line-height: 1.65; }
-    .cr-form-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 40px;
-    }
-    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .cr-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-    .cr-field.full { grid-column: 1 / -1; }
-    .cr-field label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .cr-field input,
-    .cr-field textarea,
-    .cr-field select {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 12px 14px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 14px;
-      width: 100%;
-    }
-    .cr-field input:focus,
-    .cr-field textarea:focus,
-    .cr-field select:focus { outline: none; border-color: var(--primary); }
-    .cr-field textarea { min-height: 140px; resize: vertical; }
-    .cr-submit { justify-content: center; }
-    .cr-error { display: none; margin-top: 12px; color: #B42318; font-size: 13px; }
-    .cr-success {
-      display: none;
-      background: rgba(30,111,255,0.08);
-      border: 1px solid rgba(30,111,255,0.3);
-      border-radius: 8px;
-      padding: 24px;
-      color: var(--text);
-    }
-    .cr-success.show { display: block; }
-    .cr-success p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-    @media (max-width: 968px) {
-      .ex-what, .ex-form-grid { grid-template-columns: 1fr; gap: 32px; }
-      .ex-steps { grid-template-columns: 1fr; }
-      .ex-terms { grid-template-columns: 1fr; gap: 24px; }
-      .ex-q { grid-template-columns: 1fr; gap: 6px; }
-    }
-    @media (max-width: 560px) {
-      .cr-form { grid-template-columns: 1fr; }
-      .cr-form-wrap { padding: 24px; }
-      .ex-terms { padding: 28px 20px; }
-    }
-  </style>
 </head>
 <body>
 
   <!-- nav + footer injected by /js/nav.js -->
 
-  <section class="container page-hero">
-    <div class="hero-eyebrow" data-i18n="experts.eyebrow">KIRA EXPERTS</div>
-    <h1>
-      <span data-i18n="experts.heroLine1">시장을 아는 사람과의</span>
-      <span class="accent" data-i18n="experts.heroLine2">직접 대화.</span>
-    </h1>
-    <p class="lead" data-i18n="experts.heroSub">Kira Experts는 당사가 다루는 시장을 직접 경험한 현업 운영자, 경영진, 전문가, 자문가와의 대화를 당면한 질문에 맞추어 주선합니다.</p>
-    <div class="hero-actions">
-      <a href="#request" class="btn btn-primary">
-        <span data-i18n="experts.heroCta">전문가 요청</span>
-        <span class="btn-arrow">→</span>
-      </a>
-      <a href="/ko/library" class="btn btn-secondary" data-i18n="experts.heroCta2">라이브러리 둘러보기</a>
-    </div>
-  </section>
-
-  <!-- The service -->
-  <section class="container">
-    <div class="ex-what">
-      <div class="ex-label" data-i18n="experts.whatLabel">— 서비스</div>
-      <div>
-        <h2 class="ex-h2" data-i18n="experts.whatHeading">직접 경험을, 필요한 때에.</h2>
-        <p data-i18n="experts.whatP1">발간된 리서치는 시장을 설명합니다. 그 시장에서 일해 본 사람은 시장이 실제로 어떻게 움직이는지를 설명합니다. Kira Experts는 동남아시아, 일본, 한국, 대만, 호주, 뉴질랜드에 걸쳐 그러한 경험에 직접 접근할 수 있도록 합니다.</p>
-        <p data-i18n="experts.whatP2">각 대화는 구체적인 질문을 중심으로 마련되므로, 꼭 알아야 할 내용에 시간을 집중할 수 있습니다.</p>
+  <section class="sv-hero">
+    <div class="sv-hero-bg"><img src="/img/svc/exp.webp" alt="" width="1500" height="1000" fetchpriority="high"></div>
+    <div class="sv-w">
+      <div class="sv-copy">
+      <div class="hero-eyebrow" data-i18n="experts.eyebrow">KIRA EXPERTS</div>
+      <h1>
+        <span data-i18n="experts.heroLine1">시장을 아는 사람과의</span>
+        <span class="accent" data-i18n="experts.heroLine2">직접 대화.</span>
+      </h1>
+      <p class="lead" data-i18n="experts.heroSub">Kira Experts는 당사가 다루는 시장을 직접 경험한 현업 운영자, 경영진, 전문가, 자문가와의 대화를 당면한 질문에 맞추어 주선합니다.</p>
+      <div class="hero-actions">
+        <a href="#request" class="btn btn-primary">
+          <span data-i18n="experts.heroCta">전문가 요청</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="/ko/library" class="btn btn-secondary" data-i18n="experts.heroCta2">라이브러리 둘러보기</a>
       </div>
+      </div>
+      <p class="sv-tag br" data-i18n="experts.heroTag">현장의 경험, 더 날카로운 관점.</p>
     </div>
   </section>
 
   <!-- How it works -->
-  <section class="container ex-how">
+  <section class="sv-w ex-how">
     <div class="ex-label" data-i18n="experts.howEyebrow">진행 방식</div>
     <h2 class="ex-h2" data-i18n="experts.howHeading">질문에서 대화까지.</h2>
     <div class="ex-steps">
       <div class="ex-step">
-        <div class="ex-step-num">01</div>
+        <div class="ex-step-top"><div class="ex-step-num">01</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg></div></div>
         <h3 data-i18n="experts.step1Title">질문 공유</h3>
         <p data-i18n="experts.step1Body">시장, 산업, 파악하고자 하는 내용을 알려 주십시오. 간단한 개요만으로 시작할 수 있습니다.</p>
       </div>
       <div class="ex-step">
-        <div class="ex-step-num">02</div>
+        <div class="ex-step-top"><div class="ex-step-num">02</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.2 18.2a6 6 0 0 1 11.6 0"/></svg></div></div>
         <h3 data-i18n="experts.step2Title">전문가 선정 및 사전 브리핑</h3>
         <p data-i18n="experts.step2Body">질문에 맞는 경험을 갖춘 인물을 찾고, 다루고자 하는 내용을 사전에 전달합니다.</p>
       </div>
       <div class="ex-step">
-        <div class="ex-step-num">03</div>
+        <div class="ex-step-top"><div class="ex-step-num">03</div><div class="ex-step-ic"><svg class="sv-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 12h5"/></svg></div></div>
         <h3 data-i18n="experts.step3Title">전문가와 대화</h3>
         <p data-i18n="experts.step3Body">대화는 직접 진행합니다. 요청 시 논의 내용의 서면 요약을 제공합니다.</p>
       </div>
@@ -281,7 +79,7 @@
   </section>
 
   <!-- Typical questions -->
-  <section class="container ex-questions">
+  <section class="sv-w ex-questions">
     <div class="ex-label" data-i18n="experts.qEyebrow">주요 질문 유형</div>
     <h2 class="ex-h2" data-i18n="experts.qHeading">직접 경험이 가장 중요한 영역.</h2>
     <div class="ex-q-list">
@@ -308,28 +106,24 @@
     </div>
   </section>
 
-  <!-- Terms -->
-  <section class="container">
-    <div class="ex-terms">
-      <div class="ex-label" data-i18n="experts.termsLabel">— 조건</div>
-      <div>
-        <h3 data-i18n="experts.termsPricingTitle">요금</h3>
-        <p data-i18n="experts.termsPricing">요금은 건별로 협의합니다.</p>
-      </div>
-      <div>
-        <h3 data-i18n="experts.termsComplianceTitle">준법 원칙</h3>
-        <p data-i18n="experts.termsCompliance">전문가는 일반적인 지식과 경험을 바탕으로 참여합니다. Kira Experts는 기밀 정보 또는 미공개 중요 정보의 공개를 매개하지 않습니다.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Request form -->
-  <section class="container ex-form-section" id="request">
+    <!-- Request form -->
+  <section class="sv-w ex-form-section" id="request">
     <div class="ex-form-grid">
       <div class="intro">
         <div class="hero-eyebrow" data-i18n="experts.formEyebrow">전문가 요청</div>
         <h2 class="ex-h2" data-i18n="experts.formTitle">알고자 하는 내용을 알려 주십시오.</h2>
         <p data-i18n="experts.formSub">시장과 질문을 기재해 주십시오. 다음 단계를 논의하기 위해 이메일로 회신드리겠습니다.</p>
+        <div class="sv-notes">
+          <div>
+        <h3 data-i18n="experts.termsPricingTitle">요금</h3>
+        <p data-i18n="experts.termsPricing">요금은 건별로 협의합니다.</p>
+                </div>
+          <div>
+        <h3 data-i18n="experts.termsComplianceTitle">준법 원칙</h3>
+        <p data-i18n="experts.termsCompliance">전문가는 일반적인 지식과 경험을 바탕으로 참여합니다. Kira Experts는 기밀 정보 또는 미공개 중요 정보의 공개를 매개하지 않습니다.</p>
+                </div>
+        </div>
+        <div class="sv-map" aria-hidden="true"><span style="left:40.3%;top:38%" data-i18n="experts.mapChina">중국</span><span style="left:61.0%;top:35%" data-i18n="experts.mapJapan">일본</span><span style="left:43.0%;top:70%" data-i18n="experts.mapSea">동남아시아</span><span style="left:63.5%;top:88%" data-i18n="experts.mapAus">호주</span></div>
       </div>
 
       <div class="cr-form-wrap">
