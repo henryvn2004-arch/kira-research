@@ -167,7 +167,7 @@
   function coverHtml(it, isNew) {
     const c = it.cover;
     return '<div class="cover-thumb">' +
-      (c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" onerror="this.onerror=null;this.src=\'' + esc(c.thumb) + '\'">'
+      (c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" data-fallback="' + esc(c.thumb) + '">'
          : '<div class="ph"><b>KIRA</b><span>' + esc(R.country(it.country)) + ' ' + esc(R.sector(it.industry)) + '</span></div>') +
       (isNew ? '<span class="tag-new">' + esc(t('newTag')) + '</span>' : '') +
     '</div>';
@@ -243,6 +243,11 @@
   }
 
   // ── Events (delegated; filter markup is re-rendered on every load) ──
+  // Small list thumbnail missing (older cover): fall back to the full thumbnail once.
+  app.addEventListener('error', e => {
+    const img = e.target;
+    if (img.tagName === 'IMG' && img.dataset.fallback) { const f = img.dataset.fallback; delete img.dataset.fallback; img.src = f; }
+  }, true);
   app.addEventListener('change', e => {
     const el = e.target;
     if (el.dataset.filter) setFilter(el.dataset.filter, el.value);
