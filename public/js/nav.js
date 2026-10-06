@@ -89,6 +89,7 @@
           <a href="${localPath('/insights')}"         class="${('insights'       + activeIf('insights')).trim()}"       data-i18n="nav.insights">Insights</a>
           <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
           <a href="${localPath('/experts/')}"         class="${('experts'        + activeIf('experts')).trim()}"        data-i18n="nav.experts">Kira Experts</a>
+          <a href="${localPath('/survey/')}"          class="${('survey'         + activeIf('survey')).trim()}"         data-i18n="nav.survey">Kira Survey</a>
           <a href="${localPath('/profile')}" class="${('kira-my-library'   + activeIf('profile')).trim()}" data-i18n="nav.myLibrary" style="display:none">My Library</a>
           <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
           <a href="${localPath('/library')}" class="nav-cta" data-i18n="nav.browseCta">Explore the library →</a>
@@ -114,6 +115,7 @@
     <a href="${localPath('/insights')}"         data-i18n="nav.insights">Insights</a>
     <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
     <a href="${localPath('/experts/')}"         data-i18n="nav.experts">Kira Experts</a>
+    <a href="${localPath('/survey/')}"          data-i18n="nav.survey">Kira Survey</a>
     <a href="${localPath('/profile')}" class="kira-my-library" data-i18n="nav.myLibrary" style="display:none">My Library</a>
     <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
   </div>
@@ -142,6 +144,7 @@
         <a href="${localPath('/about')}"            data-i18n="footer.about">About</a>
         <a href="${localPath('/methodology')}"      data-i18n="footer.methodology">Methodology</a>
         <a href="${localPath('/experts/')}"         data-i18n="footer.experts">Kira Experts</a>
+        <a href="${localPath('/survey/')}"          data-i18n="footer.survey">Kira Survey</a>
         <a href="mailto:hello@kiraresearch.com"     data-i18n="footer.contact">Contact</a>
       </div>
       <div class="footer-col">

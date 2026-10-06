@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kira Survey — KIRA Research</title>
+  <meta name="description" content="Kira Surveyは、現地の言語で行う顧客調査とデプスインタビューを、意思決定に合わせて設計・実施します。">
+
+  <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/survey/">
+  <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/survey/">
+  <link rel="alternate" hreflang="ko"        href="https://kiraresearch.com/ko/survey/">
+  <link rel="alternate" hreflang="zh-Hans"   href="https://kiraresearch.com/zh/survey/">
+  <link rel="alternate" hreflang="x-default" href="https://kiraresearch.com/en/survey/">
+
+  <meta property="og:title"       content="Kira Survey — KIRA Research">
+  <meta property="og:description" content="顧客の声を、現地で直接聞く。東南アジア、日本、韓国、台湾、オーストラリア、ニュージーランドでの顧客調査とデプスインタビュー。">
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://kiraresearch.com/ja/survey/">
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/kira.css">
+
+  <style>
+    .page-hero {
+      padding-top: 80px; padding-bottom: 64px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 880px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 span { display: block; }
+    .page-hero h1 .accent { color: var(--primary); }
+    .page-hero .lead {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 660px;
+      margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .ex-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .ex-h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin: 12px 0 20px;
+    }
+
+    /* The service */
+    .ex-what {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      padding: 96px 0 24px;
+      align-items: start;
+    }
+    .ex-what h2 { margin-top: 0; }
+    .ex-what p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-width: 680px;
+    }
+
+    /* How it works */
+    .ex-how { padding-top: 96px; }
+    .ex-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .ex-step { background: var(--bg); padding: 32px 28px; }
+    .ex-step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      margin-bottom: 18px;
+    }
+    .ex-step h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .ex-step p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+
+    /* Typical questions */
+    .ex-questions { padding-top: 96px; }
+    .ex-q-list { margin-top: 32px; border-top: 1px solid var(--border); }
+    .ex-q {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 40px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .ex-q h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .ex-q p { font-size: 15px; line-height: 1.65; color: var(--muted); }
+
+    /* Terms */
+    .ex-terms {
+      margin-top: 96px;
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 2fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .ex-terms h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .ex-terms p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+
+    /* Request form */
+    .ex-form-section { padding-top: 96px; scroll-margin-top: 80px; }
+    .ex-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .ex-form-grid .intro p { color: var(--muted); font-size: 16px; line-height: 1.65; }
+    .cr-form-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px;
+    }
+    .cr-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cr-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .cr-field.full { grid-column: 1 / -1; }
+    .cr-field label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cr-field input,
+    .cr-field textarea,
+    .cr-field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      width: 100%;
+    }
+    .cr-field input:focus,
+    .cr-field textarea:focus,
+    .cr-field select:focus { outline: none; border-color: var(--primary); }
+    .cr-field textarea { min-height: 140px; resize: vertical; }
+    .cr-submit { justify-content: center; }
+    .cr-error { display: none; margin-top: 12px; color: #B42318; font-size: 13px; }
+    .cr-success {
+      display: none;
+      background: rgba(30,111,255,0.08);
+      border: 1px solid rgba(30,111,255,0.3);
+      border-radius: 8px;
+      padding: 24px;
+      color: var(--text);
+    }
+    .cr-success.show { display: block; }
+    .cr-success p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    @media (max-width: 968px) {
+      .ex-what, .ex-form-grid { grid-template-columns: 1fr; gap: 32px; }
+      .ex-steps { grid-template-columns: 1fr; }
+      .ex-terms { grid-template-columns: 1fr; gap: 24px; }
+      .ex-q { grid-template-columns: 1fr; gap: 6px; }
+    }
+    @media (max-width: 560px) {
+      .cr-form { grid-template-columns: 1fr; }
+      .cr-form-wrap { padding: 24px; }
+      .ex-terms { padding: 28px 20px; }
+    }
+    .ex-steps.s4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 1100px) { .ex-steps.s4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 968px) { .ex-steps.s4 { grid-template-columns: 1fr; } }
+  </style>
+  <!-- ja: Japanese typography (Noto Sans JP fallback, CJK line-height) -->
+  <style>
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans JP', sans-serif; }
+    html:lang(ja) body { line-break: strict; }
+    html:lang(ja) h1 { line-height: 1.25; letter-spacing: -0.01em; }
+    html:lang(ja) h2, html:lang(ja) h3 { line-height: 1.4; letter-spacing: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <section class="container page-hero">
+    <div class="hero-eyebrow" data-i18n="survey.eyebrow">KIRA SURVEY</div>
+    <h1>
+      <span data-i18n="survey.heroLine1">顧客の声を、</span>
+      <span class="accent" data-i18n="survey.heroLine2">現地で直接聞く。</span>
+    </h1>
+    <p class="lead" data-i18n="survey.heroSub">Kira Surveyは、現地市場で行う一次調査です。当社のリサーチチームが、現地の言語で顧客調査とデプスインタビューを設計・実施し、市場の購買者がどう考え、どう選び、どう決めるのかを明らかにします。</p>
+    <div class="hero-actions">
+      <a href="#request" class="btn btn-primary">
+        <span data-i18n="survey.heroCta">調査を依頼する</span>
+        <span class="btn-arrow">→</span>
+      </a>
+      <a href="/ja/library" class="btn btn-secondary" data-i18n="survey.heroCta2">ライブラリを見る</a>
+    </div>
+  </section>
+
+  <!-- The service -->
+  <section class="container">
+    <div class="ex-what">
+      <div class="ex-label" data-i18n="survey.whatLabel">— サービス内容</div>
+      <div>
+        <h2 class="ex-h2" data-i18n="survey.whatHeading">顧客の本音を、源から。</h2>
+        <p data-i18n="survey.whatP1">公開されたリサーチは、市場の構造を説明します。顧客は、なぜ買うのか、いくら払うのか、何を変えたいのかを教えてくれます。Kira Surveyは、東南アジア、日本、韓国、台湾、オーストラリア、ニュージーランドで参入・拡大を目指す企業に、その対話の場を提供します。</p>
+        <p data-i18n="survey.whatP2">どの調査も、下すべき意思決定から出発します。設問、対象者、報告の形はすべてそれに合わせて組み立てます。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Methods -->
+  <section class="container ex-questions">
+    <div class="ex-label" data-i18n="survey.mEyebrow">調査手法</div>
+    <h2 class="ex-h2" data-i18n="survey.mHeading">顧客に聞く、二つの方法。</h2>
+    <div class="ex-q-list">
+      <div class="ex-q">
+        <h3 data-i18n="survey.m1Title">顧客調査（アンケート）</h3>
+        <p data-i18n="survey.m1Body">消費者、法人の購買担当者、チャネルパートナーなど、定めた対象者に現地の言語で構造化した設問を実施します。セグメント間や市場間で比較できる結果が得られます。</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="survey.m2Title">デプスインタビュー</h3>
+        <p data-i18n="survey.m2Body">顧客、購買担当者、意思決定者との一対一の対話を通じて、行動の背景にある理由を、回答者自身の言葉で掘り下げます。</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="survey.m3Title">組み合わせた調査</h3>
+        <p data-i18n="survey.m3Body">まずインタビューで適切な問いを見つけ、続いて調査でその答えがどこまで広がるかを測ります。あるいはその逆の順序で進めます。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="container ex-how">
+    <div class="ex-label" data-i18n="survey.howEyebrow">進め方</div>
+    <h2 class="ex-h2" data-i18n="survey.howHeading">問いから、顧客の声へ。</h2>
+    <div class="ex-steps s4">
+      <div class="ex-step">
+        <div class="ex-step-num">01</div>
+        <h3 data-i18n="survey.step1Title">問いを共有する</h3>
+        <p data-i18n="survey.step1Body">市場、声を聞きたい顧客、判断したいことをお知らせください。始めるには簡単な概要で十分です。</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">02</div>
+        <h3 data-i18n="survey.step2Title">調査を設計する</h3>
+        <p data-i18n="survey.step2Body">設問またはインタビューガイドと、対象者の条件をご提案します。実施前にご確認いただきます。</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">03</div>
+        <h3 data-i18n="survey.step3Title">現地で実施する</h3>
+        <p data-i18n="survey.step3Body">条件に合う回答者に声をかけ、現地の言語で調査・インタビューを実施します。</p>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">04</div>
+        <h3 data-i18n="survey.step4Title">結果を受け取る</h3>
+        <p data-i18n="survey.step4Body">根拠を添えた報告書にまとめます。ご希望に応じて、インタビューの要旨もお渡しします。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typical questions -->
+  <section class="container ex-questions">
+    <div class="ex-label" data-i18n="survey.qEyebrow">代表的な問い</div>
+    <h2 class="ex-h2" data-i18n="survey.qHeading">顧客に直接聞くことが最も生きる領域。</h2>
+    <div class="ex-q-list">
+      <div class="ex-q">
+        <h3 data-i18n="survey.q1Title">誰が実際に決めるのか</h3>
+        <p data-i18n="survey.q1Body">購買に影響を与える人と最終決裁者は誰か。選ぶ前に何を重視するか。</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="survey.q2Title">価格と支払意思</h3>
+        <p data-i18n="survey.q2Body">顧客はどこに価値を見いだすか。価格帯にどう反応するか。現在いくら払っているか。</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="survey.q3Title">製品・提案の適合度</h3>
+        <p data-i18n="survey.q3Body">顧客は製品、ブランド、コンセプトにどう反応するか。その市場向けに何を変える必要があるか。</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="survey.q4Title">チャネルと購買プロセス</h3>
+        <p data-i18n="survey.q4Body">顧客はどのように探し、比較し、購入するか。どのチャネルを信頼しているか。</p>
+      </div>
+      <div class="ex-q">
+        <h3 data-i18n="survey.q5Title">満たされていないニーズ</h3>
+        <p data-i18n="survey.q5Body">既存の供給元では、顧客がまだ得られていないものは何か。参入の余地はどこにあるか。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terms -->
+  <section class="container">
+    <div class="ex-terms">
+      <div class="ex-label" data-i18n="survey.termsLabel">— 条件</div>
+      <div>
+        <h3 data-i18n="survey.termsPricingTitle">料金</h3>
+        <p data-i18n="survey.termsPricing">料金は調査ごとに取り決めます。</p>
+      </div>
+      <div>
+        <h3 data-i18n="survey.termsStandardsTitle">調査の基準</h3>
+        <p data-i18n="survey.termsStandards">調査への参加は任意です。結果は集計または匿名化して報告し、回答者に企業の機密情報はお尋ねしません。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Request form -->
+  <section class="container ex-form-section" id="request">
+    <div class="ex-form-grid">
+      <div class="intro">
+        <div class="hero-eyebrow" data-i18n="survey.formEyebrow">調査を依頼する</div>
+        <h2 class="ex-h2" data-i18n="survey.formTitle">知りたいことをお聞かせください。</h2>
+        <p data-i18n="survey.formSub">対象の市場と問いをご記入ください。次のステップについて、メールでご連絡します。</p>
+      </div>
+
+      <div class="cr-form-wrap">
+        <form class="cr-form" id="cr-lead-form" novalidate>
+          <div class="cr-field">
+            <label for="cr-name" data-i18n="survey.fieldName">氏名</label>
+            <input type="text" id="cr-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-email" data-i18n="survey.fieldEmail">勤務先メールアドレス</label>
+            <input type="email" id="cr-email" name="email" required autocomplete="email" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-company" data-i18n="survey.fieldCompany">会社名</label>
+            <input type="text" id="cr-company" name="company" autocomplete="organization" />
+          </div>
+          <div class="cr-field">
+            <label for="cr-role" data-i18n="survey.fieldRole">役職</label>
+            <input type="text" id="cr-role" name="role" autocomplete="organization-title" />
+          </div>
+          <div class="cr-field full">
+            <label for="cr-deadline" data-i18n="survey.fieldDeadline">希望時期</label>
+            <select id="cr-deadline" name="deadline">
+              <option value="2w" data-i18n="survey.deadline2w">2週間以内</option>
+              <option value="month" selected data-i18n="survey.deadlineMonth">1カ月以内</option>
+              <option value="quarter" data-i18n="survey.deadlineQuarter">四半期以内</option>
+              <option value="flex" data-i18n="survey.deadlineFlex">時期は問わない</option>
+            </select>
+          </div>
+          <div class="cr-field full">
+            <label for="cr-brief" data-i18n="survey.fieldBrief">ご質問の内容</label>
+            <textarea id="cr-brief" name="brief" required minlength="10"
+              data-i18n-attr="placeholder:survey.briefPlaceholder"
+              placeholder="対象の市場と顧客層、検討中の意思決定、そして顧客から知りたいこと。"></textarea>
+          </div>
+
+          <!-- Honeypot: hidden from humans, bots fill it. -->
+          <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="cr-hp">空欄のままにしてください</label>
+            <input type="text" id="cr-hp" name="hp" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="cr-field full">
+            <button type="submit" class="btn btn-primary cr-submit" data-i18n="survey.submitCta">調査を依頼する →</button>
+            <div class="cr-error" id="cr-error" role="alert"></div>
+          </div>
+        </form>
+
+        <div class="cr-success" id="cr-success" role="status">
+          <strong data-i18n="survey.successTitle">お申し込みを受け付けました。</strong>
+          <p data-i18n="survey.successBody">ありがとうございます。ご質問の内容を確認のうえ、メールでご連絡します。補足事項があれば、hello@kiraresearch.com までお送りください。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script defer>
+    // Expert request form → POST /api/leads (source 'experts').
+    document.addEventListener('DOMContentLoaded', () => {
+      const form    = document.getElementById('cr-lead-form');
+      const success = document.getElementById('cr-success');
+      const errBox  = document.getElementById('cr-error');
+      const submit  = form && form.querySelector('button[type="submit"]');
+      if (!form) return;
+
+      function showError(msg) {
+        errBox.textContent = msg;
+        errBox.style.display = 'block';
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errBox.style.display = 'none';
+        errBox.textContent   = '';
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.locale = (window.kira && window.kira.locale) || 'ja';
+        data.source = 'survey';
+        data.tier   = 'not-sure';
+
+        const originalLabel = submit.textContent;
+        submit.disabled = true;
+        submit.textContent = '送信中…';
+
+        try {
+          const res = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            showError(({
+              name_required:   '氏名を入力してください。',
+              email_invalid:   '有効なメールアドレスを入力してください。',
+              brief_too_short: 'ご質問の内容をもう少し詳しくご記入ください。',
+              insert_failed:   '当社側で問題が発生しました。もう一度お試しいただくか、hello@kiraresearch.com までメールでご連絡ください。',
+              invalid_json:    'フォームを送信できませんでした。もう一度お試しください。'
+            })[body.error] || '送信できませんでした。もう一度お試しいただくか、hello@kiraresearch.com までメールでご連絡ください。');
+            submit.disabled = false;
+            submit.textContent = originalLabel;
+            return;
+          }
+          form.style.display = 'none';
+          success.classList.add('show');
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          showError('通信エラーが発生しました。もう一度お試しいただくか、hello@kiraresearch.com までメールでご連絡ください。');
+          submit.disabled = false;
+          submit.textContent = originalLabel;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

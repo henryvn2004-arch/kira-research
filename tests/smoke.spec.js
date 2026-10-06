@@ -24,6 +24,7 @@ const STATIC_PAGES = [
   '/methodology',
   '/pricing',
   '/experts/',                                  // Kira Experts (replaces Custom Research, S5)
+  '/survey/',                                   // Kira Survey (customer surveys + in-depth interviews)
   '/insights/'                                  // folder route
 ];
 
@@ -748,5 +749,12 @@ test.describe('library and insights pages', () => {
     const body = await (await request.get('/api/library-list?locale=en&limit=24&sort=recent')).json();
     await page.goto('/en/');
     await expect(page.locator('[data-stat="reports"]')).toHaveText(String(body.facets.totalPublished), { timeout: 10000 });
+  });
+
+  test('homepage use-case slider renders in every locale', async ({ page }) => {
+    for (const locale of ['en', 'ja', 'ko', 'zh']) {
+      await page.goto('/' + locale + '/');
+      await expect(page.locator('#home-stories .st-card')).toHaveCount(15, { timeout: 10000 });
+    }
   });
 });
