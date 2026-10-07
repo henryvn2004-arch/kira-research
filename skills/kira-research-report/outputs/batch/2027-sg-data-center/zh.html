@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 新加坡数据中心2027展望</title>
+<meta name="description" content="暂停令之后的新加坡数据中心行业：以绿色能源为门槛的容量分配机制遭遇由AI需求带动的强劲增长，2027年前溢出容量持续流向柔佛与巴淡。">
+<meta property="og:title" content="KIRA Research — 新加坡数据中心2027展望">
+<meta property="og:description" content="暂停令之后的容量分配、绿色能源门槛与海外溢出——KIRA Research对2027年的研判。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.md-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.md-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 7px; margin-top: 14px; }
+.md-narrative h3:first-child { margin-top: 0; }
+.md-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.md-narrative p strong { color: var(--text); font-weight: 600; }
+.md-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.fo-chart-wrap { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.fo-scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.fo-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.fo-card.base { border-top: 3px solid var(--primary); }
+.fo-card.bull { border-top: 3px solid var(--green); }
+.fo-card.bear { border-top: 3px solid var(--amber); }
+.fo-card .sc-name { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.fo-card.base .sc-name { color: var(--primary); }
+.fo-card.bull .sc-name { color: var(--green); }
+.fo-card.bear .sc-name { color: var(--amber); }
+.fo-card .sc-val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.fo-card .sc-val .unit { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-left: 3px; }
+.fo-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.fo-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.me-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; flex: 1; min-height: 0; }
+.me-method h3, .me-sources h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.me-method p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.me-method p strong { color: var(--text); font-weight: 600; }
+.me-disclaimer { margin-top: 12px; font-size: 9.5px; line-height: 1.5; color: var(--muted); font-style: italic; }
+.me-sources ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+.me-sources li { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9.5px; line-height: 1.45; color: var(--text-mid); margin-bottom: 7px; break-inside: avoid; }
+.me-sources li strong { color: var(--text); font-weight: 700; }
+
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 760px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+.cover-logo { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.cover-logo .accent { color: var(--primary); }
+
+.mi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.mi-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.mi-item { margin-bottom: 14px; }
+.mi-item .lbl { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.mi-item .dsc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: grid; grid-template-columns: 34px 1fr 44px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); font-weight: 700; }
+.toc-row .ttitle { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); }
+.toc-row .ttitle .tsub { display: block; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 400; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.toc-row .tpage { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 001 — COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">数字基础设施 · 新加坡 · 2027展望</div>
+      <h1>新加坡数据中心<span class="accent">分配</span>机制&#8212;&#8212;容量、绿色门槛与溢出效应</h1>
+      <p class="cover-subtitle">暂停令之后，容量稀缺不再是偶然，而是制度设计的结果。绿色能源门槛决定哪些项目能落地新加坡；其余需求则溢出至柔佛与巴淡。</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">国家</div><div class="val">新加坡 <span class="accent">·</span> SG</div></div>
+        <div class="cover-meta-item"><div class="label">行业</div><div class="val">数据中心/数字基础设施</div></div>
+        <div class="cover-meta-item"><div class="label">研究期间</div><div class="val">2025 &#8211; 2030F</div></div>
+        <div class="cover-meta-item"><div class="label">版本</div><div class="val">2027<span class="accent">展望</span></div></div>
+      </div>
+      <div style="margin-top:24px;" class="cover-confidential"><strong>机密</strong> · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 002 — METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第01章 · 研究方法</div>
+      <div class="page-section-counter">002 / 017</div>
+    </div>
+    <h1 class="page-h1">本报告的研究框架</h1>
+    <p class="page-subhead">本报告基于两类证据来源：<strong>一手输入</strong>&#8212;&#8212;容量分配计划文本、运营商披露信息及分析师综合研判；以及<strong>二手锚点</strong>&#8212;&#8212;统计机构、监管路线图及交叉验证估算。每项量化结论均附明确的来源标签。</p>
+    <div class="mi-body">
+      <div class="mi-col">
+        <h3>一手输入</h3>
+        <div class="mi-item"><div class="lbl">分配与路线图文本</div><div class="dsc">《绿色数据中心路线图》、DC-CFA/DC-CFA2征集文件及Green Mark DC 2024标准&#8212;&#8212;揭示实际释放的MW、实际的绿色能源门槛与实际时间表。</div></div>
+        <div class="mi-item"><div class="lbl">分析师综合研判</div><div class="dsc">KIRA内部对多项公开数据的交叉验证&#8212;&#8212;在运容量、已释放容量及溢出项目储备。文中以[Kira estimates]标注。</div></div>
+        <div class="mi-item"><div class="lbl">运营商与集群研判</div><div class="dsc">解读运营商资产组合、托管空置率及柔佛&#47;巴淡项目储备，比整体市场规模数据更贴近供给信号。</div></div>
+      </div>
+      <div class="mi-col">
+        <h3>二手锚点</h3>
+        <div class="mi-item"><div class="lbl">监管与政府机构来源</div><div class="dsc">资讯通信媒体发展局（IMDA）、经济发展局（EDB）、能源市场管理局及建设局（BCA）的公开文件，以及跨境经济特区文本&#8212;&#8212;文中按来源名称引用。</div></div>
+        <div class="mi-item"><div class="lbl">基础设施数据集</div><div class="dsc">已公开的新加坡及柔佛&#47;巴淡容量、托管与投资数据集，并与运营商披露交叉核对&#8212;&#8212;按数据集及期间引用。</div></div>
+        <div class="mi-item"><div class="lbl">交叉验证估算</div><div class="dsc">当单一来源无法覆盖某一数据时（如已释放容量与需求之间的缺口），我们结合2&#8211;3项输入并披露方法。以[Kira estimates]标注。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 003 — TOC ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 · 目录</div>
+      <div class="page-section-counter">003 / 017</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <p class="page-subhead">四个部分：拉动容量的需求、限定落地规模的绿色门槛、承接溢出的海外市场，以及对2027年的情景研判。</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">执行摘要<span class="tsub">2027年分配核心论点</span></span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">战略启示<span class="tsub">影响市场参与者的五大力量</span></span><span class="tpage">005</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">市场规模与发展轨迹<span class="tsub">至2030年的容量与收入</span></span><span class="tpage">007</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">需求驱动因素<span class="tsub">AI、云与数据主权</span></span><span class="tpage">008</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">电力与可持续性<span class="tsub">7%上限与PUE门槛</span></span><span class="tpage">010</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">容量分配<span class="tsub">DC-CFA2与绿色要求</span></span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">海外溢出<span class="tsub">柔佛、巴淡与JS-SEZ</span></span><span class="tpage">013</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">竞争格局<span class="tsub">谁掌握已分配的MW</span></span><span class="tpage">014</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">2027展望与情景<span class="tsub">基准、加速、受限</span></span><span class="tpage">016</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">研究方法与来源<span class="tsub">标签体系与来源说明</span></span><span class="tpage">017</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 004 — EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · 执行摘要</div>
+      <div class="page-section-counter">004 / 017</div>
+    </div>
+    <h1 class="page-h1">新加坡数据中心市场&#8212;&#8212;2027年的分配考验</h1>
+    <p class="page-subhead">一个以700&#43; MW在运容量为基础、规模达<strong>USD 4.2 bn的市场</strong>，如今依靠许可而非土地增长。<strong>决定新增超大规模容量实际落地多少的是绿色能源门槛，而非需求</strong>&#8212;&#8212;其余部分被推向海外。</p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2024年市场规模</div>
+        <div class="num">~4.2<span class="unit">USD bn</span></div>
+        <div class="change">&#8593; 2030年升至~5.6 bn</div>
+        <div class="source-tag sec">Operator filings 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年在运容量</div>
+        <div class="num">700&#43;<span class="unit">MW</span></div>
+        <div class="change">空置率~1.4%，亚太最低</div>
+        <div class="source-tag sec">Structure Research 2024</div>
+      </div>
+      <div class="callout">
+        <div class="label">DC-CFA2分配容量</div>
+        <div class="num">200&#43;<span class="unit">MW</span></div>
+        <div class="change down">强制50%绿色能源</div>
+        <div class="source-tag sec">IMDA-EDB 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">柔佛项目储备</div>
+        <div class="num">2,000&#43;<span class="unit">MW</span></div>
+        <div class="change">溢出容量的承接地</div>
+        <div class="source-tag sec">Structure Research 2024</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>基本格局</h3>
+        <p>2024年新加坡数据中心市场规模约<strong>USD 4.2 bn</strong>，预计<strong>2030年达~USD 5.6 bn</strong>[Operator filings 2025]；在运容量超过<strong>700 MW</strong>，托管空置率约1.4%，为区域最低[Structure Research 2024]。2019&#8211;2022年建设暂停之后，供给改为分批定向释放，而非交由市场决定。</p>
+        <h3>门槛所在</h3>
+        <p>约束来自政策，而非土地。《绿色数据中心路线图》近期释放<strong>至少300 MW</strong>，另为绿色项目追加200 MW[IMDA GDCR 2024]；DC-CFA2征集（2025年12月）在<strong>50%绿色能源强制要求下分配200&#43; MW</strong>，并设定1.25的PUE标准[IMDA-EDB 2025]。无法跨过门槛的容量流向柔佛与巴淡。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">已释放容量与溢出项目储备对比</div>
+            <div class="chart-subtitle">新加坡分配vs柔佛储备 · MW</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="200"/>
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="60" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="60" y1="65" x2="460" y2="65"/>
+            <text class="axis-text" x="54" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="54" y="159" text-anchor="end">800</text>
+            <text class="axis-text" x="54" y="114" text-anchor="end">1600</text>
+            <text class="axis-text" x="54" y="69" text-anchor="end">2400</text>
+            <rect class="bar-secondary" x="100" y="172" width="70" height="28"/>
+            <text class="label-data" x="135" y="166" text-anchor="middle">~500</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">新加坡已释放</text>
+            <rect class="bar-primary" x="220" y="160" width="70" height="40"/>
+            <text class="label-data" x="255" y="154" text-anchor="middle">700&#43;</text>
+            <text class="axis-text" x="255" y="216" text-anchor="middle">新加坡在运</text>
+            <rect class="bar-tertiary" x="340" y="88" width="70" height="112"/>
+            <text class="label-data" x="375" y="82" text-anchor="middle">2,000&#43;</text>
+            <text class="axis-text" x="375" y="216" text-anchor="middle">柔佛储备</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IMDA, EDB, STRUCTURE RESEARCH, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA GDCR 2024 = IMDA Green Data Centre Roadmap, May 2024 &#183; IMDA-EDB 2025 = IMDA &amp; EDB Data Centre Call for Application (DC-CFA2), Dec 2025 &#183; Operator filings 2025 = Listed SG data center operator disclosure 2025 &#183; Structure Research 2024 = Structure Research Singapore &amp; Johor/Batam DCI datasets 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 005 — EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · 执行摘要</div>
+      <div class="page-section-counter">005 / 017</div>
+    </div>
+    <h1 class="page-h1">对市场参与者的五项战略启示</h1>
+    <p class="page-subhead">五大力量决定了2027年前谁能获得新加坡定量释放的新增容量。每一项均以有据可查的数据和KIRA的综合研判为依据。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · 政策</div>
+        <div class="title">绿色门槛是硬约束</div>
+        <div class="body-text">容量按征集释放，而非按需求释放。DC-CFA2将<strong>200&#43; MW置于50%绿色能源强制要求之下</strong>，并设1.25的PUE标准[IMDA-EDB 2025]。决定谁能落地的是可持续性资质，而非资本。<strong>设定2027年上限的是分配，而非土地。</strong></div>
+        <div class="anchor">锚点：<span class="num-anchor">PUE 1.25</span> DC-CFA2标准</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · 电力</div>
+        <div class="title">7%电力上限压制本地规模</div>
+        <div class="body-text">数据中心已消耗约<strong>全国7%的电力</strong>[IMDA GDCR 2024]。本地增长取决于进口低碳电力&#8212;&#8212;目标为<strong>2035年达6 GW</strong>[EMA 2025]。制约新增MW的是电力，而非建设。</div>
+        <div class="anchor">锚点：<span class="num-anchor">6 GW</span> 2035年进口目标</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · 溢出</div>
+        <div class="title">柔佛承接无法落地的容量</div>
+        <div class="body-text">2019&#8211;2024年柔佛在运供给<strong>年均增长~145%</strong>[Structure Research 2024]，项目储备达<strong>2,000&#43; MW</strong>。新加坡保留高价值核心；大规模及训练算力北移30公里。应将两地视为<strong>同一都市圈</strong>。</div>
+        <div class="anchor">锚点：<span class="num-anchor">~145%</span> 柔佛年复合增长率</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · 跨境</div>
+        <div class="title">JS-SEZ将双枢纽格局制度化</div>
+        <div class="body-text">柔佛&#8211;新加坡经济特区（2025年1月）构建了<strong>统一的跨境走廊</strong>[Reed Smith 2025]。对时延敏感的节点留在新加坡；高容量需求的负载落户Sedenak与Nusajaya。这是<strong>结构性分工</strong>，而非流失。</div>
+        <div class="anchor">锚点：<span class="num-anchor">2025年1月</span> JS-SEZ签署</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · 需求</div>
+        <div class="title">AI与数据主权构成需求底线</div>
+        <div class="body-text">高密度AI机柜与可信枢纽定位使利用率接近满载；空置率仅<strong>~1.4%</strong>，为亚太最低[Structure Research 2024]。需求是结构性的；问题仅在于供给政策将释放多少。<strong>稀缺溢价</strong>将持续。</div>
+        <div class="anchor">锚点：<span class="num-anchor">~1.4%</span> 空置率</div>
+      </div>
+    </div>
+    <div class="source-key">EMA 2025 = Energy Market Authority low-carbon electricity import program 2025 &#183; IMDA GDCR 2024 = IMDA Green Data Centre Roadmap, May 2024 &#183; IMDA-EDB 2025 = IMDA &amp; EDB DC-CFA2 call, Dec 2025 &#183; Reed Smith 2025 = Reed Smith JS-SEZ data center analysis 2025 &#183; Structure Research 2024 = Structure Research SG &amp; Johor/Batam DCI datasets 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 006 — DIVIDER: THE DEMAND PULL ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h1 class="divider-title">需求<span class="accent">拉动</span></h1>
+    <div class="divider-thesis">即便物理容量增长缓慢，新加坡数据中心收入仍在持续复合增长。拉动力来自<strong>AI算力、云服务锚定与数据主权</strong>&#8212;&#8212;需求是容易的一半，释放供给才是困难的一半。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1市场规模</div>
+      <div class="toc-pill">4.2收入与容量</div>
+      <div class="toc-pill">4.3需求驱动因素</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 007 — MARKET SIZING ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 市场规模</div>
+      <div class="page-section-counter">007 / 017</div>
+    </div>
+    <h1 class="page-h1">容量受配给，收入仍复合增长</h1>
+    <p class="page-subhead">两只时钟以不同速度运转。<strong>装机容量</strong>在分配机制下缓慢爬升；<strong>市场价值</strong>则增长更快，AI级机柜、高密度部署与稀缺溢价共同推高每MW收入。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>收入曲线</h3>
+        <p>2024年市场规模约<strong>USD 4.2 bn</strong>，预计<strong>2030年接近USD 5.6 bn</strong>（年复合增长率~5%）[Operator filings 2025]。最大细分市场托管业务2024年约为<strong>USD 2.2 bn</strong>，增长路径相近[Operator filings 2025]&#8212;&#8212;增长由价值而非规模驱动。</p>
+        <h3>容量曲线</h3>
+        <p>全面建成后在运容量超过<strong>700 MW</strong>[Structure Research 2024]。新增供给按政策分批到位：路线图与两轮征集合计<strong>释放~500 MW</strong>[IMDA GDCR 2024]。[Kira estimates]显示，2027年实际落地的本地新增容量将远低于潜在需求。</p>
+        <h3>稀缺溢价</h3>
+        <p>托管空置率约<strong>1.4%，为亚太最低</strong>[Structure Research 2024]。供给紧张使租金与利用率维持在高位；新加坡以规模换价值，并获得<strong>可信枢纽溢价</strong>。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">新加坡数据中心&#8212;&#8212;价值与容量</div>
+            <div class="chart-subtitle">USD bn（折线） · 在运MW（柱） · 2024&#8211;2030F</div>
+          </div>
+          <div class="chart-unit">USD BN / MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">400</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">800</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">1200</text>
+            <!-- capacity bars: 700, ~900, ~1050 MW scaled at ~0.169px/MW from y205 -->
+            <rect class="bar-primary" x="95" y="87" width="48" height="118"/>
+            <text class="label-data" x="119" y="81" text-anchor="middle">700</text>
+            <text class="axis-text" x="119" y="221" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="240" y="53" width="48" height="152"/>
+            <text class="label-data" x="264" y="47" text-anchor="middle">~900</text>
+            <text class="axis-text" x="264" y="221" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="385" y="28" width="48" height="177"/>
+            <text class="label-data" x="409" y="22" text-anchor="middle">~1050</text>
+            <text class="axis-text" x="409" y="221" text-anchor="middle">2030F</text>
+            <!-- revenue line 4.2 -> 4.9 -> 5.6 USD bn mapped onto canvas -->
+            <polyline points="119,150 264,135 409,118" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="119" cy="150" r="4" fill="#D97706"/><text class="label-small" x="119" y="145" text-anchor="middle" style="fill:#D97706">4.2</text>
+            <circle cx="264" cy="135" r="4" fill="#D97706"/><text class="label-small" x="280" y="133" style="fill:#D97706">~4.9</text>
+            <circle cx="409" cy="118" r="4" fill="#D97706"/><text class="label-small" x="409" y="113" text-anchor="middle" style="fill:#D97706">5.6</text>
+            <rect class="bar-primary" x="50" y="232" width="10" height="10"/><text class="label-small" x="64" y="241">容量MW</text>
+            <rect x="170" y="232" width="10" height="10" fill="#D97706"/><text class="label-small" x="184" y="241">市场价值USD bn</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: OPERATOR FILINGS, STRUCTURE RESEARCH, IMDA, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA GDCR 2024 = IMDA Green Data Centre Roadmap, May 2024 &#183; Operator filings 2025 = Listed SG data center operator disclosure 2025 &#183; Structure Research 2024 = Structure Research Singapore DCI dataset 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 008 — DEMAND DRIVERS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 需求驱动因素</div>
+      <div class="page-section-counter">008 / 017</div>
+    </div>
+    <h1 class="page-h1">三大需求引擎：AI算力、云服务锚定与数据主权</h1>
+    <p class="page-subhead">从结构上看，需求是容易的一侧。AI级算力、深厚的云与金融基础，以及可信枢纽定位，各自拉动容量需求&#8212;&#8212;并在供给固定的前提下相互强化。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>AI算力</h3>
+        <p>DC-CFA2明确将容量分配与新加坡作为<strong>可信AI枢纽</strong>的价值挂钩，要求申请方证明在运营中应用AI[IMDA-EDB 2025]。AI机柜的单柜功耗远高于传统机柜，对改造与高密度机房空间的需求增速远超建筑面积&#8212;&#8212;使第010页的电力问题更加突出。</p>
+        <h3>云服务锚定</h3>
+        <p>新加坡是全球云服务与金融业的区域控制中枢。前五大运营商约占<strong>装机容量的65%</strong>[Structure Research 2024]，锚定了租户不会轻易迁移的可用区。对时延敏感及受监管的负载留在本地。</p>
+        <h3>数据主权与信任</h3>
+        <p>完善的数据保护与互联互通制度，使新加坡成为区域内合规敏感型负载的默认节点。这将信任转化为<strong>持久的托管需求</strong>，不依赖任何单一的AI投资周期，空置率维持在1.4%左右[Structure Research 2024]。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">拉动容量需求的因素</div>
+            <div class="chart-subtitle">需求贡献指数 · 方向性</div>
+          </div>
+          <div class="chart-unit">驱动因素</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="20" x2="150" y2="210"/>
+            <rect class="bar-primary" x="150" y="34" width="280" height="34"/>
+            <text class="label-data" x="438" y="56" style="fill:var(--primary)">高</text>
+            <text class="label-small" x="146" y="55" text-anchor="end">AI算力</text>
+            <rect class="bar-primary" x="150" y="92" width="230" height="34" opacity="0.85"/>
+            <text class="label-data" x="388" y="114">高</text>
+            <text class="label-small" x="146" y="113" text-anchor="end">云服务锚定</text>
+            <rect class="bar-secondary" x="150" y="150" width="250" height="34"/>
+            <text class="label-data" x="408" y="172" style="fill:var(--green)">结构性</text>
+            <text class="label-small" x="146" y="171" text-anchor="end">数据主权</text>
+            <text class="label-small" x="150" y="232">柱长=对2025&#8211;2030年容量需求的方向性拉动[Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IMDA, EDB, STRUCTURE RESEARCH, KIRA综合研判 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA-EDB 2025 = IMDA &amp; EDB DC-CFA2 call, Dec 2025 &#183; Structure Research 2024 = Structure Research Singapore DCI dataset 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 009 — DIVIDER: THE ALLOCATION GATE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第05章</div>
+    <h1 class="divider-title">分配<span class="accent">门槛</span></h1>
+    <div class="divider-thesis">问题不在需求，而在资格。<strong>电力上限与绿色能源强制要求</strong>限定了可落地的规模&#8212;&#8212;容量授予能够证明能效与清洁供电的运营商，而非仅仅付得起地价的一方。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1电力与可持续性</div>
+      <div class="toc-pill">5.2DC-CFA2机制</div>
+      <div class="toc-pill">5.3绿色能源要求</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 010 — POWER & SUSTAINABILITY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 电力与可持续性</div>
+      <div class="page-section-counter">010 / 017</div>
+    </div>
+    <h1 class="page-h1">7%电力上限、1.3的PUE目标与进口清洁电力</h1>
+    <p class="page-subhead">关键问题不在于机房面积，而在于<strong>稳定的低碳电力从何而来</strong>。路线图从源头设定能效门槛，并将增长导向进口可再生能源。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>上限</h3>
+        <p>数据中心已消耗约<strong>全国7%的电力</strong>[IMDA GDCR 2024]。2019&#8211;2022年的暂停令正是为了控制这一占比；如今增长必须来自能效提升与清洁供电，而非无约束的并网。</p>
+        <h3>能效门槛</h3>
+        <p>《绿色数据中心路线图》目标是在十年内实现100% IT负载下<strong>PUE &#8804; 1.3</strong>[IMDA GDCR 2024]；DC-CFA2将其收紧至<strong>满载1.25</strong>，并要求Green Mark DC 2024白金级认证及SS 715:2025设备标准[IMDA-EDB 2025]。能效是获得分配的前提。</p>
+        <h3>清洁电力路径</h3>
+        <p>新加坡目标是<strong>2035年前进口最多6 GW低碳电力</strong>，高于2021年设定的4 GW[EMA 2025]，并已从100 MW老挝水电试点起步。如今满足DC-CFA2要求的是直接绿色电力采购&#8212;&#8212;而非非捆绑证书。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">低碳电力进口目标</div>
+            <div class="chart-subtitle">进口GW · 2021年vs2035年目标</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">2</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">4</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">6</text>
+            <!-- 4GW -> y115 (90px), 6GW -> y70 (135px); 22.5px/GW from y205 -->
+            <rect class="bar-secondary" x="130" y="115" width="70" height="90"/>
+            <text class="label-data" x="165" y="109" text-anchor="middle">4</text>
+            <text class="axis-text" x="165" y="221" text-anchor="middle">2021年目标</text>
+            <rect class="bar-primary" x="310" y="70" width="70" height="135"/>
+            <text class="label-data" x="345" y="64" text-anchor="middle">6</text>
+            <text class="axis-text" x="345" y="221" text-anchor="middle">2035年目标</text>
+            <path d="M 200 150 L 306 100" stroke="#D97706" stroke-width="2" fill="none" marker-end="url(#arrp)"/>
+            <text class="label-small" x="253" y="120" text-anchor="middle" style="fill:#D97706; font-weight:700">清洁电力进口+50%</text>
+            <defs><marker id="arrp" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#D97706"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ENERGY MARKET AUTHORITY, IMDA, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">EMA 2025 = Energy Market Authority low-carbon electricity import program 2025 &#183; IMDA GDCR 2024 = IMDA Green Data Centre Roadmap, May 2024 &#183; IMDA-EDB 2025 = IMDA &amp; EDB DC-CFA2 call, Dec 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 011 — CAPACITY ALLOCATION (DC-CFA2) ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 容量分配</div>
+      <div class="page-section-counter">011 / 017</div>
+    </div>
+    <h1 class="page-h1">从试点到电力博弈：MW如何被配给</h1>
+    <p class="page-subhead">容量分配已从小规模试点演变为有意为之的政策工具。<strong>每一轮都抬高绿色门槛</strong>&#8212;&#8212;80 MW的试点演变为以50%绿色能源和更严PUE为门槛的200&#43; MW征集。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>试点</h3>
+        <p>解除暂停令后，首轮DC-CFA向<strong>四家运营商分配约80 MW</strong>&#8212;&#8212;Equinix、万国数据（GDS）、微软，以及AirTrunk&#8211;字节跳动联合体[IMDA-EDB 2023]。这确立了择优原则：容量是凭能效与经济贡献换取的资格。</p>
+        <h3>路线图</h3>
+        <p>《绿色数据中心路线图》（2024年5月）近期释放<strong>至少300 MW</strong>，另为<strong>绿色能源项目追加200 MW</strong>[IMDA GDCR 2024]。容量释放与Green Mark DC 2024及2025年前实施的设备能效标准挂钩。</p>
+        <h3>征集</h3>
+        <p>DC-CFA2（2025年12月开放，2026年3月截止）在<strong>50%绿色能源强制要求下分配200&#43; MW</strong>，并要求PUE 1.25、白金级认证及运营中应用AI的考核[IMDA-EDB 2025]。非捆绑证书不符合要求&#8212;&#8212;仅认可直接清洁电力采购。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">各轮分配&#8212;&#8212;容量与绿色门槛</div>
+            <div class="chart-subtitle">释放MW · 各轮能效与绿色门槛</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">150</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">300</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">450</text>
+            <!-- 80 -> 36px ; 300 -> 135px ; 200 -> 90px ; 0.45px/MW -->
+            <rect class="bar-secondary" x="90" y="169" width="60" height="36"/>
+            <text class="label-data" x="120" y="163" text-anchor="middle">~80</text>
+            <text class="axis-text" x="120" y="221" text-anchor="middle">DC-CFA试点</text>
+            <text class="label-small" x="120" y="233" text-anchor="middle">2023</text>
+            <rect class="bar-primary" x="220" y="70" width="60" height="135"/>
+            <text class="label-data" x="250" y="64" text-anchor="middle">300&#43;</text>
+            <text class="axis-text" x="250" y="221" text-anchor="middle">GDCR</text>
+            <text class="label-small" x="250" y="233" text-anchor="middle">2024</text>
+            <rect class="bar-tertiary" x="350" y="115" width="60" height="90"/>
+            <text class="label-data" x="380" y="109" text-anchor="middle">200&#43;</text>
+            <text class="axis-text" x="380" y="221" text-anchor="middle">DC-CFA2</text>
+            <text class="label-small" x="380" y="233" text-anchor="middle">2025&#8211;26 · 50%绿色能源</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: IMDA, EDB, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA-EDB 2023 = IMDA &amp; EDB Data Centre Call for Application (pilot) award 2023 &#183; IMDA GDCR 2024 = IMDA Green Data Centre Roadmap, May 2024 &#183; IMDA-EDB 2025 = IMDA &amp; EDB DC-CFA2 call, Dec 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 012 — DIVIDER: THE OVERSEAS SPILL-OVER ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第06章</div>
+    <h1 class="divider-title">海外<span class="accent">溢出</span></h1>
+    <div class="divider-thesis">无法落地新加坡的容量并不会消失&#8212;&#8212;而是北移30公里。<strong>柔佛与巴淡承接溢出容量</strong>，JS-SEZ则将这一约束重塑为统一的跨境都市圈，而非流失的市场。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1柔佛与巴淡</div>
+      <div class="toc-pill">6.2JS-SEZ走廊</div>
+      <div class="toc-pill">6.3竞争格局</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 013 — SPILL-OVER (JOHOR / BATAM / JS-SEZ) ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 · 海外溢出</div>
+      <div class="page-section-counter">013 / 017</div>
+    </div>
+    <h1 class="page-h1">柔佛与巴淡承接溢出，JS-SEZ将其制度化</h1>
+    <p class="page-subhead">新加坡的克制成就了柔佛的繁荣。<strong>更低廉的土地与电力、充裕的电网容量以及正式的经济特区</strong>，将约束转化为双枢纽走廊&#8212;&#8212;高价值核心留在南面，大规模容量落户北面。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>柔佛的爆发式增长</h3>
+        <p>2019&#8211;2024年柔佛在运供给<strong>年均增长约145%</strong>，为东南亚最快[Structure Research 2024]。Sedenak与Nusajaya科技园区的项目储备超过<strong>2,000 MW</strong>；2021&#8211;2023年马来西亚获批的数据中心投资约达<strong>USD 27 bn</strong>[SCMP 2024]。</p>
+        <h3>JS-SEZ走廊</h3>
+        <p>柔佛&#8211;新加坡经济特区（2025年1月签署）构建了<strong>统一的跨境枢纽</strong>[Reed Smith 2025]。占地7,300英亩的Ibrahim Technopolis与Sedenak承接高容量需求的负载；新加坡保留低时延与受监管节点。</p>
+        <h3>结构性分工</h3>
+        <p>应将新加坡与柔佛视为分担两种角色的同一都市圈。AI训练与大规模存储因电力与土地而北移；推理、金融及主权类负载留在南面。[Kira estimates]显示，2027年前区域净新增MW大部分将落地柔佛。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">净新增容量的落地去向</div>
+            <div class="chart-subtitle">新加坡vs柔佛/巴淡 · MW储备 · 方向性</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">800</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">1600</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">2400</text>
+            <!-- SG released ~500 -> 84px ; Johor 2000+ -> 135px capped at top -->
+            <rect class="bar-secondary" x="110" y="121" width="80" height="84"/>
+            <text class="label-data" x="150" y="115" text-anchor="middle">~500</text>
+            <text class="axis-text" x="150" y="221" text-anchor="middle">新加坡已释放</text>
+            <rect class="bar-tertiary" x="300" y="62" width="80" height="143"/>
+            <text class="label-data" x="340" y="56" text-anchor="middle">2,000&#43;</text>
+            <text class="axis-text" x="340" y="221" text-anchor="middle">柔佛储备</text>
+            <path d="M 192 150 L 296 110" stroke="#1E6FFF" stroke-width="2" fill="none" marker-end="url(#arrs)"/>
+            <text class="label-small" x="244" y="128" text-anchor="middle" style="fill:var(--primary); font-weight:700">向北溢出</text>
+            <defs><marker id="arrs" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1E6FFF"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: STRUCTURE RESEARCH, SCMP, REED SMITH, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Reed Smith 2025 = Reed Smith JS-SEZ data center analysis 2025 &#183; SCMP 2024 = South China Morning Post Johor spill-over &amp; investment reporting 2024 &#183; Structure Research 2024 = Structure Research Johor/Batam DCI dataset 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 014 — COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 · 竞争格局</div>
+      <div class="page-section-counter">014 / 017</div>
+    </div>
+    <h1 class="page-h1">高度集中的核心，下一批容量由分配机制决定</h1>
+    <p class="page-subhead">五家运营商约占<strong>装机容量的65%</strong>[Structure Research 2024]。其优势在于在位地位&#8212;&#8212;即已投运且满租的资产&#8212;&#8212;但下一批MW将归于能跨过绿色分配门槛的一方。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">各运营商容量份额</div>
+            <div class="chart-subtitle">新加坡 · 装机MW份额（参考值） · 2024</div>
+          </div>
+          <div class="chart-unit">%份额</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="130" y1="15" x2="130" y2="175"/>
+            <rect class="bar-primary" x="130" y="22" width="150" height="22"/><text class="label-data" x="288" y="39">~17%</text><text class="label-small" x="126" y="38" text-anchor="end">Equinix</text>
+            <rect class="bar-primary" x="130" y="56" width="135" height="22" opacity="0.85"/><text class="label-data" x="273" y="73">~15%</text><text class="label-small" x="126" y="72" text-anchor="end">STT GDC</text>
+            <rect class="bar-secondary" x="130" y="90" width="115" height="22"/><text class="label-data" x="253" y="107">~13%</text><text class="label-small" x="126" y="106" text-anchor="end">Keppel DC REIT</text>
+            <rect class="bar-secondary" x="130" y="124" width="98" height="22" opacity="0.8"/><text class="label-data" x="236" y="141">~11%</text><text class="label-small" x="126" y="140" text-anchor="end">Digital Realty</text>
+            <rect class="bar-tertiary" x="130" y="158" width="80" height="22"/><text class="label-data" x="218" y="175">~9%</text><text class="label-small" x="126" y="174" text-anchor="end">Singtel/其他</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: STRUCTURE RESEARCH, OPERATOR FILINGS, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>高度集中，在位企业主导</h3>
+        <p>前五大运营商将<strong>托管与互联、托管运维服务捆绑提供</strong>；其资产在<strong>~1.4%的空置率</strong>下基本满租[Structure Research 2024]。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>前五大容量份额</span><span class="val">~65%</span></div>
+          <div class="stat-line"><span>托管空置率</span><span class="val">~1.4%</span></div>
+          <div class="stat-line"><span>现有设施</span><span class="val">40&#43;</span></div>
+          <div class="stat-line"><span>在运容量</span><span class="val">700&#43; MW</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">第01名</div>
+        <div class="comp-name">Equinix</div>
+        <div class="comp-parent">Equinix Inc.（上市） · 试点获配方</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~17%</span></div>
+        <div class="comp-stat-row"><span>定位</span><span class="val">互联</span></div>
+        <div class="comp-stat-row"><span>DC-CFA</span><span class="val">试点获配</span></div>
+        <div class="comp-strengths"><strong>电力规模最大。</strong>密集的互联网络；在2023年试点中获配容量。[IMDA-EDB 2023]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">第02名</div>
+        <div class="comp-name">STT GDC</div>
+        <div class="comp-parent">ST Telemedia（淡马锡关联）</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~15%</span></div>
+        <div class="comp-stat-row"><span>优势</span><span class="val">本土基地</span></div>
+        <div class="comp-stat-row"><span>覆盖</span><span class="val">区域</span></div>
+        <div class="comp-strengths"><strong>立足新加坡的规模。</strong>本地布局深厚，并拥有泛亚业务网络。[Structure Research 2024]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">第03名</div>
+        <div class="comp-name">Keppel DC REIT</div>
+        <div class="comp-parent">吉宝集团（Keppel，上市REIT）</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~13%</span></div>
+        <div class="comp-stat-row"><span>模式</span><span class="val">REIT收益</span></div>
+        <div class="comp-stat-row"><span>重点</span><span class="val">成熟资产</span></div>
+        <div class="comp-strengths"><strong>以收益为导向的在位企业。</strong>满租资产直接受益于稀缺溢价。[Operator filings 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">第04名</div>
+        <div class="comp-name">Digital Realty</div>
+        <div class="comp-parent">Digital Realty Trust（上市）</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~11%</span></div>
+        <div class="comp-stat-row"><span>优势</span><span class="val">PlatformDIGITAL</span></div>
+        <div class="comp-stat-row"><span>覆盖</span><span class="val">全球</span></div>
+        <div class="comp-strengths"><strong>全球超大规模通道。</strong>将新加坡需求接入全球业务网络与租户基础。[Structure Research 2024]</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA-EDB 2023 = IMDA &amp; EDB DC-CFA pilot award 2023 &#183; Operator filings 2025 = Listed SG data center operator disclosure 2025 &#183; Structure Research 2024 = Structure Research Singapore DCI dataset 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 015 — DIVIDER: 2027 OUTLOOK ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第07章</div>
+    <h1 class="divider-title">2027<span class="accent">展望</span></h1>
+    <div class="divider-thesis">三条路径因一个变量而分化：<strong>绿色门槛释放多少容量，以及清洁电力到位有多快</strong>。需求几乎确定；各情景之间的差距几乎完全取决于政策与电力。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1基准情景</div>
+      <div class="toc-pill">7.2加速情景</div>
+      <div class="toc-pill">7.3受限情景</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 016 — FORECAST / SCENARIOS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 2027展望</div>
+      <div class="page-section-counter">016 / 017</div>
+    </div>
+    <h1 class="page-h1">2027年本地在运容量的三种情景</h1>
+    <p class="page-subhead">需求已定，问题在于释放。各情景的差异主要在于<strong>DC-CFA2容量有多少能通电投运，以及清洁电力进口扩张有多快</strong>&#8212;&#8212;其余部分溢出至柔佛。</p>
+    <div class="fo-chart-wrap">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">本地在运容量&#8212;&#8212;至2027年的情景扇形图</div>
+          <div class="chart-subtitle">新加坡在运MW合计 · 2024年实际值 · 2027年情景</div>
+        </div>
+        <div class="chart-unit">在运MW</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1080 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <line class="axis-line" x1="60" y1="15" x2="60" y2="165"/>
+          <line class="axis-line" x1="60" y1="165" x2="1060" y2="165"/>
+          <line class="grid-line" x1="60" y1="125" x2="1060" y2="125"/>
+          <line class="grid-line" x1="60" y1="85" x2="1060" y2="85"/>
+          <line class="grid-line" x1="60" y1="45" x2="1060" y2="45"/>
+          <text class="axis-text" x="54" y="169" text-anchor="end">600</text>
+          <text class="axis-text" x="54" y="129" text-anchor="end">800</text>
+          <text class="axis-text" x="54" y="89" text-anchor="end">1000</text>
+          <text class="axis-text" x="54" y="49" text-anchor="end">1200</text>
+          <!-- start 700 (~y145) at x150 ; fan to x980 -->
+          <circle cx="150" cy="145" r="5" fill="#0B0D10"/>
+          <text class="label-data" x="150" y="137" text-anchor="middle">700</text>
+          <text class="axis-text" x="150" y="182" text-anchor="middle">2024年实际</text>
+          <!-- accelerated 1000 -> y85 -->
+          <path d="M 150 145 L 980 85" stroke="#00A88B" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="85" r="5" fill="#00A88B"/>
+          <text class="label-data" x="998" y="83" style="fill:#00A88B">~1000加速</text>
+          <!-- base 900 -> y105 -->
+          <path d="M 150 145 L 980 105" stroke="#1E6FFF" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="105" r="5" fill="#1E6FFF"/>
+          <text class="label-data" x="998" y="103" style="fill:#1E6FFF">~900基准</text>
+          <!-- constrained 820 -> y121 -->
+          <path d="M 150 145 L 980 121" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="980" cy="121" r="5" fill="#D97706"/>
+          <text class="label-data" x="998" y="119" style="fill:#D97706">~820受限</text>
+          <text class="axis-text" x="980" y="182" text-anchor="middle">2027F</text>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: IMDA, EDB, STRUCTURE RESEARCH, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="fo-scenarios">
+      <div class="fo-card bull">
+        <div class="sc-name">加速情景</div>
+        <div class="sc-val">~1000<span class="unit">在运MW</span></div>
+        <div class="sc-body">DC-CFA2获配项目快速通电，清洁电力进口提前扩张，能效改造释放被锁定的容量。新加坡保有高端核心，柔佛同步扩张。[Kira estimates]</div>
+      </div>
+      <div class="fo-card base">
+        <div class="sc-name">基准情景</div>
+        <div class="sc-val">~900<span class="unit">在运MW</span></div>
+        <div class="sc-body">已分配MW按期落地；本地增长与~5%的价值增长路径一致。区域净新增容量大部分在JS-SEZ框架下落户柔佛。[Kira estimates]</div>
+      </div>
+      <div class="fo-card bear">
+        <div class="sc-name">受限情景</div>
+        <div class="sc-val">~820<span class="unit">在运MW</span></div>
+        <div class="sc-body">绿色电力供给滞后，获配项目分阶段缓慢投运，PUE门槛拖慢部分建设。需求不变；释放受限，更多溢出容量被推向北面。[Kira estimates]</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA-EDB 2025 = IMDA &amp; EDB DC-CFA2 call, Dec 2025 &#183; Structure Research 2024 = Structure Research Singapore DCI dataset 2024 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 017 — METHODOLOGY ENDNOTE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 研究方法与来源</div>
+      <div class="page-section-counter">017 / 017</div>
+    </div>
+    <h1 class="page-h1">研究方法与来源</h1>
+    <p class="page-subhead">各项数据的推导方式，以及本报告引用的每一个具名来源的完整出处。</p>
+    <div class="me-body">
+      <div class="me-method">
+        <h3>研究方法</h3>
+        <p>本报告对两类证据来源进行交叉验证。凡带有<strong>具名来源标签</strong>（如[IMDA GDCR 2024]、[IMDA-EDB 2025]）的数据，其底层数据均来自该来源，完整出处见右栏。凡标注[Kira estimates]的数据，均由KIRA分析师综合多项公开输入（分配文本、运营商披露、政府机构路线图）推导得出，方法见相应章节。</p>
+        <p>容量与价值数据将已公开的基础设施数据集与运营商披露交叉核对；已释放容量与需求之间的缺口以及2027年情景扇形图为KIRA自行构建。约<strong>25%的量化结论由KIRA推导</strong>，其余均引自外部来源。</p>
+        <div class="me-disclaimer">本报告仅限授权读者使用。前瞻性估算基于情景假设，不构成保证。© 2026 KIRA Research。</div>
+      </div>
+      <div class="me-sources">
+        <h3>来源说明</h3>
+        <ul>
+          <li><strong>IMDA GDCR 2024</strong> — IMDA Green Data Centre Roadmap, May 2024</li>
+          <li><strong>IMDA-EDB 2023</strong> — IMDA &amp; EDB Data Centre Call for Application (pilot) award 2023</li>
+          <li><strong>IMDA-EDB 2025</strong> — IMDA &amp; EDB Data Centre Call for Application 2 (DC-CFA2), Dec 2025</li>
+          <li><strong>EMA 2025</strong> — Energy Market Authority low-carbon electricity import program 2025</li>
+          <li><strong>Operator filings 2025</strong> — Listed Singapore data center operator disclosure 2025</li>
+          <li><strong>Structure Research 2024</strong> — Structure Research Singapore &amp; Johor/Batam DCI datasets 2024</li>
+          <li><strong>SCMP 2024</strong> — South China Morning Post Johor spill-over &amp; investment reporting 2024</li>
+          <li><strong>Reed Smith 2025</strong> — Reed Smith JS-SEZ cross-border data center analysis 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅限授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+
+
+</body>
+</html>
