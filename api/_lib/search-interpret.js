@@ -14,17 +14,19 @@
 //      for market entry" and picks ONE parent industry from the list (by number)
 //   4. the name Haiku returns must pass the shape + denylist again and share a word
 //      with the reader's own text, so nothing but the reader's topic can reach a page
-//   5. every decision is cached (search_interpretations); at most DAILY_LLM_LIMIT
+//   5. every decision is cached (search_interpretations); at most search.daily_model_limit
 //      model calls per 24 h; no ANTHROPIC_API_KEY → skipped
 // The query is untrusted data: it sits inside <query> tags and its instructions are ignored.
 // ============================================================
 
 import Anthropic from '@anthropic-ai/sdk';
+import { getConfig } from './config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const MODEL = 'claude-haiku-4-5';
-const DAILY_LLM_LIMIT = 300;
+// Daily model-call limit and the on/off switch are owner settings: search.daily_model_limit,
+// search.auto_placeholders (api/_lib/config.js, edited on /en/admin/config).
 
 const SHAPE = /^[\p{L}\p{N}][\p{L}\p{N} &'-]*$/u;
 
@@ -126,9 +128,10 @@ export async function interpretSearch(country, industries, rest) {
   } catch (e) { console.error('[search-interpret] cache read', e.message); }
 
   if (!process.env.ANTHROPIC_API_KEY) return { ok: false, why: 'no_key' };
+  if (!(await getConfig('search.auto_placeholders'))) return { ok: false, why: 'disabled' };
   try {
     const used = await sb('rpc/llm_calls_today', 'POST', {});
-    if (typeof used === 'number' && used >= DAILY_LLM_LIMIT) return { ok: false, why: 'budget' };
+    if (typeof used === 'number' && used >= (await getConfig('search.daily_model_limit'))) return { ok: false, why: 'budget' };
   } catch (_e) { return { ok: false, why: 'error' }; }
 
   let out;

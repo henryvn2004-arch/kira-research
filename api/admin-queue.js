@@ -15,6 +15,7 @@
 // Auth: Bearer <supabase-jwt>, email in ADMIN_EMAILS.
 // ============================================================
 import { logAudit } from './_lib/audit.js';
+import { getConfig } from './_lib/config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -25,7 +26,7 @@ const WORK = ['pending', 'en_done', 'ja_done', 'ko_done', 'zh_backfill'];
 const IN_PROGRESS = ['en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress'];
 const PRIOR = { en_in_progress: 'pending', ja_in_progress: 'en_done', ko_in_progress: 'ja_done', zh_in_progress: 'ko_done' };
 const RETRY_TARGETS = new Set(WORK);
-const STALE_MIN = 150;
+// stuck / stalled thresholds come from owner settings (pipeline.stale_minutes, pipeline.stalled_hours)
 
 async function sb(path, method = 'GET', body, prefer) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -59,7 +60,7 @@ function cors(res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-function summarize(rows, events) {
+function summarize(rows, events, STALE_MIN, STALLED_H) {
   const by_status = {};
   for (const r of rows) by_status[r.status] = (by_status[r.status] || 0) + 1;
   const work_left = rows.filter(r => WORK.includes(r.status) || IN_PROGRESS.includes(r.status)).length;
@@ -69,7 +70,7 @@ function summarize(rows, events) {
   const hours_since = lastOk ? Math.round((Date.now() - Date.parse(lastOk.at)) / 36e5) : null;
   const weekAgo = Date.now() - 7 * 864e5;
   const completed_7d = events.filter(e => e.outcome === 'ok' && e.to_status === 'done' && e.stage !== 'zh_backfill' && Date.parse(e.at) > weekAgo).length;
-  const state = work_left === 0 ? 'idle' : (stuck.length || hours_since == null || hours_since > 30 ? 'stalled' : 'running');
+  const state = work_left === 0 ? 'idle' : (stuck.length || hours_since == null || hours_since > STALLED_H ? 'stalled' : 'running');
   // stage timing: average wall-clock of successful stage runs (last 200 events)
   const timing = {};
   for (const e of events) {
@@ -119,7 +120,7 @@ export default async function handler(req, res) {
         sb('report_queue_events?select=queue_id,usage&outcome=eq.usage&limit=5000').catch(() => []),
         sb('service_prices?select=service,usd_per_m_in,usd_per_m_out').catch(() => [])
       ]);
-      res.status(200).json({ rows, events: events.slice(0, 60), summary: summarize(rows, events), costs: summarizeCosts(usageRows, prices) });
+      res.status(200).json({ rows, events: events.slice(0, 60), summary: summarize(rows, events, await getConfig('pipeline.stale_minutes'), await getConfig('pipeline.stalled_hours')), costs: summarizeCosts(usageRows, prices) });
       return;
     }
 

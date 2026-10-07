@@ -22,6 +22,7 @@
 // ============================================================
 
 import { envProblems } from './_lib/env-checks.js';
+import { getConfig } from './_lib/config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -89,12 +90,13 @@ function tally(rows, field) {
 // the dashboard simply hides the card. Cached 60 s per warm instance.
 const WORK_STATES = new Set(['pending', 'en_done', 'ja_done', 'ko_done', 'zh_backfill', 'en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress']);
 const IN_PROGRESS = new Set(['en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress']);
-const STALE_MIN = 150;
+// stuck / stalled thresholds come from owner settings (pipeline.stale_minutes, pipeline.stalled_hours)
 let pipelineCache = { at: 0, value: null };
 
 async function pipelineHealth() {
   if (Date.now() - pipelineCache.at < 60 * 1000) return pipelineCache.value;
   try {
+    const STALE_MIN = await getConfig('pipeline.stale_minutes'), STALLED_H = await getConfig('pipeline.stalled_hours');
     const [rows, events] = await Promise.all([
       sb('report_queue?select=id,status,claimed_at&limit=10000'),
       sb('report_queue_events?select=outcome,to_status,stage,at&outcome=eq.ok&order=at.desc&limit=200')
@@ -108,7 +110,7 @@ async function pipelineHealth() {
     const weekAgo = Date.now() - 7 * 864e5;
     const completed_7d = events.rows.filter(e => e.to_status === 'done' && e.stage !== 'zh_backfill' && new Date(e.at).getTime() > weekAgo).length;
     // idle = nothing to do (fine); stalled = work waiting but no stage finished for 30h+, or a claim is stuck
-    const state = work_left === 0 ? 'idle' : (stuck || hours_since == null || hours_since > 30 ? 'stalled' : 'running');
+    const state = work_left === 0 ? 'idle' : (stuck || hours_since == null || hours_since > STALLED_H ? 'stalled' : 'running');
     pipelineCache = { at: Date.now(), value: { state, by_status, work_left, completed_7d, last_batch_at: last, hours_since, stuck, errors: by_status.error || 0 } };
   } catch (err) {
     console.warn('[admin-stats] pipeline health:', err.message);
