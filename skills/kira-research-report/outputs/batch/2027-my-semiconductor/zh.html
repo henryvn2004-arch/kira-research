@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>马来西亚半导体2027年展望 — KIRA Research</title>
+<meta name="description" content="马来西亚半导体后段产业基础（封装、测试与先进封装）在2027年前的AI芯片周期中向产业链上游攀升。KIRA Research市场分析。">
+<meta property="og:title" content="马来西亚半导体2027年展望 — KIRA Research">
+<meta property="og:description" content="马来西亚半导体市场分析2027——后段规模测算、OSAT格局、先进封装、AI影响与预测。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+/* === MASTER STYLES INJECTED HERE === */
+/* ============================================================
+   KIRA Research — Master report styles v1.0
+   All page types use these styles. Do not edit per-report.
+   ============================================================ */
+
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+
+/* ============ PAGE BASE ============ */
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+/* ============ DATA TAGS ============ */
+.data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+/* ============ DARK DIVIDER ============ */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* ============ EXEC SUMMARY ============ */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+/* ============ CHART CARDS ============ */
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* ============ SOURCE KEY (Phase L.3) ============
+   Per-page footer line resolving inline source aliases to full citations.
+   Renders just above .page-footer; pages may omit if all numbers are
+   [Kira estimates] only. Pattern: alias = full citation · alias = full citation · ... */
+.source-key {
+  font-family: 'JetBrains Mono', 'Noto Sans SC', monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--muted);
+  padding: 8px 0 6px;
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  max-height: 32px;
+  overflow: hidden;
+}
+.source-key::before {
+  content: "来源说明 · ";
+  font-weight: 700;
+  color: var(--text-mid);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+/* Hide entirely when empty so layout doesn't show an orphan dotted line */
+.source-key:empty { display: none; }
+
+/* ============ IMPLICATIONS GRID ============ */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* ============ COMPETITIVE ============ */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* ============ PROFILE DEEP-DIVE ============ */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+/* ============ AI / USE CASE GRID ============ */
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* ============ COVER ============ */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+/* ============ SVG UTILITIES ============ */
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* ============ PRINT (for PDF) ============ */
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+  .viewer-divider { display: none; }
+}
+
+/* ============================================================
+   === Phase H new page types (2026-05-23) ===
+   5 new page types: persona_profile, policy_timeline,
+   risk_matrix (qualitative), channel_waterfall,
+   price_quality_matrix. All conform to 1280x720 canvas with
+   page-header + body + page-footer chrome inherited from .page.
+   Severity tokens shared across types where useful.
+   ============================================================ */
+
+/* shared severity tokens (risk_matrix + winner/loser chips) */
+:root {
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+
+.severity-chip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.neutral { background: var(--sev-neutral-soft); color: var(--sev-neutral); }
+.severity-chip.winner { background: var(--green-soft); color: var(--green); }
+.severity-chip.loser { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.mixed { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.pending { background: var(--primary-soft); color: var(--primary); }
+
+/* ============ PERSONA PROFILE (consumer_segmentation) ============ */
+.persona-profile-page .page-inner { padding-top: 30px; }
+.persona-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 14px; flex-shrink: 0; }
+.persona-header .persona-label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; }
+.persona-header .persona-headline { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); flex: 1; max-width: 760px; }
+.persona-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex-shrink: 0; margin-bottom: 12px; }
+.persona-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
+.persona-block h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.persona-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-stat { padding: 4px 0; }
+.persona-stat .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.persona-stat .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 18px; line-height: 1; color: var(--text); letter-spacing: -0.02em; }
+.persona-stat .num .unit { font-size: 10px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-stat .src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; font-weight: 600; }
+.persona-behavior-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-behavior { padding: 4px 0; }
+.persona-behavior .metric { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 17px; line-height: 1.1; color: var(--text); margin-bottom: 3px; }
+.persona-behavior .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+.persona-behavior .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-behavior .change.down { color: var(--amber); }
+.persona-bottom-row { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; flex: 1; min-height: 0; }
+.persona-quote-block { background: var(--primary-soft); border-left: 3px solid var(--primary); padding: 14px 16px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; justify-content: center; }
+.persona-quote-block .qmark { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 32px; line-height: 0.6; color: var(--primary); margin-bottom: 4px; }
+.persona-quote-block .body { font-size: 13px; line-height: 1.45; color: var(--text); font-style: italic; margin-bottom: 8px; }
+.persona-quote-block .attribution { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.persona-channel-pref { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
+.persona-channel-pref .title { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.persona-channel-row { display: grid; grid-template-columns: 90px 1fr 38px; gap: 8px; align-items: center; font-size: 10.5px; }
+.persona-channel-row .ch-name { color: var(--text-mid); font-weight: 500; }
+.persona-channel-row .ch-bar { height: 8px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.persona-channel-row .ch-bar-fill { height: 100%; background: var(--primary); }
+.persona-channel-row .ch-pct { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; color: var(--text); font-weight: 700; text-align: right; }
+.persona-channel-caption { font-size: 10.5px; color: var(--text-mid); margin-top: 6px; line-height: 1.4; }
+.persona-wtp-anchor { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 10px 14px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+.persona-wtp-anchor .left .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.persona-wtp-anchor .left .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-wtp-anchor .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.persona-wtp-anchor .num .unit { font-size: 11px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-source-strip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; }
+
+/* ============ POLICY TIMELINE (regulatory_brief) ============ */
+.policy-timeline-page .page-inner { padding-top: 30px; }
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.policy-timeline-chart .chart-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.policy-timeline-chart .chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.policy-timeline-chart .tl-svg { flex: 1; min-height: 0; width: 100%; }
+.policy-timeline-chart .tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.policy-source-strip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ RISK MATRIX (entry_strategy, qualitative) ============ */
+.risk-matrix-page .page-inner { padding-top: 30px; }
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-matrix-chart .chart-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.risk-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-cell-bg-empty { fill: var(--surface-alt); stroke: var(--border); stroke-width: 0.5; }
+.risk-cell-bg-low { fill: var(--sev-low-soft); stroke: var(--sev-low); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-med { fill: var(--sev-med-soft); stroke: var(--sev-med); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-high { fill: var(--sev-high-soft); stroke: var(--sev-high); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 9px; font-weight: 600; fill: var(--text); }
+.risk-axis-label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.risk-axis-title { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.risk-legend-strip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; font-weight: 600; flex-shrink: 0; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.risk-source-strip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ CHANNEL WATERFALL (distribution_analysis) ============ */
+.channel-waterfall-page .page-inner { padding-top: 30px; }
+.waterfall-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 12px; }
+.waterfall-chart .chart-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.waterfall-chart .chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.waterfall-svg-wrap { height: 260px; width: 100%; }
+.waterfall-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.wf-segment-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.wf-segment-pct { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; fill: var(--text); font-weight: 700; }
+.wf-segment-note { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.04em; }
+.wf-segment-src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.wf-axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.wf-segment-fill-1 { fill: var(--primary); }
+.wf-segment-fill-2 { fill: var(--primary-dim); }
+.wf-segment-fill-3 { fill: var(--green); }
+.wf-segment-fill-4 { fill: var(--amber); }
+.wf-segment-fill-5 { fill: #6366F1; }
+.wf-segment-fill-6 { fill: #DB2777; }
+.wf-segment-fill-7 { fill: #0EA5E9; }
+.waterfall-commentary { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.waterfall-commentary h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.waterfall-commentary p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 6px; }
+.waterfall-commentary p strong { color: var(--text); font-weight: 600; }
+.waterfall-commentary ul { list-style: none; padding: 0; margin: 0; }
+.waterfall-commentary li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.waterfall-commentary li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; }
+.waterfall-commentary li strong { color: var(--text); font-weight: 600; }
+.waterfall-source-strip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ PRICE QUALITY MATRIX (pricing_strategy) ============ */
+.price-quality-page .page-inner { padding-top: 30px; }
+.pq-matrix-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.pq-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-matrix-chart .chart-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.pq-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.pq-svg-wrap { flex: 1; min-height: 0; width: 100%; }
+.pq-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.pq-quadrant-bg { fill: var(--bg); stroke: var(--border); stroke-width: 0.5; }
+.pq-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.pq-grid-line { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 2 2; }
+.pq-axis-label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.pq-axis-tick { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.pq-quadrant-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 10px; fill: var(--text-mid); font-weight: 700; letter-spacing: -0.005em; text-transform: uppercase; }
+.pq-dot { fill: var(--primary); stroke: var(--bg); stroke-width: 1.5; }
+.pq-dot-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 10px; fill: var(--text); font-weight: 700; }
+.pq-sidebar { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-sidebar h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.pq-sidebar p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.pq-sidebar p strong { color: var(--text); font-weight: 600; }
+.pq-source-strip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+
+</style>
+</head>
+<body>
+
+<div class="page cover-page" style="background:var(--dark-bg); color:var(--dark-text);">
+  <div style="position:absolute; inset:0; background-image: radial-gradient(ellipse 70% 50% at 75% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 15% 85%, rgba(30,111,255,0.10) 0%, transparent 60%); pointer-events:none;"></div>
+  <div style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; padding:64px 72px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">KIRA<span style="color:var(--primary);">.</span><span style="font-weight:400; color:var(--muted); font-size:13px; letter-spacing:0.25em; margin-left:8px;">RESEARCH</span></div>
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.15em;">机密</div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+      <div class="mono" style="font-size:13px; color:var(--primary); letter-spacing:0.3em; margin-bottom:24px;">马来西亚 · 半导体 · 2027</div>
+      <h1 style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:58px; line-height:1.04; letter-spacing:-0.04em; margin-bottom:28px; max-width:960px;">马来西亚半导体后段产业基础向产业链上游攀升</h1>
+      <p style="font-size:18px; color:#A3A9B6; line-height:1.5; max-width:720px; margin-bottom:auto;">先进封装、测试产能与北部走廊，正为2027年前的AI芯片周期重塑马来西亚占全球13%的封装测试地位。</p>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.1em;">报告 · KR-MY-SEMICONDUCTOR-2027</div>
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.1em;">市场分析</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">研究方法</div>
+      <div class="page-section-counter">02 / 23</div>
+    </div>
+    <h1 class="page-h1">本报告观点的构建方式</h1>
+    <p class="page-subhead">本报告观点基于两类证据：<strong>一手输入</strong>——覆盖北部半导体走廊的渠道调研、分析师综合研判与专业人士解读；以及<strong>二手锚点</strong>——统计机构、上市公司披露与三角验证估算。每一项量化结论均标注明确的来源标签。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:8px; flex:1;">
+      <div>
+        <div style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:11px; color:var(--primary); letter-spacing:0.15em; text-transform:uppercase; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--primary);">一手输入</div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">走廊渠道调研</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">与槟城、居林及巴生谷的OSAT运营商、设备供应商和招聘机构交流，掌握真实的产能利用率、招聘情况与交付周期。</div></div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">分析师综合研判</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">KIRA内部对多项公开输入进行三角验证，正文中标注为[Kira estimates]。</div></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">专业人士与运营方解读</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">封装工程师、测试车间经理及投资走廊官员，比整体贸易数据更贴近需求信号。</div></div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:11px; color:var(--primary); letter-spacing:0.15em; text-transform:uppercase; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--primary);">二手锚点</div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">统计机构</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">贸易与投资机构、中央银行及产业战略文件——正文中注明具体来源。</div></div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">上市公司披露</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">具名OSAT及IDM运营商的年报与投资者演示材料——按公司及期间引用。</div></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">三角验证估算</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">若单一来源无法覆盖某一数据，我们综合两至三项输入并披露方法，标注为[Kira estimates]。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">目录</div>
+      <div class="page-section-counter">03 / 23</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 48px; margin-top:18px; flex:1;">
+      <div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">03</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">执行摘要</div><div style="font-size:11px; color:var(--muted);">2027年拐点</div></div><span class="mono" style="font-size:11px; color:var(--muted);">004</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">04</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">宏观背景</div><div style="font-size:11px; color:var(--muted);">马来西亚2027年宏观环境</div></div><span class="mono" style="font-size:11px; color:var(--muted);">006</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">05</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">行业规模测算</div><div style="font-size:11px; color:var(--muted);">封装、测试与先进封装</div></div><span class="mono" style="font-size:11px; color:var(--muted);">008</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">06</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">细分领域经济性</div><div style="font-size:11px; color:var(--muted);">封装、测试与前段对比</div></div><span class="mono" style="font-size:11px; color:var(--muted);">010</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">07</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">竞争格局</div><div style="font-size:11px; color:var(--muted);">运营商与IDM核心企业</div></div><span class="mono" style="font-size:11px; color:var(--muted);">012</span></div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">08</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">需求与投资</div><div style="font-size:11px; color:var(--muted);">走廊投资项目储备</div></div><span class="mono" style="font-size:11px; color:var(--muted);">017</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">09</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">政策环境</div><div style="font-size:11px; color:var(--muted);">国家半导体战略</div></div><span class="mono" style="font-size:11px; color:var(--muted);">019</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">10</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">AI影响</div><div style="font-size:11px; color:var(--muted);">先进封装与测试</div></div><span class="mono" style="font-size:11px; color:var(--muted);">020</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">11</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">五年展望</div><div style="font-size:11px; color:var(--muted);">至2030年的预测</div></div><span class="mono" style="font-size:11px; color:var(--muted);">022</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">12</span><div style="flex:1;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px;">研究方法附注</div><div style="font-size:11px; color:var(--muted);">来源构成与披露</div></div><span class="mono" style="font-size:11px; color:var(--muted);">023</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">执行摘要</div>
+      <div class="page-section-counter">04 / 23</div>
+    </div>
+    <h1 class="page-h1">马来西亚半导体产业基础——2027年拐点</h1>
+    <p class="page-subhead">经历2023–24年的周期性低谷后，AI芯片周期与供应链多元化重塑了后段增长曲线。需要守住的是<strong>约占全球封装、测试与先进封装13%的份额</strong>；更大的机会在于将价值构成转向先进封装。</p>
+    <div class="exec-callouts">
+      <div class="callout"><div class="label">2024年电子电气出口</div><div class="num">RM601<span class="unit">bn</span></div><div class="change">约占出口总额40%</div><div class="source-tag">MATRADE</div></div>
+      <div class="callout"><div class="label">全球ATP份额</div><div class="num">~13<span class="unit">%</span></div><div class="change">封装·测试·先进封装</div><div class="source-tag">MIDA</div></div>
+      <div class="callout"><div class="label">NSS投资目标</div><div class="num">RM500<span class="unit">bn</span></div><div class="change">多年期，2024年启动</div><div class="source-tag">NSS</div></div>
+      <div class="callout"><div class="label">工程师缺口</div><div class="num">60<span class="unit">k</span></div><div class="change">高技能人才目标</div><div class="source-tag">NSS</div></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:15px; margin-bottom:6px;">基本格局</div><p style="font-size:12.5px; color:var(--text-mid); line-height:1.6;">马来西亚是中国台湾和中国大陆以外全球最大的后段制造节点，约占<strong>全球ATP服务的13%</strong>[MIDA]，全球约7%的半导体贸易经由其工厂流转[MIDA]。2023–24年的下行周期大幅压低了OSAT产能利用率，但AI加速器、汽车芯片含量提升以及库存正常化，推动需求在2025–27年回升[WSTS]。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:15px; margin-bottom:6px;">结构转变</div><p style="font-size:12.5px; color:var(--text-mid); line-height:1.6;">2027年的战略转变在于质的提升，而不仅是量的增长。先进封装——2.5D/3D集成、扇出型封装与系统级封装——是产业链中增长最快的环节[Kira estimates]；国家半导体战略明确引导走廊从通用型封装组装转向高利润的先进封装、测试与设计[NSS]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">全球芯片销售额走势</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD BN · 全球 · 2024–2026F</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="91" y="72" width="58" height="98" fill="#1E6FFF"/>
+<text x="120" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="120" y="66" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">630</text>
+<rect x="231" y="50" width="58" height="120" fill="#1E6FFF"/>
+<text x="260" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2025</text>
+<text x="260" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">772</text>
+<rect x="371" y="18" width="58" height="152" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="400" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2026F</text>
+<text x="400" y="12" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">976</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px; letter-spacing:0.05em;">SOURCE: WSTS, SIA · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">MIDA = Malaysian Investment Development Authority · MATRADE = Malaysia External Trade Development Corp · WSTS = World Semiconductor Trade Statistics · SIA = Semiconductor Industry Assn · NSS = National Semiconductor Strategy 2024 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">执行摘要</div>
+      <div class="page-section-counter">05 / 23</div>
+    </div>
+    <h1 class="page-h1">2027年的五项战略启示</h1>
+    <p class="page-subhead">马来西亚半导体产业基础需要采取行动的领域。每项启示均对应展开相关证据的章节。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; align-content:start;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">定位</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">先守住测试车间，再谈晶圆厂</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">前段晶圆厂更受关注，但马来西亚在2027年可守住的优势在于后段<strong>封装与测试</strong>[Kira estimates]。AI与汽车器件需要更长、更复杂的测试——走廊运营商无需承担晶圆厂的资本强度即可获取这一利润池。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">见细分领域经济性 · 第010页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">资本开支</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">先进封装是价值迁移的方向</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">标准引线键合正趋于同质化。增长与利润集中在2.5D/3D、扇出型封装与SiP；全球先进封装规模2024年约为USD 38–44 bn，至2030年将达USD 65–80 bn[Kira estimates]。2027年在此布局的产能将产生复利效应。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">见AI影响 · 第020页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">人才</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">工程师缺口是关键约束</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">NSS提出的60,000名工程师目标[NSS]并非远大愿景，而是每一项扩产的决定性因素。相对新加坡的薪资套利空间正在收窄；能解决人才留存而不仅是招聘的市场参与者，将赢得这一周期。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">见宏观背景 · 第006页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">地理布局</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">北部走廊集中了押注</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">槟城是封装与测试的核心；居林（吉打州）正成为与之配套的晶圆制造基地[MIDA]。封装、测试与前段制造在同一走廊内集聚，是需要守护的结构性优势。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">见需求与投资 · 第017页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px; grid-column:1 / -1;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">政策</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">用好NSS优惠政策，并为其退坡做好准备</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">该战略将财政支持前置——5–10年内至少RM25 bn[NSS]。2027年的决策应在锁定优惠的同时，构建在补贴退坡后依然成立的成本竞争力。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">见政策环境 · 第019页</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h2 class="divider-title">宏观背景：<span class="accent">马来西亚2027</span></h2>
+    <p class="divider-thesis">一个增速4.5–5%的经济体，林吉特持续回升，电子产品是其出口中最大的单一品类。半导体周期如今已是宏观驱动因素，而非一个子行业。<strong>约束在于人才，而非需求。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">GDP与汇率</span><span class="toc-pill">出口结构</span><span class="toc-pill">人才缺口</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 宏观背景</div>
+      <div class="page-section-counter">07 / 23</div>
+    </div>
+    <h1 class="page-h1">驱动2027年产业基础的宏观指标</h1>
+    <p class="page-subhead">稳健增长与走强的林吉特为资本开支规划提供支撑，但电子产品出口的高度集中意味着芯片周期如今左右着国家整体数据。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">增长保持在4.5–5%区间</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">实际GDP在2023年增长约3.6%后，2024年增长约5.1%；中央银行对2025年的指引为约4.5–5.5%，2026–27年路径相近[BNM]。这为多年期的晶圆厂与封装投资承诺提供了有利背景。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">林吉特回升利好进口设备</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">林吉特在2024年初贬至约RM4.70/USD，随后回升至RM4.20–4.40[BNM]。后段产能依赖以美元计价的进口设备，汇率稳定直接影响项目经济性。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">电子产品主导出口结构</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2024年电子电气出口约RM601 bn，约占出口总额的40%[MATRADE]。半导体是其中最大的部分，使后段周期成为国民账户层面的变量。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">GDP增长与林吉特汇率</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">实际GDP %（柱）· RM/USD（线）· 2023–2027F</div>
+        <svg viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="160" x2="470" y2="160" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="75" y="77" width="34" height="83" fill="#1E6FFF"/>
+<text x="92" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2023</text>
+<text x="92" y="72" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">3.6</text>
+<rect x="159" y="43" width="34" height="117" fill="#1E6FFF"/>
+<text x="176" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2024</text>
+<text x="176" y="38" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">5.1</text>
+<rect x="243" y="50" width="34" height="110" fill="#1E6FFF"/>
+<text x="260" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2025F</text>
+<text x="260" y="45" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">4.8</text>
+<rect x="327" y="52" width="34" height="108" fill="#1E6FFF"/>
+<text x="344" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2026F</text>
+<text x="344" y="47" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">4.7</text>
+<rect x="411" y="54" width="34" height="106" fill="#1E6FFF"/>
+<text x="428" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2027F</text>
+<text x="428" y="49" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">4.6</text>
+<polyline points="92,39 176,66 260,90 344,99 428,105" fill="none" stroke="#D97706" stroke-width="1.8"/>
+<circle cx="92" cy="39" r="3" fill="#D97706"/>
+<text x="92" y="32" text-anchor="middle" font-size="8" fill="#D97706">4.56</text>
+<circle cx="176" cy="66" r="3" fill="#D97706"/>
+<text x="176" y="59" text-anchor="middle" font-size="8" fill="#D97706">4.42</text>
+<circle cx="260" cy="90" r="3" fill="#D97706"/>
+<text x="260" y="83" text-anchor="middle" font-size="8" fill="#D97706">4.30</text>
+<circle cx="344" cy="99" r="3" fill="#D97706"/>
+<text x="344" y="92" text-anchor="middle" font-size="8" fill="#D97706">4.25</text>
+<circle cx="428" cy="105" r="3" fill="#D97706"/>
+<text x="428" y="98" text-anchor="middle" font-size="8" fill="#D97706">4.22</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: BNM, DOSM · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">BNM = Bank Negara Malaysia · DOSM = Dept of Statistics Malaysia · MATRADE = Malaysia External Trade Development Corp · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第05章</div>
+    <h2 class="divider-title">行业规模测算：<span class="accent">封装、测试与先进封装</span></h2>
+    <p class="divider-thesis">马来西亚约占全球ATP 13%的份额是其核心资产。2023–24年的低谷已经过去；2027年的问题在于，回升中的价值池有多少会从通用引线键合迁移至先进封装与高价值测试。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">ATP份额</span><span class="toc-pill">价值池</span><span class="toc-pill">复苏形态</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 行业规模测算</div>
+      <div class="page-section-counter">09 / 23</div>
+    </div>
+    <h1 class="page-h1">市场规模与增长：马来西亚半导体后段</h1>
+    <p class="page-subhead">全球市场回暖，带动以封装和测试为核心的产业基础。全球芯片销售额由2024年的约USD 630 bn增至2026年的约USD 976 bn[WSTS]；马来西亚的后段份额随这一曲线上行。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">约13%的后段地位</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">马来西亚承担了全球约13%的封装、测试与先进封装业务[MIDA]。以2024年全球OSAT约USD 45–50 bn的规模计算[Kira estimates]，在计入IDM自有后段产能之前，这一份额已对应数十亿美元的本土价值池。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">走出低谷</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">消费电子疲软压低了2023–24年的OSAT产能利用率。库存正常化、AI加速器与汽车芯片含量提升，推动利用率在2025年回升[Kira estimates]，为2027年奠定更稳固的基础。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">“中国+1”顺风因素</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">供应链多元化正将新增ATP投资引向马来西亚[MIDA]，在周期性复苏之上叠加结构性需求。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">马来西亚电子电气出口</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">RM BN · 2022–2027F</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="74" y="51" width="58" height="119" fill="#1E6FFF"/>
+<text x="103" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2022</text>
+<text x="103" y="45" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">593</text>
+<rect x="179" y="55" width="58" height="115" fill="#1E6FFF"/>
+<text x="208" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2023</text>
+<text x="208" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">575</text>
+<rect x="284" y="50" width="58" height="120" fill="#1E6FFF"/>
+<text x="313" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="313" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">601</text>
+<rect x="389" y="26" width="58" height="144" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="418" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2027F</text>
+<text x="418" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">720</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: MATRADE；2027F为KIRA估算 · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">MIDA = Malaysian Investment Development Authority · MATRADE = Malaysia External Trade Development Corp · WSTS = World Semiconductor Trade Statistics · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 · 细分领域经济性</div>
+      <div class="page-section-counter">10 / 23</div>
+    </div>
+    <h1 class="page-h1">细分领域经济性：利润集中在哪里</h1>
+    <p class="page-subhead">后段产业链分为通用封装组装、高价值测试，以及快速增长的先进封装层级。利润与增长集中在这一结构的顶端。</p>
+    <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:30px; flex:1;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">各细分领域参考毛利率</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">毛利率区间 % · KIRA估算</div>
+        <svg viewBox="0 0 460 176" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">
+<text x="0" y="24" font-size="11" fill="#0B0D10" font-weight="500">先进封装</text>
+<rect x="0" y="30" width="248" height="12" fill="#1E6FFF" rx="2"/>
+<text x="256" y="40" font-size="10" font-weight="700" fill="#1E6FFF">32%</text>
+<text x="0" y="66" font-size="11" fill="#0B0D10" font-weight="500">终测与系统级测试</text>
+<rect x="0" y="72" width="217" height="12" fill="#1E6FFF" rx="2"/>
+<text x="225" y="82" font-size="10" font-weight="700" fill="#1E6FFF">28%</text>
+<text x="0" y="108" font-size="11" fill="#0B0D10" font-weight="500">晶圆级封装／凸块</text>
+<rect x="0" y="114" width="186" height="12" fill="#4A5568" rx="2"/>
+<text x="194" y="124" font-size="10" font-weight="700" fill="#4A5568">24%</text>
+<text x="0" y="150" font-size="11" fill="#0B0D10" font-weight="500">标准引线键合封装</text>
+<rect x="0" y="156" width="116" height="12" fill="#4A5568" rx="2"/>
+<text x="124" y="166" font-size="10" font-weight="700" fill="#4A5568">15%</text>
+</g></svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: 运营商披露、渠道调研 · KIRA RESEARCH 2027</div>
+      </div>
+      <div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">先进封装——增长层级</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">在AI/HPC与HBM堆叠的拉动下，2.5D/3D集成、扇出型封装与SiP拥有最高的利润率和最强劲的需求[Kira estimates]。这是走廊在2027年必须重点倾斜的环节。</p></div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">测试——被低估的利润池</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">AI与汽车器件需要更长、更复杂的测试，高价值器件对系统级测试的采用也在增加[Kira estimates]。测试产能无需晶圆厂的资本强度即可扩大利润。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">标准封装——趋于同质化</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">引线键合与引线框架业务仍是产量基础，但面临价格压力[Kira estimates]。唯有依靠规模、自动化及贴近测试环节才能守住。</p></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">毛利率区间为KIRA基于上市OSAT披露及走廊渠道调研的三角验证估算 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第07章</div>
+    <h2 class="divider-title">竞争格局</h2>
+    <p class="divider-thesis">两个层级共享这一走廊：本土上市OSAT，以及作为集群核心的跨国IDM。2027年的竞争焦点是先进封装订单及运营这些订单所需的工程师，而非通用产能的规模。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">上市OSAT</span><span class="toc-pill">IDM核心企业</span><span class="toc-pill">订单竞争</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 竞争格局</div>
+      <div class="page-section-counter">12 / 23</div>
+    </div>
+    <h1 class="page-h1">市场结构：双层级走廊</h1>
+    <p class="page-subhead">本土上市OSAT规模化提供专业封装与测试；跨国IDM与全球OSAT以最大规模的资本开支锚定集群。集中度适中，高价值层级竞争激烈。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:16px;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">走廊内的核心投资承诺</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">部分投资项目，USD BN · 近期</div>
+        <svg viewBox="0 0 460 134" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">
+<text x="0" y="24" font-size="11" fill="#0B0D10" font-weight="500">英特尔 · 3D封装，槟城</text>
+<rect x="0" y="30" width="271" height="12" fill="#1E6FFF" rx="2"/>
+<text x="279" y="40" font-size="10" font-weight="700" fill="#1E6FFF">7 bn</text>
+<text x="0" y="66" font-size="11" fill="#0B0D10" font-weight="500">英飞凌 · SiC晶圆厂，居林</text>
+<rect x="0" y="72" width="194" height="12" fill="#1E6FFF" rx="2"/>
+<text x="202" y="82" font-size="10" font-weight="700" fill="#1E6FFF">5 bn</text>
+<text x="0" y="108" font-size="11" fill="#0B0D10" font-weight="500">德州仪器 · 封装／测试</text>
+<rect x="0" y="114" width="120" height="12" fill="#4A5568" rx="2"/>
+<text x="128" y="124" font-size="10" font-weight="700" fill="#4A5568">3.1 bn</text>
+</g></svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: MIDA、企业公告 · KIRA RESEARCH 2027</div>
+      </div>
+      <div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:8px;">结构解读</div>
+        <p style="font-size:12px; color:var(--text-mid); line-height:1.55; margin-bottom:10px;">该集群由<strong>本土OSAT</strong>（Inari、Unisem、MPI、Globetronics）与<strong>IDM核心企业</strong>（英特尔、英飞凌、德州仪器、美光）构成，另有在马来西亚设厂的全球OSAT（日月光、Amkor）[MIDA]。</p>
+        <div class="mono" style="font-size:11px; color:var(--text-mid); line-height:1.9;">
+          · 全球约13%的ATP在马来西亚完成[MIDA]<br>
+          · 全球约7%的芯片贸易经由马来西亚[MIDA]<br>
+          · “中国+1”正将新订单引入[MIDA]<br>
+          · 高价值层级竞争激烈，尚未整合[Kira est.]
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">企业01</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">Inari Amertron</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">射频／光电子封装</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">FY24营收约RM1.4–1.5 bn[Inari AR]</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">企业02</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">Unisem</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">晶圆凸块、倒装芯片、测试</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">2024年营收约RM1.5 bn[Unisem AR]</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">企业03</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">英特尔马来西亚</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">3D先进封装核心企业</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">槟城约USD 7 bn[MIDA]</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:6px;">企业04</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:4px; line-height:1.15;">英飞凌居林</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4; margin-bottom:6px;">SiC功率器件晶圆厂</div>
+        <div class="mono" style="font-size:9px; color:var(--muted);">最高约EUR 5 bn[Infineon]</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">MIDA = Malaysian Investment Development Authority · Inari AR / Unisem AR = company annual reports · Infineon = company announcement · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 企业概况</div>
+      <div class="page-section-counter">13 / 23</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:2px solid var(--text); margin-bottom:16px;">
+      <div>
+        <h1 style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:30px; letter-spacing:-0.03em; margin-bottom:6px;">Inari Amertron</h1>
+        <p style="font-size:13px; color:var(--text-mid);">按市值计马来西亚最大的上市OSAT——专注射频、光电子与光子封装。</p>
+        <div style="display:flex; gap:8px; margin-top:10px;"><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">射频封装</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">光电子</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">SiP</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,auto); gap:14px 26px; text-align:right;">
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~RM1.4bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">FY24营收</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">Bursa</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">上市地</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">射频滤波器</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">主要客户业务</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">SiP／中国</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">扩张方向</div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1;">
+      <div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">市场地位</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">Inari是走廊内的旗舰本土OSAT，专注射频前端模组与光电子，FY2024营收约RM1.4–1.5 bn[Inari AR]。其射频封装规模是马来西亚本土企业中最强的高价值地位。</p></div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">客户集中度</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">单一主导客户贡献了大部分营收，其供应的射频滤波器最终用于旗舰智能手机[Kira estimates]。集中度既是增长引擎，也是主要风险。</p></div></div>
+      <div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:10px;">战略启示</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.5;"><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>趁射频需求强劲、在智能手机周期走弱之前推进客户多元化[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>扩大系统级封装与先进产能，把握AI/HPC含量增长[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>将义乌（中国）布局作为“中国+1”的对冲，而非利润拖累[Kira estimates]。</span></div></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">来源说明 · Inari AR = Inari Amertron annual report FY2024 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 企业概况</div>
+      <div class="page-section-counter">14 / 23</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:2px solid var(--text); margin-bottom:16px;">
+      <div>
+        <h1 style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:30px; letter-spacing:-0.03em; margin-bottom:6px;">Unisem</h1>
+        <p style="font-size:13px; color:var(--text-mid);">混合信号OSAT，提供晶圆凸块、倒装芯片与测试——布局怡保及成都。</p>
+        <div style="display:flex; gap:8px; margin-top:10px;"><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">晶圆凸块</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">倒装芯片</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">测试</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,auto); gap:14px 26px; text-align:right;">
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~RM1.5bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">2024年营收</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">怡保 · 成都</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">生产基地</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">凸块／倒装</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">优势</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">中国合资</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">股东关联</div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1;">
+      <div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">市场地位</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">Unisem在怡保和成都提供晶圆凸块、倒装芯片和引线框架封装以及测试服务，2024年营收接近RM1.5 bn[Unisem AR]。其凸块与倒装产线更接近先进封装层级，而非通用引线键合。</p></div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">周期敞口</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2023–24年需求低谷期间利润率承压[Unisem AR]；2025年产能利用率的回升，是其至2027年盈利能力的关键变量[Kira estimates]。</p></div></div>
+      <div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:10px;">战略启示</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.5;"><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>加码倒装芯片与凸块产能，作为获取先进封装订单的切入点[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>结合供应链多元化需求，平衡马来西亚与中国的产能布局[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>通过向测试与高价值封装调整产品结构，将回升的利用率转化为利润[Kira estimates]。</span></div></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">来源说明 · Unisem AR = Unisem (M) Berhad annual report 2024 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 企业概况</div>
+      <div class="page-section-counter">15 / 23</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:2px solid var(--text); margin-bottom:16px;">
+      <div>
+        <h1 style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:30px; letter-spacing:-0.03em; margin-bottom:6px;">IDM核心企业</h1>
+        <p style="font-size:13px; color:var(--text-mid);">以最大单笔投资承诺锚定走廊的跨国整合器件制造商。</p>
+        <div style="display:flex; gap:8px; margin-top:10px;"><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">先进封装</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">SiC晶圆厂</span><span class="mono" style="font-size:9px; background:var(--primary-soft); color:var(--primary); padding:4px 9px; border-radius:3px; letter-spacing:0.05em; font-weight:600;">封装／测试</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,auto); gap:14px 26px; text-align:right;">
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~$7bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">英特尔 · 槟城</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~€5bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">英飞凌 · 居林</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">~$3.1bn</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">TI · 吉隆坡／马六甲</div></div><div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">集群核心</div><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">角色</div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1;">
+      <div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">英特尔——先进封装</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">英特尔在槟城约USD 7 bn的3D先进封装投资，是高价值后段向马来西亚迁移的最强信号[MIDA]。它将供应商、测试产能与工程人才吸引至走廊。</p></div><div style="margin-bottom:14px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">英飞凌与德州仪器——拓宽广度</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">英飞凌正在居林建设大型200mm碳化硅功率晶圆厂（最高约EUR 5 bn）[Infineon]，德州仪器则新增约USD 3.1 bn的封装与测试投资[MIDA]——推动集群从逻辑芯片拓展至功率与汽车领域。</p></div></div>
+      <div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:10px;">对产业生态的战略启示</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.5;"><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>本土OSAT与供应商应定位为IDM核心企业的第二供应源及溢出产能合作伙伴[Kira estimates]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>居林SiC晶圆厂为槟城的封装优势培育了晶圆制造配套[MIDA]。</span></div><div style="display:flex; gap:8px; margin-bottom:9px;"><span style="color:var(--primary); font-weight:700;">→</span><span>核心企业的资本开支加剧人才约束——生态内招聘必须同步扩张[Kira estimates]。</span></div></div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">来源说明 · MIDA = Malaysian Investment Development Authority · Infineon = company announcement · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第08章</div>
+    <h2 class="divider-title">需求与投资：<span class="accent">走廊投资项目储备</span></h2>
+    <p class="divider-thesis">创纪录的获批投资正向北部走廊集中。槟城在封装与测试领域领先；居林新增晶圆制造产能。项目储备真实存在——<strong>能否落地取决于电力、土地与工程师。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">FDI项目储备</span><span class="toc-pill">槟城+居林</span><span class="toc-pill">建设约束</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第08章 · 需求与投资</div>
+      <div class="page-section-counter">17 / 23</div>
+    </div>
+    <h1 class="page-h1">投资项目储备与北部走廊</h1>
+    <p class="page-subhead">这一押注在地理上高度集中。槟城近年吸引了创纪录的获批制造业投资，居林则成为与之配套的晶圆制造基地——两者共同构成统一的北部半导体走廊。</p>
+    <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:30px; flex:1;">
+      <div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">槟城——封装与测试核心</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">在半导体与电子电气的带动下，槟城获批制造业投资创下纪录（峰值年份约RM60 bn量级）[MIDA]，承载了马来西亚大部分后段业务，包括英特尔的3D封装项目。</p></div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">居林——晶圆制造配套</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">吉打州居林高科技园正与槟城并肩成为晶圆制造中心，以英飞凌SiC功率器件晶圆厂为核心[Infineon]，使走廊从后段向前段延伸。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">落地约束</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">电力供应、工业用地，尤其是熟练工程师，是将项目储备转化为产出的关键约束[Kira estimates]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">走廊核心项目分布</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">各节点部分投资承诺</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#1E6FFF; margin-top:5px; flex-shrink:0;"></span>
+            <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px;">槟城</div><div style="font-size:11px; color:var(--text-mid); line-height:1.4;">英特尔3D封装 · 博世测试 · 本土OSAT</div></div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#1E6FFF; margin-top:5px; flex-shrink:0;"></span>
+            <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px;">居林（吉打州）</div><div style="font-size:11px; color:var(--text-mid); line-height:1.4;">英飞凌SiC功率晶圆厂</div></div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#4A5568; margin-top:5px; flex-shrink:0;"></span>
+            <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px;">吉隆坡／马六甲</div><div style="font-size:11px; color:var(--text-mid); line-height:1.4;">德州仪器封装与测试</div></div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#4A5568; margin-top:5px; flex-shrink:0;"></span>
+            <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px;">怡保（霹雳州）</div><div style="font-size:11px; color:var(--text-mid); line-height:1.4;">Unisem凸块／倒装芯片／测试</div></div>
+          </div>
+        </div>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:12px;">SOURCE: MIDA、企业公告 · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">MIDA = Malaysian Investment Development Authority · Infineon = company announcement · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第09章</div>
+    <h2 class="divider-title">政策环境：<span class="accent">国家半导体战略</span></h2>
+    <p class="divider-thesis">NSS于2024年推出，是2027年展望的政策主轴：至少RM500 bn的目标投资、RM25 bn的财政支持，以及从后段向设计与前段攀升的明确路径。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">RM500 bn目标</span><span class="toc-pill">三个阶段</span><span class="toc-pill">人才培养</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第09章 · 政策环境</div>
+      <div class="page-section-counter">19 / 23</div>
+    </div>
+    <h1 class="page-h1">监管与政策：NSS框架</h1>
+    <p class="page-subhead">国家半导体战略确立了沿产业链向上攀升的方向，并将优惠政策前置。2027年的任务是在锁定支持的同时，构建在优惠退坡后依然成立的成本竞争力。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:30px; flex:1;">
+      <div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">雄心规模</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">NSS目标吸引至少RM500 bn（约USD 107 bn）投资，5–10年内提供至少RM25 bn财政支持，并在设计与先进封装领域培育10家本土龙头企业[NSS]。</p></div>
+        <div style="margin-bottom:13px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">分阶段价值攀升</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">第一阶段优先发展先进封装与设计；第二阶段迈向先进逻辑与前段；第三阶段瞄准全球领先地位[NSS]——一条有意摆脱通用封装组装的路径。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">以人才为核心</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">该战略承诺培养和提升60,000名高技能工程师[NSS]——这是政策中最重要、也最难实现的目标。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:14px;">NSS三个阶段</div>
+        <div style="position:relative; padding-left:22px;">
+          <div style="position:absolute; left:5px; top:6px; bottom:6px; width:2px; background:var(--border-strong);"></div>
+          <div style="position:relative; margin-bottom:16px;">
+            <span style="position:absolute; left:-22px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-soft);"></span>
+            <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:2px;">第一阶段</div>
+            <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:3px;">先进封装与设计</div>
+            <div style="font-size:11px; color:var(--text-mid); line-height:1.45;">依托后段基础；培育设计公司与先进封装订单。</div>
+          </div>
+          <div style="position:relative; margin-bottom:16px;">
+            <span style="position:absolute; left:-22px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-soft);"></span>
+            <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:2px;">第二阶段</div>
+            <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:3px;">先进逻辑与前段</div>
+            <div style="font-size:11px; color:var(--text-mid); line-height:1.45;">向更高价值的逻辑芯片与晶圆制造能力攀升。</div>
+          </div>
+          <div style="position:relative; margin-bottom:16px;">
+            <span style="position:absolute; left:-22px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-soft);"></span>
+            <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:2px;">第三阶段</div>
+            <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:3px;">全球领先</div>
+            <div style="font-size:11px; color:var(--text-mid); line-height:1.45;">培育在全球前沿竞争的本土龙头企业。</div>
+          </div>
+        </div>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:4px;">SOURCE: NSS 2024 · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">NSS = National Semiconductor Strategy, launched 2024 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第10章</div>
+    <h2 class="divider-title">AI对<span class="accent">先进封装与测试</span>的影响</h2>
+    <p class="divider-thesis">AI在此并非次要议题，而是需求驱动力。HBM堆叠与加速器逻辑芯片正推动先进封装市场从约USD 38–44 bn增至2030年的USD 65–80 bn，并延长每一款高价值器件的测试时间。</p>
+    <div class="divider-mini-toc"><span class="toc-pill">HBM与2.5D/3D</span><span class="toc-pill">测试复杂度</span><span class="toc-pill">产能押注</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第10章 · AI影响</div>
+      <div class="page-section-counter">21 / 23</div>
+    </div>
+    <h1 class="page-h1">马来西亚后段中的AI：规模与应用场景</h1>
+    <p class="page-subhead">AI加速器与高带宽存储器是推动先进封装与更长测试的结构性力量——这恰恰是走廊在2027年能够获取利润的层级。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-bottom:16px;">
+      <div>
+        <div style="margin-bottom:12px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:3px;">先进封装需求</div><p style="font-size:11.5px; color:var(--text-mid); line-height:1.5;">随着摩尔定律放缓，异构集成正在取代单片微缩；AI/HPC是最大的拉动力[Kira estimates]。</p></div>
+        <div style="margin-bottom:12px;"><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:3px;">HBM堆叠</div><p style="font-size:11.5px; color:var(--text-mid); line-height:1.5;">高带宽存储器堆叠大幅提升单颗器件的封装价值[Kira estimates]。</p></div>
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:3px;">测试时间延长</div><p style="font-size:11.5px; color:var(--text-mid); line-height:1.5;">AI芯片需要更长、更复杂的测试；高价值器件对系统级测试的采用持续增加[Kira estimates]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">全球先进封装市场</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD BN · 2024 → 2030F</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="126" y="92" width="58" height="78" fill="#1E6FFF"/>
+<text x="155" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="155" y="86" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">41</text>
+<rect x="336" y="33" width="58" height="137" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="365" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+<text x="365" y="27" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">72</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: 行业来源三角验证；CAGR约9–11% · KIRA RESEARCH 2027</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">高影响</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">HBM与2.5D/3D产线</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">布局存储器堆叠与中介层集成产能——单颗器件价值最高的层级。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">高影响</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">先进测试（ATE／SLT）</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">为测试时间与单颗成本持续上升的AI/HPC器件新增测试产能。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">中等</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">扇出型封装与SiP</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">扩大扇出型晶圆级封装与系统级封装，服务紧凑型高性能模组。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">中等</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">功率与SiC封装</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">依托居林晶圆厂基础，通过SiC器件封装获取汽车与功率需求。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">支撑要素</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">良率与检测分析</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">运用数据驱动的良率与缺陷分析，提升先进封装的一次通过率。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px;">
+        <div class="mono" style="font-size:8.5px; color:var(--primary); font-weight:600; letter-spacing:0.1em; margin-bottom:5px;">支撑要素</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:12.5px; margin-bottom:4px; line-height:1.15;">工程产出效率</div>
+        <div style="font-size:10.5px; color:var(--text-mid); line-height:1.4;">运用可测试性设计与自动化，充分发挥稀缺的工程人力。</div>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">先进封装规模为KIRA对行业来源的三角验证（2024年约USD 38–44 bn → 2030年USD 65–80 bn，CAGR约9–11%） · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第11章 · 五年展望</div>
+      <div class="page-section-counter">22 / 23</div>
+    </div>
+    <h1 class="page-h1">五年展望及至2030年的预测</h1>
+    <p class="page-subhead">全球市场回暖、由AI需求带动的先进封装需求以及“中国+1”投资，共同构成积极的基准情景——但受制于人才与执行。</p>
+    <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;">
+        <div><div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:13px;">马来西亚电子电气出口——基准情景路径</div><div class="mono" style="font-size:10px; color:var(--muted);">RM BN · 实际值 → 预测值</div></div>
+        <div class="mono" style="font-size:10px; color:var(--primary); font-weight:600;">CAGR约+5–7%[Kira est.]</div>
+      </div>
+      <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="69" y="71" width="46" height="99" fill="#4A5568"/>
+<text x="92" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2023</text>
+<text x="92" y="65" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">575</text>
+<rect x="153" y="66" width="46" height="104" fill="#4A5568"/>
+<text x="176" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="176" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">601</text>
+<rect x="237" y="58" width="46" height="112" fill="#1E6FFF"/>
+<text x="260" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2025F</text>
+<text x="260" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">650</text>
+<rect x="321" y="46" width="46" height="124" fill="#1E6FFF"/>
+<text x="344" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2027F</text>
+<text x="344" y="40" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">720</text>
+<rect x="405" y="25" width="46" height="145" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="428" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2030F</text>
+<text x="428" y="19" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">840</text>
+</g>
+</svg>
+      <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: MATRADE（实际值）；2025F–2030F为KIRA估算 · KIRA RESEARCH 2027</div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-top:3px solid var(--border-strong); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); font-weight:600; letter-spacing:0.12em; margin-bottom:6px;">悲观</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:6px;">周期停滞</div>
+        <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">消费电子再度疲软叠加人才紧缺，限制产能利用率；增速滑落至低个位数[Kira estimates]。</p>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-top:3px solid var(--primary); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; letter-spacing:0.12em; margin-bottom:6px;">基准</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:6px;">价值稳步攀升</div>
+        <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">由AI需求带动的封装需求与“中国+1”投资，支撑出口年复合增长率维持在约5–7%，产品结构向先进封装倾斜[Kira estimates]。</p>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-top:3px solid var(--border-strong); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); font-weight:600; letter-spacing:0.12em; margin-bottom:6px;">乐观</div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:6px;">先进封装实现突破</div>
+        <p style="font-size:11px; color:var(--text-mid); line-height:1.5;">NSS落实带来多项先进封装订单，工程师培养如期达标，推动增长高于基准路径[Kira estimates]。</p>
+      </div>
+    </div>
+    <div class="source-key" style="font-family:'JetBrains Mono', 'Noto Sans SC', monospace; font-size:10px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:auto; padding-top:10px;">MATRADE = Malaysia External Trade Development Corp (actuals) · 预测区间与CAGR为KIRA估算，以WSTS全球走势及走廊项目储备为锚 · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">研究方法附注</div>
+      <div class="page-section-counter">23 / 23</div>
+    </div>
+    <h1 class="page-h1">研究方法附注与来源构成</h1>
+    <p class="page-subhead">本报告观点基于两类证据的三角验证。标注具名来源标签的数据，其基础数据来自该来源；标注[Kira estimates]的数据，由KIRA分析师综合多项公开输入推算得出。</p>
+    <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:32px; flex:1;">
+      <div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:8px;">如何解读来源标签</div>
+        <p style="font-size:12px; color:var(--text-mid); line-height:1.6; margin-bottom:14px;">具名标签（如[MIDA]、[MATRADE]、[WSTS]、[NSS]）对应下方列出的具体外部来源。[Kira estimates]表示我们的分析师依据相关章节披露的方法，基于企业披露、贸易数据与走廊渠道调研进行三角验证得出的数据。本报告约<strong>55%</strong>的量化结论引自外部来源，<strong>45%</strong>由KIRA推算[Kira estimates]。</p>
+        <div style="display:flex; gap:10px; margin-bottom:14px;">
+          <span class="data-tag secondary">约55%外部引用</span> <span class="data-tag estimate">约45% KIRA估算</span>
+        </div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:6px;">免责声明</div>
+        <p style="font-size:10.5px; color:var(--muted); line-height:1.5; border-top:1px solid var(--border); padding-top:10px;">本报告仅供参考，不构成投资、法律或商业建议。预测为估算值，可能随情况变化而修订。© KIRA Research 2027.</p>
+      </div>
+      <div>
+        <div style="font-family:'Satoshi', 'Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:10px;">来源列表</div>
+        <div class="mono" style="font-size:10.5px; color:var(--text-mid); line-height:1.85;">
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">MIDA</span><span>Malaysian Investment Development Authority — ATP份额、投资数据</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">MATRADE</span><span>Malaysia External Trade Development Corp — 电子电气出口额</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">DOSM</span><span>Department of Statistics Malaysia — 宏观指标</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">BNM</span><span>Bank Negara Malaysia — GDP、汇率指引</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">NSS</span><span>National Semiconductor Strategy 2024 — 目标与阶段</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">WSTS</span><span>World Semiconductor Trade Statistics — 全球芯片销售额</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">SIA</span><span>Semiconductor Industry Association — 全球销售额</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">Inari AR</span><span>Inari Amertron annual report FY2024</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">Unisem AR</span><span>Unisem (M) Berhad annual report 2024</span></div>
+          <div style="display:flex; gap:8px; padding:3px 0; border-bottom:1px solid var(--border);"><span style="color:var(--primary); font-weight:600; min-width:74px;">Infineon</span><span>Infineon Technologies — 居林SiC晶圆厂公告</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>马来西亚 · 半导体 · 2027</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
