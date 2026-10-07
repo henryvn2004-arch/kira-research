@@ -50,6 +50,10 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 3. **Translation**: translators translate `<title>`; eyebrows come pre-translated from the vocabulary.
 4. **Publish** (`batch_runner.md` 5.3a): slug, code, stage, type, segment, keywords and the EN eyebrow come from `naming.json`; the JA/KO/ZH title is the translated `<title>`; JA/KO/ZH eyebrows come from `naming.eyebrow.<locale>`.
 
+## File names
+
+A PDF a person receives is never called `en.pdf`. Its name is `KIRA_<code>_<Country-segment-year>_<LOCALE>.pdf`, for example `KIRA_VN-RTL-ENT-D26-01_Vietnam-convenience-store-licensing-2026_EN.pdf`. `naming.json` carries the stem (`file_stem`); the download link on the site sets the same name (`api/library-content.js`, from `living_reports.code`, `segment`, `year`). The working files in `outputs/batch/<id>/` and the storage paths (`<report_id>/<locale>.pdf`) keep their short names, because the scripts address them by locale.
+
 ## Search
 
 - Supabase `living_reports` stores `code`, `industry_code`, `stage`, `report_type`, `segment` and `keywords` (migration 023).
