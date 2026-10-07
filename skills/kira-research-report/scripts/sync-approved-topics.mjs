@@ -56,8 +56,8 @@ if (!URL || !KEY) done(0, 'sync-approved-topics: no Supabase env, skipping');
 let approved, industries;
 const demand = new Map();   // topic slug → demand score (3 per email request + 1 per unmet search)
 try {
-  approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title&order=decided_at.asc&limit=200');
-  industries = await sb('tax_industries?select=id,name&limit=1000');
+  approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title,priority_score&order=decided_at.asc&limit=1000');
+  industries = await sb('tax_industries?select=id,name,parent_id&limit=1000');
 } catch (e) {
   done(0, `sync-approved-topics: ${e.message}`);
 }
@@ -70,9 +70,14 @@ try {
 } catch (e) {
   console.error(`sync-approved-topics: demand unavailable (${e.message}), keeping queue order`);
 }
-approved.sort((a, b) => (demand.get(b.slug) || 0) - (demand.get(a.slug) || 0));   // stable: ties keep decided_at order
+// Queue order: demand first, then planner priority_score (0-100), then decided_at (stable sort).
+const prio = new Map(approved.map(t => [t.slug, t.priority_score || 0]));
+const weight = (slug) => (demand.get(slug) || 0) * 1000 + (prio.get(slug) || 0);
+approved.sort((a, b) => weight(b.slug) - weight(a.slug));
 
-const indName = new Map(industries.map(i => [i.id, i.name]));
+// The report name vocabulary knows level-1 industries only: a level-2 topic is written under its parent.
+const indById = new Map(industries.map(i => [i.id, i]));
+const indName = new Map(industries.map(i => [i.id, (indById.get(i.parent_id) || i).name]));
 const text = fs.readFileSync(QUEUE_PATH, 'utf8');
 const header = text.split('\n', 1)[0].replace(/\r$/, '').split(',');
 const need = ['id', 'topic', 'country', 'industry', 'year', 'target_languages', 'status', 'output_paths', 'date_added', 'date_completed', 'error_log', 'claimed_at'];
@@ -108,13 +113,13 @@ const statusOf = (l) => {   // minimal CSV split: quoted cells may contain comma
   return cells[header.indexOf('status')];
 };
 let moved = 0;
-if (demand.size) {
+if (demand.size || prio.size) {
   const all = out.split('\n');
   const trail = all[all.length - 1] === '' ? all.pop() : null;
   const body = all.slice(1);
   const pendingIdx = body.map((l, i) => (l && statusOf(l) === 'pending' ? i : -1)).filter(i => i >= 0);
   const pending = pendingIdx.map(i => body[i]);
-  const sorted = pending.map((l, i) => ({ l, i })).sort((a, b) => (demand.get(csvFirstCell(b.l)) || 0) - (demand.get(csvFirstCell(a.l)) || 0) || a.i - b.i).map(x => x.l);
+  const sorted = pending.map((l, i) => ({ l, i })).sort((a, b) => weight(csvFirstCell(b.l)) - weight(csvFirstCell(a.l)) || a.i - b.i).map(x => x.l);
   moved = sorted.filter((l, i) => l !== pending[i]).length;
   if (moved) {
     pendingIdx.forEach((bi, k) => { body[bi] = sorted[k]; });
