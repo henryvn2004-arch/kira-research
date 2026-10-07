@@ -55,7 +55,8 @@
     .kc-list tr.row { cursor: pointer; } .kc-list tr.row:hover { background: var(--surface); }
     .kc-ph { padding: 16px 20px 6px; font-family: 'Satoshi', sans-serif; font-size: 18px; font-weight: 700; }
     .conf-high { color: #1E6B35; } .conf-medium { color: #8A6100; } .conf-low { color: #9B2C2C; }
-    .vs-confirmed, .vs-corrected { color: #1E6B35; } .vs-unreachable { color: #9B2C2C; }
+    .vs-confirmed, .vs-corrected { color: #1E6B35; } .vs-unreachable { color: #9B2C2C; } .vs-reported { color: #8A6100; }
+    .kc-seg button:disabled { opacity: .45; cursor: not-allowed; }
     .kc-foot { margin-top: 24px; font-size: 12.5px; color: var(--muted); line-height: 1.6; max-width: 820px; }
     .kc-foot h3 { font-size: 13px; color: var(--text); margin: 0 0 6px; }
     @media (max-width: 720px) {
@@ -67,7 +68,7 @@
 </head>
 <body>
   <main class="kc-wrap">
-    <div class="kc-proto"><strong>Prototype for internal review.</strong> Desk research, every source re-opened and checked on 2026-10-07, not reviewed by analysts. Arrows show how the product moves along the chain, a structure defined by KIRA analysts; dots are the companies found in each group. There are no company-to-company links. Not linked from the site.</div>
+    <div class="kc-proto" id="kc-proto"><strong>Prototype for internal review.</strong> Desk research, every source re-opened and checked on 2026-10-07, not reviewed by analysts. Arrows show how the product moves along the chain, a structure defined by KIRA analysts; dots are the companies found in each group. There are no company-to-company links. Not linked from the site.</div>
     <div class="kc-eyebrow" id="kc-eyebrow">Kira Chain</div>
     <h1 id="kc-h1">Loading…</h1>
     <p style="margin:-6px 0 14px"><a href="/en/chain/" style="font-size:13px;color:var(--primary);text-decoration:none">← Search another product</a></p>
@@ -103,7 +104,7 @@
     var RANK = { high: 3, medium: 2, low: 1 };
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-    var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked' };
+    var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked', reported: 'From a KIRA report' };
     function vstat(c) { return (c.verification || {}).status || 'unreachable'; }
     function siteLink(u, kind) { return safeUrl(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary)">' + esc(String(u).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>' + (kind === 'group' ? ' <span class="tag">group site</span>' : kind === 'brand' ? ' <span class="tag">brand site</span>' : '') : '<span style="color:var(--muted-dim)">—</span>'; }
     function siteLinkRec(r) { return r && r.website ? siteLink(r.website, r.website_kind) : siteLink(null); }
@@ -332,7 +333,7 @@
     function renderEntity(e) {
       var b = e.best, rows = [];
       function add(k, v) { if (v) rows.push('<dt>' + esc(k) + '</dt><dd>' + v + '</dd>'); }
-      add('Stages', e.hubIds.map(function (hid) { var h = hubs.filter(function (x) { return x.id === hid; })[0]; return esc(stageLabel(h.stage) + ' · ' + h.role); }).join('<br>'));
+      add('Stages', e.hubIds.map(function (hid) { var h = hubs.filter(function (x) { return x.id === hid; })[0]; return esc(h.role === stageLabel(h.stage) ? h.role : stageLabel(h.stage) + ' · ' + h.role); }).join('<br>'));
       add('Province / country', esc(b.province));
       add('Ownership', esc(OWN[e.own]));
       add('Website', siteDetail(e.recs.filter(function (r) { return safeUrl(r.website); })[0]));
@@ -379,6 +380,12 @@
       $('kc-h1').textContent = chainMeta.name + ' value chain in ' + chainMeta.country_name;
       $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (t) { return '<p style="margin:0 0 8px">' + esc(t) + '</p>'; }).join('') +
         '<p style="margin:0 0 8px">Company identities are merged by name across stages, so a few merges may be wrong.</p>';
+      if (data.auto) {
+        $('kc-proto').innerHTML = '<strong>Automatic draft.</strong> Built from the “who’s who” chapter of KIRA reports; no analyst has reviewed it and the sources were not re-opened. The arrows are a straight line through the stages, drawn by default, and counts are the companies the reports named, not the whole market. Not linked from the site.';
+      }
+      if (!data.stages.some(function (s) { return s.estimate && s.estimate.count; })) {
+        var eb = document.querySelector('.kc-seg button[data-mode="est"]'); eb.disabled = true; eb.title = 'No market estimate for this chain yet';
+      }
       var flow = build(); layout(); draw(flow); init(flow); setMode('kira');
     }).catch(function () { $('kc-h1').textContent = 'Could not load this chain'; $('kc-sub').textContent = 'Please try again in a moment.'; });
   })();

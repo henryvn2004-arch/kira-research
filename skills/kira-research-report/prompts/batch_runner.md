@@ -466,6 +466,15 @@ Prints one JSON line; `"ok": true` expected. A cover failure is NOT fatal (the p
 
 Finds or creates each company in `entities` and writes this report's rows in `industry_players` (re-running replaces them). Prints one JSON line; `"ok": true` expected. NOT fatal: note a failure in the fire summary and continue. Reports made before 2026-10-07 have no `players.json`; skip them.
 
+**5.3b-5 — Build the Kira Chain draft.**
+
+```bash
+[ -s skills/kira-research-report/outputs/batch/${id}/players.json ] \
+  && node skills/kira-research-report/scripts/build-chain.mjs --id ${id}
+```
+
+Merges every report of this country x industry x segment into one chain in `chains` (published, `stats.auto = true`; page is noindex). Needs at least 8 players in 3 stages, otherwise prints `built:false` with the reason (fine). Never overwrites a hand-made chain. NOT fatal: note a failure in the fire summary and continue.
+
 **5.3c — Verify (3 cache-busted curls):**
 
 1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` contains the new slug
