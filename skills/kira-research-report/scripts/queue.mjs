@@ -17,10 +17,11 @@
 // fires can never claim the same row. Needs SUPABASE_URL + SUPABASE_SERVICE_KEY.
 // ---------------------------------------------------------------
 import fs from 'fs';
+import { getConfig } from '../../../api/_lib/config.js';   // owner settings (/en/admin/config); defaults apply if unreachable
 
 const URL = process.env.SUPABASE_URL;
 const KEY = process.env.SUPABASE_SERVICE_KEY;
-const STALE_MIN = 150;                       // above the 90-min EN cap
+// stuck-claim threshold: owner setting pipeline.stale_minutes (default 150, above the 90-min EN cap)
 const LANGS = process.env.QUEUE_TARGET_LANGUAGES || 'en,ja,ko,zh';
 
 // picked status → [claim status, stage]; order = pick priority (most advanced first, backfill last)
@@ -53,6 +54,7 @@ const event = (e) => sb('report_queue_events', 'POST', e).catch(err => console.e
 const secondsSince = (iso) => (iso ? Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 1000)) : null);
 
 async function recover() {
+  const STALE_MIN = await getConfig('pipeline.stale_minutes');
   const cutoff = new Date(Date.now() - STALE_MIN * 60000).toISOString();
   const rows = await sb(`report_queue?status=in.(en_in_progress,ja_in_progress,ko_in_progress,zh_in_progress)&or=(claimed_at.is.null,claimed_at.lt.${cutoff})&select=*`);
   let n = 0;
@@ -76,9 +78,10 @@ async function syncTopics() {
   const demand = new Map();
   try {
     const reqs = await sb('topic_requests?select=topic:topics(slug)&topic_id=not.is.null&limit=10000');
-    for (const r of reqs) if (r.topic && r.topic.slug) demand.set(r.topic.slug, (demand.get(r.topic.slug) || 0) + 3);
+    const wReq = await getConfig('topics.demand_weight_request'), wSearch = await getConfig('topics.demand_weight_search');
+    for (const r of reqs) if (r.topic && r.topic.slug) demand.set(r.topic.slug, (demand.get(r.topic.slug) || 0) + wReq);
     const searched = await sb('topics?select=slug,search_count&search_count=gt.0&limit=10000');
-    for (const t of searched) demand.set(t.slug, (demand.get(t.slug) || 0) + t.search_count);
+    for (const t of searched) demand.set(t.slug, (demand.get(t.slug) || 0) + t.search_count * wSearch);
   } catch (e) { console.error(`queue: demand unavailable (${e.message})`); }
   const indName = new Map(industries.map(i => [i.id, i.name]));
   const existing = new Set((await sb('report_queue?select=id&limit=100000')).map(r => r.id));

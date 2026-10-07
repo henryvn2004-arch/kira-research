@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .cf-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+    .cf-head h1 { margin:0; font-size:28px; }
+    .cf-lead { color:var(--muted); font-size:14px; margin:0 0 22px; max-width:68ch; }
+    .cf-sec { margin:28px 0 12px; font-size:18px; }
+    .cf-card { border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; background:var(--bg); }
+    .cf-card h3 { margin:0 0 6px; font-size:16px; line-height:1.35; }
+    .cf-help { font-size:13.5px; color:var(--muted); margin:0 0 12px; max-width:70ch; }
+    .cf-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .cf-row input[type=number] { width:110px; padding:9px 10px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
+    .cf-unit { font-size:13px; color:var(--muted); }
+    .cf-switch { display:inline-flex; align-items:center; gap:8px; font-size:14.5px; cursor:pointer; min-height:42px; }
+    .cf-switch input { width:20px; height:20px; }
+    .cf-btn { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:8px; padding:9px 14px; font-size:14px; cursor:pointer; min-height:42px; }
+    .cf-btn.go { background:var(--primary); border-color:var(--primary); color:#fff; font-weight:600; }
+    .cf-btn:disabled { opacity:.5; cursor:wait; }
+    .cf-meta { font-size:12.5px; color:var(--muted); margin-top:10px; }
+    .cf-tag { font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px; background:var(--surface-2); color:var(--muted); margin-left:8px; vertical-align:middle; }
+    .cf-tag.chg { background:#FFF4DB; color:#8A5A00; }
+    .cf-msg { font-size:13px; margin-left:4px; } .cf-msg.ok { color:#067647; } .cf-msg.bad { color:#B42318; }
+    .cf-empty { color:var(--muted); padding:24px 0; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config" class="active">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="cf-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    async function api(path, opts = {}) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, { ...opts, headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+
+    const ERR = {
+      not_a_whole_number: 'Enter a whole number.',
+      not_a_boolean: 'Choose on or off.',
+      unknown_key: 'Unknown setting.'
+    };
+    const errText = (code, s) => /^out_of_range_/.test(code) ? `Must be between ${s.min} and ${s.max}.` : (ERR[code] || 'Could not save (' + code + ').');
+
+    function card(s) {
+      const when = s.updated_at ? new Date(s.updated_at).toLocaleString() : '';
+      const control = s.type === 'bool'
+        ? `<label class="cf-switch"><input type="checkbox" ${s.value ? 'checked' : ''} /> <span>${s.value ? 'On' : 'Off'}</span></label>`
+        : `<input type="number" step="1" min="${esc(s.min)}" max="${esc(s.max)}" value="${esc(s.value)}" inputmode="numeric" /> <span class="cf-unit">${esc(s.unit || '')} (${esc(s.min)}–${esc(s.max)})</span>`;
+      return `<div class="cf-card" data-key="${esc(s.key)}">
+        <h3>${esc(s.label)}<span class="cf-tag ${s.is_default ? '' : 'chg'}">${s.is_default ? 'default' : 'changed'}</span></h3>
+        <p class="cf-help">${esc(s.help)}</p>
+        <div class="cf-row">${control}
+          <button class="cf-btn go" data-act="save">Save</button>
+          ${s.is_default ? '' : '<button class="cf-btn" data-act="reset">Reset to default</button>'}
+          <span class="cf-msg" aria-live="polite"></span></div>
+        <div class="cf-meta">Default: ${esc(s.type === 'bool' ? (s.default ? 'On' : 'Off') : s.default + (s.unit ? ' ' + s.unit : ''))}${s.is_default ? '' : ` · set by ${esc(s.updated_by || 'unknown')} on ${esc(when)}`}</div>
+      </div>`;
+    }
+
+    function render(settings) {
+      const groups = [...new Set(settings.map(s => s.group))];
+      root.innerHTML = `
+        <div class="cf-head"><h1>Settings</h1></div>
+        <p class="cf-lead">Change how the site and the report pipeline behave without a deploy. A change goes live within about a minute. If something looks wrong, "Reset to default" always brings back the original behaviour.</p>
+        ${groups.map(g => `<h2 class="cf-sec">${esc(g)}</h2>${settings.filter(s => s.group === g).map(card).join('')}`).join('')}`;
+
+      root.querySelectorAll('.cf-card').forEach(el => {
+        const key = el.dataset.key, s = settings.find(x => x.key === key);
+        const msg = el.querySelector('.cf-msg');
+        const box = el.querySelector('input[type=checkbox]');
+        if (box) box.addEventListener('change', () => { el.querySelector('.cf-switch span').textContent = box.checked ? 'On' : 'Off'; });
+        el.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', async () => {
+          const reset = btn.dataset.act === 'reset';
+          const value = box ? box.checked : el.querySelector('input[type=number]').value;
+          btn.disabled = true; msg.className = 'cf-msg'; msg.textContent = 'Saving…';
+          try {
+            await api('/api/admin-config', { method: 'PATCH', body: JSON.stringify(reset ? { key, reset: true } : { key, value }) });
+            render((await api('/api/admin-config')).settings);
+            const again = root.querySelector(`.cf-card[data-key="${key}"] .cf-msg`);
+            if (again) { again.className = 'cf-msg ok'; again.textContent = reset ? 'Back to default.' : 'Saved.'; }
+          } catch (e) { msg.className = 'cf-msg bad'; msg.textContent = errText(e.message, s); btn.disabled = false; }
+        }));
+      });
+    }
+
+    try { render((await api('/api/admin-config')).settings); }
+    catch (e) { root.innerHTML = `<div class="cf-empty">Could not load settings (${esc(e.message)}).</div>`; }
+  </script>
+</body>
+</html>

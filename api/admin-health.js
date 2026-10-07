@@ -13,6 +13,7 @@
 // ============================================================
 
 import { ENV_CHECKS } from './_lib/env-checks.js';
+import { getConfig } from './_lib/config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -87,11 +88,12 @@ export default async function handler(req, res) {
     const WORK = new Set(['pending', 'en_done', 'ja_done', 'ko_done', 'zh_backfill', 'en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress']);
     const work_left = queue.filter(r => WORK.has(r.status)).length;
     const runnerH = lastOk[0] ? hoursSince(lastOk[0].at) : null;
+    const STALLED_H = await getConfig('pipeline.stalled_hours');
     jobs.unshift({
       key: 'batch-runner', label: 'Report batch runner (cloud Routine)', schedule: '3 fires/day, one stage per fire',
       last_at: lastOk[0] ? lastOk[0].at : null, hours_since: runnerH, last_ok: true,
       detail: `${work_left} report(s) in the work queue` + (lastOk[0] ? `, last finished stage: ${lastOk[0].stage}` : ''),
-      status: work_left === 0 ? 'idle' : (runnerH == null ? 'never_run' : runnerH > 30 ? 'late' : 'ok')
+      status: work_left === 0 ? 'idle' : (runnerH == null ? 'never_run' : runnerH > STALLED_H ? 'late' : 'ok')
     });
 
     res.status(200).json({
