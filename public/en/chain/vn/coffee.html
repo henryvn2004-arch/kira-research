@@ -66,6 +66,7 @@
     .tag.state { background: #FDECEC; color: #9B2C2C; }
     .tag.listed { background: #EAF1FE; color: #1558CC; }
     .conf-high { color: #1E6B35; } .conf-medium { color: #8A6100; } .conf-low { color: #9B2C2C; }
+    .vs-confirmed, .vs-corrected { color: #1E6B35; } .vs-unreachable { color: #9B2C2C; }
 
     .kc-detail { padding: 20px; }
     .kc-detail .back { font: inherit; font-size: 13px; color: var(--primary); background: none; border: 0; cursor: pointer; padding: 0; margin-bottom: 14px; }
@@ -91,7 +92,7 @@
 </head>
 <body>
   <main class="kc-wrap">
-    <div class="kc-proto"><strong>Prototype for internal review.</strong> Data comes from desk research with a source link per company. It has not been verified by analysts, and counts reflect companies KIRA has found, not every company in the market. Not linked from the site.</div>
+    <div class="kc-proto"><strong>Prototype for internal review.</strong> Desk research with a source link per company. On 2026-10-07 every source was re-opened and checked (see "How to read this"); it has not been reviewed by analysts. Counts reflect companies KIRA has found, not every company in the market. Not linked from the site.</div>
     <div class="kc-eyebrow">Kira Chain · Vietnam</div>
     <h1 id="kc-title">Coffee value chain in Vietnam</h1>
     <p class="kc-sub" id="kc-sub">Loading…</p>
@@ -122,6 +123,13 @@
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     function fmtN(n) { return Number(n).toLocaleString('en-US'); }
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(v >= 1e11 ? 0 : 1) + ' billion VND'; }
+    var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked' };
+    function vstat(c) { return (c.verification || {}).status || 'unreachable'; }
+    function taxHtml(c) {
+      if (c.tax_id) return esc(c.tax_id) + ' <span class="tag">verified: an opened page shows name and number</span>';
+      if (c.tax_id_candidate) return esc(c.tax_id_candidate) + ' <span class="tag" style="background:#FFF7E6;color:#6B4A00">candidate from search, not verified: re-check with the registry</span>';
+      return '';
+    }
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
 
     var OWN = { state: 'State-owned', private: 'Private', fdi: 'Foreign-invested', listed: 'Listed', cooperative: 'Cooperative', unknown: 'Unknown' };
@@ -236,10 +244,10 @@
         '<select id="f-own"><option value="">All ownership</option>' + owns.map(function (o) { return '<option value="' + o + '"' + (f.own === o ? ' selected' : '') + '>' + esc(OWN[o] || o) + '</option>'; }).join('') + '</select>' +
         '<select id="f-prov"><option value="">All provinces</option>' + provs.map(function (o) { return '<option' + (f.prov === o ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select>' +
         '<select id="f-sort"><option value="cap"' + (f.sort === 'cap' ? ' selected' : '') + '>Sort: capital</option><option value="name"' + (f.sort === 'name' ? ' selected' : '') + '>Sort: name</option></select></div>' +
-        '<table class="kc-table"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Scale (sourced)</th><th>Evidence</th></tr></thead><tbody>' +
+        '<table class="kc-table"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Scale (sourced)</th><th>Source check</th></tr></thead><tbody>' +
         (list.length ? list.map(function (c) {
           var i = state.data.companies.indexOf(c);
-          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td class="conf-' + esc(c.confidence) + '">' + esc(c.confidence || '') + '</td></tr>';
+          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</td></tr>';
         }).join('') : '<tr><td colspan="5" style="color:var(--muted)">No company matches the filters.</td></tr>') +
         '</tbody></table>';
       $('f-q').addEventListener('input', function (e) { f.q = e.target.value; renderPanel(); var el = $('f-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); });
@@ -259,7 +267,7 @@
         var list = d.facts.filter(function (f) { return f.stage === s.id; });
         if (!list.length) return;
         html += '<details style="margin:6px 0"><summary style="cursor:pointer;font-weight:600;color:var(--text)">' + esc(s.label) + ' (' + list.length + ')</summary><ul style="margin:6px 0 8px 18px;padding:0">' +
-          list.map(function (f) { return '<li>' + esc(f.label) + ': <b>' + esc(f.value) + (f.unit && String(f.value).indexOf(f.unit) < 0 ? ' ' + esc(f.unit) : '') + '</b>' + (f.year ? ' (' + esc(f.year) + ')' : '') + (safeUrl(f.source_url) ? ' · <a href="' + esc(f.source_url) + '" target="_blank" rel="noopener" style="color:var(--primary)">' + esc(f.source) + '</a>' : ' · ' + esc(f.source || 'source not linked')) + '</li>'; }).join('') + '</ul></details>';
+          list.map(function (f) { return '<li>' + esc(f.label) + ': <b>' + esc(f.value) + (f.unit && String(f.value).indexOf(f.unit) < 0 ? ' ' + esc(f.unit) : '') + '</b>' + (f.year ? ' (' + esc(f.year) + ')' : '') + (f.verification && f.verification.status === 'unreachable' ? ' <span class="vs-unreachable">(source not checked)</span>' : '') + (safeUrl(f.source_url) ? ' · <a href="' + esc(f.source_url) + '" target="_blank" rel="noopener" style="color:var(--primary)">' + esc(f.source) + '</a>' : ' · ' + esc(f.source || 'source not linked')) + '</li>'; }).join('') + '</ul></details>';
       });
       $('kc-facts').innerHTML = html;
     }
@@ -270,14 +278,14 @@
       add('Stage / role', esc(state.sel.role));
       add('Province / country', esc(c.province));
       add('Ownership', esc(OWN[c.ownership] || ''));
-      add('Tax ID', esc(c.tax_id));
+      add('Tax ID', taxHtml(c));
       add('Registered capital', esc(fmtVnd(c.capital_vnd)));
       add('Scale', esc(c.scale_note));
       add('Export markets', esc((c.export_markets || []).join(', ')));
       add('Website', safeUrl(c.website) ? '<a href="' + esc(c.website) + '" target="_blank" rel="noopener">' + esc(c.website) + '</a>' : '');
       add('What the source says', esc(c.evidence_note));
       add('Source', safeUrl(c.evidence_url) ? '<a href="' + esc(c.evidence_url) + '" target="_blank" rel="noopener">' + esc(c.evidence_url) + '</a>' : '');
-      add('Confidence', '<span class="conf-' + esc(c.confidence) + '">' + esc(c.confidence) + '</span> · desk research, not yet verified by an analyst');
+      add('Source check', '<span class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</span> on ' + esc((c.verification || {}).checked || '') + ' · not yet reviewed by an analyst');
       p.innerHTML = '<div class="kc-detail"><button type="button" class="back" id="kc-back">← Back to list</button><h2>' + esc(c.name) + '</h2>' + (c.name_vi && c.name_vi !== c.name ? '<div style="color:var(--muted-dim);font-size:13px">' + esc(c.name_vi) + '</div>' : '') + '<dl>' + rows.join('') + '</dl></div>';
       $('kc-back').addEventListener('click', function () { state.company = null; renderPanel(); });
     }
