@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chains — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .pl-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+    .pl-head h1 { margin:0; font-size:28px; }
+    .pl-state { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
+    .pl-state.running { background:#E6F4EA; color:#067647; } .pl-state.idle { background:var(--surface-2); color:var(--muted); } .pl-state.stalled { background:#FDE8E6; color:#B42318; }
+    .pl-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px; }
+    @media (max-width:700px) { .pl-kpis { grid-template-columns:repeat(2,1fr); } }
+    .pl-kpi { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+    .pl-kpi b { display:block; font-size:24px; font-family:'Satoshi',sans-serif; }
+    .pl-kpi span { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .pl-kpi.bad b { color:#B42318; }
+    .pl-note { font-size:13px; color:var(--muted); margin:0 0 20px; }
+    .pl-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .pl-chip { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:999px; padding:7px 13px; font-size:13.5px; cursor:pointer; }
+    .pl-chip.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .pl-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    table.pl { width:100%; border-collapse:collapse; font-size:14px; }
+    table.pl th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+    table.pl td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.pl tr:last-child td { border-bottom:0; }
+    .pl-id { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); word-break:break-all; }
+    .pl-topic { max-width:380px; }
+    .pl-st { font-size:12px; font-weight:600; border-radius:6px; padding:3px 8px; background:var(--surface-2); white-space:nowrap; }
+    .pl-st.error { background:#FDE8E6; color:#B42318; } .pl-st.done { background:#E6F4EA; color:#067647; } .pl-st.hold { background:#FFF4DB; color:#8A5A00; }
+    .pl-st.run { background:#E3EEFF; color:var(--primary-dim); }
+    .pl-err { font-size:12.5px; color:#B42318; margin-top:4px; }
+    .pl-btn { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer; margin:2px 4px 2px 0; }
+    .pl-btn:disabled { opacity:.5; cursor:wait; }
+    .pl-sec { margin:28px 0 12px; font-size:18px; }
+    .pl-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .pl-empty { color:var(--muted); padding:24px 0; }
+    .pl-price { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; font-size:13.5px; }
+    .pl-price input { width:90px; padding:7px 9px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
+    .pl-timing { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
+    .pl-timing div { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13.5px; }
+    .pl-timing b { font-family:'Satoshi',sans-serif; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/funnel">Funnel</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/chains" class="active">Chains</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="pl-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+    let data = null;
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    async function api(path, opts = {}) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, { ...opts, headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+    const ago = (iso) => {
+      if (!iso) return '—';
+      const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
+      return m < 60 ? m + ' min ago' : m < 2880 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago';
+    };
+
+    async function load() { data = await api('/api/admin-chains'); render(); }
+
+    function render() {
+      const { chains, requests, total_requests } = data;
+      const live = chains.filter(c => c.status === 'published').length;
+      root.innerHTML = `
+        <div class="pl-head"><h1>Kira Chain</h1></div>
+        <div class="pl-kpis" style="grid-template-columns:repeat(3,1fr)">
+          <div class="pl-kpi"><b>${chains.length}</b><span>chains</span></div>
+          <div class="pl-kpi"><b>${live}</b><span>published</span></div>
+          <div class="pl-kpi"><b>${total_requests}</b><span>requests for missing chains</span></div>
+        </div>
+        <p class="pl-note">Chains marked <b>auto</b> were built from report data when a report was published and went live on their own. Set one to draft to take it off the site (its page then shows "no chain here yet"). The pages are not linked or indexed.</p>
+        <h2 class="pl-sec">Chains</h2>
+        ${chains.length ? `<div class="pl-wrap"><table class="pl"><thead><tr><th>Chain</th><th>Companies</th><th>Stages</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>
+          ${chains.map(c => { const st = c.stats || {}; const u = `/en/chain/${esc(c.country_code.toLowerCase())}/${esc(c.slug)}`; return `<tr data-c="${esc(c.country_code)}" data-s="${esc(c.slug)}">
+            <td class="pl-topic"><div><a href="${u}" target="_blank" rel="noopener">${esc(c.name)}</a> · ${esc(c.country_code)} ${st.auto ? '<span class="pl-st">auto</span>' : '<span class="pl-st done">analyst</span>'}</div><div class="pl-id">${esc(c.slug)}</div></td>
+            <td>${esc(st.companies ?? '—')}</td><td>${esc(st.stages ?? '—')}</td>
+            <td><span class="pl-st ${c.status === 'published' ? 'done' : 'hold'}">${esc(c.status)}</span></td><td>${esc(ago(c.updated_at))}</td>
+            <td><button class="pl-btn" data-to="${c.status === 'published' ? 'draft' : 'published'}">${c.status === 'published' ? 'Take down (draft)' : 'Publish'}</button></td></tr>`; }).join('')}
+        </tbody></table></div>` : '<div class="pl-empty">No chains yet.</div>'}
+        <h2 class="pl-sec">What readers searched for and did not find<small>most requested first</small></h2>
+        ${requests.length ? `<div class="pl-wrap"><table class="pl"><thead><tr><th>Search</th><th>Times</th><th>Left an email</th><th>Last</th></tr></thead><tbody>
+          ${requests.map(r => `<tr><td>${esc(r.query)}</td><td>${r.count}</td><td>${r.emails}</td><td>${esc(ago(r.last))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="pl-empty">No requests yet.</div>'}`;
+
+      root.querySelectorAll('tr[data-c] [data-to]').forEach(b => b.addEventListener('click', async () => {
+        const tr = b.closest('tr');
+        if (b.dataset.to === 'draft' && !confirm('Take ' + tr.dataset.s + ' off the site?')) return;
+        b.disabled = true;
+        try { await api('/api/admin-chains', { method: 'PATCH', body: JSON.stringify({ country: tr.dataset.c, slug: tr.dataset.s, status: b.dataset.to }) }); await load(); }
+        catch (e) { alert('Could not save: ' + e.message); b.disabled = false; }
+      }));
+    }
+
+    try { await load(); }
+    catch (e) { root.innerHTML = `<div class="pl-empty">Could not load chains (${esc(e.message)}).</div>`; }
+  </script>
+</body>
+</html>
