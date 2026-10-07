@@ -77,7 +77,16 @@ Distribution (2026-10-05)
 - Built on the Phase R tables (`entities`, `relationships`, `company_graph_bfs()`, 250 companies).
 - Candidate sources: customs import/export data, business registry, distributor websites, e-commerce shops.
 - Linked from reports (a click on a product or company name opens its chain).
-- **UX not designed yet**: brainstorm with the owner when the sprint starts.
+
+**Kira Chain UX: decided 2026-10-07** after a coffee × Vietnam prototype (PR #73, files in `public/en/chain/vn/`, not linked from the site):
+- **Network view.** Each value-chain stage holds hubs (groups of companies, e.g. "Vietnamese exporters"). Arrows between hubs show how the product moves along the chain. Dots are companies, coloured by ownership. Click a hub for its company list and its inflows and outflows; click a dot for the company detail with its source link. The bubble-column "map view" stays in the repo as an alternative only.
+- **The arrows are a chain template, one per product, written by KIRA analysts** and reviewed by an analyst. There are **no company-to-company links**: no data source exists for them, so the product does not promise them.
+- **Size:** hub size = companies in the KIRA database. Official estimates are a separate toggle, shown only where a sourced number exists (the unit differs per stage: households, dealers, factories, shops).
+- **Concentration:** only from sourced figures (a stage-level top-N share from industry statistics, or registered capital once registry data exists). Never estimated by us.
+- **Prototype findings:** 121 company rows = 99 distinct companies, 14 of them at several stages (Intimex, Olam, Louis Dreyfus, Trung Nguyên, Vinacafé…). 49 rows are low confidence and only 2 have a tax ID. Weakest stages: collection (12) and distribution (9). Web search alone is not enough for v1: it needs registry lookups (tax ID and capital via the ĐKKD connector) and analyst uploads (for example the VICOFA member list).
+- **v1 data model (proposed):** new tables `chains`, `chain_stages`, `chain_flows` (the template arrows) and `chain_memberships` (company × chain × stage × role, with `evidence_url`, `confidence` and `status` ai_draft → registry_confirmed → analyst_verified). Reuses `entities`, `facts`, `sources`.
+- **Rules:** company-level public information only, no personal data. Every analyst upload records its source and licence (paid databases usually forbid redistribution).
+- **Open before the S10 build:** (1) a verification pass on the coffee data (open each source, look up tax IDs); (2) analyst review of the coffee chain template; (3) wording of the Kira Chain line on the pricing pages.
 
 **Expert transcript library** (proposed 2026-10-06; confirm at S9 start):
 - KIRA runs the interviews itself and owns the transcripts (Third Bridge / Arches model).
@@ -122,7 +131,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S5** | Website repositioning, Kira Experts + Kira Survey pages, pricing + waitlist, library filters, redesign | ✅ merged (#52–#61) |
 | **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | ✅ merged (#66); PPT/Excel left for S12 |
 | **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🔴 later |
-| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last): brainstorm UX first, then data model on Phase R tables; ~10 priority VN industries; product → value-chain map; links from reports | 🔴 last |
+| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last). **UX decided 2026-10-07**: network view of value-chain groups joined by flow arrows (prototype PR #73). Left: data model (`chains`, `chain_stages`, `chain_flows`, `chain_memberships`) on the Phase R tables, registry + analyst-upload ingestion, ~10 priority VN industries, links from reports | 🔴 last (UX ✅) |
 | **S11** | On-demand production, revised 2026-10-06 (owner: no delivery date on pages; reader-requested topics approve themselves, no human step). Mine: coming-soon pages and the topic API show no ETA, and every status maps to an explicit state (a reader-created `requested` topic was wrongly shown as "in production"). **Owned by the session "Report search with placeholders":** auto-approval of reader topics and the `requested` / `source` schema | ✅ PR #68 (rest with the search session) |
 | **S13** | **Topic queue review** (owner, 2026-10-06): current topics are too high level, so reports read as generic and nobody opens them. For every country × industry, break the topic down one more level, and build topics from the keywords readers search most. Inputs: `topics.search_count`, `search_misses`, `topic_requests` (almost empty today, so keyword research outside the site is needed at first), the 18 queued and 57 held topics. Output: a re-planned queue the owner approves. Starts once the search session's auto-approval has landed | 🔴 next |
 | **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🔴 |
