@@ -96,7 +96,9 @@
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked' };
     function vstat(c) { return (c.verification || {}).status || 'unreachable'; }
-    function siteLink(u) { return safeUrl(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary)">' + esc(String(u).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>' : '<span style="color:var(--muted-dim)">—</span>'; }
+    function siteLink(u, kind) { return safeUrl(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary)">' + esc(String(u).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>' + (kind === 'group' ? ' <span class="tag">group site</span>' : kind === 'brand' ? ' <span class="tag">brand site</span>' : '') : '<span style="color:var(--muted-dim)">—</span>'; }
+    function siteLinkRec(r) { return r && r.website ? siteLink(r.website, r.website_kind) : siteLink(null); }
+    function siteDetail(r) { return r && safeUrl(r.website) ? siteLinkRec(r) + (r.website_note ? ' <span style="color:var(--muted-dim);font-size:12px">· ' + esc(r.website_note) + '</span>' : '') : ''; }
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(1) + ' billion VND'; }
 
@@ -244,7 +246,7 @@
       var list = h.members.filter(visible).sort(function (a, b) { return (RANK[b.conf] || 0) - (RANK[a.conf] || 0) || a.name.localeCompare(b.name); });
       $('kc-panel').innerHTML = '<div class="kc-ph">' + esc(stageLabel(h.stage)) + ' · ' + esc(h.role) + ' <span style="font-weight:400;font-size:13px;color:var(--muted)">(' + list.length + ' shown of ' + h.members.length + ')</span></div>' +
         '<table class="kc-list"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Stages</th><th>Website</th><th>Source check</th></tr></thead><tbody>' +
-        list.map(function (e) { return '<tr class="row" data-id="' + esc(e.id) + '" tabindex="0"><td><b>' + esc(e.name) + '</b></td><td>' + esc(e.best.province || '—') + '</td><td>' + esc(OWN[e.own]) + '</td><td>' + Object.keys(e.stages).length + '</td><td>' + siteLink((e.recs.filter(function (r) { return r.website; })[0] || {}).website) + '</td><td class="vs-' + vstat(e.best) + '">' + esc(VLAB[vstat(e.best)]) + '</td></tr>'; }).join('') + '</tbody></table>';
+        list.map(function (e) { return '<tr class="row" data-id="' + esc(e.id) + '" tabindex="0"><td><b>' + esc(e.name) + '</b></td><td>' + esc(e.best.province || '—') + '</td><td>' + esc(OWN[e.own]) + '</td><td>' + Object.keys(e.stages).length + '</td><td>' + siteLinkRec(e.recs.filter(function (r) { return r.website; })[0]) + '</td><td class="vs-' + vstat(e.best) + '">' + esc(VLAB[vstat(e.best)]) + '</td></tr>'; }).join('') + '</tbody></table>';
       document.querySelectorAll('#kc-panel tr.row').forEach(function (tr) {
         function open() { var e = ents.filter(function (x) { return x.id === tr.dataset.id; })[0]; state.sel = e; select(); renderEntity(e); }
         tr.addEventListener('click', open); tr.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') open(); });
@@ -257,8 +259,7 @@
       add('Stages', e.hubIds.map(function (hid) { var h = hubs.filter(function (x) { return x.id === hid; })[0]; return esc(stageLabel(h.stage) + ' · ' + h.role); }).join('<br>'));
       add('Province / country', esc(b.province));
       add('Ownership', esc(OWN[e.own]));
-      var ws = (e.recs.filter(function (r) { return safeUrl(r.website); })[0] || {}).website;
-      add('Website', ws ? siteLink(ws) : '');
+      add('Website', siteDetail(e.recs.filter(function (r) { return safeUrl(r.website); })[0]));
       add('Registered capital', esc(fmtVnd(b.capital_vnd)));
       add('Scale', esc(b.scale_note));
       add('Export markets', esc((b.export_markets || []).join(', ')));

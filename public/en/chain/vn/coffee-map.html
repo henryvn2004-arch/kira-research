@@ -125,7 +125,9 @@
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(v >= 1e11 ? 0 : 1) + ' billion VND'; }
     var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked' };
     function vstat(c) { return (c.verification || {}).status || 'unreachable'; }
-    function siteLink(u) { return safeUrl(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary)">' + esc(String(u).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>' : '<span style="color:var(--muted-dim)">—</span>'; }
+    function siteLink(u, kind) { return safeUrl(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary)">' + esc(String(u).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>' + (kind === 'group' ? ' <span class="tag">group site</span>' : kind === 'brand' ? ' <span class="tag">brand site</span>' : '') : '<span style="color:var(--muted-dim)">—</span>'; }
+    function siteLinkRec(r) { return r && r.website ? siteLink(r.website, r.website_kind) : siteLink(null); }
+    function siteDetail(r) { return r && safeUrl(r.website) ? siteLinkRec(r) + (r.website_note ? ' <span style="color:var(--muted-dim);font-size:12px">· ' + esc(r.website_note) + '</span>' : '') : ''; }
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
 
     var OWN = { state: 'State-owned', private: 'Private', fdi: 'Foreign-invested', listed: 'Listed', cooperative: 'Cooperative', unknown: 'Unknown' };
@@ -243,7 +245,7 @@
         '<table class="kc-table"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Scale (sourced)</th><th>Website</th><th>Source check</th></tr></thead><tbody>' +
         (list.length ? list.map(function (c) {
           var i = state.data.companies.indexOf(c);
-          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td>' + siteLink(c.website) + '</td><td class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</td></tr>';
+          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td>' + siteLinkRec(c) + '</td><td class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</td></tr>';
         }).join('') : '<tr><td colspan="5" style="color:var(--muted)">No company matches the filters.</td></tr>') +
         '</tbody></table>';
       $('f-q').addEventListener('input', function (e) { f.q = e.target.value; renderPanel(); var el = $('f-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); });
@@ -277,7 +279,7 @@
       add('Registered capital', esc(fmtVnd(c.capital_vnd)));
       add('Scale', esc(c.scale_note));
       add('Export markets', esc((c.export_markets || []).join(', ')));
-      add('Website', safeUrl(c.website) ? '<a href="' + esc(c.website) + '" target="_blank" rel="noopener">' + esc(c.website) + '</a>' : '');
+      add('Website', siteDetail(c));;
       add('What the source says', esc(c.evidence_note));
       add('Source', safeUrl(c.evidence_url) ? '<a href="' + esc(c.evidence_url) + '" target="_blank" rel="noopener">' + esc(c.evidence_url) + '</a>' : '');
       add('Source check', '<span class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</span> on ' + esc((c.verification || {}).checked || '') + ' · not yet reviewed by an analyst');
