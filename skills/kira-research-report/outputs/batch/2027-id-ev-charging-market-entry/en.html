@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>Indonesia EV charging 2026: how should a foreign operator enter?</title>
+<meta name="description" content="Which entry mode, partner type and first city a Japanese, Korean or Chinese charging operator should choose in Indonesia, what the first year costs, and the sessions-per-charger test that decides go or no-go.">
+<meta property="og:title" content="Indonesia EV charging 2026: how should a foreign operator enter?">
+<meta property="og:description" content="Which entry mode, partner type and first city a Japanese, Korean or Chinese charging operator should choose in Indonesia, what the first year costs, and the sessions-per-charger test that decides go or no-go.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* === MASTER STYLES INJECTED HERE === */
+/* ============================================================
+   KIRA Research — Master report styles v1.0
+   All page types use these styles. Do not edit per-report.
+   ============================================================ */
+
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  /* CJK fallback slot in every font stack (Satoshi / JetBrains Mono carry no
+     CJK glyphs and the PDF renderer has no system CJK fonts). Set per locale
+     below; the translated HTML loads the matching Noto webfont via a Google
+     Fonts <link> in <head> (translator_jp / _ko / _zh.md). */
+  --font-cjk: system-ui;
+}
+html:lang(ja) { --font-cjk: 'Noto Sans JP'; }
+html:lang(ko) { --font-cjk: 'Noto Sans KR'; }
+html:lang(zh) { --font-cjk: 'Noto Sans SC'; } /* zh reports use lang="zh-Hans"; SC glyphs, never JP variants */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', var(--font-cjk), system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-variant-numeric: tabular-nums; }
+
+/* ============ PAGE BASE ============ */
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+/* ============ DATA TAGS ============ */
+.data-tag { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+/* ============ DARK DIVIDER ============ */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* ============ EXEC SUMMARY ============ */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+/* ============ CHART CARDS ============ */
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* ============ SOURCE KEY (Phase L.3) ============
+   Per-page footer line resolving inline source aliases to full citations.
+   Renders just above .page-footer; pages may omit if all numbers are
+   [Kira estimates] only. Pattern: alias = full citation · alias = full citation · ... */
+.source-key {
+  font-family: 'JetBrains Mono', var(--font-cjk), monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--muted);
+  padding: 8px 0 6px;
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  max-height: 40px;
+  overflow: hidden;
+}
+.source-key::before {
+  content: "SOURCE KEY · ";
+  font-weight: 700;
+  color: var(--text-mid);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+/* Hide entirely when empty so layout doesn't show an orphan dotted line */
+.source-key:empty { display: none; }
+
+/* ============ IMPLICATIONS GRID ============ */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* ============ COMPETITIVE ============ */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* ============ PROFILE DEEP-DIVE ============ */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+/* ============ AI / USE CASE GRID ============ */
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* ============ COVER ============ */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+
+/* ============ SVG UTILITIES ============ */
+.axis-text { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* ============ PRINT (for PDF) ============ */
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+  .viewer-divider { display: none; }
+}
+
+/* ============================================================
+   === Phase H new page types (2026-05-23) ===
+   5 new page types: persona_profile, policy_timeline,
+   risk_matrix (qualitative), channel_waterfall,
+   price_quality_matrix. All conform to 1280x720 canvas with
+   page-header + body + page-footer chrome inherited from .page.
+   Severity tokens shared across types where useful.
+   ============================================================ */
+
+/* shared severity tokens (risk_matrix + winner/loser chips) */
+:root {
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+
+.severity-chip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.neutral { background: var(--sev-neutral-soft); color: var(--sev-neutral); }
+.severity-chip.winner { background: var(--green-soft); color: var(--green); }
+.severity-chip.loser { background: var(--sev-high-soft); color: var(--sev-high); }
+.severity-chip.mixed { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.pending { background: var(--primary-soft); color: var(--primary); }
+
+/* ============ PERSONA PROFILE (consumer_segmentation) ============ */
+.persona-profile-page .page-inner { padding-top: 30px; }
+.persona-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 14px; flex-shrink: 0; }
+.persona-header .persona-label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; }
+.persona-header .persona-headline { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); flex: 1; max-width: 760px; }
+.persona-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex-shrink: 0; margin-bottom: 12px; }
+.persona-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
+.persona-block h4 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.persona-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-stat { padding: 4px 0; }
+.persona-stat .label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.persona-stat .num { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 18px; line-height: 1; color: var(--text); letter-spacing: -0.02em; }
+.persona-stat .num .unit { font-size: 10px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-stat .src { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; font-weight: 600; }
+.persona-behavior-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.persona-behavior { padding: 4px 0; }
+.persona-behavior .metric { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 17px; line-height: 1.1; color: var(--text); margin-bottom: 3px; }
+.persona-behavior .label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+.persona-behavior .change { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-behavior .change.down { color: var(--amber); }
+.persona-bottom-row { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; flex: 1; min-height: 0; }
+.persona-quote-block { background: var(--primary-soft); border-left: 3px solid var(--primary); padding: 14px 16px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; justify-content: center; }
+.persona-quote-block .qmark { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 32px; line-height: 0.6; color: var(--primary); margin-bottom: 4px; }
+.persona-quote-block .body { font-size: 13px; line-height: 1.45; color: var(--text); font-style: italic; margin-bottom: 8px; }
+.persona-quote-block .attribution { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.persona-channel-pref { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
+.persona-channel-pref .title { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.persona-channel-row { display: grid; grid-template-columns: 90px 1fr 38px; gap: 8px; align-items: center; font-size: 10.5px; }
+.persona-channel-row .ch-name { color: var(--text-mid); font-weight: 500; }
+.persona-channel-row .ch-bar { height: 8px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.persona-channel-row .ch-bar-fill { height: 100%; background: var(--primary); }
+.persona-channel-row .ch-pct { font-family: 'JetBrains Mono', var(--font-cjk), monospace; color: var(--text); font-weight: 700; text-align: right; }
+.persona-channel-caption { font-size: 10.5px; color: var(--text-mid); margin-top: 6px; line-height: 1.4; }
+.persona-wtp-anchor { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 10px 14px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+.persona-wtp-anchor .left .label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.persona-wtp-anchor .left .change { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--green); font-weight: 600; }
+.persona-wtp-anchor .num { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.persona-wtp-anchor .num .unit { font-size: 11px; color: var(--primary); margin-left: 3px; font-weight: 700; }
+.persona-source-strip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; }
+
+/* ============ POLICY TIMELINE (regulatory_brief) ============ */
+.policy-timeline-page .page-inner { padding-top: 30px; }
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.policy-timeline-chart .chart-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.policy-timeline-chart .chart-subtitle { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.policy-timeline-chart .tl-svg { flex: 1; min-height: 0; width: 100%; }
+.policy-timeline-chart .tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.policy-source-strip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ RISK MATRIX (entry_strategy, qualitative) ============ */
+.risk-matrix-page .page-inner { padding-top: 30px; }
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-matrix-chart .chart-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.risk-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-cell-bg-empty { fill: var(--surface-alt); stroke: var(--border); stroke-width: 0.5; }
+.risk-cell-bg-low { fill: var(--sev-low-soft); stroke: var(--sev-low); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-med { fill: var(--sev-med-soft); stroke: var(--sev-med); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-bg-high { fill: var(--sev-high-soft); stroke: var(--sev-high); stroke-width: 0.5; stroke-opacity: 0.6; }
+.risk-cell-label { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 9px; font-weight: 600; fill: var(--text); }
+.risk-axis-label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.risk-axis-title { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.risk-legend-strip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--text-mid); letter-spacing: 0.06em; text-transform: uppercase; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; font-weight: 600; flex-shrink: 0; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.risk-source-strip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ CHANNEL WATERFALL (distribution_analysis) ============ */
+.channel-waterfall-page .page-inner { padding-top: 30px; }
+.waterfall-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 12px; }
+.waterfall-chart .chart-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.waterfall-chart .chart-subtitle { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.waterfall-svg-wrap { height: 260px; width: 100%; }
+.waterfall-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.wf-segment-label { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.wf-segment-pct { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; fill: var(--text); font-weight: 700; }
+.wf-segment-note { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8.5px; fill: var(--text-mid); letter-spacing: 0.04em; }
+.wf-segment-src { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.wf-axis-text { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.wf-segment-fill-1 { fill: var(--primary); }
+.wf-segment-fill-2 { fill: var(--primary-dim); }
+.wf-segment-fill-3 { fill: var(--green); }
+.wf-segment-fill-4 { fill: var(--amber); }
+.wf-segment-fill-5 { fill: #6366F1; }
+.wf-segment-fill-6 { fill: #DB2777; }
+.wf-segment-fill-7 { fill: #0EA5E9; }
+.waterfall-commentary { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.waterfall-commentary h3 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.waterfall-commentary p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 6px; }
+.waterfall-commentary p strong { color: var(--text); font-weight: 600; }
+.waterfall-commentary ul { list-style: none; padding: 0; margin: 0; }
+.waterfall-commentary li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.waterfall-commentary li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-weight: 700; }
+.waterfall-commentary li strong { color: var(--text); font-weight: 600; }
+.waterfall-source-strip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============ PRICE QUALITY MATRIX (pricing_strategy) ============ */
+.price-quality-page .page-inner { padding-top: 30px; }
+.pq-matrix-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.pq-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-matrix-chart .chart-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 4px; }
+.pq-matrix-chart .chart-subtitle { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.pq-svg-wrap { flex: 1; min-height: 0; width: 100%; }
+.pq-svg-wrap svg { width: 100%; height: 100%; display: block; }
+.pq-quadrant-bg { fill: var(--bg); stroke: var(--border); stroke-width: 0.5; }
+.pq-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.pq-grid-line { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 2 2; }
+.pq-axis-label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; fill: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+.pq-axis-tick { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.06em; }
+.pq-quadrant-label { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10px; fill: var(--text-mid); font-weight: 700; letter-spacing: -0.005em; text-transform: uppercase; }
+.pq-dot { fill: var(--primary); stroke: var(--bg); stroke-width: 1.5; }
+.pq-dot-label { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10px; fill: var(--text); font-weight: 700; }
+.pq-sidebar { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.pq-sidebar h3 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.pq-sidebar p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.pq-sidebar p strong { color: var(--text); font-weight: 600; }
+.pq-source-strip { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+
+/* ============================================================
+   === Decision-brief page types (2026-10) ===
+   decision_scorecard + stage_gate_plan, for question-led reports.
+   ============================================================ */
+
+/* ============ DECISION SCORECARD ============ */
+.scorecard-wrap { display: grid; grid-template-columns: 2.3fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.kira-table { width: 100%; border-collapse: collapse; font-size: 11px; color: var(--text-mid); }
+.kira-table th { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border-strong); background: var(--bg-soft); }
+.kira-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.4; }
+.kira-table td.row-label { color: var(--text); font-weight: 700; }
+.kira-table td.criterion { color: var(--text); font-weight: 600; width: 22%; }
+.kira-table tr.recommended td { background: var(--primary-soft); }
+.kira-table tr.recommended td.row-label { color: var(--primary); }
+.rating { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; display: inline-block; margin-bottom: 3px; }
+.rating.strong { background: var(--green-soft); color: var(--green); }
+.rating.fair { background: var(--sev-med-soft); color: var(--sev-med); }
+.rating.weak { background: var(--sev-high-soft); color: var(--sev-high); }
+.scorecard-rail { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.scorecard-rail h3 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.scorecard-rail p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.scorecard-rail p strong { color: var(--text); font-weight: 600; }
+
+/* ============ STAGE-GATE PLAN ============ */
+.gate-wrap { display: grid; grid-template-columns: 2.1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.gate-wrap .kira-table td.gate-name { color: var(--text); font-weight: 700; width: 20%; }
+.gate-wrap .kira-table td .mono { color: var(--text); font-weight: 600; white-space: nowrap; }
+.scorecard-wrap .kira-table, .gate-wrap .kira-table { align-self: start; }
+.kira-table tr.recommended td.row-label::after { content: " · RECOMMENDED"; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8px; letter-spacing: 0.12em; }
+.action-list { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; }
+.action-list h3 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.action-list ol { margin: 0; padding-left: 18px; }
+.action-list li { font-size: 11px; line-height: 1.5; color: var(--text-mid); margin-bottom: 5px; }
+.action-list li strong { color: var(--text); font-weight: 600; }
+.decision-source-strip { /* unused since source-key replaced it; kept for older drafts */ font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; }
+
+/* ============================================================
+   === Exhibit layer (2026-10) — flexible exhibit pages ===
+   Page = action title (the so-what) + optional kicker line +
+   1-3 exhibits in a layout + takeaway bar. No fixed slot counts.
+   Exhibit snippets live in templates/exhibits.html.
+   ============================================================ */
+.exhibit-page .page-h1 { font-size: 25px; max-width: 1120px; }
+.page-kicker { font-size: 13.5px; color: var(--text-mid); line-height: 1.5; margin-bottom: 14px; max-width: 1100px; flex-shrink: 0; }
+.page-kicker strong { color: var(--text); font-weight: 600; }
+
+/* layout grids — the body area between title and takeaway */
+.layout { display: grid; gap: 20px; flex: 1; min-height: 0; }
+.layout-full { grid-template-columns: 1fr; }
+.layout-split { grid-template-columns: 1fr 1fr; }
+.layout-main-side { grid-template-columns: 2fr 1fr; }
+.layout-side-main { grid-template-columns: 1fr 2fr; }
+.layout-trio { grid-template-columns: 1fr 1fr 1fr; }
+.layout-stack { grid-template-rows: 1fr 1fr; }
+.layout-hero { grid-template-columns: 1fr 2.2fr; }   /* big number left, exhibit right */
+
+/* exhibit frame */
+.exhibit { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.exhibit.plain { background: transparent; border: none; padding: 0; }
+.exhibit-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.exhibit-sub { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin: 3px 0 8px; }
+.exhibit-body { flex: 1; min-height: 0; position: relative; }
+.exhibit-body svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.exhibit-note { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8.5px; color: var(--muted); padding-top: 6px; border-top: 1px solid var(--border); margin-top: 6px; letter-spacing: 0.04em; }
+
+/* commentary column — short, hooked prose */
+.commentary { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.commentary h3 { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+.commentary p { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+.commentary p strong { color: var(--text); font-weight: 600; }
+
+/* emphasis devices */
+.big-number { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 18px 20px; border-left: 4px solid var(--primary); background: var(--primary-soft); border-radius: 0 6px 6px 0; }
+.big-number .value { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 54px; line-height: 1; letter-spacing: -0.03em; color: var(--primary); }
+.big-number .label { font-size: 13px; line-height: 1.4; color: var(--text); font-weight: 600; }
+.big-number .context { font-size: 11px; line-height: 1.45; color: var(--text-mid); }
+.pull-quote { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 19px; font-weight: 700; line-height: 1.3; color: var(--text); border-left: 3px solid var(--amber); padding: 4px 0 4px 16px; }
+.callout-box { background: var(--amber-soft); border: 1px solid rgba(217,119,6,0.35); border-radius: 6px; padding: 10px 12px; font-size: 11.5px; line-height: 1.5; color: var(--text); }
+.callout-box .tag { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); font-weight: 700; display: block; margin-bottom: 3px; }
+.takeaway { margin-top: 12px; flex-shrink: 0; background: var(--dark-bg); color: var(--dark-text); border-radius: 4px; padding: 10px 16px; font-size: 13px; line-height: 1.45; display: flex; gap: 12px; align-items: baseline; }
+.takeaway::before { content: "SO WHAT"; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9.5px; letter-spacing: 0.2em; color: var(--primary); font-weight: 700; white-space: nowrap; }
+.takeaway strong { color: #fff; }
+
+/* SVG emphasis helpers shared by exhibits */
+.hl-fill { fill: var(--primary); } .base-fill { fill: #C9D3E3; } .neg-fill { fill: var(--sev-high); } .pos-fill { fill: var(--green); } .warn-fill { fill: var(--amber); }
+.annot-text { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10.5px; font-weight: 700; fill: var(--text); }
+.annot-line { stroke: var(--text-mid); stroke-width: 1; fill: none; }
+.svg-label { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10px; fill: var(--text-mid); }
+.svg-value { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+
+/* ------------------------------------------------------------
+   Exhibit library helpers (2026-10) — used by templates/exhibits.html
+   and docs/exhibit_library.md. All classes namespaced .ex-*.
+   Colour discipline: ONE highlight (.hl-fill / primary) for the
+   insight, muted greys for everything else, sequential blues
+   (.ex-s1..s5) only for magnitude (heatmap, tile map).
+   ------------------------------------------------------------ */
+/* muted greys for non-highlight series / stack segments (darkest first) */
+.ex-g1 { fill: #8E9BB0; } .ex-g2 { fill: #B4BFD0; } .ex-g3 { fill: #DCE2EC; }
+.ex-hl-soft { fill: var(--primary-soft); }
+.ex-total-fill { fill: var(--text-mid); }
+/* forecast bar: tinted fill + dashed highlight outline */
+.ex-bar-fc { fill: var(--primary-soft); stroke: var(--primary); stroke-width: 1.25; stroke-dasharray: 4 3; }
+/* sequential magnitude scale, one hue light -> dark */
+.ex-s0 { fill: #F1F4F9; } .ex-s1 { fill: #DCE7FB; } .ex-s2 { fill: #B3CBF7; } .ex-s3 { fill: #7FA8F5; } .ex-s4 { fill: #4C86F7; } .ex-s5 { fill: #1E5BD6; }
+/* lines */
+.ex-line-hl { stroke: var(--primary); stroke-width: 2.5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.ex-line-base { stroke: #9AA6B8; stroke-width: 1.75; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.ex-line-fc { stroke-dasharray: 5 4; }
+.ex-band { fill: var(--primary); opacity: 0.12; }
+.ex-zero { stroke: var(--text-mid); stroke-width: 1; }
+.ex-ref { stroke: var(--text-mid); stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.ex-conn { stroke: #9AA6B8; stroke-width: 1; stroke-dasharray: 2 2; fill: none; }
+.ex-event { stroke: var(--border-strong); stroke-width: 1; stroke-dasharray: 2 3; }
+.ex-dot-hl { fill: var(--primary); stroke: #fff; stroke-width: 1.5; }
+.ex-dot-base { fill: #9AA6B8; stroke: #fff; stroke-width: 1.5; }
+/* text */
+.ex-axis-title { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.ex-in-label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; font-weight: 700; fill: #fff; }
+.ex-in-dark { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; font-weight: 700; fill: var(--text); }
+.ex-label-hl { fill: var(--primary); font-weight: 700; }
+.ex-label-strong { fill: var(--text); font-weight: 700; }
+.ex-small { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+/* 2x2 quadrants */
+.ex-quad { fill: #FFFFFF; stroke: var(--border); stroke-width: 1; }
+.ex-quad-hl { fill: var(--primary-soft); stroke: var(--border); stroke-width: 1; }
+.ex-quad-label { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; fill: var(--muted); }
+.ex-quad-label.hl { fill: var(--primary); }
+.ex-bubble-hl { fill: var(--primary); fill-opacity: 0.85; stroke: #fff; stroke-width: 1.5; }
+.ex-bubble-base { fill: #B4BFD0; fill-opacity: 0.9; stroke: #fff; stroke-width: 1.5; }
+/* nodes (driver tree, funnel, tiles) */
+.ex-node { fill: #FFFFFF; stroke: var(--border-strong); stroke-width: 1; }
+.ex-node-hl { fill: var(--primary-soft); stroke: var(--primary); stroke-width: 1.5; }
+.ex-node-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10.5px; font-weight: 700; fill: var(--text); }
+.ex-node-value { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 12px; font-weight: 700; fill: var(--text); }
+.ex-node-note { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; fill: var(--muted); }
+.ex-link { stroke: var(--border-strong); stroke-width: 1.25; fill: none; }
+.ex-tile-code { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 10px; font-weight: 700; }
+.ex-tile-val { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9.5px; font-weight: 600; }
+.ex-tile-outline { fill: none; stroke: var(--text); stroke-width: 2; }
+/* timeline / gantt */
+.ex-track { fill: var(--bg); stroke: var(--border); stroke-width: 1; }
+.ex-gate { fill: var(--text); }
+.ex-today { stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 4 3; }
+
+/* HTML legend (only when direct labels are impossible) */
+.ex-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 10px; color: var(--text-mid); margin: 0 0 6px; flex-shrink: 0; }
+.ex-legend .k { display: inline-flex; align-items: center; gap: 5px; }
+.ex-legend .k i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; background: #B4BFD0; }
+.ex-legend .k i.hl { background: var(--primary); } .ex-legend .k i.g1 { background: #8E9BB0; } .ex-legend .k i.g2 { background: #B4BFD0; } .ex-legend .k i.g3 { background: #DCE2EC; }
+.ex-legend .k i.fc { background: var(--primary-soft); border: 1px dashed var(--primary); }
+
+/* heatmap (HTML table) */
+.ex-heat { width: 100%; height: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; font-size: 10.5px; }
+.ex-heat th { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 2px 4px 4px; text-align: center; }
+.ex-heat th.row { text-align: left; color: var(--text); font-family: 'Satoshi', var(--font-cjk), sans-serif; font-size: 11px; letter-spacing: 0; text-transform: none; width: 32%; }
+.ex-heat td { text-align: center; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-weight: 700; border-radius: 3px; color: var(--text); }
+.ex-heat td.h1 { background: #EEF2F8; color: var(--text-mid); } .ex-heat td.h2 { background: #DCE7FB; } .ex-heat td.h3 { background: #B3CBF7; } .ex-heat td.h4 { background: #6F9DF4; color: #fff; } .ex-heat td.h5 { background: #1E5BD6; color: #fff; }
+.ex-heat td.sum { background: transparent; border-left: 2px solid var(--border-strong); border-radius: 0; color: var(--text); }
+.ex-heat td.hl { box-shadow: inset 0 0 0 2px var(--text); }
+.ex-scale { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; color: var(--muted); margin-top: 6px; flex-shrink: 0; }
+.ex-scale i { width: 26px; height: 9px; display: inline-block; border-radius: 2px; }
+
+/* Harvey ball: <span class="ex-harvey" style="--v:75"></span> (0/25/50/75/100) */
+.ex-harvey { width: 14px; height: 14px; border-radius: 50%; display: inline-block; vertical-align: -3px; border: 1.5px solid var(--text-mid); background: conic-gradient(var(--text-mid) calc(var(--v, 0) * 1%), #FFFFFF 0); }
+.kira-table tr.recommended .ex-harvey { border-color: var(--primary); background: conic-gradient(var(--primary) calc(var(--v, 0) * 1%), #FFFFFF 0); }
+.kira-table.ex-compact td { padding: 6px 8px; }
+.kira-table.ex-compact th { padding: 6px 8px; }
+.kira-table td.ex-c { text-align: center; } .kira-table th.ex-c { text-align: center; }
+
+/* big numbers: row of 1-4 */
+.ex-bn-row { display: grid; grid-template-columns: repeat(var(--n, 4), 1fr); gap: 14px; }
+.ex-bn-row .big-number { padding: 14px 16px; }
+.ex-bn-row .big-number .value { font-size: 40px; }
+.ex-bn-row .big-number.muted { border-left-color: var(--border-strong); background: var(--bg-soft); }
+.ex-bn-row .big-number.muted .value { color: var(--text); }
+.big-number .ex-src { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8.5px; color: var(--muted); letter-spacing: 0.04em; }
+
+/* flow / value chain (HTML grid) — set --cols to the stage count */
+.ex-flow { display: grid; grid-template-columns: 120px repeat(var(--cols, 5), 1fr); gap: 6px 4px; align-content: start; }
+.ex-flow .stage { position: relative; background: #8E9BB0; color: #fff; font-size: 11px; font-weight: 700; line-height: 1.2; padding: 9px 16px 9px 20px; min-height: 46px; display: flex; flex-direction: column; justify-content: center; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%); }
+.ex-flow .stage:nth-child(2) { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); padding-left: 12px; }
+.ex-flow .stage.hl { background: var(--primary); }
+.ex-flow .stage .n { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; font-weight: 600; opacity: 0.85; letter-spacing: 0.08em; }
+.ex-flow .lane { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 8px 6px 0 0; border-top: 1px solid var(--border); }
+.ex-flow .cell { font-size: 11px; line-height: 1.45; color: var(--text-mid); padding: 9px 8px; border-top: 1px solid var(--border); }
+.ex-flow .cell strong { color: var(--text); font-weight: 700; }
+.ex-flow .cell.hl { background: var(--primary-soft); }
+.ex-flow .cell .mono { color: var(--text); font-weight: 700; }
+.ex-pain { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: var(--sev-high); color: #fff; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9px; font-weight: 700; margin-right: 4px; vertical-align: 1px; }
+
+/* layout modifiers */
+.layout.ex-rows { grid-template-rows: 1fr auto; }        /* exhibit + callout strip underneath */
+.layout-stack.ex-top-auto { grid-template-rows: auto 1fr; } /* big-number row + exhibit */
+.ex-cell { display: flex; flex-direction: column; gap: 12px; min-height: 0; min-width: 0; }  /* column holding 2+ blocks */
+.exhibit-body.ex-html { display: flex; flex-direction: column; }
+
+/* ============================================================
+   === Cover + closing (2026-10) ===
+   Cover: 9 layouts. L1 (.cover2): left text column + per-report
+   illustration (cover.jpg, generated by scripts/gen-cover.mjs) faded
+   into white on the right. L2-L9 (.cover3) follow the L1 block.
+   Closing: identical brand page on every report (no image API).
+   Images use relative src; scripts/lib/inline-assets.mjs inlines
+   them before render / upload.
+   ============================================================ */
+.cover2 { background: #fff; }
+.cover2 .cv-art { position: absolute; top: 0; right: 0; width: 64%; height: 100%; object-fit: cover; object-position: center right; z-index: 0; }
+/* white fade over the art's left and top edges (CSS masks are dropped in PDF print, gradients are not) */
+.cover2::after { content: ""; position: absolute; top: 0; right: 0; width: calc(64% + 6px); height: 100%; z-index: 1; pointer-events: none;
+  background: linear-gradient(to right, #fff 0%, rgba(255,255,255,0.85) 12%, rgba(255,255,255,0) 34%), linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 17%); }
+.cover2 .cv-wrap { position: relative; z-index: 2; height: 100%; padding: 52px 64px 48px; display: flex; flex-direction: column; }
+.cover2 .cv-top { display: flex; justify-content: space-between; align-items: center; }
+.cover2 .cv-logo { height: 26px; width: auto; display: block; }
+.cover2 .cv-meta { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; letter-spacing: 0.28em; color: var(--text-mid); text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+.cover2 .cv-meta::after { content: ""; width: 90px; height: 1px; background: #9CB6E8; }
+.cover2 .cv-main { margin-top: 92px; max-width: 540px; }
+.cover2 .cv-eyebrow { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 16px; margin-bottom: 34px; }
+.cover2 .cv-eyebrow::before { content: ""; width: 54px; height: 2px; background: var(--primary); }
+.cover2 .cv-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 74px; line-height: 0.98; letter-spacing: -0.035em; color: var(--text); }
+.cover2 .cv-title.long { font-size: 60px; }
+.cover2 .cv-title .accent { color: var(--primary); display: block; }
+.cover2 .cv-sub { margin-top: 26px; font-size: 18px; line-height: 1.45; color: var(--text-mid); max-width: 420px; }
+.cover2 .cv-bottom { margin-top: auto; }
+.cover2 .cv-bottom::before { content: ""; display: block; width: 48px; height: 2px; background: var(--primary); margin-bottom: 26px; }
+.cover2 .cv-year-row { display: flex; align-items: center; gap: 22px; }
+.cover2 .cv-year { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 26px; letter-spacing: 0.32em; color: var(--text); }
+.cover2 .cv-tag { border-left: 1px solid var(--border-strong); padding-left: 22px; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9.5px; letter-spacing: 0.28em; line-height: 1.7; color: var(--text-mid); text-transform: uppercase; }
+.cover2.plain .cv-art, .cover2.plain::after { display: none; }   /* no illustration available */
+
+/* Cover layouts L2–L9 (templates cover_L2 … cover_L9; L1 is .cover2 above).
+   gen-cover.mjs picks the layout and the image shape that fits it.
+   No CSS masks (dropped in PDF print): gradients + border-radius only.
+   .cv-deco holds shapes that bleed off the page; overflow: clip keeps them
+   out of the page's scrollHeight so the render overflow check stays clean. */
+.cover3 { background: #fff; }
+.cover3 .cv-deco { position: absolute; inset: 0; overflow: clip; z-index: 0; pointer-events: none; }
+.cover3 .cv-art { position: absolute; display: block; object-fit: cover; z-index: 0; }
+.cover3 .cv-wrap { position: absolute; z-index: 2; display: flex; flex-direction: column; }
+.cover3 .cv-wrap > .cv-year-row { margin-top: auto; }
+.cover3 .cv-logo { height: 26px; width: auto; display: block; flex: none; align-self: flex-start; }
+.cover3 .cv-meta { margin-top: 14px; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; letter-spacing: 0.28em; color: var(--text-mid); text-transform: uppercase; }
+.cover3 .cv-top { display: flex; justify-content: space-between; align-items: center; flex: none; }
+.cover3 .cv-top .cv-meta { margin-top: 0; }
+.cover3 .cv-eyebrow { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.cover3 .cv-eyebrow::before { content: ""; width: 54px; height: 2px; background: currentColor; flex: none; }
+.cover3 .cv-title { font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 72px; line-height: 0.98; letter-spacing: -0.035em; color: var(--text); }
+.cover3 .cv-title.long { font-size: 58px; }
+.cover3 .cv-title .accent { color: var(--primary); display: block; }
+.cover3 .cv-title .cv-l3 { display: block; }
+.cover3 .cv-sub { margin-top: 24px; font-size: 17px; line-height: 1.45; color: var(--text-mid); }
+.cover3 .cv-year-row { display: flex; align-items: center; gap: 22px; flex: none; }
+.cover3 .cv-year { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 26px; letter-spacing: 0.32em; color: var(--text); }
+.cover3 .cv-tag { border-left: 1px solid var(--border-strong); padding-left: 22px; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9.5px; letter-spacing: 0.28em; line-height: 1.7; color: var(--text-mid); text-transform: uppercase; }
+.cover3 .cv-left, .cover3 .cv-right { min-width: 0; }
+
+/* L2 mirror: art left (right third of the image empty), text right-aligned */
+.cover3.cv-L2 .cv-art { left: 0; top: 0; width: 64%; height: 100%; object-position: center left; }
+.cover3.cv-L2::after { content: ""; position: absolute; left: 0; top: 0; width: calc(64% + 6px); height: 100%; z-index: 1; pointer-events: none;
+  background: linear-gradient(to left, #fff 0%, rgba(255,255,255,0.85) 12%, rgba(255,255,255,0) 34%), linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 17%); }
+.cover3.cv-L2 .cv-wrap { right: 64px; top: 52px; bottom: 48px; width: 490px; align-items: flex-end; text-align: right; }
+.cover3.cv-L2 .cv-logo { align-self: flex-end; }
+.cover3.cv-L2 .cv-eyebrow { flex-direction: row-reverse; }
+.cover3.cv-L2 .cv-main { margin-top: 86px; }
+.cover3.cv-L2 .cv-sub { max-width: 440px; margin-left: auto; }
+.cover3.cv-L2 .cv-title.long { font-size: 52px; }
+
+/* L3 panorama + white band at the bottom */
+.cover3.cv-L3 { display: flex; flex-direction: column; }
+.cover3.cv-L3 .cv-art { position: relative; flex: 1 1 0; min-height: 0; width: 100%; object-position: center 30%; }
+.cover3.cv-L3 .cv-chip { position: absolute; z-index: 3; top: 36px; left: 64px; background: #fff; padding: 12px 18px; }
+.cover3.cv-L3 .cv-chip .cv-meta { margin-top: 8px; }
+.cover3.cv-L3 .cv-band { position: relative; z-index: 2; flex: none; min-height: 290px; margin-top: -40px; background: #fff; padding: 30px 64px 44px; display: grid; grid-template-columns: 1fr 340px; gap: 48px; }
+.cover3.cv-L3 .cv-band::before { content: ""; position: absolute; left: 0; right: 0; top: -90px; height: 90px; background: linear-gradient(to top, #fff, rgba(255,255,255,0)); }
+.cover3.cv-L3 .cv-title { font-size: 62px; }
+.cover3.cv-L3 .cv-title.long { font-size: 50px; }
+.cover3.cv-L3 .cv-title .accent, .cover3.cv-L4 .cv-title .accent { display: inline; }
+.cover3.cv-L3 .cv-eyebrow, .cover3.cv-L4 .cv-eyebrow { margin-bottom: 18px; }
+.cover3.cv-L3 .cv-right { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; border-left: 2px solid var(--primary); padding-left: 28px; }
+.cover3.cv-L3 .cv-sub, .cover3.cv-L4 .cv-sub { margin-top: 0; }
+
+/* L4 framed banner across the top */
+.cover3.cv-L4 .cv-wrap { left: 64px; right: 64px; top: 40px; bottom: 44px; }
+.cover3.cv-L4 .cv-art { position: relative; flex: 1 1 0; min-height: 0; width: 100%; margin: 22px 0 30px; object-position: center 45%; }
+.cover3.cv-L4 .cv-low { flex: none; min-height: 220px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; }
+.cover3.cv-L4 .cv-title { font-size: 58px; }
+.cover3.cv-L4 .cv-title.long { font-size: 48px; }
+.cover3.cv-L4 .cv-right { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; padding-top: 30px; }
+
+/* L5 navy split: navy text panel left, art right */
+.cover3.cv-L5 { background: #0A1630; }
+.cover3.cv-L5 .cv-art { right: 0; top: 0; width: 58%; height: 100%; }
+.cover3.cv-L5 .cv-wrap { left: 0; top: 0; bottom: 0; width: 42%; padding: 52px 56px 48px; }
+.cover3.cv-L5 .cv-main { margin-top: 78px; }
+.cover3.cv-L5 .cv-title { color: #fff; font-size: 62px; }
+.cover3.cv-L5 .cv-title.long { font-size: 48px; }
+.cover3.cv-L5 .cv-title .accent, .cover3.cv-L5 .cv-eyebrow { color: #6EA0FF; }
+.cover3.cv-L5 .cv-sub { color: #C9D4EA; }
+.cover3.cv-L5 .cv-meta, .cover3.cv-L5 .cv-tag { color: #9FB0D0; }
+.cover3.cv-L5 .cv-tag { border-color: #33456B; }
+.cover3.cv-L5 .cv-year { color: #fff; }
+
+/* L6 arch window on the right */
+.cover3.cv-L6 .cv-art { right: 96px; bottom: 0; width: 470px; height: 640px; border-radius: 235px 235px 0 0; object-position: center 35%; }
+.cover3.cv-L6 .cv-ring { position: absolute; right: 72px; bottom: 0; width: 518px; height: 664px; border: 1.5px solid #9CB6E8; border-bottom: 0; border-radius: 259px 259px 0 0; }
+.cover3.cv-L6 .cv-wrap { left: 64px; top: 52px; bottom: 48px; width: 590px; }
+.cover3.cv-L6 .cv-main, .cover3.cv-L9 .cv-main { margin-top: 78px; }
+.cover3.cv-L6 .cv-sub { max-width: 440px; }
+
+/* L7 full-bleed art + white text card */
+.cover3.cv-L7 .cv-art { inset: 0; width: 100%; height: 100%; }
+.cover3.cv-L7 .cv-card { position: absolute; z-index: 2; left: 64px; top: 64px; bottom: 64px; width: 540px; background: rgba(255,255,255,0.96); padding: 40px 44px; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(11,13,16,0.18); }
+.cover3.cv-L7 .cv-eyebrow { margin-top: 40px; margin-bottom: 24px; }
+.cover3.cv-L7 .cv-title { font-size: 60px; }
+.cover3.cv-L7 .cv-title.long { font-size: 46px; }
+.cover3.cv-L7 .cv-sub { margin-top: 20px; }
+.cover3.cv-L7 .cv-card > .cv-year-row { margin-top: auto; padding-top: 20px; }
+
+/* L8 vertical art strip + giant outlined year */
+.cover3.cv-L8 .cv-art { left: 64px; top: 52px; width: 330px; height: 616px; }
+.cover3.cv-L8 .cv-ghost { position: absolute; right: 40px; bottom: -56px; font: 900 300px/1 'Satoshi', sans-serif; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1.5px #C7D6F5; }
+.cover3.cv-L8 .cv-wrap { left: 450px; right: 64px; top: 52px; bottom: 48px; }
+.cover3.cv-L8 .cv-main { margin-top: 64px; }
+.cover3.cv-L8 .cv-title { font-size: 80px; }
+.cover3.cv-L8 .cv-title.long { font-size: 62px; }
+.cover3.cv-L8 .cv-sub { max-width: 520px; }
+
+/* L9 art in a large circle on the right */
+.cover3.cv-L9 .cv-art { width: 700px; height: 700px; border-radius: 50%; right: -110px; top: 60px; }
+.cover3.cv-L9 .cv-ring { position: absolute; width: 760px; height: 760px; border-radius: 50%; right: -140px; top: 30px; border: 1.5px solid #9CB6E8; }
+.cover3.cv-L9 .cv-dot { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); right: 600px; top: 120px; }
+.cover3.cv-L9 .cv-wrap { left: 64px; top: 52px; bottom: 48px; width: 560px; }
+.cover3.cv-L9 .cv-sub { max-width: 430px; }
+
+/* CJK covers (lang ja / ko / zh): keep each title line whole (break inside it
+   only when it cannot fit) and size "long" so ~10 CJK characters hold one line. */
+.cover2 .cv-title:is(:lang(ja), :lang(ko), :lang(zh)), .cover3 .cv-title:is(:lang(ja), :lang(ko), :lang(zh)) { word-break: keep-all; overflow-wrap: anywhere; }
+.cover2 .cv-title.long:is(:lang(ja), :lang(ko), :lang(zh)) { font-size: 52px; }
+.cover3.cv-L2 .cv-title.long:is(:lang(ja), :lang(ko), :lang(zh)) { font-size: 48px; }
+.cover3.cv-L5 .cv-title.long:is(:lang(ja), :lang(ko), :lang(zh)) { font-size: 42px; }
+.cover3.cv-L6 .cv-title.long:is(:lang(ja), :lang(ko), :lang(zh)), .cover3.cv-L9 .cv-title.long:is(:lang(ja), :lang(ko), :lang(zh)) { font-size: 54px; }
+.cover3.cv-L7 .cv-title.long:is(:lang(ja), :lang(ko), :lang(zh)) { font-size: 44px; }
+.cover2 .cv-sub:lang(ko), .cover3 .cv-sub:lang(ko) { word-break: keep-all; }   /* Korean wraps at spaces */
+
+.closing-page { background: var(--primary); color: #fff; }
+.closing-page .cl-wrap { height: 100%; padding: 52px 64px 48px; display: flex; flex-direction: column; }
+.closing-page .cl-top { display: flex; justify-content: space-between; align-items: center; }
+.closing-page .cl-logo { height: 26px; width: auto; display: block; }
+.closing-page .cl-meta { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; letter-spacing: 0.24em; color: rgba(255,255,255,0.85); text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+.closing-page .cl-meta::after { content: ""; width: 90px; height: 1px; background: rgba(255,255,255,0.7); }
+.closing-page .cl-eyebrow { margin-top: 64px; font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 16px; }
+.closing-page .cl-eyebrow::before { content: ""; width: 54px; height: 2px; background: #fff; }
+.closing-page .cl-title { margin-top: 28px; font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 900; font-size: 84px; line-height: 0.96; letter-spacing: -0.04em; }
+.closing-page .cl-title .soft { color: rgba(255,255,255,0.78); }
+.closing-page .cl-body { margin-top: 24px; font-size: 18px; line-height: 1.5; max-width: 560px; color: rgba(255,255,255,0.92); }
+.closing-page .cl-contacts { margin-top: 28px; display: flex; gap: 56px; }
+.closing-page .cl-contact { display: flex; align-items: center; gap: 14px; }
+.closing-page .cl-icon { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; }
+.closing-page .cl-icon svg { width: 20px; height: 20px; }
+.closing-page .cl-contact .k { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.closing-page .cl-contact .v { font-size: 15px; }
+.closing-page .cl-bottom { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; }
+.closing-page .cl-tag { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 9.5px; letter-spacing: 0.28em; line-height: 1.7; text-transform: uppercase; color: rgba(255,255,255,0.9); }
+.closing-page .cl-tag::before { content: ""; display: block; width: 48px; height: 2px; background: #fff; margin-bottom: 20px; }
+.closing-page .cl-legal { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 8.5px; letter-spacing: 0.08em; color: rgba(255,255,255,0.7); text-align: right; }
+
+/* ============================================================
+   WHO'S WHO — players by value-chain stage (scripts/render-players.mjs)
+   One column per stage (max 5 per page, 6 cards per column).
+   ============================================================ */
+.players-page .pl-grid { flex: 1; min-height: 0; display: grid; gap: 14px; align-content: start; }
+.players-page .pl-col { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.players-page .pl-stage { font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; color: var(--primary); padding-bottom: 7px; border-bottom: 2px solid var(--primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.players-page .pl-card { background: var(--bg-soft); border-left: 2px solid var(--border-strong); padding: 6px 9px; height: 62px; overflow: hidden; }
+.players-page .pl-name { display: flex; justify-content: space-between; gap: 6px; font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.25; }
+.players-page .pl-name span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.players-page .pl-origin { flex: none; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; color: var(--primary-dim); background: var(--primary-soft); padding: 1px 5px; letter-spacing: 0.06em; }
+.players-page .pl-meta { font-size: 10.5px; color: var(--text-mid); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.players-page .pl-scale { font-size: 10px; color: var(--muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.players-page .pl-src { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary-dim); }
+
+</style>
+</head>
+<body>
+
+<!-- ============ ALL PAGES INJECTED HERE ============ -->
+<div class="page cover3 cv-L9">
+  <div class="cv-deco"><div class="cv-ring"></div><img class="cv-art" src="cover.jpg" alt=""><div class="cv-dot"></div></div>
+  <div class="cv-wrap">
+    <img class="cv-logo" src="brand/logo.png" alt="KIRA Research">
+    <div class="cv-meta">Market intelligence &nbsp;|&nbsp; Indonesia</div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">Market entry brief</div>
+      <h1 class="cv-title">Indonesia <span class="accent">EV charging</span><span class="cv-l3"></span></h1>
+      <p class="cv-sub">Which mode, which partner and which first city for a foreign charging operator, and what year one costs</p>
+    </div>
+    <div class="cv-year-row"><div class="cv-year">2026</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Section 02 · Methodology</div><div class="page-section-counter">002 / 031</div></div>
+    <h1 class="page-h1">How we built this view</h1>
+    <p class="page-subhead">This brief asks how a Japanese, Korean or Chinese charging operator should enter Indonesia, and what the first year costs. It rests on two evidence streams: <strong>rules and tariffs</strong> (investment and licensing rules, the regulated charging price, PLN's bulk power terms) and <strong>market evidence</strong> (car sales, charger counts, session data, company moves). Every quantitative claim carries an explicit source tag.</p>
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div><h3 style="font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Rules and tariffs</h3><div style="margin-bottom: 14px; padding-left: 20px; position: relative;"><div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ Investment and licensing rules</div><div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">The risk-based licensing regulation PP 28/2025, the business code for charging stations, and the energy ministry's simplified registration, read through official statements and legal briefings.</div></div><div style="margin-bottom: 14px; padding-left: 20px; position: relative;"><div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ Regulated price and power cost</div><div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">The capped selling price per kWh, the capped service fee per session, and PLN's bulk tariff and connection discount for charging operators.</div></div><div style="margin-bottom: 14px; padding-left: 20px; position: relative;"><div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ Our reading, flagged</div><div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">Where a rule is stated by officials but not yet published as a procedure, we say so. This brief is market research, not legal advice.</div></div></div>
+      <div><h3 style="font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Market evidence</h3><div style="margin-bottom: 14px; padding-left: 20px; position: relative;"><div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ Car sales and charger counts</div><div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">Industry-association wholesale data for battery-electric cars, and the public charger stock by speed and province from PLN and the energy ministry.</div></div><div style="margin-bottom: 14px; padding-left: 20px; position: relative;"><div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ Company moves, in four languages</div><div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">Operator, carmaker, landlord and fleet announcements, searched in Indonesian, Japanese, Korean and Chinese as well as English.</div></div><div style="margin-bottom: 14px; padding-left: 20px; position: relative;"><div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ Triangulated estimates</div><div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">Sessions per charger, session margins, payback and the year-one budget combine published inputs with a method shown on each page. Tagged [Kira estimates].</div></div></div>
+    </div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Section 03 · Table of Contents</div><div class="page-section-counter">003 / 031</div></div>
+    <h1 class="page-h1">What this report covers</h1>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow: hidden;">
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">ES</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">Executive summary</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 004</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">The answer and the five questions</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">01</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">The cars arrived faster than the fast chargers</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 006</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">Electric car sales, the public charger stock, where the chargers and sessions are</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">02</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">A charger pays only where cars queue</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 010</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">Session economics under the price cap, payback by sessions a day, the demand pools</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">03</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">The rules are open; the sites are not</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 014</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">Entry rules, who runs the network today, entry modes, partner types</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">04</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">Start in Greater Jakarta, with a fleet and a landlord</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 019</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">City sequence, the year-one budget, where the case breaks</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">05</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">Decision: build hubs, not a map of pins</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 023</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">Conditions, options compared, risks, stage gates and go / no-go tests</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">06</div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">Who's who</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 028</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">16 power, operator, carmaker, site-host and fleet players</div></div>
+<div style="display: grid; grid-template-columns: 60px 1fr 80px; column-gap: 16px; row-gap: 2px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: center;"><div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;"></div><div style="font-family: 'Satoshi', var(--font-cjk), sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">Methodology and sources</div><div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG 029</div><div style="font-size: 11px; color: var(--text-mid); grid-column: 2 / 3;">Source index and tagging</div></div>
+    </div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Executive summary</div><div class="page-section-counter">004 / 031</div></div>
+    <h1 class="page-h1">Conditional go: enter with a few busy hubs in Greater Jakarta, not a wide network; year one costs about USD 2 million</h1>
+    <p class="page-kicker">The tension: Indonesia has one public charger for every 37 electric cars, yet the average Jakarta charger served only two to three sessions a day.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Years to pay back one 120 kW charger, by sessions a day</div>
+  <div class="exhibit-sub">Indonesia · installed cost Rp 1.0 bn · 24 kWh per session at the capped price and fee · after power, landlord and payment costs</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 300">
+<!-- scale: x = 230 + years*16 (axis 0-25) ; row i: y = 12 + i*48, height 28 -->
+<text class="svg-label" x="220" y="26" text-anchor="end">2.0 a day</text>
+<text class="axis-text" x="220" y="39" text-anchor="end">Jakarta average, 2025</text>
+<rect class="base-fill" x="230" y="12" width="400" height="28" rx="2"/>
+<text class="svg-value" x="636" y="31">54</text>
+<text class="annot-text" x="666" y="31">off scale</text>
+<text class="svg-label" x="220" y="74" text-anchor="end">3.3 a day</text>
+<text class="axis-text" x="220" y="87" text-anchor="end">Jakarta average, Q1 2026</text>
+<rect class="base-fill" x="230" y="60" width="320" height="28" rx="2"/>
+<text class="svg-value" x="556" y="79">20.0</text>
+<text class="svg-label" x="220" y="122" text-anchor="end">5 a day</text>
+<rect class="base-fill" x="230" y="108" width="174.4" height="28" rx="2"/>
+<text class="svg-value" x="410.4" y="127">10.9</text>
+<text class="svg-label" x="220" y="170" text-anchor="end">8 a day</text>
+<rect class="base-fill" x="230" y="156" width="97.6" height="28" rx="2"/>
+<text class="svg-value" x="333.6" y="175">6.1</text>
+<text class="svg-label ex-label-strong" x="220" y="218" text-anchor="end">10 a day</text>
+<text class="axis-text" x="220" y="231" text-anchor="end">hub target</text>
+<rect class="hl-fill" x="230" y="204" width="75.2" height="28" rx="2"/>
+<text class="svg-value ex-label-hl" x="311.2" y="223">4.7</text>
+<text class="annot-text" x="350" y="223">inside a five-year payback</text>
+<text class="svg-label" x="220" y="266" text-anchor="end">12 a day</text>
+<rect class="base-fill" x="230" y="252" width="60.8" height="28" rx="2"/>
+<text class="svg-value" x="296.8" y="271">3.8</text>
+<line class="ex-ref" x1="310" y1="6" x2="310" y2="290"/>
+<text class="ex-axis-title" x="314" y="296">5-YEAR PAYBACK</text>
+<line class="ex-zero" x1="230" y1="6" x2="230" y2="290"/>
+</svg></div>
+  <div class="exhibit-note">Source: [Kira estimates] from [Bisnis Apr 2026], [PLN Dec 2024], [Kepmen 182.K/2023], [PLN 2022 packages]; method on pages 11-12</div>
+</div>
+<div class="commentary"><h3>Why the answer is a few hubs</h3><p><strong>The network is short of fast chargers, not of chargers.</strong> 4,778 public units served about 175,000 battery-electric cars at end-2025, but only one in four units is 50 kW or faster [ESDM Feb 2026]; [Kontan Jan 2026].</p><p><strong>The price is capped, so volume decides the return.</strong> A 24 kWh ultra-fast session leaves about Rp 67,000 (USD 3.7); a charger needs about ten sessions a day to pay back in five years [Kira estimates].</p><p><strong>The sites and the repeat customers sit with partners.</strong> PLN owns three in five public units; landlords, toll-road operators and taxi fleets hold the rest of the volume [PLN Nov 2025].</p></div>
+    </div>
+    <div class="takeaway"><span>Set up a wholly owned operator, sign a taxi-fleet anchor and two landlords in Jakarta, and require ten sessions a day per fast charger before scaling.</span></div>
+    <div class="source-key">ESDM Feb 2026 = energy ministry via CNN Indonesia, Feb 2026 · Kontan Jan 2026 = Kontan, PLN SPKLU 2025 · PLN Nov 2025 = PLN via Gaikindo, Nov 2025 · Bisnis Apr 2026 = Bisnis Indonesia, Jakarta SPKLU sessions · PLN Dec 2024 = PLN tariff terms · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Executive summary</div><div class="page-section-counter">005 / 031</div></div>
+    <h1 class="page-h1">Five answers: own the operator, borrow the sites, start in Jakarta, budget USD 2 million, judge it on sessions a day</h1>
+    <p class="page-kicker">The buyer's five questions, answered in one line each, with how sure we are. The chapters that follow hold the evidence.</p>
+    <div class="layout layout-full">
+<div class="exhibit plain">
+  <div class="exhibit-title">The five questions and our answers</div>
+  <div class="exhibit-sub">Foreign charging operator entering Indonesia · evidence to early October 2026 · confidence = our judgement of the evidence</div>
+  <div class="exhibit-body"><table class="kira-table ex-compact"><thead><tr><th>Question</th><th>Our answer</th><th>Confidence</th></tr></thead><tbody>
+<tr><td class="row-label">1 · Which entry mode</td><td>A wholly owned operator (open to 100% foreign ownership) on landlord and fleet contracts, using PLN's bulk tariff; the PLN franchise is cheaper but leaves price and customer with PLN; equipment supply suits hardware makers only [Emerhub 2026]</td><td><span class="rating fair">Medium</span></td></tr>
+<tr><td class="row-label">2 · Which partner types</td><td>Taxi and ride-hailing fleets for repeat sessions; mall and toll-road landlords for sites; PLN for power and app listing; carmakers bring drivers but want their own networks [Kontan JMRB Dec 2025]; [Electrive Aug 2024]</td><td><span class="rating strong">High</span></td></tr>
+<tr><td class="row-label">3 · Which first city, then where</td><td>Greater Jakarta (30% of public units, 803,000 sessions in 2025), then the toll road to Bandung, then Surabaya and Bali in year two [ESDM Feb 2026]; [Bisnis Apr 2026]</td><td><span class="rating strong">High</span></td></tr>
+<tr><td class="row-label">4 · What year one costs, and where it breaks</td><td>About Rp 37 bn (USD 2.1 m) for 20 sites with 30 fast and 20 AC chargers; it breaks below about ten sessions a day per fast charger, or if the service-fee cap is cut [Kira estimates]</td><td><span class="rating fair">Medium</span></td></tr>
+<tr><td class="row-label">5 · Go / no-go at the end of the pilot</td><td>Go if hub chargers average 6+ sessions a day by month 9 and are on track for 10, fleets supply 30%+ of kWh and uptime is 97%+; no-go below 4 a day at month 12 [Kira estimates]</td><td><span class="rating fair">Medium</span></td></tr>
+</tbody></table></div>
+  <div class="exhibit-note">Source: chapter pages; [Kira estimates] where marked</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Treat Indonesia as a hub business: a dozen high-throughput sites earn more than a hundred quiet ones.</span></div>
+    <div class="source-key">Emerhub 2026 = Emerhub, opening an EV charging station in Indonesia, Jul 2026 · Kontan JMRB Dec 2025 = Kontan, toll rest-area chargers · Electrive Aug 2024 = electrive, Grab EV fleet · ESDM Feb 2026 = CNN Indonesia · Bisnis Apr 2026 = Bisnis Indonesia · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 01</div>
+    <h1 class="divider-title">The cars arrived faster <span class="accent">than the fast chargers</span></h1>
+    <div class="divider-thesis">Battery-electric car sales multiplied tenfold in three years and kept rising after import incentives ended. The public network grew too, but mostly with slow units. <strong>The gap is in fast charging where cars actually gather.</strong></div>
+    <div class="divider-mini-toc"><div class="toc-pill">Car sales</div><div class="toc-pill">Charger stock</div><div class="toc-pill">Where the sessions are</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 1 · Demand</div><div class="page-section-counter">007 / 031</div></div>
+    <h1 class="page-h1">Electric car sales rose from 10,000 in 2022 to 104,000 in 2025, and 2026 matched that in eight months</h1>
+    <p class="page-kicker">Sales kept climbing after the import-duty holiday for fully built cars ended in December 2025, because makers now assemble locally.</p>
+    <div class="layout layout-hero">
+<div class="big-number">
+  <div class="label">Battery-electric share of car wholesales, Jan-Aug 2026</div>
+  <div class="value">17%</div>
+  <div class="context">103,300 of 599,491 cars, up from <strong>12.9%</strong> for full-year 2025. About 280,000 battery-electric cars were wholesaled from 2022 to August 2026.</div>
+  <div class="ex-src">[Gaikindo Aug 2026]; [Gaikindo 2025]; share and total [Kira estimates]</div>
+</div>
+<div class="exhibit">
+  <div class="exhibit-title">Battery-electric car wholesales</div>
+  <div class="exhibit-sub">Indonesia · units · 2022 to Jan-Aug 2026 · highlighted = 2026 to August</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 310">
+<!-- scale: y = 270 - units*0.002182 (axis 0-110k) ; bar i: x = 66 + i*130, width 78 -->
+<rect class="base-fill" x="66" y="247.5" width="78" height="22.5" rx="2"/>
+<text class="svg-value" x="105" y="241.5" text-anchor="middle">10,327</text>
+<text class="axis-text" x="105" y="285" text-anchor="middle">2022</text>
+<rect class="base-fill" x="196" y="232.8" width="78" height="37.2" rx="2"/>
+<text class="svg-value" x="235" y="226.8" text-anchor="middle">17,062</text>
+<text class="axis-text" x="235" y="285" text-anchor="middle">2023</text>
+<rect class="base-fill" x="326" y="174.3" width="78" height="95.7" rx="2"/>
+<text class="svg-value" x="365" y="168.3" text-anchor="middle">43,854</text>
+<text class="axis-text" x="365" y="285" text-anchor="middle">2024</text>
+<rect class="base-fill" x="456" y="43.2" width="78" height="226.8" rx="2"/>
+<text class="svg-value" x="495" y="37.2" text-anchor="middle">103,931</text>
+<text class="axis-text" x="495" y="285" text-anchor="middle">2025</text>
+<rect class="hl-fill" x="586" y="44.6" width="78" height="225.4" rx="2"/>
+<text class="svg-value ex-label-hl" x="625" y="38.6" text-anchor="middle">103,300</text>
+<text class="axis-text ex-label-hl" x="625" y="285" text-anchor="middle">JAN-AUG 2026</text>
+<text class="axis-text" x="625" y="298" text-anchor="middle">8 months</text>
+<text class="annot-text" x="120" y="110">Chinese brands lead: BYD sold</text>
+<text class="annot-text" x="120" y="125">40,151 of 82,525 in Jan-Nov 2025</text>
+<line class="ex-zero" x1="40" y1="270" x2="700" y2="270"/>
+</svg></div>
+  <div class="exhibit-note">Source: [Gaikindo 2022-24]; [Gaikindo 2025]; [Gaikindo Nov 2025]; [Gaikindo Aug 2026]</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Plan for about 330,000 battery-electric cars by end-2026: the charging case no longer rests on early adopters alone [Kira estimates].</span></div>
+    <div class="source-key">Gaikindo 2022-24 = Gaikindo wholesales via Kontan and just-auto · Gaikindo 2025 = Gaikindo via Jawa Pos, Jan 2026 · Gaikindo Nov 2025 = Gaikindo, BEV wholesales Jan-Nov 2025 · Gaikindo Aug 2026 = Gaikindo via just-auto, Sep 2026 · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 1 · Demand</div><div class="page-section-counter">008 / 031</div></div>
+    <h1 class="page-h1">Public chargers grew 44% in 2025, but three in four run below 50 kW</h1>
+    <p class="page-kicker">Counted against the guideline of one public charger per 15 electric cars, the network is short; counted in fast units, it is shorter still.</p>
+    <div class="layout layout-stack ex-top-auto">
+<div class="ex-bn-row" style="--n:4">
+  <div class="big-number muted"><div class="value">4,778</div><div class="label">Public charging units, Dec 2025, at 3,093 locations</div><div class="ex-src">[ESDM Feb 2026]</div></div>
+  <div class="big-number muted"><div class="value">+44%</div><div class="label">Units added by PLN and partners in 2025 (3,223 to 4,655)</div><div class="ex-src">[Kontan Jan 2026]</div></div>
+  <div class="big-number muted"><div class="value">~37</div><div class="label">Battery-electric cars per public unit, end-2025, vs a guideline of 15</div><div class="ex-src">[Kira estimates]; [PLN Nov 2025]</div></div>
+  <div class="big-number"><div class="value">24%</div><div class="label">Share of units at 50 kW or faster</div><div class="ex-src">[Kontan Jan 2026]</div></div>
+</div>
+<div class="exhibit">
+  <div class="exhibit-title">Public charging units by speed class</div>
+  <div class="exhibit-sub">Indonesia · PLN and partner network · 4,655 units, end-2025 · % of units</div>
+  <div class="exhibit-body"><svg viewBox="0 0 1100 150">
+<!-- scale: x = 90 + share_pct*10 ; one row at y = 30, height 40 -->
+<text class="ex-axis-title ex-label-hl" x="92" y="22">ULTRA FAST</text>
+<text class="ex-axis-title ex-label-hl" x="228" y="22">FAST</text>
+<text class="ex-axis-title" x="332" y="22">MEDIUM</text>
+<text class="ex-axis-title" x="908" y="22">STANDARD</text>
+<text class="svg-label ex-label-strong" x="80" y="55" text-anchor="end">Units</text>
+<rect class="hl-fill" x="90" y="30" width="134" height="40"/>
+<text class="ex-in-label" x="157" y="54" text-anchor="middle">633 · 14%</text>
+<rect class="hl-fill" x="226" y="30" width="102" height="40" fill-opacity="0.7"/>
+<text class="ex-in-label" x="277" y="54" text-anchor="middle">482 · 10%</text>
+<rect class="ex-g2" x="330" y="30" width="574" height="40"/>
+<text class="ex-in-dark" x="617" y="54" text-anchor="middle">2,681 · 58%</text>
+<rect class="ex-g3" x="906" y="30" width="183" height="40"/>
+<text class="ex-in-dark" x="997" y="54" text-anchor="middle">859 · 18%</text>
+<path class="annot-line" d="M90 80 L90 88 L328 88 L328 80"/>
+<text class="annot-text" x="92" y="108">1,115 units at 50 kW or more can turn 8-12 sessions a day</text>
+<text class="ex-small" x="600" y="108">Medium and standard units suit long stays: homes, offices, hotels</text>
+<text class="ex-small" x="92" y="140">Cars per unit: ~175,000 battery-electric cars wholesaled 2022-25 against 4,778 units; two-wheelers excluded</text>
+</svg></div>
+  <div class="exhibit-note">Source: [Kontan Jan 2026]; ratio [Kira estimates] from [Gaikindo 2025], [Gaikindo 2022-24] and [ESDM Feb 2026]</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Compete on fast and ultra-fast units at high-traffic sites; adding slow units where PLN already has them adds little.</span></div>
+    <div class="source-key">ESDM Feb 2026 = energy ministry via CNN Indonesia, Feb 2026 · Kontan Jan 2026 = Kontan, PLN operates 4,655 SPKLU in 2025 · PLN Nov 2025 = PLN via Gaikindo, Nov 2025 · Gaikindo 2022-24, Gaikindo 2025 = Gaikindo wholesales · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 1 · Demand</div><div class="page-section-counter">009 / 031</div></div>
+    <h1 class="page-h1">Jakarta holds 30% of public units, and its sessions in early 2026 ran five times a year earlier</h1>
+    <p class="page-kicker">Jakarta and West Java together hold almost half the network; the rest is spread across 30-plus provinces.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Public charging units by province</div>
+  <div class="exhibit-sub">Indonesia · units · December 2025 · highlighted = Jakarta</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 300">
+<!-- scale: x = 200 + units*0.1818 (axis 0-2,200) ; row i: y = 20 + i*62, height 34 -->
+<text class="svg-label ex-label-strong" x="190" y="42" text-anchor="end">DKI Jakarta</text>
+<rect class="hl-fill" x="200" y="20" width="261.5" height="34" rx="2"/>
+<text class="svg-value ex-label-hl" x="467.5" y="42">1,438</text>
+<text class="annot-text" x="520" y="42">30% of the national stock</text>
+<text class="svg-label" x="190" y="104" text-anchor="end">West Java</text>
+<rect class="base-fill" x="200" y="82" width="150.4" height="34" rx="2"/>
+<text class="svg-value" x="356.4" y="104">827</text>
+<text class="annot-text" x="420" y="104">with Jakarta: 47%</text>
+<text class="svg-label" x="190" y="166" text-anchor="end">Central Java and DIY</text>
+<rect class="base-fill" x="200" y="144" width="69.6" height="34" rx="2"/>
+<text class="svg-value" x="275.6" y="166">383</text>
+<text class="svg-label" x="190" y="228" text-anchor="end">All other provinces</text>
+<text class="axis-text" x="190" y="241" text-anchor="end">incl. East Java, Bali, Banten</text>
+<rect class="ex-g2" x="200" y="206" width="387.3" height="34" rx="2"/>
+<text class="svg-value" x="593.3" y="228">2,130</text>
+<line class="ex-zero" x1="200" y1="12" x2="200" y2="290"/>
+</svg></div>
+  <div class="exhibit-note">Source: [ESDM Feb 2026]; other provinces = national total less the three named [Kira estimates]</div>
+</div>
+<div class="commentary"><h3>Where the sessions are</h3><p><strong>Jakarta's chargers are getting busier.</strong> They logged 803,235 sessions in 2025 and 430,593 in the first quarter of 2026 alone, more than five times the same quarter a year earlier [Bisnis Apr 2026]. Per unit, that is about 2.0 sessions a day in 2025 and 3.3 in Q1 2026 [Kira estimates].</p><p><strong>The toll roads peak at holidays.</strong> On the second day after Eid in March 2026, PLN chargers handled 18,088 sessions and 427,980 kWh, four times the year before [PLN Lebaran 2026].</p><div class="callout-box"><span class="tag">How we derived it</span>Sessions per unit divide Jakarta's sessions by its average unit count over the period; a unit may carry more than one connector.</div></div>
+    </div>
+    <div class="takeaway"><span>Start where usage is compounding: sessions per Jakarta unit rose from about 2.0 a day in 2025 to 3.3 in early 2026.</span></div>
+    <div class="source-key">ESDM Feb 2026 = energy ministry via CNN Indonesia, Feb 2026 · Bisnis Apr 2026 = Bisnis Indonesia, Jakarta SPKLU sessions, Apr 2026 · PLN Lebaran 2026 = PLN via Investortrust, Mar 2026 · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 02</div>
+    <h1 class="divider-title">A charger pays only <span class="accent">where cars queue</span></h1>
+    <div class="divider-thesis">The government caps the price per kWh and the fee per session, so an operator cannot price its way to a return. <strong>Throughput is the only lever, and the average site is far below what a fast charger needs.</strong></div>
+    <div class="divider-mini-toc"><div class="toc-pill">Session economics</div><div class="toc-pill">Payback by sessions a day</div><div class="toc-pill">Demand pools</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 2 · Economics</div><div class="page-section-counter">011 / 031</div></div>
+    <h1 class="page-h1">A 24 kWh ultra-fast session leaves about Rp 67,000, or USD 3.7, after power, landlord and payments</h1>
+    <p class="page-kicker">The capped service fee is half of what the driver pays and about 70% of what the operator keeps.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Money flow of one ultra-fast session</div>
+  <div class="exhibit-sub">Indonesia · Rp thousand per session · 24 kWh at the capped price · excluding VAT · 2026 terms</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 316">
+<!-- scale: y = 282 - value*2.2 ; bar i: x = 29 + i*100, width 62 -->
+<rect class="base-fill" x="29" y="151.8" width="62" height="130.2"/>
+<text class="svg-value" x="60" y="145.8" text-anchor="middle">59.2</text>
+<text class="svg-label" x="60" y="297" text-anchor="middle">Energy</text>
+<text class="axis-text" x="60" y="309" text-anchor="middle">Rp 2,466/kWh</text>
+<line class="ex-conn" x1="91" y1="151.8" x2="129" y2="151.8"/>
+<rect class="hl-fill" x="129" y="26.4" width="62" height="125.4"/>
+<text class="svg-value ex-label-hl" x="160" y="20.4" text-anchor="middle">+57.0</text>
+<text class="svg-label" x="160" y="297" text-anchor="middle">Service fee</text>
+<text class="axis-text" x="160" y="309" text-anchor="middle">capped</text>
+<line class="ex-conn" x1="191" y1="26.4" x2="229" y2="26.4"/>
+<rect class="ex-total-fill" x="229" y="26.4" width="62" height="255.6"/>
+<text class="svg-value" x="260" y="20.4" text-anchor="middle">116.2</text>
+<text class="svg-label ex-label-strong" x="260" y="297" text-anchor="middle">Driver pays</text>
+<line class="ex-conn" x1="291" y1="26.4" x2="329" y2="26.4"/>
+<rect class="ex-g1" x="329" y="26.4" width="62" height="58.1"/>
+<text class="svg-value" x="360" y="99" text-anchor="middle">-26.4</text>
+<text class="svg-label" x="360" y="297" text-anchor="middle">PLN power</text>
+<text class="axis-text" x="360" y="309" text-anchor="middle">Rp 1,100/kWh</text>
+<line class="ex-conn" x1="391" y1="84.5" x2="429" y2="84.5"/>
+<rect class="ex-g1" x="429" y="84.5" width="62" height="38.3"/>
+<text class="svg-value" x="460" y="137" text-anchor="middle">-17.4</text>
+<text class="svg-label" x="460" y="297" text-anchor="middle">Landlord</text>
+<text class="axis-text" x="460" y="309" text-anchor="middle">15% of revenue</text>
+<line class="ex-conn" x1="491" y1="122.8" x2="529" y2="122.8"/>
+<rect class="ex-g1" x="529" y="122.8" width="62" height="12.8"/>
+<text class="svg-value" x="560" y="117" text-anchor="middle">-5.8</text>
+<text class="svg-label" x="560" y="297" text-anchor="middle">Payments, app</text>
+<text class="axis-text" x="560" y="309" text-anchor="middle">5% of revenue</text>
+<line class="ex-conn" x1="591" y1="135.6" x2="629" y2="135.6"/>
+<rect class="ex-total-fill" x="629" y="135.6" width="62" height="146.4"/>
+<text class="svg-value" x="660" y="129.6" text-anchor="middle">66.6</text>
+<text class="svg-label ex-label-strong" x="660" y="297" text-anchor="middle">Operator keeps</text>
+<text class="axis-text" x="660" y="309" text-anchor="middle">~USD 3.7</text>
+<line class="ex-zero" x1="10" y1="282" x2="710" y2="282"/>
+</svg></div>
+  <div class="exhibit-note">Source: [PLN Dec 2024]; [Kepmen 182.K/2023]; 24 kWh per session, landlord and payment shares [Kira estimates]; Rp 17,950 per USD [BI Sep 2026]</div>
+</div>
+<div class="commentary"><h3>What sets each layer</h3><p><strong>Price and fee are capped by the state.</strong> Operators may sell at up to Rp 2,466 per kWh and add at most Rp 25,000 per fast session or Rp 57,000 per ultra-fast session, before VAT [PLN Dec 2024]; [Kepmen 182.K/2023].</p><p><strong>Power got cheaper in December 2024.</strong> PLN moved charging operators to a bulk tariff of Rp 1,100 per kWh, down from Rp 1,644, and halved the connection fee [PLN Dec 2024]. Sessions average about 24 kWh, from PLN's holiday data [Kira estimates]; [PLN Lebaran 2026].</p><div class="callout-box"><span class="tag">Implication</span>Without the fee, the same session would leave about Rp 21,000. Any cut to the fee cap is the biggest single threat to the case.</div></div>
+    </div>
+    <div class="takeaway"><span>Model every site on the capped fee and the bulk tariff, and negotiate landlord shares on margin, not on revenue, where possible.</span></div>
+    <div class="source-key">PLN Dec 2024 = PLN, bulk tariff and connection discount for SPKLU operators, Dec 2024 · Kepmen 182.K/2023 = energy ministry decree on SPKLU service fees · PLN Lebaran 2026 = PLN via Investortrust · BI Sep 2026 = Bank Indonesia JISDOR, 29 Sep 2026 · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 2 · Economics</div><div class="page-section-counter">012 / 031</div></div>
+    <h1 class="page-h1">A fast charger pays back in five years only at about ten sessions a day; Jakarta's average is two to three</h1>
+    <p class="page-kicker">Cheaper hardware lowers the bar to about six sessions a day, still nearly twice the early-2026 average.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Payback years for one 120 kW charger, by sessions a day</div>
+  <div class="exhibit-sub">Indonesia · Rp 66,600 kept per session, Rp 30 m a year upkeep · two installed costs · axis cut at 25 years</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 316">
+<!-- scale: x = 60 + (sessions-2)*60 ; y = 286 - years*10.4 (axis 0-25) -->
+<line class="grid-line" x1="60" y1="26" x2="660" y2="26"/>
+<text class="axis-text" x="54" y="29" text-anchor="end">25</text>
+<line class="grid-line" x1="60" y1="78" x2="660" y2="78"/>
+<text class="axis-text" x="54" y="81" text-anchor="end">20</text>
+<line class="grid-line" x1="60" y1="130" x2="660" y2="130"/>
+<text class="axis-text" x="54" y="133" text-anchor="end">15</text>
+<line class="grid-line" x1="60" y1="182" x2="660" y2="182"/>
+<text class="axis-text" x="54" y="185" text-anchor="end">10</text>
+<line class="ex-ref" x1="60" y1="234" x2="660" y2="234"/>
+<text class="axis-text" x="54" y="237" text-anchor="end">5</text>
+<text class="ex-axis-title" x="160" y="250">5-YEAR PAYBACK</text>
+<line class="axis-line" x1="60" y1="286" x2="660" y2="286"/>
+<text class="axis-text" x="54" y="289" text-anchor="end">0</text>
+<text class="axis-text" x="60" y="301" text-anchor="middle">2</text>
+<text class="axis-text" x="180" y="301" text-anchor="middle">4</text>
+<text class="axis-text" x="300" y="301" text-anchor="middle">6</text>
+<text class="axis-text" x="420" y="301" text-anchor="middle">8</text>
+<text class="axis-text" x="540" y="301" text-anchor="middle">10</text>
+<text class="axis-text" x="660" y="301" text-anchor="middle">12</text>
+<text class="ex-axis-title" x="360" y="314" text-anchor="middle">SESSIONS PER CHARGER PER DAY</text>
+<line class="ex-event" x1="60" y1="26" x2="60" y2="286"/>
+<text class="ex-small" x="66" y="40">Jakarta 2025: 2.0</text>
+<line class="ex-event" x1="138" y1="60" x2="138" y2="286"/>
+<text class="ex-small" x="144" y="72">Jakarta Q1 2026: 3.3</text>
+<path class="ex-line-hl" d="M120 42.7 L180 131 L240 172.6 L300 196.6 L360 212.2 L420 222.6 L480 230.9 L540 237.1 L600 242.3 L660 246.5"/>
+<path class="ex-line-base" d="M120 140.4 L180 193.4 L240 217.4 L300 231.9 L360 241.3 L420 248.6 L480 252.7 L540 256.9 L600 260 L660 262.1"/>
+<circle cx="510" cy="234" r="5" class="ex-dot-hl"/>
+<text class="annot-text" x="470" y="200">~9.5 a day at Rp 1.0 bn</text>
+<circle cx="312" cy="234" r="5" class="ex-dot-base"/>
+<text class="annot-text" x="250" y="270">~6 a day at Rp 0.6 bn</text>
+<text class="svg-label ex-label-strong" x="664" y="242">Rp 1.0 bn</text>
+<text class="svg-label" x="664" y="270">Rp 0.6 bn</text>
+</svg></div>
+  <div class="exhibit-note">Source: [Kira estimates] from [Bisnis Apr 2026], [PLN 2022 packages], [PLN Dec 2024], [Kepmen 182.K/2023]</div>
+</div>
+<div class="commentary"><h3>How the curve is built</h3><p><strong>Each session keeps about Rp 66,600</strong> after power, a 15% landlord share and 5% for payments (page 11). Upkeep is Rp 30 m a year per unit [Kira estimates].</p><p><strong>Installed cost is the swing factor.</strong> PLN's 2022 partner package priced an outdoor charger above 100 kW at Rp 1.08 bn and a 50 kW unit at Rp 0.60 bn; imported hardware has fallen since, so we show Rp 1.0 bn and Rp 0.6 bn [PLN 2022 packages].</p><div class="callout-box"><span class="tag">Caveat</span>A 60 kW unit with the lower Rp 25,000 fee needs about the same ten sessions a day: the smaller fee offsets its lower cost.</div></div>
+    </div>
+    <div class="takeaway"><span>Underwrite each fast charger at ten sessions a day, and buy hardware at 2026 import prices, not at the old partner-package prices.</span></div>
+    <div class="source-key">Bisnis Apr 2026 = Bisnis Indonesia, Jakarta SPKLU sessions · PLN 2022 packages = PLN partner package prices via Detik, Jul 2022 · PLN Dec 2024 = PLN bulk tariff terms · Kepmen 182.K/2023 = SPKLU service-fee decree · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 2 · Economics</div><div class="page-section-counter">013 / 031</div></div>
+    <h1 class="page-h1">Taxi fleets and toll roads supply the repeat sessions; malls supply visibility but slow turnover</h1>
+    <p class="page-kicker">Five places where Indonesian electric cars charge, rated on what a fast charger needs: many short sessions every day.</p>
+    <div class="layout layout-full">
+<div class="exhibit plain">
+  <div class="exhibit-title">Demand pools for public fast charging</div>
+  <div class="exhibit-sub">Indonesia · rated for a fast-charger business · ratings are our judgement from the evidence shown</div>
+  <div class="exhibit-body"><table class="kira-table ex-compact"><thead><tr><th>Demand pool</th><th>Who controls access</th><th>Evidence</th><th>Session pattern</th><th>Fit for fast hubs</th></tr></thead><tbody>
+<tr><td class="row-label">Taxi and ride-hailing fleets</td><td>Fleet operators and their depots</td><td>Xanh SM runs about 1,000 electric taxis in Jakarta with depots in Limo, Kapuk and Kemayoran; Grab had about 8,500 EVs in 2024 [Kontan Xanh SM 2025]; [Xanh SM 2024]; [Electrive Aug 2024]</td><td>Two or more fast sessions a car a day, predictable</td><td><span class="rating strong">Strong</span></td></tr>
+<tr><td class="row-label">Toll-road rest areas</td><td>Jasa Marga's rest-area arm, PLN</td><td>107 units at 26 Trans-Java rest areas for the 2025-26 year-end holidays; 18,088 sessions on one Eid day [Kontan JMRB Dec 2025]; [PLN Lebaran 2026]</td><td>Very high at holidays, thin midweek</td><td><span class="rating strong">Strong</span></td></tr>
+<tr><td class="row-label">Malls and offices</td><td>Property groups</td><td>Lippo Malls, Summarecon and Plaza Senayan host fast chargers with carmakers, PLN or private operators [Detik Lippo 2023]; [Kontan Summarecon 2025]; [Terra Charge Oct 2025]</td><td>One to three hours parked; AC often enough</td><td><span class="rating fair">Fair</span></td></tr>
+<tr><td class="row-label">Dealers and brand hubs</td><td>Carmakers</td><td>Hyundai's network of about 600 chargers; BYD plans about 1,000 flash chargers by end-2027 [FN News Feb 2025]; [RCTI Aug 2026]</td><td>Own-brand drivers, often free or bundled</td><td><span class="rating weak">Weak</span></td></tr>
+<tr><td class="row-label">Homes and apartments</td><td>Owners, building managers, PLN</td><td>PLN home-charging customers rose 239% in H1 2025 to 20,053, with a 30% night discount [Bisnis Jul 2025]</td><td>Overnight, cheapest power; competes with public charging</td><td><span class="rating weak">Weak</span></td></tr>
+</tbody></table></div>
+  <div class="exhibit-note">Source: as tagged in each row; ratings [Kira estimates]</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Anchor each hub with a fleet contract and place it on a corridor; use malls for brand presence, not for the return.</span></div>
+    <div class="source-key">Kontan Xanh SM 2025 = Kontan · Xanh SM 2024 = Vingroup, Dec 2024 · Electrive Aug 2024 = electrive · Kontan JMRB Dec 2025 = Kontan · PLN Lebaran 2026 = Investortrust · Detik Lippo 2023 = Detik · Kontan Summarecon 2025 = Kontan · Terra Charge Oct 2025 = Metro TV · FN News Feb 2025 = Financial News · RCTI Aug 2026 = RCTI+ · Bisnis Jul 2025 = Bisnis Indonesia</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 03</div>
+    <h1 class="divider-title">The rules are open; <span class="accent">the sites are not</span></h1>
+    <div class="divider-thesis">A foreign operator can own its company outright and register with a business number, and since 2025 its minimum investment counts per province, not per site. <strong>What it cannot buy off the shelf is a busy site: PLN, landlords, carmakers and fleets hold them.</strong></div>
+    <div class="divider-mini-toc"><div class="toc-pill">Entry rules</div><div class="toc-pill">Who runs the network</div><div class="toc-pill">Entry modes</div><div class="toc-pill">Partner types</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 3 · Rules and rivals</div><div class="page-section-counter">015 / 031</div></div>
+    <h1 class="page-h1">A foreign operator may own 100% and register with a business number; the binding rules are on price</h1>
+    <p class="page-kicker">Five steps from company to first paid session. Highlighted: the step that sets the return.</p>
+    <div class="layout layout-full">
+<div class="exhibit">
+  <div class="exhibit-title">Entry and operating rules for a foreign-owned charging operator</div>
+  <div class="exhibit-sub">Indonesia · public charging stations (SPKLU) · rules in force to early October 2026</div>
+  <div class="exhibit-body">
+<div class="ex-flow" style="--cols:5">
+<div></div>
+<div class="stage"><span class="n">01</span>Company</div>
+<div class="stage"><span class="n">02</span>Capital</div>
+<div class="stage"><span class="n">03</span>Registration</div>
+<div class="stage"><span class="n">04</span>Power supply</div>
+<div class="stage hl"><span class="n">05</span>Selling price</div>
+<div class="lane">Rule</div>
+<div class="cell">Foreign-owned PT PMA; charging is open to <strong>100% foreign ownership</strong></div>
+<div class="cell">Minimum investment <span class=mono>Rp 10 bn</span>, now counted <strong>per province</strong>, not per site; paid-up <span class=mono>Rp 2.5 bn</span></div>
+<div class="cell">Business number (NIB) through the online system; no business-area or utility-plan approval needed</div>
+<div class="cell">PLN bulk tariff <span class=mono>Rp 1,100/kWh</span>; 50% off the connection fee</div>
+<div class="cell hl">Cap <span class=mono>Rp 2,466/kWh</span>; fee at most <span class=mono>Rp 25,000</span> fast, <span class=mono>Rp 57,000</span> ultra-fast</div>
+<div class="lane">Source</div>
+<div class="cell">[Emerhub 2026]</div>
+<div class="cell">[IBP Aug 2025]; [SIP Law 2025]</div>
+<div class="cell">[ESDM Feb 2026]</div>
+<div class="cell">[PLN Dec 2024]</div>
+<div class="cell hl">[Kepmen 182.K/2023]; [PLN Dec 2024]</div>
+<div class="lane">Watch</div>
+<div class="cell">New business code KBLI 35133 is mandatory for new registrations from 18 Jun 2026</div>
+<div class="cell">Officials say foreign investors should partner with domestic cooperatives; we found no published procedure</div>
+<div class="cell">Each site still needs local permits and a grid connection</div>
+<div class="cell">The bulk tariff was a 2024 relaxation; it can be reversed</div>
+<div class="cell hl"><strong>A cut to the fee cap halves the session margin</strong></div>
+</div>
+  </div>
+  <div class="exhibit-note">Source: as tagged in the Source row; reading of the cooperative statement [Kira estimates]</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Entry is a filing exercise of weeks; spend the effort on site contracts and on a written view from counsel on the cooperative statement.</span></div>
+    <div class="source-key">Emerhub 2026 = Emerhub, EV charging station set-up · IBP Aug 2025 = Indonesia Business Post, PP 28/2025 and SPKLU · SIP Law 2025 = SIP Law Firm, PP 28/2025 capital rules · ESDM Feb 2026 = energy ministry via CNN Indonesia · PLN Dec 2024 = PLN tariff terms · Kepmen 182.K/2023 = SPKLU service-fee decree</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 3 · Rules and rivals</div><div class="page-section-counter">016 / 031</div></div>
+    <h1 class="page-h1">PLN owns three in five public units, and private plans run far ahead of what has been built</h1>
+    <p class="page-kicker">A Japanese entrant built 300+ units in 14 months; the biggest announcements are memoranda, not chargers.</p>
+    <div class="layout layout-split">
+<div class="exhibit">
+  <div class="exhibit-title">Public charging units by owner</div>
+  <div class="exhibit-sub">Indonesia · units · November 2025 · total 4,400</div>
+  <div class="exhibit-body"><svg viewBox="0 0 500 300">
+<!-- scale: y = 260 - units*0.0769 (axis 0-2,600) ; bars x = 110 and 290, width 110 -->
+<rect class="hl-fill" x="110" y="60" width="110" height="200" rx="2"/>
+<text class="svg-value ex-label-hl" x="165" y="52" text-anchor="middle">2,600</text>
+<text class="svg-label ex-label-strong" x="165" y="278" text-anchor="middle">PLN-owned</text>
+<text class="axis-text" x="165" y="291" text-anchor="middle">59%</text>
+<rect class="base-fill" x="290" y="121.5" width="110" height="138.5" rx="2"/>
+<text class="svg-value" x="345" y="113.5" text-anchor="middle">1,800</text>
+<text class="svg-label" x="345" y="278" text-anchor="middle">Private and partners</text>
+<text class="axis-text" x="345" y="291" text-anchor="middle">41%</text>
+<text class="annot-text" x="250" y="30" text-anchor="middle">PLN also sells every operator its power</text>
+<line class="ex-zero" x1="80" y1="260" x2="430" y2="260"/>
+</svg></div>
+  <div class="exhibit-note">Source: [PLN Nov 2025]</div>
+</div>
+<div class="exhibit plain">
+  <div class="exhibit-title">Announced versus built</div>
+  <div class="exhibit-sub">Selected networks · latest public figures</div>
+  <div class="exhibit-body"><table class="kira-table ex-compact"><thead><tr><th>Network</th><th>Announced</th><th>Built or reported</th></tr></thead><tbody>
+<tr><td class="row-label">Terra Charge (JP)</td><td>1,000+ stations by end-2025 [IBP Terra 2024]</td><td>300+ units at 250 sites, Oct 2025 [Terra Charge Oct 2025]</td></tr>
+<tr><td class="row-label">Hyundai network (KR)</td><td>400+ chargers with five local operators, 2024 [S&amp;P Jul 2024]</td><td>~600 chargers, opened to all brands Feb 2025 [FN News Feb 2025]</td></tr>
+<tr><td class="row-label">V-Green (VN)</td><td>~63,000 ports, USD 300 m, by end-2025 [Vingroup May 2025]</td><td>No installed count published</td></tr>
+<tr><td class="row-label">BYD (CN)</td><td>~1,000 flash chargers by end-2027 [RCTI Aug 2026]</td><td>Plan</td></tr>
+<tr><td class="row-label">Jasa Marga rest areas</td><td>Fast units at Trans-Java rest areas</td><td>107 units at 26 rest areas, Dec 2025 [Kontan JMRB Dec 2025]</td></tr>
+</tbody></table></div>
+  <div class="exhibit-note">Source: as tagged in each row</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Expect PLN to stay the default and carmakers to build closed networks; a new operator wins on site quality and uptime, not on pin count.</span></div>
+    <div class="source-key">PLN Nov 2025 = PLN via Gaikindo · IBP Terra 2024 = Indonesia Business Post · Terra Charge Oct 2025 = Metro TV · S&amp;P Jul 2024 = S&amp;P Global Mobility · FN News Feb 2025 = Financial News (KR) · Vingroup May 2025 = Vingroup · RCTI Aug 2026 = RCTI+ · Kontan JMRB Dec 2025 = Kontan</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 3 · Rules and rivals</div><div class="page-section-counter">017 / 031</div></div>
+    <h1 class="page-h1">Owning the operator keeps price and customer; the PLN route is cheaper but hands both to PLN</h1>
+    <p class="page-kicker">Seven ways in, placed by the capital they put at risk and the control they give over pricing, data and the driver relationship.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Entry modes: capital at risk versus control</div>
+  <div class="exhibit-sub">Indonesia · foreign charging operator · positions are our judgement, 0-100 on each axis</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 316">
+<!-- scale: x = 64 + capital*6.36 ; y = 278 - control*2.62 ; split at 50 -->
+<rect class="ex-quad" x="64" y="16" width="318" height="131"/>
+<rect class="ex-quad-hl" x="382" y="16" width="318" height="131"/>
+<rect class="ex-quad" x="64" y="147" width="318" height="131"/>
+<rect class="ex-quad" x="382" y="147" width="318" height="131"/>
+<text class="ex-quad-label hl" x="692" y="31" text-anchor="end">Own the customer</text>
+<text class="ex-quad-label" x="72" y="31">Light and in control</text>
+<text class="ex-quad-label" x="72" y="270">Supplier or franchisee</text>
+<text class="ex-quad-label" x="692" y="270" text-anchor="end">Capital without control</text>
+<text class="ex-axis-title" x="382" y="300" text-anchor="middle">CAPITAL AT RISK (LOW TO HIGH)</text>
+<text class="ex-axis-title" transform="translate(30 147) rotate(-90)" text-anchor="middle">CONTROL OF PRICE AND CUSTOMER</text>
+<circle class="ex-bubble-base" cx="140.3" cy="246.6" r="9"/>
+<text class="svg-label" x="154" y="250">Equipment supply only</text>
+<circle class="ex-bubble-base" cx="286.6" cy="220.4" r="9"/>
+<text class="svg-label" x="300" y="224">PLN partnership</text>
+<circle class="ex-bubble-base" cx="242.1" cy="168" r="9"/>
+<text class="svg-label" x="256" y="172">Operator for a carmaker</text>
+<circle class="ex-bubble-base" cx="413.8" cy="141.8" r="9"/>
+<text class="svg-label" x="428" y="146">JV with a local group</text>
+<circle class="ex-bubble-base" cx="432.9" cy="110.3" r="9"/>
+<text class="svg-label" x="447" y="114">Fleet-depot operator</text>
+<circle class="ex-bubble-hl" cx="509.2" cy="55.3" r="11"/>
+<text class="svg-label ex-label-strong" x="495" y="80" text-anchor="end">Own operator, host sites, fleet anchor</text>
+<circle class="ex-bubble-base" cx="636.4" cy="68.4" r="9"/>
+<text class="svg-label" x="636.4" y="94" text-anchor="middle">Acquire a local operator</text>
+</svg></div>
+  <div class="exhibit-note">Source: [Kira estimates] from the rules and precedents on pages 15-16</div>
+</div>
+<div class="commentary"><h3>Why the top right</h3><p><strong>The PLN partnership is the lightest route, and the least controlled.</strong> PLN supplies the licence, power and app listing; the partner brings land or chargers and shares revenue [PLN 2022 packages]; [Emerhub 2026]. Pricing and the driver relationship stay with PLN.</p><p><strong>A carmaker or fleet contract removes demand risk but not much else.</strong> Hyundai built its network with five local operators, and Xanh SM charges its own taxis at depots [S&amp;P Jul 2024]; [Xanh SM 2024].</p><div class="callout-box"><span class="tag">Precedent</span>Terra Charge launched in August 2024, worked with PLN and property firms for sites, and had 300+ units at 250 sites 14 months later [Terra Charge PR 2024]; [Terra Charge Oct 2025].</div></div>
+    </div>
+    <div class="takeaway"><span>Own the operating company, and use PLN, carmakers and fleets as contracts around it rather than as the vehicle itself.</span></div>
+    <div class="source-key">PLN 2022 packages = PLN partner packages via Detik · Emerhub 2026 = Emerhub · S&amp;P Jul 2024 = S&amp;P Global Mobility · Xanh SM 2024 = Vingroup, Dec 2024 · Terra Charge PR 2024 = Terra Charge press release, Aug 2024 · Terra Charge Oct 2025 = Metro TV · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 3 · Rules and rivals</div><div class="page-section-counter">018 / 031</div></div>
+    <h1 class="page-h1">Fleets bring the customers, landlords and toll roads bring the sites; PLN brings the power</h1>
+    <p class="page-kicker">No single partner type holds both busy sites and repeat drivers, so the entrant needs one of each.</p>
+    <div class="layout layout-full">
+<div class="exhibit plain">
+  <div class="exhibit-title">Partner types and what each one holds</div>
+  <div class="exhibit-sub">Indonesia · ratings are our judgement of what the partner can bring to a foreign fast-charging operator</div>
+  <div class="exhibit-body"><table class="kira-table ex-compact"><thead><tr><th>Partner type</th><th>Busy sites</th><th>Repeat drivers</th><th>What it wants</th><th>Evidence</th></tr></thead><tbody>
+<tr><td class="row-label">Taxi and ride-hailing fleets</td><td><span class="rating fair">Depots</span></td><td><span class="rating strong">Strong</span></td><td>Low cost per kWh, uptime, depot power</td><td>Xanh SM ~1,000 taxis in Jakarta, depots in Limo, Kapuk, Kemayoran; Grab ~8,500 EVs [Kontan Xanh SM 2025]; [Electrive Aug 2024]</td></tr>
+<tr><td class="row-label">Toll-road operator</td><td><span class="rating strong">Strong</span></td><td><span class="rating fair">Holidays</span></td><td>Rent or revenue share, peak capacity</td><td>Jasa Marga's rest-area arm: 107 units at 26 rest areas [Kontan JMRB Dec 2025]</td></tr>
+<tr><td class="row-label">Mall and property groups</td><td><span class="rating strong">Strong</span></td><td><span class="rating weak">Weak</span></td><td>Footfall, tenant amenity, revenue share</td><td>Lippo Malls (52 malls with Hyundai), Summarecon (10 × 240 kW with PLN), Plaza Senayan (Terra Charge) [Detik Lippo 2023]; [Kontan Summarecon 2025]</td></tr>
+<tr><td class="row-label">PLN</td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">App users</span></td><td>Network targets met with private capital</td><td>Bulk tariff, connection discount, app listing; asks private firms to speed up [PLN Dec 2024]; [PLN Nov 2025]</td></tr>
+<tr><td class="row-label">Carmakers</td><td><span class="rating fair">Dealers</span></td><td><span class="rating fair">Own brand</span></td><td>Charging for their own buyers, often exclusive</td><td>Hyundai ~600 chargers; Geely with Voltron at dealers; BYD flash-charger plan [FN News Feb 2025]; [S&amp;P Geely 2025]; [RCTI Aug 2026]</td></tr>
+<tr><td class="row-label">Pertamina fuel stations</td><td><span class="rating fair">Fair</span></td><td><span class="rating weak">Weak</span></td><td>Green-station targets</td><td>238 green energy stations by Aug 2025, but only 6 car chargers each in Jakarta and Bali [Investortrust Pertamina 2025]</td></tr>
+</tbody></table></div>
+  <div class="exhibit-note">Source: as tagged in each row; ratings [Kira estimates]</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Shortlist one fleet anchor and two landlord groups in Jakarta before choosing hardware; take PLN's bulk tariff and app listing from day one.</span></div>
+    <div class="source-key">Kontan Xanh SM 2025 = Kontan · Electrive Aug 2024 = electrive · Kontan JMRB Dec 2025 = Kontan · Detik Lippo 2023 = Detik · Kontan Summarecon 2025 = Kontan · PLN Dec 2024, PLN Nov 2025 = PLN · FN News Feb 2025 = Financial News · S&amp;P Geely 2025 = S&amp;P Global Mobility · RCTI Aug 2026 = RCTI+ · Investortrust Pertamina 2025 = Investortrust</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 04</div>
+    <h1 class="divider-title">Start in Greater Jakarta, <span class="accent">with a fleet and a landlord</span></h1>
+    <div class="divider-thesis">Jakarta has the cars, the sessions and the partners, and it is where a pilot can reach ten sessions a day per charger. <strong>Year one costs about USD 2 million; the case breaks on the fee cap and on throughput.</strong></div>
+    <div class="divider-mini-toc"><div class="toc-pill">City sequence</div><div class="toc-pill">Year-one budget</div><div class="toc-pill">Where it breaks</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 4 · Where and how much</div><div class="page-section-counter">020 / 031</div></div>
+    <h1 class="page-h1">Greater Jakarta first, then Bandung and the toll road; Surabaya and Bali follow in year three</h1>
+    <p class="page-kicker">Six candidate areas scored on demand, room left by existing chargers, landlord partners and fleet demand.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Launch-area attractiveness for fast-charging hubs</div>
+  <div class="exhibit-sub">Score 1-5 · equal weights · higher room = fewer existing chargers per car</div>
+  <div class="exhibit-body ex-html" style="display:flex;flex-direction:column">
+<table class="ex-heat">
+<thead><tr><th class="row">Area</th><th>EV demand</th><th>Room</th><th>Landlords</th><th>Fleets</th><th>Avg</th></tr></thead>
+<tbody>
+<tr><th class="row">Greater Jakarta</th><td class="h5 hl">5</td><td class="h2">2</td><td class="h5 hl">5</td><td class="h5 hl">5</td><td class="sum">4.3</td></tr>
+<tr><th class="row">Bandung and West Java</th><td class="h4">4</td><td class="h3">3</td><td class="h4">4</td><td class="h3">3</td><td class="sum">3.5</td></tr>
+<tr><th class="row">Trans-Java toll corridor</th><td class="h4">4</td><td class="h4">4</td><td class="h3">3</td><td class="h2">2</td><td class="sum">3.3</td></tr>
+<tr><th class="row">Surabaya and East Java</th><td class="h3">3</td><td class="h4">4</td><td class="h3">3</td><td class="h3">3</td><td class="sum">3.3</td></tr>
+<tr><th class="row">Bali</th><td class="h3">3</td><td class="h3">3</td><td class="h3">3</td><td class="h3">3</td><td class="sum">3.0</td></tr>
+<tr><th class="row">Central Java and DIY</th><td class="h2">2</td><td class="h4">4</td><td class="h2">2</td><td class="h2">2</td><td class="sum">2.5</td></tr>
+</tbody></table>
+<div class="ex-scale">1 = low<i style="background:#EEF2F8"></i><i style="background:#DCE7FB"></i><i style="background:#B3CBF7"></i><i style="background:#6F9DF4"></i><i style="background:#1E5BD6"></i>5 = high · outlined = deciding cells</div>
+  </div>
+  <div class="exhibit-note">Source: [Kira estimates] scoring from [ESDM Feb 2026], [Bisnis Apr 2026], [Kontan JMRB Dec 2025], [Xanh SM 2024]</div>
+</div>
+<div class="commentary"><h3>The sequence</h3><p><strong>2027 · Greater Jakarta.</strong> 1,438 public units and 803,235 sessions in 2025; the taxi fleets and the mall groups are here. Room is the weak score: pick sites next to fleets, not next to PLN units [ESDM Feb 2026]; [Bisnis Apr 2026].</p><p><strong>2028 · Bandung and the toll road.</strong> West Java has 827 units; rest areas carry holiday peaks of four times normal [ESDM Feb 2026]; [PLN Lebaran 2026].</p><p><strong>2029 · Surabaya and Bali,</strong> once Jakarta hubs pass ten sessions a day. Terra Charge and Xanh SM both name Bali as a target [Terra Charge PR 2024]; [Kontan Xanh SM 2025].</p></div>
+    </div>
+    <div class="takeaway"><span>Put the first 20 sites within reach of taxi depots and the inner toll ring; do not spread into a second city before the Jakarta gate is met.</span></div>
+    <div class="source-key">ESDM Feb 2026 = CNN Indonesia · Bisnis Apr 2026 = Bisnis Indonesia · Kontan JMRB Dec 2025 = Kontan · Xanh SM 2024 = Vingroup · PLN Lebaran 2026 = Investortrust · Terra Charge PR 2024 = Terra Charge press release · Kontan Xanh SM 2025 = Kontan · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 4 · Where and how much</div><div class="page-section-counter">021 / 031</div></div>
+    <h1 class="page-h1">Year one costs about Rp 37 bn, or USD 2.1 million, and six-tenths of it is fast-charger hardware</h1>
+    <p class="page-kicker">A 20-site Jakarta pilot with 30 fast or ultra-fast chargers and 20 AC chargers, from company set-up to the first full year of operation.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">Year-one budget for a 20-site pilot</div>
+  <div class="exhibit-sub">Greater Jakarta · Rp bn · 2027 · excluding land, VAT and electricity (passed through to drivers)</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 316">
+<!-- scale: y = 282 - value*6.8 ; bar i: x = 21 + i*88, width 62 -->
+<rect class="base-fill" x="21" y="271.8" width="62" height="10.2"/>
+<text class="svg-value" x="52" y="265.8" text-anchor="middle">1.5</text>
+<text class="svg-label" x="52" y="297" text-anchor="middle">Set-up</text>
+<text class="axis-text" x="52" y="309" text-anchor="middle">entity, counsel</text>
+<line class="ex-conn" x1="83" y1="271.8" x2="109" y2="271.8"/>
+<rect class="hl-fill" x="109" y="122.2" width="62" height="149.6"/>
+<text class="svg-value ex-label-hl" x="140" y="116.2" text-anchor="middle">+22.0</text>
+<text class="svg-label" x="140" y="297" text-anchor="middle">Fast chargers</text>
+<text class="axis-text" x="140" y="309" text-anchor="middle">30 units</text>
+<line class="ex-conn" x1="171" y1="122.2" x2="197" y2="122.2"/>
+<rect class="base-fill" x="197" y="115.4" width="62" height="6.8"/>
+<text class="svg-value" x="228" y="109.4" text-anchor="middle">+1.0</text>
+<text class="svg-label" x="228" y="297" text-anchor="middle">AC chargers</text>
+<text class="axis-text" x="228" y="309" text-anchor="middle">20 × 22 kW</text>
+<line class="ex-conn" x1="259" y1="115.4" x2="285" y2="115.4"/>
+<rect class="base-fill" x="285" y="95" width="62" height="20.4"/>
+<text class="svg-value" x="316" y="89" text-anchor="middle">+3.0</text>
+<text class="svg-label" x="316" y="297" text-anchor="middle">Grid, site works</text>
+<text class="axis-text" x="316" y="309" text-anchor="middle">after 50% discount</text>
+<line class="ex-conn" x1="347" y1="95" x2="373" y2="95"/>
+<rect class="base-fill" x="373" y="81.4" width="62" height="13.6"/>
+<text class="svg-value" x="404" y="75.4" text-anchor="middle">+2.0</text>
+<text class="svg-label" x="404" y="297" text-anchor="middle">Software</text>
+<text class="axis-text" x="404" y="309" text-anchor="middle">app, payments</text>
+<line class="ex-conn" x1="435" y1="81.4" x2="461" y2="81.4"/>
+<rect class="base-fill" x="461" y="47.4" width="62" height="34"/>
+<text class="svg-value" x="492" y="41.4" text-anchor="middle">+5.0</text>
+<text class="svg-label" x="492" y="297" text-anchor="middle">Team, office</text>
+<text class="axis-text" x="492" y="309" text-anchor="middle">~10 staff</text>
+<line class="ex-conn" x1="523" y1="47.4" x2="549" y2="47.4"/>
+<rect class="base-fill" x="549" y="30.4" width="62" height="17"/>
+<text class="svg-value" x="580" y="24.4" text-anchor="middle">+2.5</text>
+<text class="svg-label" x="580" y="297" text-anchor="middle">Operations</text>
+<text class="axis-text" x="580" y="309" text-anchor="middle">upkeep, marketing</text>
+<line class="ex-conn" x1="611" y1="30.4" x2="637" y2="30.4"/>
+<rect class="ex-total-fill" x="637" y="30.4" width="62" height="251.6"/>
+<text class="svg-value" x="668" y="24.4" text-anchor="middle">37.0</text>
+<text class="svg-label ex-label-strong" x="668" y="297" text-anchor="middle">Year one</text>
+<text class="axis-text" x="668" y="309" text-anchor="middle">~USD 2.1 m</text>
+<line class="ex-zero" x1="10" y1="282" x2="710" y2="282"/>
+</svg></div>
+  <div class="exhibit-note">Source: [Kira estimates]; hardware from [PLN 2022 packages] at 2026 discounts; connection discount [PLN Dec 2024]; Rp 17,950 per USD [BI Sep 2026]</div>
+</div>
+<div class="commentary"><h3>What the budget assumes</h3><p><strong>Hardware dominates.</strong> Twenty 60 kW units at Rp 0.6 bn and ten 120 kW units at Rp 1.0 bn installed make Rp 22 bn; the spend alone clears the Rp 10 bn per-province investment floor [PLN 2022 packages]; [IBP Aug 2025].</p><p><strong>Revenue covers little of year one.</strong> With chargers live for about six months at four sessions a day, sales reach about Rp 2-3 bn [Kira estimates].</p><div class="callout-box"><span class="tag">Range</span>Rp 30-45 bn (USD 1.7-2.5 m), depending on hardware prices, how many sites need new transformers, and team size.</div></div>
+    </div>
+    <div class="takeaway"><span>Budget USD 2-2.5 million for year one, and buy chargers in two tranches so the second waits for the month-9 utilisation reading.</span></div>
+    <div class="source-key">PLN 2022 packages = PLN partner packages via Detik · PLN Dec 2024 = PLN tariff and connection terms · IBP Aug 2025 = Indonesia Business Post · BI Sep 2026 = Bank Indonesia JISDOR · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 4 · Where and how much</div><div class="page-section-counter">022 / 031</div></div>
+    <h1 class="page-h1">A cut to the service-fee cap would hurt the case more than anything the operator controls</h1>
+    <p class="page-kicker">Payback of one 120 kW charger at a base of eight sessions a day (6.1 years), with one input changed at a time.</p>
+    <div class="layout layout-main-side">
+<div class="exhibit">
+  <div class="exhibit-title">What moves the payback of one ultra-fast charger</div>
+  <div class="exhibit-sub">Indonesia · years · base 8 sessions a day, Rp 1.0 bn installed · green = shorter, red = longer</div>
+  <div class="exhibit-body"><svg viewBox="0 0 720 316">
+<!-- scale: x = 250 + years*36 (axis 0-12) ; row i: y = 34 + i*52, height 28 ; base 6.1 at x = 469.6 -->
+<text class="svg-label ex-label-strong" x="240" y="47" text-anchor="end">Fee cap cut to Rp 25,000</text>
+<text class="axis-text" x="240" y="59" text-anchor="end">no upside: the fee is capped</text>
+<rect class="neg-fill" x="469.6" y="34" width="183.6" height="28"/>
+<text class="svg-value" x="659" y="52">11.2</text>
+<text class="svg-label" x="240" y="99" text-anchor="end">Sessions a day: 10 vs 6</text>
+<rect class="pos-fill" x="419.2" y="86" width="50.4" height="28"/>
+<rect class="neg-fill" x="469.6" y="86" width="90" height="28"/>
+<text class="svg-value" x="413" y="104" text-anchor="end">4.7</text>
+<text class="svg-value" x="565.6" y="104">8.6</text>
+<text class="svg-label" x="240" y="151" text-anchor="end">Installed cost: Rp 0.6 vs 1.2 bn</text>
+<rect class="pos-fill" x="379.6" y="138" width="90" height="28"/>
+<rect class="neg-fill" x="469.6" y="138" width="43.2" height="28"/>
+<text class="svg-value" x="373" y="156" text-anchor="end">3.6</text>
+<text class="svg-value" x="518.8" y="156">7.3</text>
+<text class="svg-label" x="240" y="203" text-anchor="end">Landlord share: 5% vs 25%</text>
+<rect class="pos-fill" x="430" y="190" width="39.6" height="28"/>
+<rect class="neg-fill" x="469.6" y="190" width="57.6" height="28"/>
+<text class="svg-value" x="424" y="208" text-anchor="end">5.0</text>
+<text class="svg-value" x="533.2" y="208">7.7</text>
+<text class="svg-label" x="240" y="255" text-anchor="end">Bulk tariff back to Rp 1,644</text>
+<rect class="neg-fill" x="469.6" y="242" width="64.8" height="28"/>
+<text class="svg-value" x="540.4" y="260">7.9</text>
+<line class="ex-ref" x1="469.6" y1="22" x2="469.6" y2="282"/>
+<text class="ex-axis-title" x="473.6" y="18">BASE 6.1 YEARS</text>
+<line class="axis-line" x1="250" y1="284" x2="682" y2="284"/>
+<text class="axis-text" x="250" y="298" text-anchor="middle">0</text>
+<text class="axis-text" x="322" y="298" text-anchor="middle">2</text>
+<text class="axis-text" x="394" y="298" text-anchor="middle">4</text>
+<text class="axis-text" x="466" y="298" text-anchor="middle">6</text>
+<text class="axis-text" x="538" y="298" text-anchor="middle">8</text>
+<text class="axis-text" x="610" y="298" text-anchor="middle">10</text>
+<text class="axis-text" x="682" y="298" text-anchor="middle">12</text>
+<text class="ex-axis-title" x="466" y="312" text-anchor="middle">YEARS TO PAY BACK</text>
+</svg></div>
+  <div class="exhibit-note">Source: [Kira estimates] on the session model of page 11; inputs [Kepmen 182.K/2023], [PLN Dec 2024], [PLN 2022 packages]</div>
+</div>
+<div class="commentary"><h3>Where it breaks, beyond the model</h3><p><strong>Closed brand networks take the best drivers.</strong> BYD, the best-selling brand, plans about 1,000 flash chargers by end-2027, and Hyundai already runs its own network [RCTI Aug 2026]; [FN News Feb 2025].</p><p><strong>Home charging takes the routine sessions.</strong> PLN gives a 30% night discount, and home-charging customers rose 239% in the first half of 2025 [Bisnis Jul 2025].</p><div class="callout-box"><span class="tag">Watch</span>The rupiah traded near Rp 18,000 per USD in September 2026; imported hardware costs move with it [BI Sep 2026].</div></div>
+    </div>
+    <div class="takeaway"><span>Write the fee cap and the bulk tariff into the board case as named risks, and hold the second hardware order until month 9.</span></div>
+    <div class="source-key">Kepmen 182.K/2023 = SPKLU service-fee decree · PLN Dec 2024 = PLN tariff terms · PLN 2022 packages = PLN partner packages via Detik · RCTI Aug 2026 = RCTI+ · FN News Feb 2025 = Financial News · Bisnis Jul 2025 = Bisnis Indonesia · BI Sep 2026 = Bank Indonesia JISDOR · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 05</div>
+    <h1 class="divider-title">Decision: build hubs, <span class="accent">not a map of pins</span></h1>
+    <div class="divider-thesis">The return comes from a small number of fast chargers that turn ten sessions a day, placed with a fleet and a landlord. <strong>Conditional go, with the condition measured in sessions per charger by month nine.</strong></div>
+    <div class="divider-mini-toc"><div class="toc-pill">Conditions</div><div class="toc-pill">Options compared</div><div class="toc-pill">Risks</div><div class="toc-pill">Stage gates</div></div>
+  </div>
+</div>
+
+<div class="page exhibit-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 5 · Decision</div><div class="page-section-counter">024 / 031</div></div>
+    <h1 class="page-h1">Six conditions decide the case; we are least sure of hub throughput and of the fee cap</h1>
+    <p class="page-kicker">Each condition comes with a test the team can run inside the pilot, before the second hardware order.</p>
+    <div class="layout layout-full">
+<div class="exhibit plain">
+  <div class="exhibit-title">What would have to be true, and how to test it</div>
+  <div class="exhibit-sub">Foreign charging operator · Indonesia · confidence = our judgement of the evidence at October 2026</div>
+  <div class="exhibit-body"><table class="kira-table ex-compact"><thead><tr><th>Condition</th><th>How sure we are</th><th>How to test it</th></tr></thead><tbody>
+<tr><td class="row-label">Hub chargers reach ten sessions a day within 18 months</td><td><span class="rating weak">Low</span></td><td>Track sessions per unit monthly; go if hub units average 6+ by month 9 and are rising</td></tr>
+<tr><td class="row-label">The service-fee cap and the bulk tariff hold</td><td><span class="rating fair">Medium</span></td><td>Follow energy-ministry reviews; ask PLN for a written tariff term in the supply contract</td></tr>
+<tr><td class="row-label">A fleet will commit volume to a third-party hub</td><td><span class="rating fair">Medium</span></td><td>Letter of intent from one fleet for 200+ cars before signing sites</td></tr>
+<tr><td class="row-label">Landlords accept 15% or less of revenue</td><td><span class="rating fair">Medium</span></td><td>Term sheets with two mall or property groups; walk away above 20%</td></tr>
+<tr><td class="row-label">Uptime stays at 97% or better</td><td><span class="rating strong">High</span></td><td>Local service partner with spares in Jakarta; publish uptime monthly</td></tr>
+<tr><td class="row-label">The cooperative statement adds no ownership condition</td><td><span class="rating fair">Medium</span></td><td>Written opinion from counsel and a query to the investment ministry before the company is set up</td></tr>
+</tbody></table></div>
+  <div class="exhibit-note">Source: [Kira estimates] based on [Kepmen 182.K/2023], [PLN Dec 2024] and [IBP Aug 2025]</div>
+</div>
+    </div>
+    <div class="takeaway"><span>Make the month-9 sessions reading the decision point for the second hardware tranche, and get the fleet letter before the first.</span></div>
+    <div class="source-key">Kepmen 182.K/2023 = SPKLU service-fee decree · PLN Dec 2024 = PLN tariff terms · IBP Aug 2025 = Indonesia Business Post · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page decision-scorecard-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 5 · Decision</div><div class="page-section-counter">025 / 031</div></div>
+    <h1 class="page-h1">A wholly owned operator with a fleet anchor and host sites is the only route strong on control and volume</h1>
+    <p class="page-subhead">Six entry routes rated on what decides a fast-charging business under capped prices. Ratings are our judgement from the rules and the precedent entries [Kira estimates].</p>
+    <div class="scorecard-wrap">
+      <table class="kira-table"><thead><tr><th>Entry route</th><th>Time to first site</th><th>Control of price and data</th><th>Sessions per charger</th><th>Capital at risk</th><th>Regulatory fit</th></tr></thead><tbody>
+<tr class="recommended"><td class="row-label">Own operator + host sites + fleet anchor</td><td><span class="rating fair">Fair</span><br><span class="mono">6-9 months</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating strong">Strong</span><br><span class="mono">fleet volume</span></td><td><span class="rating weak">Weak</span><br><span class="mono">USD 2 m yr 1</span></td><td><span class="rating strong">Strong</span><br><span class="mono">100% foreign</span></td></tr>
+<tr class=""><td class="row-label">PLN partnership</td><td><span class="rating strong">Strong</span></td><td><span class="rating weak">Weak</span><br><span class="mono">PLN app, PLN price</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating strong">Strong</span></td></tr>
+<tr class=""><td class="row-label">Operator for a carmaker network</td><td><span class="rating strong">Strong</span></td><td><span class="rating weak">Weak</span><br><span class="mono">brand rules</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating strong">Strong</span></td></tr>
+<tr class=""><td class="row-label">Fleet-depot operator only</td><td><span class="rating strong">Strong</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">Fair</span><br><span class="mono">private, not public</span></td></tr>
+<tr class=""><td class="row-label">JV with a local group or cooperative</td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating fair">Fair</span></td><td><span class="rating strong">Strong</span><br><span class="mono">covers the statement</span></td></tr>
+<tr class=""><td class="row-label">Equipment supply only</td><td><span class="rating strong">Strong</span></td><td><span class="rating weak">Weak</span></td><td><span class="rating weak">n/a</span></td><td><span class="rating strong">Strong</span></td><td><span class="rating strong">Strong</span></td></tr>
+</tbody></table>
+      <div class="scorecard-rail"><h3>Our recommendation</h3><p><strong>Japanese or Korean operator:</strong> a wholly owned company, a fleet anchor and two landlord groups in Jakarta; Terra Charge is the precedent [Terra Charge Oct 2025].</p><p><strong>Chinese hardware maker:</strong> supply and service first, then operate hubs with a fleet partner once the hardware is proven locally.</p><p><strong>What would change it:</strong> a published cooperative condition would make the JV route the default for all three.</p></div>
+    </div>
+    <div class="source-key">Terra Charge Oct 2025 = Metro TV, Terra Charge Indonesia, Oct 2025 · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page risk-matrix-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 5 · Decision</div><div class="page-section-counter">026 / 031</div></div>
+    <h1 class="page-h1">The biggest risk is quiet chargers; the rule that matters most is the fee cap</h1>
+    <p class="page-subhead">Eight risks placed by likelihood to 2029 and impact on payback; severity is shown by cell shading, not scores [Kira estimates].</p>
+    <div class="risk-matrix-wrap">
+      <div class="risk-matrix-chart">
+        <div class="chart-title">Risk map for a fast-charging hub business</div>
+        <div class="chart-subtitle">Likelihood to 2029 × impact on payback and cash</div>
+        <div class="risk-grid-svg"><svg viewBox="0 0 640 330">
+<rect class="risk-cell-bg-low" x="71.0" y="230.2" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="71.0" y="175.4" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="71.0" y="120.6" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="71.0" y="65.8" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="71.0" y="11.0" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="183.0" y="230.2" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="183.0" y="175.4" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="183.0" y="120.6" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="183.0" y="65.8" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="183.0" y="11.0" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="295.0" y="230.2" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="295.0" y="175.4" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="295.0" y="120.6" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="295.0" y="65.8" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-high" x="295.0" y="11.0" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="407.0" y="230.2" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="407.0" y="175.4" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="407.0" y="120.6" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-high" x="407.0" y="65.8" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-high" x="407.0" y="11.0" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-low" x="519.0" y="230.2" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-med" x="519.0" y="175.4" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-high" x="519.0" y="120.6" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-high" x="519.0" y="65.8" width="110.0" height="52.8"/>
+<rect class="risk-cell-bg-high" x="519.0" y="11.0" width="110.0" height="52.8"/>
+<text class="risk-cell-label" x="412.0" y="95.2">Quiet chargers</text>
+<text class="risk-cell-label" x="300.0" y="40.4">Fee cap cut</text>
+<text class="risk-cell-label" x="412.0" y="143.5">Brand networks</text>
+<text class="risk-cell-label" x="412.0" y="156.5">Rupiah on hardware</text>
+<text class="risk-cell-label" x="300.0" y="150.0">Cooperative rule</text>
+<text class="risk-cell-label" x="188.0" y="95.2">Bulk tariff ends</text>
+<text class="risk-cell-label" x="524.0" y="204.8">Home charging</text>
+<text class="risk-cell-label" x="300.0" y="204.8">Grid delays</text>
+<text class="risk-axis-label" x="126.0" y="300" text-anchor="middle">Rare</text>
+<text class="risk-axis-label" x="238.0" y="300" text-anchor="middle">Unlikely</text>
+<text class="risk-axis-label" x="350.0" y="300" text-anchor="middle">Possible</text>
+<text class="risk-axis-label" x="462.0" y="300" text-anchor="middle">Likely</text>
+<text class="risk-axis-label" x="574.0" y="300" text-anchor="middle">Near certain</text>
+<text class="risk-axis-label" x="64" y="259.6" text-anchor="end">Marginal</text>
+<text class="risk-axis-label" x="64" y="204.8" text-anchor="end">Minor</text>
+<text class="risk-axis-label" x="64" y="150.0" text-anchor="end">Moderate</text>
+<text class="risk-axis-label" x="64" y="95.2" text-anchor="end">Major</text>
+<text class="risk-axis-label" x="64" y="40.4" text-anchor="end">Severe</text>
+<text class="risk-axis-title" x="350.0" y="320" text-anchor="middle">LIKELIHOOD BY 2029</text>
+<text class="risk-axis-title" transform="translate(12 147.0) rotate(-90)" text-anchor="middle">IMPACT</text>
+</svg></div>
+        <div class="risk-legend-strip">Shading: low · medium · high severity</div>
+      </div>
+      <div class="risk-rail"><div class="risk-rail-card"><div class="name">Quiet chargers</div><span class="severity-chip high" style="align-self: flex-start; margin-bottom: 6px;">HIGH</span><div class="body">Jakarta averaged 2-3 sessions a day per unit. Site next to fleets, buy hardware in two tranches.</div><div class="footer-row"><div class="src">[Bisnis Apr 2026]</div></div></div><div class="risk-rail-card"><div class="name">Fee cap cut</div><span class="severity-chip high" style="align-self: flex-start; margin-bottom: 6px;">HIGH</span><div class="body">The fee is about 70% of what an operator keeps. Model a cut in the board case; track ministry reviews.</div><div class="footer-row"><div class="src">[Kepmen 182.K/2023]</div></div></div><div class="risk-rail-card"><div class="name">Closed brand networks</div><span class="severity-chip med" style="align-self: flex-start; margin-bottom: 6px;">MED</span><div class="body">BYD and Hyundai serve their own drivers. Win on open access and uptime; offer to run brand sites.</div><div class="footer-row"><div class="src">[RCTI Aug 2026]</div></div></div></div>
+    </div>
+    <div class="risk-source-strip">Bisnis Apr 2026 = Bisnis Indonesia, Jakarta SPKLU sessions · Kepmen 182.K/2023 = SPKLU service-fee decree · RCTI Aug 2026 = RCTI+, BYD flash charging · Kira estimates = KIRA analyst triangulation</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page stage-gate-page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Chapter 5 · Decision</div><div class="page-section-counter">027 / 031</div></div>
+    <h1 class="page-h1">Prove six sessions a day on Jakarta hubs by month nine before ordering the second tranche</h1>
+    <p class="page-subhead">Four gates, each with a test the team can measure. Budgets cover company, hardware, sites, software and team, not land or electricity [Kira estimates].</p>
+    <div class="gate-wrap">
+      <table class="kira-table"><thead><tr><th>Gate</th><th>What happens</th><th>Budget</th><th>Duration</th><th>Go / no-go test</th></tr></thead><tbody>
+<tr><td class="gate-name">G0 · Set up</td><td>Company and business number, counsel's view on the cooperative statement, PLN bulk-power contract, fleet letter, two landlord term sheets</td><td><span class="mono">Rp 3-4 bn</span></td><td><span class="mono">Q1 2027</span></td><td>Fleet letter for 200+ cars; landlord share at or below 15%</td></tr>
+<tr><td class="gate-name">G1 · Jakarta pilot</td><td>20 sites; first tranche of 15 fast and 20 AC units live; second tranche of 15 fast units ordered at month 9 only if the test is met</td><td><span class="mono">Rp 30-33 bn</span></td><td><span class="mono">Q2-Q4 2027</span></td><td>Hub units average 6+ sessions a day by month 9; uptime 97%+. <strong>No-go: under 4 a day at month 12</strong></td></tr>
+<tr><td class="gate-name">G2 · Corridor</td><td>Bandung and Jakarta-Bandung toll sites with the rest-area operator; 20-30 more fast units</td><td><span class="mono">Rp 25-30 bn</span></td><td><span class="mono">2028</span></td><td>Hub units at 9-10 sessions a day; fleets supply 30%+ of kWh</td></tr>
+<tr><td class="gate-name">G3 · Second cities</td><td>Surabaya and Bali hubs with the same fleet-and-landlord model</td><td><span class="mono">Rp 30-40 bn a year</span></td><td><span class="mono">2029 onward</span></td><td>Trailing 12-month payback per hub at five years or less</td></tr>
+</tbody></table>
+      <div class="action-list"><h3>First 90 days</h3><ol><li>Incorporate the operating company and get counsel's written view on the cooperative statement.</li><li>Sign a letter of intent with one taxi or ride-hailing fleet.</li><li>Agree term sheets with two Jakarta landlord groups, at 15% or less.</li><li>Apply for PLN's bulk tariff and connection discount on the first sites.</li><li>Tender hardware at 2026 import prices, in two tranches.</li><li>Set the monthly dashboard: sessions per unit, kWh, uptime, fleet share.</li></ol></div>
+    </div>
+    <div class="source-key">Kira estimates = KIRA analyst triangulation; rules from PP 28/2025, Kepmen 182.K/2023 and PLN's 2024 tariff terms</div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page players-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 06 · Who's who</div>
+      <div class="page-section-counter">028 / 031</div>
+    </div>
+    <h1 class="page-h1">Who's who: 16 players, and the sites belong to landlords, toll roads and fleets</h1>
+    <p class="page-subhead">Companies that supply power, run public chargers, build brand networks, host chargers or fill them. Counts are the latest reported.</p>
+    <div class="pl-grid" style="grid-template-columns: repeat(5, 1fr);">
+      <div class="pl-col">
+        <div class="pl-stage">Power supply</div>
+        <div class="pl-card">
+          <div class="pl-name"><span>PLN</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">State utility; bulk power, largest SPKLU operator · PLN Mobile</div>
+          <div class="pl-scale">4,655 units with partners, end-2025 <span class="pl-src">[Kontan Jan 2026]</span></div>
+        </div>
+      </div>
+      <div class="pl-col">
+        <div class="pl-stage">Charging operators</div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Terra Charge Indonesia</span><span class="pl-origin">JP</span></div>
+          <div class="pl-meta">Japanese-owned public charging network · Terra Charge</div>
+          <div class="pl-scale">300+ units at 250 sites, Oct 2025 <span class="pl-src">[Terra Charge Oct 2025]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Voltron</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">Charging network; hubs and dealer sites · Voltron</div>
+          <div class="pl-scale">15 fast chargers at Puri Indah hub, 2026 <span class="pl-src">[Otodriver Voltron 2026]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Casion</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">Charging operator; Hyundai network partner · Casion</div>
+          <div class="pl-scale"> <span class="pl-src">[S&amp;P Jul 2024]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Utomo Charge+</span></div>
+          <div class="pl-meta">Charging operator; Hyundai network partner · Charge+</div>
+          <div class="pl-scale"> <span class="pl-src">[S&amp;P Jul 2024]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Usaha Chunlan Indonesia</span></div>
+          <div class="pl-meta">Partner in PLN hub at Summarecon Mall Bekasi</div>
+          <div class="pl-scale"> <span class="pl-src">[Kontan Summarecon 2025]</span></div>
+        </div>
+      </div>
+      <div class="pl-col">
+        <div class="pl-stage">Carmaker networks</div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Hyundai Motors Indonesia</span><span class="pl-origin">KR</span></div>
+          <div class="pl-meta">Brand network, opened to all EVs · Hyundai</div>
+          <div class="pl-scale">~600 chargers, Feb 2025 <span class="pl-src">[FN News Feb 2025]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>BYD Indonesia</span><span class="pl-origin">CN</span></div>
+          <div class="pl-meta">Best-selling EV brand; flash-charger plan · BYD, Denza</div>
+          <div class="pl-scale">~1,000 flash chargers planned by end-2027 <span class="pl-src">[RCTI Aug 2026]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Geely</span><span class="pl-origin">CN</span></div>
+          <div class="pl-meta">Chargers at dealers with Voltron · Geely</div>
+          <div class="pl-scale"> <span class="pl-src">[S&amp;P Geely 2025]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>V-Green</span><span class="pl-origin">VN</span></div>
+          <div class="pl-meta">VinFast charging arm; partner MoUs · VinFast</div>
+          <div class="pl-scale">~63,000 ports in MoUs, May 2025 <span class="pl-src">[Vingroup May 2025]</span></div>
+        </div>
+      </div>
+      <div class="pl-col">
+        <div class="pl-stage">Site hosts</div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Lippo Malls Indonesia</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">Mall operator; Hyundai chargers · Lippo Malls</div>
+          <div class="pl-scale">52 malls in the Hyundai MoU <span class="pl-src">[Detik Lippo 2023]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Summarecon</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">Mall owner; 10 × 240 kW hub with PLN · Summarecon Mall Bekasi</div>
+          <div class="pl-scale"> <span class="pl-src">[Kontan Summarecon 2025]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Plaza Senayan</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">Jakarta mall; Terra Charge site · Plaza Senayan</div>
+          <div class="pl-scale"> <span class="pl-src">[Terra Charge Oct 2025]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Jasamarga Related Business</span><span class="pl-origin">ID</span></div>
+          <div class="pl-meta">Toll rest-area operator · Travoy rest areas</div>
+          <div class="pl-scale">107 units at 26 rest areas, Dec 2025 <span class="pl-src">[Kontan JMRB Dec 2025]</span></div>
+        </div>
+      </div>
+      <div class="pl-col">
+        <div class="pl-stage">Fleets</div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Xanh SM</span><span class="pl-origin">VN</span></div>
+          <div class="pl-meta">Electric taxi operator with depots · Xanh SM</div>
+          <div class="pl-scale">~1,000 taxis in Jakarta, 2025 <span class="pl-src">[Kontan Xanh SM 2025]</span></div>
+        </div>
+        <div class="pl-card">
+          <div class="pl-name"><span>Grab Indonesia</span><span class="pl-origin">SG</span></div>
+          <div class="pl-meta">Ride-hailing with EV fleet · Grab</div>
+          <div class="pl-scale">~8,500 EVs, 2024 <span class="pl-src">[Electrive Aug 2024]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">Kontan Jan 2026 = Kontan · Terra Charge Oct 2025 = Metro TV · Otodriver Voltron 2026 = Otodriver · S&amp;P Jul 2024 = S&amp;P · Kontan Summarecon 2025 = Kontan · FN News Feb 2025 = FN News · RCTI Aug 2026 = RCTI+ · S&amp;P Geely 2025 = S&amp;P · Vingroup May 2025 = Vingroup · Detik Lippo 2023 = Detik · Kontan JMRB Dec 2025 = Kontan · Kontan Xanh SM 2025 = Kontan · Electrive Aug 2024 = electrive</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Players as of 2026-10. Origin = home country of the owner or brand.</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Section 07 · Methodology &amp; Sources</div><div class="page-section-counter">029 / 031</div></div>
+    <h1 class="page-h1">Methodology and sources</h1>
+    <p class="page-subhead">Where a figure carries a named source tag (e.g. [ESDM Feb 2026], [Gaikindo 2025]), it comes from that source; the full citation is below. Where it carries [Kira estimates], our analysts derived it from published inputs with the method shown on the page: sessions per charger divide reported sessions by the average unit count; session margins apply the capped price and fee, PLN's bulk tariff and stated landlord and payment shares; payback divides installed cost by annual margin less upkeep. About one in six tagged figures is KIRA-derived. Desk research only, to early October 2026; no interviews. Rules are read from official statements and legal briefings; this is market research, not legal advice.</p>
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">Source Index</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.6;"><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">BI Sep 2026</span>Bank Indonesia JISDOR reference rate, Rp 17,953.5 per USD on 29 Sep 2026, via Katadata Databoks</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Bisnis Apr 2026</span>Bisnis Indonesia, EV demand in Jakarta: SPKLU sessions jump fivefold (803,235 in 2025; 430,593 in Q1 2026), Apr 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Bisnis Jul 2025</span>Bisnis Indonesia, PLN home-charging customers up 239% in H1 2025, with a 30% night discount, Jul 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Detik Lippo 2023</span>Detik, Hyundai to build SPKLU at 52 Lippo malls from Aceh to Makassar, 2023</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Electrive Aug 2024</span>electrive, Grab integrates 1,000 BYD electric vehicles in Indonesia (about 8,500 EVs in operation), Aug 2024</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Emerhub 2026</span>Emerhub, how to open an electric vehicle charging station in Indonesia (KBLI 35133, ownership, PLN schemes), updated Jul 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">ESDM Feb 2026</span>CNN Indonesia, energy ministry: 4,778 SPKLU at 3,093 locations and 1,907 battery-swap stations at Dec 2025, by province; simplified registration, Feb 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">FN News Feb 2025</span>Financial News (Korea), Hyundai opens its Indonesian charging network of about 600 chargers to all EV brands, Feb 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Gaikindo 2022-24</span>Gaikindo battery-electric car wholesales 2022-2024 (10,327; 17,062; 43,854), via Kontan and just-auto</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Gaikindo 2025</span>Gaikindo, 103,931 battery-electric cars of 803,687 total wholesales in 2025, via Jawa Pos, Jan 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Gaikindo Aug 2026</span>Gaikindo, 103,300 battery-electric cars and 599,491 total wholesales in Jan-Aug 2026, via just-auto, Sep 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Gaikindo Nov 2025</span>Gaikindo, monthly battery-electric wholesales by brand, Jan-Nov 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">IBP Aug 2025</span>Indonesia Business Post, EV charging investment surges after PP 28/2025 counts the Rp 10 bn minimum per province; BKPM on cooperative partnership, Aug 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">IBP Terra 2024</span>Indonesia Business Post, Terra Charge to build 1,000 EV charging stations in Indonesia by 2025, 2024</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Investortrust Pertamina 2025</span>Investortrust, Pertamina green energy stations (238 by Aug 2025) and SPKLU in Jakarta and Bali, 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Kepmen 182.K/2023</span>Ministerial Decree 182.K/TL.04/MEM.S/2023 on SPKLU service fees: up to Rp 25,000 fast and Rp 57,000 ultra-fast per session, excluding VAT</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Kira estimates</span>KIRA analyst triangulation; method shown on each page</div></div>
+    </div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header"><div class="page-section-tag">Section 07 · Methodology &amp; Sources</div><div class="page-section-counter">030 / 031</div></div>
+    <h1 class="page-h1">Methodology and sources (continued)</h1>
+    
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', var(--font-cjk), monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">Source Index</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.6;"><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Kontan Jan 2026</span>Kontan, up 44%: PLN and partners operate 4,655 SPKLU in 2025, by speed class, Jan 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Kontan JMRB Dec 2025</span>Kontan, Jasamarga Related Business readies 107 SPKLU at 26 rest areas for the year-end holidays, Dec 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Kontan Summarecon 2025</span>Kontan, largest SPKLU opens at Summarecon Mall Bekasi with PLN and Usaha Chunlan (10 × 240 kW), Apr 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Kontan Xanh SM 2025</span>Kontan, Xanh SM runs about 1,000 electric taxis in Jakarta, 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Otodriver Voltron 2026</span>Otodriver, Voltron opens Puri Indah hub with 15 fast chargers, 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">PLN 2022 packages</span>Detik, PLN SPKLU partner packages: 50 kW from Rp 573-601 m, above 100 kW from Rp 1,056-1,084 m, Jul 2022</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">PLN Dec 2024</span>Listrik Indonesia, PLN gives SPKLU operators a bulk tariff of Rp 1,100 per kWh (from Rp 1,644) and 50% off connection; selling price Rp 2,466 per kWh, Dec 2024</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">PLN Lebaran 2026</span>Investortrust, record 18,088 SPKLU sessions and 427,980 kWh on 23 Mar 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">PLN Nov 2025</span>Gaikindo news, PLN urges private sector to speed up SPKLU (4,400 units: 2,600 PLN, 1,800 private; one per 15 EVs), Nov 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">RCTI Aug 2026</span>RCTI+, BYD flash charging outside China, about 1,000 units in Indonesia by end-2027, Aug 2026</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">S&amp;P Geely 2025</span>S&amp;P Global Mobility, Geely and Voltron partner to expand EV charging in Indonesia, 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">S&amp;P Jul 2024</span>S&amp;P Global Mobility, Hyundai signs MoU with charge-point operators to add over 400 chargers, Jul 2024</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">SIP Law 2025</span>SIP Law Firm, PP 28/2025: paid-up capital of Rp 2.5 bn per foreign-owned company, 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Terra Charge Oct 2025</span>Metro TV, Terra Charge Indonesia: 300+ units at 250 locations, opens at Plaza Senayan, Oct 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Terra Charge PR 2024</span>Terra Charge press release (Japanese): first Japanese charging service in Indonesia, 77 chargers at 57 sites, Aug 2024</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Vingroup May 2025</span>Vingroup, V-Green signs MoUs with four partners for about 63,000 VinFast charging ports in Indonesia, USD 300 m, May 2025</div><div style="margin-bottom: 6px; color: var(--text-mid);"><span class="mono" style="color: var(--primary); margin-right: 6px;">Xanh SM 2024</span>Vingroup, Xanh SM launches electric taxi service in Indonesia (depots in Limo, Kapuk, Kemayoran), Dec 2024</div></div>
+    </div>
+    <div class="page-footer"><div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div><div>Indonesia EV charging 2026 · Market entry brief</div></div>
+  </div>
+</div>
+
+<div class="page closing-page">
+  <div class="cl-wrap">
+    <div class="cl-top">
+      <img class="cl-logo" src="brand/logo-white.png" alt="KIRA Research">
+      <div class="cl-meta">Indonesia EV charging &nbsp;|&nbsp; Market entry brief 2026</div>
+    </div>
+    <div class="cl-eyebrow">Thank you</div>
+    <div class="cl-title">Thank you<br><span class="soft">for your time.</span></div>
+    <p class="cl-body">We hope this report gives your team a clear view of the market and the decisions ahead. For further discussion, custom research or partnership opportunities, please get in touch with our research team.</p>
+    <div class="cl-contacts">
+      <div class="cl-contact"><div class="cl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg></div><div><div class="k">Email</div><div class="v">hello@kiraresearch.com</div></div></div>
+      <div class="cl-contact"><div class="cl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 2.6 15.2 0 18M12 3c-2.6 2.8-2.6 15.2 0 18"/></svg></div><div><div class="k">Website</div><div class="v">www.kiraresearch.com</div></div></div>
+      <div class="cl-contact"><div class="cl-icon"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.5 9.5h-3v11h3v-11zM5 4a1.75 1.75 0 100 3.5A1.75 1.75 0 005 4zm15.5 9.9c0-3-1.6-4.6-3.9-4.6-1.6 0-2.5.9-2.9 1.6V9.5h-3v11h3v-6c0-1.4.6-2.6 2-2.6s1.8 1.2 1.8 2.6v6h3v-6.6z"/></svg></div><div><div class="k">LinkedIn</div><div class="v">KIRA Research</div></div></div>
+    </div>
+    <div class="cl-bottom">
+      <div class="cl-tag">Know first.<br>Move first.</div>
+      <div class="cl-legal">Single-user licence · © 2026 KIRA Research<br>Desk research; figures tagged with their sources</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
