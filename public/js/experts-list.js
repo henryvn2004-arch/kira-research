@@ -194,8 +194,8 @@
   if (searchEl) searchEl.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(runSearch, 250); });
   if (searchForm) searchForm.addEventListener('submit', (e) => { e.preventDefault(); clearTimeout(timer); runSearch(); });
 
-  fetch(BASE + 'catalog.json')
+  fetch('/api/transcript-list?locale=en')
     .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-    .then((data) => { items = data; render(); })
+    .then((data) => { items = data.items || []; render(); })
     .catch(() => { rowsEl.innerHTML = '<div class="r-empty"><p>' + esc(t('loadError')) + '</p></div>'; });
 })();

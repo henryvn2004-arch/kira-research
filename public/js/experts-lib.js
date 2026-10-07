@@ -31,9 +31,10 @@
     });
   }
 
-  fetch(LIST + 'catalog.json')
+  fetch('/api/transcript-list?locale=en')
     .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-    .then((items) => {
+    .then((data) => {
+      const items = data.items || [];
       grid.innerHTML = items.slice().sort(newest).slice(0, 4).map(card).join('');
       count.textContent = items.length + (items.length === 1 ? ' transcript' : ' transcripts') + ' in the library';
       empty.hidden = items.length > 0;
