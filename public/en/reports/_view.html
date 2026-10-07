@@ -88,6 +88,8 @@
     const PREVIEW_PAGE_W = 1280;
     const PREVIEW_PAGE_H = 720;
     const PREVIEW_PAGES  = 5;
+    const PREVIEW_ZOOM_STEP = 1.5;  // full-screen zoom: × per tap, up to 1.5× the source size
+    const PREVIEW_MAX_SCALE = 1.5;
 
     const root = document.getElementById('rpt-root');
     const R = window.kiraR, t = R.t;   // /js/research-i18n.js (deferred, runs before this module)
@@ -529,21 +531,23 @@
       const navBtn = (dir, label) => '<button type="button" class="rd-pv-nav" data-pv="' + dir + '" aria-label="' + escapeHtml(label) + '">' +
         (dir < 0 ? '<span style="transform:scaleX(-1);display:inline-flex">' + R.icon('chev') + '</span>' : R.icon('chev')) + '</button>';
       // Every page of the report can be paged through; pages after the free
+      const zoomBtn = (dir, sign, label) => '<button type="button" class="rd-pv-nav" data-pv="zoom-' + dir + '" aria-label="' + label + '">' + sign + '</button>';
       // preview show a blurred free page under a lock (no locked content is
       // ever sent to the browser).
       const total = Math.max(PREVIEW_PAGES, Number(d.pages) || 0);
       return '<section class="rd-sec rpt-preview-section" id="preview">' +
         '<h2 class="rd-sec-h"><span class="ib">' + R.icon('pages') + '</span>' + escapeHtml(t('previewTitle')) + '</h2>' +
         '<div class="rd-preview" tabindex="0" aria-label="' + escapeHtml(t('previewTitle')) + '">' +
-          '<div class="rd-preview-frame" data-page="0" data-total="' + total + '">' +
+          '<div class="rd-pv-stage"><div class="rd-preview-frame" data-page="0" data-total="' + total + '">' +
             '<iframe src="' + src + '" title="' + escapeHtml(t('previewTitle')) + '" loading="lazy" referrerpolicy="same-origin" width="' + PREVIEW_PAGE_W + '" height="' + (PREVIEW_PAGE_H * PREVIEW_PAGES) + '" scrolling="no"></iframe>' +
             '<div class="rd-pv-lock" hidden><div class="rd-pv-lock-card">' + R.icon('lock') +
               '<div class="k"></div><h3>' + escapeHtml(t('lockedTitle')) + '</h3><p>' + escapeHtml(t('lockedPage')) + '</p>' + cta + '</div></div>' +
-          '</div>' +
+          '</div></div>' +
           '<div class="rd-preview-bar">' +
             '<div class="rd-pv-ctl">' + navBtn(-1, t('prev')) + '<span class="rd-pv-pg">1 / ' + total + '</span>' + navBtn(1, t('next')) +
               '<span class="rd-pv-note">' + escapeHtml(t('freePages', PREVIEW_PAGES)) + '</span></div>' +
-            '<div class="rd-pv-ctl"><button type="button" class="rd-pv-nav" data-pv="fs" aria-label="Full screen">' + R.icon('expand') + '</button>' + cta + '</div>' +
+            '<div class="rd-pv-ctl"><span class="rd-pv-zoom">' + zoomBtn('out', '−', 'Zoom out') + zoomBtn('in', '+', 'Zoom in') + '</span>' +
+              '<button type="button" class="rd-pv-nav" data-pv="fs" aria-label="Full screen">' + R.icon('expand') + R.icon('x') + '</button>' + cta + '</div>' +
           '</div>' +
         '</div></section>';
     }
@@ -551,10 +555,18 @@
       document.querySelectorAll('.rd-preview-frame').forEach(wrap => {
         const iframe = wrap.querySelector('iframe');
         if (!iframe) return;
-        const box = wrap.parentElement;
-        const full = document.fullscreenElement === box;
-        const maxH = (full ? window.innerHeight : window.innerHeight * 0.9) - 70;
-        const scale = Math.min(box.clientWidth / PREVIEW_PAGE_W, maxH / PREVIEW_PAGE_H);
+        const stage = wrap.parentElement, box = stage.parentElement;
+        // Full screen = the .is-full overlay (iPhone Safari has no element
+        // full screen), plus native full screen where the browser has it.
+        const full = box.classList.contains('is-full');
+        const pad = full ? 16 : 0;   // .is-full .rd-pv-stage padding, both sides
+        const maxH = full ? stage.clientHeight - pad : window.innerHeight * 0.9 - 70;
+        const fit = Math.min((stage.clientWidth - pad) / PREVIEW_PAGE_W, maxH / PREVIEW_PAGE_H);
+        // Zoom (full screen only) enlarges past the fit; the stage then scrolls.
+        const zoom = full ? (Number(wrap.dataset.zoom) || 1) : 1;
+        const scale = fit * zoom;
+        box.querySelectorAll('[data-pv="zoom-out"]').forEach(b => { b.disabled = zoom <= 1; });
+        box.querySelectorAll('[data-pv="zoom-in"]').forEach(b => { b.disabled = scale * PREVIEW_ZOOM_STEP > PREVIEW_MAX_SCALE; });
         const page = Number(wrap.dataset.page) || 0;
         const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
         const locked = page >= PREVIEW_PAGES;
@@ -592,26 +604,44 @@
         } catch (_) { /* cross-origin or blocked: fall back to n × 720 */ }
         fitPreviewFrame();
       });
+      const stage = wrap.parentElement;
       const go = step => {
         const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
         wrap.dataset.page = String(Math.max(0, Math.min(total - 1, (Number(wrap.dataset.page) || 0) + step)));
+        stage.scrollTo(0, 0);
         fitPreviewFrame();
+      };
+      const setFull = on => {
+        box.classList.toggle('is-full', on);
+        document.documentElement.classList.toggle('rd-pv-noscroll', on);
+        wrap.dataset.zoom = '1';
+        if (on && box.requestFullscreen) box.requestFullscreen().catch(() => {});
+        if (!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        fitPreviewFrame();
+        box.focus();
       };
       box.addEventListener('click', e => {
         const b = e.target.closest('[data-pv]');
         if (!b) return;
-        if (b.dataset.pv === 'fs') {
-          if (document.fullscreenElement) document.exitFullscreen();
-          else if (box.requestFullscreen) box.requestFullscreen().catch(() => {});
-          return;
+        const pv = b.dataset.pv;
+        if (pv === 'fs') return setFull(!box.classList.contains('is-full'));
+        if (pv === 'zoom-in' || pv === 'zoom-out') {
+          const z = (Number(wrap.dataset.zoom) || 1) * (pv === 'zoom-in' ? PREVIEW_ZOOM_STEP : 1 / PREVIEW_ZOOM_STEP);
+          wrap.dataset.zoom = String(Math.max(1, z));
+          return fitPreviewFrame();
         }
-        go(Number(b.dataset.pv));
+        go(Number(pv));
       });
       box.addEventListener('keydown', e => {
         if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
         if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+        if (e.key === 'Escape' && box.classList.contains('is-full')) setFull(false);
       });
-      document.addEventListener('fullscreenchange', fitPreviewFrame);
+      // Leaving native full screen (Esc on desktop) also closes the overlay.
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && box.classList.contains('is-full')) setFull(false);
+        else fitPreviewFrame();
+      });
     }
 
     function renderLangLinks(slug, currentLocale, available) {

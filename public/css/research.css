@@ -194,9 +194,19 @@
 
 .rd-preview { position: relative; border-radius: var(--card-radius); overflow: hidden; background: #0F172A; padding-top: 16px; }
 .rd-preview:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-.rd-preview:fullscreen { display: flex; flex-direction: column; justify-content: center; border-radius: 0; }
-.rd-preview-frame { position: relative; overflow: hidden; margin: 0 auto; background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
-.rd-preview-frame iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #fff; transition: transform .25s ease; }
+/* Full screen is a fixed overlay (iPhone Safari has no element full screen);
+   the stage scrolls when the page is zoomed past the screen. */
+.rd-preview.is-full { position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; border-radius: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.rd-preview.is-full .rd-pv-stage { flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch; padding: 8px; }
+html.rd-pv-noscroll, html.rd-pv-noscroll body { overflow: hidden; }
+.rd-pv-stage { display: flex; }
+.rd-preview-frame { position: relative; flex: none; overflow: hidden; margin: auto; background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
+.rd-preview-frame iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #fff; transition: transform .25s ease; pointer-events: none; }
+.rd-pv-zoom { display: none; gap: 10px; }
+.rd-preview.is-full .rd-pv-zoom { display: inline-flex; }
+.rd-pv-nav[data-pv="fs"] .ic:last-child, .rd-preview.is-full .rd-pv-nav[data-pv="fs"] .ic:first-child { display: none; }
+.rd-preview.is-full .rd-pv-nav[data-pv="fs"] .ic:last-child { display: inline; }
+.rd-pv-nav[data-pv^="zoom"] { font-size: 20px; line-height: 1; }
 .rd-preview-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px 16px; color: #fff; font-size: 13px; }
 .rd-preview-bar .r-btn { padding: 8px 14px; }
 .rd-pv-ctl { display: flex; align-items: center; gap: 10px; }
