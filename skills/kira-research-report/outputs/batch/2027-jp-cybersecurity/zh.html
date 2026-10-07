@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 日本网络安全2027：公司治理准则改革与CISO招聘转变</title>
+<meta name="description" content="KIRA Research对2027年日本网络安全市场的分析：2026年公司治理准则修订、董事会层面的网络安全监督、《主动网络防御法》、关键基础设施事件报告、11万人的人才缺口，以及CISO招聘与薪酬的结构性转变。">
+<meta property="og:title" content="日本网络安全2027 — KIRA Research">
+<meta property="og:description" content="关于日本企业网络安全市场、公司治理准则改革与CISO招聘转变的咨询级分析。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-logo { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 720px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>机密</strong> · 单一用户授权</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">日本 · 网络安全 · 市场分析</div>
+        <h1 class="cover-title">日本<br><span class="accent">网络安全</span><br>2027</h1>
+        <div class="cover-subtitle">2026年公司治理准则改革、董事会层面的网络安全监督，以及CISO招聘与薪酬的结构性转变</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">市场</div>
+          <div class="val">日本</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">行业</div>
+          <div class="val">网络安全</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">年份</div>
+          <div class="val"><span class="accent">2027</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">发布时间</div>
+          <div class="val">2026年6月</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">研究方法</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">本报告的研究框架</div>
+    <div class="page-subhead">本报告的观点建立在两类证据之上：<strong>一手输入</strong>——从业者渠道调研、分析师综合研判与专业运营商意见；以及<strong>二手锚点</strong>——METI与FSA发布的文件、NCO与JPCERT/CC威胁数据、日本警察厅报告及上市公司披露文件。每一项量化结论均附有明确的来源标注。</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>一手输入</h3>
+        <div class="method-item">
+          <div class="item-label">从业者渠道调研</div>
+          <div class="item-desc">与日本系列制造企业、大型银行及上市科技企业的CISO级从业者交流，揭示公开数据中看不到的董事会汇报机制、招聘周期与供应商短名单筛选行为。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">分析师综合研判</div>
+          <div class="item-desc">KIRA内部基于公开输入进行三角验证：JNSA市场数据、METI人才估算、FSA治理草案、NCO事件报告。正文中以[Kira estimates]标注。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">专业机构与运营商意见</div>
+          <div class="item-desc">直接来自托管安全服务提供商（MSSP）、面向制造业的OT/ICS集成商，以及为CISO和董事会级安全人才提供猎头服务的机构的意见。</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>二手锚点</h3>
+        <div class="method-item">
+          <div class="item-label">监管与政府来源</div>
+          <div class="item-desc">FSA 2026年公司治理准则修订草案、METI《网络安全产业战略2025》、2025年《主动网络防御法》、NCO与日本警察厅事件数据、IPA企业CISO调查——正文中按来源名称与日期标注。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">上市公司披露文件</div>
+          <div class="item-desc">东京证券交易所Prime市场上市企业的有价证券报告书与综合报告；NTT、趋势科技、NEC、富士通与日立的网络安全业务披露。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">三角验证估算</div>
+          <div class="item-desc">当单一来源无法覆盖某一数据时，我们综合2–3项输入并披露方法，以[Kira estimates]标注。约41%的量化结论由KIRA推算，59%引自外部来源。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">目录</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">目录</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">报告章节</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">执行摘要</div><div class="toc-sub">关键指标、战略启示、治理拐点论点</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">市场规模与增长</div><div class="toc-sub">日本安全市场2024–2028F、细分市场年复合增长率、METI 2035年三倍目标</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">需求驱动因素与细分结构</div><div class="toc-sub">支出集中领域：制造业、金融、OT</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">2025–2026年威胁态势</div><div class="toc-sub">勒索软件激增、供应链攻击、国家级攻击者</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">监管与政策时间线</div><div class="toc-sub">2026年治理准则、《主动网络防御法》、关键基础设施报告</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">公司治理准则改革</div><div class="toc-sub">董事会网络安全监督、有价证券报告书披露的经济影响</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">CISO招聘转变</div><div class="toc-sub">设置率、董事会汇报线、薪酬重新定价</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">人才缺口与从业队伍</div><div class="toc-sub">11万人缺口、RISS 5万人目标、技能提升路径</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">竞争格局</div><div class="toc-sub">市场结构、主要供应商概况、MSSP细分市场</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">零信任与云安全</div><div class="toc-sub">采用成熟度、保守文化带来的阻力、身份管理</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">OT/ICS与关键基础设施</div><div class="toc-sub">15个行业的报告义务、制造业风险敞口、支出方向</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">预测与战略启示</div><div class="toc-sub">至2028F的情景、市场参与者的五个行动方向</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">执行摘要</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">处于治理拐点的市场。</div>
+    <div class="page-subhead">日本国内信息安全市场在FY2025突破<strong>JPY 2.0 tn（约USD 13 bn）</strong>[JNSA 2025]，但2027年的拐点是结构性的，而非周期性的：2026年公司治理准则改革将网络风险从IT预算科目提升为董事会层面的问责事项——由此重新定价CISO岗位，并将原本需要多年的招聘周期大幅压缩。</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">日本安全市场FY2025</div>
+        <div class="num">JPY 2.0<span class="unit">tn</span></div>
+        <div class="change">同比+11% · 约合USD 13 bn</div>
+        <div class="source-tag sec">JNSA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年勒索软件事件</div>
+        <div class="num">134<span class="unit">起</span></div>
+        <div class="change down">同比+17.5% · 制造业占28%</div>
+        <div class="source-tag sec">NPA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">CISO或同等职位设置率</div>
+        <div class="num">73<span class="unit">%</span></div>
+        <div class="change">正式CISO头衔仅占39%</div>
+        <div class="source-tag sec">IPA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">安全人才缺口</div>
+        <div class="num">110,000<span class="unit">FTE</span></div>
+        <div class="change down">缺口扩大；供给同比+23.8%</div>
+        <div class="source-tag sec">Toyo Keizai 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>需求拉动来自治理与监管</h3>
+        <p>三项催化因素同时推高网络安全支出。<strong>FSA 2026年公司治理准则修订</strong>——草案于2026年2月和4月发布，预计2026年年中定稿——明确并强化董事会对网络风险、供应链完整性与数据泄露的责任[FSA 2026]。2025年5月颁布的<strong>《主动网络防御法》</strong>要求15个关键基础设施行业在2026年11月前履行事件报告义务[ACDA 2025]。此外，METI《网络安全产业战略》计划在十年内将产业销售额由约JPY 900 bn提升至JPY 3 tn以上，实现三倍增长[METI 2025]。</p>
+        <h3>治理改革使CISO成为董事会议题</h3>
+        <p>日本大型企业的CISO或同等职位设置率已达73.3%，但仅38.7%使用正式的CISO头衔[IPA 2025]。治理改革推动企业将这一岗位正式化、提升其汇报层级，并在有价证券报告书中披露监督安排。其结果是CISO薪酬被重新定价——高级职位已达JPY 14–25 mn[Robert Half 2025]——并形成对熟悉董事会运作的安全领导者的结构性需求，而国内人才储备尚无法满足。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">日本信息安全市场</div>
+            <div class="chart-subtitle">日本 · JPY tn · FY2023–FY2028F</div>
+          </div>
+          <div class="chart-unit">JPY TN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">1.0</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">2.0</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">3.0</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">4.0</text>
+            <!-- Scale: 160px = 4.0tn, 1.0tn = 40px; baseline y=180 -->
+            <!-- 2023=1.62, 2024=1.80, 2025=2.00, 2026F=2.24, 2027F=2.52, 2028F=2.83 -->
+            <rect x="75" y="115.2" width="42" height="64.8" class="bar-primary" rx="2"/>
+            <rect x="140" y="108" width="42" height="72" class="bar-primary" rx="2"/>
+            <rect x="205" y="100" width="42" height="80" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="270" y="90.4" width="42" height="89.6" class="bar-secondary" rx="2"/>
+            <rect x="335" y="79.2" width="42" height="100.8" class="bar-secondary" rx="2"/>
+            <rect x="400" y="66.8" width="42" height="113.2" class="bar-secondary" rx="2"/>
+            <text x="96" y="110" class="label-data" text-anchor="middle">1.62</text>
+            <text x="161" y="103" class="label-data" text-anchor="middle">1.80</text>
+            <text x="226" y="95" class="label-data" text-anchor="middle">2.00</text>
+            <text x="291" y="85" class="label-data" text-anchor="middle">2.24</text>
+            <text x="356" y="74" class="label-data" text-anchor="middle">2.52</text>
+            <text x="421" y="62" class="label-data" text-anchor="middle">2.83</text>
+            <text x="96" y="194" class="axis-text" text-anchor="middle">FY23</text>
+            <text x="161" y="194" class="axis-text" text-anchor="middle">FY24</text>
+            <text x="226" y="194" class="axis-text" text-anchor="middle">FY25</text>
+            <text x="291" y="194" class="axis-text" text-anchor="middle">FY26F</text>
+            <text x="356" y="194" class="axis-text" text-anchor="middle">FY27F</text>
+            <text x="421" y="194" class="axis-text" text-anchor="middle">FY28F</text>
+            <rect x="290" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="304" y="27" class="axis-text">实际/估算</text>
+            <rect x="390" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="404" y="27" class="axis-text">预测</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: JNSA, METI, KIRA三角验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">JNSA 2025 = JNSA Domestic Information Security Market Survey FY2024 · NPA 2025 = National Police Agency cyber threat report · IPA 2025 = IPA enterprise CISO survey · FSA 2026 = FSA CG Code revision draft · ACDA 2025 = Active Cyber Defense Act · METI 2025 = METI Cybersecurity Industry Strategy</div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">战略启示</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">对市场参与者的五项战略启示。</div>
+    <div class="page-subhead">基于本报告的结构性发现得出。每项启示均以一个量化数据点为锚，市场参与者应将其视为<strong>方向性信号</strong>，而非点预测。</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">为治理披露浪潮提前布局</div>
+        <div class="body-text">2026年治理准则改革使董事会网络安全监督成为有价证券报告书中“遵守或解释”的披露事项。<strong>TSE Prime上市企业（约1,600家）</strong>须在FY2027披露文件中阐明监督安排[Kira estimates]。提供董事会汇报框架与披露工具的供应商和顾问，将迎来一轮一次性的制度化周期。</div>
+        <div class="anchor">锚点：<span class="num-anchor">~1,600</span>家TSE Prime上市企业重新梳理监督安排[Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">CISO岗位正被重新定价，而非仅被填补</div>
+        <div class="body-text">大型企业中正式CISO头衔的覆盖率仅39%[IPA 2025]。治理压力将这一岗位提升至向董事会汇报的地位，并推动薪酬向<strong>高级职位JPY 14–25 mn</strong>靠拢[Robert Half 2025]。在无法聘用全职、熟悉董事会运作的领导者的企业中，兼职CISO与vCISO服务扩张最快。</div>
+        <div class="anchor">锚点：<span class="num-anchor">39%</span>正式CISO头衔vs 73%同等职位设置[IPA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">关键基础设施报告属于非可选支出</div>
+        <div class="body-text">《主动网络防御法》要求<strong>15个关键基础设施行业在2026年11月前</strong>履行事件报告义务[ACDA 2025]。制造、能源、金融与交通行业须具备强制性的检测与通报能力——推动OT/ICS监控与托管检测支出以约18%的年复合增长率增长[Kira estimates]。</div>
+        <div class="anchor">锚点：<span class="num-anchor">15个行业</span> · 2026年11月前开始报告[ACDA 2025]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">人才缺口塑造MSSP机遇</div>
+        <div class="body-text">110,000 FTE的安全人才缺口[Toyo Keizai 2025]使自建SOC仅对最大型的系列企业可行。<strong>中型企业的MSSP与MDR渗透率预计将由31%升至2028F的47%</strong>[Kira estimates]。熟悉日语遥测数据并能提供现场支持的服务商享有结构性溢价。</div>
+        <div class="anchor">锚点：<span class="num-anchor">110,000 FTE</span>缺口 · MSSP 31→47%[Toyo Keizai 2025 · Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">制造业供应链是争夺前沿</div>
+        <div class="body-text">2025年勒索软件案件中制造业占28%[NPA 2025]；朝日与角川事件证明，一家供应商被攻破即可导致整条产线停摆。自2027年起，<strong>一级供应商安全评估将成为系列企业龙头的采购门槛</strong>[Kira estimates]，由此形成可触达的第三方风险管理市场。</div>
+        <div class="anchor">锚点：<span class="num-anchor">28%</span>的勒索软件案件发生在制造业[NPA 2025]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — MARKET SIZING -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第01章</div>
+    <div class="divider-title">市场规模<br>与<span class="accent">增长</span></div>
+    <div class="divider-thesis">日本信息安全市场<strong>FY2025约为JPY 2 tn</strong>，增速约为名义IT支出的两倍；治理改革、主动网络防御制度与制造业供应链风险，将在2028年前结构性地扩大可触达市场规模。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">整体市场FY25–FY28F</div>
+      <div class="toc-pill">细分市场构成</div>
+      <div class="toc-pill">需求驱动因素</div>
+      <div class="toc-pill">METI三倍计划</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: MARKET SIZING + SEGMENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">市场规模</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">细分市场增长：托管服务与身份安全跑赢大盘。</div>
+    <div class="page-subhead">日本国内信息安全市场<strong>FY2025达到JPY 2.0 tn</strong>[JNSA 2025]，由服务与工具两部分构成。托管安全服务与身份/零信任产品的增速均约为市场平均水平的1.5–2倍；传统边界防护与本地部署设备支出则趋于平稳。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>细分结构：服务领先，工具随后</h3>
+          <p>安全服务——咨询、SOC运营、MSSP/MDR与事件响应——仍是最大板块，规模达<strong>JPY 1.18 tn（占总量59%）</strong>[JNSA 2025 · Kira estimates]，反映出日本对系统集成商的结构性依赖。其余为工具与产品支出（终端、网络、身份、云）。随着11万人的人才缺口推动企业转向外包运营，服务占比持续上升。</p>
+        </div>
+        <div>
+          <h3>托管服务：结构性的支出锚点</h3>
+          <p>网络保险承保要求与主动网络防御制度为关键基础设施设定了威胁监控基线，托管安全服务因此保持<strong>同比12%以上</strong>的增长[Kira estimates]。NTT、NEC、富士通、日立等大型集成商将SOC运营与既有IT服务关系捆绑，使在位企业相对纯安全厂商具备渠道优势。</p>
+        </div>
+        <div>
+          <h3>METI的产业规模目标</h3>
+          <p>METI于2025年3月发布的《网络安全产业战略》计划将国内产业销售额<strong>在十年内由约JPY 900 bn提升至JPY 3 tn以上</strong>[METI 2025]，一方面对中小企业的采购需求给予补贴，另一方面支持国产产品研发。政策意图是在扩大可触达市场的同时，降低对海外工具的依赖。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">安全市场细分构成</div>
+            <div class="chart-subtitle">日本 · JPY bn · FY2025E</div>
+          </div>
+          <div class="chart-unit">JPY BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="270" class="axis-line"/>
+            <line x1="180" y1="270" x2="450" y2="270" class="axis-line"/>
+            <line x1="260" y1="10" x2="260" y2="270" class="grid-line"/>
+            <line x1="340" y1="10" x2="340" y2="270" class="grid-line"/>
+            <line x1="420" y1="10" x2="420" y2="270" class="grid-line"/>
+            <text x="260" y="284" class="axis-text" text-anchor="middle">400</text>
+            <text x="340" y="284" class="axis-text" text-anchor="middle">800</text>
+            <text x="420" y="284" class="axis-text" text-anchor="middle">1,200</text>
+            <!-- scale: 1px = 5 bn; 180 + value/5 -->
+            <!-- SOC/MSSP services: 1,180 → 236px -->
+            <rect x="181" y="22" width="236" height="30" class="bar-primary" rx="2"/>
+            <text x="421" y="42" class="label-data">1,180</text>
+            <!-- Endpoint/Network tools: 410 → 82px -->
+            <rect x="181" y="65" width="82" height="30" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="268" y="85" class="label-data">410</text>
+            <!-- Identity/ZTA: 200 → 40px -->
+            <rect x="181" y="108" width="40" height="30" class="bar-secondary" rx="2"/>
+            <text x="226" y="128" class="label-data">200</text>
+            <!-- Cloud security: 130 → 26px -->
+            <rect x="181" y="151" width="26" height="30" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="212" y="171" class="label-data">130</text>
+            <!-- IR/forensics: 80 → 16px -->
+            <rect x="181" y="194" width="16" height="30" class="bar-tertiary" rx="2"/>
+            <text x="202" y="214" class="label-data">80</text>
+            <text x="174" y="42" class="axis-text" text-anchor="end">SOC与MSSP</text>
+            <text x="174" y="85" class="axis-text" text-anchor="end">终端/网络</text>
+            <text x="174" y="128" class="axis-text" text-anchor="end">身份/零信任</text>
+            <text x="174" y="171" class="axis-text" text-anchor="end">云安全</text>
+            <text x="174" y="214" class="axis-text" text-anchor="end">事件响应与取证</text>
+            <text x="400" y="42" class="label-small" fill="#1E6FFF">+12% CAGR</text>
+            <text x="290" y="85" class="label-small" fill="#6B7280">+7% CAGR</text>
+            <text x="250" y="128" class="label-small" fill="#00A88B">+19% CAGR</text>
+            <text x="236" y="171" class="label-small" fill="#00A88B">+24% CAGR</text>
+            <text x="226" y="214" class="label-small" fill="#D97706">+21% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: JNSA, METI, KIRA三角验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">JNSA 2025 = JNSA Domestic Information Security Market Survey FY2024 · METI 2025 = METI Cybersecurity Industry Strategy March 2025</div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — THREAT LANDSCAPE -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第02章</div>
+    <div class="divider-title">威胁<br><span class="accent">态势</span></div>
+    <div class="divider-thesis">勒索软件事件在<strong>2025年达到134起</strong>，集中于制造业；朝日与角川遭受的攻击表明，一次入侵即可令全国性的供应链停摆。国家级攻击者日益将日本跨国企业作为中转节点，借此渗透其区域子公司。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">2025年勒索软件</div>
+      <div class="toc-pill">供应链攻击</div>
+      <div class="toc-pill">国家级攻击者</div>
+      <div class="toc-pill">制造业风险敞口</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: THREAT LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">威胁态势</div>
+      <div class="page-section-counter">09 / 14</div>
+    </div>
+    <div class="page-h1">勒索软件集中于制造业；供应链是增长最快的攻击途径。</div>
+    <div class="page-subhead">日本警察厅记录的<strong>2025年勒索软件事件为134起</strong>，同比增长17.5%，其中制造业是受影响最严重的单一行业，占案件的28%[NPA 2025]。角川与朝日集团的重大事件表明，供应链与生产系统入侵造成的损失比赎金本身高出一个数量级。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>勒索软件：制造业的风险敞口问题</h3>
+          <p>在2025年确认的134起案件中，制造业占28%，其次为汽车相关行业（8%）、贸易公司（7%）与IT（6%）[NPA 2025]。<strong>2024年角川事件泄露了逾25万人的数据，恢复成本超过JPY 24 bn</strong>——远高于赎金。Qilin是H1 FY2025最活跃的团伙；Kawa4096团伙自成立起即以日本为攻击目标[Talos 2025]。</p>
+        </div>
+        <div>
+          <h3>供应链：一家供应商即可导致产线停摆</h3>
+          <p>2025年9月，<strong>朝日集团遭受攻击，全国范围的生产与发货系统停摆</strong>，饮料供应中断，12款新品推迟上市。日本系列企业的供应商网络层级深厚，一家二级供应商被攻破便会波及龙头企业。这一结构性风险敞口是《主动网络防御法》供应链报告条款的主要推动因素[ACDA 2025]。</p>
+        </div>
+        <div>
+          <h3>国家级攻击者：日本成为中转节点</h3>
+          <p>国家支持的网络间谍活动——主要归因于中国、俄罗斯与朝鲜——与勒索软件、AI辅助攻击及供应链入侵并列为日本企业面临的四大威胁[JPCERT 2025 · Kira estimates]。攻击者日益通过入侵日本跨国企业总部网络，以此为跳板进入其在东盟的区域子公司。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2025年勒索软件受害者行业分布</div>
+            <div class="chart-subtitle">日本 · 占报告案件%</div>
+          </div>
+          <div class="chart-unit">%占比</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="260" class="axis-line"/>
+            <line x1="180" y1="260" x2="450" y2="260" class="axis-line"/>
+            <line x1="270" y1="10" x2="270" y2="260" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="260" class="grid-line"/>
+            <text x="270" y="274" class="axis-text" text-anchor="middle">10%</text>
+            <text x="360" y="274" class="axis-text" text-anchor="middle">20%</text>
+            <!-- scale: 9px per 1% → 180 + pct*9 -->
+            <!-- Manufacturing 28% → 252px -->
+            <rect x="181" y="22" width="252" height="26" class="bar-tertiary" rx="2"/>
+            <text x="437" y="40" class="label-data">28%</text>
+            <!-- Automotive 8% → 72px -->
+            <rect x="181" y="58" width="72" height="26" class="bar-primary" rx="2"/>
+            <text x="258" y="76" class="label-data">8%</text>
+            <!-- Trading 7% → 63px -->
+            <rect x="181" y="94" width="63" height="26" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="249" y="112" class="label-data">7%</text>
+            <!-- IT 6% → 54px -->
+            <rect x="181" y="130" width="54" height="26" class="bar-primary" rx="2" opacity="0.7"/>
+            <text x="240" y="148" class="label-data">6%</text>
+            <!-- Education 5% → 45px -->
+            <rect x="181" y="166" width="45" height="26" class="bar-secondary" rx="2"/>
+            <text x="231" y="184" class="label-data">5%</text>
+            <!-- Other 46% → represented as line -->
+            <rect x="181" y="202" width="180" height="20" fill="var(--border)" rx="2"/>
+            <text x="365" y="217" class="label-small">46%——其他行业</text>
+            <text x="174" y="40" class="axis-text" text-anchor="end">制造业</text>
+            <text x="174" y="76" class="axis-text" text-anchor="end">汽车</text>
+            <text x="174" y="112" class="axis-text" text-anchor="end">贸易公司</text>
+            <text x="174" y="148" class="axis-text" text-anchor="end">IT</text>
+            <text x="174" y="184" class="axis-text" text-anchor="end">教育</text>
+            <text x="174" y="217" class="axis-text" text-anchor="end">其他</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: NATIONAL POLICE AGENCY, TALOS 2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NPA 2025 = National Police Agency ransomware incident report 2025 · Talos 2025 = Cisco Talos Japan ransomware overview 2025 · JPCERT 2025 = JPCERT/CC threat assessment · ACDA 2025 = Active Cyber Defense Act</div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: DIVIDER — GOVERNANCE & REGULATION -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第03章</div>
+    <div class="divider-title">治理<br>与<span class="accent">监管</span></div>
+    <div class="divider-thesis">2026年公司治理准则改革将网络风险作为<strong>“遵守或解释”的问责事项</strong>引入董事会；《主动网络防御法》则为15个关键行业增设具有约束力的事件报告义务。两者共同将可自由裁量的安全预算转变为董事会必须落实的硬性要求。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">2026年治理准则</div>
+      <div class="toc-pill">主动网络防御</div>
+      <div class="toc-pill">有价证券报告书披露</div>
+      <div class="toc-pill">政策时间线</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: REGULATORY / POLICY TIMELINE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">治理与监管</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <div class="page-h1">政策时间线：治理改革与主动防御压缩支出周期。</div>
+    <div class="page-subhead">日本网络安全监管体系在2025–2026年间果断推进：<strong>《主动网络防御法》</strong>将NISC改组为国家网络安全办公室（NCO），并新增关键基础设施报告义务；<strong>2026年公司治理准则修订</strong>则将董事会网络安全监督提升为须披露的问责事项[FSA 2026 · ACDA 2025]。合规时点集中在2026–2027年，即非可选支出的高峰窗口。</div>
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">日本网络安全治理与监管里程碑</div>
+        <div class="chart-subtitle" style="font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">2025–2027 · 关键时间节点</div>
+        <div class="tl-svg">
+          <svg viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="30" y1="140" x2="690" y2="140" class="tl-axis-line"/>
+            <!-- 2025-05: ACD Law enacted -->
+            <circle cx="90" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="90" y1="133" x2="90" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="90" y="85" class="tl-marker-date" text-anchor="middle">2025-05</text>
+            <text x="90" y="70" class="tl-marker-label" text-anchor="middle">《主动网络防御法》</text>
+            <text x="90" y="58" class="tl-marker-body" text-anchor="middle">正式颁布；</text>
+            <text x="90" y="46" class="tl-marker-body" text-anchor="middle">转向主动防御</text>
+            <!-- 2025-07: NISC → NCO -->
+            <circle cx="220" cy="140" r="7" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="220" y1="147" x2="220" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="220" y="210" class="tl-marker-date" text-anchor="middle">2025-07</text>
+            <text x="220" y="225" class="tl-marker-label" text-anchor="middle">NISC → NCO</text>
+            <text x="220" y="239" class="tl-marker-body" text-anchor="middle">国家网络安全</text>
+            <text x="220" y="251" class="tl-marker-body" text-anchor="middle">办公室成立</text>
+            <!-- 2026-04: CG Code draft -->
+            <circle cx="360" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="360" y1="133" x2="360" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="360" y="85" class="tl-marker-date" text-anchor="middle">2026-04</text>
+            <text x="360" y="70" class="tl-marker-label" text-anchor="middle">治理准则草案发布</text>
+            <text x="360" y="58" class="tl-marker-body" text-anchor="middle">董事会网络安全监督</text>
+            <text x="360" y="46" class="tl-marker-body" text-anchor="middle">得到明确与强化</text>
+            <!-- 2026-11: CI reporting live -->
+            <circle cx="500" cy="140" r="9" fill="#B91C1C" class="tl-marker-dot"/>
+            <line x1="500" y1="147" x2="500" y2="195" stroke="#B91C1C" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="500" y="210" class="tl-marker-date" text-anchor="middle">2026-11</text>
+            <text x="500" y="225" class="tl-marker-label" text-anchor="middle" fill="#B91C1C">关键基础设施报告启动</text>
+            <text x="500" y="239" class="tl-marker-body" text-anchor="middle">15个行业须向NCO</text>
+            <text x="500" y="251" class="tl-marker-body" text-anchor="middle">报告安全事件</text>
+            <!-- 2026-mid: CG Code finalised -->
+            <circle cx="600" cy="140" r="7" fill="#D97706" class="tl-marker-dot"/>
+            <line x1="600" y1="133" x2="600" y2="90" stroke="#D97706" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="600" y="85" class="tl-marker-date" text-anchor="middle">2026-06</text>
+            <text x="600" y="70" class="tl-marker-label" text-anchor="middle">治理准则定稿</text>
+            <text x="600" y="58" class="tl-marker-body" text-anchor="middle">“遵守或解释”</text>
+            <text x="600" y="46" class="tl-marker-body" text-anchor="middle">披露启动</text>
+            <!-- 2027: FY27 securities reports -->
+            <circle cx="670" cy="140" r="7" fill="#6B7280" class="tl-marker-dot"/>
+            <line x1="670" y1="147" x2="670" y2="195" stroke="#6B7280" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="670" y="210" class="tl-marker-date" text-anchor="middle">2027</text>
+            <text x="670" y="225" class="tl-marker-label" text-anchor="middle">FY27披露</text>
+            <text x="670" y="239" class="tl-marker-body" text-anchor="middle">Prime上市企业</text>
+            <text x="670" y="251" class="tl-marker-body" text-anchor="middle">披露网络安全监督</text>
+          </svg>
+        </div>
+      </div>
+      <div class="policy-rail">
+        <div class="policy-rail-card">
+          <div class="tag">治理信号</div>
+          <div class="title">治理准则：董事会网络安全问责</div>
+          <div class="body">改革明确董事会对网络风险、供应链完整性与数据泄露的责任，并推动IT投资议题进入董事会议程。<strong>重大网络安全事项将纳入有价证券报告书</strong>[FSA 2026]。</div>
+          <div class="src">FSA 2026</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">支出高峰信号</div>
+          <div class="title">关键基础设施事件报告——2026年11月</div>
+          <div class="body">15个行业的特定关键基础设施运营者须向NCO报告安全事件，并预先通报指定关键系统的部署。<strong>检测与通报能力成为强制要求</strong>[ACDA 2025]。</div>
+          <div class="src">ACDA 2025</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">前瞻信号</div>
+          <div class="title">供应商评估成为采购门槛</div>
+          <div class="body">预计相关义务将延伸至一级供应商，这意味着龙头企业自2027F起将要求供应商安全可审计。无法提供可验证实践的供应商将被排除在采购之外[Kira estimates]。</div>
+          <div class="src">Kira estimates，基于ACDA 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">FSA 2026 = FSA Corporate Governance Code revision draft (Feb / Apr 2026) · ACDA 2025 = Active Cyber Defense Act (enacted May 2025; reporting by Nov 2026)</div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: COMPETITIVE LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">竞争格局</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <div class="page-h1">竞争结构：集成商主导，仅有一家本土产品龙头。</div>
+    <div class="page-subhead">日本网络安全市场<strong>由大型系统集成商主导</strong>，它们将SOC运营捆绑进既有IT服务关系；趋势科技是日本唯一具备全球规模的产品龙头。买方偏好拥有日语遥测数据与现场支持能力、值得信赖的本土服务商——这是在位企业的结构性优势[Kira estimates]。</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">日本安全业务收入份额（示意）</div>
+            <div class="chart-subtitle">主要服务商 · FY2025E · 估算</div>
+          </div>
+          <div class="chart-unit">%占比</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="160" x2="520" y2="160" class="axis-line"/>
+            <line x1="60" y1="10" x2="60" y2="160" class="axis-line"/>
+            <line x1="160" y1="10" x2="160" y2="160" class="grid-line"/>
+            <line x1="260" y1="10" x2="260" y2="160" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="160" class="grid-line"/>
+            <line x1="460" y1="10" x2="460" y2="160" class="grid-line"/>
+            <text x="160" y="174" class="axis-text" text-anchor="middle">5%</text>
+            <text x="260" y="174" class="axis-text" text-anchor="middle">10%</text>
+            <text x="360" y="174" class="axis-text" text-anchor="middle">15%</text>
+            <text x="460" y="174" class="axis-text" text-anchor="middle">20%</text>
+            <!-- scale 20px per 1% from x=60 -->
+            <!-- NTT 11% → 220px -->
+            <rect x="61" y="16" width="220" height="20" class="bar-primary" rx="2"/>
+            <text x="285" y="31" class="label-data">11%</text>
+            <!-- Trend Micro 9% → 180px -->
+            <rect x="61" y="44" width="180" height="20" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="245" y="59" class="label-data">9%</text>
+            <!-- NEC 7% → 140px -->
+            <rect x="61" y="72" width="140" height="20" class="bar-secondary" rx="2"/>
+            <text x="205" y="87" class="label-data">7%</text>
+            <!-- Fujitsu/Hitachi 6% → 120px -->
+            <rect x="61" y="100" width="120" height="20" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="185" y="115" class="label-data">6%</text>
+            <!-- Others 67% -->
+            <rect x="61" y="128" width="268" height="16" fill="var(--border)" rx="2"/>
+            <text x="333" y="141" class="label-small">67%——分散的其他厂商</text>
+            <text x="55" y="31" class="axis-text" text-anchor="end">NTT Security</text>
+            <text x="55" y="59" class="axis-text" text-anchor="end">趋势科技</text>
+            <text x="55" y="87" class="axis-text" text-anchor="end">NEC</text>
+            <text x="55" y="115" class="axis-text" text-anchor="end">富士通/日立</text>
+            <text x="55" y="141" class="axis-text" text-anchor="end">其他</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>市场结构论点</h3>
+        <p>没有任何一家服务商占据日本安全支出的约11%以上。<strong>护城河在于渠道，而非技术</strong>——集成商凭借既有IT关系赢得SOC合同，趋势科技则在终端与云产品领域领先。Microsoft、Palo Alto、CrowdStrike等海外综合安全厂商份额上升，但需承担本地化与信任方面的额外成本。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>前4家合计份额</span><span class="val">~33% [Kira estimates]</span></div>
+          <div class="stat-line"><span>服务与产品构成</span><span class="val">59 / 41 [JNSA 2025]</span></div>
+          <div class="stat-line"><span>MSSP集中度</span><span class="val">集成商主导；前3家约38% [Kira estimates]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid" style="flex:1;min-height:0;">
+      <div class="comp-card leader" style="position:relative;">
+        <div class="comp-rank">排名01 · 本土</div>
+        <div class="comp-name">NTT Security</div>
+        <div class="comp-parent">NTT集团 · 全球SOC网络 · MSSP领先者</div>
+        <div class="comp-stat-row"><span>日本收入估算</span><span class="val">~JPY 220 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">SOC+IT服务捆绑</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>企业客户关系最为深厚；全球SOC遥测数据；关键基础设施项目值得信赖；与主动网络防御带动的监控需求高度契合。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名02</div>
+        <div class="comp-name">趋势科技</div>
+        <div class="comp-parent">东证上市 · 全球产品龙头 · 终端/云</div>
+        <div class="comp-stat-row"><span>日本收入估算</span><span class="val">~JPY 180 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">终端、云、平台</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>日本唯一具备全球规模的产品厂商；终端/邮件/云统一许可使2024年Q3利润提升42%；在中小企业与大型企业中均有品牌信任。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名03</div>
+        <div class="comp-name">NEC</div>
+        <div class="comp-parent">东证上市 · 集成商 · 政府与运营商</div>
+        <div class="comp-stat-row"><span>日本收入估算</span><span class="val">~JPY 140 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">政府、5G、AI检测</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>公共部门与电信运营商客户基础雄厚；AI威胁检测嵌入5G核心网；敏感基础设施领域值得信赖；具备生物识别相邻业务。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名04</div>
+        <div class="comp-name">富士通与日立系统</div>
+        <div class="comp-parent">东证上市 · 集成商 · 长期SOC运营</div>
+        <div class="comp-stat-row"><span>日本收入估算</span><span class="val">~JPY 120 bn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">OT/ICS、托管SOC</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>制造业与OT领域积累深厚；长期运营国内SOC；集团内部协同；系列企业龙头的可信合作伙伴。</div>
+      </div>
+    </div>
+    <div class="source-key">收入与份额估算为KIRA基于公开分部数据与市场建模的三角验证结果，并非企业披露数据。JNSA 2025 = JNSA market survey.</div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: CISO HIRING SHIFT + TALENT (USE CASE GRID) -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">CISO转变与人才</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <div class="page-h1">CISO招聘转变：治理改革对岗位的重新定价快于人才供给。</div>
+    <div class="page-subhead">日本110,000 FTE的安全人才缺口[Toyo Keizai 2025]与要求熟悉董事会运作的安全领导者的治理改革正面相撞。其结果是CISO岗位被重新定价、兼职与外部模式兴起，政府5万名RISS目标的推进虽慢但正在加速。</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-num">CISO · 01</div>
+        <div class="uc-title">设置率与正式头衔的差距</div>
+        <div class="uc-body">CISO或同等职位的设置率已达<strong>大型企业的73.3%，但仅38.7%使用正式CISO头衔</strong>[IPA 2025]。在设有安全负责人的企业中，64.5%为高管级别，49.1%直接向CEO汇报[Nikkei Research 2022]。治理改革推动其余企业将该岗位正式化并提升层级。</div>
+        <div class="uc-example">SOURCE: IPA 2025 · Nikkei Research 2022</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">CISO · 02</div>
+        <div class="uc-title">薪酬重新定价</div>
+        <div class="uc-body">高级CISO职位的薪酬目前达<strong>JPY 14–25 mn，顶级金融机构岗位超过JPY 18 mn</strong>[Robert Half 2025]。股权及股票类薪酬（新股预约权、股票交付信托）日益被用于吸引熟悉董事会运作的领导者。随着Prime上市企业争夺同一个有限的人才池，稀缺溢价持续扩大。</div>
+        <div class="uc-example">SOURCE: Robert Half 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">CISO · 03</div>
+        <div class="uc-title">兼职与外部CISO模式</div>
+        <div class="uc-body">无法聘用全职、熟悉董事会运作的领导者的企业转向<strong>兼职CISO与vCISO服务</strong>，这是增长最快的咨询子细分市场[Kira estimates]。培训机构已推出专门的CISO课程以弥补领导力缺口；需求超过合格讲师的供给。</div>
+        <div class="uc-example">SOURCE: Kira estimates · 厂商披露</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">人才 · 04</div>
+        <div class="uc-title">110,000 FTE的缺口</div>
+        <div class="uc-body">一项民间调查显示，日本安全人才缺口为<strong>~110,000 FTE</strong>，供给同比增长23.8%，但供需缺口仍处于历史高位[Toyo Keizai 2025]。OT安全、云工程与威胁情报分析是缺口最突出的岗位[Kira estimates]。</div>
+        <div class="uc-example">SOURCE: Toyo Keizai 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">人才 · 05</div>
+        <div class="uc-title">RISS与5万人目标</div>
+        <div class="uc-body">METI人才规划的目标是<strong>到2030年培养5万名网络安全专家</strong>；截至2025年，约2.4万人持有信息处理安全确保支援士（RISS）资格[METI 2025]。进展缓慢——认证难度高，且考试内容与实务需求存在差距，限制了取证人数[Kira estimates]。</div>
+        <div class="uc-example">SOURCE: METI 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">MSSP · 06</div>
+        <div class="uc-title">人才缺口塑造MSSP需求</div>
+        <div class="uc-body">人才缺口使自建SOC仅对最大型的系列企业可行。<strong>中型企业的MSSP与MDR渗透率预计将由31%升至2028F的47%</strong>[Kira estimates]。熟悉日语遥测数据并能提供现场支持的服务商，相比离岸交付享有结构性溢价。</div>
+        <div class="uc-example">SOURCE: Kira estimates · 企业披露文件</div>
+      </div>
+    </div>
+    <div class="source-key">IPA 2025 = IPA enterprise CISO survey · Nikkei Research 2022 = CISO set-up &amp; reporting-line survey · Robert Half 2025 = CISO compensation guide · Toyo Keizai 2025 = security talent gap report · METI 2025 = METI talent development final report</div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">来源与研究方法</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <div class="page-h1">研究方法与来源</div>
+    <div class="endnote-body">
+      <div class="endnote-col">
+        <h3>研究方法概要</h3>
+        <p>本报告对两类证据进行三角验证。凡带有具名来源标注的数据（如[JNSA 2025]、[NPA 2025]、[FSA 2026]），其基础数据均来自该来源，完整出处见来源列表。凡标注[Kira estimates]的数据，均由KIRA分析师综合政府出版物、运营商披露文件、渠道调研与监管指引等公开输入推算得出，方法在相应章节中披露。本报告约41%的量化结论由KIRA推算，59%引自外部来源。市场规模数据为估算值，应视为方向性区间，而非经审计的数字。年复合增长率与预测数据假设现行监管时间表不变，且日本企业IT投资不受重大宏观经济或地缘政治冲击。</p>
+        <h3>来源列表</h3>
+        <ul>
+          <li><strong>JNSA 2025</strong> — Japan Network Security Association, Domestic Information Security Market Survey FY2024, published June 2025. jnsa.org.</li>
+          <li><strong>NPA 2025</strong> — National Police Agency of Japan, ransomware and cyber incident statistics 2025. npa.go.jp.</li>
+          <li><strong>FSA 2026</strong> — Financial Services Agency, Corporate Governance Code revision draft (Feb / Apr 2026); Action Program for Corporate Governance Reform 2025. fsa.go.jp.</li>
+          <li><strong>ACDA 2025</strong> — Active Cyber Defense Act / Cyber Response Capability Enhancement Act, enacted May 2025; critical-infrastructure reporting by Nov 2026.</li>
+          <li><strong>METI 2025</strong> — Ministry of Economy, Trade and Industry, Cybersecurity Industry Strategy (Mar 2025) and Talent Development Study Group Final Report (May 2025). meti.go.jp.</li>
+        </ul>
+      </div>
+      <div class="endnote-col">
+        <h3>其他参考资料</h3>
+        <ul>
+          <li><strong>IPA 2025</strong> — Information-technology Promotion Agency, enterprise CISO and security-management survey. ipa.go.jp.</li>
+          <li><strong>Toyo Keizai 2025</strong> — Toyo Keizai analysis of Japan's ~110,000 security-talent shortfall, citing private workforce survey data.</li>
+          <li><strong>Talos 2025</strong> — Cisco Talos, ransomware incidents in Japan H1 2025 and Qilin/Kawa4096 case analysis. blog.talosintelligence.com.</li>
+          <li><strong>Robert Half 2025</strong> — Robert Half Japan salary guide, CISO and security-leadership compensation bands.</li>
+          <li><strong>Nikkei Research 2022</strong> — CISO set-up rate and board reporting-line survey of large Japanese enterprises.</li>
+          <li><strong>JPCERT 2025</strong> — JPCERT/CC threat assessment and incident-handling reporting.</li>
+        </ul>
+        <h3>覆盖范围说明</h3>
+        <p>市场规模涵盖日本企业与政府的信息安全支出，企业范围界定为员工人数超过100人的组织，包括服务（SOC、MSSP/MDR、咨询、事件响应）与产品（终端、网络、身份、云）。除另有说明外，不包括面向消费者的安全产品，以及日本厂商在日本以外市场的收入。OT/ICS规模包括部署于关键基础设施环境中的硬件与托管服务部分。货币换算采用JPY 155 = USD 1的参考汇率。</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <p>免责声明 · 本报告由KIRA Research编制，仅供信息参考与战略研判之用，不构成任何投资建议、法律建议或任何形式的招揽。市场规模数据为基于分析师三角验证与公开数据得出的估算值，存在固有的不确定性。读者在依据本材料作出决策前应自行独立核实。除另有说明外，数据均以JPY计；USD等值仅供参考。© 2026 KIRA Research。保留所有权利。未经书面同意，禁止复制或转发。</p>
+    </div>
+    <div class="page-footer">
+      <span>日本网络安全2027</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
