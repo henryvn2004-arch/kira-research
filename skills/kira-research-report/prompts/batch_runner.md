@@ -193,6 +193,8 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 >
 > Naming: run `scripts/report-name.mjs` (SKILL.md Stage 3e, `docs/naming_convention.md`) and save `skills/kira-research-report/outputs/batch/${id}/naming.json`. Cover lines, report kind, `<title>` and closing short title come from it.
 >
+> Who's who (owner, 2026-10-07): write `skills/kira-research-report/outputs/batch/${id}/players.json` and the "Who's who" pages built from it (`brain_route.md` → "Who's who"; `scripts/render-players.mjs`). Find companies with searches in the market's business language, not only English.
+>
 > Write HTML to `skills/kira-research-report/outputs/batch/${id}/en.html`, PDF to `…/en.pdf` (render via `/api/render-pdf` with `PDF_RENDER_SECRET`).
 >
 > Hard rules (the skill enforces these; mentioning for safety):
@@ -215,7 +217,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 **Parent-side validation (post-return)**:
 
 1. Parse return message for "X planned, Y generated" — if `X != Y` → failure path with `error_log: EN section count mismatch X/Y`
-2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf naming.json` — all must exist; HTML and PDF non-empty (> 1KB); `naming.json` parses and its `title` equals the `<title>` of `en.html`
+2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf naming.json players.json` — all must exist; HTML and PDF non-empty (> 1KB); `naming.json` parses and its `title` equals the `<title>` of `en.html`; `node skills/kira-research-report/scripts/render-players.mjs --id ${id} --check` exits 0 and `en.html` contains a `players-page`. A failed check → failure path with `error_log: players: ${first problem}`
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
 4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
 
@@ -233,7 +235,7 @@ If all pass → commit + push the files, THEN advance the queue (files first: a 
 
 ```bash
 git add skills/kira-research-report/outputs/batch/${id}/en.html
-git add skills/kira-research-report/outputs/batch/${id}/naming.json
+git add skills/kira-research-report/outputs/batch/${id}/naming.json skills/kira-research-report/outputs/batch/${id}/players.json
 git add skills/kira-research-report/outputs/batch/${id}/cover.jpg 2>/dev/null || true
 git commit -m "batch: EN done for ${id}"
 git push origin main
@@ -454,6 +456,15 @@ fi
 ```
 
 Prints one JSON line; `"ok": true` expected. A cover failure is NOT fatal (the page falls back to a plain thumbnail): note it in the fire summary and continue.
+
+**5.3b-4 — Store the players in the company database (Kira Chain seed, migration 033).**
+
+```bash
+[ -s skills/kira-research-report/outputs/batch/${id}/players.json ] \
+  && node skills/kira-research-report/scripts/publish-players.mjs --id ${id}
+```
+
+Finds or creates each company in `entities` and writes this report's rows in `industry_players` (re-running replaces them). Prints one JSON line; `"ok": true` expected. NOT fatal: note a failure in the fire summary and continue. Reports made before 2026-10-07 have no `players.json`; skip them.
 
 **5.3c — Verify (3 cache-busted curls):**
 

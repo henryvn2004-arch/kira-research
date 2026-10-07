@@ -223,6 +223,7 @@ Stage A (EN gen) now plans each report as an answer to a **buyer question** inst
   - A fixed closing page ends every report.
   - Images stay relative in the HTML; the render and upload scripts inline them.
 - **Tagline (PR #44):** "Know first. Move first." is fixed on the cover and closing pages; it is not set per report.
+- **Who's who + company DB (2026-10-07):** every report ends with a "Who's who" chapter: the industry's companies grouped by value-chain stage, found with local-language searches. Source = `outputs/batch/<id>/players.json`; `scripts/render-players.mjs` checks it and prints the pages; at publish `scripts/publish-players.mjs` writes the companies to `entities` and `industry_players` (migration 033, applied). This is the seed data for Kira Chain (S10).
 - **Routines:** paused since 2026-10. Operations are being revamped in a separate session.
 
 ---

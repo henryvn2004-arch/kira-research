@@ -75,6 +75,7 @@ After all pages exist, walk them in order and assign:
 ### Cover and closing pages (all routes)
 
 - **Cover:** the `cover_<layout>` template (Step 1b), filled from `naming.json` (`docs/naming_convention.md`): line 1 = `cover.line1`, accent line = `cover.line2_accent`, optional line 3 ≤ `cover.line3_max_chars`; `{{REPORT_KIND}}` = `report_kind`; `{{REGION_OR_COUNTRY}}` = `country`. Subtitle = the buyer question or angle (≤110 chars). Year as usual. `{{TITLE_SIZE_CLASS}}` = `long` if any title line exceeds ~14 Latin characters (~7 CJK characters), else empty. All 9 layouts take the same placeholders. The tagline "Know first. / Move first." is fixed in the template; never change it.
+- **Who's who:** the `players-page` pages printed by `scripts/render-players.mjs` (from `players.json`) go right before the methodology endnote, and the contents list them as their own chapter (all routes; see `brain_route.md` → "Who's who").
 - **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}` (= `naming.short_title`), `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
 - Neither page carries a page number or source key.
 - `{{REPORT_TITLE}}` in `master_wrapper.html` (the HTML `<title>`) = `naming.title`. Translators translate it; publish reads each locale's title from it.

@@ -88,6 +88,7 @@ Run `node scripts/report-name.mjs --country … --industry … --stage … --typ
 | Decision chapter | Risks | `risk_matrix`, or `exhibit_page` with a `heatmap`. |
 | Decision chapter | Options compared | `decision_scorecard` (use it here, and do not repeat the same grid as a `comparison_table` elsewhere; a `matrix_2x2` of the options in the body complements it). Use when real alternatives exist. |
 | Decision chapter | Recommended path | `stage_gate_plan`, or `exhibit_page` with a `timeline` (Gantt with gates) plus a `comparison_table` of gate tests and budgets. Then a first-90-days page if it does not fit. |
+| Near the end | Who's who | `players-page` pages printed by `scripts/render-players.mjs` from `players.json` (see "Who's who" below). Its own chapter in the contents. |
 | Near the end | Methodology & sources | `methodology_endnote` (may run to 2 pages) |
 | Last | Closing | `closing` (identical brand page; no image generation) |
 
@@ -115,6 +116,16 @@ Each body page in `section_plan.json` carries:
 - `hook` is a technique from storytelling §4, used on chapter openers and on 1 page in 3.
 - Decision pages are not chart-bearing for the pre-render "chart_data populated" check.
 
+### Who's who (owner, 2026-10-07)
+
+The last chapter lists the companies in the industry, grouped by value-chain stage. It is also the seed of KIRA's company database, so it must be accurate.
+
+- **Stages:** 3–6, in value-chain order, taken from the pack's value chain and cut down to the stages that matter for this product in this country. Plain labels of 26 characters or fewer, e.g. for ready-to-drink beverages: "Ingredients and packaging", "Brand owners and makers", "Importers", "Distributors", "Retail and on-trade". Buyers and service firms (co-packers, 3PLs) count when the buyer question needs them.
+- **Players:** 15–60 companies that operate in this country. One row per company per stage (a maker that also imports may appear twice). Fields: `name` (trading name, ≤26 characters), `legal_name` (registered name, local script or diacritics kept, when found), `name_local` (optional), `stage`, `role` (what it does here, a few words), `origin` (ISO code of the owner's or brand's home country), `ownership` (local / foreign / jv / state / listed), `brands`, `scale` (stores, capacity or revenue with year, only if sourced), `source` (an alias in `sources`), `url` (optional).
+- **Finding them:** search in the market's business language as well as English. Company names, distributor lists and registry entries are written in the local language (Vietnamese "nhà phân phối …", "công ty nhập khẩu …"; Thai "ผู้จัดจำหน่าย …"; Indonesian "distributor resmi …"; Japanese "販売代理店", "輸入元"; Korean "총판", "수입사"). Good sources: industry association member lists, stock exchange and business registry listings, trade fair exhibitor lists, distributor and importer websites, official stores on e-commerce platforms, and the press. Do this for English-dominant markets too where companies list themselves in a local language (Malaysia: Bahasa Malaysia).
+- **Rules:** every player carries a source; no person names; no company that cannot be found in a source; leave a field out rather than guess it. The chapter makes no claims about market share beyond what the body supports.
+- Write `outputs/batch/<id>/players.json` (format in the header of `scripts/render-players.mjs`), run `node scripts/render-players.mjs --id <id> --check` until it passes, then `node scripts/render-players.mjs --id <id> --section <NN>` and place the pages it prints before the methodology endnote. The page walk fills `{{PAGE_NUM}}` / `{{TOTAL_PAGES}}`. Set `title` to an action title (e.g. "Who's who: 48 players, and the importers hold the keys") and `as_of` to the month of the research.
+
 ### Query strategy
 
 Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English queries, bucketed by section. Local-language queries follow topic_parser's `local_search_priority` (this rule wins over the brain's own "always search locally" line): for tier-1 / tier-2 markets, use the pack's **industry glossary** (`vi` / `ja` / `ko` / `zh` practitioner terms) on top of `references/local_lang_query_glossary.md`; for `skip` markets (English-dominant, e.g. SG, PH), add only 2–4 queries with local trade slang where it finds data English misses (e.g. Filipino retail terms for mark-ups or store types). If the buyer is an incumbent, add the baseline queries (its filings, local subsidiaries) first.
@@ -139,5 +150,6 @@ Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English 
 - [ ] Conditions, risks, path (and options when alternatives exist) are present
 - [ ] No brain-internal names anywhere in `section_plan.json` titles or briefs
 - [ ] `naming.json` written by `scripts/report-name.mjs` (exit 0) and copied into `section_plan.json`
+- [ ] The "Who's who" chapter is in the plan, and the query strategy has company-discovery queries in the local language
 
 Return `section_plan.json`.
