@@ -19,7 +19,8 @@
 // of the pending block (stable, so equal demand keeps its order). The runner
 // picks the first pending row top-down, so requested topics are produced first.
 //
-// Pending rows also get their topic title and industry refreshed when the topic was edited after queueing.
+// Pending rows also get their topic title and industry refreshed when the topic was edited after queueing,
+// and pending rows of topics merged into a broader topic (status rejected + signals.merged_into) are removed.
 //
 // Prints `added=<N>` on stdout (rows appended + rows moved + rows refreshed). Caller commits the CSV when N > 0.
 // ---------------------------------------------------------------
@@ -81,7 +82,11 @@ approved.sort((a, b) => weight(b.slug) - weight(a.slug));
 // Titles and industries can be edited after a topic was queued: remember the current ones so
 // pending rows already in the CSV get refreshed below (a row that is claimed or done is never touched).
 let queuedNow = [];
-try { queuedNow = await sb('topics?status=eq.queued&select=slug,title,industry_id&limit=5000'); }
+let merged = new Set();   // topics the owner merged into a broader one: their pending rows leave the queue
+try {
+  queuedNow = await sb('topics?status=eq.queued&select=slug,title,industry_id&limit=5000');
+  merged = new Set((await sb('topics?status=eq.rejected&signals->>merged_into=not.is.null&select=slug&limit=5000')).map(t => t.slug));
+}
 catch (e) { console.error(`sync-approved-topics: queued titles unavailable (${e.message}), not refreshing`); }
 const indById = new Map(industries.map(i => [i.id, i]));
 const indName = new Map(industries.map(i => [i.id, (indById.get(i.parent_id) || i).name]));
@@ -139,6 +144,7 @@ let refreshed = 0;
   for (let i = 1; i < all.length; i++) {
     const l = all[i];
     if (!l || statusOf(l) !== 'pending') continue;
+    if (merged.has(csvFirstCell(l))) { all[i] = null; refreshed++; continue; }
     const f = fresh.get(csvFirstCell(l));
     if (!f) continue;
     const cells = splitRow(l);
@@ -149,7 +155,7 @@ let refreshed = 0;
     all[i] = cells.map(csvCell).join(',');
     refreshed++;
   }
-  if (refreshed) out = all.join('\n');
+  if (refreshed) out = all.filter(l => l !== null).join('\n');
 }
 
 let moved = 0;
