@@ -34,6 +34,21 @@ export const CONFIG = {
     label: 'Demand points for one search that found nothing',
     help: 'Added once per search that matched no published report. Set to 0 to rank by email requests only.'
   },
+  'planner.weekly_enabled': {
+    group: 'Topic queue', type: 'bool', default: true,
+    label: 'Plan new topics every week',
+    help: 'On: once a week the topic planner adds new segment-level topics for each country, built from reader demand (requests, searches) and fresh research. Off: the weekly run does nothing.'
+  },
+  'planner.topics_per_country': {
+    group: 'Topic queue', type: 'int', min: 0, max: 15, default: 6, unit: 'topics per country per week',
+    label: 'New topics per country each week',
+    help: 'How many new topics the weekly planner adds for each of the 15 countries. Reader-requested topics count towards this number and are handled first.'
+  },
+  'planner.auto_approve': {
+    group: 'Topic queue', type: 'bool', default: true,
+    label: 'Weekly topics go straight into the production queue',
+    help: 'On: new planner topics are approved and enter the queue at the next runner fire. Off: they wait in Topics as "proposed" until you approve them.'
+  },
   'pipeline.stale_minutes': {
     group: 'Report pipeline', type: 'int', min: 60, max: 600, default: 150, unit: 'minutes',
     label: 'A running report counts as stuck after',
