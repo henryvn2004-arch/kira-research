@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>韩国半导体HBM 2026 — KIRA Research</title>
+<meta name="description" content="SK Hynix与三星的HBM产能扩张、AI存储溢价动态，以及至2026年DRAM经济性的结构性转变。KIRA Research市场分析。">
+<meta property="og:title" content="韩国半导体HBM 2026 — KIRA Research">
+<meta property="og:description" content="2026年韩国半导体HBM市场分析——SK Hynix与三星产能、HBM4路线图、AI存储价格溢价、竞争格局及至2028年预测。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+/* === MASTER STYLES === */
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 34px; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 · COVER ============ -->
+<div class="page" style="background:var(--dark-bg); color:var(--dark-text);">
+  <div style="position:absolute; inset:0; background-image: radial-gradient(ellipse 70% 50% at 75% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 15% 85%, rgba(30,111,255,0.10) 0%, transparent 60%); pointer-events:none;"></div>
+  <div style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; padding:64px 72px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:22px; letter-spacing:-0.02em;">KIRA<span style="color:var(--primary);">.</span><span style="font-weight:400; color:var(--muted); font-size:13px; letter-spacing:0.25em; margin-left:8px;">RESEARCH</span></div>
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.15em;">机密</div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+      <div class="mono" style="font-size:13px; color:var(--primary); letter-spacing:0.3em; margin-bottom:24px;">韩国 · 半导体HBM · 2026</div>
+      <h1 style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:56px; line-height:1.04; letter-spacing:-0.04em; margin-bottom:28px; max-width:1000px;">韩国HBM双寡头：AI存储周期的核心</h1>
+      <p style="font-size:18px; color:#A3A9B6; line-height:1.5; max-width:760px; margin-bottom:auto;">随着AI加速器需求为存储价格设定新的底部，SK Hynix与三星正竞相扩张HBM3E和HBM4产能。2026年拐点的关键在于谁能获取溢价，以及AI存储超级周期如何重塑DRAM经济性。</p>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.1em;">报告 · KR-SEMI-HBM-2026</div>
+      <div class="mono" style="font-size:11px; color:var(--muted); letter-spacing:0.1em;">市场分析</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 · METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">研究方法</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <h1 class="page-h1">本报告观点的形成方式</h1>
+    <p class="page-subhead">本报告基于两类证据：<strong>一手信息</strong>——与存储模组厂商、OEM采购团队及超大规模云服务商基础设施联系人开展的供应链渠道核查；以及<strong>二手依据</strong>——公司披露、行业统计机构数据及经三角验证的KIRA估算。每一项量化结论均附有明确的来源标注。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:8px; flex:1;">
+      <div>
+        <div style="font-family:'JetBrains Mono','Noto Sans SC',monospace; font-size:11px; color:var(--primary); letter-spacing:0.15em; text-transform:uppercase; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--primary);">一手信息</div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">供应链渠道核查</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">与HBM模组集成商、散热方案供应商、CoWoS封装分包商及超大规模云服务商存储采购团队交流，掌握真实的认证周期、配额分配动态和实际价格水平。</div></div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">分析师综合研判</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">KIRA内部基于多项公开数据进行三角验证，正文中以[Kira estimates]标注。</div></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">专家解读</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">工艺工程师、存储架构师及贸易政策专家，相比营收数据更贴近HBM良率曲线和JEDEC认证周期。</div></div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono','Noto Sans SC',monospace; font-size:11px; color:var(--primary); letter-spacing:0.15em; text-transform:uppercase; font-weight:600; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--primary);">二手依据</div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">行业统计机构</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">WSTS、KSIA及Gartner存储市场追踪数据——正文中按具名来源引用。</div></div>
+        <div style="margin-bottom:16px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">上市公司披露</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">SK Hynix、三星电子及Micron的季度财报、投资者日和技术简报——按公司及期间引用。</div></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">三角验证估算</div><div style="font-size:12px; color:var(--text-mid); line-height:1.5;">若单一来源无法覆盖某项数据，我们综合两至三项输入并披露方法，以[Kira estimates]标注。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 · CONTENTS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">目录</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 48px; margin-top:18px; flex:1;">
+      <div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">01</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">执行摘要</div><div style="font-size:11px; color:var(--muted);">2026年HBM拐点</div></div><span class="mono" style="font-size:11px; color:var(--muted);">004</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">02</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">宏观背景</div><div style="font-size:11px; color:var(--muted);">韩国半导体产业环境</div></div><span class="mono" style="font-size:11px; color:var(--muted);">006</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">03</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">HBM市场规模</div><div style="font-size:11px; color:var(--muted);">市场与韩国份额</div></div><span class="mono" style="font-size:11px; color:var(--muted);">007</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">04</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">产能扩张</div><div style="font-size:11px; color:var(--muted);">SK Hynix与三星路线图</div></div><span class="mono" style="font-size:11px; color:var(--muted);">009</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">05</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">AI存储溢价动态</div><div style="font-size:11px; color:var(--muted);">价格、ASP与利润结构</div></div><span class="mono" style="font-size:11px; color:var(--muted);">011</span></div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">06</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">竞争格局</div><div style="font-size:11px; color:var(--muted);">SK Hynix、三星、Micron</div></div><span class="mono" style="font-size:11px; color:var(--muted);">012</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">07</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">需求驱动因素</div><div style="font-size:11px; color:var(--muted);">超大规模云服务商与AI加速器</div></div><span class="mono" style="font-size:11px; color:var(--muted);">013</span></div>
+        <div style="display:flex; align-items:baseline; gap:14px; padding:11px 0; border-bottom:1px solid var(--border);"><span class="mono" style="font-size:11px; color:var(--primary); font-weight:600;">08</span><div style="flex:1;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px;">战略启示</div><div style="font-size:11px; color:var(--muted);">五项前瞻判断</div></div><span class="mono" style="font-size:11px; color:var(--muted);">014</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 · EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">执行摘要</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <h1 class="page-h1">韩国HBM双寡头——2026年AI存储拐点</h1>
+    <p class="page-subhead">HBM已不再是小众产品，而是决定AI加速器性能的存储架构。韩国掌控<strong>全球90%以上的HBM供应</strong>[Kira estimates]，2026年拐点的核心在于HBM4竞赛，以及这类芯片相对标准DRAM的溢价。</p>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px;">
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">2026E HBM市场规模</div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">$22<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">bn</span></div><div class="mono" style="font-size:11px; color:var(--green); font-weight:600;">同比+55%</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--green); text-transform:uppercase; font-weight:600;">Kira estimates</div></div>
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">韩国HBM份额</div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">&gt;90<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">%</span></div><div class="mono" style="font-size:11px; color:var(--text-mid); font-weight:600;">SK Hynix+三星</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--green); text-transform:uppercase; font-weight:600;">Kira estimates</div></div>
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">HBM价格溢价</div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">5–8×<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;"></span></div><div class="mono" style="font-size:11px; color:var(--text-mid); font-weight:600;">相对标准DRAM</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--amber); text-transform:uppercase; font-weight:600;">Kira estimates</div></div>
+      <div style="background:var(--bg); border:1px solid var(--border); padding:14px 16px; border-radius:6px; position:relative;"><div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">2025 SK Hynix HBM营收</div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.02em; margin-bottom:6px;">~$10<span style="font-size:13px; color:var(--primary); margin-left:4px; font-weight:700;">bn</span></div><div class="mono" style="font-size:11px; color:var(--amber); font-weight:600;">估计占DRAM营收40%以上</div><div class="mono" style="position:absolute; bottom:6px; right:8px; font-size:8px; color:var(--amber); text-transform:uppercase; font-weight:600;">SK Hynix</div></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:15px; margin-bottom:6px;">结构性转变</div><p style="font-size:12.5px; color:var(--text-mid); line-height:1.6;">HBM是AI加速器（NVIDIA H/B系列、AMD Instinct、Google TPU）实现AI推理和训练负载所需存储带宽的关键架构。转产HBM的DRAM晶圆，其<strong>单片晶圆营收是标准DDR5的5–8倍</strong>[Kira estimates]，这是DRAM历史上规模最大的一次ASP扩张。</p></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:15px; margin-bottom:6px;">2026年的竞争</div><p style="font-size:12.5px; color:var(--text-mid); line-height:1.6;">SK Hynix凭借HBM3E量产规模领先，并已向NVIDIA及超大规模云服务商交付早期HBM4样品；三星正在缩小良率差距并调配晶圆厂产能。Micron亦参与竞争，但份额仅约10%[Kira estimates]。2026年的关键问题是：三星能否在SK Hynix锁定第二代设计订单之前弥补良率差距？</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">HBM市场规模</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD BN · 全球 · 2023–2026E</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="74" y="130" width="48" height="40" fill="#1E6FFF"/>
+<text x="98" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2023</text>
+<text x="98" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">4.5</text>
+<rect x="184" y="90" width="48" height="80" fill="#1E6FFF"/>
+<text x="208" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="208" y="84" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">14</text>
+<rect x="294" y="50" width="48" height="120" fill="#1E6FFF"/>
+<text x="318" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2025E</text>
+<text x="318" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">22</text>
+<rect x="404" y="14" width="48" height="156" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="428" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2026E</text>
+<text x="428" y="8" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">34</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px; letter-spacing:0.05em;">SOURCE: WSTS (2023–24)；2025E–26E KIRA估算</div>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · Kira estimates = KIRA in-house triangulation · WSTS = World Semiconductor Trade Statistics · SK Hynix = SK Hynix earnings disclosures</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 · EXEC SUMMARY P2 · IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">执行摘要</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <h1 class="page-h1">2026年的五项战略启示</h1>
+    <p class="page-subhead">韩国HBM厂商及其供应链合作伙伴必须采取行动的领域。每项启示均对应展开相关证据的章节。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; align-content:start;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">产能</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">把握HBM4爬坡节奏，与超大规模云服务商的承诺周期相匹配。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">HBM配额由超大规模云服务商12–18个月的采购承诺窗口决定。<strong>在认证完成前过度扩产</strong>可能导致产能闲置；扩产不足则会将设计订单让给竞争对手。2026年的制约因素是先进封装产能，而非DRAM晶圆投片[Kira estimates]。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">参见产能扩张 · 第009页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">定价</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">以HBM4差异化守住ASP溢价。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">相对标准DRAM 5–8倍的ASP溢价源于工艺排他性，而不仅是产能紧张[Kira estimates]。随着Micron扩大规模、三星良率改善，维持溢价需要依靠HBM4的差异化——带宽密度、功耗范围和散热界面。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">参见AI存储溢价动态 · 第011页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">竞争</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">密切跟踪三星良率恢复的时间表。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">三星HBM3E的良率差距是最能改变SK Hynix 2026年定价能力的单一变量。若三星在2026年上半年恢复良率，将压缩SK Hynix的溢价；若推迟，则超级周期延长[secondary]。关于三星8Hi和12Hi堆叠良率的供应链情报，比公开指引更具参考价值。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">参见竞争格局 · 第012页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">需求</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">将超大规模云服务商资本开支调整作为首要需求信号。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">HBM需求直接取决于AI加速器芯片订单，而后者又取决于超大规模云服务商的数据中心资本开支[secondary]。Alphabet、Microsoft、Amazon和Meta共同指示2026年走势；任何资本开支推迟都会在两个季度内传导至HBM配额。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">参见需求驱动因素 · 第013页</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px; grid-column:1 / -1;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">地缘政治</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14.5px; margin-bottom:6px; line-height:1.2;">预判对华出口管制收紧将成为一次产能置换事件。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55; margin-bottom:8px;">美国BIS限制向中国出口先进存储产品的管制措施带来两方面影响：SK Hynix和三星将NAND/DDR产能转向HBM，使整体供应趋紧[secondary]；中国晶圆厂在成熟制程上加速推进DRAM自给计划，消耗全球设备排期，但在2026年窗口期内无法替代尖端HBM[Kira estimates]。</p>
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.05em;">参见宏观背景 · 第006页</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 · MACRO DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第02章</div>
+    <h2 class="divider-title">宏观背景：<span class="accent">2026年的韩国</span></h2>
+    <p class="divider-thesis">这是一个高度依赖半导体出口的经济体，正面对中美科技脱钩、韩元承压，以及将芯片主权列为国家优先事项的国内政策环境。制约HBM增长的不是需求，而是良率、先进封装产能，以及供应链决策所受的地缘政治约束。<strong>韩国的HBM地位是国家资产，而不仅是企业资产。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">出口依赖</span><span class="toc-pill">对华管制</span><span class="toc-pill">政策与资本开支</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 · MACRO PAGE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 · 宏观背景</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <h1 class="page-h1">韩国宏观经济与半导体出口引擎</h1>
+    <p class="page-subhead">半导体约占韩国出口的20%[KITA]，因此HBM的价格周期是一个直接的宏观经济变量，而非行业注脚。2026年的背景是：芯片周期复苏、出口管制摩擦，以及有利于产能扩张的国内政策顺风因素。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">半导体是出口引擎</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2024年韩国半导体行业出口额达USD 135 bn[KITA]，其中存储（DRAM+NAND）占大部分。HBM的ASP溢价达5–8倍，意味着每一片转产HBM的晶圆对贸易收支的影响远超其出货量占比[Kira estimates]。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">出口管制摩擦与重新定向</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">美国BIS对向中国出口先进存储产品的限制[BIS 2023]，促使SK Hynix和三星降低面向中国的NAND与DDR优先级，转而侧重HBM——HBM绝大部分销往美国超大规模云服务商和GPU厂商。这一重新定向强化了AI存储溢价[secondary]。</p></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">有利于产能扩张的政策</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">韩国政府的《K-Chips法案》（2023）为半导体设施投资提供最高15%的税收抵免[MOTIE]，降低了HBM扩产的实际成本，并鼓励先进封装在本土扩大规模。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">韩国半导体出口</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">USD BN · 年度 · 2022–2026E</div>
+        <svg viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="160" x2="470" y2="160" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="75" y="60" width="34" height="100" fill="#1E6FFF"/>
+<text x="92" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2022</text>
+<text x="92" y="55" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">129</text>
+<rect x="159" y="100" width="34" height="60" fill="#4A5568"/>
+<text x="176" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2023</text>
+<text x="176" y="95" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">99</text>
+<rect x="243" y="56" width="34" height="104" fill="#1E6FFF"/>
+<text x="260" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2024</text>
+<text x="260" y="51" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">135</text>
+<rect x="327" y="42" width="34" height="118" fill="#1E6FFF"/>
+<text x="344" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2025E</text>
+<text x="344" y="37" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0D10">152</text>
+<rect x="411" y="26" width="34" height="134" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="428" y="175" text-anchor="middle" font-size="9" fill="#6B7280">2026E</text>
+<text x="428" y="21" text-anchor="middle" font-size="9" font-weight="700" fill="#D97706">168</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: KITA (2022–24)；2025E–26E KIRA估算 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · KITA = Korea International Trade Association · BIS 2023 = US Bureau of Industry and Security advanced memory controls · MOTIE = Ministry of Trade, Industry and Energy K-Chips Act disclosure · Kira estimates = KIRA in-house triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 · HBM MARKET SIZING ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · HBM市场规模</div>
+      <div class="page-section-counter">08 / 14</div>
+    </div>
+    <h1 class="page-h1">HBM市场规模：从小众产品到关键基础设施。</h1>
+    <p class="page-subhead">HBM市场规模从2023年的USD 4.5 bn增长至2026年底预计的USD 34 bn，增长完全由超大规模云服务商和AI芯片设计公司对AI加速器的采用所驱动。韩国供应了该市场90%以上的份额[Kira estimates]。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">AI需求带动的拐点</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2023至2025年间HBM市场增长两倍，驱动力是NVIDIA GPU晶圆出货，而非DRAM周期复苏。每颗NVIDIA H100搭载80 GB HBM3，H200/B200则分别搭载141 GB/192 GB[NVIDIA]。单颗GPU的存储搭载量仍在上升，而非趋于平稳[Kira estimates]。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">韩国的结构性主导地位</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">SK Hynix约占全球HBM供应的50–55%，三星约占35–40%，Micron占其余份额[Kira estimates]。具体到HBM3E——2025–26年量产出货中ASP最高的产品——SK Hynix拿下了NVIDIA的大部分设计订单，处于领先地位[secondary]。</p></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">晶圆经济性：HBM与标准DRAM对比</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">同等容量下，一套HBM晶圆消耗的DRAM裸片面积是DDR5的3–4倍，成本由集成产品的溢价回收。HBM3E每GB有效ASP约为DDR5的6–7倍[Kira estimates]，这种利润结构在以往任何DRAM周期中都不曾出现。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">各厂商HBM份额</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:14px;">占HBM供应% · 2025E</div>
+        <svg viewBox="0 0 460 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="mono">
+<text x="0" y="22" font-size="11" fill="#0B0D10" font-weight="500">SK Hynix</text>
+<rect x="0" y="28" width="275" height="14" fill="#1E6FFF" rx="2"/>
+<text x="283" y="40" font-size="10" font-weight="700" fill="#1E6FFF">~52%</text>
+<text x="0" y="68" font-size="11" fill="#0B0D10" font-weight="500">三星电子</text>
+<rect x="0" y="74" width="185" height="14" fill="#1E6FFF" rx="2"/>
+<text x="193" y="86" font-size="10" font-weight="700" fill="#1E6FFF">~38%</text>
+<text x="0" y="110" font-size="11" fill="#0B0D10" font-weight="500">Micron Technology</text>
+<rect x="0" y="116" width="50" height="14" fill="#4A5568" rx="2"/>
+<text x="58" y="128" font-size="10" font-weight="700" fill="#4A5568">~10%</text>
+</g></svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:10px;">SOURCE: KIRA三角验证 · KIRA RESEARCH 2026</div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+          <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:12px; margin-bottom:6px;">HBM各代产品（2026E份额）</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <div style="background:var(--primary-soft); border:1px solid rgba(30,111,255,0.3); border-radius:4px; padding:6px 10px; font-family:'JetBrains Mono','Noto Sans SC',monospace; font-size:10px; color:var(--primary); font-weight:600;">HBM3E: ~65%</div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:6px 10px; font-family:'JetBrains Mono','Noto Sans SC',monospace; font-size:10px; color:var(--muted); font-weight:600;">HBM3: ~22%</div>
+            <div style="background:var(--amber-soft); border:1px solid rgba(217,119,6,0.3); border-radius:4px; padding:6px 10px; font-family:'JetBrains Mono','Noto Sans SC',monospace; font-size:10px; color:var(--amber); font-weight:600;">HBM4: ~13%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · Kira estimates = KIRA in-house triangulation · NVIDIA = NVIDIA product specifications H100/H200/B200 · WSTS = World Semiconductor Trade Statistics</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 · CAPACITY EXPANSION DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h2 class="divider-title">产能扩张：<span class="accent">SK Hynix与三星</span></h2>
+    <p class="divider-thesis">两家厂商正以前所未有的速度将DRAM晶圆产能转向HBM，并建设专用先进封装产线。瓶颈不在DRAM晶圆投片，而在于将DRAM裸片制成HBM成品堆栈的TSV钻孔与堆叠产能。<strong>谁赢得封装竞赛，谁就赢得2026年。</strong></p>
+    <div class="divider-mini-toc"><span class="toc-pill">TSV产能</span><span class="toc-pill">HBM3E放量</span><span class="toc-pill">HBM4爬坡</span></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 · CAPACITY EXPANSION ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 产能扩张</div>
+      <div class="page-section-counter">10 / 14</div>
+    </div>
+    <h1 class="page-h1">SK Hynix与三星：HBM产能路线图</h1>
+    <p class="page-subhead">SK Hynix在HBM3E量产规模和HBM4早期认证上领先；三星正大举投资以缩小良率差距，争取Google、AMD及韩国本土AI芯片企业的配额。产能竞赛的主战场是先进封装车间，而非DRAM晶圆厂。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:16px;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:8px;">SK HYNIX</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:8px;">技术领先者</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.6; margin-bottom:8px;">2024–25年的大部分时间里，SK Hynix是NVIDIA唯一通过认证的HBM3E供应商[secondary]。其位于清州的M15X晶圆厂和新建的龙仁园区是主要HBM生产基地。HBM4样品已于2025年下半年交付NVIDIA[SK Hynix IR]，目标在2026年下半年量产爬坡。</div>
+        <div class="mono" style="font-size:10px; color:var(--text-mid); line-height:1.8;">
+          · HBM3E 12Hi：2025年第一季度起量产<br>
+          · HBM4：2025年第三季度提供早期认证样品<br>
+          · 转产HBM的DRAM晶圆产能：2026年底预计约40%<br>
+          · 封装资本开支：每年USD 3–4 bn[Kira estimates]
+        </div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--amber); border-radius:6px; padding:16px;">
+        <div class="mono" style="font-size:9px; color:var(--amber); letter-spacing:0.12em; font-weight:600; margin-bottom:8px;">三星电子</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:8px;">缩小良率差距</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.6; margin-bottom:8px;">NVIDIA认证问题推迟了三星的初期爬坡，此后其HBM3E良率在2025年持续改善[secondary]。三星DS部门的目标是在2026年取得Google TPU v6和AMD MI400系列的HBM3E量产配额[Kira estimates]。HBM4研发在华城园区同步推进。</div>
+        <div class="mono" style="font-size:10px; color:var(--text-mid); line-height:1.8;">
+          · HBM3E 8Hi：2025年下半年完成量产认证<br>
+          · HBM3E 12Hi：目标2026年第二季度爬坡<br>
+          · HBM4：研发阶段；预计2026年下半年至2027年上半年量产<br>
+          · HBM资本开支：每年USD 4–5 bn[Kira estimates]
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">先进封装瓶颈</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.55;">TSV（硅通孔）钻孔和批量回流焊键合是制约12Hi堆栈良率的环节。决定2026年HBM供应的是这些环节的产能，而非DRAM晶圆投片量[secondary]。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">DRAM转产经济性</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.55;">将一片DRAM投片转产HBM，加工成本约高3–4倍，但每有效比特售价高5–8倍[Kira estimates]。只要AI溢价持续，转产的经济性在结构上优于标准DRAM。</div>
+      </div>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:14px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">Micron参与有限</div>
+        <div style="font-size:12px; color:var(--text-mid); line-height:1.55;">Micron的HBM份额约10%，正在博伊西工厂扩大HBM3E产能。其扩产受制于较小的DRAM晶圆基础和较弱的封装设施[secondary]，短期内不会威胁韩国的溢价。</div>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · SK Hynix IR = SK Hynix investor relations disclosures 2025 · Kira estimates = KIRA in-house triangulation · secondary = industry press and analyst channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 · AI MEMORY PREMIUM ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · AI存储溢价动态</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <h1 class="page-h1">AI存储溢价：结构性的，而非周期性的。</h1>
+    <p class="page-subhead">HBM相对标准DRAM的价格溢价并非源于典型的DRAM供需周期，而是反映了HBM在AI加速器设计中的架构锁定——这一认证壁垒需要12–24个月才能改变，而非商品DRAM定价那样的3–6个月。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">溢价构成</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">2025年合约价中，HBM3E（每堆栈24 GB/36 GB）售价约为每GB USD 18–24，而DDR5为每GB USD 3–4[Kira estimates]。价差反映了：（1）堆叠与封装成本；（2）受良率制约的稀缺性；（3）AI加速器设计规格中缺乏可行替代品。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">认证锁定</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">AI加速器SoC——NVIDIA Blackwell、AMD Instinct MI400、Google TPU v6——均按特定的HBM中介层和接口规格设计。更换HBM供应商需要芯片重新流片，至少需要新的封装认证，以及数月的系统验证[secondary]。设计订单的黏性构成了溢价的底线。</p></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">SK Hynix的利润结构</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">SK Hynix的DRAM营业利润率从2023年−25%的低谷回升至2024–25年预计的+40%以上，几乎完全由HBM产品结构转变驱动[SK Hynix IR]。尽管HBM在出货比特中占少数，目前已贡献DRAM营收的大部分[Kira estimates]。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">HBM与DDR5每GB ASP对比</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD / GB 合约价 · 2023–2026E</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<!-- HBM3E bars -->
+<rect x="68" y="46" width="36" height="124" fill="#1E6FFF"/>
+<text x="86" y="186" text-anchor="middle" font-size="8" fill="#6B7280">2023</text>
+<text x="86" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1E6FFF">12</text>
+<!-- DDR5 bars -->
+<rect x="110" y="140" width="36" height="30" fill="#4A5568"/>
+<text x="128" y="186" text-anchor="middle" font-size="8" fill="#6B7280">DDR5</text>
+<text x="128" y="134" text-anchor="middle" font-size="9" font-weight="700" fill="#4A5568">3.6</text>
+
+<rect x="192" y="36" width="36" height="134" fill="#1E6FFF"/>
+<text x="210" y="186" text-anchor="middle" font-size="8" fill="#6B7280">2024</text>
+<text x="210" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#1E6FFF">20</text>
+<rect x="234" y="142" width="36" height="28" fill="#4A5568"/>
+<text x="252" y="186" text-anchor="middle" font-size="8" fill="#6B7280">DDR5</text>
+<text x="252" y="136" text-anchor="middle" font-size="9" font-weight="700" fill="#4A5568">3.3</text>
+
+<rect x="316" y="32" width="36" height="138" fill="#1E6FFF"/>
+<text x="334" y="186" text-anchor="middle" font-size="8" fill="#6B7280">2025E</text>
+<text x="334" y="26" text-anchor="middle" font-size="9" font-weight="700" fill="#1E6FFF">21</text>
+<rect x="358" y="143" width="36" height="27" fill="#4A5568"/>
+<text x="376" y="186" text-anchor="middle" font-size="8" fill="#6B7280">DDR5</text>
+<text x="376" y="137" text-anchor="middle" font-size="9" font-weight="700" fill="#4A5568">3.1</text>
+
+<rect x="440" y="24" width="36" height="146" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="458" y="186" text-anchor="middle" font-size="8" fill="#6B7280">2026E</text>
+<text x="458" y="18" text-anchor="middle" font-size="9" font-weight="700" fill="#D97706">22</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: KIRA估算（合约价三角验证） · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · Kira estimates = KIRA in-house triangulation · SK Hynix IR = SK Hynix investor relations disclosures 2025 · secondary = industry press and packaging-channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 · COMPETITIVE LANDSCAPE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 · 竞争格局</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <h1 class="page-h1">竞争结构：韩国双寡头，第三名差距明显。</h1>
+    <p class="page-subhead">HBM市场的竞争在结构上不同于标准DRAM：认证深度和先进封装规模构成壁垒，阻止份额快速转移。2026年的竞争发生在韩国与Micron之间，而非来自新进入者。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); font-weight:600; margin-bottom:8px;">企业01——领先者</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:16px; margin-bottom:4px;">SK Hynix</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:10px;">HBM份额约52% · 2025E[Kira estimates]</div>
+        <div style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">HBM3E量产的先行者。2024年期间是NVIDIA H100/H200唯一通过认证的供应商。2025年下半年向NVIDIA及超大规模云服务商交付HBM4样品。以清州M15X和龙仁园区为HBM生产核心。</div>
+        <div class="mono" style="font-size:10px; color:var(--green); margin-top:8px; font-weight:600;">2025年DRAM营业利润率：约40%以上[SK Hynix IR]</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div class="mono" style="font-size:9px; color:var(--amber); font-weight:600; margin-bottom:8px;">企业02——挑战者</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:16px; margin-bottom:4px;">三星电子</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:10px;">HBM份额约38% · 2025E[Kira estimates]</div>
+        <div style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">DRAM产能基础大于SK Hynix。经历NVIDIA认证问题后，HBM3E 8Hi良率在2025年下半年持续改善。12Hi爬坡与HBM4同步推进。2026年瞄准AMD、Google及韩国本土AI芯片客户。</div>
+        <div class="mono" style="font-size:10px; color:var(--amber); margin-top:8px; font-weight:600;">2025年DS部门利润率自低谷回升[Samsung AR]</div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <div class="mono" style="font-size:9px; color:var(--muted); font-weight:600; margin-bottom:8px;">企业03——差距明显</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:900; font-size:16px; margin-bottom:4px;">Micron Technology</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:10px;">HBM份额约10% · 2025E[Kira estimates]</div>
+        <div style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">HBM3E在博伊西量产。已通过NVIDIA认证，获得部分H200配额。先进封装产能有限，制约份额提升。美国《CHIPS法案》投资支持其在2026–27年逐步建设HBM4产能。</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-top:8px; font-weight:600;">短期内不威胁韩国溢价</div>
+      </div>
+    </div>
+    <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:14px;">
+      <div class="mono" style="font-size:9px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600;">结构性进入壁垒</div>
+      <p style="font-size:12px; color:var(--text-mid); line-height:1.55;">中国厂商（CXMT、ChangXin）正在开发尖端DRAM，但在TSV和HBM堆叠能力上仍落后数代[secondary]。在2026年窗口期内，其产能无法替代韩国HBM；美国出口管制也限制其获取缩小差距所需的封装设备。</p>
+    </div>
+    <div class="source-key">来源说明 · Kira estimates = KIRA in-house triangulation · SK Hynix IR = SK Hynix investor relations 2025 · Samsung AR = Samsung Electronics annual report · secondary = industry press and analyst channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 · DEMAND DRIVERS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 需求驱动因素</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <h1 class="page-h1">需求架构：超大规模云服务商、AI芯片企业与GPU存储搭载量。</h1>
+    <p class="page-subhead">HBM需求属于派生需求——取决于AI加速器芯片订单，而后者又取决于超大规模云服务商的资本开支承诺。2026年需求前景向好：超大规模云服务商的AI基础设施资本开支总额正在加速，而非放缓。</p>
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:32px; flex:1;">
+      <div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">超大规模云服务商资本开支是首要信号</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">美国四大超大规模云服务商（Alphabet、Amazon、Microsoft、Meta）指引2025年合计资本开支达USD 300+ bn，其中数据中心和AI基础设施占增量支出的大部分[secondary]。每USD 1 bn的AI算力资本开支约对应USD 60–80 mn的HBM需求[Kira estimates]。</p></div>
+        <div style="margin-bottom:14px;"><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">单颗GPU存储搭载量上升</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">每颗加速器的HBM容量随产品代际不断增加：H100（80 GB）、H200（141 GB）、B200（192 GB）[NVIDIA]。在AI集群规模相同的情况下，每一代新GPU都需要显著更多的HBM供应——这一结构性顺风因素与超大规模云服务商的采购数量无关[Kira estimates]。</p></div>
+        <div><div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:14px; margin-bottom:4px;">新兴需求方向</div><p style="font-size:12px; color:var(--text-mid); line-height:1.55;">超大规模云服务商之外：（1）主权AI项目（欧盟、日本、阿联酋、沙特）建设本国GPU集群；（2）边缘节点的企业AI推理；（3）韩国本土AI芯片初创企业（Rebellions、Sapeon）为定制加速器设计认证HBM[secondary]。2026年，这些需求带来利润增量，但不会主导出货量。</p></div>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:18px;">
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13px; margin-bottom:2px;">超大规模云服务商AI资本开支走势</div>
+        <div class="mono" style="font-size:10px; color:var(--muted); margin-bottom:12px;">USD BN · 四大合计 · 2023–2026E</div>
+        <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<line x1="40" y1="170" x2="470" y2="170" stroke="#E5E7EB" stroke-width="1"/>
+<g class="mono">
+<rect x="74" y="120" width="48" height="50" fill="#1E6FFF"/>
+<text x="98" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2023</text>
+<text x="98" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">145</text>
+<rect x="184" y="82" width="48" height="88" fill="#1E6FFF"/>
+<text x="208" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2024</text>
+<text x="208" y="76" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">228</text>
+<rect x="294" y="44" width="48" height="126" fill="#1E6FFF"/>
+<text x="318" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2025E</text>
+<text x="318" y="38" text-anchor="middle" font-size="10" font-weight="700" fill="#0B0D10">305</text>
+<rect x="404" y="16" width="48" height="154" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="428" y="186" text-anchor="middle" font-size="10" fill="#6B7280">2026E</text>
+<text x="428" y="10" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706">360</text>
+</g>
+</svg>
+        <div class="mono" style="font-size:9px; color:var(--muted); margin-top:8px;">SOURCE: 公司披露（ALPHABET、AMAZON、MSFT、META）；2026E KIRA估算</div>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · Kira estimates = KIRA in-house triangulation · NVIDIA = NVIDIA product specs · secondary = company earnings calls, industry press</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 · STRATEGIC IMPLICATIONS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第08章 · 战略启示</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <h1 class="page-h1">对市场参与者的五项战略启示</h1>
+    <p class="page-subhead">2026年HBM拐点为投资者、供应链参与者和超大规模云服务商采购团队创造了不对称的布局机会。结构性动态至少在2027年前都有利于韩国双寡头。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; align-content:start;">
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">投资</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:6px; line-height:1.2;">在HBM供应链中布局，而不仅限于存储厂商。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">先进封装生态——TSV设备商、热界面材料供应商、CoWoS基板供应商——在HBM价值链中获取的份额不断上升，且估值倍数低于SK Hynix。Semes（TSV）、Nepes Arc（组装）和Hanmi Semiconductor（键合设备）是直接受益者[Kira estimates]。</p>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">供应链</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:6px; line-height:1.2;">提前18个月以上而非6个月建立配额可见度。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">HBM配额周期长于标准DRAM。提前12–18个月锁定HBM3E配额的超大规模云服务商采购团队，可同时获得价格可见度和供应保障；依赖现货采购者则会在良率紧张的季度面临配额短缺[secondary]。</p>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">风险</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:6px; line-height:1.2;">对冲三星良率恢复压缩溢价的风险。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">三星HBM3E 12Hi若在2026年上半年恢复良率，将是SK Hynix定价能力面临的主要悲观情景。三星全面通过认证后，HBM有效供应在不新增晶圆投片的情况下增加约20–25%，预计将溢价压缩1.5–2.0倍[Kira estimates]。</p>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">技术</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:6px; line-height:1.2;">跟踪HBM4规格，将其作为下一认证周期的锚点。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">HBM4将单堆栈带宽翻倍至约1.5 TB/s，并引入基础裸片集成逻辑的能力。认证周期将于2026年随NVIDIA和超大规模云服务商定制ASIC启动；哪家供应商在2026年上半年锁定HBM4设计订单，就将设定2027–28年的价格基准[secondary]。</p>
+      </div>
+      <div style="background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:6px; padding:14px 16px; grid-column:1 / -1;">
+        <div class="mono" style="font-size:9px; color:var(--primary); letter-spacing:0.12em; font-weight:600; margin-bottom:6px;">地缘政治</div>
+        <div style="font-family:'Satoshi','Noto Sans SC'; font-weight:700; font-size:13.5px; margin-bottom:6px; line-height:1.2;">关注美韩政策协同进一步收紧对华供应壁垒。</div>
+        <p style="font-size:11.5px; color:var(--text-mid); line-height:1.55;">现行出口管制体系限制中国获取先进HBM设备和技术，维护了韩国的结构性领先。若进一步收紧——覆盖运往中国境内AI部署的HBM3E成品——将加速需求向美国和欧洲超大规模云服务商转移，并在2027年及以后持续强化韩国溢价[Kira estimates]。</p>
+      </div>
+    </div>
+    <div class="source-key">来源说明 · Kira estimates = KIRA in-house triangulation · secondary = industry press, earnings calls, packaging channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>韩国 · 半导体HBM · 2026</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
