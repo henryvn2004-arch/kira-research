@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菲律宾BPO 2026 — KIRA Research</title>
+<meta name="description" content="菲律宾IT-BPM行业2026年研究：自动化、自建中心（GCC）与价值链升级如何重塑全球最大的呼叫中心经济体。">
+<meta property="og:title" content="菲律宾BPO 2026 — KIRA Research">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root{
+--ink:#0B0D10;
+--paper:#ffffff;
+--accent:#1E6FFF;
+--accent-soft:#EAF1FF;
+--muted:#5B6470;
+--line:#E5E8EC;
+--mono:'JetBrains Mono','Noto Sans SC',ui-monospace,monospace;
+--sans:'Satoshi','Noto Sans SC','Inter',system-ui,-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+font-family:var(--sans);
+background:var(--paper);
+color:var(--ink);
+line-height:1.5;
+}
+.page{
+width:1280px;
+height:720px;
+position:relative;
+overflow:hidden;
+background:var(--paper);
+page-break-after:always;
+margin:0 auto;
+}
+.page-num{
+position:absolute;
+bottom:24px;
+right:32px;
+font-size:12px;
+letter-spacing:0.04em;
+color:var(--muted);
+}
+.kicker{
+font-family:var(--mono);
+font-size:12px;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(--accent);
+margin-bottom:16px;
+}
+.cover{
+padding:80px;
+display:flex;
+flex-direction:column;
+height:100%;
+}
+.cover-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+}
+.logo-mark{
+font-family:var(--mono);
+font-weight:700;
+font-size:20px;
+letter-spacing:0.18em;
+}
+.cover-mid{
+margin-top:auto;
+margin-bottom:auto;
+}
+.cover-title{
+font-size:64px;
+font-weight:700;
+line-height:1.05;
+letter-spacing:-0.02em;
+margin-bottom:24px;
+}
+.cover-sub{
+font-size:24px;
+font-weight:400;
+color:var(--muted);
+line-height:1.35;
+max-width:820px;
+}
+.cover-meta{
+display:flex;
+gap:48px;
+margin-top:48px;
+font-family:var(--mono);
+font-size:13px;
+}
+.cover-meta div span{
+display:block;
+color:var(--muted);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.08em;
+margin-bottom:4px;
+}
+.section-h{
+font-size:30px;
+font-weight:700;
+letter-spacing:-0.01em;
+margin-bottom:24px;
+line-height:1.1;
+}
+.content{
+padding:42px 72px;
+height:100%;
+display:flex;
+flex-direction:column;
+}
+.body-text{
+font-size:14.5px;
+line-height:1.5;
+color:#1a1d24;
+max-width:920px;
+}
+.body-text p{margin-bottom:10px;}
+.source-tag{
+font-family:var(--mono);
+font-size:11px;
+color:var(--accent);
+vertical-align:super;
+font-weight:500;
+}
+.callout{
+background:var(--accent-soft);
+border-left:3px solid var(--accent);
+padding:14px 20px;
+margin:14px 0;
+border-radius:0 8px 8px 0;
+max-width:920px;
+}
+.callout-label{
+font-family:var(--mono);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.1em;
+color:var(--accent);
+margin-bottom:8px;
+}
+.kpi-row{display:flex;gap:36px;margin:18px 0;}
+.kpi{flex:1;}
+.kpi-num{
+font-size:38px;
+font-weight:700;
+letter-spacing:-0.02em;
+color:var(--accent);
+}
+.kpi-label{
+font-size:13px;
+color:var(--muted);
+margin-top:6px;
+line-height:1.3;
+}
+.bar-chart{margin:24px 0;}
+.bar-row{
+display:flex;
+align-items:center;
+margin-bottom:14px;
+gap:16px;
+}
+.bar-label{
+width:180px;
+font-size:13px;
+text-align:right;
+color:#1a1d24;
+}
+.bar-track{
+flex:1;
+background:#F0F2F5;
+height:28px;
+border-radius:4px;
+overflow:hidden;
+position:relative;
+}
+.bar-fill{
+height:100%;
+background:var(--accent);
+border-radius:4px;
+display:flex;
+align-items:center;
+justify-content:flex-end;
+padding-right:10px;
+color:#fff;
+font-size:12px;
+font-weight:600;
+font-family:var(--mono);
+}
+.bar-fill.muted{background:#9DB2CE;}
+.data-table{
+width:100%;
+border-collapse:collapse;
+margin:20px 0;
+font-size:14px;
+max-width:920px;
+}
+.data-table th{
+text-align:left;
+padding:12px 16px;
+background:#F7F8FA;
+font-family:var(--mono);
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.06em;
+color:var(--muted);
+border-bottom:2px solid var(--line);
+}
+.data-table td{
+padding:12px 16px;
+border-bottom:1px solid var(--line);
+}
+.data-table tr:last-child td{border-bottom:none;}
+.two-col{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+max-width:920px;
+}
+.list-clean{list-style:none;}
+.list-clean li{
+padding-left:24px;
+position:relative;
+margin-bottom:12px;
+font-size:15px;
+line-height:1.5;
+}
+.list-clean li::before{
+content:"";
+position:absolute;
+left:0;
+top:9px;
+width:8px;
+height:8px;
+background:var(--accent);
+border-radius:50%;
+}
+.tag{
+display:inline-block;
+font-family:var(--mono);
+font-size:11px;
+padding:4px 10px;
+border-radius:4px;
+background:var(--accent-soft);
+color:var(--accent);
+margin-right:8px;
+}
+.footer-brand{
+position:absolute;
+bottom:24px;
+left:32px;
+font-family:var(--mono);
+font-size:11px;
+color:var(--muted);
+letter-spacing:0.04em;
+}
+.scenario-row{display:flex;gap:24px;margin:24px 0;}
+.scenario-card{
+border:1px solid var(--line);
+border-radius:10px;
+padding:24px;
+flex:1;
+}
+.scenario-card h4{
+font-size:18px;
+margin-bottom:12px;
+}
+.scenario-card.highlight{
+border-color:var(--accent);
+background:var(--accent-soft);
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+<div class="cover-top">
+<div class="logo-mark">KIRA RESEARCH</div>
+<div class="kicker">市场情报</div>
+</div>
+<div class="cover-mid">
+<div class="kicker">菲律宾 · 业务流程外包 · 2026</div>
+<h1 class="cover-title">菲律宾BPO 2026</h1>
+<h2 class="cover-sub">服务业迁移：自动化、自建中心与价值链升级如何重塑全球最大的呼叫中心经济体？</h2>
+</div>
+<div class="cover-meta">
+<div><span>报告编号</span>KIRA-2026-PH-BPO</div>
+<div><span>页数</span>16</div>
+<div><span>发布时间</span>2026年5月</div>
+<div><span>覆盖范围</span>菲律宾</div>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+</div>
+
+<!-- EXEC SUMMARY -->
+<div class="page content">
+<div class="kicker">01 · 执行摘要</div>
+<h2 class="section-h">执行摘要</h2>
+<div class="body-text">
+<p>步入2026年，菲律宾信息技术与业务流程管理（IT-BPM）行业既是该国最具战略意义的出口产业，也是最大的私营雇主之一。2024年行业收入达<strong>US$38 billion<span class="source-tag">[secondary]</span></strong>，高于2023年的US$35.4 billion<span class="source-tag">[secondary]</span>，年增速约7%<span class="source-tag">[estimate]</span>；直接从业人数由上年的约170万<span class="source-tag">[secondary]</span>增至<strong>182万<span class="source-tag">[secondary]</span></strong>。</p>
+<p>然而，增长前景如今多了一个问号。生成式自动化可吸收相当比例的低复杂度语音与事务性工作，而这正是行业赖以起家的业务。行业的回应并非收缩，而是迁移：向上进入财务、医疗、数据分析与软件领域，向外拓展至自建中心与外省枢纽城市。2026年，这一迁移将从路线图中的一页幻灯片变为实际的运营现实。</p>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-num">$38B</div><div class="kpi-label">2024年IT-BPM收入<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">1.82M</div><div class="kpi-label">2024年直接从业人数<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">~7%</div><div class="kpi-label">对GDP的贡献<span class="source-tag">[estimate]</span></div></div>
+</div>
+<div class="callout">
+<div class="callout-label">核心洞察</div>
+威胁与机遇源自同一股力量。自动化在掏空入门级语音工作的同时，也为承接更高价值业务所需的技能提升和利润空间提供了资金。将AI视为增强层而非削减人手杠杆的运营商，将成为2028年的赢家群体。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">02</div>
+</div>
+
+<!-- MARKET CONTEXT -->
+<div class="page content">
+<div class="kicker">02 · 市场背景</div>
+<h2 class="section-h">从成本套利到能力输出</h2>
+<div class="body-text">
+<p>二十年来，菲律宾的价值主张十分简单：规模庞大、英语流利、文化上与西方契合的劳动力，以远低于在岸的成本提供语音与后台服务。这一主张使菲律宾成为全球呼叫中心交付的领先者，以及仅次于印度的全球第二大IT-BPM目的地<span class="source-tag">[secondary]</span>。目前该行业约占全球BPO市场的10–15%<span class="source-tag">[secondary]</span>，贡献全国GDP的约7–8%<span class="source-tag">[secondary]</span>。</p>
+<p>套利逻辑正从两端同时瓦解。需求端，企业买方越来越要求结果——已解决的工单、已结账的账簿、无差错的理赔——而非席位。供给端，生成式工具将最简单交互的成本压向零，恰恰消除了支撑低成本定位的那些任务。因此，行业的决定性转变是从出售劳动力产能转向出售能力：买方难以在内部复制的领域专长、流程主导权与数据分析。</p>
+<p>菲律宾信息技术与业务流程协会（IBPAP）已在《IT-BPM Roadmap 2028》中将此明确化，目标是到2028年实现收入US$59 billion、直接从业人数250万<span class="source-tag">[secondary]</span>。要达成这些数字，人均收入的增速必须快于人数增速——这是向上升级而非单纯增加席位的算术。</p>
+</div>
+<div class="callout">
+<div class="callout-label">结构性转变</div>
+2026年的问题已不再是菲律宾能否扩大BPO从业规模，而是其人均收入能否增长得足够快，以跑赢自动化对底层业务的侵蚀。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">03</div>
+</div>
+
+<!-- MARKET SIZING -->
+<div class="page content">
+<div class="kicker">03 · 市场规模</div>
+<h2 class="section-h">迈向2028年的增长轨迹</h2>
+<div class="body-text">
+<p>在走出疫情期需求冲击的复苏过程中，行业收入保持稳定复合增长。从2023年的US$35.4 billion到2024年的US$38 billion<span class="source-tag">[secondary]</span>，行业一年内新增约US$2.6 billion。Roadmap 2028设定的US$59 billion目标<span class="source-tag">[secondary]</span>意味着以2024年为基数的年复合增长率约9%<span class="source-tag">[estimate]</span>；只有在大宗语音业务趋于平稳时由更高价值业务承担增量，这一目标才能实现。</p>
+</div>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">2023年收入</div><div class="bar-track"><div class="bar-fill muted" style="width:60%;">$35.4B</div></div></div>
+<div class="bar-row"><div class="bar-label">2024年收入</div><div class="bar-track"><div class="bar-fill muted" style="width:64%;">$38.0B</div></div></div>
+<div class="bar-row"><div class="bar-label">2028年目标</div><div class="bar-track"><div class="bar-fill" style="width:100%;">$59.0B</div></div></div>
+</div>
+<div class="body-text">
+<p>从业人数沿着一条平行但更平缓的曲线增长。从2024年的182万人到250万人的目标<span class="source-tag">[secondary]</span>，意味着每年新增约8%<span class="source-tag">[estimate]</span>；但新增人员的构成比数量更重要。净新增席位将偏向非语音、技术与领域专家岗位，入门级语音招聘则会放缓。</p>
+</div>
+<div class="callout">
+<div class="callout-label">分析师观点</div>
+约9%的收入增速对比约8%的人数增速看似温和，但两者之差正是整个论点所在：这是菲律宾BPO人均收入首次在较长时期内被有意推高，而非随波逐流。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">04</div>
+</div>
+
+<!-- SEGMENTATION -->
+<div class="page content">
+<div class="kicker">04 · 市场细分</div>
+<h2 class="section-h">价值集中在哪里</h2>
+<div class="body-text">
+<p>该行业覆盖从大宗客户支持到专业知识型工作的完整谱系。基于语音的呼叫中心服务仍是从业人数最多的单一细分领域，也是菲律宾交付业务的传统核心<span class="source-tag">[secondary]</span>。其上是一批更高价值的业务线——财务与会计、医疗信息管理、软件与IT服务以及数据分析——行业正有意扩大这些领域<span class="source-tag">[secondary]</span>。</p>
+</div>
+<table class="data-table">
+<thead><tr><th>细分领域</th><th>成熟度</th><th>自动化暴露度</th><th>2026年走势</th></tr></thead>
+<tbody>
+<tr><td>语音 / 呼叫中心</td><td>成熟，占主导</td><td>高</td><td>从业人数持平至下降<span class="source-tag">[estimate]</span></td></tr>
+<tr><td>财务与会计</td><td>规模扩张中</td><td>中</td><td>增长<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>医疗信息管理</td><td>规模扩张中</td><td>中</td><td>强劲增长<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>软件与IT服务</td><td>正在形成规模</td><td>低</td><td>强劲增长<span class="source-tag">[secondary]</span></td></tr>
+<tr><td>数据分析 / 知识服务</td><td>新兴</td><td>低</td><td>强劲增长<span class="source-tag">[estimate]</span></td></tr>
+</tbody>
+</table>
+<div class="body-text">
+<p>上表清楚显示了正在发生的倒置：受自动化影响最大的细分领域规模也最大，而受影响最小的领域规模最小但增长最快。战略任务是让下方几行的增长快于首行的萎缩。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">05</div>
+</div>
+
+<!-- DEMAND DRIVERS -->
+<div class="page content">
+<div class="kicker">05 · 需求驱动因素</div>
+<h2 class="section-h">是什么将业务吸引到菲律宾</h2>
+<div class="body-text">
+<p>即便交付模式发生变化，仍有三股力量支撑着流入的需求。</p>
+</div>
+<ul class="list-clean">
+<li><strong>企业成本压力持续存在。</strong>面临利润压缩的西方企业继续推进离岸外包，但需求已从“降本”转为“降本并增加能力”。菲律宾有条件同时满足这两点。</li>
+<li><strong>自建中心浪潮。</strong>跨国企业正在当地设立自有的全球能力中心（GCC），而非外包给第三方，主要集中在数据分析、财务、IT与研发职能<span class="source-tag">[secondary]</span>。这改变了价值获取方式，但将高技能需求留在了本地。</li>
+<li><strong>英语知识型工作的人才厚度。</strong>大量受过高等教育、英语流利且与西方文化契合的劳动者在全球仍属稀缺，这是菲律宾最持久的护城河<span class="source-tag">[secondary]</span>。</li>
+</ul>
+<div class="callout">
+<div class="callout-label">需求信号</div>
+GCC浪潮是这十年中影响最深远的需求转变。它使菲律宾从席位供应商转变为跨国企业长期运营的承载地——粘性更强、技能更高，也更难回流。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">06</div>
+</div>
+
+<!-- COMPETITIVE LANDSCAPE -->
+<div class="page content">
+<div class="kicker">06 · 竞争格局</div>
+<h2 class="section-h">全球竞争版图</h2>
+<div class="body-text">
+<p>菲律宾在全球舞台上竞争，决定业务归属的是定位而不仅是价格。菲律宾约占全球BPO市场的10–15%<span class="source-tag">[secondary]</span>，在基于语音的呼叫中心交付上仍明显领先<span class="source-tag">[secondary]</span>；而印度凭借软件与工程实力保持IT-BPM整体领先地位<span class="source-tag">[secondary]</span>。</p>
+</div>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">语音 / 呼叫中心</div><div class="bar-track"><div class="bar-fill" style="width:92%;">菲律宾全球领先</div></div></div>
+<div class="bar-row"><div class="bar-label">软件 / 工程</div><div class="bar-track"><div class="bar-fill muted" style="width:55%;">印度主导</div></div></div>
+<div class="bar-row"><div class="bar-label">美国近岸（拉美）</div><div class="bar-track"><div class="bar-fill muted" style="width:40%;">上升中</div></div></div>
+<div class="bar-row"><div class="bar-label">欧盟近岸（东欧）</div><div class="bar-track"><div class="bar-fill muted" style="width:35%;">小众</div></div></div>
+</div>
+<div class="body-text">
+<p>竞争威胁越来越多来自近岸。拉丁美洲为美国买方提供同时区的西班牙语和英语支持，东欧则服务欧盟市场<span class="source-tag">[secondary]</span>。菲律宾的应对之道是英语知识型工作的深度与规模，加上近岸地区无法比拟的成本基础；但只有在菲律宾沿价值链攀升的速度快于对手缩小成本差距的速度时，这一地位才守得住。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">07</div>
+</div>
+
+<!-- AI & TECHNOLOGY -->
+<div class="page content">
+<div class="kicker">07 · 技术与自动化</div>
+<h2 class="section-h">自动化是增强，而非替代</h2>
+<div class="body-text">
+<p>生成式工具已作为坐席辅助与副驾驶层嵌入菲律宾的交付现场：实时通话摘要、建议回复、自动化质量监控以及话后记录<span class="source-tag">[secondary]</span>。短期影响体现在单个坐席的生产率上，而非大规模替代——尽管业内领先企业承认，入门级语音与事务性岗位面临最高的自动化风险<span class="source-tag">[secondary]</span>。</p>
+<p>IBPAP的公开立场将自动化定位为增强工具，用以抬高单个员工的产出下限，并配合大规模技能提升与再培训计划，将员工转向由AI监督的高复杂度岗位<span class="source-tag">[secondary]</span>。客观来看，自动化在侵蚀金字塔底部的同时也抬高了天花板：低复杂度任务被压缩，而能够管理、审核和处理自动化流程异常的人才需求在增长。</p>
+</div>
+<div class="callout">
+<div class="callout-label">自动化测算</div>
+竞争单位正从单席位成本转向单次解决成本。围绕自动化产能重新定价、并向客户让渡足够节省以留住业务的运营商，即便席位数下降，也能守住业务量。
+</div>
+<div class="body-text">
+<p>风险不在于自动化是否到来，而在于它到来的速度快于劳动力向上转移的速度。2026年的硬约束是再培训速度，而非技术获取。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">08</div>
+</div>
+
+<!-- TALENT & WAGE ECONOMICS -->
+<div class="page content">
+<div class="kicker">08 · 人才与经济性</div>
+<h2 class="section-h">劳动力及其分布</h2>
+<div class="body-text">
+<p>IT-BPM拥有182万直接从业人员<span class="source-tag">[secondary]</span>及庞大的间接就业规模，是菲律宾最大的私营部门雇主之一，也是中产阶级形成的主要渠道。这支劳动力的地理分布正在变化：在有意推动的分散化政策下，目前约30%的行业从业人员位于马尼拉大都会以外<span class="source-tag">[secondary]</span>。</p>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-num">1.82M</div><div class="kpi-label">直接从业人数<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">~30%</div><div class="kpi-label">马尼拉大都会以外从业人员占比<span class="source-tag">[secondary]</span></div></div>
+<div class="kpi"><div class="kpi-num">25</div><div class="kpi-label">Digital Cities 2025枢纽城市<span class="source-tag">[secondary]</span></div></div>
+</div>
+<div class="body-text">
+<p>Digital Cities 2025计划及此前的Next Wave Cities计划共确定了25个新兴数字枢纽<span class="source-tag">[secondary]</span>，包括达沃、伊洛伊洛、巴科洛德、卡加延德奥罗以及克拉克–邦板牙走廊<span class="source-tag">[secondary]</span>。向外省扩张可降低场地与工资成本，挖掘尚未开发的毕业生资源，并凭借生活质量因素提升员工留存率。战略目标是形成一种工资结构，既能消化自动化带来的利润压力，又能为价值链攀升所需的技能提升提供资金。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">09</div>
+</div>
+
+<!-- REGULATORY -->
+<div class="page content">
+<div class="kicker">09 · 政策与优惠</div>
+<h2 class="section-h">优惠政策问题</h2>
+<div class="body-text">
+<p>政策是2026年的一个活跃变量。IBPAP已公开敦促政府加大对本地IT-BPM行业的优惠力度<span class="source-tag">[secondary]</span>，反映出行业担忧财政优惠改革与工作安排规则可能削弱菲律宾相对于激进的近岸及离岸对手的竞争力。</p>
+<p>两项政策杠杆最为关键。其一，适用于经济区入驻企业的税收与优惠制度决定了扩张决策的税后经济性，可预期性的任何削弱都会将新业务推向竞争地区<span class="source-tag">[estimate]</span>。其二，混合与远程办公的灵活性对人才留存和外省交付至关重要，必须与优惠资格保持兼容，否则运营商将被迫在人才战略与税务地位之间取舍<span class="source-tag">[estimate]</span>。</p>
+</div>
+<div class="callout">
+<div class="callout-label">政策观察</div>
+行业Roadmap 2028的目标以稳定且具竞争力的优惠环境为前提。优惠政策的可预期性如今与工资成本同样关乎投资逻辑，而且是一个基本不受运营商控制的摇摆因素。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">10</div>
+</div>
+
+<!-- RISKS -->
+<div class="page content">
+<div class="kicker">10 · 风险与逆风因素</div>
+<h2 class="section-h">哪些因素可能推翻这一判断</h2>
+<div class="body-text">
+<p>向更高价值迁移是基准情景，但并无保证。四项风险最为突出。</p>
+</div>
+<ul class="list-clean">
+<li><strong>自动化快于再培训。</strong>若低复杂度语音工作的压缩速度快于员工向上转移的速度，结果将是净失业与产能闲置，而非有序迁移<span class="source-tag">[estimate]</span>。</li>
+<li><strong>近岸侵蚀。</strong>拉美与东欧若在美欧客户中持续扩大份额，可能在价值链建设足以抵消之前就压低菲律宾的语音业务量<span class="source-tag">[estimate]</span>。</li>
+<li><strong>优惠政策不确定性。</strong>财政优惠或工作安排规则的不利变化，可能将新业务与GCC投资分流至竞争地区<span class="source-tag">[secondary]</span>。</li>
+<li><strong>专业岗位的人才天花板。</strong>毕业生供给在通用英语工作上储备充足，但在高价值细分领域所需的工程、数据分析与领域专长方面较为薄弱<span class="source-tag">[estimate]</span>。</li>
+</ul>
+<div class="callout">
+<div class="callout-label">风险集中</div>
+这些风险相互叠加。再培训迟缓、近岸竞争与优惠政策不确定性都在挤压同一杠杆——人均收入；正是这一指标的不足，会让有序迁移演变为行业收缩。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">11</div>
+</div>
+
+<!-- OUTLOOK & SCENARIOS -->
+<div class="page content">
+<div class="kicker">11 · 展望与情景</div>
+<h2 class="section-h">通往2028年的三条路径</h2>
+<div class="scenario-row">
+<div class="scenario-card">
+<h4>停滞</h4>
+<p style="font-size:14px;color:var(--muted);">自动化侵蚀语音业务的速度快于技能提升填补高价值岗位的速度；优惠政策不确定性分流GCC投资。收入停滞在US$42–45B附近<span class="source-tag">[estimate]</span>，从业人数趋平。</p>
+</div>
+<div class="scenario-card highlight">
+<h4>有序迁移</h4>
+<p style="font-size:14px;color:var(--muted);">价值链攀升抵消语音业务压缩；GCC与外省枢纽规模扩大。收入接近Roadmap设定的US$59B目标<span class="source-tag">[secondary]</span>，从业人数接近2.5M<span class="source-tag">[secondary]</span>。</p>
+</div>
+<div class="scenario-card">
+<h4>突破</h4>
+<p style="font-size:14px;color:var(--muted);">积极的再培训加上稳定的优惠政策，使菲律宾成为GCC与知识型工作的首选枢纽。凭借人均价值提升，收入提前超过US$59B<span class="source-tag">[estimate]</span>。</p>
+</div>
+</div>
+<div class="body-text">
+<p>我们的基准情景是有序迁移。行业具备需求、人才厚度与路线图；硬约束在于再培训速度与优惠政策稳定性。两者都可以解决，但都无法保证。概率主要分布在有序迁移与停滞之间，而突破情景所需的政策顺风尚未显现<span class="source-tag">[estimate]</span>。</p>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">12</div>
+</div>
+
+<!-- STRATEGIC IMPLICATIONS -->
+<div class="page content">
+<div class="kicker">12 · 战略启示</div>
+<h2 class="section-h">对市场参与者意味着什么</h2>
+<div class="body-text">
+<p>2026年的环境对不同位置的参与者奖励不同的举措。</p>
+</div>
+<div class="two-col">
+<div>
+<div class="callout-label">对现有企业</div>
+<ul class="list-clean">
+<li>围绕解决率与结果而非席位为业务重新定价，在自动化落地时锁定业务量<span class="source-tag">[estimate]</span>。</li>
+<li>构建财务、医疗与数据分析领域的专业深度——这些是受自动化影响最小的细分领域<span class="source-tag">[secondary]</span>。</li>
+<li>将再培训视为核心资本开支，而非人力资源管理费用<span class="source-tag">[estimate]</span>。</li>
+</ul>
+</div>
+<div>
+<div class="callout-label">对企业买方</div>
+<ul class="list-clean">
+<li>在流程主导权具有战略意义的领域，借助GCC模式获取价值<span class="source-tag">[secondary]</span>。</li>
+<li>在马尼拉大都会与外省枢纽之间分散交付，以兼顾韧性与成本<span class="source-tag">[estimate]</span>。</li>
+<li>签订按自动化调整的定价合同，共享生产率收益<span class="source-tag">[estimate]</span>。</li>
+</ul>
+</div>
+</div>
+<div class="callout">
+<div class="callout-label">结论</div>
+2026年的赢家不是自动化最快或招聘最多的企业，而是能把自动化节省转化为买方愿意溢价购买的能力的企业。
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">13</div>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="page content">
+<div class="kicker">13 · 建议</div>
+<h2 class="section-h">重点方向</h2>
+<div class="body-text">
+<p>对于在菲律宾IT-BPM领域布局的参与者，2026年有五项优先事项尤为突出。</p>
+</div>
+<ul class="list-clean">
+<li><strong>调整业务结构，而不只是调整营销。</strong>设定明确的人均收入目标，并将招聘转向非语音、技术与领域专家岗位<span class="source-tag">[estimate]</span>。</li>
+<li><strong>将再培训规模化。</strong>再培训速度是硬约束；应按核心业务的规模而非培训预算的规模为其投入资金<span class="source-tag">[estimate]</span>。</li>
+<li><strong>积极承接GCC。</strong>自建中心浪潮将高技能、高粘性的需求留在本地——可与之合作，或为其建设配套<span class="source-tag">[secondary]</span>。</li>
+<li><strong>有计划地分散布局。</strong>外省枢纽可降低成本并提升留存率；25个Digital Cities提供了现成的布局图<span class="source-tag">[secondary]</span>。</li>
+<li><strong>对冲政策变量风险。</strong>在扩张模型中纳入优惠政策不确定性，并参与影响税后经济性的改革讨论<span class="source-tag">[secondary]</span>。</li>
+</ul>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">14</div>
+</div>
+
+<!-- METHODOLOGY -->
+<div class="page content">
+<div class="kicker">14 · 研究方法</div>
+<h2 class="section-h">研究方法与来源</h2>
+<div class="body-text">
+<p>本报告综合了行业协会数据、已公开的行业数据，以及我们的分析师对截至2026年第二季度菲律宾IT-BPM结构性趋势的解读<span class="source-tag">[primary]</span>。量化预测结合了已公布的路线图目标与KIRA分析师对人均收入变化的建模<span class="source-tag">[estimate]</span>。</p>
+</div>
+<div class="two-col">
+<div>
+<div class="callout-label">一手来源</div>
+<ul class="list-clean">
+<li>KIRA分析师综合研究与建模（2026年第二季度）</li>
+<li>行业路线图目标解读</li>
+</ul>
+</div>
+<div>
+<div class="callout-label">二手来源</div>
+<ul class="list-clean">
+<li>IBPAP行业数据及IT-BPM Roadmap 2028</li>
+<li>Digital Cities 2025 / Next Wave Cities计划数据</li>
+</ul>
+</div>
+</div>
+<div class="callout">
+<div class="callout-label">来源标签</div>
+<strong>[primary]</strong> KIRA原创研究 · <strong>[secondary]</strong> 已公开的第三方数据 · <strong>[estimate]</strong> KIRA分析师建模
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">15</div>
+</div>
+
+<!-- CTA -->
+<div class="page content" style="justify-content:center;align-items:flex-start;">
+<div class="kicker">KIRA Research</div>
+<h2 class="section-h" style="font-size:44px;max-width:820px;">面向东南亚的独立市场情报</h2>
+<div class="body-text">
+<p>本报告属于KIRA Research东南亚研究系列。我们的分析师针对区域内变化最快的行业，提供独立且标注来源的市场情报。如需菲律宾IT-BPM行业的定制研究、市场进入研究或竞争战略支持，我们的团队可按需求定制。</p>
+</div>
+<div style="margin-top:32px;">
+<span class="tag">定制研究</span>
+<span class="tag">市场进入</span>
+<span class="tag">竞争战略</span>
+</div>
+<div class="footer-brand">KIRA RESEARCH · 独立市场情报</div>
+<div class="page-num">16</div>
+</div>
+
+
+</body>
+</html>
