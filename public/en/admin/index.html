@@ -202,6 +202,9 @@
     <nav class="admin-sub-nav">
       <span class="label">ADMIN</span>
       <a href="/en/admin/" class="active">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
       <a href="/en/admin/leads">Leads</a>
       <a href="/en/admin/waitlist">Waitlist</a>
       <a href="/en/admin/reports">Reports</a>
@@ -320,7 +323,8 @@
         <div class="recent-row"><div><div class="title">${pl.completed_7d} reports completed in the last 7 days</div>
           <div class="sub">${pl.work_left} in the work queue · ${pl.by_status.hold || 0} on hold · ${pl.by_status.done || 0} done in total</div></div>
           <span class="meta">${pl.hours_since == null ? 'no runs yet' : 'last run ' + pl.hours_since + 'h ago'}</span></div>
-        ${pl.state === 'stalled' ? '<div class="recent-empty" style="color:#B42318">Work is waiting but the runner has not committed for over 30 hours. Check the cloud routine.</div>' : ''}
+        ${pl.state === 'stalled' ? '<div class="recent-empty" style="color:#B42318">Work is waiting but no stage has finished for over 30 hours, or a claim is stuck. Check the cloud routine.</div>' : ''}
+        ${(pl.errors || pl.stuck) ? `<div class="recent-empty" style="color:#B42318">${pl.errors} report${pl.errors === 1 ? '' : 's'} in error · ${pl.stuck} stuck claim${pl.stuck === 1 ? '' : 's'} — <a href="/en/admin/pipeline">fix in Pipeline →</a></div>` : '<div class="recent-empty"><a href="/en/admin/pipeline">Open Pipeline →</a></div>'}
       </div>`;
 
     const kpiHtml = `
@@ -388,7 +392,17 @@
         <span class="meta">${fmtDate(p.created_at)}</span>
       </div>`).join('') || '<div class="recent-empty">No purchases yet.</div>';
 
-    wrap.innerHTML = kpiHtml + pipelineHtml + `
+    const attention = stats.attention || [];
+    const attentionHtml = `
+      <div class="recent-card" style="margin-bottom:24px">
+        <h3>Needs you today</h3>
+        ${attention.length ? attention.map(a => `
+          <div class="recent-row"><div><div class="title" style="${a.severity === 'high' ? 'color:#B42318' : ''}">${esc(a.label)}</div></div>
+            <span class="meta">${a.count > 0 && !['pipeline', 'env-missing', 'paypal-mode'].includes(a.key) ? '<strong>' + a.count + '</strong> · ' : ''}<a href="${esc(a.href)}">Open →</a></span></div>`).join('')
+          : '<div class="recent-empty">Nothing needs you right now.</div>'}
+      </div>`;
+
+    wrap.innerHTML = attentionHtml + kpiHtml + pipelineHtml + `
       <div class="recent-grid">
         <div class="recent-card">
           <h3>Recent leads <a href="/en/admin/leads">All leads →</a></h3>

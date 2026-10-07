@@ -198,7 +198,7 @@ test.describe('branded 404', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -392,6 +392,20 @@ test.describe('public APIs', () => {
   test('/api/admin-companies rejects unauthenticated', async ({ request }) => {
     const r = await request.get('/api/admin-companies');
     expect(r.status()).toBe(401);
+  });
+
+  test('/api/admin-config rejects unauthenticated (GET and PATCH)', async ({ request }) => {
+    expect((await request.get('/api/admin-config')).status()).toBe(401);
+    expect((await request.patch('/api/admin-config', { data: { key: 'search.daily_model_limit', value: 1 } })).status()).toBe(401);
+  });
+
+  test('/api/admin-health rejects unauthenticated', async ({ request }) => {
+    expect((await request.get('/api/admin-health')).status()).toBe(401);
+  });
+
+  test('/api/admin-queue rejects unauthenticated (GET and PATCH)', async ({ request }) => {
+    expect((await request.get('/api/admin-queue')).status()).toBe(401);
+    expect((await request.patch('/api/admin-queue', { data: { id: 'x', action: 'hold' } })).status()).toBe(401);
   });
 
   // Sprint 8 — internal linking: API must echo relatedInsights[] so the
@@ -811,5 +825,51 @@ test.describe('library and insights pages', () => {
         await expect(page.locator('#home-stories[data-product="' + prod + '"] .st-card')).toHaveCount(n, { timeout: 10000 });
       }
     }
+  });
+});
+
+// ── Kira Chain (migration 037): one search, one page for every product ──
+// Prototype pages, noindex. They depend on the published VN coffee chain; tests
+// skip rather than fail if no chain is published.
+test.describe('Kira Chain', () => {
+  test('/api/chain-search lists published chains; a query finds coffee', async ({ request }) => {
+    const all = await (await request.get('/api/chain-search')).json();
+    expect(all.all).toBe(true);
+    expect(Array.isArray(all.items)).toBe(true);
+    test.skip(!all.items.some((c) => c.slug === 'coffee'), 'VN coffee chain not published');
+    const hit = await (await request.get('/api/chain-search?q=cofee')).json();
+    expect(hit.items.some((c) => c.slug === 'coffee' && c.country_code === 'VN')).toBe(true);
+    const other = await (await request.get('/api/chain-search?q=coffee%20in%20australia')).json();
+    expect(other.items.every((c) => c.country_code === 'AU')).toBe(true);
+  });
+
+  test('/api/chain validates input and 404s for an unknown chain', async ({ request }) => {
+    expect((await request.get('/api/chain')).status()).toBe(400);
+    expect((await request.get('/api/chain?country=vn&slug=no-such-chain-xyz')).status()).toBe(404);
+  });
+
+  test('/api/chain-request rejects GET and accepts the honeypot path', async ({ request }) => {
+    expect((await request.get('/api/chain-request')).status()).toBe(405);
+    const r = await request.post('/api/chain-request', {
+      data: { query: 'ci probe', hp: 'bot' }, headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).ok).toBe(true);
+  });
+
+  test('/en/chain/ search page loads; a chain page draws its network', async ({ page, request }) => {
+    await page.goto('/en/chain/');
+    await expect(page.locator('h1')).toContainText('value chain');
+    const all = await (await request.get('/api/chain-search')).json();
+    test.skip(!all.items.some((c) => c.slug === 'coffee' && c.country_code === 'VN'), 'VN coffee chain not published');
+    await page.goto('/en/chain/vn/coffee');
+    await expect(page.locator('#kc-h1')).toContainText('Coffee', { timeout: 15000 });
+    await expect(page.locator('.node-c').first()).toBeVisible({ timeout: 15000 });
+    expect(await page.locator('.node-h').count()).toBeGreaterThan(3);
+  });
+
+  test('an unknown chain page says so instead of breaking', async ({ page }) => {
+    await page.goto('/en/chain/vn/no-such-chain-xyz');
+    await expect(page.locator('#kc-h1')).toHaveText('No chain here yet', { timeout: 15000 });
   });
 });

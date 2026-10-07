@@ -4,7 +4,7 @@
 //
 // Auth: Authorization: Bearer <supabase-jwt>; email must be in ADMIN_EMAILS.
 //
-//   GET  /api/admin-topics[?status=proposed|approved|rejected|queued|all][&country=VN]
+//   GET  /api/admin-topics[?status=proposed|requested|approved|rejected|queued|all][&country=VN]
 //        → { stats, topics, splits, countries }   (topics carry `requests` = emails waiting and `search_count`; `misses` = top searches that matched nothing)
 //   PATCH /api/admin-topics   body:
 //        { kind: 'topic', id, action: 'approve'|'reject'|'reopen', title?, questions?, note? }
@@ -17,13 +17,14 @@
 // ============================================================
 
 import { logAudit } from './_lib/audit.js';
+import { getConfig } from './_lib/config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
   .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
 
-const TOPIC_STATUSES = ['proposed', 'approved', 'rejected', 'queued'];
+const TOPIC_STATUSES = ['proposed', 'requested', 'approved', 'rejected', 'queued'];
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
 async function sb(path, method = 'GET', body) {
@@ -141,6 +142,7 @@ export default async function handler(req, res) {
       sb('search_misses?select=keyword,searches,last_at&order=searches.desc,last_at.desc&limit=20')   // unplanned searches (029)
     ]);
 
+    const wReq = await getConfig('topics.demand_weight_request'), wSearch = await getConfig('topics.demand_weight_search');
     const demand = new Map();
     for (const r of reqRows) demand.set(r.topic_id, (demand.get(r.topic_id) || 0) + 1);
 
@@ -153,10 +155,10 @@ export default async function handler(req, res) {
     };
     const topics = topicRows
       .map(r => ({ ...withIndustry(r), competency: r.competency_key ? (compByKey.get(r.competency_key) || null) : null, requests: demand.get(r.id) || 0 }))
-      .sort((a, b) => (b.requests * 3 + (b.search_count || 0)) - (a.requests * 3 + (a.search_count || 0)));   // highest demand first (email 3, search 1); ties keep newest-first
+      .sort((a, b) => (b.requests * wReq + (b.search_count || 0) * wSearch) - (a.requests * wReq + (a.search_count || 0) * wSearch));   // highest demand first (email 3, search 1); ties keep newest-first
     const splits = splitRows.map(withIndustry);
 
-    const stats = { proposed: 0, approved: 0, rejected: 0, queued: 0, splits_proposed: splits.length };
+    const stats = { proposed: 0, requested: 0, approved: 0, rejected: 0, queued: 0, splits_proposed: splits.length };
     for (const r of counts) if (stats[r.status] !== undefined) stats[r.status]++;
 
     return res.status(200).json({ stats, topics, splits, countries, misses });

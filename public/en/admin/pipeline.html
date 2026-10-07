@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pipeline — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .pl-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+    .pl-head h1 { margin:0; font-size:28px; }
+    .pl-state { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
+    .pl-state.running { background:#E6F4EA; color:#067647; } .pl-state.idle { background:var(--surface-2); color:var(--muted); } .pl-state.stalled { background:#FDE8E6; color:#B42318; }
+    .pl-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px; }
+    @media (max-width:700px) { .pl-kpis { grid-template-columns:repeat(2,1fr); } }
+    .pl-kpi { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+    .pl-kpi b { display:block; font-size:24px; font-family:'Satoshi',sans-serif; }
+    .pl-kpi span { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .pl-kpi.bad b { color:#B42318; }
+    .pl-note { font-size:13px; color:var(--muted); margin:0 0 20px; }
+    .pl-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .pl-chip { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:999px; padding:7px 13px; font-size:13.5px; cursor:pointer; }
+    .pl-chip.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .pl-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    table.pl { width:100%; border-collapse:collapse; font-size:14px; }
+    table.pl th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+    table.pl td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.pl tr:last-child td { border-bottom:0; }
+    .pl-id { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); word-break:break-all; }
+    .pl-topic { max-width:380px; }
+    .pl-st { font-size:12px; font-weight:600; border-radius:6px; padding:3px 8px; background:var(--surface-2); white-space:nowrap; }
+    .pl-st.error { background:#FDE8E6; color:#B42318; } .pl-st.done { background:#E6F4EA; color:#067647; } .pl-st.hold { background:#FFF4DB; color:#8A5A00; }
+    .pl-st.run { background:#E3EEFF; color:var(--primary-dim); }
+    .pl-err { font-size:12.5px; color:#B42318; margin-top:4px; }
+    .pl-btn { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer; margin:2px 4px 2px 0; }
+    .pl-btn:disabled { opacity:.5; cursor:wait; }
+    .pl-sec { margin:28px 0 12px; font-size:18px; }
+    .pl-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .pl-empty { color:var(--muted); padding:24px 0; }
+    .pl-price { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; font-size:13.5px; }
+    .pl-price input { width:90px; padding:7px 9px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
+    .pl-timing { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
+    .pl-timing div { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13.5px; }
+    .pl-timing b { font-family:'Satoshi',sans-serif; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline" class="active">Pipeline</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="pl-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+    const state = { filter: 'attention', data: null };
+    const WAITING = ['pending', 'en_done', 'ja_done', 'ko_done', 'zh_backfill'];
+    const RUNNING = ['en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress'];
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    async function api(path, opts = {}) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, { ...opts, headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+
+    const ago = (iso) => {
+      if (!iso) return '—';
+      const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
+      return m < 60 ? m + ' min ago' : m < 2880 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago';
+    };
+    const dur = (s) => s == null ? '' : (s >= 3600 ? (s / 3600).toFixed(1) + ' h' : Math.max(1, Math.round(s / 60)) + ' min');
+
+    async function load() { state.data = await api('/api/admin-queue'); render(); }
+
+    async function act(id, action, extra, btn) {
+      if (btn) btn.disabled = true;
+      try { await api('/api/admin-queue', { method: 'PATCH', body: JSON.stringify({ id, action, ...extra }) }); await load(); }
+      catch (e) { alert('Could not save: ' + e.message); if (btn) btn.disabled = false; }
+    }
+
+    function actionsFor(r, stuck) {
+      const b = [];
+      if (WAITING.includes(r.status)) {
+        b.push(`<button class="pl-btn" data-a="top">Run first</button>`, `<button class="pl-btn" data-a="hold">Hold</button>`);
+      }
+      if (r.status === 'hold') b.push(`<button class="pl-btn" data-a="release">Release</button>`);
+      if (r.status === 'error') b.push(`<button class="pl-btn" data-a="retry" data-to="pending">Retry from EN</button>`,
+        `<button class="pl-btn" data-a="retry" data-to="en_done">Retry from JA</button>`,
+        `<button class="pl-btn" data-a="retry" data-to="ja_done">Retry from KO</button>`,
+        `<button class="pl-btn" data-a="retry" data-to="ko_done">Retry from ZH</button>`);
+      if (stuck) b.push(`<button class="pl-btn" data-a="unstick">Unstick</button>`);
+      return b.join('');
+    }
+
+    function render() {
+      const { rows, events, summary: s } = state.data;
+      const stuck = new Set(s.stuck);
+      const attention = rows.filter(r => r.status === 'error' || stuck.has(r.id));
+      const filters = [['attention', `Needs attention (${attention.length})`], ['waiting', `Waiting (${rows.filter(r => WAITING.includes(r.status)).length})`],
+        ['running', `Running (${rows.filter(r => RUNNING.includes(r.status)).length})`], ['hold', `On hold (${s.by_status.hold || 0})`],
+        ['done', `Done (${s.by_status.done || 0})`], ['all', `All (${rows.length})`]];
+      const pick = {
+        attention: attention, waiting: rows.filter(r => WAITING.includes(r.status)), running: rows.filter(r => RUNNING.includes(r.status)),
+        hold: rows.filter(r => r.status === 'hold'), done: rows.filter(r => r.status === 'done'), all: rows
+      }[state.filter];
+
+      const fmtN = (n) => Number(n).toLocaleString();
+      const costs = state.data.costs || { services: [], known_services: [] };
+      const costsHtml = (costs.services.length ? costs.services : costs.known_services.map(k => ({ service: k, calls: 0, reports: 0, input_tokens: 0, output_tokens: 0, price: null, usd: null }))).map(c => `
+        <div class="pl-wrap" style="padding:14px 16px;margin-bottom:10px">
+          <b>${esc(c.service)}</b>
+          <div class="pl-note" style="margin:4px 0 0">${c.calls ? fmtN(c.calls) + ' call' + (c.calls > 1 ? 's' : '') + ' on ' + c.reports + ' report' + (c.reports > 1 ? 's' : '') + ' · ' + fmtN(c.input_tokens) + ' input / ' + fmtN(c.output_tokens) + ' output tokens' : 'No usage recorded yet. The next report with a cover will log it.'}</div>
+          ${c.usd != null ? `<div style="margin-top:6px"><b>$${c.usd}</b> total${c.usd_per_report != null ? ` · about <b>$${c.usd_per_report}</b> per report` : ''}</div>` : (c.calls ? '<div class="pl-note">Enter the price below to see dollars.</div>' : '')}
+          <form class="pl-price" data-svc="${esc(c.service)}">
+            <span>Price per 1M tokens, USD (from the provider's price page): input</span><input name="in" inputmode="decimal" value="${c.price ? esc(c.price.usd_per_m_in) : ''}" />
+            <span>output</span><input name="out" inputmode="decimal" value="${c.price ? esc(c.price.usd_per_m_out) : ''}" />
+            <button class="pl-btn" type="submit">Save price</button>
+          </form>
+        </div>`).join('');
+      const timing = Object.entries(s.timing).map(([k, v]) => `<div><b>${esc(k.toUpperCase())}</b> · avg ${v.avg_min} min · ${v.runs} run${v.runs > 1 ? 's' : ''}${v.metered_usd ? ` · $${v.metered_usd} metered` : ''}</div>`).join('');
+
+      root.innerHTML = `
+        <div class="pl-head"><h1>Pipeline</h1><span class="pl-state ${esc(s.state)}">${esc(s.state)}</span></div>
+        <div class="pl-kpis">
+          <div class="pl-kpi"><b>${s.work_left}</b><span>reports in progress or waiting</span></div>
+          <div class="pl-kpi"><b>${s.completed_7d}</b><span>published, last 7 days</span></div>
+          <div class="pl-kpi"><b>${s.hours_since == null ? '—' : s.hours_since + ' h'}</b><span>since last stage finished</span></div>
+          <div class="pl-kpi ${s.stuck.length ? 'bad' : ''}"><b>${s.stuck.length}</b><span>stuck claims</span></div>
+          <div class="pl-kpi ${s.errors ? 'bad' : ''}"><b>${s.errors}</b><span>errors</span></div>
+        </div>
+        <h2 class="pl-sec">Metered costs<small>external APIs that bill per use</small></h2>
+        ${costsHtml}
+        ${timing ? `<h2 class="pl-sec">Stage timing<small>wall-clock, successful runs only</small></h2><div class="pl-timing">${timing}</div>
+        <p class="pl-note">Cost: Claude Routine usage runs on the subscription and is not metered per token, so only time is shown. Dollar figures appear only for metered external APIs (e.g. cover art) once the runner reports them.</p>` : ''}
+        <div class="pl-filters">${filters.map(([k, l]) => `<button class="pl-chip ${state.filter === k ? 'on' : ''}" data-f="${k}">${esc(l)}</button>`).join('')}</div>
+        ${pick.length ? `<div class="pl-wrap"><table class="pl"><thead><tr><th>Report</th><th>Status</th><th>Priority</th><th>Tries</th><th>Updated</th><th></th></tr></thead><tbody>
+          ${pick.map(r => `<tr data-id="${esc(r.id)}">
+            <td class="pl-topic"><div>${esc(r.topic)}</div><div class="pl-id">${esc(r.id)} · ${esc(r.country || '')} · ${esc(r.industry || '')}</div>
+              ${r.error_log && r.status === 'error' ? `<div class="pl-err">${esc(r.error_log)}</div>` : ''}</td>
+            <td><span class="pl-st ${r.status === 'error' ? 'error' : r.status === 'done' ? 'done' : r.status === 'hold' ? 'hold' : RUNNING.includes(r.status) ? 'run' : ''}">${esc(r.status)}${stuck.has(r.id) ? ' · stuck' : ''}</span></td>
+            <td>${r.priority}</td><td>${r.attempts}</td><td>${esc(ago(r.updated_at))}</td>
+            <td>${actionsFor(r, stuck.has(r.id))}</td></tr>`).join('')}
+        </tbody></table></div>` : `<div class="pl-empty">Nothing here.</div>`}
+        <h2 class="pl-sec">Recent activity<small>last ${events.length} events</small></h2>
+        ${events.length ? `<div class="pl-wrap"><table class="pl"><thead><tr><th>When</th><th>Report</th><th>Stage</th><th>Result</th><th>Took</th><th>Model</th></tr></thead><tbody>
+          ${events.map(e => `<tr><td>${esc(ago(e.at))}</td><td class="pl-id">${esc(e.queue_id)}</td><td>${esc(e.stage)}</td>
+            <td>${esc(e.outcome)}${e.to_status ? ` → ${esc(e.to_status)}` : ''}${e.note ? `<div class="pl-err">${esc(e.note)}</div>` : ''}</td>
+            <td>${esc(dur(e.duration_s))}</td><td>${esc(e.model || '')}</td></tr>`).join('')}</tbody></table></div>` : `<div class="pl-empty">No events yet. The next runner fire will log the first one.</div>`}`;
+
+      root.querySelectorAll('form[data-svc]').forEach(f => f.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const btn = f.querySelector('button'); btn.disabled = true;
+        try {
+          await api('/api/admin-queue', { method: 'PATCH', body: JSON.stringify({ action: 'set_price', service: f.dataset.svc, usd_per_m_in: f.elements.in.value, usd_per_m_out: f.elements.out.value }) });
+          await load();
+        } catch (e) { alert('Could not save price: ' + e.message); btn.disabled = false; }
+      }));
+      root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => { state.filter = b.dataset.f; render(); }));
+      root.querySelectorAll('tr[data-id] [data-a]').forEach(b => b.addEventListener('click', () => {
+        const id = b.closest('tr').dataset.id;
+        if (b.dataset.a === 'retry' && !confirm('Retry ' + id + ' from this stage?')) return;
+        act(id, b.dataset.a, b.dataset.to ? { to: b.dataset.to } : {}, b);
+      }));
+    }
+
+    try { await load(); }
+    catch (e) { root.innerHTML = `<div class="pl-empty">Could not load the pipeline (${esc(e.message)}).</div>`; }
+  </script>
+</body>
+</html>

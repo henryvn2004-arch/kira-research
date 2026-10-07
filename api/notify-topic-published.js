@@ -10,6 +10,8 @@
 // ============================================================
 
 import { sendTopicPublishedEmail } from './_lib/email.js';
+import { logJobRun } from './_lib/jobs.js';
+import { getConfig } from './_lib/config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -32,7 +34,12 @@ export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
   if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
 
+  const startedAt = Date.now();
   try {
+    if (!(await getConfig('notify.report_ready_enabled'))) {
+      await logJobRun('notify-topic-published', { ok: true, detail: 'paused in /en/admin/config; nobody was emailed', startedAt });
+      return res.status(200).json({ ok: true, paused: true });
+    }
     const due = await sb('rpc/due_topic_notifications', 'POST', { lim: 50 });
     let sent = 0, failed = 0;
     for (const d of due) {
@@ -49,9 +56,11 @@ export default async function handler(req, res) {
         await sb(`topic_requests?id=eq.${d.request_id}`, 'PATCH', { notified_at: null }).catch(() => {});
       }
     }
+    await logJobRun('notify-topic-published', { ok: failed === 0, detail: `due ${due.length}, sent ${sent}, failed ${failed}`, startedAt });
     return res.status(200).json({ ok: true, due: due.length, sent, failed });
   } catch (err) {
     console.error('[notify-topic-published]', err.message);
+    await logJobRun('notify-topic-published', { ok: false, detail: err.message, startedAt });
     return res.status(500).json({ error: 'server_error' });
   }
 }

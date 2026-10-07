@@ -14,13 +14,19 @@
 //       industry KIRA covers there (an active tax_country_industry pair), a
 //       placeholder topic is created (status 'proposed', one per pair) and
 //       returned, so the reader lands on a page with that name;
+//     • otherwise, if the query names exactly one market, Claude Haiku decides
+//       (api/_lib/search-interpret.js) whether it is a lawful product or service
+//       that belongs under one of that market's covered industries; if so a
+//       placeholder named after the query is created ("Condom market in Australia");
 //     • anything else is counted in search_misses and returns no items.
-//   The market + industry requirement is the spam bound: at most one
-//   placeholder per covered pair, never one per typed string.
+//   The market + covered-industry requirement, the model's judgement, a hard
+//   denylist and a daily call budget are the spam bound; no human review needed.
 //
 //   state  scoping       proposed or requested — not approved yet, no date promised
 //          in_progress   approved or queued — in the production queue
 // ============================================================
+
+import { interpretSearch, coveredIndustries } from './_lib/search-interpret.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -109,8 +115,26 @@ export default async function handler(req, res) {
           await rpc('bump_topic_search', { p_slug: made.o_slug });
           return res.status(200).json({ items: [{
             slug: made.o_slug, title: made.o_title, country: pair.country_name, country_code: pair.country_code,
-            industry: pair.industry_name, competency: null, year: 2027, state: 'scoping'
+            industry: pair.industry_name, competency: null, year: new Date().getUTCFullYear(), state: 'scoping'
           }] });
+        }
+      }
+      // Not an exact industry: let the model file it under a covered parent industry.
+      const ctry = (await rpc('search_country', { q }))[0];
+      if (ctry && ctry.rest) {
+        const verdict = await interpretSearch(ctry, await coveredIndustries(ctry.country_code), ctry.rest);
+        if (verdict.ok) {
+          const made = (await rpc('ensure_reader_topic', {
+            p_cc: ctry.country_code, p_industry: verdict.industryId, p_slug: verdict.slug, p_title: verdict.title,
+            p_questions: outline(verdict.topic.toLowerCase(), ctry.country_name)
+          }))[0];
+          if (made && made.o_status !== 'rejected') {
+            await rpc('bump_topic_search', { p_slug: made.o_slug });
+            return res.status(200).json({ items: [{
+              slug: made.o_slug, title: made.o_title, country: ctry.country_name, country_code: ctry.country_code,
+              industry: verdict.industryName, competency: null, year: new Date().getUTCFullYear(), state: 'scoping'
+            }] });
+          }
         }
       }
       await rpc('log_search_miss', { p_kw: q });

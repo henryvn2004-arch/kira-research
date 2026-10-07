@@ -130,7 +130,7 @@ export default async function handler(req, res) {
     // by existing ones.
     const baseRows = await sb(
       `living_reports?slug=eq.${encodeURIComponent(slug)}` +
-      `&select=id,slug,country,industry,year,pages,price,status&limit=1`
+      `&select=id,slug,code,country,industry,segment,year,pages,price,status&limit=1`
     );
     const base = Array.isArray(baseRows) ? baseRows[0] : null;
     if (!base) { res.status(404).json({ error: 'report_not_found' }); return; }
@@ -187,14 +187,18 @@ export default async function handler(req, res) {
     // External URLs pass through. Best-effort: null on failure so the UI
     // shows the "PDF is being prepared" pending state instead of breaking.
     //
-    // Download filename convention (2026-05-26): "<Country> <industry-lower> <year>_<LOCALE-UPPER>.pdf"
-    // e.g. "Vietnam fintech 2026_EN.pdf", "Vietnam e-commerce 2026_JA.pdf".
-    // Computed from living_reports country/industry/year so it auto-updates
+    // Download filename convention (2026-10-07, docs/naming_convention.md):
+    // "KIRA_<code>_<Country-segment-year>_<LOCALE>.pdf", e.g.
+    // "KIRA_VN-RTL-ENT-D26-01_Vietnam-convenience-store-licensing-2026_EN.pdf".
+    // Reports without a code or segment fall back to the industry.
+    // Computed from living_reports so it auto-updates
     // for ALL reports (already-published + future) — no Storage rename needed
     // because the storage path stays <uuid>/<locale>.pdf; only the browser
     // Content-Disposition filename (via ?download=…) changes. Aggregator HTTP
     // URLs ignore this.
-    const downloadName = `${base.country} ${(base.industry || '').toLowerCase()} ${base.year}_${effectiveLocale.toUpperCase()}.pdf`;
+    const stem = [base.country, base.segment || (base.industry || '').toLowerCase(), base.year].join(' ')
+      .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '');
+    const downloadName = `KIRA_${base.code ? base.code + '_' : ''}${stem}_${effectiveLocale.toUpperCase()}.pdf`;
     const signedPdfUrl = await resolvePdfUrl(translation.pdf_url, downloadName);
 
     res.status(200).json({

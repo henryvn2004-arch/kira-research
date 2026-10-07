@@ -97,6 +97,8 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
     errors,
     naming: {
       code, slug, title, canonical, angle, seo_title,
+      // Delivered file names: <file_stem>_<LOCALE>.pdf (same rule as api/library-content.js)
+      file_stem: `KIRA_${code}_${canonical.replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')}`,
       short_title: `${country.en} ${segment}`,
       report_kind: st.en,
       report_kind_i18n: Object.fromEntries(LOCALES.map(l => [l, st[l]])),

@@ -51,14 +51,20 @@ function extract(loc) {
   const take = text((hook.match(/<div class="takeaway">([\s\S]*?)<\/div>/) || [])[1] || '');
   const lede = noTags([kicker, take].filter(Boolean).join(' '));
   const cards = [...hook.matchAll(/<div style="font-size:\s*12\.5px[^"]*">([\s\S]*?)<\/div>/g)].map(m => noTags(text(m[1])));
-  const paragraphs = (cards.length >= 3 ? cards.slice(1, 3) : cards.slice(0, 2)).filter(Boolean);
+  // Hook pages with a commentary column instead of cards: take its first two paragraphs.
+  const commentary = (hook.match(/<div class="commentary">([\s\S]*?)<\/div>/) || [])[1] || '';
+  const paras = [...commentary.matchAll(/<p>([\s\S]*?)<\/p>/g)].map(m => noTags(text(m[1])));
+  const paragraphs = (cards.length >= 3 ? cards.slice(1, 3) : cards.length ? cards.slice(0, 2) : paras.slice(0, 2)).filter(Boolean);
+  if (!paragraphs.length) throw new Error(loc + ': no preview paragraphs on the hook page (cards or commentary)');
 
-  // contents: chapter rows = number / bold title / page ref
+  // contents: every 60px/1fr/80px grid row on the first pages = number / bold title (optional subtitle) / page ref
   const toc = [];
   for (const p of pages.slice(0, 8)) {
-    if (!/class="page-h1">[^<]*<\/h1>/.test(p) || toc.length && !/Contents|目次|목차|目录/.test((p.match(/class="page-h1">([^<]*)/) || [])[1] || '')) continue;
-    for (const m of p.matchAll(/<div class="mono"[^>]*>(\d{2})<\/div>\s*<div style="font-family[^>]*>([\s\S]*?)<\/div>\s*<div class="mono"[^>]*>([^<]*)<\/div>/g))
-      toc.push({ num: m[1], name: text(m[2]), pages: text(m[3]) });
+    for (const row of p.split(/(?=<div style="display: grid; grid-template-columns: 60px 1fr 80px)/).slice(1)) {
+      const mono = [...row.matchAll(/<div class="mono"[^>]*>([^<]*)<\/div>/g)].map(m => text(m[1]));
+      const name = (row.match(/<div style="font-family[^>]*>([\s\S]*?)<\/div>/) || [])[1];
+      if (mono.length >= 2 && name) toc.push({ num: mono[0], name: text(name), pages: mono[mono.length - 1] });
+    }
   }
   if (!toc.length) throw new Error(loc + ': no contents rows found');
   const firstHook = toc.findIndex(r => parseInt(r.pages.replace(/\D/g, ''), 10) >= pages.indexOf(hook) + 1);
