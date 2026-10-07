@@ -109,6 +109,7 @@
     <div class="kc-panel" id="kc-panel"><div class="kc-panel-empty">Click a bubble to list the companies in that group.</div></div>
 
     <div class="kc-foot" id="kc-foot"></div>
+    <div class="kc-foot" id="kc-facts"></div>
   </main>
 
   <script src="/js/nav.js"></script>
@@ -124,10 +125,10 @@
 
     var OWN = { state: 'State-owned', private: 'Private', fdi: 'Foreign-invested', listed: 'Listed', cooperative: 'Cooperative', unknown: 'Unknown' };
     var CONC = {
-      high: { label: 'Concentrated (top 5 ≥ 70% of capital)', color: '#1A3FA0' },
+      high: { label: 'Concentrated (top 5 ≥ 70%)', color: '#1A3FA0' },
       mid:  { label: 'Moderate (top 5 = 40–70%)', color: '#6A94E6' },
       low:  { label: 'Fragmented (top 5 < 40%)', color: '#BFD3F7' },
-      na:   { label: 'Not enough capital data (fewer than 5 companies with a sourced figure)', color: '#CBD2D9' }
+      na:   { label: 'No sourced concentration figure', color: '#CBD2D9' }
     };
 
     function concentration(list) {
@@ -138,6 +139,9 @@
       var share = top / tot;
       return { key: share >= 0.7 ? 'high' : share >= 0.4 ? 'mid' : 'low', share: share, n: caps.length };
     }
+
+    function classify(share) { return { key: share >= 0.7 ? 'high' : share >= 0.4 ? 'mid' : 'low', share: share }; }
+    function stageConc(s, list) { return s.concentration ? Object.assign(classify(s.concentration.share), { stageLevel: true, label: s.concentration.label, url: s.concentration.source_url }) : concentration(list); }
 
     function groups() {
       var d = state.data, out = {};
@@ -165,22 +169,22 @@
         if (state.mode === 'db') {
           body = roles.map(function (r) {
             var list = g[s.id][r], n = list.length, size = Math.round(52 + 72 * Math.sqrt(n / maxDb));
-            var cc = concentration(list), sel = state.sel && state.sel.stage === s.id && state.sel.role === r;
+            var cc = stageConc(s, list), sel = state.sel && state.sel.stage === s.id && state.sel.role === r;
             return '<button type="button" class="kc-bubble" style="width:' + size + 'px;height:' + size + 'px;--ring:' + CONC[cc.key].color + '" data-stage="' + esc(s.id) + '" data-role="' + esc(r) + '" aria-pressed="' + (sel ? 'true' : 'false') + '" aria-label="' + esc(r + ', ' + n + ' companies') + '"><span class="n" style="font-size:' + (size > 90 ? 22 : 17) + 'px">' + n + '</span><span class="r">' + esc(r) + '</span></button>';
           }).join('');
           if (!roles.length) body = '<div class="kc-bubble dashed" style="width:70px;height:70px"><span class="r">no data yet</span></div>';
         } else {
           var e = s.estimate;
           if (e && e.count) {
-            var size2 = Math.round(52 + 72 * Math.sqrt(e.count / maxEst));
-            body = '<div class="kc-bubble" style="width:' + size2 + 'px;height:' + size2 + 'px;cursor:default;--ring:#CBD2D9"><span class="n" style="font-size:' + (size2 > 90 ? 20 : 15) + 'px">' + esc(e.display || fmtN(e.count)) + '</span><span class="r">' + esc(e.unit) + '</span></div>';
+            var size2 = Math.round(84 + 44 * Math.log(e.count) / Math.log(maxEst));
+            body = '<div class="kc-bubble" style="width:' + size2 + 'px;height:' + size2 + 'px;cursor:default;--ring:#CBD2D9"><span class="n" style="font-size:' + (size2 > 90 ? 20 : 15) + 'px">' + esc(e.display || fmtN(e.count)) + '</span><span class="r">' + esc(e.unit) + (e.unverified ? ' *' : '') + '</span></div>';
           } else {
-            body = '<div class="kc-bubble dashed" style="width:76px;height:76px"><span class="r">no official estimate found</span></div>';
+            body = '<div class="kc-bubble dashed" style="width:76px;height:76px"><span class="r">no estimate found</span></div>';
           }
         }
         var foot = state.mode === 'db'
           ? '<b>' + total + '</b> companies found' + (s.note ? '<br>' + esc(s.note) : '')
-          : (s.estimate ? esc(s.estimate.label) + (safeUrl(s.estimate.source_url) ? ' · <a href="' + esc(s.estimate.source_url) + '" target="_blank" rel="noopener">' + esc(s.estimate.source) + '</a>' : '') : '');
+          : (s.estimate ? esc(s.estimate.label) + (s.estimate.unverified ? ' <b>(unverified)</b>' : '') + (safeUrl(s.estimate.source_url) ? ' · <a href="' + esc(s.estimate.source_url) + '" target="_blank" rel="noopener">' + esc(s.estimate.source) + '</a>' : '') : '');
         return '<div class="kc-col"><div class="kc-col-head"><h3>' + esc(s.label) + '</h3><p>' + esc(s.desc) + '</p></div><div class="kc-col-body">' + body + '</div><div class="kc-col-foot">' + foot + '</div></div>';
       }).join('');
 
@@ -198,7 +202,7 @@
     function renderLegend() {
       $('kc-legend').innerHTML = state.mode === 'db'
         ? '<span>Ring colour = how concentrated the group is:</span>' + ['high', 'mid', 'low', 'na'].map(function (k) { return '<span><i style="border-color:' + CONC[k].color + '"></i>' + esc(CONC[k].label) + '</span>'; }).join('')
-        : '<span>Official estimates come from public statistics and cover a different unit per stage (households, enterprises, tonnes). Read each label before comparing bubbles.</span>';
+        : '<span>Estimates come from public statistics and use a different unit per stage (households, dealers, factories, shops). Bubble size is on a log scale, so compare stages only with the label in view. * = unverified source.</span>';
     }
 
     function currentList() {
@@ -222,8 +226,8 @@
         if (f.sort === 'name') return a.name.localeCompare(b.name);
         return (b.capital_vnd || 0) - (a.capital_vnd || 0) || a.name.localeCompare(b.name);
       });
-      var cc = concentration(all);
-      var concTxt = cc.key === 'na' ? 'Concentration: not enough sourced capital figures.' : 'Top 5 hold ' + Math.round(cc.share * 100) + '% of the capital in this group (' + cc.n + ' companies with a sourced figure).';
+      var cc = stageConc(stage, all);
+      var concTxt = cc.stageLevel ? 'Stage concentration: ' + cc.label + '.' : cc.key === 'na' ? 'Concentration: no sourced capital figures.' : 'Top 5 hold ' + Math.round(cc.share * 100) + '% of the capital in this group (' + cc.n + ' companies with a sourced figure).';
       p.innerHTML =
         '<div class="kc-panel-head"><h2>' + esc(stage.label) + ' · ' + esc(state.sel.role) + '</h2><span class="meta">' + all.length + ' companies · ' + esc(concTxt) + '</span></div>' +
         '<div class="kc-filters">' +
@@ -246,6 +250,17 @@
         tr.addEventListener('click', open);
         tr.addEventListener('keydown', function (e) { if (e.key === 'Enter') open(); });
       });
+    }
+
+    function renderFacts() {
+      var d = state.data, html = '<h3 style="margin-top:22px">Sourced facts by stage</h3>';
+      d.stages.concat([{ id: 'all', label: 'Whole market' }]).forEach(function (s) {
+        var list = d.facts.filter(function (f) { return f.stage === s.id; });
+        if (!list.length) return;
+        html += '<details style="margin:6px 0"><summary style="cursor:pointer;font-weight:600;color:var(--text)">' + esc(s.label) + ' (' + list.length + ')</summary><ul style="margin:6px 0 8px 18px;padding:0">' +
+          list.map(function (f) { return '<li>' + esc(f.label) + ': <b>' + esc(f.value) + (f.unit && String(f.value).indexOf(f.unit) < 0 ? ' ' + esc(f.unit) : '') + '</b>' + (f.year ? ' (' + esc(f.year) + ')' : '') + (safeUrl(f.source_url) ? ' · <a href="' + esc(f.source_url) + '" target="_blank" rel="noopener" style="color:var(--primary)">' + esc(f.source) + '</a>' : ' · ' + esc(f.source || 'source not linked')) + '</li>'; }).join('') + '</ul></details>';
+      });
+      $('kc-facts').innerHTML = html;
     }
 
     function renderDetail(p) {
@@ -278,6 +293,7 @@
       state.data = d;
       $('kc-sub').textContent = d.summary;
       $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (m) { return '<p style="margin:0 0 8px">' + esc(m) + '</p>'; }).join('');
+      renderFacts();
       render();
     }).catch(function () { $('kc-sub').textContent = 'Data failed to load.'; });
   })();
