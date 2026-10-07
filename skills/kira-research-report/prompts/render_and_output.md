@@ -25,9 +25,10 @@ node skills/kira-research-report/scripts/gen-cover.mjs --id <report_id> --countr
   --angle "<topic angle or buyer question, short>" --out <report output dir>/cover.jpg
 ```
 
-- The style rotates per report automatically (15 house styles, stable by report id). Pass `--style` only to override.
-- Exit 0 → use the `cover` template as is (`<img class="cv-art" src="cover.jpg">`).
-- Exit 3 (no `OPENAI_API_KEY` or API error) → keep going: set `{{COVER_VARIANT}}` to `plain` and drop the `<img class="cv-art">` line. Note it in the run summary. Never block a report on cover art.
+- The style rotates per report automatically (15 house styles, stable by report id), and so does the cover layout (9 layouts `L1`…`L9`, on a separate hash, so style and layout vary independently). Pass `--style` / `--layout` only to override. Each layout asks the image model for its own image shape (landscape, square or portrait).
+- Read `layout` from the JSON line gen-cover prints (e.g. `"layout":"L6"`) and use template `cover_<layout>` from `page_components.html` (`cover_L6`). Never swap the layout after the image exists: the image shape is made for that layout.
+- Exit 0 → use `cover_<layout>` as is (keep its `<img class="cv-art" src="cover.jpg">`).
+- Exit 3 (no `OPENAI_API_KEY` or API error) → keep going: use `cover_L1`, set `{{COVER_VARIANT}}` to `plain` and drop the `<img class="cv-art">` line. Note it in the run summary. Never block a report on cover art.
 
 ## Step 1c — Images stay as relative references
 
@@ -73,7 +74,7 @@ After all pages exist, walk them in order and assign:
 
 ### Cover and closing pages (all routes)
 
-- **Cover:** the `cover` template, filled from `naming.json` (`docs/naming_convention.md`): line 1 = `cover.line1`, accent line = `cover.line2_accent`, optional line 3 ≤ `cover.line3_max_chars`; `{{REPORT_KIND}}` = `report_kind`; `{{REGION_OR_COUNTRY}}` = `country`. Subtitle = the buyer question or angle (≤110 chars). Year as usual. The tagline "Know first. / Move first." is fixed in the template; never change it.
+- **Cover:** the `cover_<layout>` template (Step 1b), filled from `naming.json` (`docs/naming_convention.md`): line 1 = `cover.line1`, accent line = `cover.line2_accent`, optional line 3 ≤ `cover.line3_max_chars`; `{{REPORT_KIND}}` = `report_kind`; `{{REGION_OR_COUNTRY}}` = `country`. Subtitle = the buyer question or angle (≤110 chars). Year as usual. `{{TITLE_SIZE_CLASS}}` = `long` if any title line exceeds ~14 Latin characters (~7 CJK characters), else empty. All 9 layouts take the same placeholders. The tagline "Know first. / Move first." is fixed in the template; never change it.
 - **Who's who:** the `players-page` pages printed by `scripts/render-players.mjs` (from `players.json`) go right before the methodology endnote, and the contents list them as their own chapter (all routes; see `brain_route.md` → "Who's who").
 - **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}` (= `naming.short_title`), `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
 - Neither page carries a page number or source key.

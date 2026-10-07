@@ -77,7 +77,7 @@ Run `node scripts/report-name.mjs --country … --industry … --stage … --typ
 
 | Position | Page | Page type |
 |---|---|---|
-| Opening | Cover | `cover` with the generated illustration (render_and_output Step 1b). Title lines and report kind from `naming.json`; subtitle = the buyer question (≤110 chars). |
+| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = the buyer question (≤110 chars). |
 | Opening | Methodology | `methodology_inline` |
 | Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
 | Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-main-side` (exhibit or `big_number` + commentary with the 3 reasons) or `layout-hero` (big number + chart, reasons in the takeaway and on page 2). Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. |
