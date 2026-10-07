@@ -22,6 +22,7 @@ This prompt is the canonical KO voice guide for this skill. Whenever you ship KO
 - Numbers and units: `USD 2.3 bn`, `5.03%`, `IDR 116 trn` — preserve verbatim (USD/IDR stay as ISO codes, "bn"/"%"/"pp" stay English; the KO reader recognizes them)
 - HTML tags, class names, IDs
 - Image references: `<img src="cover.jpg">`, `src="brand/logo.png"`, `src="brand/logo-white.png"` stay exactly as written (the render script inlines them). Translate the cover and closing page text normally; keep the contact details (email, website, LinkedIn name) verbatim.
+- **Who's who pages** (`players-page`, owner 2026-10-07): keep company names (`pl-name`), brand names, origin codes (`VN`, `JP` …) and `[source]` aliases exactly as written; translate the page title, subhead, stage labels (`pl-stage`), roles and the footer line. Keep each card's text about as short as the English (the cards are fixed-height).
 - Chart SOURCE lines: keep mono-uppercase format, only translate the descriptor part (`industry trade press` → `업계 전문지`); leave `KIRA RESEARCH 2026` and dataset names (`BPS`, `BANK INDONESIA`) as-is
 
 ---

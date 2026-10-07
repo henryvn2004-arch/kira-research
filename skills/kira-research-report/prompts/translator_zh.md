@@ -31,6 +31,7 @@ This prompt is the canonical ZH voice guide for this skill. Whenever you ship ZH
 - Numbers and units: `USD 2.3 bn`, `5.03%`, `IDR 116 trn`, `+8 pp` — preserve verbatim. ISO currency codes stay (`USD`, `IDR`, `VND`, `THB`…); do NOT convert to 亿/万 or to 美元 when the EN uses `USD … bn`. Keep ASCII digits and `%`.
 - HTML tags, class names, IDs, `data-*` attributes
 - Image references: `<img src="cover.jpg">`, `src="brand/logo.png"`, `src="brand/logo-white.png"` stay exactly as written. Translate the cover and closing page text normally; keep contact details (email, website, LinkedIn name) verbatim.
+- **Who's who pages** (`players-page`, owner 2026-10-07): keep company names (`pl-name`), brand names, origin codes (`VN`, `JP` …) and `[source]` aliases exactly as written; translate the page title, subhead, stage labels (`pl-stage`), roles and the footer line. Keep each card's text about as short as the English (the cards are fixed-height).
 - Chart SOURCE lines: keep mono-uppercase format, only translate the generic descriptor (`industry trade press` → `行业媒体`); leave `KIRA RESEARCH 2026` and dataset names (`BPS`, `BANK INDONESIA`) as-is.
 
 ---
