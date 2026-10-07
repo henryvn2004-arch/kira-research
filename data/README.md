@@ -2,7 +2,9 @@
 
 This directory holds operational data that the batch cron system reads/writes. **Not** source code, **not** generated artifacts (those live under `skills/kira-research-report/outputs/`).
 
-## report_queue.csv — batch report generation queue
+## report_queue.csv — batch report generation queue (FROZEN ARCHIVE since 2026-10-07)
+
+> The live queue is the Supabase table `report_queue` (migration 031) with an event log in `report_queue_events`. Runner access: `skills/kira-research-report/scripts/queue.mjs`; owner access: `/en/admin/pipeline`. This CSV is a read-only snapshot taken at migration time (185 rows) and is no longer edited. Column meanings below still apply to the table.
 
 The daily 4-fire cron (`prompts/batch_runner.md`) reads this file each fire, picks the most-advanced row, and advances it one stage. A report is generated in EN and translated to every language in `target_languages` (default EN+JA+KO+ZH since Phase S4, 2026-10-05).
 

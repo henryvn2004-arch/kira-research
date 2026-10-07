@@ -81,58 +81,33 @@ function tally(rows, field) {
   return out;
 }
 
-// ── Report-pipeline health (Sprint S1) ──
-// The batch queue lives in git (data/report_queue.csv) and every runner fire
-// commits "batch: ..." messages, so health = queue counts + commit history from
-// the public repo. No DB involved; cached 5 min per warm instance. Returns null
-// on any GitHub failure so the dashboard simply hides the card.
-const GH_REPO = 'henryvn2004-arch/kira-research';
-const WORK_STATES = new Set(['pending', 'en_done', 'ja_done', 'en_in_progress', 'ja_in_progress', 'ko_in_progress']);
+// ── Report-pipeline health ──
+// The queue lives in Postgres (report_queue + report_queue_events, migration 031);
+// the runner logs one event per stage. Returns null if the tables are unreadable so
+// the dashboard simply hides the card. Cached 60 s per warm instance.
+const WORK_STATES = new Set(['pending', 'en_done', 'ja_done', 'ko_done', 'zh_backfill', 'en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress']);
+const IN_PROGRESS = new Set(['en_in_progress', 'ja_in_progress', 'ko_in_progress', 'zh_in_progress']);
+const STALE_MIN = 150;
 let pipelineCache = { at: 0, value: null };
 
-function csvStatuses(text) {
-  const lines = text.split(/\r?\n/).filter(Boolean);
-  const split = (ln) => {
-    const out = []; let cur = ''; let q = false;
-    for (let i = 0; i < ln.length; i++) {
-      const c = ln[i];
-      if (q) { if (c === '"' && ln[i + 1] === '"') { cur += '"'; i++; } else if (c === '"') q = false; else cur += c; }
-      else if (c === '"') q = true;
-      else if (c === ',') { out.push(cur); cur = ''; }
-      else cur += c;
-    }
-    out.push(cur);
-    return out;
-  };
-  const idx = split(lines[0]).indexOf('status');
-  const by = {};
-  for (const ln of lines.slice(1)) {
-    const st = split(ln)[idx] || 'unknown';
-    by[st] = (by[st] || 0) + 1;
-  }
-  return by;
-}
-
 async function pipelineHealth() {
-  if (Date.now() - pipelineCache.at < 5 * 60 * 1000) return pipelineCache.value;
+  if (Date.now() - pipelineCache.at < 60 * 1000) return pipelineCache.value;
   try {
-    const gh = { 'User-Agent': 'kira-admin', 'Accept': 'application/vnd.github+json' };
-    if (process.env.GITHUB_TOKEN) gh['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
-    const [csvRes, comRes] = await Promise.all([
-      fetch(`https://raw.githubusercontent.com/${GH_REPO}/main/data/report_queue.csv`),
-      fetch(`https://api.github.com/repos/${GH_REPO}/commits?path=data/report_queue.csv&per_page=100`, { headers: gh })
+    const [rows, events] = await Promise.all([
+      sb('report_queue?select=id,status,claimed_at&limit=10000'),
+      sb('report_queue_events?select=outcome,to_status,stage,at&outcome=eq.ok&order=at.desc&limit=200')
     ]);
-    if (!csvRes.ok || !comRes.ok) throw new Error(`github ${csvRes.status}/${comRes.status}`);
-    const by_status = csvStatuses(await csvRes.text());
-    const commits = (await comRes.json()).filter(c => /^batch:/.test(c.commit.message));
-    const work_left = Object.entries(by_status).reduce((n, [k, v]) => n + (WORK_STATES.has(k) ? v : 0), 0);
-    const last = commits[0] ? commits[0].commit.committer.date : null;
+    const by_status = tally(rows.rows, 'status');
+    const work_left = rows.rows.filter(r => WORK_STATES.has(r.status)).length;
+    const cutoff = Date.now() - STALE_MIN * 60000;
+    const stuck = rows.rows.filter(r => IN_PROGRESS.has(r.status) && (!r.claimed_at || Date.parse(r.claimed_at) < cutoff)).length;
+    const last = events.rows[0] ? events.rows[0].at : null;
     const hours_since = last ? Math.round((Date.now() - new Date(last).getTime()) / 36e5) : null;
     const weekAgo = Date.now() - 7 * 864e5;
-    const completed_7d = commits.filter(c => /^batch: complete/.test(c.commit.message) && new Date(c.commit.committer.date).getTime() > weekAgo).length;
-    // idle = nothing to do (fine); stalled = work waiting but no runner commit for 30h+
-    const state = work_left === 0 ? 'idle' : (hours_since == null || hours_since > 30 ? 'stalled' : 'running');
-    pipelineCache = { at: Date.now(), value: { state, by_status, work_left, completed_7d, last_batch_at: last, hours_since } };
+    const completed_7d = events.rows.filter(e => e.to_status === 'done' && e.stage !== 'zh_backfill' && new Date(e.at).getTime() > weekAgo).length;
+    // idle = nothing to do (fine); stalled = work waiting but no stage finished for 30h+, or a claim is stuck
+    const state = work_left === 0 ? 'idle' : (stuck || hours_since == null || hours_since > 30 ? 'stalled' : 'running');
+    pipelineCache = { at: Date.now(), value: { state, by_status, work_left, completed_7d, last_batch_at: last, hours_since, stuck, errors: by_status.error || 0 } };
   } catch (err) {
     console.warn('[admin-stats] pipeline health:', err.message);
     pipelineCache = { at: Date.now(), value: null };

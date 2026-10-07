@@ -1,5 +1,7 @@
 # batch_runner.md — self-contained prompt for scheduled batch report generation
 
+> **Queue storage (2026-10-07):** the queue lives in Supabase (`report_queue` + `report_queue_events`, migration 031), NOT in `data/report_queue.csv` (frozen archive, never edit). Every queue read/write goes through `node skills/kira-research-report/scripts/queue.mjs` (`recover` · `sync-topics` · `next` · `advance` · `fail`). The owner steers the queue from `/en/admin/pipeline` (hold, release, retry, priority). Wherever older text below says "set the CSV row to X", run `queue.mjs advance <id> X` AFTER the artifacts are committed and pushed; queue changes are never git commits.
+
 Fired by a **cloud Routine** (Phase S1, 2026-10-05; before that by `mcp__scheduled-tasks` crons on the DELL). Each fire is a **fresh Claude session with no memory** of any prior conversation — everything needed is in this prompt + the files it references.
 
 This prompt is **machine-agnostic**: it derives its working directory from git, so the same prompt runs on any machine or cloud session where the repo is cloned. In a cloud Routine session the repos are not checked out yet: the Routine prompt clones `kira-research` and `kira-pipeline` (brain) side by side, runs `npm ci`, and exports `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium` before handing over to this file.
@@ -95,85 +97,54 @@ fire automatically reclaims any orphaned slug.
 
 ### How it works
 
-`scripts/audit-queue.mjs` scans `data/report_queue.csv` for rows where
-`status` ends in `_in_progress` AND `claimed_at` is empty OR older than
-**150 minutes** ago (well above the 90-min EN stage timeout — wide margin to
-never kill a legitimately-running stage).
+`queue.mjs recover` finds rows whose status ends in `_in_progress` AND `claimed_at` is empty OR older than **150 minutes** (well above the 90-min EN stage timeout).
 
-For each stale row:
+- **Strike-1** (error_log does NOT contain `auto-recovered`): revert to the prior stage (`en_in_progress`→`pending`, `ja_in_progress`→`en_done`, `ko_in_progress`→`ja_done`, `zh_in_progress`→`ko_done`, or `zh_backfill` when the row carries the `zh-backfill` token / a filled `output_paths`), clear `claimed_at`, append `auto-recovered <iso>` to `error_log`.
+- **Strike-2** (already recovered once, stuck again): real bug. Status → `error`, note `second-strike auto-recover skipped`, left for manual review.
 
-- **Strike-1** (error_log does NOT contain `auto-recovered`): revert
-  status to the prior stage, clear `claimed_at`, append
-  `auto-recovered <iso>` to `error_log`.
-  - `en_in_progress` → `pending`
-  - `ja_in_progress` → `en_done`
-  - `ko_in_progress` → `ja_done`
-  - `zh_in_progress` → `ko_done` (Fire D), or → `zh_backfill` when the row
-    is a backfill (Fire E). Backfill marker: `error_log` contains the token
-    `zh-backfill` (Fire E guarantees it at claim, Step 2) OR `output_paths`
-    is already filled (only published rows have it; Fire D rows get it at
-    publish).
-- **Strike-2** (already auto-recovered once and got stuck again): real
-  bug, do NOT auto-recover again. Set status = `error`, append
-  `second-strike auto-recover skipped` to error_log for manual review.
-
-The script is **idempotent**: if nothing is stale, the CSV is not
-touched on disk (script prints `recovered=0` and exits; the caller's
-`git status` will show no diff). It also migrates the schema (adds
-`claimed_at` column) on first run.
-
-### Call from the fire
+Idempotent: nothing stale → `recovered=0`. No commit is involved.
 
 ```bash
-RECOVERED=$(node skills/kira-research-report/scripts/audit-queue.mjs | awk -F= '/^recovered=/{print $2}')
-if [ "${RECOVERED:-0}" -gt 0 ]; then
-  git add data/report_queue.csv
-  git commit -m "batch: auto-recover ${RECOVERED} stale claim(s)"
-  git pull --rebase origin main 2>/dev/null || true
-  git push origin main
-fi
+node skills/kira-research-report/scripts/queue.mjs recover
 ```
 
-If push fails (remote ahead even after rebase), EXIT with
-`recovery commit collided, no-op` — next fire will retry the audit
-fresh. Do NOT proceed to Step 1 with un-pushed recovery state.
+If the script exits non-zero (Supabase unreachable / env missing), EXIT with `no-op: queue unreachable`; do not touch any file.
 
 ---
 
 ## Step 0.6: Pull approved topics into the queue (Phase S — Sprint S3)
 
-Topics the owner approved in `/en/admin/topics` live in Supabase (`topics.status = 'approved'`). Before routing, append them to the CSV as `pending` rows:
+Topics the owner approved in `/en/admin/topics` live in Supabase (`topics.status = 'approved'`). Move them into the queue as `pending` rows (reader demand becomes the row `priority`, so requested topics are produced first):
 
 ```bash
-ADDED=$(node skills/kira-research-report/scripts/sync-approved-topics.mjs | awk -F= '/^added=/{print $2}')
-if [ "${ADDED:-0}" -gt 0 ]; then
-  git add data/report_queue.csv
-  git commit -m "batch: queue ${ADDED} approved topic(s)"
-  git pull --rebase origin main 2>/dev/null || true
-  git push origin main
-fi
+node skills/kira-research-report/scripts/queue.mjs sync-topics
 ```
 
-The script is idempotent and never fails the fire: without Supabase access it prints `added=0`. If the push fails after a successful append, EXIT with `topic sync commit collided, no-op`; the next fire sees the rows in the CSV (or re-appends nothing) and retries the push.
+Idempotent. A failure here never blocks the fire: log it and continue to Step 1.
 
 ---
 
 ## Step 1: Find work — stage routing
 
-Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose status is one of `ko_done | ja_done | en_done | pending | zh_backfill` (in priority order — pick the most-advanced first; backfill last):
+Step 1 and Step 2 are ONE command, because claiming is an atomic compare-and-swap in the database:
 
-1. If a `ko_done` row exists → branch **Stage D (ZH translate + publish all languages)**
-2. Else if a `ja_done` row exists → branch **Stage C (KO translate; + publish only when `zh` is NOT in `target_languages`)**
-3. Else if an `en_done` row exists → branch **Stage B (JA translate)**
-4. Else if a `pending` row exists → branch **Stage A (EN gen)**
-5. Else if a `zh_backfill` row exists → branch **Stage E (ZH backfill: translate + publish ZH only)**
-6. Else → output `No work in queue` and EXIT cleanly.
+```bash
+node skills/kira-research-report/scripts/queue.mjs next --model <opus|sonnet>
+```
+
+It picks the most-advanced row (`ko_done` > `ja_done` > `en_done` > `pending` > `zh_backfill`; inside a status: highest `priority`, then oldest) and prints ONE JSON line `{id, topic, country, industry, year, target_languages, stage, picked_status, claim_status, output_paths, error_log, has_zh}`, or `none`.
+
+1. `none` → output `No work in queue` and EXIT cleanly.
+2. `stage` = `zh` with `picked_status` `ko_done` → **Stage D**; `zh_backfill` → **Stage E**; `ko` → **Stage C**; `ja` → **Stage B**; `en` → **Stage A**.
+3. `has_zh` is `HAS_ZH` (Stage C branches on it).
+
+The row is already claimed (`claim_status`, `claimed_at` set, an event logged); skip the old Step 2 below. Pass the model the stage will use (see Model routing) so the Pipeline page shows it.
 
 **Why most-advanced first**: drains rows toward `done` instead of starting new EN gens while half-done rows sit around. Also gives a natural pipeline — once steady-state, every 4 consecutive fires complete 1 four-language report (3 for legacy `en,ja,ko` rows). Backfill is lowest priority: it only uses fires the new-report pipeline leaves idle.
 
 **`zh` in `target_languages`** = the comma-split list contains `zh` (e.g. `"en,ja,ko,zh"`). Read it once here as `HAS_ZH=true|false`; Stage C branches on it.
 
-**Status values in queue.csv** (no DB constraint — the CSV is the source of truth; just keep the strings exact):
+**Status values in `report_queue`** (no DB constraint; keep the strings exact):
 
 | status | meaning |
 |---|---|
@@ -186,7 +157,7 @@ Read `data/report_queue.csv`. Walk it top-down and pick the FIRST row whose stat
 | `ko_in_progress` | a fire is translating KO (+ publishing when no `zh`) (or claimed and died) |
 | `ko_done` | (`zh` rows only) KO HTML generated + committed, nothing published yet; awaiting ZH + publish |
 | `zh_in_progress` | a fire is translating ZH + publishing (Fire D), or backfilling ZH (Fire E) (or claimed and died) |
-| `zh_backfill` | already-published report queued for a ZH-only backfill (set by the owner/script; `target_languages` gets `,zh` appended, `error_log` gets the `zh-backfill` marker, `output_paths` stays filled) |
+| `zh_backfill` | already-published report queued for a ZH-only backfill (set by the owner; `target_languages` gets `,zh` appended, `error_log` gets the `zh-backfill` marker, `output_paths` stays filled; `queue.mjs next` adds the marker itself) |
 | `done` | every language in `target_languages` + Supabase published; terminal success |
 | `error` | a stage failed (or strike-2 auto-recovery escalated); see `error_log`; terminal failure (manual reset to `pending` / `en_done` / `ja_done` / `ko_done` / `zh_backfill` to retry) |
 | `in_progress` | (legacy) treat as `error` and skip — old single-fire-all-stages format |
@@ -200,43 +171,9 @@ Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `targ
 
 ---
 
-## Step 2: Claim the row (atomic, push immediately)
+## Step 2: Claim the row — done by `queue.mjs next` in Step 1
 
-Update the row in-place — set TWO fields:
-
-1. `status` → next stage marker (`I'm working on it`):
-
-   | Picked status | Set to | Commit message |
-   |---|---|---|
-   | `pending` | `en_in_progress` | `batch: claim ${id} for EN gen` |
-   | `en_done` | `ja_in_progress` | `batch: claim ${id} for JA translate` |
-   | `ja_done` | `ko_in_progress` | `batch: claim ${id} for KO translate + publish` (`… for KO translate` when `HAS_ZH`) |
-   | `ko_done` | `zh_in_progress` | `batch: claim ${id} for ZH translate + publish` |
-   | `zh_backfill` | `zh_in_progress` | `batch: claim ${id} for ZH backfill` |
-
-   For a `zh_backfill` claim, also make sure `error_log` contains the token `zh-backfill` (append ` · zh-backfill` if missing; never delete existing text — strike-2 detection reads it). That token is how Step 0.5 knows to revert this row to `zh_backfill` and not `ko_done`.
-
-2. `claimed_at` → current UTC ISO 8601 timestamp. Compute with:
-
-   ```bash
-   CLAIMED_AT=$(node -e "process.stdout.write(new Date().toISOString())")
-   ```
-
-   This timestamp is what Step 0.5 of the NEXT fire uses to detect a
-   stale claim if this fire dies mid-stage. Always quote when written
-   to CSV (ISO timestamps contain `:`).
-
-Write CSV back. Commit + push immediately:
-
-```bash
-git add data/report_queue.csv
-git commit -m "<message above>"
-git push origin main
-```
-
-If push fails (remote ahead): `git pull --rebase origin main` → re-read CSV (in case someone else claimed) → if our intended row is still in the right pre-claim status, re-write our claim + re-push. Otherwise EXIT (`row claimed elsewhere`).
-
-**Why a separate `*_in_progress` status**: tells other concurrent fires that this row is being worked on; prevents double-claim under the overlap window.
+Nothing to do here. The claim is atomic (`UPDATE … WHERE status = <picked status>`), so two overlapping fires cannot claim the same row; a lost race makes `next` try the following candidate. If this fire dies after claiming, Step 0.5 of a later fire reverts the row once it is 150 minutes stale.
 
 ---
 
@@ -278,7 +215,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 1. Parse return message for "X planned, Y generated" — if `X != Y` → failure path with `error_log: EN section count mismatch X/Y`
 2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf naming.json` — all must exist; HTML and PDF non-empty (> 1KB); `naming.json` parses and its `title` equals the `<title>` of `en.html`
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
-4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `data/report_queue.csv` and `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
+4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
 
 **Step 3 retry path** (anti-positioning leaks specifically — not the other failures): if grep returns hits, do NOT immediately fail. Instead, spawn one more `general-purpose` subagent fire with this prompt:
 
@@ -290,14 +227,15 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 
 After the retry returns, re-run grep. If still dirty → failure path with `error_log: EN gen anti-positioning leak persisted after retry: ${first match}`. If clean → re-render the PDF via `node skills/kira-research-report/scripts/render-one.mjs <html> <pdf>` and proceed to commit. Only one retry — second leak means manual review.
 
-If all pass → set queue row status to `en_done`, **clear `claimed_at`** (this fire succeeded; Step 0.5 should never see this row as stale), leave `output_paths` empty (populated by Stage C). Commit + push:
+If all pass → commit + push the files, THEN advance the queue (files first: a status never gets ahead of its artifacts):
 
 ```bash
-git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/en.html
+git add skills/kira-research-report/outputs/batch/${id}/en.html
 git add skills/kira-research-report/outputs/batch/${id}/naming.json
 git add skills/kira-research-report/outputs/batch/${id}/cover.jpg 2>/dev/null || true
 git commit -m "batch: EN done for ${id}"
 git push origin main
+node skills/kira-research-report/scripts/queue.mjs advance ${id} en_done --model opus
 ```
 
 Go to Step 6 (summary) — do NOT proceed to JA in same fire.
@@ -359,14 +297,13 @@ Spawn ONE subagent for JA translation **with `model: "sonnet"`** (translation �
 
 If any check fails → failure path. Otherwise:
 
-- Set queue row status to `ja_done`
-- **Clear `claimed_at`** (this fire succeeded; next fire's audit must not see it as stale)
-- Commit + push:
+- Commit + push, then advance the queue to `ja_done` (this also clears `claimed_at`):
 
 ```bash
-git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/ja.html
+git add skills/kira-research-report/outputs/batch/${id}/ja.html
 git commit -m "batch: JA done for ${id}"
 git push origin main
+node skills/kira-research-report/scripts/queue.mjs advance ${id} ja_done --model sonnet
 ```
 
 Go to Step 6 — do NOT proceed to KO in same fire.
@@ -385,12 +322,13 @@ Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specifi
 
 If it fails → failure path. If it passes:
 
-- **`HAS_ZH` (row's `target_languages` contains `zh`)** → Fire C ends here, **nothing is published** (all 4 languages go live together in Fire D). Set status `ko_done`, clear `claimed_at`, commit + push, go to Step 6:
+- **`HAS_ZH` (row's `target_languages` contains `zh`)** → Fire C ends here, **nothing is published** (all 4 languages go live together in Fire D). Commit + push, advance the queue to `ko_done`, go to Step 6:
 
   ```bash
-  git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/ko.html
+  git add skills/kira-research-report/outputs/batch/${id}/ko.html
   git commit -m "batch: KO done for ${id}"
   git push origin main
+  node skills/kira-research-report/scripts/queue.mjs advance ${id} ko_done --model sonnet
   ```
 
 - **No `zh`** (legacy `en,ja,ko` rows) → proceed to 5.3 publish with `PUBLISH_LANGS="en ja ko"`. Do NOT commit yet — publish in same fire.
@@ -521,20 +459,18 @@ Prints one JSON line; `"ok": true` expected. A cover failure is NOT fatal (the p
 2. `for loc in ${PUBLISH_LANGS}; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all 200
 3. `for loc in ${PUBLISH_LANGS}; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/api/preview-html?slug=<slug>&locale=$loc&_t=$(date +%s)"; done` — all 200, confirms the preview iframe HTML is uploaded for every locale
 
-**5.3d — Finalize queue row + commit + push.**
-
-- status → `done`
-- output_paths → one `reports-pdfs/<report_id>/<locale>.pdf` per locale in `PUBLISH_LANGS`, pipe-separated (e.g. `reports-pdfs/<id>/en.pdf|reports-pdfs/<id>/ja.pdf|reports-pdfs/<id>/ko.pdf|reports-pdfs/<id>/zh.pdf`)
-- date_completed → today (YYYY-MM-DD)
-- error_log → empty
-- `claimed_at` → empty (terminal success; clears the in-flight marker)
+**5.3d — Commit + push, then finalize the queue row.**
 
 ```bash
-git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
+git add skills/kira-research-report/outputs/batch/${id}/
 git commit -m "batch: complete ${id} (EN+JA+KO, published)"      # Fire C
 git commit -m "batch: complete ${id} (EN+JA+KO+ZH, published)"   # Fire D (use instead)
 git push origin main
+# --paths = one reports-pdfs/<report_id>/<locale>.pdf per locale in PUBLISH_LANGS, pipe-separated
+node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf|reports-pdfs/<report_id>/zh.pdf" --model sonnet
 ```
+
+`advance … done` sets `date_completed` to today, empties `error_log` and `claimed_at`.
 
 Keep the `batch: complete ${id} (` prefix exactly: throughput is measured with `git log | grep -c 'batch: complete'`.
 
@@ -620,12 +556,13 @@ Zero rows returned → the report id does not exist → failure path (`zh backfi
 
 **c — Verify**: 5.3c curls 2 + 3 with `loc=zh` only (`/zh/reports/<slug>` and `preview-html?…&locale=zh` → 200).
 
-**d — Finalize**: status → `done`; append `|reports-pdfs/<report_id>/zh.pdf` to `output_paths` (unless already present); `date_completed` unchanged (it records the first publish); `error_log` → empty; `claimed_at` → empty.
+**d — Finalize**: commit + push the zh files, then advance. `--paths` must be the EXISTING `output_paths` from the `next` JSON with `|reports-pdfs/<report_id>/zh.pdf` appended (unless already present); `date_completed` is not touched for a backfill (it records the first publish).
 
 ```bash
-git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/zh.html
+git add skills/kira-research-report/outputs/batch/${id}/zh.html
 git commit -m "batch: ZH backfill published for ${id}"
 git push origin main
+node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "<existing output_paths>|reports-pdfs/<report_id>/zh.pdf" --model sonnet
 ```
 
 (Deliberately not `batch: complete` — a backfill is not a new report and must not inflate the throughput count.)
@@ -652,18 +589,14 @@ Then exit. Do not start a second stage in the same fire — that's by design.
 
 ## Step 7: Failure path (any subagent errored or validation failed)
 
-Update queue row:
-- status → `error`
-- output_paths → any PDFs that DID get generated (partial)
-- date_completed → today's ISO date
-- error_log → one-line summary including the stage (`EN gen timeout 90m` / `JA section count 15/22` / `KO render-pdf 500` / `ZH translate timeout 75m` / etc.). For a Stage E row keep the existing `zh-backfill` token in front (append, don't overwrite) and leave `output_paths` as it was (the EN/JA/KO paths are still live)
-- `claimed_at` → empty (terminal failure; clears the in-flight marker so Step 0.5 doesn't try to re-recover an `error` row)
+Mark the row failed (status `error`, `claimed_at` cleared, `error_log` set, a failure event logged with the stage duration). Commit generated files first only if there are any worth keeping:
 
 ```bash
-git add data/report_queue.csv skills/kira-research-report/outputs/batch/${id}/
-git commit -m "batch: error on ${id} stage <A|B|C|D|E> — see error_log"
-git push origin main
+node skills/kira-research-report/scripts/queue.mjs fail ${id} "<stage + one-line reason>" --model <model>
+# e.g. "EN gen timeout 90m" · "JA section count 15/22" · "KO render-pdf 500" · "ZH translate timeout 75m"
 ```
+
+For a Stage E row the existing `zh-backfill` token is kept automatically and `output_paths` is untouched (the EN/JA/KO paths are still live); for a partial failure that DID produce PDFs, add `--paths "<what exists>"`. Optionally `git add skills/kira-research-report/outputs/batch/${id}/ && git commit -m "batch: error on ${id} stage <A|B|C|D|E>" && git push origin main` to keep the partial HTML for inspection.
 
 Print 1-line error summary + exit.
 
@@ -673,7 +606,7 @@ Print 1-line error summary + exit.
 
 | What broke | What to do |
 |---|---|
-| Push rejected (remote ahead) | `git pull --rebase origin main` then re-push. If conflict on `data/report_queue.csv`, prefer the version where status is further along. |
+| Push rejected (remote ahead) | `git pull --rebase origin main` then re-push. Queue state is not in git, so conflicts can only touch `outputs/batch/${id}/`. |
 | `/api/render-pdf` returns 500 | Vercel function timeout / chromium boot issue. Save HTML, set status=error, record HTTP code. Don't retry in same fire. |
 | `/api/render-pdf` returns 401 | PDF_RENDER_SECRET missing or wrong. Set status=error with `render-pdf 401 (check env)`. |
 | Skill fails at orchestrator (no blueprint match) | Topic is malformed. status=error with `no route from orchestrator`. |
