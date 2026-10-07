@@ -76,7 +76,7 @@ node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>
 
 Also check the brain (private repo `kira-pipeline`, cloned next to this repo or at env `KIRA_BRAIN_DIR`): `node -e "const p=require('path'),f=require('fs');const b=process.env.KIRA_BRAIN_DIR||p.resolve('..','kira-pipeline','brain');console.log('BRAIN='+(f.existsSync(p.join(b,'runner','retrieve.py'))?b:'MISSING'))"`. A missing brain is NOT fatal: Stage A falls back to UC1/UC2. Note it in the fire summary.
 
-Cover art needs `OPENAI_API_KEY` (optional `OPENAI_IMAGE_MODEL`, default `gpt-image-2`; 15 house styles rotate by report id). Missing key is NOT fatal either: the cover renders without an illustration (`plain` variant). Note it in the fire summary.
+Cover art needs `OPENAI_API_KEY` (optional `OPENAI_IMAGE_MODEL`, default `gpt-image-2`; 15 house styles and 9 cover layouts rotate by report id). Missing key is NOT fatal either: the cover renders as `cover_L1` without an illustration (`plain` variant). Note it in the fire summary.
 
 If ANY of the 3 env vars prints `MISSING` → EXIT CLEANLY with one-line `missing env, no-op`. Do NOT claim any row, do NOT commit. This prevents stuck `in_progress` rows on misconfigured machines.
 
@@ -250,7 +250,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 >
 > BRAIN route: keep framing, context pack and brain trace in `<os temp dir>/kira-brain/${id}/` — never inside this repo.
 >
-> Cover art: run `scripts/gen-cover.mjs` (render_and_output Step 1b) writing `outputs/batch/${id}/cover.jpg`; end the report with the `closing` page. Keep image `src` values relative (`cover.jpg`, `brand/logo.png`).
+> Cover art: run `scripts/gen-cover.mjs` (render_and_output Step 1b) writing `outputs/batch/${id}/cover.jpg`; read `layout` from its JSON line and build the cover from template `cover_<layout>` (`cover_L1` … `cover_L9`); on exit 3 use `cover_L1` with class `plain` and no `<img>`. End the report with the `closing` page. Keep image `src` values relative (`cover.jpg`, `brand/logo.png`).
 >
 > Naming: run `scripts/report-name.mjs` (SKILL.md Stage 3e, `docs/naming_convention.md`) and save `skills/kira-research-report/outputs/batch/${id}/naming.json`. Cover lines, report kind, `<title>` and closing short title come from it.
 >

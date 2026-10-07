@@ -288,7 +288,7 @@ If it returns 0 rows (the report has no cover yet), generate one per insight at 
 ```bash
 for s in <slug1> <slug2> <slug3>; do
   node skills/kira-research-report/scripts/gen-cover.mjs --id "$s" --country "<country>" --industry "<industry>" \
-    --angle "<title_en of that insight>" --quality medium --out "/tmp/$s.jpg" \
+    --angle "<title_en of that insight>" --quality medium --layout L1 --out "/tmp/$s.jpg" \
     && node skills/kira-research-report/scripts/upload-cover.mjs --kind insight --slug "$s" --in "/tmp/$s.jpg"
 done
 ```

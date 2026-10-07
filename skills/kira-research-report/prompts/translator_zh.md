@@ -30,7 +30,7 @@ This prompt is the canonical ZH voice guide for this skill. Whenever you ship ZH
 - **Source key line**: only the label changes (`来源说明`, via CSS as above); all aliases + full citations stay in their original form. They are proper nouns of source documents.
 - Numbers and units: `USD 2.3 bn`, `5.03%`, `IDR 116 trn`, `+8 pp` — preserve verbatim. ISO currency codes stay (`USD`, `IDR`, `VND`, `THB`…); do NOT convert to 亿/万 or to 美元 when the EN uses `USD … bn`. Keep ASCII digits and `%`.
 - HTML tags, class names, IDs, `data-*` attributes
-- Image references: `<img src="cover.jpg">`, `src="brand/logo.png"`, `src="brand/logo-white.png"` stay exactly as written. Translate the cover and closing page text normally; keep contact details (email, website, LinkedIn name) verbatim.
+- Image references: `<img src="cover.jpg">`, `src="brand/logo.png"`, `src="brand/logo-white.png"` stay exactly as written. Translate the cover and closing page text normally; keep contact details (email, website, LinkedIn name) verbatim. The cover page is one of 9 layouts (`page cover2 cv-L1` or `page cover3 cv-L2` … `cv-L9`); keep its classes and markup exactly, translate only its text, and set the `long` class on `cv-title` if any translated title line exceeds ~7 CJK characters (remove it if none does).
 - Chart SOURCE lines: keep mono-uppercase format, only translate the generic descriptor (`industry trade press` → `行业媒体`); leave `KIRA RESEARCH 2026` and dataset names (`BPS`, `BANK INDONESIA`) as-is.
 
 ---
