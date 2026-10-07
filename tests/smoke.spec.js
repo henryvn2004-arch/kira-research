@@ -827,3 +827,49 @@ test.describe('library and insights pages', () => {
     }
   });
 });
+
+// ── Kira Chain (migration 037): one search, one page for every product ──
+// Prototype pages, noindex. They depend on the published VN coffee chain; tests
+// skip rather than fail if no chain is published.
+test.describe('Kira Chain', () => {
+  test('/api/chain-search lists published chains; a query finds coffee', async ({ request }) => {
+    const all = await (await request.get('/api/chain-search')).json();
+    expect(all.all).toBe(true);
+    expect(Array.isArray(all.items)).toBe(true);
+    test.skip(!all.items.some((c) => c.slug === 'coffee'), 'VN coffee chain not published');
+    const hit = await (await request.get('/api/chain-search?q=cofee')).json();
+    expect(hit.items.some((c) => c.slug === 'coffee' && c.country_code === 'VN')).toBe(true);
+    const other = await (await request.get('/api/chain-search?q=coffee%20in%20australia')).json();
+    expect(other.items.every((c) => c.country_code === 'AU')).toBe(true);
+  });
+
+  test('/api/chain validates input and 404s for an unknown chain', async ({ request }) => {
+    expect((await request.get('/api/chain')).status()).toBe(400);
+    expect((await request.get('/api/chain?country=vn&slug=no-such-chain-xyz')).status()).toBe(404);
+  });
+
+  test('/api/chain-request rejects GET and accepts the honeypot path', async ({ request }) => {
+    expect((await request.get('/api/chain-request')).status()).toBe(405);
+    const r = await request.post('/api/chain-request', {
+      data: { query: 'ci probe', hp: 'bot' }, headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).ok).toBe(true);
+  });
+
+  test('/en/chain/ search page loads; a chain page draws its network', async ({ page, request }) => {
+    await page.goto('/en/chain/');
+    await expect(page.locator('h1')).toContainText('value chain');
+    const all = await (await request.get('/api/chain-search')).json();
+    test.skip(!all.items.some((c) => c.slug === 'coffee' && c.country_code === 'VN'), 'VN coffee chain not published');
+    await page.goto('/en/chain/vn/coffee');
+    await expect(page.locator('#kc-h1')).toContainText('Coffee', { timeout: 15000 });
+    await expect(page.locator('.node-c').first()).toBeVisible({ timeout: 15000 });
+    expect(await page.locator('.node-h').count()).toBeGreaterThan(3);
+  });
+
+  test('an unknown chain page says so instead of breaking', async ({ page }) => {
+    await page.goto('/en/chain/vn/no-such-chain-xyz');
+    await expect(page.locator('#kc-h1')).toHaveText('No chain here yet', { timeout: 15000 });
+  });
+});
