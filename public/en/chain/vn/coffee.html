@@ -13,116 +13,87 @@
     .kc-proto { background: #FFF7E6; border: 1px solid #F2D49B; color: #6B4A00; border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 24px; }
     .kc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--primary); margin-bottom: 10px; }
     .kc-wrap h1 { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 0 0 10px; color: var(--text); }
-    .kc-sub { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 760px; margin: 0 0 24px; }
+    .kc-sub { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 780px; margin: 0 0 18px; }
+    .kc-views { display: inline-flex; border: 1.5px solid var(--border-strong); border-radius: 8px; overflow: hidden; margin-bottom: 18px; }
+    .kc-views a { font-size: 13px; font-weight: 600; padding: 8px 14px; color: var(--muted); text-decoration: none; background: #fff; }
+    .kc-views a + a { border-left: 1.5px solid var(--border-strong); }
+    .kc-views a.on { background: var(--primary); color: #fff; }
 
-    .kc-controls { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; margin-bottom: 20px; }
-    .kc-seg { display: inline-flex; border: 1.5px solid var(--border-strong); border-radius: 8px; overflow: hidden; }
-    .kc-seg button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; background: #fff; color: var(--muted); border: 0; cursor: pointer; }
-    .kc-seg button + button { border-left: 1.5px solid var(--border-strong); }
-    .kc-seg button[aria-pressed="true"] { background: var(--primary); color: #fff; }
-    .kc-ctl-label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-dim); margin-right: 8px; }
+    .kc-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 12px; }
+    .kc-controls select, .kc-controls input[type=search] { font: inherit; font-size: 13px; padding: 7px 10px; border: 1.5px solid var(--border-strong); border-radius: 7px; background: #fff; color: var(--text); }
+    .kc-controls label { font-size: 13px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+    .kc-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); margin-bottom: 12px; align-items: center; }
+    .kc-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
 
-    .kc-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px; color: var(--muted); margin-bottom: 20px; align-items: center; }
-    .kc-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 4px solid; margin-right: 6px; vertical-align: -2px; box-sizing: border-box; background: #fff; }
+    .kc-stage { position: relative; border: 1px solid var(--border); border-radius: 12px; background: #fff; overflow: hidden; }
+    #kc-svg { display: block; width: 100%; height: auto; touch-action: none; cursor: grab; }
+    .kc-hint { position: absolute; right: 12px; bottom: 10px; font-size: 11.5px; color: var(--muted-dim); background: rgba(255,255,255,.9); padding: 3px 8px; border-radius: 6px; }
+    .kc-tip { position: fixed; pointer-events: none; z-index: 50; background: var(--text); color: #fff; font-size: 12px; padding: 5px 9px; border-radius: 6px; max-width: 260px; line-height: 1.35; display: none; }
+    .stage-head text { font-family: 'Satoshi', sans-serif; }
+    .node-c { cursor: pointer; }
+    .node-h { cursor: pointer; }
 
-    /* ── Chain map ── */
-    .kc-map { display: grid; grid-template-columns: repeat(var(--cols, 6), minmax(150px, 1fr)); gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; background: #fff; }
-    .kc-col { border-right: 1px solid var(--border); min-width: 150px; display: flex; flex-direction: column; }
-    .kc-col:last-child { border-right: 0; }
-    .kc-col-head { padding: 14px 12px 12px; background: var(--surface); border-bottom: 1px solid var(--border); position: relative; }
-    .kc-col-head h3 { font-family: 'Satoshi', sans-serif; font-size: 14px; font-weight: 700; margin: 0 0 4px; color: var(--text); }
-    .kc-col-head p { font-size: 11.5px; color: var(--muted-dim); line-height: 1.4; margin: 0; }
-    .kc-col-head::after { content: '›'; position: absolute; right: -7px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; line-height: 12px; text-align: center; font-size: 14px; color: var(--muted-dim); background: var(--surface); border-radius: 50%; z-index: 2; }
-    .kc-col:last-child .kc-col-head::after { display: none; }
-    .kc-col-body { padding: 18px 8px 22px; display: flex; flex-direction: column; align-items: center; gap: 14px; flex: 1; }
-    .kc-col-foot { padding: 10px 12px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--muted); line-height: 1.45; min-height: 58px; }
-    .kc-col-foot b { color: var(--text); }
-
-    .kc-bubble { border-radius: 50%; border: 5px solid var(--ring, var(--border-strong)); background: #EAF1FE; color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; padding: 4px; box-sizing: border-box; font: inherit; transition: transform .12s, box-shadow .12s; }
-    .kc-bubble:hover, .kc-bubble:focus-visible { transform: scale(1.05); box-shadow: var(--elevation-md); outline: none; }
-    .kc-bubble[aria-pressed="true"] { background: var(--primary); color: #fff; }
-    .kc-bubble .n { font-family: 'Satoshi', sans-serif; font-weight: 800; line-height: 1; }
-    .kc-bubble .r { font-size: 10.5px; line-height: 1.2; margin-top: 3px; max-width: 92%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    .kc-bubble.dashed { background: #fff; border-style: dashed; border-color: var(--border-strong); cursor: default; color: var(--muted); }
-    .kc-bubble.dashed:hover { transform: none; box-shadow: none; }
-
-    /* ── Panel ── */
-    .kc-panel { margin-top: 24px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
-    .kc-panel-empty { padding: 28px; color: var(--muted); font-size: 14px; text-align: center; }
-    .kc-panel-head { padding: 18px 20px 12px; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: baseline; justify-content: space-between; }
-    .kc-panel-head h2 { font-family: 'Satoshi', sans-serif; font-size: 20px; margin: 0; }
-    .kc-panel-head .meta { font-size: 13px; color: var(--muted); }
-    .kc-filters { padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border); background: var(--surface); }
-    .kc-filters select, .kc-filters input { font: inherit; font-size: 13px; padding: 7px 10px; border: 1.5px solid var(--border-strong); border-radius: 7px; background: #fff; color: var(--text); }
-    .kc-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-    .kc-table th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-dim); padding: 10px 20px; border-bottom: 1px solid var(--border); font-weight: 700; }
-    .kc-table td { padding: 11px 20px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    .kc-table tr.row { cursor: pointer; }
-    .kc-table tr.row:hover { background: var(--surface); }
-    .kc-table .nm { font-weight: 600; color: var(--text); }
-    .kc-table .vi { display: block; font-size: 12px; color: var(--muted-dim); font-weight: 400; }
-    .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #EEF1F5; color: var(--muted); white-space: nowrap; }
-    .tag.fdi { background: #E6F4EA; color: #1E6B35; }
-    .tag.state { background: #FDECEC; color: #9B2C2C; }
-    .tag.listed { background: #EAF1FE; color: #1558CC; }
+    .kc-panel { margin-top: 20px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+    .kc-panel-empty { padding: 26px; color: var(--muted); font-size: 14px; text-align: center; }
+    .kc-detail { padding: 20px; }
+    .kc-detail h2 { font-family: 'Satoshi', sans-serif; font-size: 22px; margin: 0 0 4px; }
+    .kc-detail dl { display: grid; grid-template-columns: 160px 1fr; gap: 10px 16px; margin: 16px 0 0; font-size: 14px; }
+    .kc-detail dt { color: var(--muted-dim); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding-top: 2px; }
+    .kc-detail dd { margin: 0; line-height: 1.5; color: var(--text); }
+    .kc-detail a { color: var(--primary); }
+    .kc-list { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .kc-list th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-dim); padding: 10px 20px; border-bottom: 1px solid var(--border); }
+    .kc-list td { padding: 10px 20px; border-bottom: 1px solid var(--border); }
+    .kc-list tr.row { cursor: pointer; } .kc-list tr.row:hover { background: var(--surface); }
+    .kc-ph { padding: 16px 20px 6px; font-family: 'Satoshi', sans-serif; font-size: 18px; font-weight: 700; }
     .conf-high { color: #1E6B35; } .conf-medium { color: #8A6100; } .conf-low { color: #9B2C2C; }
     .vs-confirmed, .vs-corrected { color: #1E6B35; } .vs-unreachable { color: #9B2C2C; }
-
-    .kc-detail { padding: 20px; }
-    .kc-detail .back { font: inherit; font-size: 13px; color: var(--primary); background: none; border: 0; cursor: pointer; padding: 0; margin-bottom: 14px; }
-    .kc-detail h2 { font-family: 'Satoshi', sans-serif; font-size: 22px; margin: 0 0 4px; }
-    .kc-detail dl { display: grid; grid-template-columns: 160px 1fr; gap: 10px 16px; margin: 18px 0 0; font-size: 14px; }
-    .kc-detail dt { color: var(--muted-dim); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding-top: 2px; }
-    .kc-detail dd { margin: 0; color: var(--text); line-height: 1.5; }
-    .kc-detail a { color: var(--primary); }
-
-    .kc-foot { margin-top: 28px; font-size: 12.5px; color: var(--muted); line-height: 1.6; max-width: 820px; }
+    .kc-foot { margin-top: 24px; font-size: 12.5px; color: var(--muted); line-height: 1.6; max-width: 820px; }
     .kc-foot h3 { font-size: 13px; color: var(--text); margin: 0 0 6px; }
     @media (max-width: 720px) {
       .kc-wrap { padding: 28px 16px 72px; }
-      .kc-map { grid-template-columns: 1fr; overflow: visible; }
-      .kc-col { border-right: 0; border-bottom: 1px solid var(--border); }
-      .kc-col-head::after { display: none; }
-      .kc-col-body { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-      .kc-table th:nth-child(n+4), .kc-table td:nth-child(n+4) { display: none; }
-      .kc-detail dl { grid-template-columns: 1fr; gap: 2px; }
-      .kc-detail dt { margin-top: 10px; }
+      .kc-detail dl { grid-template-columns: 1fr; gap: 2px; } .kc-detail dt { margin-top: 10px; }
+      .kc-list th:nth-child(n+3), .kc-list td:nth-child(n+3) { display: none; }
     }
   </style>
 </head>
 <body>
   <main class="kc-wrap">
-    <div class="kc-proto"><strong>Prototype for internal review.</strong> Desk research with a source link per company. On 2026-10-07 every source was re-opened and checked (see "How to read this"); it has not been reviewed by analysts. Counts reflect companies KIRA has found, not every company in the market. Not linked from the site.</div>
+    <div class="kc-proto"><strong>Prototype for internal review.</strong> Desk research, every source re-opened and checked on 2026-10-07, not reviewed by analysts. Arrows show how coffee moves along the chain, a structure defined by KIRA analysts; dots are the companies found in each group. There are no company-to-company links. Not linked from the site.</div>
     <div class="kc-eyebrow">Kira Chain · Vietnam</div>
-    <h1 id="kc-title">Coffee value chain in Vietnam</h1>
+    <h1>Coffee value chain in Vietnam</h1>
     <p class="kc-sub" id="kc-sub">Loading…</p>
-    <div style="display:inline-flex;border:1.5px solid var(--border-strong);border-radius:8px;overflow:hidden;margin-bottom:18px"><a href="/en/chain/vn/coffee" style="font-size:13px;font-weight:600;padding:8px 14px;background:var(--primary);color:#fff;text-decoration:none">Map view</a><a href="/en/chain/vn/coffee-network" style="font-size:13px;font-weight:600;padding:8px 14px;color:var(--muted);text-decoration:none;border-left:1.5px solid var(--border-strong);background:#fff">Network view</a></div>
+    <div class="kc-views"><a href="/en/chain/vn/coffee" class="on">Network view</a><a href="/en/chain/vn/coffee-map">Bubble map (earlier version)</a></div>
 
     <div class="kc-controls">
-      <div><span class="kc-ctl-label">Bubble size</span>
-        <span class="kc-seg" role="group" aria-label="Bubble size">
-          <button type="button" data-mode="db" aria-pressed="true">Companies in KIRA database</button><button type="button" data-mode="est" aria-pressed="false">Official estimate</button>
-        </span>
-      </div>
+      <input type="search" id="q" placeholder="Find a company" />
+      <select id="own"><option value="">All ownership</option></select>
+      <label><input type="checkbox" id="hidelow" /> Hide rows we could not source-check</label>
+      <label><input type="checkbox" id="multi" /> Show only multi-stage companies</label>
+      <label><input type="checkbox" id="xlinks" /> Show cross-stage links</label>
     </div>
     <div class="kc-legend" id="kc-legend"></div>
 
-    <div class="kc-map" id="kc-map" aria-label="Coffee value chain map"></div>
-    <div class="kc-panel" id="kc-panel"><div class="kc-panel-empty">Click a bubble to list the companies in that group.</div></div>
-
+    <div class="kc-stage">
+      <svg id="kc-svg" viewBox="0 0 1200 760" role="img" aria-label="Network of coffee companies by value-chain stage"></svg>
+      <div class="kc-hint">Scroll or pinch to zoom · drag to pan</div>
+    </div>
+    <div class="kc-tip" id="tip"></div>
+    <div class="kc-panel" id="kc-panel"><div class="kc-panel-empty">Click a group hub to list its companies, or a company dot to see its detail.</div></div>
     <div class="kc-foot" id="kc-foot"></div>
-    <div class="kc-foot" id="kc-facts"></div>
   </main>
 
   <script src="/js/nav.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
   (function () {
     'use strict';
-    var state = { data: null, mode: 'db', sel: null, company: null, f: { own: '', prov: '', q: '', sort: 'cap' } };
+    var W = 1200, H = 760, TOP = 64;
+    var OWN = { state: 'State-owned', private: 'Private', fdi: 'Foreign-invested', listed: 'Listed', cooperative: 'Cooperative', unknown: 'Unknown' };
+    var COL = { state: '#C0392B', private: '#5B6B8C', fdi: '#1E8E4E', listed: '#1A66F0', cooperative: '#D68A00', unknown: '#9AA5B1' };
+    var RANK = { high: 3, medium: 2, low: 1 };
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-    function fmtN(n) { return Number(n).toLocaleString('en-US'); }
-    function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(v >= 1e11 ? 0 : 1) + ' billion VND'; }
     var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked' };
     function vstat(c) { return (c.verification || {}).status || 'unreachable'; }
     function taxHtml(c) {
@@ -131,179 +102,190 @@
       return '';
     }
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
+    function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(1) + ' billion VND'; }
 
-    var OWN = { state: 'State-owned', private: 'Private', fdi: 'Foreign-invested', listed: 'Listed', cooperative: 'Cooperative', unknown: 'Unknown' };
-    var CONC = {
-      high: { label: 'Concentrated (top 5 ≥ 70%)', color: '#1A3FA0' },
-      mid:  { label: 'Moderate (top 5 = 40–70%)', color: '#6A94E6' },
-      low:  { label: 'Fragmented (top 5 < 40%)', color: '#BFD3F7' },
-      na:   { label: 'No sourced concentration figure', color: '#CBD2D9' }
-    };
+    var data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, flowSel, state = { sel: null };
 
-    function concentration(list) {
-      var caps = list.map(function (c) { return c.capital_vnd; }).filter(function (v) { return typeof v === 'number' && v > 0; }).sort(function (a, b) { return b - a; });
-      if (caps.length < 5) return { key: 'na' };
-      var tot = caps.reduce(function (a, b) { return a + b; }, 0);
-      var top = caps.slice(0, 5).reduce(function (a, b) { return a + b; }, 0);
-      var share = top / tot;
-      return { key: share >= 0.7 ? 'high' : share >= 0.4 ? 'mid' : 'low', share: share, n: caps.length };
-    }
-
-    function classify(share) { return { key: share >= 0.7 ? 'high' : share >= 0.4 ? 'mid' : 'low', share: share }; }
-    function stageConc(s, list) { return s.concentration ? Object.assign(classify(s.concentration.share), { stageLevel: true, label: s.concentration.label, url: s.concentration.source_url }) : concentration(list); }
-
-    function groups() {
-      var d = state.data, out = {};
-      d.stages.forEach(function (s) { out[s.id] = {}; });
-      d.companies.forEach(function (c) {
-        if (!out[c.stage]) return;
-        var r = c.role || 'Other';
-        (out[c.stage][r] = out[c.stage][r] || []).push(c);
+    function build() {
+      var byE = {}, byH = {};
+      data.companies.forEach(function (c) {
+        var e = byE[c.eid] = byE[c.eid] || { id: 'c:' + c.eid, kind: 'c', recs: [], hubIds: [], stages: {} };
+        e.recs.push(c); e.stages[c.stage] = 1;
+        var hid = 'h:' + c.stage + '|' + c.role;
+        if (e.hubIds.indexOf(hid) < 0) e.hubIds.push(hid);
+        var h = byH[hid] = byH[hid] || { id: hid, kind: 'h', stage: c.stage, role: c.role, members: [] };
+        if (h.members.indexOf(e) < 0) h.members.push(e);
       });
-      return out;
-    }
-
-    function render() {
-      var d = state.data, g = groups(), map = $('kc-map');
-      map.style.setProperty('--cols', d.stages.length);
-      var maxDb = 1;
-      d.stages.forEach(function (s) { Object.keys(g[s.id]).forEach(function (r) { maxDb = Math.max(maxDb, g[s.id][r].length); }); });
-      var maxEst = 1;
-      d.stages.forEach(function (s) { if (s.estimate && s.estimate.count) maxEst = Math.max(maxEst, s.estimate.count); });
-
-      map.innerHTML = d.stages.map(function (s) {
-        var roles = Object.keys(g[s.id]).sort(function (a, b) { return g[s.id][b].length - g[s.id][a].length; });
-        var total = roles.reduce(function (a, r) { return a + g[s.id][r].length; }, 0);
-        var body = '';
-        if (state.mode === 'db') {
-          body = roles.map(function (r) {
-            var list = g[s.id][r], n = list.length, size = Math.round(52 + 72 * Math.sqrt(n / maxDb));
-            var cc = stageConc(s, list), sel = state.sel && state.sel.stage === s.id && state.sel.role === r;
-            return '<button type="button" class="kc-bubble" style="width:' + size + 'px;height:' + size + 'px;--ring:' + CONC[cc.key].color + '" data-stage="' + esc(s.id) + '" data-role="' + esc(r) + '" aria-pressed="' + (sel ? 'true' : 'false') + '" aria-label="' + esc(r + ', ' + n + ' companies') + '"><span class="n" style="font-size:' + (size > 90 ? 22 : 17) + 'px">' + n + '</span><span class="r">' + esc(r) + '</span></button>';
-          }).join('');
-          if (!roles.length) body = '<div class="kc-bubble dashed" style="width:70px;height:70px"><span class="r">no data yet</span></div>';
-        } else {
-          var e = s.estimate;
-          if (e && e.count) {
-            var size2 = Math.round(84 + 44 * Math.log(e.count) / Math.log(maxEst));
-            body = '<div class="kc-bubble" style="width:' + size2 + 'px;height:' + size2 + 'px;cursor:default;--ring:#CBD2D9"><span class="n" style="font-size:' + (size2 > 90 ? 20 : 15) + 'px">' + esc(e.display || fmtN(e.count)) + '</span><span class="r">' + esc(e.unit) + (e.unverified ? ' *' : '') + '</span></div>';
-          } else {
-            body = '<div class="kc-bubble dashed" style="width:76px;height:76px"><span class="r">no estimate found</span></div>';
-          }
-        }
-        var foot = state.mode === 'db'
-          ? '<b>' + total + '</b> companies found' + (s.note ? '<br>' + esc(s.note) : '')
-          : (s.estimate ? esc(s.estimate.label) + (s.estimate.unverified ? ' <b>(unverified)</b>' : '') + (safeUrl(s.estimate.source_url) ? ' · <a href="' + esc(s.estimate.source_url) + '" target="_blank" rel="noopener">' + esc(s.estimate.source) + '</a>' : '') : '');
-        return '<div class="kc-col"><div class="kc-col-head"><h3>' + esc(s.label) + '</h3><p>' + esc(s.desc) + '</p></div><div class="kc-col-body">' + body + '</div><div class="kc-col-foot">' + foot + '</div></div>';
-      }).join('');
-
-      map.querySelectorAll('button.kc-bubble').forEach(function (b) {
-        b.addEventListener('click', function () {
-          state.sel = { stage: b.dataset.stage, role: b.dataset.role };
-          state.company = null; state.f = { own: '', prov: '', q: '', sort: 'cap' };
-          render(); renderPanel();
-          $('kc-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      ents = Object.keys(byE).map(function (k) {
+        var e = byE[k];
+        e.best = e.recs.slice().sort(function (a, b) { return (RANK[b.confidence] || 0) - (RANK[a.confidence] || 0); })[0];
+        e.name = e.best.name; e.own = e.best.ownership || 'unknown'; e.conf = e.best.confidence;
+        e.multi = Object.keys(e.stages).length > 1;
+        return e;
+      });
+      hubs = Object.keys(byH).map(function (k) { return byH[k]; });
+      var colW = W / data.stages.length;
+      data.stages.forEach(function (s, i) {
+        var hs = hubs.filter(function (h) { return h.stage === s.id; }).sort(function (a, b) { return b.members.length - a.members.length; });
+        hs.forEach(function (h, j) {
+          h.r = 16 + 3.2 * Math.sqrt(h.members.length);
+          h.fx = colW * i + colW / 2;
+          h.fy = TOP + (H - TOP - 20) * (j + 1) / (hs.length + 1);
         });
       });
-      renderLegend();
+      links = [];
+      ents.forEach(function (e) { e.hubIds.forEach(function (hid) { links.push({ source: e.id, target: hid, kind: 'm' }); }); });
+      nodes = ents.concat(hubs);
+      var idMap = {}; nodes.forEach(function (n) { idMap[n.id] = n; });
+      links.forEach(function (l) { l.source = idMap[l.source]; l.target = idMap[l.target]; });
+      // value-chain flow between groups (KIRA's chain structure, not company data)
+      var hubById = {}; hubs.forEach(function (h) { hubById[h.id] = h; });
+      return (data.flows || []).map(function (f) { return { a: hubById['h:' + f.from_stage + '|' + f.from_role], b: hubById['h:' + f.to_stage + '|' + f.to_role], label: f.label, show: f.show_label }; })
+        .filter(function (f) { return f.a && f.b; });
     }
 
-    function renderLegend() {
-      $('kc-legend').innerHTML = state.mode === 'db'
-        ? '<span>Ring colour = how concentrated the group is:</span>' + ['high', 'mid', 'low', 'na'].map(function (k) { return '<span><i style="border-color:' + CONC[k].color + '"></i>' + esc(CONC[k].label) + '</span>'; }).join('')
-        : '<span>Estimates come from public statistics and use a different unit per stage (households, dealers, factories, shops). Bubble size is on a log scale, so compare stages only with the label in view. * = unverified source.</span>';
+    function layout() {
+      var sim = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).distance(function (l) { return l.target.r + 20 + 2 * Math.sqrt(l.target.members.length); }).strength(function (l) { return l.source.multi ? 0.18 : 0.9; }))
+        .force('charge', d3.forceManyBody().strength(function (n) { return n.kind === 'h' ? -60 : -22; }))
+        .force('collide', d3.forceCollide().radius(function (n) { return n.kind === 'h' ? n.r + 3 : (n.multi ? 9 : 6.5); }))
+        .stop();
+      for (var i = 0; i < 420; i++) sim.tick();
+      nodes.forEach(function (n) { n.x = Math.max(12, Math.min(W - 12, n.x)); n.y = Math.max(TOP + 8, Math.min(H - 8, n.y)); });
     }
 
-    function currentList() {
-      var s = state.sel;
-      return state.data.companies.filter(function (c) { return c.stage === s.stage && (c.role || 'Other') === s.role; });
-    }
-
-    function renderPanel() {
-      var p = $('kc-panel');
-      if (!state.sel) { p.innerHTML = '<div class="kc-panel-empty">Click a bubble to list the companies in that group.</div>'; return; }
-      if (state.company) { return renderDetail(p); }
-      var all = currentList(), f = state.f;
-      var stage = state.data.stages.filter(function (s) { return s.id === state.sel.stage; })[0];
-      var provs = Array.from(new Set(all.map(function (c) { return c.province; }).filter(Boolean))).sort();
-      var owns = Array.from(new Set(all.map(function (c) { return c.ownership || 'unknown'; }))).sort();
-      var list = all.filter(function (c) {
-        return (!f.own || (c.ownership || 'unknown') === f.own) && (!f.prov || c.province === f.prov) &&
-          (!f.q || (c.name + ' ' + (c.name_vi || '')).toLowerCase().indexOf(f.q.toLowerCase()) > -1);
+    function draw(flow) {
+      var svg = d3.select('#kc-svg'); svg.selectAll('*').remove();
+      var g = svg.append('g');
+      svg.call(d3.zoom().scaleExtent([0.6, 5]).on('zoom', function (ev) { g.attr('transform', ev.transform); }));
+      var colW = W / data.stages.length;
+      var sh = g.append('g').attr('class', 'stage-head');
+      data.stages.forEach(function (s, i) {
+        if (i % 2 === 0) sh.append('rect').attr('x', colW * i).attr('y', 0).attr('width', colW).attr('height', H).attr('fill', '#F7F8FA');
+        sh.append('text').attr('x', colW * i + colW / 2).attr('y', 26).attr('text-anchor', 'middle').attr('font-size', 14).attr('font-weight', 700).attr('fill', '#0F172A').text(s.label.length > 22 ? s.label.slice(0, 21) + '…' : s.label);
+        sh.append('text').attr('x', colW * i + colW / 2).attr('y', 44).attr('text-anchor', 'middle').attr('font-size', 10.5).attr('fill', '#64748B').text(i < data.stages.length - 1 ? '→' : '');
       });
-      list.sort(function (a, b) {
-        if (f.sort === 'name') return a.name.localeCompare(b.name);
-        return (b.capital_vnd || 0) - (a.capital_vnd || 0) || a.name.localeCompare(b.name);
-      });
-      var cc = stageConc(stage, all);
-      var concTxt = cc.stageLevel ? 'Stage concentration: ' + cc.label + '.' : cc.key === 'na' ? 'Concentration: no sourced capital figures.' : 'Top 5 hold ' + Math.round(cc.share * 100) + '% of the capital in this group (' + cc.n + ' companies with a sourced figure).';
-      p.innerHTML =
-        '<div class="kc-panel-head"><h2>' + esc(stage.label) + ' · ' + esc(state.sel.role) + '</h2><span class="meta">' + all.length + ' companies · ' + esc(concTxt) + '</span></div>' +
-        '<div class="kc-filters">' +
-        '<input type="search" id="f-q" placeholder="Search name" value="' + esc(f.q) + '" />' +
-        '<select id="f-own"><option value="">All ownership</option>' + owns.map(function (o) { return '<option value="' + o + '"' + (f.own === o ? ' selected' : '') + '>' + esc(OWN[o] || o) + '</option>'; }).join('') + '</select>' +
-        '<select id="f-prov"><option value="">All provinces</option>' + provs.map(function (o) { return '<option' + (f.prov === o ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select>' +
-        '<select id="f-sort"><option value="cap"' + (f.sort === 'cap' ? ' selected' : '') + '>Sort: capital</option><option value="name"' + (f.sort === 'name' ? ' selected' : '') + '>Sort: name</option></select></div>' +
-        '<table class="kc-table"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Scale (sourced)</th><th>Source check</th></tr></thead><tbody>' +
-        (list.length ? list.map(function (c) {
-          var i = state.data.companies.indexOf(c);
-          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</td></tr>';
-        }).join('') : '<tr><td colspan="5" style="color:var(--muted)">No company matches the filters.</td></tr>') +
-        '</tbody></table>';
-      $('f-q').addEventListener('input', function (e) { f.q = e.target.value; renderPanel(); var el = $('f-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); });
-      $('f-own').addEventListener('change', function (e) { f.own = e.target.value; renderPanel(); });
-      $('f-prov').addEventListener('change', function (e) { f.prov = e.target.value; renderPanel(); });
-      $('f-sort').addEventListener('change', function (e) { f.sort = e.target.value; renderPanel(); });
-      p.querySelectorAll('tr.row').forEach(function (tr) {
-        function open() { state.company = state.data.companies[+tr.dataset.i]; renderPanel(); }
-        tr.addEventListener('click', open);
-        tr.addEventListener('keydown', function (e) { if (e.key === 'Enter') open(); });
+      var defs = svg.append('defs');
+      defs.append('marker').attr('id', 'arr').attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5).attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto')
+        .append('path').attr('d', 'M0,0L10,5L0,10z').attr('fill', '#6E8FC9');
+      function geo(f) {
+        var a = f.a, b = f.b;
+        if (Math.abs(a.x - b.x) < 5) {
+          var dir = b.y > a.y ? 1 : -1, x0 = a.x + a.r * 0.7, y0 = a.y + dir * a.r * 0.7, x1 = b.x + b.r * 0.7, y1 = b.y - dir * (b.r + 3), cx = a.x + 78, cy = (y0 + y1) / 2;
+          return { d: 'M' + x0 + ',' + y0 + 'Q' + cx + ',' + cy + ' ' + x1 + ',' + y1, mx: (x0 + 2 * cx + x1) / 4, my: (y0 + 2 * cy + y1) / 4 };
+        }
+        var xs = a.x + a.r, xe = b.x - b.r - 3, mx = (xs + xe) / 2;
+        return { d: 'M' + xs + ',' + a.y + 'C' + mx + ',' + a.y + ' ' + mx + ',' + b.y + ' ' + xe + ',' + b.y, mx: mx, my: (a.y + b.y) / 2 };
+      }
+      var fg = g.append('g');
+      flowSel = fg.selectAll('path').data(flow).join('path').attr('d', function (f) { return geo(f).d; })
+        .attr('fill', 'none').attr('stroke', '#8FA9D6').attr('stroke-width', 2.2).attr('marker-end', 'url(#arr)').attr('opacity', .9);
+      flowSel.append('title').text(function (f) { return f.a.role + ' → ' + f.b.role + (f.label ? ' (' + f.label + ')' : ''); });
+      fg.selectAll('text').data(flow.filter(function (f) { return f.show && f.label; })).join('text')
+        .attr('x', function (f) { return geo(f).mx; }).attr('y', function (f) { return geo(f).my - 5; }).attr('text-anchor', 'middle')
+        .attr('font-size', 10.5).attr('font-style', 'italic').attr('fill', '#3D5A94').attr('stroke', '#fff').attr('stroke-width', 3).attr('paint-order', 'stroke').text(function (f) { return f.label; });
+      linkSel = g.append('g').selectAll('line').data(links).join('line')
+        .attr('x1', function (l) { return l.source.x; }).attr('y1', function (l) { return l.source.y; })
+        .attr('x2', function (l) { return l.target.x; }).attr('y2', function (l) { return l.target.y; })
+        .attr('stroke', function (l) { return l.source.multi ? '#1A66F0' : '#CBD2D9'; })
+        .attr('stroke-width', function (l) { return l.source.multi ? 1.5 : 0.8; })
+        .attr('opacity', function (l) { return l.source.multi ? 0 : .7; });
+      hNodes = g.append('g').selectAll('g').data(hubs).join('g').attr('class', 'node-h').attr('transform', function (h) { return 'translate(' + h.x + ',' + h.y + ')'; });
+      hNodes.append('circle').attr('r', function (h) { return h.r; }).attr('fill', '#EAF1FE').attr('stroke', '#1A66F0').attr('stroke-width', 2);
+      hNodes.append('text').attr('text-anchor', 'middle').attr('dy', '-0.1em').attr('font-size', 15).attr('font-weight', 800).attr('fill', '#0F172A').text(function (h) { return h.members.length; });
+      hNodes.append('text').attr('text-anchor', 'middle').attr('dy', function (h) { return h.r + 13; }).attr('font-size', 10.5).attr('fill', '#334155').text(function (h) { return h.role.length > 26 ? h.role.slice(0, 25) + '…' : h.role; });
+      cNodes = g.append('g').selectAll('circle').data(ents).join('circle').attr('class', 'node-c')
+        .attr('cx', function (e) { return e.x; }).attr('cy', function (e) { return e.y; })
+        .attr('r', function (e) { return e.multi ? 7.5 : 5; })
+        .attr('fill', function (e) { return COL[e.own] || COL.unknown; })
+        .attr('stroke', function (e) { return e.multi ? '#0F172A' : '#fff'; }).attr('stroke-width', function (e) { return e.multi ? 2 : 1; });
+      var tip = $('tip');
+      function showTip(ev, text) { tip.textContent = text; tip.style.display = 'block'; tip.style.left = (ev.clientX + 12) + 'px'; tip.style.top = (ev.clientY + 12) + 'px'; }
+      function hideTip() { tip.style.display = 'none'; }
+      cNodes.on('mousemove', function (ev, e) { showTip(ev, e.name + ' · ' + (OWN[e.own] || '') + (e.multi ? ' · ' + Object.keys(e.stages).length + ' stages' : '')); }).on('mouseleave', hideTip)
+        .on('click', function (ev, e) { state.sel = e; select(); renderEntity(e); });
+      hNodes.on('mousemove', function (ev, h) { showTip(ev, h.role + ' · ' + h.members.length + ' companies'); }).on('mouseleave', hideTip)
+        .on('click', function (ev, h) { state.sel = h; select(); renderHub(h); });
+    }
+
+    function visible(e) {
+      var own = $('own').value;
+      if (own && e.own !== own) return false;
+      if ($('hidelow').checked && e.conf === 'low') return false;
+      if ($('multi').checked && !e.multi) return false;
+      return true;
+    }
+    function select() {
+      var q = $('q').value.trim().toLowerCase(), s = state.sel;
+      var rel = {};
+      if (s && s.kind === 'h') s.members.forEach(function (m) { rel[m.id] = 1; });
+      if (s && s.kind === 'c') { rel[s.id] = 1; }
+      cNodes.attr('opacity', function (e) {
+        if (!visible(e)) return 0.06;
+        var match = !q || e.recs.some(function (r) { return (r.name + ' ' + (r.name_vi || '')).toLowerCase().indexOf(q) > -1; });
+        if (!match) return 0.1;
+        if (s && !rel[e.id]) return 0.22;
+        return e.conf === 'low' ? 0.55 : 1;
+      }).attr('stroke', function (e) { return s && s.id === e.id ? '#1A66F0' : (e.multi ? '#0F172A' : '#fff'); })
+        .attr('stroke-width', function (e) { return s && s.id === e.id ? 3 : (e.multi ? 2 : 1); });
+      linkSel.attr('opacity', function (l) {
+        if (!visible(l.source)) return 0.03;
+        if (s && s.kind === 'c') return l.source.id === s.id ? 1 : ($('xlinks').checked && l.source.multi ? 0.12 : 0);
+        if (s && s.kind === 'h') return l.target.id === s.id ? 0.9 : 0.06;
+        return l.source.multi ? ($('xlinks').checked ? 0.55 : 0) : 0.7;
+      }).attr('stroke-width', function (l) { return s && s.kind === 'c' && l.source.id === s.id ? 2.5 : (l.source.multi ? 1.5 : 0.8); })
+        .attr('stroke', function (l) { return (s && s.kind === 'c' && l.source.id === s.id) || l.source.multi ? '#1A66F0' : '#CBD2D9'; });
+      hNodes.select('circle').attr('stroke-width', function (h) { return s && s.id === h.id ? 4 : 2; });
+      var hubSel = s && s.kind === 'h';
+      flowSel.attr('opacity', function (f) { return hubSel ? (f.a === s || f.b === s ? 1 : 0.18) : 0.9; })
+        .attr('stroke', function (f) { return hubSel && (f.a === s || f.b === s) ? '#1A66F0' : '#8FA9D6'; })
+        .attr('stroke-width', function (f) { return hubSel && (f.a === s || f.b === s) ? 3.4 : 2.2; });
+    }
+
+    function stageLabel(id) { return data.stages.filter(function (s) { return s.id === id; })[0].label; }
+
+    function renderHub(h) {
+      var list = h.members.filter(visible).sort(function (a, b) { return (RANK[b.conf] || 0) - (RANK[a.conf] || 0) || a.name.localeCompare(b.name); });
+      $('kc-panel').innerHTML = '<div class="kc-ph">' + esc(stageLabel(h.stage)) + ' · ' + esc(h.role) + ' <span style="font-weight:400;font-size:13px;color:var(--muted)">(' + list.length + ' shown of ' + h.members.length + ')</span></div>' +
+        '<table class="kc-list"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Stages</th><th>Source check</th></tr></thead><tbody>' +
+        list.map(function (e) { return '<tr class="row" data-id="' + esc(e.id) + '" tabindex="0"><td><b>' + esc(e.name) + '</b></td><td>' + esc(e.best.province || '—') + '</td><td>' + esc(OWN[e.own]) + '</td><td>' + Object.keys(e.stages).length + '</td><td class="vs-' + vstat(e.best) + '">' + esc(VLAB[vstat(e.best)]) + '</td></tr>'; }).join('') + '</tbody></table>';
+      document.querySelectorAll('#kc-panel tr.row').forEach(function (tr) {
+        function open() { var e = ents.filter(function (x) { return x.id === tr.dataset.id; })[0]; state.sel = e; select(); renderEntity(e); }
+        tr.addEventListener('click', open); tr.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') open(); });
       });
     }
 
-    function renderFacts() {
-      var d = state.data, html = '<h3 style="margin-top:22px">Sourced facts by stage</h3>';
-      d.stages.concat([{ id: 'all', label: 'Whole market' }]).forEach(function (s) {
-        var list = d.facts.filter(function (f) { return f.stage === s.id; });
-        if (!list.length) return;
-        html += '<details style="margin:6px 0"><summary style="cursor:pointer;font-weight:600;color:var(--text)">' + esc(s.label) + ' (' + list.length + ')</summary><ul style="margin:6px 0 8px 18px;padding:0">' +
-          list.map(function (f) { return '<li>' + esc(f.label) + ': <b>' + esc(f.value) + (f.unit && String(f.value).indexOf(f.unit) < 0 ? ' ' + esc(f.unit) : '') + '</b>' + (f.year ? ' (' + esc(f.year) + ')' : '') + (f.verification && f.verification.status === 'unreachable' ? ' <span class="vs-unreachable">(source not checked)</span>' : '') + (safeUrl(f.source_url) ? ' · <a href="' + esc(f.source_url) + '" target="_blank" rel="noopener" style="color:var(--primary)">' + esc(f.source) + '</a>' : ' · ' + esc(f.source || 'source not linked')) + '</li>'; }).join('') + '</ul></details>';
-      });
-      $('kc-facts').innerHTML = html;
-    }
-
-    function renderDetail(p) {
-      var c = state.company, rows = [];
+    function renderEntity(e) {
+      var b = e.best, rows = [];
       function add(k, v) { if (v) rows.push('<dt>' + esc(k) + '</dt><dd>' + v + '</dd>'); }
-      add('Stage / role', esc(state.sel.role));
-      add('Province / country', esc(c.province));
-      add('Ownership', esc(OWN[c.ownership] || ''));
-      add('Tax ID', taxHtml(c));
-      add('Registered capital', esc(fmtVnd(c.capital_vnd)));
-      add('Scale', esc(c.scale_note));
-      add('Export markets', esc((c.export_markets || []).join(', ')));
-      add('Website', safeUrl(c.website) ? '<a href="' + esc(c.website) + '" target="_blank" rel="noopener">' + esc(c.website) + '</a>' : '');
-      add('What the source says', esc(c.evidence_note));
-      add('Source', safeUrl(c.evidence_url) ? '<a href="' + esc(c.evidence_url) + '" target="_blank" rel="noopener">' + esc(c.evidence_url) + '</a>' : '');
-      add('Source check', '<span class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</span> on ' + esc((c.verification || {}).checked || '') + ' · not yet reviewed by an analyst');
-      p.innerHTML = '<div class="kc-detail"><button type="button" class="back" id="kc-back">← Back to list</button><h2>' + esc(c.name) + '</h2>' + (c.name_vi && c.name_vi !== c.name ? '<div style="color:var(--muted-dim);font-size:13px">' + esc(c.name_vi) + '</div>' : '') + '<dl>' + rows.join('') + '</dl></div>';
-      $('kc-back').addEventListener('click', function () { state.company = null; renderPanel(); });
+      add('Stages', e.hubIds.map(function (hid) { var h = hubs.filter(function (x) { return x.id === hid; })[0]; return esc(stageLabel(h.stage) + ' · ' + h.role); }).join('<br>'));
+      add('Province / country', esc(b.province));
+      add('Ownership', esc(OWN[e.own]));
+      var tx = e.recs.filter(function (r) { return r.tax_id; })[0] || e.recs.filter(function (r) { return r.tax_id_candidate; })[0];
+      add('Tax ID', tx ? taxHtml(tx) : '');
+      add('Registered capital', esc(fmtVnd(b.capital_vnd)));
+      add('Scale', esc(b.scale_note));
+      add('Export markets', esc((b.export_markets || []).join(', ')));
+      add('What the sources say', e.recs.map(function (r) { return esc(r.evidence_note); }).filter(Boolean).join('<br><br>'));
+      add('Sources', e.recs.map(function (r) { return safeUrl(r.evidence_url) ? '<a href="' + esc(r.evidence_url) + '" target="_blank" rel="noopener">' + esc(r.evidence_url) + '</a>' : ''; }).filter(Boolean).filter(function (v, i, a) { return a.indexOf(v) === i; }).join('<br>'));
+      add('Source check', '<span class="vs-' + vstat(b) + '">' + esc(VLAB[vstat(b)]) + '</span> on ' + esc((b.verification || {}).checked || '') + ' · not yet reviewed by an analyst');
+      $('kc-panel').innerHTML = '<div class="kc-detail"><h2>' + esc(e.name) + '</h2>' + (e.multi ? '<div style="color:var(--primary);font-size:13px;font-weight:600">Operates at ' + Object.keys(e.stages).length + ' stages of the chain</div>' : '') + '<dl>' + rows.join('') + '</dl></div>';
     }
 
-    document.querySelectorAll('.kc-seg button').forEach(function (b) {
-      b.addEventListener('click', function () {
-        state.mode = b.dataset.mode;
-        document.querySelectorAll('.kc-seg button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-        render();
-      });
-    });
+    function init(flow) {
+      var ow = Object.keys(OWN).filter(function (k) { return ents.some(function (e) { return e.own === k; }); });
+      $('own').innerHTML = '<option value="">All ownership</option>' + ow.map(function (k) { return '<option value="' + k + '">' + esc(OWN[k]) + '</option>'; }).join('');
+      $('kc-legend').innerHTML = ow.map(function (k) { return '<span><i style="background:' + COL[k] + '"></i>' + esc(OWN[k]) + '</span>'; }).join('') +
+        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view, not company-to-company links)</span>';
+      ['q', 'own', 'hidelow', 'multi', 'xlinks'].forEach(function (id) { $(id).addEventListener(id === 'q' ? 'input' : 'change', select); });
+    }
 
     fetch('/en/chain/vn/coffee.json').then(function (r) { return r.json(); }).then(function (d) {
-      state.data = d;
-      $('kc-sub').textContent = d.summary;
-      $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (m) { return '<p style="margin:0 0 8px">' + esc(m) + '</p>'; }).join('');
-      renderFacts();
-      render();
+      data = d;
+      $('kc-sub').textContent = 'Read left to right: each hub is a group of companies at one stage, arrows show how coffee moves to the next stage, and dots are companies coloured by ownership. Click a hub to light up its inflows and outflows.';
+      $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (m) { return '<p style="margin:0 0 8px">' + esc(m) + '</p>'; }).join('') +
+        '<p style="margin:0 0 8px">Company identities are merged by name across stages (for example Intimex appears in collection, processing and export), so a few merges may be wrong until tax IDs confirm them.</p>';
+      var flow = build(); layout(); draw(flow); init(flow); select();
     }).catch(function () { $('kc-sub').textContent = 'Data failed to load.'; });
   })();
   </script>
