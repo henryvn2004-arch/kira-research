@@ -58,7 +58,7 @@
 </head>
 <body>
   <main class="kc-wrap">
-    <div class="kc-proto"><strong>Prototype for internal review.</strong> Same data as the map view: desk research, not verified by analysts. Connections shown are only what the data supports (which group a company belongs to, and which companies operate at several stages). There are no supplier-to-buyer links yet. Not linked from the site.</div>
+    <div class="kc-proto"><strong>Prototype for internal review.</strong> Same data as the map view: desk research, not verified by analysts. Arrows show how coffee moves along the chain, a structure defined by KIRA analysts; dots are the companies found in each group. There are no company-to-company links. Not linked from the site.</div>
     <div class="kc-eyebrow">Kira Chain · Vietnam</div>
     <h1>Coffee value chain in Vietnam: network view</h1>
     <p class="kc-sub" id="kc-sub">Loading…</p>
@@ -69,6 +69,7 @@
       <select id="own"><option value="">All ownership</option></select>
       <label><input type="checkbox" id="hidelow" /> Hide low-confidence</label>
       <label><input type="checkbox" id="multi" /> Show only multi-stage companies</label>
+      <label><input type="checkbox" id="xlinks" /> Show cross-stage links</label>
     </div>
     <div class="kc-legend" id="kc-legend"></div>
 
@@ -95,10 +96,9 @@
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(1) + ' billion VND'; }
 
-    var data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, state = { sel: null };
+    var data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, flowSel, state = { sel: null };
 
     function build() {
-      var stageIdx = {}; data.stages.forEach(function (s, i) { stageIdx[s.id] = i; });
       var byE = {}, byH = {};
       data.companies.forEach(function (c) {
         var e = byE[c.eid] = byE[c.eid] || { id: 'c:' + c.eid, kind: 'c', recs: [], hubIds: [], stages: {} };
@@ -130,10 +130,10 @@
       nodes = ents.concat(hubs);
       var idMap = {}; nodes.forEach(function (n) { idMap[n.id] = n; });
       links.forEach(function (l) { l.source = idMap[l.source]; l.target = idMap[l.target]; });
-      // faint product-flow edges between hubs of adjacent stages
-      var flow = [];
-      hubs.forEach(function (a) { hubs.forEach(function (b) { if (stageIdx[b.stage] === stageIdx[a.stage] + 1) flow.push({ a: a, b: b }); }); });
-      return flow;
+      // value-chain flow between groups (KIRA's chain structure, not company data)
+      var hubById = {}; hubs.forEach(function (h) { hubById[h.id] = h; });
+      return (data.flows || []).map(function (f) { return { a: hubById['h:' + f.from_stage + '|' + f.from_role], b: hubById['h:' + f.to_stage + '|' + f.to_role], label: f.label, show: f.show_label }; })
+        .filter(function (f) { return f.a && f.b; });
     }
 
     function layout() {
@@ -157,15 +157,31 @@
         sh.append('text').attr('x', colW * i + colW / 2).attr('y', 26).attr('text-anchor', 'middle').attr('font-size', 14).attr('font-weight', 700).attr('fill', '#0F172A').text(s.label.length > 22 ? s.label.slice(0, 21) + '…' : s.label);
         sh.append('text').attr('x', colW * i + colW / 2).attr('y', 44).attr('text-anchor', 'middle').attr('font-size', 10.5).attr('fill', '#64748B').text(i < data.stages.length - 1 ? '→' : '');
       });
-      g.append('g').selectAll('path').data(flow).join('path')
-        .attr('d', function (f) { var mx = (f.a.x + f.b.x) / 2; return 'M' + f.a.x + ',' + f.a.y + 'C' + mx + ',' + f.a.y + ' ' + mx + ',' + f.b.y + ' ' + f.b.x + ',' + f.b.y; })
-        .attr('fill', 'none').attr('stroke', '#CBD2D9').attr('stroke-width', 1.2).attr('stroke-dasharray', '4 4').attr('opacity', .8);
+      var defs = svg.append('defs');
+      defs.append('marker').attr('id', 'arr').attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5).attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto')
+        .append('path').attr('d', 'M0,0L10,5L0,10z').attr('fill', '#6E8FC9');
+      function geo(f) {
+        var a = f.a, b = f.b;
+        if (Math.abs(a.x - b.x) < 5) {
+          var dir = b.y > a.y ? 1 : -1, x0 = a.x + a.r * 0.7, y0 = a.y + dir * a.r * 0.7, x1 = b.x + b.r * 0.7, y1 = b.y - dir * (b.r + 3), cx = a.x + 78, cy = (y0 + y1) / 2;
+          return { d: 'M' + x0 + ',' + y0 + 'Q' + cx + ',' + cy + ' ' + x1 + ',' + y1, mx: (x0 + 2 * cx + x1) / 4, my: (y0 + 2 * cy + y1) / 4 };
+        }
+        var xs = a.x + a.r, xe = b.x - b.r - 3, mx = (xs + xe) / 2;
+        return { d: 'M' + xs + ',' + a.y + 'C' + mx + ',' + a.y + ' ' + mx + ',' + b.y + ' ' + xe + ',' + b.y, mx: mx, my: (a.y + b.y) / 2 };
+      }
+      var fg = g.append('g');
+      flowSel = fg.selectAll('path').data(flow).join('path').attr('d', function (f) { return geo(f).d; })
+        .attr('fill', 'none').attr('stroke', '#8FA9D6').attr('stroke-width', 2.2).attr('marker-end', 'url(#arr)').attr('opacity', .9);
+      flowSel.append('title').text(function (f) { return f.a.role + ' → ' + f.b.role + (f.label ? ' (' + f.label + ')' : ''); });
+      fg.selectAll('text').data(flow.filter(function (f) { return f.show && f.label; })).join('text')
+        .attr('x', function (f) { return geo(f).mx; }).attr('y', function (f) { return geo(f).my - 5; }).attr('text-anchor', 'middle')
+        .attr('font-size', 10.5).attr('font-style', 'italic').attr('fill', '#3D5A94').attr('stroke', '#fff').attr('stroke-width', 3).attr('paint-order', 'stroke').text(function (f) { return f.label; });
       linkSel = g.append('g').selectAll('line').data(links).join('line')
         .attr('x1', function (l) { return l.source.x; }).attr('y1', function (l) { return l.source.y; })
         .attr('x2', function (l) { return l.target.x; }).attr('y2', function (l) { return l.target.y; })
         .attr('stroke', function (l) { return l.source.multi ? '#1A66F0' : '#CBD2D9'; })
         .attr('stroke-width', function (l) { return l.source.multi ? 1.5 : 0.8; })
-        .attr('opacity', function (l) { return l.source.multi ? .38 : .7; });
+        .attr('opacity', function (l) { return l.source.multi ? 0 : .7; });
       hNodes = g.append('g').selectAll('g').data(hubs).join('g').attr('class', 'node-h').attr('transform', function (h) { return 'translate(' + h.x + ',' + h.y + ')'; });
       hNodes.append('circle').attr('r', function (h) { return h.r; }).attr('fill', '#EAF1FE').attr('stroke', '#1A66F0').attr('stroke-width', 2);
       hNodes.append('text').attr('text-anchor', 'middle').attr('dy', '-0.1em').attr('font-size', 15).attr('font-weight', 800).attr('fill', '#0F172A').text(function (h) { return h.members.length; });
@@ -206,12 +222,16 @@
         .attr('stroke-width', function (e) { return s && s.id === e.id ? 3 : (e.multi ? 2 : 1); });
       linkSel.attr('opacity', function (l) {
         if (!visible(l.source)) return 0.03;
-        if (s && s.kind === 'c') return l.source.id === s.id ? 1 : 0.05;
+        if (s && s.kind === 'c') return l.source.id === s.id ? 1 : ($('xlinks').checked && l.source.multi ? 0.12 : 0);
         if (s && s.kind === 'h') return l.target.id === s.id ? 0.9 : 0.06;
-        return l.source.multi ? 0.38 : 0.7;
+        return l.source.multi ? ($('xlinks').checked ? 0.55 : 0) : 0.7;
       }).attr('stroke-width', function (l) { return s && s.kind === 'c' && l.source.id === s.id ? 2.5 : (l.source.multi ? 1.5 : 0.8); })
         .attr('stroke', function (l) { return (s && s.kind === 'c' && l.source.id === s.id) || l.source.multi ? '#1A66F0' : '#CBD2D9'; });
       hNodes.select('circle').attr('stroke-width', function (h) { return s && s.id === h.id ? 4 : 2; });
+      var hubSel = s && s.kind === 'h';
+      flowSel.attr('opacity', function (f) { return hubSel ? (f.a === s || f.b === s ? 1 : 0.18) : 0.9; })
+        .attr('stroke', function (f) { return hubSel && (f.a === s || f.b === s) ? '#1A66F0' : '#8FA9D6'; })
+        .attr('stroke-width', function (f) { return hubSel && (f.a === s || f.b === s) ? 3.4 : 2.2; });
     }
 
     function stageLabel(id) { return data.stages.filter(function (s) { return s.id === id; })[0].label; }
@@ -247,13 +267,13 @@
       var ow = Object.keys(OWN).filter(function (k) { return ents.some(function (e) { return e.own === k; }); });
       $('own').innerHTML = '<option value="">All ownership</option>' + ow.map(function (k) { return '<option value="' + k + '">' + esc(OWN[k]) + '</option>'; }).join('');
       $('kc-legend').innerHTML = ow.map(function (k) { return '<span><i style="background:' + COL[k] + '"></i>' + esc(OWN[k]) + '</span>'; }).join('') +
-        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages (blue lines link its groups)</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:var(--muted-dim)">Dashed grey = product flow between stages, not a supplier link</span>';
-      ['q', 'own', 'hidelow', 'multi'].forEach(function (id) { $(id).addEventListener(id === 'q' ? 'input' : 'change', select); });
+        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view, not company-to-company links)</span>';
+      ['q', 'own', 'hidelow', 'multi', 'xlinks'].forEach(function (id) { $(id).addEventListener(id === 'q' ? 'input' : 'change', select); });
     }
 
     fetch('/en/chain/vn/coffee.json').then(function (r) { return r.json(); }).then(function (d) {
       data = d;
-      $('kc-sub').textContent = 'Each hub is a group of companies at one stage; dots are companies, coloured by ownership. Companies that operate at several stages sit between their hubs, joined by blue lines.';
+      $('kc-sub').textContent = 'Read left to right: each hub is a group of companies at one stage, arrows show how coffee moves to the next stage, and dots are companies coloured by ownership. Click a hub to light up its inflows and outflows.';
       $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (m) { return '<p style="margin:0 0 8px">' + esc(m) + '</p>'; }).join('') +
         '<p style="margin:0 0 8px">Company identities are merged by name across stages (for example Intimex appears in collection, processing and export), so a few merges may be wrong until tax IDs confirm them.</p>';
       var flow = build(); layout(); draw(flow); init(flow); select();
