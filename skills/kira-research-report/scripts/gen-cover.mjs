@@ -84,6 +84,19 @@ try {
   if (!/\.jpe?g$/i.test(out)) throw new Error('--out must end in .jpg');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, img);
+  // Cost metering: record the API's token counts against the queue row (report id = queue id).
+  // Best effort: insight covers have no queue row (the foreign key rejects them) and a logging
+  // failure must never lose a finished cover.
+  if (j.usage && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
+    try {
+      await fetch(`${process.env.SUPABASE_URL}/rest/v1/report_queue_events`, {
+        method: 'POST',
+        headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ queue_id: arg('id'), stage: 'cover', outcome: 'usage', model, usage: { service: 'openai-image', quality: arg('quality') || process.env.OPENAI_IMAGE_QUALITY || 'high', input_tokens: j.usage.input_tokens ?? null, output_tokens: j.usage.output_tokens ?? null, total_tokens: j.usage.total_tokens ?? null } }),
+        signal: AbortSignal.timeout(5000),
+      });
+    } catch { /* metering is optional */ }
+  }
   console.log(JSON.stringify({ ok: true, style, model, out, bytes: fs.statSync(out).size, usage: j.usage || null, prompt }));
 } catch (e) {
   console.log(JSON.stringify({ ok: false, error: String(e.message || e), style, model }));

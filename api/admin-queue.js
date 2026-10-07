@@ -6,6 +6,7 @@
 //
 //   GET   /api/admin-queue                       → { rows, events, summary }
 //   PATCH /api/admin-queue  body { id, action, to?, priority? } → { ok }
+//   PATCH /api/admin-queue  body { action: 'set_price', service, usd_per_m_in, usd_per_m_out } → { ok }  (no id)
 //         actions: hold · release · retry (to = pending|en_done|ja_done|ko_done|zh_backfill)
 //                  · unstick (in_progress row → prior stage) · top (priority above everyone) · priority
 //
@@ -26,13 +27,13 @@ const PRIOR = { en_in_progress: 'pending', ja_in_progress: 'en_done', ko_in_prog
 const RETRY_TARGETS = new Set(WORK);
 const STALE_MIN = 150;
 
-async function sb(path, method = 'GET', body) {
+async function sb(path, method = 'GET', body, prefer) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     method,
     headers: {
       apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: method === 'GET' ? '' : 'return=representation'
+      Prefer: prefer || (method === 'GET' ? '' : 'return=representation')
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
@@ -80,6 +81,27 @@ function summarize(rows, events) {
   return { state, by_status, work_left, stuck, hours_since, completed_7d, errors: by_status.error || 0, timing };
 }
 
+// Metered external-API spend. Tokens are facts logged by the runner; dollars exist only once the
+// owner has entered a price for that service (so history re-prices when the price changes).
+function summarizeCosts(usageRows, prices) {
+  const by = {};
+  for (const r of usageRows) {
+    const u = r.usage || {};
+    const svc = (by[u.service || 'unknown'] = by[u.service || 'unknown'] || { service: u.service || 'unknown', calls: 0, input_tokens: 0, output_tokens: 0, reports: new Set() });
+    svc.calls++; svc.input_tokens += Number(u.input_tokens || 0); svc.output_tokens += Number(u.output_tokens || 0); svc.reports.add(r.queue_id);
+  }
+  const services = Object.values(by).map(v => {
+    const p = prices.find(x => x.service === v.service);
+    const priced = p && p.usd_per_m_in != null && p.usd_per_m_out != null;
+    const usd = priced ? (v.input_tokens * Number(p.usd_per_m_in) + v.output_tokens * Number(p.usd_per_m_out)) / 1e6 : null;
+    return { service: v.service, calls: v.calls, reports: v.reports.size, input_tokens: v.input_tokens, output_tokens: v.output_tokens,
+      price: p ? { usd_per_m_in: p.usd_per_m_in, usd_per_m_out: p.usd_per_m_out } : null,
+      usd: usd == null ? null : Math.round(usd * 10000) / 10000,
+      usd_per_report: usd == null || !v.reports.size ? null : Math.round(usd / v.reports.size * 10000) / 10000 };
+  });
+  return { services, known_services: ['openai-image'] };
+}
+
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
@@ -91,11 +113,13 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const [rows, events] = await Promise.all([
+      const [rows, events, usageRows, prices] = await Promise.all([
         sb('report_queue?select=id,topic,country,industry,year,target_languages,status,error_log,claimed_at,priority,attempts,position,date_added,date_completed,updated_at&order=priority.desc,position.asc&limit=1000'),
-        sb('report_queue_events?select=id,queue_id,stage,outcome,from_status,to_status,model,duration_s,cost_usd,note,at&order=at.desc&limit=200')
+        sb('report_queue_events?select=id,queue_id,stage,outcome,from_status,to_status,model,duration_s,cost_usd,note,at&order=at.desc&limit=200'),
+        sb('report_queue_events?select=queue_id,usage&outcome=eq.usage&limit=5000').catch(() => []),
+        sb('service_prices?select=service,usd_per_m_in,usd_per_m_out').catch(() => [])
       ]);
-      res.status(200).json({ rows, events: events.slice(0, 60), summary: summarize(rows, events) });
+      res.status(200).json({ rows, events: events.slice(0, 60), summary: summarize(rows, events), costs: summarizeCosts(usageRows, prices) });
       return;
     }
 
@@ -105,6 +129,16 @@ export default async function handler(req, res) {
     try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); }
     catch (_) { res.status(400).json({ error: 'invalid_json' }); return; }
     const { id, action } = body;
+
+    if (action === 'set_price') {
+      const svc = String(body.service || '');
+      const pin = Number(body.usd_per_m_in), pout = Number(body.usd_per_m_out);
+      if (!/^[a-z0-9-]{2,40}$/.test(svc) || !(pin >= 0) || !(pout >= 0) || pin > 100000 || pout > 100000) { res.status(400).json({ error: 'bad_price' }); return; }
+      await sb('service_prices?on_conflict=service', 'POST', { service: svc, usd_per_m_in: pin, usd_per_m_out: pout, updated_at: new Date().toISOString() }, 'resolution=merge-duplicates,return=minimal');
+      logAudit({ actor: user.email, action: 'update', resourceType: 'service_price', resourceId: svc, resourceLabel: `in ${pin} / out ${pout} USD per 1M tokens`, req });
+      res.status(200).json({ ok: true });
+      return;
+    }
     if (!id || !action) { res.status(400).json({ error: 'id_and_action_required' }); return; }
 
     const [row] = await sb(`report_queue?id=eq.${encodeURIComponent(id)}&select=*`);

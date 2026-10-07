@@ -45,6 +45,8 @@
     .pl-sec { margin:28px 0 12px; font-size:18px; }
     .pl-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
     .pl-empty { color:var(--muted); padding:24px 0; }
+    .pl-price { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; font-size:13.5px; }
+    .pl-price input { width:90px; padding:7px 9px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
     .pl-timing { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
     .pl-timing div { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13.5px; }
     .pl-timing b { font-family:'Satoshi',sans-serif; }
@@ -158,6 +160,19 @@
         hold: rows.filter(r => r.status === 'hold'), done: rows.filter(r => r.status === 'done'), all: rows
       }[state.filter];
 
+      const fmtN = (n) => Number(n).toLocaleString();
+      const costs = state.data.costs || { services: [], known_services: [] };
+      const costsHtml = (costs.services.length ? costs.services : costs.known_services.map(k => ({ service: k, calls: 0, reports: 0, input_tokens: 0, output_tokens: 0, price: null, usd: null }))).map(c => `
+        <div class="pl-wrap" style="padding:14px 16px;margin-bottom:10px">
+          <b>${esc(c.service)}</b>
+          <div class="pl-note" style="margin:4px 0 0">${c.calls ? fmtN(c.calls) + ' call' + (c.calls > 1 ? 's' : '') + ' on ' + c.reports + ' report' + (c.reports > 1 ? 's' : '') + ' · ' + fmtN(c.input_tokens) + ' input / ' + fmtN(c.output_tokens) + ' output tokens' : 'No usage recorded yet. The next report with a cover will log it.'}</div>
+          ${c.usd != null ? `<div style="margin-top:6px"><b>$${c.usd}</b> total${c.usd_per_report != null ? ` · about <b>$${c.usd_per_report}</b> per report` : ''}</div>` : (c.calls ? '<div class="pl-note">Enter the price below to see dollars.</div>' : '')}
+          <form class="pl-price" data-svc="${esc(c.service)}">
+            <span>Price per 1M tokens, USD (from the provider's price page): input</span><input name="in" inputmode="decimal" value="${c.price ? esc(c.price.usd_per_m_in) : ''}" />
+            <span>output</span><input name="out" inputmode="decimal" value="${c.price ? esc(c.price.usd_per_m_out) : ''}" />
+            <button class="pl-btn" type="submit">Save price</button>
+          </form>
+        </div>`).join('');
       const timing = Object.entries(s.timing).map(([k, v]) => `<div><b>${esc(k.toUpperCase())}</b> · avg ${v.avg_min} min · ${v.runs} run${v.runs > 1 ? 's' : ''}${v.metered_usd ? ` · $${v.metered_usd} metered` : ''}</div>`).join('');
 
       root.innerHTML = `
@@ -169,6 +184,8 @@
           <div class="pl-kpi ${s.stuck.length ? 'bad' : ''}"><b>${s.stuck.length}</b><span>stuck claims</span></div>
           <div class="pl-kpi ${s.errors ? 'bad' : ''}"><b>${s.errors}</b><span>errors</span></div>
         </div>
+        <h2 class="pl-sec">Metered costs<small>external APIs that bill per use</small></h2>
+        ${costsHtml}
         ${timing ? `<h2 class="pl-sec">Stage timing<small>wall-clock, successful runs only</small></h2><div class="pl-timing">${timing}</div>
         <p class="pl-note">Cost: Claude Routine usage runs on the subscription and is not metered per token, so only time is shown. Dollar figures appear only for metered external APIs (e.g. cover art) once the runner reports them.</p>` : ''}
         <div class="pl-filters">${filters.map(([k, l]) => `<button class="pl-chip ${state.filter === k ? 'on' : ''}" data-f="${k}">${esc(l)}</button>`).join('')}</div>
@@ -186,6 +203,14 @@
             <td>${esc(e.outcome)}${e.to_status ? ` → ${esc(e.to_status)}` : ''}${e.note ? `<div class="pl-err">${esc(e.note)}</div>` : ''}</td>
             <td>${esc(dur(e.duration_s))}</td><td>${esc(e.model || '')}</td></tr>`).join('')}</tbody></table></div>` : `<div class="pl-empty">No events yet. The next runner fire will log the first one.</div>`}`;
 
+      root.querySelectorAll('form[data-svc]').forEach(f => f.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const btn = f.querySelector('button'); btn.disabled = true;
+        try {
+          await api('/api/admin-queue', { method: 'PATCH', body: JSON.stringify({ action: 'set_price', service: f.dataset.svc, usd_per_m_in: f.elements.in.value, usd_per_m_out: f.elements.out.value }) });
+          await load();
+        } catch (e) { alert('Could not save price: ' + e.message); btn.disabled = false; }
+      }));
       root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => { state.filter = b.dataset.f; render(); }));
       root.querySelectorAll('tr[data-id] [data-a]').forEach(b => b.addEventListener('click', () => {
         const id = b.closest('tr').dataset.id;
