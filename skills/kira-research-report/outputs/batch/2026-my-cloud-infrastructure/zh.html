@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 2026年马来西亚云基础设施：超大规模云厂商落地与主权云需求</title>
+<meta name="description" content="2026年马来西亚云基础设施——超大规模云厂商在柔佛与大吉隆坡地区的区域落地、主权云与主权AI需求、电力与电网约束，以及KIRA分析师的五年展望。">
+<meta property="og:title" content="KIRA Research — 2026年马来西亚云基础设施">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "区域领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-hero .tags .data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em; font-weight: 600; background: var(--primary-soft); color: var(--primary); text-transform: uppercase; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 12px; height: 248px; }
+.ai-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 11px 12px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 10.5px; line-height: 1.45; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover-page { background: var(--dark-bg); color: var(--dark-text); position: relative; overflow: hidden; }
+.cover-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.09) 0%, transparent 60%); pointer-events: none; }
+.cover-inner { position: relative; z-index: 2; height: 100%; padding: 64px 96px; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-logo { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.01em; color: var(--dark-text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-meta-pre { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; letter-spacing: 0.25em; color: var(--primary); margin-bottom: 18px; font-weight: 600; }
+.cover-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; color: var(--dark-text); margin-bottom: 18px; max-width: 980px; }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 17px; line-height: 1.45; color: #A3A9B6; max-width: 760px; }
+.cover-subtitle strong { color: var(--dark-text); font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 24px; border-top: 1px solid #252A33; }
+.cover-meta-strip .meta-cell .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; letter-spacing: 0.15em; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.cover-meta-strip .meta-cell .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--dark-text); }
+.cover-meta-strip .meta-cell .val .qual { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 500; font-size: 11px; color: #A3A9B6; margin-left: 6px; }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.25em; padding: 8px 14px; border: 1px solid var(--primary); border-radius: 3px; align-self: flex-start; font-weight: 600; }
+
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; font-weight: 600; }
+.meth-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+.meth-item:last-child { border-bottom: none; }
+.meth-item .meth-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.25; }
+.meth-item .meth-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.meth-item .meth-desc strong { color: var(--text); font-weight: 600; }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 48px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-col li .toc-title { font-size: 13px; color: var(--text); line-height: 1.3; }
+.toc-col li .toc-title .toc-sub { display: block; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+.toc-col li .toc-page { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--muted); text-align: right; font-weight: 600; }
+
+.endnote-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.source-mix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
+.source-mix-card { background: var(--bg-soft); border-radius: 5px; padding: 12px 14px; border-left: 3px solid var(--primary); }
+.source-mix-card.tag-secondary { border-left-color: var(--green); }
+.source-mix-card.tag-estimate { border-left-color: var(--amber); }
+.source-mix-card .smc-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.source-mix-card .smc-num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.source-mix-card .smc-num .pct { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-left: 2px; }
+.endnote-body p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.endnote-body p strong { color: var(--text); font-weight: 600; }
+.endnote-body h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }
+.endnote-side { background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; }
+.endnote-side h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.endnote-side .contact-line { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 4px; }
+.endnote-side .contact-line strong { color: var(--text); font-weight: 600; }
+.sources-list { list-style: none; }
+.sources-list li { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8.5px; line-height: 1.35; color: var(--text-mid); padding: 2px 0; border-bottom: 1px dotted var(--border); }
+.sources-list li strong { color: var(--text); font-weight: 700; }
+
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: #FFFFFF; padding: 0; }
+  .page { box-shadow: none; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER · 01_cover ============ -->
+<div class="page cover-page" data-section-id="01_cover">
+  <div class="atmosphere"></div>
+  <div class="cover-inner">
+    <div>
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div>
+      <div class="cover-meta-pre">东南亚 &middot; 云基础设施 &middot; 2026</div>
+      <h1 class="cover-title">马来西亚云基础设施&mdash;&mdash;<span class="accent">超大规模云厂商落地</span>与主权云需求</h1>
+      <p class="cover-subtitle">
+        四家超大规模云厂商已在柔佛和大吉隆坡地区落地或承诺建设云区域，带动<strong>超过USD 20 b的已公布云与AI资本投入</strong>。真正的约束已不是需求，而是电力与电网余量；主权云要求正在重塑受监管工作负载的部署位置。战略展望至2031年。
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">机密 &middot; 仅限授权读者使用</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">国家</div>
+          <div class="val">马来西亚 <span class="qual">(MY)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">行业</div>
+          <div class="val">云基础设施与数据中心</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">范围与周期</div>
+          <div class="val">2026 <span class="qual">5年预测</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">报告编号</div>
+          <div class="val">KR-MYS-CLOUD-2026-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — METHODOLOGY · 02_methodology_inline ============ -->
+<div class="page" data-section-id="02_methodology_inline">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第01章 &middot; 研究方法</div>
+      <div class="page-section-counter">002 / 024</div>
+    </div>
+    <h1 class="page-h1">我们如何构建这一判断</h1>
+    <p class="page-subhead">
+      本报告基于两类证据：<strong>一手输入</strong>&mdash;&mdash;运营商与渠道对容量、电力分配和云投入承诺的判断；以及<strong>二手锚点</strong>&mdash;&mdash;统计机构、上市公司与超大规模云厂商的披露文件，以及交叉验证估算。每一项量化结论均附有明确的来源标注。
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>一手输入</h3>
+        <div class="meth-item">
+          <div class="meth-label">运营商与渠道核查</div>
+          <div class="meth-desc">基于公开投资者材料、设施披露，以及与服务柔佛和赛城的选址及网络连接中介机构的交流，判断托管运营商的容量、租约时间表和电力分配状态。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">分析师综合研判</div>
+          <div class="meth-desc">KIRA内部对大量英文检索结果进行交叉验证，并与我们的区域数字基础设施研究进行模式比对。标注为[Kira estimates]。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">专项研判</div>
+          <div class="meth-desc">与电网工程、可持续发展和云采购从业者交流；相比头条容量数据，他们更贴近电力、水资源和主权工作负载的需求信号。</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>二手锚点</h3>
+        <div class="meth-item">
+          <div class="meth-label">统计机构</div>
+          <div class="meth-desc">马来西亚统计局（DOSM）、马来西亚国家银行（BNM）、马来西亚投资发展局（MIDA）及数字部。提供GDP、投资审批、数字经济和政策锚点，正文中按来源名称引用。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">超大规模云厂商与上市公司披露</div>
+          <div class="meth-desc">AWS、微软、Google Cloud和Oracle的云区域发布与投资披露，以及YTL Power International和Telekom Malaysia（TM One）的投资者材料&mdash;&mdash;正文中按公司和期间引用。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">交叉验证估算</div>
+          <div class="meth-desc">在单一来源披露不足时，用于估算容量、云支出和细分结构。我们结合2&ndash;3项输入并披露方法。标注为[Kira estimates]，并在正文中注明锚定指标。详见尾注。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 &middot; 仅限授权读者使用 &middot; &copy; 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — CONTENTS · 03_toc ============ -->
+<div class="page" data-section-id="03_toc">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 &middot; 目录</div>
+      <div class="page-section-counter">003 / 024</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <p class="page-subhead">全文共十二章，以五个深色分隔页划分宏观、行业、竞争、需求和AI五个部分；预测与研究方法尾注收尾。</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><span class="toc-title">研究方法<span class="toc-sub">方法与来源标注</span></span><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><span class="toc-title">目录<span class="toc-sub">本页</span></span><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><span class="toc-title">执行摘要<span class="toc-sub">关键数据与五项启示</span></span><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><span class="toc-title">宏观背景<span class="toc-sub">GDP、投资、数字经济、政策</span></span><span class="toc-page">006</span></li>
+          <li><span class="toc-num">05</span><span class="toc-title">行业概览与规模<span class="toc-sub">容量、市场价值、云支出</span></span><span class="toc-page">009</span></li>
+          <li><span class="toc-num">06</span><span class="toc-title">细分市场经济性<span class="toc-sub">超大规模 &middot; 托管 &middot; 主权云</span></span><span class="toc-page">010</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">07</span><span class="toc-title">竞争格局<span class="toc-sub">运营商与深度画像</span></span><span class="toc-page">011</span></li>
+          <li><span class="toc-num">08</span><span class="toc-title">需求驱动与电力<span class="toc-sub">工作负载、电网、水资源</span></span><span class="toc-page">017</span></li>
+          <li><span class="toc-num">09</span><span class="toc-title">监管环境<span class="toc-sub">云优先、PDPA、数据主权</span></span><span class="toc-page">019</span></li>
+          <li><span class="toc-num">10</span><span class="toc-title">云基础设施中的AI<span class="toc-sub">主权AI与应用场景</span></span><span class="toc-page">020</span></li>
+          <li><span class="toc-num">11</span><span class="toc-title">2026-2031年预测<span class="toc-sub">情景与容量路径</span></span><span class="toc-page">022</span></li>
+          <li><span class="toc-num">12</span><span class="toc-title">研究方法尾注<span class="toc-sub">来源与分析师联系方式</span></span><span class="toc-page">024</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第02章 &middot; 目录 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 · 04_exec_summary_p1 ============ -->
+<div class="page" data-section-id="04_exec_summary_p1">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 &middot; 执行摘要</div>
+      <div class="page-section-counter">004 / 024</div>
+    </div>
+    <h1 class="page-h1">马来西亚云基础设施市场&mdash;&mdash;2026年拐点</h1>
+    <p class="page-subhead">
+      数据中心市场规模<strong>2025年约USD 6.0&ndash;6.5 b</strong>，年复合增长率接近20%；四个超大规模云区域已落地或获承诺，在运IT负载超过1.5 GW；主权云要求将受监管需求引向指定的本地服务商。约束已由需求转向<strong>电力、电网与水资源</strong>。
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2025年数据中心市场</div>
+        <div class="num">USD 6.1<span class="unit">b</span></div>
+        <div class="change">至2031年CAGR约20%[DC Market 2026]</div>
+        <div class="source-tag">[MI 2026]</div>
+      </div>
+      <div class="callout">
+        <div class="label">已公布云与AI投资</div>
+        <div class="num">USD 20.3<span class="unit">b</span></div>
+        <div class="change">已承诺MYR 90.2 b[MI 2026]</div>
+        <div class="source-tag">[MI 2026]</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年在运IT负载</div>
+        <div class="num">~1.5<span class="unit">GW</span></div>
+        <div class="change">2022年仅约10 MW[Introl 2025]</div>
+        <div class="source-tag">[INTROL 2025]</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年获批投资</div>
+        <div class="num">MYR 427<span class="unit">b</span></div>
+        <div class="change">同比+11.0%，创历史新高[MIDA 2026]</div>
+        <div class="source-tag">[MIDA 2026]</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>供给已经落地，问题在于电力</h3>
+        <p>四家超大规模云厂商已承诺建设云区域：AWS已启用<strong>亚太（马来西亚）</strong>区域，并计划至2038年投入超过USD 6.2 b[AWS 2024]；微软正在大吉隆坡和柔佛建设<strong>三个可用区</strong>[Microsoft 2025]；Google承诺投资USD 2 b[Google 2024]；Oracle承诺USD 6.5 b[Oracle 2024]。2025年在运IT负载突破1.5 GW[Introl 2025]。</p>
+        <h3>柔佛是引力中心，也是瓶颈</h3>
+        <p>柔佛承载了全国大部分容量和70%以上的已分配电力[Arizton 2025]。2024年，柔佛以公用设施时间表和水资源为由，否决了约<strong>30%的新申请</strong>[DCD 2025]。自2024年年中以来，一项针对非AI项目的非正式暂停一直影响着审批[TechwireAsia 2026]。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">马来西亚数据中心市场价值</div>
+            <div class="chart-subtitle">USD b &middot; 2024&ndash;2031F &middot; CAGR约20%</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">5</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">10</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">15</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">20</text>
+            <!-- values USD b: 5.0, 6.1, 7.3, 8.7, 10.5, 12.6, 14.3, 16.0 -->
+            <rect class="bar-primary" x="58"  y="160" width="34" height="40"/>
+            <rect class="bar-primary" x="108" y="151" width="34" height="49"/>
+            <rect class="bar-primary" x="158" y="142" width="34" height="58"/>
+            <rect class="bar-primary" x="208" y="130" width="34" height="70"/>
+            <rect class="bar-primary" x="258" y="116" width="34" height="84"/>
+            <rect class="bar-primary" x="308" y="99"  width="34" height="101"/>
+            <rect class="bar-primary" x="358" y="86"  width="34" height="114"/>
+            <rect class="bar-primary" x="408" y="72"  width="34" height="128"/>
+            <text class="label-small" x="75"  y="214" text-anchor="middle">24</text>
+            <text class="label-small" x="125" y="214" text-anchor="middle">25</text>
+            <text class="label-small" x="175" y="214" text-anchor="middle">26F</text>
+            <text class="label-small" x="225" y="214" text-anchor="middle">27F</text>
+            <text class="label-small" x="275" y="214" text-anchor="middle">28F</text>
+            <text class="label-small" x="325" y="214" text-anchor="middle">29F</text>
+            <text class="label-small" x="375" y="214" text-anchor="middle">30F</text>
+            <text class="label-small" x="425" y="214" text-anchor="middle">31F</text>
+            <text class="label-data" x="125" y="145" text-anchor="middle">6.1</text>
+            <text class="label-data" x="425" y="66"  text-anchor="middle">16.0</text>
+          </svg>
+        </div>
+        <div class="chart-source">二手锚点 + [KIRA ESTIMATES] &middot; 按约20% CAGR插值2024&ndash;2031</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>MI 2026</strong> = Malaysia Data Center Market, market-research syndicate, Jan 2026 &middot; <strong>AWS 2024</strong> = AWS Asia Pacific (Malaysia) Region launch &middot; <strong>Microsoft 2025</strong> = Microsoft Malaysia cloud-region announcement &middot; <strong>Introl 2025</strong> = Introl SEA AI-infrastructure brief &middot; <strong>MIDA 2026</strong> = MIDA 2025 investment release
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第03章 &middot; 执行摘要 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 · 04_exec_summary_p2 ============ -->
+<div class="page" data-section-id="04_exec_summary_p2">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 &middot; 执行摘要</div>
+      <div class="page-section-counter">005 / 024</div>
+    </div>
+    <h1 class="page-h1">五项战略启示</h1>
+    <p class="page-subhead">未来24个月价值将向何处集中，以及各类市场参与者应如何应对。<strong>电力获取是新的护城河</strong>；数据主权是新的细分界线。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">先锁定电力，再获取土地</div>
+        <div class="body-text">没有确定电网接入时段的场地是负债而非资产。TNB的“绿色通道”将接入周期压缩至约12个月[TNB 2024]，但柔佛和赛城的馈线容量吃紧。<strong>较早锁定电力分配的运营商</strong>掌握着稀缺要素。</div>
+        <div class="anchor">锚点 &middot; 2024年柔佛<span class="num-anchor">~30%</span>的申请被否决</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">数据主权切分需求池</div>
+        <div class="body-text">云优先政策和PDPA修订推动受监管的公共部门与金融工作负载转向境内、主权可控的设施。<strong>TM One担任指定本地云服务商角色</strong>[TM One 2024]；超大规模云厂商则以区域内主权专区回应。</div>
+        <div class="anchor">锚点 &middot; 公共部门上云目标<span class="num-anchor">80%</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">AI算力密度重设建设标准</div>
+        <div class="body-text">随着AI推高机柜密度，IT负载预计将攀升至6 GW以上[DC Market 2026]。液冷、绿电PPA和GPU就绪机房已成为基本门槛。对最高价值的工作负载而言，<strong>2023年前的设计已被搁浅</strong>。</div>
+        <div class="anchor">锚点 &middot; IT负载<span class="num-anchor">1.5&rarr;6.4 GW</span>路径</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">本地运营商掌握细分场景</div>
+        <div class="body-text">超大规模云厂商赢得规模化算力；<strong>TM One、YTL和三大托管商</strong>则赢得全球云厂商难以本地化的主权、低时延互联和托管服务。前三大托管商40%以上的份额具备防御性[Arizton 2025]。</div>
+        <div class="anchor">锚点 &middot; 前三大托管商容量占比&gt;<span class="num-anchor">40%</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">绿电是建设许可证</div>
+        <div class="body-text">柔佛现已要求新建数据中心审批须使用绿色能源[Reccessary 2025]。可再生能源PPA、CRESS框架和厂内光伏已从ESG加分项变为<strong>审批前置条件</strong>。水资源回用设计亦将走上同一路径。</div>
+        <div class="anchor">锚点 &middot; 新建数据中心许可须使用绿色能源</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第03章 &middot; 执行摘要 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — MACRO DIVIDER · 05_macro_divider ============ -->
+<div class="page divider-page" data-section-id="05_macro_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h1 class="divider-title">宏观背景：<br><span class="accent">2026年马来西亚</span></h1>
+    <p class="divider-thesis">经济增速4.6&ndash;4.9%，正处于<strong>创纪录的投资周期</strong>&mdash;&mdash;2025年获批投资MYR 427 b&mdash;&mdash;数字经济目标超过GDP的22%。云资本是最大受益者，而政府正在决定其落地位置。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">GDP与增长</span>
+      <span class="toc-pill">投资周期</span>
+      <span class="toc-pill">数字经济</span>
+      <span class="toc-pill">政策取向</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — MACRO P1 · 06_macro_p1 ============ -->
+<div class="page" data-section-id="06_macro_p1">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 &middot; 宏观背景</div>
+      <div class="page-section-counter">006 / 024</div>
+    </div>
+    <h1 class="page-h1">驱动需求的宏观指标</h1>
+    <p class="page-subhead">稳健增长、创纪录的投资流入与数字经济推进相互叠加，使马来西亚成为区域内云资本的首选目的地。<strong>需求背景是结构性的，而非周期性的。</strong></p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>增长稳健，投资创纪录</h3>
+        <p><strong>2025年GDP增速估计为4.9%</strong>，2026年放缓至约4.6%[AMRO 2026]；2026年第一季度同比增长5.4%[DOSM 2026]。<strong>2025年获批投资达MYR 427 b</strong>，创历史新高，增长11.0%[MIDA 2026]；涵盖数据中心的服务业领跑投资流入。</p>
+        <h3>数字经济是政策优先方向</h3>
+        <p>数字经济的目标是<strong>2025年占GDP的22.6%以上</strong>[MITI 2025]；预计到2030年，AI将为生产能力增加约USD 115 b[Introl 2025]。云基础设施是这两项目标的物理基础，这也是政府将容量视为战略资源的原因。</p>
+        <h3>就业表明实质性扎根</h3>
+        <p>数据中心岗位薪酬<strong>明显高于全国中位数</strong>&mdash;&mdash;入门薪资为MYR 3,000&ndash;7,000，而中位数约为MYR 2,793[BNM 2025]&mdash;&mdash;说明这轮建设正在形成持久的境内经济分量，而不仅是短期施工。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">实际GDP增速与数字经济占比</div>
+            <div class="chart-subtitle">同比% &amp; 占GDP% &middot; 2023&ndash;2026</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="40" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="40" y1="65"  x2="460" y2="65"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="159" text-anchor="end">8</text>
+            <text class="axis-text" x="35" y="114" text-anchor="end">16</text>
+            <text class="axis-text" x="35" y="69"  text-anchor="end">24</text>
+            <!-- GDP growth bars: 3.6, 4.9(est), 4.9, 4.6 (scaled 1%=5.625px) -->
+            <rect class="bar-primary" x="70"  y="180" width="26" height="20"/>
+            <rect class="bar-primary" x="170" y="172" width="26" height="28"/>
+            <rect class="bar-primary" x="270" y="172" width="26" height="28"/>
+            <rect class="bar-primary" x="370" y="174" width="26" height="26"/>
+            <!-- digital econ share line: 22.6,~23.5,~24.5,~25.5 (1%=5.625px from y=200) -->
+            <polyline fill="none" stroke="#00A88B" stroke-width="2.5" points="83,73 183,68 283,62 383,57"/>
+            <circle cx="83" cy="73" r="3.5" fill="#00A88B"/>
+            <circle cx="183" cy="68" r="3.5" fill="#00A88B"/>
+            <circle cx="283" cy="62" r="3.5" fill="#00A88B"/>
+            <circle cx="383" cy="57" r="3.5" fill="#00A88B"/>
+            <text class="label-small" x="83"  y="214" text-anchor="middle">2023</text>
+            <text class="label-small" x="183" y="214" text-anchor="middle">2024</text>
+            <text class="label-small" x="283" y="214" text-anchor="middle">2025e</text>
+            <text class="label-small" x="383" y="214" text-anchor="middle">2026f</text>
+            <text class="label-data" x="383" y="48" text-anchor="middle">25.5%</text>
+            <text class="label-data" x="383" y="170" text-anchor="middle">4.6</text>
+          </svg>
+        </div>
+        <div class="chart-source">[DOSM 2026] GDP &middot; [MITI 2025] + [KIRA ESTIMATES] 数字经济占比</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>AMRO 2026</strong> = ASEAN+3 Macroeconomic Research Office, Malaysia outlook &middot; <strong>DOSM 2026</strong> = Department of Statistics Malaysia, Q1-2026 GDP &middot; <strong>MIDA 2026</strong> = MIDA 2025 investment release &middot; <strong>MITI 2025</strong> = Ministry of Investment, Trade &amp; Industry, digital-economy target &middot; <strong>BNM 2025</strong> = Bank Negara Malaysia
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第04章 &middot; 宏观背景 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — MACRO P2 · 06_macro_p2 ============ -->
+<div class="page" data-section-id="06_macro_p2">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 &middot; 宏观背景</div>
+      <div class="page-section-counter">007 / 024</div>
+    </div>
+    <h1 class="page-h1">政策与投资时间线</h1>
+    <p class="page-subhead">从MyDIGITAL到2026年AI预算拨款，一系列国家数字化与云专项举措将宏观愿景转化为具体的需求管道。<strong>每一个节点都在将受监管工作负载和AI工作负载引回境内。</strong></p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>从蓝图到主权AI</h3>
+        <p>这一进程始于<strong>MyDIGITAL蓝图</strong>（2021年）和云优先通告，经过2024年超大规模云厂商的区域承诺，到2024年12月国家AI办公室成立[Introl 2025]，再到2026年预算中<strong>MYR 5.9 b的AI拨款</strong>[Introl 2025]。政府正在同步推进容量、治理与资金。</p>
+        <h3>主权AI是最新一层</h3>
+        <p>2025年，YTL Power与英伟达达成一项<strong>USD 2.36 b</strong>的合作计划，包括马来西亚首个主权大语言模型；柔佛首个英伟达算力AI机房于10月31日前投入运营[DCD 2025]。主权AI如今是明确的国家能力目标，而非供应商的推销话术。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">政策与投资时间线</div>
+            <div class="chart-subtitle">部分节点 &middot; 2021&ndash;2026</div>
+          </div>
+          <div class="chart-unit">时间线</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="120" x2="450" y2="120"/>
+            <circle cx="80"  cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="160" cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="240" cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="320" cy="120" r="5" fill="#00A88B"/>
+            <circle cx="400" cy="120" r="5" fill="#00A88B"/>
+            <line class="grid-line" x1="80"  y1="120" x2="80"  y2="80"/>
+            <line class="grid-line" x1="160" y1="120" x2="160" y2="150"/>
+            <line class="grid-line" x1="240" y1="120" x2="240" y2="80"/>
+            <line class="grid-line" x1="320" y1="120" x2="320" y2="150"/>
+            <line class="grid-line" x1="400" y1="120" x2="400" y2="80"/>
+            <text class="label-small" x="80"  y="74" text-anchor="middle">2021</text>
+            <text class="label-data"  x="80"  y="62" text-anchor="middle">MyDIGITAL</text>
+            <text class="label-small" x="160" y="166" text-anchor="middle">2022</text>
+            <text class="label-data"  x="160" y="178" text-anchor="middle">云优先</text>
+            <text class="label-small" x="240" y="74" text-anchor="middle">2024</text>
+            <text class="label-data"  x="240" y="62" text-anchor="middle">4个云区域</text>
+            <text class="label-small" x="320" y="166" text-anchor="middle">2024年12月</text>
+            <text class="label-data"  x="320" y="178" text-anchor="middle">AI办公室</text>
+            <text class="label-small" x="400" y="74" text-anchor="middle">2025-26</text>
+            <text class="label-data"  x="400" y="62" text-anchor="middle">主权AI</text>
+          </svg>
+        </div>
+        <div class="chart-source">[MITI 2025] + [Introl 2025] + [DCD 2025] &middot; 部分政策与资本节点</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Introl 2025</strong> = Introl, Malaysia AI-infrastructure brief &middot; <strong>DCD 2025</strong> = Data Center Dynamics, YTL&ndash;Nvidia coverage &middot; <strong>MITI 2025</strong> = Ministry of Investment, Trade &amp; Industry digital-economy materials
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第04章 &middot; 宏观背景 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — SECTOR DIVIDER · 07_sector_divider ============ -->
+<div class="page divider-page" data-section-id="07_sector_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第05章</div>
+    <h1 class="divider-title">行业概览<br>与<span class="accent">规模</span></h1>
+    <p class="divider-thesis">市场从<strong>2022年约10 MW的IT负载扩张至2025年超过1.5 GW</strong>，规模接近USD 6 b，年复合增长约20%。如今行业竞争的核心是可交付容量，而非获客。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">市场价值</span>
+      <span class="toc-pill">IT负载容量</span>
+      <span class="toc-pill">云支出</span>
+      <span class="toc-pill">地理分布</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — SECTOR SIZING · 08_sector_sizing ============ -->
+<div class="page" data-section-id="08_sector_sizing">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 &middot; 行业规模</div>
+      <div class="page-section-counter">009 / 024</div>
+    </div>
+    <h1 class="page-h1">市场规模与增长：马来西亚云基础设施</h1>
+    <p class="page-subhead">衡量规模有两个视角：<strong>数据中心设施</strong>（容量、价值）以及运行其上的<strong>云服务支出</strong>。两者均以接近或超过20%的速度复合增长，而IT负载是最受关注的稀缺性指标。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>设施价值接近USD 6 b，CAGR约20%</h3>
+        <p>数据中心市场<strong>2025年规模约为USD 6.0&ndash;6.5 b</strong>，按约20%的CAGR计算，2031年有望达到USD 16 b[DC Market 2026]。AI优化细分增长更快&mdash;&mdash;有估算认为超大规模细分市场的增速约为37%[MI 2026]。</p>
+        <h3>IT负载是决定性指标</h3>
+        <p>在运IT负载由约10 MW（2022年）增至<strong>2025年的1,500 MW以上</strong>[Introl 2025]，预计2030年达到约3,340 MW[Arizton 2025]，在更高密度的AI情景下将超过6 GW[DC Market 2026]。可用容量如今决定收入。</p>
+        <h3>云支出依托底层设施增长</h3>
+        <p>企业和公共部门的云消费随新设立的境内云区域同步扩大；四家超大规模云厂商已公布的<strong>MYR 90.2 b（USD 20.3 b）</strong>资本投入[MI 2026]，是其意图获取的支出规模在供给侧的代理指标。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">IT负载容量路径</div>
+            <div class="chart-subtitle">MW &middot; 2022&ndash;2030F</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="46" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="46" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="46" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="46" y1="65"  x2="460" y2="65"/>
+            <text class="axis-text" x="42" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="42" y="159" text-anchor="end">1200</text>
+            <text class="axis-text" x="42" y="114" text-anchor="end">2400</text>
+            <text class="axis-text" x="42" y="69"  text-anchor="end">3600</text>
+            <!-- MW: 2022=10,2023=600,2024=1100,2025=1530,2026F=2050,2030F=3340 (scale 1MW=0.0375px) -->
+            <rect class="bar-primary" x="62"  y="199" width="40" height="1"/>
+            <rect class="bar-primary" x="128" y="178" width="40" height="22"/>
+            <rect class="bar-primary" x="194" y="159" width="40" height="41"/>
+            <rect class="bar-primary" x="260" y="143" width="40" height="57"/>
+            <rect class="bar-primary" x="326" y="123" width="40" height="77"/>
+            <rect class="bar-tertiary" x="392" y="75" width="40" height="125"/>
+            <text class="label-small" x="82"  y="214" text-anchor="middle">22</text>
+            <text class="label-small" x="148" y="214" text-anchor="middle">23</text>
+            <text class="label-small" x="214" y="214" text-anchor="middle">24</text>
+            <text class="label-small" x="280" y="214" text-anchor="middle">25</text>
+            <text class="label-small" x="346" y="214" text-anchor="middle">26F</text>
+            <text class="label-small" x="412" y="214" text-anchor="middle">30F</text>
+            <text class="label-data" x="280" y="137" text-anchor="middle">1530</text>
+            <text class="label-data" x="412" y="69"  text-anchor="middle">3340</text>
+          </svg>
+        </div>
+        <div class="chart-source">[Introl 2025] 在运负载 &middot; [Arizton 2025] 2030年预测 &middot; [KIRA ESTIMATES] 插值</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DC Market 2026</strong> = Malaysia data-centre &amp; hyperscale market reports, Jan 2026 &middot; <strong>MI 2026</strong> = market-research syndicate, Malaysia data-centre Jan 2026 &middot; <strong>Introl 2025</strong> = Introl SEA AI-infrastructure brief &middot; <strong>Arizton 2025</strong> = Malaysia colocation portfolio 2025
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第05章 &middot; 行业规模 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — SEGMENTS · 09_segments ============ -->
+<div class="page" data-section-id="09_segments">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 &middot; 细分市场经济性</div>
+      <div class="page-section-counter">010 / 024</div>
+    </div>
+    <h1 class="page-h1">细分市场经济性：利润在哪里</h1>
+    <p class="page-subhead">设施分为三类&mdash;&mdash;<strong>超大规模自建、第三方托管，以及主权/托管云</strong>&mdash;&mdash;各自拥有不同的客户、利润结构和约束。AI优化容量横跨三类，并享有溢价。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>超大规模：规模大、单位利润薄、资金雄厚</h3>
+        <p>自建的超大规模云区域（AWS、微软、Google、Oracle）追求的是规模经济和生态锁定，而非设施利润。它们占用最大的电力配额，也受到最多的政策审视。<strong>约束不在资本，而在电网接入时段。</strong></p>
+        <h3>托管：容量批发商</h3>
+        <p>Bridge、YTL和Vantage合计占有<strong>40%以上的在运容量</strong>[Arizton 2025]；AirTrunk、Equinix、NTT、Keppel、万国数据（GDS）和AIMS占据其余份额。利润取决于电力成本转嫁、租期和互联密度。AI就绪机房（200&ndash;256 MW园区）的去化享有溢价。</p>
+        <h3>主权与托管云：具备防御性，由监管驱动</h3>
+        <p>TM One的指定本地云服务商角色及SAP合作伙伴托管云地位[TM One 2024]，支撑起一个规模较小但黏性更强的需求池：受监管、对时延敏感且受数据驻留约束的工作负载，超大规模云厂商难以完全本地化。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">各细分市场在运容量</div>
+            <div class="chart-subtitle">IT负载占比（示意） &middot; 2025</div>
+          </div>
+          <div class="chart-unit">占比%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="40" x2="150" y2="200"/>
+            <!-- horizontal bars: hyperscale self-build 46, colocation 42, sovereign/managed 12 -->
+            <rect class="bar-primary"   x="150" y="55"  width="240" height="34"/>
+            <rect class="bar-secondary" x="150" y="103" width="219" height="34"/>
+            <rect class="bar-tertiary"  x="150" y="151" width="63"  height="34"/>
+            <text class="label-small" x="145" y="76"  text-anchor="end">超大规模</text>
+            <text class="label-small" x="145" y="124" text-anchor="end">托管</text>
+            <text class="label-small" x="145" y="172" text-anchor="end">主权/托管云</text>
+            <text class="label-data" x="400" y="76"  text-anchor="start">46%</text>
+            <text class="label-data" x="379" y="124" text-anchor="start">42%</text>
+            <text class="label-data" x="223" y="172" text-anchor="start">12%</text>
+          </svg>
+        </div>
+        <div class="chart-source">[Arizton 2025] 托管份额 + [KIRA ESTIMATES] 细分拆分</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Arizton 2025</strong> = Malaysia colocation data-centre portfolio 2025 &middot; <strong>TM One 2024</strong> = Telekom Malaysia (TM One) CSP / SAP-PMC announcements &middot; segment split = [Kira estimates], anchored on top-3 colo &gt;40% capacity disclosure
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第06章 &middot; 细分市场经济性 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — COMPETITIVE DIVIDER · 10_competitive_divider ============ -->
+<div class="page divider-page" data-section-id="10_competitive_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第07章</div>
+    <h1 class="divider-title">竞争<br><span class="accent">格局</span></h1>
+    <p class="divider-thesis">四家超大规模云厂商决定需求上限；三大托管商占有<strong>40%以上的在运容量</strong>；一家指定本地云服务商掌握主权赛道。顶层竞争激烈，中层持续整合。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">市场结构</span>
+      <span class="toc-pill">AWS</span>
+      <span class="toc-pill">微软</span>
+      <span class="toc-pill">YTL</span>
+      <span class="toc-pill">TM One</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — COMPETITIVE STRUCTURE · 11_competitive_structure ============ -->
+<div class="page" data-section-id="11_competitive_structure">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 竞争格局</div>
+      <div class="page-section-counter">011 / 024</div>
+    </div>
+    <h1 class="page-h1">市场结构：顶层竞争激烈，下层持续整合</h1>
+    <p class="page-subhead">容量集中于少数托管运营商，需求则集中于四家全球云厂商。<strong>稀缺的中间层&mdash;&mdash;已锁定电力、AI就绪的容量&mdash;&mdash;掌握定价能力。</strong></p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">在运容量份额&mdash;&mdash;主要运营商</div>
+            <div class="chart-subtitle">示意 &middot; 2025</div>
+          </div>
+          <div class="chart-unit">容量%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 170" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="10" x2="120" y2="160"/>
+            <rect class="bar-primary" x="120" y="16"  width="120" height="20"/>
+            <rect class="bar-primary" x="120" y="44"  width="98"  height="20"/>
+            <rect class="bar-primary" x="120" y="72"  width="82"  height="20"/>
+            <rect class="bar-secondary" x="120" y="100" width="150" height="20"/>
+            <rect class="bar-tertiary"  x="120" y="128" width="63"  height="20"/>
+            <text class="label-small" x="115" y="30"  text-anchor="end">Bridge DC</text>
+            <text class="label-small" x="115" y="58"  text-anchor="end">YTL DC</text>
+            <text class="label-small" x="115" y="86"  text-anchor="end">Vantage</text>
+            <text class="label-small" x="115" y="114" text-anchor="end">AirTrunk及其他</text>
+            <text class="label-small" x="115" y="142" text-anchor="end">TM One/本地</text>
+            <text class="label-data" x="244" y="30"  text-anchor="start">~16%</text>
+            <text class="label-data" x="222" y="58"  text-anchor="start">~14%</text>
+            <text class="label-data" x="206" y="86"  text-anchor="start">~11%</text>
+            <text class="label-data" x="274" y="114" text-anchor="start">~47%</text>
+            <text class="label-data" x="187" y="142" text-anchor="start">~12%</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>两层结构</h3>
+        <p>前三大托管商&mdash;&mdash;<strong>Bridge、YTL和Vantage</strong>&mdash;&mdash;合计占有40%以上的在运容量[Arizton 2025]。其余设施由一长串全球运营商（AirTrunk、Equinix、NTT、Keppel、万国数据、AIMS）以及以主权需求为支撑的本地层构成。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>前三大托管商容量</span><span class="val">&gt;40%</span></div>
+          <div class="stat-line"><span>在运站点</span><span class="val">50+</span></div>
+          <div class="stat-line"><span>柔佛电力占比</span><span class="val">~70%</span></div>
+          <div class="stat-line"><span>超大规模云区域</span><span class="val">4</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">需求锚点</div>
+        <div class="comp-name">AWS</div>
+        <div class="comp-parent">亚太（马来西亚）区域，已上线</div>
+        <div class="comp-stat-row"><span>承诺投资</span><span class="val">&gt;USD 6.2 b</span></div>
+        <div class="comp-stat-row"><span>可用区</span><span class="val">3</span></div>
+        <div class="comp-strengths">至2038年<strong>承诺规模最大的云建设</strong>；生态拉动力强[AWS 2024]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">需求锚点</div>
+        <div class="comp-name">微软</div>
+        <div class="comp-parent">大吉隆坡+柔佛区域</div>
+        <div class="comp-stat-row"><span>承诺投资</span><span class="val">USD 2.2 b</span></div>
+        <div class="comp-stat-row"><span>可用区</span><span class="val">3</span></div>
+        <div class="comp-strengths">两个云区域，包括位于柔佛的<strong>Southeast Asia 3</strong>[Microsoft 2025]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">容量+AI</div>
+        <div class="comp-name">YTL Data Center</div>
+        <div class="comp-parent">YTL Power International</div>
+        <div class="comp-stat-row"><span>AI计划</span><span class="val">USD 2.36 b</span></div>
+        <div class="comp-stat-row"><span>站点</span><span class="val">Green DC Park</span></div>
+        <div class="comp-strengths">英伟达合作伙伴；柔佛<strong>主权AI+绿电</strong>园区[DCD 2025]。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">主权云</div>
+        <div class="comp-name">TM One</div>
+        <div class="comp-parent">Telekom Malaysia</div>
+        <div class="comp-stat-row"><span>角色</span><span class="val">本地云服务商</span></div>
+        <div class="comp-stat-row"><span>授权</span><span class="val">MyDIGITAL</span></div>
+        <div class="comp-strengths">指定主权云+<strong>SAP合作伙伴托管云</strong>[TM One 2024]。</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Arizton 2025</strong> = Malaysia colocation portfolio 2025 &middot; <strong>AWS 2024</strong> = AWS Asia Pacific (Malaysia) launch &middot; <strong>Microsoft 2025</strong> = Microsoft Malaysia region announcement &middot; <strong>DCD 2025</strong> = Data Center Dynamics &middot; <strong>TM One 2024</strong> = Telekom Malaysia &middot; shares = [Kira estimates]
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 竞争格局 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — PROFILE AWS · 12_profile_aws ============ -->
+<div class="page" data-section-id="12_profile_aws">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 企业画像1/4</div>
+      <div class="page-section-counter">012 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>AWS</h2>
+        <div class="sub">亚太（马来西亚）区域 &middot; 超大规模云</div>
+        <div class="tags">
+          <span class="data-tag">超大规模云厂商</span>
+          <span class="data-tag">区域已上线</span>
+          <span class="data-tag">3个可用区</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">承诺投资</div><div class="val">6.2<span class="unit">USD b+</span></div></div>
+        <div class="stat"><div class="label">周期</div><div class="val">2038<span class="unit">截至</span></div></div>
+        <div class="stat"><div class="label">可用区</div><div class="val">3</div></div>
+        <div class="stat"><div class="label">状态</div><div class="val">已上线</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>市场地位</h3>
+        <p>AWS已启用设有三个可用区的<strong>亚太（马来西亚）区域</strong>，承诺至2038年投入超过<strong>USD 6.2 b</strong>支持相关基础设施[AWS 2024]&mdash;&mdash;这是马来西亚已披露的单笔最大云建设投资。</p>
+        <h3>战略</h3>
+        <p>该区域为对时延敏感、受数据驻留约束的马来西亚客户提供境内部署选择，而AWS公共部门云框架协议则打开了政府市场[AWS 2022]。其打法是生态深度与生态锁定，而非设施利润。</p>
+      </div>
+      <div class="profile-col">
+        <h3>近期动向</h3>
+        <ul>
+          <li>区域上线，设<strong>3个可用区</strong>以满足境内数据驻留</li>
+          <li>签署公共部门<strong>云框架协议</strong>[AWS 2022]</li>
+          <li>至2038年超过USD 6.2 b的多年期建设承诺</li>
+          <li>通过技能与合作伙伴计划培育本地云消费</li>
+        </ul>
+        <h3>战略研判</h3>
+        <p>AWS决定高端算力的需求上限。但其<strong>电网用电量</strong>和用水特征，使其直接处于马来西亚电力与可持续发展审批的约束之内&mdash;&mdash;扩张节奏如今取决于公用设施。</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>AWS 2024</strong> = AWS Asia Pacific (Malaysia) Region launch &amp; investment release &middot; <strong>AWS 2022</strong> = AWS&ndash;Malaysia Cloud Framework Agreement, public-sector blog
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 企业画像 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 — PROFILE MICROSOFT · 12_profile_microsoft ============ -->
+<div class="page" data-section-id="12_profile_microsoft">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 企业画像2/4</div>
+      <div class="page-section-counter">013 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>微软</h2>
+        <div class="sub">Malaysia West + Southeast Asia 3（柔佛）</div>
+        <div class="tags">
+          <span class="data-tag">超大规模云厂商</span>
+          <span class="data-tag">2个区域</span>
+          <span class="data-tag">政府科技</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">承诺投资</div><div class="val">2.2<span class="unit">USD b</span></div></div>
+        <div class="stat"><div class="label">期限</div><div class="val">4<span class="unit">年</span></div></div>
+        <div class="stat"><div class="label">可用区</div><div class="val">3</div></div>
+        <div class="stat"><div class="label">第二区域</div><div class="val">柔佛</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>市场地位</h3>
+        <p>微软承诺<strong>四年内投入USD 2.2 b</strong>，并在大吉隆坡和柔佛推出Malaysia West云区域；2025年11月又宣布在柔佛建设第二个区域&mdash;&mdash;<strong>Southeast Asia 3</strong>，预计两到三年内上线[Microsoft 2025]。</p>
+        <h3>战略</h3>
+        <p>微软将基础设施与深厚的<strong>政府科技合作关系</strong>[Microsoft 2022]相结合，并通过合作伙伴Enfrasys签署云框架协议，将Azure定位为MyDIGITAL框架下受监管机构和企业迁移上云的默认选择。</p>
+      </div>
+      <div class="profile-col">
+        <h3>近期动向</h3>
+        <ul>
+          <li>Malaysia West区域上线，设<strong>3个超大规模站点</strong></li>
+          <li>2025年11月宣布柔佛<strong>Southeast Asia 3</strong>区域</li>
+          <li>政府科技合作，并经Enfrasys签署公共部门云框架协议</li>
+          <li>在境内设施上叠加Copilot/AI服务</li>
+        </ul>
+        <h3>战略研判</h3>
+        <p>双区域布局使微软具备竞争对手难以匹敌的<strong>韧性与数据驻留深度</strong>。其在政府和主权工作负载上的布局是超大规模云厂商中最成熟的，正在压缩TM One的独占赛道。</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Microsoft 2025</strong> = Microsoft Malaysia cloud-region announcements (Malaysia West; Southeast Asia 3) &middot; <strong>Microsoft 2022</strong> = Government of Malaysia GovTech partnership, Microsoft News
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 企业画像 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 — PROFILE YTL · 12_profile_ytl ============ -->
+<div class="page" data-section-id="12_profile_ytl">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 企业画像3/4</div>
+      <div class="page-section-counter">014 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>YTL Data Center</h2>
+        <div class="sub">YTL Power International &middot; 容量+主权AI</div>
+        <div class="tags">
+          <span class="data-tag">托管前三</span>
+          <span class="data-tag">英伟达</span>
+          <span class="data-tag">绿电</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">AI计划</div><div class="val">2.36<span class="unit">USD b</span></div></div>
+        <div class="stat"><div class="label">首个AI机房</div><div class="val">10月<span class="unit">2025</span></div></div>
+        <div class="stat"><div class="label">托管排名</div><div class="val">前三</div></div>
+        <div class="stat"><div class="label">站点</div><div class="val">柔佛</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>市场地位</h3>
+        <p>按容量计，YTL Data Center是马来西亚<strong>前三大托管运营商</strong>之一[Arizton 2025]；其独特优势在于隶属一家综合电力集团&mdash;&mdash;YTL Power International&mdash;&mdash;能够自供绿色电力。</p>
+        <h3>战略</h3>
+        <p>其与<strong>英伟达达成的USD 2.36 b协议</strong>[DCD 2025]为柔佛一座使用可再生电力的绿色数据中心园区及马来西亚首个主权大语言模型提供资金。首个英伟达算力AI机房于2025年10月31日上线，使YTL成为国家主权AI的锚点。</p>
+      </div>
+      <div class="profile-col">
+        <h3>近期动向</h3>
+        <ul>
+          <li>2025年7月29日签署<strong>USD 2.36 b英伟达协议</strong></li>
+          <li>柔佛首个英伟达AI机房<strong>于2025年10月31日上线</strong></li>
+          <li>绿色数据中心园区实现100%可再生能源供电</li>
+          <li>国家主权大语言模型开发正在推进</li>
+        </ul>
+        <h3>战略研判</h3>
+        <p>YTL将竞争对手的结构性短板&mdash;&mdash;<strong>电力获取</strong>&mdash;&mdash;转化为自身的护城河。自有发电能力加上绿色资质，恰好跨过了正在抑制竞争对手柔佛扩张的两道门槛（能源与可持续发展）。</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DCD 2025</strong> = Data Center Dynamics, YTL Power&ndash;Nvidia USD 2.3 b AI-infrastructure coverage &middot; <strong>Arizton 2025</strong> = Malaysia colocation portfolio 2025 (top-3 operators)
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 企业画像 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 — PROFILE TM ONE · 12_profile_tmone ============ -->
+<div class="page" data-section-id="12_profile_tmone">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 企业画像4/4</div>
+      <div class="page-section-counter">015 / 024</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>TM One</h2>
+        <div class="sub">Telekom Malaysia &middot; 主权云与托管云</div>
+        <div class="tags">
+          <span class="data-tag">本地云服务商</span>
+          <span class="data-tag">主权云</span>
+          <span class="data-tag">SAP PMC</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">角色</div><div class="val">唯一<span class="unit">本地CSP</span></div></div>
+        <div class="stat"><div class="label">授权</div><div class="val">MyDIGITAL</div></div>
+        <div class="stat"><div class="label">数据中心</div><div class="val">多<span class="unit">站点</span></div></div>
+        <div class="stat"><div class="label">重点</div><div class="val">公共部门</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>市场地位</h3>
+        <p>TM One被指定为MyDIGITAL框架下<strong>唯一的马来西亚本地云服务商</strong>[TM One 2024]，运营中立数据中心，其运营不受外国监管约束&mdash;&mdash;这正是主权云的结构性定义。</p>
+        <h3>战略</h3>
+        <p>TM One锚定受监管、受数据驻留约束的赛道：政府机构、金融及国防相关工作负载。其获任<strong>SAP首家本地合作伙伴托管云服务商</strong>[TM One 2024]，将这一优势延伸至附带主权保障的企业迁移上云。</p>
+      </div>
+      <div class="profile-col">
+        <h3>近期动向</h3>
+        <ul>
+          <li>被指定为公共机构的<strong>唯一本地云服务商</strong></li>
+          <li>首家<strong>SAP合作伙伴托管云</strong>本地超大规模服务商</li>
+          <li>推出Cloud Alpha平台支持公共部门转型</li>
+          <li>多站点中立数据中心布局，覆盖马来西亚及区域</li>
+        </ul>
+        <h3>战略研判</h3>
+        <p>TM One的护城河在于<strong>监管而非技术</strong>。随着超大规模云厂商在区域内设立主权专区，其独占性正在收窄&mdash;&mdash;其持久优势是公共部门关系和完整的数据驻留控制。</p>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>TM One 2024</strong> = Telekom Malaysia (TM One) disclosures: sole MyDIGITAL local CSP; first local SAP Partner-Managed-Cloud provider; Cloud Alpha
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 企业画像 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 — DEMAND DIVIDER · 13_demand_divider ============ -->
+<div class="page divider-page" data-section-id="13_demand_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第08章</div>
+    <h1 class="divider-title">需求驱动<br>与<span class="accent">电力</span></h1>
+    <p class="divider-thesis">需求已不是问题。到2030&ndash;2035年，数据中心用电可能占<strong>马来西亚半岛用电量的30&ndash;60%</strong>&mdash;&mdash;远高于美国或中国的占比。电力、电网和水资源如今决定哪些工作负载得以建设、建在哪里。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">工作负载结构</span>
+      <span class="toc-pill">电网与TNB</span>
+      <span class="toc-pill">水资源</span>
+      <span class="toc-pill">柔佛审批门槛</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 — DEMAND & POWER · 14_demand_channels ============ -->
+<div class="page" data-section-id="14_demand_channels">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第08章 &middot; 需求与电力</div>
+      <div class="page-section-counter">017 / 024</div>
+    </div>
+    <h1 class="page-h1">需求已定，电力与水资源是门槛</h1>
+    <p class="page-subhead">AI工作负载、企业上云和主权要求都指向同一方向&mdash;&mdash;向上。真正的约束是<strong>电网、接入时间表和水资源</strong>，它们正在实质性地决定哪些项目能够获批。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>电网是新的天花板</h3>
+        <p>到2030&ndash;2035年，数据中心可能占<strong>马来西亚半岛用电量的30&ndash;60%</strong>[Fulcrum 2025]，而美国约为9&ndash;12%。TNB的“绿色通道”将接入周期由36&ndash;48个月缩短至约12个月[TNB 2024]，但柔佛和赛城的馈线已发出预警。</p>
+        <h3>柔佛是在设门槛，而非拒绝</h3>
+        <p>2024年，柔佛以公用设施时间表和规划为由，否决了约<strong>30%的新申请</strong>[DCD 2025]，并且现已<strong>要求新建数据中心审批须使用绿色能源</strong>[Reccessary 2025]。自2024年年中以来，一项针对非AI项目的非正式暂停一直影响着审批[TechwireAsia 2026]。</p>
+        <h3>开发商承担升级成本</h3>
+        <p>为保护居民用户，电网和供水升级成本<strong>完全由开发商承担</strong>[Fulcrum 2025]。高耗水特征使水资源回用和闭环冷却成为审批前置条件，而非ESG加分项。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">数据中心占全国用电比重</div>
+            <div class="chart-subtitle">占发电量% &middot; 2030&ndash;35年预测</div>
+          </div>
+          <div class="chart-unit">发电%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="44" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="44" y1="150" x2="460" y2="150"/>
+            <line class="grid-line" x1="44" y1="100" x2="460" y2="100"/>
+            <line class="grid-line" x1="44" y1="50"  x2="460" y2="50"/>
+            <text class="axis-text" x="40" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="40" y="154" text-anchor="end">20</text>
+            <text class="axis-text" x="40" y="104" text-anchor="end">40</text>
+            <text class="axis-text" x="40" y="54"  text-anchor="end">60</text>
+            <!-- US 10.5, China 5, Malaysia low 30, Malaysia high 60 (1%=2.5px) -->
+            <rect class="bar-secondary" x="80"  y="174" width="56" height="26"/>
+            <rect class="bar-secondary" x="180" y="188" width="56" height="12"/>
+            <rect class="bar-primary"   x="280" y="125" width="56" height="75"/>
+            <rect class="bar-tertiary"  x="380" y="50"  width="56" height="150"/>
+            <text class="label-small" x="108" y="214" text-anchor="middle">美国</text>
+            <text class="label-small" x="208" y="214" text-anchor="middle">中国</text>
+            <text class="label-small" x="308" y="214" text-anchor="middle">马来西亚低值</text>
+            <text class="label-small" x="408" y="214" text-anchor="middle">马来西亚高值</text>
+            <text class="label-data" x="108" y="168" text-anchor="middle">~11%</text>
+            <text class="label-data" x="308" y="119" text-anchor="middle">30%</text>
+            <text class="label-data" x="408" y="44"  text-anchor="middle">60%</text>
+          </svg>
+        </div>
+        <div class="chart-source">[Fulcrum 2025] 马来西亚半岛数据中心用电占比预测2030&ndash;2035</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Fulcrum 2025</strong> = Fulcrum (ISEAS), Malaysia data-centre energy analysis &middot; <strong>TNB 2024</strong> = Tenaga Nasional Green Lane Pathway &middot; <strong>DCD 2025</strong> = Data Center Dynamics, Johor analysis &middot; <strong>Reccessary 2025</strong> = Reccessary, Johor green-energy requirement &middot; <strong>TechwireAsia 2026</strong> = Techwire Asia, DC policy
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第08章 &middot; 需求与电力 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 — REGULATORY · 15_regulatory ============ -->
+<div class="page" data-section-id="15_regulatory">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第09章 &middot; 监管环境</div>
+      <div class="page-section-counter">019 / 024</div>
+    </div>
+    <h1 class="page-h1">监管与政策环境</h1>
+    <p class="page-subhead">三项制度决定工作负载的部署位置：<strong>云优先政策与国家云计算政策、PDPA修订，以及针对新建项目的能源与水资源门槛</strong>。三者共同界定了主权云的需求池。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>云优先政策引导公共需求</h3>
+        <p>云优先通告和国家云计算政策设定了<strong>公共部门云存储使用率80%</strong>的目标[MyGovCloud 2024]，通过MyGovCloud和一家指定本地云服务商实施。这是一股直接的、有法定依据的需求拉力，指向主权可控的设施。</p>
+        <h3>PDPA提高数据驻留预期</h3>
+        <p><strong>《2024年个人数据保护（修订）法》</strong>于2025年1月1日、4月1日和6月1日分阶段生效[Crowe 2025]，提高了同意、处理和跨境传输标准。受监管行业越来越将其视为境内数据驻留的信号。</p>
+        <h3>能源与水资源已成为审批要件</h3>
+        <p>新的规划指引和柔佛的<strong>绿色能源要求</strong>[Reccessary 2025]，使可持续电力和水资源回用设计成为获批条件&mdash;&mdash;这是硬性门槛，而非指导意见。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">监管时间线</div>
+            <div class="chart-subtitle">云与数据驻留 &middot; 2021&ndash;2025</div>
+          </div>
+          <div class="chart-unit">时间线</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="120" x2="450" y2="120"/>
+            <circle cx="75"  cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="175" cy="120" r="5" fill="#1E6FFF"/>
+            <circle cx="275" cy="120" r="5" fill="#D97706"/>
+            <circle cx="375" cy="120" r="5" fill="#D97706"/>
+            <line class="grid-line" x1="75"  y1="120" x2="75"  y2="80"/>
+            <line class="grid-line" x1="175" y1="120" x2="175" y2="150"/>
+            <line class="grid-line" x1="275" y1="120" x2="275" y2="80"/>
+            <line class="grid-line" x1="375" y1="120" x2="375" y2="150"/>
+            <text class="label-small" x="75"  y="74" text-anchor="middle">2021</text>
+            <text class="label-data"  x="75"  y="62" text-anchor="middle">云优先</text>
+            <text class="label-small" x="175" y="166" text-anchor="middle">2022-24</text>
+            <text class="label-data"  x="175" y="178" text-anchor="middle">NCCP / CFA</text>
+            <text class="label-small" x="275" y="74" text-anchor="middle">2025</text>
+            <text class="label-data"  x="275" y="62" text-anchor="middle">PDPA修订</text>
+            <text class="label-small" x="375" y="166" text-anchor="middle">2025</text>
+            <text class="label-data"  x="375" y="178" text-anchor="middle">绿色门槛</text>
+          </svg>
+        </div>
+        <div class="chart-source">[MyGovCloud 2024] + [Crowe 2025] + [Reccessary 2025] &middot; 部分监管节点</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>MyGovCloud 2024</strong> = Ministry of Finance / Cloud-First &amp; National Cloud Computing Policy &middot; <strong>Crowe 2025</strong> = Crowe Malaysia, PDPA (Amendment) Act 2024 phased commencement &middot; <strong>Reccessary 2025</strong> = Reccessary, Johor green-energy data-centre requirement
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第09章 &middot; 监管环境 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 — AI DIVIDER · 16_ai_divider ============ -->
+<div class="page divider-page" data-section-id="16_ai_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第10章</div>
+    <h1 class="divider-title">AI对<br><span class="accent">云基础设施</span>的影响</h1>
+    <p class="divider-thesis">AI既是需求倍增器，也是建设标准的颠覆者。它将IT负载推向<strong>6 GW以上</strong>，重设冷却与供电设计，并通过主权AI，为政府将算力锚定在境内提供了理由。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">主权AI</span>
+      <span class="toc-pill">GPU需求</span>
+      <span class="toc-pill">建设标准</span>
+      <span class="toc-pill">应用场景</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 22 — AI OVERVIEW + USE CASES · 17_ai_overview ============ -->
+<div class="page" data-section-id="17_ai_overview">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第10章 &middot; AI影响</div>
+      <div class="page-section-counter">020 / 024</div>
+    </div>
+    <h1 class="page-h1">马来西亚云基础设施中的AI：规模与应用场景</h1>
+    <p class="page-subhead">AI正从两端重塑该行业&mdash;&mdash;<strong>推高需求与密度</strong>，同时将主权算力引回境内。目标是到2030年，AI为生产能力增加约USD 115 b[Introl 2025]。</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>主权AI是核心应用场景</h3>
+        <p>YTL与英伟达<strong>USD 2.36 b</strong>的合作计划及马来西亚首个主权大语言模型[DCD 2025]，使境内AI能力成为国家目标。2026年预算为AI划拨<strong>MYR 5.9 b</strong>[Introl 2025]，国家AI办公室负责统筹治理。</p>
+        <h3>密度改写设施形态</h3>
+        <p>AI大幅提高机柜密度，推动预计IT负载以约33%的CAGR攀升至<strong>6 GW以上</strong>[DC Market 2026]。液冷、GPU就绪机房和稳定的绿电成为建设标准底线&mdash;&mdash;2023年前的设计无法承载高端工作负载。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">IT负载：AI带动的密度提升</div>
+            <div class="chart-subtitle">GW &middot; 2025 vs 2035年预测</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 230" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="46" y1="190" x2="440" y2="190"/>
+            <line class="grid-line" x1="46" y1="140" x2="440" y2="140"/>
+            <line class="grid-line" x1="46" y1="90"  x2="440" y2="90"/>
+            <line class="grid-line" x1="46" y1="40"  x2="440" y2="40"/>
+            <text class="axis-text" x="42" y="194" text-anchor="end">0</text>
+            <text class="axis-text" x="42" y="144" text-anchor="end">2.5</text>
+            <text class="axis-text" x="42" y="94"  text-anchor="end">5.0</text>
+            <text class="axis-text" x="42" y="44"  text-anchor="end">7.5</text>
+            <!-- 1.53 GW and 6.43 GW (1GW=20px from y=190) -->
+            <rect class="bar-primary"  x="120" y="159" width="80" height="31"/>
+            <rect class="bar-tertiary" x="280" y="61"  width="80" height="129"/>
+            <text class="label-small" x="160" y="206" text-anchor="middle">2025</text>
+            <text class="label-small" x="320" y="206" text-anchor="middle">2035F</text>
+            <text class="label-data" x="160" y="153" text-anchor="middle">1.53</text>
+            <text class="label-data" x="320" y="55"  text-anchor="middle">6.43</text>
+          </svg>
+        </div>
+        <div class="chart-source">[DC Market 2026] AI密度带动IT负载CAGR约33%</div>
+      </div>
+    </div>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">UC-01</div>
+        <div class="uc-title">主权大语言模型托管</div>
+        <div class="uc-body">在境内GPU机房开展基础模型训练与推理，使数据和模型权重处于国家控制之下。</div>
+        <div class="uc-example">例 &middot; YTL GREEN DC PARK，柔佛</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-02</div>
+        <div class="uc-title">GPU即服务</div>
+        <div class="uc-body">向无法直接获得芯片的本地企业和初创公司出租稀缺的加速器算力。</div>
+        <div class="uc-example">例 &middot; 英伟达算力容量</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-03</div>
+        <div class="uc-title">AI就绪托管</div>
+        <div class="uc-body">专为加速器机柜打造的液冷高密度园区（200&ndash;256 MW），去化享有溢价。</div>
+        <div class="uc-example">例 &middot; 赛城AI园区</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-04</div>
+        <div class="uc-title">电网感知调度</div>
+        <div class="uc-body">将可灵活安排的AI训练转移至低谷时段和可再生能源时段，缓解馈线压力并满足绿色门槛。</div>
+        <div class="uc-example">例 &middot; 与PPA挂钩的工作负载</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-05</div>
+        <div class="uc-title">冷却优化</div>
+        <div class="uc-body">在日益收紧的可持续发展规则下，以AI进行热管理和水资源管理，降低PUE和取水量。</div>
+        <div class="uc-example">例 &middot; 闭环冷却</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">UC-06</div>
+        <div class="uc-title">公共部门AI服务</div>
+        <div class="uc-body">在主权云上运行政府AI&mdash;&mdash;公民服务、文档处理&mdash;&mdash;并受数据驻留和PDPA管控。</div>
+        <div class="uc-example">例 &middot; MYGOVCLOUD + NAIO</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>Introl 2025</strong> = Introl, Malaysia AI-infrastructure brief &middot; <strong>DCD 2025</strong> = Data Center Dynamics, YTL&ndash;Nvidia &middot; <strong>DC Market 2026</strong> = Malaysia AI &amp; hyperscale data-centre market reports
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第10章 &middot; AI影响 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 23 — FORECAST · 18_forecast ============ -->
+<div class="page" data-section-id="18_forecast">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第11章 &middot; 预测</div>
+      <div class="page-section-counter">022 / 024</div>
+    </div>
+    <h1 class="page-h1">五年展望与预测</h1>
+    <p class="page-subhead">基准情景：数据中心市场<strong>到2031年大致翻倍至USD 12&ndash;16 b</strong>，IT负载达到约3.3 GW。各情景之间的差距几乎完全取决于<strong>电网与水资源约束解除的速度。</strong></p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>基准&mdash;&mdash;受约束节奏的增长</h3>
+        <p>市场价值以约20%的速度复合增长，<strong>到2031年达到约USD 16 b</strong>[DC Market 2026]；IT负载到2030年达到约3.3 GW[Arizton 2025]。“绿色通道”接入和绿电PPA按稳健节奏落地；主权需求稳步填充。</p>
+        <h3>乐观&mdash;&mdash;电网约束解除，AI需求激增</h3>
+        <p>若电网和供水升级加速、AI密度保持高位，IT负载将迈向<strong>6 GW以上</strong>[DC Market 2026]，市场价值超出基准，柔佛将巩固其区域枢纽地位，在容量上比肩新加坡。</p>
+        <h3>悲观&mdash;&mdash;门槛持续关闭</h3>
+        <p>暂停令带来的持续阻力、馈线约束或水资源限制压低审批数量；资本转向泰国和印度尼西亚。增速放缓至高个位数，已承诺资本的投放周期拉长。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">市场价值&mdash;&mdash;情景扇形图</div>
+            <div class="chart-subtitle">USD b &middot; 2025&ndash;2031F</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="150" x2="460" y2="150"/>
+            <line class="grid-line" x1="40" y1="100" x2="460" y2="100"/>
+            <line class="grid-line" x1="40" y1="50"  x2="460" y2="50"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="154" text-anchor="end">7</text>
+            <text class="axis-text" x="35" y="104" text-anchor="end">14</text>
+            <text class="axis-text" x="35" y="54"  text-anchor="end">21</text>
+            <!-- 1b=7.14px from y=200. start 6.1 @ x=70 -->
+            <!-- bull to 19.5, base to 16.0, bear to 10.5 -->
+            <polyline fill="none" stroke="#00A88B" stroke-width="2.5" points="70,156 135,143 200,126 265,106 330,84 395,62 450,61"/>
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="70,156 135,148 200,137 265,124 330,109 395,93 450,86"/>
+            <polyline fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4 3" points="70,156 135,151 200,145 265,138 330,131 395,127 450,125"/>
+            <circle cx="450" cy="61" r="3.5" fill="#00A88B"/>
+            <circle cx="450" cy="86" r="3.5" fill="#1E6FFF"/>
+            <circle cx="450" cy="125" r="3.5" fill="#D97706"/>
+            <text class="label-small" x="70"  y="216" text-anchor="middle">25</text>
+            <text class="label-small" x="200" y="216" text-anchor="middle">27F</text>
+            <text class="label-small" x="330" y="216" text-anchor="middle">29F</text>
+            <text class="label-small" x="450" y="216" text-anchor="middle">31F</text>
+            <text class="label-data" x="448" y="54"  text-anchor="end">19.5</text>
+            <text class="label-data" x="448" y="98"  text-anchor="end">16.0</text>
+            <text class="label-data" x="448" y="138" text-anchor="end">10.5</text>
+          </svg>
+        </div>
+        <div class="chart-source">[DC Market 2026] 基准路径 &middot; 乐观/悲观 = [KIRA ESTIMATES]，基于电网约束解除速度</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DC Market 2026</strong> = Malaysia data-centre &amp; hyperscale market reports (base CAGR, IT-load) &middot; <strong>Arizton 2025</strong> = Malaysia colocation portfolio (2030 IT load) &middot; bull/bear = [Kira estimates] on grid-and-water unlock pace
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第11章 &middot; 预测 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 24 — METHODOLOGY ENDNOTE · 19_methodology_endnote ============ -->
+<div class="page" data-section-id="19_methodology_endnote">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第12章 &middot; 研究方法尾注</div>
+      <div class="page-section-counter">024 / 024</div>
+    </div>
+    <h1 class="page-h1">研究方法尾注与来源构成</h1>
+    <p class="page-subhead">本报告的构建方式、支撑判断的证据构成，以及全文引用的全部具名来源。</p>
+    <div class="source-mix-grid">
+      <div class="source-mix-card">
+        <div class="smc-tag">具名二手锚点</div>
+        <div class="smc-num">~62<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-secondary">
+        <div class="smc-tag">一手/渠道研判</div>
+        <div class="smc-num">~14<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-estimate">
+        <div class="smc-tag">KIRA估算</div>
+        <div class="smc-num">~24<span class="pct">%</span></div>
+      </div>
+    </div>
+    <div class="endnote-grid">
+      <div class="endnote-body">
+        <p>本报告对两类证据进行交叉验证。凡带有<strong>具名来源标注</strong>（如[MIDA 2026]、[AWS 2024]、[DCD 2025]）的数据，均来自该来源，完整引用列于右侧。凡标注为[Kira estimates]的数据，均由KIRA分析师综合已披露的输入&mdash;&mdash;超大规模云厂商披露文件、运营商容量披露、政府数据和渠道研判&mdash;&mdash;按相应章节所述方法推算得出。</p>
+        <h4>已披露的主要估算方法</h4>
+        <p>细分容量拆分以已披露的“前三大托管商占比&gt;40%”为锚点，交叉推算出超大规模/托管/主权云的结构。2024&ndash;2031年市场价值插值以2025年为基数，套用已报告的约20% CAGR。乐观/悲观预测区间根据电网、接入和供水约束解除的速度调整基准路径&mdash;&mdash;这正是本报告识别出的核心约束。</p>
+        <p>约<strong>76%的量化结论引用外部来源</strong>；约24%由KIRA推算，并相应标注。</p>
+      </div>
+      <div class="endnote-side">
+        <h4>具名来源</h4>
+        <ul class="sources-list">
+          <li><strong>MIDA 2026</strong> — Malaysian Investment Development Authority, 2025 approved-investment release</li>
+          <li><strong>DOSM 2026</strong> — Dept of Statistics Malaysia, Q1-2026 advance GDP</li>
+          <li><strong>AMRO 2026</strong> — ASEAN+3 Macroeconomic Research Office, Malaysia outlook</li>
+          <li><strong>MITI 2025</strong> — Ministry of Investment, Trade &amp; Industry, digital-economy</li>
+          <li><strong>BNM 2025</strong> — Bank Negara Malaysia, data-centre wage data</li>
+          <li><strong>AWS 2024/2022</strong> — AWS Malaysia Region + Cloud Framework Agreement</li>
+          <li><strong>Microsoft 2025/2022</strong> — Microsoft Malaysia regions + GovTech</li>
+          <li><strong>DCD 2025</strong> — Data Center Dynamics, YTL&ndash;Nvidia &amp; Johor</li>
+          <li><strong>TM One 2024</strong> — Telekom Malaysia, local-CSP &amp; SAP-PMC</li>
+          <li><strong>Arizton 2025</strong> — Malaysia colocation portfolio, top-3 operators</li>
+          <li><strong>DC Market 2026 / MI 2026</strong> — Malaysia data-centre market reports</li>
+          <li><strong>Introl 2025</strong> — Malaysia AI-infrastructure brief</li>
+          <li><strong>Fulcrum 2025</strong> — ISEAS, DC energy &amp; sustainability</li>
+          <li><strong>TNB 2024</strong> — Tenaga Nasional Green Lane Pathway</li>
+          <li><strong>Reccessary 2025</strong> — Johor green-energy DC requirement</li>
+          <li><strong>Crowe 2025</strong> — PDPA (Amendment) Act 2024 commencement</li>
+          <li><strong>MyGovCloud 2024</strong> — Cloud-First / NCCP policy</li>
+          <li><strong>TechwireAsia 2026</strong> — DC policy &amp; AI moratorium</li>
+        </ul>
+        <div style="margin-top:auto;padding-top:10px;font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:9px;color:var(--muted);">联系方式 &middot; research@kiraresearch.com</div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:8.5px;color:var(--muted);margin-top:10px;line-height:1.4;">免责声明 &middot; 本报告仅限授权读者使用。标注为[Kira estimates]的数据由分析师推算，存在固有不确定性。本报告不构成投资建议。&copy; 2026 KIRA Research.</p>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第12章 &middot; 研究方法尾注 &middot; KR-MYS-CLOUD-2026-001</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
