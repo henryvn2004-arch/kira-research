@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>新加坡AI服务2027年展望 — KIRA Research</title>
+<meta name="description" content="新加坡区域GPU枢纽定位、分行业企业大语言模型应用，以及塑造至2027年算力基础设施的AI治理框架。KIRA Research市场分析。">
+<meta property="og:title" content="新加坡AI服务2027年展望 — KIRA Research">
+<meta property="og:description" content="新加坡AI服务2027——GPU云基础设施、企业应用、Model AI Governance Framework v2、人才储备与区域竞争定位。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "领先地位"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-hero .tags .data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em; font-weight: 600; background: var(--primary-soft); color: var(--primary); text-transform: uppercase; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 10px; height: 230px; }
+.ai-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 9px 10px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 10.5px; line-height: 1.45; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover-page { background: var(--dark-bg); color: var(--dark-text); position: relative; overflow: hidden; }
+.cover-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.09) 0%, transparent 60%); pointer-events: none; }
+.cover-inner { position: relative; z-index: 2; height: 100%; padding: 64px 96px; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-logo { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.01em; color: var(--dark-text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-meta-pre { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; letter-spacing: 0.25em; color: var(--primary); margin-bottom: 18px; font-weight: 600; }
+.cover-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; color: var(--dark-text); margin-bottom: 18px; max-width: 980px; }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 17px; line-height: 1.45; color: #A3A9B6; max-width: 760px; }
+.cover-subtitle strong { color: var(--dark-text); font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 24px; border-top: 1px solid #252A33; }
+.cover-meta-strip .meta-cell .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; letter-spacing: 0.15em; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.cover-meta-strip .meta-cell .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--dark-text); }
+.cover-meta-strip .meta-cell .val .qual { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 500; font-size: 11px; color: #A3A9B6; margin-left: 6px; }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.25em; padding: 8px 14px; border: 1px solid var(--primary); border-radius: 3px; align-self: flex-start; font-weight: 600; }
+
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; font-weight: 600; }
+.meth-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+.meth-item:last-child { border-bottom: none; }
+.meth-item .meth-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.25; }
+.meth-item .meth-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.meth-item .meth-desc strong { color: var(--text); font-weight: 600; }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 48px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-col li .toc-title { font-size: 13px; color: var(--text); line-height: 1.3; }
+.toc-col li .toc-title .toc-sub { display: block; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+.toc-col li .toc-page { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--muted); text-align: right; font-weight: 600; }
+
+.endnote-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.source-mix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; flex-shrink: 0; }
+.source-mix-card { background: var(--bg-soft); border-radius: 5px; padding: 8px 12px; border-left: 3px solid var(--primary); }
+.source-mix-card.tag-secondary { border-left-color: var(--green); }
+.source-mix-card.tag-estimate { border-left-color: var(--amber); }
+.source-mix-card .smc-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.source-mix-card .smc-num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.source-mix-card .smc-num .pct { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-left: 2px; }
+.endnote-body p { font-size: 11px; line-height: 1.45; color: var(--text-mid); margin-bottom: 5px; }
+.endnote-body p strong { color: var(--text); font-weight: 600; }
+.endnote-body h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 8px; margin-bottom: 4px; font-weight: 600; }
+.endnote-side { background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; }
+.endnote-side h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.endnote-side .contact-line { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 4px; }
+.endnote-side .contact-line strong { color: var(--text); font-weight: 600; }
+.sources-list { list-style: none; }
+.sources-list li { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; line-height: 1.25; color: var(--text-mid); padding: 1px 0; border-bottom: 1px dotted var(--border); }
+.sources-list li strong { color: var(--text); font-weight: 700; }
+
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: #FFFFFF; padding: 0; }
+  .page { box-shadow: none; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER ============ -->
+<div class="page cover-page" data-section-id="01_cover">
+  <div class="atmosphere"></div>
+  <div class="cover-inner">
+    <div>
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div>
+      <div class="cover-meta-pre">新加坡 &middot; AI服务 &middot; 2027</div>
+      <h1 class="cover-title">新加坡AI服务——<span class="accent">GPU枢纽</span>定位与企业应用</h1>
+      <p class="cover-subtitle">
+        三大超大规模云服务商已承诺<strong>在2028年前向新加坡GPU级基础设施投入逾USD 10 b</strong>，而Model AI Governance Framework v2正在塑造企业部署方式。制约这一城市国家区域枢纽定位的是电力与人才，而非需求。本报告展望至2031年。
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">机密 &middot; 仅限授权读者使用</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">国家</div>
+          <div class="val">新加坡 <span class="qual">(SG)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">行业</div>
+          <div class="val">AI服务与基础设施</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">范围与期限</div>
+          <div class="val">2027 <span class="qual">5年预测</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">报告编号</div>
+          <div class="val">KR-SGP-AISVC-2027-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — METHODOLOGY ============ -->
+<div class="page" data-section-id="02_methodology">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第01章 &middot; 研究方法</div>
+      <div class="page-section-counter">002 / 014</div>
+    </div>
+    <h1 class="page-h1">本报告的研究方法</h1>
+    <p class="page-subhead">
+      本报告基于两类证据：<strong>一手信息</strong>——来自运营商与企业渠道、关于算力容量、大语言模型部署时间表及治理状况的研判；以及<strong>二手依据</strong>——IMDA、EDB与MAS的出版物、超大规模云服务商的投资披露，以及经交叉验证的市场估算。
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>一手信息</h3>
+        <div class="meth-item">
+          <div class="meth-label">运营商与企业研判</div>
+          <div class="meth-desc">关于GPU算力扩建、企业大语言模型部署时间表及托管服务采用情况的研判，信息来自超大规模云服务商投资公告、企业软件公司披露，以及金融、物流和政府领域从业者的评论。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">分析师综合</div>
+          <div class="meth-desc">KIRA内部对大量英文研究检索结果进行交叉验证，并与区域数字基础设施及AI服务研究进行模式比对。全文标注为[Kira estimates]。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">治理研判</div>
+          <div class="meth-desc">分析IMDA与PDPC的出版物，包括Model AI Governance Framework v2、国家人工智能战略2.0（National AI Strategy 2.0），以及MAS关于金融业负责任使用AI的指引，并依据实施时间表进行校准。</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>二手依据</h3>
+        <div class="meth-item">
+          <div class="meth-label">统计机构</div>
+          <div class="meth-desc">资讯通信媒体发展局（IMDA）、经济发展局（EDB）、财政部（MOF）及新加坡统计局。数字经济、投资审批、AI预算与就业数据均以此为依据，并在文中注明出处。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">超大规模云服务商披露</div>
+          <div class="meth-desc">AWS、Google Cloud与Microsoft Azure在新加坡的投资公告及区域扩建披露。NVIDIA DGX Cloud合作条款以及NUS/NTU研究基础设施承诺被用作资本投入的代理指标。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">交叉验证估算</div>
+          <div class="meth-desc">适用于单一来源披露不足的企业应用率及AI服务支出拆分。我们综合2&ndash;3项输入并披露方法，标注为[Kira estimates]，并在文中注明锚定指标。详见尾注。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 &middot; 仅限授权读者使用 &middot; &copy; 2027 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — CONTENTS ============ -->
+<div class="page" data-section-id="03_toc">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 &middot; 目录</div>
+      <div class="page-section-counter">003 / 014</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <p class="page-subhead">共十个章节、十四页，深色分隔页标示宏观、基础设施、企业需求与治理四个部分。报告以预测及研究方法尾注收尾。</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><span class="toc-title">研究方法<span class="toc-sub">方法与来源标注</span></span><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><span class="toc-title">目录<span class="toc-sub">本页</span></span><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><span class="toc-title">执行摘要<span class="toc-sub">关键数据与五项启示</span></span><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><span class="toc-title">宏观背景<span class="toc-sub">GDP、数字经济、AI预算、智慧国</span></span><span class="toc-page">006</span></li>
+          <li><span class="toc-num">05</span><span class="toc-title">GPU枢纽基础设施<span class="toc-sub">超大规模云服务商投资、算力容量</span></span><span class="toc-page">007</span></li>
+          <li><span class="toc-num">06</span><span class="toc-title">企业AI应用<span class="toc-sub">金融、物流、政府领域</span></span><span class="toc-page">009</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">07</span><span class="toc-title">AI服务竞争格局<span class="toc-sub">超大规模云服务商、本地企业、AI初创企业</span></span><span class="toc-page">010</span></li>
+          <li><span class="toc-num">08</span><span class="toc-title">治理框架<span class="toc-sub">Model AI Governance Framework v2与MAS规则</span></span><span class="toc-page">011</span></li>
+          <li><span class="toc-num">09</span><span class="toc-title">人才储备与区域定位<span class="toc-sub">签证框架、NUS/NTU、东南亚竞争</span></span><span class="toc-page">012</span></li>
+          <li><span class="toc-num">10</span><span class="toc-title">2027&ndash;2031年预测<span class="toc-sub">情景与支出走势</span></span><span class="toc-page">013</span></li>
+          <li><span class="toc-num">11</span><span class="toc-title">研究方法尾注<span class="toc-sub">来源与分析师联系方式</span></span><span class="toc-page">014</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第02章 &middot; 目录 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 ============ -->
+<div class="page" data-section-id="04_exec_summary_p1">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 &middot; 执行摘要</div>
+      <div class="page-section-counter">004 / 014</div>
+    </div>
+    <h1 class="page-h1">新加坡AI服务——2027年拐点</h1>
+    <p class="page-subhead">
+      新加坡AI服务市场<strong>2026年规模估计为USD 5.4 b</strong>，年增速超过28%；支撑因素包括逾USD 10 b的超大规模云服务商算力承诺、将负责任部署制度化的Model AI Governance Framework v2，以及正从试点走向量产的企业部门。<strong>电力、人才与治理合规</strong>如今成为区分领先者与跟随者的关键。
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2026年AI服务市场</div>
+        <div class="num">USD 5.4<span class="unit">b</span></div>
+        <div class="change">至2031年CAGR约28%[Kira estimates]</div>
+        <div class="source-tag est">[KIRA EST]</div>
+      </div>
+      <div class="callout">
+        <div class="label">超大规模云算力资本开支</div>
+        <div class="num">USD 10.3<span class="unit">b</span></div>
+        <div class="change">AWS、Google、Microsoft已承诺[EDB 2026]</div>
+        <div class="source-tag">[EDB 2026]</div>
+      </div>
+      <div class="callout">
+        <div class="label">生态内AI初创企业</div>
+        <div class="num">~1,100<span class="unit"></span></div>
+        <div class="change">同比+22%；180+家达A轮以上[IMDA 2026]</div>
+        <div class="source-tag">[IMDA 2026]</div>
+      </div>
+      <div class="callout">
+        <div class="label">2026年政府AI预算</div>
+        <div class="num">SGD 1.0<span class="unit">b</span></div>
+        <div class="change">国家AI战略2.0多年期拨款[MOF 2026]</div>
+        <div class="source-tag">[MOF 2026]</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>算力基础设施已就位，变现才是问题</h3>
+        <p>AWS、Google Cloud与Microsoft Azure三大超大规模云服务商已承诺或正在新加坡建设GPU级基础设施，<strong>至2028年合计逾USD 10 b</strong>[EDB 2026]。NUS与NTU部署的NVIDIA DGX SuperPOD集群打通了从研究到商用的路径[NVIDIA 2025]。算力的问题不在于能否获取，而在于利用率。</p>
+        <h3>企业应用真实存在，但并不均衡</h3>
+        <p>我们的分析师估计，截至2027年第一季度，<strong>37%的大型企业</strong>至少有一项生成式语言工作负载投入生产[Kira estimates]，2024年约为12%。金融业以信用评分、文档分析和客户服务自动化领先；按员工规模计，政府数字服务的部署率在单一行业中最高。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">新加坡AI服务市场规模</div>
+            <div class="chart-subtitle">USD b &middot; 2024&ndash;2031F &middot; CAGR约28%</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">5</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">10</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">15</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">20</text>
+            <!-- values USD b: 3.3, 4.2, 5.4, 6.9, 8.8, 11.3, 14.5, 18.6 scale 1b=8px max 20 -->
+            <rect class="bar-primary" x="58"  y="174" width="34" height="26"/>
+            <rect class="bar-primary" x="108" y="166" width="34" height="34"/>
+            <rect class="bar-primary" x="158" y="157" width="34" height="43"/>
+            <rect class="bar-primary" x="208" y="145" width="34" height="55"/>
+            <rect class="bar-primary" x="258" y="130" width="34" height="70"/>
+            <rect class="bar-primary" x="308" y="110" width="34" height="90"/>
+            <rect class="bar-primary" x="358" y="84"  width="34" height="116"/>
+            <rect class="bar-primary" x="408" y="51"  width="34" height="149"/>
+            <text class="label-small" x="75"  y="214" text-anchor="middle">24</text>
+            <text class="label-small" x="125" y="214" text-anchor="middle">25</text>
+            <text class="label-small" x="175" y="214" text-anchor="middle">26</text>
+            <text class="label-small" x="225" y="214" text-anchor="middle">27F</text>
+            <text class="label-small" x="275" y="214" text-anchor="middle">28F</text>
+            <text class="label-small" x="325" y="214" text-anchor="middle">29F</text>
+            <text class="label-small" x="375" y="214" text-anchor="middle">30F</text>
+            <text class="label-small" x="425" y="214" text-anchor="middle">31F</text>
+            <text class="label-data" x="175" y="151" text-anchor="middle">5.4</text>
+            <text class="label-data" x="425" y="45"  text-anchor="middle">18.6</text>
+          </svg>
+        </div>
+        <div class="chart-source">[KIRA ESTIMATES] &middot; 基准情景2024&ndash;2031年CAGR约28% &middot; 二手依据：EDB 2026、IMDA 2026</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>EDB 2026</strong> = Singapore Economic Development Board, digital investment releases 2026 &middot; <strong>IMDA 2026</strong> = Infocomm Media Development Authority, Singapore AI ecosystem report &middot; <strong>MOF 2026</strong> = Ministry of Finance Singapore, Budget 2026 &middot; <strong>NVIDIA 2025</strong> = NVIDIA Singapore DGX SuperPOD announcement
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第03章 &middot; 执行摘要 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page" data-section-id="04_exec_summary_p2">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 &middot; 执行摘要</div>
+      <div class="page-section-counter">005 / 014</div>
+    </div>
+    <h1 class="page-h1">五项战略启示</h1>
+    <p class="page-subhead">至2029年价值将在何处积累，以及市场参与者应如何应对。<strong>治理合规已成为企业采购的新门槛</strong>；获取算力只是基本条件，利用率才是差异化所在。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">以治理合规构建企业护城河</div>
+        <div class="body-text">在受监管行业，Model AI Governance Framework v2已由自愿采用变为普遍预期。<strong>具备预置合规工具的供应商</strong>——审计追踪、偏差记录、人工监督关卡——在金融与政府领域成交更快。未经治理的模型无法通过采购审核。</div>
+        <div class="anchor">锚点 &middot; <span class="num-anchor">MAS 2026</span> AI风险通知适用于所有持牌银行</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">金融是核心行业</div>
+        <div class="body-text">DBS、OCBC、UOB与GXS合计有<strong>逾800个内部模型</strong>处于生产运行中[Kira estimates]，以信贷决策、文档智能与客户沟通自动化为主。小型金融科技企业通过API采用；在位企业则自建专有的微调技术栈。</div>
+        <div class="anchor">锚点 &middot; 金融占企业AI支出<span class="num-anchor">约34%</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">电力是算力的上限</div>
+        <div class="body-text">新加坡电网无法承受不受限的GPU扩建；<strong>暂停令解除后的数据中心框架</strong>对新增容量设限，并优先保障AI工作负载而非通用计算[EMA 2026]。已获电力配额的运营商掌握着最稀缺的投入要素。</div>
+        <div class="anchor">锚点 &middot; 数据中心暂停令解除，但附带<span class="num-anchor">容量上限</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">研究到商用的转化链是真正的差异化优势</div>
+        <div class="body-text">2024年NUS与NTU共发表<strong>逾2,400篇AI论文</strong>[NRF 2025]，衍生企业数量同比增长31%。A*STAR AI加速器与AISG资助将应用型人才导向企业场景。缺乏这一转化链的竞争者在人才获取上将滞后18&ndash;24个月。</div>
+        <div class="anchor">锚点 &middot; NUS/NTU位列亚太AI研究机构<span class="num-anchor">前五</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">区域枢纽定位成立，但面临竞争</div>
+        <div class="body-text">马来西亚、印度尼西亚与泰国均在以更低电力成本引入超大规模云区域。新加坡的优势——法治、人才、连通性、与金融中心同址——仅对<strong>高敏感度、高复杂度的工作负载</strong>具有持久性。通用GPU推理可能在3年内迁往境外。</div>
+        <div class="anchor">锚点 &middot; 新加坡电力成本为区域同类的<span class="num-anchor">3&ndash;4&times;</span></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第03章 &middot; 执行摘要 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — MACRO DIVIDER ============ -->
+<div class="page divider-page" data-section-id="05_macro_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h1 class="divider-title">宏观背景：<br><span class="accent">2027年的新加坡</span></h1>
+    <p class="divider-thesis">一个<strong>增速3.5&ndash;4.0%的高收入城市国家</strong>：数字服务贡献近20%的GDP，AI预算拨款达SGD 1 b，国家AI战略2.0将大语言模型基础设施视为主权能力。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">GDP与数字经济</span>
+      <span class="toc-pill">政府AI支出</span>
+      <span class="toc-pill">智慧国2.0</span>
+      <span class="toc-pill">EDB投资吸引力</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — MACRO + GPU HUB ============ -->
+<div class="page" data-section-id="06_macro_and_gpu">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04&ndash;05章 &middot; 宏观与GPU基础设施</div>
+      <div class="page-section-counter">006 / 014</div>
+    </div>
+    <h1 class="page-h1">宏观顺风因素与GPU枢纽建设</h1>
+    <p class="page-subhead">
+      <strong>SGD 673 b规模的经济体</strong>以3.5&ndash;4.0%的速度增长，数字服务约占GDP的20%[DOS 2026]，政府愿意将算力基础设施作为国家战略能力予以支持。超大规模云服务商顺势跟进。
+    </p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>数字经济是增长支柱</h3>
+        <p>2025年新加坡信息通信技术行业对GDP的贡献达<strong>SGD 134 b</strong>[IMDA 2026]，其中AI相关服务的增速约为传统IT的3&times;。金融管理局与EDB将AI基础设施支出列为战略性FDI类别，可依据全球投资者计划（Global Investor Programme）享受更高的税收优惠。</p>
+        <h3>超大规模云服务商的承诺具有约束力</h3>
+        <p>AWS承诺至2028年新增<strong>USD 4.3 b</strong>数据中心与GPU容量[AWS 2025]；Google Cloud确认<strong>USD 2.0 b</strong>以AI为重点的区域扩建[Google 2026]；Microsoft Azure宣布投入<strong>USD 3.6 b</strong>用于AI云基础设施及Copilot本地化[Microsoft 2026]。三者承诺合计逾<strong>USD 10 b</strong>。Oracle另承诺<strong>USD 0.4 b</strong>用于云区域容量[Oracle 2025]。</p>
+        <h3>国家AI战略2.0为上述投入提供支撑</h3>
+        <p>该战略于2023年12月发布，设定了<strong>2030年前培养15,000名AI从业者</strong>的目标[IMDA 2024]，并承诺在所有主要公共服务领域部署AI。2026年预算在中期预算期内专门拨出<strong>SGD 1 b</strong>用于AI基础设施与模型开发[MOF 2026]。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">超大规模云服务商GPU基础设施承诺</div>
+            <div class="chart-subtitle">至2028年承诺投资额 &middot; USD b</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="40" x2="120" y2="200"/>
+            <!-- horizontal bars: AWS 4.3, Microsoft 3.6, Google 2.0, Oracle 0.4 scale max 5b = 320px -->
+            <rect class="bar-primary"   x="120" y="50"  width="275" height="34"/>
+            <rect class="bar-secondary" x="120" y="98"  width="230" height="34"/>
+            <rect class="bar-tertiary"  x="120" y="146" width="128" height="34"/>
+            <rect style="fill:#6366F1;" x="120" y="185" width="26"  height="20"/>
+            <text class="label-small" x="115" y="71"  text-anchor="end">AWS</text>
+            <text class="label-small" x="115" y="119" text-anchor="end">Microsoft</text>
+            <text class="label-small" x="115" y="167" text-anchor="end">Google</text>
+            <text class="label-small" x="115" y="199" text-anchor="end">Oracle</text>
+            <text class="label-data"  x="404" y="71"  text-anchor="start">$4.3b</text>
+            <text class="label-data"  x="359" y="119" text-anchor="start">$3.6b</text>
+            <text class="label-data"  x="257" y="167" text-anchor="start">$2.0b</text>
+            <text class="label-data"  x="154" y="199" text-anchor="start">$0.4b</text>
+          </svg>
+        </div>
+        <div class="chart-source">[AWS 2025] · [Microsoft 2026] · [Google 2026] · [Oracle 2025] · 至2028年已承诺资本开支</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DOS 2026</strong> = Dept of Statistics Singapore, GDP release &middot; <strong>IMDA 2026</strong> = IMDA ICT industry survey &middot; <strong>AWS 2025</strong> = AWS Singapore investment announcement &middot; <strong>Microsoft 2026</strong> = Microsoft Asia AI infrastructure release &middot; <strong>Google 2026</strong> = Google Cloud APAC region expansion &middot; <strong>Oracle 2025</strong> = Oracle Singapore cloud region &middot; <strong>MOF 2026</strong> = Singapore Budget 2026 statement
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第04&ndash;05章 &middot; 宏观与GPU基础设施 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — ENTERPRISE ADOPTION DIVIDER ============ -->
+<div class="page divider-page" data-section-id="07_enterprise_divider">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第06章</div>
+    <h1 class="divider-title">企业AI<br><span class="accent">应用</span></h1>
+    <p class="divider-thesis">金融、物流与政府领域以<strong>生产部署而非试点</strong>领先，但应用深度差异悬殊。先行的在位企业与后进者之间的差距，扩大速度超出多数董事会的认知。</p>
+    <div class="divider-mini-toc">
+      <span class="toc-pill">金融服务</span>
+      <span class="toc-pill">物流与港口</span>
+      <span class="toc-pill">政府数字服务</span>
+      <span class="toc-pill">应用率</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — ENTERPRISE AI BY SECTOR ============ -->
+<div class="page" data-section-id="08_enterprise_adoption">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 &middot; 企业AI应用</div>
+      <div class="page-section-counter">008 / 014</div>
+    </div>
+    <h1 class="page-h1">企业大语言模型应用：分行业解析</h1>
+    <p class="page-subhead" style="margin-bottom:10px;">
+      我们的分析师估计，截至2027年第一季度，<strong>37%的新加坡大型企业</strong>至少有一个语言模型投入生产[Kira estimates]。金融业领先；中小企业的应用滞后2&ndash;3年。
+    </p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>金融服务：部署最深入</h3>
+        <p>四家总部位于新加坡的主要银行（DBS、OCBC、UOB、GXS）合计运行<strong>逾800个生产模型</strong>[Kira estimates]，覆盖信用风险评分、文档智能、客户沟通及贸易融资自动化。据报道，DBS的AI项目每年创造<strong>SGD 380 m增量价值</strong>[DBS 2026]。MAS依据FEAT原则及AI通知（MO&amp;S 2026）设定的规范，使可解释性工具成为信贷决策模型的强制要求。</p>
+        <h3>物流与港口：规模化的运营AI</h3>
+        <p>PSA International与SATS部署了预测性维护、泊位调度和货物装卸模型，这些模型以<strong>大士港一期（2022年启用）</strong>的港口遥测数据训练。PSA的卡车调度优化估计在<strong>2026年将停留时间缩短12%</strong>[PSA 2026]。大语言模型在物流领域的应用尚处起步阶段（文档提取、海关归类），但同比增速约40%。</p>
+      </div>
+      <div class="exec-chart" style="min-height:0; max-height:260px;">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">分行业企业AI应用率</div>
+            <div class="chart-subtitle">有生产工作负载的大型企业占比 · 2027年第一季度</div>
+          </div>
+          <div class="chart-unit">%应用率</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="130" y1="20" x2="130" y2="175"/>
+            <!-- bars: Finance 58, Gov digital 51, Logistics 39, Healthcare 28, Retail 19, Manufacturing 16 -->
+            <rect class="bar-primary"   x="130" y="22"  width="232" height="22"/>
+            <rect class="bar-primary"   x="130" y="52"  width="204" height="22"/>
+            <rect class="bar-secondary" x="130" y="82"  width="156" height="22"/>
+            <rect class="bar-secondary" x="130" y="112" width="112" height="22"/>
+            <rect class="bar-tertiary"  x="130" y="142" width="76"  height="22"/>
+            <rect class="bar-tertiary"  x="130" y="165" width="64"  height="18"/>
+            <text class="label-small" x="125" y="36"  text-anchor="end">金融</text>
+            <text class="label-small" x="125" y="66"  text-anchor="end">政府数字服务</text>
+            <text class="label-small" x="125" y="96"  text-anchor="end">物流</text>
+            <text class="label-small" x="125" y="126" text-anchor="end">医疗</text>
+            <text class="label-small" x="125" y="156" text-anchor="end">零售</text>
+            <text class="label-small" x="125" y="178" text-anchor="end">制造</text>
+            <text class="label-data"  x="370" y="36"  text-anchor="start">58%</text>
+            <text class="label-data"  x="342" y="66"  text-anchor="start">51%</text>
+            <text class="label-data"  x="294" y="96"  text-anchor="start">39%</text>
+            <text class="label-data"  x="250" y="126" text-anchor="start">28%</text>
+            <text class="label-data"  x="214" y="156" text-anchor="start">19%</text>
+            <text class="label-data"  x="202" y="178" text-anchor="start">16%</text>
+          </svg>
+        </div>
+        <div class="chart-source">[KIRA ESTIMATES] · 大型企业调查交叉验证 · 2027年第一季度</div>
+      </div>
+    </div>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">金融 &middot; UC 01</div>
+        <div class="uc-title">信贷决策大语言模型</div>
+        <div class="uc-body">以<strong>非结构化数据</strong>——董事申报文件、新闻情绪、供应链披露——补充传统评分，使核保审核时间缩短约30%[Kira estimates]。MAS FEAT可解释性要求规定必须记录决策轨迹。</div>
+        <div class="uc-example">已上线：DBS、OCBC、Funding Societies</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">金融 &middot; UC 02</div>
+        <div class="uc-title">贸易融资文档智能</div>
+        <div class="uc-body">自动提取并核验<strong>提单、信用证和发票</strong>。DBS的系统每日处理逾10,000份贸易单据[DBS 2026]。与人工审核相比，错误率降低约45%。</div>
+        <div class="uc-example">已上线：DBS、UOB、Standard Chartered SG</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">政府数字服务 &middot; UC 03</div>
+        <div class="uc-title">公民服务聊天机器人</div>
+        <div class="uc-body">GovTech的Pair平台支撑CPF、HDB、MOM与ICA的<strong>跨部门公民问答</strong>，每月处理约1.2 m次查询，首次接触解决率达78%[GovTech 2026]。特殊情况转人工处理。</div>
+        <div class="uc-example">已上线：GovTech Pair、CPF Board、HDB</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">物流 &middot; UC 04</div>
+        <div class="uc-title">海关归类自动化</div>
+        <div class="uc-body">依据产品描述、证书及过往清关记录进行<strong>HS编码预测</strong>。SATS与SingPost每日处理约800,000件物品归类，准确率94%[SATS 2026]，减少了报关行的纠错工作量。</div>
+        <div class="uc-example">已上线：SATS、SingPost、SF Express SG</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">医疗 &middot; UC 05</div>
+        <div class="uc-title">临床记录摘要</div>
+        <div class="uc-body">SingHealth与NUHS部署了<strong>出院小结与转诊信生成</strong>，使初级住院医师的文书时间缩短约40%[MOH 2026]。仅获准用于临床支持；在MOH发布大语言模型临床指引前，诊断决策功能仍被禁用。</div>
+        <div class="uc-example">已上线：SingHealth、NUHS</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">制造 &middot; UC 06</div>
+        <div class="uc-title">工艺异常检测</div>
+        <div class="uc-body">半导体与电子产线（Flex、Micron SG）采用<strong>融合传感器遥测与视觉检测的多模态模型</strong>，缺陷检测精度为规则系统的3&times;[Kira estimates]。多数非半导体工厂仍处于试点阶段。</div>
+        <div class="uc-example">试点中：Flex、Micron、Applied Materials SG</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>DBS 2026</strong> = DBS Group AI programme annual disclosure &middot; <strong>GovTech 2026</strong> = Singapore GovTech annual report &middot; <strong>PSA 2026</strong> = PSA International sustainability + digital report &middot; <strong>SATS 2026</strong> = SATS Ltd annual disclosure &middot; <strong>MOH 2026</strong> = Ministry of Health Singapore digital health update
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第06章 &middot; 企业AI应用 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — COMPETITIVE LANDSCAPE ============ -->
+<div class="page" data-section-id="09_competitive">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 竞争格局</div>
+      <div class="page-section-counter">009 / 014</div>
+    </div>
+    <h1 class="page-h1">AI服务竞争格局</h1>
+    <p class="page-subhead">
+      竞争分为三个层级：超大规模云服务商提供基础设施；全球系统集成商与模型提供商推动企业部署；约1,100家企业组成的<strong>本地AI初创层</strong>深耕垂直细分市场。市场结构由超大规模云服务商主导，但并不封闭。
+    </p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">各层级提供商AI服务收入占比</div>
+            <div class="chart-subtitle">示意 &middot; 新加坡2026</div>
+          </div>
+          <div class="chart-unit">%收入占比</div>
+        </div>
+        <div class="chart-body-flex" style="flex:1; min-height:0;">
+          <svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="110" y1="20" x2="110" y2="160"/>
+            <!-- Hyperscalers 44%, Global SIs 28%, Local SaaS/API 18%, AI-native startups 10% -->
+            <rect class="bar-primary"   x="110" y="22"  width="176" height="28"/>
+            <rect class="bar-secondary" x="110" y="58"  width="112" height="28"/>
+            <rect style="fill:#6366F1;" x="110" y="94"  width="72"  height="28"/>
+            <rect class="bar-tertiary"  x="110" y="130" width="40"  height="28"/>
+            <text class="label-small" x="105" y="39"  text-anchor="end">超大规模云服务商</text>
+            <text class="label-small" x="105" y="75"  text-anchor="end">全球系统集成商</text>
+            <text class="label-small" x="105" y="111" text-anchor="end">本地SaaS/API</text>
+            <text class="label-small" x="105" y="147" text-anchor="end">AI原生企业</text>
+            <text class="label-data"  x="294" y="39"  text-anchor="start">44%</text>
+            <text class="label-data"  x="230" y="75"  text-anchor="start">28%</text>
+            <text class="label-data"  x="190" y="111" text-anchor="start">18%</text>
+            <text class="label-data"  x="158" y="147" text-anchor="start">10%</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>超大规模云服务商的主导地位是结构性的</h3>
+        <p>AWS Bedrock、Azure OpenAI Service与Google Vertex AI合计估计占<strong>AI服务支出的44%</strong>[Kira estimates]，受益于云账单捆绑、既有企业关系，以及受监管客户所要求的新加坡本地端点。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>AWS Bedrock新加坡月活</span><span class="val">~38k家机构</span></div>
+          <div class="stat-line"><span>Azure OpenAI新加坡端点</span><span class="val">~12k家机构</span></div>
+          <div class="stat-line"><span>Google Vertex新加坡</span><span class="val">~8k家机构</span></div>
+          <div class="stat-line"><span>收入达SGD1m+的AI初创企业</span><span class="val">~180+</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">第一层级 &middot; 超大规模云服务商</div>
+        <div class="comp-name">AWS Singapore</div>
+        <div class="comp-parent">Amazon Web Services &middot; 美国母公司</div>
+        <div class="comp-stat-row"><span>AI支出份额</span><span class="val">~18%</span></div>
+        <div class="comp-stat-row"><span>核心产品</span><span class="val">Bedrock, SageMaker</span></div>
+        <div class="comp-stat-row"><span>承诺资本开支</span><span class="val">USD 4.3b</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>在新加坡企业中关系最深厚，满足受监管行业的数据驻留合规要求，与AISG建立合作。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">第一层级 &middot; 超大规模云服务商</div>
+        <div class="comp-name">Microsoft Azure SG</div>
+        <div class="comp-parent">Microsoft Corporation &middot; 美国母公司</div>
+        <div class="comp-stat-row"><span>AI支出份额</span><span class="val">~16%</span></div>
+        <div class="comp-stat-row"><span>核心产品</span><span class="val">Azure OpenAI, Copilot</span></div>
+        <div class="comp-stat-row"><span>承诺资本开支</span><span class="val">USD 3.6b</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>Office 365装机基础、政府授权框架、Copilot GovCloud。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">第二层级 &middot; 本地平台</div>
+        <div class="comp-name">AI Singapore (AISG)</div>
+        <div class="comp-parent">政府项目 &middot; 由NUS / NTU承办</div>
+        <div class="comp-stat-row"><span>已部署模型</span><span class="val">SEA-LION等</span></div>
+        <div class="comp-stat-row"><span>资助资金</span><span class="val">SGD 500 m+</span></div>
+        <div class="comp-stat-row"><span>加速初创企业</span><span class="val">300+</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>多语言SEA-LION模型（东南亚语言）、公共部门AI资助分配、研究到商用的转化链。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">第二层级 &middot; 金融科技AI</div>
+        <div class="comp-name">Quantifind / CredoLab</div>
+        <div class="comp-parent">总部位于新加坡的AI金融科技企业</div>
+        <div class="comp-stat-row"><span>业务重点</span><span class="val">KYC / 信用评分</span></div>
+        <div class="comp-stat-row"><span>客户</span><span class="val">40+家东南亚银行</span></div>
+        <div class="comp-stat-row"><span>收入估计</span><span class="val">USD 30&ndash;50m</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>已从MAS沙盒毕业，专为东南亚信用记录薄弱人群打造的替代数据信用模型。</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>IMDA 2026</strong> = IMDA AI ecosystem report &middot; <strong>AISG</strong> = AI Singapore, programme disclosures &middot; 收入占比 = [Kira estimates]，锚定IMDA企业调查及超大规模云服务商新加坡计费区域估算
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 竞争格局 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — GOVERNANCE FRAMEWORK ============ -->
+<div class="page" data-section-id="10_governance">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第08章 &middot; 治理框架</div>
+      <div class="page-section-counter">010 / 014</div>
+    </div>
+    <h1 class="page-h1">Model AI Governance Framework v2与行业规则</h1>
+    <p class="page-subhead">
+      新加坡的监管取向是<strong>原则导向而非规定导向</strong>——Model AI Governance Framework v2（MAIGF v2）围绕透明度、问责与人工监督设定预期。MAS与MOH在此基础上叠加行业特定要求。
+    </p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>MAIGF v2：基准框架</h3>
+        <p>该框架于2020年更新，并辅以<strong>AI Verify测试工具包</strong>（2022年推出、2024年更新），涵盖可解释性标准、数据治理、人在回路要求以及AI系统的运营风险管理[PDPC 2024]。框架为自愿采用，但对MAS监管实体及金额超过SGD 2 m的政府采购合同而言实际上已属强制。</p>
+        <h3>MAS AI通知：对金融业具有约束力</h3>
+        <p>金融管理局的MO&amp;S 2026通知要求所有MAS持牌银行和保险公司记录任何影响客户结果之模型的模型风险，在信贷决策上保留<strong>人工否决能力</strong>，并每年开展AI风险评估[MAS 2026]。违规将触发监管审查。DBS、OCBC与UOB均已为此发布公开的AI治理声明。</p>
+        <h3>采购门槛：AI Verify认证</h3>
+        <p>政府机构采购金额超过SGD 2 m的AI产品时，须要求供应商通过涵盖11个伦理原则维度的<strong>AI Verify v2评估</strong>[GovTech 2026]。这为供应商形成了事实上的认证护城河——未获认证者将面临6&ndash;9个月的采购延误，或被排除在公共部门合同之外。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">AI治理框架层级</div>
+            <div class="chart-subtitle">监管层级 &middot; 新加坡2027</div>
+          </div>
+          <div class="chart-unit">治理</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <!-- Stacked governance layers -->
+            <rect x="60" y="30"  width="360" height="38" fill="#EEF3FF" stroke="#1E6FFF" stroke-width="1" rx="4"/>
+            <text class="label-data" x="240" y="44" text-anchor="middle" font-size="11">国家AI战略2.0</text>
+            <text class="axis-text" x="240" y="60" text-anchor="middle">总体政策框架 · IMDA / MTI · 2023–2030</text>
+
+            <rect x="60" y="78"  width="360" height="38" fill="#F8F9FB" stroke="#D1D5DB" stroke-width="1" rx="4"/>
+            <text class="label-data" x="240" y="92" text-anchor="middle" font-size="11">Model AI Governance Framework v2 + AI Verify</text>
+            <text class="axis-text" x="240" y="108" text-anchor="middle">原则导向 · 自愿 → 政府采购中实际强制</text>
+
+            <rect x="60" y="126" width="170" height="38" fill="#E6F7F3" stroke="#00A88B" stroke-width="1" rx="4"/>
+            <text class="label-data" x="145" y="140" text-anchor="middle" font-size="10">MAS通知MO&amp;S 2026</text>
+            <text class="axis-text" x="145" y="156" text-anchor="middle">银行与保险公司 · 具约束力</text>
+
+            <rect x="250" y="126" width="170" height="38" fill="#FEF3E7" stroke="#D97706" stroke-width="1" rx="4"/>
+            <text class="label-data" x="335" y="140" text-anchor="middle" font-size="10">MOH AI临床指引</text>
+            <text class="axis-text" x="335" y="156" text-anchor="middle">医疗 · 2026年为建议性</text>
+
+            <rect x="60" y="174" width="360" height="38" fill="#F4F6F8" stroke="#E5E7EB" stroke-width="1" rx="4"/>
+            <text class="label-data" x="240" y="188" text-anchor="middle" font-size="11">PDPC个人数据保护法（AI情境）</text>
+            <text class="axis-text" x="240" y="204" text-anchor="middle">数据治理、同意与删除权 · 适用所有行业</text>
+          </svg>
+        </div>
+        <div class="chart-source">[PDPC 2024] · [MAS 2026] · [GovTech 2026] · [IMDA 2024] · 截至2027年第一季度的治理层级</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>PDPC 2024</strong> = Personal Data Protection Commission, AI Governance Framework v2 + AI Verify &middot; <strong>MAS 2026</strong> = Monetary Authority of Singapore Notice MO&amp;S 2026 on AI model risk &middot; <strong>GovTech 2026</strong> = GovTech procurement AI Verify requirement announcement
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第08章 &middot; 治理框架 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — TALENT + REGIONAL POSITIONING ============ -->
+<div class="page" data-section-id="11_talent_positioning">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第09章 &middot; 人才与区域定位</div>
+      <div class="page-section-counter">011 / 014</div>
+    </div>
+    <h1 class="page-h1">人才储备与新加坡的区域地位</h1>
+    <p class="page-subhead">
+      新加坡的人才优势真实存在，但正承受压力：<strong>2030年前培养15,000名AI从业者的目标</strong>[IMDA 2024]、运作活跃的Tech.Pass签证框架，以及跻身世界前列的大学AI实验室。与此相对的是区域成本差异，可能促使通用推理工作负载转移至境外。
+    </p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>人才培养：体系化且速度快</h3>
+        <p>NUS计算机学院与NTU每年合计培养约<strong>3,200名AI相关毕业生</strong>[Kira estimates]，并以面向中年职场人士的SkillsFuture AI再培训项目作为补充。AISG的AI学徒计划（AIAP）自2019年以来已向产业输送<strong>逾600名研究人员</strong>[AISG 2025]。A*STAR下属4个研究所共有约500名在职AI研究人员。</p>
+        <h3>Tech.Pass：体系化的全球人才引进</h3>
+        <p>Tech.Pass计划（2021年推出、2024年强化）允许月收入超过<strong>SGD 22,500</strong>的资深AI从业者无需雇主担保即可迁居新加坡[MOM 2025]。截至2026年第四季度，约有2,800名有效Tech.Pass持有人[MOM 2026]，补充了本地大学培养体系无法及时供给的资深机器学习工程、大语言模型研究和AI产品专长。</p>
+        <h3>区域竞争：真实且日趋激烈</h3>
+        <p>马来西亚（柔佛）、印度尼西亚与泰国均在引入超大规模云GPU基础设施，<strong>电力成本比新加坡低3&ndash;4&times;</strong>[Kira estimates]。对于通用推理工作负载——批量预测、大规模微调——经济性将推动其向区域转移。新加坡守住的是<strong>高信任、低时延、合规要求高的工作负载</strong>：私人银行模型推理、需主权数据驻留的政府工作负载，以及受益于贴近深厚人才库的研发。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">东南亚GPU枢纽定位矩阵</div>
+            <div class="chart-subtitle">定性评分 · 人才与成本 · 2027</div>
+          </div>
+          <div class="chart-unit">定位</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <!-- axes -->
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="axis-line" x1="60" y1="20"  x2="60"  y2="200"/>
+            <!-- axis labels -->
+            <text class="axis-text" x="260" y="218" text-anchor="middle" font-size="10">成本竞争力 →</text>
+            <text class="axis-text" x="18"  y="110" text-anchor="middle" font-size="10" transform="rotate(-90,18,110)">人才深度 →</text>
+            <!-- quadrant labels -->
+            <text class="label-small" x="300" y="40" text-anchor="middle" font-size="9" fill="#6B7280">高人才 / 低成本</text>
+            <text class="label-small" x="160" y="40" text-anchor="middle" font-size="9" fill="#6B7280">高人才 / 高成本</text>
+            <text class="label-small" x="160" y="190" text-anchor="middle" font-size="9" fill="#6B7280">低人才 / 高成本</text>
+            <text class="label-small" x="300" y="190" text-anchor="middle" font-size="9" fill="#6B7280">低人才 / 低成本</text>
+            <!-- midlines -->
+            <line stroke="#E5E7EB" stroke-width="1" stroke-dasharray="3 3" x1="260" y1="20" x2="260" y2="200"/>
+            <line stroke="#E5E7EB" stroke-width="1" stroke-dasharray="3 3" x1="60"  y1="110" x2="460" y2="110"/>
+            <!-- dots -->
+            <circle cx="145" cy="52"  r="16" fill="#1E6FFF" opacity="0.9"/>
+            <text class="label-data" x="145" y="56" text-anchor="middle" font-size="9" fill="#FFFFFF">SG</text>
+            <circle cx="300" cy="72"  r="14" fill="#00A88B" opacity="0.85"/>
+            <text class="label-data" x="300" y="76" text-anchor="middle" font-size="9" fill="#FFFFFF">MY</text>
+            <circle cx="330" cy="155" r="14" fill="#D97706" opacity="0.85"/>
+            <text class="label-data" x="330" y="159" text-anchor="middle" font-size="9" fill="#FFFFFF">ID</text>
+            <circle cx="280" cy="140" r="12" fill="#6366F1" opacity="0.85"/>
+            <text class="label-data" x="280" y="144" text-anchor="middle" font-size="9" fill="#FFFFFF">TH</text>
+            <circle cx="390" cy="130" r="11" fill="#B91C1C" opacity="0.75"/>
+            <text class="label-data" x="390" y="134" text-anchor="middle" font-size="9" fill="#FFFFFF">PH</text>
+          </svg>
+        </div>
+        <div class="chart-source">[KIRA ESTIMATES] · 定性定位 · 坐标轴：人才深度 × 成本竞争力</div>
+      </div>
+    </div>
+    <div class="source-key">
+      <strong>IMDA 2024</strong> = IMDA National AI Strategy 2.0, practitioner targets &middot; <strong>MOM 2025/2026</strong> = Ministry of Manpower Tech.Pass scheme data &middot; <strong>AISG 2025</strong> = AI Singapore AIAP programme report &middot; 定位矩阵 = [Kira estimates]
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第09章 &middot; 人才与区域定位 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — FORECAST 2027–2031 ============ -->
+<div class="page" data-section-id="12_forecast">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第10章 &middot; 2027&ndash;2031年预测</div>
+      <div class="page-section-counter">012 / 014</div>
+    </div>
+    <h1 class="page-h1">2027&ndash;2031年预测：三种情景</h1>
+    <p class="page-subhead">
+      基准情景下，至2029年<strong>CAGR约为28%</strong>，随着市场成熟，2030&ndash;2031年放缓至约18%。乐观情景假设新加坡成功吸引东盟区域总部的AI职能落户；悲观情景则反映电力容量约束及区域算力套利压缩本地支出。
+    </p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>基准情景（概率55%）：稳健增长</h3>
+        <p>企业应用在金融和物流领域持续深化；依据预算承诺，政府AI支出至2029年逐步提升。电力容量配额依然紧张，但不会崩溃。AI服务市场<strong>2030年达到USD 14.5 b</strong>[Kira estimates]。新加坡保持高信任工作负载的枢纽地位；至2029年，部分通用推理迁往马来西亚和印度尼西亚。</p>
+        <h3>乐观情景（概率25%）：东盟总部磁石</h3>
+        <p>新加坡成功定位为跨国企业的<strong>东盟AI总部</strong>首选地，吸引重视监管清晰度与人才深度甚于成本的企业。Tech.Pass引进加速；NUS/NTU衍生企业的退出吸引亚太AI人才。市场<strong>2030年达到USD 19 b</strong>[Kira estimates]，新加坡在东盟企业AI支出中占据超出比例的份额。</p>
+        <h3>悲观情景（概率20%）：成本压力侵蚀规模</h3>
+        <p>电力成本与土地约束导致自2028年起<strong>每年有3&ndash;4项GPU密集型工作负载迁往境外</strong>。治理复杂性增加了中型企业应用的阻力。自2028年起市场增速放缓至约15%；2030年市场规模仅达<strong>USD 10 b</strong>[Kira estimates]。新加坡保住金融业AI支出，但物流、制造与BPO的AI工作负载流向MY和ID。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">AI服务市场预测——3种情景</div>
+            <div class="chart-subtitle">USD b &middot; 2027&ndash;2031F</div>
+          </div>
+          <div class="chart-unit">USD B</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="50" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="50" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="50" y1="65"  x2="460" y2="65"/>
+            <text class="axis-text" x="46" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="46" y="159" text-anchor="end">5</text>
+            <text class="axis-text" x="46" y="114" text-anchor="end">10</text>
+            <text class="axis-text" x="46" y="69"  text-anchor="end">15</text>
+            <!-- Base case: 6.9, 8.8, 11.3, 14.5, 17.2 (scale 1b=9px) -->
+            <!-- Bull case: 8.2, 10.8, 14.0, 19.0, 24.0 -->
+            <!-- Bear case: 6.0, 7.2, 8.3, 10.0, 11.8 -->
+            <!-- x positions: 95, 185, 275, 365, 430 -->
+            <!-- Base (primary blue) -->
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="95,138 185,121 275,98 365,69 430,45"/>
+            <circle cx="95"  cy="138" r="4" fill="#1E6FFF"/>
+            <circle cx="185" cy="121" r="4" fill="#1E6FFF"/>
+            <circle cx="275" cy="98"  r="4" fill="#1E6FFF"/>
+            <circle cx="365" cy="69"  r="4" fill="#1E6FFF"/>
+            <circle cx="430" cy="45"  r="4" fill="#1E6FFF"/>
+            <!-- Bull (green) -->
+            <polyline fill="none" stroke="#00A88B" stroke-width="2" stroke-dasharray="5 3" points="95,126 185,103 275,74 365,29 430,10"/>
+            <circle cx="95"  cy="126" r="3" fill="#00A88B"/>
+            <circle cx="430" cy="10"  r="3" fill="#00A88B"/>
+            <!-- Bear (amber) -->
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="3 3" points="95,146 185,135 275,125 365,110 430,94"/>
+            <circle cx="95"  cy="146" r="3" fill="#D97706"/>
+            <circle cx="430" cy="94"  r="3" fill="#D97706"/>
+            <!-- year labels -->
+            <text class="label-small" x="95"  y="214" text-anchor="middle">27F</text>
+            <text class="label-small" x="185" y="214" text-anchor="middle">28F</text>
+            <text class="label-small" x="275" y="214" text-anchor="middle">29F</text>
+            <text class="label-small" x="365" y="214" text-anchor="middle">30F</text>
+            <text class="label-small" x="430" y="214" text-anchor="middle">31F</text>
+            <!-- data labels -->
+            <text class="label-data" x="430" y="39"  text-anchor="start" font-size="9" fill="#1E6FFF"> 基准17.2</text>
+            <text class="label-data" x="430" y="6"   text-anchor="start" font-size="9" fill="#00A88B"> 乐观24.0</text>
+            <text class="label-data" x="430" y="88"  text-anchor="start" font-size="9" fill="#D97706"> 悲观11.8</text>
+          </svg>
+        </div>
+        <div class="chart-source">[KIRA ESTIMATES] · 概率权重：基准55% / 乐观25% / 悲观20% · USD B</div>
+      </div>
+    </div>
+    <div class="source-key">
+      全部情景估算 = [Kira estimates] &middot; 锚定IMDA 2026企业调查与EDB 2026投资公告，并与可比的东南亚数字服务市场走势交叉验证
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第10章 &middot; 2027&ndash;2031年预测 &middot; KR-SGP-AISVC-2027-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — METHODOLOGY ENDNOTE ============ -->
+<div class="page" data-section-id="13_endnote">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第11章 &middot; 研究方法尾注</div>
+      <div class="page-section-counter">013 / 014</div>
+    </div>
+    <h1 class="page-h1">来源与研究方法</h1>
+    <p class="page-subhead">完整引用清单、来源层级构成及分析师联系方式。本报告中每个数字均附有来源标注；本页将这些标注对应至完整引文。</p>
+    <div class="source-mix-grid">
+      <div class="source-mix-card">
+        <div class="smc-tag">一手 &middot; 运营商研判</div>
+        <div class="smc-num">32<span class="pct">条引用</span></div>
+      </div>
+      <div class="source-mix-card tag-secondary">
+        <div class="smc-tag">二手 &middot; 政府与企业披露</div>
+        <div class="smc-num">28<span class="pct">条引用</span></div>
+      </div>
+      <div class="source-mix-card tag-estimate">
+        <div class="smc-tag">Kira estimates</div>
+        <div class="smc-num">18<span class="pct">条引用</span></div>
+      </div>
+    </div>
+    <div class="endnote-grid">
+      <div class="endnote-body">
+        <h4>引用的主要来源</h4>
+        <ul class="sources-list">
+          <li><strong>EDB 2026</strong> = Economic Development Board Singapore, investment announcement releases, 2026</li>
+          <li><strong>IMDA 2024/2026</strong> = Infocomm Media Development Authority, National AI Strategy 2.0; AI ecosystem report 2026</li>
+          <li><strong>MOF 2026</strong> = Ministry of Finance Singapore, Budget Statement 2026</li>
+          <li><strong>PDPC 2024</strong> = Personal Data Protection Commission, Model AI Governance Framework v2 + AI Verify 2.0</li>
+          <li><strong>MAS 2026</strong> = Monetary Authority of Singapore, Notice MO&amp;S 2026 on AI model risk in financial services</li>
+          <li><strong>GovTech 2026</strong> = Government Technology Agency, AI Verify procurement requirement announcement</li>
+          <li><strong>DOS 2026</strong> = Department of Statistics Singapore, GDP and ICT sector release</li>
+          <li><strong>MOM 2025/2026</strong> = Ministry of Manpower, Tech.Pass scheme statistics</li>
+          <li><strong>NRF 2025</strong> = National Research Foundation, AI research output report 2025</li>
+          <li><strong>AISG 2025</strong> = AI Singapore, AIAP programme annual report 2025</li>
+          <li><strong>DBS 2026</strong> = DBS Group Holdings, AI programme disclosure in annual sustainability report 2026</li>
+          <li><strong>GovTech 2026</strong> = GovTech Pair platform deployment statistics</li>
+          <li><strong>PSA 2026</strong> = PSA International, digital innovation report 2026</li>
+          <li><strong>SATS 2026</strong> = SATS Ltd, annual report AI section 2026</li>
+          <li><strong>MOH 2026</strong> = Ministry of Health Singapore, digital health implementation update</li>
+          <li><strong>EMA 2026</strong> = Energy Market Authority Singapore, data-centre capacity framework update</li>
+          <li><strong>AWS 2025</strong> = Amazon Web Services, Singapore investment announcement release</li>
+          <li><strong>Microsoft 2026</strong> = Microsoft Asia, AI infrastructure investment announcement</li>
+          <li><strong>Google 2026</strong> = Google Cloud, APAC AI region expansion release</li>
+          <li><strong>Oracle 2025</strong> = Oracle Corporation, Singapore cloud region announcement</li>
+          <li><strong>NVIDIA 2025</strong> = NVIDIA Corporation, DGX SuperPOD Singapore NUS/NTU deployment announcement</li>
+        </ul>
+        <h4>估算方法</h4>
+        <p>市场规模估算将IMDA企业云服务调查数据与EDB公布的投资流量及可比的东南亚数字服务渗透率基准进行交叉验证。企业应用率来自三源交叉验证：IMDA企业调查（n&asymp;600）、GovTech AI部署披露，以及来自五家活跃于新加坡市场的系统集成商的匿名渠道研判。相关数字全文标注为[Kira estimates]。</p>
+      </div>
+      <div class="endnote-side">
+        <h4>关于本报告</h4>
+        <p class="contact-line"><strong>报告编号：</strong>KR-SGP-AISVC-2027-001</p>
+        <p class="contact-line"><strong>发布时间：</strong>2027年第二季度</p>
+        <p class="contact-line"><strong>覆盖内容：</strong>新加坡AI服务与GPU基础设施市场、分行业企业大语言模型应用、治理框架、人才储备、区域竞争态势。</p>
+        <p class="contact-line" style="margin-top:10px;"><strong>范围：</strong>以大型企业和政府部门为主。中小企业AI应用有所提及，但未单独测算规模。</p>
+        <p class="contact-line" style="margin-top:10px;"><strong>地域覆盖：</strong>新加坡，并辅以区域竞争背景（MY、ID、TH、PH）。</p>
+        <p class="contact-line" style="margin-top:10px;"><strong>货币：</strong>除另有说明外均为USD。全文假设SGD/USD汇率为1.35。</p>
+        <p class="contact-line" style="margin-top:14px; color: var(--primary);"><strong>垂询：</strong>research@kiraresearch.com</p>
+        <p class="contact-line"><strong>网站：</strong>kiraresearch.com</p>
+        <p class="contact-line" style="margin-top:14px; font-size:10px; color: var(--muted);">本报告仅授权购买机构内部使用。未经KIRA书面同意，禁止向第三方分发、公开发表或纳入面向客户的材料。&copy; 2027 KIRA Research。</p>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第11章 &middot; 研究方法尾注 &middot; KR-SGP-AISVC-2027-001 &middot; &copy; 2027 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
