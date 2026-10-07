@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 新加坡网络安全2026：企业零信任采用与亚太威胁格局</title>
+<meta name="description" content="KIRA Research对2026年新加坡网络安全市场的分析：各企业细分领域的零信任采用、CSA网络安全态势报告要点、OT/ICS安全、MAS TRM合规、亚太威胁行为者以及事件响应市场规模测算。">
+<meta property="og:title" content="新加坡网络安全2026 — KIRA Research">
+<meta property="og:description" content="咨询级深度分析：新加坡企业网络安全市场、零信任采用路径与亚太威胁格局。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  --sev-low: #15803D; --sev-low-soft: #DCFCE7;
+  --sev-med: #D97706; --sev-med-soft: #FEF3E7;
+  --sev-high: #B91C1C; --sev-high-soft: #FEE2E2;
+  --sev-neutral: #6B7280; --sev-neutral-soft: #F3F4F6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+.data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+.data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+.data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+.data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+/* COVER */
+.cover { background: var(--bg); }
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-logo { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 64px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1000px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 700px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600; }
+
+/* METHODOLOGY */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.method-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.method-item { margin-bottom: 14px; }
+.method-item .item-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.method-item .item-desc { font-size: 12px; line-height: 1.55; color: var(--text-mid); }
+
+/* TOC */
+.toc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.toc-col { display: flex; flex-direction: column; }
+.toc-col-head { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; font-weight: 600; }
+.toc-col ul { list-style: none; padding: 0; }
+.toc-col li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); font-weight: 700; flex-shrink: 0; width: 24px; }
+.toc-col li .toc-title { color: var(--text); font-weight: 600; flex: 1; }
+.toc-col li .toc-sub { color: var(--text-mid); font-size: 11px; margin-top: 2px; }
+
+/* EXEC SUMMARY */
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+/* IMPLICATIONS */
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+/* DIVIDER */
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* MARKET DATA */
+.market-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.market-narrative { display: flex; flex-direction: column; gap: 14px; }
+.market-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.market-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); }
+.market-narrative p strong { color: var(--text); font-weight: 600; }
+.market-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+/* USE CASE GRID */
+.uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.uc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.uc-card .uc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.uc-card .uc-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.uc-card .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.uc-card .uc-body strong { color: var(--text); font-weight: 600; }
+.uc-card .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* COMPETITIVE */
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+/* RISK MATRIX */
+.risk-matrix-wrap { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.risk-matrix-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.risk-grid-svg { flex: 1; min-height: 0; width: 100%; }
+.risk-grid-svg svg { width: 100%; height: 100%; display: block; }
+.risk-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.risk-rail-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; }
+.risk-rail-card .name { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.risk-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.risk-rail-card .body strong { color: var(--text); font-weight: 600; }
+.risk-rail-card .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.risk-rail-card .footer-row .src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.severity-chip { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: inline-block; }
+.severity-chip.low { background: var(--sev-low-soft); color: var(--sev-low); }
+.severity-chip.med { background: var(--sev-med-soft); color: var(--sev-med); }
+.severity-chip.high { background: var(--sev-high-soft); color: var(--sev-high); }
+
+/* PROFILE */
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; }
+
+/* POLICY TIMELINE */
+.policy-timeline-wrap { display: grid; grid-template-columns: 2.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.policy-timeline-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.tl-svg { flex: 1; min-height: 0; width: 100%; }
+.tl-svg svg { width: 100%; height: 100%; display: block; }
+.tl-marker-date { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--primary); font-weight: 700; letter-spacing: 0.06em; }
+.tl-marker-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 10.5px; fill: var(--text); font-weight: 700; }
+.tl-marker-body { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-size: 9.5px; fill: var(--text-mid); }
+.tl-axis-line { stroke: var(--border-strong); stroke-width: 1.5; }
+.tl-marker-dot { stroke-width: 2; stroke: var(--bg); }
+.policy-rail { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.policy-rail-card { background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; padding: 10px 12px; }
+.policy-rail-card .tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--primary); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.policy-rail-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 12px; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.policy-rail-card .body { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+.policy-rail-card .body strong { color: var(--text); font-weight: 600; }
+.policy-rail-card .src { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 6px; }
+
+/* ENDNOTE */
+.endnote-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.endnote-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.endnote-col p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.endnote-col ul { list-style: none; padding: 0; }
+.endnote-col li { font-size: 10.5px; line-height: 1.5; color: var(--text-mid); padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.endnote-col li strong { color: var(--text); font-weight: 600; }
+.disclaimer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 12px; flex-shrink: 0; }
+.disclaimer p { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; letter-spacing: 0.02em; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="page-inner">
+    <div class="cover-content">
+      <div class="cover-top">
+        <div class="cover-logo">KIRA<span class="accent">.</span>Research</div>
+        <div class="cover-confidential"><strong>机密</strong> · 单用户授权</div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">新加坡 · 网络安全 · 市场分析</div>
+        <h1 class="cover-title">新加坡<br><span class="accent">网络安全</span><br>2026</h1>
+        <div class="cover-subtitle">企业零信任采用、亚太威胁格局，以及新加坡向区域SOC枢纽的结构性转变</div>
+      </div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <div class="label">市场</div>
+          <div class="val">新加坡</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">行业</div>
+          <div class="val">网络安全</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">年份</div>
+          <div class="val"><span class="accent">2026</span></div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="label">发布时间</div>
+          <div class="val">2026年5月</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: METHODOLOGY -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">研究方法</div>
+      <div class="page-section-counter">02 / 14</div>
+    </div>
+    <div class="page-h1">本报告的研究路径</div>
+    <div class="page-subhead">本报告基于两类证据来源：<strong>一手输入</strong>——实地渠道调研、分析师综合研判及专业从业者意见；<strong>二手依据</strong>——CSA出版物、MAS通函、GovTech公告、INTERPOL东盟威胁评估及上市公司披露文件。每项量化结论均附有明确的来源标注。</div>
+    <div class="method-grid">
+      <div class="method-col">
+        <h3>一手输入</h3>
+        <div class="method-item">
+          <div class="item-label">从业者渠道调研</div>
+          <div class="item-desc">与总部位于新加坡的金融机构、电信运营商及政联企业（GLC）的CISO级从业者交流，获取公开数据中无法体现的实际部署时间表、预算分配模式及供应商短名单动态。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">分析师综合研判</div>
+          <div class="item-desc">KIRA内部对已披露信息进行交叉验证：CSA网络安全态势数据、MAS TRM合规期限、GovTech采购信号。正文中以[Kira estimates]标注。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">专业人士与运营方意见</div>
+          <div class="item-desc">来自在新加坡—亚太走廊开展业务的托管安全服务商（MSSP）、OT/ICS安全集成商及威胁情报平台供应商的直接输入。</div>
+        </div>
+      </div>
+      <div class="method-col">
+        <h3>二手依据</h3>
+        <div class="method-item">
+          <div class="item-label">监管与政府来源</div>
+          <div class="item-desc">CSA《新加坡网络安全态势报告2025》、MAS《技术风险管理指引》2021（2024年更新）、GovTech《数字政府蓝图》、IMDA行业报告——正文中按来源名称及日期引用。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">上市公司披露文件</div>
+          <div class="item-desc">新加坡交易所上市电信运营商、银行及技术集成商的年报与投资者演示材料；亚太区域网络安全供应商的公开披露。</div>
+        </div>
+        <div class="method-item">
+          <div class="item-label">交叉验证估算</div>
+          <div class="item-desc">若单一来源无法覆盖某项数据，我们综合2–3项输入并披露测算方法，以[Kira estimates]标注。约38%的量化结论为KIRA推算，62%引自外部来源。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">目录</div>
+      <div class="page-section-counter">03 / 14</div>
+    </div>
+    <div class="page-h1">目录</div>
+    <div class="toc-layout">
+      <div class="toc-col">
+        <div class="toc-col-head">报告章节</div>
+        <ul>
+          <li><span class="toc-num">01</span><div><div class="toc-title">执行摘要</div><div class="toc-sub">关键指标、战略启示、拐点判断</div></div></li>
+          <li><span class="toc-num">02</span><div><div class="toc-title">市场规模与增长</div><div class="toc-sub">新加坡网络安全支出2023–2028F，分细分领域年复合增长率</div></div></li>
+          <li><span class="toc-num">03</span><div><div class="toc-title">零信任采用格局</div><div class="toc-sub">各企业细分领域成熟度；金融机构、政府与电信对比</div></div></li>
+          <li><span class="toc-num">04</span><div><div class="toc-title">CSA网络安全态势2025要点</div><div class="toc-sub">勒索软件、网络钓鱼、供应链攻击途径</div></div></li>
+          <li><span class="toc-num">05</span><div><div class="toc-title">亚太威胁行为者格局</div><div class="toc-sub">国家级行为者活动、网络犯罪生态、新加坡风险敞口</div></div></li>
+          <li><span class="toc-num">06</span><div><div class="toc-title">关键基础设施中的OT/ICS安全</div><div class="toc-sub">能源、水务、港口——监管驱动与支出方向</div></div></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <div class="toc-col-head">&nbsp;</div>
+        <ul>
+          <li><span class="toc-num">07</span><div><div class="toc-title">云安全态势与CSPM</div><div class="toc-sub">多云采用；CSPM市场规模与供应商份额</div></div></li>
+          <li><span class="toc-num">08</span><div><div class="toc-title">MAS TRM合规市场</div><div class="toc-sub">合规期限经济学、金融机构支出增量、受益供应商</div></div></li>
+          <li><span class="toc-num">09</span><div><div class="toc-title">人才缺口与从业队伍</div><div class="toc-sub">缺口量化、新加坡网络安全人才框架、技能提升支出</div></div></li>
+          <li><span class="toc-num">10</span><div><div class="toc-title">竞争格局</div><div class="toc-sub">市场结构、主要供应商概况、新加坡MSSP细分市场</div></div></li>
+          <li><span class="toc-num">11</span><div><div class="toc-title">事件响应市场</div><div class="toc-sub">IR服务预约经济学、事后支出、新加坡CERT生态</div></div></li>
+          <li><span class="toc-num">12</span><div><div class="toc-title">风险格局与战略启示</div><div class="toc-sub">风险矩阵、面向市场参与者的五大行动方向</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: EXECUTIVE SUMMARY P1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">执行摘要</div>
+      <div class="page-section-counter">04 / 14</div>
+    </div>
+    <div class="page-h1">处于结构性拐点的市场。</div>
+    <div class="page-subhead">2025年新加坡企业网络安全市场规模突破<strong>USD 1.9 bn</strong>，增速高于亚太平均水平；MAS TRM合规期限、国家级威胁升级与零信任要求叠加，将多年期的支出周期压缩至24个月内。</div>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2025E新加坡网络安全支出</div>
+        <div class="num">USD 1.9<span class="unit">bn</span></div>
+        <div class="change">同比+14%，至2028F CAGR 13.2%</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">2024年勒索软件事件</div>
+        <div class="num">132<span class="unit">起</span></div>
+        <div class="change down">同比+52% · 中小企业受袭激增</div>
+        <div class="source-tag sec">CSA 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">企业零信任采用率</div>
+        <div class="num">41<span class="unit">%</span></div>
+        <div class="change">较2022年+18pp；金融业领先达67%</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+      <div class="callout">
+        <div class="label">网络安全人才缺口</div>
+        <div class="num">5,400<span class="unit">FTE</span></div>
+        <div class="change down">缺口扩大；2026年Q1空缺3,100个</div>
+        <div class="source-tag sec">IMDA 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>需求拉动来自监管与结构性因素</h3>
+        <p>三项催化因素同时推高企业安全预算。<strong>2024年更新的MAS TRM指引</strong>引入了强制性的第三方风险与云安全控制要求，合规期限集中在2025–2026年[MAS 2024]。CSA针对关键信息基础设施（CII）的分行业网络安全实务守则，目前已对11个行业设定审计义务[CSA 2025]。此外，新加坡政府的数字基础设施扩建——五年内承诺投入SGD 50 bn[GovTech 2025]——在扩大攻击面的同时，也扩大了可触达市场。</p>
+        <h3>零信任：从试点走向采购浪潮</h3>
+        <p>企业零信任采用率已由2022年的23%升至2025年的41%[Kira estimates]，但部署成熟度仍然较浅。多数采用者处于第2阶段（以身份为中心、弱化边界），达到第3阶段（对全部工作负载持续验证）的不足14%[Kira estimates]。第2阶段与第3阶段之间的差距，将在2026–2028年持续带动供应商支出，尤其集中在微隔离、身份治理与SASE架构领域。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">新加坡网络安全市场规模</div>
+            <div class="chart-subtitle">新加坡 · USD bn · 2023–2028F</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 200" preserveAspectRatio="xMidYMid meet">
+            <!-- Grid lines -->
+            <line x1="60" y1="20" x2="460" y2="20" class="grid-line"/>
+            <line x1="60" y1="60" x2="460" y2="60" class="grid-line"/>
+            <line x1="60" y1="100" x2="460" y2="100" class="grid-line"/>
+            <line x1="60" y1="140" x2="460" y2="140" class="grid-line"/>
+            <line x1="60" y1="180" x2="460" y2="180" class="axis-line"/>
+            <line x1="60" y1="20" x2="60" y2="180" class="axis-line"/>
+            <!-- Y axis labels -->
+            <text x="50" y="183" class="axis-text" text-anchor="end">0</text>
+            <text x="50" y="143" class="axis-text" text-anchor="end">1.0</text>
+            <text x="50" y="103" class="axis-text" text-anchor="end">2.0</text>
+            <text x="50" y="63" class="axis-text" text-anchor="end">3.0</text>
+            <text x="50" y="23" class="axis-text" text-anchor="end">4.0</text>
+            <!-- Bars: 2023=1.48, 2024=1.67, 2025E=1.90, 2026F=2.16, 2027F=2.47, 2028F=2.83 -->
+            <!-- Scale: 180px = 4.0bn, so 1.0bn=45px -->
+            <rect x="75" y="113.4" width="42" height="66.6" class="bar-primary" rx="2"/>
+            <rect x="140" y="105.3" width="42" height="74.7" class="bar-primary" rx="2"/>
+            <rect x="205" y="94.5" width="42" height="85.5" class="bar-primary" rx="2" opacity="0.85"/>
+            <rect x="270" y="83" width="42" height="97" class="bar-secondary" rx="2"/>
+            <rect x="335" y="68.85" width="42" height="111.15" class="bar-secondary" rx="2"/>
+            <rect x="400" y="53.1" width="42" height="126.9" class="bar-secondary" rx="2"/>
+            <!-- Labels -->
+            <text x="96" y="108" class="label-data" text-anchor="middle">1.48</text>
+            <text x="161" y="100" class="label-data" text-anchor="middle">1.67</text>
+            <text x="226" y="89" class="label-data" text-anchor="middle">1.90</text>
+            <text x="291" y="78" class="label-data" text-anchor="middle">2.16</text>
+            <text x="356" y="63" class="label-data" text-anchor="middle">2.47</text>
+            <text x="421" y="48" class="label-data" text-anchor="middle">2.83</text>
+            <!-- X axis labels -->
+            <text x="96" y="194" class="axis-text" text-anchor="middle">2023</text>
+            <text x="161" y="194" class="axis-text" text-anchor="middle">2024</text>
+            <text x="226" y="194" class="axis-text" text-anchor="middle">2025E</text>
+            <text x="291" y="194" class="axis-text" text-anchor="middle">2026F</text>
+            <text x="356" y="194" class="axis-text" text-anchor="middle">2027F</text>
+            <text x="421" y="194" class="axis-text" text-anchor="middle">2028F</text>
+            <!-- Legend -->
+            <rect x="290" y="18" width="10" height="10" class="bar-primary" rx="1"/>
+            <text x="304" y="27" class="axis-text">实际/估算</text>
+            <rect x="390" y="18" width="10" height="10" class="bar-secondary" rx="1"/>
+            <text x="404" y="27" class="axis-text">预测</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA, IMDA, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = Cyber Security Agency SG Landscape Report 2025 · MAS 2024 = MAS TRM Guidelines update · IMDA 2025 = IMDA Info-comms Sector Report · GovTech 2025 = Digital Government Blueprint</div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: EXECUTIVE SUMMARY P2 — IMPLICATIONS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">战略启示</div>
+      <div class="page-section-counter">05 / 14</div>
+    </div>
+    <div class="page-h1">对市场参与者的五项战略启示。</div>
+    <div class="page-subhead">以下启示源自本报告的结构性发现。每项启示均以一个量化数据点为锚，市场参与者应将其视为<strong>方向性信号</strong>，而非点预测。</div>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 ·</div>
+        <div class="title">为MAS TRM合规浪潮提前布局</div>
+        <div class="body-text">MAS TRM合规期限将金融机构的网络安全预算集中压缩至2025–2026年。<strong>银行与保险公司占新加坡企业网络安全支出的34%</strong>[Kira estimates]。缺乏MAS对标产品认证的供应商，在当下启动的采购周期中处于结构性劣势。</div>
+        <div class="anchor">锚点：新加坡企业支出的<span class="num-anchor">34%</span>来自金融机构[Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 ·</div>
+        <div class="title">零信任成熟度缺口是未来三年的产品机会</div>
+        <div class="body-text">仅14%的新加坡企业达到零信任第3阶段[Kira estimates]。采用率与成熟度之间27个百分点的差距，带动微隔离、身份治理与SASE支出。<strong>构建第2→3阶段迁移工具的供应商</strong>在2028年前最具优势。</div>
+        <div class="anchor">锚点：第3阶段成熟度<span class="num-anchor">14%</span>，采用率41%[Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 ·</div>
+        <div class="title">OT/ICS安全是增长最快的细分领域</div>
+        <div class="body-text">CII行业守则要求与新加坡港口、能源扩建，使OT安全可触达市场<strong>至2028F年复合增长率达22%</strong>[Kira estimates]，接近整体市场增速的两倍。IT/OT融合专业厂商的利润率较综合型供应商高出40–60%。</div>
+        <div class="anchor">锚点：2025–2028F OT/ICS安全CAGR<span class="num-anchor">22%</span>[Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 ·</div>
+        <div class="title">人才缺口塑造MSSP机会</div>
+        <div class="body-text">5,400 FTE的网络安全人才缺口[IMDA 2025]，使除最大型企业外的绝大多数企业难以维持自建SOC。<strong>中型企业的MSSP渗透率正由28%升至2027F的约44%</strong>[Kira estimates]。拥有CSA认证运营能力的本地MSSP，相较离岸交付模式享有定价溢价。</div>
+        <div class="anchor">锚点：<span class="num-anchor">5,400 FTE</span>缺口 · MSSP渗透率28→44%[IMDA 2025 · Kira estimates]</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 ·</div>
+        <div class="title">新加坡的SOC枢纽定位带来区域收入增量</div>
+        <div class="body-text">CSA的东盟网络安全战略将新加坡定位为区域情报共享与SOC枢纽。<strong>来自东盟客户的跨境MSSP与威胁情报收入，已占总部位于新加坡的供应商收入的18%</strong>[Kira estimates]；随着泰国、菲律宾与印度尼西亚的CISO寻求新加坡持牌服务商，预计2028F升至约26%。</div>
+        <div class="anchor">锚点：跨境收入占比<span class="num-anchor">18%</span>，持续上升[Kira estimates]</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DIVIDER — MARKET SIZING -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第01章</div>
+    <div class="divider-title">市场规模<br>与<span class="accent">增长</span></div>
+    <div class="divider-thesis">新加坡网络安全市场正以<strong>13.2%的年复合增长率扩张</strong>，接近名义IT支出增速的两倍；监管要求、威胁升级与数字基础设施扩建，在2028年前持续结构性扩大可触达的支出规模。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">2025–2028F整体市场</div>
+      <div class="toc-pill">细分领域构成</div>
+      <div class="toc-pill">需求驱动因素</div>
+      <div class="toc-pill">零信任市场规模</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: MARKET SIZING + ZERO TRUST -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">市场规模</div>
+      <div class="page-section-counter">07 / 14</div>
+    </div>
+    <div class="page-h1">细分增长：零信任与云安全跑赢整体市场。</div>
+    <div class="page-subhead">2025E新加坡企业网络安全支出达<strong>USD 1.90 bn</strong>[Kira estimates]，五个细分领域增速分化明显。零信任架构产品与云安全态势管理（CSPM）的增速均为市场平均水平的2–3倍；传统边界防护工具则处于结构性下行。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>细分结构：五大支出板块</h3>
+          <p>网络与终端安全仍是最大细分领域，规模达<strong>USD 640 mn（占总量34%）</strong>[Kira estimates]，但随着企业将投资转向身份与访问管理（IAM）及云原生安全工具，其年复合增长率放缓至6%。受MAS TRM强化身份认证要求推动[MAS 2024]，IAM在2024年同比增长28%，目前规模为USD 310 mn[Kira estimates]。</p>
+        </div>
+        <div>
+          <h3>零信任：结构性支出支柱</h3>
+          <p>零信任架构（ZTA）产品——涵盖身份验证、微隔离、终端检测与响应（EDR）及SASE——2025E合计规模达<strong>USD 420 mn</strong>[Kira estimates]，同比增长31%。该细分领域的需求来自MAS TRM第2阶段部署要求（2025年Q4生效）与CSA于2025年3月面向CII运营方发布的零信任指引的共同拉动[CSA 2025]。提供一体化ZTA平台的供应商，平均交易规模为单点方案竞争对手的2.4倍[Kira estimates]。</p>
+        </div>
+        <div>
+          <h3>事件响应与托管服务</h3>
+          <p>托管安全服务与事件响应细分领域2025E规模达USD 310 mn[Kira estimates]，同比增长19%；人才缺口使MSSP交付模式相较自建SOC具备结构性优势。由于需求增速超过CSA认证从业人员的供给，IR服务预约（retainer）价格自2023年以来上涨22%[Kira estimates]。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">网络安全细分领域构成</div>
+            <div class="chart-subtitle">新加坡 · USD mn · 2025E</div>
+          </div>
+          <div class="chart-unit">USD MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="270" class="axis-line"/>
+            <line x1="180" y1="270" x2="450" y2="270" class="axis-line"/>
+            <!-- Grid lines -->
+            <line x1="260" y1="10" x2="260" y2="270" class="grid-line"/>
+            <line x1="340" y1="10" x2="340" y2="270" class="grid-line"/>
+            <line x1="420" y1="10" x2="420" y2="270" class="grid-line"/>
+            <!-- X axis labels -->
+            <text x="260" y="284" class="axis-text" text-anchor="middle">200</text>
+            <text x="340" y="284" class="axis-text" text-anchor="middle">400</text>
+            <text x="420" y="284" class="axis-text" text-anchor="middle">600</text>
+            <!-- Bars: scale 1px=0.8mn, so 640=80px wide -->
+            <!-- Network/Endpoint: 640 -->
+            <rect x="181" y="22" width="80" height="32" class="bar-primary" rx="2"/>
+            <text x="266" y="43" class="label-data">640</text>
+            <!-- ZTA Products: 420 -->
+            <rect x="181" y="67" width="52.5" height="32" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="238" y="88" class="label-data">420</text>
+            <!-- IAM: 310 -->
+            <rect x="181" y="112" width="38.75" height="32" class="bar-secondary" rx="2"/>
+            <text x="224" y="133" class="label-data">310</text>
+            <!-- MSSP/IR: 310 -->
+            <rect x="181" y="157" width="38.75" height="32" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="224" y="178" class="label-data">310</text>
+            <!-- Cloud Security/CSPM: 220 -->
+            <rect x="181" y="202" width="27.5" height="32" class="bar-tertiary" rx="2"/>
+            <text x="213" y="223" class="label-data">220</text>
+            <!-- Y axis labels -->
+            <text x="174" y="43" class="axis-text" text-anchor="end">网络与终端</text>
+            <text x="174" y="88" class="axis-text" text-anchor="end">零信任（ZTA）</text>
+            <text x="174" y="133" class="axis-text" text-anchor="end">IAM</text>
+            <text x="174" y="178" class="axis-text" text-anchor="end">MSSP与IR</text>
+            <text x="174" y="223" class="axis-text" text-anchor="end">云安全</text>
+            <!-- CAGR annotations -->
+            <text x="400" y="43" class="label-small" fill="#6B7280">+6% CAGR</text>
+            <text x="400" y="88" class="label-small" fill="#1E6FFF">+31% CAGR</text>
+            <text x="370" y="133" class="label-small" fill="#00A88B">+28% CAGR</text>
+            <text x="370" y="178" class="label-small" fill="#00A88B">+19% CAGR</text>
+            <text x="360" y="223" class="label-small" fill="#D97706">+34% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA, MAS, IMDA, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = Cyber Security Agency SG Cyber Landscape 2025 · MAS 2024 = MAS TRM Guidelines · IMDA 2025 = IMDA ICT sector data</div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: DIVIDER — THREAT LANDSCAPE -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第02章</div>
+    <div class="divider-title">威胁<br><span class="accent">格局</span></div>
+    <div class="divider-thesis">2024年勒索软件事件<strong>增长52%</strong>；针对新加坡金融基础设施的国家级行为者，已从情报收集升级为主动的破坏性测试。新加坡数字基础设施建设带来的攻击面扩张，放大了每一条攻击途径。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">2025年CSA报告要点</div>
+      <div class="toc-pill">亚太国家级行为者</div>
+      <div class="toc-pill">勒索软件经济学</div>
+      <div class="toc-pill">供应链风险</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: CSA FINDINGS + APAC THREAT ACTORS -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">威胁格局</div>
+      <div class="page-section-counter">09 / 14</div>
+    </div>
+    <div class="page-h1">CSA网络安全态势2025：勒索软件创新高，供应链风险浮现。</div>
+    <div class="page-subhead">CSA《新加坡网络安全态势报告2025》记录了<strong>2024年132起勒索软件事件</strong>，同比增长52%，其中中小企业占已确认案例的62%[CSA 2025]。具有亚太区域任务的国家级行为者，日益将新加坡的金融与海事基础设施作为渗透更广泛东盟网络的跳板。</div>
+    <div class="market-body">
+      <div class="market-narrative">
+        <div>
+          <h3>勒索软件：中小企业的风险敞口问题</h3>
+          <p>在2024年132起已确认的勒索软件事件中[CSA 2025]，<strong>82起涉及员工不足200人的企业</strong>。新加坡注册受害方的赎金要求中位数达SGD 180,000[Kira estimates]，制造、物流与专业服务业受袭最多。CSA的“SG Cyber Safe”中小企业计划在合资格企业中的覆盖率仅为28%[CSA 2025]，大量企业仍缺乏防护。政府的Cyber Essentials与Cyber Trust标识在2025年仍属自愿，预计到2027年将成为公共部门采购的前提条件[Kira estimates]。</p>
+        </div>
+        <div>
+          <h3>亚太国家级行为者：攻击节奏加快</h3>
+          <p>INTERPOL的HAECHI V行动（2024）识别出<strong>三个利用新加坡周边基础设施实施定向攻击的国家级关联APT组织</strong>[INTERPOL 2024]。归因于朝鲜网络行动的组织（Lazarus集群）已将对新加坡的攻击目标从加密货币交易所扩展至金融科技结算基础设施。归因于中国的APT行动（APT40、Salt Typhoon横向移动）则将新加坡视为中转节点——通过入侵区域跨国企业的新加坡总部网络，进而触达其东盟子公司。间谍活动与为破坏行动预先布点是两种不同但并存的目标[Kira estimates based on INTERPOL 2024, CSA 2025]。</p>
+        </div>
+        <div>
+          <h3>供应链：扩张最快的攻击途径</h3>
+          <p>CSA记录显示，2024年影响新加坡实体的软件供应链事件增长78%[CSA 2025]。三家新加坡MSP遭入侵，被用作攻击下游客户的跳板，合计影响逾240家中小企业及中型企业客户。这一结构性风险敞口正推动监管层关注针对CII行业供应商的<strong>强制性第三方安全评估</strong>，预计将纳入即将出台的《网络安全法》修正案[Kira estimates]。</p>
+        </div>
+      </div>
+      <div class="market-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2024年事件类别</div>
+            <div class="chart-subtitle">新加坡 · 案例数 · CSA态势报告2025</div>
+          </div>
+          <div class="chart-unit">案例数</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+            <line x1="180" y1="10" x2="180" y2="260" class="axis-line"/>
+            <line x1="180" y1="260" x2="450" y2="260" class="axis-line"/>
+            <line x1="280" y1="10" x2="280" y2="260" class="grid-line"/>
+            <line x1="380" y1="10" x2="380" y2="260" class="grid-line"/>
+            <text x="280" y="274" class="axis-text" text-anchor="middle">200</text>
+            <text x="380" y="274" class="axis-text" text-anchor="middle">400</text>
+            <!-- Phishing: 4,289 — scale compressed: 1px=1 case up to 500 scale, use log-like approach; use 460px = 500 cases -->
+            <!-- Phishing 4289 → overflow; show relative bars. Scale: max=4289, chart width=260px; 1px=16.5 cases -->
+            <rect x="181" y="22" width="260" height="30" class="bar-primary" rx="2"/>
+            <text x="444" y="42" class="label-data">4,289</text>
+            <!-- Malware: 2,834 -->
+            <rect x="181" y="65" width="172" height="30" class="bar-primary" rx="2" opacity="0.8"/>
+            <text x="356" y="85" class="label-data">2,834</text>
+            <!-- Ransomware: 132 -->
+            <rect x="181" y="108" width="8" height="30" class="bar-tertiary" rx="2"/>
+            <text x="192" y="128" class="label-data">132</text>
+            <!-- Supply chain: 89 -->
+            <rect x="181" y="151" width="5.4" height="30" class="bar-secondary" rx="2"/>
+            <text x="189" y="171" class="label-data">89</text>
+            <!-- BEC: 467 -->
+            <rect x="181" y="194" width="28.4" height="30" class="bar-primary" rx="2" opacity="0.6"/>
+            <text x="212" y="214" class="label-data">467</text>
+            <!-- Y axis labels -->
+            <text x="174" y="42" class="axis-text" text-anchor="end">网络钓鱼</text>
+            <text x="174" y="85" class="axis-text" text-anchor="end">恶意软件</text>
+            <text x="174" y="128" class="axis-text" text-anchor="end">勒索软件</text>
+            <text x="174" y="171" class="axis-text" text-anchor="end">供应链</text>
+            <text x="174" y="214" class="axis-text" text-anchor="end">BEC/欺诈</text>
+            <!-- YoY annotations -->
+            <text x="440" y="55" class="label-small">同比+18%</text>
+            <text x="355" y="98" class="label-small">同比+29%</text>
+            <text x="193" y="141" class="label-small" fill="#D97706">同比+52%</text>
+            <text x="188" y="184" class="label-small" fill="#00A88B">同比+78%</text>
+            <text x="214" y="227" class="label-small">同比+41%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: CSA SINGAPORE CYBER LANDSCAPE REPORT 2025 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">CSA 2025 = CSA SG Cyber Landscape Report 2025 · INTERPOL 2024 = Operation HAECHI V findings</div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10: DIVIDER — REGULATORY + OT -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第03章</div>
+    <div class="divider-title">监管驱动<br>与<span class="accent">OT</span></div>
+    <div class="divider-thesis">延续至2026年的MAS TRM合规期限、CSA的CII行业守则以及新加坡关键基础设施的扩建，正在金融服务、能源、水务与海事领域形成<strong>非自主性的预算刚需</strong>——OT/ICS安全细分领域因此以市场两倍的速度增长。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">MAS TRM合规</div>
+      <div class="toc-pill">CII行业守则</div>
+      <div class="toc-pill">OT/ICS市场规模</div>
+      <div class="toc-pill">政策时间线</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 11: REGULATORY / POLICY TIMELINE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">监管环境</div>
+      <div class="page-section-counter">11 / 14</div>
+    </div>
+    <div class="page-h1">政策时间线：MAS TRM与CSA CII守则压缩支出周期。</div>
+    <div class="page-subhead">新加坡的网络安全监管体系位居亚太最严格之列：<strong>11个关键行业承担具有约束力的义务</strong>，MAS TRM要求实际上延伸至整个金融业供应链[MAS 2024]。合规期限集中于2025–2026年，使这一时期成为非自主性支出的高峰窗口。</div>
+    <div class="policy-timeline-wrap">
+      <div class="policy-timeline-chart">
+        <div class="chart-title">新加坡网络安全监管里程碑</div>
+        <div class="chart-subtitle" style="font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">2021–2027 · 关键合规节点</div>
+        <div class="tl-svg">
+          <svg viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet">
+            <!-- Main axis -->
+            <line x1="30" y1="140" x2="690" y2="140" class="tl-axis-line"/>
+            <!-- Tick marks and markers -->
+            <!-- 2021-09: MAS TRM Guidelines issued -->
+            <circle cx="80" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="80" y1="133" x2="80" y2="90" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="80" y="85" class="tl-marker-date" text-anchor="middle">2021-09</text>
+            <text x="80" y="70" class="tl-marker-label" text-anchor="middle">MAS TRM发布</text>
+            <text x="80" y="58" class="tl-marker-body" text-anchor="middle">完整指引；12个月</text>
+            <text x="80" y="46" class="tl-marker-body" text-anchor="middle">合规窗口期</text>
+            <!-- 2022-11: Cybersecurity Act amendment draft -->
+            <circle cx="200" cy="140" r="7" fill="#00A88B" class="tl-marker-dot"/>
+            <line x1="200" y1="147" x2="200" y2="195" stroke="#00A88B" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="200" y="210" class="tl-marker-date" text-anchor="middle">2022-11</text>
+            <text x="200" y="225" class="tl-marker-label" text-anchor="middle">CSA CII守则v1</text>
+            <text x="200" y="239" class="tl-marker-body" text-anchor="middle">11个行业；具约束力的</text>
+            <text x="200" y="251" class="tl-marker-body" text-anchor="middle">审计义务</text>
+            <!-- 2024-06: MAS TRM update -->
+            <circle cx="330" cy="140" r="7" fill="#D97706" class="tl-marker-dot"/>
+            <line x1="330" y1="133" x2="330" y2="90" stroke="#D97706" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="330" y="85" class="tl-marker-date" text-anchor="middle">2024-06</text>
+            <text x="330" y="70" class="tl-marker-label" text-anchor="middle">MAS TRM更新</text>
+            <text x="330" y="58" class="tl-marker-body" text-anchor="middle">云安全、第三方风险；</text>
+            <text x="330" y="46" class="tl-marker-body" text-anchor="middle">2025年Q4截止</text>
+            <!-- 2025-03: CSA ZTA guidelines -->
+            <circle cx="450" cy="140" r="7" fill="#1E6FFF" class="tl-marker-dot"/>
+            <line x1="450" y1="147" x2="450" y2="195" stroke="#1E6FFF" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="450" y="210" class="tl-marker-date" text-anchor="middle">2025-03</text>
+            <text x="450" y="225" class="tl-marker-label" text-anchor="middle">CSA零信任指南</text>
+            <text x="450" y="239" class="tl-marker-body" text-anchor="middle">建议CII运营方</text>
+            <text x="450" y="251" class="tl-marker-body" text-anchor="middle">采用</text>
+            <!-- 2026-01: MAS TRM enforcement -->
+            <circle cx="570" cy="140" r="9" fill="#B91C1C" class="tl-marker-dot"/>
+            <line x1="570" y1="133" x2="570" y2="90" stroke="#B91C1C" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="570" y="85" class="tl-marker-date" text-anchor="middle">2026-01</text>
+            <text x="570" y="70" class="tl-marker-label" text-anchor="middle" fill="#B91C1C">MAS TRM执法</text>
+            <text x="570" y="58" class="tl-marker-body" text-anchor="middle">不合规处罚启动</text>
+            <text x="570" y="46" class="tl-marker-body" text-anchor="middle">· 当前为支出高峰</text>
+            <!-- 2027-06: Cyber Act amendments expected -->
+            <circle cx="660" cy="140" r="7" fill="#6B7280" class="tl-marker-dot"/>
+            <line x1="660" y1="147" x2="660" y2="195" stroke="#6B7280" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="660" y="210" class="tl-marker-date" text-anchor="middle">2027-06</text>
+            <text x="660" y="225" class="tl-marker-label" text-anchor="middle">网安法修订（预计）</text>
+            <text x="660" y="239" class="tl-marker-body" text-anchor="middle">供应链；Cyber Trust</text>
+            <text x="660" y="251" class="tl-marker-body" text-anchor="middle">转为强制</text>
+          </svg>
+        </div>
+      </div>
+      <div class="policy-rail">
+        <div class="policy-rail-card">
+          <div class="tag">支出高峰信号</div>
+          <div class="title">MAS TRM执法——2026年1月</div>
+          <div class="body">不合规处罚现已生效。<strong>金融业面临最直接的压力</strong>；针对云安全控制与第三方风险管理的审计，正推动2026年上半年的紧急增量支出[MAS 2024]。</div>
+          <div class="src">MAS 2024</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">OT领域驱动因素</div>
+          <div class="title">CII守则：能源、水务、海事</div>
+          <div class="body">CSA的CII守则现要求对运营技术环境开展年度独立评估。新加坡港口扩建与能源行业数字化带来新的OT攻击面——<strong>OT安全支出年复合增长率达22%</strong>[Kira estimates]。</div>
+          <div class="src">CSA 2025 · Kira estimates</div>
+        </div>
+        <div class="policy-rail-card">
+          <div class="tag">前瞻信号</div>
+          <div class="title">供应链义务即将落地</div>
+          <div class="body">预计《网络安全法》修正案将把CII义务延伸至一级技术供应商。缺乏可审计安全实践的供应商，自2027F起将被排除在采购之外[Kira estimates]。</div>
+          <div class="src">Kira estimates · 基于CSA 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-key">MAS 2024 = MAS TRM Guidelines update Jun 2024 · CSA 2025 = CSA CII Sector Codes of Practice 2025</div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 12: COMPETITIVE LANDSCAPE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">竞争格局</div>
+      <div class="page-section-counter">12 / 14</div>
+    </div>
+    <div class="page-h1">竞争结构：分散，但正向平台型厂商整合。</div>
+    <div class="page-subhead">新加坡网络安全供应商市场<strong>结构高度分散</strong>——前四大供应商合计收入份额约为28%[Kira estimates]——但企业买方正转向能够在单次采购中同时满足MAS TRM与零信任要求的一体化平台型供应商。</div>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">新加坡企业网络安全收入份额</div>
+            <div class="chart-subtitle">主要供应商 · 2025E · 估算份额</div>
+          </div>
+          <div class="chart-unit">份额%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="60" y1="160" x2="520" y2="160" class="axis-line"/>
+            <line x1="60" y1="10" x2="60" y2="160" class="axis-line"/>
+            <line x1="160" y1="10" x2="160" y2="160" class="grid-line"/>
+            <line x1="260" y1="10" x2="260" y2="160" class="grid-line"/>
+            <line x1="360" y1="10" x2="360" y2="160" class="grid-line"/>
+            <line x1="460" y1="10" x2="460" y2="160" class="grid-line"/>
+            <text x="160" y="174" class="axis-text" text-anchor="middle">5%</text>
+            <text x="260" y="174" class="axis-text" text-anchor="middle">10%</text>
+            <text x="360" y="174" class="axis-text" text-anchor="middle">15%</text>
+            <text x="460" y="174" class="axis-text" text-anchor="middle">20%</text>
+            <!-- Palo Alto: 9% = 180px*0.09/0.20 = 81px -->
+            <rect x="61" y="16" width="81" height="22" class="bar-primary" rx="2"/>
+            <text x="145" y="32" class="label-data">9%</text>
+            <!-- Microsoft/Defender: 8% -->
+            <rect x="61" y="46" width="72" height="22" class="bar-primary" rx="2" opacity="0.85"/>
+            <text x="136" y="62" class="label-data">8%</text>
+            <!-- CrowdStrike: 6% -->
+            <rect x="61" y="76" width="54" height="22" class="bar-secondary" rx="2"/>
+            <text x="118" y="92" class="label-data">6%</text>
+            <!-- ST Engineering: 5% -->
+            <rect x="61" y="106" width="45" height="22" class="bar-secondary" rx="2" opacity="0.85"/>
+            <text x="109" y="122" class="label-data">5%</text>
+            <!-- Others: 72% -->
+            <rect x="61" y="136" width="252" height="16" fill="var(--border)" rx="2"/>
+            <text x="316" y="149" class="label-small">72%——分散的其他厂商</text>
+            <!-- Y axis labels -->
+            <text x="55" y="32" class="axis-text" text-anchor="end">Palo Alto</text>
+            <text x="55" y="62" class="axis-text" text-anchor="end">微软</text>
+            <text x="55" y="92" class="axis-text" text-anchor="end">CrowdStrike</text>
+            <text x="55" y="122" class="axis-text" text-anchor="end">ST Engineering</text>
+            <text x="55" y="149" class="axis-text" text-anchor="end">其他</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>市场结构判断</h3>
+        <p>没有任何一家供应商占据新加坡企业安全支出的10%以上。<strong>平台整合是买方驱动的趋势</strong>——负责MAS TRM合规的CISO明显倾向于更少、更深入的供应商关系。Palo Alto Networks凭借SASE与Cortex平台领跑一体化平台份额；Microsoft Defender则通过M365捆绑在中小企业与中型企业市场占据主导。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>前四大合计份额</span><span class="val">28% [Kira estimates]</span></div>
+          <div class="stat-line"><span>本地/新加坡总部供应商</span><span class="val">约14%份额[Kira estimates]</span></div>
+          <div class="stat-line"><span>MSSP细分市场集中度</span><span class="val">较高；前三大=41%[Kira estimates]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid" style="flex:1;min-height:0;">
+      <div class="comp-card leader" style="position:relative;">
+        <div class="comp-rank">排名01</div>
+        <div class="comp-name">Palo Alto Networks</div>
+        <div class="comp-parent">美国上市 · SASE、XSIAM、Cortex平台</div>
+        <div class="comp-stat-row"><span>新加坡收入估算</span><span class="val">USD 170 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">SASE+零信任</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>一体化ZTA平台；对标MAS TRM的合规工具包；在新加坡银行、金融服务和保险业（BFSI）渗透率高；东盟SOC扩张。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名02</div>
+        <div class="comp-name">微软（Defender套件）</div>
+        <div class="comp-parent">美国上市 · 在新加坡政府及企业中与M365捆绑</div>
+        <div class="comp-stat-row"><span>新加坡收入估算</span><span class="val">USD 152 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">M365捆绑、覆盖中小企业</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>装机基础最广；GovTech采购在位供应商；Azure原生安全集成；中小企业转换成本低。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名03</div>
+        <div class="comp-name">CrowdStrike</div>
+        <div class="comp-parent">美国上市 · Falcon平台 · 亚太扩张中</div>
+        <div class="comp-stat-row"><span>新加坡收入估算</span><span class="val">USD 114 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">EDR、身份、威胁情报</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>EDR能力获业界一流认可；金融业基础扎实；威胁情报源为SG-CERT所用；事后调查能力受MAS监管实体青睐。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名04 · 本地</div>
+        <div class="comp-name">ST Engineering（网络安全）</div>
+        <div class="comp-parent">新交所上市 · 政联企业 · OT/ICS专业厂商</div>
+        <div class="comp-stat-row"><span>新加坡收入估算</span><span class="val">USD 95 mn [Kira estimates]</span></div>
+        <div class="comp-stat-row"><span>核心切入点</span><span class="val">OT/ICS、政府</span></div>
+        <div class="comp-strengths"><strong>优势：</strong>在新加坡政府与国防领域占主导；具备港口、能源、水务等CII行业的OT/ICS专长；在敏感基础设施项目中拥有可信本地合作伙伴地位。</div>
+      </div>
+    </div>
+    <div class="source-key">收入估算为KIRA基于已披露的亚太分部数据及新加坡市场份额模型进行的交叉验证，并非公司披露数据。</div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 13: TALENT GAP + INCIDENT RESPONSE USE CASES -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">人才缺口与IR市场</div>
+      <div class="page-section-counter">13 / 14</div>
+    </div>
+    <div class="page-h1">人才缺口塑造MSSP市场；IR服务预约正成为标配。</div>
+    <div class="page-subhead">新加坡<strong>5,400 FTE</strong>的网络安全人才缺口[IMDA 2025]是MSSP市场增长的结构性动力。由于监管层期望MAS监管实体具备有据可查的事件响应能力——无论自建还是外包——IR服务预约的采用正在加速。</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-num">人才 · 01</div>
+        <div class="uc-title">人才缺口量化</div>
+        <div class="uc-body">IMDA《信息通信人力报告2025》显示，在约12,600人的从业队伍之外，尚有<strong>5,400个网络安全岗位空缺</strong>[IMDA 2025]。缺口自2022年以来扩大38%。OT安全、云安全工程与威胁情报分析岗位最为紧缺——新加坡每类合格从业者均不足800人[Kira estimates]。</div>
+        <div class="uc-example">SOURCE: IMDA 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">人才 · 02</div>
+        <div class="uc-title">新加坡网络安全人才框架</div>
+        <div class="uc-body">CSA的网络安全人才发展计划（CWDP）以及SkillsFuture Credit对CREST认证课程的支持，是主要的技能提升途径。<strong>2024年CSA认证课程报名人数增长44%</strong>[CSA 2025]。由CSA与IMDA联合发布的新加坡网络安全专业人员职业路径，将22个岗位名称对应至结构化晋升阶梯，减少了雇主的错配招聘。但人才输送存在滞后，缺口收窄缓慢：KIRA预计至2028F降至约3,800 FTE[Kira estimates]。</div>
+        <div class="uc-example">SOURCE: CSA 2025 · IMDA 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">MSSP · 03</div>
+        <div class="uc-title">MSSP市场结构</div>
+        <div class="uc-body">新加坡托管安全服务市场2025E规模达<strong>USD 310 mn</strong>，同比增长19%[Kira estimates]。三大本地MSSP——NCS（Singtel子公司）、ST Engineering Cyber与ISTARI（聚焦亚太）——合计份额41%。对于要求由CSA持牌SOC运营的金融业客户，离岸交付型MSSP处于结构性劣势。中型企业渗透率将由28%升至2027F的约44%[Kira estimates]。</div>
+        <div class="uc-example">SOURCE: Kira estimates · 公司披露文件</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">IR · 04</div>
+        <div class="uc-title">事件响应服务预约经济学</div>
+        <div class="uc-body">MAS监管实体（银行、保险公司、资本市场中介）的IR服务预约采用率在2025年达到<strong>63%</strong>，高于2022年的41%[Kira estimates]。年度预约费用视响应SLA与服务范围在SGD 80,000–SGD 280,000之间[Kira estimates]。CSA建议CII运营方将IR服务预约纳入业务连续性管理框架——这一软性要求正在趋硬[CSA 2025]。</div>
+        <div class="uc-example">SOURCE: CSA 2025 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">IR · 05</div>
+        <div class="uc-title">事后支出动态</div>
+        <div class="uc-body">2024年新加坡注册企业的平均事后修复成本达<strong>SGD 2.1 mn</strong>[Kira estimates]，较2022年上升34%。最大成本项为监管通报与合规应对（32%），其次是系统修复（28%）与声誉管理（18%）。MAS要求在确认后1小时内完成违规通报——这一要求结构性抬升了IR能力支出。</div>
+        <div class="uc-example">SOURCE: CSA 2025 · MAS 2024 · Kira estimates</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-num">SOC枢纽 · 06</div>
+        <div class="uc-title">东盟SOC枢纽发展路径</div>
+        <div class="uc-body">新加坡的东盟网络安全战略及其对INTERPOL网络犯罪局的参与，使其成为区域情报协调节点。<strong>来自东盟客户的跨境MSSP与威胁情报收入，占总部位于新加坡的供应商收入的18%</strong>[Kira estimates]，预计2028F升至约26%。泰国与菲律宾监管机构在自身指引中日益参照新加坡MAS TRM框架——为新加坡持牌供应商带来认证上的相邻优势。</div>
+        <div class="uc-example">SOURCE: CSA ASEAN Strategy 2025 · Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key">IMDA 2025 = IMDA Infocomm Workforce Report 2025 · CSA 2025 = CSA SG Cyber Landscape Report · MAS 2024 = MAS TRM Guidelines</div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: METHODOLOGY ENDNOTE -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">来源与研究方法</div>
+      <div class="page-section-counter">14 / 14</div>
+    </div>
+    <div class="page-h1">研究方法与来源</div>
+    <div class="endnote-body">
+      <div class="endnote-col">
+        <h3>研究方法概述</h3>
+        <p>本报告对两类证据来源进行交叉验证。凡标注具名来源（如[CSA 2025]、[MAS 2024]、[IMDA 2025]）的数据，均来自该来源，完整引用见来源列表。凡标注[Kira estimates]的数据，均由KIRA分析师综合已披露信息——政府出版物、运营方披露文件、渠道调研及监管指引——推算得出，测算方法在相关章节中披露。本报告约38%的量化结论为KIRA推算，62%引自外部来源。市场规模数据均为估算值，应视为方向性区间，而非经审计数据。年复合增长率预测假设现行监管时间表不变，且东盟数字基础设施投资未受重大地缘政治冲击。</p>
+        <h3>来源列表</h3>
+        <ul>
+          <li><strong>CSA 2025</strong> — Cyber Security Agency of Singapore, Singapore Cyber Landscape Report 2025, published April 2025. Available at csa.gov.sg.</li>
+          <li><strong>GovTech 2025</strong> — Government Technology Agency of Singapore, Digital Government Blueprint 2025, published January 2025. govtech.gov.sg.</li>
+          <li><strong>IMDA 2025</strong> — Infocomm Media Development Authority, Infocomm Workforce Study 2025, published March 2025. imda.gov.sg.</li>
+          <li><strong>INTERPOL 2024</strong> — INTERPOL, Operation HAECHI V Cybercrime Assessment Report 2024, published December 2024. interpol.int.</li>
+          <li><strong>MAS 2024</strong> — Monetary Authority of Singapore, Technology Risk Management Guidelines (updated June 2024). mas.gov.sg.</li>
+        </ul>
+      </div>
+      <div class="endnote-col">
+        <h3>其他参考资料</h3>
+        <ul>
+          <li><strong>CSA ASEAN Strategy 2025</strong> — Cyber Security Agency, ASEAN Cybersecurity Cooperation Strategy, published February 2025. csa.gov.sg.</li>
+          <li><strong>MAS TRM 2021</strong> — MAS Technology Risk Management Guidelines, original issuance January 2021. Superseded in part by MAS 2024 update.</li>
+          <li><strong>ST Engineering AR 2024</strong> — ST Engineering Limited Annual Report 2024, Singapore Exchange filing. SGX: S63.</li>
+          <li><strong>Singtel AR 2025</strong> — Singtel Group Annual Report FY2025. NCS cybersecurity segment disclosed. SGX: Z74.</li>
+          <li><strong>CREST APAC 2025</strong> — CREST International, APAC Penetration Testing and Incident Response Market Survey 2025. crest-approved.org.</li>
+          <li><strong>GovTech TRM 2025</strong> — GovTech Technology Risk Management framework for government agencies, updated February 2025. tech.gov.sg.</li>
+        </ul>
+        <h3>覆盖范围说明</h3>
+        <p>市场规模涵盖新加坡企业与政府的网络安全支出，对象界定为员工逾50人且年度IT预算超过SGD 500,000的机构。除另有说明外，面向消费者的网络安全产品，以及新加坡本土供应商来自新加坡以外市场的收入均不计入。OT/ICS安全规模同时包含部署于CII行业环境中的硬件与托管服务部分。</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <p>免责声明 · 本报告由KIRA Research编制，仅供信息参考及战略研判之用，不构成投资建议、法律建议或任何形式的招揽。市场规模数据为基于分析师交叉验证及公开数据得出的估算值，存在固有不确定性。读者在依据本材料作出决策前，应自行进行独立核实。除另有说明外，所有数据均以USD计。© 2026 KIRA Research。保留所有权利。未经书面同意，不得复制或转发。</p>
+    </div>
+    <div class="page-footer">
+      <span>新加坡网络安全2026</span>
+      <span class="logo-foot">KIRA<span class="accent">.</span>Research</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
