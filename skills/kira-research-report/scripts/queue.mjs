@@ -6,7 +6,8 @@
 // Supabase tables `report_queue` + `report_queue_events` (migration 031).
 //
 //   queue.mjs recover                        revert stale *_in_progress claims          → recovered=<N>
-//   queue.mjs sync-topics                    approved topics → pending rows, demand → priority → added=<N>
+//   queue.mjs sync-topics                    approved topics → pending rows; priority = demand, then planner score;
+//                                            pending rows refreshed, rows of merged topics parked → added=<N>
 //   queue.mjs next [--model <m>] [--id <id>] pick the most-advanced row and CLAIM it    → one JSON line, or "none"
 //                                            (--id: only that row, to chain its next stage in the same fire)
 //   queue.mjs advance <id> <status> [--paths "a|b"] [--model <m>] [--cost <usd>]   stage succeeded
@@ -73,8 +74,8 @@ async function recover() {
 }
 
 async function syncTopics() {
-  const approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title&order=decided_at.asc&limit=200');
-  const industries = await sb('tax_industries?select=id,name&limit=1000');
+  const approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title,priority_score&order=decided_at.asc&limit=1000');
+  const industries = await sb('tax_industries?select=id,name,parent_id&limit=5000');
   const demand = new Map();
   try {
     const reqs = await sb('topic_requests?select=topic:topics(slug)&topic_id=not.is.null&limit=10000');
@@ -83,22 +84,49 @@ async function syncTopics() {
     const searched = await sb('topics?select=slug,search_count&search_count=gt.0&limit=10000');
     for (const t of searched) demand.set(t.slug, (demand.get(t.slug) || 0) + t.search_count * wSearch);
   } catch (e) { console.error(`queue: demand unavailable (${e.message})`); }
-  const indName = new Map(industries.map(i => [i.id, i.name]));
+  // The report-name vocabulary knows level-1 industries only: a level-2 segment is written under its parent.
+  const indById = new Map(industries.map(i => [i.id, i]));
+  const indName = new Map(industries.map(i => [i.id, (indById.get(i.parent_id) || i).name]));
+  // Priority = reader demand first, then the planner's priority_score (0-100) as tiebreak.
+  const score = new Map(approved.map(t => [t.slug, t.priority_score || 0]));
+  const prio = (slug) => Math.round((demand.get(slug) || 0) * 100) + (score.get(slug) || 0);
   const existing = new Set((await sb('report_queue?select=id&limit=100000')).map(r => r.id));
   const fresh = approved.filter(t => !existing.has(t.slug)).map(t => ({
     id: t.slug, topic: t.title, country: t.country_code, industry: indName.get(t.industry_id) || '', year: t.year,
-    target_languages: LANGS, status: 'pending', priority: demand.get(t.slug) || 0
+    target_languages: LANGS, status: 'pending', priority: prio(t.slug)
   }));
   if (fresh.length) await sb('report_queue', 'POST', fresh, 'resolution=ignore-duplicates');
-  // requested topics already waiting get their demand as priority (admin-set higher values are kept)
-  let bumped = 0;
-  const pending = await sb('report_queue?status=eq.pending&select=id,priority&limit=100000');
+  // Pending rows: refresh title + industry when the topic was edited after queueing, park rows of topics
+  // merged into a broader one (status rejected + signals.merged_into), and raise priority to current
+  // demand (admin-set higher values are kept). Claimed or finished rows are never touched.
+  let bumped = 0, refreshed = 0, parked = 0;
+  const pending = await sb('report_queue?status=eq.pending&select=id,topic,industry,priority,error_log&limit=100000');
+  const live = new Map((await sb('topics?status=in.(approved,queued)&select=slug,title,industry_id,priority_score&limit=10000'))
+    .map(t => [t.slug, t]));
+  const merged = new Map((await sb('topics?status=eq.rejected&signals->>merged_into=not.is.null&select=slug,signals&limit=10000'))
+    .map(t => [t.slug, t.signals.merged_into]));
   for (const r of pending) {
-    const d = demand.get(r.id) || 0;
-    if (d > r.priority) { await sb(`report_queue?id=eq.${enc(r.id)}`, 'PATCH', { priority: d, updated_at: nowIso() }); bumped++; }
+    if (merged.has(r.id)) {
+      await sb(`report_queue?id=eq.${enc(r.id)}&status=eq.pending`, 'PATCH',
+        { status: 'hold', error_log: (r.error_log ? r.error_log + ' · ' : '') + `merged into ${merged.get(r.id)}`, updated_at: nowIso() });
+      parked++; continue;
+    }
+    const t = live.get(r.id);
+    const patch = {};
+    if (t) {
+      const ind = indName.get(t.industry_id) || '';
+      if (t.title && t.title !== r.topic) patch.topic = t.title;
+      if (ind && ind !== r.industry) patch.industry = ind;
+      score.set(r.id, t.priority_score || 0);
+    }
+    const d = prio(r.id);
+    if (d > r.priority) { patch.priority = d; bumped++; }
+    if (patch.topic || patch.industry) refreshed++;
+    if (Object.keys(patch).length) await sb(`report_queue?id=eq.${enc(r.id)}`, 'PATCH', { ...patch, updated_at: nowIso() });
   }
   const now = nowIso();
   for (const t of approved) await sb(`topics?id=eq.${t.id}&status=eq.approved`, 'PATCH', { status: 'queued', queued_at: now });
+  if (parked || refreshed) console.error(`queue: parked=${parked} refreshed=${refreshed}`);
   console.log(`added=${fresh.length + bumped}`);
 }
 
