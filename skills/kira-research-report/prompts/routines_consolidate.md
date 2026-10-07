@@ -62,7 +62,7 @@ Commit `batch:` gần nhất cách hôm nay > 2 ngày mà queue còn hàng `pend
 3. **Cửa sổ Claude Code treo ở permission prompt** — chặn mọi fire sau đó.
    Xem `feedback_scheduled_task_cwd_parent.md` phần recovery.
 4. **Hàng kẹt `*_in_progress`** — chạy tay một lần:
-   `node skills/kira-research-report/scripts/audit-queue.mjs`
+   `node skills/kira-research-report/scripts/queue.mjs recover`
    (2026-07-29 có 3 hàng kẹt: 2 `en_in_progress`, 1 `ja_in_progress`.)
 
 **Fix xong mới sang Step 1.**

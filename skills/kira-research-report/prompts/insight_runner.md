@@ -154,7 +154,7 @@ The en.html file is the source-of-truth content for extraction. Find it:
 
 Faster path: just scan `skills/kira-research-report/outputs/batch/*/en.html` and grep for `<h1 class="cover-title">` matching the report title in DB (you queried it in Step 1).
 
-Or simpler: read `data/report_queue.csv`, find the row whose `<industry>-<country>-<year>` matches the slug, get the `id` field, then en.html lives at `skills/kira-research-report/outputs/batch/${id}/en.html`.
+Or simpler: query Supabase `report_queue` (`GET /rest/v1/report_queue?select=id,industry,country,year`; the CSV is a frozen archive since 2026-10-07), find the row whose `<industry>-<country>-<year>` matches the slug, get the `id` field, then en.html lives at `skills/kira-research-report/outputs/batch/${id}/en.html`.
 
 If en.html doesn't exist locally → EXIT with error log. (Edge case: published report but file was never committed. Means the batch worker on the OTHER machine has it. Skip for now; will be picked up on the machine that has the file.)
 
@@ -288,7 +288,7 @@ If it returns 0 rows (the report has no cover yet), generate one per insight at 
 ```bash
 for s in <slug1> <slug2> <slug3>; do
   node skills/kira-research-report/scripts/gen-cover.mjs --id "$s" --country "<country>" --industry "<industry>" \
-    --angle "<title_en of that insight>" --quality medium --out "/tmp/$s.jpg" \
+    --angle "<title_en of that insight>" --quality medium --layout L1 --out "/tmp/$s.jpg" \
     && node skills/kira-research-report/scripts/upload-cover.mjs --kind insight --slug "$s" --in "/tmp/$s.jpg"
 done
 ```

@@ -4,7 +4,7 @@
 //
 //   node skills/kira-research-report/scripts/backfill-covers.mjs [--kind report|insight] [--limit N] [--jobs 4] [--dry-run]
 //
-// Reports without cover_url: gen-cover.mjs (style rotates by slug) then
+// Reports without cover_url: gen-cover.mjs (style + layout rotate by slug) then
 // upload-cover.mjs, which also hands the cover to insights linked to the report.
 // Insights still without cover_url afterwards (no linked report with a cover)
 // get their own illustration from their country, industry and title.
@@ -39,13 +39,14 @@ async function one(kind, slug, country, industry, angle) {
   const out = path.join(tmp, `${kind}-${slug}.jpg`);
   const g = await run([path.join(here, 'gen-cover.mjs'), '--id', slug, '--country', country || 'Southeast Asia',
     '--industry', industry || 'Market', '--angle', (angle || '').slice(0, 160), '--out', out,
-    '--quality', kind === 'report' ? 'high' : 'medium', ...(dry ? ['--dry-run'] : [])]);
-  if (!g.ok || dry) return { kind, slug, style: g.style, ok: g.ok, dry, error: g.error };
+    '--quality', kind === 'report' ? 'high' : 'medium', ...(kind === 'insight' ? ['--layout', 'L1'] : []),
+    ...(dry ? ['--dry-run'] : [])]);
+  if (!g.ok || dry) return { kind, slug, style: g.style, layout: g.layout, ok: g.ok, dry, error: g.error };
   if (g.usage) { usage.input += g.usage.input_tokens || 0; usage.output += g.usage.output_tokens || 0; }
   usage.images++;
   const u = await run([path.join(here, 'upload-cover.mjs'), '--kind', kind, '--slug', slug, '--in', out]);
   fs.rmSync(out, { force: true });
-  return { kind, slug, style: g.style, ok: u.ok, insights: u.insights, error: u.error };
+  return { kind, slug, style: g.style, layout: g.layout, ok: u.ok, insights: u.insights, error: u.error };
 }
 async function pool(items, fn) {
   const results = []; let i = 0;
