@@ -6,9 +6,9 @@ This prompt is **machine-agnostic**: it derives its working directory from git, 
 
 ---
 
-## Mission (Phase Q.1 — 2026-05-25)
+## Mission (Phase Q.1 — 2026-05-25; full report per fire since 2026-10-07)
 
-**1 fire = 1 stage = 1 row.** Pick the most-advanced row in the queue and advance it ONE stage. Three stages per row before publish (four when `target_languages` includes `zh` — Phase S4):
+**1 fire = 1 row, carried through every stage to `done`** (Step 6 chains the stages, 2026-10-07). Each stage is still its own claim + commit, so a fire that dies mid-way leaves the row at the last finished stage and the next fire resumes it. Three stages per row before publish (four when `target_languages` includes `zh` — Phase S4):
 
 ```
 target_languages without zh (legacy "en,ja,ko"):
@@ -24,7 +24,7 @@ zh_backfill → [Fire E: ZH translate + publish ZH only, en/ja/ko untouched] →
 
 Why split: a single fire that did EN + JA + KO + publish was running 60-150 min on heavy topics. JA and KO translation subagents are **output-cap bound** (a 67KB en.html ≈ 18K tokens, sat trên Sonnet's 32K per-response output cap). Splitting per locale + chunking the translation per top-level `<div class="page">` (Section 4 + 5 below) makes each fire <30 min and survivable.
 
-Hard cap: **1 row × 1 stage per fire** to stay safely within Sonnet context budget on the Max 5x plan.
+Each stage runs in a fresh subagent with the chunked per-page protocol, so the fire's own context stays small even when it chains four stages. A full four-language report takes about 60–100 minutes. Throughput = number of Routine fires per day (`cloud_routine.md`).
 
 ---
 
@@ -35,9 +35,9 @@ The cron fire itself (this orchestrating session) runs on the account-default mo
 | Stage | Subagent work | `model` to pass | Time cap | Why |
 |---|---|---|---|---|
 | A (EN gen) | Step 3 | **`opus`** | 90 min | EN report is the sellable product — synthesis depth matters, keep top model |
-| B (JA translate) | Step 4 | **`sonnet`** | 75 min | Translation is mechanical; Sonnet is near-parity and the chunked protocol was designed for its output cap |
-| C (KO translate) | Step 5 | **`sonnet`** | 75 min | Same as JA |
-| D (ZH translate + publish) / E (ZH backfill) | Step 5Z | **`sonnet`** | 75 min | Same as JA; same chunked per-page protocol and output-cap reasoning |
+| B (JA translate) | Step 4 | **`opus`** | 75 min | Owner, 2026-10-07: the whole pipeline runs on Opus; JA/KO/ZH buyers read the translation, not the EN |
+| C (KO translate) | Step 5 | **`opus`** | 75 min | Same as JA |
+| D (ZH translate + publish) / E (ZH backfill) | Step 5Z | **`opus`** | 75 min | Same as JA; same chunked per-page protocol |
 
 Stale-claim threshold (Step 0.5) stays 150 min — above every cap.
 
@@ -198,6 +198,8 @@ has `*_in_progress` status with a `claimed_at` more than 150 minutes ago
 
 Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `target_languages`, current `status` (and `output_paths` for a `zh_backfill` row — it holds the published `report_id`).
 
+**Edition year** (owner, 2026-10-07): a report's year is the year it is published, never a later one. Set `edition_year=$(date -u +%Y)` and pass it to EN gen (naming, cover, publish). The queue's `year` column and any year inside `topic` (e.g. "2027 outlook") do not override it; a forecast horizon may still appear in the angle or body.
+
 ---
 
 ## Step 2: Claim the row (atomic, push immediately)
@@ -246,7 +248,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 
 > Generate a KIRA Research report. Load the skill at `skills/kira-research-report/SKILL.md` and follow its standard pipeline: topic_parser → orchestrator → (brain_route | blueprint | design mode) → research → content_per_section → chart_generator → render_and_output. Use the route the orchestrator selects (BRAIN when the brain is available at `${brain_dir}`).
 >
-> Queue id: `${id}` · Topic: `${topic}` · Country: `${country}` · Industry: `${industry}` · Year: `${year}`
+> Queue id: `${id}` · Topic: `${topic}` · Country: `${country}` · Industry: `${industry}` · Year: `${edition_year}`
 >
 > BRAIN route: keep framing, context pack and brain trace in `<os temp dir>/kira-brain/${id}/` — never inside this repo.
 >
@@ -300,7 +302,7 @@ git commit -m "batch: EN done for ${id}"
 git push origin main
 ```
 
-Go to Step 6 (summary) — do NOT proceed to JA in same fire.
+Go to Step 6 (summary), which chains to JA.
 
 ---
 
@@ -328,7 +330,7 @@ Typical reports have 12-30 pages (cover + methodology + contents + exec + sectio
 
 ### 4.2 — Chunked translation
 
-Spawn ONE subagent for JA translation **with `model: "sonnet"`** (translation → Sonnet per Model routing). Prompt:
+Spawn ONE subagent for JA translation **with `model: "opus"`** (see Model routing). Prompt:
 
 > Translate the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html` to Japanese. Follow `prompts/translator_jp.md` for register / vocabulary / source-tag preservation / anti-positioning rules.
 >
@@ -369,7 +371,7 @@ git commit -m "batch: JA done for ${id}"
 git push origin main
 ```
 
-Go to Step 6 — do NOT proceed to KO in same fire.
+Go to Step 6, which chains to KO.
 
 ---
 
@@ -377,7 +379,7 @@ Go to Step 6 — do NOT proceed to KO in same fire.
 
 ### 5.1 — KO chunked translation
 
-Exactly mirror Step 4 but use `translator_ko.md` rules. Spawn the subagent **with `model: "sonnet"`** (translation → Sonnet per Model routing). Subagent prompt is identical to 4.2 except substituting `ja`→`ko` everywhere AND `translator_jp.md` → `translator_ko.md`. Same chunked protocol. Same time cap. **Reminder**: top-level page class is `page` / `page cover-page` (not `kira-page`) — see §4.1.
+Exactly mirror Step 4 but use `translator_ko.md` rules. Spawn the subagent **with `model: "opus"`** (see Model routing). Subagent prompt is identical to 4.2 except substituting `ja`→`ko` everywhere AND `translator_jp.md` → `translator_ko.md`. Same chunked protocol. Same time cap. **Reminder**: top-level page class is `page` / `page cover-page` (not `kira-page`) — see §4.1.
 
 Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specific ones: `Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|클로드|クロード|맥킨지|모르도르`.
 
@@ -552,7 +554,7 @@ Stage D = a `ko_done` row (new report; EN/JA/KO are committed, nothing published
 
 ### 5Z.1 — ZH chunked translation
 
-Spawn ONE `general-purpose` subagent **with `model: "sonnet"`** (translation → Sonnet per Model routing). Prompt = the §4.2 prompt with `ja` → `zh` everywhere, `translator_jp.md` → **`translator_zh.md`**, "to Japanese" → "to Simplified Chinese (简体中文)", and these additions:
+Spawn ONE `general-purpose` subagent **with `model: "opus"`** (see Model routing). Prompt = the §4.2 prompt with `ja` → `zh` everywhere, `translator_jp.md` → **`translator_zh.md`**, "to Japanese" → "to Simplified Chinese (简体中文)", and these additions:
 
 > - In the shell Write, set `<html lang="zh-Hans">`, add the Noto Sans SC Google Fonts `<link>`, set `.source-key::before` to `来源说明 · `, and if the inlined CSS has no `--font-cjk`, add `'Noto Sans SC', ` after every `'Satoshi', ` / `'JetBrains Mono', ` in font stacks (translator_zh.md §0).
 > - Translate the `<title>`; keep it a question when the EN title is a question.
@@ -646,7 +648,9 @@ KIRA batch fire complete.
   Next pending: ${count} pending + ${count} en_done + ${count} ja_done + ${count} ko_done + ${count} zh_backfill in queue
 ```
 
-Then exit. Do not start a second stage in the same fire — that's by design.
+**Chain to the next stage (2026-10-07).** If the row is not yet `done` (status `en_done`, `ja_done` or `ko_done`), go back to Step 1 restricted to this same row id: claim the next stage (Step 2) and run it. Stop chaining when the row reaches `done`, when a stage fails (Step 7), or when the fire has run more than 150 minutes (leave the row at its finished stage; the next fire resumes it). Print the summary block once per stage. Never pick up a second row in the same fire.
+
+**Push conflicts.** Several fires can now be in flight on different rows. Whenever a `git push origin main` in this prompt is rejected, run `git pull --rebase origin main` and push again (up to 3 tries). The queue CSV merges cleanly when fires touch different rows; if the rebase stops on a conflict in our row's line, keep our version of our row and the remote version of every other row.
 
 ---
 
