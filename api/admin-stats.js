@@ -21,6 +21,8 @@
 // yet — so the dashboard renders cleanly on a fresh DB.
 // ============================================================
 
+import { envProblems } from './_lib/env-checks.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
@@ -154,6 +156,7 @@ export default async function handler(req, res) {
     const waitlistNew = waitlistAll.rows.filter(w => w.status === 'new').length;
     const leadsNewCount = leadsAll.rows.filter(l => l.status === 'new').length;
     const attention = [
+      ...envProblems().map(p => ({ ...p, href: '/en/admin/health' })),
       pipeline && (pipeline.errors || pipeline.stuck || pipeline.state === 'stalled') && {
         key: 'pipeline', href: '/en/admin/pipeline', severity: 'high',
         label: pipeline.state === 'stalled' && !pipeline.errors && !pipeline.stuck

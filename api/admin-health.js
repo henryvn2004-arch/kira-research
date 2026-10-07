@@ -12,30 +12,12 @@
 // Auth: Bearer <supabase-jwt>, email in ADMIN_EMAILS.
 // ============================================================
 
+import { ENV_CHECKS } from './_lib/env-checks.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
   .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-
-// level: critical = site or money breaks · important = a feature silently degrades · optional = nice to have
-const ENV_CHECKS = [
-  ['SUPABASE_URL',         'critical',  'Everything: database access'],
-  ['SUPABASE_SERVICE_KEY', 'critical',  'Everything: database access'],
-  ['ADMIN_EMAILS',         'critical',  'Admin login (nobody can open /en/admin without it)'],
-  ['PAYPAL_CLIENT_ID',     'critical',  'Checkout'],
-  ['PAYPAL_CLIENT_SECRET', 'critical',  'Checkout'],
-  ['PAYPAL_MODE',          'critical',  'Checkout: must read "live" in production', true],
-  ['RESEND_API_KEY',       'critical',  'Purchase receipts, lead alerts, "report is ready" emails'],
-  ['PDF_RENDER_SECRET',    'critical',  'PDF rendering for every report'],
-  ['CRON_SECRET',          'important', 'Locks the daily notification cron against outside callers'],
-  ['ANTHROPIC_API_KEY',    'important', 'Search: files product searches under an industry; Studio'],
-  ['APP_URL',              'important', 'Links inside emails (falls back to kiraresearch.com)'],
-  ['TAVILY_API_KEY',       'optional',  'Company enrichment web search'],
-  ['SERPER_API_KEY',       'optional',  'Search provider'],
-  ['EXA_API_KEY',          'optional',  'Search provider'],
-  ['FIRECRAWL_API_KEY',    'optional',  'Page scraping'],
-  ['INNGEST_EVENT_KEY',    'optional',  'Background job queue']
-];
 
 const JOBS = [
   { key: 'notify-topic-published', label: 'Daily "your report is ready" emails', schedule: 'Daily 02:00 UTC (09:00 Vietnam)', max_gap_h: 30 }

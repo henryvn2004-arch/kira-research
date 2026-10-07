@@ -397,7 +397,7 @@
         <h3>Needs you today</h3>
         ${attention.length ? attention.map(a => `
           <div class="recent-row"><div><div class="title" style="${a.severity === 'high' ? 'color:#B42318' : ''}">${esc(a.label)}</div></div>
-            <span class="meta">${a.count > 0 && a.key !== 'pipeline' ? '<strong>' + a.count + '</strong> · ' : ''}<a href="${esc(a.href)}">Open →</a></span></div>`).join('')
+            <span class="meta">${a.count > 0 && !['pipeline', 'env-missing', 'paypal-mode'].includes(a.key) ? '<strong>' + a.count + '</strong> · ' : ''}<a href="${esc(a.href)}">Open →</a></span></div>`).join('')
           : '<div class="recent-empty">Nothing needs you right now.</div>'}
       </div>`;
 
