@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菲律宾零售2026 — KIRA Research</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+:root{
+  --bg:#FFFFFF; --bg-soft:#F8F9FB; --text:#0B0D10; --text-mid:#4A5568;
+  --muted:#6B7280; --primary:#1E6FFF; --primary-soft:#EEF3FF; --green:#00A88B;
+  --amber:#D97706; --red:#B91C1C; --border:#E5E7EB; --dark:#0B0D10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#52555c;font-family:'Satoshi','Noto Sans SC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono','Noto Sans SC','SFMono-Regular',Menlo,monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.page{
+  position:relative;width:1280px;height:720px;background:var(--bg);
+  margin:0 auto 22px;overflow:hidden;
+  padding:36px 56px 28px 56px;display:flex;flex-direction:column;
+}
+.page.dark{background:var(--dark);color:#fff}
+/* page chrome */
+.page-header{display:flex;justify-content:space-between;align-items:center;height:25px;flex:0 0 auto}
+.logo-mark{font-weight:900;letter-spacing:.16em;font-size:13px;text-transform:uppercase}
+.page.dark .logo-mark{color:#fff}
+.page-header .section-tag{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.page.dark .page-header .section-tag{color:#9aa3af}
+.page-divider-rule{height:2px;background:var(--text);margin-top:6px;flex:0 0 auto}
+.page.dark .page-divider-rule{background:#fff;opacity:.2}
+.page-rule-soft{height:1px;background:var(--border);margin-top:6px;flex:0 0 auto}
+.page-footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);font-size:10px;letter-spacing:.06em;color:var(--muted);flex:0 0 auto}
+.page.dark .page-footer{border-top-color:rgba(255,255,255,.15);color:#9aa3af}
+.body-wrap{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding-top:14px}
+/* headings */
+h1.page-h1{font-size:30px;font-weight:900;line-height:1.08;letter-spacing:-.01em;margin-bottom:8px}
+.subhead{font-size:14.5px;line-height:1.45;color:var(--text-mid);max-width:1060px;margin-bottom:14px}
+.subhead strong{font-weight:700;color:var(--text)}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+/* data tags */
+.tag{display:inline-block;font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:9.5px;font-weight:600;padding:1px 5px;border-radius:3px;vertical-align:middle;letter-spacing:.02em;white-space:nowrap}
+.tag.kira{background:var(--primary-soft);color:var(--primary)}
+.tag.src{background:#E7F7F3;color:var(--green)}
+.tag.est{background:#FDF2E2;color:var(--amber)}
+/* cover */
+.cover{padding:0}
+.cover-inner{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between;padding:56px}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start}
+.cover-badge{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.cover-title{font-size:62px;font-weight:900;line-height:1.02;letter-spacing:-.02em;max-width:1000px}
+.cover-sub{font-size:20px;color:var(--text-mid);margin-top:18px;max-width:820px;line-height:1.4}
+.cover-accent{width:88px;height:6px;background:var(--primary);margin:26px 0}
+.cover-meta{display:flex;gap:48px;margin-top:8px}
+.cover-meta div .l{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.cover-meta div .v{font-size:17px;font-weight:700}
+.cover-foot{display:flex;justify-content:space-between;align-items:flex-end;font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:11px;color:var(--muted)}
+.confidential{border:1px solid var(--border);border-radius:4px;padding:5px 10px;letter-spacing:.1em;text-transform:uppercase;font-size:10px}
+/* callouts */
+.callout-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.callout{border:1px solid var(--border);border-radius:8px;padding:14px 16px;background:var(--bg-soft);min-height:100px;display:flex;flex-direction:column;justify-content:space-between}
+.callout .c-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.25}
+.callout .c-num{font-size:32px;font-weight:900;line-height:1;margin:6px 0 2px;letter-spacing:-.01em}
+.callout .c-num .u{font-size:15px;font-weight:700;color:var(--text-mid);margin-left:2px}
+.callout .c-change{font-size:11.5px;color:var(--text-mid);line-height:1.3}
+.callout .c-change .up{color:var(--green);font-weight:700}
+.callout .c-change .down{color:var(--red);font-weight:700}
+/* two-col narrative */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1 1 auto;min-height:0}
+.split-3070{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;flex:1 1 auto;min-height:0}
+.narr h3{font-size:14px;font-weight:700;margin-bottom:5px;letter-spacing:-.01em}
+.narr p{font-size:13px;line-height:1.5;color:var(--text-mid);margin-bottom:14px}
+.narr p strong{font-weight:700;color:var(--text)}
+/* chart panel */
+.chart-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column}
+.chart-card .ch-title{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.chart-card .ch-sub{font-size:11.5px;color:var(--muted);margin-top:2px;margin-bottom:6px}
+.chart-card .ch-src{font-size:10px;color:var(--muted);margin-top:auto;padding-top:8px;font-family:'JetBrains Mono','Noto Sans SC',monospace}
+svg text{font-family:'JetBrains Mono','Noto Sans SC',monospace}
+.bar-primary{fill:var(--primary)}
+.bar-soft{fill:#Bcd4ff}
+.bar-mut{fill:#cbd5e1}
+.axis-line{stroke:var(--border);stroke-width:1}
+.grid-line{stroke:#eef0f3;stroke-width:1}
+/* implications cards */
+.imp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex:1 1 auto}
+.imp-grid.g3{grid-template-columns:repeat(3,1fr)}
+.imp-card{border:1px solid var(--border);border-radius:8px;padding:14px 15px;display:flex;flex-direction:column}
+.imp-card .i-tag{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.imp-card h4{font-size:14px;font-weight:700;line-height:1.2;margin-bottom:8px;letter-spacing:-.01em}
+.imp-card p{font-size:11.5px;line-height:1.42;color:var(--text-mid)}
+.imp-card .i-anchor{margin-top:auto;padding-top:9px;font-size:10px;font-family:'JetBrains Mono','Noto Sans SC',monospace;color:var(--muted);border-top:1px solid var(--border)}
+/* divider */
+.div-body{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;max-width:980px}
+.div-num{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:13px;letter-spacing:.22em;color:var(--primary);margin-bottom:18px}
+.div-title{font-size:50px;font-weight:900;line-height:1.04;letter-spacing:-.02em;margin-bottom:22px}
+.div-title .acc{color:var(--primary)}
+.div-thesis{font-size:18px;line-height:1.5;color:#cbd2dc;max-width:840px}
+.div-thesis strong{color:#fff;font-weight:700}
+.div-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.div-pill{border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:6px 14px;font-size:11.5px;color:#dfe4ea;font-family:'JetBrains Mono','Noto Sans SC',monospace;letter-spacing:.03em}
+/* toc */
+.toc-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 48px;flex:1 1 auto;align-content:start}
+.toc-row{display:flex;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--border)}
+.toc-row .t-num{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:12px;color:var(--primary);font-weight:600;width:26px;flex:0 0 auto}
+.toc-row .t-title{font-size:13.5px;font-weight:600}
+.toc-row .t-sub{font-size:11px;color:var(--muted);margin-left:4px;font-weight:400}
+.toc-row .t-pg{margin-left:auto;font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:11.5px;color:var(--muted)}
+/* methodology cols */
+.meth-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1 1 auto}
+.meth-col h3{font-size:15px;font-weight:900;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--text)}
+.meth-item{margin-bottom:16px}
+.meth-item .m-label{font-size:13px;font-weight:700;margin-bottom:3px}
+.meth-item .m-desc{font-size:12px;line-height:1.45;color:var(--text-mid)}
+/* competitive structure */
+.cs-top{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;height:236px;margin-bottom:16px}
+.cs-side h3{font-size:14px;font-weight:700;margin-bottom:8px}
+.cs-side p{font-size:12px;line-height:1.45;color:var(--text-mid);margin-bottom:10px}
+.cs-stat{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.cs-stat .s-l{color:var(--text-mid)}
+.cs-stat .s-v{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-weight:600}
+.player-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.player-card{border:1px solid var(--border);border-radius:8px;padding:12px 13px}
+.player-card .p-rank{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:9.5px;color:var(--primary);font-weight:600;letter-spacing:.06em}
+.player-card .p-name{font-size:13.5px;font-weight:700;line-height:1.15;margin:3px 0 8px}
+.player-card .p-stat{display:flex;justify-content:space-between;font-size:10.5px;padding:2px 0;color:var(--text-mid)}
+.player-card .p-stat .v{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-weight:600;color:var(--text)}
+.player-card .p-str{font-size:10.5px;line-height:1.35;color:var(--text-mid);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+/* deep profile */
+.dp-hero{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:16px}
+.dp-name{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-.01em}
+.dp-subtitle{font-size:13px;color:var(--text-mid);margin-top:6px}
+.dp-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.dp-tag{font-size:10px;font-family:'JetBrains Mono','Noto Sans SC',monospace;background:#fff;border:1px solid var(--border);border-radius:14px;padding:3px 10px;color:var(--text-mid)}
+.dp-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dp-stat .l{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dp-stat .v{font-size:21px;font-weight:900;line-height:1.1;margin-top:2px}
+.dp-stat .v .u{font-size:11px;font-weight:600;color:var(--text-mid)}
+.dp-body{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1 1 auto}
+.dp-body h3{font-size:13.5px;font-weight:700;margin-bottom:5px}
+.dp-body p{font-size:12.5px;line-height:1.48;color:var(--text-mid);margin-bottom:12px}
+.dp-body ul{list-style:none}
+.dp-body li{font-size:12px;line-height:1.4;color:var(--text-mid);padding-left:16px;position:relative;margin-bottom:7px}
+.dp-body li:before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;background:var(--primary);border-radius:50%}
+/* use case grid */
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:14px;flex:1 1 auto}
+.uc-card{border:1px solid var(--border);border-radius:8px;padding:13px 14px;display:flex;flex-direction:column}
+.uc-card .u-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.uc-card h4{font-size:13.5px;font-weight:700;line-height:1.18;margin-bottom:7px}
+.uc-card p{font-size:11px;line-height:1.4;color:var(--text-mid)}
+.uc-card .u-ex{margin-top:auto;padding-top:8px;font-size:10px;font-family:'JetBrains Mono','Noto Sans SC',monospace;color:var(--muted);border-top:1px solid var(--border)}
+/* forecast */
+.fc-chart{height:300px;margin-bottom:16px}
+.scen-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:0 0 auto}
+.scen-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;border-top:3px solid var(--primary)}
+.scen-card.bull{border-top-color:var(--green)}
+.scen-card.bear{border-top-color:var(--amber)}
+.scen-card .s-name{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.scen-card .s-val{font-size:24px;font-weight:900;margin:5px 0}
+.scen-card .s-body{font-size:11.5px;line-height:1.4;color:var(--text-mid)}
+/* source key footer */
+.source-key{font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:10px;line-height:1.4;color:var(--muted);font-style:italic;margin-top:12px;flex:0 0 auto}
+.source-key b{font-style:normal;color:var(--text-mid)}
+/* endnote */
+.end-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;flex:1 1 auto}
+.end-grid p{font-size:12.5px;line-height:1.55;color:var(--text-mid);margin-bottom:12px}
+.src-list{columns:1;font-size:11px;line-height:1.5;color:var(--text-mid)}
+.src-list div{margin-bottom:6px;padding-left:14px;text-indent:-14px}
+.src-list b{color:var(--text);font-weight:700}
+.disclaimer{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:14px;padding-top:10px;border-top:1px solid var(--border)}
+.legend{display:flex;gap:18px;margin-top:8px;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono','Noto Sans SC',monospace}
+.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend .lg-p:before{background:var(--primary)}
+.legend .lg-s:before{background:var(--green)}
+.legend .lg-e:before{background:var(--amber)}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 COVER ============ -->
+<section class="page cover">
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="logo-mark" style="font-size:16px">KIRA RESEARCH</div>
+      <div class="cover-badge">市场分析 · 2026-PH-RETAIL</div>
+    </div>
+    <div>
+      <div class="cover-accent"></div>
+      <h1 class="cover-title">菲律宾零售2026：以商场为支点的复苏与电商渠道转移</h1>
+      <p class="cover-sub">在线上渠道夺取下一笔增量消费的同时，一个以消费为主导的经济体如何重建客流。</p>
+      <div class="cover-meta">
+        <div><div class="l">国家</div><div class="v">菲律宾</div></div>
+        <div><div class="l">行业</div><div class="v">零售与消费</div></div>
+        <div><div class="l">年份</div><div class="v">2026</div></div>
+        <div><div class="l">页数</div><div class="v">24</div></div>
+      </div>
+    </div>
+    <div class="cover-foot">
+      <div>KIRA Research · 东南亚消费与零售研究组</div>
+      <div class="confidential">机密</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 METHODOLOGY ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第01章 · 研究方法</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">本报告的观点如何形成</h1>
+    <p class="subhead">本报告的观点基于两类证据：<strong>一手输入</strong>——商场运营方渠道调研、与分销商及品牌方的交流、门店层面的观察；以及<strong>二手锚点</strong>——统计机构数据、上市公司披露文件和交叉验证估算。每一项量化结论均标注明确的来源标签。</p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>一手输入</h3>
+        <div class="meth-item"><div class="m-label">实地渠道调研</div><div class="m-desc">覆盖马尼拉大都会、宿务和达沃的商场客流观察、租户交流以及分销商和进口商访谈——反映真实的客流、客单与动销速度。</div></div>
+        <div class="meth-item"><div class="m-label">分析师综合研判</div><div class="m-desc">KIRA内部基于多项公开输入进行交叉验证。正文中标注为<span class="tag kira">Kira estimates</span>。</div></div>
+        <div class="meth-item"><div class="m-label">运营方与平台访谈</div><div class="m-desc">与零售运营商、商场招商团队及电商平台品类经理的交流，比宏观数据更贴近需求信号。</div></div>
+      </div>
+      <div class="meth-col">
+        <h3>二手锚点</h3>
+        <div class="meth-item"><div class="m-label">统计机构</div><div class="m-desc">菲律宾统计署、菲律宾中央银行及贸易数据——正文中以具名来源标注。</div></div>
+        <div class="meth-item"><div class="m-label">上市公司披露</div><div class="m-desc">上市零售商及商场运营商的年报与公告——正文中按公司及期间标注。</div></div>
+        <div class="meth-item"><div class="m-label">交叉验证估算</div><div class="m-desc">若单一来源无法覆盖某项数据，我们综合两至三项输入并披露方法。标注为<span class="tag kira">Kira estimates</span>。</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">002 / 024</div></div>
+</section>
+
+<!-- ============ 03 CONTENTS ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第02章 · 目录</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">目录</h1>
+    <div class="toc-list">
+      <div class="toc-row"><span class="t-num">03</span><span class="t-title">执行摘要<span class="t-sub">——2026年拐点</span></span><span class="t-pg">004</span></div>
+      <div class="toc-row"><span class="t-num">04</span><span class="t-title">宏观背景<span class="t-sub">——消费引擎</span></span><span class="t-pg">006</span></div>
+      <div class="toc-row"><span class="t-num">05</span><span class="t-title">市场规模与增长<span class="t-sub">——零售贸易</span></span><span class="t-pg">009</span></div>
+      <div class="toc-row"><span class="t-num">06</span><span class="t-title">细分市场经济性<span class="t-sub">——业态与客单</span></span><span class="t-pg">011</span></div>
+      <div class="toc-row"><span class="t-num">07</span><span class="t-title">竞争格局<span class="t-sub">——以商场为支点的集团</span></span><span class="t-pg">013</span></div>
+      <div class="toc-row"><span class="t-num">07</span><span class="t-title">企业概况<span class="t-sub">——主要运营商</span></span><span class="t-pg">015</span></div>
+      <div class="toc-row"><span class="t-num">08</span><span class="t-title">渠道与分销<span class="t-sub">——线上转移</span></span><span class="t-pg">018</span></div>
+      <div class="toc-row"><span class="t-num">09</span><span class="t-title">监管与政策<span class="t-sub">——零售贸易规则</span></span><span class="t-pg">020</span></div>
+      <div class="toc-row"><span class="t-num">10</span><span class="t-title">AI对零售的影响<span class="t-sub">——近期经济性</span></span><span class="t-pg">021</span></div>
+      <div class="toc-row"><span class="t-num">11</span><span class="t-title">五年展望<span class="t-sub">——预测与情景</span></span><span class="t-pg">023</span></div>
+      <div class="toc-row"><span class="t-num">12</span><span class="t-title">研究方法附注<span class="t-sub">——来源构成</span></span><span class="t-pg">024</span></div>
+      <div class="toc-row"><span class="t-num">·</span><span class="t-title">战略启示<span class="t-sub">——面向市场参与者</span></span><span class="t-pg">005</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">003 / 024</div></div>
+</section>
+
+<!-- ============ 04 EXEC SUMMARY P1 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第03章 · 执行摘要</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">菲律宾零售：围绕两大渠道重组的消费引擎</h1>
+    <p class="subhead">内需从未断裂；2026年的问题在于增量消费流向<strong>何处</strong>——是正在复苏的商场客流，还是日趋成熟、如今以便利而非新奇取胜的线上渠道。</p>
+    <div class="callout-row">
+      <div class="callout"><div class="c-label">零售贸易总额</div><div><span class="c-num">$78<span class="u">bn</span></span></div><div class="c-change">2025年基数<span class="tag est">Kira estimates</span></div></div>
+      <div class="callout"><div class="c-label">2025–30零售CAGR</div><div><span class="c-num">6.8<span class="u">%</span></span></div><div class="c-change"><span class="up">▲</span> 名义值，比索计价<span class="tag est">Kira estimates</span></div></div>
+      <div class="callout"><div class="c-label">电商占零售比重</div><div><span class="c-num">8.5<span class="u">%</span></span></div><div class="c-change"><span class="up">▲</span> 2022年约为5%<span class="tag src">DTI 2025</span></div></div>
+      <div class="callout"><div class="c-label">居民最终消费</div><div><span class="c-num">73<span class="u">%</span></span></div><div class="c-change">占GDP比重<span class="tag src">PSA 2024</span></div></div>
+    </div>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>复苏真实但不均衡</h3>
+        <p>马尼拉大都会核心商场的客流已恢复并超过2020年前水平，但复苏集中于<strong>体验主导型和超市支撑型</strong>业态<span class="tag est">Kira estimates</span>。服装及可选消费品类仍然落后，在动荡时期已将一部分结构性消费让给线上平台。零售总量数据掩盖了这一分化。</p>
+        <h3>线上已从新鲜事物变为日常习惯</h3>
+        <p>电商平台GMV增速已由三位数放缓至较可持续的十几个百分点区间，这标志着该渠道已<strong>完成获客</strong>并开始变现<span class="tag src">DTI 2025</span>。竞争焦点已从折扣转向物流速度、消费金融和直播带货转化。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">各渠道零售支出</div>
+        <div class="ch-sub">占零售贸易总额比重，%</div>
+        <svg viewBox="0 0 360 230" width="100%" height="200">
+          <line x1="40" y1="10" x2="40" y2="180" class="axis-line"/>
+          <line x1="40" y1="180" x2="350" y2="180" class="axis-line"/>
+          <line x1="40" y1="100" x2="350" y2="100" class="grid-line"/>
+          <line x1="40" y1="55" x2="350" y2="55" class="grid-line"/>
+          <!-- 2022 -->
+          <rect x="70" y="22" width="40" height="158" class="bar-mut"/>
+          <rect x="70" y="170" width="40" height="10" class="bar-primary"/>
+          <!-- 2025 -->
+          <rect x="160" y="35" width="40" height="145" class="bar-mut"/>
+          <rect x="160" y="163" width="40" height="17" class="bar-primary"/>
+          <!-- 2030E -->
+          <rect x="250" y="60" width="40" height="120" class="bar-mut"/>
+          <rect x="250" y="150" width="40" height="30" class="bar-primary"/>
+          <text x="90" y="194" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="180" y="194" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="270" y="194" font-size="9" fill="#6B7280" text-anchor="middle">2030E</text>
+          <text x="90" y="18" font-size="8.5" fill="#9aa3af" text-anchor="middle">95%</text>
+          <text x="180" y="31" font-size="8.5" fill="#9aa3af" text-anchor="middle">91.5%</text>
+          <text x="270" y="56" font-size="8.5" fill="#1E6FFF" text-anchor="middle">线上约15%</text>
+        </svg>
+        <div class="ch-src">灰色=线下 · 蓝色=电商 · DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> PSA 2024 = Philippine Statistics Authority national accounts · DTI 2025 = Dept. of Trade &amp; Industry e-commerce briefings · Kira estimates = KIRA in-house analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">004 / 024</div></div>
+</section>
+
+<!-- ============ 05 EXEC SUMMARY P2 — IMPLICATIONS ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第03章 · 执行摘要</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">对市场参与者的战略启示</h1>
+    <p class="subhead">到2030年，能否做好以下五项举措，将区分出持续复利增长的运营商与仅能守住份额的运营商。</p>
+    <div class="imp-grid">
+      <div class="imp-card"><div class="i-tag">业态</div><h4>以超市和餐饮重新锚定商场</h4><p>客流复苏由日常必需和餐饮消费带动，而非服装。将租户组合向超市和餐饮倾斜的运营商，可获得韧性最强的到访频次。</p><div class="i-anchor">客流结构 · 日常必需主导</div></div>
+      <div class="imp-card"><div class="i-tag">渠道</div><h4>把线上作为利润试验田</h4><p>增量消费在线上。运营商应将电商作为金融与数据引擎，而非清库存的折扣场，以守住客单经济性。</p><div class="i-anchor">GMV增速约十几个百分点</div></div>
+      <div class="imp-card"><div class="i-tag">履约</div><h4>自建最后一公里，或高效外包</h4><p>群岛地理使配送成本成为决定性变量。商场线上下单、门店自提可将实体网点转化为履约资产。</p><div class="i-anchor">7,640个岛屿 · 物流门槛</div></div>
+      <div class="imp-card"><div class="i-tag">支付</div><h4>推动货到付款转向数字支付</h4><p>货到付款仍主导线上结账，侵蚀利润并推高退货率。嵌入式钱包和先买后付可提升转化并减少逆向物流。</p><div class="i-anchor">数字钱包快速普及</div></div>
+      <div class="imp-card"><div class="i-tag">区域</div><h4>跟随增长走出马尼拉大都会</h4><p>宿务、达沃及二线城市的可选消费复苏更快。未来十年的增长杠杆是区域扩张，而非在首都继续加密。</p><div class="i-anchor">省级需求上升</div></div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> Implications synthesized from KIRA channel checks and listed-operator disclosures · Kira estimates = KIRA in-house analyst triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">005 / 024</div></div>
+</section>
+
+<!-- ============ 06 MACRO DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第04章</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">第04章</div>
+    <div class="div-title">宏观背景：<span class="acc">以消费为基础的经济体</span></div>
+    <div class="div-thesis">菲律宾经济依靠内需运转。侨汇、年轻的劳动力和快速正规化的服务业，使居民消费长期保持在接近<strong>GDP四分之三</strong>的水平——这是区域内少有国家可比的结构性顺风因素。零售在这里并非可选消费押注，而是直接挂钩亚洲最年轻人口之一的收入。</div>
+    <div class="div-pills"><span class="div-pill">GDP增速约6%</span><span class="div-pill">侨汇托底</span><span class="div-pill">年龄中位数低</span><span class="div-pill">城市化推进</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">006 / 024</div></div>
+</section>
+
+<!-- ============ 07 MACRO PAGE 1 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第04章 · 宏观背景</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">驱动零售需求的宏观指标</h1>
+    <p class="subhead">增长覆盖面广、由收入带动而非信贷推动——这是零售持续扩张最健康的宏观背景。</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>增长保持在6%左右</h3>
+        <p>实际GDP增速维持在<strong>5.5–6.5%</strong>区间，位居区域前列，由服务业和建筑业支撑<span class="tag src">PSA 2024</span>。对零售而言，关键信号在于消费是最主要的支出构成，因此增长可直接转化为购买力。</p>
+        <h3>通胀回到目标区间</h3>
+        <p>经历2022–23年食品价格飙升后，整体通胀已回落至<strong>2–4%目标区间</strong><span class="tag src">BSP 2025</span>，实际工资恢复增长，此前被消费降级压抑的可选消费随之解冻。</p>
+        <h3>侨汇构筑需求底线</h3>
+        <p>海外劳工侨汇每年超过<strong>$37bn</strong><span class="tag src">BSP 2024</span>，这一逆周期收入来源即使在国内遭受冲击时也能支撑消费——这是菲律宾与同类市场的结构性差异。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">实际GDP增速与通胀</div>
+        <div class="ch-sub">%，年度</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="34" y1="10" x2="34" y2="185" class="axis-line"/>
+          <line x1="34" y1="185" x2="350" y2="185" class="axis-line"/>
+          <line x1="34" y1="130" x2="350" y2="130" class="grid-line"/>
+          <line x1="34" y1="75" x2="350" y2="75" class="grid-line"/>
+          <!-- GDP line -->
+          <polyline points="60,70 130,60 200,72 270,66 330,64" fill="none" stroke="#1E6FFF" stroke-width="2.5"/>
+          <!-- inflation line -->
+          <polyline points="60,150 130,55 200,70 270,120 330,140" fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <text x="60" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2021</text>
+          <text x="130" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="200" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2023</text>
+          <text x="270" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2024</text>
+          <text x="330" y="200" font-size="9" fill="#6B7280" text-anchor="middle">2025E</text>
+          <text x="330" y="58" font-size="8.5" fill="#1E6FFF">GDP</text>
+          <text x="330" y="152" font-size="8.5" fill="#D97706">CPI</text>
+        </svg>
+        <div class="ch-src">PSA 2024, BSP 2025</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> PSA 2024 = Philippine Statistics Authority · BSP 2024/2025 = Bangko Sentral ng Pilipinas · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">007 / 024</div></div>
+</section>
+
+<!-- ============ 08 MACRO PAGE 2 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第04章 · 宏观背景</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">人口结构与数字化普及决定增长上限</h1>
+    <p class="subhead">年轻且快速联网的人口，是门店客流与线上需求能够同时增长的结构性原因。</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>亚洲最年轻的市场之一</h3>
+        <p>年龄中位数约25岁，人口超过<strong>1.15亿</strong>，未来二十年将持续产生新家庭组建带来的需求<span class="tag src">PSA 2024</span>。年轻消费者天然采用全渠道行为——线上发现，在最便宜或最快的渠道成交。</p>
+        <h3>网络连接是加速器</h3>
+        <p>移动互联网普及率超过<strong>70%</strong>，社交媒体使用时长居全球前列，直接转化为商品发现和直播带货需求<span class="tag est">Kira estimates</span>。线上渠道并非独立市场，而是整个零售的流量入口。</p>
+        <h3>城市集中，省级扩散</h3>
+        <p>马尼拉大都会是现代零售的核心，但下一阶段增长在区域市场。省级商场与便利店的扩张速度已超过趋于饱和的首都<span class="tag est">Kira estimates</span>。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">数字化普及驱动因素</div>
+        <div class="ch-sub">占人口比重 / 普及率，%</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="120" y1="10" x2="120" y2="180" class="axis-line"/>
+          <rect x="120" y="20" width="190" height="26" class="bar-primary"/>
+          <rect x="120" y="62" width="160" height="26" class="bar-primary"/>
+          <rect x="120" y="104" width="120" height="26" class="bar-soft"/>
+          <rect x="120" y="146" width="75" height="26" class="bar-soft"/>
+          <text x="114" y="38" font-size="9.5" fill="#0B0D10" text-anchor="end">移动互联网</text>
+          <text x="114" y="80" font-size="9.5" fill="#0B0D10" text-anchor="end">社交媒体</text>
+          <text x="114" y="122" font-size="9.5" fill="#0B0D10" text-anchor="end">数字钱包</text>
+          <text x="114" y="164" font-size="9.5" fill="#0B0D10" text-anchor="end">网购用户</text>
+          <text x="316" y="38" font-size="9" fill="#1E6FFF">73%</text>
+          <text x="286" y="80" font-size="9" fill="#1E6FFF">~65%</text>
+          <text x="246" y="122" font-size="9" fill="#6B7280">~45%</text>
+          <text x="201" y="164" font-size="9" fill="#6B7280">~30%</text>
+        </svg>
+        <div class="ch-src">DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> PSA 2024 = Philippine Statistics Authority · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">008 / 024</div></div>
+</section>
+
+<!-- ============ 09 SECTOR DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第05章</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">第05章</div>
+    <div class="div-title">行业概览与<span class="acc">市场规模</span></div>
+    <div class="div-thesis">现代零售年贸易额约<strong>$78bn</strong>，正以高个位数的速度复合增长，但增长正在业态之间迁移。这并非水涨船高，而是一场份额<strong>再分配</strong>——从传统渠道和可选消费专卖店，流向超市支撑型商场和线上电商平台。</div>
+    <div class="div-pills"><span class="div-pill">贸易额约$78bn</span><span class="div-pill">CAGR 6.8%</span><span class="div-pill">业态转移</span><span class="div-pill">渠道转移</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">009 / 024</div></div>
+</section>
+
+<!-- ============ 10 MARKET SIZING ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第05章 · 市场规模</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">市场规模与增长：菲律宾零售贸易</h1>
+    <p class="subhead">名义零售贸易额以<strong>约6.8%</strong>的速度复合增长，到2030年达到约<strong>$108bn</strong>，其中线上对增量的贡献远超其所占比重。</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>从$78bn迈向$108bn</h3>
+        <p>2025年零售贸易总额约为<strong>$78bn</strong><span class="tag est">Kira estimates</span>，已走出动荡时期，并随实际工资增长重新提速。我们的基准情景下，按名义比索计算，2030年将达到约<strong>$108bn</strong>。</p>
+        <h3>线上驱动增量</h3>
+        <p>电商目前约占贸易额的8.5%<span class="tag src">DTI 2025</span>，但其在增量中的占比远高于其基数占比——这正是渗透率仍在提升的渠道的典型特征。</p>
+        <h3>食品杂货是稳定核心</h3>
+        <p>食品杂货仍是规模最大、周期性最弱的细分市场，支撑商场客流，并为本轮复苏提供最具防御性的销量。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">零售贸易规模，USD bn</div>
+        <div class="ch-sub">贸易总额，名义值</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="40" y1="10" x2="40" y2="185" class="axis-line"/>
+          <line x1="40" y1="185" x2="350" y2="185" class="axis-line"/>
+          <line x1="40" y1="120" x2="350" y2="120" class="grid-line"/>
+          <line x1="40" y1="60" x2="350" y2="60" class="grid-line"/>
+          <rect x="60" y="120" width="38" height="65" class="bar-mut"/>
+          <rect x="125" y="105" width="38" height="80" class="bar-mut"/>
+          <rect x="190" y="92" width="38" height="93" class="bar-primary"/>
+          <rect x="255" y="55" width="38" height="130" class="bar-soft"/>
+          <text x="79" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="144" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2024</text>
+          <text x="209" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="274" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2030E</text>
+          <text x="79" y="114" font-size="8.5" fill="#6B7280" text-anchor="middle">62</text>
+          <text x="144" y="99" font-size="8.5" fill="#6B7280" text-anchor="middle">71</text>
+          <text x="209" y="86" font-size="8.5" fill="#1E6FFF" text-anchor="middle">78</text>
+          <text x="274" y="49" font-size="8.5" fill="#1E6FFF" text-anchor="middle">108</text>
+        </svg>
+        <div class="ch-src">PSA 2024, DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> PSA 2024 = Philippine Statistics Authority · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">010 / 024</div></div>
+</section>
+
+<!-- ============ 11 SEGMENT ECONOMICS ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第06章 · 细分市场</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">细分市场经济性：业态与客单</h1>
+    <p class="subhead">食品杂货支撑销量；便利店增长最快；可选消费专卖毛利最高，但渠道风险也最大。</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>食品杂货——销量核心</h3>
+        <p>食品杂货是按价值计最大、防御性最强的细分市场，支撑商场客流；由于生鲜和易腐商品占比高，受线上替代的冲击最小<span class="tag est">Kira estimates</span>。</p>
+        <h3>便利店——增长最快</h3>
+        <p>小型便利连锁门店数量以两位数速度扩张，受益于城市人口密度以及消费向小额、高频购物的转变<span class="tag est">Kira estimates</span>。</p>
+        <h3>可选消费专卖——毛利最高，竞争最激烈</h3>
+        <p>服装、电子产品和美妆的毛利最为丰厚，但被线上平台夺走的份额也最多——在这一细分市场，渠道策略决定胜负。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">零售细分市场构成</div>
+        <div class="ch-sub">占贸易额比重，%</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="130" y1="10" x2="130" y2="180" class="axis-line"/>
+          <rect x="130" y="18" width="180" height="24" class="bar-primary"/>
+          <rect x="130" y="56" width="95" height="24" class="bar-soft"/>
+          <rect x="130" y="94" width="80" height="24" class="bar-soft"/>
+          <rect x="130" y="132" width="55" height="24" class="bar-mut"/>
+          <text x="124" y="35" font-size="9" fill="#0B0D10" text-anchor="end">食品杂货</text>
+          <text x="124" y="73" font-size="9" fill="#0B0D10" text-anchor="end">专卖店</text>
+          <text x="124" y="111" font-size="9" fill="#0B0D10" text-anchor="end">便利店</text>
+          <text x="124" y="149" font-size="9" fill="#0B0D10" text-anchor="end">百货店</text>
+          <text x="316" y="35" font-size="9" fill="#1E6FFF">~48%</text>
+          <text x="231" y="73" font-size="9" fill="#6B7280">~24%</text>
+          <text x="216" y="111" font-size="9" fill="#6B7280">~18%</text>
+          <text x="191" y="149" font-size="9" fill="#6B7280">~10%</text>
+        </svg>
+        <div class="ch-src">DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation across listed-operator disclosures and channel checks</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">011 / 024</div></div>
+</section>
+
+<!-- ============ 12 SEGMENT GRID ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第06章 · 细分市场</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">购物篮正在向何处移动</h1>
+    <p class="subhead">到2030年重塑菲律宾零售购物篮的六大需求方向。</p>
+    <div class="uc-grid">
+      <div class="uc-card"><div class="u-tag">频次</div><h4>客单更小、频次更高</h4><p>精打细算的家庭少量多次购物，更偏好便利店和类似sari-sari小店的业态，而非每周一次的大额采购。</p><div class="u-ex">便利店密度上升</div></div>
+      <div class="uc-card"><div class="u-tag">消费升级</div><h4>选择性高端化</h4><p>实际工资增长带动咖啡、个护和包装食品的消费升级，而家庭在其他品类上仍保持价格敏感。</p><div class="u-ex">高端SKU增速超过大众款</div></div>
+      <div class="uc-card"><div class="u-tag">发现</div><h4>社交优先的商品发现</h4><p>菲律宾人是全球社交媒体使用最重度的群体之一，在任一渠道购买前，往往先在信息流和直播中发现商品。</p><div class="u-ex">直播带货转化提升</div></div>
+      <div class="uc-card"><div class="u-tag">体验</div><h4>商场成为目的地</h4><p>餐饮、娱乐和服务对商场到访的拉动超过购物本身——这是应对线上替代最持久的答案。</p><div class="u-ex">餐饮带动客流</div></div>
+      <div class="uc-card"><div class="u-tag">信贷</div><h4>嵌入式金融</h4><p>先买后付和钱包信贷，为规模庞大、未被银行充分覆盖但具备信贷资质的人群释放了更高客单价的可选消费。</p><div class="u-ex">先买后付渗透率攀升</div></div>
+      <div class="uc-card"><div class="u-tag">区域</div><h4>省级需求浪潮</h4><p>二线城市的可选消费复苏快于趋于饱和的马尼拉大都会，正在改写门店扩张版图。</p><div class="u-ex">宿务、达沃增速超过首都</div></div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> Synthesized from KIRA channel checks, DTI 2025 e-commerce briefings, and listed-operator disclosures · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">012 / 024</div></div>
+</section>
+
+<!-- ============ 13 COMPETITIVE DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第07章</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">第07章</div>
+    <div class="div-title">竞争格局：<span class="acc">以综合集团为支点</span></div>
+    <div class="div-thesis">现代零售集中于少数家族综合集团，它们以一体化生态系统的方式掌控商场、超市和百货连锁。其优势不在于任何单一业态，而在于地产、零售与金融服务之间的<strong>飞轮效应</strong>。线上平台则从完全不同的体系切入竞争——两者正在学习共存。</div>
+    <div class="div-pills"><span class="div-pill">前三大一体化集团</span><span class="div-pill">地产飞轮</span><span class="div-pill">电商平台双寡头</span><span class="div-pill">全渠道竞赛</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">013 / 024</div></div>
+</section>
+
+<!-- ============ 14 COMPETITIVE STRUCTURE ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第07章 · 市场结构</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">市场结构：高度集中且纵向一体化</h1>
+    <p class="subhead">少数综合集团主导现代零售；线上则是由两家区域性电商平台引领的新兴平行结构。</p>
+    <div class="cs-top">
+      <div class="chart-card">
+        <div class="ch-title">各集团现代零售份额</div>
+        <div class="ch-sub">占现代渠道的指示性份额，%</div>
+        <svg viewBox="0 0 360 180" width="100%" height="150">
+          <line x1="120" y1="6" x2="120" y2="150" class="axis-line"/>
+          <rect x="120" y="12" width="160" height="20" class="bar-primary"/>
+          <rect x="120" y="42" width="120" height="20" class="bar-primary"/>
+          <rect x="120" y="72" width="85" height="20" class="bar-soft"/>
+          <rect x="120" y="102" width="60" height="20" class="bar-soft"/>
+          <rect x="120" y="132" width="100" height="14" class="bar-mut"/>
+          <text x="114" y="27" font-size="9" fill="#0B0D10" text-anchor="end">SM Group</text>
+          <text x="114" y="57" font-size="9" fill="#0B0D10" text-anchor="end">Ayala及其他</text>
+          <text x="114" y="87" font-size="9" fill="#0B0D10" text-anchor="end">Robinsons</text>
+          <text x="114" y="117" font-size="9" fill="#0B0D10" text-anchor="end">Puregold</text>
+          <text x="114" y="143" font-size="9" fill="#0B0D10" text-anchor="end">分散经营者</text>
+        </svg>
+        <div class="ch-src">上市运营商披露, Kira estimates</div>
+      </div>
+      <div class="cs-side">
+        <h3>高度集中的头部梯队</h3>
+        <p>头部集团将商场、超市、百货和银行纳入同一体系，得以交叉补贴客流，并覆盖消费者的全部钱包。新进入者面对的是一体化的在位企业群，而非独立零售商。</p>
+        <div class="cs-stat"><span class="s-l">前三大集团份额（现代渠道）</span><span class="s-v">~55%</span></div>
+        <div class="cs-stat"><span class="s-l">线上电商平台集中度</span><span class="s-v">2家</span></div>
+        <div class="cs-stat"><span class="s-l">上市商场建筑面积（头部集团）</span><span class="s-v">&gt;9m m²</span></div>
+        <div class="cs-stat"><span class="s-l">结构趋势</span><span class="s-v">持续整合</span></div>
+      </div>
+    </div>
+    <div class="player-row">
+      <div class="player-card"><div class="p-rank">第01名</div><div class="p-name">SM Group</div><div class="p-stat"><span>业态</span><span class="v">商场+超市</span></div><div class="p-stat"><span>覆盖范围</span><span class="v">全国</span></div><div class="p-stat"><span>优势</span><span class="v">规模</span></div><div class="p-str">最大的商场和超市网络；与旗下银行业务形成飞轮。</div></div>
+      <div class="player-card"><div class="p-rank">第02名</div><div class="p-name">Ayala系零售</div><div class="p-stat"><span>业态</span><span class="v">商场+专卖</span></div><div class="p-stat"><span>覆盖范围</span><span class="v">城市高端</span></div><div class="p-stat"><span>优势</span><span class="v">品牌组合</span></div><div class="p-str">偏高端的商场及百货/专卖组合。</div></div>
+      <div class="player-card"><div class="p-rank">第03名</div><div class="p-name">Robinsons Retail</div><div class="p-stat"><span>业态</span><span class="v">多业态</span></div><div class="p-stat"><span>覆盖范围</span><span class="v">广泛</span></div><div class="p-stat"><span>优势</span><span class="v">多元化</span></div><div class="p-str">超市、药店、便利店和专卖店，覆盖各价格带。</div></div>
+      <div class="player-card"><div class="p-rank">线上</div><div class="p-name">电商平台双寡头</div><div class="p-stat"><span>业态</span><span class="v">电商</span></div><div class="p-stat"><span>覆盖范围</span><span class="v">全国</span></div><div class="p-stat"><span>优势</span><span class="v">物流</span></div><div class="p-str">两家区域性平台占据电商平台GMV的大部分。</div></div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> Listed-operator disclosures = annual reports of named listed retail groups · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">014 / 024</div></div>
+</section>
+
+<!-- ============ 15 PLAYER PROFILE 1 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第07章 · 企业概况</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">SM Group</div>
+        <div class="dp-subtitle">集商场、超市与银行于一体的生态系统——菲律宾现代零售的规模支柱。</div>
+        <div class="dp-tags"><span class="dp-tag">商场</span><span class="dp-tag">超市</span><span class="dp-tag">银行飞轮</span></div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">商场建筑面积</div><div class="v">&gt;9<span class="u">m m²</span></div></div>
+        <div class="dp-stat"><div class="l">业态覆盖</div><div class="v">全国</div></div>
+        <div class="dp-stat"><div class="l">核心细分市场</div><div class="v">超市</div></div>
+        <div class="dp-stat"><div class="l">结构角色</div><div class="v">支柱</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>市场地位</h3>
+        <p>该集团运营全国最大的商场和超市网络，将核心地段商场同时用作零售场所和履约基础设施。其旗舰项目的客流复苏快于市场整体，由超市和餐饮主力店带动<span class="tag est">Kira estimates</span>。</p>
+        <h3>近期动向</h3>
+        <p>持续推进省级商场扩张并整合线上下单、门店自提，使实体网点成为对抗纯线上企业的最后一公里资产。</p>
+      </div>
+      <div>
+        <h3>战略启示</h3>
+        <ul>
+          <li>地产飞轮使客流成为市场上成本最低的获客渠道。</li>
+          <li>超市主力店使业务组合免受线上替代冲击。</li>
+          <li>线上下单、门店自提将商场密度转化为履约护城河。</li>
+          <li>银行业务在同一消费者身上获取支付和信贷利润。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> Listed-operator disclosures = SM Group annual report &amp; investor materials · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">015 / 024</div></div>
+</section>
+
+<!-- ============ 16 PLAYER PROFILE 2 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第07章 · 企业概况</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">Robinsons Retail</div>
+        <div class="dp-subtitle">业态最广的多业态运营商——超市、药店、便利店、百货和专卖店，覆盖各价格带。</div>
+        <div class="dp-tags"><span class="dp-tag">多业态</span><span class="dp-tag">药店</span><span class="dp-tag">便利店</span></div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">业态数量</div><div class="v">6+</div></div>
+        <div class="dp-stat"><div class="l">覆盖范围</div><div class="v">广泛</div></div>
+        <div class="dp-stat"><div class="l">核心优势</div><div class="v">组合</div></div>
+        <div class="dp-stat"><div class="l">结构角色</div><div class="v">多元化者</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>市场地位</h3>
+        <p>业务最多元化的零售运营商，覆盖从日常食品杂货、健康品类到可选消费专卖。业态广度平滑了周期波动：药店和超市守住销量，专卖店则把握消费升级周期<span class="tag est">Kira estimates</span>。</p>
+        <h3>近期动向</h3>
+        <p>扩张便利店和药店门店数量，瞄准小额高频购物趋势和省级需求浪潮。</p>
+      </div>
+      <div>
+        <h3>战略启示</h3>
+        <ul>
+          <li>业态广度可对冲任何单一渠道或品类的冲击。</li>
+          <li>药店网络覆盖韧性较强的健康与保健消费。</li>
+          <li>便利店扩张顺应高频、小额购物趋势。</li>
+          <li>专卖组合在复苏中提供可选消费的上行空间。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> Listed-operator disclosures = Robinsons Retail annual report &amp; investor materials · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">016 / 024</div></div>
+</section>
+
+<!-- ============ 17 PLAYER PROFILE 3 ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第07章 · 企业概况</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <div class="dp-hero">
+      <div>
+        <div class="dp-name">区域性电商平台</div>
+        <div class="dp-subtitle">两家区域性电商平台占据菲律宾电商平台GMV的大部分，并决定着线上渠道的经济性。</div>
+        <div class="dp-tags"><span class="dp-tag">电商</span><span class="dp-tag">物流</span><span class="dp-tag">直播带货</span></div>
+      </div>
+      <div class="dp-stats">
+        <div class="dp-stat"><div class="l">渠道份额</div><div class="v">~8.5<span class="u">%零售</span></div></div>
+        <div class="dp-stat"><div class="l">GMV增速</div><div class="v">十几个百分点</div></div>
+        <div class="dp-stat"><div class="l">集中度</div><div class="v">2家</div></div>
+        <div class="dp-stat"><div class="l">结构角色</div><div class="v">挑战者</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div>
+        <h3>市场地位</h3>
+        <p>在经历三位数增长的获客阶段后，两家头部平台已转向变现——广告、物流费用和嵌入式金融，GMV增速回落至十几个百分点<span class="tag src">DTI 2025</span>。竞争焦点是配送速度和直播带货转化，而非单纯打折。</p>
+        <h3>近期动向</h3>
+        <p>投资区域履约网络和一体化钱包，旨在降低对货到付款的依赖并改善单位经济模型。</p>
+      </div>
+      <div>
+        <h3>战略启示</h3>
+        <ul>
+          <li>物流成本是群岛履约的决定性变量。</li>
+          <li>推动货到付款转向数字支付是关键的利润杠杆。</li>
+          <li>直播带货是社交优先发现模式的转化引擎。</li>
+          <li>在位企业以线上下单、门店自提应对，而非比拼折扣。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> DTI 2025 = Dept. of Trade &amp; Industry e-commerce briefings · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">017 / 024</div></div>
+</section>
+
+<!-- ============ 18 DEMAND DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第08章</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">第08章</div>
+    <div class="div-title">渠道与分销：<span class="acc">线上转移</span></div>
+    <div class="div-thesis">渠道问题的方向已定，节奏未定。线上已从新鲜事物变为日常习惯，在增量消费中占据不成比例的份额——但<strong>货到付款、群岛物流以及食品杂货对替代的抵抗</strong>决定了速度上限。赢得未来十年的是全渠道，而非纯线上。</div>
+    <div class="div-pills"><span class="div-pill">线上约8.5%</span><span class="div-pill">货到付款摩擦</span><span class="div-pill">最后一公里成本</span><span class="div-pill">线上下单门店自提</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">018 / 024</div></div>
+</section>
+
+<!-- ============ 19 CHANNEL STRUCTURE ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第08章 · 渠道</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">渠道与分销结构</h1>
+    <p class="subhead">现代渠道和传统渠道仍承载主要销量；线上是增长最快的层级，也是争夺增量消费的主战场。</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>传统渠道依然庞大</h3>
+        <p>sari-sari街角小店网络仍承担着日常快消品的巨大销量，这一独特且韧性极强的分销层，现代渠道和线上都必须与之合作，而非取而代之<span class="tag est">Kira estimates</span>。</p>
+        <h3>现代渠道是复苏支点</h3>
+        <p>商场和超市承接日益正规化的中产阶级消费，并提供支撑整个现代零售飞轮的客流<span class="tag est">Kira estimates</span>。</p>
+        <h3>线上是增长层</h3>
+        <p>电商以十几个百分点的速度增长，远快于线下基数<span class="tag src">DTI 2025</span>。决定性约束在于跨岛最后一公里成本，以及侵蚀线上利润的货到付款习惯。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">渠道结构演变</div>
+        <div class="ch-sub">占零售贸易额比重，%</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="40" y1="10" x2="40" y2="185" class="axis-line"/>
+          <line x1="40" y1="185" x2="350" y2="185" class="axis-line"/>
+          <!-- 2022 stacked -->
+          <rect x="80" y="40" width="60" height="60" class="bar-mut"/>
+          <rect x="80" y="100" width="60" height="75" class="bar-soft"/>
+          <rect x="80" y="175" width="60" height="10" class="bar-primary"/>
+          <!-- 2030E stacked -->
+          <rect x="230" y="50" width="60" height="50" class="bar-mut"/>
+          <rect x="230" y="100" width="60" height="55" class="bar-soft"/>
+          <rect x="230" y="155" width="60" height="30" class="bar-primary"/>
+          <text x="110" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2022</text>
+          <text x="260" y="198" font-size="9" fill="#6B7280" text-anchor="middle">2030E</text>
+          <text x="150" y="74" font-size="8.5" fill="#6B7280">传统渠道</text>
+          <text x="150" y="140" font-size="8.5" fill="#6B7280">现代渠道</text>
+          <text x="300" y="172" font-size="8.5" fill="#1E6FFF">线上约15%</text>
+        </svg>
+        <div class="ch-src">DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation across channel checks</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">019 / 024</div></div>
+</section>
+
+<!-- ============ 20 REGULATORY ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第09章 · 监管</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">监管与政策环境</h1>
+    <p class="subhead">近期的开放举措降低了外资零售资本的进入门槛，与此同时，新兴的电商监管框架正在规范线上渠道。</p>
+    <div class="split-3070">
+      <div class="narr">
+        <h3>零售贸易进一步开放</h3>
+        <p>《零售贸易自由化法》（Retail Trade Liberalization Act）修正案下调了外资零售商的最低实缴资本要求，为国际进入者和资本打开了更大的大门<span class="tag src">DTI 2025</span>。这将在预测期内提升专卖和高端业态的竞争强度。</p>
+        <h3>电商有了规则手册</h3>
+        <p>《互联网交易法》（Internet Transactions Act）为线上交易确立了消费者保护、平台责任和登记规则<span class="tag src">DTI 2025</span>，规范了一个增长快于监管的渠道，并提高了电商平台的合规成本。</p>
+        <h3>支付与税务现代化</h3>
+        <p>持续推进的数字支付和电子发票收紧了正规经济的覆盖网，逐步削弱货到付款和非正规贸易的优势<span class="tag est">Kira estimates</span>。</p>
+      </div>
+      <div class="chart-card">
+        <div class="ch-title">政策时间线</div>
+        <div class="ch-sub">近期及待出台的零售政策</div>
+        <svg viewBox="0 0 360 240" width="100%" height="210">
+          <line x1="50" y1="20" x2="50" y2="200" class="axis-line"/>
+          <circle cx="50" cy="40" r="5" class="bar-primary"/>
+          <text x="64" y="38" font-size="9" fill="#0B0D10">零售贸易自由化</text>
+          <text x="64" y="50" font-size="8" fill="#6B7280">降低外资资本门槛</text>
+          <circle cx="50" cy="95" r="5" class="bar-primary"/>
+          <text x="64" y="93" font-size="9" fill="#0B0D10">《互联网交易法》</text>
+          <text x="64" y="105" font-size="8" fill="#6B7280">电商消费者保护规则</text>
+          <circle cx="50" cy="150" r="5" class="bar-soft"/>
+          <text x="64" y="148" font-size="9" fill="#0B0D10">电子发票推行</text>
+          <text x="64" y="160" font-size="8" fill="#6B7280">正规化，分阶段实施</text>
+          <circle cx="50" cy="190" r="5" class="bar-mut"/>
+          <text x="64" y="188" font-size="9" fill="#0B0D10">数字支付推广</text>
+          <text x="64" y="200" font-size="8" fill="#6B7280">持续进行</text>
+        </svg>
+        <div class="ch-src">DTI 2025, BSP 2025</div>
+      </div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> DTI 2025 = Dept. of Trade &amp; Industry · BSP 2025 = Bangko Sentral ng Pilipinas · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">020 / 024</div></div>
+</section>
+
+<!-- ============ 21 AI DIVIDER ============ -->
+<section class="page dark">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第10章</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="div-body">
+    <div class="div-num">第10章</div>
+    <div class="div-title">AI对<span class="acc">菲律宾零售</span>的影响</div>
+    <div class="div-thesis">AI在菲律宾零售的近期价值在于运营层面，而非概念炒作：<strong>需求预测、最后一公里路线优化和对话式商务</strong>，恰好针对决定渠道转移胜负的成本项——库存与物流。制约因素在于数据成熟度，而非意愿。</div>
+    <div class="div-pills"><span class="div-pill">需求预测</span><span class="div-pill">路线优化</span><span class="div-pill">对话式商务</span><span class="div-pill">个性化</span></div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">021 / 024</div></div>
+</section>
+
+<!-- ============ 22 AI OVERVIEW + USE CASES ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第10章 · AI影响</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">菲律宾零售中的AI：当下已见回报的领域</h1>
+    <p class="subhead">应用尚处早期，但回报最高的用例正好位于渠道转移的主战场——库存准确性与最后一公里成本。</p>
+    <div class="uc-grid">
+      <div class="uc-card"><div class="u-tag">高影响</div><h4>需求预测</h4><p>SKU级预测可减少超市和便利店的缺货与降价清仓，守住销量核心的微薄利润。</p><div class="u-ex">库存成本 ↓</div></div>
+      <div class="uc-card"><div class="u-tag">高影响</div><h4>最后一公里路线优化</h4><p>跨岛地理下的路线规划与订单合并，直接针对线上最大的单项成本，也是电商利润的关键门槛。</p><div class="u-ex">配送成本 ↓</div></div>
+      <div class="uc-card"><div class="u-tag">上升中</div><h4>对话式商务</h4><p>聊天与直播带货助手将社交优先的商品发现转化为下单，契合该市场高度依赖即时通讯的消费行为。</p><div class="u-ex">转化率 ↑</div></div>
+      <div class="uc-card"><div class="u-tag">上升中</div><h4>个性化商品运营</h4><p>推荐和动态品类组合可提升电商平台及数字化现代渠道的客单规模。</p><div class="u-ex">客单 ↑</div></div>
+      <div class="uc-card"><div class="u-tag">运营</div><h4>欺诈与退货管控</h4><p>模型识别货到付款滥用和退货欺诈，减少侵蚀线上单位经济模型的逆向物流损耗。</p><div class="u-ex">退货损耗 ↓</div></div>
+      <div class="uc-card"><div class="u-tag">新兴</div><h4>信贷与先买后付评分</h4><p>基于替代数据的评分将融资扩展至信用记录薄弱的消费者，释放更高客单价的可选消费需求。</p><div class="u-ex">审批覆盖 ↑</div></div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> Synthesized from KIRA operator conversations and platform disclosures · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">022 / 024</div></div>
+</section>
+
+<!-- ============ 23 FORECAST ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第11章 · 展望</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">五年展望与预测</h1>
+    <p class="subhead">基准情景：到2030年零售贸易额达到<strong>约$108bn</strong>，线上份额大约翻倍。关键变量在于实际工资增长的持续性和最后一公里的经济性。</p>
+    <div class="fc-chart">
+      <div class="chart-card" style="height:100%">
+        <div class="ch-title">零售贸易预测，USD bn——基准/乐观/悲观</div>
+        <div class="ch-sub">贸易总额，名义值，至2030年</div>
+        <svg viewBox="0 0 760 200" width="100%" height="180" preserveAspectRatio="xMidYMid meet">
+          <line x1="40" y1="12" x2="40" y2="160" class="axis-line"/>
+          <line x1="40" y1="160" x2="740" y2="160" class="axis-line"/>
+          <line x1="40" y1="110" x2="740" y2="110" class="grid-line"/>
+          <line x1="40" y1="60" x2="740" y2="60" class="grid-line"/>
+          <!-- bull -->
+          <polyline points="60,135 230,118 400,92 570,62 720,30" fill="none" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 3"/>
+          <!-- base -->
+          <polyline points="60,135 230,122 400,105 570,82 720,55" fill="none" stroke="#1E6FFF" stroke-width="3"/>
+          <!-- bear -->
+          <polyline points="60,135 230,128 400,118 570,105 720,90" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="60" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2025</text>
+          <text x="230" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2026</text>
+          <text x="400" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2027</text>
+          <text x="570" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2028</text>
+          <text x="720" y="175" font-size="9" fill="#6B7280" text-anchor="middle">2030</text>
+          <text x="726" y="28" font-size="8.5" fill="#00A88B">乐观</text>
+          <text x="726" y="53" font-size="8.5" fill="#1E6FFF">基准</text>
+          <text x="726" y="88" font-size="8.5" fill="#D97706">悲观</text>
+        </svg>
+        <div class="ch-src">PSA 2024, DTI 2025, Kira estimates</div>
+      </div>
+    </div>
+    <div class="scen-row">
+      <div class="scen-card bull"><div class="s-name">乐观</div><div class="s-val">~$118bn</div><div class="s-body">实际工资持续增长，最后一公里成本下降，线上占贸易额突破18%。<span class="tag est">Kira estimates</span></div></div>
+      <div class="scen-card"><div class="s-name">基准</div><div class="s-val">~$108bn</div><div class="s-body">名义CAGR稳定在约6.8%；线上份额大约翻倍至约15%。<span class="tag est">Kira estimates</span></div></div>
+      <div class="scen-card bear"><div class="s-name">悲观</div><div class="s-val">~$95bn</div><div class="s-body">通胀再度抬头，侨汇走弱，可选消费持续低迷。<span class="tag est">Kira estimates</span></div></div>
+    </div>
+    <div class="source-key"><b>来源说明 ·</b> PSA 2024 = Philippine Statistics Authority · DTI 2025 = Dept. of Trade &amp; Industry · Kira estimates = KIRA in-house triangulation</div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">023 / 024</div></div>
+</section>
+
+<!-- ============ 24 METHODOLOGY ENDNOTE ============ -->
+<section class="page">
+  <div class="page-header"><div class="logo-mark">KIRA RESEARCH</div><div class="section-tag">第12章 · 研究方法附注</div></div>
+  <div class="page-divider-rule"></div>
+  <div class="body-wrap">
+    <h1 class="page-h1">研究方法附注与来源构成</h1>
+    <p class="subhead">清晰区分引用数据与KIRA推算数据。</p>
+    <div class="end-grid">
+      <div>
+        <p>本报告的观点基于两类证据的交叉验证。凡标注具名来源标签的数据——例如<span class="tag src">PSA 2024</span>或<span class="tag src">DTI 2025</span>——其底层数据均来自该来源，完整引用列于右侧。凡标注<span class="tag est">Kira estimates</span>的数据，均由KIRA分析师综合多项公开输入（政府统计、上市运营商披露文件和渠道调研），按相应章节披露的方法推算得出。</p>
+        <p>本报告约<strong>55%</strong>的量化结论为基于公开输入的KIRA推算估计；其余<strong>45%</strong>引用自具名外部来源。市场规模数据结合了PSA国民账户消费数据、上市运营商收入披露以及渠道层面的观察。</p>
+        <div class="legend"><span class="lg-p">具名来源</span><span class="lg-e">Kira estimate</span></div>
+        <div class="disclaimer">本报告仅供参考。标注为估算的数据代表KIRA的分析判断，可能与实际结果存在差异。© 2026 KIRA Research.</div>
+      </div>
+      <div>
+        <div class="src-list">
+          <div><b>BSP 2024 / 2025</b>——Bangko Sentral ng Pilipinas（菲律宾中央银行）：通胀、侨汇及数字支付数据。</div>
+          <div><b>DTI 2025</b>——Philippine Department of Trade and Industry（菲律宾贸易和工业部）：电商规模、零售贸易自由化及《互联网交易法》相关简报。</div>
+          <div><b>PSA 2024</b>——Philippine Statistics Authority（菲律宾统计署）：国民账户、居民最终消费、人口及人口结构统计。</div>
+          <div><b>Listed-operator disclosures</b>——菲律宾具名上市零售及商场集团的年报和投资者资料。</div>
+          <div><b>Kira estimates</b>——KIRA内部分析师基于上述输入，以及马尼拉大都会、宿务和达沃一手渠道调研所做的交叉验证。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><div>KIRA RESEARCH</div><div class="mono">024 / 024</div></div>
+</section>
+
+</body>
+</html>
