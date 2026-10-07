@@ -7,7 +7,8 @@
 //
 //   queue.mjs recover                        revert stale *_in_progress claims          → recovered=<N>
 //   queue.mjs sync-topics                    approved topics → pending rows, demand → priority → added=<N>
-//   queue.mjs next [--model <m>]             pick the most-advanced row and CLAIM it    → one JSON line, or "none"
+//   queue.mjs next [--model <m>] [--id <id>] pick the most-advanced row and CLAIM it    → one JSON line, or "none"
+//                                            (--id: only that row, to chain its next stage in the same fire)
 //   queue.mjs advance <id> <status> [--paths "a|b"] [--model <m>] [--cost <usd>]   stage succeeded
 //   queue.mjs fail <id> "<message>" [--paths "a|b"] [--model <m>]                  stage failed → status=error
 //   queue.mjs import <csv>                   one-off: load the old CSV (upsert, idempotent)
@@ -100,8 +101,9 @@ async function syncTopics() {
 
 async function next() {
   const model = arg('--model') || null;
+  const only = arg('--id') ? `&id=eq.${enc(arg('--id'))}` : '';
   for (const [picked, claim, stage] of ROUTE) {
-    const rows = await sb(`report_queue?status=eq.${picked}&order=priority.desc,position.asc&limit=1&select=*`);
+    const rows = await sb(`report_queue?status=eq.${picked}${only}&order=priority.desc,position.asc&limit=1&select=*`);
     if (!rows.length) continue;
     const r = rows[0];
     let log = r.error_log || '';

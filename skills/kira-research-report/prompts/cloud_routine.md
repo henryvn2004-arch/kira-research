@@ -5,8 +5,17 @@ The Routine is created in the claude.ai Routines UI (the API tool cannot attach 
 **Routine settings**
 - **Repositories:** `henryvn2004-arch/kira-research` and `henryvn2004-arch/kira-pipeline` (private brain). Both are cloned side by side under `/home/user/` in the fired session. If the form offers an option to push to branches other than `claude/*`, turn it on for `kira-research`: the runner commits `batch:` messages straight to `main`.
 - **Environment:** `OpenAI Key` (`env_01Khi54Dffp38bzpmjYSGrYg`). It must define `PDF_RENDER_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` and `OPENAI_API_KEY` (cover art; optional) and allow outbound to kiraresearch.com, `*.supabase.co`, `api.openai.com`.
-- **Schedule:** Custom cron, 3 fires/day at 01:53, 03:53 and 05:53 ICT (night only, 2 h apart so fires never overlap; EN gen can run 90 min). Cron `53 1,3,5 * * *` if the form reads it in local time (GMT+7), `53 18,20,22 * * *` if it reads UTC; check the form's "Runs at" preview. One fire = one stage of one queue row (see `batch_runner.md`), so 3 fires = 1 report/day. The insight pipeline is paused (library reports first); to restart it, add a separate routine that follows `insight_runner.md`.
-- **Model:** Sonnet 5.5 is enough. The fire only does file work, validation and commits; `batch_runner.md` picks the model for the heavy subagents (opus for EN gen, sonnet for JA/KO/ZH).
+- **Schedule (2026-10-07):** one fire = one full report (EN → JA → KO → ZH → publish, about 60–100 min; `batch_runner.md` Step 6 chains the stages), so fires per day = reports per day. Ramp agreed with the owner: start at 3/day, then 5, 7, 10 once a step runs clean (all fires `done`, no `error` rows, usage fine in claude.ai Settings → Usage). Cron in Vietnam time (`CRON_TZ=Asia/Ho_Chi_Minh`):
+
+  | Reports/day | Cron |
+  |---|---|
+  | 3 | `CRON_TZ=Asia/Ho_Chi_Minh 53 1,4,7 * * *` |
+  | 5 | `CRON_TZ=Asia/Ho_Chi_Minh 53 1,5,9,13,17 * * *` |
+  | 7 | `CRON_TZ=Asia/Ho_Chi_Minh 53 1,4,7,10,13,16,19 * * *` |
+  | 10 | `CRON_TZ=Asia/Ho_Chi_Minh 53 1,3,5,7,9,11,13,15,17,19 * * *` |
+
+  Fires at least 2 h apart rarely overlap; when they do, each works on its own row (claims in the queue CSV). The insight pipeline is paused (library reports first); to restart it, add a separate routine that follows `insight_runner.md`.
+- **Model:** Sonnet 5.5 is enough. The fire only does file work, validation and commits; `batch_runner.md` picks the model for the heavy subagents (opus for EN gen and for JA/KO/ZH).
 
 ---
 
