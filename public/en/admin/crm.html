@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRM — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .cr-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+    .cr-head h1 { margin:0; font-size:28px; }
+    .cr-lead { color:var(--muted); font-size:14px; margin:0 0 20px; max-width:72ch; }
+    .cr-stats { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+    .cr-stats div { background:var(--surface-2); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--muted); min-width:120px; }
+    .cr-stats b { display:block; font-size:24px; color:var(--text); font-family:'Satoshi',sans-serif; }
+    .cr-tools { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+    .cr-chip { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:999px; padding:8px 14px; font-size:14px; cursor:pointer; min-height:40px; }
+    .cr-chip.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .cr-search { flex:1 1 220px; min-height:40px; padding:8px 12px; border:1px solid var(--border-strong); border-radius:8px; font:inherit; background:var(--bg); color:var(--text); }
+    .cr-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    table.cr { width:100%; border-collapse:collapse; font-size:14px; }
+    table.cr th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+    table.cr td { padding:11px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.cr tr.cr-row { cursor:pointer; } table.cr tr.cr-row:hover td { background:var(--surface-2); }
+    table.cr tr:last-child td { border-bottom:0; }
+    .cr-name b { display:block; } .cr-name span { color:var(--muted); font-size:12.5px; }
+    .cr-tag { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; background:var(--surface-2); color:var(--text); margin:0 4px 4px 0; }
+    .cr-stage { font-size:12.5px; padding:3px 9px; border-radius:999px; border:1px solid var(--border-strong); white-space:nowrap; }
+    .cr-stage.won { background:#E3F4E8; color:#14532D; border-color:transparent; } .cr-stage.lost { color:var(--muted); }
+    .cr-stage.talking { background:#E6EEFB; color:#1A3F8C; border-color:transparent; }
+    .cr-due { color:#9A3412; font-weight:600; }
+    .cr-detail td { background:var(--surface-2); padding:16px 18px; }
+    .cr-cols { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; }
+    @media (max-width:760px) { .cr-cols { grid-template-columns:1fr; } }
+    .cr-detail h3 { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+    .cr-ev { padding:7px 0; border-bottom:1px solid var(--border); font-size:13.5px; } .cr-ev:last-child { border-bottom:0; }
+    .cr-ev small { display:block; color:var(--muted); font-size:12px; } .cr-ev p { margin:3px 0 0; color:var(--muted); font-size:13px; white-space:pre-wrap; }
+    .cr-form label { display:block; font-size:13px; color:var(--muted); margin:10px 0 4px; }
+    .cr-form select, .cr-form input, .cr-form textarea { width:100%; box-sizing:border-box; min-height:40px; padding:8px 10px; border:1px solid var(--border-strong); border-radius:8px; font:inherit; background:var(--bg); color:var(--text); }
+    .cr-form textarea { min-height:96px; resize:vertical; }
+    .cr-save { margin-top:12px; min-height:40px; padding:8px 18px; border:0; border-radius:8px; background:var(--primary); color:#fff; font:inherit; cursor:pointer; }
+    .cr-save[disabled] { opacity:.6; cursor:default; } .cr-msg { font-size:13px; margin-left:10px; color:var(--muted); }
+    .cr-note { font-size:13px; color:var(--muted); margin:-8px 0 14px; max-width:75ch; }
+    @media (max-width:760px) {
+      table.cr, table.cr tbody, table.cr tr, table.cr td { display:block; }
+      table.cr thead { display:none; }
+      table.cr tr.cr-row { display:grid; grid-template-columns:1fr 1fr; gap:2px 12px; padding:12px; border-bottom:1px solid var(--border); }
+      table.cr tr.cr-row td { padding:2px 0; border:0; }
+      table.cr tr.cr-row td:nth-child(1), table.cr tr.cr-row td:nth-child(2) { grid-column:1 / -1; }
+      table.cr tr.cr-row td[data-l]::before { content:attr(data-l); display:block; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+      table.cr tr.cr-detail td { padding:14px 12px; border-bottom:1px solid var(--border); }
+      .cr-name span { overflow-wrap:anywhere; }
+    }
+    .cr-empty { color:var(--muted); padding:28px 0; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/funnel">Funnel</a>
+      <a href="/en/admin/crm" class="active">CRM</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="cr-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+    const state = { filter: 'all', q: '', open: null, data: null };
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    const day = (v) => v ? new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '–';
+
+    async function api(method, body) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch('/api/admin-crm', {
+        method, headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || String(r.status));
+      return d;
+    }
+
+    const KIND = { lead: 'Request', waitlist: 'Waitlist', request: 'Topic request', purchase: 'Purchase' };
+    const STAGE = { open: 'Open', talking: 'Talking', won: 'Won', lost: 'Lost' };
+    const FILTERS = [['all', 'Everyone'], ['due', 'Follow-up due'], ['talking', 'Talking'], ['buyers', 'Buyers'], ['lost', 'Lost']];
+
+    function visible() {
+      const { people, today } = state.data;
+      const q = state.q.trim().toLowerCase();
+      return people.filter(p => {
+        if (state.filter === 'due' && !(p.follow_up_at && p.follow_up_at <= today && p.stage !== 'won' && p.stage !== 'lost')) return false;
+        if (state.filter === 'talking' && p.stage !== 'talking') return false;
+        if (state.filter === 'buyers' && !p.kinds.includes('purchase')) return false;
+        if (state.filter === 'lost' && p.stage !== 'lost') return false;
+        if (q && !(`${p.email} ${p.name || ''} ${p.company || ''}`.toLowerCase().includes(q))) return false;
+        return true;
+      });
+    }
+
+    function detail(p) {
+      return `<tr class="cr-detail"><td colspan="5"><div class="cr-cols">
+        <div><h3>History</h3>${p.events.map(e => `<div class="cr-ev">${esc(e.text)}<small>${esc(day(e.at))}${e.type ? ' · ' + esc(KIND[e.type] || e.type) : ''}</small>${e.detail ? `<p>${esc(e.detail)}</p>` : ''}</div>`).join('') || '<div class="cr-empty">No activity.</div>'}</div>
+        <div class="cr-form"><h3>Your notes</h3>
+          <label for="cr-stage">Stage</label>
+          <select id="cr-stage">${Object.entries(STAGE).map(([k, v]) => `<option value="${k}" ${p.stage === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+          <label for="cr-fu">Follow up on</label>
+          <input id="cr-fu" type="date" value="${esc(p.follow_up_at || '')}" />
+          <label for="cr-note">Note</label>
+          <textarea id="cr-note" maxlength="2000">${esc(p.note)}</textarea>
+          <button class="cr-save" id="cr-save">Save</button><span class="cr-msg" id="cr-msg"></span>
+        </div></div></td></tr>`;
+    }
+
+    function render() {
+      const { counts, today } = state.data;
+      const rows = visible();
+      root.innerHTML = `
+        <div class="cr-head"><h1>CRM</h1></div>
+        <p class="cr-lead">Everyone who has left an email, asked to be told when a report is ready, joined the waitlist or bought, one row per person. The history comes from the original forms and payments; only your stage, note and follow-up date are saved here.</p>
+        <div class="cr-stats">
+          <div><b>${counts.total}</b>people</div><div><b>${counts.buyers}</b>buyers</div>
+          <div><b>${counts.talking}</b>in conversation</div><div><b>${counts.due}</b>follow-ups due</div>
+        </div>
+        ${state.data.unattributed && state.data.unattributed.count ? `<p class="cr-note">${state.data.unattributed.count} completed purchase${state.data.unattributed.count > 1 ? 's' : ''} (USD ${state.data.unattributed.amount.toFixed(2)}) have no account behind them, so there is no email to show here. See the Transactions page.</p>` : ''}
+        <div class="cr-tools">${FILTERS.map(([k, v]) => `<button class="cr-chip ${state.filter === k ? 'on' : ''}" data-f="${k}">${v}</button>`).join('')}
+          <input class="cr-search" id="cr-q" type="search" placeholder="Search name, company or email" value="${esc(state.q)}" aria-label="Search people" /></div>
+        ${rows.length ? `<div class="cr-wrap"><table class="cr"><thead><tr><th>Person</th><th>Activity</th><th>Stage</th><th>Follow up</th><th>Last seen</th></tr></thead><tbody>
+          ${rows.map(p => `<tr class="cr-row" data-e="${esc(p.email)}">
+            <td class="cr-name"><b>${esc(p.name || p.email)}</b><span>${esc(p.name ? p.email : '')}${p.company ? (p.name ? ' · ' : '') + esc(p.company) : ''}</span></td>
+            <td>${p.kinds.map(k => `<span class="cr-tag">${esc(KIND[k] || k)}</span>`).join('')}${p.spend ? `<span class="cr-tag">${esc(p.currency || 'USD')} ${p.spend.toFixed(2)}</span>` : ''}</td>
+            <td data-l="Stage"><span class="cr-stage ${esc(p.stage)}">${esc(STAGE[p.stage])}</span></td>
+            <td data-l="Follow up" class="${p.follow_up_at && p.follow_up_at <= today && p.stage !== 'won' && p.stage !== 'lost' ? 'cr-due' : ''}">${p.follow_up_at ? esc(day(p.follow_up_at)) : '–'}</td>
+            <td data-l="Last seen">${esc(day(p.last_seen))}</td></tr>${state.open === p.email ? detail(p) : ''}`).join('')}
+          </tbody></table></div>` : `<div class="cr-empty">${state.data.people.length ? 'Nobody matches this filter.' : 'No people yet. They appear here as soon as someone leaves an email or buys.'}</div>`}`;
+
+      root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => { state.filter = b.dataset.f; state.open = null; render(); }));
+      const q = document.getElementById('cr-q');
+      q.addEventListener('input', () => { state.q = q.value; state.open = null; render(); const el = document.getElementById('cr-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); });
+      root.querySelectorAll('.cr-row').forEach(tr => tr.addEventListener('click', () => { state.open = state.open === tr.dataset.e ? null : tr.dataset.e; render(); }));
+      const save = document.getElementById('cr-save');
+      if (save) save.addEventListener('click', async () => {
+        const msg = document.getElementById('cr-msg'); save.disabled = true; msg.textContent = 'Saving…';
+        try {
+          const body = { email: state.open, stage: document.getElementById('cr-stage').value, follow_up_at: document.getElementById('cr-fu').value, note: document.getElementById('cr-note').value };
+          await api('PATCH', body);
+          await load(true);
+        } catch (e) { msg.textContent = 'Could not save (' + e.message + ')'; save.disabled = false; }
+      });
+    }
+
+    async function load(keepOpen) {
+      try {
+        state.data = await api('GET');
+        if (!keepOpen) state.open = null;
+        render();
+      } catch (e) { root.innerHTML = `<div class="cr-empty">Could not load the CRM (${esc(e.message)}).</div>`; }
+    }
+    await load();
+  </script>
+</body>
+</html>
