@@ -21,6 +21,10 @@ if (!id) { console.error('usage: publish-players.mjs --id <queue id>'); process.
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../outputs/batch', id);
 const read = f => { const p = path.join(dir, f); if (!fs.existsSync(p)) { console.error('missing ' + p); process.exit(2); } return JSON.parse(fs.readFileSync(p, 'utf8')); };
 const data = read('players.json'), naming = read('naming.json');
+// Values that go into request URLs must have the expected shape (run render-players --check first).
+if (!/^[A-Z]{2}$/.test(data.country_code || '') || !/^[a-z0-9-]{3,120}$/.test(naming.slug || '')) {
+  console.error('players.json country_code or naming.json slug malformed'); process.exit(2);
+}
 
 const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
 if (!URL_ || !KEY) { console.log(JSON.stringify({ ok: false, error: 'SUPABASE_URL / SUPABASE_SERVICE_KEY missing' })); process.exit(3); }
