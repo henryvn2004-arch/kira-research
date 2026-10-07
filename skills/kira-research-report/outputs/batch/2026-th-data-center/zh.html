@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 泰国数据中心2026年展望</title>
+<meta name="description" content="泰国数据中心建设集中于东部经济走廊（EEC）的春武里、罗勇和北柳，背后是数十亿美元规模的超大规模云服务商项目储备。决定2027年前多少容量能够通电的是稳定的可再生电力，而非需求；直购电协议（Direct PPA）与公用事业绿色电价（UGT）是关键突破口。">
+<meta property="og:title" content="KIRA Research — 泰国数据中心2026年展望">
+<meta property="og:description" content="EEC超大规模数据中心园区与可再生能源购电协议门槛——KIRA Research对2027年的研判。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.md-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.md-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 7px; margin-top: 14px; }
+.md-narrative h3:first-child { margin-top: 0; }
+.md-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.md-narrative p strong { color: var(--text); font-weight: 600; }
+.md-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.fo-chart-wrap { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.fo-scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.fo-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.fo-card.base { border-top: 3px solid var(--primary); }
+.fo-card.bull { border-top: 3px solid var(--green); }
+.fo-card.bear { border-top: 3px solid var(--amber); }
+.fo-card .sc-name { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.fo-card.base .sc-name { color: var(--primary); }
+.fo-card.bull .sc-name { color: var(--green); }
+.fo-card.bear .sc-name { color: var(--amber); }
+.fo-card .sc-val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.fo-card .sc-val .unit { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-left: 3px; }
+.fo-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.fo-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.me-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; flex: 1; min-height: 0; }
+.me-method h3, .me-sources h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.me-method p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.me-method p strong { color: var(--text); font-weight: 600; }
+.me-disclaimer { margin-top: 12px; font-size: 9.5px; line-height: 1.5; color: var(--muted); font-style: italic; }
+.me-sources ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+.me-sources li { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9.5px; line-height: 1.45; color: var(--text-mid); margin-bottom: 7px; break-inside: avoid; }
+.me-sources li strong { color: var(--text); font-weight: 700; }
+
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 780px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+.cover-logo { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.cover-logo .accent { color: var(--primary); }
+
+.mi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.mi-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.mi-item { margin-bottom: 14px; }
+.mi-item .lbl { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.mi-item .dsc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: grid; grid-template-columns: 34px 1fr 44px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); font-weight: 700; }
+.toc-row .ttitle { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); }
+.toc-row .ttitle .tsub { display: block; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 400; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.toc-row .tpage { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 001 — COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">数字基础设施 · 泰国 · 2026年展望</div>
+      <h1>泰国数据中心的<span class="accent">EEC押注</span>——超大规模云服务商建设与可再生电力门槛</h1>
+      <p class="cover-subtitle">数十亿美元规模的超大规模项目储备集中于东部经济走廊。决定2027年前多少容量能够通电的，是通过直购电协议（Direct PPA）与公用事业绿色电价（UGT）获得的稳定清洁电力，而非需求。</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">国家</div><div class="val">泰国 <span class="accent">·</span> TH</div></div>
+        <div class="cover-meta-item"><div class="label">行业</div><div class="val">数据中心／数字基础设施</div></div>
+        <div class="cover-meta-item"><div class="label">研究期间</div><div class="val">2024 &#8211; 2031F</div></div>
+        <div class="cover-meta-item"><div class="label">版本</div><div class="val">2026 <span class="accent">展望</span></div></div>
+      </div>
+      <div style="margin-top:24px;" class="cover-confidential"><strong>机密</strong> · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 002 — METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第01章 · 研究方法</div>
+      <div class="page-section-counter">002 / 017</div>
+    </div>
+    <h1 class="page-h1">本报告的研究框架</h1>
+    <p class="page-subhead">本报告基于两类证据：<strong>一手输入</strong>&#8212;&#8212;BOI投资促进申报、购电相关裁定及分析师综合研判；以及<strong>二手锚点</strong>&#8212;&#8212;国家电力规划、监管文本及交叉验证估算。每一项量化判断均标注明确的来源标签。</p>
+    <div class="mi-body">
+      <div class="mi-col">
+        <h3>一手输入</h3>
+        <div class="mi-item"><div class="lbl">投资促进与电力申报</div><div class="dsc">BOI数据中心投资促进批文、ERC直购电协议／第三方准入（TPA）标准，以及春武里、罗勇、北柳园区适用的EEC区域优惠政策&#8212;&#8212;呈现真实的MW、资本开支与时间表。</div></div>
+        <div class="mi-item"><div class="lbl">分析师综合研判</div><div class="dsc">KIRA基于多项公开输入进行的内部交叉验证&#8212;&#8212;项目储备与在运容量对比、IT负载、电网余量。正文以[Kira estimates]标注。</div></div>
+        <div class="mi-item"><div class="lbl">运营商与行业研判</div><div class="dsc">对中立运营商布局、托管定价及跨境连接的研判，比整体市场规模数据更贴近需求信号。</div></div>
+      </div>
+      <div class="mi-col">
+        <h3>二手锚点</h3>
+        <div class="mi-item"><div class="lbl">政府规划与监管文本</div><div class="dsc">PDP 2024&#8211;2037电力规划、ERC与NEPC决议、公用事业绿色电价方案，以及PDPA／云优先政策&#8212;&#8212;正文按具名来源引用。</div></div>
+        <div class="mi-item"><div class="lbl">市场研究数据集</div><div class="dsc">已发布的泰国数据中心托管、容量与收入数据集，并与运营商及BOI披露信息核对&#8212;&#8212;按数据集与期间引用。</div></div>
+        <div class="mi-item"><div class="lbl">交叉验证估算</div><div class="dsc">当单一来源无法覆盖某一数据时（如在运容量与项目储备之间的差距），我们结合2&#8211;3项输入并披露方法。标注为[Kira estimates]。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 003 — TOC ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 · 目录</div>
+      <div class="page-section-counter">003 / 017</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <p class="page-subhead">四个部分：将容量引向EEC的需求激增、制约落地规模的可再生电力约束、竞相建设的运营商，以及至2027年的情景研判。</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">执行摘要<span class="tsub">2027年落地论点</span></span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">战略启示<span class="tsub">影响参与者的五大力量</span></span><span class="tpage">005</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">市场规模与走势<span class="tsub">至2031年的容量与收入</span></span><span class="tpage">007</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">需求驱动因素<span class="tsub">AI、云与数据本地化</span></span><span class="tpage">008</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">电力与电网<span class="tsub">PDP 2024与数据中心用电</span></span><span class="tpage">010</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">运营缺口<span class="tsub">在运MW与项目储备</span></span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">购电协议结构与规则<span class="tsub">Direct PPA、UGT、数据政策</span></span><span class="tpage">012</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">竞争格局<span class="tsub">谁能落地容量</span></span><span class="tpage">014</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">2027年展望与情景<span class="tsub">基准、加速、受限</span></span><span class="tpage">016</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">研究方法与来源<span class="tsub">标签体系与来源说明</span></span><span class="tpage">017</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 004 — EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · 执行摘要</div>
+      <div class="page-section-counter">004 / 017</div>
+    </div>
+    <h1 class="page-h1">泰国数据中心市场&#8212;&#8212;2027年的落地考验</h1>
+    <p class="page-subhead"><strong>2025年约USD 1.9 bn的市场</strong>之上，是BOI申请额超过THB 728 bn的项目储备，但在运容量仅约150&#8211;350 MW。<strong>决定节奏的是稳定的可再生电力，而非需求</strong>——它决定了EEC园区的通电速度。</p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2025年市场规模</div>
+        <div class="num">1.9<span class="unit">USD bn</span></div>
+        <div class="change">&#8593; 2031年达约4.9 bn</div>
+        <div class="source-tag sec">DC Portfolio 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">2024年在运IT容量</div>
+        <div class="num">~350<span class="unit">MW</span></div>
+        <div class="change">&#8593; 2027年达约1 GW</div>
+        <div class="source-tag sec">Bloomberg 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年BOI数据中心申请</div>
+        <div class="num">728<span class="unit">THB bn</span></div>
+        <div class="change">共申报36个项目</div>
+        <div class="source-tag sec">BOI 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">直购电试点额度</div>
+        <div class="num">2,000<span class="unit">MW</span></div>
+        <div class="change down">标准仍在复审</div>
+        <div class="source-tag sec">ERC 2025</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>基本格局</h3>
+        <p>2025年泰国数据中心市场规模约<strong>USD 1.9 bn</strong>，预计以约17%的年复合增长率增至<strong>2031年的USD 4.9 bn</strong>[DC Portfolio 2025]。在运IT容量<strong>2024年末约为350 MW</strong>[Bloomberg 2025]。规划体量远超这一基数：2025年BOI共受理36项数据中心申请，金额达THB 728 bn[BOI 2025]，其中仅ByteDance一家即承诺在三个府投资最多USD 8.8 bn[DCD 2025]。</p>
+        <h3>核心约束</h3>
+        <p>瓶颈在于物理条件，且日益指向绿色电力。超大规模云服务商将选址与清洁电力挂钩，因此突破口在于<strong>2,000 MW直购电协议试点</strong>与公用事业绿色电价[ERC 2025]。PDP 2024&#8211;2037规划了73 GW可再生能源[PDP 2024]，但园区通电取决于并网窗口与购电协议规则，而两者均在2025年末进入复审。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">在运容量与2027年目标</div>
+            <div class="chart-subtitle">泰国 · MW · 2024年在运vs 2027年目标</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="200"/>
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="60" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="60" y1="65" x2="460" y2="65"/>
+            <text class="axis-text" x="54" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="54" y="159" text-anchor="end">350</text>
+            <text class="axis-text" x="54" y="114" text-anchor="end">700</text>
+            <text class="axis-text" x="54" y="69" text-anchor="end">1050</text>
+            <rect class="bar-secondary" x="100" y="155" width="70" height="45"/>
+            <text class="label-data" x="135" y="149" text-anchor="middle">~350</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">2024年在运</text>
+            <rect class="bar-tertiary" x="220" y="156" width="70" height="44"/>
+            <text class="label-data" x="255" y="150" text-anchor="middle">~347</text>
+            <text class="axis-text" x="255" y="216" text-anchor="middle">在建</text>
+            <rect class="bar-primary" x="340" y="72" width="70" height="128"/>
+            <text class="label-data" x="375" y="66" text-anchor="middle">~1000</text>
+            <text class="axis-text" x="375" y="216" text-anchor="middle">2027年目标</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, BOI, DCD, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting (350 MW &#8594; 1 GW) 2025 &#183; BOI 2025 = Thailand Board of Investment data-center promotion applications 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand pipeline reporting 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / TPA pilot criteria 2025 &#183; PDP 2024 = Thailand Power Development Plan 2024&#8211;2037 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 005 — EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · 执行摘要</div>
+      <div class="page-section-counter">005 / 017</div>
+    </div>
+    <h1 class="page-h1">对市场参与者的五项战略启示</h1>
+    <p class="page-subhead">五大力量决定了2027年前谁能分享泰国数据中心建设红利。每一项均以有据可查的数据与KIRA综合研判为锚点。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · 电力</div>
+        <div class="title">清洁电力是硬性约束</div>
+        <div class="body-text">PDP 2024&#8211;2037安排了<strong>73 GW可再生能源</strong>，目标是2037年可再生能源占比达51%[PDP 2024]。但园区通电取决于并网窗口；<strong>2,000 MW直购电协议试点</strong>是实现机制，而其标准已进入复审。<strong>决定2027年上限的是电力就绪程度，而非需求。</strong></div>
+        <div class="anchor">锚点：<span class="num-anchor">2,000 MW</span>购电额度</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · EEC</div>
+        <div class="title">罗勇与春武里是建设核心</div>
+        <div class="body-text">在2025年BOI申报中，<strong>罗勇占数据中心投资的33%，春武里占32%</strong>，北榄占12%[BOI 2025]。EEC将15年免税期、进口免关税与海缆登陆接入相结合，可将项目成本降低最多<strong>20%</strong>[DCD 2025]。</div>
+        <div class="anchor">锚点：EEC占比<span class="num-anchor">65%</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · 外国资本</div>
+        <div class="title">超大规模云服务商转向自建</div>
+        <div class="body-text">AWS承诺<strong>2037年前投资USD 5 bn</strong>；Google正在春武里建设园区；ByteDance承诺投资最多USD 8.8 bn[DCD 2025]。超大规模及自建容量目前已占<strong>需求的80%以上</strong>，挤压纯托管模式[DC Portfolio 2025]。</div>
+        <div class="anchor">锚点：AWS <span class="num-anchor">USD 5 bn</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · 政策</div>
+        <div class="title">云优先政策构筑需求底部</div>
+        <div class="body-text">2025年10月生效的“Go Cloud First”政策要求政府IT优先采用云服务[DEPA 2025]；PDPA的执行以及数字经济<strong>2027年占GDP 30%</strong>的目标，构成了独立于AI周期的结构性需求[NESDC 2025]。</div>
+        <div class="anchor">锚点：GDP目标<span class="num-anchor">30%</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · 绿色购电</div>
+        <div class="title">购电协议设计决定谁能落地</div>
+        <div class="body-text">公用事业绿色电价于2025年1月推出UGT1，提供<strong>约2,000 GWh</strong>以水电为支撑的供应[UGT 2025]；UGT2与直购电协议标准则暂停重新研究[ERC 2025]。有碳目标的租户只会在可签约获得清洁电力之处落地。</div>
+        <div class="anchor">锚点：UGT1 <span class="num-anchor">2,000 GWh</span></div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Thailand Board of Investment data-center promotion applications &amp; province split 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand pipeline &amp; EEC incentive reporting 2025 &#183; DEPA 2025 = Digital Economy Promotion Agency / Go Cloud First policy 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / UGT2 review 2025 &#183; NESDC 2025 = NESDC / digital economy GDP-share target 2025 &#183; PDP 2024 = Thailand Power Development Plan 2024&#8211;2037 &#183; UGT 2025 = Utility Green Tariff UGT1 launch 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 006 — DIVIDER: DEMAND SURGE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h1 class="divider-title">需求<span class="accent">激增</span></h1>
+    <div class="divider-thesis">泰国数据中心容量有望在三年内增至约三倍。拉动力来自<strong>AI算力、超大规模云区域以及政府云优先指令</strong>&#8212;&#8212;需求是这道题中较容易的一半。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1市场规模</div>
+      <div class="toc-pill">4.2容量走势</div>
+      <div class="toc-pill">4.3需求驱动因素</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 007 — MARKET SIZING ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 市场规模</div>
+      <div class="page-section-counter">007 / 017</div>
+    </div>
+    <h1 class="page-h1">至2031年，容量增至约三倍，收入增长逾一倍</h1>
+    <p class="page-subhead">两条曲线速度不同。<strong>装机容量</strong>由约350 MW向2027年及之后的约1 GW攀升；<strong>市场价值</strong>则随AI级机柜与超大规模托管抬升单位MW收入而持续复合增长。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>容量曲线</h3>
+        <p>在运IT容量<strong>2024年末约为350 MW</strong>，行业用电规模将<strong>在2027年前增至约1 GW</strong>[Bloomberg 2025]。另有数据集测算，容量将由2025年的约0.77 GW增至2030年的约2.93 GW，年复合增长率约30%[DC Portfolio 2025]&#8212;&#8212;考虑到电网限制，这应视为上限而非基准情景。</p>
+        <h3>收入曲线</h3>
+        <p>2025年市场价值约<strong>USD 1.9 bn</strong>，有望在<strong>2031年达到USD 4.9 bn</strong>（年复合增长率约17%）[DC Portfolio 2025]。Krungsri Research对近期的判断更为审慎，预计2025&#8211;2027年年增长率为7.5&#8211;8.5%[Krungsri 2025]。</p>
+        <h3>设施分布</h3>
+        <p>托管市场涵盖<strong>34家运营商的39座现有设施及27座规划设施</strong>[DC Portfolio 2025]。曼谷拥有在运基数，但罗勇、春武里与曼谷合计占<strong>规划电力容量的45%以上</strong>[DC Portfolio 2025]。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">泰国数据中心&#8212;&#8212;容量与市场价值</div>
+            <div class="chart-subtitle">MW（柱） · USD bn（线） · 2024&#8211;2031F</div>
+          </div>
+          <div class="chart-unit">MW / USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">700</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">1400</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">2100</text>
+            <rect class="bar-primary" x="95" y="183" width="48" height="22"/>
+            <text class="label-data" x="119" y="177" text-anchor="middle">350</text>
+            <text class="axis-text" x="119" y="221" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="240" y="141" width="48" height="64"/>
+            <text class="label-data" x="264" y="135" text-anchor="middle">~1000</text>
+            <text class="axis-text" x="264" y="221" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="385" y="78" width="48" height="127"/>
+            <text class="label-data" x="409" y="72" text-anchor="middle">~2000</text>
+            <text class="axis-text" x="409" y="221" text-anchor="middle">2031F</text>
+            <polyline points="119,188 264,162 409,118" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="119" cy="188" r="4" fill="#D97706"/><text class="label-small" x="119" y="183" text-anchor="middle" style="fill:#D97706">1.6</text>
+            <circle cx="264" cy="162" r="4" fill="#D97706"/><text class="label-small" x="280" y="160" style="fill:#D97706">~2.8</text>
+            <circle cx="409" cy="118" r="4" fill="#D97706"/><text class="label-small" x="409" y="113" text-anchor="middle" style="fill:#D97706">4.9</text>
+            <rect class="bar-primary" x="50" y="232" width="10" height="10"/><text class="label-small" x="64" y="241">容量MW</text>
+            <rect x="180" y="232" width="10" height="10" fill="#D97706"/><text class="label-small" x="194" y="241">市场价值USD bn</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, DC PORTFOLIO DATASET, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset (39 existing / 27 upcoming, 34 operators) 2025 &#183; Krungsri 2025 = Krungsri Research data-center outlook 2025&#8211;2027 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 008 — DEMAND DRIVERS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 需求驱动因素</div>
+      <div class="page-section-counter">008 / 017</div>
+    </div>
+    <h1 class="page-h1">三大需求引擎：AI算力、云区域与云优先政策</h1>
+    <p class="page-subhead">需求是结构上较容易的一面。AI投资浪潮、超大规模云区域落地以及政府云优先指令，各自将容量引向EEC，并且相互强化。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>AI算力</h3>
+        <p>AI就绪基础设施已占<strong>泰国数据中心容量的约28%</strong>[Bloomberg 2025]。超大规模云服务商与本地运营商正为主权AI及企业AI部署GPU集群；这类机柜单柜功耗远高于常规，放大了第010页讨论的电网问题，并将选址推向稳定清洁电力所在地。</p>
+        <h3>云区域</h3>
+        <p>AWS承诺<strong>2037年前投资USD 5 bn</strong>建设泰国区域，预计为GDP贡献USD 10 bn；Google正在春武里建设；Microsoft已将泰国列为区域云建设地[DCD 2025]。超大规模及自建需求目前已占<strong>总量的80%以上</strong>，推动市场脱离纯托管模式[DC Portfolio 2025]。</p>
+        <h3>云优先与数据本地化</h3>
+        <p>“Go Cloud First”政策（2025年10月）要求政府IT优先采用云服务[DEPA 2025]；PDPA的执行以及数字经济占GDP 30%的目标，将政策转化为独立于AI周期的持久需求[NESDC 2025]。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">哪些因素在拉动容量</div>
+            <div class="chart-subtitle">需求贡献指数 · 方向性</div>
+          </div>
+          <div class="chart-unit">驱动因素</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="20" x2="150" y2="210"/>
+            <rect class="bar-primary" x="150" y="34" width="285" height="34"/>
+            <text class="label-data" x="442" y="56" text-anchor="end" style="fill:#fff">高</text>
+            <text class="label-small" x="146" y="55" text-anchor="end">AI算力</text>
+            <rect class="bar-primary" x="150" y="92" width="255" height="34" opacity="0.85"/>
+            <text class="label-data" x="397" y="114" style="fill:var(--primary)">高</text>
+            <text class="label-small" x="146" y="113" text-anchor="end">云区域</text>
+            <rect class="bar-secondary" x="150" y="150" width="240" height="34"/>
+            <text class="label-data" x="397" y="172" style="fill:var(--green)">结构性</text>
+            <text class="label-small" x="146" y="171" text-anchor="end">云优先</text>
+            <text class="label-small" x="150" y="232">柱长 = 对2025&#8211;2031年容量需求的方向性拉动</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, DCD, DEPA, KIRA综合研判 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center / AI infrastructure reporting 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand hyperscaler-commitment reporting 2025 &#183; DEPA 2025 = Digital Economy Promotion Agency / Go Cloud First policy 2025 &#183; NESDC 2025 = NESDC digital-economy GDP-share target 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 009 — DIVIDER: LANDING CONSTRAINT ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第05章</div>
+    <h1 class="divider-title">落地<span class="accent">约束</span></h1>
+    <div class="divider-thesis">项目公告不等于兆瓦。<strong>电网容量、购电协议设计以及薄弱的在运基数</strong>（全国约350 MW）&#8212;&#8212;决定了THB 728 bn的项目储备中，到2027年究竟有多少能在EEC真正通电。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1电力与电网</div>
+      <div class="toc-pill">5.2运营缺口</div>
+      <div class="toc-pill">5.3购电协议结构与规则</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 010 — POWER & GRID ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 电力与电网</div>
+      <div class="page-section-counter">010 / 017</div>
+    </div>
+    <h1 class="page-h1">电力供应是门槛，清洁电力是关键</h1>
+    <p class="page-subhead">PDP 2024&#8211;2037承诺大规模新增发电，但对EEC园区而言，真正的问题在于<strong>稳定的清洁电力何时、在何处接入电表</strong>&#8212;&#8212;以及依据何种合同。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>规划</h3>
+        <p>PDP 2024&#8211;2037将总需求<strong>由2024年的约51 GW提升至2037年的约112 GW</strong>，可再生能源占比升至<strong>51%</strong>&#8212;&#8212;约73 GW可再生能源装机，其中一半以上为光伏[PDP 2024]。规划期内天然气与煤炭占比由约80%降至48%。</p>
+        <h3>约束</h3>
+        <p>问题不在发电总量，而在于<strong>可签约供给单一园区的稳定清洁电力</strong>。EGAT供应约44%的发电量，是电网的支柱[PDP 2024]。当前零售电价约为<strong>每度THB 4.15</strong>；另有提议设定每MW THB 4.5 mn的保证消纳规则，以遏制投机性申报[BOI 2025]。</p>
+        <h3>清洁电力方案</h3>
+        <p>可持续性已成为园区设计的输入条件：有碳目标的租户会将负载与<strong>公用事业绿色电价及直购电协议</strong>配对，而非使用普通电网供电[ERC 2025]。决定哪些超大规模租户落地的，日益是清洁选址，而不仅是兆瓦数量。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">PDP 2024&#8211;2037能源结构转变</div>
+            <div class="chart-subtitle">燃料占比% · 2024 vs 2037年目标</div>
+          </div>
+          <div class="chart-unit">%结构</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">30</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">60</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">90</text>
+            <rect class="bar-tertiary" x="95" y="85" width="55" height="120"/>
+            <text class="label-data" x="122" y="79" text-anchor="middle">~80</text>
+            <text class="axis-text" x="122" y="221" text-anchor="middle">化石'24</text>
+            <rect class="bar-secondary" x="170" y="175" width="55" height="30"/>
+            <text class="label-data" x="197" y="169" text-anchor="middle">~20</text>
+            <text class="axis-text" x="197" y="221" text-anchor="middle">可再生'24</text>
+            <rect class="bar-tertiary" x="285" y="133" width="55" height="72" opacity="0.7"/>
+            <text class="label-data" x="312" y="127" text-anchor="middle">~48</text>
+            <text class="axis-text" x="312" y="221" text-anchor="middle">化石'37</text>
+            <rect class="bar-secondary" x="360" y="128" width="55" height="77"/>
+            <text class="label-data" x="387" y="122" text-anchor="middle">~51</text>
+            <text class="axis-text" x="387" y="221" text-anchor="middle">可再生'37</text>
+            <text class="label-small" x="257" y="244" text-anchor="middle">2037年前新增73 GW可再生能源 · 光伏占比&gt;50% [PDP 2024]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: PDP 2024&#8211;2037, ERC, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Thailand Board of Investment guaranteed-offtake &amp; tariff reporting 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / UGT criteria 2025 &#183; PDP 2024 = Thailand Power Development Plan (PDP) 2024&#8211;2037 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 011 — OPERATIONAL GAP ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 运营缺口</div>
+      <div class="page-section-counter">011 / 017</div>
+    </div>
+    <h1 class="page-h1">公告容量与通电容量之间的缺口</h1>
+    <p class="page-subhead">项目储备以吉瓦级意向计；电表则以数百兆瓦的实际交付计。<strong>在2027年前弥合这一缺口，是电力与购电协议问题，</strong>而非需求问题。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>在运容量</h3>
+        <p>全国在运IT容量<strong>2024年末约为350 MW</strong>[Bloomberg 2025]，其中曼谷运营商中立型托管约105&#8211;113 MW[DC Portfolio 2025]。这一基数真实存在，但相对已公告的项目储备仍显单薄。</p>
+        <h3>已公告项目</h3>
+        <p>EEC项目储备规模庞大。True IDC计划建设<strong>THB 77 bn的EEC超大型园区（IT负载223 MW）</strong>[BOI 2025]；Gulf&#8211;Singtel&#8211;AIS合资企业（GSA）在罗勇预留约120 MW[BOI 2025]；Bridge Data Centres获批134 MW，Skyline（DAMAC）获批200 MW[DCD 2025]。2025年BOI共受理<strong>36项申请，金额达THB 728 bn</strong>[BOI 2025]。</p>
+        <h3>2027年前可落地的容量</h3>
+        <p>多数旗舰园区以<strong>2026&#8211;2028年分期通电</strong>为目标，取决于并网窗口与购电协议审批。[Kira estimates]测算2027年实际在运容量约为<strong>0.9&#8211;1.0 GW</strong>&#8212;&#8212;增幅可观，但仅为公告储备的一小部分。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">项目漏斗&#8212;&#8212;从公告到通电</div>
+            <div class="chart-subtitle">泰国 · MW · 交付阶段</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <rect class="bar-primary" x="80" y="34" width="320" height="34"/>
+            <text class="label-data" x="240" y="56" text-anchor="middle" style="fill:#fff">3000&#43; 已公告／申报</text>
+            <rect class="bar-primary" x="130" y="86" width="220" height="34" opacity="0.8"/>
+            <text class="label-data" x="240" y="108" text-anchor="middle" style="fill:#fff">~2000购电试点额度</text>
+            <rect class="bar-tertiary" x="175" y="138" width="130" height="34"/>
+            <text class="label-data" x="240" y="160" text-anchor="middle" style="fill:#fff">2027年前在运~900&#8211;1000</text>
+            <rect class="bar-secondary" x="200" y="190" width="80" height="30"/>
+            <text class="label-data" x="240" y="210" text-anchor="middle" style="fill:#fff">当前在运~350</text>
+            <text class="label-small" x="240" y="240" text-anchor="middle">漏斗随并网窗口与购电协议审批收窄 [Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: BLOOMBERG, BOI, DCD, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting 2025 &#183; BOI 2025 = Thailand Board of Investment data-center promotion applications (36 projects, THB 728 bn) 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset 2025 &#183; DCD 2025 = Data Center Dynamics Thailand pipeline tracking 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 012 — PPA STRUCTURES & REGULATION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 购电协议结构与规则</div>
+      <div class="page-section-counter">012 / 017</div>
+    </div>
+    <h1 class="page-h1">获取清洁电力的三条路径；数据规则构筑需求底部</h1>
+    <p class="page-subhead">两项支撑条件补全了约束全貌：一是<strong>可再生能源采购选项</strong>（Direct PPA、UGT、现场发电），决定谁能承接有碳目标的租户；二是<strong>数据政策体系</strong>，保障本地基础需求。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>经第三方准入的直购电协议</h3>
+        <p>2024年6月，NEPC批准一项试点，允许数据中心通过第三方准入（Third-Party Access）经国家电网直接向发电商采购最多<strong>2,000 MW可再生电力</strong>[ERC 2025]。ERC于2025年10月发布标准草案，但能源政策委员会要求对直购电协议与UGT2规则进行<strong>重新研究</strong>&#8212;&#8212;这是2026年需关注的关键催化因素。</p>
+        <h3>公用事业绿色电价</h3>
+        <p>UGT1于2025年1月推出，提供约<strong>每年2,000 GWh</strong>以EGAT水电为支撑的电力及可再生能源证书（REC），不指定电源；<strong>UGT2</strong>（指定电源）则面向需要额外性的买家[UGT 2025]。已有46个以上数据中心项目表达了绿色电力需求[ERC 2025]。</p>
+        <h3>数据政策</h3>
+        <p>泰国<strong>未实行全面的数据本地化要求</strong>，但PDPA（2022年起生效）与2025年10月的云优先指令将公共部门及受监管数据导向境内[DEPA 2025]&#8212;&#8212;在超大规模层之下为托管需求提供支撑。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">园区可再生能源采购路径</div>
+            <div class="chart-subtitle">规模与就绪度示意 · 2026</div>
+          </div>
+          <div class="chart-unit">MW额度</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="15" x2="120" y2="200"/>
+            <rect class="bar-primary" x="120" y="28" width="280" height="30"/>
+            <text class="label-data" x="408" y="49">2000 MW</text>
+            <text class="label-small" x="116" y="47" text-anchor="end">Direct PPA (TPA)</text>
+            <rect class="bar-secondary" x="120" y="78" width="230" height="30"/>
+            <text class="label-data" x="358" y="99" style="fill:var(--green)">~2000 GWh</text>
+            <text class="label-small" x="116" y="97" text-anchor="end">UGT1已推出</text>
+            <rect class="bar-secondary" x="120" y="128" width="150" height="30" opacity="0.7"/>
+            <text class="label-data" x="278" y="149" style="fill:var(--green)">重新研究</text>
+            <text class="label-small" x="116" y="147" text-anchor="end">UGT2指定电源</text>
+            <rect class="bar-tertiary" x="120" y="178" width="120" height="30"/>
+            <text class="label-data" x="248" y="199" style="fill:var(--amber)">现场</text>
+            <text class="label-small" x="116" y="197" text-anchor="end">表后光伏</text>
+            <text class="label-small" x="120" y="232">柱 = 额度／就绪度示意 · 待复审 [ERC 2025]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: ERC, UGT SCHEME, NEPC, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DEPA 2025 = Digital Economy Promotion Agency / PDPA &amp; Go Cloud First policy 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / TPA &amp; UGT2 criteria and restudy 2025 &#183; UGT 2025 = Utility Green Tariff UGT1 launch (EGAT/MEA/PEA, ~2,000 GWh) 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 013 — DIVIDER: WHO LANDS THE CAPACITY ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第06章</div>
+    <h1 class="divider-title">谁能落地<span class="accent">容量</span></h1>
+    <div class="divider-thesis">以电信运营商为主导的本土基础，迎来通过合资与自建方式进入的外国资本。<strong>EEC土地、电网接入与清洁电力合同</strong>&#8212;&#8212;而非建筑本身&#8212;&#8212;才是兆瓦真正通电的关键。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1市场结构</div>
+      <div class="toc-pill">6.2主要运营商</div>
+      <div class="toc-pill">6.3外资进入</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 014 — COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 · 竞争格局</div>
+      <div class="page-section-counter">014 / 017</div>
+    </div>
+    <h1 class="page-h1">以电信运营商为主导的基础格局，外国资本借道进入</h1>
+    <p class="page-subhead">本土电信运营商与上市集团掌握在运基数；全球资本通过合资、自建及EEC园区落地。竞争优势在于让兆瓦得以通电的<strong>EEC土地、电网接入与清洁电力合同</strong>。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">按运营商集团划分的容量份额</div>
+            <div class="chart-subtitle">泰国 · 在运IT负载份额示意 · 2025</div>
+          </div>
+          <div class="chart-unit">%份额</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="130" y1="15" x2="130" y2="175"/>
+            <rect class="bar-primary" x="130" y="22" width="150" height="22"/><text class="label-data" x="288" y="39">~20%</text><text class="label-small" x="126" y="38" text-anchor="end">True IDC</text>
+            <rect class="bar-primary" x="130" y="56" width="125" height="22" opacity="0.85"/><text class="label-data" x="263" y="73">~16%</text><text class="label-small" x="126" y="72" text-anchor="end">STT GDC Thailand</text>
+            <rect class="bar-secondary" x="130" y="90" width="110" height="22"/><text class="label-data" x="248" y="107">~14%</text><text class="label-small" x="126" y="106" text-anchor="end">SUPERNAP / NTT</text>
+            <rect class="bar-secondary" x="130" y="124" width="80" height="22" opacity="0.8"/><text class="label-data" x="218" y="141">~10%</text><text class="label-small" x="126" y="140" text-anchor="end">GSA（Gulf合资）</text>
+            <rect class="bar-tertiary" x="130" y="158" width="170" height="22"/><text class="label-data" x="308" y="175">~40%</text><text class="label-small" x="126" y="174" text-anchor="end">CSL／其他</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DC PORTFOLIO DATASET, 运营商披露, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>中度集中、资本密集</h3>
+        <p>没有运营商占据主导地位；前五大企业估计合计占<strong>已装机IT负载的55&#8211;60%</strong>[DC Portfolio 2025]。电信运营商与上市集团支撑在运基数；外国资本则通过合资与自建进入。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>现有设施</span><span class="val">39</span></div>
+          <div class="stat-line"><span>规划设施</span><span class="val">27</span></div>
+          <div class="stat-line"><span>跟踪运营商</span><span class="val">34</span></div>
+          <div class="stat-line"><span>Tier III占比</span><span class="val">~86%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">排名01</div>
+        <div class="comp-name">True IDC</div>
+        <div class="comp-parent">True Corporation（正大集团）</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~20%</span></div>
+        <div class="comp-stat-row"><span>EEC计划</span><span class="val">THB 77 bn</span></div>
+        <div class="comp-stat-row"><span>IT负载</span><span class="val">223 MW</span></div>
+        <div class="comp-strengths"><strong>电信级领先者。</strong>最大的本土运营商；THB 77 bn的EEC超大型园区横跨春武里与北榄。[BOI 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名02</div>
+        <div class="comp-name">STT GDC Thailand</div>
+        <div class="comp-parent">ST Telemedia（新加坡）</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~16%</span></div>
+        <div class="comp-stat-row"><span>等级</span><span class="val">III / IV</span></div>
+        <div class="comp-stat-row"><span>优势</span><span class="val">液冷</span></div>
+        <div class="comp-strengths"><strong>超大规模级建设者。</strong>Tier III/IV，较早采用液冷，拥有锚定租户合同。[DC Portfolio 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名03</div>
+        <div class="comp-name">SUPERNAP / NTT</div>
+        <div class="comp-parent">Switch合资 · NTT GDC</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~14%</span></div>
+        <div class="comp-stat-row"><span>规格</span><span class="val">Tier IV</span></div>
+        <div class="comp-stat-row"><span>重点</span><span class="val">批发</span></div>
+        <div class="comp-strengths"><strong>国际规格批发业务。</strong>高密度园区，服务超大规模及跨国租户。[DC Portfolio 2025]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名04</div>
+        <div class="comp-name">GSA Data Center</div>
+        <div class="comp-parent">Gulf · Singtel · AIS合资</div>
+        <div class="comp-stat-row"><span>集群</span><span class="val">罗勇</span></div>
+        <div class="comp-stat-row"><span>IT负载</span><span class="val">~120 MW</span></div>
+        <div class="comp-stat-row"><span>资本开支</span><span class="val">THB 37 bn</span></div>
+        <div class="comp-strengths"><strong>电力有保障的合资企业。</strong>Gulf的能源背景将发电能力与电信运营商在EEC的覆盖相结合。[BOI 2025]</div>
+      </div>
+    </div>
+    <div class="source-key">BOI 2025 = Thailand Board of Investment data-center promotion approvals (True IDC, GSA) 2025 &#183; DC Portfolio 2025 = Thailand Data Center Colocation Portfolio dataset (39 existing / 27 upcoming, 34 operators) 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 015 — DIVIDER: 2027 OUTLOOK ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第07章</div>
+    <h1 class="divider-title">2027年<span class="accent">展望</span></h1>
+    <div class="divider-thesis">三条路径的分歧取决于一个变量：<strong>稳定的清洁电力能以多快速度通过直购电协议与UGT实现可签约</strong>。需求几乎确定；情景之间的差距几乎完全取决于电力与购电协议。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1基准情景</div>
+      <div class="toc-pill">7.2加速情景</div>
+      <div class="toc-pill">7.3受限情景</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 016 — FORECAST / SCENARIOS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 2027年展望</div>
+      <div class="page-section-counter">016 / 017</div>
+    </div>
+    <h1 class="page-h1">2027年通电容量的三种情景</h1>
+    <p class="page-subhead">项目储备已定，问题在于转化效率。各情景的差异主要在于EEC各集群的<strong>购电协议审批速度与并网窗口</strong>。</p>
+    <div class="fo-chart-wrap">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">数据中心通电容量&#8212;&#8212;至2027年的情景扇形图</div>
+          <div class="chart-subtitle">泰国在运总MW · 2024年实际 &#183; 2027年情景</div>
+        </div>
+        <div class="chart-unit">在运MW</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1080 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <line class="axis-line" x1="60" y1="15" x2="60" y2="165"/>
+          <line class="axis-line" x1="60" y1="165" x2="1060" y2="165"/>
+          <line class="grid-line" x1="60" y1="125" x2="1060" y2="125"/>
+          <line class="grid-line" x1="60" y1="85" x2="1060" y2="85"/>
+          <line class="grid-line" x1="60" y1="45" x2="1060" y2="45"/>
+          <text class="axis-text" x="54" y="169" text-anchor="end">300</text>
+          <text class="axis-text" x="54" y="129" text-anchor="end">600</text>
+          <text class="axis-text" x="54" y="89" text-anchor="end">900</text>
+          <text class="axis-text" x="54" y="49" text-anchor="end">1200</text>
+          <circle cx="150" cy="158" r="5" fill="#0B0D10"/>
+          <text class="label-data" x="150" y="150" text-anchor="middle">350</text>
+          <text class="axis-text" x="150" y="182" text-anchor="middle">2024年实际</text>
+          <path d="M 150 158 L 980 55" stroke="#00A88B" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="55" r="5" fill="#00A88B"/>
+          <text class="label-data" x="998" y="53" style="fill:#00A88B">~1150加速</text>
+          <path d="M 150 158 L 980 78" stroke="#1E6FFF" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="78" r="5" fill="#1E6FFF"/>
+          <text class="label-data" x="998" y="76" style="fill:#1E6FFF">~950基准</text>
+          <path d="M 150 158 L 980 115" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="980" cy="115" r="5" fill="#D97706"/>
+          <text class="label-data" x="998" y="113" style="fill:#D97706">~700受限</text>
+          <text class="axis-text" x="980" y="182" text-anchor="middle">2027F</text>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: BLOOMBERG, BOI, ERC, KIRA交叉验证 · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="fo-scenarios">
+      <div class="fo-card bull">
+        <div class="sc-name">加速情景</div>
+        <div class="sc-val">~1150<span class="unit">MW在运</span></div>
+        <div class="sc-body">直购电协议标准于2026年定稿，UGT2推出，并网窗口如期开放。EEC旗舰园区按计划通电，清洁电力交易提前完成。[Kira estimates]</div>
+      </div>
+      <div class="fo-card base">
+        <div class="sc-name">基准情景</div>
+        <div class="sc-val">~950<span class="unit">MW在运</span></div>
+        <div class="sc-body">容量由350 MW基数增至约三倍；随着购电协议规则与输电能力逐步跟上，EEC旗舰园区部分分期延至2028年。云优先政策使托管容量保持满载。[Kira estimates]</div>
+      </div>
+      <div class="fo-card bear">
+        <div class="sc-name">受限情景</div>
+        <div class="sc-val">~700<span class="unit">MW在运</span></div>
+        <div class="sc-body">购电协议复审旷日持久、电网受限，通电延后；AI园区分期投运落后于计划。需求不变，交付受审批窗口制约。[Kira estimates]</div>
+      </div>
+    </div>
+    <div class="source-key">Bloomberg 2025 = Bloomberg Thai data-center capacity reporting 2025 &#183; BOI 2025 = Thailand Board of Investment data-center promotion applications 2025 &#183; ERC 2025 = Energy Regulatory Commission Direct PPA / UGT review 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 017 — METHODOLOGY ENDNOTE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 研究方法与来源</div>
+      <div class="page-section-counter">017 / 017</div>
+    </div>
+    <h1 class="page-h1">研究方法与来源</h1>
+    <p class="page-subhead">各项数据的推导方式，以及本报告引用的每一具名来源的完整出处。</p>
+    <div class="me-body">
+      <div class="me-method">
+        <h3>研究方法</h3>
+        <p>本报告对两类证据进行交叉验证。凡标注<strong>具名来源标签</strong>（如[PDP 2024]、[BOI 2025]）的数据，均来自该来源，完整出处列于右侧。凡标注[Kira estimates]的数据，由KIRA分析师综合多项公开输入（BOI申报、监管裁定、国家电力规划）推导得出，方法见相关章节。</p>
+        <p>容量数据将已发布的市场数据集与运营商及BOI披露信息进行核对；在运与储备容量之间的缺口以及2027年情景扇形图均为KIRA构建。约<strong>25%的量化判断由KIRA推导</strong>，其余均引自外部来源。</p>
+        <div class="me-disclaimer">本报告仅供授权读者使用。前瞻性估算基于情景分析，不构成保证。© 2026 KIRA Research。</div>
+      </div>
+      <div class="me-sources">
+        <h3>来源说明</h3>
+        <ul>
+          <li><strong>DC Portfolio 2025</strong> — Thailand Data Center Colocation Portfolio dataset (39 existing / 27 upcoming, 34 operators) 2025</li>
+          <li><strong>BOI 2025</strong> — Thailand Board of Investment data-center promotion applications &amp; approvals (36 projects, THB 728 bn; province split) 2025</li>
+          <li><strong>PDP 2024</strong> — Thailand Power Development Plan (PDP) 2024&#8211;2037 (51&#8594;112 GW demand; 73 GW renewables)</li>
+          <li><strong>ERC 2025</strong> — Energy Regulatory Commission Direct PPA / Third-Party-Access &amp; UGT2 draft criteria and restudy 2025</li>
+          <li><strong>UGT 2025</strong> — Utility Green Tariff UGT1 launch (EGAT / MEA / PEA, ~2,000 GWh) 2025</li>
+          <li><strong>DCD 2025</strong> — Data Center Dynamics Thailand pipeline, hyperscaler commitments &amp; EEC incentive reporting 2025</li>
+          <li><strong>Bloomberg 2025</strong> — Bloomberg Thai data-center capacity reporting (350 MW &#8594; 1 GW; AI-ready share) 2025</li>
+          <li><strong>Krungsri 2025</strong> — Krungsri Research data-center sector outlook 2025&#8211;2027</li>
+          <li><strong>DEPA 2025</strong> — Digital Economy Promotion Agency / PDPA &amp; Go Cloud First policy 2025</li>
+          <li><strong>NESDC 2025</strong> — NESDC digital-economy GDP-share target (30% by 2027) 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
