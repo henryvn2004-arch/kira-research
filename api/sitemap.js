@@ -187,6 +187,28 @@ async function buildLocale(locale) {
     }));
   }
 
+  // 3b) Kira Experts transcripts (migration 037) — the listing plus every published
+  //     transcript that has a translation in this locale.
+  urls.push(urlEntry({ subPath: 'experts/transcripts/', locale, changefreq: 'weekly', priority: '0.7' }));
+  const transcriptQs =
+    'status=eq.published' +
+    '&select=slug,updated_at,expert_transcript_translations!inner(locale,status,updated_at)' +
+    `&expert_transcript_translations.locale=eq.${locale}` +
+    '&expert_transcript_translations.status=eq.published' +
+    '&limit=5000';
+  const { rows: transcripts } = await sb(`expert_transcripts?${transcriptQs}`);
+  for (const tr of transcripts) {
+    const t = Array.isArray(tr.expert_transcript_translations) && tr.expert_transcript_translations[0];
+    const lastmod = (t && t.updated_at && t.updated_at > tr.updated_at) ? t.updated_at : tr.updated_at;
+    urls.push(urlEntry({
+      subPath:    `experts/transcripts/${tr.slug}`,
+      locale,
+      lastmod:    lastmod ? lastmod.slice(0, 10) : null,
+      changefreq: 'monthly',
+      priority:   '0.6'
+    }));
+  }
+
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
   //    Only include EN locale to avoid duplicate sitemap entries for the same content.
   if (locale === 'en') {

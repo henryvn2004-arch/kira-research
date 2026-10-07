@@ -835,6 +835,33 @@ test.describe('library and insights pages', () => {
       }
     }
   });
+
+  test('/api/transcript-list returns published transcripts', async ({ request }) => {
+    const body = await (await request.get('/api/transcript-list?locale=en')).json();
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body.items.length).toBeGreaterThan(0);
+    for (const k of ['slug', 'title', 'interview_type', 'market']) expect(k in body.items[0]).toBe(true);
+  });
+
+  test('transcript page shows the free opening and locks the rest', async ({ page, request }) => {
+    const { items } = await (await request.get('/api/transcript-list?locale=en')).json();
+    const t = await (await request.get('/api/transcript?slug=' + items[0].slug + '&locale=en')).json();
+    expect(t.lockedTurns).toBeGreaterThan(0);
+    expect(t.sections.reduce((n, s) => n + s.turns.length, 0)).toBe(t.totalTurns - t.lockedTurns);
+    await page.goto('/en/experts/transcripts/' + items[0].slug);
+    await expect(page.locator('.tv-head h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('#tv-locked')).toBeVisible();
+  });
+
+  test('/api/transcript-content needs a signed-in reader', async ({ request }) => {
+    const r = await request.get('/api/transcript-content?slug=vn-auto-battery-channel-2026');
+    expect(r.status()).toBe(401);
+  });
+
+  test('/en/experts/transcripts/ lists transcripts', async ({ page }) => {
+    await page.goto('/en/experts/transcripts/');
+    await expect(page.locator('.lrow').first()).toBeVisible({ timeout: 10000 });
+  });
 });
 
 // ── Kira Chain (migration 037): one search, one page for every product ──
