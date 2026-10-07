@@ -129,7 +129,7 @@ Idempotent. A failure here never blocks the fire: log it and continue to Step 1.
 Step 1 and Step 2 are ONE command, because claiming is an atomic compare-and-swap in the database:
 
 ```bash
-node skills/kira-research-report/scripts/queue.mjs next --model <opus|sonnet>
+node skills/kira-research-report/scripts/queue.mjs next --model opus
 ```
 
 It picks the most-advanced row (`ko_done` > `ja_done` > `en_done` > `pending` > `zh_backfill`; inside a status: highest `priority`, then oldest) and prints ONE JSON line `{id, topic, country, industry, year, target_languages, stage, picked_status, claim_status, output_paths, error_log, has_zh}`, or `none`.
@@ -169,7 +169,7 @@ has `*_in_progress` status with a `claimed_at` more than 150 minutes ago
 
 Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `target_languages`, current `status` (and `output_paths` for a `zh_backfill` row — it holds the published `report_id`).
 
-**Edition year** (owner, 2026-10-07): a report's year is the year it is published, never a later one. Set `edition_year=$(date -u +%Y)` and pass it to EN gen (naming, cover, publish). The queue's `year` column and any year inside `topic` (e.g. "2027 outlook") do not override it; a forecast horizon may still appear in the angle or body.
+**Edition year** (owner, 2026-10-07): a report's year is the year it is published, never a later one. Set `edition_year=$(date -u +%Y)` and pass it to EN gen (naming, cover, publish). The queue row's `year` and any year inside `topic` (e.g. "2027 outlook") do not override it; a forecast horizon may still appear in the angle or body.
 
 ---
 
@@ -305,7 +305,7 @@ If any check fails → failure path. Otherwise:
 git add skills/kira-research-report/outputs/batch/${id}/ja.html
 git commit -m "batch: JA done for ${id}"
 git push origin main
-node skills/kira-research-report/scripts/queue.mjs advance ${id} ja_done --model sonnet
+node skills/kira-research-report/scripts/queue.mjs advance ${id} ja_done --model opus
 ```
 
 Go to Step 6, which chains to KO.
@@ -330,7 +330,7 @@ If it fails → failure path. If it passes:
   git add skills/kira-research-report/outputs/batch/${id}/ko.html
   git commit -m "batch: KO done for ${id}"
   git push origin main
-  node skills/kira-research-report/scripts/queue.mjs advance ${id} ko_done --model sonnet
+  node skills/kira-research-report/scripts/queue.mjs advance ${id} ko_done --model opus
   ```
 
 - **No `zh`** (legacy `en,ja,ko` rows) → proceed to 5.3 publish with `PUBLISH_LANGS="en ja ko"`. Do NOT commit yet — publish in same fire.
@@ -469,7 +469,7 @@ git commit -m "batch: complete ${id} (EN+JA+KO, published)"      # Fire C
 git commit -m "batch: complete ${id} (EN+JA+KO+ZH, published)"   # Fire D (use instead)
 git push origin main
 # --paths = one reports-pdfs/<report_id>/<locale>.pdf per locale in PUBLISH_LANGS, pipe-separated
-node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf|reports-pdfs/<report_id>/zh.pdf" --model sonnet
+node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf|reports-pdfs/<report_id>/zh.pdf" --model opus
 ```
 
 `advance … done` sets `date_completed` to today, empties `error_log` and `claimed_at`.
@@ -564,7 +564,7 @@ Zero rows returned → the report id does not exist → failure path (`zh backfi
 git add skills/kira-research-report/outputs/batch/${id}/zh.html
 git commit -m "batch: ZH backfill published for ${id}"
 git push origin main
-node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "<existing output_paths>|reports-pdfs/<report_id>/zh.pdf" --model sonnet
+node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "<existing output_paths>|reports-pdfs/<report_id>/zh.pdf" --model opus
 ```
 
 (Deliberately not `batch: complete` — a backfill is not a new report and must not inflate the throughput count.)
@@ -585,9 +585,9 @@ KIRA batch fire complete.
   Next pending: ${count} pending + ${count} en_done + ${count} ja_done + ${count} ko_done + ${count} zh_backfill in queue
 ```
 
-**Chain to the next stage (2026-10-07).** If the row is not yet `done` (status `en_done`, `ja_done` or `ko_done`), go back to Step 1 restricted to this same row id: claim the next stage (Step 2) and run it. Stop chaining when the row reaches `done`, when a stage fails (Step 7), or when the fire has run more than 150 minutes (leave the row at its finished stage; the next fire resumes it). Print the summary block once per stage. Never pick up a second row in the same fire.
+**Chain to the next stage (2026-10-07).** If the row is not yet `done` (status `en_done`, `ja_done` or `ko_done`), claim its next stage with `node skills/kira-research-report/scripts/queue.mjs next --id ${id} --model opus` (only this row; `none` means another fire took it, so stop) and continue at the step for that stage. Stop chaining when the row reaches `done`, when a stage fails (Step 7), or when the fire has run more than 150 minutes (leave the row at its finished stage; the next fire resumes it). Print the summary block once per stage. Never pick up a second row in the same fire.
 
-**Push conflicts.** Several fires can now be in flight on different rows. Whenever a `git push origin main` in this prompt is rejected, run `git pull --rebase origin main` and push again (up to 3 tries). The queue CSV merges cleanly when fires touch different rows; if the rebase stops on a conflict in our row's line, keep our version of our row and the remote version of every other row.
+**Push conflicts.** Several fires can now be in flight on different rows. Whenever a `git push origin main` in this prompt is rejected, run `git pull --rebase origin main` and push again (up to 3 tries). Each fire commits only its own `outputs/batch/<id>/` files, so the rebase is clean.
 
 ---
 

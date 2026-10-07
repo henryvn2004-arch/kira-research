@@ -3,7 +3,7 @@
 --
 -- Before: topics defaulted to 2027 and the search functions inserted 2027, so
 -- 45 reports published in 2026 showed "2027" in the library.
--- After: no topic or report carries a year later than the current one. The
+-- After: no topic, queue row or report carries a year later than the current one. The
 -- trigger also covers code paths that still pass a hard-coded year
 -- (ensure_search_topic, ensure_reader_topic, the topic planner). Topic slugs
 -- keep their "2027-" prefix so existing coming-soon URLs do not break.
@@ -34,3 +34,11 @@ update public.topics set year = extract(year from now())::smallint
 
 update public.living_reports set year = extract(year from coalesce(published_at, now()))::smallint, updated_at = now()
   where year > extract(year from coalesce(published_at, now()));
+
+-- The production queue moved to report_queue (migration 031) the same day.
+do $$ begin
+  if to_regclass('public.report_queue') is not null then
+    update public.report_queue set year = extract(year from now())::smallint
+      where year > extract(year from now());
+  end if;
+end $$;
