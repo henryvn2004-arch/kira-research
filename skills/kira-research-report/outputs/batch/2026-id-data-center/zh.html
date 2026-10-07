@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 印度尼西亚数据中心2026年展望</title>
+<meta name="description" content="印度尼西亚数据中心建设分化为两大集群：雅加达—芝卡朗的超大规模集群，以及以合规和承接新加坡外溢需求为主的巴淡园区。决定2027年前有多少产能落地的是电力与PLN供电，而非需求。">
+<meta property="og:title" content="KIRA Research — 印度尼西亚数据中心2026年展望">
+<meta property="og:description" content="巴淡与雅加达超大规模云服务商园区及电力基础设施门槛——KIRA Research对2027年的研判。">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.callout .source-tag.est { color: var(--amber); }
+.callout .source-tag.sec { color: var(--green); }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.md-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; flex: 1; min-height: 0; }
+.md-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 7px; margin-top: 14px; }
+.md-narrative h3:first-child { margin-top: 0; }
+.md-narrative p { font-size: 12px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.md-narrative p strong { color: var(--text); font-weight: 600; }
+.md-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+.fo-chart-wrap { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; height: 300px; flex-shrink: 0; margin-bottom: 14px; }
+.fo-scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.fo-card { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; }
+.fo-card.base { border-top: 3px solid var(--primary); }
+.fo-card.bull { border-top: 3px solid var(--green); }
+.fo-card.bear { border-top: 3px solid var(--amber); }
+.fo-card .sc-name { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.fo-card.base .sc-name { color: var(--primary); }
+.fo-card.bull .sc-name { color: var(--green); }
+.fo-card.bear .sc-name { color: var(--amber); }
+.fo-card .sc-val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; }
+.fo-card .sc-val .unit { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-left: 3px; }
+.fo-card .sc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); }
+.fo-card .sc-body strong { color: var(--text); font-weight: 600; }
+
+.me-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; flex: 1; min-height: 0; }
+.me-method h3, .me-sources h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.me-method p { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+.me-method p strong { color: var(--text); font-weight: 600; }
+.me-disclaimer { margin-top: 12px; font-size: 9.5px; line-height: 1.5; color: var(--muted); font-style: italic; }
+.me-sources ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+.me-sources li { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9.5px; line-height: 1.45; color: var(--text-mid); margin-bottom: 7px; break-inside: avoid; }
+.me-sources li strong { color: var(--text); font-weight: 700; }
+
+.cover .page-inner { padding: 80px; }
+.cover-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.7; mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 0%, transparent 70%); pointer-events: none; }
+.cover-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-top { display: flex; align-items: baseline; gap: 14px; }
+.cover-main { display: flex; flex-direction: column; gap: 28px; }
+.cover-eyebrow { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 14px; }
+.cover-eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--primary); }
+.cover h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; max-width: 1040px; color: var(--text); }
+.cover h1 .accent { color: var(--primary); }
+.cover-subtitle { font-size: 18px; line-height: 1.4; color: var(--text-mid); max-width: 780px; }
+.cover-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.cover-meta-item .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.cover-meta-item .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.cover-meta-item .val .accent { color: var(--primary); }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.cover-confidential strong { color: var(--primary); font-weight: 600;}
+.cover-logo { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.cover-logo .accent { color: var(--primary); }
+
+.mi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.mi-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.mi-item { margin-bottom: 14px; }
+.mi-item .lbl { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+.mi-item .dsc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 48px; flex: 1; min-height: 0; align-content: start; }
+.toc-row { display: grid; grid-template-columns: 34px 1fr 44px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--border); }
+.toc-row .tnum { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); font-weight: 700; }
+.toc-row .ttitle { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); }
+.toc-row .ttitle .tsub { display: block; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 400; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.toc-row .tpage { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 001 — COVER ====== -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-top">
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-eyebrow">数字基础设施 · 印度尼西亚 · 2026年展望</div>
+      <h1>印度尼西亚数据中心的<span class="accent">双集群布局</span>——巴淡、雅加达与电力门槛</h1>
+      <p class="cover-subtitle">数吉瓦级超大规模云服务商项目储备分布于雅加达—芝卡朗的规模化集群和巴淡承接新加坡外溢需求的园区。决定2027年前有多少产能通电投运的是PLN的稳定供电，而非需求。</p>
+    </div>
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item"><div class="label">国家</div><div class="val">印度尼西亚 <span class="accent">·</span> ID</div></div>
+        <div class="cover-meta-item"><div class="label">行业</div><div class="val">数据中心／数字基础设施</div></div>
+        <div class="cover-meta-item"><div class="label">研究期间</div><div class="val">2025 &#8211; 2031F</div></div>
+        <div class="cover-meta-item"><div class="label">版本</div><div class="val">2026<span class="accent">展望</span></div></div>
+      </div>
+      <div style="margin-top:24px;" class="cover-confidential"><strong>机密</strong> · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 002 — METHODOLOGY ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第01章 · 研究方法</div>
+      <div class="page-section-counter">002 / 017</div>
+    </div>
+    <h1 class="page-h1">本报告的研究框架</h1>
+    <p class="page-subhead">本报告基于两类证据：<strong>一手输入</strong>&#8212;&#8212;运营商披露文件、供电协议及分析师综合研判；以及<strong>二手锚点</strong>&#8212;&#8212;统计机构、政府规划与三角验证估算。每一项量化结论均附有明确的来源标注。</p>
+    <div class="mi-body">
+      <div class="mi-col">
+        <h3>一手输入</h3>
+        <div class="mi-item"><div class="lbl">项目及供电相关文件</div><div class="dsc">雅加达—芝卡朗与巴淡园区的运营商公告、PLN购电协议（PJBTL）及经济特区审批文件&#8212;&#8212;反映真实的MW、真实的资本支出与真实的时间表。</div></div>
+        <div class="mi-item"><div class="lbl">分析师综合研判</div><div class="dsc">KIRA研究团队对多项公开输入的内部三角验证&#8212;&#8212;项目储备与在运产能、电力负荷、电网余量。正文中标注为[Kira estimates]。</div></div>
+        <div class="mi-item"><div class="lbl">运营商与行业研判</div><div class="dsc">对电信运营商布局、托管定价及跨海峡连接的研判，比整体市场规模数据更贴近需求信号。</div></div>
+      </div>
+      <div class="mi-col">
+        <h3>二手锚点</h3>
+        <div class="mi-item"><div class="lbl">政府规划与统计来源</div><div class="dsc">RUPTL 2025&#8211;2034电力规划、部委产能指引、BPS宏观数据及法规文本（GR 71、UU PDP）&#8212;&#8212;正文中按具体来源名称标注。</div></div>
+        <div class="mi-item"><div class="lbl">市场研究数据集</div><div class="dsc">已公开的印度尼西亚数据中心产能、收入及托管数据集，并与运营商披露信息核对&#8212;&#8212;按数据集及期间标注。</div></div>
+        <div class="mi-item"><div class="lbl">三角验证估算</div><div class="dsc">若某一数据没有单一来源覆盖（如在运产能与项目储备之间的缺口），我们综合2&#8211;3项输入并披露方法。标注为[Kira estimates]。</div></div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 003 — TOC ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 · 目录</div>
+      <div class="page-section-counter">003 / 017</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <p class="page-subhead">全文分为四个部分：拉动产能的需求激增、制约产能落地的供给侧约束、在两大集群竞相建设的运营商，以及对2027年的情景研判。</p>
+    <div class="toc-list">
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">执行摘要<span class="tsub">2027年落地研判</span></span><span class="tpage">004</span></div>
+      <div class="toc-row"><span class="tnum">03</span><span class="ttitle">战略启示<span class="tsub">影响市场参与者的五大因素</span></span><span class="tpage">005</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">市场规模与发展轨迹<span class="tsub">至2031年的产能与收入</span></span><span class="tpage">007</span></div>
+      <div class="toc-row"><span class="tnum">04</span><span class="ttitle">需求驱动因素<span class="tsub">AI、云与数据本地化</span></span><span class="tpage">008</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">电力与电网<span class="tsub">RUPTL 2025&#8211;2034与数据中心负荷</span></span><span class="tpage">010</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">投运缺口<span class="tsub">在运MW与项目储备</span></span><span class="tpage">011</span></div>
+      <div class="toc-row"><span class="tnum">05</span><span class="ttitle">连接与监管<span class="tsub">巴淡海缆、数据规则</span></span><span class="tpage">012</span></div>
+      <div class="toc-row"><span class="tnum">06</span><span class="ttitle">竞争格局<span class="tsub">谁将实现产能落地</span></span><span class="tpage">014</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">2027年展望与情景<span class="tsub">基准、加速、受限</span></span><span class="tpage">016</span></div>
+      <div class="toc-row"><span class="tnum">07</span><span class="ttitle">研究方法与来源<span class="tsub">标注体系与来源说明</span></span><span class="tpage">017</span></div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 004 — EXEC SUMMARY p1 ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · 执行摘要</div>
+      <div class="page-section-counter">004 / 017</div>
+    </div>
+    <h1 class="page-h1">印度尼西亚数据中心市场——2027年落地大考</h1>
+    <p class="page-subhead"><strong>2025年市场规模USD 2.8 bn</strong>，其上是数吉瓦级的已公布项目储备，但全国在运产能仅约420 MW。<strong>决定节奏的是PLN供电，而非需求</strong>——它决定雅加达与巴淡园区实际通电投运的速度。</p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2025年市场规模</div>
+        <div class="num">2.8<span class="unit">USD bn</span></div>
+        <div class="change">&#8593; 2031年增至约6.1 bn</div>
+        <div class="source-tag sec">DC Portfolio 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年在运IT产能</div>
+        <div class="num">~420<span class="unit">MW</span></div>
+        <div class="change">&#8593; 2031年达约1.5&#8211;1.8 GW</div>
+        <div class="source-tag sec">Kominfo 2025</div>
+      </div>
+      <div class="callout">
+        <div class="label">PLN供电承诺</div>
+        <div class="num">1.2<span class="unit">GW</span></div>
+        <div class="change down">已签约，尚未通电</div>
+        <div class="source-tag sec">Bisnis 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">雅加达市场份额</div>
+        <div class="num">~57<span class="unit">%</span></div>
+        <div class="change">巴淡为增长最快集群</div>
+        <div class="source-tag est">Kira estimates</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>基本格局</h3>
+        <p>2025年印度尼西亚数据中心市场规模约<strong>USD 2.8 bn</strong>，预计以约13.7%的年复合增长率增至<strong>2031年的USD 6.1 bn</strong>[DC Portfolio 2026]。<strong>2025年年中</strong>在运IT产能约<strong>420 MW</strong>[Kominfo 2025]。规划规模远超这一基数：巴淡单个园区已签约450 MW[Bisnis 2026]，芝卡朗一处园区目标为最高500 MW并扩展至1 GW[DCD 2025]。</p>
+        <h3>约束所在</h3>
+        <p>瓶颈在于物理条件。运营商与PLN签署的供电协议合计<strong>1.2 GW</strong>，为有记录以来最大规模[Bisnis 2026]，但这些电力将在2026&#8211;2027年间分阶段到位。RUPTL 2025&#8211;2034规划新增69.5 GW发电装机和47,758 ckm输电线路[PLN RUPTL 2025]，而园区通电取决于并网窗口，而非项目公告。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">在运产能与已签约项目储备</div>
+            <div class="chart-subtitle">印度尼西亚 · MW · 2025年在运与PLN已签约供电</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="200"/>
+            <line class="axis-line" x1="60" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="60" y1="155" x2="460" y2="155"/>
+            <line class="grid-line" x1="60" y1="110" x2="460" y2="110"/>
+            <line class="grid-line" x1="60" y1="65" x2="460" y2="65"/>
+            <text class="axis-text" x="54" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="54" y="159" text-anchor="end">450</text>
+            <text class="axis-text" x="54" y="114" text-anchor="end">900</text>
+            <text class="axis-text" x="54" y="69" text-anchor="end">1350</text>
+            <rect class="bar-secondary" x="100" y="158" width="70" height="42"/>
+            <text class="label-data" x="135" y="152" text-anchor="middle">~420</text>
+            <text class="axis-text" x="135" y="216" text-anchor="middle">当前在运</text>
+            <rect class="bar-tertiary" x="220" y="155" width="70" height="45"/>
+            <text class="label-data" x="255" y="149" text-anchor="middle">~450</text>
+            <text class="axis-text" x="255" y="216" text-anchor="middle">DayOne巴淡</text>
+            <rect class="bar-primary" x="340" y="80" width="70" height="120"/>
+            <text class="label-data" x="375" y="74" text-anchor="middle">1200</text>
+            <text class="axis-text" x="375" y="216" text-anchor="middle">PLN已签约</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KOMINFO, BISNIS, DCD, KIRA三角验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bisnis 2026 = Bisnis.com BDx&#8211;PLN 1.2 GW supply &amp; DayOne PJBTL reporting 2026 &#183; DC Portfolio 2026 = Indonesia Data Center Investment Analysis (portfolio dataset) 2026 &#183; DCD 2025 = Data Center Dynamics Indonesia pipeline tracking 2025 &#183; Kominfo 2025 = Ministry of Communication &amp; Digital Affairs capacity statement 2025 &#183; PLN RUPTL 2025 = PLN Electricity Supply Business Plan 2025&#8211;2034 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 005 — EXEC SUMMARY p2 — IMPLICATIONS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 · 执行摘要</div>
+      <div class="page-section-counter">005 / 017</div>
+    </div>
+    <h1 class="page-h1">对市场参与者的五项战略启示</h1>
+    <p class="page-subhead">五大因素决定了2027年前谁能分享印度尼西亚数据中心建设红利。每一项均以公开数据及KIRA综合研判为依据。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · 电力</div>
+        <div class="title">PLN供电是硬约束</div>
+        <div class="body-text">RUPTL 2025&#8211;2034规划<strong>新增69.5 GW发电装机</strong>，投资USD 183 bn[PLN RUPTL 2025]。但园区通电取决于并网窗口；已签约的1.2 GW供电分阶段到位。<strong>决定2027年上限的是电力就绪程度，而非需求。</strong></div>
+        <div class="anchor">锚点：<span class="num-anchor">1.2 GW</span>已签约</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02 · 双集群</div>
+        <div class="title">雅加达重规模，巴淡重合规</div>
+        <div class="body-text">雅加达—芝卡朗占<strong>约57%的产能</strong>并掌握互联枢纽[Kira estimates]；巴淡凭借低于2 ms的时延和经济特区持股优惠承接新加坡外溢需求[DCD 2025]。两大集群服务的是<strong>不同的买方</strong>，而非同一批客户。</div>
+        <div class="anchor">锚点：巴淡—新加坡<span class="num-anchor">&lt;2 ms</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03 · 外资</div>
+        <div class="title">超大规模云服务商支撑项目储备</div>
+        <div class="body-text">微软于2025年5月开通印度尼西亚中部云区域，承诺投资<strong>USD 1.7 bn</strong>；AWS承诺约USD 6 bn[Microsoft 2025]。全球云需求支撑批发型托管，但须借助本地电力与土地合作伙伴落地。</div>
+        <div class="anchor">锚点：微软<span class="num-anchor">USD 1.7 bn</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04 · 监管</div>
+        <div class="title">数据本地化创造需求</div>
+        <div class="body-text">GR 71/2019要求公共部门及战略性数据境内存储；UU PDP No. 27/2022新增最高达<strong>收入2%</strong>的罚款，自2024年10月起执行[ITIF 2025]。合规需求具有结构性，构成托管业务的<strong>需求底线</strong>。</div>
+        <div class="anchor">锚点：<span class="num-anchor">2%</span>收入罚款</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05 · 清洁电力</div>
+        <div class="title">绿色供电是落地前提</div>
+        <div class="body-text">RUPTL目标新增装机中<strong>76%为可再生能源</strong>[PLN RUPTL 2025]；运营商在协议中配套园区光伏，例如为超大规模园区配建200 MWp光伏电站（PLTS）[Bisnis 2026]。清洁能源获取能力已成为设有碳目标的全球云租户的入驻门槛。</div>
+        <div class="anchor">锚点：规划<span class="num-anchor">200 MWp</span>光伏电站</div>
+      </div>
+    </div>
+    <div class="source-key">Bisnis 2026 = Bisnis.com BDx&#8211;PLN 1.2 GW supply &amp; solar reporting 2026 &#183; DCD 2025 = Data Center Dynamics Indonesia pipeline &amp; Batam connectivity 2025 &#183; ITIF 2025 = Information Technology &amp; Innovation Foundation Indonesia data-localization brief 2025 &#183; Microsoft 2025 = Microsoft Indonesia Central cloud region announcement 2025 &#183; PLN RUPTL 2025 = PLN Electricity Supply Business Plan 2025&#8211;2034 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 006 — DIVIDER: DEMAND SURGE ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章</div>
+    <h1 class="divider-title">需求<span class="accent">激增</span></h1>
+    <div class="divider-thesis">未来十年，印度尼西亚数据中心产能预计增长约四倍。拉动力来自<strong>AI算力、云区域落地以及覆盖2.72亿人口的强制性数据本地化要求</strong>——需求是整个格局中较容易的一面。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">4.1市场规模</div>
+      <div class="toc-pill">4.2产能轨迹</div>
+      <div class="toc-pill">4.3需求驱动因素</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 007 — MARKET SIZING ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 市场规模</div>
+      <div class="page-section-counter">007 / 017</div>
+    </div>
+    <h1 class="page-h1">2031年前产能增长约四倍，收入增长逾一倍</h1>
+    <p class="page-subhead">两条曲线速度不同。<strong>装机产能</strong>从约420 MW攀升至1.5&#8211;1.8 GW；随着AI级机柜与托管溢价推高单位MW收入，<strong>市场价值</strong>持续复合增长。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>产能曲线</h3>
+        <p><strong>2025年年中</strong>在运IT产能约<strong>420 MW</strong>；部长依据土地平整数据预计将增至约900 MW[Kominfo 2025]。未来五至七年，总装机产能普遍预计升至<strong>1.5&#8211;1.8 GW</strong>[DC Portfolio 2026]；按最激进的口径，有数据集测算IT负荷将由2025年的1.44 GW增至2030年的3.56 GW。</p>
+        <h3>收入曲线</h3>
+        <p>2025年市场价值约<strong>USD 2.8 bn</strong>，有望在<strong>2031年达到USD 6.08 bn</strong>（年复合增长率约13.7%）[DC Portfolio 2026]。托管业务增长最快&#8212;&#8212;由2024年的约USD 460 mn增至2030年的USD 1.15 bn[DC Portfolio 2026]。</p>
+        <h3>布局</h3>
+        <p>市场覆盖<strong>17个城市的88座现有设施及25座在建设施</strong>[DC Portfolio 2026]。雅加达约占57%的产能[Kira estimates]，而巴淡是增长最快的集群，至2031年的年复合增长率约21.7%[DC Portfolio 2026]。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">印度尼西亚数据中心&#8212;&#8212;产能与市场价值</div>
+            <div class="chart-subtitle">MW（柱） · USD bn（线） · 2025&#8211;2031F</div>
+          </div>
+          <div class="chart-unit">MW / USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="205"/>
+            <line class="axis-line" x1="50" y1="205" x2="500" y2="205"/>
+            <line class="grid-line" x1="50" y1="160" x2="500" y2="160"/>
+            <line class="grid-line" x1="50" y1="115" x2="500" y2="115"/>
+            <line class="grid-line" x1="50" y1="70" x2="500" y2="70"/>
+            <text class="axis-text" x="44" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="44" y="164" text-anchor="end">600</text>
+            <text class="axis-text" x="44" y="119" text-anchor="end">1200</text>
+            <text class="axis-text" x="44" y="74" text-anchor="end">1800</text>
+            <rect class="bar-primary" x="95" y="174" width="48" height="31"/>
+            <text class="label-data" x="119" y="168" text-anchor="middle">420</text>
+            <text class="axis-text" x="119" y="221" text-anchor="middle">2025</text>
+            <rect class="bar-primary" x="240" y="130" width="48" height="75"/>
+            <text class="label-data" x="264" y="124" text-anchor="middle">~1000</text>
+            <text class="axis-text" x="264" y="221" text-anchor="middle">2027F</text>
+            <rect class="bar-primary" x="385" y="83" width="48" height="122"/>
+            <text class="label-data" x="409" y="77" text-anchor="middle">~1650</text>
+            <text class="axis-text" x="409" y="221" text-anchor="middle">2031F</text>
+            <polyline points="119,184 264,158 409,120" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <circle cx="119" cy="184" r="4" fill="#D97706"/><text class="label-small" x="119" y="179" text-anchor="middle" style="fill:#D97706">2.8</text>
+            <circle cx="264" cy="158" r="4" fill="#D97706"/><text class="label-small" x="280" y="156" style="fill:#D97706">~4.3</text>
+            <circle cx="409" cy="120" r="4" fill="#D97706"/><text class="label-small" x="409" y="115" text-anchor="middle" style="fill:#D97706">6.1</text>
+            <rect class="bar-primary" x="50" y="232" width="10" height="10"/><text class="label-small" x="64" y="241">产能MW</text>
+            <rect x="170" y="232" width="10" height="10" fill="#D97706"/><text class="label-small" x="184" y="241">市场价值USD bn</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KOMINFO, DC PORTFOLIO数据集, KIRA三角验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DC Portfolio 2026 = Indonesia Data Center Investment Analysis (portfolio dataset, 88 existing / 25 upcoming) 2026 &#183; Kominfo 2025 = Ministry of Communication &amp; Digital Affairs capacity statement 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 008 — DEMAND DRIVERS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 · 需求驱动因素</div>
+      <div class="page-section-counter">008 / 017</div>
+    </div>
+    <h1 class="page-h1">三大需求引擎：AI算力、云区域与数据本地化</h1>
+    <p class="page-subhead">需求是结构上较容易的一面。AI投资浪潮、超大规模云服务商的云区域落地以及严格的数据驻留制度各自拉动产能&#8212;&#8212;且三者相互强化。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>AI算力</h3>
+        <p>AI优化型数据中心市场<strong>2025年达USD 0.66 bn</strong>，预计以16.9%的年复合增长率于2030年增至USD 1.44 bn[AI DC 2025]。Indosat以&#8220;GPU Merdeka&#8221;品牌推广NVIDIA H100集群，BDx于2024年12月推出基于NVIDIA芯片的主权AI设施，2025年又与NVIDIA和思科共建AI卓越中心[Microsoft 2025]。AI机柜的单柜功耗远高于传统机柜，放大了第010页讨论的电网问题。</p>
+        <h3>云区域</h3>
+        <p>微软于2025年5月开通<strong>印度尼西亚中部（Indonesia Central）</strong>云区域，支持境内数据驻留；AWS、Google Cloud与微软目前均运营多可用区区域，保证国内时延低于20 ms[Microsoft 2025]。这为雅加达和巴淡合计超过250 MW的批发型托管项目储备提供支撑[DC Portfolio 2026]。</p>
+        <h3>本地化要求</h3>
+        <p>GR 71/2019要求公共部门及战略性数据留存境内，UU PDP No. 27/2022以按收入计算的罚款强化了这一制度[ITIF 2025]。这使合规要求转化为不受AI周期影响的持久托管需求。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">拉动产能的因素</div>
+            <div class="chart-subtitle">需求贡献指数 · 方向性</div>
+          </div>
+          <div class="chart-unit">驱动因素</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="150" y1="20" x2="150" y2="210"/>
+            <rect class="bar-primary" x="150" y="34" width="285" height="34"/>
+            <text class="label-data" x="442" y="56" text-anchor="end" style="fill:#fff">高</text>
+            <text class="label-small" x="146" y="55" text-anchor="end">AI算力</text>
+            <rect class="bar-primary" x="150" y="92" width="240" height="34" opacity="0.85"/>
+            <text class="label-data" x="382" y="114" style="fill:var(--primary)">高</text>
+            <text class="label-small" x="146" y="113" text-anchor="end">云区域</text>
+            <rect class="bar-secondary" x="150" y="150" width="255" height="34"/>
+            <text class="label-data" x="412" y="172" style="fill:var(--green)">结构性</text>
+            <text class="label-small" x="146" y="171" text-anchor="end">数据本地化</text>
+            <text class="label-small" x="150" y="232">柱长 = 对2025&#8211;2031年产能需求的方向性拉动</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: AI DC数据集, MICROSOFT, ITIF, KIRA综合研判 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">AI DC 2025 = Indonesia AI-Optimised Data Center market dataset 2025 &#183; DC Portfolio 2026 = Indonesia Data Center Investment Analysis (portfolio dataset) 2026 &#183; ITIF 2025 = Information Technology &amp; Innovation Foundation Indonesia data-localization brief 2025 &#183; Microsoft 2025 = Microsoft Indonesia Central cloud region &amp; AI infrastructure announcements 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 009 — DIVIDER: LANDING CONSTRAINT ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第05章</div>
+    <h1 class="divider-title">落地<span class="accent">约束</span></h1>
+    <div class="divider-thesis">项目公告不等于实际兆瓦。<strong>PLN供电、电网输电以及薄弱的在运基数</strong>（全国约420 MW），决定了2027年前雅加达与巴淡数吉瓦级项目储备中有多少能真正通电投运。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">5.1电力与电网</div>
+      <div class="toc-pill">5.2投运缺口</div>
+      <div class="toc-pill">5.3连接与规则</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 010 — POWER & GRID ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 电力与电网</div>
+      <div class="page-section-counter">010 / 017</div>
+    </div>
+    <h1 class="page-h1">供电是门槛，输电是关键锁</h1>
+    <p class="page-subhead">RUPTL 2025&#8211;2034承诺大规模新建发电装机，但园区面临的关键问题是<strong>稳定负荷在何时、何地接入电表</strong>&#8212;&#8212;以及其中有多少是清洁电力。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>规划</h3>
+        <p>RUPTL 2025&#8211;2034（2025年5月发布）目标为<strong>2034年前新增69.5 GW发电装机</strong>，其中76%为可再生能源，投资USD 183 bn，新建输电线路47,758 ckm[PLN RUPTL 2025]。前五年集中投放27.9 GW，其中可再生能源12.2 GW[PLN RUPTL 2025]。</p>
+        <h3>供电承诺</h3>
+        <p>PLN已签署的数据中心供电协议合计<strong>1.2 GW</strong>，为有记录以来最大规模[Bisnis 2026]。仅DayOne巴淡项目的标志性PJBTL即预留<strong>511 MVA（约450 MW）</strong>，在2026&#8211;2027年间分阶段供电[Bisnis 2026]。</p>
+        <h3>清洁电力方案</h3>
+        <p>可持续性已成为园区设计的输入条件：PLN与运营商的协议将负荷与<strong>200 MWp光伏电站（PLTS）建设</strong>配套，以满足投资方的碳排放标准[Bisnis 2026]。决定哪些超大规模租户入驻的，越来越多是清洁的选址条件，而不仅是兆瓦数量。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">RUPTL 2025&#8211;2034新增装机结构</div>
+            <div class="chart-subtitle">2034年前新增GW · 按电源类型</div>
+          </div>
+          <div class="chart-unit">GW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">15</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">30</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">45</text>
+            <rect class="bar-secondary" x="95" y="77" width="60" height="128"/>
+            <text class="label-data" x="125" y="71" text-anchor="middle">42.6</text>
+            <text class="axis-text" x="125" y="221" text-anchor="middle">可再生能源</text>
+            <rect class="bar-primary" x="215" y="174" width="60" height="31"/>
+            <text class="label-data" x="245" y="168" text-anchor="middle">10.3</text>
+            <text class="axis-text" x="245" y="221" text-anchor="middle">储能</text>
+            <rect class="bar-tertiary" x="335" y="155" width="60" height="50"/>
+            <text class="label-data" x="365" y="149" text-anchor="middle">16.6</text>
+            <text class="axis-text" x="365" y="221" text-anchor="middle">燃气+燃煤</text>
+            <text class="label-small" x="257" y="244" text-anchor="middle">2034年前新增装机合计69.5 GW · 76%为可再生能源[PLN RUPTL 2025]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: PLN RUPTL 2025&#8211;2034, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bisnis 2026 = Bisnis.com BDx&#8211;PLN 1.2 GW supply, DayOne PJBTL &amp; PLTS reporting 2026 &#183; PLN RUPTL 2025 = PLN Electricity Supply Business Plan (RUPTL) 2025&#8211;2034 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 011 — OPERATIONAL GAP ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 投运缺口</div>
+      <div class="page-section-counter">011 / 017</div>
+    </div>
+    <h1 class="page-h1">已公布与已通电之间的缺口</h1>
+    <p class="page-subhead">项目储备以吉瓦级意向计，电表读数却以数百兆瓦的实际交付计。<strong>2027年前弥合这一缺口是电力与施工问题，</strong>而非需求问题。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>已在运</h3>
+        <p><strong>2025年年中</strong>全国在运IT产能约<strong>420 MW</strong>，利用率65&#8211;75%[Kominfo 2025]，分布于17个城市的88座设施，雅加达占主导[DC Portfolio 2026]。这一基数是真实的，但相对已公布的项目储备显得单薄。</p>
+        <h3>已公布</h3>
+        <p>仅巴淡的项目储备就相当可观：DayOne已签约<strong>450 MW</strong>[Bisnis 2026]，BW Digital的NDP1为120 MW（2025年第四季度），Nongsa园区至2027年第四季度签约规模约540 MW[DCD 2025]。在芝卡朗—勿加泗，Digital Edge规划最高500 MW（USD 4.5 bn），PDG的JC4为240 MW，Edgnex为144 MW（USD 2.3 bn，2026年12月上线）[DCD 2025]。</p>
+        <h3>2027年前可落地规模</h3>
+        <p>多数旗舰园区目标为<strong>2026&#8211;2027年分阶段通电</strong>，与PLN并网窗口挂钩。[Kira estimates]预计2027年实际在运产能约1.0&#8211;1.1 GW&#8212;&#8212;增幅显著，但仅为数吉瓦级公告项目储备的一小部分。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">项目储备漏斗&#8212;&#8212;从公布到通电</div>
+            <div class="chart-subtitle">印度尼西亚 · MW · 交付阶段</div>
+          </div>
+          <div class="chart-unit">MW</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <rect class="bar-primary" x="80" y="34" width="320" height="34"/>
+            <text class="label-data" x="240" y="56" text-anchor="middle" style="fill:#fff">2500&#43;已公布／规划</text>
+            <rect class="bar-primary" x="130" y="86" width="220" height="34" opacity="0.8"/>
+            <text class="label-data" x="240" y="108" text-anchor="middle" style="fill:#fff">~1200 PLN已签约</text>
+            <rect class="bar-tertiary" x="175" y="138" width="130" height="34"/>
+            <text class="label-data" x="240" y="160" text-anchor="middle" style="fill:#fff">2027年前在运~1000&#8211;1100</text>
+            <rect class="bar-secondary" x="200" y="190" width="80" height="30"/>
+            <text class="label-data" x="240" y="210" text-anchor="middle" style="fill:#fff">~420当前在运</text>
+            <text class="label-small" x="240" y="240" text-anchor="middle">漏斗因PLN供电与并网窗口而收窄[Kira estimates]</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KOMINFO, BISNIS, DCD, KIRA三角验证 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Bisnis 2026 = Bisnis.com BDx&#8211;PLN supply &amp; DayOne PJBTL reporting 2026 &#183; DCD 2025 = Data Center Dynamics Indonesia pipeline tracking 2025 &#183; DC Portfolio 2026 = Indonesia Data Center Investment Analysis (portfolio dataset) 2026 &#183; Kominfo 2025 = Ministry of Communication &amp; Digital Affairs capacity statement 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 012 — CONNECTIVITY & REGULATION ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 · 连接与监管</div>
+      <div class="page-section-counter">012 / 017</div>
+    </div>
+    <h1 class="page-h1">巴淡具备海缆优势；数据规则夯实需求底线</h1>
+    <p class="page-subhead">两项支撑条件补全了约束图景：使巴淡成为新加坡外溢枢纽的<strong>跨海峡带宽</strong>，以及保障本地基础需求的<strong>数据驻留制度</strong>。</p>
+    <div class="md-body">
+      <div class="md-narrative">
+        <h3>连接</h3>
+        <p><strong>全长50 km的Nongsa-Changi海缆</strong>（Telin与BW Digital）于2025年第四季度就绪，至少24对光纤通往新加坡东部，<strong>数据中心间时延低于2 ms</strong>[DCD 2025]。巴淡可接入超过15个在运及规划中的海底光缆系统&#8212;&#8212;这是其承接外溢需求的骨干。</p>
+        <h3>新加坡外溢</h3>
+        <p>新加坡出于电力考量实施的暂停令，将产能引向柔佛，并向南转至巴淡[DCD 2025]。巴淡兼具接近新加坡的时延与经济特区优惠&#8212;&#8212;在Nongsa等园区可<strong>100%外资持股</strong>并享受税收优惠&#8212;&#8212;定位为有别于雅加达规模化集群的合规与低时延枢纽[ITIF 2025]。</p>
+        <h3>监管</h3>
+        <p>GR 71/2019要求公共部门及战略性数据境内存储；私营运营商在符合访问与监管规则的前提下可境外存储[ITIF 2025]。UU PDP No. 27/2022新增最高达<strong>年收入2%</strong>的罚款，自2024年10月起执行&#8212;&#8212;为托管需求提供了支撑。</p>
+      </div>
+      <div class="md-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">巴淡&#8212;&#8212;对新加坡的时延优势</div>
+            <div class="chart-subtitle">数据中心间时延 · ms · 参考值</div>
+          </div>
+          <div class="chart-unit">MS</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="55" y1="20" x2="55" y2="205"/>
+            <line class="axis-line" x1="55" y1="205" x2="460" y2="205"/>
+            <line class="grid-line" x1="55" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="55" y1="115" x2="460" y2="115"/>
+            <line class="grid-line" x1="55" y1="70" x2="460" y2="70"/>
+            <text class="axis-text" x="49" y="209" text-anchor="end">0</text>
+            <text class="axis-text" x="49" y="164" text-anchor="end">7</text>
+            <text class="axis-text" x="49" y="119" text-anchor="end">14</text>
+            <text class="axis-text" x="49" y="74" text-anchor="end">21</text>
+            <rect class="bar-secondary" x="110" y="192" width="70" height="13"/>
+            <text class="label-data" x="145" y="186" text-anchor="middle">&lt;2</text>
+            <text class="axis-text" x="145" y="221" text-anchor="middle">巴淡&#8211;新加坡</text>
+            <rect class="bar-primary" x="240" y="180" width="70" height="25"/>
+            <text class="label-data" x="275" y="174" text-anchor="middle">~5</text>
+            <text class="axis-text" x="275" y="221" text-anchor="middle">巴淡城域</text>
+            <rect class="bar-tertiary" x="370" y="78" width="70" height="127"/>
+            <text class="label-data" x="405" y="72" text-anchor="middle">&lt;20</text>
+            <text class="axis-text" x="405" y="221" text-anchor="middle">雅加达国内</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DCD, ITIF, 运营商披露, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DCD 2025 = Data Center Dynamics Batam connectivity &amp; Singapore-overflow reporting 2025 &#183; ITIF 2025 = Information Technology &amp; Innovation Foundation Indonesia data-localization brief 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 013 — DIVIDER: WHO LANDS THE CAPACITY ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第06章</div>
+    <h1 class="divider-title">谁将实现<span class="accent">产能</span>落地</h1>
+    <div class="divider-thesis">以电信运营商为主导的本土基础，迎来通过合资企业和批发型托管进入的外国资本。<strong>土地、与PLN的关系及网络连接</strong>&#8212;&#8212;而非建筑本身&#8212;&#8212;才是兆瓦真正通电投运的关键。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">6.1市场结构</div>
+      <div class="toc-pill">6.2主要运营商</div>
+      <div class="toc-pill">6.3外资进入</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 014 — COMPETITIVE STRUCTURE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 · 竞争格局</div>
+      <div class="page-section-counter">014 / 017</div>
+    </div>
+    <h1 class="page-h1">以电信运营商为主导的基础，外国资本借此进入</h1>
+    <p class="page-subhead">本土电信运营商与上市运营商掌握在运产能；全球资本通过合资企业、批发型托管及经济特区园区进入。竞争优势在于让兆瓦得以通电的<strong>土地、PLN接入与网络连接</strong>。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">按运营商集团划分的产能份额</div>
+            <div class="chart-subtitle">印度尼西亚 · 在运MW参考份额 · 2025</div>
+          </div>
+          <div class="chart-unit">%份额</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="120" y1="15" x2="120" y2="175"/>
+            <rect class="bar-primary" x="120" y="22" width="160" height="22"/><text class="label-data" x="288" y="39">~22%</text><text class="label-small" x="116" y="38" text-anchor="end">DCI Indonesia</text>
+            <rect class="bar-primary" x="120" y="56" width="135" height="22" opacity="0.85"/><text class="label-data" x="263" y="73">~18%</text><text class="label-small" x="116" y="72" text-anchor="end">NeutraDC (Telkom)</text>
+            <rect class="bar-secondary" x="120" y="90" width="120" height="22"/><text class="label-data" x="248" y="107">~16%</text><text class="label-small" x="116" y="106" text-anchor="end">BDx Indonesia</text>
+            <rect class="bar-secondary" x="120" y="124" width="90" height="22" opacity="0.8"/><text class="label-data" x="218" y="141">~12%</text><text class="label-small" x="116" y="140" text-anchor="end">EdgeConneX</text>
+            <rect class="bar-tertiary" x="120" y="158" width="170" height="22"/><text class="label-data" x="298" y="175">~32%</text><text class="label-small" x="116" y="174" text-anchor="end">PDG／其他</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: DC PORTFOLIO数据集, 运营商披露, KIRA分析 · KIRA RESEARCH 2026</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>趋于分散，资本密集</h3>
+        <p>没有任何运营商占据主导；在运产能分散于<strong>电信运营商、上市运营商和外资合资企业</strong>之间。Telkom旗下NeutraDC借助电信运营商身份，规模化捆绑IP转接服务[DC Portfolio 2026]。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>现有设施</span><span class="val">88</span></div>
+          <div class="stat-line"><span>在建设施</span><span class="val">25</span></div>
+          <div class="stat-line"><span>覆盖城市</span><span class="val">17</span></div>
+          <div class="stat-line"><span>利用率</span><span class="val">65&#8211;75%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">排名01</div>
+        <div class="comp-name">DCI Indonesia</div>
+        <div class="comp-parent">IDX上市（DCII） · 以雅加达为主</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~22%</span></div>
+        <div class="comp-stat-row"><span>重点</span><span class="val">超大规模</span></div>
+        <div class="comp-stat-row"><span>集群</span><span class="val">芝卡朗</span></div>
+        <div class="comp-strengths"><strong>上市规模领先者。</strong>依托雅加达互联枢纽，深耕超大规模与托管业务。[DC Portfolio 2026]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名02</div>
+        <div class="comp-name">NeutraDC</div>
+        <div class="comp-parent">Telkom Indonesia（国有）</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~18%</span></div>
+        <div class="comp-stat-row"><span>站点</span><span class="val">~33</span></div>
+        <div class="comp-stat-row"><span>优势</span><span class="val">电信运营商</span></div>
+        <div class="comp-strengths"><strong>电信运营商通道。</strong>捆绑全国IP转接；推进超大规模园区建设。[DC Portfolio 2026]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名03</div>
+        <div class="comp-name">BDx Indonesia</div>
+        <div class="comp-parent">Indosat／Lintasarta合资企业</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~16%</span></div>
+        <div class="comp-stat-row"><span>PLN协议</span><span class="val">1.2 GW</span></div>
+        <div class="comp-stat-row"><span>在建</span><span class="val">CGK5 300 MW</span></div>
+        <div class="comp-strengths"><strong>电力有保障的扩张者。</strong>最大PLN供电承诺；基于NVIDIA的主权AI设施。[Bisnis 2026]</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名04</div>
+        <div class="comp-name">DayOne</div>
+        <div class="comp-parent">外资背景 · 巴淡</div>
+        <div class="comp-stat-row"><span>产能</span><span class="val">450 MW</span></div>
+        <div class="comp-stat-row"><span>PLN</span><span class="val">511 MVA</span></div>
+        <div class="comp-stat-row"><span>贷款</span><span class="val">USD 412 mn</span></div>
+        <div class="comp-strengths"><strong>巴淡超大规模支柱。</strong>单笔最大PJBTL；Nongsa经济特区园区承接新加坡外溢需求。[Bisnis 2026]</div>
+      </div>
+    </div>
+    <div class="source-key">Bisnis 2026 = Bisnis.com BDx&#8211;PLN supply &amp; DayOne PJBTL reporting 2026 &#183; DC Portfolio 2026 = Indonesia Data Center Investment Analysis (portfolio dataset) 2026 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 015 — DIVIDER: 2027 OUTLOOK ====== -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第07章</div>
+    <h1 class="divider-title">2027年<span class="accent">展望</span></h1>
+    <div class="divider-thesis">三条路径的分化取决于同一变量：<strong>稳定的清洁电力多快抵达园区</strong>。需求几乎确定；各情景之间的差距几乎完全取决于电力与电网。</div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">7.1基准情景</div>
+      <div class="toc-pill">7.2加速情景</div>
+      <div class="toc-pill">7.3受限情景</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 016 — FORECAST / SCENARIOS ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 2027年展望</div>
+      <div class="page-section-counter">016 / 017</div>
+    </div>
+    <h1 class="page-h1">2027年通电产能的三种情景</h1>
+    <p class="page-subhead">项目储备已基本确定，问题在于交付速度。各情景的差异主要在于雅加达—芝卡朗与巴淡集群的<strong>PLN并网速度与清洁电力可得性</strong>。</p>
+    <div class="fo-chart-wrap">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">数据中心通电产能&#8212;&#8212;至2027年的情景扇形图</div>
+          <div class="chart-subtitle">印度尼西亚在运MW总量 · 2025年实际 &#183; 2027年情景</div>
+        </div>
+        <div class="chart-unit">在运MW</div>
+      </div>
+      <div class="chart-body-flex">
+        <svg viewBox="0 0 1080 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <line class="axis-line" x1="60" y1="15" x2="60" y2="165"/>
+          <line class="axis-line" x1="60" y1="165" x2="1060" y2="165"/>
+          <line class="grid-line" x1="60" y1="125" x2="1060" y2="125"/>
+          <line class="grid-line" x1="60" y1="85" x2="1060" y2="85"/>
+          <line class="grid-line" x1="60" y1="45" x2="1060" y2="45"/>
+          <text class="axis-text" x="54" y="169" text-anchor="end">400</text>
+          <text class="axis-text" x="54" y="129" text-anchor="end">700</text>
+          <text class="axis-text" x="54" y="89" text-anchor="end">1000</text>
+          <text class="axis-text" x="54" y="49" text-anchor="end">1300</text>
+          <circle cx="150" cy="162" r="5" fill="#0B0D10"/>
+          <text class="label-data" x="150" y="154" text-anchor="middle">420</text>
+          <text class="axis-text" x="150" y="182" text-anchor="middle">2025年实际</text>
+          <path d="M 150 162 L 980 60" stroke="#00A88B" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="60" r="5" fill="#00A88B"/>
+          <text class="label-data" x="998" y="58" style="fill:#00A88B">~1250加速</text>
+          <path d="M 150 162 L 980 85" stroke="#1E6FFF" stroke-width="2" fill="none"/>
+          <circle cx="980" cy="85" r="5" fill="#1E6FFF"/>
+          <text class="label-data" x="998" y="83" style="fill:#1E6FFF">~1050基准</text>
+          <path d="M 150 162 L 980 117" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="980" cy="117" r="5" fill="#D97706"/>
+          <text class="label-data" x="998" y="115" style="fill:#D97706">~800受限</text>
+          <text class="axis-text" x="980" y="182" text-anchor="middle">2027F</text>
+        </svg>
+      </div>
+      <div class="chart-source">SOURCE: KOMINFO, BISNIS, DCD, KIRA三角验证 · KIRA RESEARCH 2026</div>
+    </div>
+    <div class="fo-scenarios">
+      <div class="fo-card bull">
+        <div class="sc-name">加速情景</div>
+        <div class="sc-val">~1250<span class="unit">MW在运</span></div>
+        <div class="sc-body">PLN并网窗口如期兑现，已签约的1.2 GW供电按计划通电，巴淡承接新加坡外溢需求的园区快速填满。清洁电力协议提前达成。[Kira estimates]</div>
+      </div>
+      <div class="fo-card base">
+        <div class="sc-name">基准情景</div>
+        <div class="sc-val">~1050<span class="unit">MW在运</span></div>
+        <div class="sc-body">产能较420 MW基数约翻一番；随着输电建设追赶，芝卡朗与巴淡旗舰园区部分分阶段延至2028年。数据本地化使托管需求保持饱满。[Kira estimates]</div>
+      </div>
+      <div class="fo-card bear">
+        <div class="sc-name">受限情景</div>
+        <div class="sc-val">~800<span class="unit">MW在运</span></div>
+        <div class="sc-body">并网缓慢与清洁电力短缺推迟通电；AI园区分阶段投运滞后于计划。需求不变，交付受制于PLN并网窗口。[Kira estimates]</div>
+      </div>
+    </div>
+    <div class="source-key">Bisnis 2026 = Bisnis.com BDx&#8211;PLN supply &amp; DayOne PJBTL reporting 2026 &#183; DCD 2025 = Data Center Dynamics Indonesia pipeline tracking 2025 &#183; Kominfo 2025 = Ministry of Communication &amp; Digital Affairs capacity statement 2025 &#183; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 017 — METHODOLOGY ENDNOTE ====== -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 · 研究方法与来源</div>
+      <div class="page-section-counter">017 / 017</div>
+    </div>
+    <h1 class="page-h1">研究方法与来源</h1>
+    <p class="page-subhead">各项数据的推导方式，以及本报告引用的每一个具名来源的完整出处。</p>
+    <div class="me-body">
+      <div class="me-method">
+        <h3>研究方法</h3>
+        <p>本报告对两类证据进行三角验证。凡带有<strong>具名来源标注</strong>（如[PLN RUPTL 2025]、[Bisnis 2026]）的数据，其底层数据均来自该来源，完整出处列于右侧。凡标注为[Kira estimates]的数据，均由KIRA分析师综合多项公开输入&#8212;&#8212;运营商披露文件、PLN供电协议、政府规划&#8212;&#8212;按相关章节披露的方法推导得出。</p>
+        <p>产能数据将已公开的市场数据集与运营商及PLN披露信息相互核对；在运产能与项目储备之间的缺口以及2027年情景扇形图均为KIRA的测算。约<strong>25%的量化结论由KIRA推导</strong>，其余均引自外部来源。</p>
+        <div class="me-disclaimer">本报告仅供授权读者使用。前瞻性估算基于情景假设，不构成保证。© 2026 KIRA Research。</div>
+      </div>
+      <div class="me-sources">
+        <h3>来源说明</h3>
+        <ul>
+          <li><strong>DC Portfolio 2026</strong> — Indonesia Data Center Investment Analysis, portfolio dataset (88 existing / 25 upcoming, 17 cities) 2026</li>
+          <li><strong>Kominfo 2025</strong> — Ministry of Communication &amp; Digital Affairs national capacity statement 2025</li>
+          <li><strong>PLN RUPTL 2025</strong> — PLN Electricity Supply Business Plan (RUPTL) 2025&#8211;2034</li>
+          <li><strong>Bisnis 2026</strong> — Bisnis.com BDx&#8211;PLN 1.2 GW supply, DayOne PJBTL (511 MVA) &amp; PLTS solar reporting 2026</li>
+          <li><strong>DCD 2025</strong> — Data Center Dynamics Indonesia pipeline, Batam connectivity &amp; Nongsa-Changi cable reporting 2025</li>
+          <li><strong>Microsoft 2025</strong> — Microsoft Indonesia Central cloud region &amp; AI infrastructure announcements 2025</li>
+          <li><strong>AI DC 2025</strong> — Indonesia AI-Optimised Data Center market dataset 2025</li>
+          <li><strong>ITIF 2025</strong> — Information Technology &amp; Innovation Foundation Indonesia data-localization brief (GR 71, UU PDP) 2025</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 · 仅供授权读者使用 · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
