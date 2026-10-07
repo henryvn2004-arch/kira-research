@@ -19,7 +19,9 @@
 // of the pending block (stable, so equal demand keeps its order). The runner
 // picks the first pending row top-down, so requested topics are produced first.
 //
-// Prints `added=<N>` on stdout (rows appended + rows moved). Caller commits the CSV when N > 0.
+// Pending rows also get their topic title and industry refreshed when the topic was edited after queueing.
+//
+// Prints `added=<N>` on stdout (rows appended + rows moved + rows refreshed). Caller commits the CSV when N > 0.
 // ---------------------------------------------------------------
 
 import fs from 'fs';
@@ -76,6 +78,11 @@ const weight = (slug) => (demand.get(slug) || 0) * 1000 + (prio.get(slug) || 0);
 approved.sort((a, b) => weight(b.slug) - weight(a.slug));
 
 // The report name vocabulary knows level-1 industries only: a level-2 topic is written under its parent.
+// Titles and industries can be edited after a topic was queued: remember the current ones so
+// pending rows already in the CSV get refreshed below (a row that is claimed or done is never touched).
+let queuedNow = [];
+try { queuedNow = await sb('topics?status=eq.queued&select=slug,title,industry_id&limit=5000'); }
+catch (e) { console.error(`sync-approved-topics: queued titles unavailable (${e.message}), not refreshing`); }
 const indById = new Map(industries.map(i => [i.id, i]));
 const indName = new Map(industries.map(i => [i.id, (indById.get(i.parent_id) || i).name]));
 const text = fs.readFileSync(QUEUE_PATH, 'utf8');
@@ -112,6 +119,39 @@ const statusOf = (l) => {   // minimal CSV split: quoted cells may contain comma
   cells.push(cur);
   return cells[header.indexOf('status')];
 };
+// Refresh topic + industry of pending rows from the database (current title wins).
+const splitRow = (l) => {
+  const cells = []; let cur = '', q = false;
+  for (let i = 0; i < l.length; i++) {
+    const ch = l[i];
+    if (ch === '"') { if (q && l[i + 1] === '"') { cur += '"'; i++; } else q = !q; }
+    else if (ch === ',' && !q) { cells.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  cells.push(cur);
+  return cells;
+};
+let refreshed = 0;
+{
+  const fresh = new Map();
+  for (const t of [...approved, ...queuedNow]) fresh.set(t.slug, { topic: t.title, industry: indName.get(t.industry_id) || '' });
+  const all = out.split('\n');
+  for (let i = 1; i < all.length; i++) {
+    const l = all[i];
+    if (!l || statusOf(l) !== 'pending') continue;
+    const f = fresh.get(csvFirstCell(l));
+    if (!f) continue;
+    const cells = splitRow(l);
+    const ti = header.indexOf('topic'), ii = header.indexOf('industry');
+    if (cells[ti] === f.topic && (!f.industry || cells[ii] === f.industry)) continue;
+    cells[ti] = f.topic;
+    if (f.industry) cells[ii] = f.industry;
+    all[i] = cells.map(csvCell).join(',');
+    refreshed++;
+  }
+  if (refreshed) out = all.join('\n');
+}
+
 let moved = 0;
 if (demand.size || prio.size) {
   const all = out.split('\n');
@@ -136,4 +176,4 @@ try {
 } catch (e) {
   console.error(`sync-approved-topics: rows written, status update failed (${e.message}); next run is idempotent`);
 }
-done(lines.length + moved);
+done(lines.length + moved + refreshed);
