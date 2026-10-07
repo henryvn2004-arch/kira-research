@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Kira Chain: Coffee in Vietnam (prototype) — KIRA RESEARCH</title>
+  <title>Kira Chain (prototype) — KIRA RESEARCH</title>
   <link rel="preconnect" href="https://api.fontshare.com" />
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
   <link rel="stylesheet" href="/css/kira.css" />
@@ -67,9 +67,10 @@
 </head>
 <body>
   <main class="kc-wrap">
-    <div class="kc-proto"><strong>Prototype for internal review.</strong> Desk research, every source re-opened and checked on 2026-10-07, not reviewed by analysts. Arrows show how coffee moves along the chain, a structure defined by KIRA analysts; dots are the companies found in each group. There are no company-to-company links. Not linked from the site.</div>
-    <div class="kc-eyebrow">Kira Chain · Vietnam</div>
-    <h1>Coffee value chain in Vietnam</h1>
+    <div class="kc-proto"><strong>Prototype for internal review.</strong> Desk research, every source re-opened and checked on 2026-10-07, not reviewed by analysts. Arrows show how the product moves along the chain, a structure defined by KIRA analysts; dots are the companies found in each group. There are no company-to-company links. Not linked from the site.</div>
+    <div class="kc-eyebrow" id="kc-eyebrow">Kira Chain</div>
+    <h1 id="kc-h1">Loading…</h1>
+    <p style="margin:-6px 0 14px"><a href="/en/chain/" style="font-size:13px;color:var(--primary);text-decoration:none">← Search another product</a></p>
     <p class="kc-sub" id="kc-sub">Loading…</p>
     <div class="kc-modebar"><span class="kc-ctl-label">Show</span><span class="kc-seg" role="group" aria-label="Data source"><button type="button" data-mode="kira" aria-pressed="true">Kira Data</button><button type="button" data-mode="est" aria-pressed="false">Market Estimate</button></span></div>
 
@@ -83,7 +84,7 @@
     <div class="kc-legend" id="kc-legend"></div>
 
     <div class="kc-stage">
-      <svg id="kc-svg" viewBox="0 0 1200 760" role="img" aria-label="Network of coffee companies by value-chain stage"></svg>
+      <svg id="kc-svg" viewBox="0 0 1200 760" role="img" aria-label="Network of companies by value-chain stage"></svg>
       <div class="kc-hint">Scroll or pinch to zoom · drag to pan</div>
     </div>
     <div class="kc-tip" id="tip"></div>
@@ -110,7 +111,7 @@
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(1) + ' billion VND'; }
 
-    var data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, flowSel, state = { sel: null, mode: 'kira' };
+    var chainMeta, data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, flowSel, state = { sel: null, mode: 'kira' };
 
     function build() {
       var byE = {}, byH = {};
@@ -277,7 +278,7 @@
       if (m === 'kira') select();
       $('kc-panel').innerHTML = '<div class="kc-panel-empty">' + (m === 'kira' ? 'Click a group hub to list its companies, or a company dot to see its detail.' : 'Click a stage to see the sourced market figures behind it.') + '</div>';
       $('kc-sub').textContent = m === 'kira'
-        ? 'Read left to right: each hub is a group of companies at one stage, arrows show how coffee moves to the next stage, and dots are companies coloured by ownership. Click a hub to light up its inflows and outflows.'
+        ? 'Read left to right: each hub is a group of companies at one stage, arrows show how the product moves to the next stage, and dots are companies coloured by ownership. Click a hub to light up its inflows and outflows.'
         : 'Each circle is one stage of the chain, sized by the market estimate we could source for it (log scale; the unit differs per stage, so read each label). Grey text shows how many companies the Kira Data view holds for the same stage.';
     }
 
@@ -346,9 +347,9 @@
 
     function renderLegend() {
       var ow = Object.keys(OWN).filter(function (k) { return ents.some(function (e) { return e.own === k; }); });
-      if (state.mode === 'est') { $('kc-legend').innerHTML = '<span>Circle size = market estimate for the stage (log scale). * = unverified source. Dashed = no sourced estimate found.</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view)</span>'; return; }
+      if (state.mode === 'est') { $('kc-legend').innerHTML = '<span>Circle size = market estimate for the stage (log scale). * = unverified source. Dashed = no sourced estimate found.</span><span style="color:#3D5A94"><b>→</b> How the product moves along the chain (KIRA analyst view)</span>'; return; }
       $('kc-legend').innerHTML = ow.map(function (k) { return '<span><i style="background:' + COL[k] + '"></i>' + esc(OWN[k]) + '</span>'; }).join('') +
-        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view, not company-to-company links)</span>';
+        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:#3D5A94"><b>→</b> How the product moves along the chain (KIRA analyst view, not company-to-company links)</span>';
     }
     function init(flow) {
       var ow = Object.keys(OWN).filter(function (k) { return ents.some(function (e) { return e.own === k; }); });
@@ -358,12 +359,28 @@
       document.querySelectorAll('.kc-seg button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
     }
 
-    fetch('/en/chain/vn/coffee.json').then(function (r) { return r.json(); }).then(function (d) {
+    function fail(msg) { $('kc-h1').textContent = 'No chain here yet'; $('kc-sub').innerHTML = esc(msg) + ' <a href="/en/chain/" style="color:var(--primary)">Search for a product</a>.'; $('kc-ctl').style.display = 'none'; document.querySelector('.kc-modebar').style.display = 'none'; document.querySelector('.kc-stage').style.display = 'none'; $('kc-panel').style.display = 'none'; }
+
+    var m = location.pathname.match(/^\/en\/chain\/([a-z]{2})\/([a-z0-9-]+)\/?$/i);
+    if (!m) { fail('This address is not a chain.'); return; }
+    fetch('/api/chain?country=' + encodeURIComponent(m[1]) + '&slug=' + encodeURIComponent(m[2])).then(function (r) {
+      if (r.status === 404) { fail('We do not have this chain.'); return null; }
+      if (!r.ok) throw new Error('load');
+      return r.json();
+    }).then(function (res) {
+      if (!res) return null;
+      chainMeta = res.chain;
+      return res.payload ? res.payload : fetch(res.payload_url).then(function (r) { return r.json(); });
+    }).then(function (d) {
+      if (!d) return;
       data = d;
-      $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (m) { return '<p style="margin:0 0 8px">' + esc(m) + '</p>'; }).join('') +
-        '<p style="margin:0 0 8px">Company identities are merged by name across stages (for example Intimex appears in collection, processing and export),, so a few merges may be wrong.</p>';
+      document.title = chainMeta.name + ' in ' + chainMeta.country_name + ' · Kira Chain (prototype) — KIRA RESEARCH';
+      $('kc-eyebrow').textContent = 'Kira Chain · ' + chainMeta.country_name;
+      $('kc-h1').textContent = chainMeta.name + ' value chain in ' + chainMeta.country_name;
+      $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (t) { return '<p style="margin:0 0 8px">' + esc(t) + '</p>'; }).join('') +
+        '<p style="margin:0 0 8px">Company identities are merged by name across stages, so a few merges may be wrong.</p>';
       var flow = build(); layout(); draw(flow); init(flow); setMode('kira');
-    }).catch(function () { $('kc-sub').textContent = 'Data failed to load.'; });
+    }).catch(function () { $('kc-h1').textContent = 'Could not load this chain'; $('kc-sub').textContent = 'Please try again in a moment.'; });
   })();
   </script>
 </body>
