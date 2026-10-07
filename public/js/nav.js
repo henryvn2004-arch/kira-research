@@ -489,6 +489,20 @@
   }
   injectInstantPage();
 
+  // ── First-party funnel events (/js/track.js → /api/track → /en/admin/funnel) ──
+  // Cookie-less, respects Do Not Track, skips admin / studio / previews / localhost.
+  function injectTrack() {
+    if (isStudioHost) return;
+    if (window.location.pathname.startsWith('/en/admin/')) return;
+    if (document.getElementById('kira-track')) return;
+    const s = document.createElement('script');
+    s.id = 'kira-track';
+    s.defer = true;
+    s.src = '/js/track.js';
+    document.head.appendChild(s);
+  }
+  injectTrack();
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', inject);
   } else {

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Funnel — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .fn-viz { --series-1: var(--primary, #2a78d6); --surface: var(--bg, #fff); --ink: var(--text, #0b0b0b); --ink-2: var(--muted, #52514e); --grid: var(--border, #e5e5e2); }
+    .fn-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:6px; }
+    .fn-head h1 { margin:0; font-size:28px; }
+    .fn-range { display:flex; gap:8px; }
+    .fn-chip { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:999px; padding:8px 14px; font-size:14px; cursor:pointer; min-height:40px; }
+    .fn-chip.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .fn-lead { color:var(--muted); font-size:14px; margin:0 0 20px; max-width:72ch; }
+    .fn-sec { margin:30px 0 8px; font-size:18px; } .fn-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .fn-card { border:1px solid var(--border); border-radius:12px; padding:18px; background:var(--bg); }
+    .fn-note { font-size:13px; color:var(--muted); margin:8px 0 0; max-width:75ch; }
+    .fn-warn { background:#FFF4DB; color:#6B4700; border-radius:10px; padding:10px 14px; font-size:13.5px; margin-bottom:16px; }
+    /* funnel bars: one series, one color, thin bars, 4px rounded data end, value at the tip */
+    .fn-row { display:grid; grid-template-columns:minmax(120px, 210px) 1fr; gap:6px 16px; align-items:center; padding:9px 0; }
+    .fn-row + .fn-row { border-top:1px solid var(--grid); }
+    @media (max-width:640px) { .fn-row { grid-template-columns:1fr; gap:2px; } }
+    .fn-lab b { display:block; font-size:14.5px; color:var(--ink); } .fn-lab span { font-size:12.5px; color:var(--ink-2); }
+    .fn-track { display:flex; align-items:center; gap:10px; min-height:34px; cursor:default; }
+    .fn-bar { height:20px; background:var(--series-1); border-radius:0 4px 4px 0; min-width:2px; transition:width .25s; }
+    .fn-val { font-size:15px; color:var(--ink); white-space:nowrap; } .fn-val em { font-style:normal; color:var(--ink-2); font-size:13px; margin-left:6px; }
+    .fn-track:hover .fn-bar, .fn-track:focus-visible .fn-bar { filter:brightness(.92); }
+    /* daily columns */
+    .fn-cols { display:flex; align-items:flex-end; gap:2px; height:120px; border-bottom:1px solid var(--grid); }
+    .fn-col { flex:1 1 0; max-width:24px; min-width:3px; background:var(--series-1); border-radius:4px 4px 0 0; cursor:default; }
+    .fn-col:hover { filter:brightness(.92); }
+    .fn-axis { display:flex; justify-content:space-between; font-size:12px; color:var(--ink-2); margin-top:4px; }
+    .fn-tip { position:fixed; z-index:50; pointer-events:none; background:var(--ink); color:var(--surface); font-size:12.5px; padding:6px 9px; border-radius:6px; max-width:240px; display:none; }
+    table.fn { width:100%; border-collapse:collapse; font-size:14px; }
+    table.fn th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--border); }
+    table.fn td { padding:9px 10px; border-bottom:1px solid var(--border); } table.fn td.n, table.fn th.n { text-align:right; font-variant-numeric:tabular-nums; }
+    table.fn tr:last-child td { border-bottom:0; }
+    .fn-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    .fn-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; }
+    .fn-link { background:none; border:0; color:var(--primary); cursor:pointer; font:inherit; font-size:13px; padding:6px 0; text-decoration:underline; }
+    .fn-empty { color:var(--muted); padding:24px 0; }
+    .fn-truth { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+    .fn-truth div { background:var(--surface-2); border-radius:10px; padding:10px 14px; font-size:13px; color:var(--muted); } .fn-truth b { display:block; font-size:22px; color:var(--text); font-family:'Satoshi',sans-serif; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container fn-viz" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/funnel" class="active">Funnel</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="fn-empty">Loading…</div></div>
+    <div class="fn-tip" id="fn-tip" role="tooltip"></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+    const tip = document.getElementById('fn-tip');
+    const state = { days: 30, table: false };
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    const n = (v) => Number(v || 0).toLocaleString();
+    const pct = (a, b) => b ? Math.round(a / b * 1000) / 10 + '%' : '–';
+
+    async function api(path) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, { headers: { 'Authorization': `Bearer ${session.access_token}` } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+
+    const STEPS = [
+      ['visited', 'Visited the site', 'Any page view'],
+      ['researched', 'Looked at research', 'Opened the library, searched, or opened a report page'],
+      ['opened', 'Opened a report page', 'A specific report or coming-soon page'],
+      ['raised', 'Raised a hand', 'Left an email, joined the waitlist, or sent a request']
+    ];
+    const SOURCE_LABEL = { direct: 'Direct or unknown', google: 'Google', bing: 'Bing', linkedin: 'LinkedIn', facebook: 'Facebook', x: 'X / Twitter', naver: 'Naver', baidu: 'Baidu', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo' };
+    const LOCALE_LABEL = { en: 'English', ja: 'Japanese', ko: 'Korean', zh: 'Chinese', other: 'Other' };
+
+    function funnelBars(st) {
+      const max = Math.max(1, st.visited);
+      return STEPS.map(([k, label, hint], i) => {
+        const v = st[k] || 0, prev = i ? (st[STEPS[i - 1][0]] || 0) : null;
+        const tipText = `${label}: ${n(v)} visitors · ${pct(v, st.visited)} of all visitors` + (prev != null ? ` · ${pct(v, prev)} of the step before` : '');
+        return `<div class="fn-row"><div class="fn-lab"><b>${esc(label)}</b><span>${esc(hint)}</span></div>
+          <div class="fn-track" tabindex="0" data-tip="${esc(tipText)}" aria-label="${esc(tipText)}">
+            <div class="fn-bar" style="width:calc((100% - 150px) * ${(v / max).toFixed(4)})"></div>
+            <div class="fn-val">${n(v)}<em>${i ? pct(v, st.visited) + ' of visitors' : ''}</em></div></div></div>`;
+      }).join('');
+    }
+
+    function funnelTable(st) {
+      return `<div class="fn-wrap"><table class="fn"><thead><tr><th>Step</th><th class="n">Visitors</th><th class="n">% of all visitors</th><th class="n">% of previous step</th></tr></thead><tbody>
+        ${STEPS.map(([k, label], i) => `<tr><td>${esc(label)}</td><td class="n">${n(st[k])}</td><td class="n">${i ? pct(st[k], st.visited) : '100%'}</td><td class="n">${i ? pct(st[k], st[STEPS[i - 1][0]]) : '–'}</td></tr>`).join('')}
+        </tbody></table></div>`;
+    }
+
+    function dayColumns(days) {
+      if (!days.length) return '<div class="fn-empty">No visits recorded in this period yet.</div>';
+      const max = Math.max(1, ...days.map(d => d.visitors));
+      return `<div class="fn-cols" role="img" aria-label="Visitors per day">${days.map(d => {
+        const t = `${d.day}: ${n(d.visitors)} visitors · ${n(d.pageviews)} page views`;
+        return `<div class="fn-col" style="height:${Math.max(3, d.visitors / max * 100).toFixed(1)}%" data-tip="${esc(t)}"></div>`;
+      }).join('')}</div><div class="fn-axis"><span>${esc(days[0].day)}</span><span>${esc(days[days.length - 1].day)}</span></div>`;
+    }
+
+    function breakdown(rows, nameKey, labels) {
+      if (!rows.length) return '<div class="fn-empty">Nothing yet.</div>';
+      return `<div class="fn-wrap"><table class="fn"><thead><tr><th></th><th class="n">Visitors</th><th class="n">Raised a hand</th><th class="n">Rate</th></tr></thead><tbody>
+        ${rows.map(r => `<tr><td>${esc(labels[r[nameKey]] || r[nameKey])}</td><td class="n">${n(r.visitors)}</td><td class="n">${n(r.raised)}</td><td class="n">${pct(r.raised, r.visitors)}</td></tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function render(d) {
+      const f = d.funnel, st = f.steps, a = d.actual;
+      const since = d.tracking_since ? new Date(d.tracking_since) : null;
+      const young = !since || (Date.now() - since.getTime()) < d.days * 864e5;
+      const sig = f.signups || {};
+      root.innerHTML = `
+        <div class="fn-head"><h1>Funnel</h1>
+          <div class="fn-range">${[7, 30, 90].map(x => `<button class="fn-chip ${state.days === x ? 'on' : ''}" data-days="${x}">${x} days</button>`).join('')}</div></div>
+        <p class="fn-lead">How visitors move from arriving to raising a hand. A visitor is one browser tab session. Nothing here identifies a person: no cookies, no IP, no email.</p>
+        ${since ? (young ? `<div class="fn-warn">Tracking started ${esc(since.toLocaleDateString())}, so this period is only partly covered.</div>` : '') : '<div class="fn-warn">No visits recorded yet. Counting starts once this version of the site is live; the first numbers appear after the first real visits.</div>'}
+
+        <h2 class="fn-sec">Visitors by step<small>last ${d.days} days</small></h2>
+        <div class="fn-card">
+          ${state.table ? funnelTable(st) : funnelBars(st)}
+          <button class="fn-link" id="fn-toggle">${state.table ? 'Show chart' : 'Show as table'}</button>
+          <p class="fn-note">Bots, crawlers, our own tests and people with Do Not Track are not counted. Each bar counts visitors who also did the step above it.</p>
+        </div>
+
+        <h2 class="fn-sec">Sign-ups, counted two ways</h2>
+        <div class="fn-card">
+          <div class="fn-truth">
+            <div><b>${n(a.request_email)}</b>"Email me when ready" requests (database)</div>
+            <div><b>${n(a.waitlist)}</b>Waitlist sign-ups (database)</div>
+            <div><b>${n(a.lead)}</b>Leads (database)</div>
+            <div><b>${n(a.purchases)}</b>Completed purchases (database)</div>
+          </div>
+          <p class="fn-note">The database counts are the truth. The funnel above saw ${n((sig.request_email || 0) + (sig.waitlist || 0) + (sig.lead || 0))} sign-up events from visitors it could track; the gap is people with tracking blocked or who signed up before tracking began. Single-report checkout is currently switched off, so purchases stay at 0 until it is turned back on.</p>
+        </div>
+
+        <div class="fn-grid">
+          <div><h2 class="fn-sec">Visitors per day</h2><div class="fn-card">${dayColumns(f.by_day || [])}</div></div>
+          <div><h2 class="fn-sec">Searches<small>library, 3+ letters</small></h2><div class="fn-card">
+            <div class="fn-truth"><div><b>${n((f.searches || {}).total)}</b>searches</div><div><b>${n((f.searches || {}).no_hit)}</b>found no published report</div></div>
+            <p class="fn-note">Searches that find nothing become coming-soon pages and request forms. The words themselves are on the Topics page.</p></div></div>
+        </div>
+
+        <div class="fn-grid">
+          <div><h2 class="fn-sec">Where visitors come from</h2>${breakdown(f.by_source || [], 'source', SOURCE_LABEL)}</div>
+          <div><h2 class="fn-sec">By language</h2>${breakdown(f.by_locale || [], 'locale', LOCALE_LABEL)}</div>
+        </div>
+
+        <h2 class="fn-sec">Most visited report pages</h2>
+        ${(f.top_pages || []).length ? `<div class="fn-wrap"><table class="fn"><thead><tr><th>Page</th><th class="n">Visitors</th></tr></thead><tbody>
+          ${f.top_pages.map(p => `<tr><td><a href="${esc(p.path)}" target="_blank" rel="noopener">${esc(p.path)}</a></td><td class="n">${n(p.visitors)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="fn-empty">No report pages visited yet.</div>'}`;
+
+      root.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => { state.days = Number(b.dataset.days); load(); }));
+      const tg = document.getElementById('fn-toggle'); if (tg) tg.addEventListener('click', () => { state.table = !state.table; render(d); });
+    }
+
+    // hover layer: one shared tooltip for bars and columns
+    document.addEventListener('mousemove', (e) => {
+      const el = e.target.closest && e.target.closest('[data-tip]');
+      if (!el) { tip.style.display = 'none'; return; }
+      tip.textContent = el.dataset.tip; tip.style.display = 'block';
+      const w = tip.offsetWidth;
+      tip.style.left = Math.min(window.innerWidth - w - 8, e.clientX + 12) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+    });
+    document.addEventListener('focusin', (e) => {
+      const el = e.target.closest && e.target.closest('[data-tip]'); if (!el) return;
+      const r = el.getBoundingClientRect(); tip.textContent = el.dataset.tip; tip.style.display = 'block';
+      tip.style.left = Math.max(8, r.left) + 'px'; tip.style.top = (r.bottom + 6) + 'px';
+    });
+    document.addEventListener('focusout', () => { tip.style.display = 'none'; });
+
+    async function load() {
+      root.style.opacity = '.6';
+      try { render(await api('/api/admin-funnel?days=' + state.days)); }
+      catch (e) { root.innerHTML = `<div class="fn-empty">Could not load the funnel (${esc(e.message)}).</div>`; }
+      root.style.opacity = '';
+    }
+    await load();
+  </script>
+</body>
+</html>
