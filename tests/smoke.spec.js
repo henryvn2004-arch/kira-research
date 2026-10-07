@@ -198,7 +198,7 @@ test.describe('branded 404', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/chains'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/crm', '/en/admin/chains'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -401,6 +401,11 @@ test.describe('public APIs', () => {
 
   test('/api/admin-funnel rejects unauthenticated', async ({ request }) => {
     expect((await request.get('/api/admin-funnel')).status()).toBe(401);
+  });
+
+  test('/api/admin-crm rejects unauthenticated', async ({ request }) => {
+    expect((await request.get('/api/admin-crm')).status()).toBe(401);
+    expect((await request.patch('/api/admin-crm', { data: { email: 'a@b.co', stage: 'won' } })).status()).toBe(401);
   });
 
   test('/api/track accepts POST only and always answers quietly', async ({ request }) => {

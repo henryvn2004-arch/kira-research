@@ -32,7 +32,8 @@ const naming = JSON.parse(need('naming.json'));
 // &amp; goes last so that "&amp;lt;" decodes once, to "&lt;", not twice.
 const decode = s => s.replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "'").replace(/&amp;/g, '&');
 const text = h => decode(h.replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
-const noTags = s => s.replace(/\s*\[[^\]]*\]/g, '').replace(/\s+([,.;:。、，；：])/g, '$1').trim();
+// Dropping source tags can leave the ";" that joined two of them ("…50 kW or faster;."): remove it.
+const noTags = s => s.replace(/\s*\[[^\]]*\]/g, '').replace(/\s*[;；]\s*(?=[.,。、，；：]|$)/g, '').replace(/\s+([,.;:。、，；：])/g, '$1').trim();
 // Japanese and Chinese are set without spaces next to CJK characters or punctuation.
 const cjkTight = s => s.replace(/([\u3000-\u9fff\uff00-\uffef])\s+/g, '$1').replace(/\s+([\u3000-\u9fff\uff00-\uffef])/g, '$1');
 const q = s => '$kbat$' + s + '$kbat$';
