@@ -125,11 +125,7 @@
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(v >= 1e11 ? 0 : 1) + ' billion VND'; }
     var VLAB = { confirmed: 'Source checked', corrected: 'Source checked, row corrected', unreachable: 'Source not checked' };
     function vstat(c) { return (c.verification || {}).status || 'unreachable'; }
-    function taxHtml(c) {
-      if (c.tax_id) return esc(c.tax_id) + ' <span class="tag">verified: an opened page shows name and number</span>';
-      if (c.tax_id_candidate) return esc(c.tax_id_candidate) + ' <span class="tag" style="background:#FFF7E6;color:#6B4A00">candidate from search, not verified: re-check with the registry</span>';
-      return '';
-    }
+    function siteLink(u) { return safeUrl(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary)">' + esc(String(u).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>' : '<span style="color:var(--muted-dim)">—</span>'; }
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
 
     var OWN = { state: 'State-owned', private: 'Private', fdi: 'Foreign-invested', listed: 'Listed', cooperative: 'Cooperative', unknown: 'Unknown' };
@@ -244,10 +240,10 @@
         '<select id="f-own"><option value="">All ownership</option>' + owns.map(function (o) { return '<option value="' + o + '"' + (f.own === o ? ' selected' : '') + '>' + esc(OWN[o] || o) + '</option>'; }).join('') + '</select>' +
         '<select id="f-prov"><option value="">All provinces</option>' + provs.map(function (o) { return '<option' + (f.prov === o ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select>' +
         '<select id="f-sort"><option value="cap"' + (f.sort === 'cap' ? ' selected' : '') + '>Sort: capital</option><option value="name"' + (f.sort === 'name' ? ' selected' : '') + '>Sort: name</option></select></div>' +
-        '<table class="kc-table"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Scale (sourced)</th><th>Source check</th></tr></thead><tbody>' +
+        '<table class="kc-table"><thead><tr><th>Company</th><th>Province / country</th><th>Ownership</th><th>Scale (sourced)</th><th>Website</th><th>Source check</th></tr></thead><tbody>' +
         (list.length ? list.map(function (c) {
           var i = state.data.companies.indexOf(c);
-          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</td></tr>';
+          return '<tr class="row" data-i="' + i + '" tabindex="0"><td class="nm">' + esc(c.name) + (c.name_vi && c.name_vi !== c.name ? '<span class="vi">' + esc(c.name_vi) + '</span>' : '') + '</td><td>' + esc(c.province || '—') + '</td><td><span class="tag ' + esc(c.ownership || '') + '">' + esc(OWN[c.ownership] || 'Unknown') + '</span></td><td>' + esc(c.scale_note || fmtVnd(c.capital_vnd) || '—') + '</td><td>' + siteLink(c.website) + '</td><td class="vs-' + vstat(c) + '">' + esc(VLAB[vstat(c)]) + '</td></tr>';
         }).join('') : '<tr><td colspan="5" style="color:var(--muted)">No company matches the filters.</td></tr>') +
         '</tbody></table>';
       $('f-q').addEventListener('input', function (e) { f.q = e.target.value; renderPanel(); var el = $('f-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); });
@@ -278,7 +274,6 @@
       add('Stage / role', esc(state.sel.role));
       add('Province / country', esc(c.province));
       add('Ownership', esc(OWN[c.ownership] || ''));
-      add('Tax ID', taxHtml(c));
       add('Registered capital', esc(fmtVnd(c.capital_vnd)));
       add('Scale', esc(c.scale_note));
       add('Export markets', esc((c.export_markets || []).join(', ')));
