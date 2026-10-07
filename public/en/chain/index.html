@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Kira Chain (prototype) — KIRA RESEARCH</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+  <style>
+    .kc-wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+    .kc-proto { background: #FFF7E6; border: 1px solid #F2D49B; color: #6B4A00; border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 24px; }
+    .kc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--primary); margin-bottom: 10px; }
+    .kc-wrap h1 { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 0 0 12px; color: var(--text); }
+    .kc-sub { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 700px; margin: 0 0 28px; }
+    .kc-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .kc-card { display: block; border: 1px solid var(--border); border-radius: 12px; padding: 20px; background: #fff; text-decoration: none; color: inherit; transition: box-shadow .12s, border-color .12s; }
+    .kc-card:hover, .kc-card:focus-visible { box-shadow: var(--elevation-md); border-color: var(--primary); outline: none; }
+    .kc-card .c { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-dim); }
+    .kc-card h2 { font-family: 'Satoshi', sans-serif; font-size: 22px; margin: 6px 0 8px; color: var(--text); }
+    .kc-card p { font-size: 13.5px; color: var(--muted); line-height: 1.5; margin: 0 0 12px; }
+    .kc-card .go { font-size: 13px; font-weight: 600; color: var(--primary); }
+    .kc-soon { margin-top: 28px; font-size: 13px; color: var(--muted-dim); }
+    @media (max-width: 720px) { .kc-wrap { padding: 28px 16px 72px; } }
+  </style>
+</head>
+<body>
+  <main class="kc-wrap">
+    <div class="kc-proto"><strong>Prototype for internal review.</strong> Kira Chain is not launched. These pages hold desk-research data that has not been reviewed by analysts, and they are not linked from the site.</div>
+    <div class="kc-eyebrow">Kira Chain</div>
+    <h1>Value chains, company by company</h1>
+    <p class="kc-sub">Pick a product to see its value chain: the groups of companies at each stage, how the product moves between stages, and who operates at several stages.</p>
+    <div class="kc-cards">
+      <a class="kc-card" href="/en/chain/vn/coffee">
+        <div class="c">Vietnam</div>
+        <h2>Coffee</h2>
+        <p id="kc-coffee-meta">From growers and traders to exporters, processors, distributors and café chains.</p>
+        <span class="go">Open the network view →</span>
+      </a>
+    </div>
+    <p class="kc-soon">More products and countries are added as their data is collected and checked.</p>
+  </main>
+  <script src="/js/nav.js"></script>
+  <script>
+    fetch('/en/chain/vn/coffee.json').then(function (r) { return r.json(); }).then(function (d) {
+      var n = new Set(d.companies.map(function (c) { return c.eid; })).size;
+      var el = document.getElementById('kc-coffee-meta');
+      el.textContent = n + ' companies across ' + d.stages.length + ' stages, from growers and traders to exporters, processors, distributors and café chains. Sources checked ' + (d.verification_summary && d.verification_summary.date || '') + '.';
+    }).catch(function () {});
+  </script>
+</body>
+</html>
