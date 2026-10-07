@@ -19,6 +19,14 @@
     .kc-views a + a { border-left: 1.5px solid var(--border-strong); }
     .kc-views a.on { background: var(--primary); color: #fff; }
 
+    .kc-modebar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .kc-ctl-label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-dim); }
+    .kc-seg { display: inline-flex; border: 1.5px solid var(--border-strong); border-radius: 8px; overflow: hidden; }
+    .kc-seg button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 16px; background: #fff; color: var(--muted); border: 0; cursor: pointer; }
+    .kc-seg button + button { border-left: 1.5px solid var(--border-strong); }
+    .kc-seg button[aria-pressed="true"] { background: var(--primary); color: #fff; }
+    .kc-facts { margin: 8px 0 0 18px; padding: 0; font-size: 13.5px; line-height: 1.55; color: var(--text); }
+    .kc-facts li { margin-bottom: 6px; }
     .kc-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 12px; }
     .kc-controls select, .kc-controls input[type=search] { font: inherit; font-size: 13px; padding: 7px 10px; border: 1.5px solid var(--border-strong); border-radius: 7px; background: #fff; color: var(--text); }
     .kc-controls label { font-size: 13px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
@@ -63,9 +71,9 @@
     <div class="kc-eyebrow">Kira Chain · Vietnam</div>
     <h1>Coffee value chain in Vietnam</h1>
     <p class="kc-sub" id="kc-sub">Loading…</p>
-    <div class="kc-views"><a href="/en/chain/vn/coffee" class="on">Network view</a><a href="/en/chain/vn/coffee-map">Bubble map (earlier version)</a></div>
+    <div class="kc-modebar"><span class="kc-ctl-label">Show</span><span class="kc-seg" role="group" aria-label="Data source"><button type="button" data-mode="kira" aria-pressed="true">Kira Data</button><button type="button" data-mode="est" aria-pressed="false">Market Estimate</button></span></div>
 
-    <div class="kc-controls">
+    <div class="kc-controls" id="kc-ctl">
       <input type="search" id="q" placeholder="Find a company" />
       <select id="own"><option value="">All ownership</option></select>
       <label><input type="checkbox" id="hidelow" /> Hide rows we could not source-check</label>
@@ -102,7 +110,7 @@
     function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
     function fmtVnd(v) { if (v == null) return null; return v >= 1e12 ? (v / 1e12).toFixed(1) + ' trillion VND' : (v / 1e9).toFixed(1) + ' billion VND'; }
 
-    var data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, flowSel, state = { sel: null };
+    var data, ents, hubs, nodes, links, cNodes, hNodes, linkSel, flowSel, state = { sel: null, mode: 'kira' };
 
     function build() {
       var byE = {}, byH = {};
@@ -175,24 +183,25 @@
         var xs = a.x + a.r, xe = b.x - b.r - 3, mx = (xs + xe) / 2;
         return { d: 'M' + xs + ',' + a.y + 'C' + mx + ',' + a.y + ' ' + mx + ',' + b.y + ' ' + xe + ',' + b.y, mx: mx, my: (a.y + b.y) / 2 };
       }
-      var fg = g.append('g');
+      var gk = g.append('g').attr('id', 'layer-kira');
+      var fg = gk.append('g');
       flowSel = fg.selectAll('path').data(flow).join('path').attr('d', function (f) { return geo(f).d; })
         .attr('fill', 'none').attr('stroke', '#8FA9D6').attr('stroke-width', 2.2).attr('marker-end', 'url(#arr)').attr('opacity', .9);
       flowSel.append('title').text(function (f) { return f.a.role + ' → ' + f.b.role + (f.label ? ' (' + f.label + ')' : ''); });
       fg.selectAll('text').data(flow.filter(function (f) { return f.show && f.label; })).join('text')
         .attr('x', function (f) { return geo(f).mx; }).attr('y', function (f) { return geo(f).my - 5; }).attr('text-anchor', 'middle')
         .attr('font-size', 10.5).attr('font-style', 'italic').attr('fill', '#3D5A94').attr('stroke', '#fff').attr('stroke-width', 3).attr('paint-order', 'stroke').text(function (f) { return f.label; });
-      linkSel = g.append('g').selectAll('line').data(links).join('line')
+      linkSel = gk.append('g').selectAll('line').data(links).join('line')
         .attr('x1', function (l) { return l.source.x; }).attr('y1', function (l) { return l.source.y; })
         .attr('x2', function (l) { return l.target.x; }).attr('y2', function (l) { return l.target.y; })
         .attr('stroke', function (l) { return l.source.multi ? '#1A66F0' : '#CBD2D9'; })
         .attr('stroke-width', function (l) { return l.source.multi ? 1.5 : 0.8; })
         .attr('opacity', function (l) { return l.source.multi ? 0 : .7; });
-      hNodes = g.append('g').selectAll('g').data(hubs).join('g').attr('class', 'node-h').attr('transform', function (h) { return 'translate(' + h.x + ',' + h.y + ')'; });
+      hNodes = gk.append('g').selectAll('g').data(hubs).join('g').attr('class', 'node-h').attr('transform', function (h) { return 'translate(' + h.x + ',' + h.y + ')'; });
       hNodes.append('circle').attr('r', function (h) { return h.r; }).attr('fill', '#EAF1FE').attr('stroke', '#1A66F0').attr('stroke-width', 2);
       hNodes.append('text').attr('text-anchor', 'middle').attr('dy', '-0.1em').attr('font-size', 15).attr('font-weight', 800).attr('fill', '#0F172A').text(function (h) { return h.members.length; });
       hNodes.append('text').attr('text-anchor', 'middle').attr('dy', function (h) { return h.r + 13; }).attr('font-size', 10.5).attr('fill', '#334155').text(function (h) { return h.role.length > 26 ? h.role.slice(0, 25) + '…' : h.role; });
-      cNodes = g.append('g').selectAll('circle').data(ents).join('circle').attr('class', 'node-c')
+      cNodes = gk.append('g').selectAll('circle').data(ents).join('circle').attr('class', 'node-c')
         .attr('cx', function (e) { return e.x; }).attr('cy', function (e) { return e.y; })
         .attr('r', function (e) { return e.multi ? 7.5 : 5; })
         .attr('fill', function (e) { return COL[e.own] || COL.unknown; })
@@ -204,6 +213,72 @@
         .on('click', function (ev, e) { state.sel = e; select(); renderEntity(e); });
       hNodes.on('mousemove', function (ev, h) { showTip(ev, h.role + ' · ' + h.members.length + ' companies'); }).on('mouseleave', hideTip)
         .on('click', function (ev, h) { state.sel = h; select(); renderHub(h); });
+      drawEst(g, colW, showTip, hideTip);
+    }
+
+    function wrap(str, n) { var w = String(str || '').split(' '), lines = [], cur = ''; w.forEach(function (x) { if ((cur + ' ' + x).trim().length > n && cur) { lines.push(cur); cur = x; } else { cur = (cur + ' ' + x).trim(); } }); if (cur) lines.push(cur); return lines; }
+
+    function drawEst(g, colW, showTip, hideTip) {
+      var est = g.append('g').attr('id', 'layer-est').attr('display', 'none');
+      var cy = TOP + (H - TOP) / 2 - 20;
+      var maxC = Math.max.apply(null, data.stages.map(function (s) { return s.estimate && s.estimate.count ? s.estimate.count : 2; }));
+      var pos = {};
+      data.stages.forEach(function (s, i) {
+        var e = s.estimate;
+        pos[s.id] = { x: colW * i + colW / 2, y: cy, i: i, r: e && e.count ? 34 + 44 * Math.log(Math.max(e.count, 2)) / Math.log(maxC) : 34 };
+      });
+      var seen = {}, pairs = [];
+      (data.flows || []).forEach(function (f) {
+        if (f.from_stage === f.to_stage || !pos[f.from_stage] || !pos[f.to_stage]) return;
+        var k = f.from_stage + '>' + f.to_stage; if (!seen[k]) { seen[k] = 1; pairs.push(f); }
+      });
+      est.append('g').selectAll('path').data(pairs).join('path').attr('d', function (f) {
+        var a = pos[f.from_stage], b = pos[f.to_stage], span = b.i - a.i;
+        if (span === 1) return 'M' + (a.x + a.r) + ',' + a.y + 'L' + (b.x - b.r - 4) + ',' + b.y;
+        var x0 = a.x + a.r * 0.7, y0 = a.y - a.r * 0.7, x1 = b.x - b.r * 0.7 - 2, y1 = b.y - b.r * 0.7 - 4;
+        return 'M' + x0 + ',' + y0 + 'Q' + ((x0 + x1) / 2) + ',' + (y0 - 30 - 38 * span) + ' ' + x1 + ',' + y1;
+      }).attr('fill', 'none').attr('stroke', '#8FA9D6').attr('stroke-width', 2.2).attr('marker-end', 'url(#arr)').attr('opacity', .9);
+      var gs = est.append('g').selectAll('g').data(data.stages).join('g').attr('class', 'node-e').style('cursor', 'pointer')
+        .attr('transform', function (s) { var p = pos[s.id]; return 'translate(' + p.x + ',' + p.y + ')'; });
+      function has(s) { return s.estimate && s.estimate.count; }
+      gs.append('circle').attr('r', function (s) { return pos[s.id].r; }).attr('fill', function (s) { return has(s) ? '#EAF1FE' : '#fff'; })
+        .attr('stroke', function (s) { return has(s) ? '#6E8FC9' : '#CBD2D9'; }).attr('stroke-width', 2.5).attr('stroke-dasharray', function (s) { return has(s) ? null : '5 4'; });
+      gs.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').attr('font-size', 18).attr('font-weight', 800).attr('fill', '#0F172A')
+        .text(function (s) { return has(s) ? (s.estimate.display || s.estimate.count) + (s.estimate.unverified ? ' *' : '') : 'no estimate'; })
+        .attr('font-size', function (s) { return has(s) ? 18 : 11; }).attr('font-weight', function (s) { return has(s) ? 800 : 500; }).attr('fill', function (s) { return has(s) ? '#0F172A' : '#64748B'; });
+      gs.each(function (s) {
+        var t = d3.select(this).append('text').attr('text-anchor', 'middle').attr('font-size', 10.5).attr('fill', '#334155'), r = pos[s.id].r;
+        var lines = has(s) ? wrap(s.estimate.unit, 20) : [];
+        lines.forEach(function (ln, k) { t.append('tspan').attr('x', 0).attr('y', r + 14 + k * 12).text(ln); });
+        var n = new Set(data.companies.filter(function (c) { return c.stage === s.id; }).map(function (c) { return c.eid; })).size;
+        d3.select(this).append('text').attr('text-anchor', 'middle').attr('y', r + 16 + lines.length * 12 + 4).attr('font-size', 10).attr('fill', '#94A3B8').text('Kira Data: ' + n + ' companies');
+      });
+      gs.on('mousemove', function (ev, s) { showTip(ev, has(s) ? s.estimate.label : 'No sourced market estimate found for this stage'); }).on('mouseleave', hideTip)
+        .on('click', function (ev, s) { renderStageFacts(s); });
+    }
+
+    function renderStageFacts(s) {
+      var e = s.estimate, facts = data.facts.filter(function (f) { return f.stage === s.id; }), all = data.facts.filter(function (f) { return f.stage === 'all'; });
+      function li(f) { return '<li>' + esc(f.label) + ': <b>' + esc(f.value) + (f.unit && String(f.value).indexOf(f.unit) < 0 ? ' ' + esc(f.unit) : '') + '</b>' + (f.year ? ' (' + esc(f.year) + ')' : '') + (f.verification && f.verification.status === 'unreachable' ? ' <span class="vs-unreachable">(source not checked)</span>' : '') + (safeUrl(f.source_url) ? ' · <a href="' + esc(f.source_url) + '" target="_blank" rel="noopener">' + esc(f.source) + '</a>' : ' · ' + esc(f.source || '')) + '</li>'; }
+      var head = e && e.count ? '<p style="margin:0 0 6px"><b>Chart value:</b> ' + esc(e.label) + (e.unverified ? ' <span class="vs-unreachable">(unverified)</span>' : '') + (safeUrl(e.source_url) ? ' · <a href="' + esc(e.source_url) + '" target="_blank" rel="noopener">' + esc(e.source) + '</a>' : '') + '</p>' : '<p style="margin:0 0 6px;color:var(--muted)">No sourced market estimate was found for this stage.</p>';
+      var conc = s.concentration ? '<p style="margin:0 0 6px"><b>Concentration:</b> ' + esc(s.concentration.label) + (safeUrl(s.concentration.source_url) ? ' · <a href="' + esc(s.concentration.source_url) + '" target="_blank" rel="noopener">source</a>' : '') + '</p>' : '';
+      $('kc-panel').innerHTML = '<div class="kc-ph">' + esc(s.label) + ' · market estimate</div><div class="kc-detail" style="padding-top:8px">' + head + conc +
+        (facts.length ? '<p style="margin:10px 0 0;font-weight:700">Sourced facts for this stage</p><ul class="kc-facts">' + facts.map(li).join('') + '</ul>' : '') +
+        (all.length ? '<p style="margin:10px 0 0;font-weight:700">Whole market</p><ul class="kc-facts">' + all.map(li).join('') + '</ul>' : '') + '</div>';
+    }
+
+    function setMode(m) {
+      state.mode = m; state.sel = null;
+      document.querySelectorAll('.kc-seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === m ? 'true' : 'false'); });
+      d3.select('#layer-kira').attr('display', m === 'kira' ? null : 'none');
+      d3.select('#layer-est').attr('display', m === 'est' ? null : 'none');
+      $('kc-ctl').style.display = m === 'kira' ? '' : 'none';
+      renderLegend();
+      if (m === 'kira') select();
+      $('kc-panel').innerHTML = '<div class="kc-panel-empty">' + (m === 'kira' ? 'Click a group hub to list its companies, or a company dot to see its detail.' : 'Click a stage to see the sourced market figures behind it.') + '</div>';
+      $('kc-sub').textContent = m === 'kira'
+        ? 'Read left to right: each hub is a group of companies at one stage, arrows show how coffee moves to the next stage, and dots are companies coloured by ownership. Click a hub to light up its inflows and outflows.'
+        : 'Each circle is one stage of the chain, sized by the market estimate we could source for it (log scale; the unit differs per stage, so read each label). Grey text shows how many companies the Kira Data view holds for the same stage.';
     }
 
     function visible(e) {
@@ -269,20 +344,25 @@
       $('kc-panel').innerHTML = '<div class="kc-detail"><h2>' + esc(e.name) + '</h2>' + (e.multi ? '<div style="color:var(--primary);font-size:13px;font-weight:600">Operates at ' + Object.keys(e.stages).length + ' stages of the chain</div>' : '') + '<dl>' + rows.join('') + '</dl></div>';
     }
 
+    function renderLegend() {
+      var ow = Object.keys(OWN).filter(function (k) { return ents.some(function (e) { return e.own === k; }); });
+      if (state.mode === 'est') { $('kc-legend').innerHTML = '<span>Circle size = market estimate for the stage (log scale). * = unverified source. Dashed = no sourced estimate found.</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view)</span>'; return; }
+      $('kc-legend').innerHTML = ow.map(function (k) { return '<span><i style="background:' + COL[k] + '"></i>' + esc(OWN[k]) + '</span>'; }).join('') +
+        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view, not company-to-company links)</span>';
+    }
     function init(flow) {
       var ow = Object.keys(OWN).filter(function (k) { return ents.some(function (e) { return e.own === k; }); });
       $('own').innerHTML = '<option value="">All ownership</option>' + ow.map(function (k) { return '<option value="' + k + '">' + esc(OWN[k]) + '</option>'; }).join('');
-      $('kc-legend').innerHTML = ow.map(function (k) { return '<span><i style="background:' + COL[k] + '"></i>' + esc(OWN[k]) + '</span>'; }).join('') +
-        '<span><i style="background:#fff;border:2px solid #0F172A;width:12px;height:12px"></i>Operates at several stages</span><span><i style="background:#EAF1FE;border:2px solid #1A66F0"></i>Group hub (number = companies)</span><span style="color:#3D5A94"><b>→</b> How coffee moves along the chain (KIRA analyst view, not company-to-company links)</span>';
+      renderLegend();
       ['q', 'own', 'hidelow', 'multi', 'xlinks'].forEach(function (id) { $(id).addEventListener(id === 'q' ? 'input' : 'change', select); });
+      document.querySelectorAll('.kc-seg button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
     }
 
     fetch('/en/chain/vn/coffee.json').then(function (r) { return r.json(); }).then(function (d) {
       data = d;
-      $('kc-sub').textContent = 'Read left to right: each hub is a group of companies at one stage, arrows show how coffee moves to the next stage, and dots are companies coloured by ownership. Click a hub to light up its inflows and outflows.';
       $('kc-foot').innerHTML = '<h3>How to read this</h3>' + d.method.map(function (m) { return '<p style="margin:0 0 8px">' + esc(m) + '</p>'; }).join('') +
-        '<p style="margin:0 0 8px">Company identities are merged by name across stages (for example Intimex appears in collection, processing and export), so a few merges may be wrong until tax IDs confirm them.</p>';
-      var flow = build(); layout(); draw(flow); init(flow); select();
+        '<p style="margin:0 0 8px">Company identities are merged by name across stages (for example Intimex appears in collection, processing and export),, so a few merges may be wrong.</p>';
+      var flow = build(); layout(); draw(flow); init(flow); setMode('kira');
     }).catch(function () { $('kc-sub').textContent = 'Data failed to load.'; });
   })();
   </script>
