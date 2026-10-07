@@ -15,7 +15,7 @@
 
   function card(t) {
     return '<a class="xt-card" href="' + LIST + encodeURIComponent(t.slug) + '">' +
-      '<div class="xt-meta"><span class="xt-pill">' + esc(t.market) + '</span><span class="xt-pill">' + esc(t.industry) + '</span><span class="xt-pill fmt">' + esc(t.format) + '</span></div>' +
+      '<div class="xt-meta"><span class="xt-pill type">' + esc(t.interview_type) + '</span><span class="xt-pill">' + esc(t.market) + '</span><span class="xt-pill">' + esc(t.industry) + '</span><span class="xt-pill fmt">' + esc(t.format) + '</span></div>' +
       '<h3>' + esc(t.title) + '</h3>' +
       '<div class="xt-expert"><span class="xt-av">' + esc(initials(t.expert)) + '</span>' + esc(t.expert) + '</div>' +
       '<p class="xt-blurb">' + esc(t.blurb) + '</p>' +

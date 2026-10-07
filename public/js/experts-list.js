@@ -9,13 +9,17 @@
   if (!app || !R) return;
 
   const BASE = '/en/experts/transcripts/';
+  // Interview types (fixed list, also used to colour the row thumbnail).
+  const TYPES = ['Market assessment', 'Market entry', 'Distribution & channels', 'Partner search',
+    'Competitive landscape', 'Pricing & margins', 'Regulation', 'Customer voice'];
   const GROUPS = [
+    { key: 'interview_type', param: 'type', label: 'Interview type' },
     { key: 'market', param: 'market', label: t('market') },
     { key: 'industry', param: 'industry', label: 'Industry' },
     { key: 'expert_group', param: 'expert', label: 'Expert' },
   ];
   const plural = (n) => n + (n === 1 ? ' transcript' : ' transcripts');
-  const state = { market: '', industry: '', expert_group: '', q: '', sort: 'recent' };
+  const state = { interview_type: '', market: '', industry: '', expert_group: '', q: '', sort: 'recent' };
   const ui = { collapsed: {} };
   let items = [];
 
@@ -36,7 +40,7 @@
   function textMatch(it) {
     const term = state.q.trim().toLowerCase();
     if (!term) return true;
-    const hay = [it.title, it.market, it.industry, it.expert, it.blurb].concat(it.companies || []).join(' ').toLowerCase();
+    const hay = [it.title, it.interview_type, it.market, it.industry, it.expert, it.blurb].concat(it.companies || []).join(' ').toLowerCase();
     return term.split(/\s+/).every((w) => hay.includes(w));
   }
   // A group's counts ignore that group's own selection, so each count is what a click would show.
@@ -101,9 +105,9 @@
   function rowHtml(it) {
     const initials = it.expert.split(/[\s,]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
     return '<a class="lrow" href="' + BASE + encodeURIComponent(it.slug) + '">' +
-      '<div class="cover-thumb"><div class="ph xt-ph"><span class="xt-ph-av">' + esc(initials) + '</span><b>KIRA</b><span>Expert interview</span></div></div>' +
+      '<div class="cover-thumb"><div class="ph xt-ph" data-t="' + Math.max(0, TYPES.indexOf(it.interview_type)) + '"><span class="xt-ph-av">' + esc(initials) + '</span><b>KIRA</b><span>' + esc(it.interview_type || 'Expert interview') + '</span></div></div>' +
       '<div class="lrow-body">' +
-        '<div class="lrow-chips"><span class="chip">' + esc(it.industry) + '</span><span class="chip xt-fmt">' + esc(it.format) + '</span></div>' +
+        '<div class="lrow-chips"><span class="chip">' + esc(it.interview_type) + '</span><span class="chip">' + esc(it.industry) + '</span><span class="chip xt-fmt">' + esc(it.format) + '</span></div>' +
         '<h3>' + esc(it.title) + '</h3>' +
         '<p>' + esc(it.blurb) + '</p>' +
         '<div class="meta">' +
