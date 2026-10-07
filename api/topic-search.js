@@ -115,7 +115,7 @@ export default async function handler(req, res) {
           await rpc('bump_topic_search', { p_slug: made.o_slug });
           return res.status(200).json({ items: [{
             slug: made.o_slug, title: made.o_title, country: pair.country_name, country_code: pair.country_code,
-            industry: pair.industry_name, competency: null, year: 2027, state: 'scoping'
+            industry: pair.industry_name, competency: null, year: new Date().getUTCFullYear(), state: 'scoping'
           }] });
         }
       }
@@ -132,7 +132,7 @@ export default async function handler(req, res) {
             await rpc('bump_topic_search', { p_slug: made.o_slug });
             return res.status(200).json({ items: [{
               slug: made.o_slug, title: made.o_title, country: ctry.country_name, country_code: ctry.country_code,
-              industry: verdict.industryName, competency: null, year: 2027, state: 'scoping'
+              industry: verdict.industryName, competency: null, year: new Date().getUTCFullYear(), state: 'scoping'
             }] });
           }
         }

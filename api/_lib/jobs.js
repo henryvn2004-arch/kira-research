@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/_lib/jobs.js
-// Records one row per run of a scheduled job in job_runs (migration 032);
+// Records one row per run of a scheduled job in job_runs (migration 034);
 // /en/admin/health reads it. Best-effort: a logging failure never breaks the job.
 // ============================================================
 const SUPABASE_URL         = process.env.SUPABASE_URL;

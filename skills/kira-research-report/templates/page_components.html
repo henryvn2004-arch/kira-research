@@ -21,13 +21,22 @@
 
 
 <!-- ============================================================
-     TEMPLATE: cover
-     Usage: Section 01 — Report cover page
+     TEMPLATES: cover_L1 … cover_L9
+     Usage: Section 01 — Report cover page. One of 9 layouts; use the one
+     named by the "layout" field that scripts/gen-cover.mjs prints
+     (template cover_<layout>). Each layout expects the image shape that
+     gen-cover asked for, so never swap the layout after the image exists.
+     Illustration: cover.jpg next to the report HTML.
+     No illustration (gen-cover exit 3): use cover_L1, set COVER_VARIANT to
+     "plain" and drop the <img class="cv-art"> line.
+     Title: 3 short lines (line 3 optional, may be empty); the middle line
+     carries the accent. TITLE_SIZE_CLASS = "long" if any line exceeds ~14
+     Latin characters or ~7 CJK characters, else empty.
+     The tagline is fixed; never change it.
      ============================================================ -->
-<!-- TEMPLATE_START: cover -->
-<!-- Illustration: cover.jpg next to the report HTML (scripts/gen-cover.mjs).
-     If generation failed, add class "plain" to the page and drop the <img>. -->
-<div class="page cover2 {{COVER_VARIANT}}">
+<!-- TEMPLATE_START: cover_L1 -->
+<!-- Classic: text left, illustration right (landscape, left third empty). Also the plain fallback. -->
+<div class="page cover2 cv-L1 {{COVER_VARIANT}}">
   <img class="cv-art" src="cover.jpg" alt="">
   <div class="cv-wrap">
     <div class="cv-top">
@@ -36,7 +45,6 @@
     </div>
     <div class="cv-main">
       <div class="cv-eyebrow">{{REPORT_KIND}}</div>
-      <!-- 3 short lines; the middle line carries the accent. Add class "long" if any line exceeds ~14 characters. -->
       <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
       <p class="cv-sub">{{COVER_SUBTITLE}}</p>
     </div>
@@ -48,7 +56,145 @@
     </div>
   </div>
 </div>
-<!-- TEMPLATE_END: cover -->
+<!-- TEMPLATE_END: cover_L1 -->
+
+<!-- TEMPLATE_START: cover_L2 -->
+<!-- Mirror: illustration left, text right-aligned on the right (landscape, right third empty). -->
+<div class="page cover3 cv-L2">
+  <img class="cv-art" src="cover.jpg" alt="">
+  <div class="cv-wrap">
+    <img class="cv-logo" src="brand/logo.png" alt="KIRA Research">
+    <div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    </div>
+    <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L2 -->
+
+<!-- TEMPLATE_START: cover_L3 -->
+<!-- Panorama + bottom band (landscape full-bleed, subject upper-middle). -->
+<div class="page cover3 cv-L3">
+  <img class="cv-art" src="cover.jpg" alt="">
+  <div class="cv-chip"><img class="cv-logo" src="brand/logo.png" alt="KIRA Research"><div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div></div>
+  <div class="cv-band">
+    <div class="cv-left">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}} <span class="accent">{{TITLE_LINE_2_ACCENT}}</span><span class="cv-l3">{{TITLE_LINE_3}}</span></h1>
+    </div>
+    <div class="cv-right">
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+      <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L3 -->
+
+<!-- TEMPLATE_START: cover_L4 -->
+<!-- Framed banner across the top (landscape full-bleed). -->
+<div class="page cover3 cv-L4">
+  <div class="cv-wrap">
+    <div class="cv-top"><img class="cv-logo" src="brand/logo.png" alt="KIRA Research"><div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div></div>
+    <img class="cv-art" src="cover.jpg" alt="">
+    <div class="cv-low">
+      <div class="cv-left">
+        <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+        <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}} <span class="accent">{{TITLE_LINE_2_ACCENT}}</span><span class="cv-l3">{{TITLE_LINE_3}}</span></h1>
+      </div>
+      <div class="cv-right">
+        <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+        <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L4 -->
+
+<!-- TEMPLATE_START: cover_L5 -->
+<!-- Navy split: navy text panel left, illustration right (square, subject centred). -->
+<div class="page cover3 cv-L5">
+  <img class="cv-art" src="cover.jpg" alt="">
+  <div class="cv-wrap">
+    <img class="cv-logo" src="brand/logo-white.png" alt="KIRA Research">
+    <div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    </div>
+    <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L5 -->
+
+<!-- TEMPLATE_START: cover_L6 -->
+<!-- Arch window on the right (portrait, vertical subject centred). -->
+<div class="page cover3 cv-L6">
+  <div class="cv-deco"><div class="cv-ring"></div><img class="cv-art" src="cover.jpg" alt=""></div>
+  <div class="cv-wrap">
+    <img class="cv-logo" src="brand/logo.png" alt="KIRA Research">
+    <div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    </div>
+    <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L6 -->
+
+<!-- TEMPLATE_START: cover_L7 -->
+<!-- Full-bleed illustration with a white text card (square, subject centred). -->
+<div class="page cover3 cv-L7">
+  <img class="cv-art" src="cover.jpg" alt="">
+  <div class="cv-card">
+    <img class="cv-logo" src="brand/logo.png" alt="KIRA Research">
+    <div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div>
+    <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+    <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+    <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L7 -->
+
+<!-- TEMPLATE_START: cover_L8 -->
+<!-- Vertical strip on the left + giant outlined year (portrait, vertical subject centred). -->
+<div class="page cover3 cv-L8">
+  <div class="cv-deco"><div class="cv-ghost">{{YEAR}}</div></div>
+  <img class="cv-art" src="cover.jpg" alt="">
+  <div class="cv-wrap">
+    <div class="cv-top"><img class="cv-logo" src="brand/logo.png" alt="KIRA Research"><div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div></div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    </div>
+    <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L8 -->
+
+<!-- TEMPLATE_START: cover_L9 -->
+<!-- Circle on the right (square, subject centred). -->
+<div class="page cover3 cv-L9">
+  <div class="cv-deco"><div class="cv-ring"></div><img class="cv-art" src="cover.jpg" alt=""><div class="cv-dot"></div></div>
+  <div class="cv-wrap">
+    <img class="cv-logo" src="brand/logo.png" alt="KIRA Research">
+    <div class="cv-meta">Market intelligence &nbsp;|&nbsp; {{REGION_OR_COUNTRY}}</div>
+    <div class="cv-main">
+      <div class="cv-eyebrow">{{REPORT_KIND}}</div>
+      <h1 class="cv-title {{TITLE_SIZE_CLASS}}">{{TITLE_LINE_1}}<span class="accent">{{TITLE_LINE_2_ACCENT}}</span>{{TITLE_LINE_3}}</h1>
+      <p class="cv-sub">{{COVER_SUBTITLE}}</p>
+    </div>
+    <div class="cv-year-row"><div class="cv-year">{{YEAR}}</div><div class="cv-tag">Know first.<br>Move first.</div></div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover_L9 -->
 
 
 <!-- ============================================================

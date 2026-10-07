@@ -1,4 +1,4 @@
--- 033_service_usage_and_prices.sql — metered external-API usage per report, and the prices the owner sets.
+-- 035_service_usage_and_prices.sql — metered external-API usage per report, and the prices the owner sets.
 -- gen-cover.mjs logs one report_queue_events row (stage 'cover', outcome 'usage') with the API's token counts in `usage`.
 -- Dollars are computed when read (tokens x service_prices), so a price change applies to history too.
 alter table public.report_queue_events add column if not exists usage jsonb;
