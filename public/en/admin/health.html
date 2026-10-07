@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Health — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .hl-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+    .hl-head h1 { margin:0; font-size:28px; }
+    .hl-sec { margin:28px 0 12px; font-size:18px; }
+    .hl-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .hl-card { border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; background:var(--bg); display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between; }
+    .hl-card b { font-size:15.5px; }
+    .hl-sub { font-size:13px; color:var(--muted); margin-top:3px; }
+    .hl-pill { font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:var(--surface-2); color:var(--muted); white-space:nowrap; }
+    .hl-pill.ok { background:#E6F4EA; color:#067647; } .hl-pill.bad { background:#FDE8E6; color:#B42318; } .hl-pill.warn { background:#FFF4DB; color:#8A5A00; }
+    .hl-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    table.hl { width:100%; border-collapse:collapse; font-size:14px; }
+    table.hl th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border); }
+    table.hl td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.hl tr:last-child td { border-bottom:0; }
+    .hl-mono { font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+    .hl-note { font-size:13px; color:var(--muted); margin:10px 0 0; }
+    .hl-empty { color:var(--muted); padding:24px 0; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/health" class="active">Health</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="hl-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    async function api(path) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, { headers: { 'Authorization': `Bearer ${session.access_token}` } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+
+    const ago = (h) => h == null ? 'never' : h < 1 ? 'under an hour ago' : h < 48 ? h + ' h ago' : Math.round(h / 24) + ' d ago';
+    const PILL = { ok: ['ok', 'Running'], idle: ['', 'Idle'], late: ['bad', 'Late'], failed: ['bad', 'Failed'], never_run: ['warn', 'Never ran'] };
+
+    function render(d) {
+      const missingCritical = d.env.filter(e => e.level === 'critical' && !e.set);
+      const missingImportant = d.env.filter(e => e.level === 'important' && !e.set);
+      const modeBad = d.env.find(e => e.name === 'PAYPAL_MODE' && e.set && e.value !== 'live');
+      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1);
+
+      root.innerHTML = `
+        <div class="hl-head"><h1>Health</h1>
+          <span class="hl-pill ${problems ? 'bad' : 'ok'}">${problems ? problems + ' problem' + (problems > 1 ? 's' : '') : 'All clear'}</span></div>
+
+        <h2 class="hl-sec">Services</h2>
+        <div class="hl-card"><div><b>Database</b><div class="hl-sub">${d.db.ok ? 'Reachable, answered in ' + d.db.latency_ms + ' ms' : esc(d.db.error)}</div></div>
+          <span class="hl-pill ${d.db.ok ? 'ok' : 'bad'}">${d.db.ok ? 'OK' : 'Down'}</span></div>
+        <div class="hl-card"><div><b>Last completed purchase</b><div class="hl-sub">${d.info.last_purchase_at ? new Date(d.info.last_purchase_at).toLocaleString() : 'No purchase yet'}</div></div></div>
+
+        <h2 class="hl-sec">Scheduled jobs</h2>
+        ${d.jobs.map(j => { const p = PILL[j.status] || ['', j.status]; return `
+          <div class="hl-card"><div><b>${esc(j.label)}</b>
+            <div class="hl-sub">${esc(j.schedule)} · last run ${esc(ago(j.hours_since))}</div>
+            ${j.detail ? `<div class="hl-sub">${esc(j.detail)}</div>` : ''}</div>
+            <span class="hl-pill ${p[0]}">${esc(p[1])}</span></div>`; }).join('')}
+        ${d.failures.length ? `<h2 class="hl-sec">Recent failures<small>last ${d.failures.length}</small></h2>
+          <div class="hl-wrap"><table class="hl"><thead><tr><th>When</th><th>Job</th><th>What happened</th></tr></thead><tbody>
+          ${d.failures.map(f => `<tr><td>${esc(new Date(f.at).toLocaleString())}</td><td class="hl-mono">${esc(f.job)}</td><td>${esc(f.detail || '')}</td></tr>`).join('')}</tbody></table></div>` : ''}
+
+        <h2 class="hl-sec">Site settings<small>names only, values are never shown</small></h2>
+        ${modeBad ? `<div class="hl-card"><div><b>PayPal is in "${esc(modeBad.value)}" mode</b><div class="hl-sub">Real customers cannot pay until PAYPAL_MODE is set to live.</div></div><span class="hl-pill warn">Check</span></div>` : ''}
+        <div class="hl-wrap"><table class="hl"><thead><tr><th>Setting</th><th>Needed for</th><th>Importance</th><th>State</th></tr></thead><tbody>
+          ${d.env.map(e => `<tr><td class="hl-mono">${esc(e.name)}</td><td>${esc(e.needed_for)}</td><td>${esc(e.level)}</td>
+            <td><span class="hl-pill ${e.set ? 'ok' : (e.level === 'optional' ? '' : e.level === 'critical' ? 'bad' : 'warn')}">${e.set ? (e.value ? esc(e.value) : 'Set') : 'Missing'}</span></td></tr>`).join('')}
+        </tbody></table></div>
+        <p class="hl-note">${missingCritical.length ? 'Missing critical settings break the site or payments: add them in Vercel → Project → Settings → Environment Variables, then redeploy. ' : ''}${missingImportant.length ? 'Missing "important" settings do not break anything loudly; the feature just degrades. ' : ''}The report runner has its own settings inside the Routine (including OPENAI_API_KEY for cover art); those cannot be read from here, so the runner is judged by whether stages keep finishing.</p>`;
+    }
+
+    try { render(await api('/api/admin-health')); }
+    catch (e) { root.innerHTML = `<div class="hl-empty">Could not load health (${esc(e.message)}).</div>`; }
+  </script>
+</body>
+</html>
