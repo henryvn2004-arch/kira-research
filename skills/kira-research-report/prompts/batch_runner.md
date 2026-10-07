@@ -529,10 +529,10 @@ Same chunked protocol (one Write for the shell, one Edit per top-level page, `<d
    ```bash
    node -e "const h=require('fs').readFileSync(process.argv[1],'utf8');const k=(h.match(/[぀-ヿ가-힯]/g)||[]).length,t=(h.match(/[們這為國經產業資場發關說戰與來會對學]/g)||[]).length;console.log('kana_hangul='+k+' traditional='+t);process.exit(k>0||t>5?1:0)" skills/kira-research-report/outputs/batch/${id}/zh.html
    ```
-9. Leftover English sentences — strip `<style>`, `<script>`, `.source-key` and `.chart-source` blocks, all tags and all `[…]` tags, then flag runs of 8+ consecutive Latin words:
+9. Leftover English sentences — strip `<style>`, `<script>`, `.source-key` and `.chart-source` blocks, the sources-page citation entries (`<span class="mono" style="…margin-right: 6px">ALIAS</span>` plus the full citation text after it; those stay in English by the translator rule, and this gate wrongly counted them on 2027-vn-modern-retail…, 10 runs), all tags and all `[…]` tags, then flag runs of 8+ consecutive Latin words:
 
    ```bash
-   node -e "const h=require('fs').readFileSync(process.argv[1],'utf8').replace(/<(style|script)[\s\S]*?<\/\1>/gi,' ').replace(/<div class=\"(source-key|chart-source)\"[\s\S]*?<\/div>/g,' ').replace(/<[^>]+>/g,' ').replace(/\[[^\]]*\]/g,' ').replace(/&[a-z#0-9]+;/gi,' ');const m=h.match(/(?:[A-Za-z][A-Za-z'’.-]*[ ,]+){7,}[A-Za-z][A-Za-z'’.-]*/g)||[];console.log('latin_runs='+m.length);m.slice(0,5).forEach(x=>console.log('  '+x.slice(0,120)))" skills/kira-research-report/outputs/batch/${id}/zh.html
+   node -e "const h=require('fs').readFileSync(process.argv[1],'utf8').replace(/<(style|script)[\s\S]*?<\/\1>/gi,' ').replace(/<div class=\"(source-key|chart-source)\"[\s\S]*?<\/div>/g,' ').replace(/<span class=\"mono\"[^>]*margin-right: 6px[^>]*>[^<]*<\/span>[^<]*/g,' ').replace(/<[^>]+>/g,' ').replace(/\[[^\]]*\]/g,' ').replace(/&[a-z#0-9]+;/gi,' ');const m=h.match(/(?:[A-Za-z][A-Za-z'’.-]*[ ,]+){7,}[A-Za-z][A-Za-z'’.-]*/g)||[];console.log('latin_runs='+m.length);m.slice(0,5).forEach(x=>console.log('  '+x.slice(0,120)))" skills/kira-research-report/outputs/batch/${id}/zh.html
    ```
 
    `latin_runs` 0-3 → pass (long English law / company names, contact lines); list them in the commit message. `> 3` → failure path with `error_log: zh untranslated English (${latin_runs} runs)`.
