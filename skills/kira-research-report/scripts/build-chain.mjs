@@ -106,6 +106,10 @@ async function main() {
     const players = read('players.json'), naming = fs.existsSync(path.join(dir, 'naming.json')) ? read('naming.json') : {};
     if (!/^[A-Z]{2}$/.test(players.country_code || '')) { console.error('players.json country_code malformed'); process.exit(2); }
     groups = [{ country_code: players.country_code, industry_code: players.industry_code || naming.industry_code || null, segment: players.segment || naming.segment || null }];
+    const g0 = groups[0];
+    if ((g0.industry_code != null && !/^[A-Za-z0-9_-]{2,16}$/.test(g0.industry_code)) || (g0.segment != null && !/^[\p{L}\p{N} ,&'()/.+-]{1,120}$/u.test(g0.segment))) {
+      console.error('players.json / naming.json industry_code or segment malformed'); process.exit(2);
+    }
   } else if (has('all')) {
     const seen = new Set();
     for (const g of await rest('GET', 'industry_players?select=country_code,industry_code,segment')) {
@@ -129,7 +133,7 @@ async function main() {
       if (!slug) { out.push({ ok: true, built: false, group, reason: 'no segment to name the chain' }); continue; }
       let skipped = null;
       for (let attempt = 0; attempt < 2; attempt++) {
-        const [existing] = await rest('GET', `chains?country_code=eq.${g.country_code}&slug=eq.${encodeURIComponent(slug)}&select=stats`);
+        const [existing] = await rest('GET', `chains?${eq('country_code', g.country_code)}&slug=eq.${encodeURIComponent(slug)}&select=stats`);
         if (!existing) break;
         if (existing.stats?.auto !== true) { skipped = 'a hand-made chain already uses this name'; break; }
         if (existing.stats.group === group) break;
