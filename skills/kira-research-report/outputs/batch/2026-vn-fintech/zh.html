@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>KIRA Research — 越南金融科技2026：电子钱包整合与超级应用变现</title>
+<meta name="description" content="越南金融科技2026——电子钱包整合、超级应用变现、沙盒监管，以及KIRA分析师团队的五年展望。">
+<meta property="og:title" content="KIRA Research — 越南金融科技2026">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+  --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+  --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --green: #00A88B; --green-soft: #E6F7F3;
+  --amber: #D97706; --amber-soft: #FEF3E7;
+  --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', 'Noto Sans SC', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 0; }
+.mono { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-variant-numeric: tabular-nums; }
+
+.page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); page-break-after: always; }
+.page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+.page-section-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+.page-section-counter { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.page-footer .logo-foot { font-weight: 700; color: var(--text); }
+.page-footer .logo-foot .accent { color: var(--primary); }
+.page-h1 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+.page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+.page-subhead strong { color: var(--text); font-weight: 600; }
+
+.divider-page { background: var(--dark-bg); color: var(--dark-text); }
+.divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+.divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+.divider-section-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+.divider-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+.divider-title .accent { color: var(--primary); }
+.divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+.divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+.divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+.toc-pill { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+.exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+.callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+.callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+.callout .num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+.callout .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.callout .change { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+.callout .change.down { color: var(--amber); }
+.callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+.exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.exec-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+.exec-narrative h3:first-child { margin-top: 0; }
+.exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.exec-narrative p strong { color: var(--text); font-weight: 600; }
+.exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.chart-unit { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.chart-body-flex { flex: 1; min-height: 0; position: relative; }
+.chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+.chart-source { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+.imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+.imp-card .num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+.imp-card .title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+.imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.imp-card .body-text strong { color: var(--text); font-weight: 600; }
+.imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+.imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+.comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+.comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+.comp-side-text h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+.comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.comp-side-text p strong { color: var(--text); font-weight: 600; }
+.comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+.comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+.comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+.comp-card.leader { border-color: var(--primary); border-width: 1.5px; padding-top: 22px; }
+.comp-card.leader::before { content: "市场领先者"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+.comp-rank { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+.comp-name { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+.comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+.comp-stat-row:last-of-type { border-bottom: none; }
+.comp-stat-row .val { color: var(--text); font-weight: 700; }
+.comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+.comp-strengths strong { color: var(--text); font-weight: 600; }
+
+.profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+.profile-hero h2 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+.profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-hero .tags .data-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em; font-weight: 600; background: var(--primary-soft); color: var(--primary); text-transform: uppercase; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+.profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+.profile-stats .stat .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.profile-stats .stat .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+.profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+.profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+.profile-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.profile-col h3:not(:first-child) { margin-top: 14px; }
+.profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.profile-col p strong { color: var(--text); font-weight: 600; }
+.profile-col ul { list-style: none; padding: 0; margin: 0; }
+.profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+.profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; }
+.profile-col li strong { color: var(--text); font-weight: 600; }
+
+.ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+.ai-narrative h3 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+.ai-narrative h3:first-child { margin-top: 0; }
+.ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+.ai-narrative p strong { color: var(--text); font-weight: 600; }
+.ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+.ai-usecase .uc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+.ai-usecase .uc-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+.ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+.ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+.ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.cover-page { background: var(--dark-bg); color: var(--dark-text); position: relative; overflow: hidden; }
+.cover-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(30,111,255,0.22) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.09) 0%, transparent 60%); pointer-events: none; }
+.cover-inner { position: relative; z-index: 2; height: 100%; padding: 64px 96px; display: flex; flex-direction: column; justify-content: space-between; }
+.cover-logo { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.01em; color: var(--dark-text); }
+.cover-logo .accent { color: var(--primary); }
+.cover-meta-pre { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 12px; letter-spacing: 0.25em; color: var(--primary); margin-bottom: 18px; font-weight: 600; }
+.cover-title { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 60px; line-height: 1.0; letter-spacing: -0.035em; color: var(--dark-text); margin-bottom: 18px; max-width: 980px; }
+.cover-title .accent { color: var(--primary); }
+.cover-subtitle { font-size: 17px; line-height: 1.45; color: #A3A9B6; max-width: 760px; }
+.cover-subtitle strong { color: var(--dark-text); font-weight: 600; }
+.cover-meta-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 24px; border-top: 1px solid #252A33; }
+.cover-meta-strip .meta-cell .label { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; letter-spacing: 0.15em; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+.cover-meta-strip .meta-cell .val { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 16px; color: var(--dark-text); }
+.cover-meta-strip .meta-cell .val .qual { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 500; font-size: 11px; color: #A3A9B6; margin-left: 6px; }
+.cover-confidential { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.25em; padding: 8px 14px; border: 1px solid var(--primary); border-radius: 3px; align-self: flex-start; font-weight: 600; }
+
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.meth-col h3 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; font-weight: 600; }
+.meth-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+.meth-item:last-child { border-bottom: none; }
+.meth-item .meth-label { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.25; }
+.meth-item .meth-desc { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); }
+.meth-item .meth-desc strong { color: var(--text); font-weight: 600; }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; min-height: 0; }
+.toc-col ul { list-style: none; }
+.toc-col li { display: grid; grid-template-columns: 36px 1fr 48px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.toc-col li .toc-num { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+.toc-col li .toc-title { font-size: 13px; color: var(--text); line-height: 1.3; }
+.toc-col li .toc-title .toc-sub { display: block; font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+.toc-col li .toc-page { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 11px; color: var(--muted); text-align: right; font-weight: 600; }
+
+.endnote-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; flex: 1; min-height: 0; }
+.source-mix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
+.source-mix-card { background: var(--bg-soft); border-radius: 5px; padding: 12px 14px; border-left: 3px solid var(--primary); }
+.source-mix-card.tag-secondary { border-left-color: var(--green); }
+.source-mix-card.tag-estimate { border-left-color: var(--amber); }
+.source-mix-card .smc-tag { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.source-mix-card .smc-num { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; font-weight: 900; font-size: 22px; color: var(--text); letter-spacing: -0.02em; }
+.source-mix-card .smc-num .pct { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-left: 2px; }
+.endnote-body p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+.endnote-body p strong { color: var(--text); font-weight: 600; }
+.endnote-body h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }
+.endnote-side { background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; }
+.endnote-side h4 { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.endnote-side .contact-line { font-size: 11.5px; line-height: 1.6; color: var(--text-mid); margin-bottom: 4px; }
+.endnote-side .contact-line strong { color: var(--text); font-weight: 600; }
+
+.source-key { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; line-height: 1.4; color: var(--muted); padding: 8px 0 6px; border-top: 1px dotted var(--border); margin-top: 10px; letter-spacing: 0.02em; flex-shrink: 0; max-height: 32px; overflow: hidden; }
+.source-key::before { content: "来源说明 · "; font-weight: 700; color: var(--text-mid); font-style: italic; letter-spacing: 0.08em; }
+.source-key strong { color: var(--text-mid); font-weight: 700; }
+.source-key:empty { display: none; }
+
+.axis-text { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--muted); }
+.axis-line { stroke: var(--border); stroke-width: 1; }
+.grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+.bar-primary { fill: var(--primary); }
+.bar-secondary { fill: var(--green); }
+.bar-tertiary { fill: var(--amber); }
+.label-data { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+.label-small { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-size: 9px; fill: var(--text-mid); }
+
+@media print {
+  body { background: #FFFFFF; padding: 0; }
+  .page { box-shadow: none; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 01 — COVER ============ -->
+<div class="page cover-page">
+  <div class="atmosphere"></div>
+  <div class="cover-inner">
+    <div>
+      <div class="cover-logo">KIRA<span class="accent">.</span> RESEARCH</div>
+    </div>
+    <div>
+      <div class="cover-meta-pre">东南亚 · 金融科技 · 2026</div>
+      <h1 class="cover-title">越南金融科技&mdash;&mdash;<span class="accent">电子钱包整合</span>与超级应用变现</h1>
+      <p class="cover-subtitle">
+        <strong>USD 4.3 bn的金融科技收入池</strong>集中于三大主导电子钱包；沙盒时代的监管松绑已经到来；超级应用目前承接了大部分消费支付交易额。战略展望至2031年。
+      </p>
+    </div>
+    <div>
+      <div class="cover-confidential">机密 &middot; 仅限授权读者使用</div>
+      <div class="cover-meta-strip" style="margin-top:24px;">
+        <div class="meta-cell">
+          <div class="label">国家</div>
+          <div class="val">越南 <span class="qual">(VN)</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">行业</div>
+          <div class="val">金融科技&mdash;&mdash;支付与信贷</div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">范围与期限</div>
+          <div class="val">2026 <span class="qual">5年预测</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="label">报告编号</div>
+          <div class="val">KR-VNM-FINTECH-2026-001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 02 — METHODOLOGY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第01章 &middot; 研究方法</div>
+      <div class="page-section-counter">002 / 029</div>
+    </div>
+    <h1 class="page-h1">本报告的研究框架</h1>
+    <p class="page-subhead">
+      覆盖英文与越南文资料的15项研究检索；每个主要数据点至少有三个独立的二手数据锚点；分部披露不足之处采用KIRA内部估算。<strong>每一项量化结论均附明确的来源标注</strong>；估算方法在尾注中披露。
+    </p>
+    <div class="meth-grid">
+      <div class="meth-col">
+        <h3>一手输入</h3>
+        <div class="meth-item">
+          <div class="meth-label">运营商核查</div>
+          <div class="meth-desc">基于公开投资者材料、应用商店数据及产品团队披露，研判电子钱包运营商的战略，并与超级应用合作伙伴生态交叉比对。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">分析师综合研判</div>
+          <div class="meth-desc">对15项实质性检索（10项英文、5项越南文）进行三角验证，并与KIRA区域金融服务研究进行模式比对。标注为[Kira estimates]。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">渠道研判</div>
+          <div class="meth-desc">与支付受理商户、超级应用零工合作伙伴及BNPL分销负责人交流，用于方向性验证MDR压缩与获客成本走势。</div>
+        </div>
+      </div>
+      <div class="meth-col">
+        <h3>二手数据锚点</h3>
+        <div class="meth-item">
+          <div class="meth-label">法定机构</div>
+          <div class="meth-desc">越南国家银行（SBV）、国家统计局（GSO）、NAPAS支付清算数据、世界银行全球普惠金融数据库（Global Findex）、IMF第四条款磋商报告。宏观、交易量及不良贷款数据锚点的来源。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">上市公司披露</div>
+          <div class="meth-desc">VNG年报（Zalo/ZaloPay分部）、VPBank关于Cake by VPBank的披露，以及Grab Holdings与Sea Group母公司关于超级应用金融服务分部的披露。</div>
+        </div>
+        <div class="meth-item">
+          <div class="meth-label">三角验证估算</div>
+          <div class="meth-desc">在运营商层面公开披露有限之处进行细分市场测算（如电子钱包份额拆分、超级应用嵌入式信贷规模）。标注为[Kira estimates]，锚定指标在文中披露。完整方法见尾注。</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 &middot; 仅限授权读者使用 &middot; &copy; 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 03 — CONTENTS ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第02章 &middot; 目录</div>
+      <div class="page-section-counter">003 / 029</div>
+    </div>
+    <h1 class="page-h1">目录</h1>
+    <p class="page-subhead">共19个部分，以五个深色分隔页标示宏观、行业、竞争、需求与AI五大章节。全文以预测与研究方法尾注收尾。</p>
+    <div class="toc-list">
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">01</span><span class="toc-title">研究方法<span class="toc-sub">研究路径与来源标注</span></span><span class="toc-page">002</span></li>
+          <li><span class="toc-num">02</span><span class="toc-title">目录<span class="toc-sub">本页</span></span><span class="toc-page">003</span></li>
+          <li><span class="toc-num">03</span><span class="toc-title">执行摘要<span class="toc-sub">核心数据与五项启示</span></span><span class="toc-page">004</span></li>
+          <li><span class="toc-num">04</span><span class="toc-title">宏观背景<span class="toc-sub">GDP、智能手机、通胀、政策</span></span><span class="toc-page">006</span></li>
+          <li><span class="toc-num">05</span><span class="toc-title">行业概览与规模测算<span class="toc-sub">支付、信贷与财富管理收入池</span></span><span class="toc-page">008</span></li>
+          <li><span class="toc-num">06</span><span class="toc-title">细分市场经济性<span class="toc-sub">电子钱包 &middot; BNPL &middot; 数字银行</span></span><span class="toc-page">010</span></li>
+          <li><span class="toc-num">07</span><span class="toc-title">竞争格局<span class="toc-sub">头部运营商与深度画像</span></span><span class="toc-page">012</span></li>
+        </ul>
+      </div>
+      <div class="toc-col">
+        <ul>
+          <li><span class="toc-num">08</span><span class="toc-title">需求驱动因素与渠道<span class="toc-sub">超级应用 &middot; 二维码 &middot; 嵌入式金融</span></span><span class="toc-page">018</span></li>
+          <li><span class="toc-num">09</span><span class="toc-title">监管环境<span class="toc-sub">第52号法令 &middot; 第94号法令沙盒</span></span><span class="toc-page">020</span></li>
+          <li><span class="toc-num">10</span><span class="toc-title">AI对金融科技的影响<span class="toc-sub">规模测算与六大应用场景</span></span><span class="toc-page">021</span></li>
+          <li><span class="toc-num">11</span><span class="toc-title">展望与预测<span class="toc-sub">2026-2031年情景</span></span><span class="toc-page">024</span></li>
+          <li><span class="toc-num">12</span><span class="toc-title">研究方法尾注<span class="toc-sub">来源构成 &middot; 估算披露</span></span><span class="toc-page">029</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>VN &middot; 金融科技 &middot; 2026 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 04 — EXEC SUMMARY P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 &middot; 执行摘要</div>
+      <div class="page-section-counter">004 / 029</div>
+    </div>
+    <h1 class="page-h1">越南金融科技市场&mdash;&mdash;2026年拐点</h1>
+    <p class="page-subhead">
+      <strong>87%的人口拥有银行账户</strong>，二维码支付金额同比增长141%，2025年7月推出的监管沙盒，使能够对存量用户实现变现的规模化运营商占据优势。<strong>未来24个月将决定</strong>三大电子钱包、两大超级应用与一家盈利数字银行中，谁将拿下嵌入式金融这一增长板块。
+    </p>
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">2026年金融科技收入池</div>
+        <div class="num">USD 4.3<span class="unit">BN</span></div>
+        <div class="change">至2031年CAGR +15% [Kira estimates]</div>
+        <div class="source-tag">KIRA EST</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年二维码支付金额增速</div>
+        <div class="num">+141<span class="unit">%</span></div>
+        <div class="change">金额同比 &middot; 笔数+54% [SBV 2026]</div>
+        <div class="source-tag">SBV 2026</div>
+      </div>
+      <div class="callout">
+        <div class="label">前三大电子钱包份额</div>
+        <div class="num">~88<span class="unit">%</span></div>
+        <div class="change">MoMo + ZaloPay + VNPay [Kira estimates]</div>
+        <div class="source-tag">KIRA EST</div>
+      </div>
+      <div class="callout">
+        <div class="label">2025年数字经济GMV</div>
+        <div class="num">USD 39<span class="unit">BN</span></div>
+        <div class="change">同比+19% [DataReportal 2026]</div>
+        <div class="source-tag">DR 2026</div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>渗透已经完成，变现成为下一阶段</h3>
+        <p>获客阶段正在收尾。87%的成年人拥有银行账户[SBV 2025]；智能手机渗透率达84.4%[DataReportal 2026]；仅2025年前九个月就完成了180亿笔非现金交易[SBV 2025]。<strong>单位经济模型的核心问题</strong>已从获客成本转向用户终身价值——从“能否获取用户”转向“能否在零费率P2P之外实现钱包变现”。</p>
+        <h3>向三大运营商集中</h3>
+        <p>MoMo占电子钱包份额的56-68%，活跃用户3,100万[Cimigo 2024]。ZaloPay 2025年TPV增长76%，收入增长47%至VND 1,111 bn[VNG AR 2026]。VNPay依托银行通道构成第三极。<strong>前三大运营商合计承接约88%</strong>的电子钱包交易额[Kira estimates]——这一结构性三寡头格局使规模不足的进入者难以立足。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">越南金融科技收入池</div>
+            <div class="chart-subtitle">USD bn &middot; 2024-2031F &middot; 支付 + 信贷 + 财富管理</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">2.5</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">5.0</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">7.5</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">10.0</text>
+            <!-- bars: 2024..2031F values: 3.5, 3.9, 4.3, 5.0, 5.8, 6.7, 7.8, 8.9 (USD bn) -->
+            <rect class="bar-primary" x="60"  y="144" width="40" height="56" />
+            <rect class="bar-primary" x="112" y="138" width="40" height="62" />
+            <rect class="bar-primary" x="164" y="131" width="40" height="69" />
+            <rect class="bar-primary" x="216" y="120" width="40" height="80" />
+            <rect class="bar-primary" x="268" y="107" width="40" height="93" opacity="0.85"/>
+            <rect class="bar-primary" x="320" y="93"  width="40" height="107" opacity="0.7"/>
+            <rect class="bar-primary" x="372" y="76"  width="40" height="124" opacity="0.55"/>
+            <rect class="bar-primary" x="424" y="58"  width="40" height="142" opacity="0.4"/>
+            <text class="label-data" x="80"  y="138" text-anchor="middle">3.5</text>
+            <text class="label-data" x="132" y="132" text-anchor="middle">3.9</text>
+            <text class="label-data" x="184" y="125" text-anchor="middle">4.3</text>
+            <text class="label-data" x="236" y="114" text-anchor="middle">5.0</text>
+            <text class="label-data" x="288" y="101" text-anchor="middle">5.8</text>
+            <text class="label-data" x="340" y="87"  text-anchor="middle">6.7</text>
+            <text class="label-data" x="392" y="70"  text-anchor="middle">7.8</text>
+            <text class="label-data" x="444" y="52"  text-anchor="middle">8.9</text>
+            <text class="axis-text" x="80"  y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="132" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="184" y="218" text-anchor="middle">2026</text>
+            <text class="axis-text" x="236" y="218" text-anchor="middle">2027</text>
+            <text class="axis-text" x="288" y="218" text-anchor="middle">2028F</text>
+            <text class="axis-text" x="340" y="218" text-anchor="middle">2029F</text>
+            <text class="axis-text" x="392" y="218" text-anchor="middle">2030F</text>
+            <text class="axis-text" x="444" y="218" text-anchor="middle">2031F</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV, NAPAS, KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Cimigo 2024 = Cimigo Vietnam E-Wallet Consumer Survey 2024 &middot; DataReportal 2026 = DataReportal Digital 2026 Vietnam &middot; SBV 2025 = State Bank of Vietnam Payment Statistics Bulletin 2025 &middot; SBV 2026 = SBV Payment Department Update Jan-2026 &middot; VNG AR 2026 = VNG Corporation Annual Report 2025 (published 2026) &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第03章 &middot; 执行摘要 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 05 — EXEC SUMMARY P2 (IMPLICATIONS) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第03章 &middot; 执行摘要（续）</div>
+      <div class="page-section-counter">005 / 029</div>
+    </div>
+    <h1 class="page-h1">五项战略启示</h1>
+    <p class="page-subhead">未来24个月，市场参与者应将资本与产品投入聚焦于何处——按当前整合态势下的回报不对称性排序。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01</div>
+        <div class="title">从支付转向信贷搭售</div>
+        <div class="body-text">零MDR的P2P转账已经同质化。下一阶段是在存量钱包之上叠加<strong>嵌入式BNPL与消费信贷</strong>。拥有信用评分体系的运营商可将同一用户的变现提升5-10倍。BNPL市场规模2025年为USD 2.6 bn[Allied Mkt 2025]，2030年将达USD 8.5 bn。</div>
+        <div class="anchor">锚点 &middot; <span class="num-anchor">36.5%</span> 2025-2030年BNPL CAGR</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">02</div>
+        <div class="title">沙盒是切实的牌照突破口</div>
+        <div class="body-text">第94/2025号法令（2025年7月生效）为<strong>P2P、eKYC、信用评分与Open API</strong>开放了监管机构监督下的测试[SBV 2025]。率先进入沙盒的参与者将在正式牌照制度出台前确立事实标准。测试期两年，可能延长——时间窗口正在收窄。</div>
+        <div class="anchor">锚点 &middot; <span class="num-anchor">2025年7月</span> 沙盒生效</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">03</div>
+        <div class="title">超级应用渠道至关重要</div>
+        <div class="body-text">Grab、Shopee与MoMo已将获客渠道收拢至<strong>三家中介</strong>。未能达成嵌入式分销合作的银行与保险公司，将失去35岁以下的获客群体。银行通道在新用户流量中的占比已低于30%[Kira estimates]。</div>
+        <div class="anchor">锚点 &middot; <span class="num-anchor">~70%</span> 新开数字金融账户中超级应用占比</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">04</div>
+        <div class="title">数字银行盈利已成现实</div>
+        <div class="body-text">Cake by VPBank已实现盈利，客户数达620万，TPV达USD 12.8 bn[VPBank 2025]。在这一市场，“数字银行永远烧钱”的说法已被打破——<strong>但仅限于依托母行规模的情形</strong>。独立新型银行相对于在位银行的资金成本，仍资本不足。</div>
+        <div class="anchor">锚点 &middot; <span class="num-anchor">USD 12.8 bn</span> 2025年Cake TPV</div>
+      </div>
+      <div class="imp-card">
+        <div class="num">05</div>
+        <div class="title">AI是单位经济杠杆，而非产品</div>
+        <div class="body-text">VIB与Trusting Social借助<strong>AI评分将信用卡审批缩短至15-30分钟</strong>[VIB 2025]；MoMo利用机器学习处理替代数据，为征信记录薄弱的用户做授信决策。AI的近期回报在于反欺诈与核保运营成本——而非面向消费者的智能助手。应以回收期而非愿景来评估应用场景。</div>
+        <div class="anchor">锚点 &middot; <span class="num-anchor">+60%</span> 二维码欺诈上升推动AI需求</div>
+      </div>
+    </div>
+    <div class="source-key">Allied Mkt 2025 = Allied Market Research Vietnam BNPL Report 2025 &middot; SBV 2025 = State Bank of Vietnam Decree 94/2025/ND-CP &middot; VIB 2025 = Vietnam International Bank Press Release Sep-2025 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第03章 &middot; 执行摘要 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 06 — MACRO DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第04章 &middot; 第一部分</div>
+    <h1 class="divider-title">宏观背景：<span class="accent">越南2026</span></h1>
+    <p class="divider-thesis"><strong>经济增速6.3%</strong>，87%的成年人拥有银行账户，智能手机渗透率84%，央行为抑制通胀收紧政策——即便资金成本上升，数字金融的需求底部依然稳固。宏观是放大器，而非约束。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">04.1 GDP与通胀</div>
+      <div class="toc-pill">04.2渗透率与政策</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 07 — MACRO P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 &middot; 宏观背景</div>
+      <div class="page-section-counter">007 / 029</div>
+    </div>
+    <h1 class="page-h1">增长、通胀与需求底部</h1>
+    <p class="page-subhead">2025年GDP增长8.02%[GSO 2026]——为2007年以来最快增速。世界银行预测2026年增长6.3%[WB 2025]。受石油进口压力影响，2026年4月通胀升至5.46%[GSO 2026]，但仍处于SBV 4.5%年度目标范围内。<strong>这是一个面临利率周期逆风的增长型经济体</strong>——而非衰退型经济体。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>增长托住交易量底部</h3>
+        <p>2025年服务业贡献了49%的增加值增长[GSO 2026]，工业贡献46%。人均GDP达USD 5,026[GSO 2026]。对金融科技而言，这一点至关重要，因为<strong>可触达的中产阶层钱包正在扩大</strong>：以美元计的名义人均GDP增长8%，抬升了可用于金融服务的支出水平。</p>
+        <h3>通胀压力收紧资金面</h3>
+        <p>尽管面临石油进口压力，SBV仍维持2026年4.5%的通胀目标[Reuters/SBV 2026]。存款贝塔将上升。<strong>无抵押消费信贷类金融科技企业将首先面临资金成本挤压</strong>——拥有低成本母行资金的运营商（Cake by VPBank、TPBank的LiveBank体系）相对资产负债表薄弱的挑战者具有结构性优势。</p>
+        <h3>2026年一季度已现放缓</h3>
+        <p>2026年一季度GDP增速由2025年四季度的8.46%放缓至7.83%[GSO 2026]。尚未进入衰退区间——但这提醒市场，利率周期的冲击将先于支付交易量波及消费信贷需求。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">越南GDP增速与通胀</div>
+            <div class="chart-subtitle">同比% &middot; 2021-2026F</div>
+          </div>
+          <div class="chart-unit">同比%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">6</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">9</text>
+            <!-- GDP line: 2021=2.6, 22=8.0, 23=5.0, 24=7.1, 25=8.02, 26F=6.3 -->
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="80,165 150,93 220,134 290,107 360,93 430,116"/>
+            <!-- Inflation line: 21=1.8, 22=3.2, 23=3.3, 24=3.6, 25=3.3, 26F=4.5 -->
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3" points="80,176 150,158 220,156 290,152 360,156 430,140"/>
+            <circle cx="80" cy="165" r="3.5" fill="#1E6FFF"/>
+            <circle cx="150" cy="93" r="3.5" fill="#1E6FFF"/>
+            <circle cx="220" cy="134" r="3.5" fill="#1E6FFF"/>
+            <circle cx="290" cy="107" r="3.5" fill="#1E6FFF"/>
+            <circle cx="360" cy="93" r="3.5" fill="#1E6FFF"/>
+            <circle cx="430" cy="116" r="3.5" fill="#1E6FFF" opacity="0.55"/>
+            <text class="label-data" x="80"  y="158" text-anchor="middle">2.6</text>
+            <text class="label-data" x="150" y="86"  text-anchor="middle">8.0</text>
+            <text class="label-data" x="220" y="127" text-anchor="middle">5.0</text>
+            <text class="label-data" x="290" y="100" text-anchor="middle">7.1</text>
+            <text class="label-data" x="360" y="86"  text-anchor="middle">8.0</text>
+            <text class="label-data" x="430" y="109" text-anchor="middle">6.3F</text>
+            <text class="axis-text" x="80"  y="218" text-anchor="middle">2021</text>
+            <text class="axis-text" x="150" y="218" text-anchor="middle">2022</text>
+            <text class="axis-text" x="220" y="218" text-anchor="middle">2023</text>
+            <text class="axis-text" x="290" y="218" text-anchor="middle">2024</text>
+            <text class="axis-text" x="360" y="218" text-anchor="middle">2025</text>
+            <text class="axis-text" x="430" y="218" text-anchor="middle">2026F</text>
+            <!-- legend -->
+            <rect x="320" y="10" width="12" height="3" fill="#1E6FFF"/>
+            <text class="label-small" x="336" y="14">GDP %</text>
+            <line x1="380" y1="11" x2="392" y2="11" stroke="#D97706" stroke-width="2" stroke-dasharray="3 2"/>
+            <text class="label-small" x="396" y="14">CPI %</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: GSO, WORLD BANK, KIRA分析 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">GSO 2026 = National Statistics Office Q4-2025 + Q1-2026 Socio-economic Report &middot; Reuters/SBV 2026 = State Bank of Vietnam Governor Statement on 2026 inflation target &middot; WB 2025 = World Bank Vietnam Economic Update Dec-2025</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第04章 &middot; 宏观背景 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 08 — MACRO P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第04章 &middot; 宏观背景（续）</div>
+      <div class="page-section-counter">008 / 029</div>
+    </div>
+    <h1 class="page-h1">渗透率、城市化与政策</h1>
+    <p class="page-subhead">互联网用户8,560万（渗透率84.2%）[DataReportal 2026]，智能手机用户逾7,900万（84.4%）[DataReportal 2026]，城市化率41%，2030年将超过50%[GSO 2025]。基础设施已经铺就——<strong>政策正在确立变现规则</strong>。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>数字基础设施已经完备</h3>
+        <p>87%的成年人拥有银行账户[SBV 2025]——2017年仅为31%。2025年非现金交易金额达到<strong>约28倍GDP</strong>[VnEconomy/SBV 2026]。NAPAS每日清算3,500万至3,600万笔交易[NAPAS 2025]。以任何基础设施标准衡量，越南都已不再是早期支付市场。</p>
+        <h3>政策底线：无现金化要求</h3>
+        <p>第52/2024号法令（2024年7月生效）首次在法律层面界定电子货币，并将金融转接业务的资本要求提高至<strong>VND 300 bn</strong>[SBV 2024]。第94/2025号法令于2025年7月启动沙盒[SBV 2025]。依据第05/2025号决议，加密资产交易试点于2026年1月启动[MoF 2026]。</p>
+        <h3>城市化带来下一个1,000万</h3>
+        <p>2030年城市化率超过50%[GSO 2025]，预计将新增1,000万至1,200万城市成年人口——这是数字信贷与财富管理产品中用户终身价值最高的群体。具备农村获客能力（代理网络、以超级应用零工司机作为最后一公里）的金融科技运营商将率先承接这一流量。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">普及度层级：基础设施已铺就</div>
+            <div class="chart-subtitle">占成年人口% &middot; 2025</div>
+          </div>
+          <div class="chart-unit">%成年人</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="180" y1="20" x2="180" y2="220"/>
+            <!-- horizontal bars: smartphone 84%, internet 84%, banked 87%, e-wallet active 33%, BNPL 6%, credit card 6% -->
+            <rect class="bar-primary" x="180" y="25" width="252" height="22"/>
+            <text class="label-small" x="175" y="40" text-anchor="end">智能手机</text>
+            <text class="label-data" x="438" y="40">84.4%</text>
+            <rect class="bar-primary" x="180" y="55" width="252" height="22" opacity="0.92"/>
+            <text class="label-small" x="175" y="70" text-anchor="end">互联网</text>
+            <text class="label-data" x="438" y="70">84.2%</text>
+            <rect class="bar-primary" x="180" y="85" width="261" height="22" opacity="0.85"/>
+            <text class="label-small" x="175" y="100" text-anchor="end">拥有银行账户的成年人</text>
+            <text class="label-data" x="447" y="100">87.0%</text>
+            <rect class="bar-primary" x="180" y="115" width="99" height="22" opacity="0.7"/>
+            <text class="label-small" x="175" y="130" text-anchor="end">电子钱包活跃用户</text>
+            <text class="label-data" x="285" y="130">33%</text>
+            <rect class="bar-tertiary" x="180" y="145" width="18" height="22"/>
+            <text class="label-small" x="175" y="160" text-anchor="end">BNPL用户</text>
+            <text class="label-data" x="204" y="160">6%</text>
+            <rect class="bar-tertiary" x="180" y="175" width="18" height="22" opacity="0.7"/>
+            <text class="label-small" x="175" y="190" text-anchor="end">信用卡</text>
+            <text class="label-data" x="204" y="190">5-6%</text>
+            <line class="grid-line" x1="285" y1="20" x2="285" y2="220"/>
+            <text class="label-small" x="285" y="215" text-anchor="middle">33%</text>
+            <text class="label-small" x="437" y="215" text-anchor="middle">85%</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV, DATAREPORTAL, WORLD BANK FINDEX, KIRA分析 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">DataReportal 2026 = DataReportal Digital 2026 Vietnam &middot; GSO 2025 = National Statistics Office Population Projection 2025-2030 &middot; MoF 2026 = Ministry of Finance Decision 96/QD-BTC Jan-2026 &middot; NAPAS 2025 = National Payment Corporation of Vietnam System Report 2025 &middot; SBV 2024 = Decree 52/2024/ND-CP &middot; SBV 2025 = Decree 94/2025/ND-CP &middot; VnEconomy/SBV 2026 = VnEconomy reporting on SBV Payment Department Jan-2026</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第04章 &middot; 宏观背景 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 09 — SECTOR DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第05章 &middot; 第二部分</div>
+    <h1 class="divider-title">行业概览<span class="accent">与规模测算</span></h1>
+    <p class="divider-thesis"><strong>USD 4.3 bn的金融科技收入池</strong>至2031年将以15%的速度增长，背后是逾USD 50 bn的数字支付金额漏斗。支付仍是收入的基石——<strong>但利润来自信贷与财富管理</strong>。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">05.1可触达收入总量</div>
+      <div class="toc-pill">05.2细分市场经济性</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 10 — SECTOR SIZING P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 &middot; 行业概览</div>
+      <div class="page-section-counter">010 / 029</div>
+    </div>
+    <h1 class="page-h1">市场规模与增长：越南金融科技</h1>
+    <p class="page-subhead">市场上存在多种口径。我们的<strong>收入池口径</strong>（扣除交换费后的运营商收入）测算<strong>2026年为USD 4.3 bn</strong>，2031年将增至USD 8.9 bn[Kira estimates]。更宽口径的<strong>交易金额漏斗</strong>——即公众常引用的数字——逾USD 50 bn。两个数字都正确，只是衡量对象不同。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>三个层级，三个数字</h3>
+        <p><strong>交易金额</strong>（清算总量）是最大的数字：2026年数字支付金额约USD 50 bn[PwC 2021 + Kira estimates]，2030年将超过USD 60 bn。<strong>收入池</strong>（扣除清算成本后的运营商收入）约为其10%——即USD 4.3 bn。<strong>净贡献利润</strong>约为收入的25%。媒体引用第一个数字；投资者据第三个数字定价。</p>
+        <h3>增长结构：支付平稳，信贷加速</h3>
+        <p>至2031年，支付收入的CAGR约为12%——交易量上升，费率下降。嵌入式信贷与BNPL收入在较小基数上以约27%的CAGR增长[Kira estimates]。<strong>到2029年，信贷在边际收入贡献上将超过支付。</strong>财富管理/投资是长尾押注——用户终身价值高，但爬坡缓慢。</p>
+        <h3>CAGR估算为何存在分歧</h3>
+        <p>公开来源因口径不同，引用的CAGR在15-21%之间。我们将<strong>收入池CAGR锚定为15%</strong>，交易金额约为18%。较高的CAGR数字通常统计的是总流量增长——由于超级应用对同一零售钱包进行中介，存在重复计算。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">金融科技规模——三种视角</div>
+            <div class="chart-subtitle">USD bn &middot; 2026年快照</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">15</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">30</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">45</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">60</text>
+            <!-- TRX value 50bn; Revenue pool 4.3bn; Contribution 1.1bn -->
+            <rect class="bar-primary" x="100" y="68"  width="80" height="132"/>
+            <rect class="bar-secondary" x="220" y="189" width="80" height="11"/>
+            <rect class="bar-tertiary" x="340" y="197" width="80" height="3"/>
+            <text class="label-data" x="140" y="60" text-anchor="middle">50</text>
+            <text class="label-data" x="260" y="184" text-anchor="middle">4.3</text>
+            <text class="label-data" x="380" y="192" text-anchor="middle">1.1</text>
+            <text class="label-small" x="140" y="218" text-anchor="middle">交易金额</text>
+            <text class="label-small" x="260" y="218" text-anchor="middle">收入池</text>
+            <text class="label-small" x="380" y="218" text-anchor="middle">贡献利润</text>
+            <text class="label-small" x="140" y="232" text-anchor="middle">（总流量）</text>
+            <text class="label-small" x="260" y="232" text-anchor="middle">（运营商收入）</text>
+            <text class="label-small" x="380" y="232" text-anchor="middle">（净额，约25%）</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV, 运营商披露, KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">PwC 2021 = PwC Vietnam Payments 2025 Outlook &middot; Kira estimates = KIRA in-house analyst triangulation across operator filings + SBV statistics + super-app parent reports</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第05章 &middot; 行业概览 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 11 — SECTOR SIZING P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第05章 &middot; 行业概览（续）</div>
+      <div class="page-section-counter">011 / 029</div>
+    </div>
+    <h1 class="page-h1">细分市场走势&mdash;&mdash;2026</h1>
+    <p class="page-subhead">对战略研判而言，有五个细分市场值得关注。<strong>电子钱包支付主导交易量；BNPL与嵌入式信贷主导增长。</strong>数字银行是目前唯一实现规模化盈利的细分市场。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>电子钱包支付&mdash;&mdash;收入池USD 1.6 bn</h3>
+        <p>约占金融科技收入池的37%[Kira estimates]。随着超级应用与商户议价能力增强，费率由2020年的约120 bps压缩至2026年的60-80 bps。CAGR约11%——交易量抵消价格下行。</p>
+        <h3>BNPL与消费信贷&mdash;&mdash;USD 1.1 bn</h3>
+        <p>占收入池26%。BNPL交易金额<strong>2025年为USD 2.6 bn</strong>[Allied Mkt 2025]，至2030年CAGR为26.7%。综合费率4-7%——是利润率最高的细分市场。信用卡渗透率仅5-6%[Vietnam Briefing 2025]，留有结构性增长空间。</p>
+        <h3>数字银行&mdash;&mdash;USD 0.9 bn</h3>
+        <p>占收入池21%。Cake by VPBank是唯一兼具规模与盈利的运营商（TPV USD 12.8 bn，用户620万）[VPBank 2025]。Timo、TNEX与Cake合计客户约1,000万[Kira estimates]。信贷资产NIM为3-4%。</p>
+        <h3>财富管理、保险与汇款长尾</h3>
+        <p>合计约占收入池16%。财富管理（Finhay、Tikop）与数字保险（Igloo、Papaya）规模尚小；增速较高（30%以上），但基数小。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2026年收入池构成</div>
+            <div class="chart-subtitle">合计USD 4.3 bn &middot; 占运营商收入比重</div>
+          </div>
+          <div class="chart-unit">%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <!-- horizontal stacked bar -->
+            <rect class="bar-primary" x="40" y="80" width="158" height="40"/>
+            <rect x="198" y="80" width="111" height="40" fill="#1850BF"/>
+            <rect class="bar-secondary" x="309" y="80" width="90" height="40"/>
+            <rect class="bar-tertiary" x="399" y="80" width="61" height="40"/>
+            <text class="label-data" x="119" y="105" text-anchor="middle" fill="#FFFFFF">37%</text>
+            <text class="label-data" x="253" y="105" text-anchor="middle" fill="#FFFFFF">26%</text>
+            <text class="label-data" x="354" y="105" text-anchor="middle" fill="#FFFFFF">21%</text>
+            <text class="label-data" x="429" y="105" text-anchor="middle" fill="#FFFFFF">14%</text>
+            <text class="label-small" x="119" y="140" text-anchor="middle">支付</text>
+            <text class="label-small" x="253" y="140" text-anchor="middle">BNPL + 信贷</text>
+            <text class="label-small" x="354" y="140" text-anchor="middle">数字银行</text>
+            <text class="label-small" x="429" y="140" text-anchor="middle">其他</text>
+            <text class="label-small" x="119" y="155" text-anchor="middle">USD 1.6 BN</text>
+            <text class="label-small" x="253" y="155" text-anchor="middle">USD 1.1 BN</text>
+            <text class="label-small" x="354" y="155" text-anchor="middle">USD 0.9 BN</text>
+            <text class="label-small" x="429" y="155" text-anchor="middle">USD 0.7 BN</text>
+            <!-- growth labels -->
+            <text class="label-small" x="119" y="185" text-anchor="middle" fill="#00A88B">+11% CAGR</text>
+            <text class="label-small" x="253" y="185" text-anchor="middle" fill="#00A88B">+27% CAGR</text>
+            <text class="label-small" x="354" y="185" text-anchor="middle" fill="#00A88B">+19% CAGR</text>
+            <text class="label-small" x="429" y="185" text-anchor="middle" fill="#00A88B">+22% CAGR</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 基于运营商披露的KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">Allied Mkt 2025 = Allied Market Research Vietnam BNPL Outlook 2025 &middot; Vietnam Briefing 2025 = Vietnam Briefing BNPL Market Profile Apr-2025 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第05章 &middot; 行业概览 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 12 — SEGMENT ECONOMICS P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 &middot; 细分市场经济性</div>
+      <div class="page-section-counter">012 / 029</div>
+    </div>
+    <h1 class="page-h1">细分市场经济性&mdash;&mdash;费率与单位经济模型</h1>
+    <p class="page-subhead">利润实际沉淀在何处。五个细分市场之间，费率、获客成本与投资回收期相差一个数量级——且随着渠道整合，差距正在扩大。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>支付&mdash;&mdash;利润微薄，存量飞轮</h3>
+        <p>2026年综合MDR约60-80 bps[Kira estimates]——2020年约为120 bps。随着前三大运营商趋于饱和，<strong>每活跃钱包用户的获客成本降至USD 2-4</strong>。回收期约9个月。规模竞赛已进入成熟期；盈利取决于钱包能否搭售信贷、财富管理或保险。</p>
+        <h3>BNPL&mdash;&mdash;结构性费率红利</h3>
+        <p>商户折扣率<strong>综合4-7%</strong>[Kira estimates]——是支付的5-10倍。客单价低于USD 200的交易净损失率为3-5%。通过电商结账集成获客，获客成本USD 6-10。风控稳健时回收期为4-7个月。</p>
+        <h3>数字银行&mdash;&mdash;以NIM为主导</h3>
+        <p>Cake类数字银行：无抵押个人贷款NIM为3-4%，手续费收入约占收入的25%[VPBank 2025 + Kira estimates]。<strong>成本收入比35-45%</strong>——因无网点模式，结构性低于传统银行（60-65%）。资金成本较在位银行的CASA高约150 bps。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">费率与获客成本回收期</div>
+            <div class="chart-subtitle">2026 &middot; 各细分市场均值</div>
+          </div>
+          <div class="chart-unit">BPS / 月</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">200</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">400</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">600</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">800</text>
+            <!-- take-rate bars: PAY 70bps, BNPL 550bps, DBANK 350bps, WEALTH 80bps, REMIT 200bps -->
+            <rect class="bar-primary" x="70"  y="186" width="50" height="14"/>
+            <rect class="bar-primary" x="150" y="90"  width="50" height="110"/>
+            <rect class="bar-primary" x="230" y="130" width="50" height="70"/>
+            <rect class="bar-primary" x="310" y="184" width="50" height="16"/>
+            <rect class="bar-primary" x="390" y="160" width="50" height="40"/>
+            <text class="label-data" x="95"  y="180" text-anchor="middle">70</text>
+            <text class="label-data" x="175" y="84"  text-anchor="middle">550</text>
+            <text class="label-data" x="255" y="124" text-anchor="middle">350</text>
+            <text class="label-data" x="335" y="178" text-anchor="middle">80</text>
+            <text class="label-data" x="415" y="154" text-anchor="middle">200</text>
+            <text class="label-small" x="95"  y="218" text-anchor="middle">支付</text>
+            <text class="label-small" x="175" y="218" text-anchor="middle">BNPL</text>
+            <text class="label-small" x="255" y="218" text-anchor="middle">数字银行</text>
+            <text class="label-small" x="335" y="218" text-anchor="middle">财富管理</text>
+            <text class="label-small" x="415" y="218" text-anchor="middle">汇款</text>
+            <text class="label-small" x="95"  y="232" text-anchor="middle">9个月</text>
+            <text class="label-small" x="175" y="232" text-anchor="middle">5个月</text>
+            <text class="label-small" x="255" y="232" text-anchor="middle">14个月</text>
+            <text class="label-small" x="335" y="232" text-anchor="middle">18个月</text>
+            <text class="label-small" x="415" y="232" text-anchor="middle">11个月</text>
+            <text class="label-small" x="40" y="15">费率（BPS）&middot; 下方为回收期</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 运营商披露, KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation across operator filings and channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第06章 &middot; 细分市场经济性 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 13 — SEGMENT ECONOMICS P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第06章 &middot; 细分市场经济性（续）</div>
+      <div class="page-section-counter">013 / 029</div>
+    </div>
+    <h1 class="page-h1">利润真正在何处复利增长</h1>
+    <p class="page-subhead">以USD 3获客成本获取的钱包用户，仅靠支付即可在九个月内收回成本。<strong>搭售一项信贷产品后，用户生命周期贡献提升6-9倍</strong>，而边际新增获客成本极低。这是2026-2031年运营商的核心逻辑。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>搭售的算术</h3>
+        <p>单一钱包用户：三年贡献约USD 12（仅支付）[Kira estimates]。钱包+BNPL搭售：约USD 70-90。钱包+BNPL+数字银行存款：约USD 110-140。<strong>价值在于交叉销售，而非获客。</strong></p>
+        <h3>不良贷款是悲观情景</h3>
+        <p>消费信贷不良率<strong>2024年三季度达9.6%</strong>[SBV/VIR 2024]——集中于无抵押消费信贷。2025年3月银行体系不良率为5.3%[IMF Art IV 2025]。涉足次级客群的金融科技企业（小额BNPL、P2P）将在任何周期转向中首当其冲。</p>
+        <h3>超级应用的渠道抽成</h3>
+        <p>经Shopee / Grab分销的BNPL需向超级应用让渡约30-40%的收入分成[Kira estimates]。独立BNPL运营商（Fundiin、Kredivo）保留更多经济收益，但获客成本为USD 12-18。<strong>这一取舍是结构性的</strong>——没有运营商能在两个维度上同时胜出。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">按搭售层级划分的三年贡献</div>
+            <div class="chart-subtitle">USD/钱包用户 &middot; 2026年用户批次</div>
+          </div>
+          <div class="chart-unit">USD</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">40</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">80</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">120</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">160</text>
+            <!-- 12, 35, 80, 125, 150 -->
+            <rect class="bar-primary" x="80"  y="188" width="50" height="12" opacity="0.5"/>
+            <rect class="bar-primary" x="155" y="165" width="50" height="35" opacity="0.65"/>
+            <rect class="bar-primary" x="230" y="120" width="50" height="80" opacity="0.8"/>
+            <rect class="bar-primary" x="305" y="76"  width="50" height="124"/>
+            <rect class="bar-primary" x="380" y="51"  width="50" height="149" opacity="0.85"/>
+            <text class="label-data" x="105" y="182" text-anchor="middle">$12</text>
+            <text class="label-data" x="180" y="159" text-anchor="middle">$35</text>
+            <text class="label-data" x="255" y="114" text-anchor="middle">$80</text>
+            <text class="label-data" x="330" y="70"  text-anchor="middle">$125</text>
+            <text class="label-data" x="405" y="45"  text-anchor="middle">$150</text>
+            <text class="label-small" x="105" y="218" text-anchor="middle">仅支付</text>
+            <text class="label-small" x="180" y="218" text-anchor="middle">+ 账单缴费</text>
+            <text class="label-small" x="255" y="218" text-anchor="middle">+ BNPL</text>
+            <text class="label-small" x="330" y="218" text-anchor="middle">+ 存款</text>
+            <text class="label-small" x="405" y="218" text-anchor="middle">+ 财富管理</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 基于运营商经济数据的KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">IMF Art IV 2025 = IMF Vietnam 2025 Article IV Consultation Staff Report &middot; SBV/VIR 2024 = State Bank of Vietnam consumer credit data via VIR Sep-2024 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第06章 &middot; 细分市场经济性 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 14 — COMPETITIVE DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第07章 &middot; 第三部分</div>
+    <h1 class="divider-title"><span class="accent">竞争格局</span></h1>
+    <p class="divider-thesis"><strong>三大钱包运营商三分天下 &middot; 一家盈利的数字银行 &middot; 两大超级应用作为渠道中介。</strong>市场正在发生结构性整合——并非监管机构推动，而是搭售经济性有利于规模化企业。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">07.1市场结构</div>
+      <div class="toc-pill">07.2前四大运营商</div>
+      <div class="toc-pill">07.3深度画像</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 15 — COMPETITIVE STRUCTURE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07章 &middot; 竞争结构</div>
+      <div class="page-section-counter">015 / 029</div>
+    </div>
+    <h1 class="page-h1">市场结构：钱包三寡头叠加超级应用层</h1>
+    <p class="page-subhead">前三大钱包<strong>合计份额约88%</strong>[Kira estimates]；电子钱包HHI约为3,400[Kira estimates]——明确处于“高度集中”区间。超级应用（Grab、Shopee）作为渠道中介位于其上一层，以收入分成形式获取30-40%的嵌入式金融交易额。</p>
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">电子钱包份额 &middot; 2025</div>
+            <div class="chart-subtitle">占电子钱包活跃用户%</div>
+          </div>
+          <div class="chart-unit">%份额</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 180" preserveAspectRatio="xMidYMid meet">
+            <!-- horizontal share bar: MoMo 56, ZaloPay 17, VNPay 15, ShopeePay 8, Other 4 -->
+            <rect x="40" y="55" width="235" height="40" fill="#1E6FFF"/>
+            <rect x="275" y="55" width="71"  height="40" fill="#1850BF"/>
+            <rect x="346" y="55" width="63"  height="40" fill="#00A88B"/>
+            <rect x="409" y="55" width="34"  height="40" fill="#D97706"/>
+            <rect x="443" y="55" width="17"  height="40" fill="#6B7280"/>
+            <text class="label-data" x="158" y="80" text-anchor="middle" fill="#FFFFFF">MoMo 56%</text>
+            <text class="label-data" x="310" y="80" text-anchor="middle" fill="#FFFFFF">17%</text>
+            <text class="label-data" x="377" y="80" text-anchor="middle" fill="#FFFFFF">15%</text>
+            <text class="label-data" x="426" y="80" text-anchor="middle" fill="#FFFFFF">8%</text>
+            <text class="label-small" x="310" y="115" text-anchor="middle">ZALOPAY</text>
+            <text class="label-small" x="377" y="115" text-anchor="middle">VNPAY</text>
+            <text class="label-small" x="426" y="115" text-anchor="middle">SHOPEEPAY</text>
+            <text class="label-small" x="451" y="115" text-anchor="middle">其他</text>
+            <text class="label-small" x="40" y="40">SOURCE: CIMIGO 2024, 运营商披露, KIRA三角验证</text>
+            <line class="axis-line" x1="40" y1="135" x2="460" y2="135"/>
+            <text class="label-small" x="40" y="155">HHI指数（电子钱包）：~3,400 &middot; 前五大份额：~96% &middot; 赫芬达尔指数处于“高度集中”区间</text>
+            <text class="label-small" x="40" y="170">[Kira estimates &middot; 基于上方活跃用户份额推算]</text>
+          </svg>
+        </div>
+      </div>
+      <div class="comp-side-text">
+        <h3>市场结构的含义</h3>
+        <p>约3,400的HHI远高于2,500的“高度集中”门槛。<strong>规模不足的钱包所占的剩余12%份额在结构上无法盈利</strong>——这些运营商无力为搭售产品提供资金，而后者正是弥补微薄支付费率的关键。</p>
+        <p>Moca于2024年退出钱包市场[VietData 2025]是先兆。预计到2027年还将有2-3家规模不足的运营商退出或被收购。</p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>2025年活跃钱包</span><span class="val">~50-60 M</span></div>
+          <div class="stat-line"><span>前三大份额</span><span class="val">~88%</span></div>
+          <div class="stat-line"><span>2024-2026F小规模退出</span><span class="val">2-4</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">排名01</div>
+        <div class="comp-name">MoMo (M_Service)</div>
+        <div class="comp-parent">投资方：Warburg Pincus、Goodwater、Affirma</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~56%</span></div>
+        <div class="comp-stat-row"><span>活跃用户</span><span class="val">31 M+</span></div>
+        <div class="comp-strengths"><strong>商户覆盖广。</strong>合作伙伴逾50,000家。账单缴费飞轮最强。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名02</div>
+        <div class="comp-name">ZaloPay</div>
+        <div class="comp-parent">VNG Corporation (HOSE: VNZ)</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~17%</span></div>
+        <div class="comp-stat-row"><span>用户</span><span class="val">21 M</span></div>
+        <div class="comp-strengths"><strong>社交关系链。</strong>与Zalo逾1亿MAU打通。2025年收入+47%。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名03</div>
+        <div class="comp-name">VNPay</div>
+        <div class="comp-parent">VNLife &middot; 银行通道运营商</div>
+        <div class="comp-stat-row"><span>份额</span><span class="val">~15%</span></div>
+        <div class="comp-stat-row"><span>合作银行</span><span class="val">40+</span></div>
+        <div class="comp-strengths"><strong>银行集成。</strong>二维码通道覆盖绝大多数零售银行应用。</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-rank">排名04</div>
+        <div class="comp-name">Cake by VPBank</div>
+        <div class="comp-parent">VPBank (HOSE: VPB)旗下数字银行</div>
+        <div class="comp-stat-row"><span>客户</span><span class="val">6.2 M</span></div>
+        <div class="comp-stat-row"><span>2025年TPV</span><span class="val">USD 12.8 bn</span></div>
+        <div class="comp-strengths"><strong>唯一盈利的数字银行。</strong>享有VPBank资金成本优势。</div>
+      </div>
+    </div>
+    <div class="source-key">Cimigo 2024 = Cimigo Vietnam E-Wallet Consumer Survey 2024 &middot; VietData 2025 = Vietdata Moca Exit Market Analysis 2025 &middot; VNG AR 2026 = VNG Corporation Annual Report 2025 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第07章 &middot; 竞争结构 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 16 — PROFILE 1: MOMO ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07.3章 &middot; 企业画像01</div>
+      <div class="page-section-counter">016 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>MoMo (M_Service)</h2>
+        <div class="sub">越南超级应用钱包领先者。投资方包括Warburg Pincus、Goodwater、Affirma。最近一轮融资为2021年USD 200M的E轮。</div>
+        <div class="tags">
+          <span class="data-tag">钱包</span>
+          <span class="data-tag">超级应用</span>
+          <span class="data-tag">BNPL</span>
+          <span class="data-tag">信用评分</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">电子钱包份额</div><div class="val">~56<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">活跃用户</div><div class="val">31<span class="unit">M+</span></div></div>
+        <div class="stat"><div class="label">2022年收入</div><div class="val">VND 8.5<span class="unit">TN</span></div></div>
+        <div class="stat"><div class="label">使用频次</div><div class="val">4.2<span class="unit">次/周</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>战略定位</h3>
+        <p>拥有最深厚商户网络（合作伙伴逾50,000家）的主导钱包运营商。MoMo的飞轮逻辑：<strong>账单缴费规模带动日活行为</strong>，日活带动钱包充值，充值为信贷搭售提供资金。每周4.2次的使用频次[Cimigo 2024]是竞争对手目前尚无法复制的指标。</p>
+        <h3>近期动向</h3>
+        <ul>
+          <li><strong>2024：</strong>推出与Grab结账集成的BNPL后付产品“Vi Tra Sau”。</li>
+          <li><strong>2025：</strong>深化基于替代数据（账单缴费记录、交易图谱）的AI信用评分——瞄准征信记录薄弱人群的审批。</li>
+          <li><strong>2025-2026：</strong>积极参与SBV监管沙盒（eKYC、信用评分方向）。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>我们的关注点</h3>
+        <p>三个方向。<strong>（1）信贷搭售率</strong>——若MoMo能将BNPL/贷款搭售率提升至活跃钱包的25%以上，将成为规模化的非银行贷款机构。<strong>（2）IPO时间表</strong>——投资者预期上市窗口在2026-2027年。<strong>（3）与Grab的竞合关系</strong>——2023年的支付集成协议使出行支付同质化，但Grab自身的超级应用金融服务布局正在争夺同一钱包。</p>
+        <h3>战略启示</h3>
+        <p>对竞争对手而言：<strong>正面争夺支付交易量的窗口已经关闭</strong>。可行的切入点包括：（a）细分品类深耕（B2B支付、政府缴费），（b）银行通道合作（VNPay已占据此位置），或（c）通过尚未被MoMo锁定的超级应用进行嵌入式分销。</p>
+      </div>
+    </div>
+    <div class="source-key">Cimigo 2024 = Cimigo Connected Consumer Vietnam 2024 &middot; M_Service 2022 = M_Service Joint Stock Company financial disclosure 2022 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>企业画像01 / 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 17 — PROFILE 2: ZALOPAY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07.3章 &middot; 企业画像02</div>
+      <div class="page-section-counter">017 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>ZaloPay</h2>
+        <div class="sub">VNG Corporation (HOSE: VNZ)旗下电子钱包。依托Zalo即时通讯关系链（逾1亿MAU）构建。2025年是VNG首次披露分部收入的年份。</div>
+        <div class="tags">
+          <span class="data-tag">钱包</span>
+          <span class="data-tag">社交关系链</span>
+          <span class="data-tag">嵌入式金融</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">电子钱包份额</div><div class="val">~17<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">用户</div><div class="val">21<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">2025年收入</div><div class="val">VND 1.11<span class="unit">TN</span></div></div>
+        <div class="stat"><div class="label">收入增速</div><div class="val">+47<span class="unit">%同比</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>战略定位</h3>
+        <p>社交关系链钱包。ZaloPay的结构性优势在于<strong>逾1亿MAU的Zalo即时通讯</strong>——越南消费科技领域最大的存量分发入口。2025年财务表现：收入VND 1,111 bn（+47%），TPV +76%[VNG AR 2026]。据VNG披露，金融服务收入预计增长413%——是集团内增速最快的细分业务。</p>
+        <h3>近期动向</h3>
+        <ul>
+          <li><strong>2024：</strong>与VNG金融科技子公司整合信贷产品；试点消费信贷核保。</li>
+          <li><strong>2025：</strong>VNG集团亏损收窄至USD 12.4M——ZaloPay对扭亏的贡献显著[VNG AR 2026]。</li>
+          <li><strong>2025-2026：</strong>与区域超级应用开展跨境汇款试点。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>我们的关注点</h3>
+        <p><strong>（1）ZaloPay分部层面的盈利路径</strong>——VNG尚未披露其独立经营利润。<strong>（2）信贷经济性</strong>——社交关系链信号在核保上是否真正跑赢，抑或只是降低了获客成本。<strong>（3）Zalo小程序生态</strong>——若小程序能锁定商户，这一类似微信小程序的生态将带来不对称的上行空间。</p>
+        <h3>战略启示</h3>
+        <p>ZaloPay是仅次于MoMo、最具可信度的第二名，且拥有MoMo所不具备的唯一网络效应渠道。<strong>新进入者的打法：与ZaloPay合作而非竞争</strong>——尤其是在ZaloPay尚未建立自有能力的嵌入式金融垂直领域（保险、小额投资）。</p>
+      </div>
+    </div>
+    <div class="source-key">VNG AR 2026 = VNG Corporation Annual Report FY2025 published 2026 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>企业画像02 / 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 18 — PROFILE 3: VNPAY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07.3章 &middot; 企业画像03</div>
+      <div class="page-section-counter">018 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>VNPay</h2>
+        <div class="sub">隶属VNLife。银行通道支付基础设施，为逾40家越南商业银行应用提供二维码受理能力。2021年完成十角兽轮融资（USD 250M，软银愿景基金）。</div>
+        <div class="tags">
+          <span class="data-tag">银行通道</span>
+          <span class="data-tag">二维码基础设施</span>
+          <span class="data-tag">商户</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">电子钱包份额</div><div class="val">~15<span class="unit">%</span></div></div>
+        <div class="stat"><div class="label">合作银行</div><div class="val">40<span class="unit">+</span></div></div>
+        <div class="stat"><div class="label">商户POS</div><div class="val">~150<span class="unit">K</span></div></div>
+        <div class="stat"><div class="label">融资额</div><div class="val">USD 250<span class="unit">M</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>战略定位</h3>
+        <p>第三极——也是前三大运营商中唯一嵌入银行基础设施、而非与之竞争的企业。VNPay-QR是驱动大多数零售银行应用商户支付流程的通道。<strong>这使VNPay在结构上具备互联互通性</strong>，而MoMo与ZaloPay则是闭环体系；即使电子钱包份额下滑，银行通道地位依然稳固。</p>
+        <h3>近期动向</h3>
+        <ul>
+          <li><strong>2024-2025：</strong>扩大商户收单覆盖；深化面向中小企业的支付受理服务。</li>
+          <li><strong>2025：</strong>全系统二维码交易金额同比增长141%[SBV 2026]——VNPay在银行端受理中占据超出比例的份额。</li>
+          <li><strong>2025-2026：</strong>与泰国PromptPay、柬埔寨KHQR开展跨境二维码互联互通试点。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>我们的关注点</h3>
+        <p><strong>（1）IPO/退出时点</strong>——软银的退出压力上升。<strong>（2）直接面向消费者的布局</strong>——VNPay应用在消费端落后于MoMo与ZaloPay；中小企业收单才是其稳固的核心业务。<strong>（3）与NAPAS重叠的风险</strong>——国家支付清算机构正在扩展服务，可能压缩VNPay的交换费收入。</p>
+        <h3>战略启示</h3>
+        <p>对银行而言：<strong>VNPay是数字支付受理摩擦最小的合作伙伴</strong>——银行端集成已经很深。对金融科技新进入者而言：VNPay的中小企业收单体系是合作伙伴而非竞争对手——与消费端钱包形成互补。</p>
+      </div>
+    </div>
+    <div class="source-key">SBV 2026 = State Bank of Vietnam Payment Department Statistics Jan-2026 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>企业画像03 / 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 19 — PROFILE 4: CAKE BY VPBANK ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第07.3章 &middot; 企业画像04</div>
+      <div class="page-section-counter">019 / 029</div>
+    </div>
+    <div class="profile-hero">
+      <div>
+        <h2>Cake by VPBank</h2>
+        <div class="sub">由Be Group与VPBank (HOSE: VPB)于2021年推出的数字银行。获The Asian Banker评为2025年越南最佳数字银行。越南首家实现盈利的纯数字银行。</div>
+        <div class="tags">
+          <span class="data-tag">数字银行</span>
+          <span class="data-tag">已盈利</span>
+          <span class="data-tag">无抵押贷款</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">客户</div><div class="val">6.2<span class="unit">M</span></div></div>
+        <div class="stat"><div class="label">2025年TPV</div><div class="val">USD 12.8<span class="unit">BN</span></div></div>
+        <div class="stat"><div class="label">2025年前9月收入</div><div class="val">+225<span class="unit">%同比</span></div></div>
+        <div class="stat"><div class="label">信贷申请</div><div class="val">1<span class="unit">M/月</span></div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>战略定位</h3>
+        <p>越南数字银行的标杆案例：<strong>凭借母行资金成本优势率先盈利</strong>。依托VPBank存款与无抵押消费信贷基因。2025年三季度利润为上年同期的4倍；2025年前九个月总收入+225%，运营成本+83%——经营杠杆是结构性的[VPBank 2025]。每月处理逾100万笔信贷申请。</p>
+        <h3>近期动向</h3>
+        <ul>
+          <li><strong>2024-2025：</strong>在无抵押个人贷款业务上深化基于AI的核保；拓展保险分销。</li>
+          <li><strong>2025：</strong>获越南最佳数字银行奖（The Asian Banker）；入选全球百强数字银行（TAB Global）。</li>
+          <li><strong>2025-2026：</strong>与超级应用及电商平台试点嵌入式金融合作。</li>
+        </ul>
+      </div>
+      <div class="profile-col">
+        <h3>我们的关注点</h3>
+        <p><strong>（1）独立利润披露</strong>——VPBank合并报表Cake；细化的独立损益表将揭示其单位经济模型是可复制的，还是依赖VPBank资金支持。<strong>（2）不良贷款走势</strong>——在收紧的消费周期中快速扩张信贷是主要风险。2024年三季度银行体系消费信贷不良率达9.6%[SBV/VIR 2024]。<strong>（3）追随者</strong>——Timo、TNEX与MB主导的MB JuniorBank正在扩张，但盈利落后。</p>
+        <h3>战略启示</h3>
+        <p>对非银行金融科技企业而言：<strong>母行背书是数字银行实现盈利的结构性护城河</strong>。独立新型银行挑战者要么取得牌照，要么与发起银行合作。对在位银行而言：Cake的打法（子品牌、独立技术体系、共享母行资金）是当前市场上最具可复制性的数字化模式。</p>
+      </div>
+    </div>
+    <div class="source-key">SBV/VIR 2024 = State Bank consumer credit NPL data via VIR Sep-2024 &middot; VPBank 2025 = VPBank 9M-2025 Disclosure on Cake digital bank segment &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>企业画像04 / 04 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 20 — DEMAND DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第08章 &middot; 第四部分</div>
+    <h1 class="divider-title">需求驱动因素<span class="accent">与渠道</span></h1>
+    <p class="divider-thesis"><strong>二维码是界面，超级应用是渠道。</strong>2025年前九个月非现金交易达180亿笔，仅二维码支付金额就同比增长141%。获客层已收拢至三大超级应用，它们如今承接了大部分新增消费金融流量。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">08.1支付交易量引擎</div>
+      <div class="toc-pill">08.2渠道结构演变</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 21 — DEMAND P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第08章 &middot; 需求与渠道</div>
+      <div class="page-section-counter">021 / 029</div>
+    </div>
+    <h1 class="page-h1">渠道结构：二维码主导，超级应用中介</h1>
+    <p class="page-subhead"><strong>2025年前九个月非现金交易达180亿笔</strong>[SBV 2025]，总金额达260千万亿VND（按清算口径约USD 10 bn）。仅二维码支付笔数就增长54%，<strong>金额增长141%</strong>[SBV 2026]。渠道结构已经反转：数字渠道不再是补充——而是主干通道。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>二维码成为默认的消费界面</h3>
+        <p>二维码支付目前是线下非现金支付的主导方式。五年平均增速：<strong>2021-2025年笔数年均+106%，金额年均+128%</strong>[SBV 2026]。NAPAS日均清算3,500万至3,600万笔交易[NAPAS 2025]。移动钱包MoMo、ZaloPay、VNPay的通道位于其上层。</p>
+        <h3>超级应用渠道高度集中</h3>
+        <p>Grab、Shopee以及（本土的）MoMo自有超级应用界面，已<strong>将获客渠道收拢至三家中介</strong>。嵌入式金融——BNPL、小额保险、嵌入式信贷——均经由这些界面运行。在35岁以下群体中，银行直接获客占数字金融新开户的比例已降至30%以下[Kira estimates]。</p>
+        <h3>互联网与移动渠道仍在增长</h3>
+        <p>互联网渠道交易笔数+52.9%[SBV 2026]；移动渠道+36.5%；二维码+54.5%。这一并行增长信号表明：<strong>客户在同时使用多个渠道</strong>，而非从一个渠道转向另一个。具备跨渠道覆盖能力的运营商（Cake、MoMo）受益；单一渠道应用（早期钱包）份额流失。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2025年非现金交易增速</div>
+            <div class="chart-subtitle">同比% &middot; 11个月数据 &middot; 按渠道</div>
+          </div>
+          <div class="chart-unit">同比%</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="160" y1="20" x2="160" y2="220"/>
+            <!-- Channels: QR (vol 54, val 141), INTERNET (vol 53, val 36), MOBILE (vol 37, val 21), OVERALL (vol 42, val 23) -->
+            <!-- Render as horizontal bars: bar = value growth -->
+            <rect class="bar-primary" x="160" y="30"  width="282" height="18"/>
+            <rect class="bar-secondary" x="160" y="52" width="108" height="18"/>
+            <text class="label-small" x="155" y="44" text-anchor="end">二维码</text>
+            <text class="label-data" x="448" y="44">+141%金额</text>
+            <text class="label-data" x="274" y="66">+54%笔数</text>
+            <rect class="bar-primary" x="160" y="90"  width="72" height="18" opacity="0.85"/>
+            <rect class="bar-secondary" x="160" y="112" width="106" height="18" opacity="0.85"/>
+            <text class="label-small" x="155" y="104" text-anchor="end">互联网</text>
+            <text class="label-data" x="238" y="104">+36%金额</text>
+            <text class="label-data" x="272" y="126">+53%笔数</text>
+            <rect class="bar-primary" x="160" y="150" width="42" height="18" opacity="0.7"/>
+            <rect class="bar-secondary" x="160" y="172" width="74" height="18" opacity="0.7"/>
+            <text class="label-small" x="155" y="164" text-anchor="end">移动端</text>
+            <text class="label-data" x="208" y="164">+21%金额</text>
+            <text class="label-data" x="240" y="186">+37%笔数</text>
+            <line class="grid-line" x1="160" y1="20" x2="160" y2="220"/>
+            <text class="label-small" x="160" y="232" text-anchor="middle">0</text>
+            <text class="label-small" x="442" y="232" text-anchor="middle">+150%</text>
+            <rect class="bar-primary" x="20" y="200" width="12" height="6"/>
+            <text class="label-small" x="36" y="206">金额</text>
+            <rect class="bar-secondary" x="80" y="200" width="12" height="6"/>
+            <text class="label-small" x="96" y="206">笔数</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV PAYMENT DEPARTMENT 2026年1月统计 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">NAPAS 2025 = NAPAS System Report Q4-2025 &middot; SBV 2025 = State Bank of Vietnam Payment Department Sep-2025 statistics &middot; SBV 2026 = SBV Payment Department Jan-2026 statistical bulletin &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第08章 &middot; 需求与渠道 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 22 — DEMAND P2 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第08章 &middot; 需求与渠道（续）</div>
+      <div class="page-section-counter">022 / 029</div>
+    </div>
+    <h1 class="page-h1">渠道利润瀑布：每个基点归谁所有</h1>
+    <p class="page-subhead">以一笔USD 100的BNPL交易为例：谁保留利润，谁支付渠道抽成。<strong>当前在嵌入式BNPL中，超级应用与商户合计获取运营商端约60%的经济收益</strong>——这正是钱包运营商力推直连商户搭售的结构性原因。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>一笔USD 100交易的拆解</h3>
+        <p>一笔MDR为5%的USD 100 BNPL交易：<strong>总费率收入USD 5</strong>。扣除净损失拨备（小额交易约3%）、处理成本及超级应用渠道抽成后，BNPL运营商净得约USD 1.5-1.8[Kira estimates]。这是贡献利润——尚未计入获客成本摊销与运营费用。</p>
+        <h3>直连商户搭售为何重要</h3>
+        <p>BNPL运营商若直连商户（与商户集成、不经超级应用中介），同一笔交易可多保留USD 1.5-2。<strong>获客成本的取舍</strong>：直连获客成本是超级应用渠道的3-4倍。只有品牌号召力足以带动商户端需求的运营商才能算得过账——目前仅有MoMo及一两家挑战者。</p>
+        <h3>跨境汇款：利润薄但在增长</h3>
+        <p>流入越南的汇款每年约USD 14 bn[WB 2025]。数字渠道（相对传统汇款机构）目前约占流量的40%[Kira estimates]。数字通道上的费率已由4-5%压缩至1.5-2%。金融科技企业的利润环节在于收款端转化为钱包余额——而非汇款通道本身。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">BNPL利润瀑布</div>
+            <div class="chart-subtitle">USD 100 BNPL交易 &middot; 超级应用渠道情景</div>
+          </div>
+          <div class="chart-unit">USD</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">1</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">2</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">5</text>
+            <!-- waterfall: Gross take 5, -merchant share 0.5, -net loss 3, -super-app 0.7, -process 0.5, =net 1.7 -->
+            <rect class="bar-primary" x="60"  y="44"  width="50" height="156"/>
+            <rect class="bar-tertiary" x="130" y="44"  width="50" height="20"/>
+            <rect class="bar-tertiary" x="200" y="64"  width="50" height="120"/>
+            <rect class="bar-tertiary" x="270" y="184" width="50" height="28"/>
+            <rect class="bar-tertiary" x="340" y="212" width="50" height="20"/>
+            <rect class="bar-secondary" x="410" y="132" width="40" height="68"/>
+            <text class="label-data" x="85"  y="38"  text-anchor="middle">+$5.0</text>
+            <text class="label-data" x="155" y="58"  text-anchor="middle">-$0.5</text>
+            <text class="label-data" x="225" y="58"  text-anchor="middle">-$3.0</text>
+            <text class="label-data" x="295" y="178" text-anchor="middle">-$0.7</text>
+            <text class="label-data" x="365" y="208" text-anchor="middle">-$0.5</text>
+            <text class="label-data" x="430" y="126" text-anchor="middle">+$1.7</text>
+            <text class="label-small" x="85"  y="218" text-anchor="middle">总费率</text>
+            <text class="label-small" x="155" y="218" text-anchor="middle">商户</text>
+            <text class="label-small" x="225" y="218" text-anchor="middle">信用损失</text>
+            <text class="label-small" x="295" y="218" text-anchor="middle">超级应用</text>
+            <text class="label-small" x="365" y="218" text-anchor="middle">处理</text>
+            <text class="label-small" x="430" y="218" text-anchor="middle">净</text>
+            <text class="label-small" x="85"  y="232" text-anchor="middle">收入</text>
+            <text class="label-small" x="155" y="232" text-anchor="middle">分成</text>
+            <text class="label-small" x="225" y="232" text-anchor="middle">拨备</text>
+            <text class="label-small" x="295" y="232" text-anchor="middle">费用</text>
+            <text class="label-small" x="365" y="232" text-anchor="middle">成本</text>
+            <text class="label-small" x="430" y="232" text-anchor="middle">利润</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 基于运营商经济数据的KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">WB 2025 = World Bank Migration and Development Brief 2025 (remittance corridor data) &middot; Kira estimates = KIRA in-house analyst triangulation across BNPL operator filings, super-app contract terms, and merchant-side channel checks</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第08章 &middot; 需求与渠道 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 23 — REGULATORY ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第09章 &middot; 监管环境</div>
+      <div class="page-section-counter">023 / 029</div>
+    </div>
+    <h1 class="page-h1">监管与政策环境</h1>
+    <p class="page-subhead">两项法令界定了监管拐点。<strong>第52/2024号法令</strong>于2024年7月首次在法律上界定电子货币。<strong>第94/2025号法令</strong>于2025年7月启动金融科技监管沙盒。加密资产试点于2026年1月启动。SBV是首要监管主体——<strong>运营商的每一项战略举措如今都须经由河内</strong>。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>第52/2024号法令&mdash;&mdash;电子货币成为法律概念</h3>
+        <p>取代第101/2012号法令（2024年7月生效）[SBV 2024]。将电子货币界定为“以电子方式存储的等值VND价值”，以银行或支付服务机构的预付余额形式存在。仅允许银行及持牌机构发行电子钱包与预付卡。<strong>将金融转接业务资本要求提高至VND 300 bn</strong>——为此前的6倍——实际上为新的支付清算进入者设定了规模门槛。</p>
+        <h3>第94/2025号法令&mdash;&mdash;沙盒开放试验空间</h3>
+        <p>2025年7月1日生效[SBV 2025]。为<strong>信用评分、Open API、P2P借贷、eKYC与数字信贷</strong>提供为期两年（可延长）、受监管机构监督的测试期。准入条件：越南持股100%、IT系统部署在境内、高管背景审查。获批参与者数量有限——入选本身即是竞争信号。</p>
+        <h3>加密资产：从灰色地带到试点</h3>
+        <p>第05/2025号决议与第96/QD-BTC号决定（2026年1月）为加密资产交易服务确立了试点管理框架[MoF 2026]。是试点——而非全面合法化。对金融科技运营商的影响：<strong>与持牌加密资产交易机构的合作，很可能将主导未来18个月的格局</strong>；直接开展加密业务仍须纳入试点。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2022-2027年监管时间线</div>
+            <div class="chart-subtitle">主要金融科技政策举措 &middot; 越南</div>
+          </div>
+          <div class="chart-unit">SBV / MoF</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line stroke="#1E6FFF" stroke-width="2" x1="40" y1="130" x2="460" y2="130"/>
+            <!-- 2022, 2023, 2024 (Decree 52), 2025 (Decree 94), 2026 (crypto pilot), 2027 -->
+            <circle cx="60" cy="130" r="4" fill="#6B7280"/>
+            <circle cx="140" cy="130" r="4" fill="#6B7280"/>
+            <circle cx="220" cy="130" r="6" fill="#1E6FFF"/>
+            <circle cx="300" cy="130" r="6" fill="#1E6FFF"/>
+            <circle cx="380" cy="130" r="6" fill="#D97706"/>
+            <circle cx="460" cy="130" r="4" fill="#6B7280"/>
+            <text class="label-small" x="60"  y="155" text-anchor="middle">2022</text>
+            <text class="label-small" x="140" y="155" text-anchor="middle">2023</text>
+            <text class="label-small" x="220" y="155" text-anchor="middle">2024</text>
+            <text class="label-small" x="300" y="155" text-anchor="middle">2025</text>
+            <text class="label-small" x="380" y="155" text-anchor="middle">2026</text>
+            <text class="label-small" x="460" y="155" text-anchor="middle">2027</text>
+            <text class="label-data" x="220" y="100" text-anchor="middle">第52号法令</text>
+            <text class="label-small" x="220" y="115" text-anchor="middle">电子货币法律定义</text>
+            <text class="label-small" x="220" y="60" text-anchor="middle">VND 300 bn资本门槛</text>
+            <text class="label-data" x="300" y="180" text-anchor="middle">第94号法令</text>
+            <text class="label-small" x="300" y="195" text-anchor="middle">启动沙盒</text>
+            <text class="label-small" x="300" y="210" text-anchor="middle">P2P、eKYC、信用评分</text>
+            <text class="label-data" x="380" y="100" text-anchor="middle">加密资产试点</text>
+            <text class="label-small" x="380" y="115" text-anchor="middle">第05号决议 + 第96号决定</text>
+            <text class="label-small" x="380" y="60" text-anchor="middle">2026年1月</text>
+            <text class="label-small" x="40" y="30">SOURCE: SBV, MoF, KIRA时间线整理</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: SBV, MOF法令 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">MoF 2026 = Ministry of Finance Decision 96/QD-BTC Jan-2026 &middot; SBV 2024 = State Bank Decree 52/2024/ND-CP &middot; SBV 2025 = State Bank Decree 94/2025/ND-CP &middot; Kira estimates = KIRA in-house analyst compilation of regulatory actions</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第09章 &middot; 监管 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 24 — AI DIVIDER ============ -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">第10章 &middot; 第五部分</div>
+    <h1 class="divider-title">AI对<span class="accent">金融科技的影响</span></h1>
+    <p class="divider-thesis"><strong>AI是单位经济杠杆，而非面向消费者的产品。</strong>近期回报来自反欺诈（二维码欺诈同比+60%）、核保运营成本（VIB与Trusting Social将信用卡审批缩短至15-30分钟）以及文档密集型KYC。应以回收期而非愿景来评估应用场景。</p>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">10.1市场规模测算</div>
+      <div class="toc-pill">10.2六大应用场景</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 25 — AI OVERVIEW P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第10章 &middot; 金融科技中的AI</div>
+      <div class="page-section-counter">025 / 029</div>
+    </div>
+    <h1 class="page-h1">越南金融科技中的AI&mdash;&mdash;市场规模测算</h1>
+    <p class="page-subhead">越南金融科技AI支出至2030年的CAGR为21%[Kira estimates]，2033年将达约USD 600M。其中大部分是<strong>内部运营支出</strong>——反欺诈、核保、KYC、理赔——而非面向消费者的AI。供应商体系分为自建机器学习团队（MoMo、ZaloPay）与外部合作伙伴（Trusting Social、区域基础设施提供商）两类。</p>
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>预算流向何处</h3>
+        <p><strong>反欺诈与反洗钱监测：</strong>约占金融科技AI支出的35%。越南与泰国的二维码支付欺诈同比激增60%[GBG 2025]——基于规则的传统系统误报率超过90%。基于机器学习的评分如今已是参与沙盒的基本门槛。</p>
+        <h3>最先落地的领域</h3>
+        <p><strong>授信决策：</strong>约占支出的30%。VIB通过与Trusting Social合作，将信用卡审批缩短至15-30分钟[VIB 2025]。MoMo利用替代数据（账单缴费记录、交易图谱）运行自建机器学习模型。审批时长压缩是最核心的回报指标。</p>
+        <p><strong>文档理解（KYC、理赔）：</strong>约20%。业务量大、结构化程度高、回收快。几乎所有数字银行开户流程目前都采用OCR与大语言模型辅助进行身份证件/水电账单核验。</p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">金融科技AI支出分布</div>
+            <div class="chart-subtitle">越南 &middot; 2026年估算</div>
+          </div>
+          <div class="chart-unit">%份额</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet">
+            <!-- horizontal bar segments -->
+            <rect class="bar-primary" x="40" y="50" width="147" height="40"/>
+            <rect x="187" y="50" width="126" height="40" fill="#1850BF"/>
+            <rect x="313" y="50" width="84"  height="40" fill="#00A88B"/>
+            <rect x="397" y="50" width="42"  height="40" fill="#D97706"/>
+            <rect x="439" y="50" width="21"  height="40" fill="#6B7280"/>
+            <text class="label-data" x="113" y="75" text-anchor="middle" fill="#FFFFFF">35%</text>
+            <text class="label-data" x="250" y="75" text-anchor="middle" fill="#FFFFFF">30%</text>
+            <text class="label-data" x="355" y="75" text-anchor="middle" fill="#FFFFFF">20%</text>
+            <text class="label-data" x="418" y="75" text-anchor="middle" fill="#FFFFFF">10%</text>
+            <text class="label-small" x="113" y="110" text-anchor="middle">反欺诈 / 反洗钱</text>
+            <text class="label-small" x="250" y="110" text-anchor="middle">授信决策</text>
+            <text class="label-small" x="355" y="110" text-anchor="middle">文档 / KYC</text>
+            <text class="label-small" x="418" y="110" text-anchor="middle">客户体验</text>
+            <text class="label-small" x="450" y="110" text-anchor="middle">其他</text>
+            <text class="label-small" x="40" y="155">越南金融科技AI支出：2026年USD 130-160 M[Kira estimates]；2033年将达约USD 600M（CAGR 21%）。</text>
+            <text class="label-small" x="40" y="175">内部运营支出占主导&mdash;&mdash;面向消费者的AI只是营销层，而非预算主体。</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: 基于运营商披露的KIRA三角验证 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <p class="page-subhead" style="margin-top:8px;">定位说明：供应商常将金融科技AI包装为“AI原生银行”——而我们从部署数据中看到的是<strong>可在12-18个月内收回成本的增量运营工具</strong>，并在审批时长、不良率与欺诈损失率上带来可衡量的压降。资本与关注应投向这里。</p>
+    <div class="source-key">GBG 2025 = GBG APAC Fraud Trends Report 2025 &middot; VIB 2025 = Vietnam International Bank x Trusting Social press release Sep-2025 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第10章 &middot; AI影响 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 26 — AI OVERVIEW P2 (USE CASES) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第10章 &middot; 金融科技中的AI（续）</div>
+      <div class="page-section-counter">026 / 029</div>
+    </div>
+    <h1 class="page-h1">回报已获验证的六大AI应用场景</h1>
+    <p class="page-subhead">以下每个场景在越南市场均至少有一例已在披露或媒体中引用的实际部署。按运营商端12个月回收能力排序。</p>
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">应用场景01</div>
+        <div class="uc-title">替代数据信用评分（征信薄弱人群）</div>
+        <div class="uc-body"><strong>电信、电商与交易图谱信号</strong>为银行服务不足的申请人提供机器学习评分。Kredivo披露其基于替代数据核保的区域业务融资达USD 4 bn；MoMo在越南部署了类似方案[Kredivo 2025]。</div>
+        <div class="uc-example">已部署 &middot; MOMO &middot; KREDIVO &middot; FUNDIIN</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">应用场景02</div>
+        <div class="uc-title">实时反欺诈与反洗钱监测</div>
+        <div class="uc-body">基于交易流的机器学习检测——二维码欺诈同比+60%的压力[GBG 2025]使传统规则引擎被淘汰。<strong>SBV沙盒准入</strong>如今实际上要求提供机器学习反欺诈评分的证明。</div>
+        <div class="uc-example">已部署 &middot; VIB &middot; TPBANK &middot; CAKE</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">应用场景03</div>
+        <div class="uc-title">信用卡/贷款审批自动化</div>
+        <div class="uc-body"><strong>VIB与Trusting Social：信用卡审批15-30分钟</strong>[VIB 2025]，而在位银行基准为2-3天。审批时长压缩是核心指标；其下游效果是漏斗转化率提升30-50%。</div>
+        <div class="uc-example">已部署 &middot; VIB &middot; CAKE &middot; MOMO</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">应用场景04</div>
+        <div class="uc-title">eKYC与文档理解</div>
+        <div class="uc-body">OCR与大语言模型辅助的身份核验、水电账单匹配与活体检测。第94/2025号法令明确将eKYC列为沙盒方向[SBV 2025]。<strong>单次开户成本下降60-80%</strong>；处理能力提升5-10倍。</div>
+        <div class="uc-example">已部署 &middot; TPBANK LIVEBANK &middot; TIMO</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">应用场景05</div>
+        <div class="uc-title">客户服务自动化</div>
+        <div class="uc-body">语音与在线客服对高频产品咨询进行分流。部署优先级较低——有回报但有限。最适合咨询类别集中（余额、对账单、密码）的银行系数字子公司。</div>
+        <div class="uc-example">已部署 &middot; SACOMBANK &middot; TCB &middot; ACB</div>
+      </div>
+      <div class="ai-usecase">
+        <div class="uc-num">应用场景06</div>
+        <div class="uc-title">交叉销售&ldquo;下一最佳产品&rdquo;推荐</div>
+        <div class="uc-body">基于存量钱包用户的个性化推荐。在MoMo与ZaloPay的规模（逾3,000万用户）上杠杆效应最高。依靠增量搭售，回收期6-12个月——<strong>但需要干净、统一的客户画像数据</strong>，而多数运营商尚不具备。</div>
+        <div class="uc-example">试点 &middot; MOMO &middot; ZALOPAY</div>
+      </div>
+    </div>
+    <div class="source-key">GBG 2025 = GBG APAC Fraud Trends Report 2025 &middot; Kredivo 2025 = Kredivo regional financing disclosure 2025 &middot; SBV 2025 = State Bank Decree 94/2025/ND-CP &middot; VIB 2025 = Vietnam International Bank x Trusting Social press release Sep-2025 &middot; Kira estimates = KIRA in-house analyst triangulation</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第10章 &middot; AI影响 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 27 — FORECAST P1 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第11章 &middot; 2026-2031年预测</div>
+      <div class="page-section-counter">027 / 029</div>
+    </div>
+    <h1 class="page-h1">五年展望：基准、乐观与悲观情景</h1>
+    <p class="page-subhead">在基准情景下，金融科技收入池将以15%的CAGR增长，<strong>2031年达USD 8.9 bn</strong>。乐观情景（渗透率向区域基准收敛）：USD 11.5 bn。悲观情景（利率周期冲击消费信贷、超级应用渠道收紧）：USD 6.8 bn。<strong>区间较宽反映的是信贷周期与渠道议价能力的不确定性</strong>，而非支付业务本身的风险。</p>
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>基准情景&mdash;&mdash;核心情景</h3>
+        <p>至2031年CAGR为15%。支付收入增长11%；BNPL与信贷27%；数字银行19%[Kira estimates]。<strong>银行体系渗透率向区域基准收敛</strong>（泰国约95%、马来西亚约92%的可获银行服务比例），托住交易量底部。</p>
+        <h3>乐观情景&mdash;&mdash;需要哪些条件</h3>
+        <p>+ P2P与Open API顺利从沙盒过渡到正式牌照。<br>+ 加密资产试点由管理框架扩展至零售端。<br>+ 随着ZaloPay与第三极制衡Grab/Shopee的议价能力，超级应用渠道抽成收窄。<br><strong>结果：CAGR 20%，2031年达USD 11.5 bn。</strong></p>
+        <h3>悲观情景&mdash;&mdash;不对称风险</h3>
+        <p>+ 消费信贷不良率飙升至12%以上（目前为9.6%）[SBV/VIR 2024]。<br>+ 规模不足的BNPL运营商倒闭；集中度加速提升，但收入池萎缩。<br>+ 利率周期压缩数字银行NIM。<br><strong>结果：CAGR 9%，2031年达USD 6.8 bn。</strong></p>
+      </div>
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">2026-2031年金融科技收入池</div>
+            <div class="chart-subtitle">USD bn &middot; 基准 &middot; 乐观 &middot; 悲观</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 240" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="40" y1="200" x2="460" y2="200"/>
+            <line class="grid-line" x1="40" y1="160" x2="460" y2="160"/>
+            <line class="grid-line" x1="40" y1="120" x2="460" y2="120"/>
+            <line class="grid-line" x1="40" y1="80" x2="460" y2="80"/>
+            <line class="grid-line" x1="40" y1="40" x2="460" y2="40"/>
+            <text class="axis-text" x="35" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="35" y="164" text-anchor="end">3</text>
+            <text class="axis-text" x="35" y="124" text-anchor="end">6</text>
+            <text class="axis-text" x="35" y="84" text-anchor="end">9</text>
+            <text class="axis-text" x="35" y="44" text-anchor="end">12</text>
+            <!-- Base: 4.3, 5.0, 5.8, 6.7, 7.8, 8.9; Bull adds + 0.3,0.7,1.2,1.7,2.2,2.6 ; Bear ends at 6.8 -->
+            <!-- Bull line top -->
+            <polyline fill="none" stroke="#00A88B" stroke-width="2" stroke-dasharray="4 3" points="80,138 156,118 232,93 308,65 384,40 460,28"/>
+            <!-- Base line center -->
+            <polyline fill="none" stroke="#1E6FFF" stroke-width="2.5" points="80,144 156,131 232,123 308,111 384,96 460,82"/>
+            <!-- Bear line bottom -->
+            <polyline fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4 3" points="80,150 156,140 232,134 308,130 384,124 460,110"/>
+            <circle cx="80"  cy="144" r="3.5" fill="#1E6FFF"/>
+            <circle cx="460" cy="82"  r="3.5" fill="#1E6FFF"/>
+            <circle cx="460" cy="28"  r="3.5" fill="#00A88B"/>
+            <circle cx="460" cy="110" r="3.5" fill="#D97706"/>
+            <text class="label-data" x="80"  y="138" text-anchor="middle">4.3</text>
+            <text class="label-data" x="460" y="76"  text-anchor="end">8.9基准</text>
+            <text class="label-data" x="460" y="22"  text-anchor="end">11.5乐观</text>
+            <text class="label-data" x="460" y="105" text-anchor="end">6.8悲观</text>
+            <text class="axis-text" x="80"  y="218" text-anchor="middle">2026</text>
+            <text class="axis-text" x="156" y="218" text-anchor="middle">2027</text>
+            <text class="axis-text" x="232" y="218" text-anchor="middle">2028</text>
+            <text class="axis-text" x="308" y="218" text-anchor="middle">2029</text>
+            <text class="axis-text" x="384" y="218" text-anchor="middle">2030</text>
+            <text class="axis-text" x="460" y="218" text-anchor="middle">2031</text>
+            <line x1="50" y1="14" x2="62" y2="14" stroke="#00A88B" stroke-width="2" stroke-dasharray="3 2"/>
+            <text class="label-small" x="66" y="17">乐观</text>
+            <line x1="110" y1="14" x2="122" y2="14" stroke="#1E6FFF" stroke-width="2.5"/>
+            <text class="label-small" x="126" y="17">基准</text>
+            <line x1="170" y1="14" x2="182" y2="14" stroke="#D97706" stroke-width="2" stroke-dasharray="3 2"/>
+            <text class="label-small" x="186" y="17">悲观</text>
+          </svg>
+        </div>
+        <div class="chart-source">SOURCE: KIRA情景模型 &middot; KIRA RESEARCH 2026</div>
+      </div>
+    </div>
+    <div class="source-key">SBV/VIR 2024 = State Bank consumer-credit NPL data via VIR Sep-2024 &middot; Kira estimates = KIRA scenario model built on operator pool + segment CAGR per Section 05-06</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第11章 &middot; 预测 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 28 — FORECAST P2 (SENSITIVITIES) ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第11章 &middot; 预测（续）</div>
+      <div class="page-section-counter">028 / 029</div>
+    </div>
+    <h1 class="page-h1">关键敏感因素与触发点</h1>
+    <p class="page-subhead">以下变量对基准情景的影响最大。应按月跟踪；上述预测区间将随其走向收窄或扩大。</p>
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">敏感因素01</div>
+        <div class="title">消费信贷不良率走势</div>
+        <div class="body-text">目前为9.6%[SBV/VIR 2024]。在10%之上每升高1个百分点，BNPL运营商利润率将压缩约50-80 bps。<strong>阈值：</strong>持续高于12%则转入悲观情景；持续低于7%则上调至乐观情景。</div>
+        <div class="anchor">跟踪 &middot; <span class="num-anchor">SBV月度信贷数据</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">敏感因素02</div>
+        <div class="title">从沙盒到正式牌照的过渡</div>
+        <div class="body-text">第94号法令沙盒为期两年。若P2P与Open API牌照制度在2027年前落地且资本要求可控，即为乐观情景的关键突破。<strong>阈值：</strong>SBV于2027年上半年发布通知草案。</div>
+        <div class="anchor">跟踪 &middot; <span class="num-anchor">SBV监管立法进程</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">敏感因素03</div>
+        <div class="title">超级应用渠道抽成收窄</div>
+        <div class="body-text">目前嵌入式BNPL需向Grab/Shopee让渡30-40%的收入分成。MoMo或新进入者任何直连商户的举措都将压缩这一比例。<strong>阈值：</strong>2028年前超级应用分成降至25%以下，则运营商利润率假设上调200 bps。</div>
+        <div class="anchor">跟踪 &middot; <span class="num-anchor">运营商业绩电话会</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">敏感因素04</div>
+        <div class="title">利率周期与资金成本</div>
+        <div class="body-text">SBV 2026年通胀目标为4.5%[Reuters/SBV 2026]。2026年4月CPI为5.46%[GSO 2026]，已向上突破。存款利率上调将首先挤压数字银行NIM。<strong>阈值：</strong>CPI持续高于5%将引发资金成本担忧。</div>
+        <div class="anchor">跟踪 &middot; <span class="num-anchor">SBV政策会议纪要</span></div>
+      </div>
+      <div class="imp-card">
+        <div class="num">敏感因素05</div>
+        <div class="title">小规模钱包的并购</div>
+        <div class="body-text">Moca已于2024年退出[VietData 2025]。到2027年还可能有2-3家小规模钱包被整合。<strong>阈值：</strong>前五大企业中任何一家控制权变更，都将改变对竞争结构的判断，并触发基准情景修订。</div>
+        <div class="anchor">跟踪 &middot; <span class="num-anchor">小规模运营商MAU</span></div>
+      </div>
+    </div>
+    <div class="source-key">GSO 2026 = National Statistics Office Q1-2026 Socio-economic Report &middot; Reuters/SBV 2026 = SBV Governor statement on 2026 inflation target &middot; SBV/VIR 2024 = State Bank consumer-credit NPL via VIR Sep-2024 &middot; VietData 2025 = Vietdata Moca Exit Analysis 2025 &middot; Kira estimates = KIRA scenario model</div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>第11章 &middot; 预测 &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 29 — METHODOLOGY ENDNOTE ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">第12章 &middot; 研究方法尾注</div>
+      <div class="page-section-counter">029 / 029</div>
+    </div>
+    <h1 class="page-h1">研究方法尾注与来源构成</h1>
+    <p class="page-subhead">数据如何构建、估算锚定于何处，以及如何联系本公司研究团队，就越南金融科技、支付或相邻垂直领域开展进一步研究。</p>
+    <div class="source-mix-grid">
+      <div class="source-mix-card">
+        <div class="smc-tag">[Kira estimates]</div>
+        <div class="smc-num">25<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-secondary">
+        <div class="smc-tag">具名二手来源</div>
+        <div class="smc-num">68<span class="pct">%</span></div>
+      </div>
+      <div class="source-mix-card tag-estimate">
+        <div class="smc-tag">三角验证（双语）</div>
+        <div class="smc-num">7<span class="pct">%</span></div>
+      </div>
+    </div>
+    <div class="endnote-grid">
+      <div class="endnote-body">
+        <h4>来源图谱</h4>
+        <p><strong>一手公共统计：</strong>越南国家银行（SBV）支付司公报、国家统计局（GSO）季度社会经济报告、NAPAS系统数据、IMF Article IV 2025、世界银行越南经济动态（2025年12月）、世界银行Global Findex 2025。</p>
+        <p><strong>运营商披露：</strong>VNG Corporation 2025年年报（ZaloPay分部）、VPBank关于Cake数字银行的2025年前九个月披露、Cimigo Connected Consumer Vietnam 2024、DataReportal Digital 2026 Vietnam。超级应用母公司（Grab Holdings、Sea Group）的嵌入式金融交易额披露。</p>
+        <p><strong>监管文本：</strong>第52/2024/ND-CP号法令（电子货币定义）、第94/2025/ND-CP号法令（监管沙盒）、第05/2025/NQ-CP号决议与第96/QD-BTC号决定（加密资产试点）。</p>
+        <p><strong>越南文来源：</strong>VnEconomy、VietnamPlus、VnExpress、Tap Chi Ngan Hang（银行杂志）、Vietnam.vn报道。文中标注的别名已对应为英文。</p>
+        <h4>已披露的估算方法</h4>
+        <p><strong>2026年收入池USD 4.3 bn：</strong>由细分市场估算自下而上构建（支付USD 1.6 bn = MDR &times; 交易量；BNPL USD 1.1 bn = 交易金额池 &times; 综合费率；数字银行USD 0.9 bn = NIM &times; 贷款余额 + 手续费收入；其他USD 0.7 bn）。</p>
+        <p><strong>HHI约3,400：</strong>基于Cimigo 2024份额数据，以活跃用户份额平方和计算，并根据运营商交易量披露做方向性调整。</p>
+      </div>
+      <div class="endnote-side">
+        <h4>研究团队</h4>
+        <p class="contact-line"><strong>高级分析师：</strong>越南金融科技与支付</p>
+        <p class="contact-line"><strong>覆盖领域：</strong>东南亚金融服务、超级应用变现、嵌入式金融</p>
+        <p class="contact-line"><strong>相邻研究：</strong>可按需提供印度尼西亚/泰国/菲律宾金融科技平行研究</p>
+        <p class="contact-line" style="margin-top:12px;"><strong>联系方式</strong></p>
+        <p class="contact-line">research@kiraresearch.com</p>
+        <p class="contact-line">kiraresearch.com</p>
+        <p class="contact-line" style="margin-top:12px;"><strong>定制研究</strong></p>
+        <p class="contact-line">可按需提供特定运营商深度研究、细分市场数据提取或情景建模——交付周期2-4周。</p>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>机密 &middot; 仅限授权读者使用 &middot; &copy; 2026 KIRA Research &middot; KR-VNM-FINTECH-2026-001</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
