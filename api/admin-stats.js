@@ -136,7 +136,8 @@ export default async function handler(req, res) {
       recentLeads,
       recentPurchases,
       pipeline,
-      waitlistAll
+      waitlistAll,
+      topicsProposed
     ] = await Promise.all([
       sb('leads?select=status&limit=10000'),
       sb('living_reports?select=status&limit=10000'),
@@ -145,8 +146,25 @@ export default async function handler(req, res) {
       sb('leads?select=id,name,company,status,created_at,locale&order=created_at.desc&limit=5'),
       sb('purchases?select=id,slug,locale,amount,currency,created_at,status&status=eq.completed&order=created_at.desc&limit=5'),
       pipelineHealth(),
-      sb('waitlist?select=plan,status&limit=10000')   // migration 025; zero until applied
+      sb('waitlist?select=plan,status&limit=10000'),   // migration 025; zero until applied
+      sb('topics?select=id&status=eq.proposed&limit=10000')   // waiting for the owner's decision
     ]);
+
+    // "Needs you" list for the dashboard top: only things a human has to act on.
+    const waitlistNew = waitlistAll.rows.filter(w => w.status === 'new').length;
+    const leadsNewCount = leadsAll.rows.filter(l => l.status === 'new').length;
+    const attention = [
+      pipeline && (pipeline.errors || pipeline.stuck || pipeline.state === 'stalled') && {
+        key: 'pipeline', href: '/en/admin/pipeline', severity: 'high',
+        label: pipeline.state === 'stalled' && !pipeline.errors && !pipeline.stuck
+          ? 'Pipeline stalled: work is waiting but no stage has finished for over 30 hours'
+          : `Pipeline: ${pipeline.errors} in error, ${pipeline.stuck} stuck claim(s)`,
+        count: (pipeline.errors || 0) + (pipeline.stuck || 0) || 1
+      },
+      topicsProposed.rows.length && { key: 'topics', href: '/en/admin/topics', severity: 'normal', label: 'Topics waiting for your approval', count: topicsProposed.rows.length },
+      leadsNewCount && { key: 'leads', href: '/en/admin/leads', severity: 'normal', label: 'New leads', count: leadsNewCount },
+      waitlistNew && { key: 'waitlist', href: '/en/admin/waitlist', severity: 'normal', label: 'New waitlist sign-ups', count: waitlistNew }
+    ].filter(Boolean);
 
     // Aggregate revenue (sum amount of completed purchases). All Year 1 prices
     // are USD so we report a single revenue_usd number; if currency mixing
@@ -154,6 +172,7 @@ export default async function handler(req, res) {
     const revenue = purchasesAll.rows.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
 
     res.status(200).json({
+      attention,
       leads: {
         total: leadsAll.rows.length,
         by_status: tally(leadsAll.rows, 'status')

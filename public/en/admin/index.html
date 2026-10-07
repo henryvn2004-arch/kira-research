@@ -390,7 +390,17 @@
         <span class="meta">${fmtDate(p.created_at)}</span>
       </div>`).join('') || '<div class="recent-empty">No purchases yet.</div>';
 
-    wrap.innerHTML = kpiHtml + pipelineHtml + `
+    const attention = stats.attention || [];
+    const attentionHtml = `
+      <div class="recent-card" style="margin-bottom:24px">
+        <h3>Needs you today</h3>
+        ${attention.length ? attention.map(a => `
+          <div class="recent-row"><div><div class="title" style="${a.severity === 'high' ? 'color:#B42318' : ''}">${esc(a.label)}</div></div>
+            <span class="meta">${a.count > 0 && a.key !== 'pipeline' ? '<strong>' + a.count + '</strong> · ' : ''}<a href="${esc(a.href)}">Open →</a></span></div>`).join('')
+          : '<div class="recent-empty">Nothing needs you right now.</div>'}
+      </div>`;
+
+    wrap.innerHTML = attentionHtml + kpiHtml + pipelineHtml + `
       <div class="recent-grid">
         <div class="recent-card">
           <h3>Recent leads <a href="/en/admin/leads">All leads →</a></h3>
