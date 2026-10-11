@@ -63,6 +63,11 @@ export const CONFIG = {
     group: 'Emails', type: 'bool', default: true,
     label: 'Send the daily "your report is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
+  },
+  'retention.site_events_days': {
+    group: 'Data', type: 'int', min: 30, max: 730, default: 180,
+    label: 'Keep visitor events for (days)',
+    help: 'The Funnel page reads these events. A daily job deletes anything older. Lower it to keep the database small; the Funnel page can then look back at most this far.'
   }
 };
 
