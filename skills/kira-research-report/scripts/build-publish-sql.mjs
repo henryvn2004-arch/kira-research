@@ -55,8 +55,12 @@ function extract(loc) {
   // Hook pages with a commentary column instead of cards: take its first two paragraphs.
   const commentary = (hook.match(/<div class="commentary">([\s\S]*?)<\/div>/) || [])[1] || '';
   const paras = [...commentary.matchAll(/<p>([\s\S]*?)<\/p>/g)].map(m => noTags(text(m[1])));
-  const paragraphs = (cards.length >= 3 ? cards.slice(1, 3) : cards.length ? cards.slice(0, 2) : paras.slice(0, 2)).filter(Boolean);
-  if (!paragraphs.length) throw new Error(loc + ': no preview paragraphs on the hook page (cards or commentary)');
+  // Big-number hook pages (no cards, no commentary): the number, its label and its context.
+  const bn = (hook.match(/<div class="big-number">([\s\S]*?)<\/div>\s*(?=<div class="exhibit")/) || [])[1] || '';
+  const bnPart = c => noTags(text((bn.match(new RegExp(`<div class="${c}">([\\s\\S]*?)</div>`)) || [])[1] || ''));
+  const bnPara = [bnPart('value') && bnPart('label') ? `${bnPart('value')}: ${bnPart('label')}.` : '', bnPart('context')].filter(Boolean).join(' ');
+  const paragraphs = (cards.length >= 3 ? cards.slice(1, 3) : cards.length ? cards.slice(0, 2) : paras.length ? paras.slice(0, 2) : [bnPara]).filter(Boolean);
+  if (!paragraphs.length) throw new Error(loc + ': no preview paragraphs on the hook page (cards, commentary or big number)');
 
   // contents: every 60px/1fr/80px grid row on the first pages = number / bold title (optional subtitle) / page ref
   const toc = [];
