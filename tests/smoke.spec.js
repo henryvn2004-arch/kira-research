@@ -414,6 +414,7 @@ test.describe('public APIs', () => {
   test('/api/admin-crm rejects unauthenticated', async ({ request }) => {
     expect((await request.get('/api/admin-crm')).status()).toBe(401);
     expect((await request.patch('/api/admin-crm', { data: { email: 'a@b.co', stage: 'won' } })).status()).toBe(401);
+    expect((await request.post('/api/admin-crm', { data: { email: 'a@b.co', subject: 's', body: 'b' } })).status()).toBe(401);
   });
 
   test('/api/track accepts POST only and always answers quietly', async ({ request }) => {

@@ -344,3 +344,18 @@ export async function sendChainPublishedEmail({ to, title, url }) {
 </body></html>`.trim();
   return resendSend({ to, subject, html, text });
 }
+
+// ── One-to-one email the owner writes in /en/admin/crm ────
+// Sent from the KIRA address with Reply-To = the admin who wrote it, so the answer goes straight to them.
+export async function sendCrmMessage({ to, subject, text, replyTo }) {
+  if (!to || !subject || !text) return false;
+  const footer = 'You are receiving this because you contacted KIRA RESEARCH. Just reply to this email to answer.';
+  const plain = `${text}\n\n--\nKIRA RESEARCH\n${footer}`;
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:24px;">
+  <div style="white-space:pre-wrap;">${esc(text)}</div>
+  <p style="margin:28px 0 0;font-size:12px;color:#777;border-top:1px solid #e5e5e5;padding-top:12px;">KIRA RESEARCH<br>${esc(footer)}</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text: plain, replyTo });
+}
+
