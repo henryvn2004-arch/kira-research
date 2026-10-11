@@ -403,6 +403,10 @@ test.describe('public APIs', () => {
     expect((await request.get('/api/admin-funnel')).status()).toBe(401);
   });
 
+  test('/api/notify-chain-published accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/notify-chain-published')).status()).toBe(405);
+  });
+
   test('/api/cron-site-events-retention accepts GET/POST only', async ({ request }) => {
     expect((await request.put('/api/cron-site-events-retention')).status()).toBe(405);
   });
