@@ -2,7 +2,7 @@
 // KIRA RESEARCH — api/admin-crm.js
 // CRM for /en/admin/crm: one row per person (lower-case email), built at read time from
 //   leads · waitlist · topic_requests ("email me when ready") · purchases (+ auth.users for the buyer's email)
-// plus what the owner decides, kept in crm_contacts (migration 038): stage, note, follow-up date.
+// plus what the owner decides, kept in crm_contacts (migration 045): stage, note, follow-up date.
 // Nothing is copied between tables, so the people list can never drift from the source tables.
 //
 //   GET   /api/admin-crm                       → { people: [...], counts }

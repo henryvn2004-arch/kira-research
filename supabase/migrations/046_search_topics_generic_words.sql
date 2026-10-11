@@ -1,5 +1,5 @@
 -- ============================================================
--- 038_search_topics_generic_words.sql — fix for 028's search_topics
+-- 046_search_topics_generic_words.sql — fix for 028's search_topics
 --
 -- "condom market in australia" returned six unrelated Australian topics: after
 -- the country is removed, "condom market" scored 0.5 against every topic whose

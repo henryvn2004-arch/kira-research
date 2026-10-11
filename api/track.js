@@ -1,7 +1,7 @@
 // ============================================================
 // KIRA RESEARCH — api/track.js
 // Receives the first-party funnel events sent by /js/track.js and stores one row each in
-// site_events (migration 037). Public by nature, so it is defensive:
+// site_events (migration 043). Public by nature, so it is defensive:
 //   - POST only; answers 204 whatever it decides (nothing to probe)
 //   - only accepts requests whose Origin is the production site (previews / local are ignored)
 //   - drops bots by user agent (headless browsers, crawlers, link previewers, our own smoke tests)

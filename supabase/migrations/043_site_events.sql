@@ -1,4 +1,4 @@
--- 037_site_events.sql — first-party funnel events (no cookies, no IP, no email).
+-- 043_site_events.sql — first-party funnel events (no cookies, no IP, no email).
 -- One row per event, written only by /api/track; read only through funnel_summary() from /en/admin/funnel.
 -- `sid` is a random per-tab id (sessionStorage); it can not be tied to a person.
 create table if not exists public.site_events (

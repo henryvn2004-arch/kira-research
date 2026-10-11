@@ -1,5 +1,5 @@
 -- ============================================================
--- KIRA RESEARCH — CRM (admin) · migration 038
+-- KIRA RESEARCH — CRM (admin) · migration 045
 -- One row per person (lower-case email) holding only what the owner decides:
 -- stage, a note and a follow-up date. Everything else (leads, waitlist,
 -- topic requests, purchases) is read from its own table at query time

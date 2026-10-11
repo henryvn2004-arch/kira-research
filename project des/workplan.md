@@ -57,7 +57,7 @@ Pricing (revised 2026-10-06; validate with the waitlist before S7)
 - Week plan and the $39 single report are dropped.
 - The single price anchors value, so buyers needing 2+ reports choose Month. Download caps stop "subscribe, download everything, cancel".
 - Kira Chain sits in Annual as the retention reason.
-- Live on the pricing pages (EN/JA/KO/ZH, waitlist only) since S5b (PR #66). Waitlist plan values: `report` · `month` · `annual` · `not-sure` (`week` kept for old rows, migration 030).
+- Live on the pricing pages (EN/JA/KO/ZH, waitlist only) since S5b (PR #66). Waitlist plan values: `report` · `month` · `annual` · `not-sure` (`week` kept for old rows, migration 042).
 
 Distribution (2026-10-05)
 - KDP (US + JP), Google Play Books, Apple Books via EPUB export.

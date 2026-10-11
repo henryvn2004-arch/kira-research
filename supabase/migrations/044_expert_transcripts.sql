@@ -1,5 +1,5 @@
 -- ============================================================
--- 037_expert_transcripts.sql — Kira Experts transcript library
+-- 044_expert_transcripts.sql — Kira Experts transcript library
 --
 --   expert_transcripts               one row per transcript (language-neutral facts)
 --   expert_transcript_translations   one row per (transcript, locale): the text
