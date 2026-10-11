@@ -37,3 +37,4 @@
 - [Insight fires have no claim → race double-processes a report](feedback_insight_fires_no_claim_race.md) — no DB lock; two close fires both run Stage E → 4+ insights → re-query after insert + delete down to exactly 3
 - [Insight cron has no Supabase MCP → use PostgREST](feedback_insight_cron_no_supabase_mcp.md) — cron fires lack `execute_sql` MCP; hit `{SUPABASE_URL}/rest/v1` with service key (upsert via `on_conflict` + `Prefer: merge-duplicates`); don't name a Node const `URL`
 - [Insight cron /tmp scratch can be stale](feedback_insight_cron_scratch_file_stale.md) — leftover ja_insight.json from a prior fire shadowed current report; bash heredoc silently failed to overwrite. Use Write tool + validate body against live EN structure/tags + rm scratch at end
+- [Kira Chain (S10) handoff 2026-10-11](project_kira_chain.md) — built/live/not-built list; owner wants to change direction before continuing
