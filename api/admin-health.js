@@ -22,6 +22,7 @@ const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
 
 const JOBS = [
   { key: 'notify-topic-published', label: 'Daily "your report is ready" emails', schedule: 'Daily 02:00 UTC (09:00 Vietnam)', max_gap_h: 30 },
+  { key: 'site-events-retention', label: 'Daily cleanup of old visitor events', schedule: 'Daily 03:30 UTC', max_gap_h: 30 },
   { key: 'topic-planner', label: 'Weekly topic planner (new topics for 15 countries)', schedule: 'Mondays 01:00 UTC (08:00 Vietnam)', max_gap_h: 192 }
 ];
 

@@ -403,6 +403,10 @@ test.describe('public APIs', () => {
     expect((await request.get('/api/admin-funnel')).status()).toBe(401);
   });
 
+  test('/api/cron-site-events-retention accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/cron-site-events-retention')).status()).toBe(405);
+  });
+
   test('/api/admin-crm rejects unauthenticated', async ({ request }) => {
     expect((await request.get('/api/admin-crm')).status()).toBe(401);
     expect((await request.patch('/api/admin-crm', { data: { email: 'a@b.co', stage: 'won' } })).status()).toBe(401);
