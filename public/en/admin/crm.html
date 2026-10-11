@@ -59,6 +59,10 @@
       table.cr tr.cr-detail td { padding:14px 12px; border-bottom:1px solid var(--border); }
       .cr-name span { overflow-wrap:anywhere; }
     }
+    .cr-mail { margin-top:22px; padding-top:14px; border-top:1px solid var(--border); }
+    .cr-mail small { display:block; color:var(--muted); font-size:12.5px; margin-top:6px; }
+    .cr-send { margin-top:12px; min-height:40px; padding:8px 18px; border:1px solid var(--primary); border-radius:8px; background:var(--bg); color:var(--primary); font:inherit; cursor:pointer; }
+    .cr-send[disabled] { opacity:.6; cursor:default; }
     .cr-empty { color:var(--muted); padding:28px 0; }
   </style>
 
@@ -136,7 +140,7 @@
       return d;
     }
 
-    const KIND = { lead: 'Request', waitlist: 'Waitlist', request: 'Topic request', purchase: 'Purchase' };
+    const KIND = { lead: 'Request', waitlist: 'Waitlist', request: 'Topic request', purchase: 'Purchase', email_out: 'Email sent' };
     const STAGE = { open: 'Open', talking: 'Talking', won: 'Won', lost: 'Lost' };
     const FILTERS = [['all', 'Everyone'], ['due', 'Follow-up due'], ['talking', 'Talking'], ['buyers', 'Buyers'], ['lost', 'Lost']];
 
@@ -164,6 +168,12 @@
           <label for="cr-note">Note</label>
           <textarea id="cr-note" maxlength="2000">${esc(p.note)}</textarea>
           <button class="cr-save" id="cr-save">Save</button><span class="cr-msg" id="cr-msg"></span>
+          <div class="cr-mail"><h3>Email this person</h3>
+            <label for="cr-sub">Subject</label><input id="cr-sub" maxlength="150" />
+            <label for="cr-body">Message</label><textarea id="cr-body" maxlength="5000"></textarea>
+            <button class="cr-send" id="cr-send">Send email</button><span class="cr-msg" id="cr-mmsg"></span>
+            <small>One email to this person only. Their reply comes straight to ${esc(user.email)}.</small>
+          </div>
         </div></div></td></tr>`;
     }
 
@@ -193,6 +203,7 @@
       const q = document.getElementById('cr-q');
       q.addEventListener('input', () => { state.q = q.value; state.open = null; render(); const el = document.getElementById('cr-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); });
       root.querySelectorAll('.cr-row').forEach(tr => tr.addEventListener('click', () => { state.open = state.open === tr.dataset.e ? null : tr.dataset.e; render(); }));
+      bindSend();
       const save = document.getElementById('cr-save');
       if (save) save.addEventListener('click', async () => {
         const msg = document.getElementById('cr-msg'); save.disabled = true; msg.textContent = 'Saving…';
@@ -201,6 +212,23 @@
           await api('PATCH', body);
           await load(true);
         } catch (e) { msg.textContent = 'Could not save (' + e.message + ')'; save.disabled = false; }
+      });
+    }
+
+    // (wired inside render via bindSend)
+    function bindSend() {
+      const btn = document.getElementById('cr-send'); if (!btn) return;
+      btn.addEventListener('click', async () => {
+        const msg = document.getElementById('cr-mmsg');
+        const subject = document.getElementById('cr-sub').value.trim(), body = document.getElementById('cr-body').value.trim();
+        if (!subject || !body) { msg.textContent = 'Write a subject and a message first.'; return; }
+        if (!confirm(`Send this email to ${state.open}?\nTheir reply will come to ${user.email}.`)) return;
+        btn.disabled = true; msg.textContent = 'Sending…';
+        try { await api('POST', { email: state.open, subject, body }); await load(true); }
+        catch (e) {
+          msg.textContent = e.message === 'daily_limit' ? 'Daily limit reached (30 emails per 24 hours).' : e.message === 'send_failed' ? 'The email service refused it. Nothing was sent.' : 'Could not send (' + e.message + ')';
+          btn.disabled = false;
+        }
       });
     }
 

@@ -7,10 +7,13 @@
 //
 //   GET   /api/admin-crm                       → { people: [...], counts }
 //   PATCH /api/admin-crm   body { email, stage?, note?, follow_up_at? }   (follow_up_at '' clears it)
+//   POST  /api/admin-crm   body { email, subject, body }   one email to ONE person already in the list,
+//                          Reply-To = the admin; kept in crm_messages (migration 039); max 30 sent per 24 h
 // Auth: Bearer <supabase-jwt>, email in ADMIN_EMAILS.
 // ============================================================
 
 import { logAudit } from './_lib/audit.js';
+import { sendCrmMessage } from './_lib/email.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -19,6 +22,7 @@ const ADMIN_EMAILS         = (process.env.ADMIN_EMAILS || '')
 
 const STAGES = new Set(['open', 'talking', 'won', 'lost']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DAILY_SEND_CAP = 30;
 const H = () => ({ apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' });
 
 async function verifyBearer(req) {
@@ -34,14 +38,15 @@ async function verifyBearer(req) {
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,PATCH,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PATCH,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 async function rest(path, opts = {}) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...opts, headers: { ...H(), ...(opts.headers || {}) }, cache: 'no-store' });
   if (!r.ok) throw new Error(`Supabase ${r.status}: ${await r.text()}`);
-  return r.status === 204 ? null : r.json();
+  const text = await r.text();                      // inserts with return=minimal answer 201 and an empty body
+  return text ? JSON.parse(text) : null;
 }
 
 async function userEmails() {
@@ -59,13 +64,14 @@ async function userEmails() {
 const iso = (v) => (v ? new Date(v).toISOString() : null);
 
 async function buildPeople() {
-  const [leads, waitlist, requests, purchases, contacts, emails] = await Promise.all([
+  const [leads, waitlist, requests, purchases, contacts, emails, sentMail] = await Promise.all([
     rest('leads?select=email,name,company,role,created_at,locale,tier,brief,status&order=created_at.desc&limit=500'),
     rest('waitlist?select=email,name,company,role,created_at,locale,plan,status&order=created_at.desc&limit=500'),
     rest('topic_requests?select=email,created_at,locale,keyword,notified_at&order=created_at.desc&limit=1000'),
     rest('purchases?select=user_id,slug,amount,currency,status,created_at,captured_at,locale&status=eq.completed&order=created_at.desc&limit=500'),
     rest('crm_contacts?select=*&limit=2000'),
-    userEmails()
+    userEmails(),
+    rest('crm_messages?select=email,subject,body,sent_at&ok=eq.true&order=sent_at.desc&limit=1000').catch(() => [])
   ]);
 
   const people = new Map();
@@ -97,6 +103,13 @@ async function buildPeople() {
     touch(p, b.captured_at || b.created_at, { type: 'purchase', text: `Bought ${b.slug} (${b.currency || 'USD'} ${Number(b.amount || 0).toFixed(2)})` });
   }
 
+  // What the owner already sent: shown in the history, but it is not the person's own activity,
+  // so it neither creates a person nor moves first/last seen.
+  for (const m of sentMail) {
+    const p = people.get(String(m.email).toLowerCase());
+    if (p) p.events.push({ type: 'email_out', text: `You emailed: ${m.subject}`, detail: m.body, at: iso(m.sent_at) });
+  }
+
   const meta = new Map(contacts.map(c => [c.email, c]));
   // A person the owner has already noted stays in the list even if the source rows were removed.
   for (const c of contacts) get(c.email);
@@ -106,7 +119,7 @@ async function buildPeople() {
     const c = meta.get(p.email) || {};
     const bought = p.events.some(e => e.type === 'purchase');
     p.events.sort((a, b) => (a.at < b.at ? 1 : -1));
-    const kinds = [...new Set(p.events.map(e => e.type))];
+    const kinds = [...new Set(p.events.filter(e => e.type !== 'email_out').map(e => e.type))];
     out.push({
       ...p,
       spend: Math.round(p.spend * 100) / 100,
@@ -171,6 +184,37 @@ export default async function handler(req, res) {
       });
       logAudit({ actor: user.email, action: 'update', resourceType: 'crm_contact', resourceId: email, resourceLabel: Object.keys(row).filter(k => k !== 'email').join(', '), req });
       res.status(200).json({ ok: true, contact: Array.isArray(saved) ? saved[0] : saved });
+      return;
+    }
+
+    if (req.method === 'POST') {
+      let body;
+      try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); }
+      catch (_) { res.status(400).json({ error: 'invalid_json' }); return; }
+
+      const email = String(body.email || '').trim().toLowerCase();
+      const subject = String(body.subject || '').replace(/\s+/g, ' ').trim();
+      const text = String(body.body || '').replace(/\r\n/g, '\n').trim();
+      if (!EMAIL_RE.test(email)) { res.status(400).json({ error: 'email_required' }); return; }
+      if (!subject || subject.length > 150) { res.status(400).json({ error: 'bad_subject' }); return; }
+      if (!text || text.length > 5000) { res.status(400).json({ error: 'bad_body' }); return; }
+
+      // Only people who already contacted us (or bought): this is a reply tool, not a way to email strangers.
+      const { people } = await buildPeople();
+      if (!people.some(p => p.email === email)) { res.status(404).json({ error: 'not_in_crm' }); return; }
+
+      const since = new Date(Date.now() - 864e5).toISOString();
+      const cr = await fetch(`${SUPABASE_URL}/rest/v1/crm_messages?select=id&ok=eq.true&sent_at=gte.${encodeURIComponent(since)}`, {
+        method: 'HEAD', headers: { ...H(), Prefer: 'count=exact' }, cache: 'no-store' });
+      const sentToday = parseInt((cr.headers.get('content-range') || '').split('/')[1], 10) || 0;
+      if (sentToday >= DAILY_SEND_CAP) { res.status(429).json({ error: 'daily_limit', limit: DAILY_SEND_CAP }); return; }
+
+      const ok = await sendCrmMessage({ to: email, subject, text, replyTo: user.email });
+      await rest('crm_messages', { method: 'POST', headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify({ email, subject, body: text, sent_by: user.email, ok }) }).catch(e => console.error('[admin-crm] log failed:', e.message));
+      if (!ok) { res.status(502).json({ error: 'send_failed' }); return; }
+      logAudit({ actor: user.email, action: 'other', resourceType: 'crm_email', resourceId: email, resourceLabel: subject, req });
+      res.status(200).json({ ok: true });
       return;
     }
 
