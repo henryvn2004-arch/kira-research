@@ -320,3 +320,27 @@ export async function sendTopicPublishedEmail({ to, title, url }) {
 </body></html>`.trim();
   return resendSend({ to, subject, html, text });
 }
+
+// ── A Kira Chain a reader asked for is now published ──────
+// Sent once to each reader who left an email on a chain search that found nothing (chain_requests).
+export async function sendChainPublishedEmail({ to, title, url }) {
+  if (!to || !url) return false;
+  const subject = `Now available — ${title}`;
+  const text = [
+    `The value chain you searched for is now available:`,
+    ``,
+    title,
+    url,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">The value chain you searched for is now available.</h1>
+  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
+  <p style="margin:0 0 12px;"><a href="${esc(url)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open the chain</a></p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">You are receiving this once because you asked to be told when it was ready.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text });
+}

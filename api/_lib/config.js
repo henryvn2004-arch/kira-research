@@ -64,6 +64,11 @@ export const CONFIG = {
     label: 'Send the daily "your report is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
   },
+  'notify.chain_ready_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Send the daily "your value chain is ready" emails',
+    help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
+  },
   'retention.site_events_days': {
     group: 'Data', type: 'int', min: 30, max: 730, default: 180,
     label: 'Keep visitor events for (days)',
