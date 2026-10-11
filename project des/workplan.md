@@ -124,28 +124,46 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
   - Expert compliance.
   - B2B selling.
 
+### Progress snapshot (2026-10-11, measured in the database and git)
+
+| | |
+|---|---|
+| Published reports | **118** (+4 retired). EN, JA and KO on all; **ZH on all 118** (backfill finished 2026-10-07 and 2026-10-11) |
+| New reports since 2026-10-06 | 6 with all 4 languages. **None between 2026-10-08 and 2026-10-10** (cause not confirmed; the owner's other daily routines hit the account usage limit on 10-10). Running again from 2026-10-11 |
+| Queue | 388 pending · 347 hold · 115 done (850 rows) |
+| Topics | 393 queued · 1 requested · 474 rejected (868; S13 merged the narrow ones). Weekly planner routine created, **first run 2026-10-12** |
+| Company data (`entities`) | **835** (VN 469, JP 296, ID 42, SG 28), up from 250 because each report's "Who's who" chapter now feeds it |
+| Kira Chain | 3 published chains: `coffee` (hand-made, VN), `convenience-store-licensing` and `ep-salary-benchmarks` (from the report builder). **Direction change 2026-10-11, paused by the owner** (note in `project des/memory/project_kira_chain.md`) |
+| Kira Experts transcripts | 12 published. Daily runner built in `kira-pipeline` (needs its GitHub secrets; dry run started 2026-10-11) |
+| Demand signals | waitlist **0** · topic requests **0** · chain requests **0** · leads 2 (1 custom research, 1 experts). S7 stays gated on this |
+
 ### Sprints
 
 | Sprint | Scope | Status |
 |---|---|---|
-| **S1** | Pipeline to cloud routine; queue cleanup; admin "Pipeline health" | 🟡 merged (#46, #50); owner still adds 3 env vars + creates the routine |
+| **S1** | Pipeline to cloud routine; queue cleanup; admin "Pipeline health" | ✅ merged (#46, #50); routine "Kira Report Generator" runs 3 times a day (08:53, 10:53, 12:53 Vietnam time) and has published reports since 2026-10-06 |
 | **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage | ✅ approved 2026-10-05 (13 countries, 171 industries, 15 competencies; private `kira-pipeline/taxonomy`) |
 | **S3** | Topic Planner + `/en/admin/topics` approval; approved topics flow into the queue | ✅ merged (#48); first lot of 18 topics + 13 level-2 splits approved |
 | **S3b** | Self-running loop: coming-soon pages, notify-me, auto placeholder topics, demand-ordered queue | ✅ merged (#62, #64; migrations 027–029) |
-| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | ✅ merged (#51); backfill of older published reports to ZH not started |
+| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | ✅ merged (#51); backfill of every older report to ZH done (118 of 118) |
 | **S5** | Website repositioning, Kira Experts + Kira Survey pages, pricing + waitlist, library filters, redesign | ✅ merged (#52–#61) |
 | **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | ✅ merged (#66); PPT/Excel left for S12 |
 | **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🔴 later |
-| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last). **UX decided 2026-10-07**: network view of value-chain groups joined by flow arrows (prototype PR #73). Left: data model (`chains`, `chain_stages`, `chain_flows`, `chain_memberships`) on the Phase R tables, registry + analyst-upload ingestion, ~10 priority VN industries, links from reports | 🟡 last (UX ✅; generic search + chain page prototype built, see notes) |
+| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last). **UX decided 2026-10-07**: network view of value-chain groups joined by flow arrows (prototype PR #73). Left: data model (`chains`, `chain_stages`, `chain_flows`, `chain_memberships`) on the Phase R tables, registry + analyst-upload ingestion, ~10 priority VN industries, links from reports | 🟡 last (UX ✅; generic search + chain page prototype built, see notes) **2026-10-11: owner changed direction (searchable, downloadable partner lists, shown on a country map) and paused the work.** The daily email to readers whose requested chain is published is built (#96). Details in the Kira Chain memory note and PR #99 |
 | **S11** | On-demand production, revised 2026-10-06 (owner: no delivery date on pages; reader-requested topics approve themselves, no human step). Mine: coming-soon pages and the topic API show no ETA, and every status maps to an explicit state (a reader-created `requested` topic was wrongly shown as "in production"). **Owned by the session "Report search with placeholders":** auto-approval of reader topics and the `requested` / `source` schema | ✅ PR #68 (rest with the search session) |
 | **S13** | **Topic queue review** (owner, 2026-10-06): current topics are too high level, so reports read as generic and nobody opens them. For every country × industry, break the topic down one more level, and build topics from the keywords readers search most. Inputs: `topics.search_count`, `search_misses`, `topic_requests` (almost empty today, so keyword research outside the site is needed at first), the 18 queued and 57 held topics. Output: a re-planned queue the owner approves. Starts once the search session's auto-approval has landed. **Done 2026-10-07 for all 15 countries (v2).** A topic is one market segment in one country + one lens (a KIRA brain question type), with a decision-level buyer question, 4-6 guiding questions (the chapters) and a "must cover" list of deals, rules and dates. 375 approved topics replace 516 narrow ones (merged ones are `rejected` with `signals.merged_into`). `topics.priority_score` (migration 038) orders the queue after demand. The topic brief passes `lens`, `segment` and `must_cover` to the BRAIN route; the queue sync refreshes pending titles and drops pending rows of merged topics. Facts flagged VERIFY need a check before writing| ✅ |
 | **S14** | **Weekly topic planner** (owner, 2026-10-07): every Monday a Routine adds ~6 segment-level topics per country (15 countries) from reader demand first (placeholders, email requests, empty searches), then fresh research; same topic rules as S13 v2. Procedure + scripts in private `kira-pipeline/taxonomy/planner*`; owner settings `planner.*` on `/en/admin/config`; each run on `/en/admin/health` | ✅ built (kira-pipeline #5, routine created; first run 2026-10-12) |
+| **S15** | **Owner admin platform** (built 2026-10-07 → 10-11, not in the original plan): report queue and `/en/admin/pipeline` in Supabase (#72), "Needs you today" dashboard card (#75), Health page + metered cost tracking (#77), dashboard warnings (#78), Settings page for values that change without a deploy (#81), Funnel of first-party visitor events (#87, #94 daily cleanup), CRM with one row per email and an owner-sent email (#92, #98), Chains admin (#90) | ✅ merged |
+| **S16** | **Report quality + preview** (2026-10-06 → 10-11): "Who's who" closing chapter feeding the company data (#76), edition year + Opus translation + one full report per fire (#74), 9 cover layouts (#70), PDF overflow fixes (#86), publish reads the new contents and commentary hooks (#83, #97), preview works on iPhone (#93) | ✅ merged |
+| **S3c** | **Search in 3 layers** (published → planned topic → auto placeholder → Claude Haiku files unknown product searches under a covered industry) | ✅ merged (#62, #64, #69, #89) |
 | **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🔴 |
-| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🔴 |
+| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🟡 started 2026-10-07/11: transcript library in Supabase with listing, free opening and paywall (EN, #84); 12 transcripts published; fieldwork cards + generator + daily runner in the private repo (kira-pipeline #6). Left: runner secrets and first real run, JA/KO/ZH pages, paid access, marketplace |
 | **S6** | Snapshot layer (3–5 page template) | 🔴 later |
 | **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
-Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
+Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S7 → S9 (started) → S12 → S6 → S8 → **S10 Kira Chain last** (paused, direction changing).
+
+Stale-note check (2026-10-11): the open issue below about `topics.source` / `requested` is addressed: migration 030 (`030_reader_topics.sql`) defines them and `admin-topics` and `topic-search` handle `requested` (868 topics, 1 `requested`).
 
 Open issue (found 2026-10-06): the production database has a `topics.source` column (`planner` | `reader`) and a `requested` topic status that no migration in `main` defines; main's code only knows `proposed`. The session "Report search with placeholders" owns this work and must commit that migration and teach `admin-topics`, `sync-approved-topics` and `topic-search` about `requested`.
 
