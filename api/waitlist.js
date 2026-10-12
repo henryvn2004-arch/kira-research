@@ -16,6 +16,7 @@
 // ============================================================
 
 import { sendWaitlistNotification } from './_lib/email.js';
+import { cleanAttr } from './_lib/attribution.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -111,6 +112,8 @@ export default async function handler(req, res) {
     referer:    referer || null,
     status:     'new'
   };
+  const attribution = cleanAttr(body.attr);
+  if (attribution) row.attribution = attribution;
 
   try {
     const ins = await supabase('waitlist', 'POST', row);

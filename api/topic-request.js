@@ -14,6 +14,7 @@
 // ============================================================
 
 import { sendTopicRequestConfirmation } from './_lib/email.js';
+import { cleanAttr } from './_lib/attribution.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -86,6 +87,8 @@ export default async function handler(req, res) {
 
   try {
     const row = { email, locale, ip_address: ip };
+    const attribution = cleanAttr(body.attr);
+    if (attribution) row.attribution = attribution;
     let title = keyword, url = `${APP_URL}/${locale}/library`;
     if (slug) {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/topics?slug=eq.${encodeURIComponent(slug)}&status=neq.rejected&select=id,title&limit=1`, {

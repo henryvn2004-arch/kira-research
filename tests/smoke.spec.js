@@ -318,6 +318,19 @@ test.describe('public APIs', () => {
     expect(r.status()).toBe(400);
   });
 
+  // S17: ad attribution export is admin-only; the privacy notice the footer links to must exist in every locale.
+  test('/api/admin-ads-conversions requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-ads-conversions')).status()).toBe(401);
+  });
+
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/privacy loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/privacy`);
+      expect(r.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Privacy');
+    });
+  }
+
   test('/api/topic-search returns an items array; short queries are empty', async ({ request }) => {
     const short = await request.get('/api/topic-search?q=ab');
     expect(short.status()).toBe(200);
