@@ -31,16 +31,20 @@
     return fail('Could not load this transcript', 'Please retry in a moment.');
   }
 
-  const waitAuth = async () => { for (let i = 0; i < 100 && !window.kiraAuth; i++) await new Promise((res) => setTimeout(res, 20)); };
+  const whenReady = async () => { for (let i = 0; i < 100 && !window.kiraAuth; i++) await new Promise((res) => setTimeout(res, 20)); };
 
   // Back from PayPal (?paypal=success&token=ORDER): capture the order, then fall through to load the full text.
   let paidNote = '';
   try {
     const qs = new URLSearchParams(location.search);
+    // The order id only decides whether to ask the server to finish a payment: the server checks the order
+    // with PayPal and files the purchase under the signed-in reader, so a made-up id gets nothing unlocked.
+    const ORDER_RE = /^[A-Za-z0-9_-]{5,64}$/;
     let orderId = qs.get('paypal') === 'success' ? qs.get('token') : null;
     if (!orderId) { try { orderId = sessionStorage.getItem('kira_pending_tcapture'); } catch (_e) { /* storage blocked */ } }
+    if (!ORDER_RE.test(orderId || '')) orderId = null;
     if (orderId) {
-      await waitAuth();
+      await whenReady();
       const s0 = window.db ? (await window.db.auth.getSession()).data.session : null;
       if (!s0) {
         // Not signed in (the PayPal payment already went through): sign in, then this page captures it.
@@ -63,7 +67,7 @@
   // Full text for entitled readers (admins, and readers who bought this transcript).
   let full = null;
   try {
-    await waitAuth();
+    await whenReady();
     const session = window.db ? (await window.db.auth.getSession()).data.session : null;
     if (session) {
       const r = await fetch('/api/transcript-content?slug=' + encodeURIComponent(slug) + '&locale=' + locale,
@@ -171,7 +175,7 @@
   if (buyBtn) buyBtn.addEventListener('click', async () => {
     buyBtn.disabled = true;
     try {
-      await waitAuth();
+      await whenReady();
       const session = window.db ? (await window.db.auth.getSession()).data.session : null;
       if (!session) {
         try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
