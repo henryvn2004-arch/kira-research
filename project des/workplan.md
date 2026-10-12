@@ -146,7 +146,123 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S6** | Snapshot layer (3–5 page template) | 🔴 later |
 | **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
+| **S16** | Email deliverability (paid search prerequisite) | 🔴 first, see "Paid search" below |
+| **S17** | Google Ads attribution: click id → request/purchase → conversions back to Google | 🔴 |
+| **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; report published on the same URL | 🔴 |
+| **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🔴 |
+| **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🔴 |
+| **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🔴 |
+
 Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
+Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 → S21**. Each sprint starts only when the owner says go.
+
+### Paid search: Google Ads on long-tail, buyer-intent queries (discussed 2026-10-11/12)
+
+**Goal (owner):** spend only on searches from people who want to buy now. High conversion rate matters more than traffic.
+
+**Findings that shaped the plan**
+- Past site traffic is mostly bots (owner, 2026-10-12). It is not used as a baseline, so the first ad weeks are a measurement test, not a revenue plan.
+- **Long-tail search converts better; "cheap CPC, very high conversion rate" is not proven.**
+  - NP Digital (40 companies, branded terms excluded): 1-word keywords convert at 0.17%, 3 words at 1.02%, 6 words at 1.94%.
+  - Search Engine Land (~500k keywords): the most profitable keywords are 15–30 characters, not the longest.
+  - DSA evidence is vendor case studies only (ForRent CPC −30%, TUI conversion rate +50%), with no independent controlled study.
+  - Gemini's claim that Shopee, Amazon and Euromonitor run this exact setup could not be confirmed.
+- **Dynamic Search Ads are being retired:** Google moves them to AI Max for Search; the automatic upgrade starts February 2027. KIRA does not build on DSA. It uses keyword ad groups generated from our own topics (CSV import with Google Ads Editor), plus AI Max with URL inclusions later if wanted.
+- **One ad group per exact title with exact match is mostly unservable** ("Low search volume"). Ad groups therefore use the search-style name of the topic (phrase + exact), not the full title.
+- **The ad's landing page needs no Google indexing.** Ads can point at noindex pages, so the ad landing pages (S20) and SEO indexing are decided separately.
+- **Scaled content abuse:** Google has issued manual actions since June 2025 against mass template pages that add no value. A penalty could also pull down the real reports, so the 10,000 pages are tested before they are indexed (S20).
+- **Break-even math:** at $49 and about $1.50 per click, at least 3% of clicks must buy just to cover the ad spend, before production cost.
+- **Email deliverability is broken today** (DNS checked 2026-10-12):
+  - `kiraresearch.com` SPF only includes Google (`include:_spf.google.com`), not the sender Resend uses.
+  - No DKIM record for Resend was found at `resend._domainkey`, and there is no DMARC record.
+  - Mail from `noreply@kiraresearch.com` is therefore likely to land in spam or be rejected by Gmail/Yahoo bulk-sender rules. The "email me when published" promise depends on it, hence S16 first.
+- **Topic titles (updated 2026-10-12):** S15 renamed the queue topics to `Country segment analysis` (e.g. "Vietnam coffee chains market overview"), which already reads like a search query. S20 and S21 still check a sample of titles against Search Console queries and alert the owner if they do not fit.
+
+**Decisions locked (owner, 2026-10-12)**
+- **Price in the ad text**, e.g. "Vietnam Coffee Market Report 2026 · $49". Readers looking for free data skip the ad, which filters intent for free. The landing page must show the same price.
+- **Impulse pricing** replaces the 2026-10-06 table, so a reader can buy without a company approval step:
+
+  | Item | Price |
+  |---|---|
+  | Report | **$49** (range $39–49) |
+  | Expert interview transcript | **$29** (range $19–29) |
+  | Company list (Kira List) | **$39** (range $29–39) |
+  | Monthly subscription | **$149** |
+  | Annual subscription | to be decided |
+
+  Reference: HBR case studies sell at ~$8.95 each to individuals and ~$4.25 inside coursepacks; HBR earns on volume.
+  **Open:** what the $149 month includes so that it beats buying 3 reports (proposal: whole library online + 5 PDF + transcripts).
+- **Coming-soon pages collect email only.** No paid pre-order.
+- **Delivery promise: 2–3 days** from the first request, not 10. The promise lengthens automatically when requests pile up. Throughput (reports per day) is a setting the owner can raise.
+  - Measured 2026-10-12: about 5 reports **per week** (5 `done` events in the week of 2026-10-05), with 388 pending in the queue.
+  - Holding 2–3 days means requested topics jump the queue and the runner fires often enough.
+- **10,000 topics:** generate them without an LLM from the taxonomy (1,175 active country × industry pairs × lenses). Index them only if the thin-content test passes; otherwise keep noindex and index gradually by demand.
+- **Search with no result → placeholder → email** (S3b) is the same system as the ad landing pages. Everything below applies to both.
+
+**Already working (checked 2026-10-12)**
+- A coming-soon URL `/<locale>/reports/<topic-slug>` turns into the report once it is published. `api/topic.js` returns `{ published: <report slug> }` when `topics.report_id` points to a published report, and `reports/_view.html` redirects with JS.
+- **Gap:** the report slug differs from the topic slug (e.g. `2027-id-ev-charging-market-assessment` → `indonesia-ev-charging-2026`), and the redirect is client-side only. An ad URL or an indexed coming-soon URL therefore does not pass a server-side 301. S18 fixes this.
+- `topic_requests` (3 points) and searches (1 point) already raise queue priority, and the daily cron `/api/notify-topic-published` emails requesters at publish.
+
+#### S16 — Email deliverability (owner DNS clicks + small code)
+- [ ] Owner, Namecheap DNS (click-through guide from Claude):
+  - add the Resend DKIM + SPF records shown in the Resend dashboard → Domains;
+  - add a DMARC record, starting with `p=none` and a report address;
+  - keep Google Workspace's SPF include in the same SPF record.
+- [ ] Verify with a test send to Gmail and Outlook: "Show original" must show SPF pass, DKIM pass and DMARC pass.
+- [ ] Instant confirmation email when someone leaves an email on a coming-soon page, stating the report name and the expected date.
+  - If it lands in spam, the reader notices now rather than never.
+  - Reply-To goes to a real inbox; mostly text, few links.
+- [ ] On-page message after sign-up: "Check your inbox — add noreply@kiraresearch.com to contacts".
+- [ ] A returning reader sees the status on the same URL (it becomes the report when published), so the page never depends on email alone.
+- [ ] Resend webhook for bounces and complaints, logged and shown on `/en/admin/health`.
+
+#### S17 — Google Ads attribution
+- [ ] Store the ad click id on landing: `gclid` / `gbraid` / `wbraid` plus `utm_*`, first-party, in session storage. Send it with every `topic-request`, `leads`, `waitlist` and purchase POST. New nullable columns on those tables.
+- [ ] Send GA4 key events (`generate_lead`, `purchase` with value). Owner links GA4 to Google Ads and imports them as conversions (click-through guide).
+- [ ] Offline conversion export: a CSV of click id + conversion time + value from `/en/admin/funnel`, for upload to Google Ads, so Google learns from real emails and purchases rather than clicks.
+- [ ] Consent: target outside the EEA/UK at first (no Consent Mode needed), and add a privacy policy line on analytics and ad measurement.
+- [ ] `/en/admin/funnel` gains a "paid" source split: clicks → emails → purchases, cost per email and per purchase. Cost is entered by the owner, or later read from the Ads API.
+
+#### S18 — On-demand delivery in 2–3 days
+- [ ] Owner setting `ondemand.target_days` (default 3) and `ondemand.reports_per_day` (current runner capacity) on `/en/admin/config`.
+- [ ] ETA = target days, lengthened automatically when the requested topics ahead of this one exceed what the capacity can make in that window. Shown on the coming-soon page ("Ready by <date> — we email you") and in the confirmation email.
+- [ ] Queue: a topic with at least one email request jumps ahead of planner topics (`queue.mjs sync-topics`). Within requested topics, order by first request date so promises are kept in order.
+- [ ] The EN version publishes first; JA/KO/ZH follow and do not block the promise.
+- [ ] The runner fires often enough to meet the promise. Cadence is sized from `ondemand.reports_per_day`; the owner raises it when demand grows.
+- [ ] Missed-promise alert on `/en/admin/health` when a requested topic passes its ETA unpublished.
+- [ ] Same URL after publish: a server-side 301 from `/<locale>/reports/<topic-slug>` to the report (or publish the report under the topic slug), replacing the JS-only redirect, so ad URLs and indexed URLs carry over.
+- [ ] Show the price the report will have ("$49 on publication") on the coming-soon page, to match the ad.
+
+#### S19 — Impulse pricing + checkout
+- [ ] Pricing pages (EN/JA/KO/ZH): $49 report · $29 transcript · $39 list · $149 month. Settle what the month includes (open, see above).
+- [ ] Turn on single-report checkout (`PER_REPORT_PURCHASE = true` in `reports/_view.html`, price from the DB) with the existing PayPal flow. Check the receipt email after S16.
+- [ ] Transcript purchase ($29): unlock `/api/transcript-content` for a buyer, not only `ADMIN_EMAILS`.
+- [ ] Kira List purchase ($39): when Kira List ships.
+
+#### S20 — Topic expansion to ~10,000 (no LLM) + thin-content test
+- [ ] Generator from the taxonomy: active country × industry pairs × lenses (market assessment, market entry, regulatory, competitors, distribution…).
+  - Each page gets a search-style title, a description, a table of contents from the lens's chapter frame, the guiding questions and the price.
+  - Plus whatever real data the DB already has for that pair: published-report links, companies in `industry_players` / `entities`, related transcripts.
+  - Template text only, no model calls. New topics get `source = 'generator'` and stay out of the production queue until requested.
+- [ ] **Pilot 500 first (noindex).** Measure thinness ourselves:
+  - near-duplicate share between pages (shingle similarity), unique words per page, and the share of each page that is real data rather than template text;
+  - pages that share >~80% of their text with a sibling are merged or dropped.
+- [ ] **Google's own verdict:**
+  - index a cohort of ~200 pilot pages (sitemap + indexable) for 4–6 weeks;
+  - read Search Console → Pages: if most are "Crawled – currently not indexed" or a manual action appears, the rest stay noindex and are indexed gradually as demand (clicks, requests) adds real content.
+- [ ] Full run to ~10,000 only after the pilot passes. Sitemap split by 5,000 URLs.
+
+#### S21 — Google Ads launch (measured test)
+- [ ] Script: Google Ads Editor CSV from published reports + topics, one ad group per topic, built from the search-style name:
+  - keywords: phrase + exact match;
+  - headlines: name + "$49" + "Ready in 3 days" (coming soon) or "Download now" (published);
+  - final URL = the page.
+- [ ] Shared negative keyword list: free, pdf free, download free, wikipedia, ppt, statistics free, thesis, assignment, jobs, salary, "what is", definition…
+- [ ] Targeting: the buyer markets (JP, KR, SG, TW, US… outside the EEA/UK first), language matching the page locale.
+- [ ] Bidding: Manual CPC with a cap. Move to Maximize conversions only after ~15–30 conversions per month from S17.
+- [ ] 3–4 week test at a small daily budget. Review the search terms report every week and add negatives.
+- [ ] Read-out by product and lens: CPC, CTR, cost per email, cost per purchase.
 
 Open issue (found 2026-10-06): the production database has a `topics.source` column (`planner` | `reader`) and a `requested` topic status that no migration in `main` defines; main's code only knows `proposed`. The session "Report search with placeholders" owns this work and must commit that migration and teach `admin-topics`, `sync-approved-topics` and `topic-search` about `requested`.
 
