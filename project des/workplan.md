@@ -204,18 +204,19 @@ Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 →
 - **Gap:** the report slug differs from the topic slug (e.g. `2027-id-ev-charging-market-assessment` → `indonesia-ev-charging-2026`), and the redirect is client-side only. An ad URL or an indexed coming-soon URL therefore does not pass a server-side 301. S18 fixes this.
 - `topic_requests` (3 points) and searches (1 point) already raise queue priority, and the daily cron `/api/notify-topic-published` emails requesters at publish.
 
-#### S16 — Email deliverability (owner DNS clicks + small code)
-- [ ] Owner, Namecheap DNS (click-through guide from Claude):
-  - add the Resend DKIM + SPF records shown in the Resend dashboard → Domains;
-  - add a DMARC record, starting with `p=none` and a report address;
-  - keep Google Workspace's SPF include in the same SPF record.
+#### S16 — Email deliverability (owner DNS clicks + small code) — 🟡 code done 2026-10-12, owner steps open
+DNS check on 2026-10-12 (public lookups): no Resend records at the usual names (`resend._domainkey`, `send` MX/TXT) and no `_dmarc` record; the root SPF only includes Google; Google's own DKIM (`google._domainkey`) exists. The Resend dashboard is the source of truth for the exact records, so the owner reads them there.
+- [ ] Owner, Namecheap → Domain List → Manage → Advanced DNS (click-through guide in chat):
+  - open Resend → Domains → kiraresearch.com and add every record it lists (DKIM TXT at `resend._domainkey`, SPF TXT and MX at `send`), then press Verify until it reads Verified;
+  - add a DMARC TXT record: host `_dmarc`, value `v=DMARC1; p=none; rua=mailto:<owner inbox>` (monitor first, tighten later);
+  - leave the root SPF (`v=spf1 include:_spf.google.com ~all`) as it is: Resend sends from the `send` subdomain.
+- [ ] Owner: Resend → Webhooks → Add endpoint `https://kiraresearch.com/api/email-webhook`, events `email.delivered`, `email.bounced`, `email.complained`, `email.delivery_delayed`; copy its signing secret into Vercel as `RESEND_WEBHOOK_SECRET`, redeploy.
 - [ ] Verify with a test send to Gmail and Outlook: "Show original" must show SPF pass, DKIM pass and DMARC pass.
-- [ ] Instant confirmation email when someone leaves an email on a coming-soon page, stating the report name and the expected date.
-  - If it lands in spam, the reader notices now rather than never.
-  - Reply-To goes to a real inbox; mostly text, few links.
-- [ ] On-page message after sign-up: "Check your inbox — add noreply@kiraresearch.com to contacts".
-- [ ] A returning reader sees the status on the same URL (it becomes the report when published), so the page never depends on email alone.
-- [ ] Resend webhook for bounces and complaints, logged and shown on `/en/admin/health`.
+- [x] Instant "we got your request" email when a reader leaves an email on a coming-soon page (`sendTopicRequestConfirmation`, plain text + one link, Reply-To = first `ADMIN_EMAILS` address). Capped so the form cannot mail strangers: 3 per address per 24 h, 10 per IP per hour (`topic_requests.confirmed_at`, migration 047); the request itself is always saved. The expected date is added by S18.
+- [x] On-page message after sign-up in EN/JA/KO/ZH: check the inbox and spam, add noreply@kiraresearch.com to contacts.
+- [x] A returning reader sees "you asked" on the same URL instead of the form (the browser remembers, `localStorage`); the URL itself becomes the report when published, so the page never depends on email alone.
+- [x] Resend webhook `api/email-webhook.js` (Svix signature check, stale/forged calls refused): events go to `email_events`, hard bounces and spam complaints to `email_suppressions` and `api/_lib/email.js` never mails them again. `/en/admin/health` shows delivered / bounced / spam counts for 30 days and turns red above a 5% problem rate or any complaint. Migration 047 applied.
+- Email text is English only for now (same as the "report ready" email); JA/KO/ZH copy can follow when real readers from those markets arrive.
 
 #### S17 — Google Ads attribution
 - [ ] Store the ad click id on landing: `gclid` / `gbraid` / `wbraid` plus `utm_*`, first-party, in session storage. Send it with every `topic-request`, `leads`, `waitlist` and purchase POST. New nullable columns on those tables.

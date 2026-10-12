@@ -21,7 +21,9 @@
       stripTitle: 'Coming soon', stripBody: 'Not published yet — read what each will cover and get an email when it is.',
       noneTitle: 'Not in the library yet', noneBody: 'Tell us what you are looking for and leave an email. We will tell you if we take it on.',
       kwReq: 'Notify me', reqKw: 'Your request', soonTag: 'Coming soon', exec: 'Executive summary — available on publication.',
-      lib: 'Back to library'
+      lib: 'Back to library',
+      inbox: 'Check your inbox for a confirmation. If it is not there, look in spam and add noreply@kiraresearch.com to your contacts.',
+      asked: 'You asked to be told about this report. We will email you the day it is published.'
     },
     ja: {
       soon: '近日公開', crumbLib: 'ライブラリ', answer: 'このレポートで答える問い',
@@ -34,7 +36,9 @@
       stripTitle: '近日公開', stripBody: '未公開のレポートです。内容をご確認のうえ、公開時にメールで通知を受け取れます。',
       noneTitle: 'まだライブラリにありません', noneBody: 'お探しの内容とメールアドレスをお知らせください。制作する場合はご連絡します。',
       kwReq: '通知を受け取る', reqKw: 'ご要望', soonTag: '近日公開', exec: 'エグゼクティブサマリー — 公開時に閲覧できます。',
-      lib: 'ライブラリに戻る'
+      lib: 'ライブラリに戻る',
+      inbox: '確認メールをお送りしました。届かない場合は迷惑メールフォルダをご確認のうえ、noreply@kiraresearch.com を連絡先に追加してください。',
+      asked: 'このレポートの公開通知を受け付け済みです。公開当日にメールでお知らせします。'
     },
     ko: {
       soon: '곧 공개', crumbLib: '라이브러리', answer: '이 보고서가 답하는 질문',
@@ -47,7 +51,9 @@
       stripTitle: '곧 공개', stripBody: '아직 공개 전인 보고서입니다. 다룰 내용을 확인하고 공개 시 이메일로 알림을 받으십시오.',
       noneTitle: '아직 라이브러리에 없습니다', noneBody: '찾으시는 내용과 이메일을 남겨 주십시오. 제작하게 되면 알려드리겠습니다.',
       kwReq: '알림 받기', reqKw: '요청 내용', soonTag: '곧 공개', exec: '핵심 요약 — 공개 시 열람할 수 있습니다.',
-      lib: '라이브러리로 돌아가기'
+      lib: '라이브러리로 돌아가기',
+      inbox: '확인 메일을 보냈습니다. 보이지 않으면 스팸함을 확인하고 noreply@kiraresearch.com 을 연락처에 추가해 주십시오.',
+      asked: '이 보고서의 공개 알림을 이미 신청하셨습니다. 공개 당일 이메일로 알려드리겠습니다.'
     },
     zh: {
       soon: '即将发布', crumbLib: '资料库', answer: '本报告将回答的问题',
@@ -60,10 +66,25 @@
       stripTitle: '即将发布', stripBody: '尚未发布。可先查看内容范围，发布时通过邮件获知。',
       noneTitle: '资料库中暂无', noneBody: '请告诉我们您的需求并留下邮箱。若我们决定制作，会通知您。',
       kwReq: '通知我', reqKw: '您的需求', soonTag: '即将发布', exec: '执行摘要 — 发布后可阅读。',
-      lib: '返回资料库'
+      lib: '返回资料库',
+      inbox: '确认邮件已发送。若未收到，请查看垃圾邮件箱，并将 noreply@kiraresearch.com 加入通讯录。',
+      asked: '您已申请本报告的发布通知，发布当天我们会邮件通知您。'
     }
   };
   const s = k => (S[L] || S.en)[k] !== undefined ? (S[L] || S.en)[k] : S.en[k];
+
+  // The reader's own browser remembers what they asked for, so coming back to the page shows
+  // "you asked" instead of the form again. Convenience only: storage may be blocked, then the form shows.
+  const KEY = 'kira-cs-asked';
+  function asked(slug) {
+    try { return (JSON.parse(localStorage.getItem(KEY)) || []).indexOf(slug) >= 0; } catch (_e) { return false; }
+  }
+  function remember(slug) {
+    try {
+      const l = (JSON.parse(localStorage.getItem(KEY)) || []).filter(x => x !== slug);
+      l.push(slug); localStorage.setItem(KEY, JSON.stringify(l.slice(-200)));
+    } catch (_e) { /* ignore */ }
+  }
 
   function formHtml(attrs, button) {
     return '<form class="cs-form" data-cs-form ' + attrs + '>' +
@@ -97,7 +118,9 @@
             (t.buyer_question ? '<p class="cs-q">' + esc(t.buyer_question) + '</p>' : '') +
             '<div class="cs-status"><span class="cs-dot"></span>' + esc(stateLine(t)) + '</div>' +
             '<ol class="cs-steps">' + s('steps').map((x, i) => '<li' + (i < done ? ' class="on"' : '') + '>' + esc(x) + '</li>').join('') + '</ol>' +
-            '<div id="cs-req">' + formHtml('data-topic="' + esc(t.slug) + '"', s('notify')) + '</div>' +
+            '<div id="cs-req">' + (asked(t.slug)
+              ? '<div class="cs-done" role="status">' + esc(s('asked')) + '</div>'
+              : formHtml('data-topic="' + esc(t.slug) + '"', s('notify'))) + '</div>' +
           '</div>' +
         '</div>' +
       '</div></div>' +
@@ -138,7 +161,8 @@
       const r = await fetch('/api/topic-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (!r.ok) throw new Error('http ' + r.status);
       if (f.nextElementSibling) f.nextElementSibling.remove();   // the fine-print line
-      f.outerHTML = '<div class="cs-done" role="status">' + esc(s('sent')) + '</div>';
+      remember(f.dataset.topic || ('kw:' + (f.dataset.keyword || '').toLowerCase()));
+      f.outerHTML = '<div class="cs-done" role="status">' + esc(s('sent')) + '<br><small>' + esc(s('inbox')) + '</small></div>';
     } catch (_e) {
       btn.disabled = false;
       let msg = f.parentElement.querySelector('.cs-err');
