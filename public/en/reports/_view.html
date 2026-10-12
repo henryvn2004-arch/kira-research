@@ -80,6 +80,10 @@
     // below is kept intact). Existing buyers keep full access either way.
     let PER_REPORT_PURCHASE = false;   // set from the API (config checkout.single_report_enabled) once the report is loaded
     const WAITLIST_URL = '/en/pricing#waitlist';
+    // Month plan on sale (config checkout.subscription_enabled, from the API): the "get access" buttons that
+    // used to lead to the early-access form lead to the subscription page instead.
+    let SUBSCRIPTION = null;
+    const subCta = () => t('planCta').replace('${price}', () => '$' + SUBSCRIPTION.price);
 
     // Preview iframe geometry. Source HTML is authored at 1280×720 per page
     // (matches the PDF). 5 pages × 720px = 3600px tall. Declared up here so
@@ -135,6 +139,7 @@
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
       PER_REPORT_PURCHASE = !!data.purchaseEnabled;
+      SUBSCRIPTION = data.subscription && data.subscription.enabled ? data.subscription : null;
     } catch (err) {
       if (err && err.message === 'halt') throw err;
       root.innerHTML = msg(t('loadError'));
@@ -528,7 +533,9 @@
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
       const cta = PER_REPORT_PURCHASE
         ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 49) + '</button>'
-        : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
+        : SUBSCRIPTION
+          ? '<a class="r-btn r-btn-primary" href="/' + locale + '/subscription">' + escapeHtml(subCta()) + R.icon('arrow') + '</a>'
+          : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
       const navBtn = (dir, label) => '<button type="button" class="rd-pv-nav" data-pv="' + dir + '" aria-label="' + escapeHtml(label) + '">' +
         (dir < 0 ? '<span style="transform:scaleX(-1);display:inline-flex">' + R.icon('chev') + '</span>' : R.icon('chev')) + '</button>';
       // Every page of the report can be paged through; pages after the free
@@ -658,22 +665,41 @@
     // otherwise the subscription waitlist (S5 default).
     function renderAccessBox(d, state) {
       const incl = '<ul class="rd-incl">' + ['incl1', 'incl2', 'incl3', 'incl4'].map(k => '<li>' + R.icon('check') + escapeHtml(t(k)) + '</li>').join('') + '</ul>';
+      if (state.purchased && state.subPdf) {
+        // Month subscriber: reading is included; each new PDF counts against the monthly allowance (/api/library-pdf).
+        return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('subOwned')) + '</h3>' +
+          '<button class="r-btn r-btn-primary r-btn-block" id="sub-pdf-btn" type="button">' + escapeHtml(t('downloadPdf')) + '</button>' +
+          '<p class="small" id="sub-pdf-note">' + escapeHtml(t('subPdfUsed').replace('{used}', state.subPdf.used).replace('{limit}', state.subPdf.limit)) + '</p>' +
+          '<p style="margin:10px 0 0"><a class="r-link" href="/' + locale + '/subscription">' + escapeHtml(t('subManage')) + ' →</a></p></div>';
+      }
       if (state.purchased) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('owned')) + '</h3>' +
           (state.pdfUrl ? '<a class="r-btn r-btn-primary r-btn-block" href="' + escapeHtml(state.pdfUrl) + '" download>' + escapeHtml(t('downloadPdf')) + '</a>'
                         : '<p>' + escapeHtml(t('pdfPending')) + '</p>') + '</div>';
       }
+      const subBox = SUBSCRIPTION
+        ? '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">' +
+          '<button class="r-btn r-btn-outline r-btn-block" id="subscribe-btn" type="button">' + escapeHtml(subCta()) + '</button>' +
+          '<p class="small" style="margin-top:8px">' + escapeHtml(t('planBody').replace('{limit}', SUBSCRIPTION.pdfPerMonth || 5)) + '</p></div>' : '';
+      if (SUBSCRIPTION && !PER_REPORT_PURCHASE) {
+        // Only the Month plan is on sale: it is the primary action (no early-access form, nothing "opens soon").
+        return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
+          (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
+          '<button class="r-btn r-btn-primary r-btn-block" id="subscribe-btn" type="button">' + escapeHtml(subCta()) + R.icon('arrow') + '</button>' +
+          '<p class="small">' + escapeHtml(t('planBody').replace('{limit}', SUBSCRIPTION.pdfPerMonth || 5)) + '</p>' + incl +
+          '<p style="margin:14px 0 0"><a class="r-link" href="/' + locale + '/pricing">' + escapeHtml(t('seePlans')) + ' →</a></p></div>';
+      }
       if (PER_REPORT_PURCHASE) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
           '<p style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 49) + '</p>' +
           (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
-          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' + incl + '</div>';
+          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' + incl + subBox + '</div>';
       }
       return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3><p>' + escapeHtml(t('accessBody')) + '</p>' +
         (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
         '<a class="r-btn r-btn-primary r-btn-block" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>' +
         '<p class="small">' + escapeHtml(t('nothingCharged')) + '</p>' + incl +
-        '<p style="margin:14px 0 0"><a class="r-link" href="/' + locale + '/pricing">' + escapeHtml(t('seePlans')) + ' →</a></p></div>';
+        '<p style="margin:14px 0 0"><a class="r-link" href="/' + locale + '/pricing">' + escapeHtml(t('seePlans')) + ' →</a></p>' + subBox + '</div>';
     }
 
     function renderFullBody(full) {
@@ -764,7 +790,7 @@
             (dataBlock ? '<section class="rd-sec" id="data"><h2 class="rd-sec-h"><span class="ib">' + R.icon('layers') + '</span>' + escapeHtml(t('tabFindings')) + '</h2>' + dataBlock + '</section>' : '') +
           '</article>' +
           '<aside class="rd-aside">' + cover +
-            renderAccessBox(d, { purchased: owns, anyLocale: purchaseState.anyLocale, ownedLocale: purchaseState.ownedLocale, pdfUrl: fullContent && fullContent.pdf_url }) +
+            renderAccessBox(d, { purchased: owns, anyLocale: purchaseState.anyLocale, ownedLocale: purchaseState.ownedLocale, pdfUrl: fullContent && fullContent.pdf_url, subPdf: fullContent && fullContent.pdf, subscription: d.subscription }) +
             '<div class="rd-box"><h3>' + escapeHtml(t('reportDetails')) + '</h3><dl class="rd-dl">' +
               (d.published_at ? '<dt>' + escapeHtml(t('published')) + '</dt><dd>' + escapeHtml(R.date(d.published_at)) + '</dd>' : '') +
               (d.pages ? '<dt>' + escapeHtml(t('pages')) + '</dt><dd>' + d.pages + '</dd>' : '') +
@@ -797,6 +823,39 @@
 
       const buyBtn = document.getElementById('buy-btn');
       if (buyBtn) buyBtn.addEventListener('click', () => { buyBtn.disabled = true; startCheckout(d.slug, locale); });
+      const subscribeBtn = document.getElementById('subscribe-btn');
+      if (subscribeBtn) subscribeBtn.addEventListener('click', async () => {
+        subscribeBtn.disabled = true;
+        const u = await window.kiraAuth.getUser();
+        if (!u) {
+          sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+          window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to subscribe');
+          return;
+        }
+        try {
+          const r = await fetch('/api/subscription?action=create', {
+            method: 'POST', headers: { ...(await bearerHeaders()), 'Content-Type': 'application/json' }, body: JSON.stringify({ locale })
+          });
+          const b = await r.json().catch(() => ({}));
+          if (r.status === 409) { window.location.href = '/' + locale + '/subscription'; return; }
+          if (!r.ok || !b.approveUrl) { alert('Could not start the subscription (' + (b.error || r.status) + ').'); subscribeBtn.disabled = false; return; }
+          window.location.href = b.approveUrl;
+        } catch (_e) { alert('Network error. Please retry.'); subscribeBtn.disabled = false; }
+      });
+      const subPdfBtn = document.getElementById('sub-pdf-btn');
+      if (subPdfBtn) subPdfBtn.addEventListener('click', async () => {
+        const note = document.getElementById('sub-pdf-note');
+        subPdfBtn.disabled = true;
+        try {
+          const r = await fetch('/api/library-pdf?slug=' + encodeURIComponent(d.slug) + '&locale=' + locale, { headers: await bearerHeaders() });
+          const b = await r.json().catch(() => ({}));
+          if (r.status === 429) { if (note) note.textContent = t('subPdfLimit').replace('{limit}', b.limit); return; }
+          if (!r.ok || !b.pdf_url) { if (note) note.textContent = t('subPdfErr'); return; }
+          if (note && b.limit) note.textContent = t('subPdfUsed').replace('{used}', b.used).replace('{limit}', b.limit);
+          window.location.href = b.pdf_url;
+        } catch (_e) { if (note) note.textContent = t('subPdfErr'); }
+        finally { subPdfBtn.disabled = false; }
+      });
       const previewBuyBtn = document.getElementById('preview-buy-btn');
       if (previewBuyBtn) previewBuyBtn.addEventListener('click', () => { previewBuyBtn.disabled = true; startCheckout(d.slug, locale); });
       const copyBtn = document.getElementById('rd-copy');
@@ -839,10 +898,10 @@
       const bodyEl = document.getElementById('unlock-modal-body');
       if (!modal || !closeBtn || !buyBtn || !titleEl || !bodyEl) return;
       document.getElementById('unlock-modal-eyebrow').textContent = t('lockedTitle');
-      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 49) : t('requestAccess');
+      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 49) : SUBSCRIPTION ? subCta() : t('requestAccess');
       closeBtn.setAttribute('aria-label', t('close'));
       const foot = modal.querySelector('.unlock-modal-footnote');
-      if (foot) foot.textContent = PER_REPORT_PURCHASE ? '' : t('nothingCharged');
+      if (foot) foot.textContent = PER_REPORT_PURCHASE || SUBSCRIPTION ? '' : t('nothingCharged');
       let opener = null;
 
       function openModal(name, el) {
@@ -868,7 +927,7 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
       buyBtn.addEventListener('click', () => {
         if (purchaseState.purchased) { closeModal(); return; }
-        if (!PER_REPORT_PURCHASE) { window.location.href = WAITLIST_URL; return; }
+        if (!PER_REPORT_PURCHASE) { window.location.href = SUBSCRIPTION ? '/' + locale + '/subscription' : WAITLIST_URL; return; }
         buyBtn.disabled = true;
         startCheckout(d.slug, locale);
       });

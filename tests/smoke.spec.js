@@ -366,6 +366,31 @@ test.describe('public APIs', () => {
     expect((await request.get('/api/transcript-content?slug=anything-here')).status()).toBe(401);
   });
 
+  // S7: the Month subscription.
+  test('/api/subscription needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/subscription')).status()).toBe(401);
+    expect((await request.post('/api/subscription?action=create', { data: { locale: 'en' } })).status()).toBe(401);
+    expect((await request.post('/api/subscription?action=cancel')).status()).toBe(401);
+  });
+
+  test('/api/library-pdf needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/library-pdf?slug=anything-here')).status()).toBe(401);
+  });
+
+  test('/api/checkout-status includes the Month plan', async ({ request }) => {
+    const b = await (await request.get('/api/checkout-status')).json();
+    expect(typeof b.subscription.enabled).toBe('boolean');
+    expect(b.subscription.price).toBe(149);
+  });
+
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/subscription loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/subscription`);
+      expect(r.status()).toBe(200);
+      await expect(page).toHaveTitle(/Subscription/);
+    });
+  }
+
   test('/api/library-buy create is refused while single-report checkout is off', async ({ request }) => {
     const r = await request.post('/api/library-buy?action=create', { data: { slug: 'no-such-report', locale: 'en' } });
     expect([403, 404]).toContain(r.status());

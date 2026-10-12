@@ -5,11 +5,14 @@
 //
 //   GET /api/library-verify?slug=X&locale=Y
 //   Authorization: Bearer <supabase-jwt>
-//   → { purchased: boolean, purchasedAt?: iso, anyLocale?: boolean }
+//   → { purchased: boolean, purchasedAt?: iso, anyLocale?: boolean, viaSubscription?: boolean }
+//   A Month subscriber is `purchased: true, viaSubscription: true` for every report.
 //
 // `anyLocale` is true if the user has purchased this report in ANY locale —
 // used to offer free locale-switch on a previously-purchased report.
 // ============================================================
+
+import { activeSubscription } from './_lib/subscription.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -81,6 +84,12 @@ export default async function handler(req, res) {
         purchasedAt: exact[0].created_at,
         anyLocale: true
       });
+      return;
+    }
+
+    // Not bought: a Month subscriber still reads it in full.
+    if (await activeSubscription(user.id)) {
+      res.status(200).json({ purchased: true, viaSubscription: true, anyLocale: true });
       return;
     }
 

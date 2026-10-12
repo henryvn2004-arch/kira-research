@@ -15,7 +15,7 @@
 import { coverUrls } from './_lib/cover.js';
 import { sectorOf } from './_lib/sectors.js';
 import { getConfig } from './_lib/config.js';
-import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
+import { REPORT_PRICE_DEFAULT, SUBSCRIPTION_MONTH_PRICE } from './_lib/pricing.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -253,6 +253,7 @@ export default async function handler(req, res) {
       year:           base.year || null,
       price:          base.price || REPORT_PRICE_DEFAULT,
       purchaseEnabled: await getConfig('checkout.single_report_enabled'),
+      subscription:   { enabled: await getConfig('checkout.subscription_enabled'), price: SUBSCRIPTION_MONTH_PRICE, pdfPerMonth: await getConfig('subscription.pdf_per_month') },
       pages:          base.pages || null,
       code:           base.code || null,
       sector:         sectorOf(base.industry_code),

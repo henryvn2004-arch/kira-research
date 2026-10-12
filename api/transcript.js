@@ -7,7 +7,7 @@
 // ============================================================
 import { SLUG_RE, pickLocale, loadTranscript, meta, splitFree, sourcesFor } from './_lib/transcripts.js';
 import { getConfig } from './_lib/config.js';
-import { TRANSCRIPT_PRICE } from './_lib/pricing.js';
+import { TRANSCRIPT_PRICE, SUBSCRIPTION_MONTH_PRICE } from './_lib/pricing.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') { res.status(405).json({ error: 'method_not_allowed' }); return; }
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
       lockedTurns,
       totalTurns,
       purchase: { enabled: await getConfig('checkout.transcript_enabled'), price: TRANSCRIPT_PRICE },
+      subscription: { enabled: await getConfig('checkout.subscription_enabled'), price: SUBSCRIPTION_MONTH_PRICE },
       sources: sourcesFor(found.tr.sources, texts),
       sourceCounts: {
         public: Object.keys(found.tr.sources || {}).filter((k) => k[0] === 'N').length,
