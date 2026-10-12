@@ -279,7 +279,11 @@ Findings that shaped it: one runner fire already makes a whole report (EN → JA
 **Proposal (replaces the 10,000-page plan):**
 - [ ] Do **not** generate ~8,000 template pages. Ads do not need pages to be indexed, so the pages only have to exist for the topics we advertise; the 1,892 real topics (plus anything readers request) already are that set.
 - [ ] S21 builds ad groups from those 1,892 topics (one ad group each, search-style names); no new pages needed.
-- [ ] Optional SEO test, small: make ~200 of the best pages (written hook + must-cover facts) indexable with server-side title/description, sitemap them, and read Search Console after 4–6 weeks. Needs server-rendered meta for coming-soon pages first (today they are JS-rendered and `noindex`).
+- [x] **SEO test built 2026-10-12 (owner: "SEO thử ~200 trang").** ~195 English coming-soon pages are indexable; every other placeholder stays `noindex`.
+  - Which pages: the flag `topics.signals.seo_test = true` (no migration). Chosen as one **market overview per segment**, so no two test pages share their "must cover" facts: status `queued`, no report yet, hook and must-cover present, at most 14 per country by score (BN 8, KH 13, LA 11, MM 9 are all they have) = 195. Remove the flag to take a page out.
+  - What changes on a flagged page: `api/topic.js` returns `index: true` + `hook`; `js/coming-soon.js` skips `noindex`, sets the meta description (hook + buyer question) and drops the hreflang links (JA/KO/ZH twins stay `noindex`); `sitemap-en.xml` lists the page without hreflang (`api/sitemap.js`, block 3c); once the topic has a report it leaves the sitemap and the page redirects to the report.
+  - **Limit, said plainly:** the title, description and text are set by JavaScript (like every report page today), not in the raw HTML. Google renders JavaScript, but if the pages come back "Crawled – currently not indexed" it can mean thin content OR slow rendering; the two cannot be told apart from this test alone.
+  - Read-out (owner, Search Console, EN property): after 4–6 weeks open Indexing → Pages and filter by the sitemap-en.xml URLs. Many "Indexed" and some impressions = the pattern works, a larger set can follow. Mostly "Crawled – currently not indexed" = stop, keep ads as the only traffic. Do not add pages in the meantime.
 - [ ] If the owner still wants more pages: only where the DB has real data for that pair (published report, companies, transcript), measured with the shingle test below.
 
 Original plan, kept for reference (not started):
