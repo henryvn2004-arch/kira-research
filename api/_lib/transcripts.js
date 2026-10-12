@@ -6,6 +6,8 @@
 //   /api/transcript-content  the full text (Bearer JWT, entitled users)
 // ============================================================
 
+import { activeSubscription } from './subscription.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -120,13 +122,14 @@ export async function verifyBearer(req) {
   return u && u.id ? { id: u.id, email: (u.email || '').toLowerCase() } : null;
 }
 
-// Who may read one full transcript: the admin team (content review), or a reader with a
-// completed purchase of it (transcript_purchases, migration 051). When subscriptions ship
-// (Sprint S7), add the active-subscription check here; every endpoint goes through it.
+// Who may read one full transcript: the admin team (content review), a Month subscriber (every
+// transcript is included), or a reader with a completed purchase of it (transcript_purchases,
+// migration 051). Every endpoint goes through here.
 export async function isEntitled(user, transcriptId) {
   if (!user) return false;
   const admins = (process.env.ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
   if (admins.includes(user.email)) return true;
+  if (await activeSubscription(user.id)) return true;
   if (!transcriptId) return false;
   const rows = await sb(
     `transcript_purchases?user_id=eq.${encodeURIComponent(user.id)}&transcript_id=eq.${encodeURIComponent(transcriptId)}` +

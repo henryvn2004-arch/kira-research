@@ -5,4 +5,5 @@
 // ============================================================
 
 export const REPORT_PRICE_DEFAULT = 49;
-export const TRANSCRIPT_PRICE = 29;   // one expert-interview transcript, all languages (S19)
+export const TRANSCRIPT_PRICE = 29;
+export const SUBSCRIPTION_MONTH_PRICE = 149;   // Month plan: whole library online + transcripts + PDF_PER_MONTH downloads   // one expert-interview transcript, all languages (S19)

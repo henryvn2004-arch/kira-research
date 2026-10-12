@@ -80,6 +80,7 @@
   const sources = full ? full.sources : data.sources;
   const locked = !full && data.lockedTurns > 0;
   const buy = locked && !!(data.purchase && data.purchase.enabled);
+  const subOn = locked && !!(data.subscription && data.subscription.enabled);
 
   // Markers are numbered in order of first use on the page.
   const order = [];
@@ -121,10 +122,12 @@
           ? '<h3>Read the full interview</h3>' +
             '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. Buy the full transcript, with every marked source, for $' + data.purchase.price + '. One purchase covers every language it is published in.</p>' +
             '<button class="r-btn r-btn-primary" id="tv-buy" type="button">Buy full transcript — $' + data.purchase.price + '</button>' +
-            '<a class="alt" href="' + WAITLIST + '">Or request early access to the subscription</a>'
+            (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>'
+                   : '<a class="alt" href="' + WAITLIST + '">Or request early access to the subscription</a>')
           : '<h3>The rest of this interview is for subscribers</h3>' +
             '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, is part of the KIRA subscription.</p>' +
-            '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Request early access</a>') +
+            (subOn ? '<button class="r-btn r-btn-primary" id="tv-subscribe" type="button">Subscribe — $' + data.subscription.price + '/month</button>'
+                   : '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Request early access</a>')) +
         '<a class="alt" href="/auth.html" id="tv-signin">Already have access? Sign in</a>' +
       '</div></div>' +
     '</div>';
@@ -189,6 +192,27 @@
       if (!r.ok || !b.approveUrl) { alert('Could not start checkout (' + (b.error || r.status) + ').'); buyBtn.disabled = false; return; }
       location.href = b.approveUrl;
     } catch (_e) { alert('Network error starting checkout. Please retry.'); buyBtn.disabled = false; }
+  });
+
+  const subBtn = document.getElementById('tv-subscribe');
+  if (subBtn) subBtn.addEventListener('click', async () => {
+    subBtn.disabled = true;
+    try {
+      await whenReady();
+      const session = window.db ? (await window.db.auth.getSession()).data.session : null;
+      if (!session) {
+        try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
+        location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to subscribe');
+        return;
+      }
+      const r = await fetch('/api/subscription?action=create', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ locale })
+      });
+      const b = await r.json().catch(() => ({}));
+      if (r.status === 409) { location.href = '/' + locale + '/subscription'; return; }
+      if (!r.ok || !b.approveUrl) { alert('Could not start the subscription (' + (b.error || r.status) + ').'); subBtn.disabled = false; return; }
+      location.href = b.approveUrl;
+    } catch (_e) { alert('Network error. Please retry.'); subBtn.disabled = false; }
   });
 
   const signin = document.getElementById('tv-signin');

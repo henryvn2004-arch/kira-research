@@ -99,6 +99,16 @@ export const CONFIG = {
     label: 'Sell expert-interview transcripts (PayPal checkout)',
     help: 'Off: a locked transcript still points to the waitlist. On: the lock card offers the full transcript for $29 (one purchase covers every language) and the PayPal button works. Turn it on after /en/terms (it also covers transcripts) is approved.'
   },
+  'checkout.subscription_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell the Month subscription ($149, PayPal Subscriptions)',
+    help: 'Off: the Month card on the pricing page keeps the early-access form and nobody can start a subscription; people who already subscribed keep their access. On: the Month card becomes "Subscribe" (sign-in, then PayPal) and report pages offer it. Read /en/terms first (it covers the subscription), and make one live test subscription before you advertise it.'
+  },
+  'subscription.pdf_per_month': {
+    group: 'Checkout', type: 'int', min: 1, max: 100, default: 5, unit: 'PDFs per billing period',
+    label: 'PDF downloads included in the Month plan',
+    help: 'How many different report PDFs a subscriber can download in each monthly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
+  },
   'ads.value_request': {
     group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
     label: 'What an "email me when ready" sign-up is worth',
