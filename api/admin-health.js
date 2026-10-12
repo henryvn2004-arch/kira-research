@@ -83,8 +83,8 @@ export default async function handler(req, res) {
       sb('email_suppressions?select=email&limit=10000').catch(() => null),
       // S18: requested reports not published by the date we promised the first reader.
       sb(`topics?select=slug,title,promise_at&promise_at=lt.${encodeURIComponent(new Date().toISOString())}&report_id=is.null&status=neq.rejected&order=promise_at.asc&limit=50`).catch(() => null),
-      // S7: Month subscriptions (migration 052). null = table not there yet.
-      sb('subscriptions?select=status,created_at,current_period_end,cancel_requested_at&order=created_at.desc&limit=5000').catch(() => null)
+      // S7: Month and Annual subscriptions (migration 052). null = table not there yet.
+      sb('subscriptions?select=plan,status,created_at,current_period_end,cancel_requested_at&order=created_at.desc&limit=5000').catch(() => null)
     ]);
 
     // Subscribers now, subscriptions that renew, ones cancelled but still inside the paid period, and pending ones
@@ -92,6 +92,7 @@ export default async function handler(req, res) {
     const nowMs = Date.now();
     const subscriptions = subRows === null ? null : {
       active: subRows.filter(r => r.status === 'active' && !r.cancel_requested_at).length,
+      active_year: subRows.filter(r => r.status === 'active' && !r.cancel_requested_at && r.plan === 'year').length,
       cancelling: subRows.filter(r => (r.status === 'cancelled' || r.cancel_requested_at) && r.current_period_end && new Date(r.current_period_end).getTime() > nowMs).length,
       suspended: subRows.filter(r => r.status === 'suspended').length,
       stuck_pending: subRows.filter(r => r.status === 'pending' && nowMs - new Date(r.created_at).getTime() > 3600000 && nowMs - new Date(r.created_at).getTime() < 86400000).length

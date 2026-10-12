@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- The Month subscription page (S7, 2026-10-12). One template for every language (/en|ja|ko|zh/subscription);
+<!-- The Month and Annual subscription page (S7, 2026-10-12). One template for every language (/en|ja|ko|zh/subscription);
      the strings live in the script below, keyed by the first path segment, like profile.html. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Subscription — KIRA Research</title>
-  <meta name="description" content="Your KIRA Research Month subscription." />
+  <meta name="description" content="Your KIRA Research subscription." />
   <meta name="robots" content="noindex,nofollow" />
   <link rel="canonical" href="https://kiraresearch.com/en/subscription" />
 
@@ -50,7 +50,8 @@
     document.documentElement.setAttribute('lang', L === 'zh' ? 'zh-Hans' : L);
     const S = {
       en: {
-        title: 'Subscription', lead: 'The Month plan: the whole library, online, every month.',
+        title: 'Subscription', lead: 'Month or Annual: the whole library, online.',
+        planYear: 'Annual', perYear: '/ year', b5y: 'Renews automatically each year; cancel any time, access continues to the end of the period you paid for', subscribeYear: 'Subscribe — ${price} / year', notOpenYear: 'The Annual plan opens soon. Leave your email and we will write when it does.', activeYear: 'Your Annual subscription is active', monthName: 'Month', oneAtATime: 'You can hold one subscription at a time.',
         planName: 'Month', perMonth: '/ month', b1: 'Every report in full, online', b2: 'Every expert-interview transcript in full',
         b3: '{limit} PDF downloads per billing period (the same PDF again in the same period does not count twice)', b4: 'New research as it is published',
         b5: 'Renews automatically each month; cancel any time, access continues to the end of the period you paid for',
@@ -65,7 +66,8 @@
         library: 'Browse the library', transcripts: 'Browse transcripts', error: 'Something went wrong. Please try again.', paypalNote: 'Payments and cancellations are handled by PayPal. You can also manage the automatic payment in your PayPal account.'
       },
       ja: {
-        title: '購読', lead: '月額プラン：ライブラリ全体を、毎月オンラインで。',
+        title: '購読', lead: '月額または年間：ライブラリ全体をオンラインで。',
+        planYear: '年間', perYear: '／年', b5y: '毎年自動更新。いつでも解約でき、お支払い済みの期間の終わりまで利用できます', subscribeYear: '購読する — ${price}／年', notOpenYear: '年間プランは近日開始予定です。メールアドレスをお知らせいただければ、開始時にご連絡します。', activeYear: '年間プランをご利用中です', monthName: '月額', oneAtATime: '同時にご利用いただける購読は1つです。',
         planName: '月額', perMonth: '／月', b1: '全レポートの全文をオンラインで閲覧', b2: '全エキスパート・インタビューのトランスクリプト全文',
         b3: '課金期間ごとにPDFダウンロード{limit}件（同じ期間に同じPDFを再取得しても重複して数えません）', b4: '新たに公開されるリサーチ',
         b5: '毎月自動更新。いつでも解約でき、お支払い済みの期間の終わりまで利用できます',
@@ -80,7 +82,8 @@
         library: 'ライブラリを見る', transcripts: 'トランスクリプトを見る', error: 'エラーが発生しました。もう一度お試しください。', paypalNote: 'お支払いと解約はPayPalで処理されます。自動支払いはPayPalアカウントからも管理できます。'
       },
       ko: {
-        title: '구독', lead: '월간 플랜: 라이브러리 전체를 매달 온라인으로.',
+        title: '구독', lead: '월간 또는 연간: 라이브러리 전체를 온라인으로.',
+        planYear: '연간', perYear: '/년', b5y: '매년 자동 갱신. 언제든 해지할 수 있으며, 결제한 기간이 끝날 때까지 이용할 수 있습니다', subscribeYear: '구독하기 — ${price}/년', notOpenYear: '연간 플랜은 곧 시작됩니다. 이메일을 남겨 주시면 시작 시 안내드립니다.', activeYear: '연간 구독을 이용 중입니다', monthName: '월간', oneAtATime: '구독은 한 번에 하나만 이용할 수 있습니다.',
         planName: '월간', perMonth: '/월', b1: '모든 보고서 전문 온라인 열람', b2: '모든 전문가 인터뷰 트랜스크립트 전문',
         b3: '결제 기간마다 PDF 다운로드 {limit}건 (같은 기간에 같은 PDF를 다시 받아도 중복 차감되지 않습니다)', b4: '신규 리서치 발간 시 즉시 제공',
         b5: '매월 자동 갱신. 언제든 해지할 수 있으며, 결제한 기간이 끝날 때까지 이용할 수 있습니다',
@@ -95,7 +98,8 @@
         library: '라이브러리 둘러보기', transcripts: '트랜스크립트 둘러보기', error: '문제가 발생했습니다. 다시 시도해 주세요.', paypalNote: '결제와 해지는 PayPal에서 처리됩니다. 자동 결제는 PayPal 계정에서도 관리할 수 있습니다.'
       },
       zh: {
-        title: '订阅', lead: '月度方案：整个报告库，每月在线阅读。',
+        title: '订阅', lead: '月度或年度方案：整个报告库，在线阅读。',
+        planYear: '年度', perYear: '/年', b5y: '每年自动续订；可随时取消，已付费周期结束前仍可使用', subscribeYear: '订阅 — ${price} / 年', notOpenYear: '年度方案即将开放。留下邮箱，开放时我们会通知您。', activeYear: '您的年度订阅已生效', monthName: '月度', oneAtATime: '同一时间只能持有一份订阅。',
         planName: '月度', perMonth: '/月', b1: '在线阅读每份报告全文', b2: '阅读每份专家访谈记录全文',
         b3: '每个计费周期 {limit} 份 PDF 下载（同一周期内重复下载同一份 PDF 不重复计数）', b4: '新研究发布即可阅读',
         b5: '每月自动续订；可随时取消，已付费周期结束前仍可使用',
@@ -118,33 +122,39 @@
     while (!window.kiraAuth) await new Promise((r) => setTimeout(r, 20));
 
     async function session() { return window.db ? (await window.db.auth.getSession()).data.session : null; }
-    async function api(action, method) {
+    async function api(action, method, plan) {
       const s = await session();
       const r = await fetch('/api/subscription' + (action ? '?action=' + action : ''), {
-        method: method || 'GET', headers: { Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' }, body: method === 'POST' ? JSON.stringify({ locale: L }) : undefined
+        method: method || 'GET', headers: { Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' }, body: method === 'POST' ? JSON.stringify({ locale: L, plan: plan || undefined }) : undefined
       });
       return { ok: r.ok, status: r.status, body: await r.json().catch(() => ({})) };
     }
     const termsLink = '<p class="sub-note"><a href="/' + L + '/terms">' + esc(S.terms) + '</a> · ' + esc(S.paypalNote) + '</p>';
 
-    function offer(info, signedIn) {
-      const benefits = [S.b1, S.b2, S.b3.replace('{limit}', info.pdfPerMonth), S.b4, S.b5].map((b) => '<li>' + esc(b) + '</li>').join('');
+    // One card per plan; the buttons carry data-plan so one handler serves both.
+    function planCard(info, signedIn, plan) {
+      const year = plan === 'year', P = info.plans[plan];
+      const benefits = [S.b1, S.b2, S.b3.replace('{limit}', P.pdfLimit), S.b4, year ? S.b5y : S.b5].map((b) => '<li>' + esc(b) + '</li>').join('');
       let cta;
-      if (!info.enabled) cta = '<p>' + esc(S.notOpen) + '</p><a class="btn btn-primary" href="/' + L + '/pricing#waitlist">' + esc(S.earlyAccess) + '</a>';
+      if (!P.enabled) cta = '<p>' + esc(year ? S.notOpenYear : S.notOpen) + '</p><a class="btn btn-primary" href="/' + L + '/pricing#waitlist">' + esc(S.earlyAccess) + '</a>';
       else if (!signedIn) cta = '<button class="btn btn-primary" id="sub-signin" type="button">' + esc(S.signin) + '</button>';
-      else cta = '<button class="btn btn-primary" id="sub-go" type="button">' + esc(S.subscribe.replace('${price}', () => '$' + info.price)) + '</button>';
-      return '<div class="sub-card"><h2>' + esc(S.planName) + '</h2><div class="sub-price">$' + esc(info.price) + ' <small>' + esc(S.perMonth) + '</small></div><ul>' + benefits + '</ul><div class="sub-actions">' + cta + '</div></div>' + termsLink;
+      else cta = '<button class="btn btn-primary" data-plan="' + plan + '" type="button">' + esc((year ? S.subscribeYear : S.subscribe).replace('${price}', () => '$' + P.price.toLocaleString('en-US'))) + '</button>';
+      return '<div class="sub-card"><h2>' + esc(year ? S.planYear : S.planName) + '</h2><div class="sub-price">$' + esc(P.price.toLocaleString('en-US')) + ' <small>' + esc(year ? S.perYear : S.perMonth) + '</small></div><ul>' + benefits + '</ul><div class="sub-actions">' + cta + '</div></div>';
+    }
+
+    function offer(info, signedIn) {
+      return planCard(info, signedIn, 'month') + planCard(info, signedIn, 'year') + '<p class="sub-note">' + esc(S.oneAtATime) + '</p>' + termsLink;
     }
 
     function wireOffer() {
-      const go = document.getElementById('sub-go');
-      if (go) go.addEventListener('click', async () => {
-        go.disabled = true;
-        const r = await api('create', 'POST');
+      document.querySelectorAll('button[data-plan]').forEach((go) => go.addEventListener('click', async () => {
+        document.querySelectorAll('button[data-plan]').forEach((x) => { x.disabled = true; });
+        const r = await api('create', 'POST', go.dataset.plan);
         if (r.ok && r.body.approveUrl) { location.href = r.body.approveUrl; return; }
         if (r.status === 409) { location.reload(); return; }
-        const m = document.createElement('div'); m.className = 'sub-msg err'; m.textContent = S.error; root.prepend(m); go.disabled = false;
-      });
+        const m = document.createElement('div'); m.className = 'sub-msg err'; m.textContent = S.error; root.prepend(m);
+        document.querySelectorAll('button[data-plan]').forEach((x) => { x.disabled = false; });
+      }));
       const si = document.getElementById('sub-signin');
       if (si) si.addEventListener('click', () => {
         try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
@@ -154,10 +164,10 @@
 
     function manage(info) {
       const sub = info.subscription;
-      const used = sub.pdf ? sub.pdf.used : 0, limit = sub.pdf ? sub.pdf.limit : info.pdfPerMonth;
+      const used = sub.pdf ? sub.pdf.used : 0, limit = sub.pdf ? sub.pdf.limit : (info.plans[sub.plan] ? info.plans[sub.plan].pdfLimit : info.pdfPerMonth);
       const pct = Math.min(100, Math.round((used / Math.max(1, limit)) * 100));
       if (sub.entitled && !sub.cancelRequested) {
-        return '<div class="sub-card"><h2>' + esc(S.activeTitle) + '</h2><dl class="sub-meta"><dt>' + esc(S.renews) + '</dt><dd>' + esc(fmtDate(sub.periodEnd)) + '</dd>' +
+        return '<div class="sub-card"><h2>' + esc(sub.plan === 'year' ? S.activeYear : S.activeTitle) + '</h2><dl class="sub-meta"><dt>' + esc(S.renews) + '</dt><dd>' + esc(fmtDate(sub.periodEnd)) + '</dd>' +
           '<dt>' + esc(S.pdfs) + '</dt><dd><div class="sub-bar"><i style="width:' + pct + '%"></i></div>' + esc(S.pdfOf.replace('{used}', used).replace('{limit}', limit)) + '</dd></dl>' +
           '<div class="sub-actions"><a class="btn btn-primary" href="/' + L + '/library">' + esc(S.library) + '</a><a class="btn btn-secondary" href="/' + L + '/experts/transcripts/">' + esc(S.transcripts) + '</a>' +
           '<button class="sub-link" id="sub-cancel" type="button">' + esc(S.cancelBtn) + '</button></div></div>' + termsLink;
@@ -176,8 +186,8 @@
       let html = '<h1>' + esc(S.title) + '</h1><p class="lead">' + esc(S.lead) + '</p>' + (msg ? '<div class="sub-msg' + (msg.err ? ' err' : '') + '">' + esc(msg.text) + '</div>' : '');
       if (!s) {
         const pub = await fetch('/api/checkout-status').then((r) => r.json()).catch(() => ({}));
-        const sc = pub.subscription || { enabled: false, price: 149 };
-        html += offer({ enabled: sc.enabled, price: sc.price, pdfPerMonth: 5 }, false);
+        const sc = pub.subscription || { enabled: false, price: 149 }, an = pub.annual || { enabled: false, price: 1190 };
+        html += offer({ plans: { month: { enabled: sc.enabled, price: sc.price, pdfLimit: 5 }, year: { enabled: an.enabled, price: an.price, pdfLimit: 60 } } }, false);
       } else if (!info) {
         html += '<div class="sub-msg err">' + esc(S.error) + '</div>';
       } else if (info.subscription && info.subscription.entitled) {
