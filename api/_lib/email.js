@@ -111,15 +111,18 @@ export async function sendPurchaseReceipt({
   amount,
   currency = 'USD',
   reportTitle,
-  downloadUrl
+  downloadUrl,
+  kind = 'report'            // 'report' | 'transcript' (expert-interview transcript, S19)
 }) {
   if (!buyerEmail) return false;
 
   const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
   const title = reportTitle || slug;
-  const reportUrl = `${APP_URL}/${locale}/reports/${slug}`;
+  const isTranscript = kind === 'transcript';
+  const noun = isTranscript ? 'transcript' : 'report';
+  const reportUrl = isTranscript ? `${APP_URL}/${locale}/experts/transcripts/${slug}` : `${APP_URL}/${locale}/reports/${slug}`;
 
-  const subject = `Your KIRA RESEARCH report — ${title}`;
+  const subject = `Your KIRA RESEARCH ${noun} — ${title}`;
 
   const text = [
     `Thanks for your purchase.`,
@@ -127,7 +130,7 @@ export async function sendPurchaseReceipt({
     `You bought: ${title}`,
     `Amount: ${niceAmount} ${currency}`,
     ``,
-    `View your report: ${reportUrl}`,
+    `View your ${noun}: ${reportUrl}`,
     downloadUrl ? `Direct PDF download: ${downloadUrl}` : '',
     ``,
     `If you have any questions, just reply to this email.`,
@@ -141,10 +144,10 @@ export async function sendPurchaseReceipt({
   <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Thanks for your purchase.</h1>
   <p style="margin:0 0 18px;">You now have access to <strong>${esc(title)}</strong>.</p>
   <table style="border-collapse:collapse;margin:0 0 24px;">
-    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Report</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">${isTranscript ? 'Transcript' : 'Report'}</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
     <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Amount</td><td style="padding:4px 0;font-size:14px;">${esc(niceAmount)} ${esc(currency)}</td></tr>
   </table>
-  <p style="margin:0 0 12px;"><a href="${esc(reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open your report</a></p>
+  <p style="margin:0 0 12px;"><a href="${esc(reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open your ${noun}</a></p>
   ${downloadUrl ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">Direct PDF link (expires in 1 hour): <a href="${esc(downloadUrl)}">download</a></p>` : ''}
   <p style="margin:24px 0 6px;font-size:13px;color:#666;">If you have any questions, just reply to this email.</p>
   <p style="margin:0;font-size:13px;color:#666;">— The KIRA RESEARCH team</p>

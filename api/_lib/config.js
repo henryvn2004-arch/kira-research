@@ -94,6 +94,11 @@ export const CONFIG = {
     label: 'Sell single reports (PayPal checkout)',
     help: 'Off: report pages show "Request access" and coming-soon pages show no price; nothing can be bought. On: report pages show the price and the PayPal button, and coming-soon pages say what the report will cost. Turn it on only after you have read /en/terms and are happy with the refund policy.'
   },
+  'checkout.transcript_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell expert-interview transcripts (PayPal checkout)',
+    help: 'Off: a locked transcript still points to the waitlist. On: the lock card offers the full transcript for $29 (one purchase covers every language) and the PayPal button works. Turn it on after /en/terms (it also covers transcripts) is approved.'
+  },
   'ads.value_request': {
     group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
     label: 'What an "email me when ready" sign-up is worth',
