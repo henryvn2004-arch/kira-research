@@ -116,13 +116,13 @@
         <div class="hl-sub">Raise the runner's fires (Routine "Kira Report Generator"), then raise "reports per day" in Settings, or look at the Pipeline page for stuck rows.</div></div>
         <span class="hl-pill bad">Late</span></div>`;
     }
-    // Month subscriptions (S7): who pays now, and anything that needs a look.
+    // Month and Annual subscriptions (S7): who pays now, and anything that needs a look.
     function subscriptionCard(s) {
-      const head = '<h2 class="hl-sec">Month subscriptions</h2>';
+      const head = '<h2 class="hl-sec">Subscriptions (Month and Annual)</h2>';
       if (!s) return head + '<div class="hl-card"><div><b>Could not read</b><div class="hl-sub">The subscription tables need migration 052.</div></div><span class="hl-pill warn">Check</span></div>';
       const note = (s.suspended || s.stuck_pending) ? ((s.suspended ? s.suspended + ' on hold after a failed payment. ' : '') + (s.stuck_pending ? s.stuck_pending + ' approved at PayPal but not confirmed for over an hour.' : '')) : 'Renewals are checked with PayPal whenever a subscriber or an entitlement check looks.';
       return head + `<div class="hl-card"><div><b>${s.active} active subscriber${s.active === 1 ? '' : 's'}</b>
-        <div class="hl-sub">${s.cancelling} cancelled but still inside the paid period. ${esc(note)}</div></div>
+        <div class="hl-sub">${s.active_year || 0} of them on Annual. ${s.cancelling} cancelled but still inside the paid period. ${esc(note)}</div></div>
         <span class="hl-pill ${(s.suspended || s.stuck_pending) ? 'warn' : 'ok'}">${(s.suspended || s.stuck_pending) ? 'Look' : 'Fine'}</span></div>`;
     }
     function mailBad(m) {

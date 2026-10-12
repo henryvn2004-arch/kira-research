@@ -385,6 +385,8 @@ test.describe('public APIs', () => {
     const b = await (await request.get('/api/checkout-status')).json();
     expect(typeof b.subscription.enabled).toBe('boolean');
     expect(b.subscription.price).toBe(149);
+    expect(typeof b.annual.enabled).toBe('boolean');
+    expect(b.annual.price).toBe(1190);
   });
 
   for (const loc of ['en', 'ja', 'ko', 'zh']) {

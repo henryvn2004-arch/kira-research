@@ -104,6 +104,16 @@ export const CONFIG = {
     label: 'Sell the Month subscription ($149, PayPal Subscriptions)',
     help: 'Off: the Month card on the pricing page keeps the early-access form and nobody can start a subscription; people who already subscribed keep their access. On: the Month card becomes "Subscribe" (sign-in, then PayPal) and report pages offer it. Read /en/terms first (it covers the subscription), and make one live test subscription before you advertise it.'
   },
+  'checkout.annual_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell the Annual subscription ($1,190 a year, PayPal Subscriptions)',
+    help: 'Off: the Annual card on the pricing page keeps the early-access form and nobody can start an Annual plan; people who already subscribed keep their access. On: the Annual card becomes "Subscribe" (sign-in, then PayPal) on the subscription page. It needs the same setup as the Month plan (PayPal Subscriptions enabled, /en/terms read) and is separate from the Month switch. A reader can hold one subscription at a time; moving from Month to Annual means cancelling Month and subscribing to Annual when its paid period ends.'
+  },
+  'subscription.pdf_per_year': {
+    group: 'Checkout', type: 'int', min: 1, max: 1000, default: 60, unit: 'PDFs per billing year',
+    label: 'PDF downloads included in the Annual plan',
+    help: 'How many different report PDFs an Annual subscriber can download in each yearly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
+  },
   'subscription.pdf_per_month': {
     group: 'Checkout', type: 'int', min: 1, max: 100, default: 5, unit: 'PDFs per billing period',
     label: 'PDF downloads included in the Month plan',

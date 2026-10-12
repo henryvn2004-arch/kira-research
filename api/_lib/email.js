@@ -159,17 +159,19 @@ export async function sendPurchaseReceipt({
 // ── Month subscription started ───────────────────────────
 // Sent once, the first time a subscription is seen active (api/subscription.js claims `welcomed_at`
 // before calling this). Best-effort like the other receipts.
-export async function sendSubscriptionStarted({ buyerEmail, amount, currency = 'USD', periodEnd, pdfPerMonth = 5 }) {
+export async function sendSubscriptionStarted({ buyerEmail, plan = 'month', amount, currency = 'USD', periodEnd, pdfLimit = 5 }) {
   if (!buyerEmail) return false;
+  const year = plan === 'year';
+  const label = year ? 'Annual' : 'Month', per = year ? 'year' : 'month';
   const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
   const next = periodEnd ? new Date(periodEnd).toISOString().slice(0, 10) : '';
   const manageUrl = `${APP_URL}/en/subscription`;
-  const subject = 'Your KIRA RESEARCH Month subscription is live';
+  const subject = `Your KIRA RESEARCH ${label} subscription is live`;
   const text = [
     'Thanks for subscribing.',
     '',
-    `Plan: Month, ${niceAmount} ${currency} per month, renews automatically${next ? ` (next charge around ${next})` : ''}.`,
-    `Included: every report in full online, every expert-interview transcript, and ${pdfPerMonth} PDF downloads per billing period.`,
+    `Plan: ${label}, ${niceAmount} ${currency} per ${per}, renews automatically${next ? ` (next charge around ${next})` : ''}.`,
+    `Included: every report in full online, every expert-interview transcript, and ${pdfLimit} PDF downloads per billing period.`,
     '',
     `Manage or cancel any time: ${manageUrl}`,
     'Cancelling stops the next charge; access continues to the end of the period you paid for.',
@@ -181,9 +183,9 @@ export async function sendSubscriptionStarted({ buyerEmail, amount, currency = '
   const html = `
 <!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
   <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Your Month subscription is live.</h1>
-  <p style="margin:0 0 18px;">${esc(niceAmount)} ${esc(currency)} per month, renews automatically${next ? ` (next charge around ${esc(next)})` : ''}.</p>
-  <p style="margin:0 0 18px;">Included: every report in full online, every expert-interview transcript, and ${esc(String(pdfPerMonth))} PDF downloads per billing period.</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Your ${esc(label)} subscription is live.</h1>
+  <p style="margin:0 0 18px;">${esc(niceAmount)} ${esc(currency)} per ${per}, renews automatically${next ? ` (next charge around ${esc(next)})` : ''}.</p>
+  <p style="margin:0 0 18px;">Included: every report in full online, every expert-interview transcript, and ${esc(String(pdfLimit))} PDF downloads per billing period.</p>
   <p style="margin:0 0 12px;"><a href="${esc(manageUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Manage your subscription</a></p>
   <p style="margin:18px 0 6px;font-size:13px;color:#666;">Cancel any time: the next charge stops, and access continues to the end of the period you paid for.</p>
   <p style="margin:0;font-size:13px;color:#666;">— The KIRA RESEARCH team</p>
