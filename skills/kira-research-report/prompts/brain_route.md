@@ -76,13 +76,13 @@ Follow `docs/naming_convention.md`. Pick from the framing:
 - **Segment:** the 1–4 word noun a buyer would type (`coffee chains`, `cold chain`).
 - **Angle:** when the brief has an `analysis`, the angle is that analysis name as written (`market overview`, `competitive landscape`, `distribution analysis`, ...), so the title reads `Vietnam coffee chains 2026: market overview`; keep it through Stage 5. Without one: ≤ 60 characters, preferably a question the report answers, in the owner's hook style (`How to win…?`, `Where to play…?`, `How to enter…?`, `How to expand…?`, `What are the key impacts of…?`). A statement (the working answer or tension) is allowed when a question would not fit.
 
-Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen a free-written angle once the evidence is in (never an analysis name); rerun the script if it does.
+Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … [--hook "<brief.hook>"] --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. When the topic brief has a `hook` (the one-line question under the title), pass it as `--hook` exactly as written; it is never part of the title or angle. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen a free-written angle once the evidence is in (never an analysis name); rerun the script if it does.
 
 ### 4. Fixed pages
 
 | Position | Page | Page type |
 |---|---|---|
-| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = the buyer question (≤110 chars). |
+| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = `naming.hook` when it has one, else the buyer question (≤110 chars). |
 | Opening | Methodology | `methodology_inline` |
 | Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
 | Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-main-side` (exhibit or `big_number` + commentary with the 3 reasons) or `layout-hero` (big number + chart, reasons in the takeaway and on page 2). Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. |
