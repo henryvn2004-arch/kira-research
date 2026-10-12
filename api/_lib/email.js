@@ -31,6 +31,21 @@ const ADMIN_EMAILS   = (process.env.ADMIN_EMAILS || '')
   .map(s => s.trim())
   .filter(Boolean);
 
+// Addresses that hard-bounced or marked us as spam (email_suppressions, filled by /api/email-webhook).
+// Sending to them again hurts the domain's reputation. Fails open: if the lookup breaks, mail still goes out.
+async function dropSuppressed(recipients) {
+  const SB = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+  if (!SB || !KEY || !recipients.length) return recipients;
+  try {
+    const list = recipients.map(a => `"${String(a).toLowerCase().replace(/"/g, '')}"`).join(',');
+    const r = await fetch(`${SB}/rest/v1/email_suppressions?select=email&email=in.(${encodeURIComponent(list)})`,
+      { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
+    if (!r.ok) return recipients;
+    const bad = new Set((await r.json()).map(x => x.email));
+    return recipients.filter(a => !bad.has(String(a).toLowerCase()));
+  } catch { return recipients; }
+}
+
 // ── Low-level POST to Resend ─────────────────────────────
 async function resendSend({ to, subject, html, text, replyTo }) {
   if (!RESEND_API_KEY) {
@@ -43,9 +58,14 @@ async function resendSend({ to, subject, html, text, replyTo }) {
   }
 
   try {
+    const recipients = await dropSuppressed(Array.isArray(to) ? to : [to]);
+    if (recipients.length === 0) {
+      console.warn('[email] every recipient is suppressed (bounced or complained) — skipping');
+      return false;
+    }
     const body = {
       from:    RESEND_FROM,
-      to:      Array.isArray(to) ? to : [to],
+      to:      recipients,
       subject,
       html,
       text
@@ -293,6 +313,39 @@ export async function sendWaitlistNotification(entry) {
 </body></html>`.trim();
 
   return resendSend({ to: ADMIN_EMAILS, subject, html, text, replyTo: entry.email || undefined });
+}
+
+// ── "We got your request" — sent the moment a reader leaves an email on a coming-soon page ──
+// Two jobs: the reader sees right away whether our mail lands in the inbox or in spam, and the
+// reply-to is a real inbox. Plain on purpose (one link, no images) so it is not filtered.
+export async function sendTopicRequestConfirmation({ to, title, url }) {
+  if (!to || !title || !url) return false;
+  const replyTo = ADMIN_EMAILS[0] || undefined;
+  const subject = `We got your request: ${title}`;
+  const text = [
+    `You asked to be told when this report is published:`,
+    ``,
+    title,
+    ``,
+    `We will email you once, on the day it is ready. You can check its status any time here:`,
+    url,
+    ``,
+    `If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.`,
+    `Not you? Ignore this message; we will only send one more email about this report.`,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">We got your request.</h1>
+  <p style="margin:0 0 8px;">You asked to be told when this report is published:</p>
+  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
+  <p style="margin:0 0 16px;">We will email you once, on the day it is ready. You can check its status any time: <a href="${esc(url)}">${esc(url)}</a></p>
+  <p style="margin:0 0 16px;font-size:13px;color:#555;">If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.</p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">Not you? Ignore this message; we will only send one more email about this report.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text, replyTo });
 }
 
 // ── Coming-soon topic is now published ────────────────────

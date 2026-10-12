@@ -308,6 +308,16 @@ test.describe('public APIs', () => {
     expect((await r.json()).ok).toBe(true);
   });
 
+  // S16: Resend bounce/complaint webhook. Unsigned calls must be refused before anything is stored.
+  test('/api/email-webhook rejects GET and unsigned POST', async ({ request }) => {
+    expect((await request.get('/api/email-webhook')).status()).toBe(405);
+    const r = await request.post('/api/email-webhook', {
+      data: { type: 'email.bounced', data: { to: ['ci@example.com'] } },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(400);
+  });
+
   test('/api/topic-search returns an items array; short queries are empty', async ({ request }) => {
     const short = await request.get('/api/topic-search?q=ab');
     expect(short.status()).toBe(200);

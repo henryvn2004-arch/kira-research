@@ -73,12 +73,23 @@ export default async function handler(req, res) {
       value: showValue && process.env[name] ? process.env[name] : undefined
     }));
 
-    const [runs, failures, lastOk, lastPurchase] = await Promise.all([
+    const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
+    const [runs, failures, lastOk, lastPurchase, mailEvents, mailSuppressed] = await Promise.all([
       sb('job_runs?select=job,ok,detail,at&order=at.desc&limit=200').catch(() => []),
       sb('job_runs?select=job,detail,at&ok=eq.false&order=at.desc&limit=10').catch(() => []),
       sb('report_queue_events?select=at,stage&outcome=eq.ok&order=at.desc&limit=1').catch(() => []),
-      sb('purchases?select=created_at&status=eq.completed&order=created_at.desc&limit=1').catch(() => [])
+      sb('purchases?select=created_at&status=eq.completed&order=created_at.desc&limit=1').catch(() => []),
+      sb(`email_events?select=type&at=gte.${since30}&limit=10000`).catch(() => null),
+      sb('email_suppressions?select=email&limit=10000').catch(() => null)
     ]);
+
+    // Email deliverability (S16): Resend webhook events of the last 30 days. null = table or webhook not set up yet.
+    const tally = t => (mailEvents || []).filter(e => e.type === t).length;
+    const email = mailEvents === null ? null : {
+      delivered: tally('delivered'), bounced: tally('bounced'), complained: tally('complained'),
+      delayed: tally('delivery_delayed'), suppressed: mailSuppressed ? mailSuppressed.length : 0,
+      webhook_secret_set: !!process.env.RESEND_WEBHOOK_SECRET
+    };
 
     const jobs = JOBS.map(j => {
       const last = runs.find(r => r.job === j.key);
@@ -101,7 +112,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       db, env, jobs, failures,
-      info: { last_purchase_at: lastPurchase[0] ? lastPurchase[0].created_at : null }
+      info: { last_purchase_at: lastPurchase[0] ? lastPurchase[0].created_at : null, email }
     });
   } catch (err) {
     console.error('[admin-health] error:', err.message);
