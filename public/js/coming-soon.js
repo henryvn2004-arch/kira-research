@@ -114,11 +114,23 @@
     return s(t.state === 'approved' ? 'approved' : 'scoping');
   }
 
+  // Placeholder pages are noindex, except the English SEO-test pages (S20: api/topic.js `index`),
+  // which get a description and no hreflang (their JA/KO/ZH twins stay noindex).
+  function seoMeta(t) {
+    if (t.index && L === 'en') {
+      const d = [t.hook, t.buyer_question].filter(Boolean).join(' ').slice(0, 300);
+      ['meta[name="description"]', '#meta-og-description'].forEach(q => { const e = document.querySelector(q); if (e) e.content = d; });
+      document.querySelectorAll('link[data-kira-hreflang]').forEach(l => l.remove());
+      return;
+    }
+    const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex,follow'; document.head.appendChild(m);
+  }
+
   function page(root, t) {
     const done = t.state === 'scoping' ? 1 : t.state === 'approved' ? 2 : 3;
     const chips = [t.country, t.industry, t.competency, t.year].filter(Boolean);
     document.title = t.title + ' — KIRA RESEARCH';
-    const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex,follow'; document.head.appendChild(m);
+    seoMeta(t);
 
     root.innerHTML =
       '<div class="r-band"><div class="r-container">' +
