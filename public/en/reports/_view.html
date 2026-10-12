@@ -74,11 +74,11 @@
     document.documentElement.setAttribute('lang', locale === 'zh' ? 'zh-Hans' : locale);
 
     // ── Per-report purchase switch (Sprint S5) ──────────────
-    // false → the $39 single-report checkout is hidden; the buy box, preview
+    // false → the single-report checkout is hidden; the buy box, preview
     // CTA and locked-section modal point to the subscription waitlist instead.
     // true  → restores the original PayPal per-report flow (all payment code
     // below is kept intact). Existing buyers keep full access either way.
-    const PER_REPORT_PURCHASE = false;
+    let PER_REPORT_PURCHASE = false;   // set from the API (config checkout.single_report_enabled) once the report is loaded
     const WAITLIST_URL = '/en/pricing#waitlist';
 
     // Preview iframe geometry. Source HTML is authored at 1280×720 per page
@@ -134,6 +134,7 @@
       }
       if (!r.ok) throw new Error('http ' + r.status);
       data = await r.json();
+      PER_REPORT_PURCHASE = !!data.purchaseEnabled;
     } catch (err) {
       if (err && err.message === 'halt') throw err;
       root.innerHTML = msg(t('loadError'));
@@ -363,7 +364,7 @@
             ...(PER_REPORT_PURCHASE ? {
               offers: {
                 '@type':        'Offer',
-                price:          String(d.price || 39),
+                price:          String(d.price || 49),
                 priceCurrency:  'USD',
                 availability:   'https://schema.org/InStock',
                 url
@@ -526,7 +527,7 @@
     function renderPreviewFrame(d, currentLocale) {
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
       const cta = PER_REPORT_PURCHASE
-        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 39) + '</button>'
+        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 49) + '</button>'
         : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
       const navBtn = (dir, label) => '<button type="button" class="rd-pv-nav" data-pv="' + dir + '" aria-label="' + escapeHtml(label) + '">' +
         (dir < 0 ? '<span style="transform:scaleX(-1);display:inline-flex">' + R.icon('chev') + '</span>' : R.icon('chev')) + '</button>';
@@ -664,7 +665,7 @@
       }
       if (PER_REPORT_PURCHASE) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
-          '<p style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 39) + '</p>' +
+          '<p style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 49) + '</p>' +
           (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
           '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' + incl + '</div>';
       }
@@ -838,7 +839,7 @@
       const bodyEl = document.getElementById('unlock-modal-body');
       if (!modal || !closeBtn || !buyBtn || !titleEl || !bodyEl) return;
       document.getElementById('unlock-modal-eyebrow').textContent = t('lockedTitle');
-      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 39) : t('requestAccess');
+      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 49) : t('requestAccess');
       closeBtn.setAttribute('aria-label', t('close'));
       const foot = modal.querySelector('.unlock-modal-footnote');
       if (foot) foot.textContent = PER_REPORT_PURCHASE ? '' : t('nothingCharged');

@@ -17,7 +17,7 @@
       steps: ['Scoped', 'Approved', 'In production', 'Review', 'Published'],
       emailPh: 'Work email', notify: 'Email me when it is published',
       fine: 'One email, the day it is published. A report that readers ask for goes to the front of our schedule.',
-      eta: 'Expected by {date}', etaFine: 'Ask for it and we aim to publish by this date, then email you.',
+      eta: 'Expected by {date}', etaFine: 'Ask for it and we aim to publish by this date, then email you.', price: 'Price when published: ${price}. Asking for it costs nothing.',
       sent: 'Done — we will email you when this report is published.', err: 'Something went wrong. Please try again.',
       stripTitle: 'Coming soon', stripBody: 'Not published yet — read what each will cover and get an email when it is.',
       noneTitle: 'Not in the library yet', noneBody: 'Tell us what you are looking for and leave an email. We will tell you if we take it on.',
@@ -33,7 +33,7 @@
       steps: ['企画', '承認', '制作中', 'レビュー', '公開'],
       emailPh: '勤務先メールアドレス', notify: '公開時にメールで通知',
       fine: '公開当日に1通だけお送りします。ご要望のあったレポートは制作を最優先します。',
-      eta: '公開予定日：{date}', etaFine: 'ご希望をお知らせいただければ、この日までの公開を目指し、公開時にメールでお知らせします。',
+      eta: '公開予定日：{date}', etaFine: 'ご希望をお知らせいただければ、この日までの公開を目指し、公開時にメールでお知らせします。', price: '公開後の価格：${price}。リクエストは無料です。',
       sent: '受け付けました。公開時にメールでお知らせします。', err: 'エラーが発生しました。もう一度お試しください。',
       stripTitle: '近日公開', stripBody: '未公開のレポートです。内容をご確認のうえ、公開時にメールで通知を受け取れます。',
       noneTitle: 'まだライブラリにありません', noneBody: 'お探しの内容とメールアドレスをお知らせください。制作する場合はご連絡します。',
@@ -49,7 +49,7 @@
       steps: ['기획', '승인', '제작 중', '검토', '공개'],
       emailPh: '업무용 이메일', notify: '공개되면 이메일로 알림',
       fine: '공개 당일 한 번만 보내드립니다. 독자가 요청한 보고서를 가장 먼저 제작합니다.',
-      eta: '공개 예정일: {date}', etaFine: '요청해 주시면 이 날짜까지 공개를 목표로 하고, 공개되면 이메일로 알려드립니다.',
+      eta: '공개 예정일: {date}', etaFine: '요청해 주시면 이 날짜까지 공개를 목표로 하고, 공개되면 이메일로 알려드립니다.', price: '공개 후 가격: ${price}. 요청은 무료입니다.',
       sent: '접수되었습니다. 공개되면 이메일로 알려드리겠습니다.', err: '오류가 발생했습니다. 다시 시도해 주십시오.',
       stripTitle: '곧 공개', stripBody: '아직 공개 전인 보고서입니다. 다룰 내용을 확인하고 공개 시 이메일로 알림을 받으십시오.',
       noneTitle: '아직 라이브러리에 없습니다', noneBody: '찾으시는 내용과 이메일을 남겨 주십시오. 제작하게 되면 알려드리겠습니다.',
@@ -65,7 +65,7 @@
       steps: ['策划', '批准', '制作中', '审校', '发布'],
       emailPh: '工作邮箱', notify: '发布时邮件通知我',
       fine: '发布当天只发送一封邮件。读者要求的报告会排在制作计划最前面。',
-      eta: '预计发布日期：{date}', etaFine: '提交请求后，我们将力争在此日期前发布，并邮件通知您。',
+      eta: '预计发布日期：{date}', etaFine: '提交请求后，我们将力争在此日期前发布，并邮件通知您。', price: '发布后价格：${price}。提交请求不收费。',
       sent: '已收到，报告发布时我们会邮件通知您。', err: '出现错误，请重试。',
       stripTitle: '即将发布', stripBody: '尚未发布。可先查看内容范围，发布时通过邮件获知。',
       noneTitle: '资料库中暂无', noneBody: '请告诉我们您的需求并留下邮箱。若我们决定制作，会通知您。',
@@ -105,7 +105,8 @@
     try {
       d = new Date(t.eta.date + 'T00:00:00Z').toLocaleDateString(L === 'zh' ? 'zh-CN' : L, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
     } catch (_e) { d = t.eta.date; }
-    return '<p class="cs-eta"><b>' + esc(s('eta').replace('{date}', d)) + '</b><br><span>' + esc(s('etaFine')) + '</span></p>';
+    return '<p class="cs-eta"><b>' + esc(s('eta').replace('{date}', d)) + '</b><br><span>' + esc(s('etaFine')) + '</span>' +
+      (t.price ? '<br><span>' + esc(s('price').replace('${price}', '$' + t.price)) + '</span>' : '') + '</p>';
   }
 
   function stateLine(t) {

@@ -149,7 +149,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S16** | Email deliverability (paid search prerequisite) | 🔴 first, see "Paid search" below |
 | **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
 | **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
-| **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🔴 |
+| **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🔴 |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🔴 |
 
@@ -245,10 +245,14 @@ Findings that shaped it: one runner fire already makes a whole report (EN → JA
 - Known: the one test request made on 2026-10-12 (Laos data centres) is a real request, so that report will be made first at the next fire.
 
 #### S19 — Impulse pricing + checkout
-- [ ] Show the price on the coming-soon page ("$49 on publication") together with the new pricing pages, so the ad, the coming-soon page and the pricing page agree (moved from S18).
-- [ ] Pricing pages (EN/JA/KO/ZH): $49 report · $29 transcript · $39 list · $149 month. Settle what the month includes (open, see above).
-- [ ] Turn on single-report checkout (`PER_REPORT_PURCHASE = true` in `reports/_view.html`, price from the DB) with the existing PayPal flow. Check the receipt email after S16.
-- [ ] Transcript purchase ($29): unlock `/api/transcript-content` for a buyer, not only `ADMIN_EMAILS`.
+- [x] Price on the coming-soon page ("Price when published: $49", EN/JA/KO/ZH, `api/topic.js` returns `price`). Shown only while checkout is on, so the page never advertises something that cannot be bought.
+- [x] Pricing pages (EN/JA/KO/ZH) and locale files: single report $49; Month $149 now includes expert transcripts (owner decision 2026-10-12: whole library online + 5 PDF + transcripts); note that a transcript is $29 outside a plan. Annual stays $1,190.
+- [x] Migration 050 (applied): `living_reports.price` default 49 and the 125 published reports moved from 39 to 49; `build-publish-sql.mjs` default 49; `api/_lib/pricing.js` holds the fallback.
+- [x] Single-report checkout behind a setting: `checkout.single_report_enabled` on `/en/admin/config` → "Checkout" (default **off**). `/api/library-report` returns `purchaseEnabled`; `reports/_view.html` reads it instead of a hard-coded constant; `/api/library-buy?action=create` answers 403 `checkout_closed` while off (a capture of an order already started still completes).
+- [x] `/en/terms` (draft; ja/ko/zh rewrite to EN): licence for internal use, 7-day refund if the PDF was not downloaded, refund if the report is not as described, desk-research limits, liability capped at the price paid. Governing law and legal entity name left out on purpose.
+- [ ] **Owner:** read `/en/terms`, then switch on "Sell single reports" in `/en/admin/config`. Do one live $49 test purchase and check the receipt email (S16) before any ad money.
+- [ ] Pricing page CTAs still say "Request early access" for the single report; when checkout is on, point them at the library/report pages.
+- [ ] Transcript purchase ($29): unlock `/api/transcript-content` for a buyer, not only `ADMIN_EMAILS` (needs a purchases table for transcripts; not built).
 - [ ] Kira List purchase ($39): when Kira List ships.
 
 #### S20 — Topic expansion to ~10,000 (no LLM) + thin-content test

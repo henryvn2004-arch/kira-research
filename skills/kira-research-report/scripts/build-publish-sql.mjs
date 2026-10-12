@@ -5,7 +5,7 @@
 //
 // Usage:
 //   node skills/kira-research-report/scripts/build-publish-sql.mjs --id 2026-vn-coffee-chains \
-//     [--langs "en ja ko zh"] [--chart-page 18] [--price 39] > /tmp/insert.sql
+//     [--langs "en ja ko zh"] [--chart-page 18] [--price 49] > /tmp/insert.sql
 //
 // - title    <- <title> of each locale's HTML
 // - eyebrow  <- naming.eyebrow[locale]
@@ -24,7 +24,7 @@ const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ?
 const id = arg('id');
 if (!id) { console.error('usage: build-publish-sql.mjs --id <queue id> [--langs "en ja ko zh"] [--chart-page N]'); process.exit(2); }
 const langs = (arg('langs', 'en ja ko zh')).split(/\s+/).filter(Boolean);
-const price = Number(arg('price', 39));
+const price = Number(arg('price', 49));
 const chartPage = arg('chart-page') ? Number(arg('chart-page')) : null;
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../outputs/batch', id);
 const need = f => { const p = path.join(dir, f); if (!fs.existsSync(p)) { console.error('missing ' + p); process.exit(2); } return fs.readFileSync(p, 'utf8'); };

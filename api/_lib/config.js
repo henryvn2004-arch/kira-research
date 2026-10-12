@@ -89,6 +89,11 @@ export const CONFIG = {
     label: 'Reader-made topics that approve themselves each day',
     help: 'A topic created from a reader search is approved and queued as soon as someone leaves an email for it, so it can be made within the promised time. This caps how many such topics can start production per 24 hours (each one costs a full report). 0 = they wait for your approval in Topics.'
   },
+  'checkout.single_report_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell single reports (PayPal checkout)',
+    help: 'Off: report pages show "Request access" and coming-soon pages show no price; nothing can be bought. On: report pages show the price and the PayPal button, and coming-soon pages say what the report will cost. Turn it on only after you have read /en/terms and are happy with the refund policy.'
+  },
   'ads.value_request': {
     group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
     label: 'What an "email me when ready" sign-up is worth',

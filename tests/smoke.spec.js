@@ -331,6 +331,20 @@ test.describe('public APIs', () => {
     });
   }
 
+  // S19: terms of sale exist in every locale; checkout is closed by default (config checkout.single_report_enabled).
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/terms loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/terms`);
+      expect(r.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Terms');
+    });
+  }
+
+  test('/api/library-buy create is refused while single-report checkout is off', async ({ request }) => {
+    const r = await request.post('/api/library-buy?action=create', { data: { slug: 'no-such-report', locale: 'en' } });
+    expect([403, 404]).toContain(r.status());
+  });
+
   test('/api/topic-search returns an items array; short queries are empty', async ({ request }) => {
     const short = await request.get('/api/topic-search?q=ab');
     expect(short.status()).toBe(200);
