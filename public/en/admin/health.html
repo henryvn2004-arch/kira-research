@@ -106,6 +106,16 @@
     const PILL = { ok: ['ok', 'Running'], idle: ['', 'Idle'], late: ['bad', 'Late'], failed: ['bad', 'Failed'], never_run: ['warn', 'Never ran'] };
 
     // Email deliverability: Resend tells us (webhook) what happened to each email. Healthy = almost all delivered, no complaints.
+    // Requested reports not published by the date promised to the first reader (S18).
+    function promiseCard(p) {
+      const head = '<h2 class="hl-sec">Promised dates</h2>';
+      if (!p) return head + '<div class="hl-card"><div><b>Could not read</b><div class="hl-sub">The promised-date check needs migration 049.</div></div><span class="hl-pill warn">Check</span></div>';
+      if (!p.count) return head + '<div class="hl-card"><div><b>Every requested report is on time</b><div class="hl-sub">A report asked for by email is promised a date on its page (default 3 days).</div></div><span class="hl-pill ok">On time</span></div>';
+      return head + `<div class="hl-card"><div><b>${p.count} requested report${p.count > 1 ? 's' : ''} past the promised date</b>
+        <div class="hl-sub">${p.items.map(i => esc(i.title) + ' (promised ' + new Date(i.promise_at).toLocaleDateString() + ')').join(' · ')}</div>
+        <div class="hl-sub">Raise the runner's fires (Routine "Kira Report Generator"), then raise "reports per day" in Settings, or look at the Pipeline page for stuck rows.</div></div>
+        <span class="hl-pill bad">Late</span></div>`;
+    }
     function mailBad(m) {
       if (!m) return false;
       const total = m.delivered + m.bounced + m.complained;
@@ -130,7 +140,7 @@
       const missingCritical = d.env.filter(e => e.level === 'critical' && !e.set);
       const missingImportant = d.env.filter(e => e.level === 'important' && !e.set);
       const modeBad = d.env.find(e => e.name === 'PAYPAL_MODE' && e.set && e.value !== 'live');
-      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1) + (mailBad(d.info.email) ? 1 : 0);
+      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1) + (mailBad(d.info.email) ? 1 : 0) + ((d.info.late_promises && d.info.late_promises.count) ? 1 : 0);
 
       root.innerHTML = `
         <div class="hl-head"><h1>Health</h1>
@@ -141,6 +151,7 @@
           <span class="hl-pill ${d.db.ok ? 'ok' : 'bad'}">${d.db.ok ? 'OK' : 'Down'}</span></div>
         <div class="hl-card"><div><b>Last completed purchase</b><div class="hl-sub">${d.info.last_purchase_at ? new Date(d.info.last_purchase_at).toLocaleString() : 'No purchase yet'}</div></div></div>
 
+        ${promiseCard(d.info.late_promises)}
         ${mailCard(d.info.email)}
 
         <h2 class="hl-sec">Scheduled jobs</h2>
