@@ -150,7 +150,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
 | **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
-| **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🔴 |
+| **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🟡 measured: template pages would be >70% duplicate; replacement proposal waits for the owner |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🔴 |
 
 Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
@@ -256,17 +256,23 @@ Findings that shaped it: one runner fire already makes a whole report (EN → JA
 - [ ] Kira List purchase ($39): when Kira List ships.
 
 #### S20 — Topic expansion to ~10,000 (no LLM) + thin-content test
-- [ ] Generator from the taxonomy: active country × industry pairs × lenses (market assessment, market entry, regulatory, competitors, distribution…).
-  - Each page gets a search-style title, a description, a table of contents from the lens's chapter frame, the guiding questions and the price.
-  - Plus whatever real data the DB already has for that pair: published-report links, companies in `industry_players` / `entities`, related transcripts.
-  - Template text only, no model calls. New topics get `source = 'generator'` and stay out of the production queue until requested.
-- [ ] **Pilot 500 first (noindex).** Measure thinness ourselves:
-  - near-duplicate share between pages (shingle similarity), unique words per page, and the share of each page that is real data rather than template text;
-  - pages that share >~80% of their text with a sibling are merged or dropped.
-- [ ] **Google's own verdict:**
-  - index a cohort of ~200 pilot pages (sitemap + indexable) for 4–6 weeks;
-  - read Search Console → Pages: if most are "Crawled – currently not indexed" or a manual action appears, the rest stay noindex and are indexed gradually as demand (clicks, requests) adds real content.
-- [ ] Full run to ~10,000 only after the pilot passes. Sitemap split by 5,000 URLs.
+**Measured first (2026-10-12, before generating anything), on the 1,892 live topic pages:**
+- Frame text (the 4–5 guiding questions) is shared: a lens has only 1–4 distinct question sets across all its pages (e.g. 339 market-entry pages use 3 sets). It is ~400 characters per page.
+- What is unique per page: title + buyer question ≈ 145 characters (27% of the page); with the written hook and the 2–3 "must cover" facts ≈ 410 characters (50%, about 60 words). 40 pages have no must-cover facts.
+- Real per-pair data is almost empty: `tax_country_industry.why_domestic` is null, `evidence` is a one-line note, `signals` is `{}`; the companies table covers only VN and JP.
+- So a generated page for the other ~8,000 pair × lens combinations would carry only a title and a templated buyer question: about 100–150 characters (<30%) of its own text, 70%+ shared with its siblings. That is the thin / near-duplicate pattern Google's scaled-content policy targets, and it would not pass the ">~80% shared = merge or drop" rule below.
+
+**Proposal for the owner (replaces the 10,000-page plan; decide before any work):**
+- [ ] Do **not** generate ~8,000 template pages. Ads do not need pages to be indexed, so the pages only have to exist for the topics we advertise; the 1,892 real topics (plus anything readers request) already are that set.
+- [ ] S21 builds ad groups from those 1,892 topics (one ad group each, search-style names); no new pages needed.
+- [ ] Optional SEO test, small: make ~200 of the best pages (written hook + must-cover facts) indexable with server-side title/description, sitemap them, and read Search Console after 4–6 weeks. Needs server-rendered meta for coming-soon pages first (today they are JS-rendered and `noindex`).
+- [ ] If the owner still wants more pages: only where the DB has real data for that pair (published report, companies, transcript), measured with the shingle test below.
+
+Original plan, kept for reference (not started):
+- [ ] Generator from the taxonomy: active country × industry pairs × lenses (market assessment, market entry, regulatory, competitors, distribution…). Template text only, no model calls; `source = 'generator'`, outside the production queue until requested.
+- [ ] Pilot 500 first (noindex); near-duplicate share (shingle similarity), unique words per page, share of real data; pages sharing >~80% with a sibling are merged or dropped.
+- [ ] Google's verdict: index a cohort of ~200 pilot pages for 4–6 weeks and read Search Console → Pages ("Crawled – currently not indexed" = stop).
+- [ ] Full run only after the pilot passes. Sitemap split by 5,000 URLs.
 
 #### S21 — Google Ads launch (measured test)
 - [ ] Script: Google Ads Editor CSV from published reports + topics, one ad group per topic, built from the search-style name:
