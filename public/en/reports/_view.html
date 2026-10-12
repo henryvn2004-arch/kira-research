@@ -663,6 +663,16 @@
 
     // Access box: owned copy → download; per-report sale on → price + buy;
     // otherwise the subscription waitlist (S5 default).
+    // S12: the numbers behind the report's exhibits, for a reader who owns the report (/api/library-exhibits).
+    function exhibitsHtml(n) {
+      if (!n) return '';
+      return '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"><h4 style="margin:0 0 6px;font-size:14px">' + escapeHtml(t('exhibitsTitle')) + '</h4>' +
+        '<p class="small" style="margin:0 0 10px">' + escapeHtml(t('exhibitsNote').replace('{n}', n)) + '</p>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="r-btn r-btn-outline" type="button" data-exhibit-dl="xlsx">' + escapeHtml(t('exhibitsExcel')) + '</button>' +
+        '<button class="r-btn r-btn-outline" type="button" data-exhibit-dl="pptx">' + escapeHtml(t('exhibitsPpt')) + '</button></div>' +
+        '<p class="small" id="exhibit-dl-note" style="margin:8px 0 0"></p></div>';
+    }
+
     function renderAccessBox(d, state) {
       const incl = '<ul class="rd-incl">' + ['incl1', 'incl2', 'incl3', 'incl4'].map(k => '<li>' + R.icon('check') + escapeHtml(t(k)) + '</li>').join('') + '</ul>';
       if (state.purchased && state.subPdf) {
@@ -670,12 +680,13 @@
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('subOwned')) + '</h3>' +
           '<button class="r-btn r-btn-primary r-btn-block" id="sub-pdf-btn" type="button">' + escapeHtml(t('downloadPdf')) + '</button>' +
           '<p class="small" id="sub-pdf-note">' + escapeHtml(t('subPdfUsed').replace('{used}', state.subPdf.used).replace('{limit}', state.subPdf.limit)) + '</p>' +
+          exhibitsHtml(state.exhibits) +
           '<p style="margin:10px 0 0"><a class="r-link" href="/' + locale + '/subscription">' + escapeHtml(t('subManage')) + ' →</a></p></div>';
       }
       if (state.purchased) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('owned')) + '</h3>' +
           (state.pdfUrl ? '<a class="r-btn r-btn-primary r-btn-block" href="' + escapeHtml(state.pdfUrl) + '" download>' + escapeHtml(t('downloadPdf')) + '</a>'
-                        : '<p>' + escapeHtml(t('pdfPending')) + '</p>') + '</div>';
+                        : '<p>' + escapeHtml(t('pdfPending')) + '</p>') + exhibitsHtml(state.exhibits) + '</div>';
       }
       const subBox = SUBSCRIPTION
         ? '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">' +
@@ -790,7 +801,7 @@
             (dataBlock ? '<section class="rd-sec" id="data"><h2 class="rd-sec-h"><span class="ib">' + R.icon('layers') + '</span>' + escapeHtml(t('tabFindings')) + '</h2>' + dataBlock + '</section>' : '') +
           '</article>' +
           '<aside class="rd-aside">' + cover +
-            renderAccessBox(d, { purchased: owns, anyLocale: purchaseState.anyLocale, ownedLocale: purchaseState.ownedLocale, pdfUrl: fullContent && fullContent.pdf_url, subPdf: fullContent && fullContent.pdf, subscription: d.subscription }) +
+            renderAccessBox(d, { purchased: owns, anyLocale: purchaseState.anyLocale, ownedLocale: purchaseState.ownedLocale, pdfUrl: fullContent && fullContent.pdf_url, subPdf: fullContent && fullContent.pdf, exhibits: fullContent && fullContent.exhibits, subscription: d.subscription }) +
             '<div class="rd-box"><h3>' + escapeHtml(t('reportDetails')) + '</h3><dl class="rd-dl">' +
               (d.published_at ? '<dt>' + escapeHtml(t('published')) + '</dt><dd>' + escapeHtml(R.date(d.published_at)) + '</dd>' : '') +
               (d.pages ? '<dt>' + escapeHtml(t('pages')) + '</dt><dd>' + d.pages + '</dd>' : '') +
@@ -842,6 +853,19 @@
           window.location.href = b.approveUrl;
         } catch (_e) { alert('Network error. Please retry.'); subscribeBtn.disabled = false; }
       });
+      document.querySelectorAll('[data-exhibit-dl]').forEach(btn => btn.addEventListener('click', async () => {
+        const note = document.getElementById('exhibit-dl-note');
+        btn.disabled = true; if (note) note.textContent = '';
+        try {
+          const r = await fetch('/api/library-exhibits?slug=' + encodeURIComponent(d.slug) + '&format=' + btn.dataset.exhibitDl, { headers: await bearerHeaders() });
+          if (!r.ok) { if (note) note.textContent = t('exhibitsErr'); return; }
+          const name = ((r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/) || [])[1] || ('exhibits.' + btn.dataset.exhibitDl);
+          const url = URL.createObjectURL(await r.blob());
+          const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (_e) { if (note) note.textContent = t('exhibitsErr'); }
+        finally { btn.disabled = false; }
+      }));
       const subPdfBtn = document.getElementById('sub-pdf-btn');
       if (subPdfBtn) subPdfBtn.addEventListener('click', async () => {
         const note = document.getElementById('sub-pdf-note');
