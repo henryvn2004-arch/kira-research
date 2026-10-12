@@ -14,6 +14,8 @@
 // ============================================================
 
 import { sendPurchaseReceipt } from './_lib/email.js';
+import { getConfig } from './_lib/config.js';
+import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
   ? 'https://api-m.paypal.com'
@@ -102,6 +104,7 @@ export default async function handler(req, res) {
       const slug   = body.slug;
       const locale = LOCALES.has(body.locale) ? body.locale : 'en';
       if (!isSlug(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
+      if (!(await getConfig('checkout.single_report_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
 
       // Look up the report — price + status come from DB, never from client.
       const rows = await sb(
@@ -111,7 +114,7 @@ export default async function handler(req, res) {
       const report = Array.isArray(rows) ? rows[0] : null;
       if (!report) { res.status(404).json({ error: 'report_not_found' }); return; }
 
-      const amount   = (report.price || 39).toFixed(2);
+      const amount   = (report.price || REPORT_PRICE_DEFAULT).toFixed(2);
       const currency = report.currency || 'USD';
 
       const token = await getPayPalToken();
@@ -213,7 +216,7 @@ export default async function handler(req, res) {
       const report = Array.isArray(reportRows) ? reportRows[0] : null;
       if (!report) { res.status(404).json({ error: 'report_not_found' }); return; }
 
-      const expectedAmount = Number((report.price || 39).toFixed(2));
+      const expectedAmount = Number((report.price || REPORT_PRICE_DEFAULT).toFixed(2));
       const paidAmount = Number(
         unit.amount?.value ??
         unit.payments?.captures?.[0]?.amount?.value ??
