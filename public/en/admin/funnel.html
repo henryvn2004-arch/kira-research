@@ -209,7 +209,9 @@
           ${Object.keys(d.ads.by_campaign).length ? `<table class="fn" style="margin-top:12px"><thead><tr><th>Campaign tag</th><th class="n">Sign-ups</th></tr></thead><tbody>
             ${Object.entries(d.ads.by_campaign).sort((p, q) => q[1] - p[1]).map(([c, k]) => `<tr><td>${esc(c)}</td><td class="n">${n(k)}</td></tr>`).join('')}</tbody></table>` : ''}
           <p class="fn-note">Counted from the database, only for people whose browser allowed it (not Do Not Track) and who came through an ad click. Ads that reach the site but produce no sign-up do not appear here; Google Ads shows those clicks and their cost.</p>
-          <p><button class="fn-link" id="fn-ads-csv">Download conversions for Google Ads (CSV, last ${Math.min(state.days, 90)} days)</button></p>`
+          <p><button class="fn-link" id="fn-ads-csv">Download conversions for Google Ads (CSV, last ${Math.min(state.days, 90)} days)</button></p>
+          <p><button class="fn-link" data-ads-file="campaign">Download the campaign file for Google Ads Editor (first 100 topics, everything paused)</button>
+             &nbsp;·&nbsp; <button class="fn-link" data-ads-file="negatives">Download the negative keyword list</button></p>`
           : '<div class="fn-empty">Not available yet.</div>'}
         </div>
 
@@ -242,6 +244,18 @@
         } catch (e) { alert('Could not download (' + e.message + ').'); }
         csv.disabled = false;
       });
+      root.querySelectorAll('[data-ads-file]').forEach(btn => btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          const negatives = btn.dataset.adsFile === 'negatives';
+          const r = await fetch('/api/admin-ads-campaign' + (negatives ? '?kind=negatives' : ''), { headers: { Authorization: 'Bearer ' + session.access_token } });
+          if (!r.ok) throw new Error(String(r.status));
+          const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob());
+          a.download = negatives ? 'kira-ads-negative-keywords.txt' : 'kira-ads-campaign-0-100.csv'; a.click();
+        } catch (e) { alert('Could not download (' + e.message + ').'); }
+        btn.disabled = false;
+      }));
       const tg = document.getElementById('fn-toggle'); if (tg) tg.addEventListener('click', () => { state.table = !state.table; render(d); });
     }
 

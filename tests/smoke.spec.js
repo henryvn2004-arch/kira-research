@@ -331,6 +331,11 @@ test.describe('public APIs', () => {
     });
   }
 
+  // S21: the Google Ads Editor file is admin-only.
+  test('/api/admin-ads-campaign requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-ads-campaign')).status()).toBe(401);
+  });
+
   // S19: terms of sale exist in every locale; checkout is closed by default (config checkout.single_report_enabled).
   for (const loc of ['en', 'ja', 'ko', 'zh']) {
     test(`/${loc}/terms loads`, async ({ page }) => {
