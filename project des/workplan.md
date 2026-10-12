@@ -150,7 +150,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
 | **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
-| **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🟡 measured: template pages would be >70% duplicate; replacement proposal waits for the owner |
+| **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🔴 |
 
 Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
@@ -262,7 +262,9 @@ Findings that shaped it: one runner fire already makes a whole report (EN → JA
 - Real per-pair data is almost empty: `tax_country_industry.why_domestic` is null, `evidence` is a one-line note, `signals` is `{}`; the companies table covers only VN and JP.
 - So a generated page for the other ~8,000 pair × lens combinations would carry only a title and a templated buyer question: about 100–150 characters (<30%) of its own text, 70%+ shared with its siblings. That is the thin / near-duplicate pattern Google's scaled-content policy targets, and it would not pass the ">~80% shared = merge or drop" rule below.
 
-**Proposal for the owner (replaces the 10,000-page plan; decide before any work):**
+**Decided by the owner 2026-10-12: proposal accepted. No template pages are generated; S20 is closed by the measurement. The ~200-page SEO test (second bullet) stays optional and unscheduled.**
+
+**Proposal (replaces the 10,000-page plan):**
 - [ ] Do **not** generate ~8,000 template pages. Ads do not need pages to be indexed, so the pages only have to exist for the topics we advertise; the 1,892 real topics (plus anything readers request) already are that set.
 - [ ] S21 builds ad groups from those 1,892 topics (one ad group each, search-style names); no new pages needed.
 - [ ] Optional SEO test, small: make ~200 of the best pages (written hook + must-cover facts) indexable with server-side title/description, sitemap them, and read Search Console after 4–6 weeks. Needs server-rendered meta for coming-soon pages first (today they are JS-rendered and `noindex`).
@@ -275,12 +277,13 @@ Original plan, kept for reference (not started):
 - [ ] Full run only after the pilot passes. Sitemap split by 5,000 URLs.
 
 #### S21 — Google Ads launch (measured test)
-- [ ] Script: Google Ads Editor CSV from published reports + topics, one ad group per topic, built from the search-style name:
-  - keywords: phrase + exact match;
-  - headlines: name + "$49" + "Ready in 3 days" (coming soon) or "Download now" (published);
-  - final URL = the page.
-- [ ] Shared negative keyword list: free, pdf free, download free, wikipedia, ppt, statistics free, thesis, assignment, jobs, salary, "what is", definition…
-- [ ] Targeting: the buyer markets (JP, KR, SG, TW, US… outside the EEA/UK first), language matching the page locale.
+Owner 2026-10-12: set up only, do not run ads yet. Everything below that touches Google is prepared paused.
+- [x] Campaign file for Google Ads Editor (`api/admin-ads-campaign.js`, `api/_lib/ads-campaign.js`; button on `/en/admin/funnel`): one ad group per topic page (the 1,892 live topics, best score first, 100 per file via `?offset=`), 4 phrase + 4 exact keywords each, one responsive search ad each, final URL = the coming-soon or published page. Campaign, ad groups, keywords and ads are all **Paused**; daily budget and max CPC are parameters (`budget`, `cpc`, defaults $20 and $1.00).
+  - Headlines ≤30 characters, descriptions ≤90 (Google's limits), checked in code.
+  - "Ready in about N days" uses `ondemand.target_days`; the "Report from $49" headline is written only while `checkout.single_report_enabled` is on.
+  - **Not verified against a real Ads Editor import** (no account access from here): if Editor rejects a column, send me the error text.
+- [x] Shared negative keyword list (`?kind=negatives`, 36 phrases: free, pdf free, wikipedia, ppt, thesis, assignment, jobs, salary, "what is", definition…). Paste into one shared list in Ads and attach it to the campaign.
+- [ ] Owner, in Google Ads (when the owner says go): import the file; set location (JP, KR, SG, TW, US… outside the EEA/UK first) and review language; attach the negative list; link GA4 and import `generate_lead` as the primary conversion; enable auto-tagging.
 - [ ] Bidding: Manual CPC with a cap. Move to Maximize conversions only after ~15–30 conversions per month from S17.
 - [ ] 3–4 week test at a small daily budget. Review the search terms report every week and add negatives.
 - [ ] Read-out by product and lens: CPC, CTR, cost per email, cost per purchase.
