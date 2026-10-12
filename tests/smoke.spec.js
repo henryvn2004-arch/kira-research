@@ -345,6 +345,27 @@ test.describe('public APIs', () => {
     });
   }
 
+  // S19 follow-up: transcript checkout + the public "what can be bought" switch.
+  test('/api/checkout-status reports what can be bought', async ({ request }) => {
+    const r = await request.get('/api/checkout-status');
+    expect(r.status()).toBe(200);
+    const b = await r.json();
+    expect(typeof b.report.enabled).toBe('boolean');
+    expect(b.report.price).toBe(49);
+    expect(typeof b.transcript.enabled).toBe('boolean');
+    expect(b.transcript.price).toBe(29);
+  });
+
+  test('/api/transcript-buy answers 405 to GET and refuses create for an unknown transcript', async ({ request }) => {
+    expect((await request.get('/api/transcript-buy')).status()).toBe(405);
+    const r = await request.post('/api/transcript-buy?action=create', { data: { slug: 'no-such-transcript', locale: 'en' } });
+    expect([403, 404]).toContain(r.status());
+  });
+
+  test('/api/transcript-content refuses a reader who is not signed in', async ({ request }) => {
+    expect((await request.get('/api/transcript-content?slug=anything-here')).status()).toBe(401);
+  });
+
   test('/api/library-buy create is refused while single-report checkout is off', async ({ request }) => {
     const r = await request.post('/api/library-buy?action=create', { data: { slug: 'no-such-report', locale: 'en' } });
     expect([403, 404]).toContain(r.status());

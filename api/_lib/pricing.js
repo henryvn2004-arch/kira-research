@@ -5,3 +5,4 @@
 // ============================================================
 
 export const REPORT_PRICE_DEFAULT = 49;
+export const TRANSCRIPT_PRICE = 29;   // one expert-interview transcript, all languages (S19)
