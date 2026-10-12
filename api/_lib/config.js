@@ -74,6 +74,21 @@ export const CONFIG = {
     label: 'Send the daily "your value chain is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
   },
+  'ads.value_request': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
+    label: 'What an "email me when ready" sign-up is worth',
+    help: 'Sent to Google Ads with each such conversion in the file from the Funnel page, so it can favour clicks that produce them. Your own estimate of the value of one sign-up; 0 sends none.'
+  },
+  'ads.value_waitlist': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 15, unit: 'USD',
+    label: 'What a subscription-waitlist sign-up is worth',
+    help: 'Same as above, for the waitlist form on the pricing page.'
+  },
+  'ads.value_lead': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 100, unit: 'USD',
+    label: 'What a custom-research enquiry is worth',
+    help: 'Same as above, for the enquiry form (a person asking for a quote).'
+  },
   'retention.site_events_days': {
     group: 'Data', type: 'int', min: 30, max: 730, default: 180,
     label: 'Keep visitor events for (days)',

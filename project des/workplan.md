@@ -147,7 +147,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
 | **S16** | Email deliverability (paid search prerequisite) | 🔴 first, see "Paid search" below |
-| **S17** | Google Ads attribution: click id → request/purchase → conversions back to Google | 🔴 |
+| **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
 | **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; report published on the same URL | 🔴 |
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🔴 |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🔴 |
@@ -204,26 +204,33 @@ Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 →
 - **Gap:** the report slug differs from the topic slug (e.g. `2027-id-ev-charging-market-assessment` → `indonesia-ev-charging-2026`), and the redirect is client-side only. An ad URL or an indexed coming-soon URL therefore does not pass a server-side 301. S18 fixes this.
 - `topic_requests` (3 points) and searches (1 point) already raise queue priority, and the daily cron `/api/notify-topic-published` emails requesters at publish.
 
-#### S16 — Email deliverability (owner DNS clicks + small code) — 🟡 code done 2026-10-12, owner steps open
+#### S16 — Email deliverability (owner DNS clicks + small code) — ✅ done 2026-10-12 (PR #106)
 DNS check on 2026-10-12 (public lookups): no Resend records at the usual names (`resend._domainkey`, `send` MX/TXT) and no `_dmarc` record; the root SPF only includes Google; Google's own DKIM (`google._domainkey`) exists. The Resend dashboard is the source of truth for the exact records, so the owner reads them there.
-- [ ] Owner, Namecheap → Domain List → Manage → Advanced DNS (click-through guide in chat):
+- [x] Owner, Namecheap → Domain List → Manage → Advanced DNS (click-through guide in chat):
   - open Resend → Domains → kiraresearch.com and add every record it lists (DKIM TXT at `resend._domainkey`, SPF TXT and MX at `send`), then press Verify until it reads Verified;
   - add a DMARC TXT record: host `_dmarc`, value `v=DMARC1; p=none; rua=mailto:<owner inbox>` (monitor first, tighten later);
   - leave the root SPF (`v=spf1 include:_spf.google.com ~all`) as it is: Resend sends from the `send` subdomain.
-- [ ] Owner: Resend → Webhooks → Add endpoint `https://kiraresearch.com/api/email-webhook`, events `email.delivered`, `email.bounced`, `email.complained`, `email.delivery_delayed`; copy its signing secret into Vercel as `RESEND_WEBHOOK_SECRET`, redeploy.
-- [ ] Verify with a test send to Gmail and Outlook: "Show original" must show SPF pass, DKIM pass and DMARC pass.
+- [x] Owner: Resend → Webhooks → Add endpoint `https://kiraresearch.com/api/email-webhook`, events `email.delivered`, `email.bounced`, `email.complained`, `email.delivery_delayed`; copy its signing secret into Vercel as `RESEND_WEBHOOK_SECRET`, redeploy.
+- [x] Verify with a test send to Gmail: "Show original" shows SPF pass (`send.kiraresearch.com`), DKIM pass (`d=kiraresearch.com`, selector `resend`) and DMARC pass (p=none); the webhook stored the `delivered` event 2 s after sending and the request row was marked confirmed (2026-10-12). Outlook not tested.
 - [x] Instant "we got your request" email when a reader leaves an email on a coming-soon page (`sendTopicRequestConfirmation`, plain text + one link, Reply-To = first `ADMIN_EMAILS` address). Capped so the form cannot mail strangers: 3 per address per 24 h, 10 per IP per hour (`topic_requests.confirmed_at`, migration 047); the request itself is always saved. The expected date is added by S18.
 - [x] On-page message after sign-up in EN/JA/KO/ZH: check the inbox and spam, add noreply@kiraresearch.com to contacts.
 - [x] A returning reader sees "you asked" on the same URL instead of the form (the browser remembers, `localStorage`); the URL itself becomes the report when published, so the page never depends on email alone.
 - [x] Resend webhook `api/email-webhook.js` (Svix signature check, stale/forged calls refused): events go to `email_events`, hard bounces and spam complaints to `email_suppressions` and `api/_lib/email.js` never mails them again. `/en/admin/health` shows delivered / bounced / spam counts for 30 days and turns red above a 5% problem rate or any complaint. Migration 047 applied.
 - Email text is English only for now (same as the "report ready" email); JA/KO/ZH copy can follow when real readers from those markets arrive.
 
-#### S17 — Google Ads attribution
-- [ ] Store the ad click id on landing: `gclid` / `gbraid` / `wbraid` plus `utm_*`, first-party, in session storage. Send it with every `topic-request`, `leads`, `waitlist` and purchase POST. New nullable columns on those tables.
-- [ ] Send GA4 key events (`generate_lead`, `purchase` with value). Owner links GA4 to Google Ads and imports them as conversions (click-through guide).
-- [ ] Offline conversion export: a CSV of click id + conversion time + value from `/en/admin/funnel`, for upload to Google Ads, so Google learns from real emails and purchases rather than clicks.
-- [ ] Consent: target outside the EEA/UK at first (no Consent Mode needed), and add a privacy policy line on analytics and ad measurement.
-- [ ] `/en/admin/funnel` gains a "paid" source split: clicks → emails → purchases, cost per email and per purchase. Cost is entered by the owner, or later read from the Ads API.
+#### S17 — Google Ads attribution — 🟡 code done 2026-10-12, owner steps open
+Found on the way: the footer links **/privacy and /terms returned 404 on every page** (no such files). Google Ads and any page that collects emails need a working privacy notice, so S17 adds `/en/privacy` (ja/ko/zh rewrite to it). **Terms is still missing** and needs the owner's commercial decisions (refunds, licence of a report), so it was not drafted.
+- [x] `public/js/track.js`: on a landing with `gclid` / `gbraid` / `wbraid` or `utm_source`, the click is kept in `localStorage` (`kira_attr`, 90 days, last click wins) and added as `attr` to the JSON body of `/api/topic-request`, `/api/waitlist` and `/api/leads` (by wrapping `fetch`, so no form was edited). Off for Do Not Track, admin, previews, localhost. A landing with a click id but no `utm_source` is labelled source `google-ads` in the funnel (separate from organic `google`).
+- [x] Server: `api/_lib/attribution.js` keeps only known keys with length limits; stored in `attribution jsonb` on `topic_requests`, `waitlist`, `leads` (migration 048, applied). Purchases get the same when checkout is switched on (S19).
+- [x] GA4 key event `generate_lead` (`lead_type` = request_email / waitlist / lead) fires after each successful sign-up through `window.gtag` (exposed by `nav.js`).
+- [x] `GET /api/admin-ads-conversions` (admin): Google Ads offline-conversion CSV (click id / GBRAID / WBRAID, conversion name, UTC time, value, USD) from tagged sign-ups, last 1-90 days. Conversion names: `KIRA email request`, `KIRA waitlist`, `KIRA enquiry`. Values are owner settings on `/en/admin/config` → Google Ads (`ads.value_request` 5, `ads.value_waitlist` 15, `ads.value_lead` 100 USD; placeholders, the owner sets what a sign-up is worth).
+- [x] `/en/admin/funnel`: "From Google Ads" block (tagged sign-ups per type and per campaign tag) and the CSV download button; source label "Google Ads (paid)".
+- [x] `/en/privacy` written from what the site really does (draft for the owner to review: legal entity name, retention promises, contact route; EN only).
+- [ ] Owner (Claude in Chrome prompt in chat): link GA4 property `G-N1891GBDCB` to the Google Ads account; turn on auto-tagging; create the Google Ads conversion by importing the GA4 key event `generate_lead` as the primary conversion. The CSV conversions are a cross-check (create them as separate secondary actions with the three names above) so one sign-up is never counted twice as primary.
+- [ ] Owner: add a final-URL suffix in Google Ads `utm_source=google&utm_medium=cpc&utm_campaign={campaignid}` (S21 sets it per campaign).
+- [ ] Owner decisions: review `/en/privacy`; decide Terms (S19 needs it before taking payment from ad traffic).
+- Known gap: Google Analytics already loads for every visitor with no consent banner. Ads must target outside the EEA/UK (S21) until a consent banner exists.
+- Not done: cost per sign-up (needs ad spend: enter it by hand or read it from the Ads API in S21).
 
 #### S18 — On-demand delivery in 2–3 days
 - [ ] Owner setting `ondemand.target_days` (default 3) and `ondemand.reports_per_day` (current runner capacity) on `/en/admin/config`.

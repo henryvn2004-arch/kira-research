@@ -45,6 +45,25 @@ async function countSince(table, since, extra = '') {
   } catch (_) { return null; }
 }
 
+// Sign-ups that carry an ad click (attribution, migration 048): per type, and per campaign tag.
+// null when the column does not exist yet.
+async function adSignups(since) {
+  const out = { request_email: 0, waitlist: 0, lead: 0, by_campaign: {} };
+  const tables = [['topic_requests', 'request_email'], ['waitlist', 'waitlist'], ['leads', 'lead']];
+  for (const [table, key] of tables) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=attribution&attribution=not.is.null&created_at=gte.${encodeURIComponent(since)}&limit=5000`, { headers: H() });
+    if (!r.ok) return null;
+    for (const x of await r.json()) {
+      const a = x.attribution || {};
+      if (!(a.gclid || a.gbraid || a.wbraid)) continue;      // only real ad clicks
+      out[key]++;
+      const c = a.utm_campaign || '(no campaign tag)';
+      out.by_campaign[c] = (out.by_campaign[c] || 0) + 1;
+    }
+  }
+  return out;
+}
+
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
@@ -59,13 +78,14 @@ export default async function handler(req, res) {
     const days = [7, 30, 90].includes(parseInt(req.query && req.query.days, 10)) ? parseInt(req.query.days, 10) : 30;
     const since = new Date(Date.now() - days * 864e5).toISOString();
 
-    const [fr, requests, waitlist, leads, purchases, firstEvent] = await Promise.all([
+    const [fr, requests, waitlist, leads, purchases, firstEvent, ads] = await Promise.all([
       fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_summary`, { method: 'POST', headers: H(), body: JSON.stringify({ p_from: since }) }),
       countSince('topic_requests', since),
       countSince('waitlist', since),
       countSince('leads', since),
       countSince('purchases', since, '&status=eq.completed'),
-      fetch(`${SUPABASE_URL}/rest/v1/site_events?select=at&order=at.asc&limit=1`, { headers: H() }).then(r => r.ok ? r.json() : []).catch(() => [])
+      fetch(`${SUPABASE_URL}/rest/v1/site_events?select=at&order=at.asc&limit=1`, { headers: H() }).then(r => r.ok ? r.json() : []).catch(() => []),
+      adSignups(since).catch(() => null)
     ]);
     if (!fr.ok) throw new Error(`funnel_summary ${fr.status}`);
     const funnel = await fr.json();
@@ -74,7 +94,8 @@ export default async function handler(req, res) {
       days,
       funnel,
       tracking_since: firstEvent[0] ? firstEvent[0].at : null,       // events only exist from this moment on
-      actual: { request_email: requests, waitlist, lead: leads, purchases }
+      actual: { request_email: requests, waitlist, lead: leads, purchases },
+      ads
     });
   } catch (err) {
     console.error('[admin-funnel] error:', err.message);

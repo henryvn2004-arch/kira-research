@@ -132,7 +132,7 @@
       ['opened', 'Opened a report page', 'A specific report or coming-soon page'],
       ['raised', 'Raised a hand', 'Left an email, joined the waitlist, or sent a request']
     ];
-    const SOURCE_LABEL = { direct: 'Direct or unknown', google: 'Google', bing: 'Bing', linkedin: 'LinkedIn', facebook: 'Facebook', x: 'X / Twitter', naver: 'Naver', baidu: 'Baidu', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo' };
+    const SOURCE_LABEL = { direct: 'Direct or unknown', 'google-ads': 'Google Ads (paid)', google: 'Google (organic)', bing: 'Bing', linkedin: 'LinkedIn', facebook: 'Facebook', x: 'X / Twitter', naver: 'Naver', baidu: 'Baidu', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo' };
     const LOCALE_LABEL = { en: 'English', ja: 'Japanese', ko: 'Korean', zh: 'Chinese', other: 'Other' };
 
     function funnelBars(st) {
@@ -197,6 +197,22 @@
           <p class="fn-note">The database counts are the truth. The funnel above saw ${n((sig.request_email || 0) + (sig.waitlist || 0) + (sig.lead || 0))} sign-up events from visitors it could track; the gap is people with tracking blocked or who signed up before tracking began. Single-report checkout is currently switched off, so purchases stay at 0 until it is turned back on.</p>
         </div>
 
+        <h2 class="fn-sec">From Google Ads<small>sign-ups that came with an ad click</small></h2>
+        <div class="fn-card">
+          ${d.ads ? `
+          <div class="fn-truth">
+            <div><b>${n(d.ads.request_email)}</b>"Email me when ready" requests</div>
+            <div><b>${n(d.ads.waitlist)}</b>Waitlist sign-ups</div>
+            <div><b>${n(d.ads.lead)}</b>Enquiries</div>
+            <div><b>${n(d.ads.request_email + d.ads.waitlist + d.ads.lead)}</b>Total from ads</div>
+          </div>
+          ${Object.keys(d.ads.by_campaign).length ? `<table class="fn" style="margin-top:12px"><thead><tr><th>Campaign tag</th><th class="n">Sign-ups</th></tr></thead><tbody>
+            ${Object.entries(d.ads.by_campaign).sort((p, q) => q[1] - p[1]).map(([c, k]) => `<tr><td>${esc(c)}</td><td class="n">${n(k)}</td></tr>`).join('')}</tbody></table>` : ''}
+          <p class="fn-note">Counted from the database, only for people whose browser allowed it (not Do Not Track) and who came through an ad click. Ads that reach the site but produce no sign-up do not appear here; Google Ads shows those clicks and their cost.</p>
+          <p><button class="fn-link" id="fn-ads-csv">Download conversions for Google Ads (CSV, last ${Math.min(state.days, 90)} days)</button></p>`
+          : '<div class="fn-empty">Not available yet.</div>'}
+        </div>
+
         <div class="fn-grid">
           <div><h2 class="fn-sec">Visitors per day</h2><div class="fn-card">${dayColumns(f.by_day || [])}</div></div>
           <div><h2 class="fn-sec">Searches<small>library, 3+ letters</small></h2><div class="fn-card">
@@ -214,6 +230,18 @@
           ${f.top_pages.map(p => `<tr><td><a href="${esc(p.path)}" target="_blank" rel="noopener">${esc(p.path)}</a></td><td class="n">${n(p.visitors)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="fn-empty">No report pages visited yet.</div>'}`;
 
       root.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => { state.days = Number(b.dataset.days); load(); }));
+      const csv = document.getElementById('fn-ads-csv');
+      if (csv) csv.addEventListener('click', async () => {
+        csv.disabled = true;
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          const r = await fetch('/api/admin-ads-conversions?days=' + Math.min(state.days, 90), { headers: { Authorization: 'Bearer ' + session.access_token } });
+          if (!r.ok) throw new Error(String(r.status));
+          const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob());
+          a.download = 'kira-ads-conversions-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+        } catch (e) { alert('Could not download (' + e.message + ').'); }
+        csv.disabled = false;
+      });
       const tg = document.getElementById('fn-toggle'); if (tg) tg.addEventListener('click', () => { state.table = !state.table; render(d); });
     }
 
