@@ -8,6 +8,7 @@
 //
 // 401 if unauthenticated · 402 if neither purchased nor subscribed · 404 if report missing.
 // A Month subscriber gets the full content with pdf_url null and pdf { used, limit } (PDFs: /api/library-pdf).
+// `exhibits` = number of exhibits with downloadable data (/api/library-exhibits), 0 if none.
 // Tracks each successful delivery in `downloads` so we can show access
 // counts to owners.
 // ============================================================
@@ -147,6 +148,13 @@ export default async function handler(req, res) {
       // Swallow — downloads table is optional infrastructure.
     }
 
+    // How many exhibits have downloadable data (S12). 0 for reports made before it; never blocks delivery.
+    let exhibitCount = 0;
+    try {
+      const ex = await sb(`report_exhibits?report_id=eq.${base.id}&select=exhibit_count&limit=1`);
+      exhibitCount = (Array.isArray(ex) && ex[0] && ex[0].exhibit_count) || 0;
+    } catch { /* table missing or unreachable: no download buttons */ }
+
     // Buyers get a short-lived signed URL when pdf_url is a storage path (external URLs pass through;
     // null on failure so the UI shows the "PDF is being prepared" state). Subscribers do not get the link
     // here: their PDF goes through /api/library-pdf, which counts it against the monthly allowance.
@@ -171,6 +179,7 @@ export default async function handler(req, res) {
       full_content:   translation.full_content,
       pdf_url:        signedPdfUrl,
       pdf:            pdfInfo,
+      exhibits:       exhibitCount,
 
       ownedLocale:    viaSubscription ? null : purchases[0].locale,
       purchasedAt:    viaSubscription ? null : purchases[0].created_at,

@@ -195,6 +195,8 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 >
 > Who's who (owner, 2026-10-07): write `skills/kira-research-report/outputs/batch/${id}/players.json` and the "Who's who" pages built from it (`brain_route.md` → "Who's who"; `scripts/render-players.mjs`). Find companies with searches in the market's business language, not only English.
 >
+> Exhibit data (owner, 2026-10-12): write `skills/kira-research-report/outputs/batch/${id}/exhibits.json`, one entry per exhibit with the numbers behind it (`brain_route.md` → "Exhibit data"), and run `node skills/kira-research-report/scripts/check-exhibits.mjs --id ${id}` until it exits 0.
+>
 > Write HTML to `skills/kira-research-report/outputs/batch/${id}/en.html`, PDF to `…/en.pdf` (render via `/api/render-pdf` with `PDF_RENDER_SECRET`).
 >
 > Hard rules (the skill enforces these; mentioning for safety):
@@ -218,6 +220,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 
 1. Parse return message for "X planned, Y generated" — if `X != Y` → failure path with `error_log: EN section count mismatch X/Y`
 2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf naming.json players.json` — all must exist; HTML and PDF non-empty (> 1KB); `naming.json` parses and its `title` equals the `<title>` of `en.html`; `node skills/kira-research-report/scripts/render-players.mjs --id ${id} --check` exits 0 and `en.html` contains a `players-page`. A failed check → failure path with `error_log: players: ${first problem}`
+2b. `node skills/kira-research-report/scripts/check-exhibits.mjs --id ${id}` (S12). A failure or a missing `exhibits.json` is NOT fatal: note `exhibits: ${first problem}` in the fire summary and carry on (no `exhibits.json` is committed, so step 5.3b-4b skips it and the report just has no download buttons).
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
 4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
 
@@ -236,6 +239,7 @@ If all pass → commit + push the files, THEN advance the queue (files first: a 
 ```bash
 git add skills/kira-research-report/outputs/batch/${id}/en.html
 git add skills/kira-research-report/outputs/batch/${id}/naming.json skills/kira-research-report/outputs/batch/${id}/players.json
+git add skills/kira-research-report/outputs/batch/${id}/exhibits.json 2>/dev/null || true
 git add skills/kira-research-report/outputs/batch/${id}/cover.jpg 2>/dev/null || true
 git commit -m "batch: EN done for ${id}"
 git push origin main
@@ -465,6 +469,15 @@ Prints one JSON line; `"ok": true` expected. A cover failure is NOT fatal (the p
 ```
 
 Finds or creates each company in `entities` and writes this report's rows in `industry_players` (re-running replaces them). Prints one JSON line; `"ok": true` expected. NOT fatal: note a failure in the fire summary and continue. Reports made before 2026-10-07 have no `players.json`; skip them.
+
+**5.3b-4b — Store the exhibit data (S12, migration 053).**
+
+```bash
+[ -s skills/kira-research-report/outputs/batch/${id}/exhibits.json ] \
+  && node skills/kira-research-report/scripts/publish-exhibits.mjs --id ${id}
+```
+
+Runs the same checks as `check-exhibits.mjs`, then writes the numbers behind this report's exhibits to `report_exhibits` (re-running replaces them); readers who own the report get Excel and PowerPoint download buttons. Prints one JSON line; `"ok": true` expected. NOT fatal: a report without exhibit data just has no download buttons, so note a failure (or a missing `exhibits.json`) in the fire summary and continue. Reports made before 2026-10-12 have none; skip them.
 
 **5.3b-5 — Build the Kira Chain draft.**
 

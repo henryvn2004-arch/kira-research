@@ -377,6 +377,10 @@ test.describe('public APIs', () => {
     expect((await request.get('/api/library-pdf?slug=anything-here')).status()).toBe(401);
   });
 
+  test('/api/library-exhibits needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/library-exhibits?slug=anything-here&format=xlsx')).status()).toBe(401);
+  });
+
   test('/api/checkout-status includes the Month plan', async ({ request }) => {
     const b = await (await request.get('/api/checkout-status')).json();
     expect(typeof b.subscription.enabled).toBe('boolean');

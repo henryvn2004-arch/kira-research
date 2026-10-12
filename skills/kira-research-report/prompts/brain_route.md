@@ -131,6 +131,17 @@ The last chapter lists the companies in the industry, grouped by value-chain sta
 - **Rules:** every player carries a source; no person names; no company that cannot be found in a source; leave a field out rather than guess it. The chapter makes no claims about market share beyond what the body supports.
 - Write `outputs/batch/<id>/players.json` (format in the header of `scripts/render-players.mjs`), run `node scripts/render-players.mjs --id <id> --check` until it passes, then `node scripts/render-players.mjs --id <id> --section <NN>` and place the pages it prints before the methodology endnote. The page walk fills `{{PAGE_NUM}}` / `{{TOTAL_PAGES}}`. Set `title` to an action title (e.g. "Who's who: 48 players, and the importers hold the keys") and `as_of` to the month of the research.
 
+### Exhibit data (owner, 2026-10-12, S12)
+
+Readers who own a report can download the numbers behind its exhibits as Excel and PowerPoint, so every exhibit you draw also goes into `outputs/batch/<id>/exhibits.json` (format in the header of `api/_lib/exhibits.js`).
+
+- **One entry per exhibit** on the page, in page order: `page` (the number in the page counter), `title` (copied exactly from the `.exhibit-title` text), `subtitle` and `source` (the `.exhibit-sub` and `.exhibit-note` text), `chart`, `columns`, `rows`.
+- **Same numbers as the picture.** Each value is the one printed on the exhibit or used to draw it, in the unit the exhibit states. Never invent a value to fill a table.
+- **`chart`:** `bar` (horizontal ranking), `column` (vertical, by period), `stacked`, `line`, `pie` (one value column), or `none` for tables and anything that is not a plain series. First column = labels; with a chart, every other column holds numbers (`null` for a gap). With `none`, cells may be text. Forecast or estimate years keep their label ("2030F", "Dec 2026 (plan)").
+- **Tables** (`comparison_table` and the like): `chart: "none"`, the printed header as `columns`, the printed rows as `rows`.
+- **No clean table** (a flow, a driver tree you cannot reduce to rows, a bubble matrix, a tile map): list it under `skipped` with a one-line `reason`. Drivers and bridges usually do reduce to a short table (step / value / how it is built).
+- Run `node scripts/check-exhibits.mjs --id <id>` until it exits 0: it fails on a malformed entry, on an exhibit printed in `en.html` that is neither listed nor skipped, and on a title that is not printed.
+
 ### Query strategy
 
 Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English queries, bucketed by section. Local-language queries follow topic_parser's `local_search_priority` (this rule wins over the brain's own "always search locally" line): for tier-1 / tier-2 markets, use the pack's **industry glossary** (`vi` / `ja` / `ko` / `zh` practitioner terms) on top of `references/local_lang_query_glossary.md`; for `skip` markets (English-dominant, e.g. SG, PH), add only 2–4 queries with local trade slang where it finds data English misses (e.g. Filipino retail terms for mark-ups or store types). If the buyer is an incumbent, add the baseline queries (its filings, local subsidiaries) first.
@@ -155,6 +166,7 @@ Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English 
 - [ ] Conditions, risks, path (and options when alternatives exist) are present
 - [ ] No brain-internal names anywhere in `section_plan.json` titles or briefs
 - [ ] `naming.json` written by `scripts/report-name.mjs` (exit 0) and copied into `section_plan.json`
+- [ ] The plan tells the writer to produce `exhibits.json` (one entry per exhibit, `check-exhibits.mjs` exit 0)
 - [ ] The "Who's who" chapter is in the plan, and the query strategy has company-discovery queries in the local language
 
 Return `section_plan.json`.
