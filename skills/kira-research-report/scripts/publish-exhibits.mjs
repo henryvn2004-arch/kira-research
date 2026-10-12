@@ -11,6 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createClient } from '@supabase/supabase-js';
 import { validateExhibits } from '../../../api/_lib/exhibits.js';
 
 const i = process.argv.indexOf('--id');
@@ -25,18 +26,16 @@ if (!/^[a-z0-9-]{3,120}$/.test(naming.slug || '')) { console.error('naming.json 
 
 const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
 if (!URL_ || !KEY) { console.log(JSON.stringify({ ok: false, error: 'SUPABASE_URL / SUPABASE_SERVICE_KEY missing' })); process.exit(3); }
-const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' };
+const db = createClient(URL_, KEY, { auth: { persistSession: false } });
 
 try {
-  const r = await fetch(`${URL_}/rest/v1/living_reports?slug=eq.${encodeURIComponent(naming.slug)}&select=id`, { headers: H });
-  if (!r.ok) throw new Error(`living_reports: ${r.status} ${await r.text()}`);
-  const [report] = await r.json();
+  const { data: report, error: e1 } = await db.from('living_reports').select('id').eq('slug', naming.slug).maybeSingle();
+  if (e1) throw new Error(`living_reports: ${e1.message}`);
   if (!report) throw new Error(`no living_reports row for slug ${naming.slug}`);
-  const w = await fetch(`${URL_}/rest/v1/report_exhibits?on_conflict=report_id`, {
-    method: 'POST', headers: { ...H, Prefer: 'resolution=merge-duplicates,return=minimal' },
-    body: JSON.stringify({ report_id: report.id, data, exhibit_count: data.exhibits.length, updated_at: new Date().toISOString() }),
-  });
-  if (!w.ok) throw new Error(`report_exhibits: ${w.status} ${await w.text()}`);
+  const { error: e2 } = await db.from('report_exhibits').upsert(
+    { report_id: report.id, data, exhibit_count: data.exhibits.length, updated_at: new Date().toISOString() },
+    { onConflict: 'report_id' });
+  if (e2) throw new Error(`report_exhibits: ${e2.message}`);
   console.log(JSON.stringify({ ok: true, slug: naming.slug, report_id: report.id, exhibits: data.exhibits.length }));
 } catch (e) {
   console.log(JSON.stringify({ ok: false, error: String(e.message || e) }));

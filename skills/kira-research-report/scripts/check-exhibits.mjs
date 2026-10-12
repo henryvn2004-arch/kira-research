@@ -19,7 +19,8 @@ if (!id || !/^[A-Za-z0-9._-]+$/.test(id)) { console.error('usage: check-exhibits
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../outputs/batch', id);
 const need = (f) => { const p = path.join(dir, f); if (!fs.existsSync(p)) { console.error('missing ' + p); process.exit(2); } return fs.readFileSync(p, 'utf8'); };
 
-const decode = (s) => s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
+// Exhibit titles are plain text (docs/exhibit_library.md); markup inside one is reported, not stripped.
+const decode = (s) => s.replace(/&nbsp;/g, ' ').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
   .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
   .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, '&')
   .replace(/\s+/g, ' ').trim();
@@ -29,7 +30,9 @@ try { data = JSON.parse(need('exhibits.json')); } catch (e) { console.error('exh
 const problems = [...validateExhibits(data).errors];
 
 const html = need('en.html');
-const printed = [...html.matchAll(/class="exhibit-title">([\s\S]*?)<\/div>/g)].map((m) => decode(m[1]));
+const rawTitles = [...html.matchAll(/class="exhibit-title">([\s\S]*?)<\/div>/g)].map((m) => m[1]);
+for (const r of rawTitles) if (r.includes('<')) problems.push(`exhibit-title contains markup, keep it plain text: "${r.slice(0, 70)}"`);
+const printed = rawTitles.map(decode);
 const listed = new Set([...(data.exhibits || []).map((x) => x && x.title), ...(data.skipped || []).map((x) => x && x.title)]);
 for (const t of printed) if (!listed.has(t)) problems.push(`exhibit printed in en.html but missing from exhibits.json: "${t.slice(0, 70)}"`);
 const printedSet = new Set(printed);
