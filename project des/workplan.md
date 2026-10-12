@@ -151,7 +151,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
-| **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🔴 |
+| **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
 
 Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
 Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 → S21**. Each sprint starts only when the owner says go.
