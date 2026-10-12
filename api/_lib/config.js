@@ -37,7 +37,7 @@ export const CONFIG = {
   'planner.weekly_enabled': {
     group: 'Topic queue', type: 'bool', default: true,
     label: 'Plan new topics every week',
-    help: 'On: once a week the topic planner adds new segment-level topics for each country, built from reader demand (requests, searches) and fresh research. Off: the weekly run does nothing.'
+    help: 'On: once a week the topic planner adds new topics for each country (one market segment × one standard analysis, market overview first), built from reader demand (requests, searches) and fresh research. Off: the weekly run does nothing.'
   },
   'planner.topics_per_country': {
     group: 'Topic queue', type: 'int', min: 0, max: 15, default: 6, unit: 'topics per country per week',
