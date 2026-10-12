@@ -155,6 +155,7 @@ export default async function handler(req, res) {
     const items = reports.map(r => {
       const t = byId.get(r.id) || null;
       const lede = t && t.preview && typeof t.preview === 'object' ? t.preview.lede : null;
+      const hook = t && t.preview && typeof t.preview === 'object' && t.preview.hook ? String(t.preview.hook).slice(0, 160) : null;
       return {
         code:     r.code || null,
         slug:     r.slug,
@@ -169,6 +170,7 @@ export default async function handler(req, res) {
         published_at: r.published_at || null,
         cover:    coverUrls(r),
         title:    (t && t.title) || null,
+        hook:     hook,
         excerpt:  (lede ? String(lede).slice(0, 240) : null),
         locale:   t ? t.locale : null,
         hasTranslation: !!t

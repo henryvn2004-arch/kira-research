@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const VOCAB = JSON.parse(fs.readFileSync(path.join(here, '../../references/naming_vocab.json'), 'utf8'));
 
-const LIMITS = { segment: 28, angle: 60, title: 95, canonical: 45, seo: 60, slug: 60, line3: 18 };
+const LIMITS = { segment: 28, angle: 60, title: 95, canonical: 45, seo: 60, slug: 60, line3: 18, hook: 90 };
 const HYPE = /\b(game[- ]?changer|unprecedented|explosive|massive|revolutionary|ultimate|booming)\b/i;
 
 export function resolveCountry(input) {
@@ -44,6 +44,8 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   const year = Number(input.year);
   const segment = String(input.segment || '').trim().replace(/\s+/g, ' ');
   const angle = String(input.angle || '').trim().replace(/\s+/g, ' ').replace(/[.]$/, '');
+  // Optional one-line hook question (cover subtitle + line under the title on the site). Never part of the title.
+  const hook = String(input.hook || '').trim().replace(/\s+/g, ' ');
 
   if (!cc) errors.push(`unknown country "${input.country}" (add it to references/naming_vocab.json)`);
   if (!ind) errors.push(`unknown industry "${input.industryCode || input.industry}" (map it to an existing code or add one to naming_vocab.json)`);
@@ -56,6 +58,7 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
     errors.push('segment is sentence case: lowercase unless an acronym or proper noun (e.g. "coffee chains", "EV charging")');
   if (!angle || angle.length > LIMITS.angle) errors.push(`angle is required, <= ${LIMITS.angle} chars (got ${angle.length})`);
   if (HYPE.test(angle) || HYPE.test(segment)) errors.push('no hype words in titles (voice_guide)');
+  if (hook && (hook.length > LIMITS.hook || !/[?\uff1f]$/.test(hook) || HYPE.test(hook))) errors.push(`hook is one question, <= ${LIMITS.hook} chars, no hype words (got ${hook.length} chars)`);
   if (cc && segment.toLowerCase().includes(VOCAB.countries[cc].en.toLowerCase())) errors.push('segment must not repeat the country');
   if (errors.length) return { naming: null, errors };
 
@@ -96,7 +99,7 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   return {
     errors,
     naming: {
-      code, slug, title, canonical, angle, seo_title,
+      code, slug, title, canonical, angle, ...(hook ? { hook } : {}), seo_title,
       // Delivered file names: <file_stem>_<LOCALE>.pdf (same rule as api/library-content.js)
       file_stem: `KIRA_${code}_${canonical.replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')}`,
       short_title: `${country.en} ${segment}`,
