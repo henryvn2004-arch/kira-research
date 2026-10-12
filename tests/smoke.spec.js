@@ -349,6 +349,15 @@ test.describe('public APIs', () => {
     expect((await r.json()).items).toEqual([]);
   });
 
+  // S18: a coming-soon topic carries the "ready by" date (eta may be null if it can not be worked out, but the key is there).
+  test('/api/topic returns an eta field for a coming-soon topic', async ({ request }) => {
+    const found = await (await request.get('/api/topic-search?q=indonesia%20ev%20charging')).json();
+    const item = (found.items || [])[0];
+    test.skip(!item, 'no coming-soon topic matched the probe query');
+    const d = await (await request.get('/api/topic?slug=' + encodeURIComponent(item.slug))).json();
+    if (!d.published) expect(d).toHaveProperty('eta');
+  });
+
   test('/api/topic 404s for an unknown slug', async ({ request }) => {
     expect((await request.get('/api/topic?slug=no-such-topic-xyz')).status()).toBe(404);
   });

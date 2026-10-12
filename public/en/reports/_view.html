@@ -125,7 +125,7 @@
         const tr = await fetch('/api/topic?slug=' + encodeURIComponent(slug)).catch(() => null);
         if (tr && tr.ok && window.kiraComingSoon) {
           const tp = await tr.json();
-          if (tp.published) window.location.replace('/' + locale + '/reports/' + encodeURIComponent(tp.published));
+          if (tp.published) window.location.replace('/' + locale + '/reports/' + encodeURIComponent(tp.published) + window.location.search);   // keep ad tags (gclid, utm) on the way to the report
           else window.kiraComingSoon.page(root, tp);
           throw new Error('halt');
         }

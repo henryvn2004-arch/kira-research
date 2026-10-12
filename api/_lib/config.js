@@ -74,6 +74,21 @@ export const CONFIG = {
     label: 'Send the daily "your value chain is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
   },
+  'ondemand.target_days': {
+    group: 'On-demand reports', type: 'int', min: 1, max: 30, default: 3, unit: 'days',
+    label: 'Promised time to make a requested report',
+    help: 'The "ready by" date on a coming-soon page and in the confirmation email is today plus this many days, as long as the report is not stuck behind other requested reports (then the date moves out on its own). Lower it only after you have added runner fires.'
+  },
+  'ondemand.reports_per_day': {
+    group: 'On-demand reports', type: 'int', min: 1, max: 50, default: 3, unit: 'reports per day',
+    label: 'How many reports the runner makes per day',
+    help: 'Tell the site how fast the Routine "Kira Report Generator" really is (one fire = one report in four languages; its cron today has 3 fires a day). It is used only to work out the "ready by" date when several reports were requested. It does NOT change the Routine: change the cron there first, then raise this number.'
+  },
+  'ondemand.auto_approve_per_day': {
+    group: 'On-demand reports', type: 'int', min: 0, max: 100, default: 10, unit: 'topics per 24 h',
+    label: 'Reader-made topics that approve themselves each day',
+    help: 'A topic created from a reader search is approved and queued as soon as someone leaves an email for it, so it can be made within the promised time. This caps how many such topics can start production per 24 hours (each one costs a full report). 0 = they wait for your approval in Topics.'
+  },
   'ads.value_request': {
     group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
     label: 'What an "email me when ready" sign-up is worth',

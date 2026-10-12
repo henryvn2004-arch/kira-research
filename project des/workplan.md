@@ -148,7 +148,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 
 | **S16** | Email deliverability (paid search prerequisite) | 🔴 first, see "Paid search" below |
 | **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
-| **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; report published on the same URL | 🔴 |
+| **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🔴 |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | 🔴 |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🔴 |
@@ -232,17 +232,20 @@ Found on the way: the footer links **/privacy and /terms returned 404 on every p
 - Known gap: Google Analytics already loads for every visitor with no consent banner. Ads must target outside the EEA/UK (S21) until a consent banner exists.
 - Not done: cost per sign-up (needs ad spend: enter it by hand or read it from the Ads API in S21).
 
-#### S18 — On-demand delivery in 2–3 days
-- [ ] Owner setting `ondemand.target_days` (default 3) and `ondemand.reports_per_day` (current runner capacity) on `/en/admin/config`.
-- [ ] ETA = target days, lengthened automatically when the requested topics ahead of this one exceed what the capacity can make in that window. Shown on the coming-soon page ("Ready by <date> — we email you") and in the confirmation email.
-- [ ] Queue: a topic with at least one email request jumps ahead of planner topics (`queue.mjs sync-topics`). Within requested topics, order by first request date so promises are kept in order.
-- [ ] The EN version publishes first; JA/KO/ZH follow and do not block the promise.
-- [ ] The runner fires often enough to meet the promise. Cadence is sized from `ondemand.reports_per_day`; the owner raises it when demand grows.
-- [ ] Missed-promise alert on `/en/admin/health` when a requested topic passes its ETA unpublished.
-- [ ] Same URL after publish: a server-side 301 from `/<locale>/reports/<topic-slug>` to the report (or publish the report under the topic slug), replacing the JS-only redirect, so ad URLs and indexed URLs carry over.
-- [ ] Show the price the report will have ("$49 on publication") on the coming-soon page, to match the ad.
+#### S18 — On-demand delivery in 2–3 days — 🟡 code done 2026-10-12 (migration 049)
+Findings that shaped it: one runner fire already makes a whole report (EN → JA → KO → ZH → publish, about 60–100 min), so no "EN first" step is needed. The Routine "Kira Report Generator" has cron `53 1,3,5 * * *` UTC = **3 reports/day** today; the "ready by" date follows that capacity. A reader-made placeholder topic (`requested`) never entered the queue without the owner's approval, and queue priority did not honour first-asked-first-made.
+- [x] Owner settings on `/en/admin/config` → "On-demand reports": `ondemand.target_days` (3), `ondemand.reports_per_day` (3: tell the site the real speed; it does NOT change the Routine, raise the cron first), `ondemand.auto_approve_per_day` (10).
+- [x] "Ready by" date: `api/_lib/eta.js` = today + max(target days, ceil((reports ahead + 1) / reports per day)); "ahead" = requested topics that asked earlier and are not published + planner reports being made right now (SQL `topic_queue_ahead`, migration 049). With nobody ahead it is exactly the target; when many readers ask, the date moves out by itself. Shown on the coming-soon page in EN/JA/KO/ZH (`/api/topic` returns `eta`) and in the confirmation email ("We expect to publish it by 15 October 2026").
+- [x] Queue: a topic with at least one email request goes to a "requested band" (`api/_lib/queue-band.js`: priority 90000 minus the 10-minute slot of its first request) so it is made before every planner topic, in the order first asked (the promise to each reader holds). `queue.mjs sync-topics` applies it on every fire. Owner's "Run first" (max + 1) still goes above it. Tested with mocked data: early request > later request > planner topic.
+- [x] A reader-made placeholder (`requested`) or an unapproved planner proposal approves itself when someone leaves an email, up to `ondemand.auto_approve_per_day` per 24 h (each one costs a full report); the next fire queues it.
+- [x] First request records `topics.promise_at` (once). `/en/admin/health` → "Promised dates" turns red when a requested report is past its date, with the names and what to do (more fires, then raise "reports per day").
+- [x] Same URL after publish: the coming-soon URL still redirects to the report in the browser, and now **keeps the query string** (`gclid`, `utm_*`). A server-side 301 would need edge middleware on every page; not worth it. Ads that point at a topic page still land correctly, and S21 builds final URLs from the current state (published → report URL).
+- [ ] Owner: decide whether to add runner fires (Routine "Kira Report Generator", cron in claude.ai Routines; guide in `cloud_routine.md`), then set "reports per day" to match. Until then 3 reports/day means a 3-day promise holds for the first ~2 requested topics in line; beyond that the date moves out (about 1 day per 3 extra requests).
+- Moved to S19: showing "$49 on publication" on the coming-soon page. The pricing pages still say $299 and checkout is off, so a price on that page now would contradict the rest of the site.
+- Known: the one test request made on 2026-10-12 (Laos data centres) is a real request, so that report will be made first at the next fire.
 
 #### S19 — Impulse pricing + checkout
+- [ ] Show the price on the coming-soon page ("$49 on publication") together with the new pricing pages, so the ad, the coming-soon page and the pricing page agree (moved from S18).
 - [ ] Pricing pages (EN/JA/KO/ZH): $49 report · $29 transcript · $39 list · $149 month. Settle what the month includes (open, see above).
 - [ ] Turn on single-report checkout (`PER_REPORT_PURCHASE = true` in `reports/_view.html`, price from the DB) with the existing PayPal flow. Check the receipt email after S16.
 - [ ] Transcript purchase ($29): unlock `/api/transcript-content` for a buyer, not only `ADMIN_EMAILS`.

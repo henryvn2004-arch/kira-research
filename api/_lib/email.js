@@ -318,7 +318,7 @@ export async function sendWaitlistNotification(entry) {
 // ── "We got your request" — sent the moment a reader leaves an email on a coming-soon page ──
 // Two jobs: the reader sees right away whether our mail lands in the inbox or in spam, and the
 // reply-to is a real inbox. Plain on purpose (one link, no images) so it is not filtered.
-export async function sendTopicRequestConfirmation({ to, title, url }) {
+export async function sendTopicRequestConfirmation({ to, title, url, eta }) {
   if (!to || !title || !url) return false;
   const replyTo = ADMIN_EMAILS[0] || undefined;
   const subject = `We got your request: ${title}`;
@@ -327,7 +327,8 @@ export async function sendTopicRequestConfirmation({ to, title, url }) {
     ``,
     title,
     ``,
-    `We will email you once, on the day it is ready. You can check its status any time here:`,
+    eta ? `We expect to publish it by ${eta}, and we will email you once, on the day it is ready. You can check its status any time here:`
+        : `We will email you once, on the day it is ready. You can check its status any time here:`,
     url,
     ``,
     `If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.`,
@@ -341,7 +342,7 @@ export async function sendTopicRequestConfirmation({ to, title, url }) {
   <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">We got your request.</h1>
   <p style="margin:0 0 8px;">You asked to be told when this report is published:</p>
   <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
-  <p style="margin:0 0 16px;">We will email you once, on the day it is ready. You can check its status any time: <a href="${esc(url)}">${esc(url)}</a></p>
+  <p style="margin:0 0 16px;">${eta ? `We expect to publish it by <strong>${esc(eta)}</strong>, and we` : 'We'} will email you once, on the day it is ready. You can check its status any time: <a href="${esc(url)}">${esc(url)}</a></p>
   <p style="margin:0 0 16px;font-size:13px;color:#555;">If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.</p>
   <p style="margin:24px 0 0;font-size:13px;color:#666;">Not you? Ignore this message; we will only send one more email about this report.</p>
 </body></html>`.trim();
