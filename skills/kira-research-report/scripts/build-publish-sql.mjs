@@ -10,7 +10,8 @@
 // - title    <- <title> of each locale's HTML
 // - eyebrow  <- naming.eyebrow[locale]
 // - preview  <- lede (hook page kicker + takeaway), 2 paragraphs (hook page cards),
-//               optional chart from --chart-page (a 3-bar exhibit; omitted without it)
+//               optional chart from --chart-page (a 3-bar exhibit; omitted without it),
+//               hook = the cover subtitle of that locale (only when naming.json has a hook)
 // - toc      <- chapter rows of the Contents pages
 // - living_reports fields <- naming.json
 // pdf_url is computed inside the SQL as <report_id>/<locale>.pdf.
@@ -97,7 +98,13 @@ function extract(loc) {
     };
   }
   const tight = /^(ja|zh)/.test(loc) ? cjkTight : x => x;
-  return { title, eyebrow: naming.eyebrow[loc], preview: { lede: tight(lede), paragraphs: paragraphs.map(tight), ...(chart ? { chart } : {}) }, toc, pageCount: pages.length };
+  // The one-line hook question is the cover subtitle, so the translators' cover translation is also the hook's.
+  let hookLine = null;
+  if (naming.hook) {
+    hookLine = text((pages[0].match(/<p class="cv-sub">([\s\S]*?)<\/p>/) || [])[1] || '');
+    if (!hookLine) throw new Error(loc + ': naming.json has a hook but the cover has no subtitle (cv-sub)');
+  }
+  return { title, eyebrow: naming.eyebrow[loc], preview: { lede: tight(lede), paragraphs: paragraphs.map(tight), ...(chart ? { chart } : {}), ...(hookLine ? { hook: tight(hookLine) } : {}) }, toc, pageCount: pages.length };
 }
 
 const loc = Object.fromEntries(langs.map(l => [l, extract(l)]));

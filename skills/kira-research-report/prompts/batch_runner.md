@@ -349,7 +349,7 @@ Build the SQL with `node skills/kira-research-report/scripts/build-publish-sql.m
 
 - `title` ← the `<title>` element of each locale's HTML (EN = `naming.title`; translators translate it)
 - `eyebrow` ← `naming.eyebrow.<locale>` from `outputs/batch/${id}/naming.json`
-- `preview` JSONB: `lede` (~400 chars), `paragraphs` (2 × ~300 chars), `chart` (`{title, subtitle, bars[{pct,label,value}]}` from exec-chart page 4)
+- `preview` JSONB: `lede` (~400 chars), `paragraphs` (2 × ~300 chars), `chart` (`{title, subtitle, bars[{pct,label,value}]}` from exec-chart page 4), `hook` (the cover subtitle of that locale; only when `naming.json` has a hook; the site shows it under the title and on the library card)
 - `toc` JSONB array from `.toc-col li` elements
 
 **Naming**: slug, code, country (English name), industry, stage, report type, segment and keywords all come from `outputs/batch/${id}/naming.json` (`docs/naming_convention.md`). Never derive a slug from the queue id. If `naming.json` is missing (a row started before the convention), create it with `scripts/report-name.mjs` before publishing.

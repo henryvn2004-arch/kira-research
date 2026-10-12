@@ -187,7 +187,7 @@ async function buildLocale(locale) {
     }));
   }
 
-  // 3b) Kira Experts transcripts (migration 037) — the listing plus every published
+  // 3b) Kira Experts transcripts (migration 044) — the listing plus every published
   //     transcript that has a translation in this locale.
   urls.push(urlEntry({ subPath: 'experts/transcripts/', locale, changefreq: 'weekly', priority: '0.7' }));
   const transcriptQs =

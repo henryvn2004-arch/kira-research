@@ -182,6 +182,7 @@
       '<div class="lrow-body">' +
         '<div class="lrow-chips">' + chips.map(c => '<span class="chip">' + esc(c) + '</span>').join('') + '</div>' +
         '<h3>' + esc(title) + '</h3>' +
+        (it.hook ? '<p class="lrow-hook">' + esc(it.hook) + '</p>' : '') +
         (it.excerpt ? '<p>' + esc(it.excerpt) + '</p>' : '') +
         '<div class="meta">' +
           '<span>' + ic('doc') + esc(t(it.type || 'D')) + '</span>' + pages +

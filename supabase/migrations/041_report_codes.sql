@@ -1,4 +1,4 @@
--- 023_report_codes.sql — report naming convention (skills/kira-research-report/docs/naming_convention.md)
+-- 041_report_codes.sql — report naming convention (skills/kira-research-report/docs/naming_convention.md)
 -- Adds the searchable naming fields to living_reports, normalises ISO country values
 -- to English names, and gives every existing report a code (stage XPL, type D).
 -- Idempotent: columns IF NOT EXISTS, backfill only touches rows with code IS NULL.

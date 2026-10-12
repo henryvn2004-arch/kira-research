@@ -13,7 +13,7 @@ The BRAIN route turns a topic into a **buyer question**, lets the KIRA brain pic
 Input: Stage 1 topic JSON + the queue row (`id`, `topic`, `country`, `industry`, `year`).
 
 0. Fetch the owner-approved topic brief (a planner output the owner reviewed): `node skills/kira-research-report/scripts/fetch-topic-brief.mjs "<id>" > "<scratch>/topic_brief.json"`. If the file is non-empty, read it. An empty file means no brief: continue with step 1.
-   - A topic is **one market segment in one country seen through one lens**, not a single narrow question. `segment` is the scope; keep the whole segment in view.
+   - A topic is **one market segment in one country seen through one standard analysis** (`analysis`: market overview, competitive landscape, customer insight analysis, distribution analysis, market entry strategy, regulatory landscape, ...), not a single narrow question. `segment` is the scope; keep the whole segment in view.
    - `lens` (when present) is the primary `question_types` value: use it as-is, so the brain's full storyline for that question type is the spine.
    - `buyer_question` is the decision the report answers. `guiding_questions` (4-6) are the chapters the report must cover (put them in `framing.json` as `guiding_questions`); they set coverage, they do not narrow the scope.
    - `must_cover` lists triggers (deals, rules, dates, named players) that must appear as evidence inside the relevant chapters. They are never the frame of the whole report. Facts marked VERIFY must be checked in Stage 4 before use.
@@ -74,15 +74,15 @@ The anti-padding rule is the only cut: a page with no new data-backed claim is d
 Follow `docs/naming_convention.md`. Pick from the framing:
 - **Stage:** `XPL` when the question is whether the market is worth a look (size, growth, structure). `ENT` when it is how to get in (entry mode, partner, channel, pricing, go/no-go). `XPN` when the buyer already operates there.
 - **Segment:** the 1–4 word noun a buyer would type (`coffee chains`, `cold chain`).
-- **Angle:** in ≤ 60 characters. Prefer a question the report answers, in the owner's hook style (`How to win…?`, `Where to play…?`, `How to enter…?`, `How to expand…?`, `What are the key impacts of…?`); start from the approved brief's title when there is one. A statement (the working answer or tension) is allowed when a question would not fit.
+- **Angle:** when the brief has an `analysis`, the angle is that analysis name as written (`market overview`, `competitive landscape`, `distribution analysis`, ...), so the title reads `Vietnam coffee chains 2026: market overview`; keep it through Stage 5. Without one: ≤ 60 characters, preferably a question the report answers, in the owner's hook style (`How to win…?`, `Where to play…?`, `How to enter…?`, `How to expand…?`, `What are the key impacts of…?`). A statement (the working answer or tension) is allowed when a question would not fit.
 
-Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen the angle once the evidence is in; rerun the script if it does.
+Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … [--hook "<brief.hook>"] --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. When the topic brief has a `hook` (the one-line question under the title), pass it as `--hook` exactly as written; it is never part of the title or angle. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen a free-written angle once the evidence is in (never an analysis name); rerun the script if it does.
 
 ### 4. Fixed pages
 
 | Position | Page | Page type |
 |---|---|---|
-| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = the buyer question (≤110 chars). |
+| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = `naming.hook` when it has one, else the buyer question (≤110 chars). |
 | Opening | Methodology | `methodology_inline` |
 | Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
 | Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-main-side` (exhibit or `big_number` + commentary with the 3 reasons) or `layout-hero` (big number + chart, reasons in the takeaway and on page 2). Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. |

@@ -5,7 +5,7 @@
 //   node scripts/fetch-topic-brief.mjs <queue-id> > <scratch>/topic_brief.json
 //
 // Prints the owner-approved brief for a queued report (buyer question,
-// guiding questions, rationale, competency, industry) as JSON on stdout; the
+// guiding questions, rationale, competency, analysis, industry) as JSON on stdout; the
 // caller redirects it to a file OUTSIDE the repo (the brain scratch folder).
 // Used by the BRAIN route, Step A. Prints nothing (empty file) and exits 0 when
 // there is no brief or Supabase is unreachable: the route then frames the
@@ -38,7 +38,7 @@ try {
   console.log(JSON.stringify({
     id: s(t.slug, 120), country: s(t.country_code, 2), industry: ind ? s(ind.name, 200) : null, kind: s(t.kind, 20),
     competency: s(t.competency_key, 60), competency_label: comp ? s(comp.label, 200) : null, stage: comp ? s(comp.stage, 60) : null,
-    title: s(t.title, 240), lens: s(sig.lens, 40), segment: s(sig.segment, 120), buyer_question: s(t.buyer_question), guiding_questions: qs, must_cover: mc, rationale: s(t.rationale), owner_note: s(t.note, 1000)
+    title: s(t.title, 240), lens: s(sig.lens, 40), analysis: s(sig.analysis, 60), hook: s(sig.hook, 160), segment: s(sig.segment, 120), buyer_question: s(t.buyer_question), guiding_questions: qs, must_cover: mc, rationale: s(t.rationale), owner_note: s(t.note, 1000)
   }, null, 2));
 } catch (e) {
   console.error(`fetch-topic-brief: ${e.message}`);

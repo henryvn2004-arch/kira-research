@@ -12,7 +12,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 | Type | `D` deep report · `S` industry snapshot | `D` |
 | Year | 4 digits | `2026` |
 | Segment | 1–4 words, sentence case, ≤ 28 chars, the noun a buyer would type | `coffee chains` |
-| Angle | ≤ 60 chars, no hype words. A question the report answers is preferred (owner preference, not a rule): `How to win…?` · `Where to play…?` · `How to enter…?` · `How to expand…?` · `What are the key impacts of…?`. A statement (the answer or the tension) is also accepted | `how can a foreign brand win the food-led gap?` |
+| Angle | ≤ 60 chars, no hype words. For a queued topic it is the topic's analysis name (`market overview`, `competitive landscape`, `distribution analysis`, ...; owner rule 2026-10-12). Otherwise a question the report answers is preferred: `How to win…?` · `Where to play…?` · `How to enter…?` · `How to expand…?` · `What are the key impacts of…?`; a statement (the answer or the tension) is also accepted | `market overview` |
 
 ## What the script produces
 
@@ -56,9 +56,9 @@ A PDF a person receives is never called `en.pdf`. Its name is `KIRA_<code>_<Coun
 
 ## Search
 
-- Supabase `living_reports` stores `code`, `industry_code`, `stage`, `report_type`, `segment` and `keywords` (migration 023).
+- Supabase `living_reports` stores `code`, `industry_code`, `stage`, `report_type`, `segment` and `keywords` (migration 041).
 - `/api/library-list?q=` matches a code prefix (`VN-FSV`), or text in the slug, segment or keywords.
-- Reports published before this convention were given codes by the backfill in migration 023. Their slugs and titles are unchanged.
+- Reports published before this convention were given codes by the backfill in migration 041. Their slugs and titles are unchanged.
 
 ## Examples
 
