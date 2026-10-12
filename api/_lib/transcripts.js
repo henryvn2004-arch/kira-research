@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/_lib/transcripts.js
-// Shared helpers for the Kira Experts transcript endpoints (migration 037):
+// Shared helpers for the Kira Experts transcript endpoints (migration 044):
 //   /api/transcript-list     published catalog (public)
 //   /api/transcript          one transcript: summary + the free opening (public)
 //   /api/transcript-content  the full text (Bearer JWT, entitled users)

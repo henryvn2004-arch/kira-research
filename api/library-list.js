@@ -61,7 +61,7 @@ const SORTS = {
 };
 
 // Whitelists for the S5 library filters (living_reports.stage / report_type,
-// constrained the same way in migration 023). Case-insensitive input.
+// constrained the same way in migration 041). Case-insensitive input.
 const STAGES = new Set(['XPL', 'ENT', 'XPN']);
 const TYPES  = new Set(['D', 'S']);
 function upperPick(s, allowed) {

@@ -56,9 +56,9 @@ A PDF a person receives is never called `en.pdf`. Its name is `KIRA_<code>_<Coun
 
 ## Search
 
-- Supabase `living_reports` stores `code`, `industry_code`, `stage`, `report_type`, `segment` and `keywords` (migration 023).
+- Supabase `living_reports` stores `code`, `industry_code`, `stage`, `report_type`, `segment` and `keywords` (migration 041).
 - `/api/library-list?q=` matches a code prefix (`VN-FSV`), or text in the slug, segment or keywords.
-- Reports published before this convention were given codes by the backfill in migration 023. Their slugs and titles are unchanged.
+- Reports published before this convention were given codes by the backfill in migration 041. Their slugs and titles are unchanged.
 
 ## Examples
 

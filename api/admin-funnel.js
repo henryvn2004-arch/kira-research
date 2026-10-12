@@ -1,7 +1,7 @@
 // ============================================================
 // KIRA RESEARCH — api/admin-funnel.js
 // Funnel for /en/admin/funnel: visitors → looked at research → opened a report page → raised a hand.
-// Visitor numbers come from first-party events (site_events via funnel_summary(), migration 037);
+// Visitor numbers come from first-party events (site_events via funnel_summary(), migration 043);
 // the "signed up" numbers are also counted straight from the tables, as ground truth to compare against
 // (events only see people whose browser ran our script and did not block it).
 //

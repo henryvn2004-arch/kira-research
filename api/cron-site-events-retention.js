@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/cron-site-events-retention.js
-// Daily Vercel cron (vercel.json). Deletes visitor events (site_events, migration 037)
+// Daily Vercel cron (vercel.json). Deletes visitor events (site_events, migration 043)
 // older than the owner's setting `retention.site_events_days` (default 180, /en/admin/config).
 // Idempotent: running it twice deletes nothing the first run did not.
 //
