@@ -166,8 +166,10 @@
 
   function coverHtml(it, isNew) {
     const c = it.cover;
+    // The rendered cover slide (16:9, title included); the wide art if that image is missing, the portrait art for older covers.
     return '<div class="cover-thumb">' +
-      (c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" data-fallback="' + esc(c.thumb) + '">'
+      (c && c.slide ? '<img src="' + esc(c.slide) + '" alt="" loading="lazy" decoding="async" width="800" height="450" data-fallback="' + esc(c.wide) + '">'
+         : c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" data-fallback="' + esc(c.thumb) + '">'
          : '<div class="ph"><b>KIRA</b><span>' + esc(R.country(it.country)) + ' ' + esc(R.sector(it.industry)) + '</span></div>') +
       (isNew ? '<span class="tag-new">' + esc(t('newTag')) + '</span>' : '') +
     '</div>';
@@ -177,7 +179,7 @@
     const title = it.title || String(it.slug || '').replace(/-/g, ' ');
     const chips = [it.industry ? R.sector(it.industry) : '', it.stage ? t(it.stage) : ''].filter(Boolean);
     const pages = it.pages ? '<span>' + ic('pages') + esc(t('nPages', it.pages)) + '</span>' : '';
-    return '<a class="lrow" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' +
+    return '<a class="lrow' + (it.cover && it.cover.slide ? ' lrow-slide' : '') + '" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' +
       coverHtml(it, isNew) +
       '<div class="lrow-body">' +
         '<div class="lrow-chips">' + chips.map(c => '<span class="chip">' + esc(c) + '</span>').join('') + '</div>' +

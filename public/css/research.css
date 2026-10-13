@@ -87,6 +87,9 @@
 .meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 12.5px; color: var(--muted-dim); }
 .meta span { display: inline-flex; align-items: center; gap: 6px; }
 .lrow .go .ic-chev { display: none; }
+/* Rows whose thumbnail is the rendered cover slide (16:9, white edge, so it gets a hairline). */
+.lrow.lrow-slide { grid-template-columns: 200px minmax(0, 1fr) auto; }
+.lrow-slide .cover-thumb { width: 100%; aspect-ratio: 16 / 9; box-shadow: 0 0 0 1px var(--border), 0 1px 3px rgba(15,23,42,.12); }
 
 .r-empty { padding: 64px 16px; text-align: center; color: var(--muted); display: grid; justify-items: center; gap: 12px; }
 .r-empty h3 { margin: 6px 0 0; font-size: 20px; color: var(--text); }
@@ -138,6 +141,7 @@
   .r-search .r-btn { display: none; }
   .lrow { grid-template-columns: 64px minmax(0, 1fr) 20px; gap: 14px; padding: 14px 0; align-items: start; }
   .cover-thumb { width: 64px; }
+  .lrow.lrow-slide { grid-template-columns: 120px minmax(0, 1fr) 20px; }
   .lrow h3 { font-size: 15px; }
   .lrow p { font-size: 13px; }
   .lrow .go .r-btn { display: none; }
