@@ -4,10 +4,10 @@
 (function () {
   const R = window.kiraR, t = R.t, esc = R.esc, ic = R.icon, locale = R.locale;
   const PAGE = 20;
-  const GROUPS = ['stage', 'type', 'country', 'sector', 'year'];          // sidebar groups
-  const FILTERS = ['stage', 'type', 'country', 'sector', 'industry', 'year']; // + industry, set from links
+  const GROUPS = ['status', 'stage', 'type', 'country', 'sector', 'year'];   // sidebar groups
+  const FILTERS = ['status', 'stage', 'type', 'country', 'sector', 'industry', 'year']; // + industry, set from links
   const SECTOR_KEYS = ['food', 'consumer', 'finance', 'tech', 'health', 'property', 'auto', 'logistics', 'energy', 'industrial', 'travel', 'services'];
-  const STAGES = ['XPL', 'ENT', 'XPN'], TYPES = ['D', 'S'];
+  const STAGES = ['XPL', 'ENT', 'XPN'], TYPES = ['D', 'S'], STATUSES = ['published', 'soon'];
   const LIST_LIMIT = 8;               // options shown before "Show more"
 
   const app = document.getElementById('lib-app');
@@ -15,16 +15,13 @@
   const searchForm = document.getElementById('lib-search-form');
   if (!app) return;
 
-  const state = { tab: 'published', stage: '', type: '', country: '', sector: '', industry: '', year: '', q: '', sort: 'recent', page: 1 };
+  const state = { status: '', stage: '', type: '', country: '', sector: '', industry: '', year: '', q: '', sort: 'recent', page: 1 };
   const ui = { expanded: {}, collapsed: {}, find: {} };
-  let facets = null, soonFacets = null, lastTotal = 0;
-  const SOON_GROUPS = ['country', 'industry'];   // the Coming soon tab filters by market and industry only
-  const groups = () => (state.tab === 'soon' ? SOON_GROUPS : GROUPS);
-  const curFacets = () => (state.tab === 'soon' ? soonFacets : facets);
+  let facets = null, lastTotal = 0;
 
   // ── State from URL ──
   const u0 = new URLSearchParams(location.search);
-  if (u0.get('tab') === 'soon') state.tab = 'soon';
+  if (STATUSES.includes(u0.get('status'))) state.status = u0.get('status');
   const st = (u0.get('stage') || '').toUpperCase(); if (STAGES.includes(st)) state.stage = st;
   const ty = (u0.get('type') || '').toUpperCase(); if (TYPES.includes(ty)) state.type = ty;
   if (u0.get('country')) state.country = u0.get('country').toLowerCase().slice(0, 60);
@@ -38,8 +35,7 @@
 
   function syncUrl() {
     const u = new URL(location.href);
-    ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) u.searchParams.set(k, state[k]); else u.searchParams.delete(k); });
-    if (state.tab === 'soon') u.searchParams.set('tab', 'soon'); else u.searchParams.delete('tab');
+    ['status', 'stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) u.searchParams.set(k, state[k]); else u.searchParams.delete(k); });
     if (state.sort !== 'recent') u.searchParams.set('sort', state.sort); else u.searchParams.delete('sort');
     if (state.page > 1) u.searchParams.set('page', state.page); else u.searchParams.delete('page');
     u.searchParams.delete('filter');
@@ -48,7 +44,8 @@
   function setFilter(group, value) {
     if (!FILTERS.includes(group)) return;
     const v = state[group] === value ? '' : value;
-    if (group === 'stage') state.stage = v; else if (group === 'type') state.type = v;
+    if (group === 'status') state.status = STATUSES.includes(v) ? v : '';
+    else if (group === 'stage') state.stage = v; else if (group === 'type') state.type = v;
     else if (group === 'country') state.country = v; else if (group === 'industry') state.industry = v;
     else if (group === 'sector') state.sector = SECTOR_KEYS.includes(v) ? v : '';
     else state.year = v;
@@ -56,35 +53,36 @@
     load();
   }
   function clearAll() {
-    state.stage = state.type = state.country = state.sector = state.industry = state.year = state.q = '';
+    state.status = state.stage = state.type = state.country = state.sector = state.industry = state.year = state.q = '';
     state.page = 1;
     if (searchEl) searchEl.value = '';
     load();
   }
-  const anyFilter = () => ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].some(k => state[k]);
+  const anyFilter = () => ['status', 'stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].some(k => state[k]);
 
   // ── Facets ──
   function labelFor(group, value) {
+    if (group === 'status') return t(value === 'soon' ? 'statusSoon' : 'statusPub');
     if (group === 'stage' || group === 'type') return t(value);
     if (group === 'country') return R.country(value);
-    if (group === 'industry') return state.tab === 'soon' ? value.charAt(0).toUpperCase() + value.slice(1) : R.sector(value);
+    if (group === 'industry') return R.sector(value);
     if (group === 'sector') return t('sector_' + value);
     return String(value);
   }
   function options(group) {
-    const f = curFacets() || {};
+    const f = facets || {};
     let list;
-    if (group === 'stage') list = STAGES.map(v => [v, (f.stages || {})[v] || 0]);
+    if (group === 'status') list = [['published', f.totalPublished || 0], ['soon', f.totalSoon || 0]];
+    else if (group === 'stage') list = STAGES.map(v => [v, (f.stages || {})[v] || 0]);
     else if (group === 'type') list = TYPES.map(v => [v, (f.types || {})[v] || 0]);
     else if (group === 'country') list = Object.entries(f.countries || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    else if (group === 'industry') list = Object.entries(f.industries || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     else if (group === 'sector') list = SECTOR_KEYS.map(k => [k, (f.sectors || {})[k] || 0]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
     else list = Object.entries(f.years || {}).sort((a, b) => String(b[0]).localeCompare(String(a[0])));
     list = list.map(([v, n]) => ({ value: String(v), n, label: labelFor(group, v) }));
     if (state[group] && !list.some(o => o.value === state[group])) list.unshift({ value: state[group], n: 0, label: labelFor(group, state[group]) });
     return list;
   }
-  const GROUP_LABEL = { stage: 'stage', type: 'type', country: 'market', sector: 'sector', industry: 'sector', year: 'year' };
+  const GROUP_LABEL = { status: 'status', stage: 'stage', type: 'type', country: 'market', sector: 'sector', year: 'year' };
   function groupHtml(group, where) {
     const all = options(group);
     if (!all.length) return '';
@@ -92,7 +90,7 @@
     let opts = find ? all.filter(o => o.label.toLowerCase().includes(find) || o.value.includes(find)) : all;
     const long = !find && opts.length > LIST_LIMIT && !ui.expanded[group];
     if (long) opts = opts.filter((o, i) => i < LIST_LIMIT || o.value === state[group]);
-    const searchable = (group === 'country' || group === 'industry') && all.length > LIST_LIMIT;
+    const searchable = group === 'country' && all.length > LIST_LIMIT;
     const id = where + '-' + group;
     return '<div class="fgrp' + (ui.collapsed[group] ? ' collapsed' : '') + '" data-group="' + group + '">' +
       '<button type="button" class="fgrp-head" aria-expanded="' + !ui.collapsed[group] + '" aria-controls="' + id + '">' +
@@ -107,14 +105,10 @@
           ? '<button type="button" class="r-link fgrp-more" data-more="' + group + '">' + esc(t(ui.expanded[group] ? 'showLess' : 'showMore')) + ic('down') + '</button>' : '') +
       '</div></div>';
   }
-  function filtersHtml(where) { return groups().map(g => groupHtml(g, where)).join(''); }
+  function filtersHtml(where) { return GROUPS.map(g => groupHtml(g, where)).join(''); }
 
   // ── Skeleton ──
   app.innerHTML =
-    '<div class="lib-tabs" role="tablist">' +
-      '<button type="button" class="lib-tab" role="tab" data-tab="published">' + esc(t('tabPub')) + '<span class="n" data-n="pub"></span></button>' +
-      '<button type="button" class="lib-tab" role="tab" data-tab="soon">' + esc(t('tabSoon')) + '<span class="n" data-n="soon"></span></button>' +
-    '</div>' +
     '<div class="lib2">' +
       '<aside class="lib2-side" aria-label="' + esc(t('refineBy')) + '">' +
         '<div class="lib2-side-head"><h2>' + esc(t('refineBy')) + '</h2><button type="button" class="r-link" data-clear hidden>' + esc(t('clearAll')) + '</button></div>' +
@@ -165,19 +159,11 @@
         if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
       }
     });
-    app.querySelectorAll('.lib-tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === state.tab)));
-    const nPub = (facets || {}).totalPublished, nSoon = (soonFacets || {}).total;
-    const np = app.querySelector('[data-n="pub"]'), ns = app.querySelector('[data-n="soon"]');
-    if (np) np.textContent = nPub ? nPub.toLocaleString() : '';
-    if (ns) ns.textContent = nSoon ? nSoon.toLocaleString() : '';
-    const soon = state.tab === 'soon';
-    app.querySelectorAll('.lib2-sort, [data-open="sort"]').forEach(e => { e.style.display = soon ? 'none' : ''; });
     const on = anyFilter();
     app.querySelectorAll('[data-clear]').forEach(b => { b.hidden = !on; });
-    const shown = FILTERS.filter(g => state[g] && groups().includes(g === 'sector' ? 'sector' : g));
-    const nSel = shown.length;
+    const nSel = FILTERS.filter(g => state[g]).length;
     $('.fcount').textContent = nSel ? ' (' + nSel + ')' : '';
-    $('.lib2-active').innerHTML = shown.map(g =>
+    $('.lib2-active').innerHTML = FILTERS.filter(g => state[g]).map(g =>
       '<button type="button" data-filter="' + g + '" value="' + esc(state[g]) + '">' + esc(labelFor(g, state[g])) + ic('x') + '</button>').join('');
     $('[data-sort]').value = state.sort;
   }
@@ -186,7 +172,7 @@
     const c = it.cover;
     // The rendered cover slide (16:9, title included); the wide art if that image is missing, the portrait art for older covers.
     return '<div class="cover-thumb">' +
-      (c && c.slide ? R.slideImg(c)
+      (c && c.slide ? '<img src="' + esc(c.slide) + '" alt="" loading="lazy" decoding="async" width="800" height="450" data-fallback="' + esc(c.wide) + '">'
          : c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" data-fallback="' + esc(c.thumb) + '">'
          : '<div class="ph"><b>KIRA</b><span>' + esc(R.country(it.country)) + ' ' + esc(R.sector(it.industry)) + '</span></div>') +
       (isNew ? '<span class="tag-new">' + esc(t('newTag')) + '</span>' : '') +
@@ -214,12 +200,13 @@
         '<span class="ic-chev">' + ic('chev') + '</span></div>' +
     '</a>';
   }
+  // A topic still in the production queue: same row, a ribbon instead of a cover, "Get notified" instead of "View".
   function soonRowHtml(it) {
-    const chips = [it.industry || '', it.planned ? t('plannedTag') : ''].filter(Boolean);
+    const chips = [t('soonTag'), it.industry || '', it.planned ? t('plannedTag') : ''].filter(Boolean);
     return '<a class="lrow soonrow" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' +
       '<div class="cover-thumb soon"><div class="ph"><b>KIRA</b><span>' + esc(R.country(it.country)) + ' ' + esc(it.industry || '') + '</span></div><span class="ribbon">' + esc(t('soonTag')) + '</span></div>' +
       '<div class="lrow-body">' +
-        '<div class="lrow-chips">' + chips.map(c => '<span class="chip">' + esc(c) + '</span>').join('') + '</div>' +
+        '<div class="lrow-chips">' + chips.map((c, i) => '<span class="chip' + (i === 0 ? ' chip-soon' : '') + '">' + esc(c) + '</span>').join('') + '</div>' +
         '<h3>' + esc(it.title) + '</h3>' +
         (it.hook ? '<p class="lrow-hook">' + esc(it.hook) + '</p>' : '') +
         '<div class="meta">' + (it.country ? '<span>' + ic('globe') + esc(R.country(it.country)) + '</span>' : '') +
@@ -274,45 +261,12 @@
   }
 
   let seq = 0;
-  async function loadSoon(my) {
-    const qs = new URLSearchParams({ limit: String(PAGE), offset: String((state.page - 1) * PAGE) });
-    ['country', 'industry', 'q'].forEach(k => { if (state[k]) qs.set(k, state[k]); });
-    try {
-      const r = await fetch('/api/topic-list?' + qs);
-      if (!r.ok) throw new Error('http ' + r.status);
-      const d = await r.json();
-      if (my !== seq) return;
-      soonFacets = d.facets || soonFacets;
-      lastTotal = d.total || 0;
-      const pages = Math.max(1, Math.ceil(lastTotal / PAGE));
-      if (state.page > pages) { state.page = pages; return load(); }
-      renderFilters();
-      $('.lib2-count').innerHTML = '<strong>' + esc(t('soonCount', lastTotal)) + '</strong>' + (pages > 1 ? '<span class="pg">(' + esc(t('page', state.page, pages)) + ')</span>' : '');
-      $('.lib2-mobilebar .cnt').textContent = t('soonCount', lastTotal);
-      app.querySelector('[data-showres]').textContent = t('showResults', lastTotal);
-      rowsEl.innerHTML = (d.items || []).length ? d.items.map(soonRowHtml).join('') :
-        '<div class="r-empty"><p>' + esc(t('soonNone')) + '</p><div class="acts"><button type="button" class="r-btn r-btn-primary" data-clear>' + esc(t('clearFilters')) + '</button></div></div>';
-      pagerEl.innerHTML = pagerHtml(pages);
-    } catch (_e) {
-      if (my !== seq) return;
-      rowsEl.innerHTML = '<div class="r-empty"><p>' + esc(t('loadError')) + '</p></div>';
-    } finally {
-      if (my === seq) rowsEl.style.opacity = '';
-    }
-  }
-  function setTab(tab) {
-    if (tab === state.tab) return;
-    state.tab = tab; state.page = 1;
-    state.stage = state.type = state.sector = state.year = '';   // these filters only exist on the Published tab
-    load();
-  }
   async function load() {
     const my = ++seq;
     syncUrl();
     renderFilters();
     rowsEl.style.opacity = '.55';
-    if (state.tab === 'soon') return loadSoon(my);
-    const qs = new URLSearchParams({ locale, sort: state.sort, limit: String(PAGE), offset: String((state.page - 1) * PAGE) });
+    const qs = new URLSearchParams({ locale, sort: state.sort, limit: String(PAGE), offset: String((state.page - 1) * PAGE), status: state.status || 'all' });
     ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) qs.set(k, state[k]); });
     try {
       const r = await fetch('/api/library-list?' + qs);
@@ -327,9 +281,9 @@
       $('.lib2-count').innerHTML = '<strong>' + esc(t('reports', lastTotal)) + '</strong>' + (pages > 1 ? '<span class="pg">(' + esc(t('page', state.page, pages)) + ')</span>' : '');
       $('.lib2-mobilebar .cnt').textContent = t('reports', lastTotal);
       app.querySelector('[data-showres]').textContent = t('showResults', lastTotal);
-      rowsEl.innerHTML = (d.items || []).length ? d.items.map(rowHtml).join('') : emptyHtml();
+      rowsEl.innerHTML = (d.items || []).length ? d.items.map(it => (it.soon ? soonRowHtml(it) : rowHtml(it))).join('') : emptyHtml();
       pagerEl.innerHTML = pagerHtml(pages);
-      if (state.q) addSoon(my, !(d.items || []).length);
+      if (state.q && !(d.items || []).length) addSoon(my, true);   // coming-soon topics now list inline; this adds request forms
     } catch (_e) {
       if (my !== seq) return;
       rowsEl.innerHTML = '<div class="r-empty"><p>' + esc(t('loadError')) + '</p></div>';
@@ -351,16 +305,15 @@
   });
   app.addEventListener('input', e => {
     const g = e.target.dataset.find;
-    if (g && groups().includes(g)) { ui.find[g] = e.target.value.slice(0, 40); renderFilters(); }
+    if (g && GROUPS.includes(g)) { ui.find[g] = e.target.value.slice(0, 40); renderFilters(); }
   });
   app.addEventListener('click', e => {
     const b = e.target.closest('button, [data-close]');
     if (!b) return;
-    if (b.dataset.tab) return setTab(b.dataset.tab);
     if (b.matches('.lib2-active [data-filter]')) return setFilter(b.dataset.filter, b.value);
     if (b.hasAttribute('data-clear')) return clearAll();
-    if (b.matches('.fgrp-head')) { const g = b.parentElement.dataset.group; if (groups().includes(g)) { ui.collapsed[g] = !ui.collapsed[g]; renderFilters(); } return; }
-    if (b.dataset.more && groups().includes(b.dataset.more)) { ui.expanded[b.dataset.more] = !ui.expanded[b.dataset.more]; renderFilters(); return; }
+    if (b.matches('.fgrp-head')) { const g = b.parentElement.dataset.group; if (GROUPS.includes(g)) { ui.collapsed[g] = !ui.collapsed[g]; renderFilters(); } return; }
+    if (b.dataset.more && GROUPS.includes(b.dataset.more)) { ui.expanded[b.dataset.more] = !ui.expanded[b.dataset.more]; renderFilters(); return; }
     if (b.dataset.page) { const n = parseInt(b.dataset.page, 10); if (n >= 1) { state.page = n; load(); app.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
     if (b.dataset.open) return openSheet(b.dataset.open);
     if (b.hasAttribute('data-applysort')) {
@@ -392,6 +345,4 @@
   if (searchForm) searchForm.addEventListener('submit', e => { e.preventDefault(); clearTimeout(timer); runSearch(); });
 
   load();
-  // Tab counts: the other tab's number is fetched once so both show on first paint.
-  fetch('/api/topic-list?limit=1').then(r => r.json()).then(d => { if (d && d.facets) { soonFacets = soonFacets || d.facets; renderFilters(); } }).catch(() => {});
 })();

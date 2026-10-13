@@ -15,6 +15,12 @@
 //                                    skills/kira-research-report/docs/naming_convention.md)
 //       &sort=recent|oldest|price-asc|price-desc  (default: recent)
 //       &limit=24&offset=0
+//       &status=published|soon|all  (default: published — home, insights and live-counts rely on that.
+//                                    The library page sends "all": published reports first, then the
+//                                    coming-soon topics of the production queue, shaped like reports
+//                                    with soon: true; see api/_lib/soon.js. Any explicit status also
+//                                    folds the coming-soon topics into facets (facets.totalSoon). soon rows honour country,
+//                                    sector, year, stage, industry and q; type=S has none.)
 //
 // Returns { items: [...], total, facets } where each item carries enough
 // data to render a report-card (slug, title, country, industry, year, price,
@@ -24,6 +30,7 @@
 
 import { coverUrls } from './_lib/cover.js';
 import { SECTORS, sectorOf } from './_lib/sectors.js';
+import { soonRows, soonFacets } from './_lib/soon.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -94,6 +101,9 @@ export default async function handler(req, res) {
   const sort     = SORTS[url.searchParams.get('sort')] || SORTS.recent;
   const limit    = int(url.searchParams.get('limit'),  24, 96);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
+  const statusIn = clean(url.searchParams.get('status'));
+  const status   = statusIn === 'all' || statusIn === 'soon' ? statusIn : 'published';
+  const withSoon = url.searchParams.has('status');   // an explicit status asks for the library's merged sidebar counts
 
   try {
     // ── 1) Base query against living_reports (status=published) ──
@@ -125,7 +135,13 @@ export default async function handler(req, res) {
       `&offset=${offset}` +
       `&select=id,code,slug,country,industry,industry_code,year,pages,price,stage,report_type,published_at,cover_url,cover_thumb_url`;
 
-    const { rows: reports, total } = await sb(`living_reports?${baseQs}`);
+    // PostgREST answers 416 when the offset is past the last row, which happens when the page lies
+    // wholly in the coming-soon part of the list: count first and skip the query then.
+    let reports = [], total = 0;
+    if (status !== 'soon') {
+      if (offset > 0) total = (await sb(`living_reports?${where.join('&')}&select=id&limit=1`)).total;
+      if (offset === 0 || offset < total) ({ rows: reports, total } = await sb(`living_reports?${baseQs}`));
+    }
 
     // ── 2) Fetch matching translations in a single in() query ───
     const ids = reports.map(r => r.id);
@@ -177,6 +193,19 @@ export default async function handler(req, res) {
       };
     });
 
+    // ── 3b) Coming-soon topics fill the rest of the page, after every published report ──
+    let soonTotal = 0;
+    if (status !== 'published') {
+      const pubTotal = status === 'all' ? total : 0;
+      const room = limit - items.length;   // free places on this page after the published rows
+      const soon = await soonRows({
+        country, industry, sector, stage, type, q, year: /^\d{4}$/.test(year || '') ? year : '',
+        offset: Math.max(0, offset - pubTotal), limit: Math.max(room, 1)   // limit 1 = only the count is needed
+      });
+      soonTotal = soon.total;
+      if (room > 0) items.push(...soon.rows.slice(0, room));
+    }
+
     // ── 4) Facets (counts for sidebar) ─────────────────────────
     // One query, no filters except status=published, just to know totals.
     const { rows: all } = await sb(
@@ -196,8 +225,16 @@ export default async function handler(req, res) {
       if (sg) facets.sectors[sg] = (facets.sectors[sg] || 0) + 1;
     });
     facets.totalPublished = all.length;
+    if (withSoon) {
+      // Sidebar counts cover both kinds, so the numbers match what a reader finds in the list.
+      const sf = await soonFacets();
+      const add = (a, b) => Object.entries(b || {}).forEach(([k, n]) => { a[k] = (a[k] || 0) + n; });
+      add(facets.countries, sf.countries); add(facets.sectors, sf.sectors); add(facets.years, sf.years);
+      add(facets.stages, sf.stages); facets.types.D = (facets.types.D || 0) + sf.total;
+      facets.totalSoon = sf.total;
+    }
 
-    res.status(200).json({ items, total, limit, offset, facets, locale });
+    res.status(200).json({ items, total: total + soonTotal, publishedTotal: total, limit, offset, facets, locale });
   } catch (err) {
     console.error('[library-list] error:', err.message);
     res.status(500).json({ error: 'server_error' });
