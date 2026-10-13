@@ -104,8 +104,10 @@
 
   function rowHtml(it) {
     const initials = it.expert.split(/[\s,]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
-    return '<a class="lrow" href="' + BASE + encodeURIComponent(it.slug) + '">' +
-      '<div class="cover-thumb"><div class="ph xt-ph" data-t="' + Math.max(0, TYPES.indexOf(it.interview_type)) + '"><span class="xt-ph-av">' + esc(initials) + '</span><b>KIRA</b><span>' + esc(it.interview_type || 'Expert interview') + '</span></div></div>' +
+    return '<a class="lrow' + (it.thumb ? ' xt-wide' : '') + '" href="' + BASE + encodeURIComponent(it.slug) + '">' +
+      '<div class="cover-thumb' + (it.thumb ? ' xt-img' : '') + '">' + (it.thumb
+        ? '<img src="' + esc(it.thumb) + '" alt="" loading="lazy" decoding="async" width="288" height="288">'
+        : '<div class="ph xt-ph" data-t="' + Math.max(0, TYPES.indexOf(it.interview_type)) + '"><span class="xt-ph-av">' + esc(initials) + '</span><b>KIRA</b><span>' + esc(it.interview_type || 'Expert interview') + '</span></div>') + '</div>' +
       '<div class="lrow-body">' +
         '<div class="lrow-chips"><span class="chip">' + esc(it.interview_type) + '</span><span class="chip">' + esc(it.industry) + '</span><span class="chip xt-fmt">' + esc(it.format) + '</span></div>' +
         '<h3>' + esc(it.title) + '</h3>' +

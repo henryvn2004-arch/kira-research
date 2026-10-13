@@ -466,6 +466,7 @@
     document.head.appendChild(s);
     window.dataLayer = window.dataLayer || [];
     function gtag(){ window.dataLayer.push(arguments); }
+    window.gtag = window.gtag || gtag;   // /js/track.js sends the sign-up key event through it
     gtag('js', new Date());
     gtag('config', GA_ID);
   }

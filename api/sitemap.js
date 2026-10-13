@@ -44,6 +44,8 @@ const STATIC_PAGES = [
   { path: 'about',                                changefreq: 'monthly', priority: '0.6' },
   { path: 'methodology',                          changefreq: 'monthly', priority: '0.6' },
   { path: 'pricing',                              changefreq: 'monthly', priority: '0.6' },
+  { path: 'privacy',                              changefreq: 'yearly',  priority: '0.3' },
+  { path: 'terms',                                changefreq: 'yearly',  priority: '0.3' },
   { path: 'experts/',                             changefreq: 'monthly', priority: '0.7' },
   { path: 'survey/',                              changefreq: 'monthly', priority: '0.7' }
 ];
@@ -80,20 +82,20 @@ function xmlEscape(s) {
 }
 
 // Build one <url> entry with hreflang alternates pointing to /<otherLocale>/<sameSubpath>.
-function urlEntry({ subPath, locale, lastmod, changefreq, priority }) {
+function urlEntry({ subPath, locale, lastmod, changefreq, priority, noAlternates }) {
   const loc = `${ORIGIN}/${locale}/${subPath}`;
-  const alternates = LOCALES
+  const alternates = noAlternates ? '' : LOCALES
     .map(l => `    <xhtml:link rel="alternate" hreflang="${HREFLANG[l]}" href="${xmlEscape(`${ORIGIN}/${l}/${subPath}`)}"/>`)
     .join('\n');
-  const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(`${ORIGIN}/${X_DEFAULT}/${subPath}`)}"/>`;
+  const xDefault = noAlternates ? '' : `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(`${ORIGIN}/${X_DEFAULT}/${subPath}`)}"/>`;
   const lastmodTag = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : '';
   return [
     '  <url>',
     `    <loc>${xmlEscape(loc)}</loc>${lastmodTag}`,
     changefreq ? `    <changefreq>${changefreq}</changefreq>` : null,
     priority ? `    <priority>${priority}</priority>` : null,
-    alternates,
-    xDefault,
+    alternates || null,
+    xDefault || null,
     '  </url>'
   ].filter(Boolean).join('\n');
 }
@@ -187,7 +189,7 @@ async function buildLocale(locale) {
     }));
   }
 
-  // 3b) Kira Experts transcripts (migration 037) — the listing plus every published
+  // 3b) Kira Experts transcripts (migration 044) — the listing plus every published
   //     transcript that has a translation in this locale.
   urls.push(urlEntry({ subPath: 'experts/transcripts/', locale, changefreq: 'weekly', priority: '0.7' }));
   const transcriptQs =
@@ -207,6 +209,17 @@ async function buildLocale(locale) {
       changefreq: 'monthly',
       priority:   '0.6'
     }));
+  }
+
+  // 3c) S20 SEO test: the coming-soon pages of the topics flagged `signals.seo_test` (English only,
+  //     no hreflang because their JA/KO/ZH twins stay noindex). A topic drops out once it has a report.
+  if (locale === 'en') {
+    const { rows: seoTopics } = await sb(
+      'topics?status=neq.rejected&report_id=is.null&signals->>seo_test=eq.true&select=slug&order=slug.asc&limit=1000'
+    );
+    for (const t of seoTopics) {
+      urls.push(urlEntry({ subPath: `reports/${t.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+    }
   }
 
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)

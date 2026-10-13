@@ -7,6 +7,7 @@
 //     --country VN --industry "Coffee Chains" --stage ENT --type D --year 2026 \
 //     --segment "coffee chains" --angle "how a foreign brand wins the food-led gap" \
 //     --keywords "cafe chain,coffee shop,chuỗi cà phê" \
+//     [--hook "What are the opportunities and challenges ahead?"] \
 //     --out skills/kira-research-report/outputs/batch/<id>/naming.json
 //
 // --industry takes a vocabulary name or alias (or use --industry-code FSV).
@@ -49,7 +50,7 @@ if (fs.existsSync(batchDir)) {
 const { naming, errors } = buildName({
   country: arg('country'), industry: arg('industry'), industryCode: arg('industry-code'),
   stage: arg('stage'), type: arg('type'), year: arg('year'),
-  segment: arg('segment'), angle: arg('angle'),
+  segment: arg('segment'), angle: arg('angle'), hook: arg('hook'),
   keywords: (arg('keywords') || '').split(',').map(s => s.trim()).filter(Boolean),
 }, taken);
 

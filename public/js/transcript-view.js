@@ -1,7 +1,8 @@
 // One Kira Experts transcript (/<locale>/experts/transcripts/<slug> → _view.html).
 // /api/transcript gives the summary and the free opening; a signed-in, entitled reader
 // also gets the full dialogue from /api/transcript-content. Locked turns are never sent
-// to other readers: the page draws placeholder lines under a blur instead.
+// to other readers: the page draws placeholder lines under a blur instead. A reader who bought it
+// (PayPal, /api/transcript-buy, when the setting is on) gets the full text like an admin does.
 (async function () {
   const root = document.getElementById('tv-root');
   if (!root) return;
@@ -30,10 +31,43 @@
     return fail('Could not load this transcript', 'Please retry in a moment.');
   }
 
-  // Full text for entitled readers (admins today, subscribers once subscriptions open).
+  const whenReady = async () => { for (let i = 0; i < 100 && !window.kiraAuth; i++) await new Promise((res) => setTimeout(res, 20)); };
+
+  // Back from PayPal (?paypal=success&token=ORDER): capture the order, then fall through to load the full text.
+  let paidNote = '';
+  try {
+    const qs = new URLSearchParams(location.search);
+    // The order id only decides whether to ask the server to finish a payment: the server checks the order
+    // with PayPal and files the purchase under the signed-in reader, so a made-up id gets nothing unlocked.
+    const ORDER_RE = /^[A-Za-z0-9_-]{5,64}$/;
+    let orderId = qs.get('paypal') === 'success' ? qs.get('token') : null;
+    if (!orderId) { try { orderId = sessionStorage.getItem('kira_pending_tcapture'); } catch (_e) { /* storage blocked */ } }
+    if (!ORDER_RE.test(orderId || '')) orderId = null;
+    if (orderId) {
+      await whenReady();
+      const s0 = window.db ? (await window.db.auth.getSession()).data.session : null;
+      if (!s0) {
+        // Not signed in (the PayPal payment already went through): sign in, then this page captures it.
+        try { sessionStorage.setItem('kira_pending_tcapture', orderId); sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
+        location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to finish your purchase');
+        return;
+      }
+      root.innerHTML = '<div class="r-empty" style="margin-block:64px"><h3>Finalising your purchase…</h3><p>Please do not close this tab.</p></div>';
+      const cr = await fetch('/api/transcript-buy?action=capture', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + s0.access_token }, body: JSON.stringify({ orderId })
+      });
+      try { sessionStorage.removeItem('kira_pending_tcapture'); } catch (_e) { /* storage blocked */ }
+      history.replaceState({}, '', location.pathname);
+      paidNote = cr.ok ? 'ok' : 'failed';
+    } else if (qs.get('paypal') === 'cancel') {
+      history.replaceState({}, '', location.pathname);
+    }
+  } catch (_e) { paidNote = 'failed'; }
+
+  // Full text for entitled readers (admins, and readers who bought this transcript).
   let full = null;
   try {
-    for (let i = 0; i < 100 && !window.kiraAuth; i++) await new Promise((res) => setTimeout(res, 20));
+    await whenReady();
     const session = window.db ? (await window.db.auth.getSession()).data.session : null;
     if (session) {
       const r = await fetch('/api/transcript-content?slug=' + encodeURIComponent(slug) + '&locale=' + locale,
@@ -45,6 +79,8 @@
   const sections = full ? full.sections : data.sections;
   const sources = full ? full.sources : data.sources;
   const locked = !full && data.lockedTurns > 0;
+  const buy = locked && !!(data.purchase && data.purchase.enabled);
+  const subOn = locked && !!(data.subscription && data.subscription.enabled);
 
   // Markers are numbered in order of first use on the page.
   const order = [];
@@ -82,9 +118,16 @@
           '<div class="ga"><div class="w"></div><div class="l"></div><div class="l"></div><div class="l" style="width:88%"></div><div class="l" style="width:61%"></div></div>').join('') +
       '</div>' +
       '<div class="tv-lock"><div class="tv-lock-card">' + ic('lock') +
-        '<h3>The rest of this interview is for subscribers</h3>' +
-        '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, is part of the KIRA subscription.</p>' +
-        '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Request early access</a>' +
+        (buy
+          ? '<h3>Read the full interview</h3>' +
+            '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. Buy the full transcript, with every marked source, for $' + data.purchase.price + '. One purchase covers every language it is published in.</p>' +
+            '<button class="r-btn r-btn-primary" id="tv-buy" type="button">Buy full transcript — $' + data.purchase.price + '</button>' +
+            (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>'
+                   : '<a class="alt" href="' + WAITLIST + '">Or request early access to the subscription</a>')
+          : '<h3>The rest of this interview is for subscribers</h3>' +
+            '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, is part of the KIRA subscription.</p>' +
+            (subOn ? '<button class="r-btn r-btn-primary" id="tv-subscribe" type="button">Subscribe — $' + data.subscription.price + '/month</button>'
+                   : '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Request early access</a>')) +
         '<a class="alt" href="/auth.html" id="tv-signin">Already have access? Sign in</a>' +
       '</div></div>' +
     '</div>';
@@ -98,7 +141,11 @@
   const total = data.sourceCounts.public + data.sourceCounts.field;
   const hidden = total - order.filter((t) => sources[t]).length;
 
-  root.innerHTML =
+  const paidBanner = paidNote === 'ok' && full
+    ? '<div class="tv-note" role="status"><b>Purchase complete.</b> The full transcript is unlocked below. A receipt is on its way to your email.</div>'
+    : paidNote ? '<div class="tv-note" role="alert"><b>We could not confirm your payment on this page.</b> If PayPal charged you, email hello@kiraresearch.com with the PayPal receipt and we will unlock it or refund you.</div>' : '';
+
+  root.innerHTML = paidBanner +
     '<div class="tv-wrap">' +
       '<aside class="tv-side">' +
         '<div class="tv-card"><h4>Expert profile</h4><div class="tv-role">' + esc(data.expert_role) + '</div>' +
@@ -126,6 +173,47 @@
         '<div class="tv-block"><h2>About this transcript</h2><p class="tv-about">KIRA modelled interviews are built on our in-depth field interviews and follow the same question structure: business context, who decides, purchase criteria, channel economics, imports, regulation, technology and entry advice. Answers draw only on the sources listed. Channel-practice items reflect what practitioners told our analysts; sourced figures are current to their publication date.</p></div>' +
       '</div>' +
     '</div>';
+
+  const buyBtn = document.getElementById('tv-buy');
+  if (buyBtn) buyBtn.addEventListener('click', async () => {
+    buyBtn.disabled = true;
+    try {
+      await whenReady();
+      const session = window.db ? (await window.db.auth.getSession()).data.session : null;
+      if (!session) {
+        try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
+        location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to buy this transcript');
+        return;
+      }
+      const r = await fetch('/api/transcript-buy?action=create', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, locale })
+      });
+      const b = await r.json().catch(() => ({}));
+      if (!r.ok || !b.approveUrl) { alert('Could not start checkout (' + (b.error || r.status) + ').'); buyBtn.disabled = false; return; }
+      location.href = b.approveUrl;
+    } catch (_e) { alert('Network error starting checkout. Please retry.'); buyBtn.disabled = false; }
+  });
+
+  const subBtn = document.getElementById('tv-subscribe');
+  if (subBtn) subBtn.addEventListener('click', async () => {
+    subBtn.disabled = true;
+    try {
+      await whenReady();
+      const session = window.db ? (await window.db.auth.getSession()).data.session : null;
+      if (!session) {
+        try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
+        location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to subscribe');
+        return;
+      }
+      const r = await fetch('/api/subscription?action=create', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ locale })
+      });
+      const b = await r.json().catch(() => ({}));
+      if (r.status === 409) { location.href = '/' + locale + '/subscription'; return; }
+      if (!r.ok || !b.approveUrl) { alert('Could not start the subscription (' + (b.error || r.status) + ').'); subBtn.disabled = false; return; }
+      location.href = b.approveUrl;
+    } catch (_e) { alert('Network error. Please retry.'); subBtn.disabled = false; }
+  });
 
   const signin = document.getElementById('tv-signin');
   if (signin) signin.addEventListener('click', () => {

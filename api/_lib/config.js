@@ -37,12 +37,17 @@ export const CONFIG = {
   'planner.weekly_enabled': {
     group: 'Topic queue', type: 'bool', default: true,
     label: 'Plan new topics every week',
-    help: 'On: once a week the topic planner adds new segment-level topics for each country, built from reader demand (requests, searches) and fresh research. Off: the weekly run does nothing.'
+    help: 'On: once a week the topic planner looks at the news in each country and either moves a topic that is in the news to the front of the queue or adds a new topic (one market segment × one standard analysis, market overview first), after answering reader demand (requests, searches). Off: the weekly run does nothing.'
   },
   'planner.topics_per_country': {
     group: 'Topic queue', type: 'int', min: 0, max: 15, default: 6, unit: 'topics per country per week',
     label: 'New topics per country each week',
-    help: 'How many new topics the weekly planner adds for each of the 15 countries. Reader-requested topics count towards this number and are handled first.'
+    help: 'The base number of topics the weekly planner picks for each of the 15 countries. The core markets (Vietnam, Thailand, Indonesia, Philippines, Malaysia, Singapore) get one more, the smallest markets (New Zealand, Cambodia, Laos, Myanmar, Brunei) one fewer, so the default 6 means 5 to 7 a week. Reader-requested topics count towards the number and are handled first. 0 pauses the planner.'
+  },
+  'planner.trend_days': {
+    group: 'Topic queue', type: 'int', min: 7, max: 90, default: 28, unit: 'days',
+    label: 'A topic that is in the news stays at the front for',
+    help: 'When the weekly planner finds that a topic is in the news, it moves up the queue. After this many days it goes back to its normal place if it has not been produced yet.'
   },
   'planner.auto_approve': {
     group: 'Topic queue', type: 'bool', default: true,
@@ -68,6 +73,66 @@ export const CONFIG = {
     group: 'Emails', type: 'bool', default: true,
     label: 'Send the daily "your value chain is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
+  },
+  'ondemand.target_days': {
+    group: 'On-demand reports', type: 'int', min: 1, max: 30, default: 3, unit: 'days',
+    label: 'Promised time to make a requested report',
+    help: 'The "ready by" date on a coming-soon page and in the confirmation email is today plus this many days, as long as the report is not stuck behind other requested reports (then the date moves out on its own). Lower it only after you have added runner fires.'
+  },
+  'ondemand.reports_per_day': {
+    group: 'On-demand reports', type: 'int', min: 1, max: 50, default: 3, unit: 'reports per day',
+    label: 'How many reports the runner makes per day',
+    help: 'Tell the site how fast the Routine "Kira Report Generator" really is (one fire = one report in four languages; its cron today has 3 fires a day). It is used only to work out the "ready by" date when several reports were requested. It does NOT change the Routine: change the cron there first, then raise this number.'
+  },
+  'ondemand.auto_approve_per_day': {
+    group: 'On-demand reports', type: 'int', min: 0, max: 100, default: 10, unit: 'topics per 24 h',
+    label: 'Reader-made topics that approve themselves each day',
+    help: 'A topic created from a reader search is approved and queued as soon as someone leaves an email for it, so it can be made within the promised time. This caps how many such topics can start production per 24 hours (each one costs a full report). 0 = they wait for your approval in Topics.'
+  },
+  'checkout.single_report_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell single reports (PayPal checkout)',
+    help: 'Off: report pages show "Request access" and coming-soon pages show no price; nothing can be bought. On: report pages show the price and the PayPal button, and coming-soon pages say what the report will cost. Turn it on only after you have read /en/terms and are happy with the refund policy.'
+  },
+  'checkout.transcript_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell expert-interview transcripts (PayPal checkout)',
+    help: 'Off: a locked transcript still points to the waitlist. On: the lock card offers the full transcript for $29 (one purchase covers every language) and the PayPal button works. Turn it on after /en/terms (it also covers transcripts) is approved.'
+  },
+  'checkout.subscription_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell the Month subscription ($149, PayPal Subscriptions)',
+    help: 'Off: the Month card on the pricing page keeps the early-access form and nobody can start a subscription; people who already subscribed keep their access. On: the Month card becomes "Subscribe" (sign-in, then PayPal) and report pages offer it. Read /en/terms first (it covers the subscription), and make one live test subscription before you advertise it.'
+  },
+  'checkout.annual_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell the Annual subscription ($1,190 a year, PayPal Subscriptions)',
+    help: 'Off: the Annual card on the pricing page keeps the early-access form and nobody can start an Annual plan; people who already subscribed keep their access. On: the Annual card becomes "Subscribe" (sign-in, then PayPal) on the subscription page. It needs the same setup as the Month plan (PayPal Subscriptions enabled, /en/terms read) and is separate from the Month switch. A reader can hold one subscription at a time; moving from Month to Annual means cancelling Month and subscribing to Annual when its paid period ends.'
+  },
+  'subscription.pdf_per_year': {
+    group: 'Checkout', type: 'int', min: 1, max: 1000, default: 60, unit: 'PDFs per billing year',
+    label: 'PDF downloads included in the Annual plan',
+    help: 'How many different report PDFs an Annual subscriber can download in each yearly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
+  },
+  'subscription.pdf_per_month': {
+    group: 'Checkout', type: 'int', min: 1, max: 100, default: 5, unit: 'PDFs per billing period',
+    label: 'PDF downloads included in the Month plan',
+    help: 'How many different report PDFs a subscriber can download in each monthly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
+  },
+  'ads.value_request': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
+    label: 'What an "email me when ready" sign-up is worth',
+    help: 'Sent to Google Ads with each such conversion in the file from the Funnel page, so it can favour clicks that produce them. Your own estimate of the value of one sign-up; 0 sends none.'
+  },
+  'ads.value_waitlist': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 15, unit: 'USD',
+    label: 'What a subscription-waitlist sign-up is worth',
+    help: 'Same as above, for the waitlist form on the pricing page.'
+  },
+  'ads.value_lead': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 100, unit: 'USD',
+    label: 'What a custom-research enquiry is worth',
+    help: 'Same as above, for the enquiry form (a person asking for a quote).'
   },
   'retention.site_events_days': {
     group: 'Data', type: 'int', min: 30, max: 730, default: 180,

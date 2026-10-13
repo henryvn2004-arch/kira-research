@@ -57,7 +57,7 @@ Pricing (revised 2026-10-06; validate with the waitlist before S7)
 - Week plan and the $39 single report are dropped.
 - The single price anchors value, so buyers needing 2+ reports choose Month. Download caps stop "subscribe, download everything, cancel".
 - Kira Chain sits in Annual as the retention reason.
-- Live on the pricing pages (EN/JA/KO/ZH, waitlist only) since S5b (PR #66). Waitlist plan values: `report` · `month` · `annual` · `not-sure` (`week` kept for old rows, migration 030).
+- Live on the pricing pages (EN/JA/KO/ZH, waitlist only) since S5b (PR #66). Waitlist plan values: `report` · `month` · `annual` · `not-sure` (`week` kept for old rows, migration 042).
 
 Distribution (2026-10-05)
 - KDP (US + JP), Google Play Books, Apple Books via EPUB export.
@@ -124,18 +124,19 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
   - Expert compliance.
   - B2B selling.
 
-### Progress snapshot (2026-10-11, measured in the database and git)
+### Progress snapshot (2026-10-13, measured in the database and git)
 
 | | |
 |---|---|
-| Published reports | **118** (+4 retired). EN, JA and KO on all; **ZH on all 118** (backfill finished 2026-10-07 and 2026-10-11) |
-| New reports since 2026-10-06 | 6 with all 4 languages. **None between 2026-10-08 and 2026-10-10** (cause not confirmed; the owner's other daily routines hit the account usage limit on 10-10). Running again from 2026-10-11 |
-| Queue | 388 pending · 347 hold · 115 done (850 rows) |
-| Topics | 393 queued · 1 requested · 474 rejected (868; S13 merged the narrow ones). Weekly planner routine created, **first run 2026-10-12** |
-| Company data (`entities`) | **835** (VN 469, JP 296, ID 42, SG 28), up from 250 because each report's "Who's who" chapter now feeds it |
-| Kira Chain | 3 published chains: `coffee` (hand-made, VN), `convenience-store-licensing` and `ep-salary-benchmarks` (from the report builder). **Direction change 2026-10-11, paused by the owner** (note in `project des/memory/project_kira_chain.md`) |
-| Kira Experts transcripts | 12 published. Daily runner built in `kira-pipeline` (needs its GitHub secrets; dry run started 2026-10-11) |
-| Demand signals | waitlist **0** · topic requests **0** · chain requests **0** · leads 2 (1 custom research, 1 experts). S7 stays gated on this |
+| Published reports | **121** (+4 retired), EN, JA, KO and **ZH on all 121** (ZH backfill finished 2026-10-07 and 10-11) |
+| New reports since 2026-10-06 | 10 with all 4 languages. **None between 2026-10-08 and 2026-10-10** (cause not confirmed; the owner's other daily routines hit the account usage limit on 10-10). Running again since 2026-10-11 |
+| Queue | 1,883 pending · 376 hold · 118 done · 1 in progress (2,378 rows; the planner and the topic reframe, S14/S15, grew it) |
+| Topics | 1,892 queued · 1 requested · 501 rejected (2,394). Weekly planner Routine has run since 2026-10-12 |
+| Company data (`entities`) | **944**, up from 250 because each report's "Who's who" chapter feeds it |
+| Kira Chain | 6 chains in the database. **Direction change 2026-10-11, paused by the owner** (note in `project des/memory/project_kira_chain.md`) |
+| Kira Experts transcripts | 16 published. Daily runner built in `kira-pipeline` (needs its GitHub secrets) |
+| Money side | Subscriptions (Month, Annual) and single-report checkout are built and **switched off** (S7, S19); the owner turns them on |
+| Demand signals | waitlist **0** · topic requests **1** · chain requests **0** · leads 2 (1 custom research, 1 experts). Little real demand yet |
 
 ### Sprints
 
@@ -145,25 +146,201 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S2** | Taxonomy: countries, per-country market-seeking industries, competency × stage | ✅ approved 2026-10-05 (13 countries, 171 industries, 15 competencies; private `kira-pipeline/taxonomy`) |
 | **S3** | Topic Planner + `/en/admin/topics` approval; approved topics flow into the queue | ✅ merged (#48); first lot of 18 topics + 13 level-2 splits approved |
 | **S3b** | Self-running loop: coming-soon pages, notify-me, auto placeholder topics, demand-ordered queue | ✅ merged (#62, #64; migrations 027–029) |
-| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | ✅ merged (#51); backfill of every older report to ZH done (118 of 118) |
+| **S4** | Chinese (Simplified): translator step, DB locale constraints, `/zh/` site | ✅ merged (#51); backfill of every older report to ZH done (121 of 121) |
+| **S3c** | **Search in 3 layers** (published → planned topic → auto placeholder → Claude Haiku files unknown product searches under a covered industry) | ✅ merged (#62, #64, #69, #89) |
+| **SA** | **Owner admin platform** (built 2026-10-07 → 10-11, not in the original plan): report queue and `/en/admin/pipeline` in Supabase (#72), "Needs you today" dashboard card (#75), Health page + metered cost tracking (#77), dashboard warnings (#78), Settings page for values that change without a deploy (#81), Funnel of first-party visitor events (#87, #94 daily cleanup), CRM with one row per email and an owner-sent email (#92, #98), Chains admin (#90) | ✅ merged |
+| **SQ** | **Report quality + preview** (2026-10-06 → 10-11): "Who's who" closing chapter feeding the company data (#76), edition year + Opus translation + one full report per fire (#74), 9 cover layouts (#70), PDF overflow fixes (#86), publish reads the new contents and commentary hooks (#83, #97), preview works on iPhone (#93) | ✅ merged |
 | **S5** | Website repositioning, Kira Experts + Kira Survey pages, pricing + waitlist, library filters, redesign | ✅ merged (#52–#61) |
 | **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | ✅ merged (#66); PPT/Excel left for S12 |
-| **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🔴 later |
+| **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🟡 built 2026-10-12 for new reports; 1 report has data (see S12 block); older reports have none |
 | **S10** | **Kira Chain v1** (owner, 2026-10-06: build last). **UX decided 2026-10-07**: network view of value-chain groups joined by flow arrows (prototype PR #73). Left: data model (`chains`, `chain_stages`, `chain_flows`, `chain_memberships`) on the Phase R tables, registry + analyst-upload ingestion, ~10 priority VN industries, links from reports | 🟡 last (UX ✅; generic search + chain page prototype built, see notes) **2026-10-11: owner changed direction (searchable, downloadable partner lists, shown on a country map) and paused the work.** The daily email to readers whose requested chain is published is built (#96). Details in the Kira Chain memory note and PR #99 |
 | **S11** | On-demand production, revised 2026-10-06 (owner: no delivery date on pages; reader-requested topics approve themselves, no human step). Mine: coming-soon pages and the topic API show no ETA, and every status maps to an explicit state (a reader-created `requested` topic was wrongly shown as "in production"). **Owned by the session "Report search with placeholders":** auto-approval of reader topics and the `requested` / `source` schema | ✅ PR #68 (rest with the search session) |
 | **S13** | **Topic queue review** (owner, 2026-10-06): current topics are too high level, so reports read as generic and nobody opens them. For every country × industry, break the topic down one more level, and build topics from the keywords readers search most. Inputs: `topics.search_count`, `search_misses`, `topic_requests` (almost empty today, so keyword research outside the site is needed at first), the 18 queued and 57 held topics. Output: a re-planned queue the owner approves. Starts once the search session's auto-approval has landed. **Done 2026-10-07 for all 15 countries (v2).** A topic is one market segment in one country + one lens (a KIRA brain question type), with a decision-level buyer question, 4-6 guiding questions (the chapters) and a "must cover" list of deals, rules and dates. 375 approved topics replace 516 narrow ones (merged ones are `rejected` with `signals.merged_into`). `topics.priority_score` (migration 038) orders the queue after demand. The topic brief passes `lens`, `segment` and `must_cover` to the BRAIN route; the queue sync refreshes pending titles and drops pending rows of merged topics. Facts flagged VERIFY need a check before writing| ✅ |
-| **S14** | **Weekly topic planner** (owner, 2026-10-07): every Monday a Routine adds ~6 segment-level topics per country (15 countries) from reader demand first (placeholders, email requests, empty searches), then fresh research; same topic rules as S13 v2. Procedure + scripts in private `kira-pipeline/taxonomy/planner*`; owner settings `planner.*` on `/en/admin/config`; each run on `/en/admin/health` | ✅ built (kira-pipeline #5, routine created; first run 2026-10-12) |
-| **S15** | **Owner admin platform** (built 2026-10-07 → 10-11, not in the original plan): report queue and `/en/admin/pipeline` in Supabase (#72), "Needs you today" dashboard card (#75), Health page + metered cost tracking (#77), dashboard warnings (#78), Settings page for values that change without a deploy (#81), Funnel of first-party visitor events (#87, #94 daily cleanup), CRM with one row per email and an owner-sent email (#92, #98), Chains admin (#90) | ✅ merged |
-| **S16** | **Report quality + preview** (2026-10-06 → 10-11): "Who's who" closing chapter feeding the company data (#76), edition year + Opus translation + one full report per fire (#74), 9 cover layouts (#70), PDF overflow fixes (#86), publish reads the new contents and commentary hooks (#83, #97), preview works on iPhone (#93) | ✅ merged |
-| **S3c** | **Search in 3 layers** (published → planned topic → auto placeholder → Claude Haiku files unknown product searches under a covered industry) | ✅ merged (#62, #64, #69, #89) |
-| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🔴 |
-| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🟡 started 2026-10-07/11: transcript library in Supabase with listing, free opening and paywall (EN, #84); 12 transcripts published; fieldwork cards + generator + daily runner in the private repo (kira-pipeline #6). Left: runner secrets and first real run, JA/KO/ZH pages, paid access, marketplace |
+| **S14** | **Weekly topic planner** (owner, 2026-10-07): every Monday a Routine adds ~6 segment-level topics per country (15 countries) from reader demand first (placeholders, email requests, empty searches), then fresh research; same topic rules as S13 v2. **v2 (2026-10-12): trend-driven.** Scans the last 14 days of news per country/industry, then boosts a live topic whose subject is in the news (priority base + 40 + 20 x strength; expires after `planner.trend_days`, default 28) or adds a new topic where a segment/analysis is missing; quota per country = `planner.topics_per_country` +1 core / -1 small market. Procedure + scripts in private `kira-pipeline/taxonomy/planner*`; owner settings `planner.*` on `/en/admin/config`; each run on `/en/admin/health` | ✅ built (kira-pipeline #5, routine created; first run 2026-10-12) |
+| **S15** | **Topic reframe: segment × standard analysis** (owner, 2026-10-12): topics read too narrow (one event-led question each, from buyer questions found on JP/KR/TW business-association sites). Kept the level-2 segments; each topic is now one segment × one standard analysis (market overview, competitive landscape, customer insight analysis, distribution analysis, pricing, value proposition, market entry strategy, partner landscape, investment analysis, M&A landscape, regulatory landscape, growth strategy), keyed to the brain question type so its storyline is the spine. Title = `Country segment analysis`; buyer question and chapters come from private `kira-pipeline/taxonomy/analysis_types.json`; report title = `Country segment year: analysis`. Market overview first: 296 overviews added, so the queue holds 336 overviews (priority 70-100) ahead of the other analyses (about 10-50). Round 2: the five core analyses added per segment by parent industry, live queue 1,892 topics. 30 cross-industry rule topics (FDI screening, visas, tax, sanctions, data law, RHQ) parked; 2 duplicates merged. One-line hook per topic (all 1,887 written individually): cover subtitle, line under the report title and under the library-card title (`preview.hook`, no migration; see CLAUDE.md). Weekly planner (S14) follows the same rules; it stays paused until the owner has reviewed the queue | ✅ |
+| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🟡 Month $149 and Annual $1,190 built, both switched off (owner turns them on) |
+| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🟡 started 2026-10-07/11: transcript library in Supabase with listing, free opening and paywall (EN, #84); 16 transcripts published; fieldwork cards + generator + daily runner in the private repo (kira-pipeline #6). Left: runner secrets and first real run, JA/KO/ZH pages, marketplace |
 | **S6** | Snapshot layer (3–5 page template) | 🔴 later |
 | **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
-Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S7 → S9 (started) → S12 → S6 → S8 → **S10 Kira Chain last** (paused, direction changing).
+| **S16** | Email deliverability (paid search prerequisite) | 🔴 first, see "Paid search" below |
+| **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
+| **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
+| **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
+| **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
+| **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
 
-Stale-note check (2026-10-11): the open issue below about `topics.source` / `requested` is addressed: migration 030 (`030_reader_topics.sql`) defines them and `admin-topics` and `topic-search` handle `requested` (868 topics, 1 `requested`).
+#### S7 — Month subscription ($149 / month, PayPal Subscriptions) — built 2026-10-12, switched OFF
+Owner decision: the Month plan = every report in full online + every transcript + 5 PDF downloads per billing period. Annual ($1,190, 60 PDF + Kira Chain) is **not** built.
+- [x] Migration 052 (applied): `billing_plans` (the PayPal product/plan, created once on the first checkout and remembered), `subscriptions` (one row per PayPal subscription; mirrors PayPal status; `welcomed_at` for the one welcome email), `subscription_pdf_downloads` (one row per reader, report, language, billing period).
+- [x] `api/_lib/subscription.js` + `api/_lib/paypal.js`: plan setup, refresh from PayPal (no webhook needed: a row is re-checked when it is older than 10 minutes, a just-approved one every 15 seconds), `activeSubscription()`, period dates from PayPal (`last_payment` / `next_billing_time`), the PDF allowance (`claimPdf`: the same PDF again in the same period is free).
+- [x] `api/subscription.js`: `GET` status (settles a just-approved subscription, sends the welcome email once), `POST ?action=create` (403 `checkout_closed` while the switch is off, 409 if already subscribed), `POST ?action=cancel` (stops the next charge; access continues to the end of the paid period).
+- [x] Entitlements: `library-verify` (a subscriber owns every report), `library-content` (full text; no PDF link, shows `pdf { used, limit }`), new `library-pdf` (counted PDF link; 429 `pdf_limit_reached`), `isEntitled()` for transcripts. A reader who bought the single report still gets its PDF without counting.
+- [x] Settings (`/en/admin/config` → Checkout): `checkout.subscription_enabled` (default **off**) and `subscription.pdf_per_month` (default 5).
+- [x] Pages: `/<locale>/subscription` (EN/JA/KO/ZH: offer, status, PDF usage, cancel, return from PayPal), report page (Subscribe button, counted PDF button, all "get access" buttons point to the subscription page while it is on sale), transcript lock card, pricing pages (Month card becomes "Subscribe"), `/en/terms` has a subscription section, `/en/admin/health` shows active / cancelling / stuck subscribers.
+- [ ] **Owner:** read `/en/terms` (subscription section), switch on "Sell the Month subscription" in `/en/admin/config`, then make **one live $149 subscription yourself** and check: the PayPal approval, the welcome email, reading a report in full, one PDF download (the counter goes 0 → 1), and cancelling (the PayPal side shows it cancelled; access stays to the end of the period). Cancel your test subscription afterwards, or ask PayPal to refund the month.
+- [x] **Annual ($1,190 a year) built 2026-10-12, switched OFF.** Same machinery as Month, no migration (`subscriptions.plan` already existed): `PLANS` in `api/_lib/subscription.js` (PayPal plan `year-1190-usd`, interval YEAR; one PayPal product serves both plans), `POST /api/subscription?action=create` takes `plan: 'month' | 'year'` (default month; 400 `unknown_plan`; 403 while that plan's switch is off), `GET /api/subscription` returns `plans { month, year }` and the reader's `plan`. Settings: `checkout.annual_enabled` (default off, separate from the Month switch) and `subscription.pdf_per_year` (default 60, counted per yearly billing period). A reader holds **one** subscription at a time (the existing unique index): Month → Annual means cancelling Month and subscribing when its paid period ends (no upgrade button; no proration). The subscription page shows both plans; the pricing page's Annual card becomes "Subscribe" and the lead line lists what is on sale; the welcome email and `/en/admin/health` name the plan; `/en/terms` covers Annual (a started year is not refunded, except a broken promise: fix or refund the part still to run; draft for the owner). The Annual card says transcripts are included (like Month). Report and transcript pages still promote Month only.
+- [ ] **Owner (Annual):** read `/en/terms` again (the Annual wording and the refund line are my draft); decide whether to keep the "Kira Chain, as it launches" line on the Annual card while Kira Chain is unbuilt (it is also in the terms); switch on "Sell the Annual subscription"; make one live $1,190 test purchase and cancel it (PayPal charges the full year at once; refund it in PayPal).
+- [ ] Not built: upgrade from Month to Annual with credit; a webhook (renewals and lapses are noticed the next time the subscriber or an access check looks, so a lapsed subscriber can keep reading until the first check after the lapse, at most about 10 minutes after PayPal ends the subscription); an admin button to cancel or refund (do it in the PayPal dashboard); coupons; team seats.
+
+Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
+Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 → S21**. Each sprint starts only when the owner says go.
+
+### Paid search: Google Ads on long-tail, buyer-intent queries (discussed 2026-10-11/12)
+
+**Goal (owner):** spend only on searches from people who want to buy now. High conversion rate matters more than traffic.
+
+**Findings that shaped the plan**
+- Past site traffic is mostly bots (owner, 2026-10-12). It is not used as a baseline, so the first ad weeks are a measurement test, not a revenue plan.
+- **Long-tail search converts better; "cheap CPC, very high conversion rate" is not proven.**
+  - NP Digital (40 companies, branded terms excluded): 1-word keywords convert at 0.17%, 3 words at 1.02%, 6 words at 1.94%.
+  - Search Engine Land (~500k keywords): the most profitable keywords are 15–30 characters, not the longest.
+  - DSA evidence is vendor case studies only (ForRent CPC −30%, TUI conversion rate +50%), with no independent controlled study.
+  - Gemini's claim that Shopee, Amazon and Euromonitor run this exact setup could not be confirmed.
+- **Dynamic Search Ads are being retired:** Google moves them to AI Max for Search; the automatic upgrade starts February 2027. KIRA does not build on DSA. It uses keyword ad groups generated from our own topics (CSV import with Google Ads Editor), plus AI Max with URL inclusions later if wanted.
+- **One ad group per exact title with exact match is mostly unservable** ("Low search volume"). Ad groups therefore use the search-style name of the topic (phrase + exact), not the full title.
+- **The ad's landing page needs no Google indexing.** Ads can point at noindex pages, so the ad landing pages (S20) and SEO indexing are decided separately.
+- **Scaled content abuse:** Google has issued manual actions since June 2025 against mass template pages that add no value. A penalty could also pull down the real reports, so the 10,000 pages are tested before they are indexed (S20).
+- **Break-even math:** at $49 and about $1.50 per click, at least 3% of clicks must buy just to cover the ad spend, before production cost.
+- **Email deliverability is broken today** (DNS checked 2026-10-12):
+  - `kiraresearch.com` SPF only includes Google (`include:_spf.google.com`), not the sender Resend uses.
+  - No DKIM record for Resend was found at `resend._domainkey`, and there is no DMARC record.
+  - Mail from `noreply@kiraresearch.com` is therefore likely to land in spam or be rejected by Gmail/Yahoo bulk-sender rules. The "email me when published" promise depends on it, hence S16 first.
+- **Topic titles (updated 2026-10-12):** S15 renamed the queue topics to `Country segment analysis` (e.g. "Vietnam coffee chains market overview"), which already reads like a search query. S20 and S21 still check a sample of titles against Search Console queries and alert the owner if they do not fit.
+
+**Decisions locked (owner, 2026-10-12)**
+- **Price in the ad text**, e.g. "Vietnam Coffee Market Report 2026 · $49". Readers looking for free data skip the ad, which filters intent for free. The landing page must show the same price.
+- **Impulse pricing** replaces the 2026-10-06 table, so a reader can buy without a company approval step:
+
+  | Item | Price |
+  |---|---|
+  | Report | **$49** (range $39–49) |
+  | Expert interview transcript | **$29** (range $19–29) |
+  | Company list (Kira List) | **$39** (range $29–39) |
+  | Monthly subscription | **$149** |
+  | Annual subscription | to be decided |
+
+  Reference: HBR case studies sell at ~$8.95 each to individuals and ~$4.25 inside coursepacks; HBR earns on volume.
+  **Open:** what the $149 month includes so that it beats buying 3 reports (proposal: whole library online + 5 PDF + transcripts).
+- **Coming-soon pages collect email only.** No paid pre-order.
+- **Delivery promise: 2–3 days** from the first request, not 10. The promise lengthens automatically when requests pile up. Throughput (reports per day) is a setting the owner can raise.
+  - Measured 2026-10-12: about 5 reports **per week** (5 `done` events in the week of 2026-10-05), with 388 pending in the queue.
+  - Holding 2–3 days means requested topics jump the queue and the runner fires often enough.
+- **10,000 topics:** generate them without an LLM from the taxonomy (1,175 active country × industry pairs × lenses). Index them only if the thin-content test passes; otherwise keep noindex and index gradually by demand.
+- **Search with no result → placeholder → email** (S3b) is the same system as the ad landing pages. Everything below applies to both.
+
+**Already working (checked 2026-10-12)**
+- A coming-soon URL `/<locale>/reports/<topic-slug>` turns into the report once it is published. `api/topic.js` returns `{ published: <report slug> }` when `topics.report_id` points to a published report, and `reports/_view.html` redirects with JS.
+- **Gap:** the report slug differs from the topic slug (e.g. `2027-id-ev-charging-market-assessment` → `indonesia-ev-charging-2026`), and the redirect is client-side only. An ad URL or an indexed coming-soon URL therefore does not pass a server-side 301. S18 fixes this.
+- `topic_requests` (3 points) and searches (1 point) already raise queue priority, and the daily cron `/api/notify-topic-published` emails requesters at publish.
+
+#### S16 — Email deliverability (owner DNS clicks + small code) — ✅ done 2026-10-12 (PR #106)
+DNS check on 2026-10-12 (public lookups): no Resend records at the usual names (`resend._domainkey`, `send` MX/TXT) and no `_dmarc` record; the root SPF only includes Google; Google's own DKIM (`google._domainkey`) exists. The Resend dashboard is the source of truth for the exact records, so the owner reads them there.
+- [x] Owner, Namecheap → Domain List → Manage → Advanced DNS (click-through guide in chat):
+  - open Resend → Domains → kiraresearch.com and add every record it lists (DKIM TXT at `resend._domainkey`, SPF TXT and MX at `send`), then press Verify until it reads Verified;
+  - add a DMARC TXT record: host `_dmarc`, value `v=DMARC1; p=none; rua=mailto:<owner inbox>` (monitor first, tighten later);
+  - leave the root SPF (`v=spf1 include:_spf.google.com ~all`) as it is: Resend sends from the `send` subdomain.
+- [x] Owner: Resend → Webhooks → Add endpoint `https://kiraresearch.com/api/email-webhook`, events `email.delivered`, `email.bounced`, `email.complained`, `email.delivery_delayed`; copy its signing secret into Vercel as `RESEND_WEBHOOK_SECRET`, redeploy.
+- [x] Verify with a test send to Gmail: "Show original" shows SPF pass (`send.kiraresearch.com`), DKIM pass (`d=kiraresearch.com`, selector `resend`) and DMARC pass (p=none); the webhook stored the `delivered` event 2 s after sending and the request row was marked confirmed (2026-10-12). Outlook not tested.
+- [x] Instant "we got your request" email when a reader leaves an email on a coming-soon page (`sendTopicRequestConfirmation`, plain text + one link, Reply-To = first `ADMIN_EMAILS` address). Capped so the form cannot mail strangers: 3 per address per 24 h, 10 per IP per hour (`topic_requests.confirmed_at`, migration 047); the request itself is always saved. The expected date is added by S18.
+- [x] On-page message after sign-up in EN/JA/KO/ZH: check the inbox and spam, add noreply@kiraresearch.com to contacts.
+- [x] A returning reader sees "you asked" on the same URL instead of the form (the browser remembers, `localStorage`); the URL itself becomes the report when published, so the page never depends on email alone.
+- [x] Resend webhook `api/email-webhook.js` (Svix signature check, stale/forged calls refused): events go to `email_events`, hard bounces and spam complaints to `email_suppressions` and `api/_lib/email.js` never mails them again. `/en/admin/health` shows delivered / bounced / spam counts for 30 days and turns red above a 5% problem rate or any complaint. Migration 047 applied.
+- Email text is English only for now (same as the "report ready" email); JA/KO/ZH copy can follow when real readers from those markets arrive.
+
+#### S17 — Google Ads attribution — 🟡 code done 2026-10-12, owner steps open
+Found on the way: the footer links **/privacy and /terms returned 404 on every page** (no such files). Google Ads and any page that collects emails need a working privacy notice, so S17 adds `/en/privacy` (ja/ko/zh rewrite to it). **Terms is still missing** and needs the owner's commercial decisions (refunds, licence of a report), so it was not drafted.
+- [x] `public/js/track.js`: on a landing with `gclid` / `gbraid` / `wbraid` or `utm_source`, the click is kept in `localStorage` (`kira_attr`, 90 days, last click wins) and added as `attr` to the JSON body of `/api/topic-request`, `/api/waitlist` and `/api/leads` (by wrapping `fetch`, so no form was edited). Off for Do Not Track, admin, previews, localhost. A landing with a click id but no `utm_source` is labelled source `google-ads` in the funnel (separate from organic `google`).
+- [x] Server: `api/_lib/attribution.js` keeps only known keys with length limits; stored in `attribution jsonb` on `topic_requests`, `waitlist`, `leads` (migration 048, applied). Purchases get the same when checkout is switched on (S19).
+- [x] GA4 key event `generate_lead` (`lead_type` = request_email / waitlist / lead) fires after each successful sign-up through `window.gtag` (exposed by `nav.js`).
+- [x] `GET /api/admin-ads-conversions` (admin): Google Ads offline-conversion CSV (click id / GBRAID / WBRAID, conversion name, UTC time, value, USD) from tagged sign-ups, last 1-90 days. Conversion names: `KIRA email request`, `KIRA waitlist`, `KIRA enquiry`. Values are owner settings on `/en/admin/config` → Google Ads (`ads.value_request` 5, `ads.value_waitlist` 15, `ads.value_lead` 100 USD; placeholders, the owner sets what a sign-up is worth).
+- [x] `/en/admin/funnel`: "From Google Ads" block (tagged sign-ups per type and per campaign tag) and the CSV download button; source label "Google Ads (paid)".
+- [x] `/en/privacy` written from what the site really does (draft for the owner to review: legal entity name, retention promises, contact route; EN only).
+- [ ] Owner (Claude in Chrome prompt in chat): link GA4 property `G-N1891GBDCB` to the Google Ads account; turn on auto-tagging; create the Google Ads conversion by importing the GA4 key event `generate_lead` as the primary conversion. The CSV conversions are a cross-check (create them as separate secondary actions with the three names above) so one sign-up is never counted twice as primary.
+- [ ] Owner: add a final-URL suffix in Google Ads `utm_source=google&utm_medium=cpc&utm_campaign={campaignid}` (S21 sets it per campaign).
+- [ ] Owner decisions: review `/en/privacy`; decide Terms (S19 needs it before taking payment from ad traffic).
+- Known gap: Google Analytics already loads for every visitor with no consent banner. Ads must target outside the EEA/UK (S21) until a consent banner exists.
+- Not done: cost per sign-up (needs ad spend: enter it by hand or read it from the Ads API in S21).
+
+#### S18 — On-demand delivery in 2–3 days — 🟡 code done 2026-10-12 (migration 049)
+Findings that shaped it: one runner fire already makes a whole report (EN → JA → KO → ZH → publish, about 60–100 min), so no "EN first" step is needed. The Routine "Kira Report Generator" has cron `53 1,3,5 * * *` UTC = **3 reports/day** today; the "ready by" date follows that capacity. A reader-made placeholder topic (`requested`) never entered the queue without the owner's approval, and queue priority did not honour first-asked-first-made.
+- [x] Owner settings on `/en/admin/config` → "On-demand reports": `ondemand.target_days` (3), `ondemand.reports_per_day` (3: tell the site the real speed; it does NOT change the Routine, raise the cron first), `ondemand.auto_approve_per_day` (10).
+- [x] "Ready by" date: `api/_lib/eta.js` = today + max(target days, ceil((reports ahead + 1) / reports per day)); "ahead" = requested topics that asked earlier and are not published + planner reports being made right now (SQL `topic_queue_ahead`, migration 049). With nobody ahead it is exactly the target; when many readers ask, the date moves out by itself. Shown on the coming-soon page in EN/JA/KO/ZH (`/api/topic` returns `eta`) and in the confirmation email ("We expect to publish it by 15 October 2026").
+- [x] Queue: a topic with at least one email request goes to a "requested band" (`api/_lib/queue-band.js`: priority 90000 minus the 10-minute slot of its first request) so it is made before every planner topic, in the order first asked (the promise to each reader holds). `queue.mjs sync-topics` applies it on every fire. Owner's "Run first" (max + 1) still goes above it. Tested with mocked data: early request > later request > planner topic.
+- [x] A reader-made placeholder (`requested`) or an unapproved planner proposal approves itself when someone leaves an email, up to `ondemand.auto_approve_per_day` per 24 h (each one costs a full report); the next fire queues it.
+- [x] First request records `topics.promise_at` (once). `/en/admin/health` → "Promised dates" turns red when a requested report is past its date, with the names and what to do (more fires, then raise "reports per day").
+- [x] Same URL after publish: the coming-soon URL still redirects to the report in the browser, and now **keeps the query string** (`gclid`, `utm_*`). A server-side 301 would need edge middleware on every page; not worth it. Ads that point at a topic page still land correctly, and S21 builds final URLs from the current state (published → report URL).
+- [ ] Owner: decide whether to add runner fires (Routine "Kira Report Generator", cron in claude.ai Routines; guide in `cloud_routine.md`), then set "reports per day" to match. Until then 3 reports/day means a 3-day promise holds for the first ~2 requested topics in line; beyond that the date moves out (about 1 day per 3 extra requests).
+- Moved to S19: showing "$49 on publication" on the coming-soon page. The pricing pages still say $299 and checkout is off, so a price on that page now would contradict the rest of the site.
+- Known: the one test request made on 2026-10-12 (Laos data centres) is a real request, so that report will be made first at the next fire.
+
+#### S19 — Impulse pricing + checkout
+- [x] Price on the coming-soon page ("Price when published: $49", EN/JA/KO/ZH, `api/topic.js` returns `price`). Shown only while checkout is on, so the page never advertises something that cannot be bought.
+- [x] Pricing pages (EN/JA/KO/ZH) and locale files: single report $49; Month $149 now includes expert transcripts (owner decision 2026-10-12: whole library online + 5 PDF + transcripts); note that a transcript is $29 outside a plan. Annual stays $1,190.
+- [x] Migration 050 (applied): `living_reports.price` default 49 and the 125 published reports moved from 39 to 49; `build-publish-sql.mjs` default 49; `api/_lib/pricing.js` holds the fallback.
+- [x] Single-report checkout behind a setting: `checkout.single_report_enabled` on `/en/admin/config` → "Checkout" (default **off**). `/api/library-report` returns `purchaseEnabled`; `reports/_view.html` reads it instead of a hard-coded constant; `/api/library-buy?action=create` answers 403 `checkout_closed` while off (a capture of an order already started still completes).
+- [x] `/en/terms` (draft; ja/ko/zh rewrite to EN): licence for internal use, 7-day refund if the PDF was not downloaded, refund if the report is not as described, desk-research limits, liability capped at the price paid. Governing law and legal entity name left out on purpose.
+- [ ] **Owner:** read `/en/terms`, then switch on "Sell single reports" in `/en/admin/config`. Do one live $49 test purchase and check the receipt email (S16) before any ad money.
+- [x] Pricing page CTAs: when `checkout.single_report_enabled` is on, the single-report card says "Browse the library" and links to `/<locale>/library`, and the lead line says single reports are on sale (`js/pricing-live.js`, reads the new public `GET /api/checkout-status`; off = unchanged).
+- [x] Transcript purchase ($29, one purchase = every language): migration 051 `transcript_purchases` (applied), `api/transcript-buy.js` (PayPal create/capture, receipt email), `isEntitled(user, transcriptId)` = admin or a completed purchase, lock card on `/<locale>/experts/transcripts/<slug>` offers "Buy full transcript — $29" and finishes the capture when PayPal returns. Behind its own switch `checkout.transcript_enabled` (default **off**). `/en/terms` now covers transcripts (refund only if not as described, since the text opens at once).
+- [ ] **Owner:** switch on "Sell expert-interview transcripts" after reading `/en/terms`; test with one live $29 purchase (a double purchase of the same transcript is logged as `DOUBLE PURCHASE` in the function logs, refund it by hand).
+- [ ] Kira List purchase ($39): when Kira List ships.
+
+#### S12 — Exhibit data download (Excel + PowerPoint), built 2026-10-12
+- [x] **Data:** each new report writes `outputs/batch/<id>/exhibits.json` with the numbers behind every exhibit (format in the header of `api/_lib/exhibits.js`; instructions in `prompts/brain_route.md` → "Exhibit data"; runner `batch_runner.md` step 2b check + 5.3b-4b publish). Stored in table `report_exhibits` (migration 053, applied; RLS on, no policies, service key only).
+- [x] **Checks:** `scripts/check-exhibits.mjs --id` fails on a malformed entry, an exhibit printed in `en.html` that is neither listed nor `skipped` (with a reason), or a title that is not printed. `scripts/publish-exhibits.mjs --id` re-checks and stores. Both are **not fatal** in the runner: a report without exhibit data just has no download buttons.
+- [x] **Download:** `GET /api/library-exhibits?slug=&format=xlsx|pptx` (signed in; bought the report, Month subscriber or admin; nothing is counted). Excel = a contents sheet + one sheet per exhibit. PowerPoint = a cover + one slide per exhibit: native, editable PowerPoint charts (bar, column, stacked, line, pie; bars start at zero) or a table; source line and page on each slide. Over 4.3 MB it answers 413 (use Excel); at most 60 exhibits per report.
+- [x] **Page:** `/api/library-content` returns `exhibits` (count); the report page shows "Exhibit data" with the two buttons in the owner's box (buyer and subscriber), in 4 languages. Text inside the files is English.
+- [x] **First real data:** `indonesia-ev-charging-2026` (20 exhibits, 1 skipped bubble chart), written by hand from the published report as the format test; the other published reports have none.
+- [x] **Backfill trial (2026-10-13):** `scripts/dump-exhibits.mjs --id` prints what an existing report's exhibits show (tables, SVG labels with x,y); an agent turns it into `exhibits.json` (rules in the brief: only printed numbers, tables copied, no-value diagrams under `skipped`, `check-exhibits.mjs` must pass). Done for 3 reports: VN coffee chains (24 exhibits + 3 skipped), TH data centres (19 + 1), SG Employment Pass (18 + 0); with the first report, **4 of 121 published reports have data**. Spot-checks against the page matched (stacked outlets 2019 split, payback sensitivity, colocation split, salary-threshold bars). Cost per report: about 2 minutes of agent time. Findings the agents made while reading: TH "Data centres by operator" bars add to 57 sites but the text says "of 60" (13 for "Unlisted others" may be 16); TH p7 nested pools (cloud ~67 + colocation ~7-10 = 74-77) exceed the printed 73; SG COMPASS table rows C5/C6 look garbled (20-point cells).
+- [x] **Backfill of the other 5 new-layer reports (2026-10-13, owner: "chạy nốt")**: `indonesia-ev-charging-market-entry-2026` (15 exhibits + 2 skipped), `indonesia-imported-food-2026` (22 + 1), `malaysia-online-marketplaces-2026` (21 + 2), `vietnam-convenience-stores-2027` (23 + 1), `vietnam-convenience-store-licensing-2026` (14 + 2). **All 9 reports that use the new exhibit layer now have data (176 exhibits).** Exporter fix found on the way: PowerPoint column/bar charts were forced to start at 0, which clipped negative values (P&L costs, GS25 loss, import-value declines); the zero baseline is now forced only when every value is non-negative, and category labels move to the low side when a value is negative.
+- [ ] **Content issues the agents found in published reports (owner decision 2026-10-13: do not edit published text now; none of the true figures could be verified from here, and a fix means 4 languages + PDF + preview). Check against the cited source at the next refresh of each report:**
+  - `thailand-data-centres-2026`: "Data centres by operator" bars add to 57 sites (13+8+4+3+3+3+10+13) but the text says "of 60 sites" (NT 13 + AIS 8 + True 4 = 25 of 60); "Unlisted others" may be 16. p7 nested pools: cloud ~67 + colocation ~7-10 = 74-77, above the printed 73.
+  - `singapore-ep-salary-benchmarks-2026`: COMPASS points table, rows C5 and C6 (the 20-point cells) read as garbled (C5's 20/10 depend on nationality share; C6 has no 20-point case).
+  - `indonesia-ev-charging-market-entry-2026`: speed-class exhibit says "4,655 units, end-2025" while its own footnote and the province exhibit say 4,778 (two sources: Kontan Jan 2026 vs ESDM Feb 2026); first exhibit prints 103,300 for Jan-Aug 2026 against 103,931 for all of 2025 (a data point, not an error).
+  - `indonesia-imported-food-2026`: halal deadline printed as 17 Oct 2026 on one marker and 18 Oct 2026 on another (p23) and "18 Oct" on p24; p18 says +35.5% in 2025 but the printed bars give about +36.2%; p30 subtitle mentions a "brand edge" score that the p29 table does not have.
+  - `vietnam-convenience-store-licensing-2026`: "9,703 stores counted" does not equal the nine listed chains (9,393, so about 310 stores sit in unnamed chains); 9,703 minus 1,322 foreign = 8,381, not the printed ~8,100.
+  - `vietnam-convenience-stores-2027`: the summary says ~0.25% of retail goods sales, the exhibit prints 0.2-0.25% (its own figures give 0.19-0.26%); "Net new stores: All convenience chains +120" equals the five foreign chains' change (1,322 minus 1,202), not the census total (1,450), so the label may overstate its scope; Hanoi prime rent is 120-180 USD/m² in one exhibit and "USD 100" in the break-even exhibit.
+- [ ] **Not yet backfilled:** About 112 older reports use the previous chart style (`chart-title` / `class="chart"` markup, no `exhibit-title`), and most of their folders have no `naming.json`; they need a different dump and a slug mapping first.
+- [ ] **Not built (older note):** backfill for the ~100 older reports (their charts are drawn SVG with no data behind them; each would need its numbers re-entered, a Routine could do it from `en.html`); exhibit text in JA/KO/ZH; a table with more than one table inside one exhibit keeps only the first (the sample's last exhibit); exhibit data for a report that is later re-generated is replaced only when `publish-exhibits.mjs` runs again.
+- [ ] **Owner:** after the next report is generated by the runner, check that `exhibits.json` exists in its folder and that `check-exhibits` passed (fire summary). Try the buttons on `/en/reports/indonesia-ev-charging-2026` as a subscriber or buyer (the admin account also works).
+
+#### S20 — Topic expansion to ~10,000 (no LLM) + thin-content test
+**Measured first (2026-10-12, before generating anything), on the 1,892 live topic pages:**
+- Frame text (the 4–5 guiding questions) is shared: a lens has only 1–4 distinct question sets across all its pages (e.g. 339 market-entry pages use 3 sets). It is ~400 characters per page.
+- What is unique per page: title + buyer question ≈ 145 characters (27% of the page); with the written hook and the 2–3 "must cover" facts ≈ 410 characters (50%, about 60 words). 40 pages have no must-cover facts.
+- Real per-pair data is almost empty: `tax_country_industry.why_domestic` is null, `evidence` is a one-line note, `signals` is `{}`; the companies table covers only VN and JP.
+- So a generated page for the other ~8,000 pair × lens combinations would carry only a title and a templated buyer question: about 100–150 characters (<30%) of its own text, 70%+ shared with its siblings. That is the thin / near-duplicate pattern Google's scaled-content policy targets, and it would not pass the ">~80% shared = merge or drop" rule below.
+
+**Decided by the owner 2026-10-12: proposal accepted. No template pages are generated; S20 is closed by the measurement. The ~200-page SEO test (second bullet) stays optional and unscheduled.**
+
+**Proposal (replaces the 10,000-page plan):**
+- [ ] Do **not** generate ~8,000 template pages. Ads do not need pages to be indexed, so the pages only have to exist for the topics we advertise; the 1,892 real topics (plus anything readers request) already are that set.
+- [ ] S21 builds ad groups from those 1,892 topics (one ad group each, search-style names); no new pages needed.
+- [x] **SEO test built 2026-10-12 (owner: "SEO thử ~200 trang").** ~195 English coming-soon pages are indexable; every other placeholder stays `noindex`.
+  - Which pages: the flag `topics.signals.seo_test = true` (no migration). Chosen as one **market overview per segment**, so no two test pages share their "must cover" facts: status `queued`, no report yet, hook and must-cover present, at most 14 per country by score (BN 8, KH 13, LA 11, MM 9 are all they have) = 195. Remove the flag to take a page out.
+  - What changes on a flagged page: `api/topic.js` returns `index: true` + `hook`; `js/coming-soon.js` skips `noindex`, sets the meta description (hook + buyer question) and drops the hreflang links (JA/KO/ZH twins stay `noindex`); `sitemap-en.xml` lists the page without hreflang (`api/sitemap.js`, block 3c); once the topic has a report it leaves the sitemap and the page redirects to the report.
+  - **Limit, said plainly:** the title, description and text are set by JavaScript (like every report page today), not in the raw HTML. Google renders JavaScript, but if the pages come back "Crawled – currently not indexed" it can mean thin content OR slow rendering; the two cannot be told apart from this test alone.
+  - Read-out (owner, Search Console, EN property): after 4–6 weeks open Indexing → Pages and filter by the sitemap-en.xml URLs. Many "Indexed" and some impressions = the pattern works, a larger set can follow. Mostly "Crawled – currently not indexed" = stop, keep ads as the only traffic. Do not add pages in the meantime.
+- [ ] If the owner still wants more pages: only where the DB has real data for that pair (published report, companies, transcript), measured with the shingle test below.
+
+Original plan, kept for reference (not started):
+- [ ] Generator from the taxonomy: active country × industry pairs × lenses (market assessment, market entry, regulatory, competitors, distribution…). Template text only, no model calls; `source = 'generator'`, outside the production queue until requested.
+- [ ] Pilot 500 first (noindex); near-duplicate share (shingle similarity), unique words per page, share of real data; pages sharing >~80% with a sibling are merged or dropped.
+- [ ] Google's verdict: index a cohort of ~200 pilot pages for 4–6 weeks and read Search Console → Pages ("Crawled – currently not indexed" = stop).
+- [ ] Full run only after the pilot passes. Sitemap split by 5,000 URLs.
+
+#### S21 — Google Ads launch (measured test)
+Owner 2026-10-12: set up only, do not run ads yet. Everything below that touches Google is prepared paused.
+- [x] Campaign file for Google Ads Editor (`api/admin-ads-campaign.js`, `api/_lib/ads-campaign.js`; button on `/en/admin/funnel`): one ad group per topic page (the 1,892 live topics, best score first, 100 per file via `?offset=`), 4 phrase + 4 exact keywords each, one responsive search ad each, final URL = the coming-soon or published page. Campaign, ad groups, keywords and ads are all **Paused**; daily budget and max CPC are parameters (`budget`, `cpc`, defaults $20 and $1.00).
+  - Headlines ≤30 characters, descriptions ≤90 (Google's limits), checked in code.
+  - "Ready in about N days" uses `ondemand.target_days`; the "Report from $49" headline is written only while `checkout.single_report_enabled` is on.
+  - **Not verified against a real Ads Editor import** (no account access from here): if Editor rejects a column, send me the error text.
+- [x] Shared negative keyword list (`?kind=negatives`, 36 phrases: free, pdf free, wikipedia, ppt, thesis, assignment, jobs, salary, "what is", definition…). Paste into one shared list in Ads and attach it to the campaign.
+- [ ] Owner, in Google Ads (when the owner says go): import the file; set location (JP, KR, SG, TW, US… outside the EEA/UK first) and review language; attach the negative list; link GA4 and import `generate_lead` as the primary conversion; enable auto-tagging.
+- [ ] Bidding: Manual CPC with a cap. Move to Maximize conversions only after ~15–30 conversions per month from S17.
+- [ ] 3–4 week test at a small daily budget. Review the search terms report every week and add negatives.
+- [ ] Read-out by product and lens: CPC, CTR, cost per email, cost per purchase.
 
 Open issue (found 2026-10-06): the production database has a `topics.source` column (`planner` | `reader`) and a `requested` topic status that no migration in `main` defines; main's code only knows `proposed`. The session "Report search with placeholders" owns this work and must commit that migration and teach `admin-topics`, `sync-approved-topics` and `topic-search` about `requested`.
 

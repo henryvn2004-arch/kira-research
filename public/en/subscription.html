@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!-- The Month and Annual subscription page (S7, 2026-10-12). One template for every language (/en|ja|ko|zh/subscription);
+     the strings live in the script below, keyed by the first path segment, like profile.html. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Subscription — KIRA Research</title>
+  <meta name="description" content="Your KIRA Research subscription." />
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="canonical" href="https://kiraresearch.com/en/subscription" />
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    .sub-page { max-width: 720px; margin: 0 auto; padding: 120px 24px 88px; }
+    .sub-page h1 { font-size: clamp(30px, 5vw, 42px); line-height: 1.1; margin-bottom: 10px; }
+    .sub-page .lead { color: var(--muted); font-size: 17px; line-height: 1.6; margin-bottom: 28px; }
+    .sub-card { border: 1px solid var(--border); border-radius: 12px; padding: 28px; background: var(--surface, #fff); margin-bottom: 20px; }
+    .sub-price { font-size: 44px; font-weight: 800; color: var(--text); line-height: 1; }
+    .sub-price small { font-size: 16px; font-weight: 500; color: var(--muted); }
+    .sub-card ul { margin: 18px 0 22px 20px; color: var(--muted); line-height: 1.8; }
+    .sub-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .sub-card p { color: var(--muted); line-height: 1.65; margin-bottom: 12px; }
+    .sub-meta { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 14px 0 20px; font-size: 15px; }
+    .sub-meta dt { color: var(--muted-dim); } .sub-meta dd { margin: 0; color: var(--text); }
+    .sub-bar { height: 8px; border-radius: 4px; background: var(--border); overflow: hidden; margin: 4px 0 6px; }
+    .sub-bar > i { display: block; height: 100%; background: var(--primary); }
+    .sub-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+    .sub-link { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font: inherit; padding: 0; }
+    .sub-note { font-size: 13px; color: var(--muted-dim); }
+    .sub-msg { border-radius: 8px; padding: 12px 14px; margin-bottom: 18px; font-size: 15px; background: #eef4ff; color: #123; }
+    .sub-msg.err { background: #fdecec; }
+  </style>
+</head>
+<body>
+  <main class="sub-page" id="sub-root"><p class="lead">…</p></main>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script type="module">
+    const parts = location.pathname.split('/').filter(Boolean);
+    const L = ['en', 'ja', 'ko', 'zh'].includes(parts[0]) ? parts[0] : 'en';
+    document.documentElement.setAttribute('lang', L === 'zh' ? 'zh-Hans' : L);
+    const S = {
+      en: {
+        title: 'Subscription', lead: 'Month or Annual: the whole library, online.',
+        planYear: 'Annual', perYear: '/ year', b5y: 'Renews automatically each year; cancel any time, access continues to the end of the period you paid for', subscribeYear: 'Subscribe — ${price} / year', notOpenYear: 'The Annual plan opens soon. Leave your email and we will write when it does.', activeYear: 'Your Annual subscription is active', monthName: 'Month', oneAtATime: 'You can hold one subscription at a time.',
+        planName: 'Month', perMonth: '/ month', b1: 'Every report in full, online', b2: 'Every expert-interview transcript in full',
+        b3: '{limit} PDF downloads per billing period (the same PDF again in the same period does not count twice)', b4: 'New research as it is published',
+        b5: 'Renews automatically each month; cancel any time, access continues to the end of the period you paid for',
+        subscribe: 'Subscribe — ${price} / month', signin: 'Sign in to subscribe', notOpen: 'The Month plan opens soon. Leave your email and we will write when it does.', earlyAccess: 'Request early access',
+        terms: 'Read the terms',
+        confirming: 'Confirming your subscription with PayPal…', confirmed: 'Your subscription is active. Thank you.', stillPending: 'PayPal has not confirmed the payment yet. This page checks again whenever you open it; if it stays pending for more than an hour, email hello@kiraresearch.com.',
+        cancelled: 'Checkout was cancelled. Nothing was charged.',
+        activeTitle: 'Your Month subscription is active', renews: 'Next charge', pdfs: 'PDF downloads this period', pdfOf: '{used} of {limit} used',
+        cancelBtn: 'Cancel subscription', cancelAsk: 'Cancel the subscription? The next charge stops. You keep access until {date}.', cancelDone: 'Cancelled. You keep access until {date}.',
+        endedTitle: 'Your subscription has been cancelled', until: 'Access until', endedBody: 'Your access has ended.', again: 'Subscribe again',
+        suspended: 'Your last payment did not go through, so the subscription is on hold. Update the payment method in PayPal, or subscribe again.',
+        library: 'Browse the library', transcripts: 'Browse transcripts', error: 'Something went wrong. Please try again.', paypalNote: 'Payments and cancellations are handled by PayPal. You can also manage the automatic payment in your PayPal account.'
+      },
+      ja: {
+        title: '購読', lead: '月額または年間：ライブラリ全体をオンラインで。',
+        planYear: '年間', perYear: '／年', b5y: '毎年自動更新。いつでも解約でき、お支払い済みの期間の終わりまで利用できます', subscribeYear: '購読する — ${price}／年', notOpenYear: '年間プランは近日開始予定です。メールアドレスをお知らせいただければ、開始時にご連絡します。', activeYear: '年間プランをご利用中です', monthName: '月額', oneAtATime: '同時にご利用いただける購読は1つです。',
+        planName: '月額', perMonth: '／月', b1: '全レポートの全文をオンラインで閲覧', b2: '全エキスパート・インタビューのトランスクリプト全文',
+        b3: '課金期間ごとにPDFダウンロード{limit}件（同じ期間に同じPDFを再取得しても重複して数えません）', b4: '新たに公開されるリサーチ',
+        b5: '毎月自動更新。いつでも解約でき、お支払い済みの期間の終わりまで利用できます',
+        subscribe: '購読する — ${price}／月', signin: 'ログインして購読する', notOpen: '月額プランは近日開始予定です。メールアドレスをお知らせいただければ、開始時にご連絡します。', earlyAccess: '早期アクセスを申し込む',
+        terms: '利用条件を読む',
+        confirming: 'PayPalで購読を確認しています…', confirmed: '購読が有効になりました。ありがとうございます。', stillPending: 'PayPalからまだ支払いの確認が届いていません。このページは開くたびに再確認します。1時間以上保留のままの場合は hello@kiraresearch.com までご連絡ください。',
+        cancelled: 'お手続きはキャンセルされました。料金は発生していません。',
+        activeTitle: '月額プランをご利用中です', renews: '次回のお支払い', pdfs: '今期のPDFダウンロード', pdfOf: '{limit}件中{used}件使用',
+        cancelBtn: '購読を解約する', cancelAsk: '購読を解約しますか？次回以降の請求は停止され、{date}までご利用いただけます。', cancelDone: '解約しました。{date}までご利用いただけます。',
+        endedTitle: '購読は解約されました', until: 'ご利用可能期限', endedBody: 'ご利用期間は終了しました。', again: '再度購読する',
+        suspended: '前回のお支払いが完了しなかったため、購読は一時停止中です。PayPalでお支払い方法を更新するか、再度購読してください。',
+        library: 'ライブラリを見る', transcripts: 'トランスクリプトを見る', error: 'エラーが発生しました。もう一度お試しください。', paypalNote: 'お支払いと解約はPayPalで処理されます。自動支払いはPayPalアカウントからも管理できます。'
+      },
+      ko: {
+        title: '구독', lead: '월간 또는 연간: 라이브러리 전체를 온라인으로.',
+        planYear: '연간', perYear: '/년', b5y: '매년 자동 갱신. 언제든 해지할 수 있으며, 결제한 기간이 끝날 때까지 이용할 수 있습니다', subscribeYear: '구독하기 — ${price}/년', notOpenYear: '연간 플랜은 곧 시작됩니다. 이메일을 남겨 주시면 시작 시 안내드립니다.', activeYear: '연간 구독을 이용 중입니다', monthName: '월간', oneAtATime: '구독은 한 번에 하나만 이용할 수 있습니다.',
+        planName: '월간', perMonth: '/월', b1: '모든 보고서 전문 온라인 열람', b2: '모든 전문가 인터뷰 트랜스크립트 전문',
+        b3: '결제 기간마다 PDF 다운로드 {limit}건 (같은 기간에 같은 PDF를 다시 받아도 중복 차감되지 않습니다)', b4: '신규 리서치 발간 시 즉시 제공',
+        b5: '매월 자동 갱신. 언제든 해지할 수 있으며, 결제한 기간이 끝날 때까지 이용할 수 있습니다',
+        subscribe: '구독하기 — ${price}/월', signin: '로그인하고 구독하기', notOpen: '월간 플랜은 곧 시작됩니다. 이메일을 남겨 주시면 시작 시 안내드립니다.', earlyAccess: '사전 신청하기',
+        terms: '이용 약관 보기',
+        confirming: 'PayPal에서 구독을 확인하는 중입니다…', confirmed: '구독이 활성화되었습니다. 감사합니다.', stillPending: 'PayPal에서 아직 결제 확인이 오지 않았습니다. 이 페이지는 열 때마다 다시 확인합니다. 1시간 넘게 보류 상태이면 hello@kiraresearch.com으로 문의해 주세요.',
+        cancelled: '결제가 취소되었습니다. 청구된 금액은 없습니다.',
+        activeTitle: '월간 구독을 이용 중입니다', renews: '다음 결제', pdfs: '이번 기간 PDF 다운로드', pdfOf: '{limit}건 중 {used}건 사용',
+        cancelBtn: '구독 해지', cancelAsk: '구독을 해지하시겠습니까? 다음 결제가 중단되며 {date}까지 이용할 수 있습니다.', cancelDone: '해지되었습니다. {date}까지 이용할 수 있습니다.',
+        endedTitle: '구독이 해지되었습니다', until: '이용 가능 기간', endedBody: '이용 기간이 종료되었습니다.', again: '다시 구독하기',
+        suspended: '마지막 결제가 완료되지 않아 구독이 일시 중지되었습니다. PayPal에서 결제 수단을 갱신하거나 다시 구독해 주세요.',
+        library: '라이브러리 둘러보기', transcripts: '트랜스크립트 둘러보기', error: '문제가 발생했습니다. 다시 시도해 주세요.', paypalNote: '결제와 해지는 PayPal에서 처리됩니다. 자동 결제는 PayPal 계정에서도 관리할 수 있습니다.'
+      },
+      zh: {
+        title: '订阅', lead: '月度或年度方案：整个报告库，在线阅读。',
+        planYear: '年度', perYear: '/年', b5y: '每年自动续订；可随时取消，已付费周期结束前仍可使用', subscribeYear: '订阅 — ${price} / 年', notOpenYear: '年度方案即将开放。留下邮箱，开放时我们会通知您。', activeYear: '您的年度订阅已生效', monthName: '月度', oneAtATime: '同一时间只能持有一份订阅。',
+        planName: '月度', perMonth: '/月', b1: '在线阅读每份报告全文', b2: '阅读每份专家访谈记录全文',
+        b3: '每个计费周期 {limit} 份 PDF 下载（同一周期内重复下载同一份 PDF 不重复计数）', b4: '新研究发布即可阅读',
+        b5: '每月自动续订；可随时取消，已付费周期结束前仍可使用',
+        subscribe: '订阅 — ${price} / 月', signin: '登录后订阅', notOpen: '月度方案即将开放。留下邮箱，开放时我们会通知您。', earlyAccess: '申请优先开通',
+        terms: '阅读条款',
+        confirming: '正在向 PayPal 确认您的订阅…', confirmed: '您的订阅已生效，谢谢。', stillPending: 'PayPal 尚未确认付款。每次打开本页都会重新检查；若超过一小时仍未确认，请发邮件至 hello@kiraresearch.com。',
+        cancelled: '结账已取消，未收取任何费用。',
+        activeTitle: '您的月度订阅已生效', renews: '下次扣款', pdfs: '本周期 PDF 下载', pdfOf: '已用 {used}/{limit} 份',
+        cancelBtn: '取消订阅', cancelAsk: '确定取消订阅吗？将停止下次扣款，您可使用至 {date}。', cancelDone: '已取消。您可使用至 {date}。',
+        endedTitle: '您的订阅已取消', until: '可使用至', endedBody: '您的使用期限已结束。', again: '重新订阅',
+        suspended: '上次付款未成功，订阅已暂停。请在 PayPal 更新付款方式，或重新订阅。',
+        library: '浏览报告库', transcripts: '浏览访谈记录', error: '出现问题，请重试。', paypalNote: '付款和取消均由 PayPal 处理，您也可以在 PayPal 账户中管理自动付款。'
+      }
+    }[L];
+
+    const root = document.getElementById('sub-root');
+    const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmtDate = (iso) => { try { return new Date(iso).toLocaleDateString(L === 'zh' ? 'zh-CN' : L, { day: 'numeric', month: 'long', year: 'numeric' }); } catch (_e) { return iso || ''; } };
+    const q = new URLSearchParams(location.search);
+    while (!window.kiraAuth) await new Promise((r) => setTimeout(r, 20));
+
+    async function session() { return window.db ? (await window.db.auth.getSession()).data.session : null; }
+    async function api(action, method, plan) {
+      const s = await session();
+      const r = await fetch('/api/subscription' + (action ? '?action=' + action : ''), {
+        method: method || 'GET', headers: { Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' }, body: method === 'POST' ? JSON.stringify({ locale: L, plan: plan || undefined }) : undefined
+      });
+      return { ok: r.ok, status: r.status, body: await r.json().catch(() => ({})) };
+    }
+    const termsLink = '<p class="sub-note"><a href="/' + L + '/terms">' + esc(S.terms) + '</a> · ' + esc(S.paypalNote) + '</p>';
+
+    // One card per plan; the buttons carry data-plan so one handler serves both.
+    function planCard(info, signedIn, plan) {
+      const year = plan === 'year', P = info.plans[plan];
+      const benefits = [S.b1, S.b2, S.b3.replace('{limit}', P.pdfLimit), S.b4, year ? S.b5y : S.b5].map((b) => '<li>' + esc(b) + '</li>').join('');
+      let cta;
+      if (!P.enabled) cta = '<p>' + esc(year ? S.notOpenYear : S.notOpen) + '</p><a class="btn btn-primary" href="/' + L + '/pricing#waitlist">' + esc(S.earlyAccess) + '</a>';
+      else if (!signedIn) cta = '<button class="btn btn-primary" id="sub-signin" type="button">' + esc(S.signin) + '</button>';
+      else cta = '<button class="btn btn-primary" data-plan="' + plan + '" type="button">' + esc((year ? S.subscribeYear : S.subscribe).replace('${price}', () => '$' + P.price.toLocaleString('en-US'))) + '</button>';
+      return '<div class="sub-card"><h2>' + esc(year ? S.planYear : S.planName) + '</h2><div class="sub-price">$' + esc(P.price.toLocaleString('en-US')) + ' <small>' + esc(year ? S.perYear : S.perMonth) + '</small></div><ul>' + benefits + '</ul><div class="sub-actions">' + cta + '</div></div>';
+    }
+
+    function offer(info, signedIn) {
+      return planCard(info, signedIn, 'month') + planCard(info, signedIn, 'year') + '<p class="sub-note">' + esc(S.oneAtATime) + '</p>' + termsLink;
+    }
+
+    function wireOffer() {
+      document.querySelectorAll('button[data-plan]').forEach((go) => go.addEventListener('click', async () => {
+        document.querySelectorAll('button[data-plan]').forEach((x) => { x.disabled = true; });
+        const r = await api('create', 'POST', go.dataset.plan);
+        if (r.ok && r.body.approveUrl) { location.href = r.body.approveUrl; return; }
+        if (r.status === 409) { location.reload(); return; }
+        const m = document.createElement('div'); m.className = 'sub-msg err'; m.textContent = S.error; root.prepend(m);
+        document.querySelectorAll('button[data-plan]').forEach((x) => { x.disabled = false; });
+      }));
+      const si = document.getElementById('sub-signin');
+      if (si) si.addEventListener('click', () => {
+        try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
+        location.href = '/auth.html?msg=' + encodeURIComponent(S.signin);
+      });
+    }
+
+    function manage(info) {
+      const sub = info.subscription;
+      const used = sub.pdf ? sub.pdf.used : 0, limit = sub.pdf ? sub.pdf.limit : (info.plans[sub.plan] ? info.plans[sub.plan].pdfLimit : info.pdfPerMonth);
+      const pct = Math.min(100, Math.round((used / Math.max(1, limit)) * 100));
+      if (sub.entitled && !sub.cancelRequested) {
+        return '<div class="sub-card"><h2>' + esc(sub.plan === 'year' ? S.activeYear : S.activeTitle) + '</h2><dl class="sub-meta"><dt>' + esc(S.renews) + '</dt><dd>' + esc(fmtDate(sub.periodEnd)) + '</dd>' +
+          '<dt>' + esc(S.pdfs) + '</dt><dd><div class="sub-bar"><i style="width:' + pct + '%"></i></div>' + esc(S.pdfOf.replace('{used}', used).replace('{limit}', limit)) + '</dd></dl>' +
+          '<div class="sub-actions"><a class="btn btn-primary" href="/' + L + '/library">' + esc(S.library) + '</a><a class="btn btn-secondary" href="/' + L + '/experts/transcripts/">' + esc(S.transcripts) + '</a>' +
+          '<button class="sub-link" id="sub-cancel" type="button">' + esc(S.cancelBtn) + '</button></div></div>' + termsLink;
+      }
+      if (sub.entitled) {   // cancelled, but the paid period still runs
+        return '<div class="sub-card"><h2>' + esc(S.endedTitle) + '</h2><dl class="sub-meta"><dt>' + esc(S.until) + '</dt><dd>' + esc(fmtDate(sub.periodEnd)) + '</dd></dl>' +
+          '<div class="sub-actions"><a class="btn btn-primary" href="/' + L + '/library">' + esc(S.library) + '</a></div></div>' + termsLink;
+      }
+      return '';
+    }
+
+    async function render(msg) {
+      const s = await session();
+      let info = null;
+      if (s) { const r = await api(''); if (r.ok) info = r.body; }
+      let html = '<h1>' + esc(S.title) + '</h1><p class="lead">' + esc(S.lead) + '</p>' + (msg ? '<div class="sub-msg' + (msg.err ? ' err' : '') + '">' + esc(msg.text) + '</div>' : '');
+      if (!s) {
+        const pub = await fetch('/api/checkout-status').then((r) => r.json()).catch(() => ({}));
+        const sc = pub.subscription || { enabled: false, price: 149 }, an = pub.annual || { enabled: false, price: 1190 };
+        html += offer({ plans: { month: { enabled: sc.enabled, price: sc.price, pdfLimit: 5 }, year: { enabled: an.enabled, price: an.price, pdfLimit: 60 } } }, false);
+      } else if (!info) {
+        html += '<div class="sub-msg err">' + esc(S.error) + '</div>';
+      } else if (info.subscription && info.subscription.entitled) {
+        html += manage(info);
+      } else {
+        if (info.subscription && info.subscription.status === 'suspended') html += '<div class="sub-msg err">' + esc(S.suspended) + '</div>';
+        else if (info.subscription && (info.subscription.status === 'cancelled' || info.subscription.status === 'expired')) html += '<div class="sub-msg">' + esc(S.endedBody) + '</div>';
+        html += offer(info, true);
+        if (info.subscription && info.subscription.status === 'pending' && !msg) html += '<p class="sub-note">' + esc(S.stillPending) + '</p>';
+      }
+      root.innerHTML = html;
+      wireOffer();
+      const cancel = document.getElementById('sub-cancel');
+      if (cancel) cancel.addEventListener('click', async () => {
+        const date = fmtDate(info.subscription.periodEnd);
+        if (!confirm(S.cancelAsk.replace('{date}', date))) return;
+        cancel.disabled = true;
+        const r = await api('cancel', 'POST');
+        if (r.ok) await render({ text: S.cancelDone.replace('{date}', fmtDate(r.body.periodEnd || info.subscription.periodEnd)) });
+        else { cancel.disabled = false; alert(S.error); }
+      });
+      return info;
+    }
+
+    // Back from PayPal: it may take a few seconds for the subscription to turn active.
+    if (q.get('paypal') === 'success') {
+      root.innerHTML = '<h1>' + esc(S.title) + '</h1><div class="sub-msg">' + esc(S.confirming) + '</div>';
+      let info = null;
+      for (let i = 0; i < 14; i++) {
+        const s = await session();
+        if (!s) break;
+        const r = await api('');
+        info = r.ok ? r.body : null;
+        if (info && info.subscription && info.subscription.entitled) break;
+        await new Promise((res) => setTimeout(res, 3000));
+      }
+      history.replaceState({}, '', location.pathname);
+      await render(info && info.subscription && info.subscription.entitled ? { text: S.confirmed } : null);
+    } else if (q.get('paypal') === 'cancel') {
+      history.replaceState({}, '', location.pathname);
+      await render({ text: S.cancelled });
+    } else {
+      await render(null);
+    }
+  </script>
+</body>
+</html>

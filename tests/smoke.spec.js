@@ -308,6 +308,100 @@ test.describe('public APIs', () => {
     expect((await r.json()).ok).toBe(true);
   });
 
+  // S16: Resend bounce/complaint webhook. Unsigned calls must be refused before anything is stored.
+  test('/api/email-webhook rejects GET and unsigned POST', async ({ request }) => {
+    expect((await request.get('/api/email-webhook')).status()).toBe(405);
+    const r = await request.post('/api/email-webhook', {
+      data: { type: 'email.bounced', data: { to: ['ci@example.com'] } },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(400);
+  });
+
+  // S17: ad attribution export is admin-only; the privacy notice the footer links to must exist in every locale.
+  test('/api/admin-ads-conversions requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-ads-conversions')).status()).toBe(401);
+  });
+
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/privacy loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/privacy`);
+      expect(r.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Privacy');
+    });
+  }
+
+  // S21: the Google Ads Editor file is admin-only.
+  test('/api/admin-ads-campaign requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-ads-campaign')).status()).toBe(401);
+  });
+
+  // S19: terms of sale exist in every locale; checkout is closed by default (config checkout.single_report_enabled).
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/terms loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/terms`);
+      expect(r.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Terms');
+    });
+  }
+
+  // S19 follow-up: transcript checkout + the public "what can be bought" switch.
+  test('/api/checkout-status reports what can be bought', async ({ request }) => {
+    const r = await request.get('/api/checkout-status');
+    expect(r.status()).toBe(200);
+    const b = await r.json();
+    expect(typeof b.report.enabled).toBe('boolean');
+    expect(b.report.price).toBe(49);
+    expect(typeof b.transcript.enabled).toBe('boolean');
+    expect(b.transcript.price).toBe(29);
+  });
+
+  test('/api/transcript-buy answers 405 to GET and refuses create for an unknown transcript', async ({ request }) => {
+    expect((await request.get('/api/transcript-buy')).status()).toBe(405);
+    const r = await request.post('/api/transcript-buy?action=create', { data: { slug: 'no-such-transcript', locale: 'en' } });
+    expect([403, 404]).toContain(r.status());
+  });
+
+  test('/api/transcript-content refuses a reader who is not signed in', async ({ request }) => {
+    expect((await request.get('/api/transcript-content?slug=anything-here')).status()).toBe(401);
+  });
+
+  // S7: the Month subscription.
+  test('/api/subscription needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/subscription')).status()).toBe(401);
+    expect((await request.post('/api/subscription?action=create', { data: { locale: 'en' } })).status()).toBe(401);
+    expect((await request.post('/api/subscription?action=cancel')).status()).toBe(401);
+  });
+
+  test('/api/library-pdf needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/library-pdf?slug=anything-here')).status()).toBe(401);
+  });
+
+  test('/api/library-exhibits needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/library-exhibits?slug=anything-here&format=xlsx')).status()).toBe(401);
+  });
+
+  test('/api/checkout-status includes the Month plan', async ({ request }) => {
+    const b = await (await request.get('/api/checkout-status')).json();
+    expect(typeof b.subscription.enabled).toBe('boolean');
+    expect(b.subscription.price).toBe(149);
+    expect(typeof b.annual.enabled).toBe('boolean');
+    expect(b.annual.price).toBe(1190);
+  });
+
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/subscription loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/subscription`);
+      expect(r.status()).toBe(200);
+      await expect(page).toHaveTitle(/Subscription/);
+    });
+  }
+
+  test('/api/library-buy create is refused while single-report checkout is off', async ({ request }) => {
+    const r = await request.post('/api/library-buy?action=create', { data: { slug: 'no-such-report', locale: 'en' } });
+    expect([403, 404]).toContain(r.status());
+  });
+
   test('/api/topic-search returns an items array; short queries are empty', async ({ request }) => {
     const short = await request.get('/api/topic-search?q=ab');
     expect(short.status()).toBe(200);
@@ -324,6 +418,15 @@ test.describe('public APIs', () => {
     });
     expect(r.status()).toBe(200);
     expect((await r.json()).items).toEqual([]);
+  });
+
+  // S18: a coming-soon topic carries the "ready by" date (eta may be null if it can not be worked out, but the key is there).
+  test('/api/topic returns an eta field for a coming-soon topic', async ({ request }) => {
+    const found = await (await request.get('/api/topic-search?q=indonesia%20ev%20charging')).json();
+    const item = (found.items || [])[0];
+    test.skip(!item, 'no coming-soon topic matched the probe query');
+    const d = await (await request.get('/api/topic?slug=' + encodeURIComponent(item.slug))).json();
+    if (!d.published) expect(d).toHaveProperty('eta');
   });
 
   test('/api/topic 404s for an unknown slug', async ({ request }) => {

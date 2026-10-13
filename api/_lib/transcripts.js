@@ -1,10 +1,12 @@
 // ============================================================
 // KIRA RESEARCH — api/_lib/transcripts.js
-// Shared helpers for the Kira Experts transcript endpoints (migration 037):
+// Shared helpers for the Kira Experts transcript endpoints (migration 044):
 //   /api/transcript-list     published catalog (public)
 //   /api/transcript          one transcript: summary + the free opening (public)
 //   /api/transcript-content  the full text (Bearer JWT, entitled users)
 // ============================================================
+
+import { activeSubscription } from './subscription.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -120,10 +122,18 @@ export async function verifyBearer(req) {
   return u && u.id ? { id: u.id, email: (u.email || '').toLowerCase() } : null;
 }
 
-// Who may read full transcripts. Subscriptions are not live yet (Sprint S7),
-// so for now only the admin team can, to review content. When subscriptions
-// ship, add the active-subscription check here; every endpoint goes through it.
-export function isEntitled(user) {
+// Who may read one full transcript: the admin team (content review), a Month subscriber (every
+// transcript is included), or a reader with a completed purchase of it (transcript_purchases,
+// migration 051). Every endpoint goes through here.
+export async function isEntitled(user, transcriptId) {
+  if (!user) return false;
   const admins = (process.env.ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
-  return !!user && admins.includes(user.email);
+  if (admins.includes(user.email)) return true;
+  if (await activeSubscription(user.id)) return true;
+  if (!transcriptId) return false;
+  const rows = await sb(
+    `transcript_purchases?user_id=eq.${encodeURIComponent(user.id)}&transcript_id=eq.${encodeURIComponent(transcriptId)}` +
+    `&status=eq.completed&select=id&limit=1`
+  );
+  return rows.length > 0;
 }

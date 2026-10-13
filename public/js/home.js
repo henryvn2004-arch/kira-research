@@ -27,6 +27,14 @@
   const CODE = { vietnam: 'VN', thailand: 'TH', indonesia: 'ID', malaysia: 'MY', singapore: 'SG', philippines: 'PH', cambodia: 'KH', laos: 'LA', myanmar: 'MM', brunei: 'BN', japan: 'JP', 'south korea': 'KR', taiwan: 'TW', australia: 'AU', 'new zealand': 'NZ' };
   const svg = p => '<svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
   const reportHref = it => '/' + locale + '/reports/' + encodeURIComponent(it.slug);
+  // A report's cover slide (16:9, title included); the wide art if the API has no slide for it or the image is missing.
+  const slideImg = c => c.slide
+    ? '<img src="' + esc(c.slide) + '" alt="" loading="lazy" decoding="async" width="800" height="450" data-fallback="' + esc(c.wide) + '">'
+    : '<img src="' + esc(c.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">';
+  document.addEventListener('error', e => {
+    const img = e.target;
+    if (img.tagName === 'IMG' && img.dataset.fallback) { const f = img.dataset.fallback; delete img.dataset.fallback; img.src = f; }
+  }, true);
 
   // Headline numbers count up to the live value (no motion if the reader asked for less)
   const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,7 +62,7 @@
 
   function reportCard(it, featured) {
     return '<a class="rcard" href="' + reportHref(it) + '">' +
-      '<div class="img">' + (it.cover ? '<img src="' + esc(it.cover.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">' : '') +
+      '<div class="img' + (it.cover && it.cover.slide ? ' slide' : '') + '">' + (it.cover ? slideImg(it.cover) : '') +
         (featured ? '<span class="home-pill">' + esc(t('newTag')) + '</span>' : '') + '</div>' +
       '<div class="body"><div class="kick"><span>' + esc([R.country(it.country), it.sector ? t('sector_' + it.sector) : it.industry].filter(Boolean).join(' · ')) + '</span>' +
         '<span class="d">' + esc(R.date(it.published_at)) + '</span></div>' +
@@ -114,7 +122,7 @@
       if (fe && ft) fe.innerHTML =
         '<div class="k">' + esc(t('featuredReport')) + '</div>' +
         '<a class="home-ft" href="' + reportHref(ft) + '">' +
-          '<div class="cover-thumb">' + (ft.cover ? '<img src="' + esc(ft.cover.thumb) + '" alt="" loading="lazy" width="360" height="480">' : '') + '</div>' +
+          '<div class="cover-thumb slide">' + (ft.cover ? slideImg(ft.cover) : '') + '</div>' +
           '<div class="kick">' + esc([R.country(ft.country), ft.sector ? t('sector_' + ft.sector) : ''].filter(Boolean).join(' · ')) + '</div>' +
           '<h3>' + esc(ft.title || ft.slug) + '</h3>' + (ft.excerpt ? '<p>' + esc(ft.excerpt) + '</p>' : '') +
           '<span class="r-link">' + esc(t('viewReport')) + ' →</span></a>';

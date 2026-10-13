@@ -5,12 +5,13 @@
 //
 // Usage:
 //   node skills/kira-research-report/scripts/build-publish-sql.mjs --id 2026-vn-coffee-chains \
-//     [--langs "en ja ko zh"] [--chart-page 18] [--price 39] > /tmp/insert.sql
+//     [--langs "en ja ko zh"] [--chart-page 18] [--price 49] > /tmp/insert.sql
 //
 // - title    <- <title> of each locale's HTML
 // - eyebrow  <- naming.eyebrow[locale]
 // - preview  <- lede (hook page kicker + takeaway), 2 paragraphs (hook page cards),
-//               optional chart from --chart-page (a 3-bar exhibit; omitted without it)
+//               optional chart from --chart-page (a 3-bar exhibit; omitted without it),
+//               hook = the cover subtitle of that locale (only when naming.json has a hook)
 // - toc      <- chapter rows of the Contents pages
 // - living_reports fields <- naming.json
 // pdf_url is computed inside the SQL as <report_id>/<locale>.pdf.
@@ -23,7 +24,7 @@ const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ?
 const id = arg('id');
 if (!id) { console.error('usage: build-publish-sql.mjs --id <queue id> [--langs "en ja ko zh"] [--chart-page N]'); process.exit(2); }
 const langs = (arg('langs', 'en ja ko zh')).split(/\s+/).filter(Boolean);
-const price = Number(arg('price', 39));
+const price = Number(arg('price', 49));
 const chartPage = arg('chart-page') ? Number(arg('chart-page')) : null;
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../outputs/batch', id);
 const need = f => { const p = path.join(dir, f); if (!fs.existsSync(p)) { console.error('missing ' + p); process.exit(2); } return fs.readFileSync(p, 'utf8'); };
@@ -97,7 +98,13 @@ function extract(loc) {
     };
   }
   const tight = /^(ja|zh)/.test(loc) ? cjkTight : x => x;
-  return { title, eyebrow: naming.eyebrow[loc], preview: { lede: tight(lede), paragraphs: paragraphs.map(tight), ...(chart ? { chart } : {}) }, toc, pageCount: pages.length };
+  // The one-line hook question is the cover subtitle, so the translators' cover translation is also the hook's.
+  let hookLine = null;
+  if (naming.hook) {
+    hookLine = text((pages[0].match(/<p class="cv-sub">([\s\S]*?)<\/p>/) || [])[1] || '');
+    if (!hookLine) throw new Error(loc + ': naming.json has a hook but the cover has no subtitle (cv-sub)');
+  }
+  return { title, eyebrow: naming.eyebrow[loc], preview: { lede: tight(lede), paragraphs: paragraphs.map(tight), ...(chart ? { chart } : {}), ...(hookLine ? { hook: tight(hookLine) } : {}) }, toc, pageCount: pages.length };
 }
 
 const loc = Object.fromEntries(langs.map(l => [l, extract(l)]));

@@ -16,6 +16,7 @@ export const ENV_CHECKS = [
   ['PAYPAL_MODE',          'critical',  'Checkout: must read "live" in production', true],
   ['RESEND_API_KEY',       'critical',  'Purchase receipts, lead alerts, "report is ready" emails'],
   ['PDF_RENDER_SECRET',    'critical',  'PDF rendering for every report'],
+  ['RESEND_WEBHOOK_SECRET','important', 'Bounce and spam-complaint tracking for our emails (/api/email-webhook)'],
   ['CRON_SECRET',          'important', 'Locks the daily notification cron against outside callers'],
   ['ANTHROPIC_API_KEY',    'important', 'Search: files product searches under an industry; Studio'],
   ['APP_URL',              'important', 'Links inside emails (falls back to kiraresearch.com)'],

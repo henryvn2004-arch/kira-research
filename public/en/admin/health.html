@@ -105,11 +105,51 @@
     const ago = (h) => h == null ? 'never' : h < 1 ? 'under an hour ago' : h < 48 ? h + ' h ago' : Math.round(h / 24) + ' d ago';
     const PILL = { ok: ['ok', 'Running'], idle: ['', 'Idle'], late: ['bad', 'Late'], failed: ['bad', 'Failed'], never_run: ['warn', 'Never ran'] };
 
+    // Email deliverability: Resend tells us (webhook) what happened to each email. Healthy = almost all delivered, no complaints.
+    // Requested reports not published by the date promised to the first reader (S18).
+    function promiseCard(p) {
+      const head = '<h2 class="hl-sec">Promised dates</h2>';
+      if (!p) return head + '<div class="hl-card"><div><b>Could not read</b><div class="hl-sub">The promised-date check needs migration 049.</div></div><span class="hl-pill warn">Check</span></div>';
+      if (!p.count) return head + '<div class="hl-card"><div><b>Every requested report is on time</b><div class="hl-sub">A report asked for by email is promised a date on its page (default 3 days).</div></div><span class="hl-pill ok">On time</span></div>';
+      return head + `<div class="hl-card"><div><b>${p.count} requested report${p.count > 1 ? 's' : ''} past the promised date</b>
+        <div class="hl-sub">${p.items.map(i => esc(i.title) + ' (promised ' + new Date(i.promise_at).toLocaleDateString() + ')').join(' · ')}</div>
+        <div class="hl-sub">Raise the runner's fires (Routine "Kira Report Generator"), then raise "reports per day" in Settings, or look at the Pipeline page for stuck rows.</div></div>
+        <span class="hl-pill bad">Late</span></div>`;
+    }
+    // Month and Annual subscriptions (S7): who pays now, and anything that needs a look.
+    function subscriptionCard(s) {
+      const head = '<h2 class="hl-sec">Subscriptions (Month and Annual)</h2>';
+      if (!s) return head + '<div class="hl-card"><div><b>Could not read</b><div class="hl-sub">The subscription tables need migration 052.</div></div><span class="hl-pill warn">Check</span></div>';
+      const note = (s.suspended || s.stuck_pending) ? ((s.suspended ? s.suspended + ' on hold after a failed payment. ' : '') + (s.stuck_pending ? s.stuck_pending + ' approved at PayPal but not confirmed for over an hour.' : '')) : 'Renewals are checked with PayPal whenever a subscriber or an entitlement check looks.';
+      return head + `<div class="hl-card"><div><b>${s.active} active subscriber${s.active === 1 ? '' : 's'}</b>
+        <div class="hl-sub">${s.active_year || 0} of them on Annual. ${s.cancelling} cancelled but still inside the paid period. ${esc(note)}</div></div>
+        <span class="hl-pill ${(s.suspended || s.stuck_pending) ? 'warn' : 'ok'}">${(s.suspended || s.stuck_pending) ? 'Look' : 'Fine'}</span></div>`;
+    }
+    function mailBad(m) {
+      if (!m) return false;
+      const total = m.delivered + m.bounced + m.complained;
+      return m.complained > 0 || (total > 0 && (m.bounced + m.complained) / total > 0.05);
+    }
+    function mailCard(m) {
+      const head = '<h2 class="hl-sec">Email deliverability<small>last 30 days</small></h2>';
+      if (!m || (!m.delivered && !m.bounced && !m.complained && !m.delayed)) {
+        return head + `<div class="hl-card"><div><b>No email events yet</b>
+          <div class="hl-sub">${m && m.webhook_secret_set ? 'The webhook is set up; events appear after the first email is sent.' : 'Not connected: add the Resend webhook (Resend → Webhooks → https://kiraresearch.com/api/email-webhook) and put its signing secret in Vercel as RESEND_WEBHOOK_SECRET.'}</div></div>
+          <span class="hl-pill warn">Not tracked</span></div>`;
+      }
+      const total = m.delivered + m.bounced + m.complained;
+      const badRate = total ? (m.bounced + m.complained) / total : 0;
+      const bad = mailBad(m);
+      return head + `<div class="hl-card"><div><b>${m.delivered} delivered · ${m.bounced} bounced · ${m.complained} marked as spam</b>
+        <div class="hl-sub">${m.delayed} delayed · ${m.suppressed} address(es) will no longer be emailed (hard bounce or spam complaint)${total ? ' · ' + Math.round(badRate * 100) + '% problem rate' : ''}</div></div>
+        <span class="hl-pill ${bad ? 'bad' : 'ok'}">${bad ? 'Check' : 'Healthy'}</span></div>`;
+    }
+
     function render(d) {
       const missingCritical = d.env.filter(e => e.level === 'critical' && !e.set);
       const missingImportant = d.env.filter(e => e.level === 'important' && !e.set);
       const modeBad = d.env.find(e => e.name === 'PAYPAL_MODE' && e.set && e.value !== 'live');
-      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1);
+      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1) + (mailBad(d.info.email) ? 1 : 0) + ((d.info.late_promises && d.info.late_promises.count) ? 1 : 0);
 
       root.innerHTML = `
         <div class="hl-head"><h1>Health</h1>
@@ -119,6 +159,10 @@
         <div class="hl-card"><div><b>Database</b><div class="hl-sub">${d.db.ok ? 'Reachable, answered in ' + d.db.latency_ms + ' ms' : esc(d.db.error)}</div></div>
           <span class="hl-pill ${d.db.ok ? 'ok' : 'bad'}">${d.db.ok ? 'OK' : 'Down'}</span></div>
         <div class="hl-card"><div><b>Last completed purchase</b><div class="hl-sub">${d.info.last_purchase_at ? new Date(d.info.last_purchase_at).toLocaleString() : 'No purchase yet'}</div></div></div>
+
+        ${promiseCard(d.info.late_promises)}
+        ${subscriptionCard(d.info.subscriptions)}
+        ${mailCard(d.info.email)}
 
         <h2 class="hl-sec">Scheduled jobs</h2>
         ${d.jobs.map(j => { const p = PILL[j.status] || ['', j.status]; return `

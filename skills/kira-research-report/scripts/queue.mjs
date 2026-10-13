@@ -6,7 +6,8 @@
 // Supabase tables `report_queue` + `report_queue_events` (migration 031).
 //
 //   queue.mjs recover                        revert stale *_in_progress claims          → recovered=<N>
-//   queue.mjs sync-topics                    approved topics → pending rows; priority = demand, then planner score;
+//   queue.mjs sync-topics                    approved topics → pending rows; priority = requested band (readers who asked by
+//                                            email, first asked first, api/_lib/queue-band.js), else demand, then planner score;
 //                                            pending rows refreshed, rows of merged topics parked → added=<N>
 //   queue.mjs next [--model <m>] [--id <id>] pick the most-advanced row and CLAIM it    → one JSON line, or "none"
 //                                            (--id: only that row, to chain its next stage in the same fire)
@@ -18,7 +19,8 @@
 // fires can never claim the same row. Needs SUPABASE_URL + SUPABASE_SERVICE_KEY.
 // ---------------------------------------------------------------
 import fs from 'fs';
-import { getConfig } from '../../../api/_lib/config.js';   // owner settings (/en/admin/config); defaults apply if unreachable
+import { getConfig } from '../../../api/_lib/config.js';
+import { requestedPriority } from '../../../api/_lib/queue-band.js';   // owner settings (/en/admin/config); defaults apply if unreachable
 
 const URL = process.env.SUPABASE_URL;
 const KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -77,8 +79,13 @@ async function syncTopics() {
   const approved = await sb('topics?status=eq.approved&select=id,slug,country_code,industry_id,year,title,priority_score&order=decided_at.asc&limit=1000');
   const industries = await sb('tax_industries?select=id,name,parent_id&limit=5000');
   const demand = new Map();
+  const firstAsked = new Map();     // slug -> when a reader first asked for it by email
   try {
-    const reqs = await sb('topic_requests?select=topic:topics(slug)&topic_id=not.is.null&limit=10000');
+    const reqs = await sb('topic_requests?select=created_at,topic:topics(slug)&topic_id=not.is.null&limit=10000');
+    for (const r of reqs) {
+      const sl = r.topic && r.topic.slug;
+      if (sl && (!firstAsked.has(sl) || r.created_at < firstAsked.get(sl))) firstAsked.set(sl, r.created_at);
+    }
     const wReq = await getConfig('topics.demand_weight_request'), wSearch = await getConfig('topics.demand_weight_search');
     for (const r of reqs) if (r.topic && r.topic.slug) demand.set(r.topic.slug, (demand.get(r.topic.slug) || 0) + wReq);
     const searched = await sb('topics?select=slug,search_count&search_count=gt.0&limit=10000');
@@ -87,9 +94,12 @@ async function syncTopics() {
   // The report-name vocabulary knows level-1 industries only: a level-2 segment is written under its parent.
   const indById = new Map(industries.map(i => [i.id, i]));
   const indName = new Map(industries.map(i => [i.id, (indById.get(i.parent_id) || i).name]));
-  // Priority = reader demand first, then the planner's priority_score (0-100) as tiebreak.
+  // Priority: a topic a reader asked for by email goes to the requested band (first asked, first made, so the
+  // date promised to each reader holds); everything else = search demand first, then the planner's priority_score.
   const score = new Map(approved.map(t => [t.slug, t.priority_score || 0]));
-  const prio = (slug) => Math.round((demand.get(slug) || 0) * 100) + (score.get(slug) || 0);
+  const prio = (slug) => firstAsked.has(slug)
+    ? requestedPriority(firstAsked.get(slug))
+    : Math.round((demand.get(slug) || 0) * 100) + (score.get(slug) || 0);
   const existing = new Set((await sb('report_queue?select=id&limit=100000')).map(r => r.id));
   const fresh = approved.filter(t => !existing.has(t.slug)).map(t => ({
     id: t.slug, topic: t.title, country: t.country_code, industry: indName.get(t.industry_id) || '', year: t.year,

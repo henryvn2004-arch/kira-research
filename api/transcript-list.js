@@ -2,7 +2,7 @@
 // KIRA RESEARCH — api/transcript-list.js
 //   GET /api/transcript-list?locale=en
 //   → { items: [{ slug, interview_type, market, industry, expert_group, format, published,
-//                 title, blurb, expert, expert_type, as_of, length, companies }] }
+//                 title, blurb, expert, expert_type, as_of, length, companies, thumb }] }
 // Published transcripts only; each item in the requested locale, else EN.
 // ============================================================
 import { sb, pickLocale } from './_lib/transcripts.js';
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   try {
     const bases = await sb(
       'expert_transcripts?status=eq.published&order=published_at.desc' +
-      '&select=id,slug,interview_type,market,industry,expert_group,format,published_at'
+      '&select=id,slug,interview_type,market,industry,expert_group,format,published_at,thumb_url'
     );
     const ids = bases.map((b) => b.id);
     const trs = ids.length ? await sb(
@@ -29,6 +29,7 @@ export default async function handler(req, res) {
         expert_group: b.expert_group, format: b.format, published: b.published_at,
         title: tr.title, blurb: tr.blurb, expert: tr.expert_role, expert_type: tr.expert_type,
         as_of: tr.as_of, length: tr.length_label, companies: tr.companies || [], locale: tr.locale,
+        thumb: b.thumb_url || null,
       };
     }).filter(Boolean);
     res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');

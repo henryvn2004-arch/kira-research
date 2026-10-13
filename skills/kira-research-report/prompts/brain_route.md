@@ -13,7 +13,7 @@ The BRAIN route turns a topic into a **buyer question**, lets the KIRA brain pic
 Input: Stage 1 topic JSON + the queue row (`id`, `topic`, `country`, `industry`, `year`).
 
 0. Fetch the owner-approved topic brief (a planner output the owner reviewed): `node skills/kira-research-report/scripts/fetch-topic-brief.mjs "<id>" > "<scratch>/topic_brief.json"`. If the file is non-empty, read it. An empty file means no brief: continue with step 1.
-   - A topic is **one market segment in one country seen through one lens**, not a single narrow question. `segment` is the scope; keep the whole segment in view.
+   - A topic is **one market segment in one country seen through one standard analysis** (`analysis`: market overview, competitive landscape, customer insight analysis, distribution analysis, market entry strategy, regulatory landscape, ...), not a single narrow question. `segment` is the scope; keep the whole segment in view.
    - `lens` (when present) is the primary `question_types` value: use it as-is, so the brain's full storyline for that question type is the spine.
    - `buyer_question` is the decision the report answers. `guiding_questions` (4-6) are the chapters the report must cover (put them in `framing.json` as `guiding_questions`); they set coverage, they do not narrow the scope.
    - `must_cover` lists triggers (deals, rules, dates, named players) that must appear as evidence inside the relevant chapters. They are never the frame of the whole report. Facts marked VERIFY must be checked in Stage 4 before use.
@@ -74,15 +74,15 @@ The anti-padding rule is the only cut: a page with no new data-backed claim is d
 Follow `docs/naming_convention.md`. Pick from the framing:
 - **Stage:** `XPL` when the question is whether the market is worth a look (size, growth, structure). `ENT` when it is how to get in (entry mode, partner, channel, pricing, go/no-go). `XPN` when the buyer already operates there.
 - **Segment:** the 1–4 word noun a buyer would type (`coffee chains`, `cold chain`).
-- **Angle:** in ≤ 60 characters. Prefer a question the report answers, in the owner's hook style (`How to win…?`, `Where to play…?`, `How to enter…?`, `How to expand…?`, `What are the key impacts of…?`); start from the approved brief's title when there is one. A statement (the working answer or tension) is allowed when a question would not fit.
+- **Angle:** when the brief has an `analysis`, the angle is that analysis name as written (`market overview`, `competitive landscape`, `distribution analysis`, ...), so the title reads `Vietnam coffee chains 2026: market overview`; keep it through Stage 5. Without one: ≤ 60 characters, preferably a question the report answers, in the owner's hook style (`How to win…?`, `Where to play…?`, `How to enter…?`, `How to expand…?`, `What are the key impacts of…?`). A statement (the working answer or tension) is allowed when a question would not fit.
 
-Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen the angle once the evidence is in; rerun the script if it does.
+Run `node scripts/report-name.mjs --country … --industry … --stage … --type D --year … --segment … --angle … [--hook "<brief.hook>"] --keywords "<synonyms and local-language terms from the pack glossary>" --out outputs/batch/<id>/naming.json`. When the topic brief has a `hook` (the one-line question under the title), pass it as `--hook` exactly as written; it is never part of the title or angle. Fix any rule it reports and run it again. Copy the result into `section_plan.json` as `naming`. Stage 5 may sharpen a free-written angle once the evidence is in (never an analysis name); rerun the script if it does.
 
 ### 4. Fixed pages
 
 | Position | Page | Page type |
 |---|---|---|
-| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = the buyer question (≤110 chars). |
+| Opening | Cover | `cover_<layout>` with the generated illustration (render_and_output Step 1b; layout from gen-cover's JSON). Title lines and report kind from `naming.json`; subtitle = `naming.hook` when it has one, else the buyer question (≤110 chars). |
 | Opening | Methodology | `methodology_inline` |
 | Opening | Contents | `toc`. Chapters plus page titles; may run to 2–3 pages. |
 | Executive summary, page 1 | The hook | `exhibit_page`, layout `layout-main-side` (exhibit or `big_number` + commentary with the 3 reasons) or `layout-hero` (big number + chart, reasons in the takeaway and on page 2). Title = the answer (go / no-go / conditional + the one-line reason). Kicker = the tension. |
@@ -131,6 +131,17 @@ The last chapter lists the companies in the industry, grouped by value-chain sta
 - **Rules:** every player carries a source; no person names; no company that cannot be found in a source; leave a field out rather than guess it. The chapter makes no claims about market share beyond what the body supports.
 - Write `outputs/batch/<id>/players.json` (format in the header of `scripts/render-players.mjs`), run `node scripts/render-players.mjs --id <id> --check` until it passes, then `node scripts/render-players.mjs --id <id> --section <NN>` and place the pages it prints before the methodology endnote. The page walk fills `{{PAGE_NUM}}` / `{{TOTAL_PAGES}}`. Set `title` to an action title (e.g. "Who's who: 48 players, and the importers hold the keys") and `as_of` to the month of the research.
 
+### Exhibit data (owner, 2026-10-12, S12)
+
+Readers who own a report can download the numbers behind its exhibits as Excel and PowerPoint, so every exhibit you draw also goes into `outputs/batch/<id>/exhibits.json` (format in the header of `api/_lib/exhibits.js`).
+
+- **One entry per exhibit** on the page, in page order: `page` (the number in the page counter), `title` (copied exactly from the `.exhibit-title` text), `subtitle` and `source` (the `.exhibit-sub` and `.exhibit-note` text), `chart`, `columns`, `rows`.
+- **Same numbers as the picture.** Each value is the one printed on the exhibit or used to draw it, in the unit the exhibit states. Never invent a value to fill a table.
+- **`chart`:** `bar` (horizontal ranking), `column` (vertical, by period), `stacked`, `line`, `pie` (one value column), or `none` for tables and anything that is not a plain series. First column = labels; with a chart, every other column holds numbers (`null` for a gap). With `none`, cells may be text. Forecast or estimate years keep their label ("2030F", "Dec 2026 (plan)").
+- **Tables** (`comparison_table` and the like): `chart: "none"`, the printed header as `columns`, the printed rows as `rows`.
+- **No clean table** (a flow, a driver tree you cannot reduce to rows, a bubble matrix, a tile map): list it under `skipped` with a one-line `reason`. Drivers and bridges usually do reduce to a short table (step / value / how it is built).
+- Run `node scripts/check-exhibits.mjs --id <id>` until it exits 0: it fails on a malformed entry, on an exhibit printed in `en.html` that is neither listed nor skipped, and on a title that is not printed.
+
 ### Query strategy
 
 Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English queries, bucketed by section. Local-language queries follow topic_parser's `local_search_priority` (this rule wins over the brain's own "always search locally" line): for tier-1 / tier-2 markets, use the pack's **industry glossary** (`vi` / `ja` / `ko` / `zh` practitioner terms) on top of `references/local_lang_query_glossary.md`; for `skip` markets (English-dominant, e.g. SG, PH), add only 2–4 queries with local trade slang where it finds data English misses (e.g. Filipino retail terms for mark-ups or store types). If the buyer is an incumbent, add the baseline queries (its filings, local subsidiaries) first.
@@ -155,6 +166,7 @@ Fill `query_strategy_designed` from the evidence plan (Step B): 20–30 English 
 - [ ] Conditions, risks, path (and options when alternatives exist) are present
 - [ ] No brain-internal names anywhere in `section_plan.json` titles or briefs
 - [ ] `naming.json` written by `scripts/report-name.mjs` (exit 0) and copied into `section_plan.json`
+- [ ] The plan tells the writer to produce `exhibits.json` (one entry per exhibit, `check-exhibits.mjs` exit 0)
 - [ ] The "Who's who" chapter is in the plan, and the query strategy has company-discovery queries in the local language
 
 Return `section_plan.json`.
