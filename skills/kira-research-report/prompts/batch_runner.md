@@ -443,6 +443,19 @@ done
 
 Expects HTTP 200 + `{"Key": "reports-html/<report_id>/<locale>.html", "Id": "<uuid>"}`. Any non-200 → bail to failure path.
 
+**5.3b-2b — Render the cover slide per locale (library list, home cards, link previews).**
+
+The library list, the home cards and the link preview (og:image, served to Facebook/LinkedIn/X/Slack bots by `api/report-og.js`) show each report's cover slide (page 1: logo, title, subtitle, year), not the bare illustration. `upload-cover-slide.mjs` renders page 1 of each locale's HTML with Chromium (Playwright, as `render-local.mjs`) and writes `covers/reports/<slug>-slide-<locale>.jpg` (800×450) and `<slug>-og-<locale>.jpg` (1200×630). No DB column: `api/_lib/cover.js` derives both URLs from `cover_url`.
+
+```bash
+for loc in ${PUBLISH_LANGS}; do
+  node skills/kira-research-report/scripts/upload-cover-slide.mjs --slug "<slug>" --locale "$loc" \
+    --html "skills/kira-research-report/outputs/batch/${id}/${loc}.html"
+done
+```
+
+Prints one JSON line per locale; `"ok": true` expected. NOT fatal (the list falls back to the wide illustration): note any failure in the fire summary and continue. Chromium missing → set `PW_CHROMIUM_PATH` to a chromium build. Older reports, or a re-run for one report: `node skills/kira-research-report/scripts/upload-cover-slide.mjs --backfill [--slug <slug>]` renders every published translation from its preview HTML.
+
 **5.3b-3 — Upload the cover image (library thumbnail + report page).**
 
 The library list and the report page show the cover illustration from the public `covers` bucket (migration 026). `upload-cover.mjs` writes the full image, a portrait thumbnail and a wide crop, sets `living_reports.cover_url` / `cover_thumb_url`, and gives the same cover to insights linked to this report:
@@ -587,7 +600,7 @@ RETURNING report_id, locale, title;
 
 Zero rows returned → the report id does not exist → failure path (`zh backfill: report not found`). Eyebrow: `naming.eyebrow.zh` when `naming.json` exists; otherwise build `<country> · <industry> · <report kind>` from the `zh` labels in `references/naming_vocab.json`, matching the EN eyebrow of the published `en` row.
 
-**b — Upload** `zh.pdf` and the zh preview: the 5.3b / 5.3b-2 loops with `PUBLISH_LANGS="zh"`.
+**b — Upload** `zh.pdf`, the zh preview and the zh cover slide: the 5.3b / 5.3b-2 / 5.3b-2b loops with `PUBLISH_LANGS="zh"`.
 
 **c — Verify**: 5.3c curls 2 + 3 with `loc=zh` only (`/zh/reports/<slug>` and `preview-html?…&locale=zh` → 200).
 

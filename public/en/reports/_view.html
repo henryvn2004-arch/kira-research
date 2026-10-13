@@ -768,8 +768,10 @@
       const tabs = [['overview', 'tabOverview'], dataBlock ? ['data', 'tabFindings'] : null, owns ? null : ['preview', 'tabPreview'],
         (d.toc && d.toc.length) ? ['contents', 'tabContents'] : null, continueHtml ? ['related', 'tabRelated'] : null].filter(Boolean);
 
+      // Aside cover = the report's cover slide (page 1 of the preview HTML, see wireCover); the art is the fallback.
       const cover = d.cover
-        ? '<div class="rd-cover"><img src="' + escapeHtml(d.cover.full) + '" alt="" width="1536" height="1024" decoding="async" fetchpriority="high"></div>'
+        ? '<div class="rd-cover"><img src="' + escapeHtml(d.cover.full) + '" alt="" width="1536" height="1024" decoding="async" fetchpriority="high">' +
+          '<iframe src="/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(locale) + '" aria-hidden="true" tabindex="-1" scrolling="no" loading="lazy" referrerpolicy="same-origin" width="' + PREVIEW_PAGE_W + '" height="' + PREVIEW_PAGE_H + '"></iframe></div>'
         : '';
       const pageUrl = 'https://kiraresearch.com/' + locale + '/reports/' + encodeURIComponent(d.slug);
       const citation = 'KIRA Research, \u201C' + (d.title || d.slug) + '\u201D, ' + R.date(d.last_refresh || d.published_at) + '. ' + pageUrl;
@@ -895,9 +897,32 @@
 
       wireUnlockModal(d, purchaseState);
       wireTabs();
+      wireCover();
       wirePreview();
       fitPreviewFrame();
       window.addEventListener('resize', fitPreviewFrame);
+    }
+
+    // Scale the cover slide (first page of the preview document, same origin) to the aside column.
+    // No preview document (or blocked): the art stays.
+    function wireCover() {
+      const box = document.querySelector('.rd-cover');
+      const iframe = box && box.querySelector('iframe');
+      if (!iframe) return;
+      let top = 0;
+      const fit = () => { iframe.style.transform = 'scale(' + (box.getBoundingClientRect().width / PREVIEW_PAGE_W) + ') translateY(' + (-top) + 'px)'; };
+      iframe.addEventListener('load', () => {
+        try {
+          const doc = iframe.contentDocument;
+          const page = doc.querySelector('.page');
+          if (!page) return;
+          top = page.getBoundingClientRect().top + doc.defaultView.scrollY;   // templates pad the body, so the page does not start at 0
+          iframe.height = String(Math.ceil(top) + PREVIEW_PAGE_H);
+          fit();
+          box.classList.add('slide');
+        } catch (_) { /* cross-origin or blocked: keep the art */ }
+      });
+      window.addEventListener('resize', fit);
     }
 
     // Tabs + rail highlight the section in view; rail clicks scroll.

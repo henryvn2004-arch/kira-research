@@ -168,7 +168,7 @@ export default async function handler(req, res) {
         stage:    r.stage || null,
         type:     r.report_type || null,
         published_at: r.published_at || null,
-        cover:    coverUrls(r),
+        cover:    coverUrls(r, t ? t.locale : 'en'),
         title:    (t && t.title) || null,
         hook:     hook,
         excerpt:  (lede ? String(lede).slice(0, 240) : null),
