@@ -144,7 +144,7 @@ export default async function handler(req, res) {
           year:     r.year,
           price:    r.price,
           pages:    r.pages || null,
-          cover:    coverUrls(r),
+          cover:    coverUrls(r, (t && t.locale) || 'en'),
           title:    (t && t.title) || null,
           excerpt:  lede ? String(lede).slice(0, 180) : null
         };

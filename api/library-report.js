@@ -237,7 +237,7 @@ export default async function handler(req, res) {
             price:    r.price || REPORT_PRICE_DEFAULT,
             title:    t.title,
             eyebrow:  t.eyebrow,
-            cover:    coverUrls(r),
+            cover:    coverUrls(r, t.locale),
             locale:   t.locale
           };
         }).filter(Boolean);
