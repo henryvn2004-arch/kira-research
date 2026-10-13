@@ -1,7 +1,8 @@
 // Homepage (all locales). Needs /js/research-i18n.js first.
 // Everything shown is live: report and insight cards, counts per sector and
 // per market and the featured report all come from the library and insights
-// APIs. Nothing is invented while loading: numbers stay
+// APIs. Counts include coming-soon topics (as the library does); cards are
+// published reports only. Nothing is invented while loading: numbers stay
 // "—" until the data arrives.
 (function () {
   const R = window.kiraR, t = R.t, esc = R.esc, ic = R.icon, locale = R.locale;
@@ -75,10 +76,12 @@
 
   async function loadReports() {
     try {
-      const r = await fetch('/api/library-list?locale=' + locale + '&limit=24&sort=recent');
+      // status=all: counts (total, sectors, markets) cover published reports and coming-soon topics,
+      // the same numbers the library shows. Cards below stay published-only.
+      const r = await fetch('/api/library-list?locale=' + locale + '&limit=24&sort=recent&status=all');
       const d = await r.json();
-      const items = d.items || [], f = d.facets || {};
-      const total = f.totalPublished != null ? f.totalPublished : d.total;
+      const items = (d.items || []).filter(i => !i.soon), f = d.facets || {};
+      const total = f.totalPublished != null ? f.totalPublished + (f.totalSoon || 0) : d.total;
       setStat('reports', total);
       const withCover = items.filter(i => i.cover);
 

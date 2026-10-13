@@ -448,7 +448,7 @@ test.describe('public APIs', () => {
   test('/api/library-list: default is published only; status=all appends coming-soon topics', async ({ request }) => {
     const d = await (await request.get('/api/library-list?limit=3')).json();
     expect(d.items.every((i) => !i.soon)).toBe(true);
-    expect(d.facets.totalSoon).toBeUndefined();   // home and live-counts rely on the published-only default
+    expect(d.facets.totalSoon).toBeUndefined();   // the insights page relies on the published-only default
     const a = await (await request.get('/api/library-list?status=all&limit=3')).json();
     expect(a.total).toBeGreaterThanOrEqual(d.total);
     expect(a.facets.totalPublished).toBe(d.total);
@@ -999,9 +999,10 @@ test.describe('library and insights pages', () => {
   });
 
   test('homepage headline numbers come from the live library', async ({ page, request }) => {
-    const body = await (await request.get('/api/library-list?locale=en&limit=24&sort=recent')).json();
+    // published reports + coming-soon topics, as the library counts them
+    const body = await (await request.get('/api/library-list?locale=en&limit=24&sort=recent&status=all')).json();
     await page.goto('/en/');
-    await expect(page.locator('[data-stat="reports"]')).toHaveText(String(body.facets.totalPublished), { timeout: 10000 });
+    await expect(page.locator('[data-stat="reports"]')).toHaveText(String(body.facets.totalPublished + (body.facets.totalSoon || 0)), { timeout: 10000 });
   });
 
   test('homepage use-case slider renders in every locale', async ({ page }) => {
