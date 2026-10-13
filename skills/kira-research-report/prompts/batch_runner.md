@@ -443,9 +443,9 @@ done
 
 Expects HTTP 200 + `{"Key": "reports-html/<report_id>/<locale>.html", "Id": "<uuid>"}`. Any non-200 → bail to failure path.
 
-**5.3b-2b — Render the cover slide per locale (library list thumbnail).**
+**5.3b-2b — Render the cover slide per locale (library list, home cards, link previews).**
 
-The library list shows each report's cover slide (page 1: logo, title, subtitle, year), not the bare illustration. `upload-cover-slide.mjs` renders page 1 of each locale's HTML with Chromium (Playwright, as `render-local.mjs`) and writes `covers/reports/<slug>-slide-<locale>.jpg` (800×450). No DB column: `api/_lib/cover.js` derives the URL from `cover_url`.
+The library list, the home cards and the link preview (og:image, served to Facebook/LinkedIn/X/Slack bots by `api/report-og.js`) show each report's cover slide (page 1: logo, title, subtitle, year), not the bare illustration. `upload-cover-slide.mjs` renders page 1 of each locale's HTML with Chromium (Playwright, as `render-local.mjs`) and writes `covers/reports/<slug>-slide-<locale>.jpg` (800×450) and `<slug>-og-<locale>.jpg` (1200×630). No DB column: `api/_lib/cover.js` derives both URLs from `cover_url`.
 
 ```bash
 for loc in ${PUBLISH_LANGS}; do

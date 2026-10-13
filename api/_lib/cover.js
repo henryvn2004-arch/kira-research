@@ -2,8 +2,10 @@
 // cover_url points at <slug>.jpg?v=..; the 800x500 crop sits next to it as
 // <slug>-wide.jpg with the same version; <slug>-sm.jpg (228x304) is the small
 // list thumbnail. With a locale, slide is the rendered cover slide (title and all,
-// 800x450) as <slug>-slide-<locale>.jpg, written by upload-cover-slide.mjs; it may
-// be missing, so the list falls back to wide. Returns null when there is no cover.
+// 800x450) as <slug>-slide-<locale>.jpg and og is the 1200x630 link-preview version
+// (<slug>-og-<locale>.jpg), both written by upload-cover-slide.mjs; they may be
+// missing, so callers fall back (list: wide, link preview: full). Returns null when
+// there is no cover.
 export function coverUrls(row, locale) {
   if (!row || !row.cover_url) return null;
   const urls = {
@@ -12,6 +14,9 @@ export function coverUrls(row, locale) {
     sm:    (row.cover_thumb_url || '').replace(/-thumb\.jpg(\?|$)/, '-sm.jpg$1') || row.cover_url,
     wide:  row.cover_url.replace(/\.jpg(\?|$)/, '-wide.jpg$1')
   };
-  if (locale) urls.slide = row.cover_url.replace(/\.jpg(\?|$)/, `-slide-${locale}.jpg$1`);
+  if (locale) {
+    urls.slide = row.cover_url.replace(/\.jpg(\?|$)/, `-slide-${locale}.jpg$1`);
+    urls.og    = row.cover_url.replace(/\.jpg(\?|$)/, `-og-${locale}.jpg$1`);
+  }
   return urls;
 }
