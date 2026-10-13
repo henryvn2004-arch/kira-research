@@ -77,6 +77,16 @@ function removeDiv(html, cls) {
   return html;
 }
 
+// Scan instead of one regex pass: removing a comment can join the pieces around it into a new one,
+// and the loop only ends when no comment opener is left (an unclosed one drops the rest).
+function stripComments(html) {
+  for (let i; (i = html.indexOf('<!--')) >= 0;) {
+    const j = html.indexOf('-->', i + 2);
+    html = html.slice(0, i) + (j < 0 ? '' : html.slice(j + 3));
+  }
+  return html;
+}
+
 const ENT = { nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", mdash: '—', ndash: '–', hellip: '…' };
 const text = h => h
   .replace(/<[^>]+>/g, ' ')
@@ -98,8 +108,8 @@ function prefixClasses(html) {
 function buildPage(page, first) {
   let h = pageInner(page);
   if (h == null) throw new Error('page has no .page-inner');
-  h = h.replace(/<!--[\s\S]*?-->/g, '');
-  const tag = text(grab(h, /<div\s+class="page-section-tag"[^>]*>([\s\S]*?)<\/div>/) || '');
+  h = stripComments(h);
+  const tag =text(grab(h, /<div\s+class="page-section-tag"[^>]*>([\s\S]*?)<\/div>/) || '');
   const h1 = text(grab(h, /<h1\s+class="page-h1"[^>]*>([\s\S]*?)<\/h1>/) || '');
   const sub = grab(h, /<p\s+class="page-subhead"[^>]*>([\s\S]*?)<\/p>/);
   h = removeDiv(removeDiv(h, 'page-header'), 'page-footer');
