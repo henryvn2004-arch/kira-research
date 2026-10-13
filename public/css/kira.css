@@ -1810,6 +1810,27 @@ button.toc-item.preview-scroll:focus-visible {
 .article-body svg .label-data    { font-family: 'JetBrains Mono', monospace; font-size: 12px; fill: var(--text); font-weight: 700; }
 .article-body svg .label-small   { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--muted); }
 
+/* ── Report pages inside an insight (scripts/extract-insight-pages.mjs) ─────
+   The script copies whole report pages and prefixes their classes with kp-.
+   Slides are 1280x720 in the report; here they reflow into the article column. */
+.article-body .kp-page { margin: 0 0 48px; }
+.article-body .kp-page-subhead { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0 0 22px; }
+.article-body .kp-exec-callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 8px; }
+.article-body .kp-callout { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+.article-body .kp-callout .kp-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-dim); }
+.article-body .kp-callout .kp-num { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1; letter-spacing: -0.02em; color: var(--text); margin: 8px 0 4px; }
+.article-body .kp-callout .kp-unit { font-size: 14px; font-weight: 600; color: var(--muted); margin-left: 4px; }
+.article-body .kp-callout .kp-change { font-size: 13px; line-height: 1.4; color: var(--muted); }
+.article-body .kp-callout .kp-source-tag { margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--primary); }
+.article-body .kp-exec-chart { border: 1px solid var(--border); border-radius: 12px; padding: 18px 18px 14px; margin: 28px 0 0; }
+.article-body .kp-chart-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.article-body .kp-chart-title { font-weight: 600; font-size: 16px; color: var(--text); }
+.article-body .kp-chart-subtitle { font-size: 13px; color: var(--muted); }
+.article-body .kp-chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--muted-dim); white-space: nowrap; }
+.article-body .kp-chart-body-flex svg { margin: 12px 0 6px; }
+.article-body .kp-chart-source { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: var(--muted-dim); }
+.article-body .kp-source-key { margin-top: 18px; font-size: 12.5px; line-height: 1.6; color: var(--muted-dim); }
+
 /* ── kira-data-table — HTML comparison tables in insight articles ─────────
    Used by: insight data-table articles (4th insight per report, Phase Q.6)
             and report preview_tables blocks on report pages.
