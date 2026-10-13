@@ -471,7 +471,9 @@
       '</div>';
     }
 
-    function cardImg(cover) {
+    // slide: a report card shows the report's cover slide (16:9, title included) when there is one; insight cards keep their art.
+    function cardImg(cover, slide) {
+      if (slide && cover && cover.slide) return '<div class="img slide">' + R.slideImg(cover) + '</div>';
       return '<div class="img">' + (cover ? '<img src="' + escapeHtml(cover.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">' : '') + '</div>';
     }
     // "Continue reading": related insights first, then related reports, max 3.
@@ -484,7 +486,7 @@
           (it.excerpt ? '<p>' + escapeHtml(it.excerpt) + '</p>' : '') +
           '<div class="foot"><span></span><span class="go">' + escapeHtml(t('readArticle')) + R.icon('arrow') + '</span></div></div></a>'));
       const reps = (d.relatedReports || []).map(it => (
-        '<a class="rcard" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' + cardImg(it.cover) +
+        '<a class="rcard" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' + cardImg(it.cover, true) +
           '<div class="body"><div class="kick"><span>' + escapeHtml([R.country(it.country), it.industry].filter(Boolean).join(' · ')) + '</span>' +
             (it.year ? '<span class="d">' + escapeHtml(it.year) + '</span>' : '') + '</div>' +
           '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +

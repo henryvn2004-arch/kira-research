@@ -220,6 +220,14 @@
       return d.toLocaleDateString(DATE_LOCALE[locale], style === 'long' ? { day: 'numeric', month: 'long', year: 'numeric' } : { month: 'short', year: 'numeric' });
     },
     esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); },
+    // <img> for a report's cover slide (16:9, title included) from an API `cover`; the wide art if the API has no slide for it.
+    // A slide image that fails to load falls back to the wide art once (listener below).
+    slideImg(c) {
+      const e = window.kiraR.esc;
+      return c.slide
+        ? '<img src="' + e(c.slide) + '" alt="" loading="lazy" decoding="async" width="800" height="450" data-fallback="' + e(c.wide) + '">'
+        : '<img src="' + e(c.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">';
+    },
     // Small inline icons (stroke = currentColor) used in meta rows.
     icon(name) {
       const P = {
@@ -247,4 +255,9 @@
       return '<svg class="ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[name] || '') + '</svg>';
     }
   };
+  // An <img data-fallback="…"> that fails to load switches to that URL once (see slideImg).
+  document.addEventListener('error', e => {
+    const img = e.target;
+    if (img.tagName === 'IMG' && img.dataset.fallback) { const f = img.dataset.fallback; delete img.dataset.fallback; img.src = f; }
+  }, true);
 })();

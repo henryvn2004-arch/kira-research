@@ -186,7 +186,7 @@
     const c = it.cover;
     // The rendered cover slide (16:9, title included); the wide art if that image is missing, the portrait art for older covers.
     return '<div class="cover-thumb">' +
-      (c && c.slide ? '<img src="' + esc(c.slide) + '" alt="" loading="lazy" decoding="async" width="800" height="450" data-fallback="' + esc(c.wide) + '">'
+      (c && c.slide ? R.slideImg(c)
          : c ? '<img src="' + esc(c.sm || c.thumb) + '" alt="" loading="lazy" decoding="async" width="228" height="304" data-fallback="' + esc(c.thumb) + '">'
          : '<div class="ph"><b>KIRA</b><span>' + esc(R.country(it.country)) + ' ' + esc(R.sector(it.industry)) + '</span></div>') +
       (isNew ? '<span class="tag-new">' + esc(t('newTag')) + '</span>' : '') +

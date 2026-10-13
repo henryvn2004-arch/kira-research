@@ -223,8 +223,9 @@
     }
     function renderReportBox(r) {
       if (!r) return '';
-      return '<div class="art-report">' +
-        '<div class="cover-thumb">' + (r.cover ? '<img src="' + escapeHtml(r.cover.thumb) + '" alt="" loading="lazy" width="360" height="480">' : '<div class="ph"><b>KIRA</b><span>' + escapeHtml(r.title || '') + '</span></div>') + '</div>' +
+      const slide = r.cover && r.cover.slide ? ' slide' : '';   // the report's cover slide (16:9, title included) when there is one
+      return '<div class="art-report' + slide + '">' +
+        '<div class="cover-thumb' + slide + '">' + (slide ? R.slideImg(r.cover) : r.cover ? '<img src="' + escapeHtml(r.cover.thumb) + '" alt="" loading="lazy" width="360" height="480">' : '<div class="ph"><b>KIRA</b><span>' + escapeHtml(r.title || '') + '</span></div>') + '</div>' +
         '<div><div class="k">' + escapeHtml(t('getFull')) + ' · ' + escapeHtml([R.country(r.country), r.industry, r.year].filter(Boolean).join(' · ')) + '</div>' +
           '<h3>' + escapeHtml(r.title || r.slug) + '</h3>' +
           '<p>' + escapeHtml(t('getFullBody')) + '</p>' +
