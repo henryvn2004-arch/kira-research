@@ -20,9 +20,14 @@
 //
 // Caches at the CDN edge for 1h (preview content doesn't change after
 // the report's published).
+//
+// Never serves more than PREVIEW_PAGES pages, even if the stored file holds
+// the whole report (see api/_lib/preview-slice.js).
 // ============================================================
 
-const SUPABASE_URL         = process.env.SUPABASE_URL;
+import { limitPreviewPages } from './_lib/preview-slice.js';
+
+const SUPABASE_URL        = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const BUCKET = 'reports-html';
 const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
@@ -95,14 +100,14 @@ export default async function handler(req, res) {
       return;
     }
 
-    const buf = Buffer.from(await obj.arrayBuffer());
+    const html = limitPreviewPages(Buffer.from(await obj.arrayBuffer()).toString('utf8'));
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     // Allow same-origin embedding (the parent /<locale>/reports/<slug>
     // is on the same host).
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-    res.status(200).send(buf);
+    res.status(200).send(html);
   } catch (err) {
     console.error('[preview-html] error:', err.message);
     res.status(500).send('server_error');
