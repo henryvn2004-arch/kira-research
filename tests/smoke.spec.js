@@ -412,28 +412,29 @@ test.describe('public APIs', () => {
   });
 
   // unmet:false never writes; nonsense matches nothing, so this leaves no row behind.
-  test('/api/topic-list lists queued topics with facets; filters narrow the list', async ({ request }) => {
-    expect((await request.post('/api/topic-list')).status()).toBe(405);
-    const r = await request.get('/api/topic-list?limit=5');
-    expect(r.status()).toBe(200);
-    const d = await r.json();
-    expect(Array.isArray(d.items)).toBe(true);
-    expect(d.facets.total).toBeGreaterThan(0);
-    test.skip(!d.items.length, 'no queued topics');
-    expect(d.items[0]).toHaveProperty('slug');
-    const c = Object.keys(d.facets.countries)[0];
-    const f = await (await request.get('/api/topic-list?limit=1&country=' + encodeURIComponent(c))).json();
-    expect(f.total).toBe(d.facets.countries[c]);
+  test('/api/library-list: default is published only; status=all appends coming-soon topics', async ({ request }) => {
+    const d = await (await request.get('/api/library-list?limit=3')).json();
+    expect(d.items.every((i) => !i.soon)).toBe(true);
+    expect(d.facets.totalSoon).toBeUndefined();   // home and live-counts rely on the published-only default
+    const a = await (await request.get('/api/library-list?status=all&limit=3')).json();
+    expect(a.total).toBeGreaterThanOrEqual(d.total);
+    expect(a.facets.totalPublished).toBe(d.total);
+    test.skip(!a.facets.totalSoon, 'no queued topics');
+    expect(a.total).toBe(d.total + a.facets.totalSoon);
+    const s = await (await request.get('/api/library-list?status=soon&limit=3')).json();
+    expect(s.items.length).toBeGreaterThan(0);
+    expect(s.items.every((i) => i.soon === true && i.slug && i.title)).toBe(true);
   });
 
-  test('library has a Coming soon tab listing topics that open their page', async ({ page, request }) => {
-    const d = await (await request.get('/api/topic-list?limit=1')).json();
-    test.skip(!d.items.length, 'no queued topics');
-    await page.goto('/en/library?tab=soon');
-    await expect(page.locator('.lib-tab[aria-selected="true"]')).toContainText('Coming soon', { timeout: 15000 });
+  test('library lists coming-soon topics next to reports and the Status filter narrows them', async ({ page, request }) => {
+    const a = await (await request.get('/api/library-list?status=all&limit=1')).json();
+    test.skip(!a.facets.totalSoon, 'no queued topics');
+    await page.goto('/en/library?status=soon');
     await expect(page.locator('.soonrow').first()).toBeVisible({ timeout: 15000 });
-    await page.locator('[data-tab="published"]').click();
-    await expect(page.locator('.lib-tab[aria-selected="true"]')).toContainText('Published');
+    await expect(page.locator('.lrow:not(.soonrow)')).toHaveCount(0);
+    await page.goto('/en/library');
+    await expect(page.locator('.lrow:not(.soonrow)').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.lib2-side [data-group="status"]')).toBeVisible();
   });
 
   test('/api/topic-search POST answers, and a nonsense query yields no topic', async ({ request }) => {

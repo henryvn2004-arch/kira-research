@@ -1,4 +1,4 @@
-// Planned contents of a topic (topics.signals.planned), shared by api/topic.js and api/topic-list.js.
+// Planned contents of a topic (topics.signals.planned), shared by api/topic.js and api/_lib/soon.js.
 // signals.planned is plain data written by a script, but the page renders it, so it is re-checked
 // and cut to size here: anything that is not the expected shape reads as "no planned contents".
 export function plannedOf(signals) {
