@@ -12,7 +12,7 @@
 // Falls back gracefully when only one of the two rows exists.
 // ============================================================
 
-import { coverUrls } from './_lib/cover.js';
+import { coverUrls, insightCoverUrls } from './_lib/cover.js';
 import { sectorOf } from './_lib/sectors.js';
 import { getConfig } from './_lib/config.js';
 import { REPORT_PRICE_DEFAULT, SUBSCRIPTION_MONTH_PRICE } from './_lib/pricing.js';
@@ -170,7 +170,7 @@ export default async function handler(req, res) {
             excerpt:   t.excerpt,
             read_time: t.read_time,
             published_at: i.published_at,
-            cover:     coverUrls(i),
+            cover:     insightCoverUrls(i, t.locale),
             locale:    t.locale
           };
         }).filter(Boolean);

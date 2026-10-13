@@ -54,8 +54,12 @@ async function render(browser, html) {
   try {
     await page.setContent(html, { waitUntil: 'networkidle', timeout: 60_000 });
     try { await page.evaluate(() => document.fonts.ready); } catch (_) { /* render with what loaded */ }
+    // Older templates only fix the page height at print time (PDF page = 1280x720); on screen a short cover is as tall as its content.
+    const natural = await page.evaluate(() => Math.round(document.querySelector('.page').getBoundingClientRect().height));
+    await page.addStyleTag({ content: '.page{width:1280px!important;height:720px!important}' });
     const shot = await page.locator('.page').first().screenshot({ type: 'png' });
     return {
+      natural,
       slide: await sharp(shot).resize(800, 450).jpeg({ quality: 80, mozjpeg: true }).toBuffer(),
       og: await sharp(shot).resize(1200, 630, { fit: 'cover' }).jpeg({ quality: 82, mozjpeg: true }).toBuffer(),
     };
@@ -98,7 +102,7 @@ try {
           const img = await render(browser, await src.text());
           await store(j.slug, j.locale, img);
           ok++;
-          console.log(JSON.stringify({ ok: true, slug: j.slug, locale: j.locale, bytes: { slide: img.slide.length, og: img.og.length } }));
+          console.log(JSON.stringify({ ok: true, slug: j.slug, locale: j.locale, bytes: { slide: img.slide.length, og: img.og.length }, ...(img.natural !== 720 ? { naturalHeight: img.natural } : {}) }));
         } catch (e) {
           failed.push(`${j.slug}/${j.locale}`);
           console.log(JSON.stringify({ ok: false, slug: j.slug, locale: j.locale, error: String(e.message || e) }));

@@ -479,7 +479,7 @@
     // "Continue reading": related insights first, then related reports, max 3.
     function renderContinue(d) {
       const ins = (d.relatedInsights || []).map(it => (
-        '<a class="rcard" href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '">' + cardImg(it.cover) +
+        '<a class="rcard" href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '">' + cardImg(it.cover, true) +
           '<div class="body"><div class="kick"><span>' + escapeHtml([R.country(it.country), it.industry].filter(Boolean).join(' · ')) + '</span>' +
             (it.read_time ? '<span class="d">' + escapeHtml(it.read_time) + '</span>' : '') + '</div>' +
           '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +
