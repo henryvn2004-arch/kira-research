@@ -10,6 +10,7 @@
 // ============================================================
 
 import { test, expect } from '@playwright/test';
+import { limitPreviewPages } from '../api/_lib/preview-slice.js';
 
 // ── 1) Every static + dynamic-list page across all 3 locales ──
 //
@@ -227,6 +228,38 @@ test.describe('admin auth gate', () => {
 });
 
 // ── 6) Public APIs return JSON, not HTML 404 ──
+// The free preview is the first 5 pages of a report; /api/preview-html must never
+// serve more, even if the bucket holds the whole file. Pure function, no network.
+test.describe('report preview slicing', () => {
+  const doc = (n, tag = 'div') => '<html><head><style>.page{}</style></head><body>\n' +
+    Array.from({ length: n }, (_, i) => `<${tag} class="page"><div class="page-inner">PAGE-${i + 1}</div></${tag}>`).join('\n') +
+    '\n</body></html>';
+
+  test('keeps the first 5 pages and drops the rest', () => {
+    const out = limitPreviewPages(doc(9));
+    expect(out).toContain('PAGE-5');
+    expect(out).not.toContain('PAGE-6');
+    expect(out).toContain('<style>');
+    expect(out.trim().endsWith('</html>')).toBe(true);
+  });
+
+  test('leaves a preview of 5 pages or fewer untouched', () => {
+    expect(limitPreviewPages(doc(5))).toBe(doc(5));
+    expect(limitPreviewPages(doc(2))).toBe(doc(2));
+  });
+
+  test('counts <section> pages and divider pages too', () => {
+    expect(limitPreviewPages(doc(7, 'section'))).not.toContain('PAGE-6');
+    const divider = doc(7).replace('class="page"', 'class="page divider-page"');
+    expect(limitPreviewPages(divider)).not.toContain('PAGE-6');
+  });
+
+  test('does not mistake page-inner or page-header for a page', () => {
+    const nested = '<body><div class="page"><div class="page-inner"><div class="page-header">x</div></div></div></body>';
+    expect(limitPreviewPages(nested, 1)).toBe(nested);
+  });
+});
+
 test.describe('public APIs', () => {
   test('/api/library-list returns JSON', async ({ request }) => {
     const r = await request.get('/api/library-list?locale=en&limit=4');
