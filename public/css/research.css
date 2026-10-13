@@ -240,8 +240,11 @@ html.rd-pv-noscroll, html.rd-pv-noscroll body { overflow: hidden; }
 
 .rd-aside { position: sticky; top: 84px; display: grid; gap: 16px; }
 .rd-mcover { display: none; }
-.rd-cover { border-radius: 8px; overflow: hidden; aspect-ratio: 3 / 2; background: linear-gradient(160deg, #0F2A5C, #1A66F0); box-shadow: var(--elevation-md); }
+.rd-cover { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9; background: linear-gradient(160deg, #0F2A5C, #1A66F0); box-shadow: var(--elevation-md); }
 .rd-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* The report's own cover slide (page 1 of the preview HTML, 1280×720) scaled to the column; the art above stays as the fallback until it loads. */
+.rd-cover iframe { position: absolute; top: 0; left: 0; width: 1280px; border: 0; background: #fff; transform-origin: 0 0; pointer-events: none; opacity: 0; }
+.rd-cover.slide iframe { opacity: 1; }
 .rd-box { border: 1px solid var(--border); border-radius: var(--card-radius); padding: 18px; background: #fff; }
 .rd-box h3 { margin: 0 0 8px; font-size: 16px; }
 .rd-box p { margin: 0 0 14px; font-size: 13.5px; line-height: 1.55; color: var(--muted); }
