@@ -40,11 +40,13 @@
   const minutes = rt => { const m = String(rt || '').match(/\d+/); return m ? m[0] + ' ' + t('minRead') : ''; };
   const kicker = it => [it.country ? R.country(it.country) : '', it.industry ? R.sector(it.industry) : ''].filter(Boolean).join(' · ');
   const href = it => '/' + locale + '/insights/' + encodeURIComponent(it.slug);
-  const img = (c, w) => c ? '<img src="' + esc(w ? c.wide : c.full) + '" alt="" loading="lazy" decoding="async" width="800" height="500">' : '';
+  const img = (c, w) => c && c.slide ? R.slideImg(c)   // the insight's cover slide (title included); else the art
+    : c ? '<img src="' + esc(w ? c.wide : c.full) + '" alt="" loading="lazy" decoding="async" width="800" height="500">' : '';
+  const slideCls = c => c && c.slide ? ' slide' : '';
 
   function featuredHtml(it) {
     return '<a class="ins-feature" href="' + href(it) + '">' +
-      '<div class="img">' + img(it.cover, false) + '<span class="pill">' + esc(t('featured')) + '</span></div>' +
+      '<div class="img' + slideCls(it.cover) + '">' + img(it.cover, false) + '<span class="pill">' + esc(t('featured')) + '</span></div>' +
       '<div class="body">' +
         '<div class="kick"><span>' + esc(kicker(it)) + '</span><span class="d">' + esc([R.date(it.published_at), minutes(it.read_time)].filter(Boolean).join(' · ')) + '</span></div>' +
         '<h2>' + esc(it.title || it.slug) + '</h2>' +
@@ -53,7 +55,7 @@
       '</div></a>';
   }
   function cardHtml(it) {
-    return '<a class="rcard" href="' + href(it) + '"><div class="img">' + img(it.cover, true) + '</div>' +
+    return '<a class="rcard" href="' + href(it) + '"><div class="img' + slideCls(it.cover) + '">' + img(it.cover, true) + '</div>' +
       '<div class="body"><div class="kick"><span>' + esc(kicker(it)) + '</span><span class="d">' + esc(R.date(it.published_at)) + '</span></div>' +
       '<h3>' + esc(it.title || it.slug) + '</h3>' + (it.excerpt ? '<p>' + esc(it.excerpt) + '</p>' : '') +
       '<div class="foot"><span>' + esc(minutes(it.read_time)) + '</span><span class="go">' + esc(t('readArticle')) + ic('arrow') + '</span></div></div></a>';

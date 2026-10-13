@@ -66,7 +66,7 @@
   function insightCard(it) {
     const m = (String(it.read_time || '').match(/\d+/) || [])[0];
     return '<a class="rcard" href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '">' +
-      '<div class="img">' + (it.cover ? '<img src="' + esc(it.cover.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">' : '') + '</div>' +
+      '<div class="img' + (it.cover && it.cover.slide ? ' slide' : '') + '">' + (it.cover ? R.slideImg(it.cover) : '') + '</div>' +
       '<div class="body"><div class="kick"><span>' + esc([R.country(it.country), R.sector(it.industry)].filter(Boolean).join(' · ')) + '</span>' +
         '<span class="d">' + esc(R.date(it.published_at)) + '</span></div>' +
         '<h3>' + esc(it.title || it.slug) + '</h3>' + (it.excerpt ? '<p>' + esc(it.excerpt) + '</p>' : '') +

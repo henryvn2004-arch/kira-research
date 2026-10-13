@@ -9,7 +9,7 @@
 // related reports so the article page can link them.
 // ============================================================
 
-import { coverUrls } from './_lib/cover.js';
+import { coverUrls, insightCoverUrls } from './_lib/cover.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -205,7 +205,7 @@ export default async function handler(req, res) {
               industry: c.industry,
               category: c.category,
               published_at: c.published_at,
-              cover:    coverUrls(c),
+              cover:    insightCoverUrls(c, (t && t.locale) || 'en'),
               title:    (t && t.title) || null
             };
           }).filter(x => x.title); // hide rows we couldn't get a title for

@@ -15,7 +15,7 @@
 // country, industry, title, excerpt, read_time, published_at.
 // ============================================================
 
-import { coverUrls } from './_lib/cover.js';
+import { insightCoverUrls } from './_lib/cover.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -177,7 +177,7 @@ export default async function handler(req, res) {
           industry:     i.industry,
           published_at: i.published_at,
           featured:     !!i.featured,
-          cover:        coverUrls(i),
+          cover:        insightCoverUrls(i, t.locale),
           title:        t.title    || null,
           excerpt:      t.excerpt  || null,
           read_time:    t.read_time || null,

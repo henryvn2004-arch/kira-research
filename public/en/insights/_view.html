@@ -236,7 +236,7 @@
       if (!Array.isArray(items) || !items.length) return '';
       return '<section class="rd-sec" style="margin-top:36px"><h2 class="rd-sec-h"><span class="ib">' + R.icon('book') + '</span>' + escapeHtml(t('continueReading')) + '</h2><div class="rcards">' +
         items.slice(0, 3).map(it => '<a class="rcard" href="/' + locale + '/insights/' + encodeURIComponent(it.slug) + '">' +
-          '<div class="img">' + (it.cover ? '<img src="' + escapeHtml(it.cover.wide) + '" alt="" loading="lazy" width="800" height="500">' : '') + '</div>' +
+          '<div class="img' + (it.cover && it.cover.slide ? ' slide' : '') + '">' + (it.cover ? R.slideImg(it.cover) : '') + '</div>' +
           '<div class="body"><div class="kick"><span>' + escapeHtml([R.country(it.country), R.sector(it.industry)].filter(Boolean).join(' · ')) + '</span>' +
             (it.published_at ? '<span class="d">' + escapeHtml(R.date(it.published_at)) + '</span>' : '') + '</div>' +
           '<h3>' + escapeHtml(it.title || it.slug) + '</h3>' +

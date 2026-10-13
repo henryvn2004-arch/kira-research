@@ -20,3 +20,13 @@ export function coverUrls(row, locale) {
   }
   return urls;
 }
+
+// Insights: slide is the insight's own cover slide (its title and excerpt on the report cover look,
+// 800x450) at covers/insights/<slug>-slide-<locale>.jpg, written by upload-insight-slide.mjs.
+// It is NOT derived from cover_url, which for most insights is the linked report's cover.
+// The file may be missing, so cards fall back to wide.
+export function insightCoverUrls(row, locale) {
+  const urls = coverUrls(row);
+  if (urls && locale && row.slug) urls.slide = row.cover_url.replace(/\/covers\/.*$/, `/covers/insights/${row.slug}-slide-${locale}.jpg`);
+  return urls;
+}

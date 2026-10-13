@@ -295,6 +295,18 @@ done
 
 A cover failure is not fatal; note it in the summary.
 
+### 3.7 — Cover slide (every language)
+
+The insight cards (home, insights list, "continue reading") show the insight's own cover slide: the report cover look with the insight's title and excerpt, over its cover art. Render it once the EN translations exist, and again after each language is added (the command renders every published language of the slug and is safe to repeat):
+
+```bash
+for s in <slug1> <slug2> <slug3>; do
+  node skills/kira-research-report/scripts/upload-insight-slide.mjs --slug "$s"
+done
+```
+
+Needs Chromium through Playwright, like `render-local.mjs` (set `PW_CHROMIUM_PATH` for a specific build). Not fatal: without it the card shows the cover art. Existing insights: `upload-insight-slide.mjs --all`.
+
 No git commit needed for Stage E (insights live in DB, not files). Just print summary + exit.
 
 ---
@@ -379,7 +391,7 @@ If 0 rows → failure path.
 curl -s "https://kiraresearch.com/api/insights-list?_t=$(date +%s)&locale=ja" | head -c 500
 ```
 
-Print summary + exit.
+Render the JA cover slides as in **3.7** (`upload-insight-slide.mjs --slug "$s"` for each of the 3 slugs). Print summary + exit.
 
 ---
 
@@ -387,7 +399,7 @@ Print summary + exit.
 
 Exactly mirror Step 4 but with `translator_ko.md` rules + KO question templates from `question_templates.md` Section C. Same chunked approach (1 subagent **with `model: "sonnet"`**, 3 insights).
 
-After successful INSERT → this report's insight pipeline is **fully done** (9 insight_translations rows: 3 insights × 3 locales).
+After successful INSERT → render the KO cover slides as in **3.7**, then this report's insight pipeline is **fully done** (9 insight_translations rows: 3 insights × 3 locales).
 
 ---
 
@@ -499,7 +511,7 @@ ON CONFLICT (insight_id, locale) DO UPDATE SET
 RETURNING insight_id, locale, title;
 ```
 
-Then give it a cover exactly as in **3.6** (copy the report's cover; generate one at `--quality medium` only if the report has none), with `<slug>` as the only slug.
+Then give it a cover exactly as in **3.6** (copy the report's cover; generate one at `--quality medium` only if the report has none), with `<slug>` as the only slug, and render its cover slide as in **3.7**.
 
 Print summary + exit.
 
@@ -571,7 +583,7 @@ RETURNING insight_id, locale, title;
 
 Mirror Step 4T exactly but with `translator_ko.md` rules. `read_time` → "3분 읽기".
 
-After successful INSERT → this report's full insight pipeline is **complete** (12 insight_translations rows: 4 insights × 3 locales).
+After successful INSERT → render the KO cover slide as in **3.7**, then this report's full insight pipeline is **complete** (12 insight_translations rows: 4 insights × 3 locales).
 
 ---
 
