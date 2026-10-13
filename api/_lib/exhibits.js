@@ -129,6 +129,8 @@ export async function buildPptx(report, data) {
 
     const labels = x.rows.map((r) => cell(r[0]));
     const series = x.columns.slice(1).map((name, k) => ({ name, labels, values: x.rows.map((r) => (r[k + 1] === null ? 0 : r[k + 1])) }));
+    // Bars start at zero (design rule), unless some value is negative: then the axis must reach it.
+    const nonNegative = series.every((sr) => sr.values.every((v) => v >= 0));
     const common = { ...box, showLegend: series.length > 1 && x.chart !== 'pie', legendPos: 'b', legendFontSize: 11, catAxisLabelFontSize: 11, valAxisLabelFontSize: 10,
       showValue: true, dataLabelFontSize: 10, dataLabelFormatCode: '#,##0.##', valAxisLabelFormatCode: '#,##0.##', chartColors: PALETTE.slice(0, x.chart === 'pie' ? labels.length : series.length), catAxisLabelFontFace: 'Calibri', valAxisLabelFontFace: 'Calibri' };
     if (x.chart === 'pie') {
@@ -136,7 +138,7 @@ export async function buildPptx(report, data) {
     } else if (x.chart === 'line') {
       s.addChart(pptx.charts.LINE, series, { ...common, lineSize: 2.5, lineDataSymbolSize: 7 });
     } else if (x.chart === 'bar' || x.chart === 'column' || x.chart === 'stacked') {
-      s.addChart(pptx.charts.BAR, series, { ...common, barDir: x.chart === 'bar' ? 'bar' : 'col', barGrouping: x.chart === 'stacked' ? 'stacked' : 'clustered', valAxisMinVal: 0, catAxisOrientation: x.chart === 'bar' ? 'maxMin' : 'minMax' });
+      s.addChart(pptx.charts.BAR, series, { ...common, barDir: x.chart === 'bar' ? 'bar' : 'col', barGrouping: x.chart === 'stacked' ? 'stacked' : 'clustered', ...(nonNegative ? { valAxisMinVal: 0 } : { catAxisLabelPos: 'low' }), catAxisOrientation: x.chart === 'bar' ? 'maxMin' : 'minMax' });
     } else {
       const head = x.columns.map((c) => ({ text: c, options: { bold: true, color: 'FFFFFF', fill: { color: INK }, fontSize: 11 } }));
       const body = x.rows.map((r, j) => r.map((c, k) => ({ text: cell(c), options: { fontSize: 10, color: INK, fill: { color: j % 2 ? PANEL : 'FFFFFF' }, bold: k === 0 } })));
