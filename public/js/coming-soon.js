@@ -22,6 +22,8 @@
       stripTitle: 'Coming soon', stripBody: 'Not published yet — read what each will cover and get an email when it is.',
       noneTitle: 'Not in the library yet', noneBody: 'Tell us what you are looking for and leave an email. We will tell you if we take it on.',
       kwReq: 'Notify me', reqKw: 'Your request', soonTag: 'Coming soon', exec: 'Executive summary — available on publication.',
+      planned: 'Planned contents', plannedNote: 'Planned before research starts. Page titles can change as the evidence comes in.',
+      peek: 'A look inside', peekNote: 'Sample layout only. The real pages, charts and numbers appear on the day the report is published.', peekTag: 'Preview on publication', peekExec: 'Executive summary',
       lib: 'Back to library',
       inbox: 'Check your inbox for a confirmation. If it is not there, look in spam and add noreply@kiraresearch.com to your contacts.',
       asked: 'You asked to be told about this report. We will email you the day it is published.'
@@ -38,6 +40,8 @@
       stripTitle: '近日公開', stripBody: '未公開のレポートです。内容をご確認のうえ、公開時にメールで通知を受け取れます。',
       noneTitle: 'まだライブラリにありません', noneBody: 'お探しの内容とメールアドレスをお知らせください。制作する場合はご連絡します。',
       kwReq: '通知を受け取る', reqKw: 'ご要望', soonTag: '近日公開', exec: 'エグゼクティブサマリー — 公開時に閲覧できます。',
+      planned: '予定している構成', plannedNote: '調査を始める前の計画です。調査の結果に応じてページ名が変わることがあります。',
+      peek: '内容のイメージ', peekNote: 'レイアウトの見本です。実際のページ・グラフ・数値は公開日にご覧いただけます。', peekTag: '公開時にプレビュー', peekExec: 'エグゼクティブサマリー',
       lib: 'ライブラリに戻る',
       inbox: '確認メールをお送りしました。届かない場合は迷惑メールフォルダをご確認のうえ、noreply@kiraresearch.com を連絡先に追加してください。',
       asked: 'このレポートの公開通知を受け付け済みです。公開当日にメールでお知らせします。'
@@ -54,6 +58,8 @@
       stripTitle: '곧 공개', stripBody: '아직 공개 전인 보고서입니다. 다룰 내용을 확인하고 공개 시 이메일로 알림을 받으십시오.',
       noneTitle: '아직 라이브러리에 없습니다', noneBody: '찾으시는 내용과 이메일을 남겨 주십시오. 제작하게 되면 알려드리겠습니다.',
       kwReq: '알림 받기', reqKw: '요청 내용', soonTag: '곧 공개', exec: '핵심 요약 — 공개 시 열람할 수 있습니다.',
+      planned: '예정된 구성', plannedNote: '조사를 시작하기 전의 계획입니다. 조사 결과에 따라 페이지 제목이 바뀔 수 있습니다.',
+      peek: '미리보기', peekNote: '레이아웃 예시입니다. 실제 페이지, 차트, 수치는 보고서가 공개되는 날 확인할 수 있습니다.', peekTag: '공개 시 미리보기', peekExec: '핵심 요약',
       lib: '라이브러리로 돌아가기',
       inbox: '확인 메일을 보냈습니다. 보이지 않으면 스팸함을 확인하고 noreply@kiraresearch.com 을 연락처에 추가해 주십시오.',
       asked: '이 보고서의 공개 알림을 이미 신청하셨습니다. 공개 당일 이메일로 알려드리겠습니다.'
@@ -70,6 +76,8 @@
       stripTitle: '即将发布', stripBody: '尚未发布。可先查看内容范围，发布时通过邮件获知。',
       noneTitle: '资料库中暂无', noneBody: '请告诉我们您的需求并留下邮箱。若我们决定制作，会通知您。',
       kwReq: '通知我', reqKw: '您的需求', soonTag: '即将发布', exec: '执行摘要 — 发布后可阅读。',
+      planned: '计划章节', plannedNote: '研究开始前的计划，页面标题可能随研究证据调整。',
+      peek: '内容预览', peekNote: '仅为版式示例，真实的页面、图表和数据将在报告发布当天呈现。', peekTag: '发布时预览', peekExec: '执行摘要',
       lib: '返回资料库',
       inbox: '确认邮件已发送。若未收到，请查看垃圾邮件箱，并将 noreply@kiraresearch.com 加入通讯录。',
       asked: '您已申请本报告的发布通知，发布当天我们会邮件通知您。'
@@ -126,17 +134,59 @@
     const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex,follow'; document.head.appendChild(m);
   }
 
+  // Free cover design: one of six CSS variants, picked by a stable hash of the slug (no image is generated).
+  function coverIdx(slug) {
+    let h = 0; const x = String(slug || '');
+    for (let i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0;
+    return h % 6;
+  }
+
+  // "A look inside": grey sample slides, one per chapter. Captions are the planned page titles
+  // (or the guiding questions when nothing is planned yet). Layout only, no data.
+  const SLIDES = [
+    '<i class="sk-l w60"></i><i class="sk-l"></i><i class="sk-l"></i><i class="sk-l w80"></i><i class="sk-l w40"></i>',
+    '<div class="sk-bars"><i style="height:35%"></i><i style="height:50%"></i><i style="height:62%"></i><i style="height:78%"></i><i style="height:92%"></i></div>',
+    '<div class="sk-tbl"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>',
+    '<div class="sk-split"><span class="sk-ring"></span><div><i class="sk-l"></i><i class="sk-l w80"></i><i class="sk-l w60"></i></div></div>',
+    '<div class="sk-hbars"><i style="width:90%"></i><i style="width:70%"></i><i style="width:55%"></i><i style="width:38%"></i></div>'
+  ];
+  function peekHtml(t) {
+    const ch = t.planned || [];
+    const caps = ch.length
+      ? ch.map(c => ({ k: c.title, c: c.pages[0] || '' }))
+      : (t.questions || []).map(q => ({ k: '', c: q }));
+    if (!caps.length) return '';
+    const cards = caps.slice(0, 5).map((x, i) =>
+      '<figure class="cs-slide"><div class="cs-slide-art" aria-hidden="true"><b>' + esc(i === 0 && !ch.length ? s('peekExec') : x.k || String(i + 1).padStart(2, '0')) + '</b>' +
+        SLIDES[i % SLIDES.length] + '<span class="cs-slide-tag">' + esc(s('peekTag')) + '</span></div>' +
+        '<figcaption>' + esc(x.c) + '</figcaption></figure>').join('');
+    return '<h2>' + esc(s('peek')) + '</h2><div class="cs-peek">' + cards + '</div><p class="cs-exec">' + esc(s('peekNote')) + '</p>';
+  }
+
+  // Planned contents (chapters with page titles) when the topic has them, else the guiding questions.
+  function contentsHtml(t) {
+    if (t.planned && t.planned.length) {
+      return '<h2>' + esc(s('planned')) + '</h2><p class="cs-exec">' + esc(s('plannedNote')) + '</p><ol class="cs-toc cs-toc2">' +
+        t.planned.map(c =>
+          '<li><div><b>' + esc(c.title) + '</b>' +
+          '<ul>' + c.pages.map(p => '<li>' + esc(p) + '</li>').join('') + '</ul></div></li>').join('') + '</ol>';
+    }
+    return t.questions && t.questions.length
+      ? '<h2>' + esc(s('answer')) + '</h2><ol class="cs-toc">' + t.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ol>' : '';
+  }
+
   function page(root, t) {
     const done = t.state === 'scoping' ? 1 : t.state === 'approved' ? 2 : 3;
     const chips = [t.country, t.industry, t.competency, t.year].filter(Boolean);
     document.title = t.title + ' — KIRA RESEARCH';
     seoMeta(t);
+    const cv = coverIdx(t.slug);
 
     root.innerHTML =
       '<div class="r-band"><div class="r-container">' +
         '<div class="r-crumbs"><a href="/' + L + '/library">' + esc(s('crumbLib')) + '</a><span class="sep">›</span><span>' + esc(t.country || '') + '</span></div>' +
         '<div class="cs-grid">' +
-          '<div class="cs-cover" aria-hidden="true"><span class="cs-ribbon">' + esc(s('soon')) + '</span>' +
+          '<div class="cs-cover cs-cv' + cv + '" aria-hidden="true"><span class="cs-ribbon">' + esc(s('soon')) + '</span>' +
             '<small>KIRA RESEARCH · ' + esc(t.country_code || '') + ' · ' + esc(t.year) + '</small>' +
             '<b>' + esc(t.title) + '</b><i>' + esc(t.competency || '') + '</i></div>' +
           '<div>' +
@@ -153,8 +203,7 @@
         '</div>' +
       '</div></div>' +
       '<div class="r-container cs-body">' +
-        (t.questions && t.questions.length
-          ? '<h2>' + esc(s('answer')) + '</h2><ol class="cs-toc">' + t.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ol>' : '') +
+        peekHtml(t) + contentsHtml(t) +
         '<p class="cs-exec">' + esc(s('exec')) + '</p>' +
         '<p><a class="r-btn r-btn-outline" href="/' + L + '/library">' + esc(s('lib')) + '</a></p>' +
       '</div>';

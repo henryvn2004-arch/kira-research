@@ -16,6 +16,7 @@ Input: Stage 1 topic JSON + the queue row (`id`, `topic`, `country`, `industry`,
    - A topic is **one market segment in one country seen through one standard analysis** (`analysis`: market overview, competitive landscape, customer insight analysis, distribution analysis, market entry strategy, regulatory landscape, ...), not a single narrow question. `segment` is the scope; keep the whole segment in view.
    - `lens` (when present) is the primary `question_types` value: use it as-is, so the brain's full storyline for that question type is the spine.
    - `buyer_question` is the decision the report answers. `guiding_questions` (4-6) are the chapters the report must cover (put them in `framing.json` as `guiding_questions`); they set coverage, they do not narrow the scope.
+   - `planned_contents` (when present, null otherwise) is the chapter and page plan readers already see on the coming-soon page (written before research, descriptive titles with no findings). Use it as the **starting storyline**: keep its chapters in that order and cover every page it lists, then turn each descriptive page title into an action title once the evidence is in. Add, merge or drop pages freely when the research says so (the readers were told titles can change), but do not silently skip a chapter. It is a hypothesis about structure, never evidence: no number or claim in the report comes from it.
    - `must_cover` lists triggers (deals, rules, dates, named players) that must appear as evidence inside the relevant chapters. They are never the frame of the whole report. Facts marked VERIFY must be checked in Stage 4 before use.
    - `competency_label` + `stage` tell you which kind of analysis the buyer is at (explore, enter or expand). Keep the owner's wording of the questions.
 1. If `data/report_framing.json` exists and has an entry for this `id`, use it as-is (owner-reviewed framing) and skip to Step B.
@@ -46,6 +47,8 @@ Then read `<brain>/runner/expert_prompt.md` and follow its **Procedure steps 1�
 ## Step C — Turn the spine into a story and a page plan
 
 Read `prompts/storytelling.md` (arc, page grammar, hooks) and `docs/exhibit_library.md` (16 exhibit types, layouts) first.
+
+When the brief carries `planned_contents`, start the page plan from it (see Step A.0) instead of drawing the spine from scratch; the brain's selected analyses still decide the evidence and the exhibits behind each page.
 
 When a topic brief exists, every `guiding_questions` entry must be answered by at least one page, and the storyline's action titles must make the answers findable; list the mapping (question → page) in `brain_trace.md`.
 

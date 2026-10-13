@@ -19,11 +19,14 @@
 //   hook      the one-line hook question (topics.signals.hook), used for the page description.
 //   price     USD price of the report once published, or null while checkout is off
 //             (config checkout.single_report_enabled, S19).
+//   planned   [{ title, pages: [title, ...] }] the planned contents (topics.signals.planned, written
+//             before any research and checked by scripts/check-planned-contents.mjs), or null.
 // ============================================================
 
 import { topicEta } from './_lib/eta.js';
 import { getConfig } from './_lib/config.js';
 import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
+import { plannedOf } from './_lib/planned.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -70,6 +73,7 @@ export default async function handler(req, res) {
       price: purchase ? REPORT_PRICE_DEFAULT : null,
       index: !!(t.signals && t.signals.seo_test === true),
       hook: (t.signals && typeof t.signals.hook === 'string') ? t.signals.hook : null,
+      planned: plannedOf(t.signals),
       slug: t.slug, title: t.title, buyer_question: t.buyer_question,
       questions: Array.isArray(t.questions) ? t.questions : [],
       country: t.country ? t.country.name : null, country_code: t.country ? t.country.code : null,
