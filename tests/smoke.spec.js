@@ -412,6 +412,30 @@ test.describe('public APIs', () => {
   });
 
   // unmet:false never writes; nonsense matches nothing, so this leaves no row behind.
+  test('/api/topic-list lists queued topics with facets; filters narrow the list', async ({ request }) => {
+    expect((await request.post('/api/topic-list')).status()).toBe(405);
+    const r = await request.get('/api/topic-list?limit=5');
+    expect(r.status()).toBe(200);
+    const d = await r.json();
+    expect(Array.isArray(d.items)).toBe(true);
+    expect(d.facets.total).toBeGreaterThan(0);
+    test.skip(!d.items.length, 'no queued topics');
+    expect(d.items[0]).toHaveProperty('slug');
+    const c = Object.keys(d.facets.countries)[0];
+    const f = await (await request.get('/api/topic-list?limit=1&country=' + encodeURIComponent(c))).json();
+    expect(f.total).toBe(d.facets.countries[c]);
+  });
+
+  test('library has a Coming soon tab listing topics that open their page', async ({ page, request }) => {
+    const d = await (await request.get('/api/topic-list?limit=1')).json();
+    test.skip(!d.items.length, 'no queued topics');
+    await page.goto('/en/library?tab=soon');
+    await expect(page.locator('.lib-tab[aria-selected="true"]')).toContainText('Coming soon', { timeout: 15000 });
+    await expect(page.locator('.soonrow').first()).toBeVisible({ timeout: 15000 });
+    await page.locator('[data-tab="published"]').click();
+    await expect(page.locator('.lib-tab[aria-selected="true"]')).toContainText('Published');
+  });
+
   test('/api/topic-search POST answers, and a nonsense query yields no topic', async ({ request }) => {
     const r = await request.post('/api/topic-search', {
       data: { q: 'zzqx wvkp', unmet: false }, headers: { 'Content-Type': 'application/json' }

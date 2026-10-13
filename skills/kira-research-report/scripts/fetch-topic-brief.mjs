@@ -34,11 +34,15 @@ try {
   const s = (v, n = 1500) => (v == null ? null : String(v).slice(0, n));
   const qs = Array.isArray(t.questions) ? t.questions.slice(0, 8).map(q => s(q, 600)) : [];
   const sig = t.signals && typeof t.signals === 'object' ? t.signals : {};
+  // Planned contents (chapters + page titles written before research, shown on the coming-soon page).
+  const pl = sig.planned && Array.isArray(sig.planned.chapters)
+    ? sig.planned.chapters.slice(0, 6).map(c => ({ title: s(c && c.title, 120), pages: Array.isArray(c && c.pages) ? c.pages.slice(0, 4).map(x => s(x, 160)) : [] }))
+    : null;
   const mc = Array.isArray(sig.must_cover) ? sig.must_cover.slice(0, 8).map(m => s(m, 400)) : [];
   console.log(JSON.stringify({
     id: s(t.slug, 120), country: s(t.country_code, 2), industry: ind ? s(ind.name, 200) : null, kind: s(t.kind, 20),
     competency: s(t.competency_key, 60), competency_label: comp ? s(comp.label, 200) : null, stage: comp ? s(comp.stage, 60) : null,
-    title: s(t.title, 240), lens: s(sig.lens, 40), analysis: s(sig.analysis, 60), hook: s(sig.hook, 160), segment: s(sig.segment, 120), buyer_question: s(t.buyer_question), guiding_questions: qs, must_cover: mc, rationale: s(t.rationale), owner_note: s(t.note, 1000)
+    title: s(t.title, 240), lens: s(sig.lens, 40), analysis: s(sig.analysis, 60), hook: s(sig.hook, 160), segment: s(sig.segment, 120), buyer_question: s(t.buyer_question), guiding_questions: qs, planned_contents: pl, must_cover: mc, rationale: s(t.rationale), owner_note: s(t.note, 1000)
   }, null, 2));
 } catch (e) {
   console.error(`fetch-topic-brief: ${e.message}`);
