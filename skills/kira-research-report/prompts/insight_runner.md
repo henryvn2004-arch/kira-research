@@ -156,7 +156,7 @@ Faster path: just scan `skills/kira-research-report/outputs/batch/*/en.html` and
 
 Or simpler: query Supabase `report_queue` (`GET /rest/v1/report_queue?select=id,industry,country,year`; the CSV is a frozen archive since 2026-10-07), find the row whose `<industry>-<country>-<year>` matches the slug, get the `id` field, then en.html lives at `skills/kira-research-report/outputs/batch/${id}/en.html`.
 
-If en.html doesn't exist locally → EXIT with error log. (Edge case: published report but file was never committed. Means the batch worker on the OTHER machine has it. Skip for now; will be picked up on the machine that has the file.)
+If en.html doesn't exist locally, restore it first: `outputs/` is git-ignored in this public repo, the private archive holds it (`node skills/kira-research-report/scripts/archive-batch.mjs pull ${id}`). Still missing (exit 3) → EXIT with error log.
 
 ---
 
