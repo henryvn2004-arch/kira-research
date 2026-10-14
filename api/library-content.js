@@ -13,7 +13,7 @@
 // counts to owners.
 // ============================================================
 
-import { resolvePdfUrl, downloadNameFor } from './_lib/report-pdf.js';
+import { resolvePdfUrl, downloadNameFor, nameParts } from './_lib/report-pdf.js';
 import { activeSubscription, pdfUsage } from './_lib/subscription.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
     // Buyers get a short-lived signed URL when pdf_url is a storage path (external URLs pass through;
     // null on failure so the UI shows the "PDF is being prepared" state). Subscribers do not get the link
     // here: their PDF goes through /api/library-pdf, which counts it against the monthly allowance.
-    const downloadName = downloadNameFor(base, effectiveLocale);
+    const downloadName = downloadNameFor(await nameParts(base.id, effectiveLocale), effectiveLocale);
     const signedPdfUrl = viaSubscription ? null : await resolvePdfUrl(translation.pdf_url, downloadName);
 
     res.status(200).json({

@@ -19,7 +19,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 | Output | Pattern | Example |
 |---|---|---|
 | **Code** | `CC-IND-STG-TYY-NN` | `VN-FSV-ENT-D26-01` |
-| **Slug** | `country-segment-year`; if taken, `country-segment-stage-year`; then `-2`, `-3` | `vietnam-coffee-chains-2026` |
+| **Slug** | `country-segment-analysis-year` when the topic has an analysis (since 2026-10-14; if the slug would pass 60 characters, the next rule); else `country-segment-year`; if taken, `country-segment-stage-year`; then `-2`, `-3` | `vietnam-banking-ai-impact-and-use-cases-2026` |
 | **Title** | `Country segment year: angle` (≤ 95 chars) | `Vietnam coffee chains 2026: how a foreign brand wins the food-led gap` |
 | Canonical title | `Country segment year` (≤ 45 chars) | `Vietnam coffee chains 2026` |
 | SEO title | Canonical + report kind + brand, cut from the right to fit 60 chars | `Vietnam coffee chains 2026 — Market entry brief` |
@@ -52,7 +52,7 @@ Every report gets its names from one script, `scripts/report-name.mjs`, and neve
 
 ## File names
 
-A PDF a person receives is never called `en.pdf`. Its name is `KIRA_<code>_<Country-segment-year>_<LOCALE>.pdf`, for example `KIRA_VN-RTL-ENT-D26-01_Vietnam-convenience-store-licensing-2026_EN.pdf`. `naming.json` carries the stem (`file_stem`); the download link on the site sets the same name (`api/library-content.js`, from `living_reports.code`, `segment`, `year`). The working files in `outputs/batch/<id>/` and the storage paths (`<report_id>/<locale>.pdf`) keep their short names, because the scripts address them by locale.
+A file a person receives is never called `en.pdf`. Its name is `<report title>_<LOCALE>_<Mon-YYYY>.<ext>` (owner, 2026-10-14): the English title of the report, the language of the file in capitals, and the month and year it was published. Example: `Vietnam banking 2026 - trends and outlook_EN_Oct-2026.pdf`, and in Japanese `Vietnam banking 2026 - trends and outlook_JA_Oct-2026.pdf`. The title uses the English title in every language so the name stays plain ASCII in all browsers; a colon becomes " - " and characters Windows does not allow are dropped. The Excel and PowerPoint downloads of the exhibits add `- exhibits` after the title (`Vietnam banking 2026 - trends and outlook - exhibits_EN_Oct-2026.xlsx`). One function names all of them (`api/_lib/report-pdf.js`, `downloadNameFor`), from the stored English title and `published_at`, so reports published earlier get the new names too. `naming.json` carries the title part (`file_stem`). The working files in `outputs/batch/<id>/` and the storage paths (`<report_id>/<locale>.pdf`) keep their short names, because the scripts address them by locale.
 
 ## Search
 

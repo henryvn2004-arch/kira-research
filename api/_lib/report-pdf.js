@@ -57,10 +57,33 @@ export async function resolvePdfUrl(pdfUrl, downloadName) {
 }
 
 
-// Download filename convention (docs/naming_convention.md): "KIRA_<code>_<Country-segment-year>_<LOCALE>.pdf".
-// Reports without a code or segment fall back to the industry.
-export function downloadNameFor(base, locale) {
-  const stem = [base.country, base.segment || (base.industry || '').toLowerCase(), base.year].join(' ')
-    .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '');
-  return `KIRA_${base.code ? base.code + '_' : ''}${stem}_${String(locale).toUpperCase()}.pdf`;
+// Download file names (owner, 2026-10-14; docs/naming_convention.md → "File names"):
+//   "<report title>_<LOCALE>_<Mon-YYYY>.<ext>", e.g. "Vietnam banking 2026 - trends and outlook_EN_Oct-2026.pdf".
+// The title is the English title in every language (plain ASCII in every browser), the month is the publish month.
+// Exhibit downloads add a tag after the title ("... - exhibits_EN_Oct-2026.xlsx").
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// The parts of the name for one report: English title and the publish date of the language being delivered
+// (falls back to the English edition, then to the report's own date).
+export async function nameParts(reportId, locale = 'en') {
+  const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+  const get = async (path) => { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: h }); return r.ok ? r.json() : []; };
+  try {
+    const [tr, base] = await Promise.all([
+      get(`report_translations?report_id=eq.${reportId}&locale=in.(en,${locale})&select=locale,title,published_at`),
+      get(`living_reports?id=eq.${reportId}&select=slug,published_at&limit=1`)
+    ]);
+    const en = tr.find((t) => t.locale === 'en'), own = tr.find((t) => t.locale === locale);
+    return { title: (en && en.title) || (base[0] && base[0].slug) || 'KIRA report',
+             publishedAt: (own && own.published_at) || (en && en.published_at) || (base[0] && base[0].published_at) || null };
+  } catch { return { title: 'KIRA report', publishedAt: null }; }
+}
+
+export function downloadNameFor({ title, publishedAt }, locale, ext = 'pdf', tag = '') {
+  const clean = String(title || 'KIRA report')
+    .replace(/\s*[:\u2013\u2014]\s+/g, ' - ').replace(/[\\/:*?"<>|]+/g, ' ').replace(/[^\x20-\x7E]+/g, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, 110);
+  const d = publishedAt ? new Date(publishedAt) : null;
+  const when = d && !isNaN(d) ? `${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()}` : '';
+  return `${clean}${tag ? ' - ' + tag : ''}_${String(locale).toUpperCase()}${when ? '_' + when : ''}.${ext}`;
 }

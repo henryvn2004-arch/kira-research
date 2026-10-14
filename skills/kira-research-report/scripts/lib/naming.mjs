@@ -46,6 +46,8 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   const angle = String(input.angle || '').trim().replace(/\s+/g, ' ').replace(/[.]$/, '');
   // Optional one-line hook question (cover subtitle + line under the title on the site). Never part of the title.
   const hook = String(input.hook || '').trim().replace(/\s+/g, ' ');
+  // Optional analysis name of a queued topic (`market overview`, `trends and outlook`, ...): goes into the slug.
+  const analysis = String(input.analysis || '').trim().replace(/\s+/g, ' ');
 
   if (!cc) errors.push(`unknown country "${input.country}" (add it to references/naming_vocab.json)`);
   if (!ind) errors.push(`unknown industry "${input.industryCode || input.industry}" (map it to an existing code or add one to naming_vocab.json)`);
@@ -70,11 +72,15 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   if (canonical.length > LIMITS.canonical) errors.push(`"${canonical}" is longer than ${LIMITS.canonical} chars; shorten the segment`);
   if (title.length > LIMITS.title) errors.push(`title is ${title.length} chars (max ${LIMITS.title}); shorten the angle`);
 
-  // Slug: country-segment-year, then add the stage word, then -2, -3 …
+  // Slug: country-segment-analysis-year when the report is one analysis of a segment (owner, 2026-10-14: several analyses
+  // of one segment must not fight over country-segment-year); else country-segment-year, then add the stage word,
+  // then -2, -3 …
   const base = [slugify(country.en), slugify(segment)];
-  const tries = [[...base, year], [...base, st.slug, year]];
+  const analysisSlug = analysis ? slugify(analysis) : '';
+  const tries = [...(analysisSlug && [...base, analysisSlug, year].join('-').length <= LIMITS.slug ? [[...base, analysisSlug, year]] : []),
+                 [...base, year], [...base, st.slug, year]];
   let slug = tries.map(t => t.join('-')).find(s => !taken.slugs.has(s));
-  for (let n = 2; !slug; n++) { const s = `${tries[1].join('-')}-${n}`; if (!taken.slugs.has(s)) slug = s; }
+  for (let n = 2; !slug; n++) { const s = `${tries[tries.length - 1].join('-')}-${n}`; if (!taken.slugs.has(s)) slug = s; }
   if (slug.length > LIMITS.slug) errors.push(`slug "${slug}" exceeds ${LIMITS.slug} chars; shorten the segment`);
 
   // Code: CC-IND-STG-TYY-NN, NN = next free sequence for that prefix.
@@ -99,9 +105,10 @@ export function buildName(input, taken = { slugs: new Set(), codes: new Set() })
   return {
     errors,
     naming: {
-      code, slug, title, canonical, angle, ...(hook ? { hook } : {}), seo_title,
-      // Delivered file names: <file_stem>_<LOCALE>.pdf (same rule as api/library-content.js)
-      file_stem: `KIRA_${code}_${canonical.replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')}`,
+      code, slug, title, canonical, angle, ...(hook ? { hook } : {}), ...(analysis ? { analysis } : {}), seo_title,
+      // Delivered file names: "<title>_<LOCALE>_<Mon-YYYY>.pdf" (owner, 2026-10-14; same rule as api/_lib/report-pdf.js).
+      // The month is the publish month, so the API adds it; this is the title part.
+      file_stem: title.replace(/\s*[:\u2013\u2014]\s+/g, ' - ').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim(),
       short_title: `${country.en} ${segment}`,
       report_kind: st.en,
       report_kind_i18n: Object.fromEntries(LOCALES.map(l => [l, st[l]])),
