@@ -2,7 +2,7 @@
 // Make the "executive summary" insight of a published report, in every language the report has, from the
 // report's own pages (extract-insight-pages.mjs). No LLM and no translation: one report takes seconds.
 //
-//   node make-insight.mjs --pending [N]          the N (default 10) oldest published reports that have no
+//   node make-insight.mjs --pending [N]          the N (default 10) newest published reports that have no
 //                                                 insight yet, or lack a language their report has
 //   node make-insight.mjs --report <report-slug> one report
 //   add --dry-run to change nothing (still builds and checks), --draft to save as hidden drafts,
@@ -116,20 +116,28 @@ async function makeOne(slug) {
 
     const status = opt.draft ? 'draft' : 'published';
     const now = new Date().toISOString();
-    const [existing] = await rest('GET', `insights?slug=eq.${insightSlug}&select=id,status,published_at`);
-    const [row] = await rest('POST', 'insights?on_conflict=slug', [{
-      slug: insightSlug, category: 'market-analysis', country: slugify(report.country), industry: slugify(report.industry),
-      featured: false, related_report_slugs: [report.slug], status: existing ? existing.status : status,
-      published_at: existing ? existing.published_at : (status === 'published' ? now : null),
-      cover_url: report.cover_url, cover_thumb_url: report.cover_thumb_url,
-    }], 'resolution=merge-duplicates,return=representation');
-    await rest('POST', 'insight_translations?on_conflict=insight_id,locale', Object.entries(made.locales).map(([locale, m]) => ({
-      insight_id: row.id, locale, title: m.title, excerpt: m.excerpt, lede: m.lede, body: m.body, read_time: m.read_time,
-      status: row.status, published_at: row.status === 'published' ? now : null,
-    })), 'resolution=merge-duplicates,return=minimal');
-    out.status = row.status === 'published' ? 'published' : 'draft';
+    // An insight that exists is never rewritten as a whole (an owner's featured / retired / draft choice stays); only the
+    // languages that are new or different are written, so a retry costs nothing and keeps the dates.
+    let [row] = await rest('GET', `insights?slug=eq.${insightSlug}&select=id,status`);
+    if (!row) {
+      [row] = await rest('POST', 'insights?on_conflict=slug', [{
+        slug: insightSlug, category: 'market-analysis', country: slugify(report.country), industry: slugify(report.industry),
+        featured: false, related_report_slugs: [report.slug], status, published_at: status === 'published' ? now : null,
+        cover_url: report.cover_url, cover_thumb_url: report.cover_thumb_url,
+      }], 'resolution=merge-duplicates,return=representation');
+    }
+    const have = new Map((await rest('GET', `insight_translations?insight_id=eq.${row.id}&select=locale,status,body`)).map(t => [t.locale, t]));
+    const changed = Object.entries(made.locales).filter(([locale, m]) => { const t = have.get(locale); return !t || t.status !== row.status || t.body !== m.body; });
+    if (changed.length) {
+      await rest('POST', 'insight_translations?on_conflict=insight_id,locale', changed.map(([locale, m]) => ({
+        insight_id: row.id, locale, title: m.title, excerpt: m.excerpt, lede: m.lede, body: m.body, read_time: m.read_time,
+        status: row.status, published_at: row.status === 'published' ? now : null,
+      })), 'resolution=merge-duplicates,return=minimal');
+    }
+    out.changed = changed.map(([locale]) => locale);
+    out.status = !changed.length ? 'unchanged' : row.status === 'published' ? 'published' : 'draft';
 
-    if (!opt['no-slides'] && row.status === 'published') {
+    if (!opt['no-slides'] && row.status === 'published' && changed.length) {
       const sl = spawnSync('node', [path.join(HERE, 'upload-insight-slide.mjs'), '--slug', insightSlug], { encoding: 'utf8', timeout: 240000 });
       out.slides = sl.status === 0 ? 'ok' : `failed (${(sl.stdout + sl.stderr).trim().split('\n').pop().slice(0, 100)})`;
     }
@@ -138,9 +146,10 @@ async function makeOne(slug) {
 }
 
 async function pendingSlugs(limit) {
-  const reports = await rest('GET', 'living_reports?status=eq.published&select=id,slug,created_at&order=created_at.asc&limit=1000');
+  // Newest first: a report the script cannot do (unusual layout) stays pending for ever and must not use up the limit.
+  const reports = await rest('GET', 'living_reports?status=eq.published&select=id,slug,created_at&order=created_at.desc&limit=1000');
   const translations = await rest('GET', 'report_translations?status=eq.published&select=report_id,locale&limit=5000');
-  const insights = await rest('GET', 'insights?slug=like.*-exec-summary-*&select=slug,related_report_slugs,insight_translations(locale,status)&limit=2000');
+  const insights = await rest('GET', 'insights?slug=like.*exec-summary*&select=slug,related_report_slugs,insight_translations(locale,status)&limit=2000');
   const localesOf = new Map();
   for (const t of translations) localesOf.set(t.report_id, (localesOf.get(t.report_id) || new Set()).add(t.locale));
   const done = new Map();

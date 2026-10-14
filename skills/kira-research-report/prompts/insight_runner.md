@@ -1,6 +1,6 @@
-# insight_runner.md — scheduled insight pages built from published reports
+# insight_runner.md — insight pages built from published reports
 
-Fired by the insight Routine (a separate routine from the batch runner; paused until the owner restarts it). Each fire is a **fresh Claude session with no memory** of any prior conversation, on an empty disk: everything needed is in this prompt and the scripts it names.
+Normally this runs by itself: `batch_runner.md` Step 5.3b-6 calls `make-insight.mjs --pending 5` right after each report is published, inside the report Routine (which already has `kira-research` and `kira-pipeline` attached). This file is the full procedure for the same job run on its own: a backfill, a retry, or a separate Routine. A separate Routine only works if `kira-pipeline` (private) is attached to it in the claude.ai Routines page; a Routine created through the API cannot attach it and a fresh session cannot clone it. Such a session is a **fresh Claude session with no memory** of any prior conversation, on an empty disk: everything needed is in this prompt and the scripts it names.
 
 ---
 
@@ -40,11 +40,12 @@ Any `MISSING` line → EXIT with `missing <what>, no-op`. Re-export the two vari
 node skills/kira-research-report/scripts/make-insight.mjs --pending 20
 ```
 
-It takes the 20 oldest published reports that have no executive-summary insight yet (or lack a language their report has) and, per report: finds its batch folder, restores it from the private archive (`archive-batch.mjs pull`), checks that page 4 of the folder's English file is exactly the published preview's page 4, cuts the pages (`extract-insight-pages.mjs --pages auto`), upserts `insights` + `insight_translations` (slug `<industry>-<country>-exec-summary-<year>`, or `<report-slug>-exec-summary` when another report already has that one; category `market-analysis`; the report's cover) and renders the cover slides (`upload-insight-slide.mjs`, not fatal). It prints one JSON line per report and a last `{"summary":true,...}` line. Exit code 1 only when a report **failed**.
+It takes the 20 newest published reports that have no executive-summary insight yet (or lack a language their report has; newest first so a report it cannot do never uses up the limit) and, per report: finds its batch folder, restores it from the private archive (`archive-batch.mjs pull`), checks that page 4 of the folder's English file is exactly the published preview's page 4, cuts the pages (`extract-insight-pages.mjs --pages auto`), upserts `insights` + `insight_translations` (slug `<industry>-<country>-exec-summary-<year>`, or `<report-slug>-exec-summary` when another report already has that one; category `market-analysis`; the report's cover) and renders the cover slides (`upload-insight-slide.mjs`, not fatal). It prints one JSON line per report and a last `{"summary":true,...}` line. Exit code 1 only when a report **failed**.
 
 | `status` | Meaning | What to do |
 |---|---|---|
 | `published` | insight live in every language that passed its checks (`locales`) | nothing; if `skippedLocales` is not empty or `slides` is `failed…`, mention it in the summary |
+| `unchanged` | the insight already exists with the same text in every language the checks allow (a report that lacks a language in its own file stays pending for ever; a retry writes nothing) | nothing |
 | `skipped` | the report cannot be done by script: `extract:` an unusual layout or no chart page (`pages … layout the insight styles do not cover`), or no batch folder for it | nothing now; list it in the summary. It is retried every fire and costs nothing. A report whose layout is new needs CSS in `public/css/kira.css` (`.kp-*`) first |
 | `failed` | something broke: archive pull, **page 4 differs from the published preview** (the folder is not the published version of the report), a database error | do not retry in this fire; list the `reason` in the summary |
 

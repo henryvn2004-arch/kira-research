@@ -14,7 +14,7 @@ The Routine is created in the claude.ai Routines UI (the API tool cannot attach 
   | 7 | `CRON_TZ=Asia/Ho_Chi_Minh 53 1,4,7,10,13,16,19 * * *` |
   | 10 | `CRON_TZ=Asia/Ho_Chi_Minh 53 1,3,5,7,9,11,13,15,17,19 * * *` |
 
-  Fires at least 2 h apart rarely overlap; when they do, each works on its own row (claims in the queue CSV). The insight pipeline is paused (library reports first); to restart it, add a separate routine that follows `insight_runner.md`.
+  Fires at least 2 h apart rarely overlap; when they do, each works on its own row (claims in the queue CSV). Insights need no routine of their own: `batch_runner.md` Step 5.3b-6 makes each report's insight right after it is published. (A routine created through the API cannot attach the private `kira-pipeline` repo, and a fresh session cannot clone it, so a separate insight routine would only work if the owner attaches `kira-pipeline` to it in the claude.ai Routines page.)
 - **Model:** Sonnet 5.5 is enough. The fire only does file work, validation and commits; `batch_runner.md` picks the model for the heavy subagents (opus for EN gen and for JA/KO/ZH).
 
 ---
