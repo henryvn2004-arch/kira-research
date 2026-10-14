@@ -405,6 +405,11 @@ Capture the `report_id` UUID — needed for 5.3b.
 
 ```sql
 UPDATE topics SET report_id = '<report_id>' WHERE slug = $kbat$<id>$kbat$ AND report_id IS NULL;
+-- Analysis type for the library filter (migration 056): the topic's, else from the stage.
+UPDATE living_reports SET analysis = COALESCE(
+  (SELECT competency_key FROM topics WHERE slug = $kbat$<id>$kbat$),
+  CASE stage WHEN 'XPL' THEN 'market_assessment' WHEN 'ENT' THEN 'market_entry' END)
+WHERE id = '<report_id>';
 ```
 
 **5.3b — Upload one PDF per locale to Supabase Storage bucket `reports-pdfs`.**

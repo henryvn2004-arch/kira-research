@@ -258,6 +258,7 @@ export default async function handler(req, res) {
       code:           base.code || null,
       sector:         sectorOf(base.industry_code),
       stage:          base.stage || null,
+      analysis:       base.analysis || null,
       type:           base.report_type || null,
       cover:          coverUrls(base),
       published_at:   translation?.published_at || base.published_at || null,

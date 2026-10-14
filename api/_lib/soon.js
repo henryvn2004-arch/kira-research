@@ -2,10 +2,11 @@
 // Used by api/library-list.js when the page asks for status=all or status=soon.
 //
 //   soonRows(f)    one page of topics shaped like library rows ({ soon: true, ... }), plus the total
-//   soonFacets()   counts for the sidebar (market, sector, year, stage), cached for 10 minutes
+//   soonFacets()   counts for the sidebar (market, sector, year, stage, analysis), cached for 10 minutes
 //
 // Filters mirror the published ones where the data allows it: market, sector (tax_industries.sector,
-// migration 055), year, stage (competency stage: explore/enter/expand = XPL/ENT/XPN), industry, text in
+// migration 055), year, stage (competency stage: explore/enter/expand = XPL/ENT/XPN),
+// analysis (topics.competency_key), industry, text in
 // the title. Every queued topic is a deep report ('D'); the snapshot type ('S') has none.
 import { plannedOf } from './planned.js';
 
@@ -26,7 +27,7 @@ async function sb(path) {
   return { rows, total: Number.isFinite(total) ? total : rows.length };
 }
 
-// f: { country, industry, sector, year, stage (XPL|ENT|XPN), type, q, offset, limit }
+// f: { country, industry, sector, year, stage (XPL|ENT|XPN), analysis, type, q, offset, limit }
 export async function soonRows(f) {
   if (f.type && f.type !== 'D') return { rows: [], total: 0 };          // topics are all deep reports
   const where = [BASE];
@@ -35,11 +36,12 @@ export async function soonRows(f) {
   if (f.sector)   where.push(`tax_industries.sector=eq.${encodeURIComponent(f.sector)}`);
   if (f.year)     where.push(`year=eq.${f.year}`);
   if (f.stage)    where.push(`tax_competencies.stage=eq.${STAGE_OF[f.stage]}`);
+  if (f.analysis) where.push(`competency_key=eq.${f.analysis}`);
   if (f.q)        where.push(`title=ilike.${encodeURIComponent(`*${f.q}*`)}`);
   const competency = f.stage ? 'tax_competencies!inner(stage)' : 'tax_competencies(stage)';
   const { rows, total } = await sb(
     `topics?${where.join('&')}&order=priority_score.desc.nullslast,slug.asc&limit=${f.limit}&offset=${f.offset}` +
-    `&select=slug,title,year,signals,tax_countries!inner(name),tax_industries!inner(name,sector),${competency}`
+    `&select=slug,title,year,signals,competency_key,tax_countries!inner(name),tax_industries!inner(name,sector),${competency}`
   );
   return {
     total,
@@ -51,6 +53,7 @@ export async function soonRows(f) {
       sector: t.tax_industries ? t.tax_industries.sector || null : null,
       year: t.year, pages: null, price: null,
       stage: t.tax_competencies ? CODE_OF[t.tax_competencies.stage] || null : null,
+      analysis: t.competency_key || null,
       type: 'D', published_at: null, cover: null,
       title: t.title,
       hook: t.signals && typeof t.signals.hook === 'string' ? t.signals.hook.slice(0, 160) : null,
@@ -68,18 +71,19 @@ export async function soonFacets() {
   for (let off = 0; off < 8000; off += 1000) {
     const { rows } = await sb(
       `topics?${BASE}&order=slug.asc&limit=1000&offset=${off}` +
-      '&select=year,tax_countries(name),tax_industries(sector),tax_competencies(stage)'
+      '&select=year,competency_key,tax_countries(name),tax_industries(sector),tax_competencies(stage)'
     );
     all.push(...rows);
     if (rows.length < 1000) break;
   }
-  const data = { total: all.length, countries: {}, sectors: {}, years: {}, stages: {} };
+  const data = { total: all.length, countries: {}, sectors: {}, years: {}, stages: {}, analyses: {} };
   const bump = (o, k) => { if (k) o[k] = (o[k] || 0) + 1; };
   all.forEach(r => {
     bump(data.countries, r.tax_countries && r.tax_countries.name ? r.tax_countries.name.toLowerCase() : '');
     bump(data.sectors, r.tax_industries && r.tax_industries.sector);
     bump(data.years, r.year);
     bump(data.stages, r.tax_competencies && CODE_OF[r.tax_competencies.stage]);
+    bump(data.analyses, r.competency_key);
   });
   cache = { at: Date.now(), data };
   return data;

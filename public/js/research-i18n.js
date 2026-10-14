@@ -9,7 +9,7 @@
     en: {
       all: 'All', clearAll: 'Clear all', refineBy: 'Refine by', filters: 'Filters', sort: 'Sort',
       sortLatest: 'Latest', sortOldest: 'Oldest', apply: 'Apply',
-      stage: 'Stage', type: 'Report type', market: 'Market', sector: 'Sector', year: 'Year',
+      analysis: 'Analysis', type: 'Report type', market: 'Market', sector: 'Sector', year: 'Year',
       searchSectors: 'Search sectors…', searchMarkets: 'Search markets…',
       showMore: 'Show more', showLess: 'Show less', coming: 'coming',
       status: 'Status', statusPub: 'Published', statusSoon: 'Coming soon', soonTag: 'Coming soon', getNotified: 'Get notified', plannedTag: 'Contents planned',
@@ -20,7 +20,7 @@
       noneTitle: 'No reports found', noneBody: 'No report matches these filters yet. Try removing a filter or another search term.',
       clearFilters: 'Clear all filters', browseAll: 'Browse all reports',
       viewReport: 'View report', newTag: 'New', prev: 'Previous', next: 'Next',
-      XPL: 'Assess', ENT: 'Enter', XPN: 'Expand', D: 'Deep report', S: 'Snapshot',
+      D: 'Deep report', S: 'Snapshot',
       // report detail
       library: 'Library', inThisReport: 'In this report', published: 'Published', pages: 'Pages', format: 'Format',
       sections: 'Sections', updated: 'Last updated', analyst: 'Analyst', ourTeam: 'Our research team',
@@ -60,7 +60,7 @@
     ja: {
       all: 'すべて', clearAll: 'すべて解除', refineBy: '絞り込み', filters: '絞り込み', sort: '並び替え',
       sortLatest: '新しい順', sortOldest: '古い順', apply: '適用',
-      stage: '段階', type: 'レポート種別', market: '市場', sector: '業界', year: '年',
+      analysis: '分析の種類', type: 'レポート種別', market: '市場', sector: '業界', year: '年',
       searchSectors: '業界を検索…', searchMarkets: '市場を検索…',
       showMore: 'もっと見る', showLess: '閉じる', coming: '準備中',
       status: '公開状況', statusPub: '公開済み', statusSoon: '近日公開', soonTag: '近日公開', getNotified: '通知を受け取る', plannedTag: '構成を計画済み',
@@ -69,7 +69,7 @@
       noneTitle: '該当するレポートはありません', noneBody: 'この条件に該当するレポートはまだありません。条件を外すか、別の語で検索してください。',
       clearFilters: '絞り込みをすべて解除', browseAll: 'すべてのレポートを見る',
       viewReport: 'レポートを見る', newTag: '新着', prev: '前へ', next: '次へ',
-      XPL: '評価', ENT: '参入', XPN: '拡大', D: '詳細レポート', S: '概況レポート',
+      D: '詳細レポート', S: '概況レポート',
       library: 'ライブラリ', inThisReport: '目次', published: '発行', pages: 'ページ数', format: '形式',
       sections: 'セクション', updated: '最終更新', analyst: 'アナリスト', ourTeam: '当社リサーチチーム',
       tabOverview: '概要', tabFindings: '主要データ', tabPreview: 'プレビュー', tabContents: '目次', tabRelated: '関連',
@@ -107,7 +107,7 @@
     ko: {
       all: '전체', clearAll: '모두 해제', refineBy: '필터', filters: '필터', sort: '정렬',
       sortLatest: '최신순', sortOldest: '오래된순', apply: '적용',
-      stage: '단계', type: '보고서 유형', market: '시장', sector: '산업', year: '연도',
+      analysis: '분석 유형', type: '보고서 유형', market: '시장', sector: '산업', year: '연도',
       searchSectors: '산업 검색…', searchMarkets: '시장 검색…',
       showMore: '더 보기', showLess: '접기', coming: '준비 중',
       status: '공개 상태', statusPub: '공개됨', statusSoon: '곧 공개', soonTag: '곧 공개', getNotified: '알림 받기', plannedTag: '구성 계획됨',
@@ -116,7 +116,7 @@
       noneTitle: '해당하는 보고서가 없습니다', noneBody: '조건에 맞는 보고서가 아직 없습니다. 필터를 해제하거나 다른 검색어를 입력해 주십시오.',
       clearFilters: '필터 모두 해제', browseAll: '전체 보고서 보기',
       viewReport: '보고서 보기', newTag: '신규', prev: '이전', next: '다음',
-      XPL: '평가', ENT: '진출', XPN: '확장', D: '심층 보고서', S: '스냅샷',
+      D: '심층 보고서', S: '스냅샷',
       library: '라이브러리', inThisReport: '목차', published: '발행', pages: '페이지', format: '형식',
       sections: '섹션', updated: '최종 업데이트', analyst: '애널리스트', ourTeam: '당사 리서치팀',
       tabOverview: '개요', tabFindings: '주요 데이터', tabPreview: '미리보기', tabContents: '목차', tabRelated: '관련',
@@ -154,7 +154,7 @@
     zh: {
       all: '全部', clearAll: '全部清除', refineBy: '筛选', filters: '筛选', sort: '排序',
       sortLatest: '最新', sortOldest: '最早', apply: '应用',
-      stage: '阶段', type: '报告类型', market: '市场', sector: '行业', year: '年份',
+      analysis: '分析类型', type: '报告类型', market: '市场', sector: '行业', year: '年份',
       searchSectors: '搜索行业…', searchMarkets: '搜索市场…',
       showMore: '显示更多', showLess: '收起', coming: '即将推出',
       status: '发布状态', statusPub: '已发布', statusSoon: '即将发布', soonTag: '即将发布', getNotified: '通知我', plannedTag: '章节已规划',
@@ -163,7 +163,7 @@
       noneTitle: '未找到报告', noneBody: '暂无符合筛选条件的报告。请移除部分筛选条件或换一个搜索词。',
       clearFilters: '清除全部筛选', browseAll: '浏览全部报告',
       viewReport: '查看报告', newTag: '最新', prev: '上一页', next: '下一页',
-      XPL: '评估', ENT: '进入', XPN: '扩张', D: '深度报告', S: '简报',
+      D: '深度报告', S: '简报',
       library: '报告库', inThisReport: '报告目录', published: '发布', pages: '页数', format: '格式',
       sections: '章节', updated: '最近更新', analyst: '分析师', ourTeam: '我们的研究团队',
       tabOverview: '概览', tabFindings: '关键数据', tabPreview: '预览', tabContents: '目录', tabRelated: '相关内容',
@@ -205,6 +205,13 @@
     ko: { vietnam: '베트남', thailand: '태국', indonesia: '인도네시아', malaysia: '말레이시아', singapore: '싱가포르', philippines: '필리핀', cambodia: '캄보디아', laos: '라오스', myanmar: '미얀마', brunei: '브루나이', australia: '호주', 'new zealand': '뉴질랜드', taiwan: '대만', japan: '일본', 'south korea': '한국' },
     zh: { vietnam: '越南', thailand: '泰国', indonesia: '印度尼西亚', malaysia: '马来西亚', singapore: '新加坡', philippines: '菲律宾', cambodia: '柬埔寨', laos: '老挝', myanmar: '缅甸', brunei: '文莱', australia: '澳大利亚', 'new zealand': '新西兰', taiwan: '中国台湾', japan: '日本', 'south korea': '韩国' }
   };
+  // Analysis types (tax_competencies.key; topics.competency_key, living_reports.analysis).
+  const ANALYSIS = {
+    en: { market_assessment: 'Market overview', competitive_intelligence: 'Competitive landscape', customer_demand: 'Customer insight', distribution_channel: 'Distribution', pricing_landed_cost: 'Pricing', product_portfolio: 'Value proposition', market_entry: 'Market entry strategy', partner_search: 'Partner landscape', investment_case: 'Investment analysis', m_and_a: 'M&A landscape', regulatory_climate: 'Regulatory landscape', growth_strategy: 'Growth strategy', value_chain: 'Value chain', operating_model: 'Operating model', case_studies: 'Case studies' },
+    ja: { market_assessment: '市場概要', competitive_intelligence: '競争環境', customer_demand: '顧客インサイト', distribution_channel: '流通チャネル', pricing_landed_cost: '価格分析', product_portfolio: '価値提案', market_entry: '市場参入戦略', partner_search: 'パートナー候補', investment_case: '投資分析', m_and_a: 'M&A動向', regulatory_climate: '規制環境', growth_strategy: '成長戦略', value_chain: 'バリューチェーン', operating_model: 'オペレーティングモデル', case_studies: 'ケーススタディ' },
+    ko: { market_assessment: '시장 개요', competitive_intelligence: '경쟁 구도', customer_demand: '고객 인사이트', distribution_channel: '유통 채널', pricing_landed_cost: '가격 분석', product_portfolio: '가치 제안', market_entry: '시장 진출 전략', partner_search: '파트너 현황', investment_case: '투자 분석', m_and_a: 'M&A 동향', regulatory_climate: '규제 환경', growth_strategy: '성장 전략', value_chain: '가치사슬', operating_model: '운영 모델', case_studies: '사례 연구' },
+    zh: { market_assessment: '市场概览', competitive_intelligence: '竞争格局', customer_demand: '客户洞察', distribution_channel: '分销渠道', pricing_landed_cost: '定价分析', product_portfolio: '价值主张', market_entry: '市场进入策略', partner_search: '合作伙伴格局', investment_case: '投资分析', m_and_a: '并购格局', regulatory_climate: '监管环境', growth_strategy: '增长战略', value_chain: '价值链', operating_model: '运营模式', case_studies: '案例研究' }
+  };
   const DATE_LOCALE = { en: 'en-GB', ja: 'ja-JP', ko: 'ko-KR', zh: 'zh-CN' };
 
   function titleCase(s) { return String(s || '').replace(/\b\w/g, c => c.toUpperCase()); }
@@ -213,6 +220,7 @@
     locale,
     t(key, ...a) { const v = (S[locale] && S[locale][key]) ?? S.en[key]; return typeof v === 'function' ? v(...a) : (v ?? key); },
     country(name) { const k = String(name || '').toLowerCase().replace(/-/g, ' '); return (COUNTRY[locale] || {})[k] || titleCase(k); },
+    analysis(key) { return (ANALYSIS[locale] || {})[key] || ANALYSIS.en[key] || titleCase(String(key || '').replace(/_/g, ' ')); },
     sector(name) { return titleCase(String(name || '').replace(/-/g, ' ')); },
     date(iso, style) {
       if (!iso) return '';
