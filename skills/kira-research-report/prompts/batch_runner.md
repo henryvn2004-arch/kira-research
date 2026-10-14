@@ -506,6 +506,15 @@ Runs the same checks as `check-exhibits.mjs`, then writes the numbers behind thi
 
 Merges every report of this country x industry x segment into one chain in `chains` (published, `stats.auto = true`; page is noindex). Needs at least 8 players in 3 stages, otherwise prints `built:false` with the reason (fine). Never overwrites a hand-made chain. NOT fatal: note a failure in the fire summary and continue.
 
+**5.3b-6 — Make the report's insight (executive summary + first chart, owner 2026-10-13).**
+
+```bash
+export KIRA_BRAIN_DIR=/home/user/kira-pipeline/brain PW_CHROMIUM_PATH=/opt/pw-browsers/chromium
+node skills/kira-research-report/scripts/make-insight.mjs --pending 5
+```
+
+Cuts the report's executive-summary page and its first chart page out of the finished HTML into an insight, in every language that was just published (nothing is written or translated by a model), and renders its cover slides. `--pending 5` takes the 5 newest published reports that lack an insight (or a language of it): the report just published is the newest, the rest are retries. Prints one JSON line per report and a `summary` line; a report whose layout the insight styles do not cover prints `status: skipped` (fine, nothing to do). NOT fatal, and never delays the queue: note any `failed` line (slug + reason) in the fire summary and continue. Details: `prompts/insight_runner.md`.
+
 **5.3c — Verify (3 cache-busted curls):**
 
 1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` contains the new slug
