@@ -6,6 +6,7 @@
 // Usage:
 //   node skills/kira-research-report/scripts/build-publish-sql.mjs --id 2026-vn-coffee-chains \
 //     [--langs "en ja ko zh"] [--chart-page 18] [--price 49] > /tmp/insert.sql
+//   --price: default is set by length (under 20 pages $39, 20–29 $45, 30+ $49; same rule as api/_lib/pricing.js)
 //
 // - title    <- <title> of each locale's HTML
 // - eyebrow  <- naming.eyebrow[locale]
@@ -24,7 +25,6 @@ const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ?
 const id = arg('id');
 if (!id) { console.error('usage: build-publish-sql.mjs --id <queue id> [--langs "en ja ko zh"] [--chart-page N]'); process.exit(2); }
 const langs = (arg('langs', 'en ja ko zh')).split(/\s+/).filter(Boolean);
-const price = Number(arg('price', 49));
 const chartPage = arg('chart-page') ? Number(arg('chart-page')) : null;
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../outputs/batch', id);
 const need = f => { const p = path.join(dir, f); if (!fs.existsSync(p)) { console.error('missing ' + p); process.exit(2); } return fs.readFileSync(p, 'utf8'); };
@@ -110,6 +110,7 @@ function extract(loc) {
 const loc = Object.fromEntries(langs.map(l => [l, extract(l)]));
 const pageCount = loc.en ? loc.en.pageCount : Object.values(loc)[0].pageCount;
 for (const l of langs) if (loc[l].pageCount !== pageCount) { console.error(`${l}: ${loc[l].pageCount} pages vs ${pageCount}`); process.exit(2); }
+const price = arg('price') ? Number(arg('price')) : (pageCount < 20 ? 39 : pageCount < 30 ? 45 : 49);
 
 const kw = '[' + naming.keywords.map(q).join(',') + ']';
 const tuples = langs.map(l => `(${q(l)}, ${q(loc[l].title)}, ${q(loc[l].eyebrow)}, ${q(JSON.stringify(loc[l].preview))}, ${q(JSON.stringify(loc[l].toc))})`).join(',\n  ');
@@ -132,4 +133,4 @@ ON CONFLICT (report_id, locale) DO UPDATE SET
   title = EXCLUDED.title, eyebrow = EXCLUDED.eyebrow, preview = EXCLUDED.preview, toc = EXCLUDED.toc,
   pdf_url = EXCLUDED.pdf_url, status = 'published', published_at = now()
 RETURNING report_id, locale, title;`);
-console.error(`build-publish-sql: ${naming.slug} (${naming.code}) ${pageCount} pages, locales ${langs.join(',')}, toc ${loc[langs[0]].toc.length} rows${chartPage ? ', chart from page ' + chartPage : ''}`);
+console.error(`build-publish-sql: ${naming.slug} (${naming.code}) ${pageCount} pages, $${price}, locales ${langs.join(',')}, toc ${loc[langs[0]].toc.length} rows${chartPage ? ', chart from page ' + chartPage : ''}`);

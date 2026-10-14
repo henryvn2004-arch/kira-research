@@ -34,13 +34,13 @@
 
 ---
 
-## Current state (2026-10-13 — Phase S: library + expert platform)
+## Current state (2026-10-14 — Phase S: library + expert platform)
 
-**Snapshot, measured 2026-10-13** (numbers also in `project des/workplan.md` → "Progress snapshot"; the paragraphs below are the per-feature detail written by each session):
-- **Library:** 121 published reports (+4 retired), all in EN/JA/KO/ZH. Subscriptions (Month, Annual) and single-report checkout are built but **switched off** (S7, S19; the owner turns them on). Waitlist 0, topic requests 1, chain requests 0, leads 2: little real demand yet.
-- **Production:** the cloud Routine "Kira Report Generator" runs 3 times a day (08:53, 10:53, 12:53 Vietnam time), one stage per fire. 10 new reports since 2026-10-06; **none on 2026-10-08 → 10-10** (cause not confirmed, likely the account usage limit); running again since 10-11. Queue: 1,883 pending, 376 hold, 118 done. Topics: 1,892 queued. The weekly topic planner Routine has run since 2026-10-12.
-- **Company data:** 944 entities; each report's "Who's who" chapter feeds it.
-- **Kira Experts:** 16 transcripts published; the daily generator is in the private repo (secrets and first real run pending).
+**Snapshot, measured 2026-10-14** (numbers also in `project des/workplan.md` → "Progress snapshot"; the paragraphs below are the per-feature detail written by each session):
+- **Library:** 127 published reports (+4 retired), all in EN/JA/KO/ZH. Subscriptions (Month, Annual), single-report ($49) and transcript ($29) checkout are built but **switched off** (S7, S19; the owner turns them on). Waitlist 0, topic requests 1, chain requests 0, leads 2: little real demand yet.
+- **Production:** the cloud Routine "Kira Report Generator" runs 3 times a day (08:53, 10:53, 12:53 Vietnam time), one stage per fire. 16 new reports since 2026-10-06; **none on 2026-10-08 → 10-10** (cause not confirmed, likely the account usage limit); 3 a day since 10-12. Queue: 1,878 pending, 376 hold, 124 done. Topics: 1,894 queued. The weekly topic planner is built but paused until the owner reviews the queue.
+- **Company data:** 1,131 entities; each report's "Who's who" chapter feeds it.
+- **Kira Experts:** 20 transcripts published; the daily generator in the private repo runs since 2026-10-11 (3 a day).
 - **Kira Chain:** the owner changed direction on 2026-10-11 and paused the work (`project des/memory/project_kira_chain.md`, PR #99); the prototype below stays as is.
 - **Pages and speed (2026-10-06):** Kira Survey page; Methodology, Experts and Survey redesigned (`css/service.css`); a use-case slider (one list in `js/stories.js`, filtered per page by `data-product`; illustrative scenarios, not client quotes) on the homepage, library, Experts and Survey; nav logo `logo-nav.webp`, mobile hero variants, `/img/*` cached a day, library list uses `-sm.jpg` covers (`scripts/backfill-cover-sm.mjs`; `upload-cover.mjs` writes them for new covers).
 
@@ -276,7 +276,7 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **5.1** | Demote 3 generation tools | ✅ | `692d907`, `74c21c0` redirects + this session: 6 service-line landings (EN/JA/KO × market-analysis, strategy-builder) rebuilt as analyst-led service pages |
 | **5.2** | Kill /studio/ | ✅ | `692d907` |
 | **5.3** | Credit system scoping | ✅ | `a8a9206` · credit system retired entirely Year 1, all platform-era APIs + profile.html removed |
-| **6** | Report population (50+ EN reports) | ✅ | 121 published (2026-10-13); the cloud Routine adds about one a day |
+| **6** | Report population (50+ EN reports) | ✅ | 127 published (2026-10-14); the cloud Routine adds 3 a day |
 | **7.1** | Insights blog + article templates | ✅ | `15e94f2` + pagination `8aa3b82` |
 | **7.2** | Content production admin (re-scoped) | ✅ | Year 1 decision: skip LLM auto-gen (brand voice conflict). Built scheduling (published_at gate) + status flow + related-report CTA in admin + improved "Get the full report" copy on `_view.html` |
 | **7.3** | Schema markup + OG + sitemap + GSC | 🟡 | sitemap ✅ (`6bb331f`+`8bcb6d4`) · per-report/article schema + OG/Twitter ✅ (item 7.3-remainder) · GSC submission + internal linking pending |
