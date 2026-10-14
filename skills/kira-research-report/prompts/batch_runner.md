@@ -1,6 +1,8 @@
 # batch_runner.md — self-contained prompt for scheduled batch report generation
 
-> **Queue storage (2026-10-07):** the queue lives in Supabase (`report_queue` + `report_queue_events`, migration 031), NOT in `data/report_queue.csv` (frozen archive, never edit). Every queue read/write goes through `node skills/kira-research-report/scripts/queue.mjs` (`recover` · `sync-topics` · `next` · `advance` · `fail`). The owner steers the queue from `/en/admin/pipeline` (hold, release, retry, priority). Wherever older text below says "set the CSV row to X", run `queue.mjs advance <id> X` AFTER the artifacts are committed and pushed; queue changes are never git commits.
+> **Queue storage (2026-10-07):** the queue lives in Supabase (`report_queue` + `report_queue_events`, migration 031), NOT in `data/report_queue.csv` (frozen archive, never edit). Every queue read/write goes through `node skills/kira-research-report/scripts/queue.mjs` (`recover` · `sync-topics` · `next` · `advance` · `fail`). The owner steers the queue from `/en/admin/pipeline` (hold, release, retry, priority). Wherever older text below says "set the CSV row to X", run `queue.mjs advance <id> X` AFTER the artifacts are saved to the private archive; queue changes are never git commits.
+>
+> **Artifacts are private (owner, 2026-10-13):** `skills/kira-research-report/outputs/` is git-ignored in this PUBLIC repo; the full report HTML is the paid product. Between fires and machines a report's folder travels through the private repo `kira-pipeline` (`report-archive/batch/<id>/`): `node skills/kira-research-report/scripts/archive-batch.mjs push <id>` saves it (HTML, JSON, cover; PDFs are skipped, Supabase Storage is canonical for them) and `pull <id>` restores what is missing locally. Never `git add` anything under `outputs/`. The push goes to `kira-pipeline` `main`, so the Routine needs write access to that repo; a failed save is a failure-path exit (`error_log: archive save failed`), never skipped.
 
 Fired by a **cloud Routine** (Phase S1, 2026-10-05; before that by `mcp__scheduled-tasks` crons on the DELL). Each fire is a **fresh Claude session with no memory** of any prior conversation — everything needed is in this prompt + the files it references.
 
@@ -10,7 +12,7 @@ This prompt is **machine-agnostic**: it derives its working directory from git, 
 
 ## Mission (Phase Q.1 — 2026-05-25; full report per fire since 2026-10-07)
 
-**1 fire = 1 row, carried through every stage to `done`** (Step 6 chains the stages, 2026-10-07). Each stage is still its own claim + commit, so a fire that dies mid-way leaves the row at the last finished stage and the next fire resumes it. Three stages per row before publish (four when `target_languages` includes `zh` — Phase S4):
+**1 fire = 1 row, carried through every stage to `done`** (Step 6 chains the stages, 2026-10-07). Each stage is still its own claim + archive save, so a fire that dies mid-way leaves the row at the last finished stage and the next fire resumes it. Three stages per row before publish (four when `target_languages` includes `zh` — Phase S4):
 
 ```
 target_languages without zh (legacy "en,ja,ko"):
@@ -32,7 +34,7 @@ Each stage runs in a fresh subagent with the chunked per-page protocol, so the f
 
 ## Model routing (Phase Q.5 — 2026-05-29)
 
-The cron fire itself (this orchestrating session) runs on the account-default model — it only does file ops, claims, validation greps, and commits, so its model doesn't matter much. **The token-heavy work is the spawned `general-purpose` subagent, and THAT is where the model is chosen explicitly via the `Agent` tool's `model` parameter.** Policy:
+The cron fire itself (this orchestrating session) runs on the account-default model — it only does file ops, claims, validation greps, and archive saves, so its model doesn't matter much. **The token-heavy work is the spawned `general-purpose` subagent, and THAT is where the model is chosen explicitly via the `Agent` tool's `model` parameter.** Policy:
 
 | Stage | Subagent work | `model` to pass | Time cap | Why |
 |---|---|---|---|---|
@@ -151,11 +153,11 @@ The row is already claimed (`claim_status`, `claimed_at` set, an event logged); 
 | `pending` | not yet started |
 | `hold` | parked by the owner; the runner never picks it. Flip to `pending` to release |
 | `en_in_progress` | a fire is generating EN (or claimed and died — see `claimed_at`) |
-| `en_done` | EN HTML+PDF generated + committed; awaiting JA |
+| `en_done` | EN HTML+PDF generated + saved to the private archive; awaiting JA |
 | `ja_in_progress` | a fire is translating JA (or claimed and died) |
-| `ja_done` | JA HTML+PDF generated + committed; awaiting KO (+ publish when no `zh`) |
+| `ja_done` | JA HTML+PDF generated + saved to the private archive; awaiting KO (+ publish when no `zh`) |
 | `ko_in_progress` | a fire is translating KO (+ publishing when no `zh`) (or claimed and died) |
-| `ko_done` | (`zh` rows only) KO HTML generated + committed, nothing published yet; awaiting ZH + publish |
+| `ko_done` | (`zh` rows only) KO HTML generated + saved to the private archive, nothing published yet; awaiting ZH + publish |
 | `zh_in_progress` | a fire is translating ZH + publishing (Fire D), or backfilling ZH (Fire E) (or claimed and died) |
 | `zh_backfill` | already-published report queued for a ZH-only backfill (set by the owner; `target_languages` gets `,zh` appended, `error_log` gets the `zh-backfill` marker, `output_paths` stays filled; `queue.mjs next` adds the marker itself) |
 | `done` | every language in `target_languages` + Supabase published; terminal success |
@@ -176,6 +178,18 @@ Extract from the chosen row: `id`, `topic`, `country`, `industry`, `year`, `targ
 ## Step 2: Claim the row — done by `queue.mjs next` in Step 1
 
 Nothing to do here. The claim is atomic (`UPDATE … WHERE status = <picked status>`), so two overlapping fires cannot claim the same row; a lost race makes `next` try the following candidate. If this fire dies after claiming, Step 0.5 of a later fire reverts the row once it is 150 minutes stale.
+
+---
+
+## Step 2.5 (every stage except A): restore the row's saved artifacts
+
+A fresh session has no `outputs/` folder (it is git-ignored). Before any stage past A, fetch what the earlier fires saved:
+
+```bash
+node skills/kira-research-report/scripts/archive-batch.mjs pull ${id}
+```
+
+It copies only the files missing locally (never overwrites). Exit 3 = nothing archived for this id → failure path with `error_log: no archived artifacts for ${id}`; any other non-zero exit → failure path with the script's message. Stage A has nothing to restore.
 
 ---
 
@@ -222,7 +236,7 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 2. `ls -la skills/kira-research-report/outputs/batch/${id}/en.html en.pdf naming.json players.json` — all must exist; HTML and PDF non-empty (> 1KB); `naming.json` parses and its `title` equals the `<title>` of `en.html`; `node skills/kira-research-report/scripts/render-players.mjs --id ${id} --check` exits 0 and `en.html` contains a `players-page`. A failed check → failure path with `error_log: players: ${first problem}`
 2b. `node skills/kira-research-report/scripts/check-exhibits.mjs --id ${id}` (S12). A failure or a missing `exhibits.json` is NOT fatal: note `exhibits: ${first problem}` in the fire summary and carry on (no `exhibits.json` is committed, so step 5.3b-4b skips it and the report just has no download buttons).
 3. `grep -E '(Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード|클로드)' en.html` — must be zero hits
-4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must show nothing outside `outputs/batch/${id}/`. A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
+4. Brain leak check (BRAIN route): `grep -iE '(brain trace|context pack|archive card|selection matrix|module_library|industryprint|P3-[0-9]{4})' en.html` must be zero hits, and `git status --porcelain` must be empty (`outputs/` is git-ignored, nothing else may have changed). A hit → failure path with `error_log: brain leak: ${first match}` (no retry).
 
 **Step 3 retry path** (anti-positioning leaks specifically — not the other failures): if grep returns hits, do NOT immediately fail. Instead, spawn one more `general-purpose` subagent fire with this prompt:
 
@@ -234,15 +248,10 @@ Spawn a `general-purpose` subagent **with `model: "opus"`** (EN gen is the sella
 
 After the retry returns, re-run grep. If still dirty → failure path with `error_log: EN gen anti-positioning leak persisted after retry: ${first match}`. If clean → re-render the PDF via `node skills/kira-research-report/scripts/render-one.mjs <html> <pdf>` and proceed to commit. Only one retry — second leak means manual review.
 
-If all pass → commit + push the files, THEN advance the queue (files first: a status never gets ahead of its artifacts):
+If all pass → save the report folder to the private archive, THEN advance the queue (files first: a status never gets ahead of its artifacts). A non-zero exit from the save is a failure (`error_log: archive save failed: ${first line}`):
 
 ```bash
-git add skills/kira-research-report/outputs/batch/${id}/en.html
-git add skills/kira-research-report/outputs/batch/${id}/naming.json skills/kira-research-report/outputs/batch/${id}/players.json
-git add skills/kira-research-report/outputs/batch/${id}/exhibits.json 2>/dev/null || true
-git add skills/kira-research-report/outputs/batch/${id}/cover.jpg 2>/dev/null || true
-git commit -m "batch: EN done for ${id}"
-git push origin main
+node skills/kira-research-report/scripts/archive-batch.mjs push ${id} --msg "batch: EN done for ${id}"
 node skills/kira-research-report/scripts/queue.mjs advance ${id} en_done --model opus
 ```
 
@@ -305,12 +314,10 @@ Spawn ONE subagent for JA translation **with `model: "opus"`** (see Model routin
 
 If any check fails → failure path. Otherwise:
 
-- Commit + push, then advance the queue to `ja_done` (this also clears `claimed_at`):
+- Save to the private archive, then advance the queue to `ja_done` (this also clears `claimed_at`):
 
 ```bash
-git add skills/kira-research-report/outputs/batch/${id}/ja.html
-git commit -m "batch: JA done for ${id}"
-git push origin main
+node skills/kira-research-report/scripts/archive-batch.mjs push ${id} --msg "batch: JA done for ${id}"
 node skills/kira-research-report/scripts/queue.mjs advance ${id} ja_done --model opus
 ```
 
@@ -330,16 +337,14 @@ Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specifi
 
 If it fails → failure path. If it passes:
 
-- **`HAS_ZH` (row's `target_languages` contains `zh`)** → Fire C ends here, **nothing is published** (all 4 languages go live together in Fire D). Commit + push, advance the queue to `ko_done`, go to Step 6:
+- **`HAS_ZH` (row's `target_languages` contains `zh`)** → Fire C ends here, **nothing is published** (all 4 languages go live together in Fire D). Save to the private archive, advance the queue to `ko_done`, go to Step 6:
 
   ```bash
-  git add skills/kira-research-report/outputs/batch/${id}/ko.html
-  git commit -m "batch: KO done for ${id}"
-  git push origin main
+  node skills/kira-research-report/scripts/archive-batch.mjs push ${id} --msg "batch: KO done for ${id}"
   node skills/kira-research-report/scripts/queue.mjs advance ${id} ko_done --model opus
   ```
 
-- **No `zh`** (legacy `en,ja,ko` rows) → proceed to 5.3 publish with `PUBLISH_LANGS="en ja ko"`. Do NOT commit yet — publish in same fire.
+- **No `zh`** (legacy `en,ja,ko` rows) → proceed to 5.3 publish with `PUBLISH_LANGS="en ja ko"`. Do NOT save yet — publish in the same fire (5.3d saves).
 
 ### 5.3 — Auto-publish to Supabase
 
@@ -404,7 +409,7 @@ UPDATE topics SET report_id = '<report_id>' WHERE slug = $kbat$<id>$kbat$ AND re
 
 **5.3b — Upload one PDF per locale to Supabase Storage bucket `reports-pdfs`.**
 
-Path: `<report_id>/<locale>.pdf`. PDFs are gitignored, so a fresh (cloud) session only has the PDF rendered in THIS fire. Re-render any missing one from its committed HTML first (same endpoint, idempotent):
+Path: `<report_id>/<locale>.pdf`. PDFs are not archived, so a fresh (cloud) session only has the PDF rendered in THIS fire. Re-render any missing one from its archived HTML first (same endpoint, idempotent):
 
 ```bash
 for loc in ${PUBLISH_LANGS}; do
@@ -507,13 +512,11 @@ Merges every report of this country x industry x segment into one chain in `chai
 2. `for loc in ${PUBLISH_LANGS}; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/$loc/reports/<slug>"; done` — all 200
 3. `for loc in ${PUBLISH_LANGS}; do curl -o /dev/null -w '%{http_code}\n' "https://kiraresearch.com/api/preview-html?slug=<slug>&locale=$loc&_t=$(date +%s)"; done` — all 200, confirms the preview iframe HTML is uploaded for every locale
 
-**5.3d — Commit + push, then finalize the queue row.**
+**5.3d — Save to the private archive, then finalize the queue row.**
 
 ```bash
-git add skills/kira-research-report/outputs/batch/${id}/
-git commit -m "batch: complete ${id} (EN+JA+KO, published)"      # Fire C
-git commit -m "batch: complete ${id} (EN+JA+KO+ZH, published)"   # Fire D (use instead)
-git push origin main
+node skills/kira-research-report/scripts/archive-batch.mjs push ${id} --msg "batch: complete ${id} (EN+JA+KO, published)"      # Fire C
+# Fire D (use instead): --msg "batch: complete ${id} (EN+JA+KO+ZH, published)"
 # --paths = one reports-pdfs/<report_id>/<locale>.pdf per locale in PUBLISH_LANGS, pipe-separated
 node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "reports-pdfs/<report_id>/en.pdf|reports-pdfs/<report_id>/ja.pdf|reports-pdfs/<report_id>/ko.pdf|reports-pdfs/<report_id>/zh.pdf" --model opus
 ```
@@ -526,11 +529,11 @@ Keep the `batch: complete ${id} (` prefix exactly: throughput is measured with `
 
 ## Step 5Z (Stage D and Stage E): ZH translate + publish
 
-Stage D = a `ko_done` row (new report; EN/JA/KO are committed, nothing published yet) → translate ZH, then publish all four languages via 5.3. Stage E = a `zh_backfill` row (report already published in EN/JA/KO) → translate ZH, then publish ZH only via 5Z.4. **Steps 5Z.0-5Z.2 (inputs, translation, validation) are identical for D and E; only the publish branch (5Z.3) differs.**
+Stage D = a `ko_done` row (new report; EN/JA/KO are saved to the private archive, nothing published yet) → translate ZH, then publish all four languages via 5.3. Stage E = a `zh_backfill` row (report already published in EN/JA/KO) → translate ZH, then publish ZH only via 5Z.4. **Steps 5Z.0-5Z.2 (inputs, translation, validation) are identical for D and E; only the publish branch (5Z.3) differs.**
 
 ### 5Z.0 — Inputs (Stage E pre-checks)
 
-- `skills/kira-research-report/outputs/batch/${id}/en.html` must exist (committed). Missing → failure path with `error_log: en.html missing for zh stage`.
+- `skills/kira-research-report/outputs/batch/${id}/en.html` must exist (Step 2.5 restores it from the private archive). Missing → failure path with `error_log: en.html missing for zh stage`.
 - Stage E only: `REPORT_ID` = the UUID segment of the first path in the row's `output_paths` (`reports-pdfs/<report_id>/en.pdf`). If `output_paths` is empty, look the report up by `naming.json`'s `slug` (`SELECT id FROM living_reports WHERE slug = …`). Neither available → failure path with `error_log: zh backfill: report_id unknown`. Never create a new `living_reports` row in Stage E.
 - Count `PAGE_COUNT` on en.html exactly as §4.1 (same 8-40 bounds).
 
@@ -570,7 +573,7 @@ Same chunked protocol (one Write for the shell, one Edit per top-level page, `<d
    node -e "const h=require('fs').readFileSync(process.argv[1],'utf8').replace(/<(style|script)[\s\S]*?<\/\1>/gi,' ').replace(/<div class=\"(source-key|chart-source)\"[\s\S]*?<\/div>/g,' ').replace(/<span class=\"mono\"[^>]*margin-right: 6px[^>]*>[^<]*<\/span>[^<]*/g,' ').replace(/<[^>]+>/g,' ').replace(/\[[^\]]*\]/g,' ').replace(/&[a-z#0-9]+;/gi,' ');const m=h.match(/(?:[A-Za-z][A-Za-z'’.-]*[ ,]+){7,}[A-Za-z][A-Za-z'’.-]*/g)||[];console.log('latin_runs='+m.length);m.slice(0,5).forEach(x=>console.log('  '+x.slice(0,120)))" skills/kira-research-report/outputs/batch/${id}/zh.html
    ```
 
-   `latin_runs` 0-3 → pass (long English law / company names, contact lines); list them in the commit message. `> 3` → failure path with `error_log: zh untranslated English (${latin_runs} runs)`.
+   `latin_runs` 0-3 → pass (long English law / company names, contact lines); list them in the archive save message (`--msg`). `> 3` → failure path with `error_log: zh untranslated English (${latin_runs} runs)`.
 
 Any other check failing → failure path (`error_log: zh page count Y/X`, `zh source tag drift`, `zh anti-positioning: <match>`, `zh title untranslated`, …).
 
@@ -604,18 +607,16 @@ Zero rows returned → the report id does not exist → failure path (`zh backfi
 
 **c — Verify**: 5.3c curls 2 + 3 with `loc=zh` only (`/zh/reports/<slug>` and `preview-html?…&locale=zh` → 200).
 
-**d — Finalize**: commit + push the zh files, then advance. `--paths` must be the EXISTING `output_paths` from the `next` JSON with `|reports-pdfs/<report_id>/zh.pdf` appended (unless already present); `date_completed` is not touched for a backfill (it records the first publish).
+**d — Finalize**: save the zh files to the private archive, then advance. `--paths` must be the EXISTING `output_paths` from the `next` JSON with `|reports-pdfs/<report_id>/zh.pdf` appended (unless already present); `date_completed` is not touched for a backfill (it records the first publish).
 
 ```bash
-git add skills/kira-research-report/outputs/batch/${id}/zh.html
-git commit -m "batch: ZH backfill published for ${id}"
-git push origin main
+node skills/kira-research-report/scripts/archive-batch.mjs push ${id} --msg "batch: ZH backfill published for ${id}"
 node skills/kira-research-report/scripts/queue.mjs advance ${id} done --paths "<existing output_paths>|reports-pdfs/<report_id>/zh.pdf" --model opus
 ```
 
 (Deliberately not `batch: complete` — a backfill is not a new report and must not inflate the throughput count.)
 
-`.gitignore` excludes `outputs/batch/*/*.pdf` so PDFs stay out of the public repo (Supabase Storage is canonical for PDFs).
+`outputs/` is git-ignored as a whole (the public repo never holds report artifacts); the archive skips PDFs, and Supabase Storage is canonical for them.
 
 ---
 
@@ -633,7 +634,7 @@ KIRA batch fire complete.
 
 **Chain to the next stage (2026-10-07).** If the row is not yet `done` (status `en_done`, `ja_done` or `ko_done`), claim its next stage with `node skills/kira-research-report/scripts/queue.mjs next --id ${id} --model opus` (only this row; `none` means another fire took it, so stop) and continue at the step for that stage. Stop chaining when the row reaches `done`, when a stage fails (Step 7), or when the fire has run more than 150 minutes (leave the row at its finished stage; the next fire resumes it). Print the summary block once per stage. Never pick up a second row in the same fire.
 
-**Push conflicts.** Several fires can now be in flight on different rows. Whenever a `git push origin main` in this prompt is rejected, run `git pull --rebase origin main` and push again (up to 3 tries). Each fire commits only its own `outputs/batch/<id>/` files, so the rebase is clean.
+**Push conflicts.** Several fires can now be in flight on different rows. `archive-batch.mjs push` fetches `kira-pipeline` `main` and retries up to 4 times when another fire pushed first, so there is nothing to do by hand; each fire only writes its own `report-archive/batch/<id>/` folder.
 
 ---
 
@@ -646,7 +647,7 @@ node skills/kira-research-report/scripts/queue.mjs fail ${id} "<stage + one-line
 # e.g. "EN gen timeout 90m" · "JA section count 15/22" · "KO render-pdf 500" · "ZH translate timeout 75m"
 ```
 
-For a Stage E row the existing `zh-backfill` token is kept automatically and `output_paths` is untouched (the EN/JA/KO paths are still live); for a partial failure that DID produce PDFs, add `--paths "<what exists>"`. Optionally `git add skills/kira-research-report/outputs/batch/${id}/ && git commit -m "batch: error on ${id} stage <A|B|C|D|E>" && git push origin main` to keep the partial HTML for inspection.
+For a Stage E row the existing `zh-backfill` token is kept automatically and `output_paths` is untouched (the EN/JA/KO paths are still live); for a partial failure that DID produce PDFs, add `--paths "<what exists>"`. Optionally `node skills/kira-research-report/scripts/archive-batch.mjs push ${id} --msg "batch: error on ${id} stage <A|B|C|D|E>"` to keep the partial HTML for inspection.
 
 Print 1-line error summary + exit.
 

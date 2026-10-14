@@ -3,7 +3,7 @@
 The Routine is created in the claude.ai Routines UI (the API tool cannot attach repositories, and fired sessions do not get `add_repo`: tested 2026-10-05). The prompt below is pasted into it; this file is the versioned copy. To change the Routine's behaviour, edit this file and paste the new text into the Routine.
 
 **Routine settings**
-- **Repositories:** `henryvn2004-arch/kira-research` and `henryvn2004-arch/kira-pipeline` (private brain). Both are cloned side by side under `/home/user/` in the fired session. If the form offers an option to push to branches other than `claude/*`, turn it on for `kira-research`: the runner commits `batch:` messages straight to `main`.
+- **Repositories:** `henryvn2004-arch/kira-research` and `henryvn2004-arch/kira-pipeline` (private brain). Both are cloned side by side under `/home/user/` in the fired session. The runner saves each report's folder to `kira-pipeline` `main` (`report-archive/`, `archive-batch.mjs`), so that repo needs the same push-to-`main` permission as `kira-research`; check it before the first fire after 2026-10-13. If the form offers an option to push to branches other than `claude/*`, turn it on for `kira-research`: the runner commits `batch:` messages straight to `main`.
 - **Environment:** `OpenAI Key` (`env_01Khi54Dffp38bzpmjYSGrYg`). It must define `PDF_RENDER_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` and `OPENAI_API_KEY` (cover art; optional) and allow outbound to kiraresearch.com, `*.supabase.co`, `api.openai.com`.
 - **Schedule (2026-10-07):** one fire = one full report (EN → JA → KO → ZH → publish, about 60–100 min; `batch_runner.md` Step 6 chains the stages), so fires per day = reports per day. Ramp agreed with the owner: start at 3/day, then 5, 7, 10 once a step runs clean (all fires `done`, no `error` rows, usage fine in claude.ai Settings → Usage). Cron in Vietnam time (`CRON_TZ=Asia/Ho_Chi_Minh`):
 
@@ -23,7 +23,7 @@ The Routine is created in the claude.ai Routines UI (the API tool cannot attach 
 
 You are the KIRA Research scheduled runner. Each fire is a fresh session on an empty disk. Do the following in order and do not improvise beyond it.
 
-**1. Locate the code.** `ls /home/user`. You should see `kira-research` and `kira-pipeline` side by side. If `kira-research` is missing, stop with `no-op: kira-research not attached`. If `kira-pipeline` is missing, continue: the runner falls back to the old route and says so in its summary.
+**1. Locate the code.** `ls /home/user`. You should see `kira-research` and `kira-pipeline` side by side. If `kira-research` is missing, stop with `no-op: kira-research not attached`. If `kira-pipeline` is missing, stop with `no-op: kira-pipeline not attached` (besides the brain it holds the report archive that every stage saves to and restores from).
 
 **2. Prepare.**
 ```bash
