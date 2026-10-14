@@ -137,14 +137,16 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | Kira Experts transcripts | **20** published. Daily runner live in `kira-pipeline` since 2026-10-11 (3 a day) |
 | Insights | 310 published (264 cut from report pages, 37 data explainers, 9 older articles); 25 retired. Commentary columns (Insights v2) built, not run yet |
 | Exhibit data (Excel/PPT) | 15 reports have data (the 9 backfilled + new reports) |
-| Money side | Single report $49, transcript $29, Month $149, Annual $1,190: **all built, all switched off**. 0 subscriptions; 2 old purchases |
+| Money side | Single report $39–49 (by length), transcript $29, Month $149, Annual $1,190: **all switched on 2026-10-14**. 0 subscriptions yet; 2 old purchases |
 | Demand signals | waitlist **0** · topic requests **1** · chain requests **0** · leads 2. Little real demand yet |
 
 ### Summary for the owner (2026-10-14)
 
 **Done (in the plan):** S1, S2, S3, S3b, S3c, S4, S5, S5b, S11, S13, S14 (built, paused), S15, S16, S20 (closed by the measurement + 195-page SEO test).
 
-**Code done, waiting for the owner:** S7 (Month + Annual, switched off), S12 (Excel/PPT download), S17 (Google Ads tracking), S18 (2–3 day promise), S19 ($49 / $29 checkout, switched off), S21 (Ads campaign file, paused).
+**Live since 2026-10-14 (owner test purchase open):** S7 (Month + Annual), S19 (report $39–49, transcript $29), S12 (Excel/PPT download for buyers).
+
+**Code done, waiting for the owner's go:** S17 (Google Ads tracking), S18 (2–3 day promise), S21 (Ads campaign file, paused).
 
 **Started, not finished:** S9 Kira Experts (20 transcripts, daily runner; marketplace not started) · S10 Kira Chain (prototype, auto drafts, admin; paused by the owner).
 
@@ -152,7 +154,9 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 
 **Done but outside the original plan:** SA owner admin platform · SQ report quality + cover slides · SI insights cut from report pages · SI2 insights v2 commentary columns · SP report files moved to the private archive · SL library and site refresh (coming-soon showcase, coming-soon in the library, filter by analysis, About redesign, new nav). Detail in the table below.
 
-**Owner to-do, in order:** (1) read `/en/terms` and `/en/privacy`; (2) switch on "Sell single reports" and make one live $49 test purchase; (3) then Month / Annual / transcripts the same way; (4) review the topic queue, then turn the weekly planner back on; (5) set `INSIGHTS_PUBLISH_STATUS` when the first commentary columns look right; (6) Google Ads steps (S17, S21) only when you say go; (7) decide the new Kira Chain direction.
+**Owner decisions 2026-10-14:** terms + privacy read ✅ · selling switched on (single report, transcript, Month, Annual) ✅ · single report priced by length: under 20 pages $39 (70 reports), 20–29 pages $45 (41), 30+ pages $49 (16) ✅ · weekly planner on ✅ · commentary columns publish without a draft review (kira-pipeline PR) ✅ · Google Ads: not yet, the owner will say go · Kira Chain: direction still open, parked.
+
+**Owner to-do:** one live test purchase of each (a report, a transcript, Month; Annual is optional since PayPal charges the whole year), check the receipt email, then refund the tests in PayPal.
 
 ### Sprints
 
