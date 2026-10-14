@@ -10,16 +10,33 @@
 
 import * as worldbank from './worldbank.js';
 import * as imf from './imf.js';
+import * as psa from './psa.js';
+import * as boj from './boj.js';
+import * as vnNso from './vn-nso.js';
+import * as ecos from './ecos.js';
+import * as bot from './bot.js';
+import * as estat from './estat.js';
+import * as krCustoms from './kr-customs.js';
 
 export { ISO3, FIRST_YEAR } from './util.js';
 
+// `own: true` = a heavy source that runs in its own cron slot (/api/cron-econ-refresh?source=<key>), not in the default run.
 const ADAPTERS = {
   worldbank_wdi: { series: worldbank.fetchWorldBank },
-  imf_weo: { series: imf.fetchImf }
+  imf_weo: { series: imf.fetchImf },
+  psa_openstat: { series: psa.series, flows: psa.flows },
+  boj: { series: boj.series, flows: boj.flows },
+  vn_nso: { series: vnNso.series },
+  bok_ecos: { series: ecos.series },
+  bot: { series: bot.series },
+  estat: { flows: estat.flows, own: true },
+  kr_customs: { flows: krCustoms.flows, own: true }
 };
 
-// indicators: econ_indicators rows; sources: data_sources rows ({ key, env_key }).
-export async function collect(indicators, sources = []) {
+// indicators: econ_indicators rows; sources: data_sources rows ({ key, env_key });
+// only: run just this source key (its own cron slot); otherwise run every source not marked `own`.
+export async function collect(indicators, sources = [], { only = null } = {}) {
+  const runs = (key) => (only ? key === only : !(ADAPTERS[key] && ADAPTERS[key].own));
   const envOf = Object.fromEntries(sources.map((s) => [s.key, s.env_key]));
   const missingKey = (src) => envOf[src] && !process.env[envOf[src]];
   const rows = [];
@@ -28,7 +45,7 @@ export async function collect(indicators, sources = []) {
   const waiting = new Set();
   for (const ind of indicators) {
     const ad = ADAPTERS[ind.source_key];
-    if (!ad || !ad.series) continue;
+    if (!ad || !ad.series || !runs(ind.source_key)) continue;
     if (missingKey(ind.source_key)) { waiting.add(ind.source_key); continue; }
     try {
       rows.push(...(await ad.series(ind, { env: process.env[envOf[ind.source_key]] })));
@@ -37,7 +54,7 @@ export async function collect(indicators, sources = []) {
     }
   }
   for (const [key, ad] of Object.entries(ADAPTERS)) {
-    if (!ad.flows) continue;
+    if (!ad.flows || !runs(key)) continue;
     if (missingKey(key)) { waiting.add(key); continue; }
     try {
       flows.push(...(await ad.flows({ env: process.env[envOf[key]] })));

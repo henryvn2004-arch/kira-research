@@ -34,7 +34,8 @@ export default async function handler(req, res) {
       read('data_sources?select=key,env_key')
     ]);
 
-    const { rows, flows, errors, waiting } = await collect(indicators, sources);
+    const only = /^[a-z_]{2,40}$/.test(String(req.query.source || '')) ? String(req.query.source) : null;
+    const { rows, flows, errors, waiting } = await collect(indicators, sources, { only });
     const now = new Date().toISOString();
     const write = async (table, conflict, list) => {
       for (let i = 0; i < list.length; i += 1000) {
@@ -50,15 +51,15 @@ export default async function handler(req, res) {
     await write('econ_series', 'indicator_key,country_code,period', rows);
     await write('econ_flows', 'source_key,reporter,partner,product,flow,freq,period', flows);
 
-    const ok = errors.length === 0 && rows.length > 0;
+    const ok = errors.length === 0 && (rows.length > 0 || flows.length > 0 || (only && waiting.includes(only)));
     const detail = `${rows.length} values, ${flows.length} trade flows` +
       (waiting.length ? `; waiting for key: ${waiting.join(', ')}` : '') +
       (errors.length ? `; failed: ${errors.join(' | ')}` : '');
-    await logJobRun('econ-refresh', { ok, detail, startedAt });
+    await logJobRun(only ? `econ-refresh-${only}` : 'econ-refresh', { ok, detail, startedAt });
     return res.status(ok ? 200 : 207).json({ ok, rows: rows.length, flows: flows.length, waiting, errors });
   } catch (err) {
     console.error('[econ-refresh] error:', err.message);
-    await logJobRun('econ-refresh', { ok: false, detail: err.message, startedAt });
+    await logJobRun(/^[a-z_]{2,40}$/.test(String(req.query.source || '')) ? `econ-refresh-${req.query.source}` : 'econ-refresh', { ok: false, detail: err.message, startedAt });
     return res.status(500).json({ error: 'server_error' });
   }
 }
