@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>关于我们 — KIRA Research</title>
-  <meta name="description" content="KIRA Research发布关于东南亚、日本、韩国、中国台湾、澳大利亚与新西兰市场、行业及进入路径的研究。">
+  <meta name="description" content="KIRA Research是一家覆盖东南亚、日本、韩国、中国台湾、澳大利亚与新西兰的研究机构，2018年以BizDirect Asia之名创立。">
 
   <link rel="alternate" hreflang="en"        href="https://kiraresearch.com/en/about">
   <link rel="alternate" hreflang="ja"        href="https://kiraresearch.com/ja/about">
@@ -14,7 +14,7 @@
   <link rel="canonical" href="https://kiraresearch.com/zh/about">
 
   <meta property="og:title"       content="关于我们 — KIRA Research">
-  <meta property="og:description" content="为东南亚的决策提供清晰依据。">
+  <meta property="og:description" content="为在亚洲拓展业务的企业提供市场情报。">
   <meta property="og:type"        content="website">
 
   <link rel="preconnect" href="https://api.fontshare.com">
@@ -25,369 +25,286 @@
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/kira.css">
+  <link rel="stylesheet" href="/css/service.css">
 
   <style>
+    /* About — editorial layout: navy hero with key figures, then quiet
+       sections on white, timeline on a pale panel, navy closing band. */
+    :root { --navy: #0B1A33; --navy-2: #12264A; --on-navy: #FFFFFF; --on-navy-muted: rgba(255,255,255,.72); --on-navy-line: rgba(255,255,255,.16); --accent-light: #8DB4FF; }
+    .ab-hero { position: relative; overflow: hidden; background: var(--navy); color: var(--on-navy); }
+    .ab-hero::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(60% 80% at 92% 10%, rgba(26,102,240,.38), rgba(26,102,240,0) 70%),
+                  linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%); }
+    .ab-hero .sv-w { position: relative; padding-top: 96px; }
+    .ab-hero .hero-eyebrow { color: var(--accent-light); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .16em; margin-bottom: 24px; }
+    .ab-hero .hero-eyebrow::before { background: var(--accent-light); width: 22px; height: 1.5px; }
+    .ab-hero h1 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 900; font-size: clamp(36px, 5.2vw, 66px); line-height: 1.04; letter-spacing: -0.035em; margin: 0 0 24px; max-width: 920px; text-wrap: balance; color: var(--on-navy); }
+    .ab-hero h1 span { display: block; }
+    .ab-hero h1 .accent { color: var(--accent-light); }
+    .ab-hero .lead { font-size: 18px; line-height: 1.65; color: var(--on-navy-muted); max-width: 680px; margin: 0; }
+    .ab-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 72px; border-top: 1px solid var(--on-navy-line); }
+    .ab-stat { padding: 28px 24px 40px 0; }
+    .ab-stat + .ab-stat { padding-left: 28px; border-left: 1px solid var(--on-navy-line); }
+    .ab-stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: clamp(30px, 3.4vw, 44px); line-height: 1; letter-spacing: -0.03em; color: var(--on-navy); margin-bottom: 12px; }
+    .ab-stat .lbl { font-size: 13px; line-height: 1.5; color: var(--on-navy-muted); }
+
+    .ab-sec { padding-top: 104px; }
+    .ab-h2 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 700; font-size: clamp(28px, 3.3vw, 42px); line-height: 1.1; letter-spacing: -0.028em; margin: 14px 0 0; text-wrap: balance; }
+    .ab-intro { font-size: 16px; line-height: 1.65; color: var(--muted); max-width: 620px; margin: 16px 0 0; }
+
+    .ab-purpose { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 72px; align-items: start; }
+    .ab-purpose .copy p { font-size: 16px; line-height: 1.75; color: var(--muted); margin: 0 0 18px; }
+    .ab-purpose .copy p:first-child { font-size: 20px; line-height: 1.6; color: var(--text); }
+
+    .ab-journey { margin-top: 104px; padding: 88px 0 96px; background: #F5F8FC; border-top: 1px solid #E8EEF7; border-bottom: 1px solid #E8EEF7; }
+    .ab-tl { list-style: none; padding: 0; margin: 56px 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: relative; }
+    .ab-tl::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--border-strong); }
+    .ab-tl li { position: relative; padding: 36px 28px 0 0; }
+    .ab-tl li::before { content: ""; position: absolute; left: 0; top: 0; width: 15px; height: 15px; box-sizing: border-box; border-radius: 50%; background: #F5F8FC; border: 2px solid var(--primary); }
+    .ab-tl li.now::before { background: var(--primary); box-shadow: 0 0 0 5px rgba(26,102,240,.16); }
+    .ab-tl .yr { display: flex; align-items: center; gap: 10px; font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 34px; line-height: 1; letter-spacing: -0.03em; color: var(--primary); margin-bottom: 16px; }
+    .ab-tl .chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--primary); border-radius: 3px; padding: 4px 7px; }
+    .ab-tl h3 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 700; font-size: 16px; line-height: 1.35; margin: 0 0 8px; color: var(--text); }
+    .ab-tl p { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+    .ab-svcs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-top: 48px; }
+    .ab-svc { border-top: 2px solid var(--text); padding-top: 24px; display: flex; flex-direction: column; }
+    .ab-svc .name { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--primary); margin-bottom: 14px; }
+    .ab-svc h3 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.015em; margin: 0 0 12px; }
+    .ab-svc p { font-size: 15px; line-height: 1.7; color: var(--muted); margin: 0 0 20px; flex: 1; }
+    .ab-svc a { font-size: 14px; font-weight: 600; color: var(--text); text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
+    .ab-svc a:hover { color: var(--primary); }
+
+    .ab-how { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 56px; margin-top: 40px; counter-reset: h; }
+    .ab-how > div { display: grid; grid-template-columns: 56px minmax(0, 1fr); padding: 28px 0; border-top: 1px solid var(--border); counter-increment: h; }
+    .ab-how > div::before { content: counter(h, decimal-leading-zero); font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 18px; color: var(--primary); }
+    .ab-how h3 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 700; font-size: 18px; line-height: 1.35; margin: 0 0 8px; }
+    .ab-how p { font-size: 14.5px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+    .ab-where { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 64px; align-items: center; }
+    .ab-facts { margin-top: 28px; border-top: 1px solid var(--border); }
+    .ab-fact { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .ab-fact .key { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-dim); padding-top: 3px; }
+    .ab-fact .val { font-size: 14.5px; line-height: 1.6; color: var(--text); }
+    .ab-fact .val a { color: var(--primary); text-decoration: none; }
+    .ab-where .sv-map { margin-top: 0; }
+    html:lang(ja) .ab-fact .key, html:lang(ko) .ab-fact .key, html:lang(zh-Hans) .ab-fact .key,
+    html:lang(ja) .ab-svc .name, html:lang(ko) .ab-svc .name, html:lang(zh-Hans) .ab-svc .name { letter-spacing: .06em; }
+
+    .ab-close { margin-top: 112px; background: var(--navy); color: var(--on-navy); position: relative; overflow: hidden; }
+    .ab-close::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(50% 90% at 8% 100%, rgba(26,102,240,.30), rgba(26,102,240,0) 70%); }
+    .ab-close .sv-w { position: relative; padding-block: 80px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+    .ab-close h2 { font-family: 'Satoshi', var(--font-cjk, sans-serif), sans-serif; font-weight: 700; font-size: clamp(28px, 3.4vw, 44px); letter-spacing: -0.028em; line-height: 1.1; margin: 0 0 14px; color: var(--on-navy); }
+    .ab-close p { font-size: 16px; line-height: 1.65; color: var(--on-navy-muted); margin: 0; max-width: 560px; }
+    .ab-close .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .ab-close .btn-ghost { background: transparent; color: var(--on-navy); border: 1px solid rgba(255,255,255,.35); }
+    .ab-close .btn-ghost:hover { border-color: #fff; }
+
+    footer.kira-footer { margin-top: 0; }
+    html:lang(ja) .ab-hero h1, html:lang(ko) .ab-hero h1, html:lang(zh-Hans) .ab-hero h1 { font-size: clamp(30px, 4vw, 52px); line-height: 1.25; letter-spacing: -0.01em; max-width: 1000px; }
+    html:lang(ja) .ab-hero h1, html:lang(ja) .ab-h2, html:lang(ja) .ab-close h2 { word-break: auto-phrase; }
+
+    @media (max-width: 1100px) {
+      .ab-tl { grid-template-columns: minmax(0, 1fr); margin-top: 40px; }
+      .ab-tl::before { left: 7px; right: auto; top: 8px; bottom: 8px; width: 1px; height: auto; }
+      .ab-tl li { padding: 0 0 36px 44px; }
+      .ab-tl li:last-child { padding-bottom: 0; }
+      .ab-tl li::before { top: 8px; }
+      .ab-tl .yr { font-size: 28px; margin-bottom: 10px; }
+      .ab-tl p { max-width: 620px; }
+    }
+    @media (max-width: 960px) {
+      .ab-purpose, .ab-where, .ab-close .sv-w { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+      .ab-close .actions { justify-content: flex-start; }
+      .ab-svcs { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+      .ab-how { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .ab-hero .sv-w { padding-top: 56px; }
+      .ab-hero .lead { font-size: 16px; }
+      .ab-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 48px; }
+      .ab-stat, .ab-stat + .ab-stat { padding: 22px 16px 26px 0; border-left: 0; }
+      .ab-stat:nth-child(even) { padding-left: 20px; border-left: 1px solid var(--on-navy-line); }
+      .ab-stat:nth-child(n+3) { border-top: 1px solid var(--on-navy-line); }
+      .ab-sec { padding-top: 72px; }
+      .ab-journey { margin-top: 72px; padding: 64px 0 72px; }
+      .ab-close { margin-top: 80px; }
+      .ab-close .sv-w { padding-block: 56px; }
+      .ab-fact { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+      .ab-purpose .copy p:first-child { font-size: 18px; }
+    }
+  </style>
+
+  <style>
+    /* zh: Simplified Chinese font fallback, CJK line-height */
     body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; }
-    h1 { line-height: 1.15 !important; letter-spacing: -0.01em !important; }
     p, li { line-height: 1.8; }
-    h1 span { display: inline-block; }
-    .page-hero {
-      padding-top: 80px; padding-bottom: 56px;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-    }
-    .page-hero h1 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: clamp(40px, 5.5vw, 64px);
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      max-width: 880px;
-      margin-bottom: 24px;
-    }
-    .page-hero h1 .accent { color: var(--primary); }
-    .page-hero .lead {
-      font-size: 19px;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 640px;
-    }
-
-    .story-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 80px;
-      padding: 96px 0 24px;
-      align-items: start;
-    }
-    .story-grid .label-col {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--primary);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .story-grid h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 38px;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin-bottom: 24px;
-    }
-    .story-grid p {
-      font-size: 17px;
-      line-height: 1.7;
-      color: var(--muted);
-      margin-bottom: 20px;
-      max-width: 680px;
-    }
-    .story-grid p strong { color: var(--text); font-weight: 600; }
-
-    .pillars {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      padding: 64px 0;
-    }
-    .pillar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 32px;
-      position: relative;
-    }
-    .pillar::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 40px; height: 1px;
-      background: var(--primary);
-    }
-    .pillar .num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--primary);
-      letter-spacing: 0.15em;
-      margin-bottom: 16px;
-    }
-    .pillar h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: -0.015em;
-      margin-bottom: 12px;
-    }
-    .pillar p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    .stance {
-      padding: 96px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .stance-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-    }
-    .stance-col h3 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .stance-col h3::before {
-      content: "";
-      width: 24px;
-      height: 1px;
-      background: var(--primary);
-    }
-    .stance-col ul {
-      list-style: none;
-      padding: 0;
-    }
-    .stance-col li {
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 15px;
-      line-height: 1.55;
-      color: var(--text);
-    }
-    .stance-col li:last-child { border-bottom: none; }
-    .stance-col li .lede { font-weight: 600; display: block; margin-bottom: 4px; }
-    .stance-col li .body { color: var(--muted); font-size: 14px; }
-
-    .team {
-      padding-top: 96px;
-    }
-    .team-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 80px;
-      align-items: start;
-    }
-    .team h2 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 38px;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin-bottom: 24px;
-    }
-    .team .lead {
-      font-size: 17px;
-      line-height: 1.7;
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
-    .team-facts {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .team-fact {
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border);
-      align-items: start;
-    }
-    .team-fact:last-child { border-bottom: none; }
-    .team-fact .key {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding-top: 2px;
-    }
-    .team-fact .val { font-size: 15px; line-height: 1.6; color: var(--text); }
-
-    .closing-cta {
-      margin: 96px 0 0;
-      padding: 56px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .closing-cta::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 80px; height: 1px;
-      background: var(--primary);
-    }
-    .closing-cta h3 {
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 700;
-      font-size: 32px;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-    }
-    .closing-cta p {
-      font-size: 16px;
-      color: var(--muted);
-      max-width: 480px;
-      margin: 0 auto 28px;
-    }
-    .closing-cta .actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    @media (max-width: 968px) {
-      .story-grid, .team-grid { grid-template-columns: 1fr; gap: 32px; }
-      .pillars { grid-template-columns: 1fr; }
-      .stance-grid { grid-template-columns: 1fr; gap: 48px; }
-      .closing-cta { padding: 36px 24px; }
-    }
   </style>
 </head>
 <body>
 
-  <section class="container page-hero">
-    <div class="hero-eyebrow" data-i18n="about.eyebrow">关于我们</div>
-    <h1>
-      <span data-i18n="about.titleLine1">为东南亚的决策</span>
-      <span class="accent" data-i18n="about.titleLine2">提供清晰依据。</span>
-    </h1>
-    <p class="lead" data-i18n="about.lead">KIRA Research发布关于东南亚、日本、韩国、中国台湾、澳大利亚与新西兰市场、行业及进入路径的研究。每份报告旨在为一项投资或市场进入决策提供更充分的依据。</p>
+  <section class="ab-hero">
+    <div class="sv-w">
+      <div class="hero-eyebrow" data-i18n="about.eyebrow">关于我们</div>
+      <h1>
+        <span data-i18n="about.titleLine1">为在亚洲拓展业务的企业</span>
+        <span class="accent" data-i18n="about.titleLine2">提供市场情报。</span>
+      </h1>
+      <p class="lead" data-i18n="about.lead">KIRA Research是一家研究机构，覆盖东南亚、日本、韩国、中国台湾、澳大利亚与新西兰。我们帮助企业及其顾问团队，以可引用的依据决定在哪里竞争、如何进入以及如何增长。</p>
+      <div class="ab-stats">
+        <div class="ab-stat">
+          <div class="val" data-i18n="about.stat1Val">2018</div>
+          <div class="lbl" data-i18n="about.stat1Label">以BizDirect Asia之名创立</div>
+        </div>
+        <div class="ab-stat">
+          <div class="val" data-i18n="about.stat2Val">15</div>
+          <div class="lbl" data-i18n="about.stat2Label">覆盖的亚太市场</div>
+        </div>
+        <div class="ab-stat">
+          <div class="val" data-i18n="about.stat3Val">1500万+</div>
+          <div class="lbl" data-i18n="about.stat3Label">数据基础中收录的企业数量</div>
+        </div>
+        <div class="ab-stat">
+          <div class="val" data-i18n="about.stat4Val">4</div>
+          <div class="lbl" data-i18n="about.stat4Label">发布语言</div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section class="container">
-    <div class="story-grid">
-      <div class="label-col" data-i18n="about.storyLabel">— 我们的工作</div>
+  <section class="sv-w ab-sec">
+    <div class="ab-purpose">
       <div>
-        <h2 data-i18n="about.storyHeading">先明确决策，再研究市场。</h2>
-        <p data-i18n="about.storyP1">每份报告都从其所服务的决策出发：市场是否值得投入、如何进入，或在立足之后向何处扩张。</p>
-        <p data-i18n="about.storyP2">我们覆盖东南亚、日本、韩国、中国台湾、澳大利亚与新西兰，聚焦企业争夺本地需求的行业，而非纯出口型制造业。</p>
-        <p data-i18n="about.storyP3">我们的报告属于案头研究，基于公开及授权来源。每项数据均注明来源，每份报告在发布前均经本公司研究团队审核。</p>
+        <div class="sv-label" data-i18n="about.purposeLabel">我们的使命</div>
+        <h2 class="ab-h2" data-i18n="about.purposeHeading">为亚洲市场的决策提供更可靠的依据。</h2>
+      </div>
+      <div class="copy">
+        <p data-i18n="about.purposeP1">亚洲市场分散、变化快，且以多种语言记录。管理层所需的依据通常存在，但分散在当地公开文件、行业协会、行业媒体以及市场一线从业者的经验之中。</p>
+        <p data-i18n="about.purposeP2">我们的工作是汇集这些依据、加以检验，并整理成对当下问题的清晰回答：这个市场是否值得进入？应如何进入？增长空间在哪里？</p>
+        <p data-i18n="about.purposeP3">我们从企业数据起步，建立了日本、韩国和中国的专职研究团队，如今以同一品牌提供行业研究、专家洞察与一手调研。</p>
       </div>
     </div>
   </section>
 
-  <section class="container">
-    <div class="pillars">
-      <div class="pillar">
-        <div class="num">01</div>
-        <h3 data-i18n="about.pillar1Title">围绕决策构建。</h3>
-        <p data-i18n="about.pillar1Body">每份报告针对一个明确的阶段撰写——评估市场、进入市场或在市场内扩张——并回答该阶段提出的问题。</p>
+  <section class="ab-journey">
+    <div class="sv-w">
+      <div class="sv-label" data-i18n="about.journeyLabel">发展历程</div>
+      <h2 class="ab-h2" data-i18n="about.journeyHeading">从企业数据到研究伙伴。</h2>
+      <p class="ab-intro" data-i18n="about.journeyLead">每个阶段新增的能力，都是我们今天研究工作的基础。</p>
+      <ol class="ab-tl">
+        <li>
+          <div class="yr">2018</div>
+          <h3 data-i18n="about.j1Title">奠定基础</h3>
+          <p data-i18n="about.j1Body">BizDirect Asia成立，作为企业情报数据门户，覆盖亚洲15个国家的1500多万家企业。</p>
+        </li>
+        <li>
+          <div class="yr">2020</div>
+          <h3 data-i18n="about.j2Title">进入行业研究</h3>
+          <p data-i18n="about.j2Body">设立日本研究部（Japan Research Desk），推出行业研究、专家访谈与商务对接服务。</p>
+        </li>
+        <li>
+          <div class="yr">2022</div>
+          <h3 data-i18n="about.j3Title">拓展至全亚洲</h3>
+          <p data-i18n="about.j3Body">设立韩国与中国专职研究部，扩大覆盖全区域的研究能力。</p>
+        </li>
+        <li>
+          <div class="yr">2024</div>
+          <h3 data-i18n="about.j4Title">沉淀专家知识</h3>
+          <p data-i18n="about.j4Body">推出BizDirect Asia专家访谈记录数据库，将专家访谈中的洞察转化为易于获取的研究情报。</p>
+        </li>
+        <li class="now">
+          <div class="yr">2026 <span class="chip" data-i18n="about.jNow">如今</span></div>
+          <h3 data-i18n="about.j5Title">KIRA Research时代</h3>
+          <p data-i18n="about.j5Body">推出行业研究与市场情报服务，BizDirect Asia更名为KIRA Research，完成向以研究为核心的情报伙伴的转型。</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sv-w ab-sec">
+    <div class="sv-label" data-i18n="about.doLabel">业务内容</div>
+    <h2 class="ab-h2" data-i18n="about.doHeading">以三种方式支持决策。</h2>
+    <div class="ab-svcs">
+      <div class="ab-svc">
+        <div class="name">Kira Library</div>
+        <h3 data-i18n="about.do1Title">行业研究</h3>
+        <p data-i18n="about.do1Body">关于市场、细分领域与进入路径的报告。每份报告围绕一个具体的商业问题撰写，每个数字均注明来源，并以英文、日文、韩文和简体中文发布。</p>
+        <a href="/zh/library"><span data-i18n="about.do1Cta">浏览报告库</span> <span class="btn-arrow">→</span></a>
       </div>
-      <div class="pillar">
-        <div class="num">02</div>
-        <h3 data-i18n="about.pillar2Title">注明来源，可供引用。</h3>
-        <p data-i18n="about.pillar2Body">每项数据均附来源标注，可放心核查、引用与分享，出处清晰可查。</p>
+      <div class="ab-svc">
+        <div class="name">Kira Experts</div>
+        <h3 data-i18n="about.do2Title">专家洞察</h3>
+        <p data-i18n="about.do2Body">与亲历市场的经营者、高管和专家进行的访谈记录及一对一交流。</p>
+        <a href="/zh/experts/"><span data-i18n="about.do2Cta">了解Kira Experts</span> <span class="btn-arrow">→</span></a>
       </div>
-      <div class="pillar">
-        <div class="num">03</div>
-        <h3 data-i18n="about.pillar3Title">订阅之前，即可阅读。</h3>
-        <p data-i18n="about.pillar3Body">每份报告的执行摘要均可免费阅读。完整报告与PDF版本包含在订阅中。</p>
+      <div class="ab-svc">
+        <div class="name">Kira Survey</div>
+        <h3 data-i18n="about.do3Title">一手调研</h3>
+        <p data-i18n="about.do3Body">以当地语言开展的消费者问卷与深度访谈，回答公开资料无法回答的问题。</p>
+        <a href="/zh/survey/"><span data-i18n="about.do3Cta">了解Kira Survey</span> <span class="btn-arrow">→</span></a>
       </div>
     </div>
   </section>
 
-  <section class="stance">
-    <div class="container">
-      <div class="stance-grid">
-        <div class="stance-col">
-          <h3 data-i18n="about.weAreLabel">我们是</h3>
-          <ul>
-            <li>
-              <span class="lede" data-i18n="about.weAre1Title">一家研究机构。</span>
-              <span class="body"   data-i18n="about.weAre1Body">我们开展研究、撰写并发布。分析本身就是产品。</span>
-            </li>
-            <li>
-              <span class="lede" data-i18n="about.weAre2Title">一个订阅制报告库。</span>
-              <span class="body"   data-i18n="about.weAre2Body">一项订阅即可在线阅读整个报告库，并享有一定额度的PDF版本。订阅即将开放，现可申请优先开通。</span>
-            </li>
-            <li>
-              <span class="lede" data-i18n="about.weAre3Title">以读者的语言发布。</span>
-              <span class="body"   data-i18n="about.weAre3Body">提供英文、日文与韩文版本，简体中文版本正在陆续上线。各语言版本的数据与来源完全一致。</span>
-            </li>
-          </ul>
-        </div>
-        <div class="stance-col">
-          <h3 data-i18n="about.weAreNotLabel">我们不是</h3>
-          <ul>
-            <li>
-              <span class="lede" data-i18n="about.weAreNot1Title">不是实地调研机构。</span>
-              <span class="body"   data-i18n="about.weAreNot1Body">我们的报告基于已发布及授权来源，而非问卷调查或门店走访。如需一手视角，可另行通过Kira Experts获取。</span>
-            </li>
-            <li>
-              <span class="lede" data-i18n="about.weAreNot2Title">不是市场规模数据库。</span>
-              <span class="body"   data-i18n="about.weAreNot2Body">每份报告针对特定市场中的特定问题，并呈现完整的推理过程。</span>
-            </li>
-            <li>
-              <span class="lede" data-i18n="about.weAreNot3Title">不是咨询公司。</span>
-              <span class="body"   data-i18n="about.weAreNot3Body">我们的工作是公开发布的研究。当问题需要一手经验时，Kira Experts会安排与具备相关经验的人士进行交流。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container team">
-    <div class="team-grid">
+  <section class="sv-w ab-sec">
+    <div class="sv-label" data-i18n="about.howLabel">工作方式</div>
+    <h2 class="ab-h2" data-i18n="about.howHeading">支撑我们研究的标准。</h2>
+    <div class="ab-how">
       <div>
-        <h2 data-i18n="about.teamHeading">概览。</h2>
-        <p class="lead" data-i18n="about.teamLead">我们是谁，覆盖哪些市场。</p>
-        <a href="mailto:hello@kiraresearch.com" class="btn btn-secondary">
-          <span data-i18n="about.teamCta">来信联系</span>
-          <span class="btn-arrow">→</span>
-        </a>
+        <div>
+          <h3 data-i18n="about.how1Title">以决策为起点。</h3>
+          <p data-i18n="about.how1Body">每个项目都从其需要支持的决策出发，收集该决策所需的依据。</p>
+        </div>
       </div>
-      <div class="team-facts">
-        <div class="team-fact">
-          <div class="key" data-i18n="about.factCoverage">覆盖范围</div>
-          <div class="val" data-i18n="about.factCoverageVal">越南、泰国、印度尼西亚、马来西亚、新加坡、菲律宾、柬埔寨、老挝、缅甸、文莱、日本、韩国、中国台湾、澳大利亚、新西兰</div>
+      <div>
+        <div>
+          <h3 data-i18n="about.how2Title">每个数字都有来源。</h3>
+          <p data-i18n="about.how2Body">数字注明来源，估算明确标注，证据不足之处如实说明，便于核查与引用。</p>
         </div>
-        <div class="team-fact">
-          <div class="key" data-i18n="about.factFocus">研究重点</div>
-          <div class="val" data-i18n="about.factFocusVal">企业争夺本地需求的行业</div>
+      </div>
+      <div>
+        <div>
+          <h3 data-i18n="about.how3Title">当地来源，读者的语言。</h3>
+          <p data-i18n="about.how3Body">我们依据当地语言资料开展研究，并以读者的语言发布；各语言版本的数字与来源完全一致。</p>
         </div>
-        <div class="team-fact">
-          <div class="key" data-i18n="about.factLanguages">语言</div>
-          <div class="val" data-i18n="about.factLanguagesVal">英文 · 日文 · 韩文 · 简体中文（陆续上线）</div>
-        </div>
-        <div class="team-fact">
-          <div class="key" data-i18n="about.factMethod">研究方法</div>
-          <div class="val" data-i18n="about.factMethodVal">基于公开及授权来源的案头研究，标注来源，发布前经过审核</div>
-        </div>
-        <div class="team-fact">
-          <div class="key" data-i18n="about.factContact">联系方式</div>
-          <div class="val">hello@kiraresearch.com</div>
+      </div>
+      <div>
+        <div>
+          <h3 data-i18n="about.how4Title">发布前审核。</h3>
+          <p data-i18n="about.how4Body">每份报告在发布前均经过研究团队审核。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="container">
-    <div class="closing-cta">
-      <h3 data-i18n="about.closingHeading">了解我们的研究成果。</h3>
-      <p data-i18n="about.closingBody">阅读任一执行摘要，了解我们的工作方式，或申请优先开通完整报告库。</p>
+  <section class="sv-w ab-sec">
+    <div class="ab-where">
+      <div>
+        <div class="sv-label" data-i18n="about.whereLabel">覆盖范围</div>
+        <h2 class="ab-h2" data-i18n="about.whereHeading">15个市场，一个区域视角。</h2>
+        <p class="ab-intro" data-i18n="about.whereBody">我们聚焦企业围绕本地需求展开竞争的行业，而非纯出口型制造业，覆盖三个次区域。</p>
+        <div class="ab-facts">
+          <div class="ab-fact"><div class="key" data-i18n="about.regionSea">东南亚</div><div class="val" data-i18n="about.regionSeaVal">越南、泰国、印度尼西亚、马来西亚、新加坡、菲律宾、柬埔寨、老挝、缅甸、文莱</div></div>
+          <div class="ab-fact"><div class="key" data-i18n="about.regionNorth">东北亚</div><div class="val" data-i18n="about.regionNorthVal">日本、韩国、中国台湾</div></div>
+          <div class="ab-fact"><div class="key" data-i18n="about.regionOce">大洋洲</div><div class="val" data-i18n="about.regionOceVal">澳大利亚、新西兰</div></div>
+          <div class="ab-fact"><div class="key" data-i18n="about.factLanguages">语言</div><div class="val" data-i18n="about.factLanguagesVal">English · 日本語 · 한국어 · 简体中文</div></div>
+          <div class="ab-fact"><div class="key" data-i18n="about.factContact">联系方式</div><div class="val"><a href="mailto:hello@kiraresearch.com">hello@kiraresearch.com</a></div></div>
+        </div>
+      </div>
+      <div class="sv-map" aria-hidden="true"><span style="left:61.0%;top:35%" data-i18n="about.regionNorth">东北亚</span><span style="left:43.0%;top:70%" data-i18n="about.regionSea">东南亚</span><span style="left:63.5%;top:88%" data-i18n="about.regionOce">大洋洲</span></div>
+    </div>
+  </section>
+
+  <section class="ab-close">
+    <div class="sv-w">
+      <div>
+        <h2 data-i18n="about.closingHeading">从依据开始。</h2>
+        <p data-i18n="about.closingBody">阅读任意报告的执行摘要，了解我们的研究方法，或告诉我们您面临的决策。</p>
+      </div>
       <div class="actions">
-        <a href="/zh/library" class="btn btn-primary">
-          <span data-i18n="about.closingCta1">浏览报告库</span>
-          <span class="btn-arrow">→</span>
-        </a>
-        <a href="/zh/methodology" class="btn btn-secondary" data-i18n="about.closingCta2">阅读研究方法</a>
-        <a href="/zh/pricing#waitlist" class="btn btn-secondary" data-i18n="about.closingCta3">申请优先开通</a>
+        <a href="/zh/library" class="btn btn-primary"><span data-i18n="about.closingCta1">浏览报告库</span> <span class="btn-arrow">→</span></a>
+        <a href="/zh/methodology" class="btn btn-ghost"><span data-i18n="about.closingCta2">研究方法</span></a>
+        <a href="mailto:hello@kiraresearch.com" class="btn btn-ghost"><span data-i18n="about.closingCta3">联系我们</span></a>
       </div>
     </div>
   </section>
