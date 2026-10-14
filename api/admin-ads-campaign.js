@@ -16,7 +16,7 @@
 // ============================================================
 
 import { getConfig } from './_lib/config.js';
-import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
+import { REPORT_PRICE_MIN } from './_lib/pricing.js';
 import { buildCampaignCsv, NEGATIVES } from './_lib/ads-campaign.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     const out = buildCampaignCsv(topics, {
       campaign: 'KIRA Reports - Pilot', budget: num(query.budget, 1, 500, 20), maxCpc: num(query.cpc, 0.1, 20, 1).toFixed(2),
       languages: String(query.languages || 'English').replace(/[^A-Za-z ,]/g, '').slice(0, 60) || 'English',
-      priceOn, price: REPORT_PRICE_DEFAULT, etaDays
+      priceOn, price: REPORT_PRICE_MIN, etaDays
     });
 
     if (query.format === 'json') {
