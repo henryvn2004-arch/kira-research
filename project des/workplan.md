@@ -169,7 +169,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
-| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🔴 planned; sample proposal first, build waits for the owner's go |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14 (see D1 block); D2–D7 wait for the owner's go |
 
 #### S7 — Month subscription ($149 / month, PayPal Subscriptions) — built 2026-10-12, switched OFF
 Owner decision: the Month plan = every report in full online + every transcript + 5 PDF downloads per billing period. Annual ($1,190, 60 PDF + Kira Chain) is **not** built.
@@ -228,6 +228,16 @@ Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 →
 | **D5** | Registries + GLEIF: Houjin Bangou/gBizINFO, GCIS, ACRA, ABN/ASIC, NZBN → enrich `entities` (legal name, status, parent), detect new subsidiaries of JP/KR/TW groups |
 | **D6** | File/scrape sources: VN Customs, SBV, FIA, BOI, MIDA, BKPM, ASEANstats FDI, JETRO/MOF, Korea Eximbank, Taiwan MOEA, CLMB national files |
 | **D7** | Paid layer: full history + Excel export + moves alerts for subscribers; "email me new moves" lead form; JA/KO/ZH lead-sentence templates; sitemap for pages that pass the data check |
+
+#### D1 — data layer + country data pages (built 2026-10-14)
+- [x] Migration 057 (applied): `data_sources` (licence register, `public` flag), `econ_indicators` (18 series, labels EN/JA/KO/ZH), `econ_series` (one row per indicator × country × period). RLS on, no policies; only the server reads and writes.
+- [x] Sources: World Bank WDI (13 indicators, 14 markets, 2000–2025; CC BY 4.0 read on the data catalog page; **public**). IMF WEO through the official SDMX API `api.imf.org` (5 indicators incl. Taiwan and projections; **not public** until the IMF agrees). The IMF DataMapper URL refuses server requests (bot protection), so it is not used.
+- [x] Backfill 2026-10-14: 4,587 World Bank values + 2,400 IMF values, loaded inside Supabase with `pg_net` (same parsing as the code).
+- [x] Weekly refresh: Vercel cron `/api/cron-econ-refresh` (Mondays 04:10 UTC, `api/_lib/econ.js`), logs `econ-refresh` in `job_runs`, shown on `/en/admin/health`.
+- [x] `GET /api/econ` (15 markets with headline values) and `GET /api/econ?country=vietnam` (all public indicators); rows from non-public sources never leave the server.
+- [x] Pages (noindex, not in nav or sitemap): `/<loc>/data/` (15 market cards) and `/<loc>/data/<country>` (template lead sentence, 8 tiles with sparklines, growth chart, 6-year table, source line, link to the library filtered by country), EN/JA/KO/ZH. Files `public/en/data/{index,_view}.html`, `public/js/econ-view.js`, `public/css/data.css`.
+- Taiwan has no World Bank data; its page says the national statistics office is being added (D2: DGBAS), or shows IMF once permission arrives.
+- Moved to D2: ABS (its CPI moved to a new monthly dataflow; Australia already has the World Bank annual series), Korea customs and e-Stat (need the owner's free keys).
 
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 
