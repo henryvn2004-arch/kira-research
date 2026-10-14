@@ -88,7 +88,7 @@ Distribution (2026-10-05)
 - **One generic page for every product (owner, 2026-10-07; built, prototype, noindex).** `/en/chain/` is a search box: the reader types a product or service, `/api/chain-search` finds the chain (forgives typos, accents and filler words; a query that names a market only returns that market's chains), and `/en/chain/<country>/<product>` draws it with one shared page (`public/en/chain/_view.html`, data from `/api/chain`). Per-product work is data only. A query with no chain shows a request form (`/api/chain-request`, table `chain_requests`; email optional) as demand signal.
   - **Data:** migration 037, table `chains` (country × slug, name, aliases, `payload` jsonb or `payload_url` to a static file, status draft/published). VN coffee is the first row, its data in `public/chain-data/vn-coffee.json`. `payload` has the shape the page reads: `stages`, `flows`, `companies`, `facts`, `method`.
   - **Auto-chain builder ✅ (2026-10-07):** `skills/kira-research-report/scripts/build-chain.mjs` (`--id <queue id>` | `--all` | `--dry`) turns `industry_players` rows of one country x industry x segment into a published chain (`stats.auto = true`, `stats.group`), one hub per stage, straight-line arrows, confidence medium, verification "From a KIRA report". Needs >= 8 players in >= 3 stages. Never overwrites a chain without `stats.auto` (hand-made coffee). Runs at publish (`batch_runner.md` step 5.3b-5, non-fatal). First auto chain: VN convenience store licensing (23 companies, 5 stages). The page shows an "Automatic draft" banner and disables Market Estimate when no stage has an estimate. Still to do: analyst fixes the arrows and adds stage estimates (the pipeline does not produce them), request-email sender, plan gating. Admin publish/unpublish page ✅ (`/en/admin/chains`, `api/admin-chains.js`, also lists unmatched searches).
-  - **Not built yet:** the email sender for `chain_requests` (the table has `notified_at`; copy the `notify-topic-published` cron), the plan gating (map and counts public, company lists for Annual), and an admin page to publish or unpublish chains.
+  - **Not built yet:** the plan gating (map and counts public, company lists for Annual). (The `chain_requests` email cron, #96, and the admin page, #90, are built.)
 - **Owner decision 2026-10-07: tax ID and registered capital are not needed.** A company's identity in v1 is its name, a source link and its website (shown as a link, labelled "group site" or "brand site" when the page belongs to the parent or brand). Concentration rings then rely only on sourced stage-level figures.
 - **Rules:** company-level public information only, no personal data. Every analyst upload records its source and licence (paid databases usually forbid redistribution).
 - **Open before the S10 build:** (1) coffee verification and website passes are done (2026-10-07); still to do: fill the ~12 websites that block automated fetching and the 3 weakest stages through analyst upload; (2) analyst review of the coffee chain template; (3) wording of the Kira Chain line on the pricing pages.
@@ -124,19 +124,39 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
   - Expert compliance.
   - B2B selling.
 
-### Progress snapshot (2026-10-13, measured in the database and git)
+### Progress snapshot (2026-10-14, measured in the database and git)
 
 | | |
 |---|---|
-| Published reports | **121** (+4 retired), EN, JA, KO and **ZH on all 121** (ZH backfill finished 2026-10-07 and 10-11) |
-| New reports since 2026-10-06 | 10 with all 4 languages. **None between 2026-10-08 and 2026-10-10** (cause not confirmed; the owner's other daily routines hit the account usage limit on 10-10). Running again since 2026-10-11 |
-| Queue | 1,883 pending · 376 hold · 118 done · 1 in progress (2,378 rows; the planner and the topic reframe, S14/S15, grew it) |
-| Topics | 1,892 queued · 1 requested · 501 rejected (2,394). Weekly planner Routine has run since 2026-10-12 |
-| Company data (`entities`) | **944**, up from 250 because each report's "Who's who" chapter feeds it |
-| Kira Chain | 6 chains in the database. **Direction change 2026-10-11, paused by the owner** (note in `project des/memory/project_kira_chain.md`) |
-| Kira Experts transcripts | 16 published. Daily runner built in `kira-pipeline` (needs its GitHub secrets) |
-| Money side | Subscriptions (Month, Annual) and single-report checkout are built and **switched off** (S7, S19); the owner turns them on |
-| Demand signals | waitlist **0** · topic requests **1** · chain requests **0** · leads 2 (1 custom research, 1 experts). Little real demand yet |
+| Published reports | **127** (+4 retired), EN, JA, KO and ZH on every one |
+| New reports since 2026-10-06 | 16 with all 4 languages (10-06: 2 · 10-07: 4 · 10-11: 1 · 10-12: 3 · 10-13: 3 · 10-14: 3). **None between 2026-10-08 and 2026-10-10** (cause not confirmed, likely the account usage limit). Since 10-12 the Routine makes 3 a day, as planned |
+| Queue | 1,878 pending · 376 hold · 124 done · 2 in progress |
+| Topics | 1,894 queued · 1 requested · 501 rejected. Weekly planner built, **paused** (`planner.weekly_enabled` off) until the owner reviews the queue |
+| Company data (`entities`) | **1,131** (250 in May), fed by each report's "Who's who" chapter |
+| Kira Chain | 12 chains in the database (auto drafts made at publish). **Paused by the owner since 2026-10-11** (new direction, `project des/memory/project_kira_chain.md`) |
+| Kira Experts transcripts | **20** published. Daily runner live in `kira-pipeline` since 2026-10-11 (3 a day) |
+| Insights | 310 published (264 cut from report pages, 37 data explainers, 9 older articles); 25 retired. Commentary columns (Insights v2) built, not run yet |
+| Exhibit data (Excel/PPT) | 15 reports have data (the 9 backfilled + new reports) |
+| Money side | Single report $39–49 (by length), transcript $29, Month $149, Annual $1,190: **all switched on 2026-10-14**. 0 subscriptions yet; 2 old purchases |
+| Demand signals | waitlist **0** · topic requests **1** · chain requests **0** · leads 2. Little real demand yet |
+
+### Summary for the owner (2026-10-14)
+
+**Done (in the plan):** S1, S2, S3, S3b, S3c, S4, S5, S5b, S11, S13, S14 (built, paused), S15, S16, S20 (closed by the measurement + 195-page SEO test).
+
+**Live since 2026-10-14 (owner test purchase open):** S7 (Month + Annual), S19 (report $39–49, transcript $29), S12 (Excel/PPT download for buyers).
+
+**Code done, waiting for the owner's go:** S17 (Google Ads tracking), S18 (2–3 day promise), S21 (Ads campaign file, paused).
+
+**Started, not finished:** S9 Kira Experts (20 transcripts, daily runner; marketplace not started) · S10 Kira Chain (prototype, auto drafts, admin; paused by the owner).
+
+**Not started:** S6 Snapshot layer · S8 EPUB / KDP / Google Play / Apple Books · Kira List purchase ($39).
+
+**Done but outside the original plan:** SA owner admin platform · SQ report quality + cover slides · SI insights cut from report pages · SI2 insights v2 commentary columns · SP report files moved to the private archive · SL library and site refresh (coming-soon showcase, coming-soon in the library, filter by analysis, About redesign, new nav). Detail in the table below.
+
+**Owner decisions 2026-10-14:** terms + privacy read ✅ · selling switched on (single report, transcript, Month, Annual) ✅ · single report priced by length: under 20 pages $39 (70 reports), 20–29 pages $45 (41), 30+ pages $49 (16) ✅ · weekly planner on ✅ · commentary columns publish without a draft review (kira-pipeline PR) ✅ · Google Ads: not yet, the owner will say go · Kira Chain: direction still open, parked.
+
+**Owner to-do:** one live test purchase of each (a report, a transcript, Month; Annual is optional since PayPal charges the whole year), check the receipt email, then refund the tests in PayPal.
 
 ### Sprints
 
@@ -152,26 +172,36 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **SQ** | **Report quality + preview** (2026-10-06 → 10-11): "Who's who" closing chapter feeding the company data (#76), edition year + Opus translation + one full report per fire (#74), 9 cover layouts (#70), PDF overflow fixes (#86), publish reads the new contents and commentary hooks (#83, #97), preview works on iPhone (#93) | ✅ merged |
 | **S5** | Website repositioning, Kira Experts + Kira Survey pages, pricing + waitlist, library filters, redesign | ✅ merged (#52–#61) |
 | **S5b** | New pricing on the site + waitlist ✅ · "why KIRA" section (5 reasons) on the pricing page ✅ · "Cite this report" box on report pages ✅ (published/updated dates and per-table sources were already shown). **Left:** PPT/Excel exhibit download (needs the pipeline to emit exhibit data; moved to S12) | ✅ merged (#66); PPT/Excel left for S12 |
-| **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🟡 built 2026-10-12 for new reports; 1 report has data (see S12 block); older reports have none |
-| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last). **UX decided 2026-10-07**: network view of value-chain groups joined by flow arrows (prototype PR #73). Left: data model (`chains`, `chain_stages`, `chain_flows`, `chain_memberships`) on the Phase R tables, registry + analyst-upload ingestion, ~10 priority VN industries, links from reports | 🟡 last (UX ✅; generic search + chain page prototype built, see notes) **2026-10-11: owner changed direction (searchable, downloadable partner lists, shown on a country map) and paused the work.** The daily email to readers whose requested chain is published is built (#96). Details in the Kira Chain memory note and PR #99 |
+| **S12** | PPT/Excel download of a report's exhibits: pipeline writes each exhibit's data, export endpoint, button on report pages for subscribers | 🟡 built 2026-10-12; 15 reports have data (9 new-layer reports backfilled + new reports from the runner); ~112 older reports have none (different chart style) |
+| **S10** | **Kira Chain v1** (owner, 2026-10-06: build last). **UX decided 2026-10-07**: network view of value-chain groups joined by flow arrows (prototype PR #73). Left: data model (`chains`, `chain_stages`, `chain_flows`, `chain_memberships`) on the Phase R tables, registry + analyst-upload ingestion, ~10 priority VN industries, links from reports | 🟡 last (UX ✅; generic search + chain page prototype built, see notes) **2026-10-11: owner changed direction (searchable, downloadable partner lists, shown on a country map) and paused the work.** The daily email to readers whose requested chain is published is built (#96), auto drafts are made at publish (12 chains in the database), admin page `/en/admin/chains` built. Details in the Kira Chain memory note and PR #99 |
 | **S11** | On-demand production, revised 2026-10-06 (owner: no delivery date on pages; reader-requested topics approve themselves, no human step). Mine: coming-soon pages and the topic API show no ETA, and every status maps to an explicit state (a reader-created `requested` topic was wrongly shown as "in production"). **Owned by the session "Report search with placeholders":** auto-approval of reader topics and the `requested` / `source` schema | ✅ PR #68 (rest with the search session) |
 | **S13** | **Topic queue review** (owner, 2026-10-06): current topics are too high level, so reports read as generic and nobody opens them. For every country × industry, break the topic down one more level, and build topics from the keywords readers search most. Inputs: `topics.search_count`, `search_misses`, `topic_requests` (almost empty today, so keyword research outside the site is needed at first), the 18 queued and 57 held topics. Output: a re-planned queue the owner approves. Starts once the search session's auto-approval has landed. **Done 2026-10-07 for all 15 countries (v2).** A topic is one market segment in one country + one lens (a KIRA brain question type), with a decision-level buyer question, 4-6 guiding questions (the chapters) and a "must cover" list of deals, rules and dates. 375 approved topics replace 516 narrow ones (merged ones are `rejected` with `signals.merged_into`). `topics.priority_score` (migration 038) orders the queue after demand. The topic brief passes `lens`, `segment` and `must_cover` to the BRAIN route; the queue sync refreshes pending titles and drops pending rows of merged topics. Facts flagged VERIFY need a check before writing| ✅ |
 | **S14** | **Weekly topic planner** (owner, 2026-10-07): every Monday a Routine adds ~6 segment-level topics per country (15 countries) from reader demand first (placeholders, email requests, empty searches), then fresh research; same topic rules as S13 v2. **v2 (2026-10-12): trend-driven.** Scans the last 14 days of news per country/industry, then boosts a live topic whose subject is in the news (priority base + 40 + 20 x strength; expires after `planner.trend_days`, default 28) or adds a new topic where a segment/analysis is missing; quota per country = `planner.topics_per_country` +1 core / -1 small market. Procedure + scripts in private `kira-pipeline/taxonomy/planner*`; owner settings `planner.*` on `/en/admin/config`; each run on `/en/admin/health` | ✅ built (kira-pipeline #5, routine created; first run 2026-10-12) |
 | **S15** | **Topic reframe: segment × standard analysis** (owner, 2026-10-12): topics read too narrow (one event-led question each, from buyer questions found on JP/KR/TW business-association sites). Kept the level-2 segments; each topic is now one segment × one standard analysis (market overview, competitive landscape, customer insight analysis, distribution analysis, pricing, value proposition, market entry strategy, partner landscape, investment analysis, M&A landscape, regulatory landscape, growth strategy), keyed to the brain question type so its storyline is the spine. Title = `Country segment analysis`; buyer question and chapters come from private `kira-pipeline/taxonomy/analysis_types.json`; report title = `Country segment year: analysis`. Market overview first: 296 overviews added, so the queue holds 336 overviews (priority 70-100) ahead of the other analyses (about 10-50). Round 2: the five core analyses added per segment by parent industry, live queue 1,892 topics. 30 cross-industry rule topics (FDI screening, visas, tax, sanctions, data law, RHQ) parked; 2 duplicates merged. One-line hook per topic (all 1,887 written individually): cover subtitle, line under the report title and under the library-card title (`preview.hook`, no migration; see CLAUDE.md). Weekly planner (S14) follows the same rules; it stays paused until the owner has reviewed the queue | ✅ |
-| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🟡 Month $149 and Annual $1,190 built, both switched off (owner turns them on) |
-| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🟡 started 2026-10-07/11: transcript library in Supabase with listing, free opening and paywall (EN, #84); 16 transcripts published; fieldwork cards + generator + daily runner in the private repo (kira-pipeline #6). Admin page `/en/admin/transcripts` (`api/admin-transcripts.js`: languages per transcript, bought count, take down / publish) built 2026-10-13. Left: runner secrets and first real run, marketplace |
+| **S7** | Subscription billing (PayPal Subscriptions, entitlements, download caps): only if the waitlist shows demand | 🟡 code done: Month $149 (#113) and Annual $1,190 (#116) built, both switched off; owner test purchase open |
+| **S9** | Kira Experts transcript library: AI-led interview pilot (~20) → library → self-matching marketplace | 🟡 started 2026-10-07/11: transcript library in Supabase with listing, free opening and paywall (EN, #84); 20 transcripts published; daily runner live in the private repo since 2026-10-11 (3 a day, ja/ko/zh, listing thumbnails #120). Admin page `/en/admin/transcripts` (#125). $29 purchase built, switched off (S19). Left: `OPENAI_API_KEY` secret for thumbnails, owner review of the daily batches, self-matching marketplace |
 | **S6** | Snapshot layer (3–5 page template) | 🔴 later |
 | **S8** | Distribution: EPUB export, KDP/Google Play/Apple Books | 🔴 later |
 
-| **S16** | Email deliverability (paid search prerequisite) | 🔴 first, see "Paid search" below |
-| **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done, owner steps open |
-| **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done |
-| **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done, checkout switched off (owner turns it on) |
+| **S16** | Email deliverability (paid search prerequisite) | ✅ done 2026-10-12 (#106): DNS verified, instant confirmation email, bounce/complaint webhook |
+| **S17** | Google Ads attribution: click id → sign-up → conversions back to Google; privacy page | 🟡 code done (#107), owner steps open (link GA4 ↔ Ads, auto-tagging, review `/en/privacy`) |
+| **S18** | Coming-soon pages promise delivery in 2–3 days; requested topics jump the queue; promised-date alert | 🟡 code done (#108); owner decides whether to add runner fires |
+| **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
 
+Work done outside the original sprint list (2026-10-12 → 10-14):
+
+| Sprint | Scope | Status |
+|---|---|---|
+| **SI** | **Insights cut from report pages** (owner, 2026-10-13): each published report gives one insight = its executive summary + first chart page, in EN/JA/KO/ZH, no model writing (`scripts/make-insight.mjs`); runs after every publish; 118 backfilled; 25 table-only "key data metrics" insights retired; insight cover slides | ✅ merged (#122, #126, #130, #131) |
+| **SI2** | **Insights v2 = trending commentary columns** (owner, 2026-10-14: report extracts do not help SEO/AEO/GEO): daily scout → write 3–5 columns with KIRA's view, winners/losers, predictions, FAQ, dated sources → fact-check → ja/ko/zh; saved as **draft** | 🟡 built (#134 + kira-pipeline runner), not run yet; owner sets `INSIGHTS_PUBLISH_STATUS=published` after reviewing the first batch |
+| **SP** | **Paid report files kept private** (owner, 2026-10-13): full report HTML/JSON moved from this public repo to private `kira-pipeline/report-archive/` (`scripts/archive-batch.mjs`), `outputs/` git-ignored; free preview sliced to 5 pages at upload and again on every response | ✅ merged (#122, #128). Old files are still in this repo's git history (purging it is a separate owner decision) |
+| **SL** | **Library + site refresh**: report cover slide on report page, library, home and link previews (#118, #121); coming-soon showcase (CSS covers, sample slides, planned contents for 195 topics, #123); coming-soon topics in the same library list with a Status filter (#124); home counts include coming-soon (#127); library filter by **analysis** instead of investor stage (migration 056, #132); About page redesign + company history (#129); nav + footer reorganised around the current products (#133) | ✅ merged |
+| **SX** | **Small fixes**: competitor names removed from 2 reports (`7b64f9a`); S12 PowerPoint charts keep negative values (#119) | ✅ merged |
+
 #### S7 — Month subscription ($149 / month, PayPal Subscriptions) — built 2026-10-12, switched OFF
-Owner decision: the Month plan = every report in full online + every transcript + 5 PDF downloads per billing period. Annual ($1,190, 60 PDF + Kira Chain) is **not** built.
+Owner decision: the Month plan = every report in full online + every transcript + 5 PDF downloads per billing period. Annual ($1,190, 60 PDF + Kira Chain) was built the same day (see below), also switched off.
 - [x] Migration 052 (applied): `billing_plans` (the PayPal product/plan, created once on the first checkout and remembered), `subscriptions` (one row per PayPal subscription; mirrors PayPal status; `welcomed_at` for the one welcome email), `subscription_pdf_downloads` (one row per reader, report, language, billing period).
 - [x] `api/_lib/subscription.js` + `api/_lib/paypal.js`: plan setup, refresh from PayPal (no webhook needed: a row is re-checked when it is older than 10 minutes, a just-approved one every 15 seconds), `activeSubscription()`, period dates from PayPal (`last_payment` / `next_billing_time`), the PDF allowance (`claimPdf`: the same PDF again in the same period is free).
 - [x] `api/subscription.js`: `GET` status (settles a just-approved subscription, sends the welcome email once), `POST ?action=create` (403 `checkout_closed` while the switch is off, 409 if already subscribed), `POST ?action=cancel` (stops the next charge; access continues to the end of the paid period).
@@ -183,8 +213,8 @@ Owner decision: the Month plan = every report in full online + every transcript 
 - [ ] **Owner (Annual):** read `/en/terms` again (the Annual wording and the refund line are my draft); decide whether to keep the "Kira Chain, as it launches" line on the Annual card while Kira Chain is unbuilt (it is also in the terms); switch on "Sell the Annual subscription"; make one live $1,190 test purchase and cancel it (PayPal charges the full year at once; refund it in PayPal).
 - [ ] Not built: upgrade from Month to Annual with credit; a webhook (renewals and lapses are noticed the next time the subscriber or an access check looks, so a lapsed subscriber can keep reading until the first check after the lapse, at most about 10 minutes after PayPal ends the subscription); an admin button to cancel or refund (do it in the PayPal dashboard); coupons; team seats.
 
-Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 → S9 → S12 → S6 → S8 → **S10 Kira Chain last**.
-Paid search track (owner, 2026-10-12): **S16 → S17 → S18 → S19 → S20 → S21**. Each sprint starts only when the owner says go.
+Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 🟡 (code done) → S9 🟡 → S12 🟡 (code done) → S6 → S8 → **S10 Kira Chain last** (paused).
+Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S19 🟡 → S20 ✅ → S21 🟡**: all code is done; what is left is owner steps (terms, switches, Google Ads).
 
 ### Paid search: Google Ads on long-tail, buyer-intent queries (discussed 2026-10-11/12)
 
@@ -386,7 +416,7 @@ Prices are list prices found online; many are secondary sources.
 
 ---
 
-## Status snapshot (2026-05-20)
+## Status snapshot, original phases 1–10 (written 2026-05-20, statuses refreshed 2026-10-14)
 
 Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 
@@ -395,13 +425,13 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner blocked
 | 1 | Report unit foundation | ⏸️ | Henry's Claude-chat workflow; outside repo build |
 | 2 | Brand & copy rewrite (EN) | ✅ | All 4 sprints done — `b9e28fd`, `4dba4b5`. Removal cleanup finalized in `a8a9206` (29 legacy files gone). |
 | 3 | Library infrastructure | ✅ | 3.1 + 3.2 + 3.3 all done (`ffde22e`, `60b00bb`, `1a46491`, `87cd168`, `8bcb6d4`). Sitemap + hreflang shipped. |
-| 4 | Admin backend | 🟡 | 4.1 auth + dashboard ✅ (`714375a`, `eb05464`), 4.2 reports CRUD ✅ (`b2174fe`), 4.4 leads ✅. **4.1 audit log deferred, 4.3 transactions+users pending, 4.4 aggregator tracking pending** |
+| 4 | Admin backend | ✅ | 4.1–4.4 all done (audit log, transactions, users, aggregators: May 2026). Grown far beyond the plan in Phase S (SA: pipeline, health, config, funnel, CRM, chains, transcripts) |
 | 5 | Tool demotion + Studio kill | ✅ | Redirects all wired (`692d907`, `74c21c0`). 5.3 credit-system + profile.html resolved in `a8a9206`. Sprint 5.1 service-line subpages rebuilt EN/JA/KO this session — `/custom-research/{market-analysis,strategy-builder}` now live as senior-analyst-led service landings (no functional AI tool). |
-| 6 | Report population | 🟡 | 6.2 PDF upload + Storage delivery shipped (item D, this session); content production still owner-blocked. |
-| 7 | SEO + Insights engine | 🟡 | 7.1 templates ✅ (`15e94f2`). 7.3 sitemap ✅ (`6bb331f`+`8bcb6d4`), per-page schema/OG ✅ (this commit). **7.2 auto-insights cron + 7.3 internal linking + GSC submission pending.** |
-| 8 | JA layer | 🟡 | 8.1 infra ✅ + 8.4 copy ✅ (`9147ea2`…`4bea633`) + hreflang/sitemap-ja.xml ✅ (`8bcb6d4`). **8.2 JA report translations + 8.3 GIIResearch submission pending — Henry content work.** |
-| 9 | KO layer | 🟡 | 9.1 infra ✅ (same commit range) + sitemap-ko.xml ✅. **9.2 KO translations + 9.3 KO aggregator pending.** |
-| 10 | Polish & launch | 🔴 | Not started — depends on Phases 6/8/9 having content |
+| 6 | Report population | ✅ | 127 published (target 50+), made by the cloud Routine, 3 a day. 6.3 aggregator submission not done (owner) |
+| 7 | SEO + Insights engine | 🟡 | 7.1 ✅, 7.2 ✅ (insights from report pages, SI; commentary columns SI2 built), 7.3 sitemap + schema/OG + GSC sitemaps ✅. Left: internal linking beyond related insights; read the S20 SEO test in Search Console (~late Nov 2026) |
+| 8 | JA layer | 🟡 | 8.1 ✅, 8.2 ✅ (every report has JA), 8.4 ✅. Left: 8.3 GIIResearch submission (owner), native QA |
+| 9 | KO layer | 🟡 | 9.1 ✅, 9.2 ✅ (every report has KO). ZH added on top (S4). Left: 9.3 KO aggregator (owner), native QA |
+| 10 | Polish & launch | 🟡 | Mobile check at 390px + image weight done (2026-10-06). Left: Lighthouse run, real-phone check, turning payments on, soft launch |
 | ∞ | Infra & quality (unplanned) | ✅ | Smoke CI `7e4e0de`+`87cd168`, security cleanup `09dbc30`, memory `9fde035`+`4d9456a` |
 
 Detailed checkboxes per sprint below. CLAUDE.md at repo root has the

@@ -46,7 +46,7 @@
     if (lead) {
       const text = (rep && !mon && !ann) ? S.leadReport : S.leadOn.replace('{list}', [rep && S.report, mon && S.month, ann && S.year].filter(Boolean).join(S.sep));
       lead.removeAttribute('data-i18n');
-      lead.textContent = text.replace('$REPORT', '$' + (st.report ? st.report.price : 49)).replace('$MONTH', '$' + (st.subscription ? st.subscription.price : 149))
+      lead.textContent = text.replace('$REPORT', '$' + (st.report ? st.report.price : '39–49')).replace('$MONTH', '$' + (st.subscription ? st.subscription.price : 149))
         .replace('$YEAR', '$' + (st.annual ? st.annual.price.toLocaleString('en-US') : '1,190'));
     }
   }).catch(() => {});

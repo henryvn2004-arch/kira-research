@@ -17,7 +17,7 @@
 //   index     true only for the SEO test pages (topics.signals.seo_test, S20): the English page may be
 //             indexed and sits in sitemap-en.xml. Everything else stays noindex.
 //   hook      the one-line hook question (topics.signals.hook), used for the page description.
-//   price     USD price of the report once published, or null while checkout is off
+//   price     USD price range of the report once published ("39–49", set by length), or null while checkout is off
 //             (config checkout.single_report_enabled, S19).
 //   planned   [{ title, pages: [title, ...] }] the planned contents (topics.signals.planned, written
 //             before any research and checked by scripts/check-planned-contents.mjs), or null.
@@ -25,7 +25,7 @@
 
 import { topicEta } from './_lib/eta.js';
 import { getConfig } from './_lib/config.js';
-import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
+import { REPORT_PRICE_RANGE } from './_lib/pricing.js';
 import { plannedOf } from './_lib/planned.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
     return res.status(200).json({
       eta: eta ? { date: eta.date, days: eta.days } : null,
-      price: purchase ? REPORT_PRICE_DEFAULT : null,
+      price: purchase ? REPORT_PRICE_RANGE : null,
       index: !!(t.signals && t.signals.seo_test === true),
       hook: (t.signals && typeof t.signals.hook === 'string') ? t.signals.hook : null,
       planned: plannedOf(t.signals),
