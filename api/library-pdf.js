@@ -13,7 +13,7 @@
 // the same PDF again in that period is free.
 // ============================================================
 
-import { resolvePdfUrl, downloadNameFor } from './_lib/report-pdf.js';
+import { resolvePdfUrl, downloadNameFor, nameParts } from './_lib/report-pdf.js';
 import { activeSubscription, claimPdf } from './_lib/subscription.js';
 import { verifyBearer, LOCALES } from './_lib/transcripts.js';
 
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       if (!tr || !tr.pdf_url) { res.status(404).json({ error: 'pdf_missing' }); return; }
       allowance = await claimPdf(user.id, sub, slug, tr.locale);
       if (!allowance.ok) { res.status(429).json({ error: 'pdf_limit_reached', used: allowance.used, limit: allowance.limit }); return; }
-      const link = await resolvePdfUrl(tr.pdf_url, downloadNameFor(base, tr.locale));
+      const link = await resolvePdfUrl(tr.pdf_url, downloadNameFor(await nameParts(base.id, tr.locale), tr.locale));
       if (!link) { res.status(404).json({ error: 'pdf_missing' }); return; }
       res.status(200).json({ pdf_url: link, via, used: allowance.used, limit: allowance.limit });
       return;
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
     let tr = (await sb(`report_translations?report_id=eq.${base.id}&locale=eq.${locale}&status=eq.published&select=pdf_url,locale&limit=1`))[0];
     if (!tr && locale !== 'en') tr = (await sb(`report_translations?report_id=eq.${base.id}&locale=eq.en&status=eq.published&select=pdf_url,locale&limit=1`))[0];
     if (!tr || !tr.pdf_url) { res.status(404).json({ error: 'pdf_missing' }); return; }
-    const link = await resolvePdfUrl(tr.pdf_url, downloadNameFor(base, tr.locale));
+    const link = await resolvePdfUrl(tr.pdf_url, downloadNameFor(await nameParts(base.id, tr.locale), tr.locale));
     if (!link) { res.status(404).json({ error: 'pdf_missing' }); return; }
     res.status(200).json({ pdf_url: link, via });
   } catch (err) {

@@ -14,6 +14,7 @@
 import { activeSubscription } from './_lib/subscription.js';
 import { verifyBearer, SLUG_RE } from './_lib/transcripts.js';
 import { buildXlsx, buildPptx } from './_lib/exhibits.js';
+import { downloadNameFor, nameParts } from './_lib/report-pdf.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -65,9 +66,9 @@ export default async function handler(req, res) {
     const buf = format === 'xlsx' ? await buildXlsx(report, row.data) : await buildPptx(report, row.data);
     // Vercel answers up to 4.5 MB; a deck of very many charts could pass it, then Excel is the way.
     if (buf.length > 4.3 * 1024 * 1024) { res.status(413).json({ error: 'file_too_large' }); return; }
-    const stem = String(base.code || base.slug).replace(/[^A-Za-z0-9._-]+/g, '_');
+    const fileName = downloadNameFor(await nameParts(base.id, 'en'), 'en', format, 'exhibits');
     res.setHeader('Content-Type', TYPES[format]);
-    res.setHeader('Content-Disposition', `attachment; filename="KIRA_${stem}_exhibits.${format}"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.status(200).send(buf);
   } catch (err) {
     console.error('[library-exhibits] error:', err.message);
