@@ -1,624 +1,98 @@
-# insight_runner.md — self-contained prompt for scheduled Insight generation from published reports
+# insight_runner.md — scheduled insight pages built from published reports
 
-Fired by `kira-insight-XXXX` scheduled tasks (4 fires/day @ 07:00 / 11:00 / 15:00 / 21:00 ICT). Each fire is a **fresh Claude session with no memory** of prior conversations.
-
-This prompt picks 1 `living_reports` row and advances its Insight pipeline by 1 stage. Mirrors the multi-stage pattern in `batch_runner.md` (Phase Q.1).
+Fired by the insight Routine (a separate routine from the batch runner; paused until the owner restarts it). Each fire is a **fresh Claude session with no memory** of any prior conversation, on an empty disk: everything needed is in this prompt and the scripts it names.
 
 ---
 
-## Mission (Phase Q.6 — 2026-06-09, updated)
+## Mission (owner, 2026-10-13: replaces the Phase Q.2 / Q.6 design)
 
-For every published report, produce **4 insights × 3 languages = 12 insight_translations rows** in up to 6 fires:
+For every published report, publish **one insight, the report's own executive-summary page plus its first chart page, in every language the report has** (EN, JA, KO, ZH). The pages are cut out of the finished report HTML as they are: same words, same numbers, same chart, same translation. **No LLM writes or translates anything here.** One report takes seconds, so one fire clears the whole backlog.
 
-```
-[report published]
-  → Fire 1 (Stage E):  extract 3 narrative insights from en.html → 3 EN translations
-  → Fire 2 (Stage J):  translate to JA → 3 JA translations
-  → Fire 3 (Stage K):  translate to KO → 3 KO translations
-  → Fire 4 (Stage T):  generate 4th data-table insight (EN) → 1 EN translation
-  → Fire 5 (Stage TJ): translate 4th insight to JA → 1 JA translation
-  → Fire 6 (Stage TK): translate 4th insight to KO → 1 KO translation
-```
+Why the old design was retired (3 sections lifted as text + a table-only "key data metrics" insight, then re-translated to JA/KO): the pages carried no conclusion or chart, the tables had no commentary, the translations repeated work the report already has, and nothing was made for ZH. The old insights stay live (see "Old insights").
 
-The 4th insight (`slug: <industry>-<country>-key-data-metrics-<year>`) contains 2–3 HTML comparison tables with `class="kira-data-table"` — pure data, no prose — designed for AI engine citation and infographic creation.
+What is public: the executive-summary page and the next chart page. The implication / "where to compete" pages stay in the paid report. Do not change the page choice per report by hand; the choice is made by the script.
 
 ---
 
-## Mission (Phase Q.2 — 2026-05-25, original)
-
-For every published report, produce **3 insights × 3 languages = 9 insight_translations rows** in 3 fires:
-
-```
-[report published, no insights yet]
-  → Fire 1 (Stage E): extract 3 insights from en.html → INSERT 3 insights + 3 EN translations (status=published)
-  → Fire 2 (Stage J): translate the 3 insights to JA → INSERT 3 JA translations (status=published)
-  → Fire 3 (Stage K): translate the 3 insights to KO → INSERT 3 KO translations (status=published)
-```
-
-Why split: same root cause as batch — translation subagent output-cap risk. Each insight body is ~3-5KB (small), but doing 3 insights × 3 langs in one fire = 9 Write calls + 600K+ tokens. Splitting per language keeps each fire <20 min.
-
-Hard cap: 1 report × 1 stage per fire.
-
----
-
-## Model routing (Phase Q.5 — 2026-05-29)
-
-Insight articles are SEO/AEO marketing content derived from already-published reports — not the sellable report itself. **All spawned `general-purpose` subagents in this pipeline (extraction + JA + KO) run on `model: "sonnet"`** via the `Agent` tool's `model` parameter. The orchestrating cron session runs on the account default (only does validation + SQL + commits — lightweight). Wherever a step says "spawn `general-purpose`", pass `model: "sonnet"`. If the `model` param is unavailable for any reason, proceed on the default model (do NOT fail the fire) and note it in the summary.
-
----
-
-## Working directory (machine-agnostic)
+## Step 0: Pre-flight
 
 ```bash
-# Try git rev-parse first; if cron fired from parent dir it will fail — use fallback.
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-if [ -z "$REPO_ROOT" ]; then
-  for _CANDIDATE in \
-    "$HOME/kira-research" \
-    "/home/user/kira-research" \
-    "/home/henry/kira-research" \
-    "$(pwd)/kira-research" \
-    "$(dirname "$(pwd)")/kira-research"; do
-    if [ -f "$_CANDIDATE/skills/kira-research-report/SKILL.md" ]; then
-      REPO_ROOT="$_CANDIDATE"
-      break
-    fi
-  done
-fi
-if [ -z "$REPO_ROOT" ]; then
-  echo "ERROR: Cannot find repo root. PWD=$PWD. Tried git rev-parse + 5 fallback paths."
-  exit 1
-fi
-cd "$REPO_ROOT"
-```
-
-If all paths fail → EXIT with the error above (cron will log it). **Do NOT silently no-op — log the failure so it surfaces in the cron output.**
-
----
-
-## Step 0: Pre-flight env check
-
-Same as batch_runner — needs `PDF_RENDER_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`. If missing → EXIT `missing env, no-op`. (PDF_RENDER_SECRET not strictly used by Insights; checked anyway for consistency.)
-
----
-
-## Step 1: Find work — query Supabase
-
-Run via `mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__execute_sql`:
-
-```sql
-WITH reports AS (
-  SELECT lr.id, lr.slug, lr.country, lr.industry, lr.year, lr.created_at
-  FROM living_reports lr
-  WHERE lr.status = 'published'
-),
-insight_counts AS (
-  SELECT i.related_report_slugs[1] AS report_slug,
-         COUNT(*) FILTER (WHERE it.locale = 'en') AS en_count,
-         COUNT(*) FILTER (WHERE it.locale = 'ja') AS ja_count,
-         COUNT(*) FILTER (WHERE it.locale = 'ko') AS ko_count
-  FROM insights i
-  LEFT JOIN insight_translations it ON it.insight_id = i.id AND it.status = 'published'
-  WHERE i.status = 'published'
-    AND array_length(i.related_report_slugs, 1) > 0
-  GROUP BY i.related_report_slugs[1]
-)
-SELECT r.id, r.slug, r.country, r.industry, r.year,
-       COALESCE(ic.en_count, 0) AS en_count,
-       COALESCE(ic.ja_count, 0) AS ja_count,
-       COALESCE(ic.ko_count, 0) AS ko_count,
-       CASE
-         WHEN COALESCE(ic.en_count, 0) < 3 THEN 'stage_en'
-         WHEN COALESCE(ic.ja_count, 0) < 3 THEN 'stage_ja'
-         WHEN COALESCE(ic.ko_count, 0) < 3 THEN 'stage_ko'
-         -- Phase Q.6: data-table enrichment stages (4th insight per report)
-         WHEN COALESCE(ic.en_count, 0) < 4 THEN 'stage_t'
-         WHEN COALESCE(ic.ja_count, 0) < 4 THEN 'stage_tj'
-         WHEN COALESCE(ic.ko_count, 0) < 4 THEN 'stage_tk'
-         ELSE 'done'
-       END AS next_stage
-FROM reports r
-LEFT JOIN insight_counts ic ON ic.report_slug = r.slug
-WHERE NOT (COALESCE(ic.en_count, 0) >= 4
-       AND COALESCE(ic.ja_count, 0) >= 4
-       AND COALESCE(ic.ko_count, 0) >= 4)
-ORDER BY
-  CASE
-    -- Finish nearly-complete reports first
-    WHEN COALESCE(ic.ko_count, 0) >= 3 AND COALESCE(ic.en_count, 0) >= 4 THEN 1  -- stage_tk
-    WHEN COALESCE(ic.ja_count, 0) >= 3 AND COALESCE(ic.en_count, 0) >= 4 THEN 2  -- stage_tj
-    WHEN COALESCE(ic.ko_count, 0) >= 3 THEN 3  -- stage_t (all 3 langs done, needs 4th)
-    WHEN COALESCE(ic.ko_count, 0) > 0 THEN 4   -- stage_ko
-    WHEN COALESCE(ic.ja_count, 0) > 0 THEN 5   -- stage_ja
-    WHEN COALESCE(ic.en_count, 0) > 0 THEN 6   -- stage_en (continuing)
-    ELSE 7
-  END,
-  r.created_at ASC
-LIMIT 1;
-```
-
-If 0 rows → output `No insight work in queue` + EXIT.
-
-Pick the single returned row — note `slug`, `country`, `industry`, `year`, `next_stage`.
-
----
-
-## Step 2: Locate the EN report HTML
-
-The en.html file is the source-of-truth content for extraction. Find it:
-
-```bash
-# Convention: report slug "vietnam-coffee-2026" maps to queue id "2026-vn-coffee"
-# Reverse-derive: pull country/industry/year from slug, search for matching id in queue.csv
-```
-
-Faster path: just scan `skills/kira-research-report/outputs/batch/*/en.html` and grep for `<h1 class="cover-title">` matching the report title in DB (you queried it in Step 1).
-
-Or simpler: query Supabase `report_queue` (`GET /rest/v1/report_queue?select=id,industry,country,year`; the CSV is a frozen archive since 2026-10-07), find the row whose `<industry>-<country>-<year>` matches the slug, get the `id` field, then en.html lives at `skills/kira-research-report/outputs/batch/${id}/en.html`.
-
-If en.html doesn't exist locally, restore it first: `outputs/` is git-ignored in this public repo, the private archive holds it (`node skills/kira-research-report/scripts/archive-batch.mjs pull ${id}`). Still missing (exit 3) → EXIT with error log.
-
----
-
-## Step 3 (Stage E only): extract 3 insights → EN published
-
-### 3.1 — Spawn extraction subagent
-
-Spawn `general-purpose` **with `model: "sonnet"`** (insight pipeline → Sonnet per Model routing) and this prompt (substitute fields):
-
-> Read the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html`.
->
-> Extract THE 3 STRONGEST sections that work as standalone Insight articles. Strong = (a) has a specific data point or chart, (b) addresses a question a strategy lead would actually search for, (c) self-contained (doesn't reference earlier sections by number).
->
-> For each chosen section, output JSON with this exact shape:
->
-> ```json
-> {
->   "insights": [
->     {
->       "section_h2": "<original section H2 from en.html>",
->       "question_h2_en": "<convert original H2 to question form per question_templates.md table>",
->       "slug_key": "<short URL-safe phrase, e.g. 'market-size', 'top-players', 'ai-impact'>",
->       "title_en": "<full Insight title, question-form, 60-90 chars, case-sentence>",
->       "excerpt_en": "<280 char teaser for cards>",
->       "lede_en": "<400 char opening paragraph rendered larger>",
->       "body_en": "<HTML body: include the source section's paragraphs verbatim (preserving numbers and source tags in English brackets like [BPS 2024], [Kira estimates]). Convert section sub-H3 to question form too. Include 1 inline chart SVG if the section had one (copy verbatim from en.html). End with a 'Methodology note' paragraph styled per the seed insight pattern.>",
->       "read_time": "<X min read, estimate from word count: ~200 wpm>"
->     },
->     { … insight 2 … },
->     { … insight 3 … }
->   ]
-> }
-> ```
->
-> Rules:
-> - Lift body content **verbatim** from en.html — do NOT rewrite. Only the H2 changes (to question form) and the lede may be lightly adapted from the section's first paragraph. Numbers + source tags MUST stay intact.
-> - Source tags stay in English brackets: `[Kira estimates]`, `[BPS 2024]`, etc. NEVER translate or strip.
-> - Anti-positioning: no Mordor/Frost/Euromonitor/Synovate/Ipsos/IMARC/Claude/McKinsey in any output field.
-> - Slug rule: final slug will be `<industry-lower>-<country-lower>-<slug_key>-<year>`. Make `slug_key` 2-4 words, kebab-case.
-> - Question H2 templates per `prompts/question_templates.md` Section A.
-> - Charts: if you include an SVG, copy the entire `<svg>…</svg>` element verbatim including styles. Do not modify dimensions.
-> - `body_en` is HTML (`<h2>`, `<h3>`, `<p>`, `<ul>`, `<table>`), never Markdown: no `##`, `**` or `- ` list markers. Do not repeat the title as the first heading; the page shows it already.
->
-> Return ONLY the JSON. No markdown fences, no commentary.
-
-**Hard time cap: 30 minutes** (extraction is faster than full report gen).
-
-### 3.2 — Parent-side validation
-
-1. Parse return as JSON. If fails → failure path with `error_log: extraction subagent returned non-JSON`.
-2. Must have exactly 3 insights. If not → failure.
-3. For each insight: required fields all non-empty (`question_h2_en`, `slug_key`, `title_en`, `excerpt_en`, `lede_en`, `body_en`, `read_time`).
-4. Grep all 3 body_en for forbidden terms (`Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey`). Zero hits required.
-4b. Each body_en must start with `<` and contain no Markdown markers (`grep -E '(^|\n)#{1,4} |\*\*'` → zero hits). A Markdown body renders as raw `##` / `**` on the site → failure path with `error_log: insight body is Markdown`.
-5. Char limits: `excerpt_en` ≤ 320 chars, `lede_en` ≤ 500 chars, `title_en` ≤ 100 chars. Warn but don't fail on over.
-
-### 3.3 — Build slugs and check uniqueness
-
-For each insight: `slug = ${industry-lower}-${country-lower}-${slug_key}-${year}` (e.g. `coffee-vietnam-market-size-2026`).
-
-Verify uniqueness in DB:
-
-```sql
-SELECT slug FROM insights WHERE slug = ANY($1::text[]);
-```
-
-If any slug already exists → append `-2`, `-3` until unique. (Rare edge case; happens if same report regenerates with different section choices.)
-
-### 3.4 — INSERT insights + insight_translations EN (3 + 3 rows, idempotent)
-
-`<country-slug>` = the report's English country name, lowercase, spaces → hyphens (`vietnam`, `south-korea`). Never an ISO code (`VN`, `KR`): the insights filters match on this value.
-
-Build and execute SQL via Supabase MCP:
-
-```sql
-WITH new_insights AS (
-  INSERT INTO insights (slug, category, country, industry, featured, related_report_slugs, status, published_at)
-  VALUES
-    ($kbat$<slug1>$kbat$, 'data-explainer', $kbat$<country-slug>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now()),
-    ($kbat$<slug2>$kbat$, 'data-explainer', $kbat$<country-slug>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now()),
-    ($kbat$<slug3>$kbat$, 'data-explainer', $kbat$<country-slug>$kbat$, $kbat$<industry-lower>$kbat$, false, ARRAY[$kbat$<report-slug>$kbat$], 'published', now())
-  ON CONFLICT (slug) DO UPDATE SET
-    updated_at = now(),
-    published_at = now(),
-    status = 'published',
-    related_report_slugs = EXCLUDED.related_report_slugs
-  RETURNING id, slug
-)
-INSERT INTO insight_translations (insight_id, locale, title, excerpt, lede, body, read_time, status, published_at)
-SELECT ni.id, 'en', t.title, t.excerpt, t.lede, t.body, t.read_time, 'published', now()
-FROM new_insights ni
-JOIN (VALUES
-  ($kbat$<slug1>$kbat$, $kbat$<title_en_1>$kbat$, $kbat$<excerpt_en_1>$kbat$, $kbat$<lede_en_1>$kbat$, $kbat$<body_en_1>$kbat$, $kbat$<read_time_1>$kbat$),
-  ($kbat$<slug2>$kbat$, $kbat$<title_en_2>$kbat$, $kbat$<excerpt_en_2>$kbat$, $kbat$<lede_en_2>$kbat$, $kbat$<body_en_2>$kbat$, $kbat$<read_time_2>$kbat$),
-  ($kbat$<slug3>$kbat$, $kbat$<title_en_3>$kbat$, $kbat$<excerpt_en_3>$kbat$, $kbat$<lede_en_3>$kbat$, $kbat$<body_en_3>$kbat$, $kbat$<read_time_3>$kbat$)
-) AS t(slug, title, excerpt, lede, body, read_time)
-  ON ni.slug = t.slug
-ON CONFLICT (insight_id, locale) DO UPDATE SET
-  updated_at = now(), published_at = now(),
-  title = EXCLUDED.title, excerpt = EXCLUDED.excerpt, lede = EXCLUDED.lede,
-  body = EXCLUDED.body, read_time = EXCLUDED.read_time, status = 'published'
-RETURNING insight_id, locale, title;
-```
-
-If 0 rows returned → failure path with `error_log: insight INSERT returned 0 rows`.
-
-### 3.5 — Verify + commit memo
-
-```bash
-curl -s "https://kiraresearch.com/api/insights-list?_t=$(date +%s)" | grep -o "<slug_key>" | head -1
-```
-
-Should return at least 1 match for each slug_key. Soft check; warn but don't fail.
-
-### 3.6 — Cover image (every insight carries one)
-
-Insights from a report use that report's cover (the library and insights pages show it on cards and at the top of the article). Copy it in SQL:
-
-```sql
-UPDATE insights i SET cover_url = lr.cover_url, cover_thumb_url = lr.cover_thumb_url
-FROM living_reports lr
-WHERE lr.slug = $kbat$<report-slug>$kbat$ AND lr.cover_url IS NOT NULL
-  AND i.slug = ANY(ARRAY[$kbat$<slug1>$kbat$, $kbat$<slug2>$kbat$, $kbat$<slug3>$kbat$])
-RETURNING i.slug;
-```
-
-If it returns 0 rows (the report has no cover yet), generate one per insight at web quality and upload it:
-
-```bash
-for s in <slug1> <slug2> <slug3>; do
-  node skills/kira-research-report/scripts/gen-cover.mjs --id "$s" --country "<country>" --industry "<industry>" \
-    --angle "<title_en of that insight>" --quality medium --layout L1 --out "/tmp/$s.jpg" \
-    && node skills/kira-research-report/scripts/upload-cover.mjs --kind insight --slug "$s" --in "/tmp/$s.jpg"
+for c in "$REPO_ROOT" "$HOME/kira-research" /home/user/kira-research; do
+  [ -n "$c" ] && [ -f "$c/skills/kira-research-report/SKILL.md" ] && REPO_ROOT="$c" && break
 done
+cd "$REPO_ROOT" || { echo "ERROR: cannot find the kira-research checkout"; exit 1; }
+git pull --ff-only origin main
+[ -d node_modules ] || npm ci --no-audit --no-fund
+export KIRA_BRAIN_DIR="$(dirname "$REPO_ROOT")/kira-pipeline/brain"     # the private archive lives next to the brain
+export PW_CHROMIUM_PATH="${PW_CHROMIUM_PATH:-/opt/pw-browsers/chromium}"
+for v in SUPABASE_URL SUPABASE_SERVICE_KEY; do [ -n "${!v}" ] || echo "MISSING $v"; done
+[ -d "$(dirname "$KIRA_BRAIN_DIR")/report-archive" ] || echo "MISSING kira-pipeline report-archive"
 ```
 
-A cover failure is not fatal; note it in the summary.
+Any `MISSING` line → EXIT with `missing <what>, no-op`. Re-export the two variables in every later shell call (shell state does not persist). Never `git add` anything under `skills/kira-research-report/outputs/` (git-ignored; the report folders come from the private archive).
 
-### 3.7 — Cover slide (every language)
+---
 
-The insight cards (home, insights list, "continue reading") show the insight's own cover slide: the report cover look with the insight's title and excerpt, over its cover art. Render it once the EN translations exist, and again after each language is added (the command renders every published language of the slug and is safe to repeat):
+## Step 1: Make the insights
 
 ```bash
-for s in <slug1> <slug2> <slug3>; do
-  node skills/kira-research-report/scripts/upload-insight-slide.mjs --slug "$s"
-done
+node skills/kira-research-report/scripts/make-insight.mjs --pending 20
 ```
 
-Needs Chromium through Playwright, like `render-local.mjs` (set `PW_CHROMIUM_PATH` for a specific build). Not fatal: without it the card shows the cover art. Existing insights: `upload-insight-slide.mjs --all`.
+It takes the 20 oldest published reports that have no executive-summary insight yet (or lack a language their report has) and, per report: finds its batch folder, restores it from the private archive (`archive-batch.mjs pull`), checks that page 4 of the folder's English file is exactly the published preview's page 4, cuts the pages (`extract-insight-pages.mjs --pages auto`), upserts `insights` + `insight_translations` (slug `<industry>-<country>-exec-summary-<year>`, or `<report-slug>-exec-summary` when another report already has that one; category `market-analysis`; the report's cover) and renders the cover slides (`upload-insight-slide.mjs`, not fatal). It prints one JSON line per report and a last `{"summary":true,...}` line. Exit code 1 only when a report **failed**.
 
-No git commit needed for Stage E (insights live in DB, not files). Just print summary + exit.
+| `status` | Meaning | What to do |
+|---|---|---|
+| `published` | insight live in every language that passed its checks (`locales`) | nothing; if `skippedLocales` is not empty or `slides` is `failed…`, mention it in the summary |
+| `skipped` | the report cannot be done by script: `extract:` an unusual layout or no chart page (`pages … layout the insight styles do not cover`), or no batch folder for it | nothing now; list it in the summary. It is retried every fire and costs nothing. A report whose layout is new needs CSS in `public/css/kira.css` (`.kp-*`) first |
+| `failed` | something broke: archive pull, **page 4 differs from the published preview** (the folder is not the published version of the report), a database error | do not retry in this fire; list the `reason` in the summary |
+
+`notes` are warnings that do not block: "figures in EN not found here" (a translation restated a chart label), "refers to a section/exhibit/page number". Mention at most the count.
+
+`--report <report-slug>` does one report, `--dry-run` builds and checks without writing, `--draft` saves hidden drafts. No other options are needed in a scheduled fire.
 
 ---
 
-## Step 4 (Stage J only): translate 3 insights to JA
+## Step 2: Verify
 
-### 4.1 — Fetch the 3 EN insights to translate
-
-```sql
-SELECT i.id, i.slug, it.title, it.excerpt, it.lede, it.body, it.read_time
-FROM insights i
-JOIN insight_translations it ON it.insight_id = i.id AND it.locale = 'en' AND it.status = 'published'
-WHERE i.related_report_slugs && ARRAY[$1]::text[]
-  AND NOT EXISTS (
-    SELECT 1 FROM insight_translations it2
-    WHERE it2.insight_id = i.id AND it2.locale = 'ja' AND it2.status = 'published'
-  )
-ORDER BY i.slug
-LIMIT 3;
-```
-
-Where `$1` is the report slug from Step 1. Should return 3 rows. If returns 0 → already done, somehow. If 1 or 2 → partial done; still translate what's there.
-
-### 4.2 — Spawn JA translation subagent (1 call, 3 insights)
-
-Insight bodies are ~3-5KB each, so 3 × 5KB = 15KB total — well within Sonnet output cap. One subagent can do all 3. Spawn it **with `model: "sonnet"`** (per Model routing).
-
-Subagent prompt:
-
-> Translate 3 KIRA Research Insight articles from EN to JP. Follow `prompts/translator_jp.md` for register / vocabulary / source-tag preservation / anti-positioning rules.
->
-> Per insight, translate: `title`, `excerpt`, `lede`, `body`, `read_time` (read_time: just translate "min read" → "分で読了").
->
-> Question-form titles per `prompts/question_templates.md` Section B (JA register: NO `？` ending, use compact noun-phrase form like `「市場規模」` not `「市場規模はどうか？」`).
->
-> Preserve in body: source tags in English brackets (`[Kira estimates]`, `[BPS 2024]` etc.), HTML tags + classes, inline SVG charts verbatim (only translate `<text>` content inside SVG).
->
-> Anti-positioning grep before returning: no `Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|クロード`.
->
-> Input (3 insights as JSON):
->
-> ```json
-> [
->   {"slug": "<slug1>", "title": "<en>", "excerpt": "<en>", "lede": "<en>", "body": "<en HTML>", "read_time": "<en>"},
->   {"slug": "<slug2>", …},
->   {"slug": "<slug3>", …}
-> ]
-> ```
->
-> Output: JSON array of 3 objects with same shape, all fields translated to JA. Return ONLY the JSON.
-
-**Hard time cap: 25 minutes.**
-
-### 4.3 — Validation gate
-
-1. Parse return as JSON, must be array of 3.
-2. Each must have all 5 translated fields, all non-empty.
-3. Source tag superset check: every `[…]` tag present in EN body must also appear in JA body.
-4. Anti-positioning grep on all 3 bodies — zero hits for forbidden terms + katakana variants.
-5. Title char limit: ≤ 90 chars (JA compresses ~0.7x). Warn but don't fail.
-
-### 4.4 — INSERT 3 JA translations
-
-```sql
-INSERT INTO insight_translations (insight_id, locale, title, excerpt, lede, body, read_time, status, published_at)
-VALUES
-  ((SELECT id FROM insights WHERE slug = $kbat$<slug1>$kbat$), 'ja', $kbat$<title_ja_1>$kbat$, $kbat$<excerpt_ja_1>$kbat$, $kbat$<lede_ja_1>$kbat$, $kbat$<body_ja_1>$kbat$, $kbat$<read_time_ja_1>$kbat$, 'published', now()),
-  ((SELECT id FROM insights WHERE slug = $kbat$<slug2>$kbat$), 'ja', ...),
-  ((SELECT id FROM insights WHERE slug = $kbat$<slug3>$kbat$), 'ja', ...)
-ON CONFLICT (insight_id, locale) DO UPDATE SET
-  updated_at = now(), published_at = now(),
-  title = EXCLUDED.title, excerpt = EXCLUDED.excerpt, lede = EXCLUDED.lede,
-  body = EXCLUDED.body, read_time = EXCLUDED.read_time, status = 'published'
-RETURNING insight_id, locale, title;
-```
-
-If 0 rows → failure path.
-
-### 4.5 — Verify + exit
+For each `published` line (at most 5 per fire, the first ones):
 
 ```bash
-curl -s "https://kiraresearch.com/api/insights-list?_t=$(date +%s)&locale=ja" | head -c 500
+for loc in en ja ko zh; do curl -s -o /dev/null -w "$loc %{http_code}\n" "https://kiraresearch.com/api/insight?slug=<slug>&locale=$loc&_t=$(date +%s)"; done
 ```
 
-Render the JA cover slides as in **3.7** (`upload-insight-slide.mjs --slug "$s"` for each of the 3 slugs). Print summary + exit.
+`en` and every locale in `locales` must be 200 (a locale that is not in `locales` correctly falls back, status 200 with `isFallback`). Any other result → list it in the summary; do not change the database by hand.
 
 ---
 
-## Step 5 (Stage K only): translate 3 insights to KO
-
-Exactly mirror Step 4 but with `translator_ko.md` rules + KO question templates from `question_templates.md` Section C. Same chunked approach (1 subagent **with `model: "sonnet"`**, 3 insights).
-
-After successful INSERT → render the KO cover slides as in **3.7**, then this report's insight pipeline is **fully done** (9 insight_translations rows: 3 insights × 3 locales).
-
----
-
----
-
-## Step 3T (Stage T only — Phase Q.6): generate 4th data-table insight (EN)
-
-This stage runs after all 3 core insights are done in all 3 languages (en≥3, ja≥3, ko≥3). It generates ONE additional insight per report whose body is **pure HTML comparison tables** — no narrative prose — designed as source material for infographics and AI citation.
-
-### 3T.1 — Locate en.html (same as Stage E, Step 2)
-
-Use the same en.html lookup logic from Step 2. If not found locally → EXIT `en.html not found, skip stage_t`.
-
-### 3T.2 — Spawn data-table extraction subagent
-
-Spawn `general-purpose` **with `model: "sonnet"`** and this prompt (substitute fields):
-
-> Read the KIRA Research EN report at `skills/kira-research-report/outputs/batch/${id}/en.html`.
->
-> Generate ONE new Insight article that is a **pure data compilation** — 2–3 HTML comparison tables covering the report's most citable numbers. This article is specifically designed as infographic source material and for AI engine citation.
->
-> **Structure (strict):**
-> - `title_en`: "[Industry] [Country] [Year]: Key Market Data and Metrics" — sentence case, 60–90 chars
-> - `excerpt_en`: "A data reference covering market size, competitive landscape, and key metrics for [industry] in [country]." (max 280 chars)
-> - `lede_en`: 1–2 sentence introduction only. "Key market metrics from Kira Research's [Industry] [Country] [Year] analysis." (max 300 chars)
-> - `body_en`: Exactly 2 or 3 HTML `<table class="kira-data-table">` blocks. No prose between tables except a short 1-line `<h3>` header for each table. Each table has `<thead>` and `<tbody>`. After the last table, add one `<p class="data-source"><em>Source: Kira Research analysis, [Country] [Industry] [Year]. See full report for methodology.</em></p>`.
-> - `slug_key`: always `"key-data-metrics"`
-> - `read_time`: "3 min read"
-> - `category`: "data-explainer"
->
-> **Table requirements:**
-> 1. **Market metrics table** — rows: market size (USD), CAGR %, key volume metric (units/tonnes/users), penetration rate. Columns: metric name | 2023 or 2024 | 2025 | 2026E or 2027E. Use data from the report's market sizing and forecast sections. Source tag every number: `[Kira estimates]` or named source in brackets.
-> 2. **Competitive landscape table** — rows: top 3–5 players. Columns: company | est. market share (%) | key strength/segment | headquarters country. If the report has no market share data, use qualitative "Leader / Challenger / Niche" classification.
-> 3. *(Optional)* **Regulatory / supply chain table** — only include if the report has ≥3 data points for this (e.g. tariff rates, compliance deadlines, production capacity). Skip if thin.
->
-> **Hard rules:**
-> - `<table class="kira-data-table">` — this exact class on every table (used by the CSS + infographic pipeline)
-> - Every number in a table must have a source tag in its cell: append `<span class="src-tag">[Kira estimates]</span>` or `<span class="src-tag">[Source name]</span>`
-> - No Mordor/Frost/Euromonitor/Synovate/Ipsos/IMARC/Claude/McKinsey
-> - No section numbers or references to "Section X" — the article must be standalone
-> - Do NOT rewrite numbers — lift them verbatim from en.html
->
-> Output JSON with this exact shape (no markdown fences):
-> ```json
-> {
->   "title_en": "...",
->   "excerpt_en": "...",
->   "lede_en": "...",
->   "body_en": "<h3>Market Metrics</h3><table class=\"kira-data-table\">...</table>...",
->   "slug_key": "key-data-metrics",
->   "read_time": "3 min read",
->   "category": "data-explainer"
-> }
-> ```
-
-**Hard time cap: 20 minutes.**
-
-### 3T.3 — Validation
-
-1. Parse as JSON. Must have all required fields, all non-empty.
-2. `body_en` must contain at least 2 `<table class="kira-data-table">` blocks. If only 1 → fail.
-3. Check `body_en` contains at least 5 `<span class="src-tag">` (source tags on numbers).
-4. Anti-positioning grep: zero hits for forbidden terms.
-5. `slug_key` must be `"key-data-metrics"`.
-
-### 3T.4 — Build slug and check uniqueness
-
-`slug = ${industry-lower}-${country-lower}-key-data-metrics-${year}`
-e.g. `fintech-vietnam-key-data-metrics-2026`
-
-Check uniqueness:
-```sql
-SELECT slug FROM insights WHERE slug = $kbat$<slug>$kbat$;
-```
-If exists → this stage already ran (idempotent). EXIT with `stage_t already done for <report-slug>`.
-
-### 3T.5 — INSERT 4th insight (EN only)
-
-```sql
-WITH new_insight AS (
-  INSERT INTO insights (slug, category, country, industry, featured, related_report_slugs, status, published_at)
-  VALUES (
-    $kbat$<slug>$kbat$,
-    'data-explainer',
-    $kbat$<country-slug>$kbat$,
-    $kbat$<industry-lower>$kbat$,
-    false,
-    ARRAY[$kbat$<report-slug>$kbat$],
-    'published',
-    now()
-  )
-  ON CONFLICT (slug) DO UPDATE SET updated_at = now()
-  RETURNING id, slug
-)
-INSERT INTO insight_translations (insight_id, locale, title, excerpt, lede, body, read_time, status, published_at)
-SELECT ni.id, 'en',
-  $kbat$<title_en>$kbat$,
-  $kbat$<excerpt_en>$kbat$,
-  $kbat$<lede_en>$kbat$,
-  $kbat$<body_en>$kbat$,
-  '3 min read',
-  'published',
-  now()
-FROM new_insight ni
-ON CONFLICT (insight_id, locale) DO UPDATE SET
-  updated_at = now(), published_at = now(),
-  title = EXCLUDED.title, excerpt = EXCLUDED.excerpt,
-  lede = EXCLUDED.lede, body = EXCLUDED.body, status = 'published'
-RETURNING insight_id, locale, title;
-```
-
-Then give it a cover exactly as in **3.6** (copy the report's cover; generate one at `--quality medium` only if the report has none), with `<slug>` as the only slug, and render its cover slide as in **3.7**.
-
-Print summary + exit.
-
----
-
-## Step 4T (Stage TJ only — Phase Q.6): translate 4th insight to JA
-
-### 4T.1 — Fetch the 4th EN insight
-
-```sql
-SELECT i.id, i.slug, it.title, it.excerpt, it.lede, it.body, it.read_time
-FROM insights i
-JOIN insight_translations it ON it.insight_id = i.id AND it.locale = 'en' AND it.status = 'published'
-WHERE i.related_report_slugs && ARRAY[$kbat$<report-slug>$kbat$]::text[]
-  AND i.slug LIKE '%-key-data-metrics-%'
-  AND NOT EXISTS (
-    SELECT 1 FROM insight_translations it2
-    WHERE it2.insight_id = i.id AND it2.locale = 'ja' AND it2.status = 'published'
-  )
-LIMIT 1;
-```
-
-If 0 rows → already done. EXIT.
-
-### 4T.2 — Spawn JA translation subagent (with `model: "sonnet"`)
-
-Same translator_jp.md rules as Step 4.2, but **special instruction for data tables:**
-
-> Translate KIRA Research data-table insight from EN to JA.
->
-> Special rules for this data-table article:
-> - Translate `<h3>` headers and table `<thead>` column labels to JA
-> - Translate table `<tbody>` row labels (left column) to JA
-> - Keep all numbers, percentages, and year values EXACTLY as-is (do not translate digits)
-> - Keep all `<span class="src-tag">[...]</span>` source tags in English brackets — do NOT translate
-> - Keep `class="kira-data-table"` and `class="src-tag"` attributes unchanged
-> - Translate `title`, `excerpt`, `lede` per translator_jp.md register rules
-> - `read_time`: "3分で読了"
->
-> Follow `prompts/translator_jp.md` for general register, anti-positioning, and source-tag rules.
-
-### 4T.3 — Validation + INSERT JA
-
-Same validation as Step 4.3. Then INSERT:
-
-```sql
-INSERT INTO insight_translations (insight_id, locale, title, excerpt, lede, body, read_time, status, published_at)
-VALUES (
-  (SELECT id FROM insights WHERE slug = $kbat$<slug>$kbat$),
-  'ja',
-  $kbat$<title_ja>$kbat$,
-  $kbat$<excerpt_ja>$kbat$,
-  $kbat$<lede_ja>$kbat$,
-  $kbat$<body_ja>$kbat$,
-  '3分で読了',
-  'published',
-  now()
-)
-ON CONFLICT (insight_id, locale) DO UPDATE SET
-  updated_at = now(), published_at = now(),
-  title = EXCLUDED.title, excerpt = EXCLUDED.excerpt,
-  lede = EXCLUDED.lede, body = EXCLUDED.body, status = 'published'
-RETURNING insight_id, locale, title;
-```
-
----
-
-## Step 5T (Stage TK only — Phase Q.6): translate 4th insight to KO
-
-Mirror Step 4T exactly but with `translator_ko.md` rules. `read_time` → "3분 읽기".
-
-After successful INSERT → render the KO cover slide as in **3.7**, then this report's full insight pipeline is **complete** (12 insight_translations rows: 4 insights × 3 locales).
-
----
-
-## Step 6: Summary output
+## Step 3: Summary
 
 ```
 KIRA insight fire complete.
-  Report: <slug> (<country>, <industry>, <year>)
-  Stage advanced: <stage_en | stage_ja | stage_ko | stage_t | stage_tj | stage_tk>
-  Insights now: <en_count>/4 EN · <ja_count>/4 JA · <ko_count>/4 KO
-  Next pending reports: <count> need stage_en · <count> stage_ja · <count> stage_ko
-                        <count> stage_t · <count> stage_tj · <count> stage_tk
+  Reports checked: <n> · published: <n> · skipped: <n> · failed: <n>
+  Skipped (script cannot do these): <slug> (<short reason>), …
+  Failed: <slug> (<reason>), …
+  Skipped languages: <slug> <loc: reason>, …
 ```
 
-Exit. No second report in same fire.
+Exit. No commit is needed (insights live in the database; covers in Storage).
 
 ---
 
-## Step 7: Failure path
+## How the script chooses and checks (reference)
 
-For Insight gen, "failure" is logical (validation gate failed, subagent timeout, SQL error). Unlike batch_runner there's no queue.csv to update — failures are tracked by NOT INSERT'ing the rows + printing a clear error message.
+- **Pages (`--pages auto`)**: the first page after the contents page(s) that holds a chart, then the next page with a chart (up to page 14). A report with no second chart page gets a one-page insight. Three layouts are styled: `exec` (callout cards + chart card), `classic` (older callout-row + chart-card) and `exhibit` (exhibit + commentary + takeaway, the BRAIN route). Another layout → `skipped`.
+- **Per language**: the page count must equal the English file's, the chosen pages must have the same layout, the figures of the English page must still be present (under 75% → that language is left out), and no forbidden term (`Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey`, plus the katakana / hangul spellings of Claude when not part of a longer word) may appear. A language that fails is left out; if English fails nothing is written.
+- **Title / lede**: the report's cover title before the colon + the page headline; the page's own sub-headline (or kicker) is the lede. The page's section label is the opening heading.
+- **Charts**: chart colours come from `public/css/kira.css`. The block between `BEGIN report-chart-css` and `END report-chart-css` is generated from `templates/master_styles.css` by `scripts/sync-insight-chart-css.mjs`; run it (and commit) whenever the exhibit styles in `master_styles.css` change (`--check` tells whether it is out of date). A few older reports style a chart class in their own `<style>`; the script copies those rules into the insight.
+- **Slugs / covers**: the insight uses the report's cover for `cover_url`; its own 800x450 cover slide per language is rendered by `upload-insight-slide.mjs`.
 
-If a SQL INSERT partially succeeded (e.g. INSERT'd insights rows but failed on insight_translations) → MANUAL CLEANUP needed: delete the orphan insights rows so the next fire's "Find work" query re-picks the report.
+---
 
-Print:
+## Old insights (decision of 2026-10-13)
 
-```
-KIRA insight fire FAILED.
-  Report: <slug>
-  Stage attempted: <stage_en | stage_ja | stage_ko>
-  Failure: <reason>
-  Cleanup needed: <none | DELETE FROM insights WHERE slug IN (...)>
-```
-
-Exit non-zero.
+The 214 insights made by the old runner (3 lifted sections per report, 25 table-only "key data metrics" pages, a few seed articles) stay as they are, except the table-only pages, which have no commentary or chart and were retired (`status = 'retired'`; to bring one back set `insights.status` and its `insight_translations.status` to `published`). Review the rest with Search Console after 4–6 weeks (which pages get impressions and clicks) before retiring or redirecting more.
 
 ---
 
@@ -626,39 +100,18 @@ Exit non-zero.
 
 | What broke | What to do |
 |---|---|
-| en.html missing locally | Skip silently — wait for the machine that has it (or commit it from there). Print `en.html not found locally, skipping`. |
-| Extraction subagent returns non-JSON | status=error, log raw return for inspection. |
-| Extraction returns < 3 insights | Subagent followed the prompt poorly. status=error. |
-| Slug collision (rare) | Append `-2`/`-3` to slug. Don't fail. |
-| Translation subagent returns < 3 insights | status=error. Manually re-trigger. |
-| Stage T: body has < 2 tables | status=error. Subagent didn't follow table instructions. Re-trigger. |
-| Stage T: < 5 src-tag spans in body | Warn but don't fail — tables may legitimately have few tagged numbers. |
-| Stage T: slug already exists | Idempotent exit — stage_t already completed. Move to stage_tj. |
-| Source tag drift (EN tags missing in JA/KO) | status=error with `<lang> source tag drift on <slug>`. |
-| SQL INSERT returns 0 rows | status=error. Manual SQL cleanup may be needed. |
-| anti-positioning leak | status=error. Manual review of the source en.html — leak likely originated there. |
-| Subagent timeout | status=error with `<stage> timeout XXm`. Re-trigger after diagnosing. |
+| `MISSING …` in Step 0 | EXIT with `missing <what>, no-op`. |
+| `archive pull: kira-pipeline not found` | `KIRA_BRAIN_DIR` is wrong or the repo is not cloned next to this one. Fix the export; do not skip. |
+| `skipped … no batch folder` | The report is not in `report_queue.output_paths` and has no `naming.json`: add it to `scripts/lib/report-folders.json` (slug → folder id). |
+| `failed … page 4 differs from the published preview` | The folder holds another version than the published one (a refresh, or the wrong folder). Leave it; the owner decides which is right. |
+| `skipped … layout the insight styles do not cover` | New template: add its classes to the `.kp-*` block in `public/css/kira.css` and to `familyOf` in `extract-insight-pages.mjs`. |
+| Chart renders black / flat | A chart class has no style: `make-insight` notes `chart classes with no style anywhere`; add it to `master_styles.css` and run `sync-insight-chart-css.mjs`. |
+| `slides: failed` | Chromium or `sharp` missing. Not fatal (cards fall back to the cover art). Run `node skills/kira-research-report/scripts/upload-insight-slide.mjs --slug <slug>` later. |
 
 ---
 
 ## What this prompt is NOT
 
-- Not a place to add new features — keep it stable so cron behavior is predictable
-- Not a place for chitchat — every fire is fresh, no human present
-- Not a place to ask clarifying questions — log error + exit
-
----
-
-## Phase Q.6 changelog (2026-06-09)
-
-- **Stage T** added: after all 3 core insights complete (en≥3, ja≥3, ko≥3), generate a 4th insight per report whose body is 2–3 HTML comparison tables with `class="kira-data-table"`. Purpose: AI citation source + infographic raw material. Slug pattern: `<industry>-<country>-key-data-metrics-<year>`.
-- **Stage TJ / TK** added: translate 4th data-table insight to JA and KO. Special translator instruction preserves table structure (column headers translated, numbers unchanged, src-tag spans in EN).
-- Done condition changed from `en≥3 AND ja≥3 AND ko≥3` → `en≥4 AND ja≥4 AND ko≥4`. Existing reports with 3/3/3 will get the 4th insight on next fire.
-- Priority ORDER BY updated: stage_t/tj/tk reports sorted ahead of fresh stage_en reports so enrichment backlogs drain before new extraction starts.
-- No schema change. State tracked by counting insight_translations rows per locale.
-
-## Phase Q.2 changelog (2026-05-25)
-
-- New skill — first version. Mirrors batch_runner.md (Phase Q.1) split pattern.
-- Source of truth for stage = row count in `insight_translations` (`< 3 EN` → stage_en; `< 3 JA` → stage_ja; `< 3 KO` → stage_ko). No schema change to the existing insights/insight_translations tables.
-- Cadence: 4 fires/day. With ~3-4 reports/day published by batch, queue should drain within 24-36h of report publish.
+- Not a place to write or rewrite insight text: nothing is generated, every word is the report's.
+- Not a place to ask questions: log the result and exit.
+- Not a place to touch the old insights, the report pages or the queue.
