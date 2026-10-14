@@ -4,7 +4,20 @@ Owner asked to rebuild `/insights` (2026-10-14): report extracts (S-insights fro
 recycled content and do not help SEO/AEO/GEO. New insights are **new, dated, short** pieces about what just
 changed in one of KIRA's 15 markets, written so search engines and answer engines can quote them.
 
-Status: **pilot** — 5 articles in `pilot/` (EN + JA/KO/ZH), reviewed by the owner before anything is built.
+Status: **pipeline built 2026-10-14** (private `kira-pipeline/brain/insights/runner/`, not run yet). The 5 briefs
+in `pilot/` were the first format; after reviewing them the owner asked for **commentary columns** instead
+(see "Format, revised" below).
+
+## Format, revised after the pilot (owner, 2026-10-14)
+
+The pilot briefs were too narrow: readers ask a chatbot about "Decree 342" directly, and few know the decree
+number in the first place. Each column now takes one big force (tariffs, rates and capital flows,
+geopolitics, technology, energy, consumer change, regulation) and says what it does to an industry in KIRA's
+markets, with a point of view, like a column in a leading business paper: what happened, our view (what most
+coverage misses), a winners/losers table, 2-3 predictions with a time frame and a signpost to watch, 3 FAQ,
+dated sources. 450-650 words. Titles name the force and the industry, never a decree number. Topics come from
+what is trending in the last 7-14 days: one batch finds 5-10 candidate titles and writes the best 3-5.
+Bylines: desks for now; the owner will send a list of real reviewers.
 
 ## Decisions
 
@@ -34,7 +47,7 @@ published, read_min, title, dek, takeaways, sections[{h2, p, list, ol, table}], 
 4. MY · tax · Budget 2027 (tabled 9 Oct 2026)
 5. PH · energy · Meralco October 2026 power rate
 
-## Next (after owner review)
+## Next (written before the format change; steps 2-3 are now the insights runner)
 
 1. Template: render this structure on `insights/_view.html` (key takeaways box, tables, FAQ, sources,
    desk byline, chart), desk pages, hub pages, `NewsArticle` schema; DB fields for driver, takeaways,
