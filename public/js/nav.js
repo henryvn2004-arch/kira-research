@@ -85,11 +85,11 @@
           ${localeLinks}
         </div>
         <div class="nav-links" id="kira-nav-links">
-          <a href="${localPath('/library')}"          class="${('library'        + activeIf('library')).trim()}"        data-i18n="nav.library">Library</a>
-          <a href="${localPath('/insights')}"         class="${('insights'       + activeIf('insights')).trim()}"       data-i18n="nav.insights">Insights</a>
-          <a href="${localPath('/pricing')}"          class="${('pricing'        + activeIf('pricing')).trim()}"        data-i18n="nav.pricing">Pricing</a>
-          <a href="${localPath('/experts/')}"         class="${('experts'        + activeIf('experts')).trim()}"        data-i18n="nav.experts">Kira Experts</a>
-          <a href="${localPath('/survey/')}"          class="${('survey'         + activeIf('survey')).trim()}"         data-i18n="nav.survey">Kira Survey</a>
+          <a href="${localPath('/library')}" class="${('library' + activeIf('library')).trim()}" data-i18n="nav.library">Library</a>
+          <a href="${localPath('/experts/')}" class="${('experts' + activeIf('experts')).trim()}" data-i18n="nav.experts">Experts</a>
+          <a href="${localPath('/survey/')}" class="${('survey' + activeIf('survey')).trim()}" data-i18n="nav.survey">Survey</a>
+          <a href="${localPath('/insights')}" class="${('insights' + activeIf('insights')).trim()}" data-i18n="nav.insights">Insights</a>
+          <a href="${localPath('/pricing')}" class="${('pricing' + activeIf('pricing')).trim()}" data-i18n="nav.pricing">Pricing</a>
           <a href="${localPath('/profile')}" class="${('kira-my-library'   + activeIf('profile')).trim()}" data-i18n="nav.myLibrary" style="display:none">My Library</a>
           <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
           <a href="${localPath('/library')}" class="nav-cta" data-i18n="nav.browseCta">Explore the library →</a>
@@ -111,17 +111,18 @@
         return `<a href="${localeHref(loc)}" class="${cls}">${labels[loc]}</a>`;
       }).join('')}
     </div>
-    <a href="${localPath('/library')}"          data-i18n="nav.library">Library</a>
-    <a href="${localPath('/insights')}"         data-i18n="nav.insights">Insights</a>
-    <a href="${localPath('/pricing')}"          data-i18n="nav.pricing">Pricing</a>
-    <a href="${localPath('/experts/')}"         data-i18n="nav.experts">Kira Experts</a>
-    <a href="${localPath('/survey/')}"          data-i18n="nav.survey">Kira Survey</a>
+    <a href="${localPath('/library')}" data-i18n="nav.library">Library</a>
+    <a href="${localPath('/experts/')}" data-i18n="nav.experts">Experts</a>
+    <a href="${localPath('/survey/')}" data-i18n="nav.survey">Survey</a>
+    <a href="${localPath('/insights')}" data-i18n="nav.insights">Insights</a>
+    <a href="${localPath('/pricing')}" data-i18n="nav.pricing">Pricing</a>
     <a href="${localPath('/profile')}" class="kira-my-library" data-i18n="nav.myLibrary" style="display:none">My Library</a>
     <a href="https://studio.kiraresearch.com/" class="kira-studio" data-i18n="nav.studio" style="display:none">Studio</a>
   </div>
 </div>`;
 
   // ── Footer HTML ────────────────────────────────────────────
+  // The transcript listing is EN-only, so its link is fixed to /en/ (as in js/experts-lib.js).
   const FOOTER_HTML = `
 <footer class="kira-footer">
   <div class="container">
@@ -133,26 +134,25 @@
         <p class="footer-tag" data-i18n="footer.tagline">Market-entry research on Southeast Asia, Japan, South Korea, Taiwan, Australia and New Zealand.</p>
       </div>
       <div class="footer-col">
-        <h3 data-i18n="footer.libraryCol">Library</h3>
-        <a href="${localPath('/library')}"                       data-i18n="footer.browseAll">Browse All</a>
-        <a href="${localPath('/library?filter=country')}"        data-i18n="footer.byCountry">By Country</a>
-        <a href="${localPath('/library?filter=industry')}"       data-i18n="footer.byIndustry">By Industry</a>
-        <a href="${localPath('/library?sort=recent')}"           data-i18n="footer.latest">Latest</a>
+        <h3 data-i18n="footer.researchCol">Research</h3>
+        <a href="${localPath('/library')}"                data-i18n="footer.reportLibrary">Report library</a>
+        <a href="${localPath('/library?status=soon')}"    data-i18n="footer.comingSoon">Coming soon</a>
+        <a href="${HOST_PREFIX}/en/experts/transcripts/"  data-i18n="footer.transcripts">Expert transcripts</a>
+        <a href="${localPath('/insights')}"               data-i18n="footer.insights">Insights</a>
       </div>
       <div class="footer-col">
-        <h3 data-i18n="footer.firmCol">Firm</h3>
-        <a href="${localPath('/about')}"            data-i18n="footer.about">About</a>
-        <a href="${localPath('/methodology')}"      data-i18n="footer.methodology">Methodology</a>
-        <a href="${localPath('/experts/')}"         data-i18n="footer.experts">Kira Experts</a>
-        <a href="${localPath('/survey/')}"          data-i18n="footer.survey">Kira Survey</a>
-        <a href="mailto:hello@kiraresearch.com"     data-i18n="footer.contact">Contact</a>
+        <h3 data-i18n="footer.servicesCol">Services</h3>
+        <a href="${localPath('/experts/#request')}"       data-i18n="footer.expertCalls">Expert calls</a>
+        <a href="${localPath('/survey/')}"                data-i18n="footer.survey">Kira Survey</a>
+        <a href="${localPath('/pricing')}"                data-i18n="footer.pricing">Pricing</a>
       </div>
       <div class="footer-col">
-        <h3 data-i18n="footer.resourcesCol">Resources</h3>
-        <a href="${localPath('/insights')}" data-i18n="footer.insights">Insights</a>
-        <a href="${localPath('/pricing')}"  data-i18n="footer.pricing">Pricing</a>
-        <a href="${localPath('/terms')}"    data-i18n="footer.terms">Terms</a>
-        <a href="${localPath('/privacy')}"  data-i18n="footer.privacy">Privacy</a>
+        <h3 data-i18n="footer.companyCol">Company</h3>
+        <a href="${localPath('/about')}"                  data-i18n="footer.about">About</a>
+        <a href="${localPath('/methodology')}"            data-i18n="footer.methodology">Methodology</a>
+        <a href="mailto:hello@kiraresearch.com"           data-i18n="footer.contact">Contact</a>
+        <a href="${localPath('/terms')}"                  data-i18n="footer.terms">Terms</a>
+        <a href="${localPath('/privacy')}"                data-i18n="footer.privacy">Privacy</a>
       </div>
     </div>
     <div class="footer-bottom">
