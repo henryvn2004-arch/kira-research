@@ -1,0 +1,48 @@
+/* Kira Data pages (/<locale>/data/, /<locale>/data/<country>): tiles with sparklines, one bar chart, a table. */
+.ed-head { display: grid; gap: 10px; padding-block: 8px 4px; }
+.ed-head h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; margin: 0; text-wrap: balance; }
+.ed-lead { font-size: 17px; line-height: 1.6; color: var(--text); max-width: 72ch; margin: 0; }
+.ed-lead b { font-weight: 700; }
+.ed-note { font-size: 13px; color: var(--muted-dim); }
+.ed-main { display: grid; gap: 40px; padding-block: 32px 72px; }
+.ed-section { display: grid; gap: 14px; min-width: 0; }
+.ed-section h2 { font-size: 20px; font-weight: 800; margin: 0; }
+.ed-section h2 small { font-size: 13px; font-weight: 500; color: var(--muted-dim); margin-left: 6px; }
+
+.ed-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.ed-tile { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px 12px; display: grid; gap: 2px; min-width: 0; }
+.ed-tile .lbl { font-size: 12.5px; color: var(--muted); }
+.ed-tile .val { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 500; color: var(--text); }
+.ed-tile .sub { font-size: 12px; color: var(--muted-dim); }
+.ed-tile svg { width: 100%; height: 30px; display: block; margin-top: 6px; }
+
+.ed-chart { width: 100%; max-width: 760px; display: block; }
+.ed-chart text { fill: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.ed-chart .grid { stroke: var(--border); }
+.ed-chart .base { stroke: var(--border-strong); }
+.ed-chart .bar { fill: var(--primary); }
+.ed-chart .bar.neg { fill: #94A3B8; }
+
+.ed-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+.ed-table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+.ed-table th, .ed-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+.ed-table th:first-child, .ed-table td:first-child { text-align: left; white-space: normal; }
+.ed-table thead th { background: var(--band); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.ed-table td { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-size: 13px; }
+.ed-table td:first-child { font-family: inherit; font-size: 14px; }
+.ed-table tbody tr:last-child td { border-bottom: 0; }
+
+.ed-sources { display: grid; gap: 4px; font-size: 13px; color: var(--muted-dim); }
+.ed-sources a { color: var(--primary); text-decoration: none; }
+.ed-links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.ed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.ed-card { display: grid; gap: 10px; border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-decoration: none; color: var(--text); background: var(--bg); transition: border-color .15s; }
+.ed-card:hover, .ed-card:focus-visible { border-color: var(--primary); }
+.ed-card h3 { margin: 0; font-size: 17px; font-weight: 700; }
+.ed-card dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; }
+.ed-card dt { color: var(--muted); }
+.ed-card dd { margin: 0; font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; text-align: right; }
+
+#ed-tip { position: fixed; pointer-events: none; background: var(--text); color: #fff; font: 12px 'JetBrains Mono', monospace; padding: 5px 8px; border-radius: 6px; opacity: 0; z-index: 50; white-space: nowrap; }
+@media (max-width: 560px) { .ed-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .ed-tile .val { font-size: 19px; } }

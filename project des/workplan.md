@@ -189,6 +189,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14 (see D1 block); D2–D7 wait for the owner's go |
 
 Work done outside the original sprint list (2026-10-12 → 10-14):
 
@@ -215,6 +216,60 @@ Owner decision: the Month plan = every report in full online + every transcript 
 
 Build order (owner, 2026-10-06): S5b ✅ → S11 ✅ → S13 ✅ → S14 ✅ → S15 ✅ → S7 🟡 (code done) → S9 🟡 → S12 🟡 (code done) → S6 → S8 → **S10 Kira Chain last** (paused).
 Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S19 🟡 → S20 ✅ → S21 🟡**: all code is done; what is left is owner steps (terms, switches, Google Ads).
+
+### Open data: Kira Data (planned 2026-10-14, owner: "làm hết trừ các nguồn trả phí")
+
+**Goal.** Pull free economic data and company moves for the 15 markets by API, store them in Supabase, and show them where readers already are: report pages, coming-soon pages, company pages, plus a few new data pages. Paid sources (Panjiva, Volza, fDi Markets, OpenCorporates, Toyo Keizai) are out. Sample proposal with real Vietnam data (private page, owner only): https://claude.ai/artifact/FfRC6a4LVriStMnpJ3TWuW
+
+**Research (2026-10-14, 4 checks, official pages read where reachable).**
+- Global, all 15 markets: World Bank WDI, IMF (WEO / DataMapper / SDMX), UN Comtrade, ADB KIDB, ASEANstats, UNCTADstat, WITS, OECD, BIS, ILOSTAT, FAOSTAT.
+- National APIs that work today (no key, or a free key): ABS (AU, SDMX, CC BY 4.0), Korea Customs on data.go.kr (HS 10-digit × country, monthly, unrestricted use), e-Stat (JP, incl. customs HS 9-digit × country; credit mandatory), BOJ API (launched Feb 2026), KOSIS + ECOS (KR), Stats NZ ADE (Infoshare retires early 2027), OpenDOSM + BNM (MY; OpenDOSM limit 4 calls/min; no HS × partner trade), PSA OpenSTAT (PH, PXWeb; trade by commodity × country and approved FDI by investor country), SingStat Table Builder + data.gov.sg (SG Open Data Licence), BPS WebAPI (ID, free key; trade by HS), BOT gateway (TH, token) and MOC "API Data Exchange" (TH, HS × country, parameters to test), Vietnam NSO PXWeb (`pxweb.nso.gov.vn/api/v1/vi/`, annual yearbook tables only).
+- Files or web only (scrape or download): VN Customs, SBV, FIA monthly FDI; BOI (TH), MIDA (MY), BKPM (ID); JETRO + MOF outward FDI (JP), Korea Eximbank ODI (KR), Taiwan MOEA / data.gov.tw CSV; Cambodia, Laos, Myanmar, Brunei (CamStat may have SDMX, to test).
+- Company names, free API: OpenDART (KR: share acquisitions, overseas subsidiaries, mergers), EDINET v2 (JP: 5% holdings, tender offers, affiliate lists; PDL 1.0), SEC EDGAR full-text (US: 8-K deals, Ex-21 subsidiaries), GDELT DOC API (news, all 15; max 1 call / 5 s), GLEIF (CC0, parent links). Registries: Houjin Bangou + gBizINFO (JP), GCIS (TW, directors and shareholdings), ACRA (SG), ABN + ASIC (AU), NZBN (NZ). VN, ID, PH, MY, TH, KH, LA, MM, BN have no free registry API.
+- Importer/exporter names by shipment exist only at paid vendors whose licences forbid republishing: out of scope.
+
+**Licence rules (decide what may be shown publicly).**
+- UN Comtrade free tier is for internal use; republishing needs a paid re-dissemination licence. So Comtrade feeds the report pipeline and internal checks only. **Trade numbers on the site come from national customs APIs** (KR customs, JP e-Stat, SingStat, PSA, BPS…), which allow commercial reuse with credit; partner-reported ("mirror") data covers the hosts without an API.
+- IMF: commercial reuse needs written permission (copyright@imf.org) → owner action before IMF forecasts go on the site. World Bank WDI: CC BY 4.0 per dataset (confirm per dataset in the Data Catalog).
+- Each source gets a row in a licence register (`data_sources`: licence, attribution text, public yes/no); a block renders only sources marked public and prints the credit line the source requires.
+
+**Organisation (benchmarked against Trading Economics, OEC, Statista, Crunchbase/DealStreetAsia, JETRO/KOTRA).**
+- One taxonomy everywhere: country × industry/segment (existing `tax_*`, `topics`) × company (`entities`). A segment maps to HS codes (`hs_segment_map`) so trade data attaches to reports and coming-soon pages.
+- Do not compete with Trading Economics on "Vietnam GDP". KIRA's own value is the join: macro + Japanese/Korean/Taiwanese company moves + KIRA segments + report findings, in JA/KO/ZH.
+- Page types:
+  - Country data hub `/<loc>/data/<country>` (15): ~12 headline indicators with sparklines, FDI by source country, trade partners, latest moves, reports.
+  - **Investor corridor** `/<loc>/data/<investor>-in-<host>` (flagship, ~40: JP/KR/TW × hosts): investment flow and stock, bilateral trade by top HS chapters (partner customs), timeline of company moves, companies present, related reports. The page a Japanese or Korean buyer searches for (ベトナム 日系企業 進出).
+  - Moves feed `/<loc>/data/moves` with filters (host, investor, industry, type); no page per event, events live on company pages.
+  - Embedded blocks (no URL): "Market data" + "Recent moves" panel on report pages, coming-soon pages (gives the 1,892 placeholders unique, updating content) and company pages.
+  - A few indicator pages only where they help market entry (FDI, wages, retail, trade); index only pages that pass a data-sufficiency check, the rest `noindex`.
+- Every block: one dated, sourced lead sentence (template + numbers, no model), chart, period covered, "updated" and source line.
+- Free vs paid: charts, latest values, 5-year view, last 10 moves per corridor are free; full history, Excel/PPT export (reuse S12), full moves history and alerts are for Month/Annual. Before checkout is on: "Email me new Japanese investments in Vietnam" captures leads.
+- Moves come in tiers: filing (DART/EDINET/EDGAR) > official release > news (GDELT). News-only moves are drafts until a rule or the owner confirms them.
+
+**Data model (proposed).** `data_sources` (licence register), `econ_series` (source, country, indicator, partner, product_code, freq, period, value, unit, release_date, retrieved_at), `econ_indicators` (catalogue, labels in 4 languages), `hs_segment_map`, `company_events` (entity, counterpart, host country, investor country, type, stake, value, date, source_url, tier, status draft/published). Fetchers run as scheduled GitHub Actions jobs (daily filings, weekly/monthly series), write through the service key, and log to `job_runs` so `/en/admin/health` shows stale series.
+
+**Sprints (each starts when the owner says go).**
+| Sprint | Scope |
+|---|---|
+| **D1** | Data layer (tables above, licence register) + World Bank + IMF (internal until permission) + ABS/KR customs/e-Stat; country data hub for the 15 markets (noindex until reviewed) |
+| **D2** | Remaining national APIs: OpenDOSM, BNM, PSA, SingStat/data.gov.sg, BPS, BOT, Thai MOC, KOSIS/ECOS, BOJ, Stats NZ, VN NSO PXWeb |
+| **D3** | Segment ↔ HS map; "Market data" panel on report and coming-soon pages; the report pipeline reads the same series (Comtrade allowed there) |
+| **D4** | Company moves: OpenDART, EDINET, EDGAR, GDELT → `company_events`, rules + review queue in admin; moves feed + corridor pages |
+| **D5** | Registries + GLEIF: Houjin Bangou/gBizINFO, GCIS, ACRA, ABN/ASIC, NZBN → enrich `entities` (legal name, status, parent), detect new subsidiaries of JP/KR/TW groups |
+| **D6** | File/scrape sources: VN Customs, SBV, FIA, BOI, MIDA, BKPM, ASEANstats FDI, JETRO/MOF, Korea Eximbank, Taiwan MOEA, CLMB national files |
+| **D7** | Paid layer: full history + Excel export + moves alerts for subscribers; "email me new moves" lead form; JA/KO/ZH lead-sentence templates; sitemap for pages that pass the data check |
+
+#### D1 — data layer + country data pages (built 2026-10-14)
+- [x] Migration 057 (applied): `data_sources` (licence register, `public` flag), `econ_indicators` (18 series, labels EN/JA/KO/ZH), `econ_series` (one row per indicator × country × period). RLS on, no policies; only the server reads and writes.
+- [x] Sources: World Bank WDI (13 indicators, 14 markets, 2000–2025; CC BY 4.0 read on the data catalog page; **public**). IMF WEO through the official SDMX API `api.imf.org` (5 indicators incl. Taiwan and projections; **not public** until the IMF agrees). The IMF DataMapper URL refuses server requests (bot protection), so it is not used.
+- [x] Backfill 2026-10-14: 4,587 World Bank values + 2,400 IMF values, loaded inside Supabase with `pg_net` (same parsing as the code).
+- [x] Weekly refresh: Vercel cron `/api/cron-econ-refresh` (Mondays 04:10 UTC, `api/_lib/econ.js`), logs `econ-refresh` in `job_runs`, shown on `/en/admin/health`.
+- [x] `GET /api/econ` (15 markets with headline values) and `GET /api/econ?country=vietnam` (all public indicators); rows from non-public sources never leave the server.
+- [x] Pages (noindex, not in nav or sitemap): `/<loc>/data/` (15 market cards) and `/<loc>/data/<country>` (template lead sentence, 8 tiles with sparklines, growth chart, 6-year table, source line, link to the library filtered by country), EN/JA/KO/ZH. Files `public/en/data/{index,_view}.html`, `public/js/econ-view.js`, `public/css/data.css`.
+- Taiwan has no World Bank data; its page says the national statistics office is being added (D2: DGBAS), or shows IMF once permission arrives.
+- Moved to D2: ABS (its CPI moved to a new monthly dataflow; Australia already has the World Bank annual series), Korea customs and e-Stat (need the owner's free keys).
+
+**Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 
 ### Paid search: Google Ads on long-tail, buyer-intent queries (discussed 2026-10-11/12)
 

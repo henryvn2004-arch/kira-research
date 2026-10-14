@@ -1104,3 +1104,26 @@ test.describe('Kira Chain', () => {
     await expect(page.locator('#kc-h1')).toHaveText('No chain here yet', { timeout: 15000 });
   });
 });
+
+test.describe('Kira Data (D1)', () => {
+  test('/api/econ serves only public sources', async ({ request }) => {
+    const body = await (await request.get('/api/econ?country=vietnam')).json();
+    expect(body.country.code).toBe('VN');
+    expect(body.indicators.length).toBeGreaterThan(5);
+    for (const i of body.indicators) expect(body.sources.map((s) => s.key)).toContain(i.source_key);
+    expect(body.indicators.some((i) => i.source_key === 'imf_weo')).toBe(false);
+  });
+
+  test('/api/econ rejects an unknown market', async ({ request }) => {
+    expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
+  });
+
+  test('data index and country page render, noindex', async ({ page }) => {
+    await page.goto('/en/data/');
+    await expect(page.locator('.ed-card').first()).toBeVisible({ timeout: 10000 });
+    await page.goto('/ja/data/vietnam');
+    await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 10000 });
+    await expect(page.locator('.ed-tile').first()).toBeVisible();
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+  });
+});
