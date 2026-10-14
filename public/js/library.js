@@ -4,10 +4,10 @@
 (function () {
   const R = window.kiraR, t = R.t, esc = R.esc, ic = R.icon, locale = R.locale;
   const PAGE = 20;
-  const GROUPS = ['status', 'stage', 'type', 'country', 'sector', 'year'];   // sidebar groups
-  const FILTERS = ['status', 'stage', 'type', 'country', 'sector', 'industry', 'year']; // + industry, set from links
+  const GROUPS = ['status', 'analysis', 'type', 'country', 'sector', 'year'];   // sidebar groups
+  const FILTERS = ['status', 'analysis', 'type', 'country', 'sector', 'industry', 'year']; // + industry, set from links
   const SECTOR_KEYS = ['food', 'consumer', 'finance', 'tech', 'health', 'property', 'auto', 'logistics', 'energy', 'industrial', 'travel', 'services'];
-  const STAGES = ['XPL', 'ENT', 'XPN'], TYPES = ['D', 'S'], STATUSES = ['published', 'soon'];
+  const TYPES = ['D', 'S'], STATUSES = ['published', 'soon'];
   const LIST_LIMIT = 8;               // options shown before "Show more"
 
   const app = document.getElementById('lib-app');
@@ -15,14 +15,14 @@
   const searchForm = document.getElementById('lib-search-form');
   if (!app) return;
 
-  const state = { status: '', stage: '', type: '', country: '', sector: '', industry: '', year: '', q: '', sort: 'recent', page: 1 };
+  const state = { status: '', analysis: '', type: '', country: '', sector: '', industry: '', year: '', q: '', sort: 'recent', page: 1 };
   const ui = { expanded: {}, collapsed: {}, find: {} };
   let facets = null, lastTotal = 0;
 
   // ── State from URL ──
   const u0 = new URLSearchParams(location.search);
   if (STATUSES.includes(u0.get('status'))) state.status = u0.get('status');
-  const st = (u0.get('stage') || '').toUpperCase(); if (STAGES.includes(st)) state.stage = st;
+  if (/^[a-z_]{2,40}$/.test(u0.get('analysis') || '')) state.analysis = u0.get('analysis');
   const ty = (u0.get('type') || '').toUpperCase(); if (TYPES.includes(ty)) state.type = ty;
   if (u0.get('country')) state.country = u0.get('country').toLowerCase().slice(0, 60);
   if (u0.get('industry')) state.industry = u0.get('industry').toLowerCase().slice(0, 60);
@@ -35,7 +35,7 @@
 
   function syncUrl() {
     const u = new URL(location.href);
-    ['status', 'stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) u.searchParams.set(k, state[k]); else u.searchParams.delete(k); });
+    ['status', 'analysis', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) u.searchParams.set(k, state[k]); else u.searchParams.delete(k); });
     if (state.sort !== 'recent') u.searchParams.set('sort', state.sort); else u.searchParams.delete('sort');
     if (state.page > 1) u.searchParams.set('page', state.page); else u.searchParams.delete('page');
     u.searchParams.delete('filter');
@@ -45,7 +45,7 @@
     if (!FILTERS.includes(group)) return;
     const v = state[group] === value ? '' : value;
     if (group === 'status') state.status = STATUSES.includes(v) ? v : '';
-    else if (group === 'stage') state.stage = v; else if (group === 'type') state.type = v;
+    else if (group === 'analysis') state.analysis = v; else if (group === 'type') state.type = v;
     else if (group === 'country') state.country = v; else if (group === 'industry') state.industry = v;
     else if (group === 'sector') state.sector = SECTOR_KEYS.includes(v) ? v : '';
     else state.year = v;
@@ -53,17 +53,18 @@
     load();
   }
   function clearAll() {
-    state.status = state.stage = state.type = state.country = state.sector = state.industry = state.year = state.q = '';
+    state.status = state.analysis = state.type = state.country = state.sector = state.industry = state.year = state.q = '';
     state.page = 1;
     if (searchEl) searchEl.value = '';
     load();
   }
-  const anyFilter = () => ['status', 'stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].some(k => state[k]);
+  const anyFilter = () => ['status', 'analysis', 'type', 'country', 'sector', 'industry', 'year', 'q'].some(k => state[k]);
 
   // ── Facets ──
   function labelFor(group, value) {
     if (group === 'status') return t(value === 'soon' ? 'statusSoon' : 'statusPub');
-    if (group === 'stage' || group === 'type') return t(value);
+    if (group === 'analysis') return R.analysis(value);
+    if (group === 'type') return t(value);
     if (group === 'country') return R.country(value);
     if (group === 'industry') return R.sector(value);
     if (group === 'sector') return t('sector_' + value);
@@ -73,7 +74,7 @@
     const f = facets || {};
     let list;
     if (group === 'status') list = [['published', f.totalPublished || 0], ['soon', f.totalSoon || 0]];
-    else if (group === 'stage') list = STAGES.map(v => [v, (f.stages || {})[v] || 0]);
+    else if (group === 'analysis') list = Object.entries(f.analyses || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     else if (group === 'type') list = TYPES.map(v => [v, (f.types || {})[v] || 0]);
     else if (group === 'country') list = Object.entries(f.countries || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     else if (group === 'sector') list = SECTOR_KEYS.map(k => [k, (f.sectors || {})[k] || 0]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
@@ -82,7 +83,7 @@
     if (state[group] && !list.some(o => o.value === state[group])) list.unshift({ value: state[group], n: 0, label: labelFor(group, state[group]) });
     return list;
   }
-  const GROUP_LABEL = { status: 'status', stage: 'stage', type: 'type', country: 'market', sector: 'sector', year: 'year' };
+  const GROUP_LABEL = { status: 'status', analysis: 'analysis', type: 'type', country: 'market', sector: 'sector', year: 'year' };
   function groupHtml(group, where) {
     const all = options(group);
     if (!all.length) return '';
@@ -181,7 +182,7 @@
   function rowHtml(it) {
     const isNew = it.published_at && (Date.now() - new Date(it.published_at).getTime()) < 30 * 864e5;
     const title = it.title || String(it.slug || '').replace(/-/g, ' ');
-    const chips = [it.industry ? R.sector(it.industry) : '', it.stage ? t(it.stage) : ''].filter(Boolean);
+    const chips = [it.industry ? R.sector(it.industry) : '', it.analysis ? R.analysis(it.analysis) : ''].filter(Boolean);
     const pages = it.pages ? '<span>' + ic('pages') + esc(t('nPages', it.pages)) + '</span>' : '';
     return '<a class="lrow' + (it.cover && it.cover.slide ? ' lrow-slide' : '') + '" href="/' + locale + '/reports/' + encodeURIComponent(it.slug) + '">' +
       coverHtml(it, isNew) +
@@ -267,7 +268,7 @@
     renderFilters();
     rowsEl.style.opacity = '.55';
     const qs = new URLSearchParams({ locale, sort: state.sort, limit: String(PAGE), offset: String((state.page - 1) * PAGE), status: state.status || 'all' });
-    ['stage', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) qs.set(k, state[k]); });
+    ['analysis', 'type', 'country', 'sector', 'industry', 'year', 'q'].forEach(k => { if (state[k]) qs.set(k, state[k]); });
     try {
       const r = await fetch('/api/library-list?' + qs);
       if (!r.ok) throw new Error('http ' + r.status);

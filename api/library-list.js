@@ -9,6 +9,7 @@
 //       &sector=finance             (optional; one of the 12 groups in _lib/sectors.js)
 //       &year=2026                  (optional)
 //       &stage=XPL|ENT|XPN          (optional; investor stage — explore / enter / expand)
+//       &analysis=market_assessment (optional; analysis type = tax_competencies.key, migration 056)
 //       &type=D|S                   (optional; report type — deep report / snapshot)
 //       &q=VN-FSV | coffee chain    (optional; report-code prefix, or text in
 //                                    slug / segment / industry — see
@@ -71,6 +72,7 @@ const SORTS = {
 // constrained the same way in migration 041). Case-insensitive input.
 const STAGES = new Set(['XPL', 'ENT', 'XPN']);
 const TYPES  = new Set(['D', 'S']);
+const ANALYSIS_RE = /^[a-z_]{2,40}$/;   // tax_competencies.key
 function upperPick(s, allowed) {
   const v = typeof s === 'string' ? s.trim().toUpperCase() : '';
   return allowed.has(v) ? v : '';
@@ -97,6 +99,8 @@ export default async function handler(req, res) {
   const year     = url.searchParams.get('year');
   const stage    = upperPick(url.searchParams.get('stage'), STAGES);
   const type     = upperPick(url.searchParams.get('type'),  TYPES);
+  const analysisIn = clean(url.searchParams.get('analysis'));
+  const analysis = ANALYSIS_RE.test(analysisIn) ? analysisIn : '';
   const q        = (url.searchParams.get('q') || '').trim().slice(0, 60);
   const sort     = SORTS[url.searchParams.get('sort')] || SORTS.recent;
   const limit    = int(url.searchParams.get('limit'),  24, 96);
@@ -113,6 +117,7 @@ export default async function handler(req, res) {
     if (sector)   where.push(`industry_code=in.(${SECTORS[sector].join(',')})`);
     if (year && /^\d{4}$/.test(year)) where.push(`year=eq.${year}`);
     if (stage) where.push(`stage=eq.${stage}`);
+    if (analysis) where.push(`analysis=eq.${analysis}`);
     if (type)  where.push(`report_type=eq.${type}`);
     if (q) {
       // Code prefix (VN, VN-FSV, VN-FSV-ENT-D26-01) or text in slug / segment /
@@ -133,7 +138,7 @@ export default async function handler(req, res) {
       `&order=${sort}` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,code,slug,country,industry,industry_code,year,pages,price,stage,report_type,published_at,cover_url,cover_thumb_url`;
+      `&select=id,code,slug,country,industry,industry_code,year,pages,price,stage,analysis,report_type,published_at,cover_url,cover_thumb_url`;
 
     // PostgREST answers 416 when the offset is past the last row, which happens when the page lies
     // wholly in the coming-soon part of the list: count first and skip the query then.
@@ -182,6 +187,7 @@ export default async function handler(req, res) {
         pages:    r.pages,
         price:    r.price,
         stage:    r.stage || null,
+        analysis: r.analysis || null,
         type:     r.report_type || null,
         published_at: r.published_at || null,
         cover:    coverUrls(r, t ? t.locale : 'en'),
@@ -199,7 +205,7 @@ export default async function handler(req, res) {
       const pubTotal = status === 'all' ? total : 0;
       const room = limit - items.length;   // free places on this page after the published rows
       const soon = await soonRows({
-        country, industry, sector, stage, type, q, year: /^\d{4}$/.test(year || '') ? year : '',
+        country, industry, sector, stage, analysis, type, q, year: /^\d{4}$/.test(year || '') ? year : '',
         offset: Math.max(0, offset - pubTotal), limit: Math.max(room, 1)   // limit 1 = only the count is needed
       });
       soonTotal = soon.total;
@@ -209,9 +215,9 @@ export default async function handler(req, res) {
     // ── 4) Facets (counts for sidebar) ─────────────────────────
     // One query, no filters except status=published, just to know totals.
     const { rows: all } = await sb(
-      'living_reports?status=eq.published&select=country,industry,industry_code,year,stage,report_type&limit=2000'
+      'living_reports?status=eq.published&select=country,industry,industry_code,year,stage,analysis,report_type&limit=2000'
     );
-    const facets = { countries: {}, industries: {}, sectors: {}, years: {}, stages: {}, types: {} };
+    const facets = { countries: {}, industries: {}, sectors: {}, years: {}, stages: {}, analyses: {}, types: {} };
     all.forEach(r => {
       const c = (r.country || '').toLowerCase();
       const i = (r.industry || '').toLowerCase();
@@ -220,6 +226,7 @@ export default async function handler(req, res) {
       if (i) facets.industries[i] = (facets.industries[i] || 0) + 1;
       if (y) facets.years[y]      = (facets.years[y]      || 0) + 1;
       if (r.stage)       facets.stages[r.stage]      = (facets.stages[r.stage]      || 0) + 1;
+      if (r.analysis)    facets.analyses[r.analysis] = (facets.analyses[r.analysis] || 0) + 1;
       if (r.report_type) facets.types[r.report_type] = (facets.types[r.report_type] || 0) + 1;
       const sg = sectorOf(r.industry_code);
       if (sg) facets.sectors[sg] = (facets.sectors[sg] || 0) + 1;
@@ -230,7 +237,7 @@ export default async function handler(req, res) {
       const sf = await soonFacets();
       const add = (a, b) => Object.entries(b || {}).forEach(([k, n]) => { a[k] = (a[k] || 0) + n; });
       add(facets.countries, sf.countries); add(facets.sectors, sf.sectors); add(facets.years, sf.years);
-      add(facets.stages, sf.stages); facets.types.D = (facets.types.D || 0) + sf.total;
+      add(facets.stages, sf.stages); add(facets.analyses, sf.analyses); facets.types.D = (facets.types.D || 0) + sf.total;
       facets.totalSoon = sf.total;
     }
 

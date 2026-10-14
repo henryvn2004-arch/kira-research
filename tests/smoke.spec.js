@@ -287,6 +287,15 @@ test.describe('public APIs', () => {
     for (const it of body.items) expect(it.stage).toBe('ENT');
   });
 
+  test('/api/library-list accepts ?analysis=market_assessment', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&analysis=market_assessment&status=all&limit=4');
+    expect(r.status()).toBe(200);
+    const body = await r.json();
+    expect(Array.isArray(body.items)).toBe(true);
+    for (const it of body.items) expect(it.analysis).toBe('market_assessment');
+    expect(typeof body.facets.analyses).toBe('object');
+  });
+
   test('/api/library-list accepts ?type=D', async ({ request }) => {
     const r = await request.get('/api/library-list?locale=en&type=D&limit=4');
     expect(r.status()).toBe(200);
