@@ -15,8 +15,8 @@
 //                                    skills/kira-research-report/docs/naming_convention.md)
 //       &sort=recent|oldest|price-asc|price-desc  (default: recent)
 //       &limit=24&offset=0
-//       &status=published|soon|all  (default: published — home, insights and live-counts rely on that.
-//                                    The library page sends "all": published reports first, then the
+//       &status=published|soon|all  (default: published — the insights page relies on that.
+//                                    The library page and the home page (for its counts) send "all": published reports first, then the
 //                                    coming-soon topics of the production queue, shaped like reports
 //                                    with soon: true; see api/_lib/soon.js. Any explicit status also
 //                                    folds the coming-soon topics into facets (facets.totalSoon). soon rows honour country,
