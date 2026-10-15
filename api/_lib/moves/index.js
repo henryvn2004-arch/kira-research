@@ -15,13 +15,13 @@ import { classify, sameStory } from './rules.js';
 
 const ADAPTERS = { gdelt, opendart, edinet };
 
-export async function collect({ sources = [], recent = [] } = {}) {
+export async function collect({ sources = [], recent = [], log = null } = {}) {
   const envOf = Object.fromEntries(sources.map((s) => [s.key, s.env_key]));
   const raw = [], errors = [], waiting = [];
   for (const [key, ad] of Object.entries(ADAPTERS)) {
     if (envOf[key] && !process.env[envOf[key]]) { waiting.push(key); continue; }
     try {
-      const got = await ad.items({ env: process.env[envOf[key]] });
+      const got = await ad.items({ env: process.env[envOf[key]], log });
       raw.push(...got);
       if (got.failed) errors.push(`${key}: no answer for ${got.failed.join(', ')}`);
     }

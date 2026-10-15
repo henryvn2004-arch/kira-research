@@ -10,30 +10,35 @@ const VERBS = '(acquire OR acquisition OR stake OR invest OR investment OR facto
 
 let last = 0;
 async function get(url) {
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 3; i++) {
     const wait = last + 6000 - Date.now();
     if (wait > 0) await sleep(wait);
     last = Date.now();
     let r;
-    try { r = await fetch(url, { headers: { 'User-Agent': 'KIRA Research data refresh (kiraresearch.com)' }, signal: AbortSignal.timeout(30000) }); }
+    try { r = await fetch(url, { headers: { 'User-Agent': 'KIRA Research data refresh (kiraresearch.com)' }, signal: AbortSignal.timeout(20000) }); }
     catch (_e) { continue; }   // timed out: try again
-    if (r.status === 429 || r.status >= 500) { await sleep(10000 * (i + 1)); continue; }
+    if (r.status === 429 || r.status >= 500) { await sleep(8000 * (i + 1)); continue; }
     if (!r.ok) throw new Error(`GDELT ${r.status}`);
     const t = await r.text();
     if (!t.trim()) return {};   // GDELT answers an empty body when nothing matches
     try { return JSON.parse(t); } catch (_e) { throw new Error('GDELT: ' + t.slice(0, 80)); }   // a plain-text error (query syntax)
   }
-  throw new Error('GDELT: busy (429/5xx after 4 tries)');
+  throw new Error('GDELT: busy (429/5xx/timeout after 3 tries)');
 }
 
 // → [{ source_key, url, title, domain, lang, event_date, tier }] (classification happens in index.js)
-export async function items({ days = 3 } = {}) {
+// budgetMs keeps one run inside the function's time limit; markets not reached are reported and caught up by the
+// next daily run (each run reads 3 days of news).
+export async function items({ days = 3, budgetMs = 600000, log = null } = {}) {
   const out = [], failed = [];
+  const t0 = Date.now();
   for (const h of HOSTS) {
+    if (Date.now() - t0 > budgetMs) { failed.push(h); continue; }
     const name = HOST_NAME[h].includes(' ') ? `"${HOST_NAME[h]}"` : HOST_NAME[h];
     const qs = new URLSearchParams({ query: `${INVESTORS} ${VERBS} ${name} sourcelang:english`, mode: 'artlist', format: 'json', maxrecords: '75', timespan: `${days}d`, sort: 'datedesc' });
     let body;
-    try { body = await get(`${API}?${qs.toString()}`); } catch (_e) { failed.push(h); continue; }   // one busy query should not stop the others
+    try { body = await get(`${API}?${qs.toString()}`); } catch (_e) { failed.push(h); if (log) log(h, 'failed'); continue; }   // one busy query should not stop the others
+    if (log) log(h, (body.articles || []).length);
     for (const a of body.articles || []) {
       const d = /^(\d{4})(\d{2})(\d{2})/.exec(a.seendate || '');
       if (!a.url || !a.title || !d) continue;
