@@ -1,0 +1,31 @@
+/* Kira Data "Market data" panel (public/js/market-panel.js) on report and coming-soon pages. */
+.mk { display: grid; gap: 14px; margin-block: 32px; padding-top: 28px; border-top: 1px solid var(--border); min-width: 0; }
+.mk h2 { font-size: 22px; font-weight: 800; margin: 0; }
+.mk h3 { font-size: 15px; font-weight: 700; margin: 10px 0 0; }
+.mk h3 small { font-weight: 500; color: var(--muted-dim); margin-left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.mk-subtitle { margin: -8px 0 0; font-size: 13px; color: var(--muted-dim); }
+.mk-lead { margin: 0; font-size: 16px; line-height: 1.6; max-width: 72ch; }
+.mk-lead b { font-weight: 700; }
+.mk-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.mk-tile { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px 10px; display: grid; gap: 2px; min-width: 0; background: var(--bg); }
+.mk-tile .lbl { font-size: 12.5px; color: var(--muted); }
+.mk-tile .val { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 500; color: var(--text); }
+.mk-tile .sub { font-size: 12px; color: var(--muted-dim); }
+.mk-spark { width: 100%; height: 28px; display: block; margin-top: 4px; }
+.mk-top { margin: 0; font-size: 13px; color: var(--muted); }
+.mk-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+.mk-table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 13.5px; }
+.mk-table th, .mk-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+.mk-table th:first-child, .mk-table td:first-child { text-align: left; white-space: normal; }
+.mk-table thead th { background: var(--band); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.mk-table td { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-size: 13px; }
+.mk-table td:first-child { font-family: inherit; font-size: 13.5px; }
+.mk-table td small { color: var(--muted-dim); }
+.mk-table td.mk-sp { width: 110px; }
+.mk-table td.mk-sp .mk-spark { width: 100px; margin: 0; }
+.mk-table tbody tr:last-child td { border-bottom: 0; }
+.mk-note { margin: 0; font-size: 12px; color: var(--muted-dim); }
+.mk-sources { display: grid; gap: 3px; font-size: 12.5px; color: var(--muted-dim); }
+.mk-sources a, .mk-link { color: var(--primary); text-decoration: none; }
+.mk-link { font-size: 14px; font-weight: 600; }
+@media (max-width: 560px) { .mk-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .mk-tile .val { font-size: 17px; } }

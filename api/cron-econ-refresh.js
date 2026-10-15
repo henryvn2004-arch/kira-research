@@ -3,7 +3,7 @@
 // Weekly Vercel cron (vercel.json). Kira Data: refreshes econ_series (migration 057) and econ_flows (058)
 // from every source adapter in api/_lib/econ/. Upserts, so a re-run only rewrites the same rows.
 // Sources whose API key is not set yet are skipped and named in the log line.
-// Logs one job_runs row ('econ-refresh') for /en/admin/health.
+// Logs one job_runs row ('econ-refresh', or 'econ-refresh-<source>' for a source's own slot) for /en/admin/health.
 //
 // If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>`
 // (Vercel cron does this automatically).
@@ -29,13 +29,15 @@ export default async function handler(req, res) {
       if (!r.ok) throw new Error(`Supabase ${r.status}: ${await r.text()}`);
       return r.json();
     };
-    const [indicators, sources] = await Promise.all([
+    const [indicators, sources, map] = await Promise.all([
       read('econ_indicators?active=eq.true&select=key,source_key,source_code,country_code,params,freq'),
-      read('data_sources?select=key,env_key')
+      read('data_sources?select=key,env_key'),
+      read('segment_data_map?select=hs')
     ]);
+    const hs = [...new Set(map.flatMap((m) => m.hs || []))].sort();
 
     const only = /^[a-z_]{2,40}$/.test(String(req.query.source || '')) ? String(req.query.source) : null;
-    const { rows, flows, errors, waiting } = await collect(indicators, sources, { only });
+    const { rows, flows, errors, waiting } = await collect(indicators, sources, { only, hs });
     const now = new Date().toISOString();
     const write = async (table, conflict, list) => {
       for (let i = 0; i < list.length; i += 1000) {

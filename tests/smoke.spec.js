@@ -1123,6 +1123,20 @@ test.describe('Kira Data (D1)', () => {
     }
   });
 
+  test('/api/market-data: segment trade from public sources only (D3)', async ({ request }) => {
+    const body = await (await request.get('/api/market-data?report=vietnam-coffee-chains-2026')).json();
+    expect(body.country.code).toBe('VN');
+    expect(body.profile).toBe('coffee');
+    const keys = body.sources.map((s) => s.key);
+    for (const t of body.trade) for (const r of t.rows) expect(keys).toContain(r.source_key);
+    expect((await request.get('/api/market-data?report=no-such-report-xyz')).status()).toBe(404);
+  });
+
+  test('report page shows the market data panel (D3)', async ({ page }) => {
+    await page.goto('/en/reports/vietnam-coffee-chains-2026');
+    await expect(page.locator('#market-data h2')).toBeVisible({ timeout: 15000 });
+  });
+
   test('/api/econ rejects an unknown market', async ({ request }) => {
     expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
   });

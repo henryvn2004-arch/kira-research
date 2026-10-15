@@ -60,6 +60,7 @@
   <script src="/js/i18n.js" defer></script>
   <script src="/js/research-i18n.js" defer></script>
   <script src="/js/coming-soon.js" defer></script>
+  <script src="/js/market-panel.js" defer></script>
 
   <script type="module">
     // ── 1) URL parsing ───────────────────────────────────
@@ -164,6 +165,9 @@
     render(data, purchaseState, fullContent, captureResult);
 
     if (window.kira && window.kira.i18n) window.kira.i18n.apply();
+
+    // ── 6b) Market data panel (Kira Data D3, async; renders nothing without data) ──
+    if (window.kiraMarket) window.kiraMarket.mount(document.getElementById('rpt-market-slot'), { report: data.slug });
 
     // ── 7) Key Players strip (async, VN reports only) ────
     const _countryUp = (data.country || '').toUpperCase();
@@ -832,6 +836,7 @@
             ((d.toc && d.toc.length) || (d.glossary_json && d.glossary_json.length)
               ? '<section class="rd-sec" id="contents"><div class="rd-contents-narrow">' + renderContents(d.toc, owns) + '</div>' + renderGlossary(d.glossary_json) + '</section>' : '') +
             (owns ? renderFullBody(fullContent && fullContent.full_content) : '') +
+            '<div id="rpt-market-slot"></div>' +
             '<div id="rpt-key-players-slot"></div>' +
             continueHtml +
         '</div><div></div></div></div>';
