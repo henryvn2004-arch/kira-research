@@ -279,7 +279,7 @@ Equivalent shell (use Bash, NOT PowerShell — the `[" ]` character class trips 
 PAGE_COUNT=$(grep -cE '<div class="page[" ]' skills/kira-research-report/outputs/batch/${id}/en.html)
 ```
 
-Typical reports have 12-30 pages (cover + methodology + contents + exec + sections + dividers + endnote). Note the count for the validation gate (Step 4.3). If the count is < 8 or > 40, something is wrong — bail to failure path with `unexpected page count <N>`.
+Typical reports have 12-45 pages (cover + methodology + contents + exec + sections + dividers + endnote); there is no page cap (see storytelling.md), so the gate only catches broken output. Note the count for the validation gate (Step 4.3). If the count is < 8 or > 80, something is wrong — bail to failure path with `unexpected page count <N>`.
 
 ### 4.2 — Chunked translation
 
@@ -549,7 +549,7 @@ Stage D = a `ko_done` row (new report; EN/JA/KO are saved to the private archive
 
 - `skills/kira-research-report/outputs/batch/${id}/en.html` must exist (Step 2.5 restores it from the private archive). Missing → failure path with `error_log: en.html missing for zh stage`.
 - Stage E only: `REPORT_ID` = the UUID segment of the first path in the row's `output_paths` (`reports-pdfs/<report_id>/en.pdf`). If `output_paths` is empty, look the report up by `naming.json`'s `slug` (`SELECT id FROM living_reports WHERE slug = …`). Neither available → failure path with `error_log: zh backfill: report_id unknown`. Never create a new `living_reports` row in Stage E.
-- Count `PAGE_COUNT` on en.html exactly as §4.1 (same 8-40 bounds).
+- Count `PAGE_COUNT` on en.html exactly as §4.1 (same 8-80 bounds).
 
 ### 5Z.1 — ZH chunked translation
 
