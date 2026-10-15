@@ -1137,6 +1137,22 @@ test.describe('Kira Data (D1)', () => {
     await expect(page.locator('#market-data h2')).toBeVisible({ timeout: 15000 });
   });
 
+  test('/api/moves: published moves from public sources, corridor links (D4)', async ({ request }) => {
+    const body = await (await request.get('/api/moves?host=VN&investor=JP&limit=20')).json();
+    expect(Array.isArray(body.events)).toBe(true);
+    expect(Array.isArray(body.corridor.links)).toBe(true);
+    const keys = body.sources.map((s) => s.key);
+    for (const e of body.events) { expect(keys).toContain(e.source_key); expect(e.host_country).toBe('VN'); }
+    expect((await request.get('/api/admin-moves')).status()).toBe(401);
+  });
+
+  test('moves feed and a corridor page render (D4)', async ({ page }) => {
+    await page.goto('/en/data/moves');
+    await expect(page.locator('.mv-filters')).toBeVisible({ timeout: 15000 });
+    await page.goto('/ja/data/japan-in-vietnam');
+    await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 15000 });
+  });
+
   test('/api/econ rejects an unknown market', async ({ request }) => {
     expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
   });
