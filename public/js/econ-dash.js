@@ -143,7 +143,9 @@
 
   // ---- state ------------------------------------------------------------------------------
   const params = new URLSearchParams(location.search);
-  let lens = LENS.includes(String(params.get('from') || '').toUpperCase()) ? params.get('from').toUpperCase() : '';
+  // Only a code from LENS is kept (taken from the list, not from the URL text).
+  const pickLens = (v) => LENS[LENS.indexOf(String(v || '').toUpperCase())] || '';
+  let lens = pickLens(params.get('from'));
   let D = null;
   const charts = [];
 
@@ -160,8 +162,8 @@
   // ---- tab bar + investing-from filter ------------------------------------------------------
   function bar(el, code) {
     el.innerHTML = '<div class="dd-bar"><nav class="dd-tabs" aria-label="' + esc(T.all) + '">' +
-      '<a class="dd-tab' + (code ? '' : ' on') + '" data-slug="" href="' + href('') + '"' + (code ? '' : ' aria-current="page"') + '>' + esc(T.all) + '</a>' +
-      D.countries.map((c) => '<a class="dd-tab' + (c.code === code ? ' on' : '') + '" data-slug="' + esc(c.slug) + '" href="' + href(c.slug) + '"' + (c.code === code ? ' aria-current="page"' : '') + '>' + esc(nm(c.code)) + '</a>').join('') +
+      '<a class="dd-tab' + (code ? '' : ' on') + '" data-slug="" href="' + esc(href('')) + '"' + (code ? '' : ' aria-current="page"') + '>' + esc(T.all) + '</a>' +
+      D.countries.map((c) => '<a class="dd-tab' + (c.code === code ? ' on' : '') + '" data-slug="' + esc(c.slug) + '" href="' + esc(href(c.slug)) + '"' + (c.code === code ? ' aria-current="page"' : '') + '>' + esc(nm(c.code)) + '</a>').join('') +
       '</nav><label class="dd-lens">' + esc(T.from) + ' <select id="dd-lens"><option value="">' + esc(T.any) + '</option>' +
       LENS.filter((c) => c !== code).map((c) => '<option value="' + c + '"' + (c === lens ? ' selected' : '') + '>' + esc(nm(c)) + '</option>').join('') + '</select></label></div>';
     const on = el.querySelector('.dd-tab.on');
@@ -222,7 +224,7 @@
       const d = await r.json();
       if (!(d.events || []).length || !window.kiraMoves || !window.kiraMoves.list) return;   // nothing yet: no empty block
       el.innerHTML = sec(T.qMoves, T.hMoves(host ? nm(host) : '', lens ? nm(lens) : ''),
-        window.kiraMoves.list(d.events, nm) + '<p class="dd-cap"><a href="/' + L + '/data/moves' + (host || lens ? '?' + new URLSearchParams(Object.assign({}, host ? { host } : {}, lens ? { investor: lens } : {})).toString() : '') + '">' + esc(T.allMoves) + '</a></p>');
+        window.kiraMoves.list(d.events, nm) + '<p class="dd-cap"><a href="' + esc('/' + L + '/data/moves' + (host || lens ? '?' + new URLSearchParams(Object.assign({}, host ? { host } : {}, lens ? { investor: lens } : {})).toString() : '')) + '">' + esc(T.allMoves) + '</a></p>');
     } catch (_e) { /* the block stays empty */ }
   }
 
@@ -236,7 +238,7 @@
     let h = sec(T.qWhere, T.hWhere,
       '<div class="dd-grid2">' + box('dd-bubble', 'tall') +
       '<div class="dd-card ed-table-wrap dd-league"><table class="ed-table"><thead><tr>' + T.cols.map((c) => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
-      rows.map((r) => '<tr data-href="' + href(r.c.slug) + '"><td><a href="' + href(r.c.slug) + '">' + esc(nm(r.c.code)) + '</a></td><td>' + pct(r.g) + '</td><td>' + pct(r.inf) + '</td><td>' + money(r.inc) + '</td><td>' + money(r.gdp) + '</td><td>' + money(r.fdi) + '</td></tr>').join('') +
+      rows.map((r) => '<tr><td><a href="' + esc(href(r.c.slug)) + '">' + esc(nm(r.c.code)) + '</a></td><td>' + pct(r.g) + '</td><td>' + pct(r.inf) + '</td><td>' + money(r.inc) + '</td><td>' + money(r.gdp) + '</td><td>' + money(r.fdi) + '</td></tr>').join('') +
       '</tbody></table></div></div>', esc(T.capBubble) + ' ' + esc(T.rowHint) + ' ' + esc(T.noTW) + (yr ? ' · ' + esc(T.srcLbl(SRC.worldbank_wdi, per(yr))) : ''));
 
     // Currencies: change against the US dollar over a month and a year (positive = the local currency gained).
@@ -262,7 +264,7 @@
         return '<td style="background:' + bg + ';color:' + (a > 0.5 ? '#fff' : 'inherit') + '">' + money(v) + '</td>';
       };
       h += sec(T.qWho, T.hMatrix(ly), '<div class="dd-card ed-table-wrap"><table class="ed-table dd-heat"><thead><tr><th>' + esc(T.hostInv) + '</th>' + invs.map((i) => '<th>' + esc(nm(i)) + '</th>').join('') + '</tr></thead><tbody>' +
-        hosts.map((ho) => '<tr><td><a href="' + href((D.countries.find((c) => c.code === ho) || {}).slug) + '">' + esc(nm(ho)) + '</a></td>' + invs.map((i) => cell(at(asean.find((s) => s.host === ho && s.investor === i), ly))).join('') + '</tr>').join('') +
+        hosts.map((ho) => '<tr><td><a href="' + esc(href((D.countries.find((c) => c.code === ho) || {}).slug)) + '">' + esc(nm(ho)) + '</a></td>' + invs.map((i) => cell(at(asean.find((s) => s.host === ho && s.investor === i), ly))).join('') + '</tr>').join('') +
         '</tbody></table></div>', esc(T.capMatrix) + ' · ' + esc(T.srcLbl(SRC.aseanstats, per(ly))));
     } else {
       const mine = asean.filter((s) => s.investor === lens);
@@ -276,7 +278,7 @@
     }
     h += '<div id="dd-moves"></div>' + credits();
     el.innerHTML = h;
-    el.querySelectorAll('tr[data-href]').forEach((tr) => tr.addEventListener('click', (e) => { if (e.target.tagName !== 'A') location.href = tr.dataset.href; }));
+    el.querySelectorAll('.dd-league tbody tr').forEach((tr, i) => tr.addEventListener('click', (e) => { if (e.target.tagName !== 'A') location.href = href(rows[i].c.slug); }));
 
     if (!setup()) return;
     const pts = rows.map((r) => ({ x: r.inc, y: r.g, r: Math.max(4, Math.sqrt((r.gdp || 0) / 1e9) * 0.8), n: nm(r.c.code), slug: r.c.slug }));
@@ -399,7 +401,7 @@
       if (o.body) (o.code ? renderCountry(o.body, o.code) : renderAll(o.body));
       const sel = document.getElementById('dd-lens');
       if (sel) sel.addEventListener('change', () => {
-        lens = sel.value;
+        lens = pickLens(sel.value);
         const u = new URL(location.href);
         if (lens) u.searchParams.set('from', lens); else u.searchParams.delete('from');
         history.replaceState(null, '', u.pathname + u.search);
