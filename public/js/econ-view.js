@@ -22,6 +22,7 @@
       lead: (c, v) => `${c}'s real GDP ${v.neg ? 'shrank' : 'grew'} <b>${v.growthAbs}</b> in ${v.year}` + (v.gdp ? `, with GDP at <b>${v.gdp}</b>.` : '.') +
         (v.hh ? ` Households spent <b>${v.hh}</b>` + (v.fdi ? `, and foreign direct investment brought a net <b>${v.fdi}</b>.` : '.') : ''),
       ofYear: (y) => `${y}`,
+      xlsx: 'Download the full history (Excel)', xlsxPlan: 'The full history in Excel comes with the Month plan.', xlsxSeePlan: 'See the plan', xlsxFail: 'The download did not work. Please try again.',
       showAll: (n) => `Show all ${n}`, recent: 'Latest monthly and quarterly figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
       win: { M: (a, b) => `12 months to ${b}`, Q: (a, b) => `4 quarters to ${b}`, A: (a, b) => b }, ytd: (a, b) => `${a} – ${b}`,
       grp: { TOTAL: 'Merchandise trade', FDI: 'Direct investment', VISITORS: 'Visitors' },
@@ -46,6 +47,7 @@
       lead: (c, v) => (v.growth ? `${c}の${v.year}年の実質GDP成長率は<b>${v.growth}</b>` : '') + (v.gdp ? `、名目GDPは<b>${v.gdp}</b>でした。` : '。') +
         (v.hh ? `家計消費支出は<b>${v.hh}</b>` + (v.fdi ? `、対内直接投資の純流入は<b>${v.fdi}</b>です。` : 'です。') : ''),
       ofYear: (y) => `${y}年`,
+      xlsx: '全期間データをダウンロード（Excel）', xlsxPlan: '全期間データのExcelは月額プランでご利用いただけます。', xlsxSeePlan: 'プランを見る', xlsxFail: 'ダウンロードできませんでした。もう一度お試しください。',
       showAll: (n) => `すべて表示（${n}件）`, recent: '最新の月次・四半期データ', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
       win: { M: (a, b) => `${b}までの12か月`, Q: (a, b) => `${b}までの4四半期`, A: (a, b) => b }, ytd: (a, b) => `${a}～${b}`,
       grp: { TOTAL: '商品貿易', FDI: '直接投資', VISITORS: '訪問者' },
@@ -70,6 +72,7 @@
       lead: (c, v) => (v.growth ? `${c}의 ${v.year}년 실질 GDP 성장률은 <b>${v.growth}</b>` : '') + (v.gdp ? `, 명목 GDP는 <b>${v.gdp}</b>입니다.` : '입니다.') +
         (v.hh ? ` 가계 소비지출은 <b>${v.hh}</b>` + (v.fdi ? `, 외국인직접투자 순유입은 <b>${v.fdi}</b>입니다.` : '입니다.') : ''),
       ofYear: (y) => `${y}년`,
+      xlsx: '전체 기간 데이터 내려받기(Excel)', xlsxPlan: '전체 기간 Excel 데이터는 월간 플랜에 포함됩니다.', xlsxSeePlan: '플랜 보기', xlsxFail: '내려받지 못했습니다. 다시 시도해 주세요.',
       showAll: (n) => `전체 보기(${n}개)`, recent: '최신 월간·분기 지표', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
       win: { M: (a, b) => `${b}까지 12개월`, Q: (a, b) => `${b}까지 4개 분기`, A: (a, b) => b }, ytd: (a, b) => `${a}~${b}`,
       grp: { TOTAL: '상품 무역', FDI: '직접투자', VISITORS: '방문객' },
@@ -94,6 +97,7 @@
       lead: (c, v) => (v.growth ? `${c}${v.year}年实际GDP增长<b>${v.growth}</b>` : '') + (v.gdp ? `，国内生产总值为<b>${v.gdp}</b>。` : '。') +
         (v.hh ? `家庭消费支出为<b>${v.hh}</b>` + (v.fdi ? `，外国直接投资净流入<b>${v.fdi}</b>。` : '。') : ''),
       ofYear: (y) => `${y}年`,
+      xlsx: '下载完整历史数据（Excel）', xlsxPlan: '完整历史数据的Excel文件包含在月度方案中。', xlsxSeePlan: '查看方案', xlsxFail: '下载失败，请重试。',
       showAll: (n) => `显示全部（${n}项）`, recent: '最新月度与季度数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
       win: { M: (a, b) => `截至${b}的12个月`, Q: (a, b) => `截至${b}的4个季度`, A: (a, b) => b }, ytd: (a, b) => `${a}至${b}`,
       grp: { TOTAL: '商品贸易', FDI: '直接投资', VISITORS: '访客' },
@@ -143,6 +147,56 @@
   function fail(msg) {
     root.innerHTML = '<div class="r-empty" style="margin-block:64px"><h3>' + esc(msg) + '</h3><a class="r-btn r-btn-outline" href="/' + locale + '/data/">' + esc(T.all) + '</a></div>';
   }
+  // Pages that pass the data check (the API's `indexable`, the same rule as the sitemap) may be indexed;
+  // the HTML ships noindex so every other page stays out of search.
+  function indexable(yes) {
+    if (!yes) return;
+    const m = document.querySelector('meta[name="robots"]');
+    if (m) m.setAttribute('content', 'index, follow');
+  }
+  // A signed-in reader's token (Supabase keeps the session in localStorage).
+  function token() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (/^sb-.*-auth-token$/.test(k)) { const t = JSON.parse(localStorage.getItem(k)); if (t && t.access_token) return t.access_token; }
+      }
+    } catch (_e) { /* no session */ }
+    return null;
+  }
+  // Paid layer (D7): the full history as Excel for subscribers (/api/econ-export). The button shows while the
+  // Month plan is on sale, or to a signed-in reader (a subscriber, or the admin team).
+  async function wireExcel(slugName) {
+    const box = document.getElementById('ed-xlsx-box');
+    if (!box) return;
+    let onSale = false;
+    try { onSale = !!(await (await fetch('/api/checkout-status')).json()).subscription.enabled; } catch (_e) { /* off */ }
+    if (!onSale && !token()) return;
+    box.innerHTML = '<button type="button" class="r-btn r-btn-primary" id="ed-xlsx">' + esc(T.xlsx) + '</button><p class="ed-xlsx-msg" role="status"></p>';
+    const btn = document.getElementById('ed-xlsx'), msg = box.querySelector('.ed-xlsx-msg');
+    const plan = () => { msg.innerHTML = esc(T.xlsxPlan) + (onSale ? ' <a href="/' + locale + '/subscription">' + esc(T.xlsxSeePlan) + ' →</a>' : ''); };
+    btn.addEventListener('click', async () => {
+      const t = token();
+      if (!t) {
+        try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* ignore */ }
+        location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to download the data');
+        return;
+      }
+      btn.disabled = true;
+      try {
+        const r = await fetch('/api/econ-export?country=' + encodeURIComponent(slugName), { headers: { Authorization: 'Bearer ' + t } });
+        if (r.status === 402) { plan(); return; }
+        if (r.status === 401) { try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* ignore */ } location.href = '/auth.html'; return; }
+        if (!r.ok) throw new Error(r.status);
+        const blob = await r.blob();
+        const name = (/filename="([^"]+)"/.exec(r.headers.get('content-disposition') || '') || [])[1] || 'KIRA_market-data.xlsx';
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      } catch (_e) { msg.textContent = T.xlsxFail; }
+      finally { btn.disabled = false; }
+    });
+  }
   function sources(list, updated) {
     return '<div class="ed-sources">' + list.map((s) => '<span>' + (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.attribution) + '</a>' : esc(s.attribution)) + '</span>').join('') +
       (updated ? '<span>' + esc(T.updated(dateFmt(updated))) + '</span>' : '') + '</div>';
@@ -164,6 +218,7 @@
         '<a class="ed-card" href="/' + locale + '/data/' + esc(c.slug) + '"><h3>' + esc(cname(c.name)) + '</h3>' +
         (Object.keys(c.latest).length ? '<dl>' + ['gdp_usd', 'gdp_growth', 'population'].map((k) => row(c, k)).join('') + '</dl>' : '<span class="ed-note">' + esc(T.none(cname(c.name))) + '</span>') +
         '</a>').join('') + '</div>' + sources(data.sources || []) + '</div>';
+    indexable(data.indexable);
     return;
   }
 
@@ -257,13 +312,15 @@
     (recent ? '<section class="ed-section"><h2>' + esc(T.recent) + '</h2><div class="ed-tiles">' + recent + '</div></section>' : '') +
     (years.length ? '<section class="ed-section"><h2>' + esc(T.history) + '</h2>' + table + '</section>' : '') +
     (linkTable ? '<section class="ed-section"><h2>' + esc(T.links) + '</h2><div class="ed-table-wrap"><table class="ed-table ed-links-table"><thead><tr><th>' + esc(T.linkCol) + '</th><th>' + esc(T.periodCol) + '</th><th>' + esc(T.valueCol) + '</th><th>' + esc(T.changeCol) + '</th></tr></thead><tbody>' + linkTable + '</tbody></table></div></section>' : '') +
-    '<section class="ed-section">' + sources(data.sources, data.updated_at) + '<div class="ed-links">' + libLink + '<a class="r-btn r-btn-outline" href="/' + locale + '/data/">' + esc(T.all) + '</a></div></section>' +
+    '<section class="ed-section"><div id="ed-xlsx-box"></div>' + sources(data.sources, data.updated_at) + '<div class="ed-links">' + libLink + '<a class="r-btn r-btn-outline" href="/' + locale + '/data/">' + esc(T.all) + '</a></div></section>' +
     '</div>';
 
   root.querySelectorAll('.ed-more-btn').forEach((b) => b.addEventListener('click', () => {
     root.querySelectorAll('tr.ed-more[data-grp="' + b.dataset.grp + '"]').forEach((tr) => { tr.hidden = false; });
     b.closest('tr').remove();
   }));
+  indexable(data.indexable);
+  wireExcel(data.country.slug);
 
   // ---- charts -----------------------------------------------------------------------------
   const NS = 'http://www.w3.org/2000/svg';

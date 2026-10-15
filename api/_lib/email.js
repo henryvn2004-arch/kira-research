@@ -47,7 +47,7 @@ async function dropSuppressed(recipients) {
 }
 
 // ── Low-level POST to Resend ─────────────────────────────
-async function resendSend({ to, subject, html, text, replyTo }) {
+async function resendSend({ to, subject, html, text, replyTo, headers }) {
   if (!RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY not set — skipping send to', to);
     return false;
@@ -71,6 +71,7 @@ async function resendSend({ to, subject, html, text, replyTo }) {
       text
     };
     if (replyTo) body.reply_to = replyTo;
+    if (headers) body.headers = headers;
 
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -453,3 +454,58 @@ export async function sendCrmMessage({ to, subject, text, replyTo }) {
   return resendSend({ to, subject, html, text: plain, replyTo });
 }
 
+// ── Kira Data: "email me new moves" (moves_alerts, migration 063) ──────────
+// Double opt-in: the first email only asks the reader to confirm; nothing else is sent until they click.
+export async function sendMovesAlertConfirm({ to, label, confirmUrl }) {
+  if (!to || !confirmUrl) return false;
+  const subject = `Confirm your alert: ${label}`;
+  const text = [
+    `You asked us to email you when we publish new company moves:`,
+    ``,
+    label,
+    ``,
+    `Confirm with this link (nothing is sent until you do):`,
+    confirmUrl,
+    ``,
+    `Not you? Ignore this message and you will not hear from us again.`,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Confirm your alert</h1>
+  <p style="margin:0 0 8px;">You asked us to email you when we publish new company moves:</p>
+  <p style="margin:0 0 20px;"><strong>${esc(label)}</strong></p>
+  <p style="margin:0 0 12px;"><a href="${esc(confirmUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Confirm the alert</a></p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">Nothing is sent until you confirm. Not you? Ignore this message and you will not hear from us again.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text });
+}
+
+// One email per alert with the moves published since the last one. Every email carries the unsubscribe link,
+// in the body and as a List-Unsubscribe header (one-click unsubscribe in Gmail / Yahoo).
+export async function sendMovesDigest({ to, label, moves, pageUrl, unsubUrl }) {
+  if (!to || !moves || !moves.length || !unsubUrl) return false;
+  const subject = moves.length === 1 ? `New move: ${moves[0].title}`.slice(0, 140) : `${moves.length} new company moves: ${label}`;
+  const text = [
+    `New company moves we published (${label}):`,
+    ``,
+    ...moves.map((m) => `• ${m.date} — ${m.title}\n  ${m.url}`),
+    ``,
+    `All moves: ${pageUrl}`,
+    ``,
+    `Stop these emails: ${unsubUrl}`,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 6px;font-weight:600;">New company moves</h1>
+  <p style="margin:0 0 20px;color:#555;">${esc(label)}</p>
+  ${moves.map((m) => `<p style="margin:0 0 14px;"><span style="font-size:13px;color:#666;">${esc(m.date)}${m.type ? ' · ' + esc(m.type) : ''}</span><br><a href="${esc(m.url)}" style="color:#111;">${esc(m.title)}</a></p>`).join('')}
+  <p style="margin:20px 0 0;"><a href="${esc(pageUrl)}">See all moves</a></p>
+  <p style="margin:28px 0 0;font-size:12px;color:#777;">You get this because you confirmed an alert on kiraresearch.com. <a href="${esc(unsubUrl)}" style="color:#777;">Stop these emails</a>.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text, headers: { 'List-Unsubscribe': `<${unsubUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } });
+}

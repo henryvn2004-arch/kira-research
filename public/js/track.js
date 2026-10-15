@@ -63,7 +63,8 @@
   window.kiraTrack = send;
 
   // Watch fetch: successful signup POSTs and library searches.
-  var SIGNUP = { '/api/topic-request': 'request_email', '/api/waitlist': 'waitlist', '/api/leads': 'lead' };
+  // A moves alert (D7) counts as "left an email to be told", like a topic request.
+  var SIGNUP = { '/api/topic-request': 'request_email', '/api/moves-alert': 'request_email', '/api/waitlist': 'waitlist', '/api/leads': 'lead' };
   var seenQueries = {};
   var realFetch = window.fetch;
   if (typeof realFetch === 'function') {

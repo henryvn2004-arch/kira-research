@@ -26,6 +26,11 @@
         FDI_REG_YTD_M: (r, p) => p ? `Registered investment from ${p} in ${r} (new + added capital)` : `Registered foreign investment in ${r} (new + added capital)`,
         FDI_APPROVED_X: (r, p) => p ? `Approved investment from ${r} in ${p}` : `Approved outward investment from ${r}`,
         TOTAL_X: (r, p) => `${r} exports to ${p}`, TOTAL_M: (r, p) => `${r} imports from ${p}`, VISITORS_M: (r, p) => `Visitors from ${p} to ${r}` },
+      alertH: 'Get new moves by email', alertLead: (w) => `We email you when we publish a new company move: ${w}. You confirm first, and every email has a one-click unsubscribe.`,
+      alertPh: 'Work email', alertBtn: 'Email me new moves', alertSent: 'Check your inbox and click the link to confirm.', alertErr: 'That did not work. Check the address and try again.',
+      alertPick: 'Choose a market or an investor above to get new moves by email.', allInv: 'all investors', allHosts: 'all 15 markets',
+      banner: { confirmed: 'Your alert is on. We will email you when we publish a new move.', stopped: 'You will not get these emails any more.', unknown: 'That link is no longer valid.', error: 'Something went wrong. Please try the link again later.' },
+      locked: 'Older moves come with the Month plan.', lockedLink: 'See the plan',
       type: { acquisition: 'Acquisition', stake: 'Stake', investment: 'Investment', plant: 'New plant', jv: 'Joint venture', subsidiary: 'New subsidiary or office', expansion: 'Expansion', exit: 'Exit', other: 'Other' },
       extra: { CN: 'China', HK: 'Hong Kong', US: 'United States', IN: 'India', DE: 'Germany', FR: 'France', GB: 'United Kingdom' }, unknown: 'Unknown'
     },
@@ -40,6 +45,11 @@
         FDI_REG_YTD_M: (r, p) => p ? `${p}から${r}への登録投資額（新規＋増資）` : `${r}への外国投資登録額（新規＋増資）`,
         FDI_APPROVED_X: (r, p) => p ? `${r}から${p}への認可投資額` : `${r}の対外投資認可額`,
         TOTAL_X: (r, p) => `${r}から${p}への輸出`, TOTAL_M: (r, p) => `${r}の${p}からの輸入`, VISITORS_M: (r, p) => `${p}から${r}への訪問者数` },
+      alertH: '新しい動きをメールで受け取る', alertLead: (w) => `新しい企業の動き（${w}）を掲載したらメールでお知らせします。最初に確認メールをお送りします。すべてのメールからワンクリックで配信停止できます。`,
+      alertPh: '勤務先メールアドレス', alertBtn: 'メールで受け取る', alertSent: '確認メールのリンクをクリックしてください。', alertErr: '登録できませんでした。アドレスを確認してもう一度お試しください。',
+      alertPick: 'メールで受け取るには、上で市場または投資元を選んでください。', allInv: 'すべての投資元', allHosts: '15市場すべて',
+      banner: { confirmed: 'アラートを設定しました。新しい動きを掲載したらお知らせします。', stopped: '配信を停止しました。', unknown: 'このリンクは無効です。', error: 'エラーが発生しました。後ほどもう一度お試しください。' },
+      locked: 'それ以前の動きは月額プランでご覧いただけます。', lockedLink: 'プランを見る',
       type: { acquisition: '買収', stake: '出資・株式取得', investment: '投資', plant: '工場新設', jv: '合弁', subsidiary: '子会社・拠点設立', expansion: '事業拡大', exit: '撤退・売却', other: 'その他' },
       extra: { CN: '中国', HK: '香港', US: '米国', IN: 'インド', DE: 'ドイツ', FR: 'フランス', GB: '英国' }, unknown: '不明'
     },
@@ -54,6 +64,11 @@
         FDI_REG_YTD_M: (r, p) => p ? `${p}의 ${r} 등록 투자액(신규+증액)` : `${r} 외국인투자 등록액(신규+증액)`,
         FDI_APPROVED_X: (r, p) => p ? `${r}의 ${p} 승인 투자액` : `${r} 해외투자 승인액`,
         TOTAL_X: (r, p) => `${r}의 ${p} 수출`, TOTAL_M: (r, p) => `${r}의 ${p}산 수입`, VISITORS_M: (r, p) => `${p}발 ${r} 방문객` },
+      alertH: '새 동향을 이메일로 받기', alertLead: (w) => `새 기업 동향(${w})을 게시하면 이메일로 알려 드립니다. 먼저 확인 메일을 보내 드리며, 모든 메일에서 한 번에 수신을 거부할 수 있습니다.`,
+      alertPh: '업무용 이메일', alertBtn: '이메일로 받기', alertSent: '받은편지함에서 확인 링크를 눌러 주세요.', alertErr: '등록하지 못했습니다. 주소를 확인하고 다시 시도해 주세요.',
+      alertPick: '이메일로 받으려면 위에서 시장이나 투자국을 고르세요.', allInv: '모든 투자국', allHosts: '15개 시장 전체',
+      banner: { confirmed: '알림이 설정되었습니다. 새 동향을 게시하면 알려 드립니다.', stopped: '더 이상 이 메일을 보내지 않습니다.', unknown: '더 이상 유효하지 않은 링크입니다.', error: '문제가 생겼습니다. 잠시 후 다시 시도해 주세요.' },
+      locked: '이전 동향은 월간 플랜에서 볼 수 있습니다.', lockedLink: '플랜 보기',
       type: { acquisition: '인수', stake: '지분 취득', investment: '투자', plant: '공장 신설', jv: '합작', subsidiary: '법인·사무소 설립', expansion: '확장', exit: '철수·매각', other: '기타' },
       extra: { CN: '중국', HK: '홍콩', US: '미국', IN: '인도', DE: '독일', FR: '프랑스', GB: '영국' }, unknown: '미상'
     },
@@ -68,6 +83,11 @@
         FDI_REG_YTD_M: (r, p) => p ? `${p}对${r}的登记投资（新增+增资）` : `${r}外资登记额（新增+增资）`,
         FDI_APPROVED_X: (r, p) => p ? `${r}对${p}的获批投资` : `${r}获批对外投资`,
         TOTAL_X: (r, p) => `${r}对${p}出口`, TOTAL_M: (r, p) => `${r}自${p}进口`, VISITORS_M: (r, p) => `${p}赴${r}访客` },
+      alertH: '通过邮件接收新动态', alertLead: (w) => `我们发布新的企业动态（${w}）时会发邮件通知您。需先确认邮箱，每封邮件均可一键退订。`,
+      alertPh: '工作邮箱', alertBtn: '邮件通知我', alertSent: '请查收邮件并点击链接确认。', alertErr: '提交失败，请检查邮箱地址后重试。',
+      alertPick: '请先在上方选择市场或投资来源，再订阅邮件。', allInv: '所有投资来源', allHosts: '全部15个市场',
+      banner: { confirmed: '提醒已开启，发布新动态时我们会通知您。', stopped: '您将不再收到这些邮件。', unknown: '该链接已失效。', error: '出现问题，请稍后再试该链接。' },
+      locked: '更早的动态需订阅月度方案查看。', lockedLink: '查看方案',
       type: { acquisition: '收购', stake: '入股', investment: '投资', plant: '新建工厂', jv: '合资', subsidiary: '设立子公司或办事处', expansion: '扩张', exit: '退出', other: '其他' },
       extra: { CN: '中国', HK: '香港', US: '美国', IN: '印度', DE: '德国', FR: '法国', GB: '英国' }, unknown: '未知'
     }
@@ -89,6 +109,14 @@
     return T.ofYear(p);
   }
 
+  // Pages that pass the data check (the API's `indexable`, the same rule as the sitemap) may be indexed;
+  // the HTML ships noindex so every other page stays out of search.
+  function indexable(yes) {
+    if (!yes) return;
+    const m = document.querySelector('meta[name="robots"]');
+    if (m) m.setAttribute('content', 'index, follow');
+  }
+
   function handles(slug) { return slug === 'moves' || corridorOf(slug) !== null; }
   function corridorOf(slug) {
     const m = /^([a-z-]+)-in-([a-z-]+)$/.exec(slug || '');
@@ -108,8 +136,52 @@
   function credits(sources) {
     return '<div class="ed-sources">' + sources.map((s) => '<span>' + (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.attribution) + '</a>' : esc(s.attribution)) + '</span>').join('') + '</div>';
   }
+  // A signed-in reader's token (Supabase keeps the session in localStorage): lets /api/moves see a subscriber.
+  function bearer() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (/^sb-.*-auth-token$/.test(k)) { const t = JSON.parse(localStorage.getItem(k)); if (t && t.access_token) return { Authorization: 'Bearer ' + t.access_token }; }
+      }
+    } catch (_e) { /* no session */ }
+    return {};
+  }
+  // Banner after a link from an alert email (?alert=confirmed|stopped|unknown|error).
+  function banner() {
+    const k = new URLSearchParams(location.search).get('alert');
+    return k && T.banner[k] ? '<p class="mv-banner" role="status">' + esc(T.banner[k]) + '</p>' : '';
+  }
+  // "Email me new moves" for one filter (host and/or investor); double opt-in by /api/moves-alert.
+  function alertBox(host, investor, nm) {
+    if (!host && !investor) return '<section class="ed-section mv-alert"><h2>' + esc(T.alertH) + '</h2><p class="mv-alert-note">' + esc(T.alertPick) + '</p></section>';
+    const what = (investor ? nm(investor) : T.allInv) + ' → ' + (host ? nm(host) : T.allHosts);
+    return '<section class="ed-section mv-alert"><h2>' + esc(T.alertH) + '</h2><p class="mv-alert-note">' + esc(T.alertLead(what)) + '</p>' +
+      '<form class="mv-alert-form" data-host="' + esc(host || '') + '" data-investor="' + esc(investor || '') + '">' +
+      '<input type="email" name="email" required autocomplete="email" placeholder="' + esc(T.alertPh) + '" aria-label="' + esc(T.alertPh) + '">' +
+      '<input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" class="mv-hp">' +
+      '<button type="submit" class="r-btn r-btn-primary">' + esc(T.alertBtn) + '</button></form><p class="mv-alert-msg" role="status" aria-live="polite"></p></section>';
+  }
+  function wireAlert(root) {
+    const form = root.querySelector('.mv-alert-form');
+    if (!form) return;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = root.querySelector('.mv-alert-msg'), btn = form.querySelector('button');
+      btn.disabled = true;
+      try {
+        const r = await fetch('/api/moves-alert', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: form.email.value, hp: form.hp.value, host: form.dataset.host, investor: form.dataset.investor, locale: L }) });
+        if (!r.ok) throw new Error(r.status);
+        form.remove();
+        msg.textContent = T.alertSent;
+      } catch (_e) { msg.textContent = T.alertErr; btn.disabled = false; }
+    });
+  }
+  function lockedNote() {
+    return '<p class="mv-locked">' + esc(T.locked) + ' <a href="/' + L + '/subscription">' + esc(T.lockedLink) + ' →</a></p>';
+  }
   async function get(qs) {
-    const r = await fetch('/api/moves?' + new URLSearchParams(qs).toString());
+    const r = await fetch('/api/moves?' + new URLSearchParams(qs).toString(), { headers: bearer() });
     if (!r.ok) throw new Error(r.status);
     return r.json();
   }
@@ -139,13 +211,16 @@
           (ch === null ? '' : ' · ' + esc((ch > 0 ? '+' : '') + pct1.format(ch) + '% ' + T.change)) + '</span></div>';
       }).join('');
       const hostSlug = slugOf(d.names[c.host]);
-      root.innerHTML = '<div class="ed-main"><div class="ed-head"><h1>' + esc(T.corrH1(I, H)) + '</h1><p class="ed-lead">' + esc(T.corrLead(I, H)) + '</p></div>' +
+      root.innerHTML = '<div class="ed-main">' + banner() + '<div class="ed-head"><h1>' + esc(T.corrH1(I, H)) + '</h1><p class="ed-lead">' + esc(T.corrLead(I, H)) + '</p></div>' +
         (tiles ? '<section class="ed-section"><h2>' + esc(T.links) + '</h2><div class="ed-tiles">' + tiles + '</div></section>' : '') +
-        '<section class="ed-section"><h2>' + esc(T.moves) + '</h2>' + list(d.events, nm) + '</section>' +
+        '<section class="ed-section"><h2>' + esc(T.moves) + '</h2>' + list(d.events, nm) + (d.older_locked ? lockedNote() : '') + '</section>' +
+        alertBox(c.host, c.investor, nm) +
         '<section class="ed-section">' + credits(d.sources) + '<div class="ed-links">' +
         '<a class="r-btn r-btn-outline" href="/' + L + '/data/' + esc(hostSlug) + '">' + esc(T.hostData(H)) + '</a>' +
         '<a class="r-btn r-btn-outline" href="/' + L + '/library?country=' + encodeURIComponent(String(d.names[c.host] || '').toLowerCase()) + '">' + esc(T.reports(H)) + '</a>' +
         '<a class="r-btn r-btn-outline" href="/' + L + '/data/moves?host=' + c.host + '">' + esc(T.allMoves) + '</a></div></section></div>';
+      wireAlert(root);
+      indexable(d.indexable);
       return;
     }
 
@@ -163,10 +238,13 @@
       '<label>' + esc(T.host) + '<select name="host">' + opt('', T.all, f.host) + hosts.map((h) => opt(h, nm(h), f.host)).join('') + '</select></label>' +
       '<label>' + esc(T.investor) + '<select name="investor">' + opt('', T.all, f.investor) + investors.map((h) => opt(h, nm(h), f.investor)).join('') + '</select></label>' +
       '<label>' + esc(T.typeCol) + '<select name="type">' + opt('', T.all, f.type) + Object.keys(T.type).map((k) => opt(k, T.type[k], f.type)).join('') + '</select></label></form>';
-    root.innerHTML = '<div class="ed-main"><div class="ed-head"><h1>' + esc(T.feedH1) + '</h1><p class="ed-lead">' + esc(T.feedLead) + '</p></div>' + filters +
+    root.innerHTML = '<div class="ed-main">' + banner() + '<div class="ed-head"><h1>' + esc(T.feedH1) + '</h1><p class="ed-lead">' + esc(T.feedLead) + '</p></div>' + filters +
       '<section class="ed-section" id="mv-out">' + list(d.events, nm) + '</section>' +
-      (d.events.length === 50 ? '<p><button type="button" class="r-btn r-btn-outline" id="mv-more">' + esc(T.more) + '</button></p>' : '') +
+      (d.older_locked ? lockedNote() : d.events.length === 50 ? '<p><button type="button" class="r-btn r-btn-outline" id="mv-more">' + esc(T.more) + '</button></p>' : '') +
+      alertBox(f.host, f.investor, nm) +
       '<section class="ed-section">' + credits(d.sources) + '</section></div>';
+    wireAlert(root);
+    indexable(!f.host && !f.investor && !f.type && d.indexable);
     document.getElementById('mv-f').addEventListener('change', (e) => {
       const p = new URLSearchParams(new FormData(e.currentTarget));
       for (const [k, v] of [...p.entries()]) if (!v) p.delete(k);

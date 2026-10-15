@@ -1,7 +1,8 @@
 // ============================================================
 // KIRA RESEARCH — api/admin-crm.js
 // CRM for /en/admin/crm: one row per person (lower-case email), built at read time from
-//   leads · waitlist · topic_requests ("email me when ready") · purchases (+ auth.users for the buyer's email)
+//   leads · waitlist · topic_requests ("email me when ready") · moves_alerts ("email me new moves", D7)
+//   · purchases (+ auth.users for the buyer's email)
 // plus what the owner decides, kept in crm_contacts (migration 045): stage, note, follow-up date.
 // Nothing is copied between tables, so the people list can never drift from the source tables.
 //
@@ -64,14 +65,15 @@ async function userEmails() {
 const iso = (v) => (v ? new Date(v).toISOString() : null);
 
 async function buildPeople() {
-  const [leads, waitlist, requests, purchases, contacts, emails, sentMail] = await Promise.all([
+  const [leads, waitlist, requests, purchases, contacts, emails, sentMail, alerts] = await Promise.all([
     rest('leads?select=email,name,company,role,created_at,locale,tier,brief,status&order=created_at.desc&limit=500'),
     rest('waitlist?select=email,name,company,role,created_at,locale,plan,status&order=created_at.desc&limit=500'),
     rest('topic_requests?select=email,created_at,locale,keyword,notified_at&order=created_at.desc&limit=1000'),
     rest('purchases?select=user_id,slug,amount,currency,status,created_at,captured_at,locale&status=eq.completed&order=created_at.desc&limit=500'),
     rest('crm_contacts?select=*&limit=2000'),
     userEmails(),
-    rest('crm_messages?select=email,subject,body,sent_at&ok=eq.true&order=sent_at.desc&limit=1000').catch(() => [])
+    rest('crm_messages?select=email,subject,body,sent_at&ok=eq.true&order=sent_at.desc&limit=1000').catch(() => []),
+    rest('moves_alerts?select=email,host_country,investor_country,locale,status,created_at&order=created_at.desc&limit=1000').catch(() => [])
   ]);
 
   const people = new Map();
@@ -95,6 +97,11 @@ async function buildPeople() {
   for (const l of leads) { const p = get(l.email); if (!p) continue; fill(p, l); touch(p, l.created_at, { type: 'lead', text: `Sent a request (${l.tier})`, detail: l.brief || '' }); }
   for (const w of waitlist) { const p = get(w.email); if (!p) continue; fill(p, w); touch(p, w.created_at, { type: 'waitlist', text: `Joined the waitlist (${w.plan})` }); }
   for (const t of requests) { const p = get(t.email); if (!p) continue; fill(p, t); touch(p, t.created_at, { type: 'request', text: `Asked to be emailed when ready: ${t.keyword || 'a topic'}`, detail: t.notified_at ? 'Notified ' + t.notified_at.slice(0, 10) : '' }); }
+  for (const a of alerts) {
+    const p = get(a.email); if (!p) continue; fill(p, a);
+    const what = `${a.investor_country || 'all investors'} → ${a.host_country || 'all markets'}`;
+    touch(p, a.created_at, { type: 'alert', text: `Asked for new company moves: ${what}`, detail: a.status === 'active' ? 'Confirmed' : a.status === 'pending' ? 'Not confirmed yet' : 'Unsubscribed' });
+  }
   const unattributed = { count: 0, amount: 0 };
   for (const b of purchases) {
     const p = get(emails.get(b.user_id));
