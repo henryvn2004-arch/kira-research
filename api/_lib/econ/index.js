@@ -27,11 +27,13 @@ import * as aseanstats from './aseanstats.js';
 import * as vnNsoFdi from './vn-nso-fdi.js';
 import * as vnCustoms from './vn-customs.js';
 import * as twMac from './tw-mac.js';
+import * as ecb from './ecb.js';
 
 export { ISO3, FIRST_YEAR } from './util.js';
 
 // `own: true` = a heavy source that runs in its own cron slot (/api/cron-econ-refresh?source=<key>), not in the default run.
 // `slot: 'files'` = file and page sources (D6: PDFs, workbooks, CSV files) that share one slot (?source=files).
+// `slot: 'daily'` = fast series (ECB daily rates, Viet Nam half-month trade) in the daily slot (?source=daily).
 const ADAPTERS = {
   worldbank_wdi: { series: worldbank.fetchWorldBank },
   imf_weo: { series: imf.fetchImf },
@@ -51,6 +53,10 @@ const ADAPTERS = {
   aseanstats: { flows: aseanstats.flows, slot: 'files' },
   vn_nso_fdi: { flows: vnNsoFdi.flows, slot: 'files' },       // rows carry source_key vn_nso (same publisher)
   vn_customs: { flows: vnCustoms.flows, slot: 'files' },
+  // Keyed by indicator: these indicators belong to vn_customs, whose monthly files run in the files slot.
+  vn_exports_half: { series: vnCustoms.series, slot: 'daily' },
+  vn_imports_half: { series: vnCustoms.series, slot: 'daily' },
+  ecb: { series: ecb.series, slot: 'daily' },
   tw_mac: { flows: twMac.flows, slot: 'files' }
 };
 
@@ -69,8 +75,9 @@ export async function collect(indicators, sources = [], { only = null, hs = [] }
   const errors = [];
   const waiting = new Set();
   for (const ind of indicators) {
-    const ad = ADAPTERS[ind.source_key];
-    if (!ad || !ad.series || !runs(ind.source_key)) continue;
+    const k = ADAPTERS[ind.key] ? ind.key : ind.source_key;   // an adapter keyed by indicator wins over its source's
+    const ad = ADAPTERS[k];
+    if (!ad || !ad.series || !runs(k)) continue;
     if (missingKey(ind.source_key)) { waiting.add(ind.source_key); continue; }
     try {
       rows.push(...(await ad.series(ind, { env: process.env[envOf[ind.source_key]] })));

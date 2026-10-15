@@ -325,6 +325,12 @@ Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S
 - Lead sentences in JA/KO/ZH were already done in D1 (country page) and D3 (market panel).
 - Owner: the BoJ asks to be told when a service using its API goes public: now that the data pages are in the sitemap, email post.rsd17@boj.or.jp (Claude prepares the text). The data pages are still not linked from the nav or footer (owner decision).
 
+#### D8 — dashboard + faster data (built 2026-10-15, owner approved the mockup)
+- [x] `/<locale>/data/` and every market page are one dashboard: a tab bar (All markets + 15 markets, links keep the filter) and an "Investing from" filter (Japan, Korea, Taiwan, China, Singapore, Hong Kong, US; `?from=JP`). Charts with Chart.js 4.4.1 served from `/js/vendor/` (no CDN). One cached call `GET /api/econ-dash` (public sources only).
+- [x] Blocks answer buyer questions: **Where to go** (bubble chart growth × income × GDP, league table); **Is now a good time** (local currencies against the US dollar, past month and 12 months); **Who is investing where** (ASEAN matrix by source; with a filter, that investor's trend per market plus its own statistics: Bank of Japan outward, Taiwan approvals); on a market page **Trade momentum** (monthly trade with the largest partners, or the filtered partner with 12-month totals) and **Who is investing** (one chart per source: ASEANstats, BKPM, PSA, VN NSO year to date, BoJ); **Latest company moves** shows only when a move is published. The old tables stay below on market pages.
+- [x] Migration 064 (applied): freq `D` and `H`; source `ecb` (euro reference rates → local currency per US$, 9 currencies; none for VND, TWD, KHR, LAK, MMK, BND); Viet Nam Customs half-month totals `vn_exports_half` / `vn_imports_half` (period `YYYY-MM-H1|H2`, the half-month PDFs list commodities only, no countries; backfilled 48 halves). Daily slot `/api/cron-econ-refresh?source=daily` Mon–Fri 15:40 UTC (health job `econ-refresh-daily`).
+- Not done: daily policy rates (they change only at meetings: monthly is enough); commodity prices (FRED needs a free key: owner); Korea 10-day exports (data.go.kr key).
+
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 
 ### Paid search: Google Ads on long-tail, buyer-intent queries (discussed 2026-10-11/12)

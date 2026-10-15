@@ -1185,7 +1185,7 @@ test.describe('Kira Data (D1)', () => {
 
   test('data index and country page render; indexed only when the data check passes (D7)', async ({ page }) => {
     await page.goto('/en/data/');
-    await expect(page.locator('.ed-card').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('#dd-bubble')).toBeVisible({ timeout: 15000 });
     await page.goto('/ja/data/vietnam');
     await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 10000 });
     await expect(page.locator('.ed-tile').first()).toBeVisible();
@@ -1193,5 +1193,24 @@ test.describe('Kira Data (D1)', () => {
     await page.goto('/en/data/taiwan');   // no public indicators for Taiwan yet
     await expect(page.locator('.ed-head h1')).toBeVisible({ timeout: 10000 });
     expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+  });
+
+  test('/api/econ-dash: dashboard data from public sources, with daily exchange rates', async ({ request }) => {
+    const body = await (await request.get('/api/econ-dash')).json();
+    expect(body.countries.length).toBe(15);
+    expect(body.compare.VN.gdp_growth.length).toBeGreaterThan(5);
+    expect(body.invest.some((s) => s.src === 'aseanstats')).toBe(true);
+    expect(body.trade.some((s) => s.reporter === 'VN' && s.partner === 'CN')).toBe(true);
+    expect(body.fx.find((f) => f.code === 'JP').last[0]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    for (const s of body.sources) expect(s.key).not.toBe('imf_weo');
+  });
+
+  test('data dashboard: one tab per market and the "Investing from" filter', async ({ page }) => {
+    await page.goto('/en/data/vietnam?from=CN');
+    await expect(page.locator('.dd-tab')).toHaveCount(16, { timeout: 15000 });
+    await expect(page.locator('.dd-tab.on')).toHaveText('Vietnam');
+    await expect(page.locator('#dd-lens')).toHaveValue('CN');
+    await expect(page.locator('#dd-tm')).toBeVisible();
+    await expect(page.locator('.dd-tab').first()).toHaveAttribute('href', '/en/data/?from=CN');
   });
 });

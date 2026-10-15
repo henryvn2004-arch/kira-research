@@ -18,12 +18,12 @@
       growthChart: 'Real GDP growth', growthUnit: '% per year', indicator: 'Indicator', updated: (d) => `Data refreshed ${d}.`,
       reports: (c) => `KIRA reports on ${c}`, notFound: 'Market not found', loadFail: 'Could not load the data. Please retry in a moment.',
       none: (c) => `Data for ${c} comes from its national statistics office and is being added.`,
-      indexH1: 'Market data for 15 Asia-Pacific markets', indexLead: 'Headline economic indicators for every market KIRA covers, refreshed every week from public sources.',
+      indexH1: 'Market data for 15 Asia-Pacific markets', indexLead: 'Compare the 15 markets KIRA covers, see who is investing where, and follow trade and company moves. Public sources only, refreshed every week; company moves every day.',
       lead: (c, v) => `${c}'s real GDP ${v.neg ? 'shrank' : 'grew'} <b>${v.growthAbs}</b> in ${v.year}` + (v.gdp ? `, with GDP at <b>${v.gdp}</b>.` : '.') +
         (v.hh ? ` Households spent <b>${v.hh}</b>` + (v.fdi ? `, and foreign direct investment brought a net <b>${v.fdi}</b>.` : '.') : ''),
       ofYear: (y) => `${y}`,
       xlsx: 'Download the full history (Excel)', xlsxPlan: 'The full history in Excel comes with the Month plan.', xlsxSeePlan: 'See the plan', xlsxFail: 'The download did not work. Please try again.',
-      showAll: (n) => `Show all ${n}`, recent: 'Latest monthly and quarterly figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
+      showAll: (n) => `Show all ${n}`, recent: 'Most recent figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
       win: { M: (a, b) => `12 months to ${b}`, Q: (a, b) => `4 quarters to ${b}`, A: (a, b) => b }, ytd: (a, b) => `${a} – ${b}`,
       grp: { TOTAL: 'Merchandise trade', FDI: 'Direct investment', VISITORS: 'Visitors' },
       link: {
@@ -43,12 +43,12 @@
       growthChart: '実質GDP成長率', growthUnit: '％（前年比）', indicator: '指標', updated: (d) => `データ更新日：${d}`,
       reports: (c) => `${c}に関するKIRAレポート`, notFound: '市場が見つかりません', loadFail: 'データを読み込めませんでした。しばらくしてから再度お試しください。',
       none: (c) => `${c}のデータは同国の統計機関から追加中です。`,
-      indexH1: 'アジア太平洋15市場の市場データ', indexLead: 'KIRAが対象とする全市場の主要経済指標。公開データから毎週更新しています。',
+      indexH1: 'アジア太平洋15市場の市場データ', indexLead: 'KIRAが対象とする15市場を比較し、どこに誰が投資しているか、貿易と企業の動きを追えます。公開データのみ使用し毎週更新、企業の動きは毎日更新しています。',
       lead: (c, v) => (v.growth ? `${c}の${v.year}年の実質GDP成長率は<b>${v.growth}</b>` : '') + (v.gdp ? `、名目GDPは<b>${v.gdp}</b>でした。` : '。') +
         (v.hh ? `家計消費支出は<b>${v.hh}</b>` + (v.fdi ? `、対内直接投資の純流入は<b>${v.fdi}</b>です。` : 'です。') : ''),
       ofYear: (y) => `${y}年`,
       xlsx: '全期間データをダウンロード（Excel）', xlsxPlan: '全期間データのExcelは月額プランでご利用いただけます。', xlsxSeePlan: 'プランを見る', xlsxFail: 'ダウンロードできませんでした。もう一度お試しください。',
-      showAll: (n) => `すべて表示（${n}件）`, recent: '最新の月次・四半期データ', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
+      showAll: (n) => `すべて表示（${n}件）`, recent: '最新の数値', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
       win: { M: (a, b) => `${b}までの12か月`, Q: (a, b) => `${b}までの4四半期`, A: (a, b) => b }, ytd: (a, b) => `${a}～${b}`,
       grp: { TOTAL: '商品貿易', FDI: '直接投資', VISITORS: '訪問者' },
       link: {
@@ -68,12 +68,12 @@
       growthChart: '실질 GDP 성장률', growthUnit: '% (전년 대비)', indicator: '지표', updated: (d) => `데이터 갱신일: ${d}`,
       reports: (c) => `${c} 관련 KIRA 보고서`, notFound: '시장을 찾을 수 없습니다', loadFail: '데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
       none: (c) => `${c} 데이터는 해당국 통계청 자료로 추가하는 중입니다.`,
-      indexH1: '아시아·태평양 15개 시장 데이터', indexLead: 'KIRA가 다루는 모든 시장의 주요 경제지표. 공개 자료로 매주 갱신합니다.',
+      indexH1: '아시아·태평양 15개 시장 데이터', indexLead: 'KIRA가 다루는 15개 시장을 비교하고, 누가 어디에 투자하는지, 무역과 기업 동향을 살펴보세요. 공개 자료만 사용해 매주 갱신하며, 기업 동향은 매일 갱신합니다.',
       lead: (c, v) => (v.growth ? `${c}의 ${v.year}년 실질 GDP 성장률은 <b>${v.growth}</b>` : '') + (v.gdp ? `, 명목 GDP는 <b>${v.gdp}</b>입니다.` : '입니다.') +
         (v.hh ? ` 가계 소비지출은 <b>${v.hh}</b>` + (v.fdi ? `, 외국인직접투자 순유입은 <b>${v.fdi}</b>입니다.` : '입니다.') : ''),
       ofYear: (y) => `${y}년`,
       xlsx: '전체 기간 데이터 내려받기(Excel)', xlsxPlan: '전체 기간 Excel 데이터는 월간 플랜에 포함됩니다.', xlsxSeePlan: '플랜 보기', xlsxFail: '내려받지 못했습니다. 다시 시도해 주세요.',
-      showAll: (n) => `전체 보기(${n}개)`, recent: '최신 월간·분기 지표', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
+      showAll: (n) => `전체 보기(${n}개)`, recent: '최신 수치', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
       win: { M: (a, b) => `${b}까지 12개월`, Q: (a, b) => `${b}까지 4개 분기`, A: (a, b) => b }, ytd: (a, b) => `${a}~${b}`,
       grp: { TOTAL: '상품 무역', FDI: '직접투자', VISITORS: '방문객' },
       link: {
@@ -93,12 +93,12 @@
       growthChart: '实际GDP增长率', growthUnit: '%（同比）', indicator: '指标', updated: (d) => `数据更新于${d}。`,
       reports: (c) => `KIRA关于${c}的报告`, notFound: '未找到该市场', loadFail: '无法加载数据，请稍后重试。',
       none: (c) => `${c}的数据来自其国家统计机构，正在添加中。`,
-      indexH1: '亚太15个市场的市场数据', indexLead: 'KIRA覆盖的每个市场的主要经济指标，每周根据公开数据更新。',
+      indexH1: '亚太15个市场的市场数据', indexLead: '比较KIRA覆盖的15个市场，了解谁在投资哪里，追踪贸易与企业动态。仅使用公开数据，每周更新；企业动态每日更新。',
       lead: (c, v) => (v.growth ? `${c}${v.year}年实际GDP增长<b>${v.growth}</b>` : '') + (v.gdp ? `，国内生产总值为<b>${v.gdp}</b>。` : '。') +
         (v.hh ? `家庭消费支出为<b>${v.hh}</b>` + (v.fdi ? `，外国直接投资净流入<b>${v.fdi}</b>。` : '。') : ''),
       ofYear: (y) => `${y}年`,
       xlsx: '下载完整历史数据（Excel）', xlsxPlan: '完整历史数据的Excel文件包含在月度方案中。', xlsxSeePlan: '查看方案', xlsxFail: '下载失败，请重试。',
-      showAll: (n) => `显示全部（${n}项）`, recent: '最新月度与季度数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
+      showAll: (n) => `显示全部（${n}项）`, recent: '最新数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
       win: { M: (a, b) => `截至${b}的12个月`, Q: (a, b) => `截至${b}的4个季度`, A: (a, b) => b }, ytd: (a, b) => `${a}至${b}`,
       grp: { TOTAL: '商品贸易', FDI: '直接投资', VISITORS: '访客' },
       link: {
@@ -134,9 +134,15 @@
   }
   // Periods: '2026' → year, '2026-Q2' → quarter, '2026-08' → month, in the reader's language.
   const monthFmt = new Intl.DateTimeFormat(NUM_LOCALE, { year: 'numeric', month: 'short', timeZone: 'UTC' });
+  const dayFmt = new Intl.DateTimeFormat(NUM_LOCALE, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
   function per(p) {
     const q = /^(\d{4})-Q([1-4])$/.exec(p);
     if (q) return T.quarter(q[1], q[2]);
+    const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p);
+    if (d) return dayFmt.format(new Date(Date.UTC(+d[1], +d[2] - 1, +d[3])));
+    // Half month: 'YYYY-MM-H1' = days 1–15, 'YYYY-MM-H2' = 16 to the end of the month.
+    const h = /^(\d{4})-(\d{2})-H([12])$/.exec(p);
+    if (h) return monthFmt.format(new Date(Date.UTC(+h[1], +h[2] - 1, 1))) + ' ' + (h[3] === '1' ? '1–15' : '16–' + new Date(Date.UTC(+h[1], +h[2], 0)).getUTCDate());
     const m = /^(\d{4})-(\d{2})$/.exec(p);
     if (m) return monthFmt.format(new Date(Date.UTC(+m[1], +m[2] - 1, 1)));
     return T.ofYear(p);
@@ -211,13 +217,10 @@
       if (!r.ok) throw new Error(r.status);
       data = await r.json();
     } catch (_e) { return fail(T.loadFail); }
-    const units = Object.fromEntries((data.indicators || []).map((i) => [i.key, i]));
-    const row = (c, k) => (c.latest[k] && units[k] ? '<dt>' + esc(label(units[k])) + ' ' + esc(T.ofYear(c.latest[k].period)) + '</dt><dd>' + esc(fmt(c.latest[k].value, units[k].unit)) + '</dd>' : '');
+    // The dashboard (js/econ-dash.js): tab bar, "Investing from" filter and the chart blocks.
     root.innerHTML = '<div class="ed-main"><div class="ed-head"><h1>' + esc(T.indexH1) + '</h1><p class="ed-lead">' + esc(T.indexLead) + '</p></div>' +
-      '<div class="ed-grid">' + data.countries.map((c) =>
-        '<a class="ed-card" href="/' + locale + '/data/' + esc(c.slug) + '"><h3>' + esc(cname(c.name)) + '</h3>' +
-        (Object.keys(c.latest).length ? '<dl>' + ['gdp_usd', 'gdp_growth', 'population'].map((k) => row(c, k)).join('') + '</dl>' : '<span class="ed-note">' + esc(T.none(cname(c.name))) + '</span>') +
-        '</a>').join('') + '</div>' + sources(data.sources || []) + '</div>';
+      '<div id="dd-bar"></div><div id="dd-body" class="dd-body"></div></div>';
+    if (window.kiraDash) await window.kiraDash.mount({ bar: document.getElementById('dd-bar'), body: document.getElementById('dd-body'), code: null });
     indexable(data.indexable);
     return;
   }
@@ -282,7 +285,7 @@
   const recent = data.indicators.filter((i) => i.freq !== 'A' && last(i.key)).map((i) => {
     const p = last(i.key);
     return '<div class="ed-tile"><span class="lbl">' + esc(label(i)) + '</span><span class="val">' + esc(fmt(p[1], i.unit, i.params && i.params.currency)) + '</span>' +
-      '<span class="sub">' + esc(per(p[0])) + '</span><svg data-spark="' + esc(i.key) + '" data-n="' + (i.freq === 'Q' ? 8 : 24) + '" aria-hidden="true"></svg></div>';
+      '<span class="sub">' + esc(per(p[0])) + '</span><svg data-spark="' + esc(i.key) + '" data-n="' + ({ Q: 8, D: 130 }[i.freq] || 24) + '" aria-hidden="true"></svg></div>';
   }).join('');
 
   // Links: trade, direct investment and visitors between this market and others, from either side's statistics.
@@ -305,11 +308,12 @@
     }).join('') + more;
   }).join('');
 
-  root.innerHTML = '<div class="ed-main">' +
+  root.innerHTML = '<div class="ed-main">' + '<div id="dd-bar"></div>' +
     '<div class="ed-head"><h1>' + esc(T.h1(C)) + '</h1>' + (v ? '<p class="ed-lead">' + T.lead(esc(C), Object.fromEntries(Object.entries(v).map(([k, x]) => [k, typeof x === 'string' ? esc(x) : x]))) + '</p>' : '') + '</div>' +
     '<section class="ed-section"><h2>' + esc(T.latest) + '</h2><div class="ed-tiles">' + tiles + '</div></section>' +
     (actual('gdp_growth').length ? '<section class="ed-section"><h2>' + esc(T.growthChart) + '<small>' + esc(T.growthUnit) + '</small></h2><svg class="ed-chart" id="ed-growth" viewBox="0 0 760 240" role="img" aria-label="' + esc(T.growthChart) + '"></svg></section>' : '') +
     (recent ? '<section class="ed-section"><h2>' + esc(T.recent) + '</h2><div class="ed-tiles">' + recent + '</div></section>' : '') +
+    '<div id="dd-body" class="dd-body"></div>' +
     (years.length ? '<section class="ed-section"><h2>' + esc(T.history) + '</h2>' + table + '</section>' : '') +
     (linkTable ? '<section class="ed-section"><h2>' + esc(T.links) + '</h2><div class="ed-table-wrap"><table class="ed-table ed-links-table"><thead><tr><th>' + esc(T.linkCol) + '</th><th>' + esc(T.periodCol) + '</th><th>' + esc(T.valueCol) + '</th><th>' + esc(T.changeCol) + '</th></tr></thead><tbody>' + linkTable + '</tbody></table></div></section>' : '') +
     '<section class="ed-section"><div id="ed-xlsx-box"></div>' + sources(data.sources, data.updated_at) + '<div class="ed-links">' + libLink + '<a class="r-btn r-btn-outline" href="/' + locale + '/data/">' + esc(T.all) + '</a></div></section>' +
@@ -321,6 +325,7 @@
   }));
   indexable(data.indexable);
   wireExcel(data.country.slug);
+  if (window.kiraDash) window.kiraDash.mount({ bar: document.getElementById('dd-bar'), body: document.getElementById('dd-body'), code: data.country.code });
 
   // ---- charts -----------------------------------------------------------------------------
   const NS = 'http://www.w3.org/2000/svg';
