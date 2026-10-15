@@ -1,4 +1,4 @@
-// Kira Data (D4) adapter: GDELT DOC 2.0 API (news search, no key). One query per host market for headlines that
+// Kira Data (D4) adapter: GDELT DOC 2.0 API (news search, no key). Three queries cover the 15 markets, for headlines that
 // pair an investor country with an investment verb; rules.js keeps the ones it can classify. GDELT asks for at
 // most one request every 5 seconds, so calls are spaced 6 s and a 429 waits and retries.
 import { HOSTS, HOST_NAME } from './rules.js';
@@ -27,18 +27,22 @@ async function get(url) {
 }
 
 // → [{ source_key, url, title, domain, lang, event_date, tier }] (classification happens in index.js)
-// budgetMs keeps one run inside the function's time limit; markets not reached are reported and caught up by the
-// next daily run (each run reads 3 days of news).
+// The 15 markets go in 3 queries of 5 (GDELT allows one request every 5 seconds); rules.js finds the market of
+// each headline. budgetMs keeps one run inside the function's time limit; a group not reached is reported and
+// caught up by the next daily run (each run reads 3 days of news).
+const GROUPS = [HOSTS.slice(0, 5), HOSTS.slice(5, 10), HOSTS.slice(10)];
+const quoted = (h) => (HOST_NAME[h].includes(' ') ? `"${HOST_NAME[h]}"` : HOST_NAME[h]);
+
 export async function items({ days = 3, budgetMs = 600000, log = null } = {}) {
   const out = [], failed = [];
   const t0 = Date.now();
-  for (const h of HOSTS) {
-    if (Date.now() - t0 > budgetMs) { failed.push(h); continue; }
-    const name = HOST_NAME[h].includes(' ') ? `"${HOST_NAME[h]}"` : HOST_NAME[h];
-    const qs = new URLSearchParams({ query: `${INVESTORS} ${VERBS} ${name} sourcelang:english`, mode: 'artlist', format: 'json', maxrecords: '75', timespan: `${days}d`, sort: 'datedesc' });
+  for (const g of GROUPS) {
+    if (Date.now() - t0 > budgetMs) { failed.push(...g); continue; }
+    const qs = new URLSearchParams({ query: `${INVESTORS} ${VERBS} (${g.map(quoted).join(' OR ')}) sourcelang:english`, mode: 'artlist', format: 'json',
+      maxrecords: '250', timespan: `${days}d`, sort: 'datedesc' });
     let body;
-    try { body = await get(`${API}?${qs.toString()}`); } catch (_e) { failed.push(h); if (log) log(h, 'failed'); continue; }   // one busy query should not stop the others
-    if (log) log(h, (body.articles || []).length);
+    try { body = await get(`${API}?${qs.toString()}`); } catch (_e) { failed.push(...g); if (log) log(g.join(','), 'failed'); continue; }   // one busy query should not stop the others
+    if (log) log(g.join(','), (body.articles || []).length);
     for (const a of body.articles || []) {
       const d = /^(\d{4})(\d{2})(\d{2})/.exec(a.seendate || '');
       if (!a.url || !a.title || !d) continue;
