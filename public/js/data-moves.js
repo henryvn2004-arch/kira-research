@@ -262,5 +262,5 @@
     });
   }
 
-  window.kiraMoves = { handles, render };
+  window.kiraMoves = { handles, render, list };
 })();

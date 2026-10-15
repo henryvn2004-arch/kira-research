@@ -32,6 +32,7 @@ const JOBS = [
   { key: 'moves-alerts', label: 'Daily "new company moves" emails to confirmed alerts', schedule: 'Daily 23:50 UTC', max_gap_h: 48 },
   { key: 'moves-refresh', label: 'Daily company moves (GDELT news; OpenDART, EDINET when their keys are set)', schedule: 'Daily 22:20 UTC', max_gap_h: 48 },
   { key: 'econ-refresh-files', label: 'Weekly file sources (Vietnam customs + NSO FDI, Indonesia BKPM, Taiwan outward investment, ASEANstats)', schedule: 'Saturdays 04:10 UTC', max_gap_h: 192 },
+  { key: 'econ-refresh-daily', label: 'Daily fast series (ECB exchange rates, Viet Nam half-month trade)', schedule: 'Mon–Fri 15:40 UTC', max_gap_h: 96 },
   { key: 'econ-refresh-us_census', label: 'Weekly US trade by product refresh (waits for CENSUS_API_KEY)', schedule: 'Fridays 04:10 UTC', max_gap_h: 192 },
   { key: 'topic-planner', label: 'Weekly topic planner (new topics for 15 countries)', schedule: 'Mondays 01:00 UTC (08:00 Vietnam)', max_gap_h: 192 }
 ];

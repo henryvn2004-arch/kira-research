@@ -5,11 +5,15 @@
 // lines are read (the commodity lines use Vietnam's own commodity groups, not HS codes). The final figures link to an
 // internal address, so the preliminary ones are what is published. No licence is stated on the site.
 //   flows: reporter VN, partner ISO2, product TOTAL, flow X | M, freq M, USD.
+// Half-month releases ("Kỳ 1" = 1st–15th, "Kỳ 2" = 16th–end of month; files "…-T9K2-1X(VN-SB).pdf" / "…-1N…") list
+// commodities only, no countries: `series` reads their "TỔNG TRỊ GIÁ" line (value of the half month, then the year to
+// date) into vn_exports_half / vn_imports_half, period 'YYYY-MM-H1' | 'YYYY-MM-H2'. Daily slot, the latest HALVES.
 import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { getJson, sleep } from './util.js';
 
 const LIST = 'https://www.customs.gov.vn/bridge?url=/customs/api/tkhq/LayDanhSachMoiCongBoServlet&pageSize=600&language=TIENG_VIET';
 const MONTHS = 25;   // per run: 12 months and the 12 before them (the year-on-year change)
+const HALVES = 6;    // half-month releases read per daily run (a backfill passes more)
 
 // Country names as printed by Vietnam Customs → ISO2.
 export const NUOC = {
@@ -34,6 +38,21 @@ export const NUOC = {
 };
 
 const num = (s) => Number(String(s).replace(/\./g, ''));
+
+// The release list answers 503 now and then like the file server: retry with pauses. One fetch per run.
+let listed = null;
+function releases() {
+  if (!listed) {
+    listed = (async () => {
+      for (let i = 0; ; i++) {
+        try { return await getJson(LIST); } catch (err) { if (i >= 4) throw err; await sleep(3000 * (i + 1)); }
+      }
+    })();
+    listed.catch(() => { listed = null; });
+    setTimeout(() => { listed = null; }, 10 * 60 * 1000).unref?.();
+  }
+  return listed;
+}
 
 // Country lines of one PDF's text → [{ partner, value }] (month values).
 export function parseText(text) {
@@ -64,7 +83,7 @@ async function getPdf(url) {
 }
 
 export async function flows() {
-  const list = await getJson(LIST);
+  const list = await releases();
   const files = ((list && list.data) || [])
     .map((r) => ({ url: r.fileSoBo, m: /(\d{4})-t(\d{1,2})-5([xn])\(vn-sb\)\.pdf$/i.exec(r.fileSoBo || '') }))
     .filter((f) => f.m)
@@ -88,5 +107,39 @@ export async function flows() {
     await sleep(500);
   }
   if (!out.length) throw new Error('VN customs: no country lines read');
+  return out;
+}
+
+// Total line of a half-month PDF → value of the half month (US$). The line reads
+// "<year to date> <half month>USDTỔNG TRỊ GIÁ" ('.' = thousands).
+export function parseHalfTotal(text) {
+  const m = /([\d.]+) +([\d.]+) *USD *TỔNG TRỊ GIÁ/.exec(text.normalize('NFC'));
+  return m ? num(m[2]) : null;
+}
+
+export async function series(ind, { halves = HALVES } = {}) {
+  const flow = { vn_exports_half: 'X', vn_imports_half: 'N' }[ind.key];
+  if (!flow) throw new Error(`VN customs: no adapter for ${ind.key}`);
+  const list = await releases();
+  const files = ((list && list.data) || [])
+    .map((r) => ({ url: r.fileSoBo, m: /(\d{4})-t(\d{1,2})k([12])-1([xn])\(vn-sb\)\.pdf$/i.exec(r.fileSoBo || '') }))
+    .filter((f) => f.m && f.m[4].toUpperCase() === flow)
+    .map((f) => ({ url: f.url, period: `${f.m[1]}-${f.m[2].padStart(2, '0')}-H${f.m[3]}` }))
+    .sort((a, b) => (a.period < b.period ? 1 : -1));
+  const out = [];
+  const done = new Set();
+  for (const f of files) {
+    if (done.has(f.period)) continue;
+    if (done.size >= halves) break;
+    done.add(f.period);
+    const buf = await getPdf(f.url);
+    if (!buf) continue;
+    let text;
+    try { ({ text } = await pdf(buf)); } catch { continue; }
+    const v = parseHalfTotal(text);
+    if (v) out.push({ indicator_key: ind.key, country_code: 'VN', period: f.period, value: v, is_forecast: false, source_key: ind.source_key, vintage: null });
+    await sleep(500);
+  }
+  if (!out.length) throw new Error(`VN customs: no half-month totals read for ${ind.key}`);
   return out;
 }

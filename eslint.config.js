@@ -33,7 +33,8 @@ export default [
         supabase: "readonly",
         kiraAuth: "readonly",
         db: "readonly",
-        kira: "writable"
+        kira: "writable",
+        Chart: "readonly"
       }
     },
     rules: {
@@ -84,7 +85,8 @@ export default [
       "node_modules/**",
       ".vercel/**",
       "playwright-report/**",
-      "test-results/**"
+      "test-results/**",
+      "public/js/vendor/**"
     ]
   }
 ];

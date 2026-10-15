@@ -5,6 +5,7 @@
 .ed-lead b { font-weight: 700; }
 .ed-note { font-size: 13px; color: var(--muted-dim); }
 .ed-main { display: grid; gap: 40px; padding-block: 32px 72px; }
+.ed-main > *, .dd-body > * { min-width: 0; }
 .ed-section { display: grid; gap: 14px; min-width: 0; }
 .ed-section h2 { font-size: 20px; font-weight: 800; margin: 0; }
 .ed-section h2 small { font-size: 13px; font-weight: 500; color: var(--muted-dim); margin-left: 6px; }
@@ -88,3 +89,38 @@
 .ed-xlsx-msg { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
 .ed-xlsx-msg:empty { display: none; }
 .ed-xlsx-msg a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+/* Dashboard (js/econ-dash.js): tab bar, "Investing from" filter, chart cards. */
+.dd-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 77px; z-index: 5;
+  background: var(--bg); padding: 10px 0; border-bottom: 1px solid var(--border); }
+.dd-tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; flex: 1 1 520px; min-width: 0; padding-bottom: 2px; }
+.dd-tab { flex: 0 0 auto; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 13.5px; color: var(--text); text-decoration: none; white-space: nowrap; background: var(--bg); }
+.dd-tab:hover { border-color: var(--primary); }
+.dd-tab.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.dd-lens { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); flex: 0 0 auto; }
+.dd-lens select { padding: 7px 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; font-size: 14px; }
+.dd-body { display: grid; gap: 40px; min-width: 0; }
+.dd-body:empty { display: none; }
+.dd-q { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin-bottom: -8px; }
+.dd-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px; background: var(--bg); min-width: 0; }
+.dd-card h3 { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.dd-chart { position: relative; height: 280px; }
+.dd-chart.tall { height: 380px; }
+.dd-grid2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.dd-grid2.dd-even { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.dd-cap { margin: 4px 0 0; font-size: 13px; color: var(--muted-dim); }
+.dd-cap a, .dd-league a, .dd-heat a { color: var(--primary); text-decoration: none; }
+.dd-league { padding: 0; max-height: 420px; overflow: auto; }
+.dd-league .ed-table { min-width: 560px; }
+.dd-league tbody tr { cursor: pointer; }
+.dd-league tbody tr:hover td { background: var(--band); }
+.dd-heat { min-width: 720px; }
+.dd-heat td { font-size: 12.5px; }
+.dd-heat .dd-na { color: var(--muted-dim); }
+.dd-up { color: #067647; font-weight: 600; }
+.dd-dn { color: #B42318; font-weight: 600; }
+@media (max-width: 860px) {
+  .dd-grid2 { grid-template-columns: minmax(0, 1fr); }
+  .dd-chart.tall { height: 320px; }
+  .dd-bar { top: 56px; }
+}
