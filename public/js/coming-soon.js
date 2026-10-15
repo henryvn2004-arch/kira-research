@@ -204,9 +204,12 @@
       '</div></div>' +
       '<div class="r-container cs-body">' +
         peekHtml(t) + contentsHtml(t) +
+        '<div id="cs-market"></div>' +
         '<p class="cs-exec">' + esc(s('exec')) + '</p>' +
         '<p><a class="r-btn r-btn-outline" href="/' + L + '/library">' + esc(s('lib')) + '</a></p>' +
       '</div>';
+    // Kira Data market panel (js/market-panel.js, loaded by reports/_view.html); renders nothing without data.
+    if (window.kiraMarket) window.kiraMarket.mount(document.getElementById('cs-market'), { topic: t.slug });
   }
 
   function strip(items) {

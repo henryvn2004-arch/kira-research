@@ -189,7 +189,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
-| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2 built 2026-10-15 (see blocks); D3–D7 next |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2 + D3 built 2026-10-15 (see blocks); D4–D7 next |
 
 Work done outside the original sprint list (2026-10-12 → 10-14):
 
@@ -277,6 +277,14 @@ Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S
 - [x] Country page: "Latest monthly and quarterly figures" tiles and a "Trade, investment and visitor links" table (from either side's statistics, e.g. Japan's direct investment in Vietnam from the BoJ), EN/JA/KO/ZH.
 - Not built: BPS Indonesia (site blocks automated reads; build when the key exists), KOSIS and Stats NZ (not needed: ECOS has Korean CPI, Stats NZ's API has no CPI/GDP), ABS (World Bank covers Australia annually), Thai MOC, DGBAS Taiwan (moved to D6, files).
 - Owner: BoJ asks to be told when a service using its API goes public: email post.rsd17@boj.or.jp when the data pages are linked.
+
+#### D3 — segment ↔ HS map + "Market data" panel (built 2026-10-15)
+- [x] Migration 059 (applied): `hs_codes` (88 HS chapters/headings, labels EN/JA/KO/ZH), `segment_data_map` (42 data profiles: HS codes + indicator groups, matched by industry slug, then parent, then keyword in segment / title / industry; every one of the 128 published reports gets one except 2: anime IP, cannabis), `econ_flows.reporter` may be the EU or the US.
+- [x] New sources: Eurostat Comext DS-045409 (EU imports from / exports to each market by HS code, annual, no key, reuse allowed with credit; 17,282 rows loaded, Thursdays in its own cron slot) and US Census International Trade (public domain; built, waits for the free key `CENSUS_API_KEY`, Fridays). e-Stat and Korea customs (D2) feed the same panel by HS chapter once their keys are in.
+- [x] `GET /api/market-data?report=<slug>|?topic=<slug>`: macro tiles (World Bank + the profile's national series), Japan's net direct investment (BoJ, 12 months), visitor arrivals (tourism profiles), partner trade per HS code with the market's share of the reporter's extra-EU / world trade. Public sources only.
+- [x] Panel `public/js/market-panel.js` + `css/market.css` on every report page (`#rpt-market-slot`) and coming-soon page (`#cs-market`): template lead sentence (largest share ≥ 1%, else growth + inflation), tiles with sparklines, trade tables, credits, link to `/data/<country>`. EN/JA/KO/ZH. The 1,892 coming-soon pages now carry live, dated numbers.
+- [x] Report pipeline: `skills/kira-research-report/scripts/fetch-market-data.mjs <queue-id>` (BRAIN route step 0b) gives the writer the same numbers, so report and page agree. Comtrade was not added: the national/partner sources cover it and keep one set of numbers.
+- Owner: free US Census key (keys page) adds US imports/exports by HS code to every panel.
 
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 

@@ -20,6 +20,8 @@ import * as krCustoms from './kr-customs.js';
 import * as opendosm from './opendosm.js';
 import * as bnm from './bnm.js';
 import * as singstat from './singstat.js';
+import * as eurostat from './eurostat.js';
+import * as census from './census.js';
 
 export { ISO3, FIRST_YEAR } from './util.js';
 
@@ -36,12 +38,15 @@ const ADAPTERS = {
   bnm: { series: bnm.series },
   singstat: { series: singstat.series, flows: singstat.flows },
   estat: { flows: estat.flows, own: true },
-  kr_customs: { flows: krCustoms.flows, own: true }
+  kr_customs: { flows: krCustoms.flows, own: true },
+  eurostat_comext: { flows: eurostat.flows, own: true },
+  us_census: { flows: census.flows, own: true }
 };
 
 // indicators: econ_indicators rows; sources: data_sources rows ({ key, env_key });
 // only: run just this source key (its own cron slot); otherwise run every source not marked `own`.
-export async function collect(indicators, sources = [], { only = null } = {}) {
+// hs: HS codes of segment_data_map, for the sources that fetch trade by product (Eurostat, US Census).
+export async function collect(indicators, sources = [], { only = null, hs = [] } = {}) {
   const runs = (key) => (only ? key === only : !(ADAPTERS[key] && ADAPTERS[key].own));
   const envOf = Object.fromEntries(sources.map((s) => [s.key, s.env_key]));
   const missingKey = (src) => envOf[src] && !process.env[envOf[src]];
@@ -63,7 +68,7 @@ export async function collect(indicators, sources = [], { only = null } = {}) {
     if (!ad.flows || !runs(key)) continue;
     if (missingKey(key)) { waiting.add(key); continue; }
     try {
-      flows.push(...(await ad.flows({ env: process.env[envOf[key]] })));
+      flows.push(...(await ad.flows({ env: process.env[envOf[key]], hs })));
     } catch (err) {
       errors.push(`${key} flows: ${err.message}`);
     }
