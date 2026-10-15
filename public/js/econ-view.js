@@ -23,12 +23,15 @@
         (v.hh ? ` Households spent <b>${v.hh}</b>` + (v.fdi ? `, and foreign direct investment brought a net <b>${v.fdi}</b>.` : '.') : ''),
       ofYear: (y) => `${y}`,
       showAll: (n) => `Show all ${n}`, recent: 'Latest monthly and quarterly figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
-      win: { M: (a, b) => `12 months to ${b}`, Q: (a, b) => `4 quarters to ${b}`, A: (a, b) => b },
+      win: { M: (a, b) => `12 months to ${b}`, Q: (a, b) => `4 quarters to ${b}`, A: (a, b) => b }, ytd: (a, b) => `${a} – ${b}`,
       grp: { TOTAL: 'Merchandise trade', FDI: 'Direct investment', VISITORS: 'Visitors' },
       link: {
         TOTAL_X: (r, p) => p ? `${r} exports to ${p}` : `${r} total exports`, TOTAL_M: (r, p) => p ? `${r} imports from ${p}` : `${r} total imports`,
         FDI_NET_X: (r, p) => `${r} direct investment in ${p} (net)`, FDI_NET_M: (r, p) => `${p} direct investment in ${r} (net)`,
         FDI_APPROVED_M: (r, p) => `Approved investment from ${p} in ${r}`,
+        FDI_REALISED_M: (r, p) => p ? `Realised investment from ${p} in ${r}` : `Realised foreign investment in ${r}`,
+        FDI_REG_YTD_M: (r, p) => p ? `Registered investment from ${p} in ${r} (new + added capital)` : `Registered foreign investment in ${r} (new + added capital)`,
+        FDI_APPROVED_X: (r, p) => p ? `Approved investment from ${r} in ${p}` : `Approved outward investment from ${r}`,
         VISITORS_M: (r, p) => p ? `Visitors from ${p} to ${r}` : `Visitor arrivals in ${r}`
       },
       quarter: (y, q) => `Q${q} ${y}`,
@@ -44,12 +47,15 @@
         (v.hh ? `家計消費支出は<b>${v.hh}</b>` + (v.fdi ? `、対内直接投資の純流入は<b>${v.fdi}</b>です。` : 'です。') : ''),
       ofYear: (y) => `${y}年`,
       showAll: (n) => `すべて表示（${n}件）`, recent: '最新の月次・四半期データ', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
-      win: { M: (a, b) => `${b}までの12か月`, Q: (a, b) => `${b}までの4四半期`, A: (a, b) => b },
+      win: { M: (a, b) => `${b}までの12か月`, Q: (a, b) => `${b}までの4四半期`, A: (a, b) => b }, ytd: (a, b) => `${a}～${b}`,
       grp: { TOTAL: '商品貿易', FDI: '直接投資', VISITORS: '訪問者' },
       link: {
         TOTAL_X: (r, p) => p ? `${r}から${p}への輸出` : `${r}の輸出総額`, TOTAL_M: (r, p) => p ? `${r}の${p}からの輸入` : `${r}の輸入総額`,
         FDI_NET_X: (r, p) => `${r}の${p}への直接投資（ネット）`, FDI_NET_M: (r, p) => `${p}の${r}への直接投資（ネット）`,
         FDI_APPROVED_M: (r, p) => `${p}から${r}への認可投資額`,
+        FDI_REALISED_M: (r, p) => p ? `${p}から${r}への投資実行額` : `${r}への外国投資実行額`,
+        FDI_REG_YTD_M: (r, p) => p ? `${p}から${r}への登録投資額（新規＋増資）` : `${r}への外国投資登録額（新規＋増資）`,
+        FDI_APPROVED_X: (r, p) => p ? `${r}から${p}への認可投資額` : `${r}の対外投資認可額`,
         VISITORS_M: (r, p) => p ? `${p}から${r}への訪問者数` : `${r}への訪問者数`
       },
       quarter: (y, q) => `${y}年第${q}四半期`,
@@ -65,12 +71,15 @@
         (v.hh ? ` 가계 소비지출은 <b>${v.hh}</b>` + (v.fdi ? `, 외국인직접투자 순유입은 <b>${v.fdi}</b>입니다.` : '입니다.') : ''),
       ofYear: (y) => `${y}년`,
       showAll: (n) => `전체 보기(${n}개)`, recent: '최신 월간·분기 지표', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
-      win: { M: (a, b) => `${b}까지 12개월`, Q: (a, b) => `${b}까지 4개 분기`, A: (a, b) => b },
+      win: { M: (a, b) => `${b}까지 12개월`, Q: (a, b) => `${b}까지 4개 분기`, A: (a, b) => b }, ytd: (a, b) => `${a}~${b}`,
       grp: { TOTAL: '상품 무역', FDI: '직접투자', VISITORS: '방문객' },
       link: {
         TOTAL_X: (r, p) => p ? `${r}의 ${p} 수출` : `${r} 총수출`, TOTAL_M: (r, p) => p ? `${r}의 ${p}산 수입` : `${r} 총수입`,
         FDI_NET_X: (r, p) => `${r}의 ${p} 직접투자(순)`, FDI_NET_M: (r, p) => `${p}의 ${r} 직접투자(순)`,
         FDI_APPROVED_M: (r, p) => `${p}에서 ${r}로의 승인 투자액`,
+        FDI_REALISED_M: (r, p) => p ? `${p}의 ${r} 투자 실행액` : `${r} 외국인투자 실행액`,
+        FDI_REG_YTD_M: (r, p) => p ? `${p}의 ${r} 등록 투자액(신규+증액)` : `${r} 외국인투자 등록액(신규+증액)`,
+        FDI_APPROVED_X: (r, p) => p ? `${r}의 ${p} 승인 투자액` : `${r} 해외투자 승인액`,
         VISITORS_M: (r, p) => p ? `${p}발 ${r} 방문객` : `${r} 방문객 수`
       },
       quarter: (y, q) => `${y}년 ${q}분기`,
@@ -86,12 +95,15 @@
         (v.hh ? `家庭消费支出为<b>${v.hh}</b>` + (v.fdi ? `，外国直接投资净流入<b>${v.fdi}</b>。` : '。') : ''),
       ofYear: (y) => `${y}年`,
       showAll: (n) => `显示全部（${n}项）`, recent: '最新月度与季度数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
-      win: { M: (a, b) => `截至${b}的12个月`, Q: (a, b) => `截至${b}的4个季度`, A: (a, b) => b },
+      win: { M: (a, b) => `截至${b}的12个月`, Q: (a, b) => `截至${b}的4个季度`, A: (a, b) => b }, ytd: (a, b) => `${a}至${b}`,
       grp: { TOTAL: '商品贸易', FDI: '直接投资', VISITORS: '访客' },
       link: {
         TOTAL_X: (r, p) => p ? `${r}对${p}出口` : `${r}出口总额`, TOTAL_M: (r, p) => p ? `${r}自${p}进口` : `${r}进口总额`,
         FDI_NET_X: (r, p) => `${r}对${p}直接投资（净额）`, FDI_NET_M: (r, p) => `${p}对${r}直接投资（净额）`,
         FDI_APPROVED_M: (r, p) => `${p}对${r}的获批投资`,
+        FDI_REALISED_M: (r, p) => p ? `${p}对${r}的实际投资` : `${r}实际利用外资`,
+        FDI_REG_YTD_M: (r, p) => p ? `${p}对${r}的登记投资（新增+增资）` : `${r}外资登记额（新增+增资）`,
+        FDI_APPROVED_X: (r, p) => p ? `${r}对${p}的获批投资` : `${r}获批对外投资`,
         VISITORS_M: (r, p) => p ? `${p}赴${r}访客` : `${r}入境访客`
       },
       quarter: (y, q) => `${y}年第${q}季度`,
@@ -220,7 +232,9 @@
 
   // Links: trade, direct investment and visitors between this market and others, from either side's statistics.
   const EXTRA = T.extra;
-  const nm = (code) => (code === 'WLD' ? '' : data.names && data.names[code] ? cname(data.names[code]) : EXTRA[code] || code);
+  // Country names not in the database or T.extra (NL, LU, VG ...) come from the browser, in the page's language.
+  const region = (code) => { try { return new Intl.DisplayNames([locale === 'zh' ? 'zh-CN' : locale], { type: 'region' }).of(code) || code; } catch (_e) { return code; } };
+  const nm = (code) => (code === 'WLD' ? '' : data.names && data.names[code] ? cname(data.names[code]) : EXTRA[code] || region(code));
   const GROUP = (f) => (f.product === 'TOTAL' ? 'TOTAL' : f.product === 'VISITORS' ? 'VISITORS' : 'FDI');
   const linkRows = (data.flows || []).filter((f) => T.link[f.product + '_' + f.flow]);
   const linkTable = ['TOTAL', 'FDI', 'VISITORS'].map((g) => {
@@ -231,7 +245,7 @@
     return '<tr class="ed-grp"><th colspan="4">' + esc(T.grp[g]) + '</th></tr>' + list.map((f, i) => {
       const unit = f.currency === 'persons' ? 'persons' : 'lcu';
       const ch = f.prev && f.prev > 0 && f.value > 0 ? (f.value / f.prev - 1) * 100 : null;
-      return '<tr' + (more && i >= 8 ? ' class="ed-more" data-grp="' + g + '" hidden' : '') + '><td>' + esc(T.link[f.product + '_' + f.flow](nm(f.reporter), nm(f.partner))) + '</td><td>' + esc(T.win[f.freq](per(f.from), per(f.period))) + '</td>' +
+      return '<tr' + (more && i >= 8 ? ' class="ed-more" data-grp="' + g + '" hidden' : '') + '><td>' + esc(T.link[f.product + '_' + f.flow](nm(f.reporter), nm(f.partner))) + '</td><td>' + esc((/_YTD$/.test(f.product) ? T.ytd : T.win[f.freq])(per(f.from), per(f.period))) + '</td>' +
         '<td>' + esc(fmt(f.value, unit, f.currency)) + '</td><td>' + (ch === null ? '–' : esc((ch > 0 ? '+' : '') + dec(1).format(ch) + '%')) + '</td></tr>';
     }).join('') + more;
   }).join('');

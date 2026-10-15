@@ -8,7 +8,7 @@
 //     (BoJ, Japan only); links = trade and visitor flows between the two (api/_lib/econ/summarise.js)
 // ============================================================
 
-import { summarise } from './_lib/econ/summarise.js';
+import { LINK_PRODUCTS, summarise } from './_lib/econ/summarise.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     if (host && investor && host !== investor) {
       const since = String(new Date().getUTCFullYear() - 3);
       const flows = await sb(`econ_flows?or=(and(reporter.eq.${host},partner.eq.${investor}),and(reporter.eq.${investor},partner.eq.${host}))` +
-        `&source_key=${srcIn}&product=in.(TOTAL,FDI_NET,FDI_APPROVED,VISITORS)&period=gte.${since}` +
+        `&source_key=${srcIn}&product=in.(${LINK_PRODUCTS.join(',')})&period=gte.${since}` +
         `&select=source_key,reporter,partner,product,flow,freq,period,value,currency&order=period.desc&limit=5000`);
       corridor = { links: summarise(flows) };
     }

@@ -70,7 +70,9 @@ export default async function handler(req, res) {
         `&select=indicator_key,period,value,is_forecast,retrieved_at&order=indicator_key.asc,period.asc`),
       sbAll(`econ_flows?or=(reporter.eq.${country.code},partner.eq.${country.code})&source_key=${srcIn}` +
         `&product=in.(${LINK_PRODUCTS.join(',')})&period=gte.${since}` +
-        `&select=source_key,reporter,partner,product,flow,freq,period,value,currency,retrieved_at&order=period.desc`)
+        `&select=source_key,reporter,partner,product,flow,freq,period,value,currency,retrieved_at` +
+        // Sort on the whole primary key: paging over a non-unique sort repeats and skips rows.
+        `&order=source_key,reporter,partner,product,flow,freq,period.desc`)
     ]);
     const byInd = {};
     let updated = null;
