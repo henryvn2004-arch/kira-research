@@ -28,6 +28,7 @@ const JOBS = [
   { key: 'econ-refresh-estat', label: 'Weekly Japan customs trade refresh (e-Stat; waits for ESTAT_APP_ID)', schedule: 'Tuesdays 04:10 UTC', max_gap_h: 192 },
   { key: 'econ-refresh-kr_customs', label: 'Weekly Korea customs trade refresh (waits for DATA_GO_KR_KEY)', schedule: 'Wednesdays 04:10 UTC', max_gap_h: 192 },
   { key: 'econ-refresh-eurostat_comext', label: 'Weekly EU trade by product refresh (Eurostat Comext)', schedule: 'Thursdays 04:10 UTC', max_gap_h: 192 },
+  { key: 'registry-refresh', label: 'Daily company registries (GLEIF, ACRA; Houjin Bangou, ABN, NZBN when their keys are set)', schedule: 'Daily 21:40 UTC', max_gap_h: 48 },
   { key: 'moves-refresh', label: 'Daily company moves (GDELT news; OpenDART, EDINET when their keys are set)', schedule: 'Daily 22:20 UTC', max_gap_h: 48 },
   { key: 'econ-refresh-us_census', label: 'Weekly US trade by product refresh (waits for CENSUS_API_KEY)', schedule: 'Fridays 04:10 UTC', max_gap_h: 192 },
   { key: 'topic-planner', label: 'Weekly topic planner (new topics for 15 countries)', schedule: 'Mondays 01:00 UTC (08:00 Vietnam)', max_gap_h: 192 }

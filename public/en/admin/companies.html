@@ -114,7 +114,7 @@
 
     // ── Render ───────────────────────────────────────────
     function render({ stats, companies }) {
-      const { total, enriched, with_narrative } = stats;
+      const { total, enriched, with_narrative, with_registry } = stats;
 
       // KPI strip
       const kpi = `
@@ -122,6 +122,7 @@
           <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">Companies</div></div>
           <div class="stat-card"><div class="stat-val">${enriched}</div><div class="stat-lbl">Enriched</div></div>
           <div class="stat-card"><div class="stat-val">${with_narrative}</div><div class="stat-lbl">With narrative</div></div>
+          <div class="stat-card"><div class="stat-val">${with_registry || 0}</div><div class="stat-lbl">Registry match (LEI / UEN …)</div></div>
           <div class="stat-card"><div class="stat-val">${total - enriched}</div><div class="stat-lbl">Pending</div></div>
         </div>`;
 
@@ -150,6 +151,7 @@
             <th>Company</th>
             <th>Tax ID</th>
             <th>Industry</th>
+            <th>Registry</th>
             <th style="text-align:center;">OC</th>
             <th style="text-align:center;">Wiki</th>
             <th style="text-align:center;">Web</th>
@@ -173,6 +175,7 @@
             <td>${profileLink}${c.industry ? `<br><small style="color:var(--ink-muted)">${c.industry}</small>` : ''}</td>
             <td style="font-family:monospace;font-size:13px;">${c.tax_id || '—'}</td>
             <td>${c.industry || '—'}</td>
+            <td style="font-family:monospace;font-size:12px;" title="${(c.legal_name || '').replace(/"/g, '&quot;')}">${c.lei ? 'LEI ' + c.lei : ''}${c.lei && c.reg_id ? '<br>' : ''}${c.reg_id || ''}${!c.lei && !c.reg_id ? '—' : ''}${c.reg_status ? `<br><small style="color:var(--ink-muted)">${c.reg_status}</small>` : ''}</td>
             <td style="text-align:center;">${badge(c.coverage.opencorporates)}</td>
             <td style="text-align:center;">${badge(c.coverage.wikidata)}</td>
             <td style="text-align:center;">${badge(c.coverage.tavily)}</td>

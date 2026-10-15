@@ -60,7 +60,7 @@ export default async function handler(req, res) {
 
   try {
     // 1) Fetch all entities (companies)
-    let entityPath = 'entities?type=eq.company&select=id,canonical_name,tax_id,country_code,status_cache&order=canonical_name.asc&limit=5000';
+    let entityPath = 'entities?type=eq.company&select=id,canonical_name,tax_id,country_code,status_cache,lei,reg_id,reg_status,legal_name&order=canonical_name.asc&limit=5000';
     if (country) entityPath += `&country_code=eq.${country}`;
     const entities = await sb(entityPath);
 
@@ -111,6 +111,10 @@ export default async function handler(req, res) {
         tax_id:       e.tax_id,
         country_code: e.country_code,
         status_cache: e.status_cache,
+        lei:          e.lei || null,
+        reg_id:       e.reg_id || null,
+        reg_status:   e.reg_status || null,
+        legal_name:   e.legal_name || null,
         slug:         rm.slug || null,
         updated_at:   rm.updated_at || null,
         industry:     fm.industry     || null,
@@ -132,12 +136,14 @@ export default async function handler(req, res) {
     // 6) Stats
     const enriched       = companies.filter(c => c.coverage.opencorporates === 'found' || c.coverage.wikidata === 'found' || c.coverage.tavily === 'found').length;
     const with_narrative = companies.filter(c => c.coverage.llm_narrative === 'found').length;
+    const with_registry  = companies.filter(c => c.lei || c.reg_id).length;   // Kira Data D5 (GLEIF, ACRA, ...)
 
     return res.status(200).json({
       stats: {
         total:          companies.length,
         enriched,
         with_narrative,
+        with_registry,
       },
       companies,
     });
