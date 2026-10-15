@@ -155,6 +155,9 @@
     return;
   }
 
+  // ---- company moves feed and corridor pages (js/data-moves.js) ---------------------------
+  if (window.kiraMoves && window.kiraMoves.handles(slug)) return window.kiraMoves.render(root, slug);
+
   // ---- country page -----------------------------------------------------------------------
   if (!/^[a-z0-9-]{2,40}$/.test(slug)) return fail(T.notFound);
   let data;

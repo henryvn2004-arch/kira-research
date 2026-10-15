@@ -8,6 +8,8 @@
 //                                    the last 12 months / 4 quarters / latest year, with the window before it
 // ============================================================
 
+import { LINK_PRODUCTS, summarise } from './_lib/econ/summarise.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const HEADLINE = ['gdp_usd', 'gdp_growth', 'population', 'gdp_per_capita'];
@@ -28,31 +30,6 @@ async function sbAll(path) {
 }
 
 // Products shown as links on a country page (HS-level rows stay for the segment panels of sprint D3).
-const LINK_PRODUCTS = ['TOTAL', 'FDI_NET', 'FDI_APPROVED', 'VISITORS'];
-const WINDOW = { M: 12, Q: 4, A: 1 };
-
-// One row per (source, reporter, partner, product, flow): the latest full window and the one before it.
-function summarise(rows) {
-  const groups = {};
-  for (const r of rows) {
-    const k = [r.source_key, r.reporter, r.partner, r.product, r.flow, r.freq, r.currency].join('|');
-    (groups[k] = groups[k] || []).push(r);
-  }
-  const out = [];
-  for (const list of Object.values(groups)) {
-    const f = list[0], n = WINDOW[f.freq] || 1;
-    list.sort((a, b) => (a.period < b.period ? 1 : -1));
-    if (list.length < n) continue;
-    const sum = (a) => a.reduce((t, r) => t + Number(r.value), 0);
-    const cur = list.slice(0, n), prev = list.slice(n, 2 * n);
-    out.push({
-      source_key: f.source_key, reporter: f.reporter, partner: f.partner, product: f.product, flow: f.flow, freq: f.freq,
-      currency: f.currency, period: cur[0].period, from: cur[n - 1].period, value: sum(cur),
-      prev: prev.length === n ? sum(prev) : null
-    });
-  }
-  return out;
-}
 
 const slugOf = (name) => String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 

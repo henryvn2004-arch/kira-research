@@ -187,7 +187,8 @@
     { "path": "/api/cron-econ-refresh?source=estat", "schedule": "10 4 * * 2" },
     { "path": "/api/cron-econ-refresh?source=kr_customs", "schedule": "10 4 * * 3" },
     { "path": "/api/cron-econ-refresh?source=eurostat_comext", "schedule": "10 4 * * 4" },
-    { "path": "/api/cron-econ-refresh?source=us_census", "schedule": "10 4 * * 5" }
+    { "path": "/api/cron-econ-refresh?source=us_census", "schedule": "10 4 * * 5" },
+    { "path": "/api/cron-moves", "schedule": "20 22 * * *" }
   ],
   "functions": {
     "api/inngest.js": {
@@ -195,6 +196,7 @@
       "includeFiles": "skills/kira-research-report/templates/*"
     },
     "api/cron-econ-refresh.js": { "maxDuration": 800 },
+    "api/cron-moves.js": { "maxDuration": 800 },
     "api/*.js": {
       "maxDuration": 60,
       "includeFiles": "skills/kira-research-report/templates/*"

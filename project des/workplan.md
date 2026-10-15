@@ -189,7 +189,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
-| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2 + D3 built 2026-10-15 (see blocks); D4–D7 next |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2–D4 built 2026-10-15 (see blocks); D5–D7 next |
 
 Work done outside the original sprint list (2026-10-12 → 10-14):
 
@@ -285,6 +285,15 @@ Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S
 - [x] Panel `public/js/market-panel.js` + `css/market.css` on every report page (`#rpt-market-slot`) and coming-soon page (`#cs-market`): template lead sentence (largest share ≥ 1%, else growth + inflation), tiles with sparklines, trade tables, credits, link to `/data/<country>`. EN/JA/KO/ZH. The 1,892 coming-soon pages now carry live, dated numbers.
 - [x] Report pipeline: `skills/kira-research-report/scripts/fetch-market-data.mjs <queue-id>` (BRAIN route step 0b) gives the writer the same numbers, so report and page agree. Comtrade was not added: the national/partner sources cover it and keep one set of numbers.
 - Owner: free US Census key (keys page) adds US imports/exports by HS code to every panel.
+
+#### D4 — company moves (built 2026-10-15)
+- [x] Migration 060 (applied): `company_events` (one row per move: investor → host market, type acquisition / stake / investment / plant / jv / subsidiary / expansion / exit, company, value, tier filing / news, status draft / published / rejected, `also` = other outlets with the same story). Licence rows: GDELT (public, no key), OpenDART (`OPENDART_API_KEY`), EDINET (`EDINET_API_KEY`).
+- [x] `api/_lib/moves/`: `gdelt.js` (one English news query per host market, investor countries × investment verbs, last 3 days, 1 call / 6 s, retries on 429/5xx, 30 s timeout), `opendart.js` and `edinet.js` (filing lists filtered by country names in the title; wait for their keys), `rules.js` (no model: investor = demonym / possessive / opening name, host = one of the 15 named after in/into/to, type by verb, value in US$; dedupe by shared story words within 14 days).
+- [x] Daily cron `/api/cron-moves` (22:20 UTC, health job `moves-refresh`): news = draft, a filing with market + type = published.
+- [x] Review queue `/en/admin/moves` (`api/admin-moves.js`): fix investor / market / type, add the company, publish or reject (audit-logged). "Moves" added to every admin sub-nav.
+- [x] Public `GET /api/moves?host=&investor=&type=&before=` (published, public sources), with `corridor` links when both host and investor are given. Pages (noindex): `/<loc>/data/moves` (filters, older moves) and corridor pages `/<loc>/data/<japan|south-korea|taiwan|singapore|china>-in-<market>` (direct investment / trade / visitor tiles + moves), EN/JA/KO/ZH (`js/data-moves.js`).
+- Not built: SEC EDGAR (its full-text search returns only the filer name, nothing to classify; US filers are not the target investors). A model step to name the company in news headlines (owner fills it on review for now).
+- Owner: review `/en/admin/moves` from time to time; the OpenDART and EDINET keys (keys page) add filings that publish themselves.
 
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 

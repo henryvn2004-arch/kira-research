@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moves — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .pl-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+    .pl-head h1 { margin:0; font-size:28px; }
+    .pl-state { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
+    .pl-state.running { background:#E6F4EA; color:#067647; } .pl-state.idle { background:var(--surface-2); color:var(--muted); } .pl-state.stalled { background:#FDE8E6; color:#B42318; }
+    .pl-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px; }
+    @media (max-width:700px) { .pl-kpis { grid-template-columns:repeat(2,1fr); } }
+    .pl-kpi { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+    .pl-kpi b { display:block; font-size:24px; font-family:'Satoshi',sans-serif; }
+    .pl-kpi span { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .pl-kpi.bad b { color:#B42318; }
+    .pl-note { font-size:13px; color:var(--muted); margin:0 0 20px; }
+    .pl-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .pl-chip { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:999px; padding:7px 13px; font-size:13.5px; cursor:pointer; }
+    .pl-chip.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .pl-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    table.pl { width:100%; border-collapse:collapse; font-size:14px; }
+    table.pl th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+    table.pl td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.pl tr:last-child td { border-bottom:0; }
+    .pl-id { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); word-break:break-all; }
+    .pl-topic { max-width:380px; }
+    .pl-st { font-size:12px; font-weight:600; border-radius:6px; padding:3px 8px; background:var(--surface-2); white-space:nowrap; }
+    .pl-st.error { background:#FDE8E6; color:#B42318; } .pl-st.done { background:#E6F4EA; color:#067647; } .pl-st.hold { background:#FFF4DB; color:#8A5A00; }
+    .pl-st.run { background:#E3EEFF; color:var(--primary-dim); }
+    .pl-err { font-size:12.5px; color:#B42318; margin-top:4px; }
+    .pl-btn { border:1px solid var(--border-strong); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer; margin:2px 4px 2px 0; }
+    .pl-btn:disabled { opacity:.5; cursor:wait; }
+    .pl-sec { margin:28px 0 12px; font-size:18px; }
+    .pl-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .pl-empty { color:var(--muted); padding:24px 0; }
+    .pl-price { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; font-size:13.5px; }
+    .pl-price input { width:90px; padding:7px 9px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
+    .pl-timing { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
+    .pl-timing div { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13.5px; }
+    .pl-timing b { font-family:'Satoshi',sans-serif; }
+    .mv-sel { padding:5px 7px; border:1px solid var(--border-strong); border-radius:7px; background:var(--bg); color:var(--text); font:inherit; font-size:13px; }
+    .mv-co { width:150px; padding:5px 8px; border:1px solid var(--border-strong); border-radius:7px; background:var(--bg); color:var(--text); font:inherit; font-size:13px; }
+    .mv-title a { color:var(--text); text-decoration:none; } .mv-title a:hover { color:var(--primary); }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/funnel">Funnel</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/crm">CRM</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/chains">Chains</a>
+      <a href="/en/admin/moves" class="active">Moves</a>
+      <a href="/en/admin/transcripts">Transcripts</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="pl-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+    const TYPES = ['acquisition', 'stake', 'investment', 'plant', 'jv', 'subsidiary', 'expansion', 'exit', 'other'];
+    const HOSTS = ['VN', 'TH', 'ID', 'MY', 'PH', 'SG', 'TW', 'AU', 'NZ', 'KH', 'LA', 'MM', 'BN', 'JP', 'KR'];
+    const INVESTORS = ['', 'JP', 'KR', 'TW', 'SG', 'CN', 'HK', 'US', 'TH', 'MY', 'VN', 'ID', 'PH', 'AU', 'NZ', 'IN', 'DE', 'FR', 'GB'];
+    let status = 'draft', data = null;
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    async function api(path, opts = {}) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, { ...opts, headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+    const sel = (cls, list, v) => `<select class="mv-sel" data-f="${cls}">${list.map(x => `<option value="${esc(x)}"${x === (v || '') ? ' selected' : ''}>${esc(x || '?')}</option>`).join('')}</select>`;
+    const money = (v) => v ? 'US$' + (v >= 1e9 ? (v / 1e9).toFixed(1) + 'B' : Math.round(v / 1e6) + 'M') : '';
+
+    async function load() { data = await api('/api/admin-moves?status=' + status); render(); }
+
+    function render() {
+      const { events, counts } = data;
+      root.innerHTML = `
+        <div class="pl-head"><h1>Company moves</h1></div>
+        <div class="pl-kpis" style="grid-template-columns:repeat(3,1fr)">
+          <div class="pl-kpi"><b>${counts.draft}</b><span>to review</span></div>
+          <div class="pl-kpi"><b>${counts.published}</b><span>published</span></div>
+          <div class="pl-kpi"><b>${counts.rejected}</b><span>rejected</span></div>
+        </div>
+        <p class="pl-note">Found every day in the news (GDELT) and, once their keys are set, in Korean (OpenDART) and Japanese (EDINET) filings. News items wait here until you publish them; check the investor, the market and the type, add the company name if you know it. Published moves show on <a href="/en/data/moves" target="_blank" rel="noopener">/data/moves</a> and on corridor pages such as <a href="/en/data/japan-in-vietnam" target="_blank" rel="noopener">Japan in Vietnam</a>.</p>
+        <div class="pl-filters">${['draft', 'published', 'rejected'].map(s => `<button class="pl-chip${s === status ? ' on' : ''}" data-status="${s}">${s} (${counts[s]})</button>`).join('')}</div>
+        ${events.length ? `<div class="pl-wrap"><table class="pl"><thead><tr><th>Date</th><th>Move</th><th>Investor</th><th>Market</th><th>Type</th><th>Company</th><th></th></tr></thead><tbody>
+          ${events.map(e => `<tr data-id="${e.id}">
+            <td style="white-space:nowrap">${esc(e.event_date)}</td>
+            <td class="pl-topic mv-title"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title)}</a>
+              <div class="pl-id">${esc(e.domain || e.source_key)} · ${esc(e.tier)}${(e.also || []).length ? ' · also in ' + e.also.length + ' more' : ''}${e.value_usd ? ' · ' + money(e.value_usd) : ''}</div></td>
+            <td>${sel('investor_country', INVESTORS, e.investor_country)}</td>
+            <td>${sel('host_country', HOSTS, e.host_country)}</td>
+            <td>${sel('type', TYPES, e.type)}</td>
+            <td><input class="mv-co" data-f="company" value="${esc(e.company || '')}" placeholder="optional"></td>
+            <td style="white-space:nowrap">${status !== 'published' ? '<button class="pl-btn" data-to="published">Publish</button>' : '<button class="pl-btn" data-to="save">Save</button>'}${status !== 'rejected' ? '<button class="pl-btn" data-to="rejected">Reject</button>' : ''}${status === 'published' ? '<button class="pl-btn" data-to="draft">Unpublish</button>' : ''}</td></tr>`).join('')}
+        </tbody></table></div>` : '<div class="pl-empty">Nothing here.</div>'}`;
+
+      root.querySelectorAll('[data-status]').forEach(b => b.addEventListener('click', async () => { status = b.dataset.status; await load(); }));
+      root.querySelectorAll('tr[data-id] [data-to]').forEach(b => b.addEventListener('click', async () => {
+        const tr = b.closest('tr');
+        const body = { id: Number(tr.dataset.id) };
+        tr.querySelectorAll('[data-f]').forEach(f => { body[f.dataset.f] = f.value || null; });
+        if (b.dataset.to !== 'save') body.status = b.dataset.to;
+        if (!body.type) body.type = 'other';
+        b.disabled = true;
+        try { await api('/api/admin-moves', { method: 'PATCH', body: JSON.stringify(body) }); await load(); }
+        catch (e) { alert('Could not save: ' + e.message); b.disabled = false; }
+      }));
+    }
+
+    try { await load(); }
+    catch (e) { root.innerHTML = `<div class="pl-empty">Could not load moves (${esc(e.message)}).</div>`; }
+  </script>
+</body>
+</html>
