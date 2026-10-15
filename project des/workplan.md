@@ -189,7 +189,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
-| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2–D5 built 2026-10-15 (see blocks); D6–D7 next |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2–D6 built 2026-10-15 (see blocks); D7 next |
 
 Work done outside the original sprint list (2026-10-12 → 10-14):
 
@@ -303,6 +303,19 @@ Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S
 - Findings: GLEIF covers the big Japanese groups (Toyota, Honda, Nissan, Mazda, Subaru matched) but few of their Southeast Asian subsidiaries (Toyota: 1 in PH, 4 in AU); ACRA is fresh within ~4 days (about 90 new companies a day, none named after a followed group in the last 14 days).
 - Not built: GCIS (Taiwan; no Taiwanese companies in `entities` yet), ASIC bulk file (ABN Lookup covers the same names once keyed), gBizINFO (Houjin Bangou covers it), company-page display (the pages are not linked yet).
 - Owner: the Houjin Bangou, ABN and NZBN keys (keys page) add Japanese, Australian and New Zealand registry numbers.
+
+#### D6 — file and page sources (built 2026-10-15)
+- [x] Migration 062 (applied): licence rows `bkpm` (CC BY 4.0), `aseanstats` (reproduction with credit), `vn_customs` (citation, no open licence published), `tw_mac` (Open Government Data License, Taiwan). All public. No new table: rows go to `econ_flows` with new products `FDI_REALISED` (realised investment), `FDI_REG_YTD` (registered FDI, year to date) and `FDI_APPROVED` flow X (approved outward investment).
+- [x] Adapters in `api/_lib/econ/`, one weekly slot `/api/cron-econ-refresh?source=files` (Saturdays 04:10 UTC, health job `econ-refresh-files`):
+  - `vn-customs.js`: Vietnam Customs preliminary monthly PDFs (exports 5X / imports 5N by country; the release list is the site's own JSON). Country lines only (the commodity lines use Vietnam's own groups, not HS). Its file server answers every other request with 503: retried.
+  - `vn-nso-fdi.js`: registered FDI by investor country from the NSO monthly workbook (WordPress media API → xlsx → sheet "FDI"), new + added capital, year to date (only some months print capital contributions). Only partners in the latest month are shown; the change is against the same month a year before.
+  - `bkpm.js`: Indonesia realised foreign investment by country, quarterly, 2010–2026 (data.bkpm.go.id zip + CSV; two CSV formats).
+  - `tw-mac.js`: Taiwan approved outward investment by destination, monthly (data.gov.tw dataset 7476).
+  - `aseanstats.js`: net FDI inflow by host × source country, annual, 2012–2025 (8 members; Viet Nam and Laos do not report by source). Its firewall shows a captcha to some data-centre addresses: the backfill was loaded from here; the Saturday run reports it on `/en/admin/health` if Vercel is blocked too.
+- [x] Backfill 2026-10-15: Customs 3,987 rows (25 months), NSO 12 months, BKPM 2,635 rows (66 quarters), Taiwan 27 months, ASEANstats 1,930 rows.
+- [x] Country and corridor pages show the new links (EN/JA/KO/ZH labels; partner names outside our 15 markets come from the browser's own country names). Year-to-date links read "Jan 2026 – Sep 2026".
+- [x] Fix: `/api/econ` paged its flows over a non-unique sort, so a market with more than 1,000 rows could count a month twice or skip one; it now sorts on the whole key.
+- Not built (checked 2026-10-15): State Bank of Vietnam (web firewall blocks servers), Foreign Investment Agency (site gone; the NSO workbook carries the figures), Thailand BOI (JavaScript challenge on every page; files have random names), MIDA (only the top 5 countries in press-release prose), Korea Eximbank (dashboard only, no file or API), Japan MOF (same series as the BoJ), JETRO (no redistribution without permission), Taiwan DGBAS (broken TLS chain), Cambodia CamStat (SDMX works but data stops in 2014–2024), Laos and Myanmar (unreachable), Brunei DEPS (XLSX library, to add if wanted).
 
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 

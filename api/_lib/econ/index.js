@@ -22,10 +22,16 @@ import * as bnm from './bnm.js';
 import * as singstat from './singstat.js';
 import * as eurostat from './eurostat.js';
 import * as census from './census.js';
+import * as bkpm from './bkpm.js';
+import * as aseanstats from './aseanstats.js';
+import * as vnNsoFdi from './vn-nso-fdi.js';
+import * as vnCustoms from './vn-customs.js';
+import * as twMac from './tw-mac.js';
 
 export { ISO3, FIRST_YEAR } from './util.js';
 
 // `own: true` = a heavy source that runs in its own cron slot (/api/cron-econ-refresh?source=<key>), not in the default run.
+// `slot: 'files'` = file and page sources (D6: PDFs, workbooks, CSV files) that share one slot (?source=files).
 const ADAPTERS = {
   worldbank_wdi: { series: worldbank.fetchWorldBank },
   imf_weo: { series: imf.fetchImf },
@@ -40,14 +46,22 @@ const ADAPTERS = {
   estat: { flows: estat.flows, own: true },
   kr_customs: { flows: krCustoms.flows, own: true },
   eurostat_comext: { flows: eurostat.flows, own: true },
-  us_census: { flows: census.flows, own: true }
+  us_census: { flows: census.flows, own: true },
+  bkpm: { flows: bkpm.flows, slot: 'files' },
+  aseanstats: { flows: aseanstats.flows, slot: 'files' },
+  vn_nso_fdi: { flows: vnNsoFdi.flows, slot: 'files' },       // rows carry source_key vn_nso (same publisher)
+  vn_customs: { flows: vnCustoms.flows, slot: 'files' },
+  tw_mac: { flows: twMac.flows, slot: 'files' }
 };
 
 // indicators: econ_indicators rows; sources: data_sources rows ({ key, env_key });
 // only: run just this source key (its own cron slot); otherwise run every source not marked `own`.
 // hs: HS codes of segment_data_map, for the sources that fetch trade by product (Eurostat, US Census).
 export async function collect(indicators, sources = [], { only = null, hs = [] } = {}) {
-  const runs = (key) => (only ? key === only : !(ADAPTERS[key] && ADAPTERS[key].own));
+  const runs = (key) => {
+    const ad = ADAPTERS[key] || {};
+    return only ? key === only || ad.slot === only : !(ad.own || ad.slot);
+  };
   const envOf = Object.fromEntries(sources.map((s) => [s.key, s.env_key]));
   const missingKey = (src) => envOf[src] && !process.env[envOf[src]];
   const rows = [];

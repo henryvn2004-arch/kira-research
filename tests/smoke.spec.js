@@ -1153,6 +1153,16 @@ test.describe('Kira Data (D1)', () => {
     await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 15000 });
   });
 
+  test('/api/econ: file sources add Vietnam trade and FDI by partner (D6)', async ({ request }) => {
+    const body = await (await request.get('/api/econ?country=vietnam')).json();
+    const sources = new Set(body.flows.map((f) => f.source_key));
+    expect(sources.has('vn_customs')).toBe(true);
+    const ytd = body.flows.filter((f) => f.product === 'FDI_REG_YTD');
+    expect(ytd.length).toBeGreaterThan(0);
+    // Year-to-date links all end in the same, latest month.
+    expect(new Set(ytd.map((f) => f.period)).size).toBe(1);
+  });
+
   test('/api/econ rejects an unknown market', async ({ request }) => {
     expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
   });
