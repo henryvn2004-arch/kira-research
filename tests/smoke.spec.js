@@ -1114,6 +1114,15 @@ test.describe('Kira Data (D1)', () => {
     expect(body.indicators.some((i) => i.source_key === 'imf_weo')).toBe(false);
   });
 
+  test('/api/econ links come only from public sources (D2)', async ({ request }) => {
+    const body = await (await request.get('/api/econ?country=vietnam')).json();
+    expect(Array.isArray(body.flows)).toBe(true);
+    for (const f of body.flows) {
+      expect(body.sources.map((s) => s.key)).toContain(f.source_key);
+      expect([f.reporter, f.partner]).toContain('VN');
+    }
+  });
+
   test('/api/econ rejects an unknown market', async ({ request }) => {
     expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
   });

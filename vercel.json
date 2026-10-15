@@ -183,13 +183,16 @@
     { "path": "/api/notify-topic-published", "schedule": "0 2 * * *" },
     { "path": "/api/notify-chain-published", "schedule": "30 2 * * *" },
     { "path": "/api/cron-site-events-retention", "schedule": "30 3 * * *" },
-    { "path": "/api/cron-econ-refresh", "schedule": "10 4 * * 1" }
+    { "path": "/api/cron-econ-refresh", "schedule": "10 4 * * 1" },
+    { "path": "/api/cron-econ-refresh?source=estat", "schedule": "10 4 * * 2" },
+    { "path": "/api/cron-econ-refresh?source=kr_customs", "schedule": "10 4 * * 3" }
   ],
   "functions": {
     "api/inngest.js": {
       "maxDuration": 300,
       "includeFiles": "skills/kira-research-report/templates/*"
     },
+    "api/cron-econ-refresh.js": { "maxDuration": 800 },
     "api/*.js": {
       "maxDuration": 60,
       "includeFiles": "skills/kira-research-report/templates/*"
