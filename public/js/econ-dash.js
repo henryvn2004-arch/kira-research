@@ -18,6 +18,10 @@
 
   const T = {
     en: {
+      hCmp: 'Compare markets over time', capCmp: 'Pick up to 5 markets.', cmpMetric: 'Measure',
+      hPulse: 'The latest reading in each market', pulseCols: ['Market', 'Inflation', 'Policy rate', 'GDP growth', 'Currency vs US$, 1 month'],
+      capPulse: 'Monthly or quarterly figures where the national source publishes them, otherwise the latest year (World Bank). Arrows compare with the reading before.',
+      hBal: (c, b) => `${c}: trade balance with each partner, 12 months to ${b}`, capBal: 'Above zero = exports to the partner are larger than imports from it.',
       qNow: 'Is now a good time', hFx: 'Local currencies against the US dollar', fx1m: 'Past month', fx1y: 'Past 12 months',
       capFx: (d) => `Above zero = the local currency gained against the US dollar. ECB daily rates up to ${d}; no rate is published for the Vietnamese dong, Taiwan dollar, riel, kip, kyat or Brunei dollar.`,
       all: 'All markets', from: 'Investing from', any: 'Any country',
@@ -43,6 +47,10 @@
       extra: { ASEAN: 'ASEAN', WLD: 'World', EU: 'European Union' }
     },
     ja: {
+      hCmp: '市場を時系列で比較', capCmp: '最大5市場まで選べます。', cmpMetric: '指標',
+      hPulse: '各市場の最新の数値', pulseCols: ['市場', 'インフレ率', '政策金利', 'GDP成長率', '対米ドル相場（1か月）'],
+      capPulse: '各国統計が公表している場合は月次・四半期の数値、それ以外は直近年（世界銀行）。矢印は前回の数値との比較です。',
+      hBal: (c, b) => `${c}：相手国別の貿易収支、${b}までの12か月`, capBal: 'ゼロより上＝相手国への輸出が相手国からの輸入を上回る。',
       qNow: '今が好機か', hFx: '各国通貨の対米ドル相場', fx1m: '過去1か月', fx1y: '過去12か月',
       capFx: (d) => `ゼロより上＝現地通貨が米ドルに対して上昇。欧州中央銀行の日次レート（${d}まで）。ベトナムドン、台湾ドル、リエル、キープ、チャット、ブルネイドルのレートは公表されていません。`,
       all: '全市場', from: '投資元', any: 'すべての国',
@@ -68,6 +76,10 @@
       extra: { ASEAN: 'ASEAN', WLD: '世界', EU: '欧州連合' }
     },
     ko: {
+      hCmp: '시장별 추이 비교', capCmp: '최대 5개 시장까지 고를 수 있습니다.', cmpMetric: '지표',
+      hPulse: '시장별 최신 수치', pulseCols: ['시장', '물가상승률', '기준금리', 'GDP 성장률', '대미 달러 환율(1개월)'],
+      capPulse: '해당국 통계가 공표하는 경우 월간·분기 수치, 아니면 최근 연도(세계은행). 화살표는 직전 수치와의 비교입니다.',
+      hBal: (c, b) => `${c}: 교역국별 무역수지, ${b}까지 12개월`, capBal: '0보다 위 = 해당국으로의 수출이 해당국으로부터의 수입보다 많음.',
       qNow: '지금이 적기인가', hFx: '현지 통화의 대미 달러 환율', fx1m: '최근 1개월', fx1y: '최근 12개월',
       capFx: (d) => `0보다 위 = 현지 통화가 미 달러 대비 강세. 유럽중앙은행 일간 환율(${d}까지). 베트남 동, 대만 달러, 리엘, 킵, 짯, 브루나이 달러 환율은 공표되지 않습니다.`,
       all: '전체 시장', from: '투자국', any: '모든 국가',
@@ -93,6 +105,10 @@
       extra: { ASEAN: '아세안', WLD: '세계', EU: '유럽연합' }
     },
     zh: {
+      hCmp: '市场走势对比', capCmp: '最多可选5个市场。', cmpMetric: '指标',
+      hPulse: '各市场最新数据', pulseCols: ['市场', '通胀率', '政策利率', 'GDP增长率', '兑美元汇率（1个月）'],
+      capPulse: '国家统计机构公布月度或季度数据时使用该数据，否则使用最近年份（世界银行）。箭头为与上一期数据比较。',
+      hBal: (c, b) => `${c}：与各贸易伙伴的贸易差额，截至${b}的12个月`, capBal: '高于零＝对该伙伴的出口大于自其进口。',
       qNow: '现在是好时机吗', hFx: '各国货币兑美元走势', fx1m: '近1个月', fx1y: '近12个月',
       capFx: (d) => `高于零＝本币兑美元升值。欧洲中央银行每日汇率（截至${d}）。越南盾、新台币、瑞尔、基普、缅元和文莱元无公布汇率。`,
       all: '全部市场', from: '投资来源', any: '任意国家',
@@ -148,6 +164,9 @@
   let lens = pickLens(params.get('from'));
   let D = null;
   const charts = [];
+  // Compare block: chosen markets and measure (kept while the filter changes).
+  let cmp = ['VN', 'TH', 'ID', 'MY'], cmpKey = 'gdp_growth';
+  const CMP_KEYS = ['gdp_growth', 'inflation', 'gdp_per_capita', 'fdi_inflow', 'exports_usd', 'gdp_usd'];
 
   async function data() {
     if (D) return D;
@@ -228,6 +247,23 @@
     } catch (_e) { /* the block stays empty */ }
   }
 
+  // Compare chart: redrawn on its own when the chosen markets or the measure change.
+  let cmpChart = null;
+  function drawCompare() {
+    const el = document.getElementById('dd-cmp');
+    if (!el || !window.Chart) return;
+    const unit = (D.units[cmpKey] || {}).unit;
+    const years = [...new Set(cmp.flatMap((cc) => ((D.compare[cc] || {})[cmpKey] || []).map((p) => p[0])))].sort();
+    const fmt = (v) => (unit === 'pct' ? pct(v) : money(v));
+    if (cmpChart) { cmpChart.destroy(); charts.splice(charts.indexOf(cmpChart), 1); }
+    draw('dd-cmp', { type: 'line', data: { labels: years.map(per), datasets: cmp.map((cc, i) => ({ label: nm(cc),
+      data: years.map((y) => { const p = ((D.compare[cc] || {})[cmpKey] || []).find((x) => x[0] === y); return p ? p[1] : null; }),
+      borderColor: PAL[i], backgroundColor: PAL[i], tension: 0, pointRadius: 2, spanGaps: true })) },
+      options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: (x) => x.dataset.label + ': ' + fmt(x.raw) } } },
+        scales: { y: { ticks: { callback: (v) => fmt(v) } }, x: { ticks: { maxTicksLimit: 10 } } } } });
+    cmpChart = charts[charts.length - 1];
+  }
+
   // ---- All markets ----------------------------------------------------------------------------------
   function renderAll(el) {
     const rows = D.countries.filter((c) => latest(c.code, 'gdp_per_capita') && latest(c.code, 'gdp_growth'))
@@ -240,6 +276,29 @@
       '<div class="dd-card ed-table-wrap dd-league"><table class="ed-table"><thead><tr>' + T.cols.map((c) => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
       rows.map((r) => '<tr><td><a href="' + esc(href(r.c.slug)) + '">' + esc(nm(r.c.code)) + '</a></td><td>' + pct(r.g) + '</td><td>' + pct(r.inf) + '</td><td>' + money(r.inc) + '</td><td>' + money(r.gdp) + '</td><td>' + money(r.fdi) + '</td></tr>').join('') +
       '</tbody></table></div></div>', esc(T.capBubble) + ' ' + esc(T.rowHint) + ' ' + esc(T.noTW) + (yr ? ' · ' + esc(T.srcLbl(SRC.worldbank_wdi, per(yr))) : ''));
+
+    // Compare: chosen markets on one line chart, one measure at a time.
+    const cmpable = D.countries.filter((c) => D.compare[c.code]);
+    h += sec(T.qWhere, T.hCmp, '<div class="dd-card"><div class="dd-cmp-ctl"><div class="dd-chips">' +
+      cmpable.map((c) => '<button type="button" class="dd-chip' + (cmp.includes(c.code) ? ' on' : '') + '" data-cc="' + esc(c.code) + '" aria-pressed="' + cmp.includes(c.code) + '">' + esc(nm(c.code)) + '</button>').join('') +
+      '</div><label class="dd-lens">' + esc(T.cmpMetric) + ' <select id="dd-cmp-key">' +
+      CMP_KEYS.filter((k) => D.units[k]).map((k) => '<option value="' + k + '"' + (k === cmpKey ? ' selected' : '') + '>' + esc(D.units[k].label[L] || D.units[k].label.en) + '</option>').join('') +
+      '</select></label></div><div class="dd-chart"><canvas id="dd-cmp"></canvas></div></div>', esc(T.capCmp) + ' · ' + esc(T.srcLbl(SRC.worldbank_wdi, per(yr || ''))));
+
+    // Pulse: the latest reading per market (national monthly / quarterly where published, else the latest year).
+    const fxBy = Object.fromEntries((D.fx || []).map((f) => [f.code, f]));
+    const arrow = (v, p) => (v == null || p == null || v === p ? '' : v > p ? ' <span class="dd-ar">▲</span>' : ' <span class="dd-ar">▼</span>');
+    const pcell = (x) => (x ? '<td>' + pct(x.value) + arrow(x.value, x.prev) + '<small>' + esc(per(x.period)) + '</small></td>' : '<td class="dd-na">–</td>');
+    const annual = (cc, k) => { const a = (D.compare[cc] || {})[k] || []; const l = a[a.length - 1], b = a[a.length - 2]; return l ? { period: l[0], value: l[1], prev: b ? b[1] : null } : null; };
+    // Policy rates come from central banks that need a key for most markets: the column shows once 4 markets have one.
+    const rates = Object.values(D.pulse || {}).filter((p) => p.rate).length >= 4;
+    h += sec(T.qNow, T.hPulse, '<div class="dd-card ed-table-wrap dd-pulse"><table class="ed-table"><thead><tr>' + T.pulseCols.filter((_c, i) => rates || i !== 2).map((c) => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
+      D.countries.map((c) => {
+        const p = (D.pulse || {})[c.code] || {}, f = fxBy[c.code];
+        const fxc = f && f.m1 ? (f.m1[1] / f.last[1] - 1) * 100 : null;
+        return '<tr><td><a href="' + esc(href(c.slug)) + '">' + esc(nm(c.code)) + '</a></td>' + pcell(p.inflation || annual(c.code, 'inflation')) + (rates ? pcell(p.rate) : '') + pcell(p.growth || annual(c.code, 'gdp_growth')) +
+          (fxc == null ? '<td class="dd-na">–</td>' : '<td class="' + (fxc >= 0 ? 'dd-up' : 'dd-dn') + '">' + (fxc > 0 ? '+' : '') + pct(fxc) + '<small>' + esc(per(f.last[0])) + '</small></td>') + '</tr>';
+      }).join('') + '</tbody></table></div>', esc(T.capPulse));
 
     // Currencies: change against the US dollar over a month and a year (positive = the local currency gained).
     const fx = (D.fx || []).filter((f) => f.m1 || f.y1);
@@ -296,6 +355,15 @@
         ctx.restore();
       } }]
     });
+    drawCompare();
+    el.querySelectorAll('.dd-chip').forEach((b) => b.addEventListener('click', () => {
+      const cc = cmpable.find((c) => c.code === b.dataset.cc).code;   // a code from the list, not the page text
+      if (cmp.includes(cc)) cmp = cmp.filter((x) => x !== cc); else if (cmp.length < 5) cmp = [...cmp, cc]; else return;
+      b.classList.toggle('on', cmp.includes(cc)); b.setAttribute('aria-pressed', cmp.includes(cc));
+      drawCompare();
+    }));
+    const ck = document.getElementById('dd-cmp-key');
+    if (ck) ck.addEventListener('change', () => { cmpKey = CMP_KEYS[CMP_KEYS.indexOf(ck.value)] || 'gdp_growth'; drawCompare(); });
     if (fxRows.length) {
       draw('dd-fx', { type: 'bar', data: { labels: fxRows.map((r) => nm(r.code)), datasets: [
         { label: T.fx1m, data: fxRows.map((r) => r.m), backgroundColor: '#BFD3FB' },
@@ -330,7 +398,13 @@
       const c = tr[0].currency, months = [...new Set(tr.flatMap((s) => s.points.map((p) => p[0])))].sort();
       const lastM = months[months.length - 1];
       const sum = (s, a, b) => (s ? s.points.slice(a, b).reduce((t, p) => t + p[1], 0) : null);
-      const pick = (flow) => (lens ? tr.filter((s) => s.flow === flow && s.partner === lens) : tr.filter((s) => s.flow === flow && s.partner !== 'WLD').slice(0, 5));
+      const l12 = (s) => s.points.slice(-12).reduce((t, p) => t + p[1], 0);
+      const pick = (flow) => (lens ? tr.filter((s) => s.flow === flow && s.partner === lens) : tr.filter((s) => s.flow === flow && s.partner !== 'WLD').sort((a, b) => l12(b) - l12(a)).slice(0, 5));
+      // Trade balance per partner over the last 12 months (exports minus imports), partners with both directions.
+      const bal = [...new Set(tr.filter((s) => s.partner !== 'WLD').map((s) => s.partner))].map((p) => {
+        const x = tr.find((s) => s.flow === 'X' && s.partner === p), m = tr.find((s) => s.flow === 'M' && s.partner === p);
+        return x && m ? { p, v: sum(x, -12) - sum(m, -12) } : null;
+      }).filter(Boolean).sort((a, b) => b.v - a.v);
       const kpi = (label, s) => { if (!s) return ''; const a = sum(s, -12), b = s.points.length >= 24 ? sum(s, -24, -12) : null, g = change(a, b);
         return '<div class="ed-tile"><span class="lbl">' + esc(label) + '</span><span class="val">' + esc(money(a, c)) + '</span><span class="sub">' + esc(T.win12(per(lastM))) +
           (g == null ? '' : ' · <b class="' + (g >= 0 ? 'dd-up' : 'dd-dn') + '">' + (g >= 0 ? '▲ ' : '▼ ') + pct(Math.abs(g)) + '</b> ' + esc(T.yoy)) + '</span></div>'; };
@@ -341,7 +415,11 @@
           (tiles ? '<div class="ed-tiles">' + tiles + '</div>' : '') +
           '<div class="dd-grid2 dd-even"><div class="dd-card"><h3>' + esc(T.imports(C)) + '</h3><div class="dd-chart"><canvas id="dd-tm"></canvas></div></div>' +
           '<div class="dd-card"><h3>' + esc(T.exports(C)) + '</h3><div class="dd-chart"><canvas id="dd-tx"></canvas></div></div></div>',
-          esc(T.srcLbl(SRC[tr[0].src] || tr[0].src, per(lastM))));
+          esc(T.srcLbl(SRC[tr[0].src] || tr[0].src, per(lastM))) +
+          (bal.length ? '</p><h3 class="dd-sub">' + esc(T.hBal(C, per(lastM))) + '</h3><div class="dd-card"><div class="dd-chart" style="height:' + Math.max(220, bal.length * 30 + 60) + 'px"><canvas id="dd-bal"></canvas></div></div><p class="dd-cap">' + esc(T.capBal) : ''));
+        if (bal.length) draws.push(() => draw('dd-bal', { type: 'bar', data: { labels: bal.map((r) => nm(r.p)), datasets: [{ data: bal.map((r) => r.v),
+          backgroundColor: bal.map((r) => (lens && r.p !== lens ? (r.v >= 0 ? '#BFD3FB' : '#F5C2C2') : r.v >= 0 ? '#1A66F0' : '#DC2626')) }] },
+          options: { indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (x) => money(x.raw, c) } } }, scales: { x: moneyAxis(c) } } }));
         const opt = { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: tipMoney(c) }, scales: { y: moneyAxis(c), x: { ticks: { maxTicksLimit: 8 } } } };
         const ds = (f) => pick(f).map((s, i) => ({ label: nm(s.partner), data: months.map((m) => { const p = s.points.find((x) => x[0] === m); return p ? p[1] : null; }), borderColor: PAL[i], backgroundColor: PAL[i], tension: 0, pointRadius: 0, borderWidth: 2 }));
         draws.push(() => draw('dd-tm', { type: 'line', data: { labels: months.map(per), datasets: ds('M') }, options: opt }));
