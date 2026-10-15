@@ -21,7 +21,18 @@
       indexH1: 'Market data for 15 Asia-Pacific markets', indexLead: 'Headline economic indicators for every market KIRA covers, refreshed every week from public sources.',
       lead: (c, v) => `${c}'s real GDP ${v.neg ? 'shrank' : 'grew'} <b>${v.growthAbs}</b> in ${v.year}` + (v.gdp ? `, with GDP at <b>${v.gdp}</b>.` : '.') +
         (v.hh ? ` Households spent <b>${v.hh}</b>` + (v.fdi ? `, and foreign direct investment brought a net <b>${v.fdi}</b>.` : '.') : ''),
-      ofYear: (y) => `${y}`
+      ofYear: (y) => `${y}`,
+      recent: 'Latest monthly and quarterly figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
+      win: { M: (a, b) => `12 months to ${b}`, Q: (a, b) => `4 quarters to ${b}`, A: (a, b) => b },
+      grp: { TOTAL: 'Merchandise trade', FDI: 'Direct investment', VISITORS: 'Visitors' },
+      link: {
+        TOTAL_X: (r, p) => p ? `${r} exports to ${p}` : `${r} total exports`, TOTAL_M: (r, p) => p ? `${r} imports from ${p}` : `${r} total imports`,
+        FDI_NET_X: (r, p) => `${r} direct investment in ${p} (net)`, FDI_NET_M: (r, p) => `${p} direct investment in ${r} (net)`,
+        FDI_APPROVED_M: (r, p) => `Approved investment from ${p} in ${r}`,
+        VISITORS_M: (r, p) => p ? `Visitors from ${p} to ${r}` : `Visitor arrivals in ${r}`
+      },
+      quarter: (y, q) => `Q${q} ${y}`,
+      extra: { CN: 'China', HK: 'Hong Kong', US: 'United States', ASEAN: 'ASEAN' }
     },
     ja: {
       title: '市場データ', h1: (c) => `${c}：市場データ`, all: '全市場', latest: '最新', history: '直近6年',
@@ -31,7 +42,18 @@
       indexH1: 'アジア太平洋15市場の市場データ', indexLead: 'KIRAが対象とする全市場の主要経済指標。公開データから毎週更新しています。',
       lead: (c, v) => (v.growth ? `${c}の${v.year}年の実質GDP成長率は<b>${v.growth}</b>` : '') + (v.gdp ? `、名目GDPは<b>${v.gdp}</b>でした。` : '。') +
         (v.hh ? `家計消費支出は<b>${v.hh}</b>` + (v.fdi ? `、対内直接投資の純流入は<b>${v.fdi}</b>です。` : 'です。') : ''),
-      ofYear: (y) => `${y}年`
+      ofYear: (y) => `${y}年`,
+      recent: '最新の月次・四半期データ', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
+      win: { M: (a, b) => `${b}までの12か月`, Q: (a, b) => `${b}までの4四半期`, A: (a, b) => b },
+      grp: { TOTAL: '商品貿易', FDI: '直接投資', VISITORS: '訪問者' },
+      link: {
+        TOTAL_X: (r, p) => p ? `${r}から${p}への輸出` : `${r}の輸出総額`, TOTAL_M: (r, p) => p ? `${r}の${p}からの輸入` : `${r}の輸入総額`,
+        FDI_NET_X: (r, p) => `${r}の${p}への直接投資（ネット）`, FDI_NET_M: (r, p) => `${p}の${r}への直接投資（ネット）`,
+        FDI_APPROVED_M: (r, p) => `${p}から${r}への認可投資額`,
+        VISITORS_M: (r, p) => p ? `${p}から${r}への訪問者数` : `${r}への訪問者数`
+      },
+      quarter: (y, q) => `${y}年第${q}四半期`,
+      extra: { CN: '中国', HK: '香港', US: '米国', ASEAN: 'ASEAN' }
     },
     ko: {
       title: '시장 데이터', h1: (c) => `${c}: 시장 데이터`, all: '전체 시장', latest: '최신', history: '최근 6년',
@@ -41,7 +63,18 @@
       indexH1: '아시아·태평양 15개 시장 데이터', indexLead: 'KIRA가 다루는 모든 시장의 주요 경제지표. 공개 자료로 매주 갱신합니다.',
       lead: (c, v) => (v.growth ? `${c}의 ${v.year}년 실질 GDP 성장률은 <b>${v.growth}</b>` : '') + (v.gdp ? `, 명목 GDP는 <b>${v.gdp}</b>입니다.` : '입니다.') +
         (v.hh ? ` 가계 소비지출은 <b>${v.hh}</b>` + (v.fdi ? `, 외국인직접투자 순유입은 <b>${v.fdi}</b>입니다.` : '입니다.') : ''),
-      ofYear: (y) => `${y}년`
+      ofYear: (y) => `${y}년`,
+      recent: '최신 월간·분기 지표', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
+      win: { M: (a, b) => `${b}까지 12개월`, Q: (a, b) => `${b}까지 4개 분기`, A: (a, b) => b },
+      grp: { TOTAL: '상품 무역', FDI: '직접투자', VISITORS: '방문객' },
+      link: {
+        TOTAL_X: (r, p) => p ? `${r}의 ${p} 수출` : `${r} 총수출`, TOTAL_M: (r, p) => p ? `${r}의 ${p}산 수입` : `${r} 총수입`,
+        FDI_NET_X: (r, p) => `${r}의 ${p} 직접투자(순)`, FDI_NET_M: (r, p) => `${p}의 ${r} 직접투자(순)`,
+        FDI_APPROVED_M: (r, p) => `${p}에서 ${r}로의 승인 투자액`,
+        VISITORS_M: (r, p) => p ? `${p}발 ${r} 방문객` : `${r} 방문객 수`
+      },
+      quarter: (y, q) => `${y}년 ${q}분기`,
+      extra: { CN: '중국', HK: '홍콩', US: '미국', ASEAN: '아세안' }
     },
     zh: {
       title: '市场数据', h1: (c) => `${c}：市场数据`, all: '全部市场', latest: '最新', history: '近六年',
@@ -51,7 +84,18 @@
       indexH1: '亚太15个市场的市场数据', indexLead: 'KIRA覆盖的每个市场的主要经济指标，每周根据公开数据更新。',
       lead: (c, v) => (v.growth ? `${c}${v.year}年实际GDP增长<b>${v.growth}</b>` : '') + (v.gdp ? `，国内生产总值为<b>${v.gdp}</b>。` : '。') +
         (v.hh ? `家庭消费支出为<b>${v.hh}</b>` + (v.fdi ? `，外国直接投资净流入<b>${v.fdi}</b>。` : '。') : ''),
-      ofYear: (y) => `${y}年`
+      ofYear: (y) => `${y}年`,
+      recent: '最新月度与季度数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
+      win: { M: (a, b) => `截至${b}的12个月`, Q: (a, b) => `截至${b}的4个季度`, A: (a, b) => b },
+      grp: { TOTAL: '商品贸易', FDI: '直接投资', VISITORS: '访客' },
+      link: {
+        TOTAL_X: (r, p) => p ? `${r}对${p}出口` : `${r}出口总额`, TOTAL_M: (r, p) => p ? `${r}自${p}进口` : `${r}进口总额`,
+        FDI_NET_X: (r, p) => `${r}对${p}直接投资（净额）`, FDI_NET_M: (r, p) => `${p}对${r}直接投资（净额）`,
+        FDI_APPROVED_M: (r, p) => `${p}对${r}的获批投资`,
+        VISITORS_M: (r, p) => p ? `${p}赴${r}访客` : `${r}入境访客`
+      },
+      quarter: (y, q) => `${y}年第${q}季度`,
+      extra: { CN: '中国', HK: '香港', US: '美国', ASEAN: '东盟' }
     }
   }[locale];
 
@@ -59,14 +103,27 @@
   const compact = new Intl.NumberFormat(NUM_LOCALE, { notation: 'compact', maximumSignificantDigits: 4 });
   const plain = new Intl.NumberFormat(NUM_LOCALE, { maximumFractionDigits: 0 });
   const dec = (d) => new Intl.NumberFormat(NUM_LOCALE, { minimumFractionDigits: d, maximumFractionDigits: d });
-  function fmt(v, unit) {
+  const money = {};
+  const cur = (v, c) => (money[c] = money[c] || new Intl.NumberFormat(NUM_LOCALE, { style: 'currency', currency: c, notation: 'compact', maximumSignificantDigits: 4 })).format(v);
+  function fmt(v, unit, currency) {
     if (v === null || v === undefined || !Number.isFinite(v)) return '–';
+    if (unit === 'lcu' && currency) return cur(v, currency);
+    if (unit === 'persons') return compact.format(v);
     if (unit === 'usd') return 'US$' + compact.format(v);
     if (unit === 'usd_per_person') return 'US$' + plain.format(v);
     if (unit === 'people') return compact.format(v);
     if (unit === 'pct') return dec(1).format(v) + '%';
     if (unit === 'lcu_per_usd') return Math.abs(v) >= 100 ? plain.format(v) : dec(2).format(v);
     return String(v);
+  }
+  // Periods: '2026' → year, '2026-Q2' → quarter, '2026-08' → month, in the reader's language.
+  const monthFmt = new Intl.DateTimeFormat(NUM_LOCALE, { year: 'numeric', month: 'short', timeZone: 'UTC' });
+  function per(p) {
+    const q = /^(\d{4})-Q([1-4])$/.exec(p);
+    if (q) return T.quarter(q[1], q[2]);
+    const m = /^(\d{4})-(\d{2})$/.exec(p);
+    if (m) return monthFmt.format(new Date(Date.UTC(+m[1], +m[2] - 1, 1)));
+    return T.ofYear(p);
   }
   const label = (ind) => (ind.label && (ind.label[locale] || ind.label.en)) || ind.key;
   const dateFmt = (iso) => (R && R.date ? R.date(iso, 'long') : new Date(iso).toDateString());
@@ -120,7 +177,7 @@
   const at = (k, y) => { const p = actual(k).find((x) => x[0] === y); return p ? p[1] : null; };
   const libLink = '<a class="r-btn r-btn-outline" href="/' + locale + '/library?country=' + encodeURIComponent(data.country.name.toLowerCase()) + '">' + esc(T.reports(C)) + '</a>';
 
-  if (!data.indicators.length) {
+  if (!data.indicators.length && !(data.flows || []).length) {
     root.innerHTML = '<div class="ed-main"><div class="ed-head"><h1>' + esc(T.h1(C)) + '</h1><p class="ed-lead">' + esc(T.none(C)) + '</p></div><div class="ed-links">' + libLink + '</div></div>';
     return;
   }
@@ -146,15 +203,41 @@
   }).join('');
 
   // Table: every indicator, the last six years that have any value.
-  const years = [...new Set(data.indicators.flatMap((i) => actual(i.key).map((p) => p[0])))].sort().slice(-6);
+  const annual = data.indicators.filter((i) => i.freq === 'A');
+  const years = [...new Set(annual.flatMap((i) => actual(i.key).map((p) => p[0])))].sort().slice(-6);
   const table = '<div class="ed-table-wrap"><table class="ed-table"><thead><tr><th>' + esc(T.indicator) + '</th>' + years.map((y) => '<th>' + esc(y) + '</th>').join('') + '</tr></thead><tbody>' +
-    data.indicators.map((i) => '<tr><td>' + esc(label(i)) + '</td>' + years.map((y) => '<td>' + esc(fmt(at(i.key, y), i.unit)) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+    annual.map((i) => '<tr><td>' + esc(label(i)) + '</td>' + years.map((y) => '<td>' + esc(fmt(at(i.key, y), i.unit, i.params && i.params.currency)) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+
+  // National monthly and quarterly series (one tile each, the latest point and a sparkline of the last two years).
+  const recent = data.indicators.filter((i) => i.freq !== 'A' && last(i.key)).map((i) => {
+    const p = last(i.key);
+    return '<div class="ed-tile"><span class="lbl">' + esc(label(i)) + '</span><span class="val">' + esc(fmt(p[1], i.unit, i.params && i.params.currency)) + '</span>' +
+      '<span class="sub">' + esc(per(p[0])) + '</span><svg data-spark="' + esc(i.key) + '" data-n="' + (i.freq === 'Q' ? 8 : 24) + '" aria-hidden="true"></svg></div>';
+  }).join('');
+
+  // Links: trade, direct investment and visitors between this market and others, from either side's statistics.
+  const EXTRA = T.extra;
+  const nm = (code) => (code === 'WLD' ? '' : data.names && data.names[code] ? cname(data.names[code]) : EXTRA[code] || code);
+  const GROUP = (f) => (f.product === 'TOTAL' ? 'TOTAL' : f.product === 'VISITORS' ? 'VISITORS' : 'FDI');
+  const linkRows = (data.flows || []).filter((f) => T.link[f.product + '_' + f.flow]);
+  const linkTable = ['TOTAL', 'FDI', 'VISITORS'].map((g) => {
+    const list = linkRows.filter((f) => GROUP(f) === g).sort((a, b) => (a.partner === 'WLD') - (b.partner === 'WLD') || Math.abs(b.value) - Math.abs(a.value));
+    if (!list.length) return '';
+    return '<tr class="ed-grp"><th colspan="4">' + esc(T.grp[g]) + '</th></tr>' + list.map((f) => {
+      const unit = f.currency === 'persons' ? 'persons' : 'lcu';
+      const ch = f.prev && f.prev > 0 && f.value > 0 ? (f.value / f.prev - 1) * 100 : null;
+      return '<tr><td>' + esc(T.link[f.product + '_' + f.flow](nm(f.reporter), nm(f.partner))) + '</td><td>' + esc(T.win[f.freq](per(f.from), per(f.period))) + '</td>' +
+        '<td>' + esc(fmt(f.value, unit, f.currency)) + '</td><td>' + (ch === null ? '–' : esc((ch > 0 ? '+' : '') + dec(1).format(ch) + '%')) + '</td></tr>';
+    }).join('');
+  }).join('');
 
   root.innerHTML = '<div class="ed-main">' +
     '<div class="ed-head"><h1>' + esc(T.h1(C)) + '</h1>' + (v ? '<p class="ed-lead">' + T.lead(esc(C), Object.fromEntries(Object.entries(v).map(([k, x]) => [k, typeof x === 'string' ? esc(x) : x]))) + '</p>' : '') + '</div>' +
     '<section class="ed-section"><h2>' + esc(T.latest) + '</h2><div class="ed-tiles">' + tiles + '</div></section>' +
     (actual('gdp_growth').length ? '<section class="ed-section"><h2>' + esc(T.growthChart) + '<small>' + esc(T.growthUnit) + '</small></h2><svg class="ed-chart" id="ed-growth" viewBox="0 0 760 240" role="img" aria-label="' + esc(T.growthChart) + '"></svg></section>' : '') +
-    '<section class="ed-section"><h2>' + esc(T.history) + '</h2>' + table + '</section>' +
+    (recent ? '<section class="ed-section"><h2>' + esc(T.recent) + '</h2><div class="ed-tiles">' + recent + '</div></section>' : '') +
+    (years.length ? '<section class="ed-section"><h2>' + esc(T.history) + '</h2>' + table + '</section>' : '') +
+    (linkTable ? '<section class="ed-section"><h2>' + esc(T.links) + '</h2><div class="ed-table-wrap"><table class="ed-table ed-links-table"><thead><tr><th>' + esc(T.linkCol) + '</th><th>' + esc(T.periodCol) + '</th><th>' + esc(T.valueCol) + '</th><th>' + esc(T.changeCol) + '</th></tr></thead><tbody>' + linkTable + '</tbody></table></div></section>' : '') +
     '<section class="ed-section">' + sources(data.sources, data.updated_at) + '<div class="ed-links">' + libLink + '<a class="r-btn r-btn-outline" href="/' + locale + '/data/">' + esc(T.all) + '</a></div></section>' +
     '</div>';
 
@@ -168,7 +251,7 @@
   };
 
   document.querySelectorAll('[data-spark]').forEach((svg) => {
-    const vals = actual(svg.dataset.spark).slice(-11).map((p) => p[1]);
+    const vals = actual(svg.dataset.spark).slice(-(Number(svg.dataset.n) || 11)).map((p) => p[1]);
     if (vals.length < 2) return;
     const W = 120, H = 30, mn = Math.min(...vals), mx = Math.max(...vals);
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);

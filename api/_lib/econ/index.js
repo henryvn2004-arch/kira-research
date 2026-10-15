@@ -17,6 +17,9 @@ import * as ecos from './ecos.js';
 import * as bot from './bot.js';
 import * as estat from './estat.js';
 import * as krCustoms from './kr-customs.js';
+import * as opendosm from './opendosm.js';
+import * as bnm from './bnm.js';
+import * as singstat from './singstat.js';
 
 export { ISO3, FIRST_YEAR } from './util.js';
 
@@ -29,6 +32,9 @@ const ADAPTERS = {
   vn_nso: { series: vnNso.series },
   bok_ecos: { series: ecos.series },
   bot: { series: bot.series },
+  opendosm: { series: opendosm.series, flows: opendosm.flows },
+  bnm: { series: bnm.series },
+  singstat: { series: singstat.series, flows: singstat.flows },
   estat: { flows: estat.flows, own: true },
   kr_customs: { flows: krCustoms.flows, own: true }
 };

@@ -189,7 +189,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
-| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14 (see D1 block); D2–D7 wait for the owner's go |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2 built 2026-10-15 (see blocks); D3–D7 next |
 
 Work done outside the original sprint list (2026-10-12 → 10-14):
 
@@ -268,6 +268,15 @@ Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S
 - [x] Pages (noindex, not in nav or sitemap): `/<loc>/data/` (15 market cards) and `/<loc>/data/<country>` (template lead sentence, 8 tiles with sparklines, growth chart, 6-year table, source line, link to the library filtered by country), EN/JA/KO/ZH. Files `public/en/data/{index,_view}.html`, `public/js/econ-view.js`, `public/css/data.css`.
 - Taiwan has no World Bank data; its page says the national statistics office is being added (D2: DGBAS), or shows IMF once permission arrives.
 - Moved to D2: ABS (its CPI moved to a new monthly dataflow; Australia already has the World Bank annual series), Korea customs and e-Stat (need the owner's free keys).
+
+#### D2 — national APIs (built 2026-10-15)
+- [x] Migration 058 (applied): `data_sources.env_key` (a source whose key is not in Vercel yet is skipped and named "waiting for key" on `/en/admin/health`), `econ_indicators.country_code` + `params` (`params.group` = same kind of series across markets, `params.currency` for local-currency values), new table `econ_flows` (reporter × partner × product × flow × period: trade, direct investment, visitors).
+- [x] No key, live: PSA OpenSTAT (PH quarterly GDP, monthly CPI, trade by partner, approved FDI by investor country), Bank of Japan (yen per US$, call rate, Japan's direct investment in and from 10 of our markets + ASEAN, monthly), VN NSO PXWeb (industrial production, wages incl. foreign-owned firms, urban population), OpenDOSM (MY quarterly GDP, CPI, IPI, exports/imports, visitor arrivals by country), BNM (ringgit rate, OPR), SingStat (SG quarterly GDP, CPI, exports/imports by market, visitor arrivals by country).
+- [x] Built, waiting for the owner's key: e-Stat (`ESTAT_APP_ID`, Japan trade by partner and HS2, own cron Tuesday), Korea customs via data.go.kr (`DATA_GO_KR_KEY`, own cron Wednesday), Bank of Korea ECOS (`ECOS_API_KEY`), Bank of Thailand (`BOT_API_TOKEN`). ECOS and BoT stay `public = false` until their terms are read at key sign-up.
+- [x] `GET /api/econ?country=` adds national series and `flows`: each link summed over the last 12 months / 4 quarters / latest year, with the window before it for the change. HS-level rows stay for D3.
+- [x] Country page: "Latest monthly and quarterly figures" tiles and a "Trade, investment and visitor links" table (from either side's statistics, e.g. Japan's direct investment in Vietnam from the BoJ), EN/JA/KO/ZH.
+- Not built: BPS Indonesia (site blocks automated reads; build when the key exists), KOSIS and Stats NZ (not needed: ECOS has Korean CPI, Stats NZ's API has no CPI/GDP), ABS (World Bank covers Australia annually), Thai MOC, DGBAS Taiwan (moved to D6, files).
+- Owner: BoJ asks to be told when a service using its API goes public: email post.rsd17@boj.or.jp when the data pages are linked.
 
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 
