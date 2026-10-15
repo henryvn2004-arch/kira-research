@@ -79,6 +79,6 @@ insert into public.econ_indicators (key, source_key, source_code, country_code, 
   ('vn_ipi_growth', 'vn_nso', 'V07.02', 'VN', '{"en":"Industrial production growth","ja":"鉱工業生産伸び率","ko":"산업생산 증가율","zh":"工业生产增长率"}', 'pct', 'A', 320, '{"group":"ipi_growth"}'),
   ('vn_wage_all', 'vn_nso', 'V05.33', 'VN', '{"en":"Average monthly income, enterprise workers","ja":"企業従業員の平均月収","ko":"기업 근로자 월평균 소득","zh":"企业职工月均收入"}', 'lcu', 'A', 370, '{"group":"wage","currency":"VND"}'),
   ('vn_wage_foreign', 'vn_nso', 'V05.33', 'VN', '{"en":"Average monthly income, foreign-owned enterprises","ja":"外資100%企業の平均月収","ko":"외국인 투자기업 월평균 소득","zh":"外商独资企业月均收入"}', 'lcu', 'A', 380, '{"group":"wage_foreign","currency":"VND"}'),
-  ('vn_urban_pop', 'vn_nso', 'V02.03-07', 'VN', '{"en":"Urban population","ja":"都市人口","ko":"도시 인구","zh":"城镇人口"}', 'people', 'A', 390, '{"group":"urban_pop"}')
+  ('vn_urban_pop', 'vn_nso', 'V02.03-07', 'VN', '{"en":"Urban population (people)","ja":"都市人口（人）","ko":"도시 인구(명)","zh":"城镇人口（人）"}', 'people', 'A', 390, '{"group":"urban_pop"}')
 on conflict (key) do update set source_key = excluded.source_key, source_code = excluded.source_code, country_code = excluded.country_code,
   label = excluded.label, unit = excluded.unit, freq = excluded.freq, ord = excluded.ord, params = excluded.params;

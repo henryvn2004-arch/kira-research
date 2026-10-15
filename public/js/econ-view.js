@@ -22,7 +22,7 @@
       lead: (c, v) => `${c}'s real GDP ${v.neg ? 'shrank' : 'grew'} <b>${v.growthAbs}</b> in ${v.year}` + (v.gdp ? `, with GDP at <b>${v.gdp}</b>.` : '.') +
         (v.hh ? ` Households spent <b>${v.hh}</b>` + (v.fdi ? `, and foreign direct investment brought a net <b>${v.fdi}</b>.` : '.') : ''),
       ofYear: (y) => `${y}`,
-      recent: 'Latest monthly and quarterly figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
+      showAll: (n) => `Show all ${n}`, recent: 'Latest monthly and quarterly figures', links: 'Trade, investment and visitor links', linkCol: 'Link', periodCol: 'Period', valueCol: 'Value', changeCol: 'vs. year before',
       win: { M: (a, b) => `12 months to ${b}`, Q: (a, b) => `4 quarters to ${b}`, A: (a, b) => b },
       grp: { TOTAL: 'Merchandise trade', FDI: 'Direct investment', VISITORS: 'Visitors' },
       link: {
@@ -43,7 +43,7 @@
       lead: (c, v) => (v.growth ? `${c}の${v.year}年の実質GDP成長率は<b>${v.growth}</b>` : '') + (v.gdp ? `、名目GDPは<b>${v.gdp}</b>でした。` : '。') +
         (v.hh ? `家計消費支出は<b>${v.hh}</b>` + (v.fdi ? `、対内直接投資の純流入は<b>${v.fdi}</b>です。` : 'です。') : ''),
       ofYear: (y) => `${y}年`,
-      recent: '最新の月次・四半期データ', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
+      showAll: (n) => `すべて表示（${n}件）`, recent: '最新の月次・四半期データ', links: '貿易・投資・訪問者のつながり', linkCol: '項目', periodCol: '期間', valueCol: '値', changeCol: '前年比',
       win: { M: (a, b) => `${b}までの12か月`, Q: (a, b) => `${b}までの4四半期`, A: (a, b) => b },
       grp: { TOTAL: '商品貿易', FDI: '直接投資', VISITORS: '訪問者' },
       link: {
@@ -64,7 +64,7 @@
       lead: (c, v) => (v.growth ? `${c}의 ${v.year}년 실질 GDP 성장률은 <b>${v.growth}</b>` : '') + (v.gdp ? `, 명목 GDP는 <b>${v.gdp}</b>입니다.` : '입니다.') +
         (v.hh ? ` 가계 소비지출은 <b>${v.hh}</b>` + (v.fdi ? `, 외국인직접투자 순유입은 <b>${v.fdi}</b>입니다.` : '입니다.') : ''),
       ofYear: (y) => `${y}년`,
-      recent: '최신 월간·분기 지표', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
+      showAll: (n) => `전체 보기(${n}개)`, recent: '최신 월간·분기 지표', links: '무역·투자·방문객 연결', linkCol: '항목', periodCol: '기간', valueCol: '값', changeCol: '전년 대비',
       win: { M: (a, b) => `${b}까지 12개월`, Q: (a, b) => `${b}까지 4개 분기`, A: (a, b) => b },
       grp: { TOTAL: '상품 무역', FDI: '직접투자', VISITORS: '방문객' },
       link: {
@@ -85,7 +85,7 @@
       lead: (c, v) => (v.growth ? `${c}${v.year}年实际GDP增长<b>${v.growth}</b>` : '') + (v.gdp ? `，国内生产总值为<b>${v.gdp}</b>。` : '。') +
         (v.hh ? `家庭消费支出为<b>${v.hh}</b>` + (v.fdi ? `，外国直接投资净流入<b>${v.fdi}</b>。` : '。') : ''),
       ofYear: (y) => `${y}年`,
-      recent: '最新月度与季度数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
+      showAll: (n) => `显示全部（${n}项）`, recent: '最新月度与季度数据', links: '贸易、投资与访客往来', linkCol: '项目', periodCol: '期间', valueCol: '数值', changeCol: '同比',
       win: { M: (a, b) => `截至${b}的12个月`, Q: (a, b) => `截至${b}的4个季度`, A: (a, b) => b },
       grp: { TOTAL: '商品贸易', FDI: '直接投资', VISITORS: '访客' },
       link: {
@@ -221,14 +221,16 @@
   const GROUP = (f) => (f.product === 'TOTAL' ? 'TOTAL' : f.product === 'VISITORS' ? 'VISITORS' : 'FDI');
   const linkRows = (data.flows || []).filter((f) => T.link[f.product + '_' + f.flow]);
   const linkTable = ['TOTAL', 'FDI', 'VISITORS'].map((g) => {
-    const list = linkRows.filter((f) => GROUP(f) === g).sort((a, b) => (a.partner === 'WLD') - (b.partner === 'WLD') || Math.abs(b.value) - Math.abs(a.value));
+    const list = linkRows.filter((f) => GROUP(f) === g).sort((a, b) => (b.partner === 'WLD') - (a.partner === 'WLD') || Math.abs(b.value) - Math.abs(a.value));
     if (!list.length) return '';
-    return '<tr class="ed-grp"><th colspan="4">' + esc(T.grp[g]) + '</th></tr>' + list.map((f) => {
+    // Long groups (Singapore lists ~20 partners per table) show the 8 largest and a button for the rest.
+    const more = list.length > 9 ? '<tr class="ed-grp-more"><td colspan="4"><button type="button" class="ed-more-btn" data-grp="' + g + '">' + esc(T.showAll(list.length)) + '</button></td></tr>' : '';
+    return '<tr class="ed-grp"><th colspan="4">' + esc(T.grp[g]) + '</th></tr>' + list.map((f, i) => {
       const unit = f.currency === 'persons' ? 'persons' : 'lcu';
       const ch = f.prev && f.prev > 0 && f.value > 0 ? (f.value / f.prev - 1) * 100 : null;
-      return '<tr><td>' + esc(T.link[f.product + '_' + f.flow](nm(f.reporter), nm(f.partner))) + '</td><td>' + esc(T.win[f.freq](per(f.from), per(f.period))) + '</td>' +
+      return '<tr' + (more && i >= 8 ? ' class="ed-more" data-grp="' + g + '" hidden' : '') + '><td>' + esc(T.link[f.product + '_' + f.flow](nm(f.reporter), nm(f.partner))) + '</td><td>' + esc(T.win[f.freq](per(f.from), per(f.period))) + '</td>' +
         '<td>' + esc(fmt(f.value, unit, f.currency)) + '</td><td>' + (ch === null ? '–' : esc((ch > 0 ? '+' : '') + dec(1).format(ch) + '%')) + '</td></tr>';
-    }).join('');
+    }).join('') + more;
   }).join('');
 
   root.innerHTML = '<div class="ed-main">' +
@@ -240,6 +242,11 @@
     (linkTable ? '<section class="ed-section"><h2>' + esc(T.links) + '</h2><div class="ed-table-wrap"><table class="ed-table ed-links-table"><thead><tr><th>' + esc(T.linkCol) + '</th><th>' + esc(T.periodCol) + '</th><th>' + esc(T.valueCol) + '</th><th>' + esc(T.changeCol) + '</th></tr></thead><tbody>' + linkTable + '</tbody></table></div></section>' : '') +
     '<section class="ed-section">' + sources(data.sources, data.updated_at) + '<div class="ed-links">' + libLink + '<a class="r-btn r-btn-outline" href="/' + locale + '/data/">' + esc(T.all) + '</a></div></section>' +
     '</div>';
+
+  root.querySelectorAll('.ed-more-btn').forEach((b) => b.addEventListener('click', () => {
+    root.querySelectorAll('tr.ed-more[data-grp="' + b.dataset.grp + '"]').forEach((tr) => { tr.hidden = false; });
+    b.closest('tr').remove();
+  }));
 
   // ---- charts -----------------------------------------------------------------------------
   const NS = 'http://www.w3.org/2000/svg';
