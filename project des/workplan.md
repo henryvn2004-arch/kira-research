@@ -189,7 +189,7 @@ demand = 3 per email request + 1 per search → /en/admin/topics → owner appro
 | **S19** | Impulse pricing ($49 report · $29 transcript · $39 list · $149 month) + single-report checkout on | 🟡 code done (#109, #112): $49 report and $29 transcript checkout, `/en/terms` draft; both switched off (owner reads terms, turns on, one live test). Kira List $39 not built |
 | **S20** | Topic expansion to ~10,000 coming-soon pages, no LLM; pilot + thin-content test before indexing | ✅ closed 2026-10-12: measured, template pages would be >70% duplicate; owner chose the 1,892 real topics as the ad landing set |
 | **S21** | Google Ads launch: Ads Editor CSV, price in the ad, negatives, 3–4 week measured test | 🟡 campaign file + negatives built (paused); Google Ads steps and the test wait for the owner |
-| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2–D4 built 2026-10-15 (see blocks); D5–D7 next |
+| **D1–D7** | **Kira Data: free open data by API** (owner, 2026-10-14): macro / trade / FDI series + company moves (investment, new subsidiary, M&A) for the 15 markets; every free source, no paid ones. See "Open data" below | 🟡 D1 built 2026-10-14, D2–D5 built 2026-10-15 (see blocks); D6–D7 next |
 
 Work done outside the original sprint list (2026-10-12 → 10-14):
 
@@ -294,6 +294,15 @@ Paid search track (owner, 2026-10-12): **S16 ✅ → S17 🟡 → S18 🟡 → S
 - [x] Public `GET /api/moves?host=&investor=&type=&before=` (published, public sources), with `corridor` links when both host and investor are given. Pages (noindex): `/<loc>/data/moves` (filters, older moves) and corridor pages `/<loc>/data/<japan|south-korea|taiwan|singapore|china>-in-<market>` (direct investment / trade / visitor tiles + moves), EN/JA/KO/ZH (`js/data-moves.js`).
 - Not built: SEC EDGAR (its full-text search returns only the filer name, nothing to classify; US filers are not the target investors). A model step to name the company in news headlines (owner fills it on review for now).
 - Owner: review `/en/admin/moves` from time to time; the OpenDART and EDINET keys (keys page) add filings that publish themselves.
+
+#### D5 — registries + GLEIF (built 2026-10-15)
+- [x] Migration 061 (applied): `entities` gets `lei`, `legal_name`, `reg_id` (UEN / ABN / NZBN / corporate number), `reg_status`, `founded`, `parent_lei`, `ultimate_parent_lei`, `registry` (what each source returned), `registry_checked_at`; `company_groups` (92 Japanese / Korean / Taiwanese groups with name tokens, e.g. TOYOTA, SAMSUNG, LG ELECTRONICS, FOXCONN); `company_events.tier` adds `registry`. Licence rows: GLEIF (CC0), ACRA (Singapore Open Data Licence), Houjin Bangou, ABN Lookup, NZBN (keys).
+- [x] `api/_lib/registry/`: `gleif.js` (LEI by name + country, direct / ultimate parent, entities founded since a date), `acra.js` (UEN by name on data.gov.sg, new companies by day), `national.js` (Houjin Bangou JP, ABN AU, NZBN NZ: wait for their keys), `names.js` (legal-form-blind name match, group token match).
+- [x] Daily cron `/api/cron-registry` (21:40 UTC, health job `registry-refresh`): (1) new Singapore companies named after a followed group and new GLEIF entities in the 15 markets with a foreign ultimate parent → drafts in `/en/admin/moves`; (2) 60 entities a day enriched, never-checked first (all 1,174 in about 3 weeks).
+- [x] `/en/admin/companies`: "Registry match" KPI and a Registry column (LEI, national number, status).
+- Findings: GLEIF covers the big Japanese groups (Toyota, Honda, Nissan, Mazda, Subaru matched) but few of their Southeast Asian subsidiaries (Toyota: 1 in PH, 4 in AU); ACRA is fresh within ~4 days (about 90 new companies a day, none named after a followed group in the last 14 days).
+- Not built: GCIS (Taiwan; no Taiwanese companies in `entities` yet), ASIC bulk file (ABN Lookup covers the same names once keyed), gBizINFO (Houjin Bangou covers it), company-page display (the pages are not linked yet).
+- Owner: the Houjin Bangou, ABN and NZBN keys (keys page) add Japanese, Australian and New Zealand registry numbers.
 
 **Owner actions (click-through).** Register free keys: OpenDART, EDINET, e-Stat, data.go.kr, KOSIS, ECOS, BPS, BOT, Stats NZ, Houjin Bangou (takes 2–4 weeks: start first). Email copyright@imf.org for IMF reuse. Claude prepares each form's text.
 
