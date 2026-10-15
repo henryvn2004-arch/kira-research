@@ -25,6 +25,9 @@
 // DB only gets hit at most once per hour per locale per edge region.
 // ============================================================
 
+import { coverage, countryIndexable, pairIndexable } from './_lib/econ/coverage.js';
+import { INVESTOR_SLUG, HOST_SLUG } from './_lib/moves/alerts.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -220,6 +223,32 @@ async function buildLocale(locale) {
     for (const t of seoTopics) {
       urls.push(urlEntry({ subPath: `reports/${t.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
     }
+  }
+
+  // 3d) Kira Data pages (D7) that pass the data check (api/_lib/econ/coverage.js): the index, market pages with
+  //     enough indicators, corridor pages with enough links or a published move, and the moves feed once a move
+  //     is published. Every locale, with hreflang (the pages are translated).
+  try {
+    const cov = await coverage();
+    const [{ rows: countries }, { rows: moves }] = await Promise.all([
+      sb('tax_countries?select=code,name'),
+      sb('company_events?status=eq.published&select=host_country,investor_country&limit=5000')
+    ]);
+    const slugOf = (n) => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    urls.push(urlEntry({ subPath: 'data/', locale, changefreq: 'weekly', priority: '0.6' }));
+    for (const c of countries) {
+      if (countryIndexable(cov, c.code)) urls.push(urlEntry({ subPath: `data/${slugOf(c.name)}`, locale, changefreq: 'weekly', priority: '0.6' }));
+    }
+    if (moves.length) urls.push(urlEntry({ subPath: 'data/moves', locale, changefreq: 'daily', priority: '0.5' }));
+    for (const [inv, invSlug] of Object.entries(INVESTOR_SLUG)) {
+      for (const [host, hostSlug] of Object.entries(HOST_SLUG)) {
+        if (inv === host) continue;
+        const n = moves.filter((m) => m.host_country === host && m.investor_country === inv).length;
+        if (pairIndexable(cov, inv, host, n)) urls.push(urlEntry({ subPath: `data/${invSlug}-in-${hostSlug}`, locale, changefreq: 'weekly', priority: '0.5' }));
+      }
+    }
+  } catch (err) {
+    console.error('[sitemap] data pages skipped:', err.message);   // never fail the sitemap over one section
   }
 
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)

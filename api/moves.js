@@ -6,9 +6,18 @@
 //   With both host and investor (a corridor page, e.g. Japan in Vietnam) the reply adds
 //     corridor: { fdi, links[] }   fdi = the investor's net direct investment in the host, last 12 months
 //     (BoJ, Japan only); links = trade and visitor flows between the two (api/_lib/econ/summarise.js)
+//   indexable: the page passes the data check (api/_lib/econ/coverage.js; the corridor page and the unfiltered feed)
+// Paid layer (D7): while the Month subscription is on sale (checkout.subscription_enabled), a reader who is not a
+//   subscriber (Authorization: Bearer <supabase-jwt>, admins pass) gets the 10 newest moves and no older pages:
+//   older_locked = true. While it is off, everyone gets the full history.
 // ============================================================
 
 import { LINK_PRODUCTS, summarise } from './_lib/econ/summarise.js';
+import { coverage, pairIndexable } from './_lib/econ/coverage.js';
+import { getConfig } from './_lib/config.js';
+import { verifyBearer, isEntitled } from './_lib/transcripts.js';
+
+const FREE_MOVES = 10;
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -26,8 +35,9 @@ export default async function handler(req, res) {
   const q = req.query || {};
   const host = code(q.host), investor = code(q.investor);
   const type = TYPES.includes(String(q.type || '')) ? String(q.type) : null;
-  const limit = Math.min(200, Math.max(1, Number(q.limit) || 50));
-  const before = /^\d{4}-\d{2}-\d{2}$/.test(String(q.before || '')) ? String(q.before) : null;
+  let limit = Math.min(200, Math.max(1, Number(q.limit) || 50));
+  let before = /^\d{4}-\d{2}-\d{2}$/.test(String(q.before || '')) ? String(q.before) : null;
+  const authed = /^Bearer\s+\S+/i.test(String(req.headers.authorization || ''));
   try {
     const [countries, sources] = await Promise.all([
       sb('tax_countries?select=code,name'),
@@ -39,8 +49,21 @@ export default async function handler(req, res) {
     if (investor) filt.push(`investor_country=eq.${investor}`);
     if (type) filt.push(`type=eq.${type}`);
     if (before) filt.push(`event_date=lt.${before}`);
-    const events = (await sb(`company_events?${filt.join('&')}&select=id,source_key,url,title,domain,lang,event_date,investor_country,host_country,type,company,value_usd,tier,also` +
+    // Paid layer: only the newest FREE_MOVES for readers without the Month plan, while the plan is on sale.
+    let gated = false;
+    if (await getConfig('checkout.subscription_enabled')) {
+      const user = authed ? await verifyBearer(req) : null;
+      gated = !(user && await isEntitled(user));
+    }
+    if (gated && before) {
+      res.setHeader('Cache-Control', authed ? 'private, no-store' : 'public, s-maxage=600');
+      return res.status(200).json({ events: [], corridor: null, names: {}, sources: [], older_locked: true });
+    }
+    if (gated) limit = FREE_MOVES + 1;
+    let events = (await sb(`company_events?${filt.join('&')}&select=id,source_key,url,title,domain,lang,event_date,investor_country,host_country,type,company,value_usd,tier,also` +
       `&order=event_date.desc,id.desc&limit=${limit}`)).map((e) => ({ ...e, also: (e.also || []).length }));
+    const olderLocked = gated && events.length > FREE_MOVES;
+    if (gated) events = events.slice(0, FREE_MOVES);
 
     let corridor = null;
     if (host && investor && host !== investor) {
@@ -50,9 +73,15 @@ export default async function handler(req, res) {
         `&select=source_key,reporter,partner,product,flow,freq,period,value,currency&order=period.desc&limit=5000`);
       corridor = { links: summarise(flows) };
     }
+    let indexable = false;
+    if (!type && !before) {
+      if (host && investor) indexable = pairIndexable(await coverage().catch(() => ({ country: {}, pair: {} })), host, investor, events.length);
+      else if (!host && !investor) indexable = events.length > 0;
+    }
     const used = new Set([...events.map((e) => e.source_key), ...(corridor ? corridor.links.map((l) => l.source_key) : [])]);
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
-    return res.status(200).json({ events, corridor, names: Object.fromEntries(countries.map((c) => [c.code, c.name])), sources: sources.filter((s) => used.has(s.key)) });
+    res.setHeader('Cache-Control', authed ? 'private, no-store' : 'public, s-maxage=3600, stale-while-revalidate=86400');
+    return res.status(200).json({ events, corridor, names: Object.fromEntries(countries.map((c) => [c.code, c.name])), sources: sources.filter((s) => used.has(s.key)),
+      older_locked: olderLocked, indexable });
   } catch (err) {
     console.error('[moves] error:', err.message);
     return res.status(500).json({ error: 'server_error' });

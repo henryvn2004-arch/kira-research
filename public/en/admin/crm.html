@@ -142,7 +142,7 @@
       return d;
     }
 
-    const KIND = { lead: 'Request', waitlist: 'Waitlist', request: 'Topic request', purchase: 'Purchase', email_out: 'Email sent' };
+    const KIND = { lead: 'Request', waitlist: 'Waitlist', request: 'Topic request', alert: 'Moves alert', purchase: 'Purchase', email_out: 'Email sent' };
     const STAGE = { open: 'Open', talking: 'Talking', won: 'Won', lost: 'Lost' };
     const FILTERS = [['all', 'Everyone'], ['due', 'Follow-up due'], ['talking', 'Talking'], ['buyers', 'Buyers'], ['lost', 'Lost']];
 
@@ -184,7 +184,7 @@
       const rows = visible();
       root.innerHTML = `
         <div class="cr-head"><h1>CRM</h1></div>
-        <p class="cr-lead">Everyone who has left an email, asked to be told when a report is ready, joined the waitlist or bought, one row per person. The history comes from the original forms and payments; only your stage, note and follow-up date are saved here.</p>
+        <p class="cr-lead">Everyone who has left an email, asked to be told when a report is ready, asked for new company moves, joined the waitlist or bought, one row per person. The history comes from the original forms and payments; only your stage, note and follow-up date are saved here.</p>
         <div class="cr-stats">
           <div><b>${counts.total}</b>people</div><div><b>${counts.buyers}</b>buyers</div>
           <div><b>${counts.talking}</b>in conversation</div><div><b>${counts.due}</b>follow-ups due</div>

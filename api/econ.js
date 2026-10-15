@@ -6,9 +6,11 @@
 //   GET /api/econ?country=vietnam  → every public indicator for one market (also accepts ?country=VN), plus
 //                                    `flows`: trade, direct investment and visitor links that touch it, summed over
 //                                    the last 12 months / 4 quarters / latest year, with the window before it
+//   `indexable` (D7): the page passes the data check of the sitemap (api/_lib/econ/coverage.js)
 // ============================================================
 
 import { LINK_PRODUCTS, summarise } from './_lib/econ/summarise.js';
+import { COUNTRY_MIN } from './_lib/econ/coverage.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -57,7 +59,8 @@ export default async function handler(req, res) {
       return res.status(200).json({
         countries: countries.map((c) => ({ code: c.code, name: c.name, slug: slugOf(c.name), latest: latest[c.code] || {} })),
         indicators: indicators.filter((i) => HEADLINE.includes(i.key)),
-        sources
+        sources,
+        indexable: true
       });
     }
 
@@ -82,11 +85,14 @@ export default async function handler(req, res) {
     }
     for (const r of flowRows) if (!updated || r.retrieved_at > updated) updated = r.retrieved_at;
     const flows = summarise(flowRows);
+    // Same rule as data_page_coverage(): indicators with an actual (not forecast) value in the last 3 years.
+    const recent = new Set(rows.filter((r) => !r.is_forecast && r.period >= since).map((r) => r.indicator_key));
     return res.status(200).json({
       country: { code: country.code, name: country.name, slug: slugOf(country.name) },
       updated_at: updated,
       indicators: indicators.filter((i) => byInd[i.key]).map((i) => ({ ...i, series: byInd[i.key] })),
       flows,
+      indexable: recent.size >= COUNTRY_MIN,
       names: Object.fromEntries(countries.map((c) => [c.code, c.name])),
       sources: sources.filter((s) => indicators.some((i) => i.source_key === s.key && byInd[i.key]) || flows.some((f) => f.source_key === s.key))
     });

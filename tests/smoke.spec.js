@@ -1163,16 +1163,35 @@ test.describe('Kira Data (D1)', () => {
     expect(new Set(ytd.map((f) => f.period)).size).toBe(1);
   });
 
+  test('moves alerts: sign-up validation, bad link, paid export needs sign-in (D7)', async ({ request }) => {
+    expect((await request.get('/api/moves-alert')).status()).toBe(405);
+    expect((await request.post('/api/moves-alert', { data: { email: 'not-an-email', host: 'VN' } })).status()).toBe(400);
+    expect((await request.post('/api/moves-alert', { data: { email: 'a@example.com' } })).status()).toBe(400);
+    const bad = await request.get('/api/moves-alert?t=deadbeefdeadbeefdeadbeef&a=confirm', { maxRedirects: 0 });
+    expect(bad.status()).toBe(302);
+    expect(bad.headers()['location']).toContain('alert=unknown');
+    expect((await request.get('/api/econ-export?country=vietnam')).status()).toBe(401);
+  });
+
+  test('data pages that pass the data check are in the sitemap and indexable (D7)', async ({ request }) => {
+    const xml = await (await request.get('/sitemap-en.xml')).text();
+    expect(xml).toContain('https://kiraresearch.com/en/data/vietnam');
+    expect((await (await request.get('/api/econ?country=vietnam')).json()).indexable).toBe(true);
+  });
+
   test('/api/econ rejects an unknown market', async ({ request }) => {
     expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
   });
 
-  test('data index and country page render, noindex', async ({ page }) => {
+  test('data index and country page render; indexed only when the data check passes (D7)', async ({ page }) => {
     await page.goto('/en/data/');
     await expect(page.locator('.ed-card').first()).toBeVisible({ timeout: 10000 });
     await page.goto('/ja/data/vietnam');
     await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 10000 });
     await expect(page.locator('.ed-tile').first()).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
+    await page.goto('/en/data/taiwan');   // no public indicators for Taiwan yet
+    await expect(page.locator('.ed-head h1')).toBeVisible({ timeout: 10000 });
     expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
   });
 });

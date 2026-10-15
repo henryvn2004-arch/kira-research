@@ -69,6 +69,11 @@ export const CONFIG = {
     label: 'Send the daily "your report is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
   },
+  'notify.moves_alerts_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Send the daily "new company moves" emails (Kira Data alerts)',
+    help: 'Off: nothing is sent and every alert keeps its place, so readers get the moves they missed when you switch it back on. Readers sign up on the moves and corridor pages and confirm by email first.'
+  },
   'notify.chain_ready_enabled': {
     group: 'Emails', type: 'bool', default: true,
     label: 'Send the daily "your value chain is ready" emails',
