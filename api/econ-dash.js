@@ -10,8 +10,11 @@
 //             direct investment by investor, from the host's statistics or (out = true) the investor's;
 //             per source and reporting market the 12 largest partners plus the total;
 //             annual since 10 years, quarterly since 6 years, monthly the last 36 months
-//     trade   [{ src, reporter, partner, flow, currency, points }]  monthly merchandise trade, the last 25 months,
-//             the 8 largest partners per reporter and direction plus the world total
+//     trade   [{ src, reporter, partner, flow, currency, points }]  monthly merchandise trade, the last 25 months:
+//             the 8 largest partners per reporter and direction (both directions for each, for the trade balance)
+//             plus the world total
+//     pulse   { CODE: { inflation|rate|growth: { key, freq, period, value, prev_period, prev } } }  the latest monthly or
+//             quarterly reading of national inflation, policy rate and GDP growth (the page falls back to annual data)
 //     fx      [{ code, last[date, value], m1[date, value], y1[date, value] }]  local currency per US$ (ECB daily):
 //             the latest rate, about a month and about a year before
 //     sources[], updated_at }
@@ -66,7 +69,11 @@ export default async function handler(req, res) {
     const flowCols = '&select=source_key,reporter,partner,product,flow,freq,period,value,currency,retrieved_at';
     const flowOrder = '&order=source_key,reporter,partner,product,flow,freq,period';
 
-    const [indicators, rows, fdiA, fdiQ, fdiM, trade, fxRows] = await Promise.all([
+    // National monthly / quarterly readings for the pulse table, matched by key: *_cpi_yoy, *_gdp_growth_q, policy rates.
+    const pulseInd = await sb(`econ_indicators?active=eq.true&source_key=${srcIn}&freq=in.(M,Q)&unit=eq.pct&select=key,freq,country_code`);
+    const PULSE = (k) => (/_cpi_yoy$/.test(k) ? 'inflation' : /_gdp_growth_q$/.test(k) ? 'growth' : /_(call_rate|opr|base_rate|policy_rate)$/.test(k) ? 'rate' : null);
+    const pulseKeys = pulseInd.filter((i) => PULSE(i.key)).map((i) => i.key);
+    const [indicators, rows, fdiA, fdiQ, fdiM, trade, fxRows, pulseRows] = await Promise.all([
       sb(`econ_indicators?key=in.(${COMPARE.join(',')})&source_key=${srcIn}&select=key,label,unit`),
       sbAll(`econ_series?indicator_key=in.(${COMPARE.join(',')})&source_key=${srcIn}&is_forecast=eq.false&period=gte.2010` +
         `&select=indicator_key,country_code,period,value,retrieved_at&order=indicator_key,country_code,period`),
@@ -75,7 +82,9 @@ export default async function handler(req, res) {
       sbAll(`econ_flows?source_key=${srcIn}&product=in.(${FDI.join(',')})&freq=eq.M&period=gte.${m36}${flowCols}${flowOrder}`),
       sbAll(`econ_flows?source_key=${srcIn}&product=eq.TOTAL&freq=eq.M&period=gte.${m25}${flowCols}${flowOrder}`),
       sbAll(`econ_series?indicator_key=eq.fx_usd_daily&source_key=${srcIn}&period=gte.${new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10)}` +
-        `&select=country_code,period,value,retrieved_at&order=country_code,period`)
+        `&select=country_code,period,value,retrieved_at&order=country_code,period`),
+      pulseKeys.length ? sbAll(`econ_series?indicator_key=in.(${pulseKeys.join(',')})&source_key=${srcIn}&is_forecast=eq.false&period=gte.${year - 2}` +
+        `&select=indicator_key,country_code,period,value,source_key,retrieved_at&order=indicator_key,country_code,period`) : []
     ]);
 
     let updated = null;
@@ -113,10 +122,27 @@ export default async function handler(req, res) {
     const groups = {};
     for (const s of all) (groups[[s.src, s.reporter, s.flow].join('|')] = groups[[s.src, s.reporter, s.flow].join('|')] || []).push(s);
     const last12 = (s) => s.points.slice(-12).reduce((t, p) => t + p[1], 0);
-    const tradeOut = Object.values(groups).flatMap((list) => [
-      ...list.filter((s) => s.partner === 'WLD'),
-      ...list.filter((s) => s.partner !== 'WLD').sort((a, b) => last12(b) - last12(a)).slice(0, TOP_PARTNERS)
-    ]);
+    // Partners kept per reporter: the largest by exports and the largest by imports; both directions are sent for each.
+    const keep = {};
+    for (const list of Object.values(groups)) {
+      const r = list[0], k = r.src + '|' + r.reporter;
+      keep[k] = keep[k] || new Set(['WLD']);
+      list.filter((s) => s.partner !== 'WLD').sort((a, b) => last12(b) - last12(a)).slice(0, TOP_PARTNERS).forEach((s) => keep[k].add(s.partner));
+    }
+    const tradeOut = all.filter((s) => keep[s.src + '|' + s.reporter].has(s.partner));
+
+    // Pulse: the latest two readings per market and measure (policy rates: the latest change is what matters, so the
+    // previous reading is the last one with a different value).
+    pulseRows.forEach(seen);
+    const pulse = {};
+    const byKey = {};
+    for (const r of pulseRows) (byKey[r.indicator_key + '|' + r.country_code] = byKey[r.indicator_key + '|' + r.country_code] || []).push(r);
+    for (const list of Object.values(byKey)) {
+      const k = list[0].indicator_key, cc = list[0].country_code, what = PULSE(k), last = list[list.length - 1];
+      const prev = what === 'rate' ? [...list].reverse().find((r) => Number(r.value) !== Number(last.value)) : list[list.length - 2];
+      (pulse[cc] = pulse[cc] || {})[what] = { key: k, freq: (pulseInd.find((i) => i.key === k) || {}).freq, period: last.period, value: round(last.value),
+        prev_period: prev ? prev.period : null, prev: prev ? round(prev.value) : null };
+    }
 
     // Exchange rates: the latest day, and the last day on or before one month and one year earlier.
     fxRows.forEach(seen);
@@ -125,7 +151,8 @@ export default async function handler(req, res) {
     const back = (pts, days) => { const lim = new Date(Date.parse(pts[pts.length - 1][0]) - days * 864e5).toISOString().slice(0, 10); return pts.filter((p) => p[0] <= lim).pop() || null; };
     const fx = Object.entries(fxBy).map(([code, pts]) => ({ code, last: pts[pts.length - 1], m1: back(pts, 30), y1: back(pts, 365) }));
 
-    const used = new Set([...(fx.length ? ['ecb'] : []), ...rows.map(() => 'worldbank_wdi'), ...invest.map((s) => s.src), ...tradeOut.map((s) => s.src)]);
+    const used = new Set([...(fx.length ? ['ecb'] : []), ...rows.map(() => 'worldbank_wdi'), ...invest.map((s) => s.src), ...tradeOut.map((s) => s.src),
+      ...pulseRows.map((r) => (pulseInd.length ? r.source_key : null)).filter(Boolean)]);
     res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=604800');
     return res.status(200).json({
       countries: countries.map((c) => ({ code: c.code, name: c.name, slug: slugOf(c.name) })),
@@ -134,6 +161,7 @@ export default async function handler(req, res) {
       invest,
       trade: tradeOut,
       fx,
+      pulse,
       sources: sources.filter((s) => used.has(s.key)),
       updated_at: updated
     });
