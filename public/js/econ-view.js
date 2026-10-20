@@ -325,7 +325,7 @@
   }));
   indexable(data.indexable);
   wireExcel(data.country.slug);
-  if (window.kiraDash) window.kiraDash.mount({ bar: document.getElementById('dd-bar'), body: document.getElementById('dd-body'), code: data.country.code });
+  if (window.kiraDash) window.kiraDash.mount({ bar: document.getElementById('dd-bar'), body: document.getElementById('dd-body'), code: data.country.code, econ: data });
 
   // ---- charts -----------------------------------------------------------------------------
   const NS = 'http://www.w3.org/2000/svg';

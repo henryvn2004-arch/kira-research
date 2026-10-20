@@ -13,6 +13,8 @@
 //     trade   [{ src, reporter, partner, flow, currency, points }]  monthly merchandise trade, the last 25 months:
 //             the 8 largest partners per reporter and direction (both directions for each, for the trade balance)
 //             plus the world total
+//     visitors [{ src, reporter, partner, currency, points }]  monthly visitor arrivals by origin (persons), the last
+//             25 months, the 8 largest origins per market plus the total
 //     pulse   { CODE: { inflation|rate|growth: { key, freq, period, value, prev_period, prev } } }  the latest monthly or
 //             quarterly reading of national inflation, policy rate and GDP growth (the page falls back to annual data)
 //     fx      [{ code, last[date, value], m1[date, value], y1[date, value] }]  local currency per US$ (ECB daily):
@@ -73,7 +75,7 @@ export default async function handler(req, res) {
     const pulseInd = await sb(`econ_indicators?active=eq.true&source_key=${srcIn}&freq=in.(M,Q)&unit=eq.pct&select=key,freq,country_code`);
     const PULSE = (k) => (/_cpi_yoy$/.test(k) ? 'inflation' : /_gdp_growth_q$/.test(k) ? 'growth' : /_(call_rate|opr|base_rate|policy_rate)$/.test(k) ? 'rate' : null);
     const pulseKeys = pulseInd.filter((i) => PULSE(i.key)).map((i) => i.key);
-    const [indicators, rows, fdiA, fdiQ, fdiM, trade, fxRows, pulseRows] = await Promise.all([
+    const [indicators, rows, fdiA, fdiQ, fdiM, trade, fxRows, pulseRows, visitRows] = await Promise.all([
       sb(`econ_indicators?key=in.(${COMPARE.join(',')})&source_key=${srcIn}&select=key,label,unit`),
       sbAll(`econ_series?indicator_key=in.(${COMPARE.join(',')})&source_key=${srcIn}&is_forecast=eq.false&period=gte.2010` +
         `&select=indicator_key,country_code,period,value,retrieved_at&order=indicator_key,country_code,period`),
@@ -84,7 +86,8 @@ export default async function handler(req, res) {
       sbAll(`econ_series?indicator_key=eq.fx_usd_daily&source_key=${srcIn}&period=gte.${new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10)}` +
         `&select=country_code,period,value,retrieved_at&order=country_code,period`),
       pulseKeys.length ? sbAll(`econ_series?indicator_key=in.(${pulseKeys.join(',')})&source_key=${srcIn}&is_forecast=eq.false&period=gte.${year - 2}` +
-        `&select=indicator_key,country_code,period,value,source_key,retrieved_at&order=indicator_key,country_code,period`) : []
+        `&select=indicator_key,country_code,period,value,source_key,retrieved_at&order=indicator_key,country_code,period`) : [],
+      sbAll(`econ_flows?source_key=${srcIn}&product=eq.VISITORS&freq=eq.M&period=gte.${m25}${flowCols}${flowOrder}`)
     ]);
 
     let updated = null;
@@ -131,6 +134,17 @@ export default async function handler(req, res) {
     }
     const tradeOut = all.filter((s) => keep[s.src + '|' + s.reporter].has(s.partner));
 
+    // Visitors: per market the largest origins over the last 12 months, plus the total.
+    visitRows.forEach(seen);
+    const vAll = series(visitRows, (r) => [r.source_key, r.reporter, r.partner].join('|'),
+      (r) => ({ src: r.source_key, reporter: r.reporter, partner: r.partner, currency: r.currency }));
+    const vBy = {};
+    for (const s of vAll) (vBy[s.src + '|' + s.reporter] = vBy[s.src + '|' + s.reporter] || []).push(s);
+    const visitors = Object.values(vBy).flatMap((list) => [
+      ...list.filter((s) => s.partner === 'WLD'),
+      ...list.filter((s) => s.partner !== 'WLD').sort((a, b) => last12(b) - last12(a)).slice(0, TOP_PARTNERS)
+    ]);
+
     // Pulse: the latest two readings per market and measure (policy rates: the latest change is what matters, so the
     // previous reading is the last one with a different value).
     pulseRows.forEach(seen);
@@ -151,7 +165,7 @@ export default async function handler(req, res) {
     const back = (pts, days) => { const lim = new Date(Date.parse(pts[pts.length - 1][0]) - days * 864e5).toISOString().slice(0, 10); return pts.filter((p) => p[0] <= lim).pop() || null; };
     const fx = Object.entries(fxBy).map(([code, pts]) => ({ code, last: pts[pts.length - 1], m1: back(pts, 30), y1: back(pts, 365) }));
 
-    const used = new Set([...(fx.length ? ['ecb'] : []), ...rows.map(() => 'worldbank_wdi'), ...invest.map((s) => s.src), ...tradeOut.map((s) => s.src),
+    const used = new Set([...(fx.length ? ['ecb'] : []), ...rows.map(() => 'worldbank_wdi'), ...invest.map((s) => s.src), ...tradeOut.map((s) => s.src), ...visitors.map((s) => s.src),
       ...pulseRows.map((r) => (pulseInd.length ? r.source_key : null)).filter(Boolean)]);
     res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=604800');
     return res.status(200).json({
@@ -162,6 +176,7 @@ export default async function handler(req, res) {
       trade: tradeOut,
       fx,
       pulse,
+      visitors,
       sources: sources.filter((s) => used.has(s.key)),
       updated_at: updated
     });
