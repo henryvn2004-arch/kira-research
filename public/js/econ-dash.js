@@ -1,7 +1,8 @@
 // Kira Data dashboard: the tab bar (All markets + 15 markets), the "Investing from" filter and the chart blocks
 // on /<locale>/data/ and /<locale>/data/<country>. Each block answers one buyer question:
 //   All markets: where to go (growth vs income, league table), is now a good time (currencies), who invests where (ASEAN matrix, or one investor's
-//   trend), latest company moves.  One market: trade momentum, who is investing, latest company moves.
+//   trend), latest company moves.  One market: exchange rate, half-month trade (Viet Nam), trade momentum, who is
+//   investing, who is visiting (Malaysia, Singapore), latest company moves.
 // Data: /api/econ-dash (public sources only), /api/moves. Charts: Chart.js (vendored, /js/vendor).
 // Called by econ-view.js: window.kiraDash.mount({ bar, body, code }).
 (function () {
@@ -13,7 +14,8 @@
   const LENS = ['JP', 'KR', 'TW', 'CN', 'SG', 'HK', 'US'];
   const CORRIDOR = { JP: 'japan', KR: 'south-korea', TW: 'taiwan', SG: 'singapore', CN: 'china' };
   const SRC = { aseanstats: 'ASEANstats', bkpm: 'BKPM (Indonesia)', boj: 'Bank of Japan', psa_openstat: 'Philippine Statistics Authority',
-    tw_mac: 'Taiwan, Investment Commission', vn_nso: 'Viet Nam National Statistics Office', vn_customs: 'Viet Nam Customs', singstat: 'SingStat', worldbank_wdi: 'World Bank', ecb: 'European Central Bank' };
+    tw_mac: 'Taiwan, Investment Commission', vn_nso: 'Viet Nam National Statistics Office', vn_customs: 'Viet Nam Customs', singstat: 'SingStat', worldbank_wdi: 'World Bank', ecb: 'European Central Bank',
+    opendosm: 'Department of Statistics Malaysia', bnm: 'Bank Negara Malaysia' };
   const PAL = ['#1A66F0', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#0EA5E9', '#64748B', '#EC4899'];
 
   const T = {
@@ -22,6 +24,10 @@
       hPulse: 'The latest reading in each market', pulseCols: ['Market', 'Inflation', 'Policy rate', 'GDP growth', 'Currency vs US$, 1 month'],
       capPulse: 'Monthly or quarterly figures where the national source publishes them, otherwise the latest year (World Bank). Arrows compare with the reading before.',
       hBal: (c, b) => `${c}: trade balance with each partner, 12 months to ${b}`, capBal: 'Above zero = exports to the partner are larger than imports from it.',
+      qVisit: 'Who is visiting', hVisit: (c) => `Visitor arrivals in ${c} by origin, monthly`, hVisitLens: (c, i) => `Visitors from ${i} to ${c}, monthly`,
+      visTot: (c) => `Visitor arrivals in ${c}`, visFrom: (c, i) => `Visitors from ${i} to ${c}`,
+      hFxC: (c) => `${c}: local currency per US dollar, last 12 months`, capFxC: (d) => `Higher = the local currency is weaker against the US dollar. ECB daily rates up to ${d}.`,
+      hHalf: (c) => `${c}: total exports and imports, every half month`, capHalf: 'Each bar is half a month (1st–15th, 16th–end): preliminary figures, released about a week after each half.', exp: 'Exports', imp: 'Imports',
       qNow: 'Is now a good time', hFx: 'Local currencies against the US dollar', fx1m: 'Past month', fx1y: 'Past 12 months',
       capFx: (d) => `Above zero = the local currency gained against the US dollar. ECB daily rates up to ${d}; no rate is published for the Vietnamese dong, Taiwan dollar, riel, kip, kyat or Brunei dollar.`,
       all: 'All markets', from: 'Investing from', any: 'Any country',
@@ -51,6 +57,10 @@
       hPulse: '各市場の最新の数値', pulseCols: ['市場', 'インフレ率', '政策金利', 'GDP成長率', '対米ドル相場（1か月）'],
       capPulse: '各国統計が公表している場合は月次・四半期の数値、それ以外は直近年（世界銀行）。矢印は前回の数値との比較です。',
       hBal: (c, b) => `${c}：相手国別の貿易収支、${b}までの12か月`, capBal: 'ゼロより上＝相手国への輸出が相手国からの輸入を上回る。',
+      qVisit: '誰が訪れているか', hVisit: (c) => `${c}への訪問者数（出身国別、月次）`, hVisitLens: (c, i) => `${i}から${c}への訪問者数（月次）`,
+      visTot: (c) => `${c}への訪問者数`, visFrom: (c, i) => `${i}から${c}への訪問者`,
+      hFxC: (c) => `${c}：対米ドル相場（直近12か月）`, capFxC: (d) => `上昇＝現地通貨が米ドルに対して下落。欧州中央銀行の日次レート（${d}まで）。`,
+      hHalf: (c) => `${c}：輸出入総額（半月ごと）`, capHalf: '各棒は半月分（1〜15日、16日〜月末）の速報値で、各期間の約1週間後に公表されます。', exp: '輸出', imp: '輸入',
       qNow: '今が好機か', hFx: '各国通貨の対米ドル相場', fx1m: '過去1か月', fx1y: '過去12か月',
       capFx: (d) => `ゼロより上＝現地通貨が米ドルに対して上昇。欧州中央銀行の日次レート（${d}まで）。ベトナムドン、台湾ドル、リエル、キープ、チャット、ブルネイドルのレートは公表されていません。`,
       all: '全市場', from: '投資元', any: 'すべての国',
@@ -80,6 +90,10 @@
       hPulse: '시장별 최신 수치', pulseCols: ['시장', '물가상승률', '기준금리', 'GDP 성장률', '대미 달러 환율(1개월)'],
       capPulse: '해당국 통계가 공표하는 경우 월간·분기 수치, 아니면 최근 연도(세계은행). 화살표는 직전 수치와의 비교입니다.',
       hBal: (c, b) => `${c}: 교역국별 무역수지, ${b}까지 12개월`, capBal: '0보다 위 = 해당국으로의 수출이 해당국으로부터의 수입보다 많음.',
+      qVisit: '누가 방문하는가', hVisit: (c) => `${c} 방문객(출발국별, 월간)`, hVisitLens: (c, i) => `${i}발 ${c} 방문객(월간)`,
+      visTot: (c) => `${c} 방문객 수`, visFrom: (c, i) => `${i}발 ${c} 방문객`,
+      hFxC: (c) => `${c}: 미 달러당 현지통화(최근 12개월)`, capFxC: (d) => `위로 갈수록 현지 통화가 미 달러 대비 약세. 유럽중앙은행 일간 환율(${d}까지).`,
+      hHalf: (c) => `${c}: 수출입 총액(반월별)`, capHalf: '막대 하나는 반월(1~15일, 16일~말일) 잠정치이며, 각 기간 약 1주일 뒤 공표됩니다.', exp: '수출', imp: '수입',
       qNow: '지금이 적기인가', hFx: '현지 통화의 대미 달러 환율', fx1m: '최근 1개월', fx1y: '최근 12개월',
       capFx: (d) => `0보다 위 = 현지 통화가 미 달러 대비 강세. 유럽중앙은행 일간 환율(${d}까지). 베트남 동, 대만 달러, 리엘, 킵, 짯, 브루나이 달러 환율은 공표되지 않습니다.`,
       all: '전체 시장', from: '투자국', any: '모든 국가',
@@ -109,6 +123,10 @@
       hPulse: '各市场最新数据', pulseCols: ['市场', '通胀率', '政策利率', 'GDP增长率', '兑美元汇率（1个月）'],
       capPulse: '国家统计机构公布月度或季度数据时使用该数据，否则使用最近年份（世界银行）。箭头为与上一期数据比较。',
       hBal: (c, b) => `${c}：与各贸易伙伴的贸易差额，截至${b}的12个月`, capBal: '高于零＝对该伙伴的出口大于自其进口。',
+      qVisit: '谁在到访', hVisit: (c) => `${c}入境访客（按来源地，月度）`, hVisitLens: (c, i) => `${i}赴${c}访客（月度）`,
+      visTot: (c) => `${c}入境访客`, visFrom: (c, i) => `${i}赴${c}访客`,
+      hFxC: (c) => `${c}：每美元兑本币（近12个月）`, capFxC: (d) => `越高＝本币兑美元越弱。欧洲中央银行每日汇率（截至${d}）。`,
+      hHalf: (c) => `${c}：进出口总额（每半月）`, capHalf: '每根柱为半个月（1–15日、16日至月末）的初步数据，约在每期结束一周后公布。', exp: '出口', imp: '进口',
       qNow: '现在是好时机吗', hFx: '各国货币兑美元走势', fx1m: '近1个月', fx1y: '近12个月',
       capFx: (d) => `高于零＝本币兑美元升值。欧洲中央银行每日汇率（截至${d}）。越南盾、新台币、瑞尔、基普、缅元和文莱元无公布汇率。`,
       all: '全部市场', from: '投资来源', any: '任意国家',
@@ -140,6 +158,8 @@
   const curFmt = {};
   const money = (v, c) => (v == null || !Number.isFinite(v) ? '–' : (curFmt[c || 'USD'] = curFmt[c || 'USD'] ||
     new Intl.NumberFormat(NUM, { style: 'currency', currency: c || 'USD', notation: 'compact', maximumSignificantDigits: 3 })).format(v));
+  const people = new Intl.NumberFormat(NUM, { notation: 'compact', maximumSignificantDigits: 3 });
+  const persons = (v) => (v == null || !Number.isFinite(v) ? '–' : people.format(v));
   const pct = (v) => (v == null || !Number.isFinite(v) ? '–' : pct1.format(v) + '%');
   const change = (a, b) => (a > 0 && b > 0 ? (a / b - 1) * 100 : null);
   const monthFmt = new Intl.DateTimeFormat(NUM, { year: 'numeric', month: 'short', timeZone: 'UTC' });
@@ -151,6 +171,9 @@
     if (m) return monthFmt.format(new Date(Date.UTC(+m[1], +m[2] - 1, 1)));
     const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p);
     if (d) return dayFmt.format(new Date(Date.UTC(+d[1], +d[2] - 1, +d[3])));
+    // Half month: 'YYYY-MM-H1' = days 1–15, 'YYYY-MM-H2' = 16 to the end of the month.
+    const hm = /^(\d{4})-(\d{2})-H([12])$/.exec(p);
+    if (hm) return monthFmt.format(new Date(Date.UTC(+hm[1], +hm[2] - 1, 1))) + ' ' + (hm[3] === '1' ? '1–15' : '16–' + new Date(Date.UTC(+hm[1], +hm[2], 0)).getUTCDate());
     return T.ofYear(p);
   }
   let NAMES = {};
@@ -387,10 +410,36 @@
   }
 
   // ---- one market ---------------------------------------------------------------------------------------
-  function renderCountry(el, code) {
+  // econ = the /api/econ reply of this market (econ-view.js): daily exchange rates and half-month trade come from it.
+  function renderCountry(el, code, econ) {
     const C = nm(code);
     let h = '';
     const draws = [];
+
+    const ser = (k) => { const i = ((econ && econ.indicators) || []).find((x) => x.key === k); return i ? i.series.filter((p) => !p[2]) : []; };
+
+    // Exchange rate: local currency per US dollar, daily, the last 12 months (ECB).
+    const fxd = ser('fx_usd_daily');
+    if (fxd.length > 20) {
+      const lim = new Date(Date.parse(fxd[fxd.length - 1][0]) - 365 * 864e5).toISOString().slice(0, 10);
+      const pts = fxd.filter((p) => p[0] >= lim);
+      h += sec(T.qNow, T.hFxC(C), box('dd-fxc'), esc(T.capFxC(per(pts[pts.length - 1][0]))));
+      draws.push(() => draw('dd-fxc', { type: 'line', data: { labels: pts.map((p) => per(p[0])), datasets: [{ data: pts.map((p) => p[1]),
+        borderColor: '#1A66F0', backgroundColor: 'rgba(26,102,240,.08)', fill: true, tension: 0, pointRadius: 0, borderWidth: 1.6 }] },
+        options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 7 } }, y: { ticks: { callback: (v) => (Math.abs(v) >= 100 ? Math.round(v).toLocaleString(NUM) : v.toFixed(2)) } } } } }));
+    }
+
+    // Half-month trade totals (Viet Nam Customs): the earliest read of trade in the region.
+    const hx = ser('vn_exports_half'), hmv = ser('vn_imports_half');
+    if (hx.length && hmv.length) {
+      const halves = [...new Set([...hx, ...hmv].map((p) => p[0]))].sort().slice(-24);
+      const at = (a, p) => { const x = a.find((y) => y[0] === p); return x ? x[1] : null; };
+      h += sec(T.qTrade, T.hHalf(C), box('dd-half'), esc(T.capHalf) + ' · ' + esc(T.srcLbl(SRC.vn_customs, per(halves[halves.length - 1]))));
+      draws.push(() => draw('dd-half', { type: 'bar', data: { labels: halves.map(per), datasets: [
+        { label: T.exp, data: halves.map((p) => at(hx, p)), backgroundColor: '#1A66F0' },
+        { label: T.imp, data: halves.map((p) => at(hmv, p)), backgroundColor: '#F59E0B' }] },
+        options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: tipMoney('USD') }, scales: { y: moneyAxis('USD'), x: { ticks: { maxTicksLimit: 8 } } } } }));
+    }
 
     // Trade momentum (monthly trade by partner, from this market's own statistics).
     const tr = D.trade.filter((s) => s.reporter === code);
@@ -460,6 +509,23 @@
     } else if (lens) {
       h += sec(T.qWho, T.hInvestLens(nm(lens), C), '<p class="dd-cap">' + esc(T.noLens(nm(lens), C)) + '</p>');
     }
+    // Visitors by origin (monthly arrivals, from this market's statistics).
+    const vs = (D.visitors || []).filter((x) => x.reporter === code);
+    const vpick = lens ? vs.filter((x) => x.partner === lens) : vs.filter((x) => x.partner !== 'WLD').slice(0, 6);
+    if (vs.length && vpick.length) {
+      const months = [...new Set(vs.flatMap((x) => x.points.map((p) => p[0])))].sort();
+      const tot = vs.find((x) => x.partner === (lens || 'WLD'));
+      const s12 = (x, a, b) => x.points.slice(a, b).reduce((t, p) => t + p[1], 0);
+      const g = tot && tot.points.length >= 24 ? change(s12(tot, -12), s12(tot, -24, -12)) : null;
+      const tile = tot ? '<div class="ed-tiles"><div class="ed-tile"><span class="lbl">' + esc(lens ? T.visFrom(C, nm(lens)) : T.visTot(C)) + '</span><span class="val">' + esc(persons(s12(tot, -12))) + '</span><span class="sub">' +
+        esc(T.win12(per(months[months.length - 1]))) + (g == null ? '' : ' · <b class="' + (g >= 0 ? 'dd-up' : 'dd-dn') + '">' + (g >= 0 ? '▲ ' : '▼ ') + pct(Math.abs(g)) + '</b> ' + esc(T.yoy)) + '</span></div></div>' : '';
+      h += sec(T.qVisit, lens ? T.hVisitLens(C, nm(lens)) : T.hVisit(C), tile + box('dd-vis'), esc(T.srcLbl(SRC[vs[0].src] || vs[0].src, per(months[months.length - 1]))));
+      draws.push(() => draw('dd-vis', { type: 'line', data: { labels: months.map(per), datasets: vpick.map((x, i) => ({ label: nm(x.partner),
+        data: months.map((m) => { const p = x.points.find((y) => y[0] === m); return p ? p[1] : null; }), borderColor: PAL[i], backgroundColor: PAL[i], tension: 0, pointRadius: 0, borderWidth: 2 })) },
+        options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: (x) => x.dataset.label + ': ' + persons(x.raw) } } },
+          scales: { y: { ticks: { callback: (v) => persons(v) } }, x: { ticks: { maxTicksLimit: 8 } } } } }));
+    }
+
     if (lens && CORRIDOR[lens] && lens !== code) {
       h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/data/' + CORRIDOR[lens] + '-in-' + (D.countries.find((x) => x.code === code) || {}).slug + '">' + esc(T.corridor(nm(lens), C)) + '</a></div>';
     }
@@ -476,7 +542,7 @@
     const paint = () => {
       charts.splice(0).forEach((c) => c.destroy());
       if (o.bar) bar(o.bar, o.code);
-      if (o.body) (o.code ? renderCountry(o.body, o.code) : renderAll(o.body));
+      if (o.body) (o.code ? renderCountry(o.body, o.code, o.econ) : renderAll(o.body));
       const sel = document.getElementById('dd-lens');
       if (sel) sel.addEventListener('change', () => {
         lens = pickLens(sel.value);
