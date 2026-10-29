@@ -41,7 +41,11 @@ const q = s => '$kbat$' + s + '$kbat$';
 const splitPages = h => h.split(/(?=<div class="page[" ])/).slice(1);
 
 function extract(loc) {
-  const html = need(loc + '.html');
+  // Drop HTML comments: the page template's layout comment holds sample markup (<div class="commentary"><p>…</p>)
+  // that would otherwise be read as the preview paragraphs.
+  // Repeat until nothing changes, so a nested comment cannot leave a new "<!--" behind.
+  let html = need(loc + '.html');
+  for (let prev; prev !== html;) { prev = html; html = html.replace(/<!--[\s\S]*?-->/g, ''); }
   const pages = splitPages(html);
   const title = text((html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '');
   if (!title) throw new Error(loc + ': empty <title>');
