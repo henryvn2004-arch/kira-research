@@ -311,6 +311,7 @@ Spawn ONE subagent for JA translation **with `model: "opus"`** (see Model routin
 4. `grep -oE '\[[A-Za-z][^]]+\]' ja.html | sort -u` vs same on en.html — JA's set must be a SUPERSET of EN's (translator may add `[出典凡例]` label, must not REMOVE any EN publisher alias).
    - **Acceptable diff**: a single tag with the same publisher alias but a translated descriptive tail (e.g. EN `[Kira estimates · computed from active-user-share above]` ≠ JA `[Kira estimates · 上記アクティブ利用者シェアから算出]`). The publisher alias `Kira estimates` is preserved → SOURCE KEY cross-reference still resolves. Log it in the commit message but do NOT fail the gate.
    - **Fail-gate**: a publisher alias itself was Japanized (e.g. `[BPS 2024]` → `[インドネシア統計庁 2024]`), or any EN alias disappeared entirely.
+5. **Font shell (the PDF renderer has no CJK system fonts):** `grep -c 'Noto+Sans+JP' ja.html` must be ≥ 1 and `<html lang="ja"` present; if the inlined CSS has no `--font-cjk`, `'Noto Sans JP'` must also appear in the font stacks (translator_jp.md §0). Missing → fix the shell and re-render; never publish a PDF of boxes. Quick look: `pdftoppm -r 40 -f 4 -l 4 -png ja.pdf /tmp/p4` and open it.
 
 If any check fails → failure path. Otherwise:
 
@@ -333,7 +334,7 @@ Exactly mirror Step 4 but use `translator_ko.md` rules. Spawn the subagent **wit
 
 Forbidden-term grep for KO swaps the JP-specific transliterations for KO-specific ones: `Mordor|Frost|Euromonitor|Synovate|Ipsos|IMARC|Claude|McKinsey|클로드|クロード|맥킨지|모르도르`.
 
-### 5.2 — KO validation gate (same as 4.3 with ja→ko)
+### 5.2 — KO validation gate (same as 4.3 with ja→ko; check 5 uses `Noto+Sans+KR`, `lang="ko"` and `'Noto Sans KR'`)
 
 If it fails → failure path. If it passes:
 
