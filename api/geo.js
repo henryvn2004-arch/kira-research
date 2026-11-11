@@ -267,10 +267,9 @@ async function renderTradeIndustry(req, res, loc, industry) {
 }
 
 // ── hub index pages: /<loc>/markets and /<loc>/markets/<country> ──
-async function groupName(key) {
-  const i = key.indexOf('--');
-  return i > 0 ? segmentName(key.slice(0, i)) : null;
-}
+// A level-2 key (<industry>--<segment>) sits under its industry; a level-1 key is its own industry, so it sits
+// in that industry's group too (first in the list, labelled as the overview).
+const groupSlug = (key) => (key.indexOf('--') > 0 ? key.slice(0, key.indexOf('--')) : key);
 
 async function renderCountry(req, res, loc, countrySlug) {
   const country = await countryBySlug(countrySlug);
@@ -285,16 +284,17 @@ async function renderCountry(req, res, loc, countrySlug) {
   const cName = countryName(country, vl);
   const groups = new Map();
   for (const h of list) {
-    const g = (await groupName(h.segment)) || L.otherGroup;
-    if (!groups.has(g)) groups.set(g, []);
-    groups.get(g).push({ h, name: await segmentName(h.segment) });
+    const g = groupSlug(h.segment);
+    if (!groups.has(g)) groups.set(g, { name: await segmentName(g), items: [] });
+    const lvl1 = h.segment === g;
+    groups.get(g).items.push({ h, lvl1, name: lvl1 ? `${await segmentName(g)} (${L.overall})` : await segmentName(h.segment) });
   }
   const path = `/${vl}/markets/${countrySlug}`;
   const h1 = L.countryH1(cName);
   const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1, href: `/${vl}/markets` }, { name: cName }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.countryMeta(list.length))}</p>` +
-    [...groups.entries()].sort((a, b) => (a[0] === L.otherGroup) - (b[0] === L.otherGroup) || a[0].localeCompare(b[0])).map(([g, items]) =>
-      `<section><h2>${esc(g)}</h2><ul class="geo-list">${items.sort((a, b) => a.name.localeCompare(b.name)).map(({ h, name }) => `<li><a href="/${vl}/markets/${countrySlug}/${esc(h.segment)}">${esc(name)}</a> · ${esc(L.answersN(h.counts[vl]))}</li>`).join('')}</ul></section>`).join('') +
+    [...groups.values()].sort((a, b) => a.name.localeCompare(b.name)).map(({ name: g, items }) =>
+      `<section><h2>${esc(g)}</h2><ul class="geo-list">${items.sort((a, b) => (b.lvl1 - a.lvl1) || a.name.localeCompare(b.name)).map(({ h, name }) => `<li><a href="/${vl}/markets/${countrySlug}/${esc(h.segment)}">${esc(name)}</a> · ${esc(L.answersN(h.counts[vl]))}</li>`).join('')}</ul></section>`).join('') +
     '<!--/SSR-->';
   const editions = LOCALES.filter((l) => okFor(l).length);
   await shell(req, res, {
