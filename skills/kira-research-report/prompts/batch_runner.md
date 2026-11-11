@@ -522,20 +522,22 @@ Cuts the report's executive-summary page and its first chart page out of the fin
 
 **5.3b-7 — Cut the report into citable answers (GEO, migration 065).**
 
-Prompts live in the private brain: `${KIRA_BRAIN_DIR}/geo/prompts/` (`common.md`, `report_extract.md`, `qa.md`). Never copy them here.
+Prompts live in the private brain: `${KIRA_BRAIN_DIR}/geo/prompts/` (`common.md`, `report_extract.md`, `qa.md`, `translate.md`). Never copy them here.
 
 0. **Segment** — `node scripts/geo-segment.mjs --report <slug>` prints `{segment_key, method, candidates}`: the topic's level-2 segment, or `null` plus up to 8 candidate segments of the country.
 1. **Extract** — spawn ONE Haiku subagent (`model: haiku`). Give it the two prompt files, the slug, `country_code`, the resolved `segment_key` (or, when it is null, the `candidates` list), the analysis name and buyer question from the topic brief, and the local files `outputs/batch/${id}/en.html` + `outputs/batch/${id}/exhibits.json` (if present). It writes `outputs/batch/${id}/geo.json`.
 2. **QA** — spawn ONE Sonnet subagent (`model: sonnet`) with `qa.md`, the slug, title, kind `report` and analysis name, and ONLY `geo.json` (not the report). It rewrites `geo.json` in place (drops or fixes rows whose first clause does not answer the question, fixes the analysis name).
-3. **Gate + insert** (code, no model):
+2b. **Translate** — spawn ONE Haiku subagent (`model: haiku`) with `translate.md` and ONLY `geo.json`. It adds `i18n.ja` / `i18n.ko` / `i18n.zh` (`question` + `answer_short`) to every row in place and leaves any other `i18n` key as it is.
+3. **Gate + insert** (code, no model). The first command drops any ja/ko/zh version whose numbers differ from the English row (or that lost "KIRA"); the English rows are not touched:
 
 ```bash
 B=skills/kira-research-report/outputs/batch/${id}
+node scripts/geo-i18n-gate.mjs --rows $B/geo.json
 node scripts/geo-gate.mjs --rows $B/geo.json --source $B/en.html \
   $( [ -s $B/exhibits.json ] && echo --source $B/exhibits.json ) --status published --insert
 ```
 
-Prints `answers x/y passed` and one `✗` line per rejected row; only passed rows are inserted (`kira_answers`, upsert on `content_hash`, so a re-run adds nothing twice). NOT fatal and never delays the queue: note `geo: x/y` (or the failure) in the fire summary and continue. `geo.json` stays in the private archive with the rest of the folder (Step 5.3d), never in this repo.
+`geo-i18n-gate.mjs` prints `ja x kept / y dropped · ko … · zh …`; a dropped translation only means that row shows in English for that language. `geo-gate.mjs` prints `answers x/y passed` and one `✗` line per rejected row; only passed rows are inserted (`kira_answers`, upsert on `content_hash`, so a re-run adds nothing twice). NOT fatal and never delays the queue: note `geo: x/y` (or the failure) in the fire summary and continue. `geo.json` stays in the private archive with the rest of the folder (Step 5.3d), never in this repo.
 
 **5.3c — Verify (3 cache-busted curls):**
 
