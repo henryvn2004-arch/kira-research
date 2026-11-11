@@ -4,8 +4,8 @@
 // 2) upsert 3 report_translations (on_conflict=report_id,locale), pdf_url = <id>/<locale>.pdf
 import { PUBLISH } from './_build_2026-th-rubber_sql.mjs';
 
-const BASE = process.env.SUPABASE_URL;
-const KEY  = process.env.SUPABASE_SERVICE_KEY;
+const BASE = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY  = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!BASE || !KEY) { console.error('missing SUPABASE env'); process.exit(1); }
 
 const H = {

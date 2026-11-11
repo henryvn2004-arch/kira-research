@@ -4,7 +4,7 @@ The Routine is created in the claude.ai Routines UI (the API tool cannot attach 
 
 **Routine settings**
 - **Repositories:** `henryvn2004-arch/kira-research` and `henryvn2004-arch/kira-pipeline` (private brain). Both are cloned side by side under `/home/user/` in the fired session. The runner saves each report's folder to `kira-pipeline` `main` (`report-archive/`, `archive-batch.mjs`), so that repo needs the same push-to-`main` permission as `kira-research`; check it before the first fire after 2026-10-13. If the form offers an option to push to branches other than `claude/*`, turn it on for `kira-research`: the runner commits `batch:` messages straight to `main`.
-- **Environment:** `OpenAI Key` (`env_01Khi54Dffp38bzpmjYSGrYg`). It must define `PDF_RENDER_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` and `OPENAI_API_KEY` (cover art; optional) and allow outbound to kiraresearch.com, `*.supabase.co`, `api.openai.com`.
+- **Environment:** `OpenAI Key` (`env_01Khi54Dffp38bzpmjYSGrYg`). It must define `PDF_RENDER_SECRET`, `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` (or the prefixed `KIRA_SUPABASE_URL` + `KIRA_SUPABASE_SERVICE_KEY`) and `OPENAI_API_KEY` (cover art; optional) and allow outbound to kiraresearch.com, `*.supabase.co`, `api.openai.com`.
 - **Schedule (2026-10-07):** one fire = one full report (EN → JA → KO → ZH → publish, about 60–100 min; `batch_runner.md` Step 6 chains the stages), so fires per day = reports per day. Ramp agreed with the owner: start at 3/day, then 5, 7, 10 once a step runs clean (all fires `done`, no `error` rows, usage fine in claude.ai Settings → Usage). Cron in Vietnam time (`CRON_TZ=Asia/Ho_Chi_Minh`):
 
   | Reports/day | Cron |

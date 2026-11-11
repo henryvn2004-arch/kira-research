@@ -119,7 +119,7 @@ async function main() {
     process.exit(1);
   }
 
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+  if (!(process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL) || !(process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY)) {
     console.error('✗ Missing env: SUPABASE_URL and SUPABASE_SERVICE_KEY must be set');
     process.exit(1);
   }
@@ -134,8 +134,8 @@ async function main() {
   console.log('───────────────────────────────────────────────────────\n');
 
   const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY,
+    (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL),
+    (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY),
     { auth: { persistSession: false } }
   );
 

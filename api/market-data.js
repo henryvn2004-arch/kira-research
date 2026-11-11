@@ -18,8 +18,8 @@
 
 import { resolveProfile } from './_lib/market-map.js';
 
-const SUPABASE_URL         = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_URL         = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 const MACRO = ['gdp_growth', 'inflation', 'gdp_per_capita'];
 const CHAPTER_SOURCES = ['estat', 'kr_customs'];   // report HS2 chapters only
 const TRADE_YEARS = 6;

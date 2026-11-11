@@ -5,8 +5,8 @@
 // Run: node skills/kira-research-report/scripts/_publish_2026-vn-automotive-parts_rest.mjs
 // Prints the resolved report_id on success.
 
-const URL = process.env.SUPABASE_URL;
-const KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!URL || !KEY) { console.error('MISSING env SUPABASE_URL/SUPABASE_SERVICE_KEY'); process.exit(1); }
 
 const H = {

@@ -26,7 +26,7 @@ const batchDir = path.join(here, '../outputs/batch');
 const out = arg('out');
 
 const taken = { slugs: new Set(), codes: new Set() };
-const { SUPABASE_URL: url, SUPABASE_SERVICE_KEY: key } = process.env;
+const url = process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY;
 if (url && key) {
   try {
     const r = await fetch(`${url}/rest/v1/living_reports?select=slug,code&limit=10000`,

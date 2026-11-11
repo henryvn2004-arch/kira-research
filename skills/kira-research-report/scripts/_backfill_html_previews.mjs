@@ -36,7 +36,7 @@ const REPORTS = [
 ];
 const LOCALES = ['en', 'ja', 'ko'];
 
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+if (!(process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL) || !(process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY)) {
   console.error('SUPABASE_URL + SUPABASE_SERVICE_KEY env vars required');
   process.exit(2);
 }

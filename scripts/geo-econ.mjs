@@ -10,7 +10,7 @@ import { buildRows, syncRows } from '../api/_lib/geo-econ.js';
 
 const args = process.argv.slice(2);
 const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null; };
-const { SUPABASE_URL: url, SUPABASE_SERVICE_KEY: key } = process.env;
+const url = process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY;
 if (!url || !key) { console.error('needs SUPABASE_URL and SUPABASE_SERVICE_KEY'); process.exit(2); }
 // A real service key goes in both headers; a placeholder (a proxy adds the real key to apikey) must not go in Authorization.
 const H = { apikey: key, ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {}), 'Content-Type': 'application/json' };

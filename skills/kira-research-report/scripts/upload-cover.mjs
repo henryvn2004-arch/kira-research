@@ -20,7 +20,7 @@ import sharp from 'sharp';
 
 const arg = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : null; };
 const kind = arg('kind'), slug = arg('slug'), input = arg('in');
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!['report', 'insight'].includes(kind) || !slug || !input) {
   console.error('usage: upload-cover.mjs --kind report|insight --slug <slug> --in <cover.jpg>');
   process.exit(2);

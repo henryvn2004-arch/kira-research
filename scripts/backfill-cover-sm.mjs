@@ -3,7 +3,7 @@
 // public `covers` bucket, so the library list stops loading 360x480 images for 64-76px slots.
 // New covers get it from upload-cover.mjs. Safe to re-run. Env: SUPABASE_URL, SUPABASE_SERVICE_KEY.
 import sharp from 'sharp';
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!URL_ || !KEY) { console.error('SUPABASE_URL / SUPABASE_SERVICE_KEY missing'); process.exit(3); }
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
 const rows = await (await fetch(`${URL_}/rest/v1/living_reports?select=slug,cover_thumb_url&cover_thumb_url=not.is.null&limit=1000`, { headers: H })).json();

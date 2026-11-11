@@ -24,7 +24,7 @@ const v = validateExhibits(data);
 if (!v.ok) { console.error(v.errors.join('\n')); process.exit(2); }
 if (!/^[a-z0-9-]{3,120}$/.test(naming.slug || '')) { console.error('naming.json slug malformed'); process.exit(2); }
 
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!URL_ || !KEY) { console.log(JSON.stringify({ ok: false, error: 'SUPABASE_URL / SUPABASE_SERVICE_KEY missing' })); process.exit(3); }
 const db = createClient(URL_, KEY, { auth: { persistSession: false } });
 

@@ -4,8 +4,8 @@
 // (on_conflict=report_id,locale). Prints REPORT_ID=<uuid> on success.
 import { SLUG, COUNTRY, INDUSTRY, YEAR, PAGES, PRICE, META } from './_build_2027-vn-cement_sql.mjs';
 
-const BASE = process.env.SUPABASE_URL;
-const KEY  = process.env.SUPABASE_SERVICE_KEY;
+const BASE = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY  = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!BASE || !KEY) { console.error('missing SUPABASE_URL / SUPABASE_SERVICE_KEY'); process.exit(2); }
 
 const H = {
