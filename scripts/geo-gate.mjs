@@ -165,7 +165,8 @@ const A_COLS = ['question', 'intent', 'country_code', 'segment_key', 'brand', 'm
   'primary_source', 'source_kind', 'source_ref', 'home', 'i18n', 'status', 'gate', 'checked_at', 'content_hash'];
 const C_COLS = ['topic', 'industry', 'country_code', 'speaker_role', 'claim_text', 'transcript_slug', 'section', 'basis_label', 'i18n',
   'status', 'gate', 'checked_at', 'content_hash'];
-const pick = (r, cols) => Object.fromEntries(cols.filter((c) => r[c] !== undefined).map((c) => [c, r[c]]));
+// i18n is NOT NULL in both tables: a row without one gets {} (an explicit null in the SQL would fail the whole insert).
+const pick = (r, cols) => Object.fromEntries(cols.filter((c) => r[c] !== undefined || c === 'i18n').map((c) => [c, c === 'i18n' ? r[c] ?? {} : r[c]]));
 const passedA = answers.filter((x) => x.gate.ok).map((r) => pick(r, A_COLS));
 const passedC = claims.filter((x) => x.gate.ok).map((r) => pick(r, C_COLS));
 
