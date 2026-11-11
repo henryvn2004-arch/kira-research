@@ -79,20 +79,24 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const trade = claims.length
     ? `<section id="how-the-trade-works"><h2>How the trade works</h2><ul class="geo-claims">${claims.slice(0, 20).map((c) => claimItem(c, titles)).join('')}</ul></section>` : '';
 
-  // Who's who: BizDirect summary; nothing at all until it answers 200.
+  // Who's who: BizDirect Asia segment summary (final shape); nothing at all on 400/503/timeout.
   let who = '';
   try {
     const cw = await crosswalk(country.code, segment);
     const bd = await bizdirectSummary(cw);
-    const list = bd && (bd.companies || bd.items || bd.players);
-    if (Array.isArray(list) && list.length) {
-      const link = (x) => { const u = x.url || x.profile_url || x.link; return /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '') ? u : ''; };
-      const more = bd.list_url || bd.url;
-      who = `<section id="whos-who"><h2>Who's who</h2><ul class="geo-list">${list.slice(0, 12).map((x) => {
-        const n = esc(x.name || x.title || ''); const u = link(x);
-        return n ? `<li>${u ? `<a href="${esc(u)}" rel="noopener">${n}</a>` : n}</li>` : '';
-      }).join('')}</ul>` +
-        (typeof more === 'string' && /^https:\/\/(www\.)?bizdirectasia\.com\//.test(more) ? `<p class="geo-note"><a href="${esc(more)}" rel="noopener">See the full company list on BizDirect Asia</a></p>` : '') + '</section>';
+    const segs = bd && Array.isArray(bd.segments) ? bd.segments.filter((s) => s && (s.companies > 0 || (s.pages || []).length)) : [];
+    const ok = (u) => /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '');
+    const where = (r) => (r ? ` (${esc(r)})` : '');
+    if (segs.length) {
+      who = '<section id="whos-who"><h2>Who\'s who</h2>' + segs.map((s) => {
+        const pages = (s.pages || []).filter((p) => ok(p.url));
+        const top = (s.top_companies || []).slice(0, 10).filter((c) => c && c.name);
+        const regions = (s.top_regions || []).slice(0, 5).filter((r) => r && r.region);
+        return `<h3>${esc(s.name || s.term)}</h3><p>${esc(Number(s.companies) || 0)} companies in BizDirect Asia's database.` +
+          (pages.length ? ' ' + pages.map((p) => `<a href="${esc(p.url)}" rel="noopener">${esc(p.role ? String(p.role).replace(/^./, (c) => c.toUpperCase()) + ' list' : 'Company list')}</a>`).join(' · ') : '') + '</p>' +
+          (top.length ? `<ul class="geo-list">${top.map((c) => `<li>${esc(c.name)}${where(c.region)}</li>`).join('')}</ul>` : '') +
+          (regions.length ? `<p class="geo-note">Top regions: ${regions.map((r) => `${esc(r.region)} (${esc(r.companies)})`).join(', ')}</p>` : '');
+      }).join('') + '<p class="geo-note">Company data: BizDirect Asia (sister company)</p></section>';
     }
   } catch (_e) { who = ''; }
 
