@@ -27,3 +27,8 @@ export function claimItem(c, titles, loc, withLink = true) {
   return `<li>${esc(c.claim_text)} <span class="geo-basis">${who}${esc(c.basis_label)}` +
     (t ? ` · <a href="/${loc}/experts/transcripts/${esc(c.transcript_slug)}">${esc(t)}</a>` : '') + '</span></li>';
 }
+
+// The line above every list of field claims: they are modelled interviews, not recorded calls.
+const METHOD_LABEL = { en: 'Methodology', ja: '調査手法', ko: '방법론', zh: '研究方法' };
+export const modelledNote = (L, loc) =>
+  `<p class="geo-note geo-src">${L.modelled((label) => `<a href="/${loc}/methodology">${esc(METHOD_LABEL[loc] || label)}</a>`)}</p>`;

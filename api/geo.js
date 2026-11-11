@@ -22,7 +22,7 @@ import {
 } from './_lib/geo.js';
 import { T, countryName } from './_lib/geo-i18n.js';
 import { logGeoHit } from './_lib/geo-hits.js';
-import { answerBlock, claimItem } from './_lib/geo-html.js';
+import { answerBlock, claimItem, modelledNote } from './_lib/geo-html.js';
 
 const cut = (s, n) => { const t = plain(s); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
 const day = (iso) => String(iso || '').slice(0, 10);
@@ -92,7 +92,7 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   // How the trade works: statements from this market's transcripts that feed the hub (in the page's language).
   const claims = (await claimsForTranscripts(trSlugs)).filter((c) => c.country_code === country.code).map((c) => claimLoc(c, vl)).filter(Boolean);
   const trade = claims.length
-    ? `<section id="how-the-trade-works"><h2>${esc(L.howTrade)}</h2><ul class="geo-claims">${claims.slice(0, 20).map((c) => claimItem(c, titles, vl)).join('')}</ul></section>` : '';
+    ? `<section id="how-the-trade-works"><h2>${esc(L.howTrade)}</h2>${modelledNote(L, vl)}<ul class="geo-claims">${claims.slice(0, 20).map((c) => claimItem(c, titles, vl)).join('')}</ul></section>` : '';
 
   // Who's who: BizDirect Asia segment summary (final shape); nothing at all on 400/503/timeout.
   let who = '';
@@ -195,7 +195,7 @@ async function renderTrade(req, res, loc, industry, topicSlg) {
   const content = '<!--SSR-->' +
     crumbs([{ name: L.library, href: `/${vl}/library` }, { name: ind.name, href: `/${vl}/trade/${industry}` }, { name: label }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.tradeMeta(updated, claims.length, new Set(claims.map((c) => c.transcript_slug)).size))}</p>` +
-    blocks.join('') +
+    modelledNote(L, vl) + blocks.join('') +
     (siblings.length ? `<section id="more"><h2>${esc(L.moreOn(ind.name))}</h2><ul class="geo-list">${siblings.map(([k]) => `<li><a href="/${vl}/trade/${industry}/${topicSlug(k)}">${esc(L.topics[k] || k)}</a></li>`).join('')}</ul></section>` : '') +
     '<!--/SSR-->';
   const ld = [{ id: 'ld-breadcrumb', data: crumbJson([
