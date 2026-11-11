@@ -46,6 +46,8 @@ const BANNED = [
 const HONORIFIC = /\b(Mr|Mrs|Ms|Mdm|Miss|Dr|Prof|Sir|Madam|Bapak|Pak|Ibu|Bu|Khun|Anh|Chị|Ông|Bà|Mas|Mbak)\.?\s+\p{Lu}/u;
 // A single named or identifiable person "was interviewed" framing.
 const ONE_PERSON = /\b(told (us|KIRA|our analysts?)|in an interview with|interviewed (a|an|one)\b|our interviewee|the expert (said|told|explained)|he said|she said)\b/i;
+// A KIRA segment key (tax_industries.slug): "industry--segment" for level 2, or a bare industry slug some topics use.
+const SEGMENT = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)?$/;
 const BASIS = /^KIRA field research \(.{10,}\)$/;
 
 const NUM_RE = /\d[\d,.]*\d|\d/g;
@@ -85,6 +87,7 @@ function gateAnswer(r, src) {
   if (!COUNTRIES.has(r.country_code)) reasons.push(`country ${r.country_code}`);
   if (!['report', 'transcript', 'insight', 'econ'].includes(r.source_kind)) reasons.push(`source_kind ${r.source_kind}`);
   if (!r.source_ref?.slug) reasons.push('source_ref.slug missing');
+  if (r.segment_key != null && !SEGMENT.test(r.segment_key)) reasons.push('segment_key must be a segment slug or null');
   const a = r.answer_short || '';
   if (words(a) > 50) reasons.push(`answer_short ${words(a)} words > 50`);
   if (!/KIRA/.test(a) && !(r.primary_source && a.includes(r.primary_source))) reasons.push('answer does not name its source');
@@ -118,6 +121,8 @@ function gateClaim(c, src) {
   if (!COUNTRIES.has(c.country_code)) reasons.push(`country ${c.country_code}`);
   if (!c.transcript_slug) reasons.push('transcript_slug missing');
   if (!c.speaker_role) reasons.push('speaker_role missing');
+  // BizDirect matches claims on country_code + industry == segment_key: a level-2 slug or nothing.
+  if (c.industry != null && !SEGMENT.test(c.industry)) reasons.push('industry must be a segment slug or null');
   if (!c.basis_label || !BASIS.test(c.basis_label)) reasons.push('basis_label missing or malformed');
   if (words(c.claim_text) > 60) reasons.push(`claim_text ${words(c.claim_text)} words > 60`);
   if (ONE_PERSON.test(c.claim_text)) reasons.push('one-person interview framing');
