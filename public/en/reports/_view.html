@@ -329,18 +329,21 @@
       if (d.cover) { setMetaContent('meta-og-image', d.cover.full); setMetaContent('meta-tw-image', d.cover.full); }
 
       // ── hreflang ────────────────────────────────────────
-      ['en','ja','ko','zh'].forEach(loc => {
-        if (d.availableLocales.includes(loc)) {
-          const link = document.createElement('link');
-          link.rel = 'alternate'; link.hreflang = loc === 'zh' ? 'zh-Hans' : loc;
-          link.href = base + '/' + loc + '/reports/' + d.slug;
-          document.head.appendChild(link);
-        }
-      });
-      const xdef = document.createElement('link');
-      xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
-      xdef.href = base + '/en/reports/' + d.slug;
-      document.head.appendChild(xdef);
+      // The server (api/ssr.js) already wrote these (data-ssr); add them only for pages it did not render.
+      if (!document.querySelector('link[data-ssr]')) {
+        ['en','ja','ko','zh'].forEach(loc => {
+          if (d.availableLocales.includes(loc)) {
+            const link = document.createElement('link');
+            link.rel = 'alternate'; link.hreflang = loc === 'zh' ? 'zh-Hans' : loc;
+            link.href = base + '/' + loc + '/reports/' + d.slug;
+            document.head.appendChild(link);
+          }
+        });
+        const xdef = document.createElement('link');
+        xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
+        xdef.href = base + '/en/reports/' + d.slug;
+        document.head.appendChild(xdef);
+      }
 
       // ── JSON-LD: Product + Dataset + Paywall spec ────────
       // Product: signals price/purchase intent to Google Shopping + AI engines.

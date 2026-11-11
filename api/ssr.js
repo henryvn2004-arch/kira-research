@@ -168,11 +168,14 @@ async function renderInsight(req, res, loc, slug) {
     `<div class="r-container"><div class="art"><div style="min-width:0"><div class="art-body"><div class="article-body">${tr.body}</div></div></div></div></div><!--/SSR-->`;
 
   const faq = [];
-  const faqRe = /<strong>Q:\s*([^<]+)<\/strong>[^]*?<\/strong>\s*([\s\S]*?)(?=<strong>Q:|$)/g;
-  for (let m; (m = faqRe.exec(tr.body)) !== null && faq.length < 8; ) {
-    const a = plain(m[2]).slice(0, 300);
+  // Same rule as the page script: an answer runs to the next Q, the next heading, or the end.
+  tr.body.split(/<strong>Q:\s*/).slice(1).forEach((chunk) => {
+    const m = chunk.match(/^([^<]+)<\/strong>([\s\S]*)$/);
+    if (!m || faq.length >= 8) return;
+    const rest = m[2].split(/<h[1-6][\s>]/i)[0].replace(/^\s*(?:<[^>]+>\s*)*<strong>\s*A(?:nswer)?\s*:?\s*<\/strong>/i, '');
+    const a = plain(rest).slice(0, 300);
     if (m[1].trim() && a) faq.push({ '@type': 'Question', name: m[1].trim(), acceptedAnswer: { '@type': 'Answer', text: a } });
-  }
+  });
   const ld = [
     { id: 'ld-article', data: {
       '@context': 'https://schema.org', '@type': 'Article', headline: tr.title, description: desc, url,
