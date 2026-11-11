@@ -181,7 +181,7 @@ if (opt('--sql')) {
 }
 
 if (args.includes('--insert')) {
-  const { SUPABASE_URL: url, SUPABASE_SERVICE_KEY: key } = process.env;
+  const url = process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY;
   if (!url || !key) { console.error('--insert needs SUPABASE_URL and SUPABASE_SERVICE_KEY'); process.exit(2); }
   for (const [table, recs] of [['kira_answers', passedA], ['field_claims', passedC]]) {
     if (!recs.length) continue;

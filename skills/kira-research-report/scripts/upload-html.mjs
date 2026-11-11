@@ -22,8 +22,8 @@ if (!localPath || !reportId || !locale) {
   process.exit(2);
 }
 const pageCount = Number(pageCountArg) || 5;
-const url = process.env.SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_KEY;
+const url = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const key = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!url || !key) {
   console.error('SUPABASE_URL + SUPABASE_SERVICE_KEY env vars required');
   process.exit(2);

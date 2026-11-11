@@ -13,7 +13,7 @@
 import handler from '../../../api/market-data.js';
 
 const [, , id] = process.argv;
-if (!id || !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) process.exit(0);
+if (!id || !(process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL) || !(process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY)) process.exit(0);
 
 await new Promise((done) => {
   const res = {

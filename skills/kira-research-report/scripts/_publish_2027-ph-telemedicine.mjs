@@ -8,8 +8,8 @@
 // Prints the resolved report_id on success (REPORT_ID=<uuid>).
 import { SLUG, COUNTRY, INDUSTRY, YEAR, PAGES, PRICE, META } from './_build_2027-ph-telemedicine_sql.mjs';
 
-const URL = process.env.SUPABASE_URL;
-const KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!URL || !KEY) { console.error('missing SUPABASE_URL / SUPABASE_SERVICE_KEY'); process.exit(2); }
 
 const H = {

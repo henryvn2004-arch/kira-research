@@ -23,7 +23,7 @@ const arg = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? proc
 const flag = k => process.argv.includes('--' + k);
 const slugArg = arg('slug'), locale = arg('locale'), htmlPath = arg('html'), outPath = arg('out');
 const backfill = flag('backfill'), dry = flag('dry-run');
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 const LOCALES = ['en', 'ja', 'ko', 'zh'];
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{1,150}$/;
 if (backfill ? slugArg && !SLUG_RE.test(slugArg) : !SLUG_RE.test(slugArg || '') || !LOCALES.includes(locale) || !htmlPath) {

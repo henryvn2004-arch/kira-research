@@ -10,8 +10,8 @@
 // within about a minute everywhere.
 // ============================================================
 
-const SUPABASE_URL         = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_URL         = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 
 export const CONFIG = {
   'search.auto_placeholders': {

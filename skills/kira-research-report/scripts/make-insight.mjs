@@ -35,7 +35,7 @@ const { values: opt } = parseArgs({
     draft: { type: 'boolean', default: false }, 'no-slides': { type: 'boolean', default: false },
   },
 });
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if ((opt.pending === undefined) === (opt.report === undefined) || !URL_ || !KEY) {
   console.error('usage: make-insight.mjs --pending [N] | --report <report-slug>  [--dry-run] [--draft] [--no-slides]  (env SUPABASE_URL, SUPABASE_SERVICE_KEY)');
   process.exit(2);

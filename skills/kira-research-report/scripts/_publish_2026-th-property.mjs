@@ -4,8 +4,8 @@ import fs from 'node:fs';
 // Upserts living_reports (on slug) -> gets report_id -> upserts 3 report_translations.
 // Run: node skills/kira-research-report/scripts/_publish_2026-th-property.mjs
 
-const BASE = process.env.SUPABASE_URL;
-const KEY  = process.env.SUPABASE_SERVICE_KEY;
+const BASE = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY  = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!BASE || !KEY) { console.error('missing env'); process.exit(1); }
 
 const SLUG     = 'thailand-real-estate-2026';

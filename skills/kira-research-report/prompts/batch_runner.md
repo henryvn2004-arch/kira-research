@@ -72,10 +72,12 @@ These 3 env vars must be present (cloud: the Routine environment's variables; lo
 - `SUPABASE_URL` — `https://iygoynbnscednfzdsflc.supabase.co`
 - `SUPABASE_SERVICE_KEY` — Bearer token for Supabase Storage + SQL via MCP
 
+In a shared cloud environment the two Supabase variables may carry the project prefix (`KIRA_SUPABASE_URL`, `KIRA_SUPABASE_SERVICE_KEY`, owner 2026-11-11); every script reads either name.
+
 **Use Node for the check, NOT bash `${VAR:+SET}` expansion** — bash variable expansion triggers Claude Code's "Contains expansion" permission prompt every fire even when `Bash(node *)` and `Bash(cd *)` are pre-approved. Node reads `process.env` directly without shell expansion, so the command stays in the auto-approved allowlist.
 
 ```bash
-node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>{const v=process.env[k];console.log(k+'='+(v&&v.length?'SET':'MISSING'))})"
+node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>{const v=process.env[k]||process.env['KIRA_'+k];console.log(k+'='+(v&&v.length?'SET':'MISSING'))})"
 ```
 
 Also check the brain (private repo `kira-pipeline`, cloned next to this repo or at env `KIRA_BRAIN_DIR`): `node -e "const p=require('path'),f=require('fs');const b=process.env.KIRA_BRAIN_DIR||p.resolve('..','kira-pipeline','brain');console.log('BRAIN='+(f.existsSync(p.join(b,'runner','retrieve.py'))?b:'MISSING'))"`. A missing brain is NOT fatal: Stage A falls back to UC1/UC2. Note it in the fire summary.
