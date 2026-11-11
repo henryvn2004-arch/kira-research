@@ -7,7 +7,8 @@
 // Other i18n keys (e.g. i18n.industry_label) are left as they are.
 // For each row and locale the translation is kept only if:
 //   - every field is present and non-empty;
-//   - the numbers in it are exactly the numbers of the English text (same tokens, same count; full-width digits allowed);
+//   - the numbers in it are exactly the numbers of the English text (same tokens, same count; full-width digits allowed;
+//     an English month name may appear as its month digit);
 //   - an answer still names KIRA as the source (the Latin word "KIRA");
 //   - a transcript answer, and a claim's basis_label, carry the locale's fixed basis-label opening (BASIS_OPEN below).
 // Failing locales are removed from the row; the English row itself is never touched.
@@ -29,11 +30,24 @@ const norm = (t) => { let s = t.replace(/,/g, '').replace(/\.$/, ''); if (s.incl
 const nums = (s) => (toAscii(s).match(NUM_RE) || []).map(norm).sort();
 const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
+// An English month name may become a digit in ja/ko/zh ("October 2026" → 2026年10月): that digit is allowed once per name.
+const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+const MONTH_RE = new RegExp(`\\b(${MONTHS.join('|')}|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\\b`, 'gi');
+function trNums(enText, trText) {
+  const out = nums(trText);
+  const en = nums(enText);
+  for (const m of enText.match(MONTH_RE) || []) {
+    const d = String(MONTHS.findIndex((x) => x.startsWith(m.toLowerCase().slice(0, 3))) + 1);
+    if (out.filter((x) => x === d).length > en.filter((x) => x === d).length) out.splice(out.indexOf(d), 1);
+  }
+  return out;
+}
+
 function check(enText, tr, fields, extra) {
   const reasons = [];
   for (const f of fields) if (!tr?.[f] || !String(tr[f]).trim()) reasons.push(`${f} missing`);
   if (reasons.length) return reasons;
-  if (!same(nums(enText), nums(fields.map((f) => tr[f]).join(' ')))) reasons.push('numbers differ from English');
+  if (!same(nums(enText), trNums(enText, fields.map((f) => tr[f]).join(' ')))) reasons.push('numbers differ from English');
   if (extra) reasons.push(...extra());
   return reasons;
 }
