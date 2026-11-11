@@ -1302,8 +1302,15 @@ test.describe('GEO hubs (raw HTML, bot user agent)', () => {
     expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com' + hubPath + '"');
     expect(h).not.toContain('name="robots" content="noindex');  // >= 1 source and >= 5 answers
     const ja = await (await request.get('/ja/markets/thailand/data-centres-cloud--data-centres', { headers: BOT })).text();
-    expect(ja).toContain('name="robots" content="noindex,follow"');   // non-EN stays out of the index for now
-    expect(ja).toContain('href="https://kiraresearch.com' + hubPath + '"');
+    // Either translated rows qualify (own canonical, indexable) or the URL serves English text out of the index.
+    if (/rel="canonical"[^>]*href="https:\/\/kiraresearch\.com\/ja\//.test(ja)) {
+      expect(ja).not.toContain('name="robots" content="noindex');
+      expect(ja).toContain('<html lang="ja"');
+      expect(ja).toContain('hreflang="ja"');
+    } else {
+      expect(ja).toContain('name="robots" content="noindex,follow"');
+      expect(ja).toContain('href="https://kiraresearch.com' + hubPath + '"');
+    }
   });
 
   test('trade page: practitioner claims always carry their basis label', async ({ request }) => {
@@ -1328,6 +1335,10 @@ test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed 
   if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
   if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
   expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
+});
+
+test('GEO measurement: admin AI-visibility endpoint rejects unauthenticated', async ({ request }) => {
+  expect((await request.get('/api/admin-geo-hits')).status()).toBe(401);
 });
 
 test.describe('GEO admin', () => {
