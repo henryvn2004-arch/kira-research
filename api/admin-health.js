@@ -14,6 +14,7 @@
 
 import { ENV_CHECKS } from './_lib/env-checks.js';
 import { getConfig } from './_lib/config.js';
+import { geoHealthLine } from './_lib/geo-health.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -84,7 +85,7 @@ export default async function handler(req, res) {
     }));
 
     const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
-    const [runs, failures, lastOk, lastPurchase, mailEvents, mailSuppressed, latePromises, subRows] = await Promise.all([
+    const [runs, failures, lastOk, lastPurchase, mailEvents, mailSuppressed, latePromises, subRows, geo] = await Promise.all([
       sb('job_runs?select=job,ok,detail,at&order=at.desc&limit=200').catch(() => []),
       sb('job_runs?select=job,detail,at&ok=eq.false&order=at.desc&limit=10').catch(() => []),
       sb('report_queue_events?select=at,stage&outcome=eq.ok&order=at.desc&limit=1').catch(() => []),
@@ -94,7 +95,9 @@ export default async function handler(req, res) {
       // S18: requested reports not published by the date we promised the first reader.
       sb(`topics?select=slug,title,promise_at&promise_at=lt.${encodeURIComponent(new Date().toISOString())}&report_id=is.null&status=neq.rejected&order=promise_at.asc&limit=50`).catch(() => null),
       // S7: Month and Annual subscriptions (migration 052). null = table not there yet.
-      sb('subscriptions?select=plan,status,created_at,current_period_end,cancel_requested_at&order=created_at.desc&limit=5000').catch(() => null)
+      sb('subscriptions?select=plan,status,created_at,current_period_end,cancel_requested_at&order=created_at.desc&limit=5000').catch(() => null),
+      // GEO answers (migration 065): red when no new rows in 72 h while reports or transcripts were published. null = tables not there.
+      geoHealthLine().catch(() => null)
     ]);
 
     // Subscribers now, subscriptions that renew, ones cancelled but still inside the paid period, and pending ones
@@ -140,7 +143,7 @@ export default async function handler(req, res) {
       info: {
         last_purchase_at: lastPurchase[0] ? lastPurchase[0].created_at : null, email,
         late_promises: latePromises === null ? null : { count: latePromises.length, items: latePromises.slice(0, 5) },
-        subscriptions
+        subscriptions, geo
       }
     });
   } catch (err) {
