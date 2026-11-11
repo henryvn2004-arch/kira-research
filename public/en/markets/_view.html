@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Market facts — KIRA RESEARCH</title>
+  <meta name="description" content="Sourced answers and practitioner views on Asian markets from KIRA RESEARCH." />
+
+  <link rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/" />
+
+  <meta property="og:type"        content="article" />
+  <meta property="og:site_name"   content="KIRA RESEARCH" />
+  <meta property="og:title"       id="meta-og-title"       content="Market facts — KIRA RESEARCH" />
+  <meta property="og:description" id="meta-og-description" content="Sourced answers and practitioner views on Asian markets from KIRA RESEARCH." />
+  <meta property="og:url"         id="meta-og-url"         content="https://kiraresearch.com/" />
+  <meta property="og:image"       id="meta-og-image"       content="https://kiraresearch.com/og-image.png" />
+  <meta property="og:locale"      id="meta-og-locale"      content="en_US" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       id="meta-tw-title"       content="Market facts — KIRA RESEARCH" />
+  <meta name="twitter:description" id="meta-tw-description" content="Sourced answers and practitioner views on Asian markets from KIRA RESEARCH." />
+  <meta name="twitter:image"       id="meta-tw-image"       content="https://kiraresearch.com/og-image.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+  <link rel="stylesheet" href="/css/research.css" />
+  <link rel="stylesheet" href="/css/market.css" />
+  <style>
+    .geo { padding-block: 28px 64px; max-width: 860px; }
+    .geo h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin: 8px 0 6px; }
+    .geo .geo-meta { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+    .geo h2 { font-size: 22px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border, #e3e6ea); }
+    .geo h3 { font-size: 17px; line-height: 1.35; margin: 22px 0 6px; }
+    .geo p { margin: 0 0 6px; line-height: 1.6; }
+    .geo .geo-src { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
+    .geo .geo-claims { list-style: none; padding: 0; margin: 0; }
+    .geo .geo-claims li { margin: 0 0 14px; line-height: 1.6; }
+    .geo .geo-basis { display: block; color: var(--muted); font-size: 13px; }
+    .geo .geo-list { padding-left: 20px; line-height: 1.8; }
+    .geo .geo-note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <main class="r-container geo" id="geo-root"><!--SSR-->
+    <div style="padding-block:96px;text-align:center;color:var(--muted)">…</div>
+  <!--/SSR--></main>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/research-i18n.js" defer></script>
+  <script src="/js/market-panel.js" defer></script>
+  <script>
+    // Market data panel (client widget, public statistics). Present only on hub pages that name a report.
+    document.addEventListener('DOMContentLoaded', function () {
+      var el = document.getElementById('hub-market');
+      if (el && window.kiraMarket && el.getAttribute('data-report')) window.kiraMarket.mount(el, { report: el.getAttribute('data-report') });
+    });
+  </script>
+</body>
+</html>
