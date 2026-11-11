@@ -59,7 +59,12 @@ const hash = (...p) => crypto.createHash('sha1').update(p.map((x) => (typeof x =
 
 function sourceNumbers() {
   const set = new Set();
-  for (const f of many('--source')) for (const n of numbersIn(fs.readFileSync(f, 'utf8'))) set.add(n);
+  for (const f of many('--source')) {
+    let t = fs.readFileSync(f, 'utf8');
+    // HTML source: count only visible text, not CSS, scripts, attributes or inline images.
+    if (/\.html?$/i.test(f)) t = t.replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ');
+    for (const n of numbersIn(t)) set.add(n);
+  }
   const nf = opt('--numbers');
   if (nf) for (const n of JSON.parse(fs.readFileSync(nf, 'utf8'))) set.add(normNum(n));
   return set;
