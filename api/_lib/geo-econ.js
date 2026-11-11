@@ -7,6 +7,8 @@
 //   buildRows(read) → { rows, stats }            read(path) → Promise<rows> (Supabase REST GET, paged here)
 //   syncRows(rows, { write, read }) → counts      upsert by content_hash; rows of an older year/value → 'retired'
 //
+// Segment rows are HS-level trade only, read from the market's side ("<market> exported ... to the EU"); macro readings
+// (policy rate, inflation, GDP, population, visitors, FX) are country-level rows only, never repeated under segments.
 // Rules: numbers are the stored values with one fixed format (3 significant figures + k / m / bn / tn; percentages
 // with up to 2 decimals); only complete years (annual < current year, monthly windows of 12 consecutive months);
 // zero / null values are skipped; a segment comes from segment_data_map via the existing resolver (no match = skipped).
@@ -57,8 +59,9 @@ const srcName = (key, sources) => SRC_SHORT[key] || (sources.find((s) => s.key =
 // Every template gets the same numbers in every language (the ja / ko / zh gate compares number tokens).
 const T = {
   en: {
-    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `How much ${label} does ${rep} import from ${c}?` : `How much ${label} does ${rep} export to ${c}?`),
-    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${cap(rep)} ${flow === 'M' ? 'imported' : 'exported'} ${amt} of ${label} ${flow === 'M' ? 'from' : 'to'} ${c} in ${y}, ${chg} on ${y - 1} (${src}, ${VIA.en}).`,
+    // flow is the reporter's: M = the reporter imports from the market (the market exports to it), X = the reverse.
+    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `How much ${label} does ${c} export to ${rep}?` : `How much ${label} does ${c} import from ${rep}?`),
+    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${cap(c)} ${flow === 'M' ? 'exported' : 'imported'} ${amt} of ${label} ${flow === 'M' ? 'to' : 'from'} ${rep} in ${y}, ${chg} on ${y - 1} (${src}, ${VIA.en}).`,
     readQ: (label, c) => `What is the latest ${lc(label)} in ${c}?`,
     readA: (label, c, val, per, src) => `${cap(lc(label))} in ${c} came to ${val} in ${per} (${src}, ${VIA.en}).`,
     levelQ: (label, c) => `What was the level of ${lc(label)} in ${c}?`,
@@ -75,8 +78,8 @@ const T = {
     visA: (c, amt, per, chg, prev, src) => `${cap(c)} received ${amt} international visitors in the 12 months to ${per}, ${chg} on the 12 months to ${prev} (${src}, ${VIA.en}).`,
   },
   ja: {
-    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `${rep}は${c}から${label}をどれだけ輸入していますか？` : `${rep}は${c}へ${label}をどれだけ輸出していますか？`),
-    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${y}年の${rep}の${c}${flow === 'M' ? 'からの' : 'への'}${label}${flow === 'M' ? '輸入' : '輸出'}額は${amt}で、${y - 1}年比${chg}でした（${src}、${VIA.ja}）。`,
+    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `${c}は${rep}へ${label}をどれだけ輸出していますか？` : `${c}は${rep}から${label}をどれだけ輸入していますか？`),
+    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${y}年の${c}の${rep}${flow === 'M' ? '向け' : 'からの'}${label}${flow === 'M' ? '輸出' : '輸入'}額は${amt}で、${y - 1}年比${chg}でした（${src}、${VIA.ja}）。`,
     readQ: (label, c) => `${c}の最新の${label}はいくつですか？`,
     readA: (label, c, val, per, src) => `${c}の${label}は${per}時点で${val}でした（${src}、${VIA.ja}）。`,
     levelQ: (label, c) => `${c}の${label}はいくつでしたか？`,
@@ -93,8 +96,8 @@ const T = {
     visA: (c, amt, per, chg, prev, src) => `${per}までの12か月間に${c}を訪れた外国人旅行者は${amt}で、${prev}までの12か月間比${chg}でした（${src}、${VIA.ja}）。`,
   },
   ko: {
-    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `${rep}은(는) ${c}에서 ${label}을(를) 얼마나 수입합니까?` : `${rep}은(는) ${c}(으)로 ${label}을(를) 얼마나 수출합니까?`),
-    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${y}년 ${rep}의 ${c} ${flow === 'M' ? '수입' : '수출'} ${label} 금액은 ${amt}로, ${y - 1}년 대비 ${chg}였습니다(${src}, ${VIA.ko}).`,
+    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `${c}은(는) ${rep}(으)로 ${label}을(를) 얼마나 수출합니까?` : `${c}은(는) ${rep}에서 ${label}을(를) 얼마나 수입합니까?`),
+    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${y}년 ${c}의 ${rep} ${flow === 'M' ? '수출' : '수입'} ${label} 금액은 ${amt}로, ${y - 1}년 대비 ${chg}였습니다(${src}, ${VIA.ko}).`,
     readQ: (label, c) => `${c}의 최신 ${label}은(는) 얼마입니까?`,
     readA: (label, c, val, per, src) => `${c}의 ${label}은(는) ${per} 기준 ${val}였습니다(${src}, ${VIA.ko}).`,
     levelQ: (label, c) => `${c}의 ${label}은(는) 얼마였습니까?`,
@@ -111,8 +114,8 @@ const T = {
     visA: (c, amt, per, chg, prev, src) => `${per}까지 12개월간 ${c}을(를) 찾은 외국인 방문객은 ${amt}로, ${prev}까지 12개월 대비 ${chg}였습니다(${src}, ${VIA.ko}).`,
   },
   zh: {
-    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `${rep}从${c}进口了多少${label}？` : `${rep}向${c}出口了多少${label}？`),
-    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${y}年${rep}${flow === 'M' ? '从' : '向'}${c}${flow === 'M' ? '进口' : '出口'}${label}${amt}，较${y - 1}年${chg}（${src}，${VIA.zh}）。`,
+    tradeQ: (rep, flow, label, c) => (flow === 'M' ? `${c}向${rep}出口了多少${label}？` : `${c}从${rep}进口了多少${label}？`),
+    tradeA: (rep, flow, label, c, amt, y, chg, src) => `${y}年${c}${flow === 'M' ? '向' : '从'}${rep}${flow === 'M' ? '出口' : '进口'}${label}${amt}，较${y - 1}年${chg}（${src}，${VIA.zh}）。`,
     readQ: (label, c) => `${c}最新的${label}是多少？`,
     readA: (label, c, val, per, src) => `${c}的${label}在${per}为${val}（${src}，${VIA.zh}）。`,
     levelQ: (label, c) => `${c}的${label}是多少？`,
@@ -134,6 +137,14 @@ const REP = {
   KR: { en: 'South Korea', ja: '韓国', ko: '한국', zh: '韩国' }, US: { en: 'the United States', ja: '米国', ko: '미국', zh: '美国' },
 };
 const REP_ORDER = ['EU', 'JP', 'KR', 'US'];
+// Short names for the source line: "Eurostat EU import data" is the reporter's own statistics, read from the market's side.
+const REP_SHORT = { EU: { en: 'EU', ja: 'EU', ko: 'EU', zh: '欧盟' }, JP: { en: 'Japan', ja: '日本', ko: '일본', zh: '日本' }, KR: { en: 'South Korea', ja: '韓国', ko: '한국', zh: '韩国' }, US: { en: 'US', ja: '米国', ko: '미국', zh: '美国' } };
+const tradeSrc = (loc, name, rep, flow) => ({
+  en: `${name} ${REP_SHORT[rep].en} ${flow === 'M' ? 'import' : 'export'} data`,
+  ja: `${name} ${REP_SHORT[rep].ja}${flow === 'M' ? '輸入' : '輸出'}統計`,
+  ko: `${name} ${REP_SHORT[rep].ko} ${flow === 'M' ? '수입' : '수출'} 통계`,
+  zh: `${name} ${REP_SHORT[rep].zh}${flow === 'M' ? '进口' : '出口'}数据`,
+})[loc];
 const ENUM_JOIN = { en: (a) => (a.length < 3 ? a.join(' and ') : `${a.slice(0, -1).join(', ')} and ${a.at(-1)}`), ja: (a) => a.join('、'), ko: (a) => a.join(', '), zh: (a) => a.join('、') };
 
 // ── periods ──────────────────────────────────────────────
@@ -201,11 +212,13 @@ export async function buildRows(read) {
     hsFlows.get(k).byYear.set(Number(r.period), num(r.value));
   }
 
-  // The latest complete year with a positive value and a positive value the year before.
-  const latestPair = (byYear) => {
-    const ys = [...byYear.keys()].filter((y) => y < THIS_YEAR()).sort((a, b) => b - a);
-    for (const y of ys) { const v = byYear.get(y), p = byYear.get(y - 1); if (v >= MIN_TRADE_VALUE && p > 0) return { y, v, p }; }
-    return null;
+  // The reporter's newest complete year (not the market's own newest: a market that has nothing in that year gets no row
+  // rather than an older year presented as current), with a value above the floor and a positive value the year before.
+  const newestYear = {};
+  for (const [k, f] of hsFlows) { const r = k.split('|')[0]; for (const y of f.byYear.keys()) if (y < THIS_YEAR() && y > (newestYear[r] || 0)) newestYear[r] = y; }
+  const latestPair = (byYear, rep) => {
+    const y = newestYear[rep], v = byYear.get(y), p = byYear.get(y - 1);
+    return v >= MIN_TRADE_VALUE && p > 0 ? { y, v, p } : null;
   };
 
   // A national or World Bank series reading → row (latest actual value; annual series only up to last year).
@@ -258,7 +271,7 @@ export async function buildRows(read) {
       const cand = [];
       for (const code of codes) for (const flow of ['M', 'X']) {
         const f = hsFlows.get(`${rep}|${C}|${code}|${flow}`);
-        const p = f && latestPair(f.byYear);
+        const p = f && latestPair(f.byYear, rep);
         if (p) cand.push({ code, flow, f, ...p });
       }
       const pick = [...cand.filter((c) => c.flow === 'M').sort((a, b) => b.v - a.v).slice(0, 2), ...cand.filter((c) => c.flow === 'X').sort((a, b) => b.v - a.v).slice(0, 1)];
@@ -268,19 +281,12 @@ export async function buildRows(read) {
         mine.push(mk({
           country: C, segment: seg, intent: 'trade_flow', metric: `trade_hs_${c.code}_${c.flow}`, source: c.f.source, sources,
           q: (loc) => T[loc].tradeQ(REP[rep][loc], c.flow, lc(hsLabel[c.code][loc] || hsLabel[c.code].en), cn(C, loc)),
-          a: (loc) => T[loc].tradeA(REP[rep][loc], c.flow, lc(hsLabel[c.code][loc] || hsLabel[c.code].en), cn(C, loc), amt, c.y, chg, srcName(c.f.source, sources)),
+          a: (loc) => T[loc].tradeA(REP[rep][loc], c.flow, lc(hsLabel[c.code][loc] || hsLabel[c.code].en), cn(C, loc), amt, c.y, chg, tradeSrc(loc, srcName(c.f.source, sources), rep, c.flow)),
           value: c.v, unit: c.f.ccy, year: c.y, asOf: `${c.y}-12-31`, ref: { reporter: rep, hs: c.code, flow: c.flow, period: String(c.y) },
         }));
         n++;
       }
     }
-    // national indicators named in the profile's groups (not visitors, built below)
-    for (const g of (profile.groups || []).filter((x) => x !== 'visitors').slice(0, 3)) {
-      const i = natInds.find((x) => x.country_code === C && (x.params || {}).group === g);
-      const r = i && indicatorRow(i, C, seg);
-      if (r) mine.push(r);
-    }
-    if ((profile.groups || []).includes('visitors')) { const v = visitorRow(C, seg); if (v) mine.push(v); }
     if (!mine.length) { stats.skipped_no_data++; continue; }
     rows.push(...mine.slice(0, 8));
   }

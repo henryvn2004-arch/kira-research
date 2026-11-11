@@ -56,7 +56,7 @@ const { rows, stats } = await buildRows(read);
 const NUM = /\d[\d,.]*\d|\d/g;
 const nums = (s) => (String(s).match(NUM) || []).map((t) => t.replace(/,/g, '')).sort().join('|');
 if (process.env.DUMP) for (const r of rows) console.log(r.country_code, r.segment_key, r.metric, '\n ', r.question, '\n ', r.answer_short, '\n ', r.i18n.ja.answer_short);
-assert.ok(rows.length >= 7, `rows ${rows.length}`);
+assert.ok(rows.length >= 5, `rows ${rows.length}`);
 assert.equal(new Set(rows.map((r) => r.content_hash)).size, rows.length, 'unique hashes');
 for (const r of rows) {
   assert.ok(/\?$/.test(r.question) || /？$/.test(r.question), r.question);
@@ -78,7 +78,14 @@ assert.equal(by('trade_hs_0901_X').length, 1);
 assert.equal(by('trade_hs_2101_M').length, 0, 'zero / incomplete year skipped');
 assert.equal(by('trade_hs_2101_X').length, 0);
 assert.ok(!rows.some((r) => r.country_code === 'MY' && r.metric.startsWith('trade_hs')), 'values below the floor are skipped');
-assert.equal(by('trade_hs_0901_M')[0].answer_short, `The EU imported EUR 2.95 bn of coffee from Vietnam in ${CY - 1}, +51.4% on ${CY - 2} (Eurostat, via KIRA Data).`);
+assert.equal(by('trade_hs_0901_M')[0].question, 'How much coffee does Vietnam export to the EU?');
+assert.equal(by('trade_hs_0901_M')[0].answer_short, `Vietnam exported EUR 2.95 bn of coffee to the EU in ${CY - 1}, +51.4% on ${CY - 2} (Eurostat EU import data, via KIRA Data).`);
+assert.equal(by('trade_hs_0901_X')[0].answer_short, `Vietnam imported EUR 13.1 m of coffee from the EU in ${CY - 1}, +58.0% on ${CY - 2} (Eurostat EU export data, via KIRA Data).`);
+assert.match(by('trade_hs_0901_M')[0].i18n.ja.answer_short, /^\d{4}年のベトナムのEU向けコーヒー輸出額は/);
+assert.equal(by('trade_hs_0901_M')[0].i18n.zh.question, '越南向欧盟出口了多少咖啡？');
+// segment rows are HS trade only; macro readings and visitors are country-level rows
+assert.ok(rows.filter((r) => r.segment_key).every((r) => r.metric.startsWith('trade_hs_')), 'segment rows are HS trade only');
+assert.ok(rows.filter((r) => !r.segment_key).some((r) => r.metric === 'visitors_12m'));
 assert.equal(by('trade_hs_0901_M')[0].value, 2947888799);
 assert.equal(by('trade_hs_0901_M')[0].segment_key, 'coffee-tea--coffee');
 // a segment with no data profile yields nothing

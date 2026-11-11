@@ -7,6 +7,15 @@
 import { sb, listHubs, tradeIndex, tradeTopicIndexable } from './geo.js';
 
 const DAY = 86400000;
+// PostgREST returns at most 1,000 rows per request whatever `limit` says: page through.
+async function all(path) {
+  const out = [];
+  for (let off = 0; ; off += 1000) {
+    const r = await sb(`${path}&order=id&limit=1000&offset=${off}`);
+    out.push(...r);
+    if (r.length < 1000) return out;
+  }
+}
 const iso = (ms) => new Date(ms).toISOString();
 
 // The light check: no new rows in 72 h while reports or transcripts were published in those 72 h.
@@ -28,8 +37,8 @@ export async function geoHealth() {
   const d1 = iso(now - DAY), d7 = iso(now - 7 * DAY);
 
   const [answers, claims, reps, trs] = await Promise.all([
-    sb('kira_answers?select=status,country_code,source_kind,source_ref,created_at&limit=50000'),
-    sb('field_claims?select=status,country_code,transcript_slug,created_at&limit=50000'),
+    all('kira_answers?select=id,status,country_code,source_kind,source_ref,created_at'),
+    all('field_claims?select=id,status,country_code,transcript_slug,created_at'),
     sb(`living_reports?select=slug,published_at&status=eq.published&published_at=gte.${d7}&order=published_at.desc&limit=200`),
     sb(`expert_transcripts?select=slug,published_at&status=eq.published&published_at=gte.${d7}&order=published_at.desc&limit=200`),
   ]);
