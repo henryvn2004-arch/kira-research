@@ -98,6 +98,12 @@ function gateAnswer(r, src) {
   }
   const badValue = numbersIn(r.value).filter((n) => !src.has(n));
   if (badValue.length) reasons.push(`value ${r.value} not in source`);
+  // kira_answers.value is numeric: "4,523" → 4523, "−21.1" → -21.1; a range or other text ("10-30") → null
+  // (the answer text keeps the number as written).
+  if (r.value != null) {
+    const v = String(r.value).replace(/,/g, '').replace(/−/g, '-').trim();
+    r.value = /^-?\d+(\.\d+)?$/.test(v) ? v : null;
+  }
   if (r.source_kind === 'transcript') {
     const label = r.basis_label || docBasis;
     if (!label || !BASIS.test(label)) reasons.push('transcript row without a valid basis label');
@@ -159,7 +165,8 @@ const A_COLS = ['question', 'intent', 'country_code', 'segment_key', 'brand', 'm
   'primary_source', 'source_kind', 'source_ref', 'home', 'i18n', 'status', 'gate', 'checked_at', 'content_hash'];
 const C_COLS = ['topic', 'industry', 'country_code', 'speaker_role', 'claim_text', 'transcript_slug', 'section', 'basis_label', 'i18n',
   'status', 'gate', 'checked_at', 'content_hash'];
-const pick = (r, cols) => Object.fromEntries(cols.filter((c) => r[c] !== undefined).map((c) => [c, r[c]]));
+// i18n is NOT NULL in both tables: a row without one gets {} (an explicit null in the SQL would fail the whole insert).
+const pick = (r, cols) => Object.fromEntries(cols.filter((c) => r[c] !== undefined || c === 'i18n').map((c) => [c, c === 'i18n' ? r[c] ?? {} : r[c]]));
 const passedA = answers.filter((x) => x.gate.ok).map((r) => pick(r, A_COLS));
 const passedC = claims.filter((x) => x.gate.ok).map((r) => pick(r, C_COLS));
 
