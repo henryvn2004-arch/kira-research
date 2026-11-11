@@ -145,6 +145,19 @@
     { "source": "/ko/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=ko&slug=:slug" },
     { "source": "/zh/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=zh&slug=:slug" },
 
+    { "source": "/en/markets/:country/:segment", "destination": "/api/geo?type=hub&loc=en&country=:country&segment=:segment" },
+    { "source": "/en/trade/:industry/:topic", "destination": "/api/geo?type=trade&loc=en&industry=:industry&topic=:topic" },
+    { "source": "/en/trade/:industry", "destination": "/api/geo?type=trade-industry&loc=en&industry=:industry" },
+    { "source": "/ja/markets/:country/:segment", "destination": "/api/geo?type=hub&loc=ja&country=:country&segment=:segment" },
+    { "source": "/ja/trade/:industry/:topic", "destination": "/api/geo?type=trade&loc=ja&industry=:industry&topic=:topic" },
+    { "source": "/ja/trade/:industry", "destination": "/api/geo?type=trade-industry&loc=ja&industry=:industry" },
+    { "source": "/ko/markets/:country/:segment", "destination": "/api/geo?type=hub&loc=ko&country=:country&segment=:segment" },
+    { "source": "/ko/trade/:industry/:topic", "destination": "/api/geo?type=trade&loc=ko&industry=:industry&topic=:topic" },
+    { "source": "/ko/trade/:industry", "destination": "/api/geo?type=trade-industry&loc=ko&industry=:industry" },
+    { "source": "/zh/markets/:country/:segment", "destination": "/api/geo?type=hub&loc=zh&country=:country&segment=:segment" },
+    { "source": "/zh/trade/:industry/:topic", "destination": "/api/geo?type=trade&loc=zh&industry=:industry&topic=:topic" },
+    { "source": "/zh/trade/:industry", "destination": "/api/geo?type=trade-industry&loc=zh&industry=:industry" },
+
     { "source": "/ja/privacy", "destination": "/en/privacy" },
     { "source": "/ko/privacy", "destination": "/en/privacy" },
     { "source": "/zh/privacy", "destination": "/en/privacy" },
@@ -206,6 +219,10 @@
       "maxDuration": 30,
       "includeFiles": "public/en/{reports,insights,experts/transcripts}/_view.html"
     },
+    "api/geo.js": {
+      "maxDuration": 30,
+      "includeFiles": "public/en/markets/_view.html"
+    },
     "api/*.js": {
       "maxDuration": 60,
       "includeFiles": "skills/kira-research-report/templates/*"
@@ -262,6 +279,24 @@
     },
     {
       "source": "/(en|ja|ko|zh)/insights/:slug",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=86400" }
+      ]
+    },
+    {
+      "source": "/(en|ja|ko|zh)/markets/:country/:segment",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=86400" }
+      ]
+    },
+    {
+      "source": "/(en|ja|ko|zh)/trade/:industry/:topic",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=86400" }
+      ]
+    },
+    {
+      "source": "/(en|ja|ko|zh)/trade/:industry",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=86400" }
       ]

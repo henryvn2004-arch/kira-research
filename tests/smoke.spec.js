@@ -1284,3 +1284,48 @@ test.describe('Server-rendered content pages (raw HTML, bot user agent)', () => 
     expect(h).toContain('id="rpt-root"');
   });
 });
+
+// ── GEO G4: market hubs + trade pages render real Q&A / practitioner text in the first response ──
+test.describe('GEO hubs (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+  const hubPath = '/en/markets/thailand/data-centres-cloud--data-centres';
+
+  test('segment hub: questions, answers, sources, FAQ JSON-LD, index rule', async ({ request }) => {
+    const r = await request.get(hubPath, { headers: BOT });
+    test.skip(r.status() === 404, 'hub data not in this environment');
+    expect(r.status()).toBe(200);
+    const h = await r.text();
+    expect(h).toContain('<h1>Thailand Data centres');
+    expect(h).toMatch(/<h3>[^<]+\?<\/h3><p>[^<]{40,}/);        // a real question + answer
+    expect(h).toContain('Source:');
+    expect(h).toContain('"@type":"FAQPage"');
+    expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com' + hubPath + '"');
+    expect(h).not.toContain('name="robots" content="noindex');  // >= 1 source and >= 5 answers
+    const ja = await (await request.get('/ja/markets/thailand/data-centres-cloud--data-centres', { headers: BOT })).text();
+    expect(ja).toContain('name="robots" content="noindex,follow"');   // non-EN stays out of the index for now
+    expect(ja).toContain('href="https://kiraresearch.com' + hubPath + '"');
+  });
+
+  test('trade page: practitioner claims always carry their basis label', async ({ request }) => {
+    const sm = await (await request.get('/sitemap-en.xml')).text();
+    const m = sm.match(/<loc>(https:\/\/kiraresearch\.com\/en\/trade\/[a-z0-9-]+\/[a-z0-9-]+)<\/loc>/);
+    test.skip(!m, 'no indexable trade page yet');
+    const h = await (await request.get(new URL(m[1]).pathname, { headers: BOT })).text();
+    expect(h).toContain('geo-claims');
+    expect((h.match(/<li>[^<]{30,}<span class="geo-basis">/g) || []).length).toBeGreaterThan(2);
+    expect(h).toContain('KIRA field research');
+  });
+});
+
+test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed columns)', async ({ request }) => {
+  const r = await request.get('/api/geo-feed?country=TH');
+  expect(r.status()).toBe(200);
+  expect(r.headers()['cache-control']).toContain('s-maxage=3600');
+  const j = await r.json();
+  expect(Array.isArray(j.crosswalk) && Array.isArray(j.answers) && Array.isArray(j.claims)).toBe(true);
+  expect(j.generated_at).toBeTruthy();
+  expect(j.answers.every((a) => a.country_code === 'TH')).toBe(true);
+  if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
+  if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
+  expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
+});

@@ -23,11 +23,13 @@ const TEMPLATE_FILES = {
   report: 'public/en/reports/_view.html',
   insight: 'public/en/insights/_view.html',
   transcript: 'public/en/experts/transcripts/_view.html',
+  hub: 'public/en/markets/_view.html',
 };
 const TEMPLATE_URLS = {
   report: '/en/reports/_view',
   insight: '/en/insights/_view',
   transcript: '/en/experts/transcripts/_view',
+  hub: '/en/markets/_view',
 };
 const cache = new Map();   // type → { at, html }
 const TTL = 5 * 60 * 1000;
@@ -82,6 +84,10 @@ export function fillTemplate(html, opts) {
   const re = /<!--SSR-->[\s\S]*?<!--\/SSR-->/;
   if (!re.test(out)) throw new Error('SSR markers missing in template');
   out = out.replace(re, () => content);
+  // Optional second slots outside the page root (the client script does not touch them): <!--KQ-->…<!--/KQ-->
+  for (const [name, html] of Object.entries(opts.slots || {})) {
+    out = out.replace(new RegExp(`<!--${name}-->[\\s\\S]*?<!--/${name}-->`), () => `<!--${name}-->${html}<!--/${name}-->`);
+  }
   return out;
 }
 
