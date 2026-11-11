@@ -131,19 +131,19 @@
     { "source": "/ja/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=ja&slug=:slug" },
     { "source": "/ko/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=ko&slug=:slug" },
     { "source": "/zh/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=zh&slug=:slug" },
-    { "source": "/en/reports/:slug", "destination": "/en/reports/_view" },
-    { "source": "/ja/reports/:slug", "destination": "/en/reports/_view" },
-    { "source": "/ko/reports/:slug", "destination": "/en/reports/_view" },
-    { "source": "/zh/reports/:slug", "destination": "/en/reports/_view" },
+    { "source": "/en/reports/:slug", "destination": "/api/ssr?type=report&loc=en&slug=:slug" },
+    { "source": "/ja/reports/:slug", "destination": "/api/ssr?type=report&loc=ja&slug=:slug" },
+    { "source": "/ko/reports/:slug", "destination": "/api/ssr?type=report&loc=ko&slug=:slug" },
+    { "source": "/zh/reports/:slug", "destination": "/api/ssr?type=report&loc=zh&slug=:slug" },
 
-    { "source": "/en/insights/:slug", "destination": "/en/insights/_view" },
-    { "source": "/ja/insights/:slug", "destination": "/en/insights/_view" },
-    { "source": "/ko/insights/:slug", "destination": "/en/insights/_view" },
-    { "source": "/zh/insights/:slug", "destination": "/en/insights/_view" },
-    { "source": "/en/experts/transcripts/:slug", "destination": "/en/experts/transcripts/_view" },
-    { "source": "/ja/experts/transcripts/:slug", "destination": "/en/experts/transcripts/_view" },
-    { "source": "/ko/experts/transcripts/:slug", "destination": "/en/experts/transcripts/_view" },
-    { "source": "/zh/experts/transcripts/:slug", "destination": "/en/experts/transcripts/_view" },
+    { "source": "/en/insights/:slug", "destination": "/api/ssr?type=insight&loc=en&slug=:slug" },
+    { "source": "/ja/insights/:slug", "destination": "/api/ssr?type=insight&loc=ja&slug=:slug" },
+    { "source": "/ko/insights/:slug", "destination": "/api/ssr?type=insight&loc=ko&slug=:slug" },
+    { "source": "/zh/insights/:slug", "destination": "/api/ssr?type=insight&loc=zh&slug=:slug" },
+    { "source": "/en/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=en&slug=:slug" },
+    { "source": "/ja/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=ja&slug=:slug" },
+    { "source": "/ko/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=ko&slug=:slug" },
+    { "source": "/zh/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=zh&slug=:slug" },
 
     { "source": "/ja/privacy", "destination": "/en/privacy" },
     { "source": "/ko/privacy", "destination": "/en/privacy" },
@@ -202,6 +202,10 @@
     "api/cron-econ-refresh.js": { "maxDuration": 800, "includeFiles": "node_modules/pdf-parse/lib/pdf.js/v1.10.100/build/**" },
     "api/cron-moves.js": { "maxDuration": 800 },
     "api/cron-registry.js": { "maxDuration": 800 },
+    "api/ssr.js": {
+      "maxDuration": 30,
+      "includeFiles": "public/en/{reports,insights,experts/transcripts}/_view.html"
+    },
     "api/*.js": {
       "maxDuration": 60,
       "includeFiles": "skills/kira-research-report/templates/*"
