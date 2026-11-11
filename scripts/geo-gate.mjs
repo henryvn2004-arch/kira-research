@@ -104,6 +104,8 @@ function gateAnswer(r, src) {
     const v = String(r.value).replace(/,/g, '').replace(/−/g, '-').trim();
     r.value = /^-?\d+(\.\d+)?$/.test(v) ? v : null;
   }
+  // as_of is a date column: only a full YYYY-MM-DD is kept ("2026-09" would fail the whole insert; the year stays in `year`).
+  if (r.as_of != null && !/^\d{4}-\d{2}-\d{2}$/.test(String(r.as_of))) r.as_of = null;
   if (r.source_kind === 'transcript') {
     const label = r.basis_label || docBasis;
     if (!label || !BASIS.test(label)) reasons.push('transcript row without a valid basis label');
