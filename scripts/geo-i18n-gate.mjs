@@ -3,12 +3,13 @@
 //
 // Input: a GEO rows file { answers: [...], field_claims: [...] } whose rows carry
 //   i18n.<loc>.question + i18n.<loc>.answer_short   (answers)
-//   i18n.<loc>.claim_text                           (field claims)
+//   i18n.<loc>.claim_text + basis_label + speaker_role (field claims)
+// Other i18n keys (e.g. i18n.industry_label) are left as they are.
 // For each row and locale the translation is kept only if:
 //   - every field is present and non-empty;
 //   - the numbers in it are exactly the numbers of the English text (same tokens, same count; full-width digits allowed);
 //   - an answer still names KIRA as the source (the Latin word "KIRA");
-//   - a transcript answer carries the locale's fixed basis-label opening (BASIS_OPEN below).
+//   - a transcript answer, and a claim's basis_label, carry the locale's fixed basis-label opening (BASIS_OPEN below).
 // Failing locales are removed from the row; the English row itself is never touched.
 //
 // Usage: node scripts/geo-i18n-gate.mjs --rows geo.json [--out geo.json]
@@ -56,7 +57,8 @@ for (const r of rows.answers || []) {
 for (const c of rows.field_claims || []) {
   for (const loc of LOCALES) {
     const tr = c.i18n?.[loc]; if (!tr || typeof tr !== 'object') continue;
-    const reasons = check(c.claim_text, tr, ['claim_text']);
+    const reasons = check(`${c.claim_text} ${c.basis_label || ''} ${c.speaker_role || ''}`, tr, ['claim_text', 'basis_label', 'speaker_role'], () =>
+      (tr.basis_label.startsWith(BASIS_OPEN[loc]) ? [] : ['basis label missing']));
     if (reasons.length) { delete c.i18n[loc]; tally[loc].dropped++; fails.push(`${loc} ✗ ${c.claim_text.slice(0, 60)} — ${reasons.join('; ')}`); } else tally[loc].kept++;
   }
 }
