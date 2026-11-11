@@ -257,6 +257,11 @@ async function buildLocale(locale) {
   //     own hreflang tags, so no alternates here.
   try {
     const [hubs, cos, trade] = await Promise.all([listHubs(), countries(), tradeIndex(locale)]);
+    const withHubs = new Set(hubs.filter((h) => h.byLocale[locale]).map((h) => h.code));
+    if (withHubs.size) urls.push(urlEntry({ subPath: 'markets', locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    for (const co of cos) {
+      if (withHubs.has(co.code)) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}`, locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    }
     for (const h of hubs) {
       const co = cos.find((c) => c.code === h.code);
       if (h.byLocale[locale] && co) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}/${h.segment}`, locale, lastmod: h.updated ? h.updated.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));

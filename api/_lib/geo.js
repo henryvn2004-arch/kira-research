@@ -32,7 +32,7 @@ export const MIN_ANSWERS = 5;             // hub is indexable with >= 5 publishe
 export const MIN_CLAIMS = 3;              // trade page: >= 3 claims …
 export const MIN_TRANSCRIPTS = 2;         // … from >= 2 transcripts
 
-export const INTENT_ORDER = ['market_size', 'growth', 'trends', 'key_players', 'channels', 'pricing', 'margins', 'consumer', 'trade_flow', 'regulation', 'entry', 'investment', 'risks', 'practitioner', 'other'];
+export const INTENT_ORDER = ['market_size', 'growth', 'trends', 'key_players', 'channels', 'pricing', 'margins', 'consumer', 'trade_flow', 'trade_data', 'regulation', 'entry', 'investment', 'risks', 'practitioner', 'other'];
 export const INTENT_LABEL = {
   market_size: 'Market size', growth: 'Growth', trends: 'Trends', key_players: 'Key players', channels: 'Channels and distribution',
   pricing: 'Pricing', margins: 'Margins', consumer: 'Customers and demand', trade_flow: 'Trade flows', regulation: 'Regulation',
@@ -75,7 +75,7 @@ export function claimLoc(c, loc) {
   const t = c.i18n && c.i18n[loc];
   const claim_text = t && str(t.claim_text);
   if (!claim_text) return null;
-  return { ...c, claim_text, speaker_role: str(t.speaker_role) || c.speaker_role, basis_label: str(t.basis_label) || c.basis_label };
+  return { ...c, claim_en: c.claim_text, claim_text, speaker_role: str(t.speaker_role) || c.speaker_role, basis_label: str(t.basis_label) || c.basis_label };
 }
 
 // ── answers ──────────────────────────────────────────────
@@ -136,6 +136,7 @@ export async function listHubs() {
       code: h.code, segment: h.segment, n: h.answers.length, updated: h.updated,
       indexable: hubIndexable(h.answers, titles),                       // English
       byLocale: Object.fromEntries(['en', 'ja', 'ko', 'zh'].map((l) => [l, hubIndexable(h.answers, titles, l)])),
+      counts: Object.fromEntries(['en', 'ja', 'ko', 'zh'].map((l) => [l, h.answers.filter((a) => ansLoc(a, l)).length])),
     }));
   });
 }
@@ -162,6 +163,12 @@ const claimBase = () => cached('claim-base', 5 * 60e3, async () => {
   const titles = await docTitles(claims.map((c) => c.transcript_slug));
   return { claims, titles: titles.transcripts };
 });
+// Claims of published transcripts only.
+export async function publishedClaims() {
+  const { claims, titles } = await claimBase();
+  return claims.filter((c) => titles.has(c.transcript_slug));
+}
+const SLUG_LIKE = /^[a-z0-9]+(-+[a-z0-9]+)*$/;
 export async function tradeIndex(loc = 'en') {
   const { claims, titles } = await claimBase();
   return cached(`trade|${loc}`, 5 * 60e3, async () => {
@@ -171,7 +178,8 @@ export async function tradeIndex(loc = 'en') {
       if (!c || !titles.has(c.transcript_slug) || !c.industry) continue;
       const is = industrySlug(c.industry);
       if (!is) continue;
-      if (!idx.has(is)) idx.set(is, { slug: is, name: industryBase(c.industry), topics: new Map() });
+      // Since the GEO gate, claim.industry is a segment key (or null); older rows hold a free-text name.
+      if (!idx.has(is)) idx.set(is, { slug: is, key: SLUG_LIKE.test(c.industry) ? c.industry : null, name: SLUG_LIKE.test(c.industry) ? await segmentName(c.industry) : industryBase(c.industry), topics: new Map() });
       const ind = idx.get(is);
       if (!ind.topics.has(c.topic)) ind.topics.set(c.topic, []);
       ind.topics.get(c.topic).push(c);

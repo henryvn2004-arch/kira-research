@@ -1347,3 +1347,34 @@ test.describe('GEO admin', () => {
     expect((await request.post('/api/admin-geo', { data: { transcript_slug: 'x-y', posted: true } })).status()).toBe(401);
   });
 });
+
+// ── GEO hub v2: index pages, who-decides, llms.txt ──
+test.describe('GEO hub v2 (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+
+  test('/en/markets and a country page list hubs in the first response', async ({ request }) => {
+    const r = await request.get('/en/markets', { headers: BOT });
+    expect(r.status()).toBe(200);
+    const h = await r.text();
+    test.skip(!/<h1>Market facts by country/.test(h) || !/href="\/en\/markets\/[a-z-]+"/.test(h), 'no indexable hubs yet');
+    expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/markets"');
+    const m = h.match(/href="(\/en\/markets\/[a-z-]+)"/);
+    const c = await (await request.get(m[1], { headers: BOT })).text();
+    expect(c).toContain('/markets/');
+    expect(c).toMatch(/<h2>[^<]+<\/h2><ul class="geo-list"><li><a href="\/en\/markets\/[a-z-]+\/[a-z0-9-]+"/);
+    expect(c).not.toContain('name="robots" content="noindex');
+  });
+
+  test('footer links to Market facts; llms.txt points at the hubs', async ({ request }) => {
+    const l = await (await request.get('/llms.txt')).text();
+    expect(l).toContain('https://kiraresearch.com/en/markets');
+    expect(l).toContain('https://kiraresearch.com/en/trade');
+    expect(l).toContain('https://kiraresearch.com/en/methodology');
+    expect(l).toContain('How to cite');
+  });
+});
+
+test('footer Research column has Market facts', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(1);
+});

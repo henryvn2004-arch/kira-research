@@ -13,6 +13,9 @@ export function sourceLine(a, titles, L, loc) {
     const t = titles.transcripts.get(ref.slug);
     return `${L.src} ${L.srcField}${yr}` + (t ? ` · <a href="/${loc}/experts/transcripts/${esc(ref.slug)}">${esc(t)}</a>` : '');
   }
+  if (a.source_kind === 'econ') {                 // Kira Data (economic series): link to the market's data page
+    return `${L.src} ${esc(a.primary_source || L.srcEcon)}${yr}` + (titles.countrySlug ? ` · <a href="/${loc}/data/${esc(titles.countrySlug)}">${esc(L.srcEcon)}</a>` : '');
+  }
   const t = titles.reports.get(ref.slug);
   return `${L.src} ${esc(a.primary_source || L.srcDefault)}${yr}` + (t ? ` · ${L.srcReport} <a href="/${loc}/reports/${esc(ref.slug)}">${esc(t)}</a>` : '');
 }
@@ -32,3 +35,37 @@ export function claimItem(c, titles, loc, withLink = true) {
 const METHOD_LABEL = { en: 'Methodology', ja: '調査手法', ko: '방법론', zh: '研究方法' };
 export const modelledNote = (L, loc) =>
   `<p class="geo-note geo-src">${L.modelled((label) => `<a href="/${loc}/methodology">${esc(METHOD_LABEL[loc] || label)}</a>`)}</p>`;
+
+// ── "Who decides": field claims on buyers and decision makers, sorted into three columns ──
+// Sorted by words in the English claim text; a claim that matches nothing goes by its topic.
+const RISK_RE = /\b(risk|liab|warrant|blam|responsib|guarant|penalt|recall|accountab|bear|bears)/i;
+const SPEC_RE = /\b(specif|approv|design|engineer|architect|consultan|recommend|prescrib|tender|standard|qualif|shortlist)/i;
+export function decideColumns(claims) {
+  const cols = { spec: [], buy: [], risk: [] };
+  for (const c of claims) {
+    if (c.topic !== 'buyer_roles' && c.topic !== 'decision_makers') continue;
+    const t = c.claim_en || c.claim_text;
+    const k = RISK_RE.test(t) ? 'risk' : SPEC_RE.test(t) ? 'spec' : (c.topic === 'decision_makers' ? 'spec' : 'buy');
+    cols[k].push(c);
+  }
+  return cols;
+}
+// Role words in the claims → BizDirect list roles.
+const ROLE_WORDS = { distributor: /distributor|dealer/i, wholesaler: /wholesal/i, importer: /importer|import agent/i, manufacturer: /manufactur|maker|producer/i, retailer: /retailer|retail chain/i, supplier: /supplier/i };
+export function rolesIn(claims) {
+  const text = claims.map((c) => `${c.claim_en || c.claim_text} ${c.speaker_role || ''}`).join(' ');
+  return Object.keys(ROLE_WORDS).filter((r) => ROLE_WORDS[r].test(text));
+}
+// pages = BizDirect segment-summary pages [{role,url}] (possibly from several markets).
+export function whoDecidesHtml(claims, L, loc, titles, pages) {
+  const cols = decideColumns(claims);
+  const n = cols.spec.length + cols.buy.length + cols.risk.length;
+  if (n < 2) return '';
+  const cell = (k, label) => `<div><h3>${esc(label)}</h3>` + (cols[k].length
+    ? `<ul class="geo-claims">${cols[k].map((c) => claimItem(c, titles, loc, false)).join('')}</ul>` : `<p class="geo-note">${esc(L.whoEmpty)}</p>`) + '</div>';
+  const roles = rolesIn(cols.spec.concat(cols.buy, cols.risk));
+  const links = (pages || []).filter((p) => p && roles.includes(String(p.role || '').toLowerCase()) && /^https:\/\/(www\.)?bizdirectasia\.com\//.test(p.url || ''));
+  const uniq = [...new Map(links.map((p) => [p.url, p])).values()];
+  return `<section id="who-decides"><h2>${esc(L.whoDecides)}</h2>${modelledNote(L, loc)}<div class="geo-map">${cell('spec', L.whoSpecifies)}${cell('buy', L.whoBuys)}${cell('risk', L.whoRisk)}</div>` +
+    (uniq.length ? `<p class="geo-note">${esc(L.bdRoles)} ${uniq.map((p) => `<a href="${esc(p.url)}" rel="noopener">${esc(L.bdList(String(p.role).toLowerCase()))}</a>`).join(' · ')}</p>` : '') + '</section>';
+}
