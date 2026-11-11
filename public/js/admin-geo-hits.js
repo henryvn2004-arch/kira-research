@@ -1,5 +1,5 @@
-// AI visibility section for the admin funnel page (GEO G7). Self-contained: fills #geo-hits-slot.
-// Needs window.db (Supabase client from /auth.js). Separate file so the admin /geo page can reuse it.
+// AI visibility section for the admin GEO page (GEO G7). Self-contained: fills #geo-hits-slot.
+// Needs window.db (Supabase client from /auth.js). Separate file from the page it sits in.
 (function () {
   const slot = document.getElementById('geo-hits-slot');
   if (!slot) return;

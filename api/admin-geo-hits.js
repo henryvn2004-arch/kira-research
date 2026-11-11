@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/admin-geo-hits.js
-// AI visibility numbers for the admin funnel page (GEO G7).
+// AI visibility numbers for the admin GEO page (GEO G7).
 //   GET /api/admin-geo-hits?days=7|30|90   (default 30)
 //   → { days, bots:[{name,kind,total,days:{YYYY-MM-DD:n}}], top_paths:[{path,total}], referrals:[{src,visits}], note }
 // Bots: table geo_hits (migration 067). Referrals: site_events.src for the AI assistants (track.js).
