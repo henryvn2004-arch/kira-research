@@ -9,10 +9,10 @@
 //         indexable hubs and trade pages (same rules as api/_lib/geo.js), documents published in the last
 //         7 days with no rows yet (= a daily hook failed).
 // queue   one ready-to-copy LinkedIn post per transcript with published field claims, newest first:
-//         2 claims + the basis label + the transcript link + the trade page link.
+//         2 claims + the basis label + the transcript link + the segment hub link (else the trade page, if indexable).
 // Auth: Bearer <supabase-jwt>, email in ADMIN_EMAILS.
 // ============================================================
-import { sb, docTitles, tradeIndex, tradeTopicIndexable, industrySlug, topicSlug, TOPIC_LABEL } from './_lib/geo.js';
+import { sb, docTitles, tradeIndex, tradeTopicIndexable, industrySlug, topicSlug, listHubs, countryByCode, slugOf, segmentName, TOPIC_LABEL } from './_lib/geo.js';
 import { geoHealth } from './_lib/geo-health.js';
 import { logAudit } from './_lib/audit.js';
 
@@ -56,7 +56,7 @@ async function buildQueue() {
   }
   const slugs = [...bySlug.keys()].slice(0, MAX_POSTS * 2);
   const titles = (await docTitles(slugs)).transcripts;            // published transcripts only
-  const trade = await tradeIndex();
+  const [trade, hubs] = await Promise.all([tradeIndex(), listHubs()]);
   const out = [];
   for (const slug of slugs) {
     if (!titles.has(slug)) continue;
@@ -64,13 +64,23 @@ async function buildQueue() {
     const picked = pickClaims(all);
     if (!picked.length) continue;
     const c0 = picked[0];
-    const isl = industrySlug(c0.industry);
-    const ind = trade.idx.get(isl);
-    let tradeUrl = null, tradeLabel = null;
-    if (ind) {
-      const good = picked.find((c) => ind.topics.get(c.topic) && tradeTopicIndexable(ind.topics.get(c.topic), c.topic));
-      if (good) { tradeUrl = `${BASE}/en/trade/${isl}/${topicSlug(good.topic)}`; tradeLabel = `${ind.name}: ${TOPIC_LABEL[good.topic] || good.topic}`; }
-      else { tradeUrl = `${BASE}/en/trade/${isl}`; tradeLabel = ind.name; }
+    // Link to the most specific page that is indexable (the same rules as the sitemap): the segment hub, else the
+    // trade page, else only the transcript. field_claims.industry is a level-2 segment slug or null.
+    let pageUrl = null, pageLabel = null;
+    if (c0.industry) {
+      const hub = hubs.find((h) => h.code === c0.country_code && h.segment === c0.industry && h.indexable);
+      const co = hub ? await countryByCode(c0.country_code) : null;
+      if (hub && co) {
+        pageUrl = `${BASE}/en/markets/${slugOf(co.name)}/${hub.segment}`;
+        pageLabel = `${await segmentName(hub.segment)} in ${co.name}`;
+      } else {
+        const isl = industrySlug(c0.industry);
+        const ind = trade.idx.get(isl);
+        if (ind) {
+          const good = picked.find((c) => ind.topics.get(c.topic) && tradeTopicIndexable(ind.topics.get(c.topic), c.topic));
+          if (good) { pageUrl = `${BASE}/en/trade/${isl}/${topicSlug(good.topic)}`; pageLabel = `${ind.name}: ${TOPIC_LABEL[good.topic] || good.topic}`; }
+        }
+      }
     }
     const basis = BANNED.test(c0.basis_label || '') ? '' : String(c0.basis_label || '').trim();
     const basisLine = basis.toLowerCase().includes(LABEL.toLowerCase()) ? basis : `${LABEL}${basis ? ` (${basis})` : ''}`;
@@ -84,7 +94,7 @@ async function buildQueue() {
       '',
       `Basis: ${basisLine}.`,
       `Full interview: ${url}`,
-      tradeUrl ? `More on ${tradeLabel}: ${tradeUrl}` : null,
+      pageUrl ? `More on ${pageLabel}: ${pageUrl}` : null,
     ].filter((l) => l !== null).join('\n');
     out.push({ transcript_slug: slug, title, newest_claim_at: bySlug.get(slug)[0].created_at, claims: picked.length, text });
     if (out.length >= MAX_POSTS) break;
