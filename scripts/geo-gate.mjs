@@ -98,6 +98,12 @@ function gateAnswer(r, src) {
   }
   const badValue = numbersIn(r.value).filter((n) => !src.has(n));
   if (badValue.length) reasons.push(`value ${r.value} not in source`);
+  // kira_answers.value is numeric: "4,523" → 4523, "−21.1" → -21.1; a range or other text ("10-30") → null
+  // (the answer text keeps the number as written).
+  if (r.value != null) {
+    const v = String(r.value).replace(/,/g, '').replace(/−/g, '-').trim();
+    r.value = /^-?\d+(\.\d+)?$/.test(v) ? v : null;
+  }
   if (r.source_kind === 'transcript') {
     const label = r.basis_label || docBasis;
     if (!label || !BASIS.test(label)) reasons.push('transcript row without a valid basis label');
