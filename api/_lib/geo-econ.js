@@ -258,8 +258,8 @@ export async function buildRows(read) {
     const key = `${l.country_code}|${ind.slug}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    const parent = indById.get(ind.parent_id);
-    const profile = resolveProfile(map, { slug: ind.slug, parentSlug: parent ? parent.slug : null });
+    // Exact match only: a segment whose profile is its parent industry's would show another segment's products.
+    const profile = resolveProfile(map, { slug: ind.slug });
     if (!profile) { stats.skipped_no_profile++; continue; }
     const C = l.country_code, seg = ind.slug;
     const mine = [];

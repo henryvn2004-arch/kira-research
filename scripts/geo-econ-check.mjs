@@ -22,14 +22,14 @@ const L = (en) => ({ en, ja: `${en}-ja`, ko: `${en}-ko`, zh: `${en}-zh` });
 const db = {
   tax_countries: [{ code: 'VN', name: 'Vietnam' }, { code: 'MY', name: 'Malaysia' }],
   data_sources: [{ key: 'eurostat_comext', name: 'Eurostat' }, { key: 'worldbank_wdi', name: 'World Bank' }, { key: 'opendosm', name: 'OpenDOSM' }, { key: 'vn_customs', name: 'Viet Nam Customs' }, { key: 'aseanstats', name: 'ASEANstats' }],
-  segment_data_map: [{ key: 'coffee', hs: ['0901', '2101'], groups: ['cpi_yoy', 'visitors'], industry_slugs: ['coffee-tea--coffee'], keywords: ['coffee'], ord: 10 }, { key: 'none', hs: [], groups: [], industry_slugs: [], keywords: [], ord: 99 }],
-  hs_codes: [{ code: '0901', label: { en: 'Coffee', ja: 'コーヒー', ko: '커피', zh: '咖啡' } }, { code: '2101', label: { en: 'Coffee extracts', ja: 'コーヒー抽出物', ko: '커피 추출물', zh: '咖啡提取物' } }],
+  segment_data_map: [{ key: 'coffee', hs: ['0901', '2101'], groups: ['cpi_yoy', 'visitors'], industry_slugs: ['coffee-tea--coffee'], keywords: ['coffee'], ord: 10 }, { key: 'tea', hs: ['0902'], groups: [], industry_slugs: ['coffee-tea'], keywords: [], ord: 11 }, { key: 'none', hs: [], groups: [], industry_slugs: [], keywords: [], ord: 99 }],
+  hs_codes: [{ code: '0902', label: { en: 'Tea', ja: 'お茶', ko: '차', zh: '茶' } }, { code: '0901', label: { en: 'Coffee', ja: 'コーヒー', ko: '커피', zh: '咖啡' } }, { code: '2101', label: { en: 'Coffee extracts', ja: 'コーヒー抽出物', ko: '커피 추출물', zh: '咖啡提取物' } }],
   econ_indicators: [
     { key: 'gdp_usd', source_key: 'worldbank_wdi', country_code: null, label: L('GDP'), unit: 'usd', freq: 'A', params: {} },
     { key: 'my_cpi_yoy', source_key: 'opendosm', country_code: 'MY', label: L('Inflation (monthly)'), unit: 'pct', freq: 'M', params: { group: 'cpi_yoy' } },
   ],
-  tax_country_industry: [{ country_code: 'VN', industry_id: 1 }, { country_code: 'MY', industry_id: 1 }, { country_code: 'VN', industry_id: 2 }],
-  tax_industries: [{ id: 1, slug: 'coffee-tea--coffee', level: 2, parent_id: 9 }, { id: 2, slug: 'misc--other', level: 2, parent_id: 8 }, { id: 9, slug: 'coffee-tea', level: 1, parent_id: null }, { id: 8, slug: 'misc', level: 1, parent_id: null }],
+  tax_country_industry: [{ country_code: 'VN', industry_id: 1 }, { country_code: 'MY', industry_id: 1 }, { country_code: 'VN', industry_id: 2 }, { country_code: 'VN', industry_id: 3 }],
+  tax_industries: [{ id: 1, slug: 'coffee-tea--coffee', level: 2, parent_id: 9 }, { id: 2, slug: 'misc--other', level: 2, parent_id: 8 }, { id: 3, slug: 'coffee-tea--tea-shops', level: 2, parent_id: 9 }, { id: 9, slug: 'coffee-tea', level: 1, parent_id: null }, { id: 8, slug: 'misc', level: 1, parent_id: null }],
   econ_series: [
     { indicator_key: 'gdp_usd', country_code: 'VN', period: String(CY - 1), value: 476e9 }, { indicator_key: 'gdp_usd', country_code: 'VN', period: String(CY - 2), value: 430e9 },
     { indicator_key: 'my_cpi_yoy', country_code: 'MY', period: '2026-08', value: 1.4 }, { indicator_key: 'my_cpi_yoy', country_code: 'MY', period: '2026-09', value: 0 },
@@ -39,6 +39,7 @@ const db = {
 const fl = (o) => db.econ_flows.push({ source_key: 'eurostat_comext', reporter: 'EU', freq: 'A', currency: 'EUR', ...o });
 fl({ partner: 'VN', product: '0901', flow: 'M', period: String(CY - 1), value: 2947888799 }); fl({ partner: 'VN', product: '0901', flow: 'M', period: String(CY - 2), value: 1947555682 });
 fl({ partner: 'VN', product: '0901', flow: 'X', period: String(CY - 1), value: 13068846 }); fl({ partner: 'VN', product: '0901', flow: 'X', period: String(CY - 2), value: 8269239 });
+fl({ partner: 'VN', product: '0902', flow: 'M', period: String(CY - 1), value: 9e6 }); fl({ partner: 'VN', product: '0902', flow: 'M', period: String(CY - 2), value: 8e6 });   // only a parent-level profile: no row for the tea-shops segment
 fl({ partner: 'MY', product: '0901', flow: 'M', period: String(CY - 1), value: 500000 }); fl({ partner: 'MY', product: '0901', flow: 'M', period: String(CY - 2), value: 400000 });   // below the floor: skipped
 fl({ partner: 'VN', product: '2101', flow: 'M', period: String(CY - 1), value: 0 });                       // zero: skipped
 fl({ partner: 'VN', product: '2101', flow: 'M', period: String(CY), value: 5e8 }); fl({ partner: 'VN', product: '2101', flow: 'M', period: String(CY - 1), value: 4e8 }); // current year is not complete
@@ -90,7 +91,8 @@ assert.equal(by('trade_hs_0901_M')[0].value, 2947888799);
 assert.equal(by('trade_hs_0901_M')[0].segment_key, 'coffee-tea--coffee');
 // a segment with no data profile yields nothing
 assert.ok(!rows.some((r) => r.segment_key === 'misc--other'));
-assert.equal(stats.skipped_no_profile, 1);
+assert.ok(!rows.some((r) => r.segment_key === 'coffee-tea--tea-shops'), 'parent-only profile: no segment rows');
+assert.equal(stats.skipped_no_profile, 2);
 // GDP: latest complete year, +growth only when the year before is stored
 assert.equal(by('series_gdp_usd')[0].answer_short, `GDP in Vietnam came to USD 476 bn in ${CY - 1}, +10.7% on ${CY - 2} (World Bank, via KIRA Data).`);
 // latest monthly reading: a 0 value is skipped, so August is used? no: the latest stored value is used only when non-zero
