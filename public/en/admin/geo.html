@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GEO — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <style>
+    .hl-head { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+    .hl-head h1 { margin:0; font-size:28px; }
+    .hl-sec { margin:28px 0 12px; font-size:18px; }
+    .hl-sec small { color:var(--muted); font-weight:400; font-size:13px; margin-left:8px; }
+    .hl-card { border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; background:var(--bg); display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between; }
+    .hl-card b { font-size:15.5px; }
+    .hl-sub { font-size:13px; color:var(--muted); margin-top:3px; }
+    .hl-pill { font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:var(--surface-2); color:var(--muted); white-space:nowrap; }
+    .hl-pill.ok { background:#E6F4EA; color:#067647; } .hl-pill.bad { background:#FDE8E6; color:#B42318; } .hl-pill.warn { background:#FFF4DB; color:#8A5A00; }
+    .hl-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+    table.hl { width:100%; border-collapse:collapse; font-size:14px; }
+    table.hl th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border); }
+    table.hl td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.hl tr:last-child td { border-bottom:0; }
+    .hl-mono { font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+    .hl-note { font-size:13px; color:var(--muted); margin:10px 0 0; }
+    .hl-empty { color:var(--muted); padding:24px 0; }
+    .gp-post { border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:12px; background:var(--bg); }
+    .gp-post pre { white-space:pre-wrap; word-break:break-word; font:inherit; font-size:14px; line-height:1.55; margin:10px 0; padding:12px; border-radius:8px; background:var(--surface-2); }
+    .gp-bar { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; }
+    .gp-bar label { font-size:14px; display:flex; gap:6px; align-items:center; }
+    .gp-btn { font:inherit; font-size:13.5px; font-weight:600; padding:7px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg); cursor:pointer; }
+    .gp-btn:hover { background:var(--surface-2); }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/funnel">Funnel</a>
+      <a href="/en/admin/crm">CRM</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies">Companies</a>
+      <a href="/en/admin/chains">Chains</a>
+      <a href="/en/admin/moves">Moves</a>
+      <a href="/en/admin/transcripts">Transcripts</a>
+      <a href="/en/admin/geo" class="active">GEO</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root"><div class="hl-empty">Loading…</div></div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML = esc(user.email) + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    async function api(path, opts) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const o = opts || {};
+      const r = await fetch(path, { ...o, headers: { ...(o.headers || {}), 'Authorization': `Bearer ${session.access_token}` } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || String(r.status)); }
+      return r.json();
+    }
+
+    const ago = (iso) => {
+      if (!iso) return 'never';
+      const h = Math.round((Date.now() - Date.parse(iso)) / 36e5);
+      return h < 1 ? 'under an hour ago' : h < 48 ? h + ' h ago' : Math.round(h / 24) + ' d ago';
+    };
+    const SOURCE_LABEL = { report: 'Reports (answers)', transcript: 'Transcripts (answers)', insight: 'Insights (answers)', econ: 'Economic data (answers)', claims: 'Transcripts (field claims)' };
+
+    let state = null;
+
+    function render() {
+      const d = state, h = d.health;
+      const bad = !h.line.ok || h.missing_docs.length;
+      root.innerHTML = `
+        <div class="hl-head"><h1>GEO</h1>
+          <span class="hl-pill ${bad ? 'bad' : 'ok'}">${bad ? 'Needs a look' : 'All clear'}</span></div>
+
+        <h2 class="hl-sec">Answers and claims<small>published rows</small></h2>
+        <div class="hl-card"><div><b>${h.totals.answers} answers · ${h.totals.claims} field claims</b>
+          <div class="hl-sub">Added in the last day: ${h.added.d1.answers} answers, ${h.added.d1.claims} claims · last 7 days: ${h.added.d7.answers} answers, ${h.added.d7.claims} claims (drafts included)</div></div>
+          <span class="hl-pill ${h.line.ok ? 'ok' : 'bad'}">${h.line.ok ? 'Hooks running' : 'No new rows in 72 h'}</span></div>
+        <div class="hl-card"><div><b>${h.indexable.hubs} indexable hubs · ${h.indexable.trade_pages} indexable trade pages</b>
+          <div class="hl-sub">Hubs: ${h.indexable.hubs_total} segment pages exist; the rest wait for more answers. Same rules as the sitemap.</div></div></div>
+
+        <h2 class="hl-sec">Per country</h2>
+        <div class="hl-wrap"><table class="hl"><thead><tr><th>Country</th><th>Answers</th><th>Field claims</th></tr></thead><tbody>
+          ${h.by_country.map(c => `<tr><td class="hl-mono">${esc(c.code)}</td><td>${c.answers}</td><td>${c.claims}</td></tr>`).join('') || '<tr><td colspan="3">No published rows yet.</td></tr>'}
+        </tbody></table></div>
+
+        <h2 class="hl-sec">Last insert per source</h2>
+        <div class="hl-wrap"><table class="hl"><thead><tr><th>Source</th><th>Last row added</th></tr></thead><tbody>
+          ${['report', 'transcript', 'insight', 'econ', 'claims'].map(k => `<tr><td>${esc(SOURCE_LABEL[k])}</td><td>${h.last_insert[k] ? esc(new Date(h.last_insert[k]).toLocaleString()) + ' · ' + esc(ago(h.last_insert[k])) : 'never'}</td></tr>`).join('')}
+        </tbody></table></div>
+
+        <h2 class="hl-sec">Published in the last 7 days with no rows yet<small>a daily hook may have failed</small></h2>
+        ${h.missing_docs.length ? `<div class="hl-wrap"><table class="hl"><thead><tr><th>Kind</th><th>Slug</th><th>Published</th></tr></thead><tbody>
+          ${h.missing_docs.map(m => `<tr><td>${esc(m.kind)}</td><td class="hl-mono">${esc(m.slug)}</td><td>${esc(new Date(m.published_at).toLocaleString())}</td></tr>`).join('')}</tbody></table></div>`
+          : '<div class="hl-card"><div><b>Every document published this week has rows</b></div><span class="hl-pill ok">OK</span></div>'}
+
+        <h2 class="hl-sec">LinkedIn queue<small>one post per transcript, newest first</small></h2>
+        ${d.log_ready ? '' : '<div class="hl-card"><div><b>The "posted" ticks are not saved yet</b><div class="hl-sub">Migration 066 (geo_post_log) has not been applied.</div></div><span class="hl-pill warn">Check</span></div>'}
+        ${d.queue.length ? d.queue.map((q, i) => `
+          <div class="gp-post"><div class="gp-bar"><b>${esc(q.title)}</b><small class="hl-sub">${esc(q.claims)} claim${q.claims === 1 ? '' : 's'} · newest ${esc(ago(q.newest_claim_at))}</small></div>
+            <pre id="post-${i}">${esc(q.text)}</pre>
+            <div class="gp-bar"><button class="gp-btn" type="button" data-copy="${i}">Copy post</button>
+              <label><input type="checkbox" data-posted="${esc(q.transcript_slug)}" ${q.posted ? 'checked' : ''} ${d.log_ready ? '' : 'disabled'}> Posted${q.posted ? ' ' + esc(new Date(q.posted.posted_at).toLocaleDateString()) + ' by ' + esc(q.posted.posted_by) : ''}</label></div></div>`).join('')
+          : '<div class="hl-empty">No transcript has published field claims yet.</div>'}
+        <p class="hl-note">Drafts use only published field claims, always carry the "KIRA field research" label, and skip any claim that mentions a banned word. Check the wording before posting.</p>`;
+
+      root.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+        const text = state.queue[Number(b.dataset.copy)].text;
+        try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+        catch (_e) { const pre = document.getElementById('post-' + b.dataset.copy); const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected: press copy'; }
+        setTimeout(() => { b.textContent = 'Copy post'; }, 2000);
+      }));
+      root.querySelectorAll('[data-posted]').forEach(cb => cb.addEventListener('change', async () => {
+        cb.disabled = true;
+        try {
+          await api('/api/admin-geo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ transcript_slug: cb.dataset.posted, posted: cb.checked }) });
+          state = await api('/api/admin-geo'); render();
+        } catch (e) { cb.checked = !cb.checked; cb.disabled = false; alert('Could not save (' + e.message + ').'); }
+      }));
+    }
+
+    try { state = await api('/api/admin-geo'); render(); }
+    catch (e) { root.innerHTML = `<div class="hl-empty">Could not load GEO data (${esc(e.message)}).</div>`; }
+  </script>
+</body>
+</html>

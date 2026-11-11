@@ -199,7 +199,7 @@ test.describe('branded 404', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/crm', '/en/admin/chains', '/en/admin/transcripts'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/crm', '/en/admin/chains', '/en/admin/transcripts', '/en/admin/geo'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -1328,4 +1328,11 @@ test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed 
   if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
   if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
   expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
+});
+
+test.describe('GEO admin', () => {
+  test('/api/admin-geo requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-geo')).status()).toBe(401);
+    expect((await request.post('/api/admin-geo', { data: { transcript_slug: 'x-y', posted: true } })).status()).toBe(401);
+  });
 });
