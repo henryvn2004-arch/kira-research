@@ -524,7 +524,8 @@ Cuts the report's executive-summary page and its first chart page out of the fin
 
 Prompts live in the private brain: `${KIRA_BRAIN_DIR}/geo/prompts/` (`common.md`, `report_extract.md`, `qa.md`). Never copy them here.
 
-1. **Extract** — spawn ONE Haiku subagent (`model: haiku`). Give it the two prompt files, the slug, `country_code`, `segment_key` (the topic's `tax_industries.slug`), the analysis name and buyer question from the topic brief, and the local files `outputs/batch/${id}/en.html` + `outputs/batch/${id}/exhibits.json` (if present). It writes `outputs/batch/${id}/geo.json`.
+0. **Segment** — `node scripts/geo-segment.mjs --report <slug>` prints `{segment_key, method, candidates}`: the topic's level-2 segment, or `null` plus up to 8 candidate segments of the country.
+1. **Extract** — spawn ONE Haiku subagent (`model: haiku`). Give it the two prompt files, the slug, `country_code`, the resolved `segment_key` (or, when it is null, the `candidates` list), the analysis name and buyer question from the topic brief, and the local files `outputs/batch/${id}/en.html` + `outputs/batch/${id}/exhibits.json` (if present). It writes `outputs/batch/${id}/geo.json`.
 2. **QA** — spawn ONE Sonnet subagent (`model: sonnet`) with `qa.md`, the slug, title, kind `report` and analysis name, and ONLY `geo.json` (not the report). It rewrites `geo.json` in place (drops or fixes rows whose first clause does not answer the question, fixes the analysis name).
 3. **Gate + insert** (code, no model):
 
