@@ -99,6 +99,11 @@ export const CONFIG = {
     label: 'Sell single reports (PayPal checkout)',
     help: 'Off: report pages show "Request access" and coming-soon pages show no price; nothing can be bought. On: report pages show the price and the PayPal button, and coming-soon pages say what the report will cost. Turn it on only after you have read /en/terms and are happy with the refund policy.'
   },
+  'transcripts.public_full': {
+    group: 'Checkout', type: 'bool', default: true,
+    label: 'Expert-interview transcripts are fully public',
+    help: 'On (owner decision 2026-11-11): the whole dialogue of every transcript is readable and indexable by anyone, and search and AI engines see it in the page HTML. Off: only the opening share of each transcript is public, the rest needs a subscription or a purchase.'
+  },
   'checkout.transcript_enabled': {
     group: 'Checkout', type: 'bool', default: false,
     label: 'Sell expert-interview transcripts (PayPal checkout)',

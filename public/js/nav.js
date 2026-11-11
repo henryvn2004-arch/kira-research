@@ -236,7 +236,7 @@
   function injectHreflang() {
     // Studio host: skip — Studio is English-only and pages are noindex.
     if (isStudioHost) return;
-    if (document.querySelector('link[data-kira-hreflang]')) return;
+    if (document.querySelector('link[data-kira-hreflang], link[data-ssr]')) return;   // data-ssr: written by api/ssr.js
     const origin = window.location.origin;
     const sub    = subPath.join('/');                // preserves trailing-slash-less form
     const hasTrailingSlash = window.location.pathname.endsWith('/');

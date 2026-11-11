@@ -1214,3 +1214,73 @@ test.describe('Kira Data (D1)', () => {
     await expect(page.locator('.dd-tab').first()).toHaveAttribute('href', '/en/data/?from=CN');
   });
 });
+
+// ── GEO G0: content pages answer with real HTML, no JavaScript needed ──
+// A bot that does not run JS (GPTBot, ClaudeBot, PerplexityBot) must see the title and the text.
+test.describe('Server-rendered content pages (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+  const htmlOf = async (request, path) => {
+    const r = await request.get(path, { headers: BOT });
+    expect(r.status()).toBe(200);
+    return r.text();
+  };
+  const titleOf = (h) => (h.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+  const unesc = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');   // &amp; last, so "&amp;lt;" is not unescaped twice
+
+  test('transcript: title, basis line, dialogue and JSON-LD in the first response', async ({ request }) => {
+    const list = await (await request.get('/api/transcript-list?locale=en')).json();
+    test.skip(!list.items.length, 'no published transcripts');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/experts/transcripts/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('tv-turn q');
+    expect(h).toContain(`<b>${it.format.replace(/&/g, '&amp;')}.</b>`);   // "Modelled interview" label stays visible
+    expect(h).toContain(`rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/experts/transcripts/${it.slug}"`);
+    expect(h).toContain('"@type":"Article"');
+    expect(h).toContain('"@type":"BreadcrumbList"');
+    expect(h).not.toContain('tv-locked');
+    const ja = await htmlOf(request, `/ja/experts/transcripts/${it.slug}`);   // falls back to EN text when no JA edition
+    expect(ja).toContain('tv-turn q');
+  });
+
+  test('insight: full body in the first response', async ({ request }) => {
+    const list = await (await request.get('/api/insights-list?locale=en&limit=3')).json();
+    test.skip(!list.items.length, 'no published insights');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/insights/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('class="article-body"');
+    expect(h).toContain('"@type":"Article"');
+    const ja = await htmlOf(request, `/ja/insights/${it.slug}`);
+    expect(ja).toContain('class="article-body"');
+  });
+
+  test('report: title, summary and key-questions container, no paid text', async ({ request }) => {
+    const list = await (await request.get('/api/library-list?locale=en&limit=3')).json();
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/reports/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('id="overview"');
+    expect(h).toContain('id="key-questions"');
+    expect(h).toContain('"@type":"Product"');
+    expect(h).not.toContain('report-full-content');
+    const ja = await htmlOf(request, `/ja/reports/${it.slug}`);
+    expect(ja).toContain('id="overview"');
+  });
+
+  test('coming-soon: title in the first response, noindex unless it is an SEO-test topic', async ({ request }) => {
+    const list = await (await request.get('/api/library-list?locale=en&status=soon&limit=3')).json();
+    test.skip(!list.items.length, 'no coming-soon topics');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/reports/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    const topic = await (await request.get(`/api/topic?slug=${it.slug}`)).json();
+    if (topic.index) expect(h).not.toContain('content="noindex');
+    else expect(h).toContain('name="robots" content="noindex,follow"');
+  });
+
+  test('unknown slugs still reach the page script (client shows not found)', async ({ request }) => {
+    const h = await htmlOf(request, '/en/reports/this-report-does-not-exist-xyz');
+    expect(h).toContain('id="rpt-root"');
+  });
+});
