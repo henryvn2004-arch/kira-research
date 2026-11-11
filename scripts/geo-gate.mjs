@@ -10,6 +10,7 @@
 //   answers     question ends with "?", answer_short <= 50 words, cites a source,
 //               numeric intents carry a number and a year
 //   transcript  answer_short carries the basis label ("KIRA field research (...)"),
+//               the field insight leads (no number before the first ';' or '('),
 //               a sourced number reads "... (<source>), as cited in <basis label>";
 //               no wording that suggests one named person was interviewed
 //
@@ -102,6 +103,9 @@ function gateAnswer(r, src) {
     // say so, so the label does not read as the origin of the number.
     const nonYear = numbersIn(a.replace(label, '')).filter((n) => !/^(19|20)\d\d$/.test(n));
     if (nonYear.length && label && !a.includes(`as cited in ${label}`)) reasons.push('sourced number without "as cited in <basis label>"');
+    // The field insight leads; a public number may only follow it (after ';' or inside the source parenthesis).
+    const lead = a.split(/[;(]/)[0];
+    if (numbersIn(lead).some((n) => !/^(19|20)\d\d$/.test(n))) reasons.push('transcript answer leads with a public number, not the field insight');
     if (ONE_PERSON.test(a)) reasons.push('one-person interview framing');
   }
   common(`${r.question} ${a}`, src, reasons);
