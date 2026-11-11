@@ -118,6 +118,8 @@ function gateClaim(c, src) {
   if (!COUNTRIES.has(c.country_code)) reasons.push(`country ${c.country_code}`);
   if (!c.transcript_slug) reasons.push('transcript_slug missing');
   if (!c.speaker_role) reasons.push('speaker_role missing');
+  // BizDirect matches claims on country_code + industry == segment_key: a level-2 slug or nothing.
+  if (c.industry != null && !/^[a-z0-9-]+--[a-z0-9-]+$/.test(c.industry)) reasons.push('industry must be a level-2 segment slug or null');
   if (!c.basis_label || !BASIS.test(c.basis_label)) reasons.push('basis_label missing or malformed');
   if (words(c.claim_text) > 60) reasons.push(`claim_text ${words(c.claim_text)} words > 60`);
   if (ONE_PERSON.test(c.claim_text)) reasons.push('one-person interview framing');
