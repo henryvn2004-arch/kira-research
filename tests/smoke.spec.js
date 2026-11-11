@@ -1316,3 +1316,16 @@ test.describe('GEO hubs (raw HTML, bot user agent)', () => {
     expect(h).toContain('KIRA field research');
   });
 });
+
+test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed columns)', async ({ request }) => {
+  const r = await request.get('/api/geo-feed?country=TH');
+  expect(r.status()).toBe(200);
+  expect(r.headers()['cache-control']).toContain('s-maxage=3600');
+  const j = await r.json();
+  expect(Array.isArray(j.crosswalk) && Array.isArray(j.answers) && Array.isArray(j.claims)).toBe(true);
+  expect(j.generated_at).toBeTruthy();
+  expect(j.answers.every((a) => a.country_code === 'TH')).toBe(true);
+  if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
+  if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
+  expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
+});
