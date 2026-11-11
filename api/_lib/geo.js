@@ -61,8 +61,25 @@ export async function segmentName(key) {
   return tail.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
 }
 
+// ── translated rows (i18n = { ja: {...}, ko: {...}, zh: {...} }) ──
+// Answers need both question and answer_short in the language; claims need claim_text. Else null (not translated).
+const str = (v) => (typeof v === 'string' && v.trim() ? v.trim() : '');
+export function ansLoc(a, loc) {
+  if (loc === 'en') return a;
+  const t = a.i18n && a.i18n[loc];
+  const question = t && str(t.question), answer_short = t && str(t.answer_short);
+  return question && answer_short ? { ...a, question, answer_short } : null;
+}
+export function claimLoc(c, loc) {
+  if (loc === 'en') return c;
+  const t = c.i18n && c.i18n[loc];
+  const claim_text = t && str(t.claim_text);
+  if (!claim_text) return null;
+  return { ...c, claim_text, speaker_role: str(t.speaker_role) || c.speaker_role, basis_label: str(t.basis_label) || c.basis_label };
+}
+
 // ── answers ──────────────────────────────────────────────
-const A_SEL = 'id,question,intent,country_code,segment_key,answer_short,year,primary_source,source_kind,source_ref,updated_at';
+const A_SEL = 'id,question,intent,country_code,segment_key,answer_short,year,primary_source,source_kind,source_ref,updated_at,i18n';
 
 export function answersForHub(code, segment) {
   return sb(`kira_answers?status=eq.published&country_code=eq.${encodeURIComponent(code)}&segment_key=eq.${encodeURIComponent(segment)}&select=${A_SEL}&order=year.desc.nullslast,created_at.asc&limit=400`);
@@ -72,7 +89,7 @@ export function answersForDoc(slug, limit = 15) {
 }
 
 // Which of these slugs are published reports / transcripts? → { reports: Map(slug→title), transcripts: Map(slug→title) }
-export async function docTitles(slugs) {
+export async function docTitles(slugs, loc = 'en') {
   const list = [...new Set(slugs.filter(Boolean))];
   const out = { reports: new Map(), transcripts: new Map() };
   if (!list.length) return out;
@@ -84,7 +101,7 @@ export async function docTitles(slugs) {
     const m = new Map();
     for (const r of rows) {
       const tl = (r[k] || []).filter((x) => x.status === 'published');
-      const t = tl.find((x) => x.locale === 'en') || tl[0];
+      const t = tl.find((x) => x.locale === loc) || tl.find((x) => x.locale === 'en') || tl[0];
       m.set(r.slug, (t && t.title) || r.slug);
     }
     return m;
@@ -95,16 +112,17 @@ export async function docTitles(slugs) {
 }
 
 // Hub stats from its answers + the doc titles: indexable only with real sources AND enough answers.
-export function hubIndexable(answers, titles) {
+export function hubIndexable(answers, titles, loc = 'en') {
+  const n = answers.filter((a) => ansLoc(a, loc)).length;     // thresholds count the rows that exist in that language
   const docs = answers.map((a) => a.source_ref && a.source_ref.slug).filter(Boolean);
   const hasDoc = docs.some((s) => titles.reports.has(s) || titles.transcripts.has(s));
-  return hasDoc && answers.length >= MIN_ANSWERS;
+  return hasDoc && n >= MIN_ANSWERS;
 }
 
 // Every (country, segment) hub with its indexable flag — for the sitemap.
 export async function listHubs() {
   return cached('hubs', 5 * 60e3, async () => {
-    const rows = await sb('kira_answers?status=eq.published&segment_key=not.is.null&select=country_code,segment_key,source_ref,updated_at&limit=5000');
+    const rows = await sb('kira_answers?status=eq.published&segment_key=not.is.null&select=country_code,segment_key,source_ref,updated_at,i18n&limit=5000');
     const titles = await docTitles(rows.map((r) => r.source_ref && r.source_ref.slug));
     const by = new Map();
     for (const r of rows) {
@@ -114,12 +132,16 @@ export async function listHubs() {
       h.answers.push(r);
       if (r.updated_at > h.updated) h.updated = r.updated_at;
     }
-    return [...by.values()].map((h) => ({ code: h.code, segment: h.segment, n: h.answers.length, updated: h.updated, indexable: hubIndexable(h.answers, titles) }));
+    return [...by.values()].map((h) => ({
+      code: h.code, segment: h.segment, n: h.answers.length, updated: h.updated,
+      indexable: hubIndexable(h.answers, titles),                       // English
+      byLocale: Object.fromEntries(['en', 'ja', 'ko', 'zh'].map((l) => [l, hubIndexable(h.answers, titles, l)])),
+    }));
   });
 }
 
 // ── practitioner claims ──────────────────────────────────
-const C_SEL = 'id,topic,industry,country_code,speaker_role,claim_text,transcript_slug,basis_label,updated_at';
+const C_SEL = 'id,topic,industry,country_code,speaker_role,claim_text,transcript_slug,basis_label,updated_at,i18n';
 const industryBase = (s) => String(s || '').replace(/\s*\(.*$/, '').trim();
 export const industrySlug = (s) => slugOf(industryBase(s));
 
@@ -133,14 +155,20 @@ export function claimsForTranscripts(slugs) {
 // All published claims (593 rows, small) — grouped by the trade pages.
 export const allClaims = () => cached('claims', 5 * 60e3, () => sb(`field_claims?status=eq.published&select=${C_SEL}&limit=5000`));
 
-// Claims grouped by industry slug → topic → [claims]; unpublished transcripts dropped.
-export async function tradeIndex() {
-  return cached('trade', 5 * 60e3, async () => {
-    const claims = await allClaims();
-    const titles = await docTitles(claims.map((c) => c.transcript_slug));
-    const idx = new Map();   // industry slug → { name, topics: Map(topic → claims) }
-    for (const c of claims) {
-      if (!titles.transcripts.has(c.transcript_slug) || !c.industry) continue;
+// Claims grouped by industry slug → topic → [claims], in one language (translated rows only for ja/ko/zh);
+// claims of unpublished transcripts dropped.
+const claimBase = () => cached('claim-base', 5 * 60e3, async () => {
+  const claims = await allClaims();
+  const titles = await docTitles(claims.map((c) => c.transcript_slug));
+  return { claims, titles: titles.transcripts };
+});
+export async function tradeIndex(loc = 'en') {
+  const { claims, titles } = await claimBase();
+  return cached(`trade|${loc}`, 5 * 60e3, async () => {
+    const idx = new Map();   // industry slug → { slug, name, topics: Map(topic → claims) }
+    for (const c0 of claims) {
+      const c = claimLoc(c0, loc);
+      if (!c || !titles.has(c.transcript_slug) || !c.industry) continue;
       const is = industrySlug(c.industry);
       if (!is) continue;
       if (!idx.has(is)) idx.set(is, { slug: is, name: industryBase(c.industry), topics: new Map() });
@@ -148,7 +176,7 @@ export async function tradeIndex() {
       if (!ind.topics.has(c.topic)) ind.topics.set(c.topic, []);
       ind.topics.get(c.topic).push(c);
     }
-    return { idx, titles: titles.transcripts };
+    return { idx, titles };
   });
 }
 export const tradeTopicIndexable = (claims, topic) =>

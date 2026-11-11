@@ -16,6 +16,7 @@
 // ============================================================
 import { coverUrls } from './_lib/cover.js';
 import { plannedOf } from './_lib/planned.js';
+import { logGeoHit } from './_lib/geo-hits.js';
 import { keyQuestionsHtml, keyPointsHtml } from './_lib/geo-slots.js';
 import { loadTranscript, splitFree, sourcesFor, sb as sbT } from './_lib/transcripts.js';
 import {
@@ -136,7 +137,7 @@ async function renderTranscript(req, res, loc, slug) {
     hreflang: have.map((l) => ({ locale: l, url: `${BASE}/${l}/experts/transcripts/${base.slug}` })),
     xDefault: have.includes('en') ? `${BASE}/en/experts/transcripts/${base.slug}` : null,
     ld, content,
-    slots: { KP: await keyPointsHtml(base.slug).catch(() => '') },
+    slots: { KP: await keyPointsHtml(base.slug, served).catch(() => '') },
   });
   send(res, html);
   return true;
@@ -270,7 +271,7 @@ async function renderReport(req, res, loc, slug) {
     ogImage: cover && cover.full,
     hreflang: have.map((l) => ({ locale: l, url: `${BASE}/${l}/reports/${base.slug}` })),
     xDefault: `${BASE}/en/reports/${base.slug}`, ld, content,
-    slots: { KQ: await keyQuestionsHtml(base.slug).catch(() => '') },
+    slots: { KQ: await keyQuestionsHtml(base.slug, served).catch(() => '') },
   }));
   return true;
 }
@@ -329,6 +330,8 @@ export default async function handler(req, res) {
   const slug = (url.searchParams.get('slug') || '').trim().toLowerCase().replace(/\/$/, '');
   const qs = new URLSearchParams(url.searchParams); ['type', 'loc', 'slug'].forEach((k) => qs.delete(k));
   const query = qs.toString() ? `?${qs}` : '';
+  const PLURAL = { transcript: 'experts/transcripts', insight: 'insights', report: 'reports' };
+  if (PLURAL[type]) logGeoHit(req, `/${loc}/${PLURAL[type]}/${slug}`);
 
   try {
     let done = null;

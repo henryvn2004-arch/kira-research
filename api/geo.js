@@ -1,12 +1,14 @@
 // ============================================================
 // KIRA RESEARCH — api/geo.js
-// GEO hubs (G4): server-rendered pages built from kira_answers, field_claims and segment_crosswalk.
+// GEO hubs (G4/G7): server-rendered pages built from kira_answers, field_claims and segment_crosswalk.
 //   GET /api/geo?type=hub&loc=en&country=vietnam&segment=<segment_key>      /<loc>/markets/<country>/<segment>
 //   GET /api/geo?type=trade&loc=en&industry=<slug>&topic=<topic-slug>       /<loc>/trade/<industry>/<topic>
 //   GET /api/geo?type=trade-industry&loc=en&industry=<slug>                 /<loc>/trade/<industry>
-// Content is English for now: non-EN routes render the same text, canonical = the EN URL, noindex,follow.
-// Index rules (EN only): hub = >= 1 published report/transcript AND >= 5 published answers;
-//   trade page = >= 3 claims from >= 2 transcripts; trade industry hub = at least one indexable topic.
+// Languages: a page in ja/ko/zh is rendered from the translated rows (kira_answers.i18n / field_claims.i18n)
+// with its own canonical and hreflang, and is indexable when the same thresholds hold on the translated rows.
+// When they do not, the URL serves the English text with the English canonical and noindex,follow.
+// Index rules: hub = >= 1 published report/transcript AND >= 5 answers in that language;
+//   trade page = >= 3 claims from >= 2 transcripts in that language; trade industry hub = one indexable topic.
 // Every practitioner claim is printed with its basis_label (modelled interviews built on KIRA field research).
 // Freshness: tables are read per request; the edge caches 10 min + stale-while-revalidate (vercel.json).
 // ============================================================
@@ -14,15 +16,18 @@ import {
   BASE, LOCALES, esc, loadTemplate, fillTemplate, crumbJson, plain,
 } from './_lib/ssr.js';
 import {
-  INTENT_ORDER, INTENT_LABEL, TOPIC_LABEL, TOPIC_INTENT, topicSlug, topicKey, sb,
+  INTENT_ORDER, TOPIC_INTENT, topicSlug, topicKey, sb, ansLoc, claimLoc,
   countryBySlug, countryByCode, segmentName, answersForHub, docTitles, hubIndexable,
   claimsForTranscripts, crosswalk, bizdirectSummary, tradeIndex, tradeTopicIndexable,
 } from './_lib/geo.js';
+import { T, countryName } from './_lib/geo-i18n.js';
+import { logGeoHit } from './_lib/geo-hits.js';
 import { answerBlock, claimItem } from './_lib/geo-html.js';
 
 const cut = (s, n) => { const t = plain(s); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
 const day = (iso) => String(iso || '').slice(0, 10);
 const loc2 = (l) => (LOCALES.includes(l) ? l : 'en');
+const bdUrl = (u) => /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '');
 
 function page(res, html, { status = 200, cache = true } = {}) {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -30,21 +35,23 @@ function page(res, html, { status = 200, cache = true } = {}) {
   res.status(status).send(html);
 }
 
+// o.loc = language of the content; o.path = its own path (/<loc>/…) which is also the canonical;
+// o.hreflang = [{locale, url}] of the language editions that are indexable.
 async function shell(req, res, o) {
-  const url = `${BASE}${o.path}`;                                   // canonical is always the EN URL
-  const ok = o.indexable && o.loc === 'en';
   page(res, fillTemplate(await loadTemplate('hub', req), {
-    locale: 'en', title: o.title, description: o.description, canonical: url,
-    robots: ok ? null : 'noindex,follow', hreflang: [], ld: o.ld || [], content: o.content,
+    locale: o.loc, title: o.title, description: o.description, canonical: `${BASE}${o.path}`,
+    robots: o.indexable ? null : 'noindex,follow', hreflang: o.hreflang || [], xDefault: o.xDefault || null,
+    ld: o.ld || [], content: o.content,
   }), { status: o.status || 200, cache: !o.status });
 }
 
 const crumbs = (items) => `<nav class="r-crumbs" aria-label="Breadcrumb">${items.map((c, i) => (c.href ? `<a href="${esc(c.href)}">${esc(c.name)}</a>` : `<span>${esc(c.name)}</span>`) + (i < items.length - 1 ? '<span class="sep">›</span>' : '')).join('')}</nav>`;
 
 function notFound(req, res, loc) {
+  const L = T.en;
   return shell(req, res, {
-    loc, indexable: false, status: 404, path: `/${loc}/`, title: 'Page not found — KIRA RESEARCH', description: 'This page does not exist.',
-    content: `<!--SSR--><h1>Page not found</h1><p>There is nothing published at this address. <a href="/${loc}/library">Browse the library</a>.</p><!--/SSR-->`,
+    loc: 'en', indexable: false, status: 404, path: '/en/', title: `${L.nfTitle} — KIRA RESEARCH`, description: L.nfTitle,
+    content: `<!--SSR--><h1>${L.nfTitle}</h1><p>${L.nfBody} <a href="/${loc}/library">${L.nfBrowse}</a>.</p><!--/SSR-->`,
   });
 }
 
@@ -54,30 +61,38 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   if (!country) return notFound(req, res, loc);
   const answers = await answersForHub(country.code, segment);
   if (!answers.length) return notFound(req, res, loc);
-  const segName = await segmentName(segment);
-  const titles = await docTitles(answers.map((a) => a.source_ref && a.source_ref.slug));
-  const indexable = hubIndexable(answers, titles);
-  const updated = day(answers.reduce((m, a) => (a.updated_at > m ? a.updated_at : m), ''));
-  const path = `/${loc}/markets/${countrySlug}/${segment}`;
-  const h1 = `${country.name} ${segName}: key facts`;
+  const slugs = answers.map((a) => a.source_ref && a.source_ref.slug);
+  const known = await docTitles(slugs);                                  // which documents are published
+  const ok = Object.fromEntries(LOCALES.map((l) => [l, hubIndexable(answers, known, l)]));
 
-  // Q&A grouped by intent (H2), question = H3.
+  // The language of the page: the requested one when it qualifies, else English text, noindex, English canonical.
+  const fallback = loc !== 'en' && !ok[loc];
+  const vl = fallback ? 'en' : loc;
+  const L = T[vl];
+  const titles = vl === 'en' ? known : await docTitles(slugs, vl);
+  const rows = answers.map((a) => ansLoc(a, vl)).filter(Boolean);
+  const segName = await segmentName(segment);
+  const cName = countryName(country, vl);
+  const updated = day(answers.reduce((m, a) => (a.updated_at > m ? a.updated_at : m), ''));
+  const path = `/${vl}/markets/${countrySlug}/${segment}`;
+  const h1 = L.h1Hub(cName, segName);
+
   const byIntent = new Map();
-  for (const a of answers) {
+  for (const a of rows) {
     if (!byIntent.has(a.intent)) byIntent.set(a.intent, []);
     byIntent.get(a.intent).push(a);
   }
   const intents = [...byIntent.keys()].sort((x, y) => INTENT_ORDER.indexOf(x) - INTENT_ORDER.indexOf(y));
-  const qa = intents.map((i) => `<section id="${esc(i)}"><h2>${esc(INTENT_LABEL[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles)).join('')}</section>`).join('');
+  const qa = intents.map((i) => `<section id="${esc(i)}"><h2>${esc(L.intents[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles, L, vl)).join('')}</section>`).join('');
 
-  const docSlugs = [...new Set(answers.map((a) => a.source_ref && a.source_ref.slug).filter(Boolean))];
-  const repSlugs = docSlugs.filter((s) => titles.reports.has(s));
-  const trSlugs = docSlugs.filter((s) => titles.transcripts.has(s));
+  const docSlugs = [...new Set(slugs.filter(Boolean))];
+  const repSlugs = docSlugs.filter((s) => known.reports.has(s));
+  const trSlugs = docSlugs.filter((s) => known.transcripts.has(s));
 
-  // How the trade works: statements from this market's transcripts that feed the hub.
-  const claims = (await claimsForTranscripts(trSlugs)).filter((c) => c.country_code === country.code);
+  // How the trade works: statements from this market's transcripts that feed the hub (in the page's language).
+  const claims = (await claimsForTranscripts(trSlugs)).filter((c) => c.country_code === country.code).map((c) => claimLoc(c, vl)).filter(Boolean);
   const trade = claims.length
-    ? `<section id="how-the-trade-works"><h2>How the trade works</h2><ul class="geo-claims">${claims.slice(0, 20).map((c) => claimItem(c, titles)).join('')}</ul></section>` : '';
+    ? `<section id="how-the-trade-works"><h2>${esc(L.howTrade)}</h2><ul class="geo-claims">${claims.slice(0, 20).map((c) => claimItem(c, titles, vl)).join('')}</ul></section>` : '';
 
   // Who's who: BizDirect Asia segment summary (final shape); nothing at all on 400/503/timeout.
   let who = '';
@@ -85,18 +100,16 @@ async function renderHub(req, res, loc, countrySlug, segment) {
     const cw = await crosswalk(country.code, segment);
     const bd = await bizdirectSummary(cw);
     const segs = bd && Array.isArray(bd.segments) ? bd.segments.filter((s) => s && (s.companies > 0 || (s.pages || []).length)) : [];
-    const ok = (u) => /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '');
-    const where = (r) => (r ? ` (${esc(r)})` : '');
     if (segs.length) {
-      who = '<section id="whos-who"><h2>Who\'s who</h2>' + segs.map((s) => {
-        const pages = (s.pages || []).filter((p) => ok(p.url));
+      who = `<section id="whos-who"><h2>${esc(L.whosWho)}</h2>` + segs.map((s) => {
+        const pages = (s.pages || []).filter((p) => bdUrl(p.url));
         const top = (s.top_companies || []).slice(0, 10).filter((c) => c && c.name);
         const regions = (s.top_regions || []).slice(0, 5).filter((r) => r && r.region);
-        return `<h3>${esc(s.name || s.term)}</h3><p>${esc(Number(s.companies) || 0)} companies in BizDirect Asia's database.` +
-          (pages.length ? ' ' + pages.map((p) => `<a href="${esc(p.url)}" rel="noopener">${esc(p.role ? String(p.role).replace(/^./, (c) => c.toUpperCase()) + ' list' : 'Company list')}</a>`).join(' · ') : '') + '</p>' +
-          (top.length ? `<ul class="geo-list">${top.map((c) => `<li>${esc(c.name)}${where(c.region)}</li>`).join('')}</ul>` : '') +
-          (regions.length ? `<p class="geo-note">Top regions: ${regions.map((r) => `${esc(r.region)} (${esc(r.companies)})`).join(', ')}</p>` : '');
-      }).join('') + '<p class="geo-note">Company data: BizDirect Asia (sister company)</p></section>';
+        return `<h3>${esc(s.name || s.term)}</h3><p>${esc(L.bdCompanies(Number(s.companies) || 0))}` +
+          (pages.length ? ' ' + pages.map((p) => `<a href="${esc(p.url)}" rel="noopener">${esc(L.bdList(p.role ? String(p.role).toLowerCase() : ''))}</a>`).join(' · ') : '') + '</p>' +
+          (top.length ? `<ul class="geo-list">${top.map((c) => `<li>${esc(c.name)}${c.region ? ` (${esc(c.region)})` : ''}</li>`).join('')}</ul>` : '') +
+          (regions.length ? `<p class="geo-note">${esc(L.topRegions)} ${regions.map((r) => `${esc(r.region)} (${esc(r.companies)})`).join(', ')}</p>` : '');
+      }).join('') + `<p class="geo-note">${esc(L.companyData)}</p></section>`;
     }
   } catch (_e) { who = ''; }
 
@@ -108,43 +121,59 @@ async function renderHub(req, res, loc, countrySlug, segment) {
     } catch (_e) { ins = []; }
   }
   const insItems = ins.map((r) => {
-    const tr = (r.insight_translations || []).find((t) => t.locale === 'en' && t.status === 'published' && t.body);
-    return tr ? `<li><a href="/en/insights/${esc(r.slug)}">${esc(tr.title)}</a></li>` : '';
+    const all = (r.insight_translations || []).filter((t) => t.status === 'published' && t.body);
+    const tr = all.find((t) => t.locale === vl) || all.find((t) => t.locale === 'en');
+    return tr ? `<li>${esc(L.kInsight)} <a href="/${esc(tr.locale)}/insights/${esc(r.slug)}">${esc(tr.title)}</a></li>` : '';
   }).filter(Boolean);
   const related =
-    `<section id="related"><h2>Related reports, interviews and insights</h2><ul class="geo-list">` +
-    repSlugs.map((s) => `<li>Report: <a href="/en/reports/${esc(s)}">${esc(titles.reports.get(s))}</a></li>`).join('') +
-    trSlugs.map((s) => `<li>Expert interview: <a href="/en/experts/transcripts/${esc(s)}">${esc(titles.transcripts.get(s))}</a></li>`).join('') +
-    insItems.map((x) => x.replace('<li>', '<li>Insight: ')).join('') + '</ul></section>';
+    `<section id="related"><h2>${esc(L.related)}</h2><ul class="geo-list">` +
+    repSlugs.map((s) => `<li>${esc(L.kReport)} <a href="/${vl}/reports/${esc(s)}">${esc(titles.reports.get(s) || known.reports.get(s))}</a></li>`).join('') +
+    trSlugs.map((s) => `<li>${esc(L.kInterview)} <a href="/${vl}/experts/transcripts/${esc(s)}">${esc(titles.transcripts.get(s) || known.transcripts.get(s))}</a></li>`).join('') +
+    insItems.join('') + '</ul></section>';
 
   const market = repSlugs.length ? `<section id="market-data"><div id="hub-market" data-report="${esc(repSlugs[0])}"></div></section>` : '';
   const content = '<!--SSR-->' +
-    crumbs([{ name: 'Library', href: `/${loc}/library` }, { name: country.name }, { name: segName }]) +
-    `<h1>${esc(h1)}</h1><p class="geo-meta">Last updated ${esc(updated)} · ${answers.length} sourced answers from KIRA RESEARCH reports and field research. Every figure shows its year and source.</p>` +
+    crumbs([{ name: L.library, href: `/${vl}/library` }, { name: cName }, { name: segName }]) +
+    `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.metaHub(updated, rows.length))}</p>` +
     qa + market + trade + who + related + '<!--/SSR-->';
 
   const ld = [
     { id: 'ld-breadcrumb', data: crumbJson([
-      { name: 'KIRA RESEARCH', item: `${BASE}/${loc}/` }, { name: 'Library', item: `${BASE}/${loc}/library` },
-      { name: `${country.name} ${segName}`, item: BASE + path }]) },
-    { id: 'ld-faq', data: { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: answers.slice(0, 40).map((a) => ({ '@type': 'Question', name: a.question, acceptedAnswer: { '@type': 'Answer', text: a.answer_short } })) } },
+      { name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: L.library, item: `${BASE}/${vl}/library` },
+      { name: `${cName} ${segName}`, item: BASE + path }]) },
+    { id: 'ld-faq', data: { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: vl === 'zh' ? 'zh-Hans' : vl, mainEntity: rows.slice(0, 40).map((a) => ({ '@type': 'Question', name: a.question, acceptedAnswer: { '@type': 'Answer', text: a.answer_short } })) } },
   ];
-  await shell(req, res, { loc, indexable, path, title: `${h1} — KIRA RESEARCH`, description: cut(answers[0].answer_short, 200), ld, content });
+  const editions = LOCALES.filter((l) => ok[l]);
+  await shell(req, res, {
+    loc: vl, indexable: !fallback && ok[vl], path, title: `${h1} — KIRA RESEARCH`, description: cut(rows[0].answer_short, 200), ld, content,
+    hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/markets/${countrySlug}/${segment}` })),
+    xDefault: ok.en ? `${BASE}/en/markets/${countrySlug}/${segment}` : null,
+  });
   return true;
 }
 
 // ── trade pages ──────────────────────────────────────────
+// Picks the language of a trade page: the requested one when its translated claims qualify, else English.
+async function tradeView(loc, industry, topic) {
+  const first = await tradeIndex(loc);
+  const mine = first.idx.get(industry) && first.idx.get(industry).topics;
+  if (loc === 'en' || (mine && topic && mine.get(topic) && tradeTopicIndexable(mine.get(topic), topic)) ||
+      (mine && !topic && [...mine].some(([k, v]) => tradeTopicIndexable(v, k)))) return { vl: loc, fallback: false, ...first };
+  return { vl: 'en', fallback: true, ...(await tradeIndex('en')) };
+}
+
 async function renderTrade(req, res, loc, industry, topicSlg) {
   const topic = topicKey(topicSlg);
-  const { idx, titles } = await tradeIndex();
+  const { vl, fallback, idx, titles } = await tradeView(loc, industry, topic);
   const ind = idx.get(industry);
   const claims = ind && ind.topics.get(topic);
   if (!claims || topic === 'other') return notFound(req, res, loc);
-  const indexable = tradeTopicIndexable(claims, topic);
-  const label = TOPIC_LABEL[topic] || topic;
+  const L = T[vl];
+  const indexable = !fallback && tradeTopicIndexable(claims, topic);
+  const label = L.topics[topic] || topic;
   const t = { transcripts: titles, reports: new Map() };
-  const path = `/${loc}/trade/${industry}/${topicSlg}`;
-  const h1 = `${ind.name}: ${label.toLowerCase()} — what practitioners say`;
+  const path = `/${vl}/trade/${industry}/${topicSlg}`;
+  const h1 = L.tradeH1(ind.name, label);
   const updated = day(claims.reduce((m, c) => (c.updated_at > m ? c.updated_at : m), ''));
 
   const byCountry = new Map();
@@ -156,40 +185,63 @@ async function renderTrade(req, res, loc, industry, topicSlg) {
     const slugs = [...new Set(list.map((c) => c.transcript_slug))];
     let rel = [];
     if (intent) {
-      rel = (await sb(`kira_answers?status=eq.published&source_kind=eq.transcript&intent=eq.${intent}&country_code=eq.${encodeURIComponent(code)}&source_ref->>slug=in.(${slugs.map((s) => `"${s}"`).join(',')})&select=id,question,intent,answer_short,year,primary_source,source_kind,source_ref&limit=6`)).filter((a) => a.answer_short);
+      rel = (await sb(`kira_answers?status=eq.published&source_kind=eq.transcript&intent=eq.${intent}&country_code=eq.${encodeURIComponent(code)}&source_ref->>slug=in.(${slugs.map((s) => `"${s}"`).join(',')})&select=id,question,intent,answer_short,year,primary_source,source_kind,source_ref,i18n&limit=6`))
+        .map((a) => ansLoc(a, vl)).filter(Boolean);
     }
-    blocks.push(`<section id="${esc(code.toLowerCase())}"><h2>${esc(co ? co.name : code)}</h2><ul class="geo-claims">${list.map((c) => claimItem(c, t)).join('')}</ul>` +
-      (rel.length ? `<h3 class="geo-note">Related answers</h3>${rel.map((a) => answerBlock(a, { transcripts: titles, reports: new Map() }, 'h3')).join('')}` : '') + '</section>');
+    blocks.push(`<section id="${esc(code.toLowerCase())}"><h2>${esc(co ? countryName(co, vl) : code)}</h2><ul class="geo-claims">${list.map((c) => claimItem(c, t, vl)).join('')}</ul>` +
+      (rel.length ? `<h3 class="geo-note">${esc(L.relatedAnswers)}</h3>${rel.map((a) => answerBlock(a, t, L, vl)).join('')}` : '') + '</section>');
   }
   const siblings = [...ind.topics.entries()].filter(([k, v]) => k !== topic && tradeTopicIndexable(v, k));
   const content = '<!--SSR-->' +
-    crumbs([{ name: 'Library', href: `/${loc}/library` }, { name: ind.name, href: `/${loc}/trade/${industry}` }, { name: label }]) +
-    `<h1>${esc(h1)}</h1><p class="geo-meta">Last updated ${esc(updated)} · ${claims.length} practitioner statements from ${new Set(claims.map((c) => c.transcript_slug)).size} modelled interviews. They are built on KIRA field research and never presented as one person's words.</p>` +
+    crumbs([{ name: L.library, href: `/${vl}/library` }, { name: ind.name, href: `/${vl}/trade/${industry}` }, { name: label }]) +
+    `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.tradeMeta(updated, claims.length, new Set(claims.map((c) => c.transcript_slug)).size))}</p>` +
     blocks.join('') +
-    (siblings.length ? `<section id="more"><h2>More on ${esc(ind.name)}</h2><ul class="geo-list">${siblings.map(([k]) => `<li><a href="/${loc}/trade/${industry}/${topicSlug(k)}">${esc(TOPIC_LABEL[k] || k)}</a></li>`).join('')}</ul></section>` : '') +
+    (siblings.length ? `<section id="more"><h2>${esc(L.moreOn(ind.name))}</h2><ul class="geo-list">${siblings.map(([k]) => `<li><a href="/${vl}/trade/${industry}/${topicSlug(k)}">${esc(L.topics[k] || k)}</a></li>`).join('')}</ul></section>` : '') +
     '<!--/SSR-->';
   const ld = [{ id: 'ld-breadcrumb', data: crumbJson([
-    { name: 'KIRA RESEARCH', item: `${BASE}/${loc}/` }, { name: ind.name, item: `${BASE}/${loc}/trade/${industry}` }, { name: label, item: BASE + path }]) }];
-  await shell(req, res, { loc, indexable, path, title: `${h1} — KIRA RESEARCH`, description: cut(claims[0].claim_text, 200), ld, content });
+    { name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: ind.name, item: `${BASE}/${vl}/trade/${industry}` }, { name: label, item: BASE + path }]) }];
+
+  // Language editions that are indexable (each language's own claims against the same thresholds).
+  const editions = [];
+  for (const l of LOCALES) {
+    const x = (await tradeIndex(l)).idx.get(industry);
+    const cl = x && x.topics.get(topic);
+    if (cl && tradeTopicIndexable(cl, topic)) editions.push(l);
+  }
+  await shell(req, res, {
+    loc: vl, indexable, path, title: `${h1} — KIRA RESEARCH`, description: cut(claims[0].claim_text, 200), ld, content,
+    hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/trade/${industry}/${topicSlg}` })),
+    xDefault: editions.includes('en') ? `${BASE}/en/trade/${industry}/${topicSlg}` : null,
+  });
   return true;
 }
 
 async function renderTradeIndustry(req, res, loc, industry) {
-  const { idx } = await tradeIndex();
+  const { vl, fallback, idx } = await tradeView(loc, industry, null);
   const ind = idx.get(industry);
   if (!ind) return notFound(req, res, loc);
+  const L = T[vl];
   const topics = [...ind.topics.entries()].filter(([k]) => k !== 'other').sort((a, b) => b[1].length - a[1].length);
   const good = topics.filter(([k, v]) => tradeTopicIndexable(v, k));
-  const path = `/${loc}/trade/${industry}`;
+  const path = `/${vl}/trade/${industry}`;
   const content = '<!--SSR-->' +
-    crumbs([{ name: 'Library', href: `/${loc}/library` }, { name: ind.name }]) +
-    `<h1>${esc(ind.name)}: how the trade works</h1><p class="geo-meta">Practitioner views on ${esc(ind.name.toLowerCase())} across Asian markets, grouped by topic. Statements come from modelled interviews built on KIRA field research.</p>` +
+    crumbs([{ name: L.library, href: `/${vl}/library` }, { name: ind.name }]) +
+    `<h1>${esc(L.indH1(ind.name))}</h1><p class="geo-meta">${esc(L.indMeta(ind.name))}</p>` +
     `<ul class="geo-list">${topics.map(([k, v]) => {
-      const ok = tradeTopicIndexable(v, k);
-      return `<li>${ok ? `<a href="/${loc}/trade/${industry}/${topicSlug(k)}">${esc(TOPIC_LABEL[k] || k)}</a>` : esc(TOPIC_LABEL[k] || k)} · ${v.length} statements</li>`;
+      const okT = tradeTopicIndexable(v, k);
+      return `<li>${okT ? `<a href="/${vl}/trade/${industry}/${topicSlug(k)}">${esc(L.topics[k] || k)}</a>` : esc(L.topics[k] || k)} · ${esc(L.statements(v.length))}</li>`;
     }).join('')}</ul><!--/SSR-->`;
-  const ld = [{ id: 'ld-breadcrumb', data: crumbJson([{ name: 'KIRA RESEARCH', item: `${BASE}/${loc}/` }, { name: ind.name, item: BASE + path }]) }];
-  await shell(req, res, { loc, indexable: good.length > 0, path, title: `${ind.name}: how the trade works — KIRA RESEARCH`, description: `Practitioner views on ${ind.name} in Asian markets, by topic.`, ld, content });
+  const ld = [{ id: 'ld-breadcrumb', data: crumbJson([{ name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: ind.name, item: BASE + path }]) }];
+  const editions = [];
+  for (const l of LOCALES) {
+    const x = (await tradeIndex(l)).idx.get(industry);
+    if (x && [...x.topics].some(([k, v]) => tradeTopicIndexable(v, k))) editions.push(l);
+  }
+  await shell(req, res, {
+    loc: vl, indexable: !fallback && good.length > 0, path, title: `${L.indH1(ind.name)} — KIRA RESEARCH`, description: cut(L.indMeta(ind.name), 200), ld, content,
+    hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/trade/${industry}` })),
+    xDefault: editions.includes('en') ? `${BASE}/en/trade/${industry}` : null,
+  });
   return true;
 }
 
@@ -201,6 +253,9 @@ export default async function handler(req, res) {
   const ok = (s) => /^[a-z0-9][a-z0-9-]{0,120}$/.test(s);
   try {
     const type = q.get('type');
+    if (type === 'hub') logGeoHit(req, `/${loc}/markets/${g('country')}/${g('segment')}`);
+    else if (type === 'trade') logGeoHit(req, `/${loc}/trade/${g('industry')}/${g('topic')}`);
+    else if (type === 'trade-industry') logGeoHit(req, `/${loc}/trade/${g('industry')}`);
     if (type === 'hub' && ok(g('country')) && ok(g('segment'))) return void (await renderHub(req, res, loc, g('country'), g('segment')));
     if (type === 'trade' && ok(g('industry')) && ok(g('topic'))) return void (await renderTrade(req, res, loc, g('industry'), g('topic')));
     if (type === 'trade-industry' && ok(g('industry'))) return void (await renderTradeIndustry(req, res, loc, g('industry')));

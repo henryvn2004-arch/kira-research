@@ -252,28 +252,27 @@ async function buildLocale(locale) {
     console.error('[sitemap] data pages skipped:', err.message);   // never fail the sitemap over one section
   }
 
-  // 3e) GEO hubs (G4): indexable segment hubs and trade pages. English content only, so EN sitemap only
-  //     (the other locales render the same text as noindex). lastmod = newest row behind the page.
-  if (locale === 'en') {
-    try {
-      const [hubs, cos, trade] = await Promise.all([listHubs(), countries(), tradeIndex()]);
-      for (const h of hubs) {
-        const co = cos.find((c) => c.code === h.code);
-        if (h.indexable && co) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}/${h.segment}`, locale, lastmod: h.updated ? h.updated.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
-      }
-      for (const ind of trade.idx.values()) {
-        let any = false;
-        for (const [topic, claims] of ind.topics) {
-          if (!tradeTopicIndexable(claims, topic)) continue;
-          any = true;
-          const lm = claims.reduce((m, c) => (c.updated_at > m ? c.updated_at : m), '');
-          urls.push(urlEntry({ subPath: `trade/${ind.slug}/${topicSlug(topic)}`, locale, lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
-        }
-        if (any) urls.push(urlEntry({ subPath: `trade/${ind.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
-      }
-    } catch (err) {
-      console.error('[sitemap] geo pages skipped:', err.message);
+  // 3e) GEO hubs (G4/G7): hubs and trade pages that are indexable in THIS language (ja/ko/zh only once their
+  //     translated rows meet the same thresholds). lastmod = newest row behind the page. The pages carry their
+  //     own hreflang tags, so no alternates here.
+  try {
+    const [hubs, cos, trade] = await Promise.all([listHubs(), countries(), tradeIndex(locale)]);
+    for (const h of hubs) {
+      const co = cos.find((c) => c.code === h.code);
+      if (h.byLocale[locale] && co) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}/${h.segment}`, locale, lastmod: h.updated ? h.updated.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
     }
+    for (const ind of trade.idx.values()) {
+      let any = false;
+      for (const [topic, claims] of ind.topics) {
+        if (!tradeTopicIndexable(claims, topic)) continue;
+        any = true;
+        const lm = claims.reduce((m, c) => (c.updated_at > m ? c.updated_at : m), '');
+        urls.push(urlEntry({ subPath: `trade/${ind.slug}/${topicSlug(topic)}`, locale, lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+      }
+      if (any) urls.push(urlEntry({ subPath: `trade/${ind.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+    }
+  } catch (err) {
+    console.error('[sitemap] geo pages skipped:', err.message);
   }
 
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
