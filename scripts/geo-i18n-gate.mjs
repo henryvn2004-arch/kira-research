@@ -33,8 +33,10 @@ const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 // An English month name may become a digit in ja/ko/zh ("October 2026" → 2026年10月): that digit is allowed once per name.
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 const MONTH_RE = new RegExp(`\\b(${MONTHS.join('|')}|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\\b`, 'gi');
+// "per capita / per person" is written with a 1 in ja/ko (1人当たり, 1인당): not a number of the English.
+const PER_PERSON = /1人当たり|1人あたり|1인당/g;
 function trNums(enText, trText) {
-  const out = nums(trText);
+  const out = nums(trText.replace(PER_PERSON, ''));
   const en = nums(enText);
   for (const m of enText.match(MONTH_RE) || []) {
     const d = String(MONTHS.findIndex((x) => x.startsWith(m.toLowerCase().slice(0, 3))) + 1);
