@@ -19,10 +19,14 @@ const en = {
   indMeta: (i) => `Practitioner views on ${i.toLowerCase()} across Asian markets, grouped by topic. Statements come from modelled interviews built on KIRA field research.`,
   statements: (n) => `${n} statements`,
   modelled: (a) => `Practitioner views from KIRA Experts transcripts: modelled interviews built on KIRA's field interviews. How we work: ${a('Methodology')}.`,
+  otherGroup: 'Other segments', whoDecides: 'Who decides', whoSpecifies: 'Who specifies', whoBuys: 'Who buys and pays', whoRisk: 'Who carries the risk', whoEmpty: 'No field statement yet',
+  bdRoles: 'Companies in these roles, listed by BizDirect Asia:', srcEcon: 'Kira Data',
+  marketsH1: 'Market facts by country', marketsMeta: (n) => `Sourced answers and practitioner views on ${n} markets, grouped by industry. Every figure shows its year and source.`,
+  countryH1: (c) => `${c}: market facts by industry`, countryMeta: (n) => `${n} industries with sourced answers from KIRA RESEARCH reports and field research.`, answersN: (n) => `${n} answers`, industriesN: (n) => (n === 1 ? "1 industry" : `${n} industries`),
   keyQuestions: 'Key questions', keyPoints: 'Key points',
   moreSeg: (s, c) => `More on ${s} in ${c}`, acrossAsia: (i, t) => `${i}: ${t.toLowerCase()} across Asia`,
   nfTitle: 'Page not found', nfBody: 'There is nothing published at this address.', nfBrowse: 'Browse the library',
-  intents: { market_size: 'Market size', growth: 'Growth', trends: 'Trends', key_players: 'Key players', channels: 'Channels and distribution', pricing: 'Pricing', margins: 'Margins', consumer: 'Customers and demand', trade_flow: 'Trade flows', regulation: 'Regulation', entry: 'Market entry', investment: 'Investment', risks: 'Risks', practitioner: 'How the trade works', other: 'Other questions' },
+  intents: { market_size: 'Market size', growth: 'Growth', trends: 'Trends', key_players: 'Key players', channels: 'Channels and distribution', pricing: 'Pricing', margins: 'Margins', consumer: 'Customers and demand', trade_flow: 'Trade flows', trade_data: 'Trade and data', regulation: 'Regulation', entry: 'Market entry', investment: 'Investment', risks: 'Risks', practitioner: 'How the trade works', other: 'Other questions' },
   topics: { buyer_roles: 'Who buys', channel: 'Sales channels', risk: 'Risks', competition: 'Competition', pricing: 'Pricing', decision_makers: 'Who decides', switching_triggers: 'Why buyers switch', margins: 'Margins', regulation: 'Regulation', payment_terms: 'Payment terms', lead_times: 'Lead times', exclusivity: 'Exclusivity' },
 };
 const ja = {
@@ -41,10 +45,14 @@ const ja = {
   indMeta: (i) => `アジア各市場における ${i} の現場の見解をテーマ別に整理。KIRA の現地調査に基づくモデル化インタビューから作成しています。`,
   statements: (n) => `${n} 件`,
   modelled: (a) => `KIRA Experts のトランスクリプトに基づく現場の見解：KIRA の現地インタビューを土台にしたモデル化インタビューです。調査方法：${a('Methodology')}。`,
+  otherGroup: 'その他のセグメント', whoDecides: '意思決定の構図', whoSpecifies: '仕様を決める人', whoBuys: '購入し支払う人', whoRisk: 'リスクを負う人', whoEmpty: '現場の見解はまだありません',
+  bdRoles: 'これらの役割の企業（BizDirect Asia 掲載）：', srcEcon: 'Kira Data',
+  marketsH1: '国別の市場ファクト', marketsMeta: (n) => `${n} か国の市場について、出典付きの回答と現場の見解を業種別に整理。すべての数値に年と出典を示しています。`,
+  countryH1: (c) => `${c}：業種別の市場ファクト`, countryMeta: (n) => `KIRA RESEARCH のレポートと現地調査に基づく出典付き回答のある ${n} 業種。`, answersN: (n) => `回答 ${n} 件`, industriesN: (n) => `${n} 業種`,
   keyQuestions: '主要な問い', keyPoints: '要点',
   moreSeg: (s, c) => `${c}の${s}についてさらに見る`, acrossAsia: (i, t) => `${i}：アジア各国の${t}`,
   nfTitle: 'ページが見つかりません', nfBody: 'このアドレスには公開されているページがありません。', nfBrowse: 'ライブラリを見る',
-  intents: { market_size: '市場規模', growth: '成長性', trends: 'トレンド', key_players: '主要プレーヤー', channels: '流通チャネル', pricing: '価格', margins: 'マージン', consumer: '顧客と需要', trade_flow: '貿易フロー', regulation: '規制', entry: '市場参入', investment: '投資', risks: 'リスク', practitioner: '現場の実態', other: 'その他の質問' },
+  intents: { market_size: '市場規模', growth: '成長性', trends: 'トレンド', key_players: '主要プレーヤー', channels: '流通チャネル', pricing: '価格', margins: 'マージン', consumer: '顧客と需要', trade_flow: '貿易フロー', trade_data: '貿易とデータ', regulation: '規制', entry: '市場参入', investment: '投資', risks: 'リスク', practitioner: '現場の実態', other: 'その他の質問' },
   topics: { buyer_roles: '購買担当', channel: '販売チャネル', risk: 'リスク', competition: '競争', pricing: '価格', decision_makers: '意思決定者', switching_triggers: '取引先を乗り換える理由', margins: 'マージン', regulation: '規制', payment_terms: '支払条件', lead_times: 'リードタイム', exclusivity: '独占契約' },
 };
 const ko = {
@@ -63,10 +71,14 @@ const ko = {
   indMeta: (i) => `아시아 시장의 ${i}에 대한 업계 의견을 주제별로 정리했습니다. KIRA 현장 조사에 기반한 모델링 인터뷰에서 작성했습니다.`,
   statements: (n) => `${n}건`,
   modelled: (a) => `KIRA Experts 트랜스크립트에 기반한 업계 의견: KIRA 현장 인터뷰를 토대로 한 모델링 인터뷰입니다. 조사 방식: ${a('Methodology')}.`,
+  otherGroup: '기타 세그먼트', whoDecides: '의사결정 구조', whoSpecifies: '사양을 정하는 사람', whoBuys: '구매하고 비용을 지불하는 사람', whoRisk: '리스크를 지는 사람', whoEmpty: '아직 현장 의견이 없습니다',
+  bdRoles: '해당 역할의 기업(BizDirect Asia 게재):', srcEcon: 'Kira Data',
+  marketsH1: '국가별 시장 팩트', marketsMeta: (n) => `${n}개국 시장에 대한 출처 포함 답변과 업계 의견을 산업별로 정리했습니다. 모든 수치에 연도와 출처를 표시합니다.`,
+  countryH1: (c) => `${c}: 산업별 시장 팩트`, countryMeta: (n) => `KIRA RESEARCH 보고서와 현장 조사에 근거한 출처 포함 답변이 있는 ${n}개 산업.`, answersN: (n) => `답변 ${n}건`, industriesN: (n) => `${n}개 산업`,
   keyQuestions: '핵심 질문', keyPoints: '핵심 포인트',
   moreSeg: (s, c) => `${c} ${s} 더 보기`, acrossAsia: (i, t) => `${i}: 아시아 각국의 ${t}`,
   nfTitle: '페이지를 찾을 수 없습니다', nfBody: '이 주소에 게시된 페이지가 없습니다.', nfBrowse: '라이브러리 보기',
-  intents: { market_size: '시장 규모', growth: '성장', trends: '트렌드', key_players: '주요 기업', channels: '유통 채널', pricing: '가격', margins: '마진', consumer: '고객과 수요', trade_flow: '무역 흐름', regulation: '규제', entry: '시장 진입', investment: '투자', risks: '리스크', practitioner: '업계 실무', other: '기타 질문' },
+  intents: { market_size: '시장 규모', growth: '성장', trends: '트렌드', key_players: '주요 기업', channels: '유통 채널', pricing: '가격', margins: '마진', consumer: '고객과 수요', trade_flow: '무역 흐름', trade_data: '무역과 데이터', regulation: '규제', entry: '시장 진입', investment: '투자', risks: '리스크', practitioner: '업계 실무', other: '기타 질문' },
   topics: { buyer_roles: '구매 담당자', channel: '판매 채널', risk: '리스크', competition: '경쟁', pricing: '가격', decision_makers: '의사결정자', switching_triggers: '거래처 전환 요인', margins: '마진', regulation: '규제', payment_terms: '결제 조건', lead_times: '리드타임', exclusivity: '독점 계약' },
 };
 const zh = {
@@ -85,10 +97,14 @@ const zh = {
   indMeta: (i) => `亚洲各市场${i}的业内观点，按主题整理。内容来自以 KIRA 实地调研为基础的建模访谈。`,
   statements: (n) => `${n} 条`,
   modelled: (a) => `来自 KIRA Experts 访谈记录的业内观点：以 KIRA 实地访谈为基础的建模访谈。我们的工作方式：${a('Methodology')}。`,
+  otherGroup: '其他细分市场', whoDecides: '谁来决策', whoSpecifies: '谁定规格', whoBuys: '谁采购并付款', whoRisk: '谁承担风险', whoEmpty: '暂无业内观点',
+  bdRoles: '这些角色的企业（BizDirect Asia 收录）：', srcEcon: 'Kira Data',
+  marketsH1: '各国市场事实', marketsMeta: (n) => `${n} 个国家市场的带出处回答与业内观点，按行业整理。每个数字都标明年份和来源。`,
+  countryH1: (c) => `${c}：分行业市场事实`, countryMeta: (n) => `${n} 个行业，回答均来自 KIRA RESEARCH 报告与实地调研并附出处。`, answersN: (n) => `${n} 条回答`, industriesN: (n) => `${n} 个行业`,
   keyQuestions: '关键问题', keyPoints: '要点',
   moreSeg: (s, c) => `更多关于${c}${s}`, acrossAsia: (i, t) => `${i}：亚洲各国的${t}`,
   nfTitle: '找不到页面', nfBody: '此地址没有已发布的内容。', nfBrowse: '浏览资料库',
-  intents: { market_size: '市场规模', growth: '增长', trends: '趋势', key_players: '主要企业', channels: '渠道与分销', pricing: '定价', margins: '利润率', consumer: '客户与需求', trade_flow: '贸易流向', regulation: '监管', entry: '市场进入', investment: '投资', risks: '风险', practitioner: '行业实务', other: '其他问题' },
+  intents: { market_size: '市场规模', growth: '增长', trends: '趋势', key_players: '主要企业', channels: '渠道与分销', pricing: '定价', margins: '利润率', consumer: '客户与需求', trade_flow: '贸易流向', trade_data: '贸易与数据', regulation: '监管', entry: '市场进入', investment: '投资', risks: '风险', practitioner: '行业实务', other: '其他问题' },
   topics: { buyer_roles: '采购角色', channel: '销售渠道', risk: '风险', competition: '竞争', pricing: '定价', decision_makers: '决策者', switching_triggers: '更换供应商的原因', margins: '利润率', regulation: '监管', payment_terms: '付款条件', lead_times: '交货周期', exclusivity: '独家协议' },
 };
 export const T = { en, ja, ko, zh };

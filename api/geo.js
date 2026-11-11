@@ -18,11 +18,11 @@ import {
 import {
   INTENT_ORDER, TOPIC_INTENT, topicSlug, topicKey, sb, ansLoc, claimLoc,
   countryBySlug, countryByCode, segmentName, answersForHub, docTitles, hubIndexable,
-  claimsForTranscripts, crosswalk, bizdirectSummary, tradeIndex, tradeTopicIndexable,
+  publishedClaims, listHubs, countries, slugOf, crosswalk, bizdirectSummary, tradeIndex, tradeTopicIndexable,
 } from './_lib/geo.js';
 import { T, countryName } from './_lib/geo-i18n.js';
 import { logGeoHit } from './_lib/geo-hits.js';
-import { answerBlock, claimItem, modelledNote } from './_lib/geo-html.js';
+import { answerBlock, claimItem, modelledNote, whoDecidesHtml } from './_lib/geo-html.js';
 
 const cut = (s, n) => { const t = plain(s); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
 const day = (iso) => String(iso || '').slice(0, 10);
@@ -70,6 +70,7 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const vl = fallback ? 'en' : loc;
   const L = T[vl];
   const titles = vl === 'en' ? known : await docTitles(slugs, vl);
+  titles.countrySlug = countrySlug;
   const rows = answers.map((a) => ansLoc(a, vl)).filter(Boolean);
   const segName = await segmentName(segment);
   const cName = countryName(country, vl);
@@ -79,8 +80,9 @@ async function renderHub(req, res, loc, countrySlug, segment) {
 
   const byIntent = new Map();
   for (const a of rows) {
-    if (!byIntent.has(a.intent)) byIntent.set(a.intent, []);
-    byIntent.get(a.intent).push(a);
+    const g = a.source_kind === 'econ' ? 'trade_data' : a.intent;      // Kira Data answers sit in "Trade and data"
+    if (!byIntent.has(g)) byIntent.set(g, []);
+    byIntent.get(g).push(a);
   }
   const intents = [...byIntent.keys()].sort((x, y) => INTENT_ORDER.indexOf(x) - INTENT_ORDER.indexOf(y));
   const qa = intents.map((i) => `<section id="${esc(i)}"><h2>${esc(L.intents[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles, L, vl)).join('')}</section>`).join('');
@@ -89,17 +91,21 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const repSlugs = docSlugs.filter((s) => known.reports.has(s));
   const trSlugs = docSlugs.filter((s) => known.transcripts.has(s));
 
-  // How the trade works: statements from this market's transcripts that feed the hub (in the page's language).
-  const claims = (await claimsForTranscripts(trSlugs)).filter((c) => c.country_code === country.code).map((c) => claimLoc(c, vl)).filter(Boolean);
+  // Field claims of this market and segment: the claim's industry is the segment key, or it comes from one of the hub's transcripts.
+  const claims = (await publishedClaims()).filter((c) => c.country_code === country.code && (c.industry === segment || trSlugs.includes(c.transcript_slug)))
+    .map((c) => claimLoc(c, vl)).filter(Boolean);
   const trade = claims.length
     ? `<section id="how-the-trade-works"><h2>${esc(L.howTrade)}</h2>${modelledNote(L, vl)}<ul class="geo-claims">${claims.slice(0, 20).map((c) => claimItem(c, titles, vl)).join('')}</ul></section>` : '';
 
-  // Who's who: BizDirect Asia segment summary (final shape); nothing at all on 400/503/timeout.
+  // BizDirect Asia segment summary (final shape); nothing at all on 400/503/timeout.
+  let bd = null;
+  try { bd = await bizdirectSummary(await crosswalk(country.code, segment)); } catch (_e) { bd = null; }
+  const segs = bd && Array.isArray(bd.segments) ? bd.segments.filter((s) => s && (s.companies > 0 || (s.pages || []).length)) : [];
+  const decide = whoDecidesHtml(claims, L, vl, titles, segs.flatMap((s) => s.pages || []));
+
+  // Who's who.
   let who = '';
   try {
-    const cw = await crosswalk(country.code, segment);
-    const bd = await bizdirectSummary(cw);
-    const segs = bd && Array.isArray(bd.segments) ? bd.segments.filter((s) => s && (s.companies > 0 || (s.pages || []).length)) : [];
     if (segs.length) {
       who = `<section id="whos-who"><h2>${esc(L.whosWho)}</h2>` + segs.map((s) => {
         const pages = (s.pages || []).filter((p) => bdUrl(p.url));
@@ -135,7 +141,7 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const content = '<!--SSR-->' +
     crumbs([{ name: L.library, href: `/${vl}/library` }, { name: cName }, { name: segName }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.metaHub(updated, rows.length))}</p>` +
-    qa + market + trade + who + related + '<!--/SSR-->';
+    qa + market + decide + trade + who + related + '<!--/SSR-->';
 
   const ld = [
     { id: 'ld-breadcrumb', data: crumbJson([
@@ -160,6 +166,19 @@ async function tradeView(loc, industry, topic) {
   if (loc === 'en' || (mine && topic && mine.get(topic) && tradeTopicIndexable(mine.get(topic), topic)) ||
       (mine && !topic && [...mine].some(([k, v]) => tradeTopicIndexable(v, k)))) return { vl: loc, fallback: false, ...first };
   return { vl: 'en', fallback: true, ...(await tradeIndex('en')) };
+}
+
+// "Who decides" for one industry (segment): claims on buyers and decision makers across its markets.
+async function decideFor(ind, L, vl, titles) {
+  const claims = ['buyer_roles', 'decision_makers'].flatMap((t) => ind.topics.get(t) || []);
+  if (claims.length < 2) return '';
+  const pages = [];
+  if (ind.key) {
+    for (const code of [...new Set(claims.map((c) => c.country_code))].slice(0, 4)) {
+      try { const bd = await bizdirectSummary(await crosswalk(code, ind.key)); pages.push(...((bd && bd.segments) || []).flatMap((x) => x.pages || [])); } catch (_e) { /* no BizDirect links */ }
+    }
+  }
+  return whoDecidesHtml(claims, L, vl, { transcripts: titles, reports: new Map() }, pages);
 }
 
 async function renderTrade(req, res, loc, industry, topicSlg) {
@@ -192,10 +211,11 @@ async function renderTrade(req, res, loc, industry, topicSlg) {
       (rel.length ? `<h3 class="geo-note">${esc(L.relatedAnswers)}</h3>${rel.map((a) => answerBlock(a, t, L, vl)).join('')}` : '') + '</section>');
   }
   const siblings = [...ind.topics.entries()].filter(([k, v]) => k !== topic && tradeTopicIndexable(v, k));
+  const decide = topic === 'buyer_roles' || topic === 'decision_makers' ? await decideFor(ind, L, vl, titles) : '';
   const content = '<!--SSR-->' +
     crumbs([{ name: L.library, href: `/${vl}/library` }, { name: ind.name, href: `/${vl}/trade/${industry}` }, { name: label }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.tradeMeta(updated, claims.length, new Set(claims.map((c) => c.transcript_slug)).size))}</p>` +
-    modelledNote(L, vl) + blocks.join('') +
+    (decide || modelledNote(L, vl)) + blocks.join('') +
     (siblings.length ? `<section id="more"><h2>${esc(L.moreOn(ind.name))}</h2><ul class="geo-list">${siblings.map(([k]) => `<li><a href="/${vl}/trade/${industry}/${topicSlug(k)}">${esc(L.topics[k] || k)}</a></li>`).join('')}</ul></section>` : '') +
     '<!--/SSR-->';
   const ld = [{ id: 'ld-breadcrumb', data: crumbJson([
@@ -217,16 +237,17 @@ async function renderTrade(req, res, loc, industry, topicSlg) {
 }
 
 async function renderTradeIndustry(req, res, loc, industry) {
-  const { vl, fallback, idx } = await tradeView(loc, industry, null);
+  const { vl, fallback, idx, titles } = await tradeView(loc, industry, null);
   const ind = idx.get(industry);
   if (!ind) return notFound(req, res, loc);
   const L = T[vl];
   const topics = [...ind.topics.entries()].filter(([k]) => k !== 'other').sort((a, b) => b[1].length - a[1].length);
   const good = topics.filter(([k, v]) => tradeTopicIndexable(v, k));
   const path = `/${vl}/trade/${industry}`;
+  const decide = await decideFor(ind, L, vl, titles);
   const content = '<!--SSR-->' +
     crumbs([{ name: L.library, href: `/${vl}/library` }, { name: ind.name }]) +
-    `<h1>${esc(L.indH1(ind.name))}</h1><p class="geo-meta">${esc(L.indMeta(ind.name))}</p>` +
+    `<h1>${esc(L.indH1(ind.name))}</h1><p class="geo-meta">${esc(L.indMeta(ind.name))}</p>` + decide +
     `<ul class="geo-list">${topics.map(([k, v]) => {
       const okT = tradeTopicIndexable(v, k);
       return `<li>${okT ? `<a href="/${vl}/trade/${industry}/${topicSlug(k)}">${esc(L.topics[k] || k)}</a>` : esc(L.topics[k] || k)} · ${esc(L.statements(v.length))}</li>`;
@@ -245,6 +266,69 @@ async function renderTradeIndustry(req, res, loc, industry) {
   return true;
 }
 
+// ── hub index pages: /<loc>/markets and /<loc>/markets/<country> ──
+async function groupName(key) {
+  const i = key.indexOf('--');
+  return i > 0 ? segmentName(key.slice(0, i)) : null;
+}
+
+async function renderCountry(req, res, loc, countrySlug) {
+  const country = await countryBySlug(countrySlug);
+  if (!country) return notFound(req, res, loc);
+  const hubs = (await listHubs()).filter((h) => h.code === country.code);
+  if (!hubs.length) return notFound(req, res, loc);
+  const okFor = (l) => hubs.filter((h) => h.byLocale[l]);
+  const fallback = loc !== 'en' && !okFor(loc).length;
+  const vl = fallback ? 'en' : loc;
+  const L = T[vl];
+  const list = okFor(vl);
+  const cName = countryName(country, vl);
+  const groups = new Map();
+  for (const h of list) {
+    const g = (await groupName(h.segment)) || L.otherGroup;
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push({ h, name: await segmentName(h.segment) });
+  }
+  const path = `/${vl}/markets/${countrySlug}`;
+  const h1 = L.countryH1(cName);
+  const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1, href: `/${vl}/markets` }, { name: cName }]) +
+    `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.countryMeta(list.length))}</p>` +
+    [...groups.entries()].sort((a, b) => (a[0] === L.otherGroup) - (b[0] === L.otherGroup) || a[0].localeCompare(b[0])).map(([g, items]) =>
+      `<section><h2>${esc(g)}</h2><ul class="geo-list">${items.sort((a, b) => a.name.localeCompare(b.name)).map(({ h, name }) => `<li><a href="/${vl}/markets/${countrySlug}/${esc(h.segment)}">${esc(name)}</a> · ${esc(L.answersN(h.counts[vl]))}</li>`).join('')}</ul></section>`).join('') +
+    '<!--/SSR-->';
+  const editions = LOCALES.filter((l) => okFor(l).length);
+  await shell(req, res, {
+    loc: vl, indexable: !fallback && list.length > 0, path, title: `${h1} — KIRA RESEARCH`, description: cut(L.countryMeta(list.length), 200),
+    ld: [{ id: 'ld-breadcrumb', data: crumbJson([{ name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: L.marketsH1, item: `${BASE}/${vl}/markets` }, { name: cName, item: BASE + path }]) }],
+    content, hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/markets/${countrySlug}` })),
+    xDefault: editions.includes('en') ? `${BASE}/en/markets/${countrySlug}` : null,
+  });
+  return true;
+}
+
+async function renderMarkets(req, res, loc) {
+  const hubs = await listHubs();
+  const cos = await countries();
+  const okFor = (l) => hubs.filter((h) => h.byLocale[l]);
+  const fallback = loc !== 'en' && !okFor(loc).length;
+  const vl = fallback ? 'en' : loc;
+  const L = T[vl];
+  const list = cos.map((c) => ({ c, n: okFor(vl).filter((h) => h.code === c.code).length })).filter((x) => x.n > 0)
+    .sort((a, b) => countryName(a.c, vl).localeCompare(countryName(b.c, vl)));
+  const path = `/${vl}/markets`;
+  const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1 }]) +
+    `<h1>${esc(L.marketsH1)}</h1><p class="geo-meta">${esc(L.marketsMeta(list.length))}</p>` +
+    `<ul class="geo-list">${list.map(({ c, n }) => `<li><a href="/${vl}/markets/${slugOf(c.name)}">${esc(countryName(c, vl))}</a> · ${esc(L.industriesN(n))}</li>`).join('')}</ul><!--/SSR-->`;
+  const editions = LOCALES.filter((l) => okFor(l).length);
+  await shell(req, res, {
+    loc: vl, indexable: !fallback && list.length > 0, path, title: `${L.marketsH1} — KIRA RESEARCH`, description: cut(L.marketsMeta(list.length), 200),
+    ld: [{ id: 'ld-breadcrumb', data: crumbJson([{ name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: L.marketsH1, item: BASE + path }]) }],
+    content, hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/markets` })),
+    xDefault: editions.includes('en') ? `${BASE}/en/markets` : null,
+  });
+  return true;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.status(405).json({ error: 'method_not_allowed' }); return; }
   const q = new URL(req.url, `https://${req.headers.host || 'x'}`).searchParams;
@@ -255,9 +339,13 @@ export default async function handler(req, res) {
     const type = q.get('type');
     if (type === 'hub') logGeoHit(req, `/${loc}/markets/${g('country')}/${g('segment')}`);
     else if (type === 'trade') logGeoHit(req, `/${loc}/trade/${g('industry')}/${g('topic')}`);
+    else if (type === 'market-country') logGeoHit(req, `/${loc}/markets/${g('country')}`);
+    else if (type === 'markets') logGeoHit(req, `/${loc}/markets`);
     else if (type === 'trade-industry') logGeoHit(req, `/${loc}/trade/${g('industry')}`);
     if (type === 'hub' && ok(g('country')) && ok(g('segment'))) return void (await renderHub(req, res, loc, g('country'), g('segment')));
     if (type === 'trade' && ok(g('industry')) && ok(g('topic'))) return void (await renderTrade(req, res, loc, g('industry'), g('topic')));
+    if (type === 'markets') return void (await renderMarkets(req, res, loc));
+    if (type === 'market-country' && ok(g('country'))) return void (await renderCountry(req, res, loc, g('country')));
     if (type === 'trade-industry' && ok(g('industry'))) return void (await renderTradeIndustry(req, res, loc, g('industry')));
     await notFound(req, res, loc);
   } catch (err) {
