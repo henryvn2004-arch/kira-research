@@ -213,7 +213,8 @@
     { "path": "/api/cron-econ-refresh?source=daily", "schedule": "40 15 * * 1-5" },
     { "path": "/api/cron-moves-alerts", "schedule": "50 23 * * *" },
     { "path": "/api/cron-moves", "schedule": "20 22 * * *" },
-    { "path": "/api/cron-registry", "schedule": "40 21 * * *" }
+    { "path": "/api/cron-registry", "schedule": "40 21 * * *" },
+    { "path": "/api/cron-geo-econ", "schedule": "10 6 * * 0" }
   ],
   "functions": {
     "api/inngest.js": {
@@ -223,6 +224,7 @@
     "api/cron-econ-refresh.js": { "maxDuration": 800, "includeFiles": "node_modules/pdf-parse/lib/pdf.js/v1.10.100/build/**" },
     "api/cron-moves.js": { "maxDuration": 800 },
     "api/cron-registry.js": { "maxDuration": 800 },
+    "api/cron-geo-econ.js": { "maxDuration": 300 },
     "api/ssr.js": {
       "maxDuration": 30,
       "includeFiles": "public/en/{reports,insights,experts/transcripts}/_view.html"
