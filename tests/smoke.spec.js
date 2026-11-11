@@ -1225,7 +1225,7 @@ test.describe('Server-rendered content pages (raw HTML, bot user agent)', () => 
     return r.text();
   };
   const titleOf = (h) => (h.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
-  const unesc = (s) => s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  const unesc = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');   // &amp; last, so "&amp;lt;" is not unescaped twice
 
   test('transcript: title, basis line, dialogue and JSON-LD in the first response', async ({ request }) => {
     const list = await (await request.get('/api/transcript-list?locale=en')).json();
