@@ -33,8 +33,8 @@ export default async function handler(req, res) {
   try {
     const [crosswalk, answers, claims] = await Promise.all([
       rows('segment_crosswalk', `status=eq.approved&${cc}`, 'country_code,segment_key,bizdirect_country,bizdirect_term_slugs', 'country_code.asc,segment_key.asc,id.asc'),
-      rows('kira_answers', `status=eq.published&${cc}`, 'id,question,intent,country_code,segment_key,answer_short,source_kind,source_ref,updated_at', 'id.asc'),
-      rows('field_claims', `status=eq.published&${cc}`, 'id,topic,industry,country_code,speaker_role,claim_text,transcript_slug,basis_label,updated_at', 'id.asc'),
+      rows('kira_answers', `status=eq.published&${cc}`, 'id,question,intent,country_code,segment_key,answer_short,source_kind,source_ref,updated_at,i18n', 'id.asc'),
+      rows('field_claims', `status=eq.published&${cc}`, 'id,topic,industry,country_code,speaker_role,claim_text,transcript_slug,basis_label,updated_at,i18n', 'id.asc'),
     ]);
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
     res.setHeader('Access-Control-Allow-Origin', '*');
