@@ -577,6 +577,10 @@ test.describe('public APIs', () => {
     expect((await request.put('/api/notify-chain-published')).status()).toBe(405);
   });
 
+  test('/api/cron-pipeline-watch accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/cron-pipeline-watch')).status()).toBe(405);
+  });
+
   test('/api/cron-site-events-retention accepts GET/POST only', async ({ request }) => {
     expect((await request.put('/api/cron-site-events-retention')).status()).toBe(405);
   });
@@ -1332,7 +1336,7 @@ test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed 
   expect(Array.isArray(j.crosswalk) && Array.isArray(j.answers) && Array.isArray(j.claims)).toBe(true);
   expect(j.generated_at).toBeTruthy();
   expect(j.answers.every((a) => a.country_code === 'TH')).toBe(true);
-  if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
+  if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'i18n', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
   if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
   expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
 });

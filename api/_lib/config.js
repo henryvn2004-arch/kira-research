@@ -79,6 +79,26 @@ export const CONFIG = {
     label: 'Send the daily "your value chain is ready" emails',
     help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
   },
+  'notify.pipeline_watch_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Email me when a content pipeline goes silent',
+    help: 'A check runs every 6 hours and looks at the data itself (new report stages, new expert transcripts, new commentary insights). If one has been quiet longer than its limit below, the Health page turns red and you get one email per stream per day. Off: the Health page still turns red, no email is sent.'
+  },
+  'watch.reports_idle_hours': {
+    group: 'Pipeline watch', type: 'int', min: 3, max: 168, default: 12, unit: 'hours',
+    label: 'Report runner: alert after no activity for',
+    help: 'The report Routine fires 3 times a day. Any claim or finished stage counts as activity; your own actions on the Pipeline page do not.'
+  },
+  'watch.experts_idle_hours': {
+    group: 'Pipeline watch', type: 'int', min: 6, max: 336, default: 36, unit: 'hours',
+    label: 'Kira Experts: alert after no new transcript for',
+    help: 'Measured on the newest transcript created, whatever its status.'
+  },
+  'watch.insights_idle_hours': {
+    group: 'Pipeline watch', type: 'int', min: 6, max: 336, default: 36, unit: 'hours',
+    label: 'Insights: alert after no new commentary column for',
+    help: 'Measured on the newest commentary insight created, whatever its status.'
+  },
   'ondemand.target_days': {
     group: 'On-demand reports', type: 'int', min: 1, max: 30, default: 3, unit: 'days',
     label: 'Promised time to make a requested report',

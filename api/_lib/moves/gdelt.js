@@ -10,20 +10,25 @@ const VERBS = '(acquire OR acquisition OR stake OR invest OR investment OR facto
 
 let last = 0;
 async function get(url) {
+  let why = 'no answer';   // last failure, so a run that gives up says what GDELT said (status + start of the body)
   for (let i = 0; i < 3; i++) {
     const wait = last + 6000 - Date.now();
     if (wait > 0) await sleep(wait);
     last = Date.now();
     let r;
     try { r = await fetch(url, { headers: { 'User-Agent': 'KIRA Research data refresh (kiraresearch.com)' }, signal: AbortSignal.timeout(20000) }); }
-    catch (_e) { continue; }   // timed out: try again
-    if (r.status === 429 || r.status >= 500) { await sleep(8000 * (i + 1)); continue; }
+    catch (e) { why = `${e.name}: ${e.cause && e.cause.code ? e.cause.code : e.message}`.slice(0, 150); continue; }   // timed out or reset: try again
+    if (r.status === 429 || r.status >= 500) {
+      const b = await r.text().catch(() => '');
+      why = `HTTP ${r.status} ${b.replace(/\s+/g, ' ').trim().slice(0, 150)}`;
+      await sleep(8000 * (i + 1)); continue;
+    }
     if (!r.ok) throw new Error(`GDELT ${r.status}`);
     const t = await r.text();
     if (!t.trim()) return {};   // GDELT answers an empty body when nothing matches
     try { return JSON.parse(t); } catch (_e) { throw new Error('GDELT: ' + t.slice(0, 80)); }   // a plain-text error (query syntax)
   }
-  throw new Error('GDELT: busy (429/5xx/timeout after 3 tries)');
+  throw new Error(`GDELT: gave up after 3 tries, last: ${why}`);
 }
 
 // → [{ source_key, url, title, domain, lang, event_date, tier }] (classification happens in index.js)
@@ -35,13 +40,14 @@ const quoted = (h) => (HOST_NAME[h].includes(' ') ? `"${HOST_NAME[h]}"` : HOST_N
 
 export async function items({ days = 3, budgetMs = 600000, log = null } = {}) {
   const out = [], failed = [];
+  let lastError = '';
   const t0 = Date.now();
   for (const g of GROUPS) {
     if (Date.now() - t0 > budgetMs) { failed.push(...g); continue; }
     const qs = new URLSearchParams({ query: `${INVESTORS} ${VERBS} (${g.map(quoted).join(' OR ')}) sourcelang:english`, mode: 'artlist', format: 'json',
       maxrecords: '250', timespan: `${days}d`, sort: 'datedesc' });
     let body;
-    try { body = await get(`${API}?${qs.toString()}`); } catch (_e) { failed.push(...g); if (log) log(g.join(','), 'failed'); continue; }   // one busy query should not stop the others
+    try { body = await get(`${API}?${qs.toString()}`); } catch (e) { failed.push(...g); lastError = e.message; if (log) log(g.join(','), 'failed: ' + e.message); continue; }   // one busy query should not stop the others
     if (log) log(g.join(','), (body.articles || []).length);
     for (const a of body.articles || []) {
       const d = /^(\d{4})(\d{2})(\d{2})/.exec(a.seendate || '');
@@ -50,7 +56,7 @@ export async function items({ days = 3, budgetMs = 600000, log = null } = {}) {
         lang: 'en', event_date: `${d[1]}-${d[2]}-${d[3]}`, tier: 'news' });
     }
   }
-  if (failed.length === HOSTS.length) throw new Error('GDELT: every query failed');
-  if (failed.length) out.failed = failed;
+  if (failed.length === HOSTS.length) throw new Error('GDELT: every query failed; ' + lastError);
+  if (failed.length) { out.failed = failed; out.lastError = lastError; }
   return out;
 }
