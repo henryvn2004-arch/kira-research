@@ -1,0 +1,214 @@
+{
+  "blueprint_id": "entry_strategy",
+  "version": 2,
+  "query_count_target": 25,
+  "query_strategy_description": "25 web-search queries grouped into 8 buckets that map to the qualitative-only entry-strategy blueprint's decision spine. Use WebSearch (native Claude tool). Avoid named-firm aggregator results; prefer regulator filings, listed-company disclosures, trade associations, government investment promotion bodies, and trade press. Compared with v1, v2 drops the dedicated capex-benchmark and opex/staffing-benchmark buckets (no quantitative modeling in the qualitative-only variant) and adds an operating-environment bucket covering regulatory climate beyond the license, cultural-fit signals, and infrastructure readiness. Compared with market_analysis, this strategy spends fewer queries on macro / sizing and more queries on qualitative mechanics: licensing path, partner identification, operating-environment read, FX/political risk.",
+  "localized_search": {
+    "glossary_file": "references/local_lang_query_glossary.md",
+    "enabled_for_local_search_priority": [
+      "tier-1"
+    ],
+    "fire_if_en_sparse": {
+      "tier": "tier-2",
+      "threshold_sources_per_bucket": 6
+    },
+    "query_count_target_local": 10,
+    "priority_hint_by_bucket_purpose_keyword": {
+      "HIGH": [
+        "macro",
+        "overview",
+        "sizing",
+        "demand",
+        "regulatory",
+        "regulation",
+        "enforcement",
+        "statute",
+        "channel",
+        "distribution",
+        "distributor",
+        "ecommerce",
+        "price",
+        "pricing"
+      ],
+      "MEDIUM": [
+        "competitive",
+        "competitor",
+        "M&A",
+        "ma_",
+        "partner",
+        "forecast",
+        "outlook",
+        "spending",
+        "cultural",
+        "willingness"
+      ],
+      "LOW": [
+        "ai_impact",
+        "disruptor",
+        "d2c_social"
+      ]
+    },
+    "source_tagging": "English alias only (e.g. [GSO 2024]) per L.3. Page-bottom SOURCE KEY may include original local-language source name for traceability.",
+    "currency_hint": "Fire a parallel local-currency query for sizing buckets (e.g. VND/IDR/THB/JPY/KRW) since local stats rarely report in USD.",
+    "note": "Phase M.1: dual-language search. EN baseline still runs (existing query_buckets above); this block governs the additional local-language pass."
+  },
+  "query_buckets": [
+    {
+      "bucket": "01_opportunity_sizing_anchor",
+      "purpose": "One-page market opportunity context - just enough to anchor the qualitative opportunity read in the exec summary and section 06. Sizing is context, not centerpiece. Drives 06_market_opportunity_qualitative.",
+      "queries": [
+        "{{country}} {{industry}} market size {{year}} USD addressable CAGR {{year+5}}",
+        "{{country}} {{industry}} historical market value {{year-3}} to {{year}}"
+      ],
+      "expected_sources": [
+        "industry trade associations",
+        "listed-company annual reports",
+        "government industry surveys",
+        "central bank sector reports"
+      ],
+      "expected_tag_mix": "secondary 70% / estimate 30%"
+    },
+    {
+      "bucket": "02_target_segment_qualitative",
+      "purpose": "Identify the named target customer segment - who an entrant should chase first. Sizing where cleanly sourceable, otherwise qualitative growth direction. Drives 07_target_customer_segment.",
+      "queries": [
+        "{{country}} {{industry}} {{candidate_segment}} segment size households OR firms",
+        "{{country}} {{industry}} customer demographics income bands {{year}}",
+        "{{country}} middle-class urban households purchasing power {{industry}}"
+      ],
+      "expected_sources": [
+        "national statistics bureau (BPS / GSO / NSO / PSA / DOSM / SingStat)",
+        "consumer panels with published methodology",
+        "industry consumer surveys",
+        "central bank household finance surveys"
+      ],
+      "expected_tag_mix": "secondary 55% / estimate 45% (segment definitions often need KIRA triangulation across multiple anchors)"
+    },
+    {
+      "bucket": "03_competitive_intensity",
+      "purpose": "Identify the top-5 competitors and their structural advantages an entrant must outflank, plus qualitative intensity read (fragmented / contested / consolidating / oligopoly). Drives 08_competitive_intensity_qualitative. Compressed vs market_analysis - one page only, no deep profiles.",
+      "queries": [
+        "{{country}} {{industry}} top 5 players market share {{year}} revenue ranking",
+        "{{leading_player_candidate}} {{country}} revenue segment {{industry}}",
+        "{{country}} {{industry}} new entrant foreign player launch {{year-2}} to {{year}}"
+      ],
+      "expected_sources": [
+        "listed-company filings (IDX/SET/SGX/HoSE/Bursa/PSE/SGX)",
+        "company press releases",
+        "industry trade reports",
+        "competition authority filings"
+      ],
+      "expected_tag_mix": "secondary 75% / estimate 20% / primary 5%"
+    },
+    {
+      "bucket": "04_regulatory_licensing",
+      "purpose": "Foreign ownership caps, sector licensing path, timeline-to-license bands, qualitative ongoing compliance burden. Drives 09_regulatory_licensing.",
+      "queries": [
+        "{{country}} {{industry}} foreign ownership cap FDI rules {{year}}",
+        "{{country}} {{industry}} regulator {{regulator_body}} licensing application timeline cost",
+        "{{country}} investment promotion {{industry}} incentives tax holiday"
+      ],
+      "expected_sources": [
+        "country investment promotion body (BKPM Indonesia / MIC Vietnam / BOI Thailand / MIDA Malaysia / EDB Singapore / BOI Philippines)",
+        "ministry of trade/industry filings",
+        "law-firm sector guides with named partners",
+        "trade association FAQs"
+      ],
+      "expected_tag_mix": "secondary 80% / estimate 20% (process timelines often quoted as ranges that need triangulation)"
+    },
+    {
+      "bucket": "05_distribution_gtm_channels",
+      "purpose": "Channel mix options + qualitative per-channel read (effort to establish, reach ceiling, ramp speed) for entrants. Drives 10_distribution_gtm_channels.",
+      "queries": [
+        "{{country}} {{industry}} distribution channels modern trade e-commerce traditional",
+        "{{country}} {{industry}} channel margin distributor markup retailer markup"
+      ],
+      "expected_sources": [
+        "industry trade press",
+        "logistics-sector reports",
+        "listed-retailer filings",
+        "e-commerce platform investor presentations"
+      ],
+      "expected_tag_mix": "secondary 60% / estimate 40% (channel-economics data is often estimate-heavy; qualitative read is the deliverable)"
+    },
+    {
+      "bucket": "06_partner_identification",
+      "purpose": "Named JV / distributor / agent candidates. Drives 11_partnership_landscape. THIS BUCKET IS THE ONE THAT MOST DIFFERENTIATES THIS BLUEPRINT - prioritize organisation names with country footprint over generic 'partner landscape' content.",
+      "queries": [
+        "{{country}} {{industry}} largest distributors agents named list",
+        "{{country}} {{industry}} joint venture foreign partner local conglomerate",
+        "{{country}} conglomerates with {{industry}} subsidiary or JV partner",
+        "{{country}} family-owned business groups {{industry}} {{adjacent_industry}}"
+      ],
+      "expected_sources": [
+        "country-specific business-group rankings (Indonesia's Top 50 Family Groups / Thai conglomerate league tables / Vietnam corporate league tables)",
+        "listed-company filings disclosing partnership terms",
+        "trade press M&A and JV coverage",
+        "country chambers of commerce member directories"
+      ],
+      "expected_tag_mix": "secondary 65% / estimate 25% / primary 10% (KIRA shortlist scoring blends multiple anchors)",
+      "note": "Use {{adjacent_industry}} to surface conglomerates that span sectors - SEA conglomerates rarely sit in one industry. Examples: Salim Group (ID) spans F&B + cement + telecom; Charoen Pokphand (TH) spans agri + retail + telecom; San Miguel (PH) spans F&B + power + infrastructure."
+    },
+    {
+      "bucket": "07_operating_environment",
+      "purpose": "Qualitative operating-environment read for the entrant: regulatory climate stability beyond the license itself, cultural fit (B2B vs B2C norms, decision cadence, working-language reality), infrastructure readiness (logistics, digital + payment rails, talent availability for the relevant function). Drives 12_operating_environment_qualitative.",
+      "queries": [
+        "{{country}} business environment FX repatriation tax stability foreign investor {{year}}",
+        "{{country}} {{industry}} cultural norms B2B decision making working language English",
+        "{{country}} logistics infrastructure digital payment rails {{industry}} readiness {{year}}",
+        "{{country}} talent availability {{industry}} workforce skills gap"
+      ],
+      "expected_sources": [
+        "country investment promotion body climate reports",
+        "World Bank Doing Business / successor indicators",
+        "logistics performance index country pages",
+        "central bank payment-system reports",
+        "country labor ministry workforce surveys"
+      ],
+      "expected_tag_mix": "secondary 60% / estimate 40% (qualitative tags 'tailwind' / 'neutral' / 'headwind' are KIRA synthesis)"
+    },
+    {
+      "bucket": "08_risk_factors",
+      "purpose": "FX, political, regulatory, operational, competitive-response risks to populate the qualitative 5x5 matrix. Drives 13_risk_matrix. NO quantitative severity scoring — outputs feed LOW/MED/HIGH labels.",
+      "queries": [
+        "{{country}} {{currency_code}} FX volatility forecast {{year}} central bank political risk",
+        "{{country}} {{industry}} foreign company exit failed entry case studies regulatory change"
+      ],
+      "expected_sources": [
+        "central bank FX reports",
+        "political risk consultancies' country notes (read for facts; do not cite by firm name)",
+        "trade press on regulatory shifts",
+        "court filings on foreign-investor disputes (BANI Indonesia / SIAC Singapore)"
+      ],
+      "expected_tag_mix": "secondary 60% / estimate 40% (risk severity calls are KIRA qualitative synthesis)"
+    }
+  ],
+  "query_execution_rules": {
+    "parallelism": "Run queries in parallel within a bucket (up to 5 concurrent). Sequential across buckets so later buckets can reference earlier findings - in particular bucket 06 (partners) benefits from knowing bucket 03 (competitive intensity) results to avoid recommending a partner that IS a competitor, and bucket 08 (risk) draws on findings from all earlier buckets.",
+    "result_filtering": [
+      "Discard results from named-firm aggregators (Mordor, Frost, Euromonitor, IMARC, Synovate, Ipsos, etc.) - anti-positioning rule",
+      "Prefer results with citeable methodology disclosure",
+      "If a number appears in 3+ independent sources within +/- 10%, treat as well-anchored secondary",
+      "If a number appears in only 1 source, either find corroboration or downgrade to KIRA estimate with anchor commentary; qualitative-only register means false-precision is a bigger sin than honest ranges",
+      "For partner identification: any organisation name making the shortlist must have a verifiable corporate website, country registration, and at least one third-party reference (trade press, M&A coverage, listed-parent disclosure). No anonymous distributors."
+    ],
+    "estimate_methodology_template": "Anchored estimate: {{anchor_metric}} x {{ratio}} = {{output}}. Example: 'Indonesia urban middle-class households 12-15 mn [secondary] x 30-40% category penetration band = 4-6 mn-household addressable segment [estimate]'. Capex / P&L / opex anchor templates from v1 are RETIRED — qualitative-only variant does not produce these outputs.",
+    "qualitative_synthesis_note": "For market opportunity (section 06), competitive intensity (section 08), and operating environment (section 12), the output is directional language from voice_guide.md ('material', 'modest', 'contested', 'consolidating', 'tailwind', 'headwind') anchored by at most 1-2 numbers per page. Do NOT triangulate toward fully-modeled P&L scenarios — that is explicitly out of scope for v2.",
+    "research_data_output_format": "Aggregate findings into a single JSON file matching the shape of references/research_data_R0152.json, with these additional top-level keys: regulator_named, partner_shortlist, operating_environment_lenses, fx_assumptions, qualitative_risk_findings. Each value tagged with source URL + access date + extraction method."
+  },
+  "template_variable_resolution": {
+    "{{country}}": "From topic parser output",
+    "{{country_iso}}": "ISO 3166-1 alpha-2",
+    "{{currency_code}}": "ISO 4217 (IDR / VND / THB / PHP / MYR / SGD)",
+    "{{regulator_body}}": "Mapped via lookup: ID->BKPM, VN->MPI/MIC, TH->BOI, PH->BOI Philippines, MY->MIDA, SG->EDB",
+    "{{industry}}": "From topic parser, normalized",
+    "{{adjacent_industry}}": "One- or two-step adjacent industries for partner identification: e.g. for 'roofing' use 'cement OR steel OR retail-home-improvement'; for 'fintech' use 'banking OR telecom OR retail'. Used in bucket 06 to surface multi-sector conglomerates.",
+    "{{candidate_segment}}": "Filled iteratively as bucket 02 runs - first-pass segment hypotheses (urban middle-class / SMB manufacturers / etc.)",
+    "{{leading_player_candidate}}": "Filled iteratively as bucket 03 runs - pre-known players or top-result company names",
+    "{{year}}": "Topic year (parser output, default current year)",
+    "{{year-1}}": "Year - 1",
+    "{{year-2}}": "Year - 2",
+    "{{year-3}}": "Year - 3",
+    "{{year+5}}": "Year + 5"
+  }
+}

@@ -1,0 +1,290 @@
+# ============================================================
+# KIRA Research — Template Registry
+#
+# Catalog of UC1 blueprints. The orchestrator scores each topic
+# against every entry and routes to the best match if its score
+# clears match_threshold; otherwise routes to UC2 (Design Mode).
+#
+# Phase 1 ships ONE entry. Additional blueprints get added here
+# as patterns emerge organically from UC2 Design Mode usage.
+# ============================================================
+
+registry_version: 1
+match_threshold: 0.7         # min score for UC1 routing (else fallback to UC2)
+naming_convention: "<report_type>_<domain>"   # e.g. market_analysis_consumer; Phase 1 omits suffix since only one blueprint exists
+
+blueprints:
+
+  - id: market_analysis
+    path: templates/blueprints/market_analysis/
+    name: "Market Analysis (SEA, manufacturing / consumer / construction)"
+    short_description: >
+      19-section consulting-grade analysis of a country × industry combination.
+      Covers macro context, market sizing, segment breakdown, competitive
+      structure, channel & distribution, regulatory landscape, AI impact,
+      and 5-year forecast with strategic implications.
+    pattern_origin: "R0152-style baseline (Indonesia roofing/exterior/insulation 2026)"
+    section_count: 19
+    estimated_pages: 18-22
+    estimated_runtime_min: 35-55
+
+    # Topic-fit signals — orchestrator combines keyword overlap with these
+    # gates to compute a match score. ≥0.7 → use this blueprint.
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore", "Myanmar", "Cambodia", "Laos"]
+      industry_domains:
+        # Topic matches IF it falls into one of these domains
+        manufacturing:
+          keywords: ["materials", "construction", "building", "cement", "steel", "chemicals", "packaging", "automotive components", "industrial"]
+        consumer:
+          keywords: ["consumer goods", "food", "beverage", "FMCG", "personal care", "household", "retail goods", "apparel"]
+        construction:
+          keywords: ["construction", "real estate", "infrastructure", "roofing", "insulation", "cladding", "concrete", "cement", "housing"]
+      year_scope:
+        required: true
+        format: "single year (current or +1) with 5-year forecast horizon"
+
+    # Output mode for this blueprint
+    default_output_mode: publish
+    requires_confirm_step: false   # template is validated; skip the confirm gate
+
+    # Domains the blueprint does NOT cover well — orchestrator should
+    # deprioritize this blueprint and prefer UC2 for these
+    poor_fit_signals:
+      - "B2B SaaS / pure software"
+      - "Pure services industries (consulting, legal, accounting)"
+      - "Capital-markets / financial-instrument focus"
+      - "Pharma / biotech (different evidentiary regime)"
+      - "Non-SEA geographies (drift; UC2 produces better structure)"
+
+  # ------------------------------------------------------------
+  # Phase 2 blueprints (added 2026-05-23). Each one differs from
+  # market_analysis on its center of gravity. All 5 new page_types
+  # they reference (persona_profile, policy_timeline, risk_matrix,
+  # channel_waterfall, price_quality_matrix) are defined in
+  # schemas/page_schemas.json and templates/{master_styles.css,
+  # page_components.html}.
+  # ------------------------------------------------------------
+
+  - id: competitive_landscape
+    path: templates/blueprints/competitive_landscape/
+    name: "Competitive Landscape (top 10 players × country × industry)"
+    short_description: >
+      15-section deep dive on the competitor matrix and strategic positioning
+      in a country × industry. Skips sizing-and-forecast; centers on top-10
+      player matrix, strategic groups map, pricing positioning, M&A timeline,
+      and disruptor watch.
+    pattern_origin: "Designed 2026-05-23; sample target = competitive intel briefing"
+    section_count: 15
+    estimated_pages: 14-17
+    estimated_runtime_min: 30-45
+
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
+      industry_domains:
+        any:
+          keywords: ["competitor", "competitive landscape", "market share", "top players", "industry leaders", "consolidation", "HHI", "strategic groups", "competitive matrix", "competitor analysis"]
+      year_scope:
+        required: true
+        format: "current year snapshot, 3-5 year share history"
+
+    default_output_mode: publish
+    requires_confirm_step: false
+
+    poor_fit_signals:
+      - "Fragmented markets with no named competitors (commodity, generic services)"
+      - "Single-firm topics (one company deep-dive — use entry_strategy or design mode)"
+      - "Topics that require sizing/forecast as the centerpiece (use market_analysis)"
+
+  - id: consumer_segmentation
+    path: templates/blueprints/consumer_segmentation/
+    name: "Consumer Segmentation (B2C personas × country × consumer category)"
+    short_description: >
+      16-section breakdown of a consumer market by demographic, behavioral,
+      and psychographic axes. Three single-page persona profiles, channel
+      preferences, willingness-to-pay, and brand-affinity analysis. B2C only.
+    pattern_origin: "Designed 2026-05-23; sample target = consumer research briefing"
+    section_count: 16
+    estimated_pages: 16-19
+    estimated_runtime_min: 35-50
+
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
+      industry_domains:
+        consumer:
+          keywords: ["consumer", "FMCG", "food", "beverage", "personal care", "household", "fashion", "apparel", "beauty", "cosmetics"]
+        digital_consumer:
+          keywords: ["mobile", "app", "OTT", "streaming", "fintech consumer", "e-commerce consumer", "subscription"]
+        consumer_durables:
+          keywords: ["auto consumer", "appliance", "consumer electronics", "smartphone"]
+      year_scope:
+        required: true
+        format: "current year snapshot with 3-year behavioral trend"
+
+    default_output_mode: publish
+    requires_confirm_step: false
+
+    poor_fit_signals:
+      - "B2B markets (use competitive_landscape or market_analysis)"
+      - "Industrial / commodity goods without consumer-facing brand"
+      - "Markets where persona-level data isn't survey-accessible"
+
+  - id: regulatory_brief
+    path: templates/blueprints/regulatory_brief/
+    name: "Regulatory Brief (policy timeline × industry × country)"
+    short_description: >
+      14-section policy deep dive. Lower chart density, higher secondary-source
+      mix. Centerpiece: horizontal policy timeline with winner/loser annotations.
+      Covers current framework, key regulators, recent + pending changes,
+      compliance cost, and ASEAN cross-border comparison.
+    pattern_origin: "Designed 2026-05-23; sample target = regulatory advisory note"
+    section_count: 14
+    estimated_pages: 13-14
+    estimated_runtime_min: 25-40
+
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
+      industry_domains:
+        any:
+          keywords: ["regulation", "policy", "subsidy", "licensing", "compliance", "law", "decree", "tariff", "tax regime", "incentive", "ban", "restriction", "framework", "halal", "FX control", "data localization"]
+      year_scope:
+        required: true
+        format: "current regime with historical timeline + pending changes"
+
+    default_output_mode: publish
+    requires_confirm_step: false
+
+    poor_fit_signals:
+      - "Topics where policy is a side-note, not the focus (use market_analysis)"
+      - "Highly fragmented / sub-national rule complexity that needs legal counsel, not briefing"
+      - "Markets where regulatory data isn't publicly documented"
+
+  - id: entry_strategy
+    path: templates/blueprints/entry_strategy/
+    name: "Entry Strategy (qualitative market briefing × country × industry)"
+    short_description: >
+      14-section qualitative market briefing for a company considering entry
+      into a SEA market. Directional reads on opportunity, competitive
+      intensity, operating environment (regulatory/cultural/infrastructure),
+      qualitative risk matrix (LOW/MED/HIGH, no numeric scores), and phased
+      rollout milestones. Does NOT include P&L, capex, opex modeling — those
+      are out of scope for the qualitative framing.
+    pattern_origin: "Designed 2026-05-23 v2 (qualitative pivot per owner directive)"
+    section_count: 14
+    estimated_pages: 13-15
+    estimated_runtime_min: 30-45
+
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
+      industry_domains:
+        any:
+          keywords: ["enter", "entry strategy", "market entry", "expansion", "launch", "go-to-market", "GTM", "JV", "joint venture", "partnership", "subsidiary", "greenfield"]
+      year_scope:
+        required: true
+        format: "current year qualitative read with directional outlook"
+
+    default_output_mode: publish
+    requires_confirm_step: false   # qualitative briefing — no quantitative commitments to gate
+
+    poor_fit_signals:
+      - "Topics that need P&L / capex / opex modeling (qualitative blueprint does not cover these)"
+      - "Topics that aren't from a company POV (use market_analysis instead)"
+      - "Single-channel entries that don't need full GTM scope"
+
+  - id: distribution_analysis
+    path: templates/blueprints/distribution_analysis/
+    name: "Distribution Analysis (channel mix × industry × country)"
+    short_description: >
+      14-section channel + distribution deep dive for physical goods. Maps
+      modern trade × traditional × e-commerce × direct × instant. Centerpieces:
+      channel mix evolution chart and channel margin waterfall. Best for FMCG,
+      durables, B2B industrial supplies.
+    pattern_origin: "Designed 2026-05-23; sample target = channel strategy review"
+    section_count: 14
+    estimated_pages: 13-16
+    estimated_runtime_min: 30-45
+
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
+      industry_domains:
+        physical_goods:
+          keywords: ["FMCG", "consumer goods", "food", "beverage", "personal care", "household", "building materials", "industrial supplies", "hardware", "B2B industrial"]
+      channel_signals:
+        keywords: ["distribution", "channel", "retail", "wholesale", "e-commerce", "modern trade", "traditional trade", "distributor", "GTM", "shelf", "D2C", "marketplace", "instant delivery", "quick commerce"]
+      year_scope:
+        required: true
+        format: "current year channel mix with 5-year historical trend"
+
+    default_output_mode: publish
+    requires_confirm_step: false
+
+    poor_fit_signals:
+      - "Pure software / SaaS / digital-only services (no physical channel)"
+      - "Direct-only brands without intermediary structure"
+      - "Markets where channel data isn't Nielsen/Kantar-style trackable"
+
+  - id: pricing_strategy
+    path: templates/blueprints/pricing_strategy/
+    name: "Pricing Strategy (market pricing overview × industry × country)"
+    short_description: >
+      13-section market pricing overview. Maps premium/mid/mass/value tier
+      structure, indicative competitor price bands (not per-SKU detail),
+      price-quality perceptual matrix, qualitative WTP read by segment, and
+      directional promotional patterns. Proceeds on partial data with
+      coverage disclosure in methodology endnote — does NOT halt on B2B
+      opaque-pricing topics.
+    pattern_origin: "Designed 2026-05-23 v2 (general market view pivot per owner directive)"
+    section_count: 13
+    estimated_pages: 13-15
+    estimated_runtime_min: 25-40
+
+    topic_fit:
+      country_scope:
+        required: true
+        regions: ["Southeast Asia", "Asia-Pacific"]
+        countries: ["Indonesia", "Vietnam", "Thailand", "Philippines", "Malaysia", "Singapore"]
+      industry_domains:
+        consumer:
+          keywords: ["pricing", "price", "premium", "mass", "value tier", "consumer goods", "FMCG", "beauty", "F&B"]
+        clear_priced_services:
+          keywords: ["telco", "telecom", "insurance", "subscription", "streaming", "fintech", "BNPL"]
+      pricing_signals:
+        keywords: ["pricing strategy", "price point", "premium positioning", "willingness-to-pay", "price elasticity", "discount", "promotional", "tiered pricing", "freemium", "subscription model"]
+      year_scope:
+        required: true
+        format: "current year price snapshot with directional change vector"
+
+    default_output_mode: publish
+    requires_confirm_step: false
+
+    poor_fit_signals:
+      - "Buyers who explicitly need per-SKU pricing committee detail (use design mode)"
+      - "Commodity markets with thin price differentiation"
+      - "Markets where price discovery is fundamentally impossible (offline-only negotiated B2B)"
+
+  # ------------------------------------------------------------
+  # Future blueprints land below as new patterns solidify. Examples
+  # surfaced from UC2 Design Mode usage so far:
+  #   - tech_adoption_*
+  #   - m_and_a_target_screen_*
+  #   - sustainability_brief_*
+  #   - export_diagnostic_*
+  # ------------------------------------------------------------

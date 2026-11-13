@@ -1,0 +1,74 @@
+# ============================================================
+# KIRA Research — Blueprint: market_analysis
+#
+# Phase 1's only blueprint. R0152-style structure for country ×
+# industry market analysis. Best fit: SEA manufacturing / consumer
+# / construction-materials topics, current year with 5-year forecast.
+# ============================================================
+
+blueprint_id: market_analysis
+version: 1
+origin: "R0152 (Indonesia roofing/exterior/insulation 2026) — sample at references/sample_R0152_baseline.html"
+
+# Report shape
+shape:
+  total_sections: 19
+  estimated_pages: 18-22
+  estimated_render_time_min: 35-55
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from (all defined in schemas/page_schemas.json)
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - divider
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - market_data_chart
+  - competitive_structure
+  - competitive_profile_deep
+  - ai_overview
+  - forecast_outlook
+  - methodology_endnote
+
+# Research budget
+research:
+  query_count_target: 25
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 25       # KIRA synthesis
+    secondary_pct: 55     # cited external
+    estimate_pct: 20      # KIRA estimate with anchor
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 22000-28000
+  callouts_target: 12-16
+  charts_target: 8-12
+  player_profiles_target: 4-6
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages ≤ 720px rendered height"
+  - source_coverage: "Every quantitative claim has [primary|secondary|estimate|user-input] tag"
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
+  - char_budgets: "All slot char counts ≤ schema cap"
+
+# Output mode
+output:
+  default_mode: publish              # auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # template validated; skip user confirmation

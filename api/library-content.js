@@ -6,16 +6,18 @@
 //   Authorization: Bearer <supabase-jwt>
 //   → { full_content, pdf_url, title, eyebrow, toc, locale, ... }
 //
-// 401 if unauthenticated · 402 if not purchased · 404 if report missing.
+// 401 if unauthenticated · 402 if neither purchased nor subscribed · 404 if report missing.
+// A Month subscriber gets the full content with pdf_url null and pdf { used, limit } (PDFs: /api/library-pdf).
+// `exhibits` = number of exhibits with downloadable data (/api/library-exhibits), 0 if none.
 // Tracks each successful delivery in `downloads` so we can show access
 // counts to owners.
 // ============================================================
 
+import { resolvePdfUrl, downloadNameFor, nameParts } from './_lib/report-pdf.js';
+import { activeSubscription, pdfUsage } from './_lib/subscription.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-const PDF_BUCKET           = 'reports-pdfs';
-const PDF_SIGNED_TTL_SEC   = 3600;  // 1-hour signed URLs — long enough to download, short enough that leaks are short-lived.
 
 async function sb(path, method = 'GET', body = null) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -30,40 +32,6 @@ async function sb(path, method = 'GET', body = null) {
   });
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
   return res.status === 204 ? null : res.json();
-}
-
-// pdf_url can be:
-//   • a full http(s) URL — used for aggregator-hosted PDFs, returned as-is.
-//   • a storage path (e.g. "<uuid>/en.pdf") — resolved to a fresh signed URL.
-//   • null/empty — returned as null so the UI shows "PDF is being prepared".
-async function resolvePdfUrl(pdfUrl) {
-  if (!pdfUrl) return null;
-  if (/^https?:\/\//i.test(pdfUrl)) return pdfUrl;
-
-  try {
-    const r = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/sign/${PDF_BUCKET}/${pdfUrl}`,
-      {
-        method: 'POST',
-        headers: {
-          'apikey':        SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'Content-Type':  'application/json'
-        },
-        body: JSON.stringify({ expiresIn: PDF_SIGNED_TTL_SEC })
-      }
-    );
-    if (!r.ok) {
-      console.error('[library-content] sign url failed:', r.status, await r.text());
-      return null;
-    }
-    const { signedURL } = await r.json();
-    // signedURL is a relative path like "/object/sign/...?token=..." — prepend host.
-    return signedURL ? `${SUPABASE_URL}/storage/v1${signedURL}` : null;
-  } catch (err) {
-    console.error('[library-content] sign url error:', err.message);
-    return null;
-  }
 }
 
 async function verifyBearer(req) {
@@ -85,7 +53,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'private, no-store');
 }
 
-const LOCALES = new Set(['en','ja','ko']);
+const LOCALES = new Set(['en', 'ja', 'ko', 'zh']);
 
 export default async function handler(req, res) {
   cors(res);
@@ -107,9 +75,18 @@ export default async function handler(req, res) {
 
   try {
     // 3) Find the base report.
+    //
+    // Phase M.3: we do NOT filter by status here. Buyers who already paid
+    // should keep accessing their purchased content even if the report is
+    // later retired by an admin (delete-and-regen workflow, content takedown,
+    // etc.). The `purchases` check below is the actual access gate. New
+    // purchases ARE blocked at /api/library-buy by the published-status
+    // filter, and /api/library-list/library-report also hide retired rows,
+    // so retired reports become invisible to new buyers but still readable
+    // by existing ones.
     const baseRows = await sb(
       `living_reports?slug=eq.${encodeURIComponent(slug)}` +
-      `&status=eq.published&select=id,slug,country,industry,year,pages,price&limit=1`
+      `&select=id,slug,code,country,industry,segment,year,pages,price,status&limit=1`
     );
     const base = Array.isArray(baseRows) ? baseRows[0] : null;
     if (!base) { res.status(404).json({ error: 'report_not_found' }); return; }
@@ -121,9 +98,18 @@ export default async function handler(req, res) {
       `&slug=eq.${encodeURIComponent(slug)}` +
       `&status=eq.completed&select=locale,created_at&limit=1`
     );
+    // A Month subscriber reads everything online; their PDFs are counted by /api/library-pdf.
+    let viaSubscription = false;
+    let pdfInfo = null;
     if (!Array.isArray(purchases) || !purchases.length) {
-      res.status(402).json({ error: 'not_purchased' });
-      return;
+      const sub = await activeSubscription(user.id);
+      if (!sub) {
+        res.status(402).json({ error: 'not_purchased' });
+        return;
+      }
+      viaSubscription = true;
+      const usage = await pdfUsage(user.id, sub);
+      pdfInfo = { via: 'subscription', used: usage.used, limit: usage.limit };
     }
 
     // 5) Load translation for the requested locale (with EN fallback).
@@ -162,10 +148,18 @@ export default async function handler(req, res) {
       // Swallow — downloads table is optional infrastructure.
     }
 
-    // Generate a short-lived signed URL when pdf_url is a storage path.
-    // External URLs pass through. Best-effort: null on failure so the UI
-    // shows the "PDF is being prepared" pending state instead of breaking.
-    const signedPdfUrl = await resolvePdfUrl(translation.pdf_url);
+    // How many exhibits have downloadable data (S12). 0 for reports made before it; never blocks delivery.
+    let exhibitCount = 0;
+    try {
+      const ex = await sb(`report_exhibits?report_id=eq.${base.id}&select=exhibit_count&limit=1`);
+      exhibitCount = (Array.isArray(ex) && ex[0] && ex[0].exhibit_count) || 0;
+    } catch { /* table missing or unreachable: no download buttons */ }
+
+    // Buyers get a short-lived signed URL when pdf_url is a storage path (external URLs pass through;
+    // null on failure so the UI shows the "PDF is being prepared" state). Subscribers do not get the link
+    // here: their PDF goes through /api/library-pdf, which counts it against the monthly allowance.
+    const downloadName = downloadNameFor(await nameParts(base.id, effectiveLocale), effectiveLocale);
+    const signedPdfUrl = viaSubscription ? null : await resolvePdfUrl(translation.pdf_url, downloadName);
 
     res.status(200).json({
       slug:           base.slug,
@@ -184,9 +178,12 @@ export default async function handler(req, res) {
       toc:            translation.toc,
       full_content:   translation.full_content,
       pdf_url:        signedPdfUrl,
+      pdf:            pdfInfo,
+      exhibits:       exhibitCount,
 
-      ownedLocale:    purchases[0].locale,
-      purchasedAt:    purchases[0].created_at
+      ownedLocale:    viaSubscription ? null : purchases[0].locale,
+      purchasedAt:    viaSubscription ? null : purchases[0].created_at,
+      viaSubscription
     });
   } catch (err) {
     console.error('[library-content] error:', err.message);

@@ -12,14 +12,16 @@
 (function () {
   // nav.js exposes window.kira.locale; default 'en' if it's missing
   // (i18n.js could load before nav.js if someone reorders scripts).
-  const SUPPORTED = ['en', 'ja', 'ko'];
+  const SUPPORTED = ['en', 'ja', 'ko', 'zh'];
+  // <html lang> values. Chinese is Simplified-only → BCP-47 'zh-Hans'.
+  const HTML_LANG = { en: 'en', ja: 'ja', ko: 'ko', zh: 'zh-Hans' };
   const pathParts = window.location.pathname.split('/').filter(Boolean);
   const locale =
     (window.kira && window.kira.locale) ||
     (SUPPORTED.includes(pathParts[0]) ? pathParts[0] : 'en');
 
   // <html lang="..."> — keep in sync for screen readers + SEO.
-  document.documentElement.setAttribute('lang', locale);
+  document.documentElement.setAttribute('lang', HTML_LANG[locale] || locale);
 
   // ── Dotted-path lookup ────────────────────────────────────
   function lookup(dict, dottedKey) {

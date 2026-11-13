@@ -59,7 +59,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'private, no-store');
 }
 
-const LOCALES        = new Set(['en', 'ja', 'ko']);
+const LOCALES        = new Set(['en', 'ja', 'ko', 'zh']);
 const REPORT_STATUS  = new Set(['draft', 'published', 'retired']);
 const TRANS_STATUS   = new Set(['draft', 'review', 'published', 'retired']);
 
