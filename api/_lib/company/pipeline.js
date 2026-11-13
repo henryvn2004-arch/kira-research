@@ -3,18 +3,18 @@
 //
 // runPipeline(input, ctx) → { report } | { candidates } | { error }
 //
-// 6-stage pipeline:
+// Universal pipeline (all 10 KIRA countries):
 //   1. Resolve entity (tax_id → direct; name → candidates list)
-//   2. Fetch official sources (VN: ĐKKD via VietQR; other countries TBD)
-//   3. Footprint discovery (gmb, website, shopee) — Sprint 3
-//   4. Graph expansion (recursive CTE up to depth 2) — Sprint 4
-//   5. LLM synthesis (unstructured text → narrative) — Sprint 5
-//   6. Quality gate + assemble report + cache
+//   2. OpenCorporates — official registration data (all countries)
+//      Wikidata       — structured knowledge graph enrichment
+//      Tavily         — web search for description + website
+//   3. LLM synthesis — Claude Haiku analyst narrative
+//   4. Assemble + cache report
 // ============================================================
 
 import { PIPELINE_VERSION, GRAPH_MAX_DEPTH, GRAPH_MAX_NODES, GRAPH_MIN_CONF, SOURCE_TTL_DAYS, DEFAULT_COUNTRY } from './config.js';
-import * as vn_dkkd from './connectors/vn_dkkd.js';
-import * as vn_masothue from './connectors/vn_masothue.js';
+import * as opencorporates from './connectors/opencorporates.js';
+import * as wikidata from './connectors/wikidata.js';
 import * as tavily_web from './connectors/tavily_web.js';
 import { makeSlug } from './normalize.js';
 
@@ -29,7 +29,7 @@ import { makeSlug } from './normalize.js';
  *   error?:      string
  * }>}
  */
-export async function runPipeline(input, ctx) {
+export async function runPipeline(input, ctx, { force = false } = {}) {
   if (!input.taxId && !input.name) return { error: 'missing_input' };
 
   const country = (input.country || DEFAULT_COUNTRY).toUpperCase();
@@ -41,9 +41,11 @@ export async function runPipeline(input, ctx) {
 
   const { entity } = resolved;
 
-  // Cache check — fresh hit → return immediately
-  const cached = await getCachedReport(entity.id, ctx);
-  if (cached) return { report: cached };
+  // Cache check — fresh hit → return immediately (skipped when force=true)
+  if (!force) {
+    const cached = await getCachedReport(entity.id, ctx);
+    if (cached) return { report: cached };
+  }
 
   // Short-circuit: dissolved/cancelled companies skip scraping
   const isActive = !entity.status_cache || entity.status_cache === 'active';
@@ -56,10 +58,11 @@ export async function runPipeline(input, ctx) {
   // Stage 2: official sources
   const factsMap = await stage2OfficialSources(entity, ctx);
 
-  // Stages 3–5 deferred to later sprints
+  // Stage 5: LLM synthesis — generate analyst narrative from collected facts
+  const narrative = await stage5LlmSynthesis(entity, factsMap, ctx);
 
   // Stage 6: assemble + cache
-  const report = await assembleAndCache(entity, factsMap, ctx);
+  const report = await assembleAndCache(entity, factsMap, ctx, narrative);
   return { report };
 }
 
@@ -76,44 +79,31 @@ export async function expandGraph(seedId, supabase) {
   return data || [];
 }
 
-// ── Stage 2: official sources ──────────────────────────────────
+// ── Stage 2: universal enrichment sources ─────────────────────
 
 async function stage2OfficialSources(entity, ctx) {
   const { supabase } = ctx;
-  const country = entity.country_code || DEFAULT_COUNTRY;
 
-  // Check if ĐKKD data is fresh enough to skip re-fetch
-  const dkkdCoverage = await getCoverage(entity.id, 'dkkd', supabase);
-  const needsFetch = !dkkdCoverage
-    || dkkdCoverage.status === 'not_checked'
-    || dkkdCoverage.status === 'failed'
-    || isCoverageStale(dkkdCoverage, 'dkkd');
-
-  if (needsFetch && country === 'VN' && entity.tax_id) {
-    await runConnector(entity, 'dkkd', vn_dkkd, ctx);
+  // OpenCorporates — official registration data (all countries, requires tax_id)
+  if (entity.tax_id) {
+    const ocCov = await getCoverage(entity.id, 'opencorporates', supabase);
+    const needsOC = !ocCov || ocCov.status === 'not_checked' || ocCov.status === 'failed'
+      || isCoverageStale(ocCov, 'opencorporates');
+    if (needsOC) await runConnector(entity, 'opencorporates', opencorporates, ctx);
   }
 
-  // masothue scraper — charter_capital + founding_date (VN only)
-  if (country === 'VN' && entity.tax_id && process.env.FIRECRAWL_API_KEY) {
-    const masothueCoverage = await getCoverage(entity.id, 'masothue', supabase);
-    const needsMasothue = !masothueCoverage
-      || masothueCoverage.status === 'not_checked'
-      || masothueCoverage.status === 'failed'
-      || isCoverageStale(masothueCoverage, 'masothue');
-    if (needsMasothue) {
-      await runConnector(entity, 'masothue', vn_masothue, ctx);
-    }
-  }
+  // Wikidata — structured knowledge graph enrichment (all countries)
+  const wdCov = await getCoverage(entity.id, 'wikidata', supabase);
+  const needsWD = !wdCov || wdCov.status === 'not_checked' || wdCov.status === 'failed'
+    || isCoverageStale(wdCov, 'wikidata');
+  if (needsWD) await runConnector(entity, 'wikidata', wikidata, ctx);
 
-  // Tavily web enrichment — description + website (all countries, run once)
+  // Tavily — web search for description + website (all countries, requires API key)
   if (process.env.TAVILY_API_KEY) {
-    const tavilyCoverage = await getCoverage(entity.id, 'tavily', supabase);
-    const needsTavily = !tavilyCoverage
-      || tavilyCoverage.status === 'not_checked'
-      || isCoverageStale(tavilyCoverage, 'tavily');
-    if (needsTavily) {
-      await runConnector(entity, 'tavily', tavily_web, ctx);
-    }
+    const tavilyCov = await getCoverage(entity.id, 'tavily', supabase);
+    const needsTavily = !tavilyCov || tavilyCov.status === 'not_checked'
+      || isCoverageStale(tavilyCov, 'tavily');
+    if (needsTavily) await runConnector(entity, 'tavily', tavily_web, ctx);
   }
 
   // Reload all facts after connectors run
@@ -185,7 +175,85 @@ async function runConnector(entity, sourceType, connector, ctx) {
 
 // ── Stage 6: assemble + cache ──────────────────────────────────
 
-async function assembleAndCache(entity, factsMap, ctx) {
+// ── Stage 5: LLM synthesis ─────────────────────────────────────
+
+async function stage5LlmSynthesis(entity, factsMap, ctx) {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
+
+  // Skip if narrative already generated recently
+  const narCoverage = await getCoverage(entity.id, 'llm_narrative', ctx.supabase);
+  if (narCoverage?.status === 'found' && !isCoverageStale(narCoverage, 'llm_narrative')) {
+    // Retrieve existing narrative from stored report payload
+    const { data: cr } = await ctx.supabase
+      .from('company_reports')
+      .select('payload')
+      .eq('entity_id', entity.id)
+      .single();
+    return cr?.payload?.narrative || null;
+  }
+
+  // Build facts summary for the prompt
+  const factLines = Object.entries(factsMap)
+    .filter(([, v]) => v?.value != null)
+    .map(([k, v]) => {
+      const val = typeof v.value === 'string'
+        ? v.value.replace(/^"|"$/g, '')  // strip JSON string quotes
+        : v.value;
+      return `${k}: ${val}`;
+    })
+    .join('\n');
+
+  if (!factLines) return null;
+
+  const country = entity.country_code || 'VN';
+  const countryName = { VN: 'Vietnam', JP: 'Japan', KR: 'South Korea', AU: 'Australia',
+    SG: 'Singapore', MY: 'Malaysia', ID: 'Indonesia', TH: 'Thailand',
+    PH: 'Philippines', NZ: 'New Zealand' }[country] || country;
+
+  const prompt = `You are a senior analyst at KIRA Research, a specialist research house covering Asia-Pacific emerging markets.
+
+Write a concise 180–220 word company profile for ${entity.canonical_name} (${countryName}).
+
+Use these verified facts:
+${factLines}
+
+Requirements:
+- Professional, third-person analyst voice
+- Structure: (1) overview & sector position, (2) scale & operational context, (3) strategic relevance
+- Do not invent facts not provided. If a fact is missing, omit that point
+- Do not mention KIRA Research, AI, or any research platform
+- No headers or bullet points — flowing prose only
+
+Output only the narrative text.`;
+
+  try {
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const msg = await client.messages.create({
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 350,
+      messages:   [{ role: 'user', content: prompt }],
+    });
+
+    const narrative = msg.content[0]?.text?.trim() || null;
+
+    // Record coverage
+    await ctx.supabase.from('coverage').upsert(
+      { entity_id: entity.id, source_type: 'llm_narrative',
+        status: narrative ? 'found' : 'checked_empty', checked_at: new Date().toISOString() },
+      { onConflict: 'entity_id,source_type' }
+    );
+
+    return narrative;
+  } catch {
+    return null;
+  }
+}
+
+// ── Stage 6: assemble + cache ──────────────────────────────────
+
+async function assembleAndCache(entity, factsMap, ctx, narrative = null) {
   // Load coverage summary
   const { data: coverageRows } = await ctx.supabase
     .from('coverage')
@@ -215,8 +283,8 @@ async function assembleAndCache(entity, factsMap, ctx) {
     status:       entity.status_cache || 'active',
     coverage,
     facts:        factsMap,
-    graph:        [],       // populated in Sprint 4
-    narrative:    null,     // populated in Sprint 5
+    graph:        [],
+    narrative,
     generated_at: new Date().toISOString(),
     pipeline_ver: PIPELINE_VERSION,
   };

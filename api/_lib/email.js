@@ -9,6 +9,9 @@
 //   sendLeadNotification({ leadId, name, email, company, role, tier, deadline, brief, locale, source })
 //     → Notify admins about a new Custom Research inquiry.
 //
+//   sendWaitlistNotification({ email, name, company, role, plan, locale, source, repeat })
+//     → Notify admins about a subscription-waitlist sign-up (Sprint S5).
+//
 // Both functions:
 //   • Return false silently if RESEND_API_KEY is unset (lets dev / unconfigured
 //     prod environments work without erroring out).
@@ -28,8 +31,23 @@ const ADMIN_EMAILS   = (process.env.ADMIN_EMAILS || '')
   .map(s => s.trim())
   .filter(Boolean);
 
+// Addresses that hard-bounced or marked us as spam (email_suppressions, filled by /api/email-webhook).
+// Sending to them again hurts the domain's reputation. Fails open: if the lookup breaks, mail still goes out.
+async function dropSuppressed(recipients) {
+  const SB = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+  if (!SB || !KEY || !recipients.length) return recipients;
+  try {
+    const list = recipients.map(a => `"${String(a).toLowerCase().replace(/"/g, '')}"`).join(',');
+    const r = await fetch(`${SB}/rest/v1/email_suppressions?select=email&email=in.(${encodeURIComponent(list)})`,
+      { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
+    if (!r.ok) return recipients;
+    const bad = new Set((await r.json()).map(x => x.email));
+    return recipients.filter(a => !bad.has(String(a).toLowerCase()));
+  } catch { return recipients; }
+}
+
 // ── Low-level POST to Resend ─────────────────────────────
-async function resendSend({ to, subject, html, text, replyTo }) {
+async function resendSend({ to, subject, html, text, replyTo, headers }) {
   if (!RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY not set — skipping send to', to);
     return false;
@@ -40,14 +58,20 @@ async function resendSend({ to, subject, html, text, replyTo }) {
   }
 
   try {
+    const recipients = await dropSuppressed(Array.isArray(to) ? to : [to]);
+    if (recipients.length === 0) {
+      console.warn('[email] every recipient is suppressed (bounced or complained) — skipping');
+      return false;
+    }
     const body = {
       from:    RESEND_FROM,
-      to:      Array.isArray(to) ? to : [to],
+      to:      recipients,
       subject,
       html,
       text
     };
     if (replyTo) body.reply_to = replyTo;
+    if (headers) body.headers = headers;
 
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -88,15 +112,18 @@ export async function sendPurchaseReceipt({
   amount,
   currency = 'USD',
   reportTitle,
-  downloadUrl
+  downloadUrl,
+  kind = 'report'            // 'report' | 'transcript' (expert-interview transcript, S19)
 }) {
   if (!buyerEmail) return false;
 
   const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
   const title = reportTitle || slug;
-  const reportUrl = `${APP_URL}/${locale}/reports/${slug}`;
+  const isTranscript = kind === 'transcript';
+  const noun = isTranscript ? 'transcript' : 'report';
+  const reportUrl = isTranscript ? `${APP_URL}/${locale}/experts/transcripts/${slug}` : `${APP_URL}/${locale}/reports/${slug}`;
 
-  const subject = `Your KIRA RESEARCH report — ${title}`;
+  const subject = `Your KIRA RESEARCH ${noun} — ${title}`;
 
   const text = [
     `Thanks for your purchase.`,
@@ -104,7 +131,7 @@ export async function sendPurchaseReceipt({
     `You bought: ${title}`,
     `Amount: ${niceAmount} ${currency}`,
     ``,
-    `View your report: ${reportUrl}`,
+    `View your ${noun}: ${reportUrl}`,
     downloadUrl ? `Direct PDF download: ${downloadUrl}` : '',
     ``,
     `If you have any questions, just reply to this email.`,
@@ -118,15 +145,52 @@ export async function sendPurchaseReceipt({
   <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Thanks for your purchase.</h1>
   <p style="margin:0 0 18px;">You now have access to <strong>${esc(title)}</strong>.</p>
   <table style="border-collapse:collapse;margin:0 0 24px;">
-    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Report</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">${isTranscript ? 'Transcript' : 'Report'}</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
     <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Amount</td><td style="padding:4px 0;font-size:14px;">${esc(niceAmount)} ${esc(currency)}</td></tr>
   </table>
-  <p style="margin:0 0 12px;"><a href="${esc(reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open your report</a></p>
+  <p style="margin:0 0 12px;"><a href="${esc(reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open your ${noun}</a></p>
   ${downloadUrl ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">Direct PDF link (expires in 1 hour): <a href="${esc(downloadUrl)}">download</a></p>` : ''}
   <p style="margin:24px 0 6px;font-size:13px;color:#666;">If you have any questions, just reply to this email.</p>
   <p style="margin:0;font-size:13px;color:#666;">— The KIRA RESEARCH team</p>
 </body></html>`.trim();
 
+  return resendSend({ to: buyerEmail, subject, html, text });
+}
+
+// ── Month subscription started ───────────────────────────
+// Sent once, the first time a subscription is seen active (api/subscription.js claims `welcomed_at`
+// before calling this). Best-effort like the other receipts.
+export async function sendSubscriptionStarted({ buyerEmail, plan = 'month', amount, currency = 'USD', periodEnd, pdfLimit = 5 }) {
+  if (!buyerEmail) return false;
+  const year = plan === 'year';
+  const label = year ? 'Annual' : 'Month', per = year ? 'year' : 'month';
+  const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
+  const next = periodEnd ? new Date(periodEnd).toISOString().slice(0, 10) : '';
+  const manageUrl = `${APP_URL}/en/subscription`;
+  const subject = `Your KIRA RESEARCH ${label} subscription is live`;
+  const text = [
+    'Thanks for subscribing.',
+    '',
+    `Plan: ${label}, ${niceAmount} ${currency} per ${per}, renews automatically${next ? ` (next charge around ${next})` : ''}.`,
+    `Included: every report in full online, every expert-interview transcript, and ${pdfLimit} PDF downloads per billing period.`,
+    '',
+    `Manage or cancel any time: ${manageUrl}`,
+    'Cancelling stops the next charge; access continues to the end of the period you paid for.',
+    '',
+    'If you have any questions, just reply to this email.',
+    '',
+    '— The KIRA RESEARCH team'
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Your ${esc(label)} subscription is live.</h1>
+  <p style="margin:0 0 18px;">${esc(niceAmount)} ${esc(currency)} per ${per}, renews automatically${next ? ` (next charge around ${esc(next)})` : ''}.</p>
+  <p style="margin:0 0 18px;">Included: every report in full online, every expert-interview transcript, and ${esc(String(pdfLimit))} PDF downloads per billing period.</p>
+  <p style="margin:0 0 12px;"><a href="${esc(manageUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Manage your subscription</a></p>
+  <p style="margin:18px 0 6px;font-size:13px;color:#666;">Cancel any time: the next charge stops, and access continues to the end of the period you paid for.</p>
+  <p style="margin:0;font-size:13px;color:#666;">— The KIRA RESEARCH team</p>
+</body></html>`.trim();
   return resendSend({ to: buyerEmail, subject, html, text });
 }
 
@@ -242,4 +306,239 @@ export async function sendLeadNotification(lead) {
 
   // Use the lead's email as reply-to so the admin can reply directly.
   return resendSend({ to: ADMIN_EMAILS, subject, html, text, replyTo: email });
+}
+
+// ── Waitlist notification (Sprint S5) ────────────────────
+//   sendWaitlistNotification({ id, email, name, company, role, plan, locale, source, repeat })
+//     → Tell admins someone joined (or re-joined) the subscription waitlist.
+export async function sendWaitlistNotification(entry) {
+  if (ADMIN_EMAILS.length === 0) {
+    console.warn('[email] ADMIN_EMAILS empty — skipping waitlist notification');
+    return false;
+  }
+  const email   = entry.email   || '(no email)';
+  const name    = entry.name    || '';
+  const company = entry.company || '';
+  const role    = entry.role    || '';
+  const plan    = entry.plan    || 'not-sure';
+  const locale  = entry.locale  || 'en';
+  const source  = entry.source  || 'pricing';
+  const repeat  = !!entry.repeat;
+
+  const subject = `${repeat ? 'Waitlist update' : 'New waitlist sign-up'}: ${email} (${plan})`;
+  const text = [
+    `${repeat ? 'Existing waitlist entry updated' : 'New waitlist sign-up'} from ${source} (${locale}).`,
+    ``,
+    `Email:   ${email}`,
+    name    ? `Name:    ${name}`    : '',
+    company ? `Company: ${company}` : '',
+    role    ? `Role:    ${role}`    : '',
+    `Plan:    ${plan}`,
+    ``,
+    `Manage: ${APP_URL}/en/admin/waitlist`
+  ].filter(Boolean).join('\n');
+
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#111;max-width:600px;margin:0 auto;padding:24px;">
+  <p style="margin:0 0 4px;font-size:12px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH — ${repeat ? 'waitlist update' : 'new waitlist sign-up'}</p>
+  <h1 style="font-size:18px;margin:0 0 18px;font-weight:600;">${esc(email)}</h1>
+  <table style="border-collapse:collapse;font-size:13px;margin:0 0 18px;">
+    ${name    ? `<tr><td style="padding:3px 16px 3px 0;color:#666;">Name</td><td style="padding:3px 0;">${esc(name)}</td></tr>` : ''}
+    ${company ? `<tr><td style="padding:3px 16px 3px 0;color:#666;">Company</td><td style="padding:3px 0;">${esc(company)}</td></tr>` : ''}
+    ${role    ? `<tr><td style="padding:3px 16px 3px 0;color:#666;">Role</td><td style="padding:3px 0;">${esc(role)}</td></tr>` : ''}
+    <tr><td style="padding:3px 16px 3px 0;color:#666;">Plan</td><td style="padding:3px 0;">${esc(plan)}</td></tr>
+    <tr><td style="padding:3px 16px 3px 0;color:#666;">Locale</td><td style="padding:3px 0;">${esc(locale)}</td></tr>
+    <tr><td style="padding:3px 16px 3px 0;color:#666;">Source</td><td style="padding:3px 0;">${esc(source)}</td></tr>
+  </table>
+  <p style="margin:18px 0 0;font-size:12px;color:#666;"><a href="${esc(APP_URL)}/en/admin/waitlist">Open the waitlist admin</a></p>
+</body></html>`.trim();
+
+  return resendSend({ to: ADMIN_EMAILS, subject, html, text, replyTo: entry.email || undefined });
+}
+
+// ── "We got your request" — sent the moment a reader leaves an email on a coming-soon page ──
+// Two jobs: the reader sees right away whether our mail lands in the inbox or in spam, and the
+// reply-to is a real inbox. Plain on purpose (one link, no images) so it is not filtered.
+export async function sendTopicRequestConfirmation({ to, title, url, eta }) {
+  if (!to || !title || !url) return false;
+  const replyTo = ADMIN_EMAILS[0] || undefined;
+  const subject = `We got your request: ${title}`;
+  const text = [
+    `You asked to be told when this report is published:`,
+    ``,
+    title,
+    ``,
+    eta ? `We expect to publish it by ${eta}, and we will email you once, on the day it is ready. You can check its status any time here:`
+        : `We will email you once, on the day it is ready. You can check its status any time here:`,
+    url,
+    ``,
+    `If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.`,
+    `Not you? Ignore this message; we will only send one more email about this report.`,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">We got your request.</h1>
+  <p style="margin:0 0 8px;">You asked to be told when this report is published:</p>
+  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
+  <p style="margin:0 0 16px;">${eta ? `We expect to publish it by <strong>${esc(eta)}</strong>, and we` : 'We'} will email you once, on the day it is ready. You can check its status any time: <a href="${esc(url)}">${esc(url)}</a></p>
+  <p style="margin:0 0 16px;font-size:13px;color:#555;">If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.</p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">Not you? Ignore this message; we will only send one more email about this report.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text, replyTo });
+}
+
+// ── Coming-soon topic is now published ────────────────────
+// Sent once to each reader who asked to be told (topic_requests).
+export async function sendTopicPublishedEmail({ to, title, url }) {
+  if (!to || !url) return false;
+  const subject = `Now published — ${title}`;
+  const text = [
+    `The report you asked about is now available:`,
+    ``,
+    title,
+    url,
+    ``,
+    `The executive summary is free to read.`,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">The report you asked about is now published.</h1>
+  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
+  <p style="margin:0 0 12px;"><a href="${esc(url)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open the report</a></p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">The executive summary is free to read. You are receiving this once because you asked to be told when it was ready.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text });
+}
+
+// ── A Kira Chain a reader asked for is now published ──────
+// Sent once to each reader who left an email on a chain search that found nothing (chain_requests).
+export async function sendChainPublishedEmail({ to, title, url }) {
+  if (!to || !url) return false;
+  const subject = `Now available — ${title}`;
+  const text = [
+    `The value chain you searched for is now available:`,
+    ``,
+    title,
+    url,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">The value chain you searched for is now available.</h1>
+  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
+  <p style="margin:0 0 12px;"><a href="${esc(url)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open the chain</a></p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">You are receiving this once because you asked to be told when it was ready.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text });
+}
+
+// ── "Pipeline went silent" alert to the admins (api/cron-pipeline-watch.js) ──
+// idle = [{ label, last_at (ISO or null), hours, limit }]
+export async function sendPipelineWatchAlert({ idle }) {
+  if (ADMIN_EMAILS.length === 0) {
+    console.warn('[email] ADMIN_EMAILS empty — skipping pipeline watch alert');
+    return false;
+  }
+  if (!idle || !idle.length) return false;
+  const lines = idle.map(i => `- ${i.label}: last activity ${i.last_at ? i.last_at.replace('T', ' ').slice(0, 16) + ' UTC' : 'never'}` +
+    (i.hours == null ? '' : ` (${i.hours} hours ago; alert after ${i.limit})`));
+  const subject = `KIRA pipeline silent: ${idle.map(i => i.label).join(', ')}`;
+  const causes = [
+    'The Routine is paused or the claude.ai usage limit was reached.',
+    'An environment variable on the Routine was renamed or is missing (the Routine then exits quietly before it touches the database).',
+    'The Routine ran but every item failed (look for errors on the Pipeline page).'
+  ];
+  const where = [
+    'claude.ai Routines page (is the Routine enabled, did its last fire run?)',
+    `${APP_URL}/en/admin/pipeline`,
+    `${APP_URL}/en/admin/health`
+  ];
+  const text = `Nothing new has been produced by:\n\n${lines.join('\n')}\n\nLikely causes:\n${causes.map(c => '- ' + c).join('\n')}\n\nWhere to look:\n${where.map(c => '- ' + c).join('\n')}\n\nYou get this at most once a day per stream. Thresholds: ${APP_URL}/en/admin/config`;
+  const li = a => a.map(x => `<li>${esc(x)}</li>`).join('');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:24px;">
+  <p>Nothing new has been produced by:</p><ul>${li(lines.map(l => l.replace(/^- /, '')))}</ul>
+  <p><strong>Likely causes</strong></p><ul>${li(causes)}</ul>
+  <p><strong>Where to look</strong></p><ul>${li(where)}</ul>
+  <p style="font-size:12px;color:#777;">You get this at most once a day per stream. Thresholds are in /en/admin/config.</p>
+</body></html>`.trim();
+  return resendSend({ to: ADMIN_EMAILS, subject, html, text });
+}
+
+// ── One-to-one email the owner writes in /en/admin/crm ────
+// Sent from the KIRA address with Reply-To = the admin who wrote it, so the answer goes straight to them.
+export async function sendCrmMessage({ to, subject, text, replyTo }) {
+  if (!to || !subject || !text) return false;
+  const footer = 'You are receiving this because you contacted KIRA RESEARCH. Just reply to this email to answer.';
+  const plain = `${text}\n\n--\nKIRA RESEARCH\n${footer}`;
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:24px;">
+  <div style="white-space:pre-wrap;">${esc(text)}</div>
+  <p style="margin:28px 0 0;font-size:12px;color:#777;border-top:1px solid #e5e5e5;padding-top:12px;">KIRA RESEARCH<br>${esc(footer)}</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text: plain, replyTo });
+}
+
+// ── Kira Data: "email me new moves" (moves_alerts, migration 063) ──────────
+// Double opt-in: the first email only asks the reader to confirm; nothing else is sent until they click.
+export async function sendMovesAlertConfirm({ to, label, confirmUrl }) {
+  if (!to || !confirmUrl) return false;
+  const subject = `Confirm your alert: ${label}`;
+  const text = [
+    `You asked us to email you when we publish new company moves:`,
+    ``,
+    label,
+    ``,
+    `Confirm with this link (nothing is sent until you do):`,
+    confirmUrl,
+    ``,
+    `Not you? Ignore this message and you will not hear from us again.`,
+    ``,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Confirm your alert</h1>
+  <p style="margin:0 0 8px;">You asked us to email you when we publish new company moves:</p>
+  <p style="margin:0 0 20px;"><strong>${esc(label)}</strong></p>
+  <p style="margin:0 0 12px;"><a href="${esc(confirmUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Confirm the alert</a></p>
+  <p style="margin:24px 0 0;font-size:13px;color:#666;">Nothing is sent until you confirm. Not you? Ignore this message and you will not hear from us again.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text });
+}
+
+// One email per alert with the moves published since the last one. Every email carries the unsubscribe link,
+// in the body and as a List-Unsubscribe header (one-click unsubscribe in Gmail / Yahoo).
+export async function sendMovesDigest({ to, label, moves, pageUrl, unsubUrl }) {
+  if (!to || !moves || !moves.length || !unsubUrl) return false;
+  const subject = moves.length === 1 ? `New move: ${moves[0].title}`.slice(0, 140) : `${moves.length} new company moves: ${label}`;
+  const text = [
+    `New company moves we published (${label}):`,
+    ``,
+    ...moves.map((m) => `• ${m.date} — ${m.title}\n  ${m.url}`),
+    ``,
+    `All moves: ${pageUrl}`,
+    ``,
+    `Stop these emails: ${unsubUrl}`,
+    `— The KIRA RESEARCH team`
+  ].join('\n');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:32px 24px;">
+  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
+  <h1 style="font-size:20px;margin:0 0 6px;font-weight:600;">New company moves</h1>
+  <p style="margin:0 0 20px;color:#555;">${esc(label)}</p>
+  ${moves.map((m) => `<p style="margin:0 0 14px;"><span style="font-size:13px;color:#666;">${esc(m.date)}${m.type ? ' · ' + esc(m.type) : ''}</span><br><a href="${esc(m.url)}" style="color:#111;">${esc(m.title)}</a></p>`).join('')}
+  <p style="margin:20px 0 0;"><a href="${esc(pageUrl)}">See all moves</a></p>
+  <p style="margin:28px 0 0;font-size:12px;color:#777;">You get this because you confirmed an alert on kiraresearch.com. <a href="${esc(unsubUrl)}" style="color:#777;">Stop these emails</a>.</p>
+</body></html>`.trim();
+  return resendSend({ to, subject, html, text, headers: { 'List-Unsubscribe': `<${unsubUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } });
 }

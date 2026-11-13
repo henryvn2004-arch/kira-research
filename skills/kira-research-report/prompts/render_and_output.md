@@ -16,6 +16,24 @@ Load into context:
 - `templates/master_wrapper.html` — HTML doc shell with two placeholders: `{{MASTER_STYLES_CSS}}` and `{{PAGES_HTML}}`
 - `templates/page_components.html` — 10 starter page templates (use as base; substitute the placeholders specific to each section)
 
+## Step 1b — Cover illustration (every report)
+
+Generate the cover art before composing pages:
+
+```bash
+node skills/kira-research-report/scripts/gen-cover.mjs --id <report_id> --country "<country>" --industry "<industry>" \
+  --angle "<topic angle or buyer question, short>" --out <report output dir>/cover.jpg
+```
+
+- The style rotates per report automatically (15 house styles, stable by report id), and so does the cover layout (9 layouts `L1`…`L9`, on a separate hash, so style and layout vary independently). Pass `--style` / `--layout` only to override. Each layout asks the image model for its own image shape (landscape, square or portrait).
+- Read `layout` from the JSON line gen-cover prints (e.g. `"layout":"L6"`) and use template `cover_<layout>` from `page_components.html` (`cover_L6`). Never swap the layout after the image exists: the image shape is made for that layout.
+- Exit 0 → use `cover_<layout>` as is (keep its `<img class="cv-art" src="cover.jpg">`).
+- Exit 3 (no `OPENAI_API_KEY` or API error) → keep going: use `cover_L1`, set `{{COVER_VARIANT}}` to `plain` and drop the `<img class="cv-art">` line. Note it in the run summary. Never block a report on cover art.
+
+## Step 1c — Images stay as relative references
+
+Keep `src="cover.jpg"` and `src="brand/logo.png"` / `brand/logo-white.png` relative in the HTML you write (en.html, ja.html, ko.html, zh.html). This keeps the files small for page-by-page translation. `render-one.mjs`, `render-local.mjs` and `upload-html.mjs` inline them as data URIs automatically (`scripts/lib/inline-assets.mjs`).
+
 ## Step 2 — Compose each page
 
 For each section in the report plan:
@@ -53,6 +71,14 @@ After all pages exist, walk them in order and assign:
 - `{{total_pages}}` = the final count (NN)
 - `{{section_num}}` carries through all pages of a section ("Section 04" repeated across exec_summary p1 + p2)
 - Dividers ("page divider-page") inherit the section_num of the chapter they introduce
+
+### Cover and closing pages (all routes)
+
+- **Cover:** the `cover_<layout>` template (Step 1b), filled from `naming.json` (`docs/naming_convention.md`): line 1 = `cover.line1`, accent line = `cover.line2_accent`, optional line 3 ≤ `cover.line3_max_chars`; `{{REPORT_KIND}}` = `report_kind`; `{{REGION_OR_COUNTRY}}` = `country`. Subtitle = `naming.hook` when `naming.json` has one (the topic's one-line hook question, used as written; JA/KO/ZH translate it with the cover), otherwise the buyer question or angle (≤110 chars). Year as usual. `{{TITLE_SIZE_CLASS}}` = `long` if any title line exceeds ~14 Latin characters (~7 CJK characters), else empty. All 9 layouts take the same placeholders. The tagline "Know first. / Move first." is fixed in the template; never change it.
+- **Who's who:** the `players-page` pages printed by `scripts/render-players.mjs` (from `players.json`) go right before the methodology endnote, and the contents list them as their own chapter (all routes; see `brain_route.md` → "Who's who").
+- **Closing:** always append the `closing` template as the very last page, after the methodology endnote. Only `{{REPORT_SHORT_TITLE}}` (= `naming.short_title`), `{{REPORT_KIND}}` and `{{YEAR}}` change; the rest is identical on every report.
+- Neither page carries a page number or source key.
+- `{{REPORT_TITLE}}` in `master_wrapper.html` (the HTML `<title>`) = `naming.title`. Translators translate it; publish reads each locale's title from it.
 
 ## Step 3 — Assemble final HTML
 
@@ -106,7 +132,7 @@ Or on failure:
 If `overflow_detected: true`, `overflow_pages` lists the offending page indexes with `actual_height_px` and `overflow_px`. Walk through them:
 
 1. Map each overflow_page back to its source section (via the page-number-to-section index you built in Step 2)
-2. For each offending section: regenerate with `char_budget × 0.85` (i.e. -15% of all schema char caps)
+2. For each offending section: if it is an `exhibit_page` (or the report is BRAIN-route), split the page into two pages and renumber; otherwise regenerate with `char_budget × 0.85` (i.e. -15% of all schema char caps). Overflow now includes `clipped_elements` (text cut inside cards / source keys) — treat those the same way
 3. Recompose, re-render
 4. Max 3 overflow-retry cycles. After the 3rd, publish the result as-is with a `quality_flag: "overflow_unresolved"` annotation in metadata.
 
@@ -174,7 +200,7 @@ Requires Supabase MCP available. Steps:
    ON CONFLICT (id) DO NOTHING;
    ```
 
-   Slug format: kebab-case `<country>-<industry-key>-<year>` (e.g. `indonesia-construction-materials-2026`). Strip diacritics, lowercase, single hyphens.
+   Slug, code, stage, type, segment and keywords come from `naming.json` (`docs/naming_convention.md`); never build a slug by hand.
 
 4. **Insert `report_translations` row:**
    ```sql

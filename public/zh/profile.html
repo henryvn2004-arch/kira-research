@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的研究库 — KIRA Research</title>
+  <meta name="description" content="您已购买的KIRA Research报告。" />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="canonical" href="https://kiraresearch.com/zh/profile" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase client + kiraAuth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    body, h1, h2, h3, h4, h5 { font-family: 'Satoshi', 'Noto Sans SC', sans-serif; }
+    h1 { line-height: 1.15 !important; letter-spacing: -0.01em !important; }
+    p, li { line-height: 1.8; }
+    .prof-page { padding: 60px 0 96px; }
+    .prof-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .prof-header h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin: 12px 0 0;
+    }
+    .prof-account {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      font-size: 13px;
+    }
+    .prof-account .label {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .prof-account .email {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .prof-account button {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .prof-account button:hover { border-color: var(--primary); color: var(--primary); }
+
+    .prof-stats {
+      display: flex;
+      gap: 48px;
+      padding: 20px 0 28px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .prof-stat .label {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .prof-stat .val {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .prof-stat .val .currency {
+      font-size: 14px;
+      color: var(--muted);
+      vertical-align: top;
+      margin-right: 2px;
+      font-weight: 600;
+    }
+
+    .prof-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .prof-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 28px;
+      box-shadow: var(--elevation-sm);
+      transition: all 0.2s;
+    }
+    .prof-card:hover { border-color: var(--border-strong); box-shadow: var(--elevation-md); }
+    .prof-card-body { display: flex; flex-direction: column; gap: 10px; }
+    .prof-card-meta {
+      display: flex;
+      gap: 14px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .prof-card-meta .country { color: var(--primary); }
+    .prof-card-meta .locale-chip {
+      padding: 2px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text);
+      letter-spacing: 0.08em;
+    }
+    .prof-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0;
+    }
+    .prof-card-foot {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      flex-wrap: wrap;
+    }
+    .prof-card-foot .sep {
+      color: var(--muted-dim);
+    }
+    .prof-card-foot .resend {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .prof-card-foot .resend:hover { text-decoration: underline; }
+    .prof-card-foot .resend:disabled { color: var(--muted-dim); cursor: wait; text-decoration: none; }
+    .prof-card-foot .resend.success { color: #1F7A4F; }
+    .prof-card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 160px;
+    }
+    .prof-card-actions a,
+    .prof-card-actions button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      color: var(--text);
+    }
+    .prof-card-actions a:hover,
+    .prof-card-actions button:hover { border-color: var(--primary); color: var(--primary); }
+    .prof-card-actions .primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .prof-card-actions .primary:hover { background: var(--primary-dim); color: #fff; border-color: var(--primary-dim); }
+    .prof-card-actions button:disabled {
+      opacity: 0.5; cursor: wait;
+    }
+    .prof-card-actions .no-pdf {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      padding: 10px 0;
+      border: 1px dashed var(--border-strong);
+      border-radius: 4px;
+    }
+
+    .prof-empty {
+      padding: 96px 24px;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .prof-empty h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .prof-empty p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 460px;
+      margin: 0 auto 24px;
+    }
+    .prof-empty a.btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .prof-empty a.btn-primary:hover { background: var(--primary-dim); }
+
+    .prof-gate {
+      max-width: 480px;
+      margin: 96px auto;
+      padding: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .prof-gate h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .prof-gate p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .prof-status {
+      padding: 60px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .prof-error {
+      padding: 24px;
+      background: rgba(192,57,43,0.06);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 6px;
+      color: #C0392B;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 720px) {
+      .prof-card { grid-template-columns: 1fr; }
+      .prof-card-actions { min-width: 0; flex-direction: row; }
+      .prof-card-actions a, .prof-card-actions button { flex: 1; }
+      .prof-header { align-items: flex-start; }
+      .prof-account { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container prof-page" id="prof-root">
+    <div class="prof-status" data-i18n="profile.loading">正在加载您的研究库…</div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+
+  <script type="module">
+    const root = document.getElementById('prof-root');
+
+    // Locale detection from path (mirrors nav.js logic).
+    const parts  = window.location.pathname.split('/').filter(Boolean);
+    const locale = ['en','ja','ko','zh'].includes(parts[0]) ? parts[0] : 'en';
+
+    // Localized copy. i18n.js will overlay JSON values where data-i18n is set,
+    // but we use these for JS-rendered strings.
+    const COPY = {
+      en: {
+        title:       'My Library',
+        accountLbl:  'Signed in as',
+        signOut:     'Sign out',
+        countLabel:  n => n === 1 ? '1 report' : n + ' reports',
+        purchasedOn: d => 'Purchased ' + d,
+        open:        'Open report →',
+        download:    'Download PDF ↓',
+        downloading: 'Preparing…',
+        noPdf:       'PDF preparing',
+        resend:      'Resend receipt',
+        resending:   'Sending…',
+        resendOk:    'Receipt sent ✓',
+        resendErr:   "Couldn't send. Please retry.",
+        statsReports:  'Reports owned',
+        statsSpent:    'Total spent',
+        statsMember:   'Member since',
+        emptyTitle:  "You haven't purchased any reports yet.",
+        emptySub:    "Browse the library — every report is delivered as a polished PDF plus the full web edition.",
+        emptyCta:    'Browse the library',
+        gateTitle:   'Sign in to view your library',
+        gateSub:     'You need an account to see your purchased reports and download PDFs.',
+        gateCta:     'Sign in / Create account',
+        loadErr:     "Couldn't load your library. Please retry."
+      },
+      ja: {
+        title:       'マイライブラリ',
+        accountLbl:  'ログイン中',
+        signOut:     'ログアウト',
+        countLabel:  n => n + '件のレポート',
+        purchasedOn: d => '購入日: ' + d,
+        open:        'レポートを開く →',
+        download:    'PDFをダウンロード ↓',
+        downloading: '準備中…',
+        noPdf:       'PDF準備中',
+        resend:      '領収書を再送信',
+        resending:   '送信中…',
+        resendOk:    '領収書を送信しました ✓',
+        resendErr:   '送信できませんでした。再度お試しください。',
+        statsReports:  '所有レポート',
+        statsSpent:    '購入金額合計',
+        statsMember:   '登録日',
+        emptyTitle:  'まだレポートを購入していません。',
+        emptySub:    'ライブラリをご覧ください。すべてのレポートはPDFと完全なWeb版でお届けします。',
+        emptyCta:    'ライブラリを見る',
+        gateTitle:   'ライブラリの閲覧にはログインが必要です',
+        gateSub:     '購入済みレポートの閲覧とPDFダウンロードにはアカウントが必要です。',
+        gateCta:     'ログイン / アカウント作成',
+        loadErr:     'ライブラリを読み込めませんでした。再度お試しください。'
+      },
+      ko: {
+        title:       '내 라이브러리',
+        accountLbl:  '로그인 계정',
+        signOut:     '로그아웃',
+        countLabel:  n => n + '개의 보고서',
+        purchasedOn: d => '구매일: ' + d,
+        open:        '보고서 열기 →',
+        download:    'PDF 다운로드 ↓',
+        downloading: '준비 중…',
+        noPdf:       'PDF 준비 중',
+        resend:      '영수증 재전송',
+        resending:   '전송 중…',
+        resendOk:    '영수증을 보냈습니다 ✓',
+        resendErr:   '전송할 수 없습니다. 다시 시도해주세요.',
+        statsReports:  '보유 보고서',
+        statsSpent:    '총 구매 금액',
+        statsMember:   '가입일',
+        emptyTitle:  '아직 구매한 보고서가 없습니다.',
+        emptySub:    '라이브러리를 둘러보세요. 모든 보고서는 PDF와 전체 웹 버전으로 제공됩니다.',
+        emptyCta:    '라이브러리 둘러보기',
+        gateTitle:   '라이브러리를 보려면 로그인이 필요합니다',
+        gateSub:     '구매한 보고서를 보고 PDF를 다운로드하려면 계정이 필요합니다.',
+        gateCta:     '로그인 / 계정 만들기',
+        loadErr:     '라이브러리를 불러올 수 없습니다. 다시 시도해주세요.'
+      },
+      zh: {
+        title:       '我的研究库',
+        accountLbl:  '当前登录账户',
+        signOut:     '退出登录',
+        countLabel:  n => n + '份报告',
+        purchasedOn: d => '购买日期：' + d,
+        open:        '打开报告 →',
+        download:    '下载PDF ↓',
+        downloading: '准备中…',
+        noPdf:       'PDF准备中',
+        resend:      '重新发送收据',
+        resending:   '发送中…',
+        resendOk:    '收据已发送 ✓',
+        resendErr:   '发送失败，请重试。',
+        statsReports:  '已购报告',
+        statsSpent:    '累计消费',
+        statsMember:   '注册时间',
+        emptyTitle:  '您尚未购买任何报告。',
+        emptySub:    '欢迎浏览研究库，每份报告均以排版精良的PDF及完整网页版交付。',
+        emptyCta:    '浏览研究库',
+        gateTitle:   '请登录以查看您的研究库',
+        gateSub:     '查看已购报告及下载PDF需要登录账户。',
+        gateCta:     '登录 / 注册账户',
+        loadErr:     '无法加载您的研究库，请重试。'
+      }
+    };
+    const c = COPY[locale] || COPY.en;
+    document.title = c.title + ' — KIRA Research';
+
+    // Wait for kiraAuth (auth.js is classic script).
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    // 1) Auth gate.
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      renderGate();
+      throw new Error('halt');
+    }
+
+    // 2) Fetch purchases.
+    let data;
+    try {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) { renderGate(); throw new Error('halt'); }
+      const r = await fetch('/api/library-my-purchases', {
+        headers: { 'Authorization': 'Bearer ' + session.access_token }
+      });
+      if (r.status === 401) { renderGate(); throw new Error('halt'); }
+      if (!r.ok) throw new Error('http ' + r.status);
+      data = await r.json();
+    } catch (err) {
+      if (err && err.message === 'halt') throw err;
+      renderError(c.loadErr);
+      throw err;
+    }
+
+    // 3) Render. Use if/else (not early-return) because top-level `return`
+    // is a syntax error in <script type="module">.
+    const memberSince = user.created_at || user.confirmed_at || null;
+    if (!data.items || data.items.length === 0) {
+      renderEmpty(data.email || user.email);
+    } else {
+      renderList(data.items, data.email || user.email, memberSince);
+    }
+
+    // ── Render helpers ───────────────────────────────────────
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function escAttr(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+    function fmtDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      // Locale-aware short date — server gives ISO, we format per page locale.
+      try {
+        return d.toLocaleDateString(
+          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : locale === 'zh' ? 'zh-CN' : 'en-US',
+          { year: 'numeric', month: 'short', day: 'numeric' }
+        );
+      } catch { return iso.slice(0, 10); }
+    }
+    function fmtMonth(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return '—';
+      try {
+        return d.toLocaleDateString(
+          locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : locale === 'zh' ? 'zh-CN' : 'en-US',
+          { year: 'numeric', month: 'long' }
+        );
+      } catch { return iso.slice(0, 7); }
+    }
+    function fmtMoney(n) {
+      const v = Number(n || 0);
+      // No localized currency — Year 1 USD only, kept consistent across locales.
+      return v.toFixed(2).replace(/\.00$/, '');
+    }
+
+    function statsBar(items, memberSince) {
+      const count = items.length;
+      // Sum amounts; if any item has a non-USD currency, group it separately.
+      const byCcy = {};
+      items.forEach(it => {
+        const ccy = (it.currency || 'USD').toUpperCase();
+        byCcy[ccy] = (byCcy[ccy] || 0) + Number(it.amount || 0);
+      });
+      const ccyList = Object.keys(byCcy);
+      let spentHtml;
+      if (ccyList.length === 0) {
+        spentHtml = '<span class="val"><span class="currency">$</span>0</span>';
+      } else if (ccyList.length === 1 && ccyList[0] === 'USD') {
+        spentHtml = '<span class="val"><span class="currency">$</span>' + escHtml(fmtMoney(byCcy.USD)) + '</span>';
+      } else {
+        // Multi-currency edge case — list each. Year 1 shouldn't hit this but
+        // future-proof so the page never lies about a single-currency total.
+        spentHtml = '<span class="val" style="font-size:16px;">' +
+          ccyList.map(k => escHtml(fmtMoney(byCcy[k])) + ' ' + escHtml(k)).join(' · ') +
+          '</span>';
+      }
+      return (
+        '<div class="prof-stats">' +
+          '<div class="prof-stat">' +
+            '<div class="label">' + escHtml(c.statsReports) + '</div>' +
+            '<div class="val">' + count + '</div>' +
+          '</div>' +
+          '<div class="prof-stat">' +
+            '<div class="label">' + escHtml(c.statsSpent) + '</div>' +
+            spentHtml +
+          '</div>' +
+          '<div class="prof-stat">' +
+            '<div class="label">' + escHtml(c.statsMember) + '</div>' +
+            '<div class="val" style="font-size:16px;">' + escHtml(fmtMonth(memberSince)) + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function header(email, count) {
+      const countText = c.countLabel(count || 0);
+      return (
+        '<header class="prof-header">' +
+          '<div>' +
+            '<div class="hero-eyebrow">' + escHtml(countText) + '</div>' +
+            '<h1>' + escHtml(c.title) + '</h1>' +
+          '</div>' +
+          '<div class="prof-account">' +
+            '<span class="label">' + escHtml(c.accountLbl) + '</span>' +
+            '<span class="email">' + escHtml(email || '') + '</span>' +
+            '<button id="prof-signout">' + escHtml(c.signOut) + '</button>' +
+          '</div>' +
+        '</header>'
+      );
+    }
+
+    function renderList(items, email, memberSince) {
+      const cardsHtml = items.map(it => {
+        const meta = [it.industry, it.year].filter(Boolean).join(' · ').toUpperCase();
+        const country = (it.country || '').toUpperCase();
+        const localeChip = (it.locale || 'en').toUpperCase();
+        const reportUrl = '/' + locale + '/reports/' + escAttr(it.slug);
+        const downloadBtn = it.hasPdf
+          ? '<button class="primary" data-action="download" data-slug="' + escHtml(it.slug) + '" data-locale="' + escHtml(it.locale) + '">' + escHtml(c.download) + '</button>'
+          : '<div class="no-pdf">' + escHtml(c.noPdf) + '</div>';
+        return (
+          '<article class="prof-card">' +
+            '<div class="prof-card-body">' +
+              '<div class="prof-card-meta">' +
+                (country ? '<span class="country">' + escHtml(country) + '</span>' : '') +
+                (meta ? '<span>' + escHtml(meta) + '</span>' : '') +
+                '<span class="locale-chip">' + escHtml(localeChip) + '</span>' +
+              '</div>' +
+              '<h3>' + escHtml(it.title) + '</h3>' +
+              '<div class="prof-card-foot">' +
+                '<span>' + escHtml(c.purchasedOn(fmtDate(it.purchasedAt))) + '</span>' +
+                '<span class="sep">·</span>' +
+                '<button class="resend" data-action="resend" data-slug="' + escHtml(it.slug) + '" data-locale="' + escHtml(it.locale) + '">' + escHtml(c.resend) + '</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="prof-card-actions">' +
+              '<a href="' + reportUrl + '">' + escHtml(c.open) + '</a>' +
+              downloadBtn +
+            '</div>' +
+          '</article>'
+        );
+      }).join('');
+
+      root.innerHTML =
+        header(email, items.length) +
+        statsBar(items, memberSince) +
+        '<div class="prof-list">' + cardsHtml + '</div>';
+
+      // Wire sign-out button.
+      const signOut = document.getElementById('prof-signout');
+      if (signOut) {
+        signOut.addEventListener('click', async () => {
+          try {
+            await window.kiraAuth.signOut();
+            window.location.href = '/' + locale + '/';
+          } catch (err) {
+            alert('退出登录失败，请刷新页面后重试。');
+          }
+        });
+      }
+
+      // Wire download buttons — fetches signed PDF URL from library-content
+      // then triggers download via window.location.
+      root.querySelectorAll('[data-action="download"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const slug   = btn.dataset.slug;
+          const loc    = btn.dataset.locale;
+          const orig   = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = c.downloading;
+          try {
+            const session = (await window.db.auth.getSession()).data.session;
+            if (!session) throw new Error('no_session');
+            const r = await fetch(
+              '/api/library-content?slug=' + escAttr(slug) + '&locale=' + escAttr(loc),
+              { headers: { 'Authorization': 'Bearer ' + session.access_token } }
+            );
+            if (!r.ok) throw new Error('http ' + r.status);
+            const body = await r.json();
+            if (body.pdf_url) {
+              window.location.href = body.pdf_url;
+              // Reset after short delay so user can re-click if download didn't fire.
+              setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 2500);
+            } else {
+              throw new Error('no_pdf');
+            }
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = orig;
+            alert('无法准备PDF，请重试。');
+          }
+        });
+      });
+
+      // Wire resend-receipt buttons — POSTs to library-resend-receipt which
+      // re-uses the existing Resend email helper. Recipient is always the
+      // JWT's user.email — never trusts a client-supplied address.
+      root.querySelectorAll('[data-action="resend"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const slug = btn.dataset.slug;
+          const loc  = btn.dataset.locale;
+          const orig = btn.textContent;
+          btn.disabled = true;
+          btn.classList.remove('success');
+          btn.textContent = c.resending;
+          try {
+            const session = (await window.db.auth.getSession()).data.session;
+            if (!session) throw new Error('no_session');
+            const r = await fetch('/api/library-resend-receipt', {
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+              body:    JSON.stringify({ slug, locale: loc })
+            });
+            if (!r.ok) throw new Error('http ' + r.status);
+            btn.classList.add('success');
+            btn.textContent = c.resendOk;
+            // After 4s reset to original so user could resend again if needed.
+            setTimeout(() => {
+              btn.classList.remove('success');
+              btn.disabled = false;
+              btn.textContent = orig;
+            }, 4000);
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = orig;
+            alert(c.resendErr);
+          }
+        });
+      });
+    }
+
+    function renderEmpty(email) {
+      root.innerHTML =
+        header(email, 0) +
+        '<div class="prof-empty">' +
+          '<h2>' + escHtml(c.emptyTitle) + '</h2>' +
+          '<p>' + escHtml(c.emptySub) + '</p>' +
+          '<a href="/' + locale + '/library" class="btn-primary">' + escHtml(c.emptyCta) + '</a>' +
+        '</div>';
+      const signOut = document.getElementById('prof-signout');
+      if (signOut) {
+        signOut.addEventListener('click', async () => {
+          try { await window.kiraAuth.signOut(); window.location.href = '/' + locale + '/'; }
+          catch { /* noop */ }
+        });
+      }
+    }
+
+    function renderGate() {
+      root.innerHTML =
+        '<div class="prof-gate">' +
+          '<h2>' + escHtml(c.gateTitle) + '</h2>' +
+          '<p>' + escHtml(c.gateSub) + '</p>' +
+          '<a href="/auth.html" class="btn-primary" style="display:inline-flex;align-items:center;background:var(--primary);color:#fff;padding:12px 22px;border-radius:4px;font-size:14px;font-weight:600;text-decoration:none;">' +
+            escHtml(c.gateCta) +
+          '</a>' +
+        '</div>';
+      // Remember where to come back after sign-in.
+      try { sessionStorage.setItem('kira_redirect_after_login', window.location.pathname); } catch {}
+    }
+
+    function renderError(msg) {
+      root.innerHTML = '<div class="prof-error">' + escHtml(msg) + '</div>';
+    }
+  </script>
+
+  <!-- KIRA Studio dashboard card — injected after main render.
+       Shows the user's credit balance, reports-left estimate, and
+       two CTAs: Top up (→ studio billing) + New report (→ studio /new).
+       Falls back to a static promo on fetch failure (no API key, network down).
+       Canonical block: edit here, then mirror to public/{ja,ko}/profile.html. -->
+  <style>
+    .studio-cta-card {
+      margin: 28px 0 0;
+      padding: 22px 28px;
+      background: linear-gradient(135deg, rgba(30,111,255,0.06) 0%, rgba(30,111,255,0.02) 100%);
+      border: 1px solid rgba(30,111,255,0.18);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .studio-cta-card .copy { display: flex; flex-direction: column; gap: 6px; min-width: 240px; }
+    .studio-cta-card .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--primary);
+    }
+    .studio-cta-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin: 0;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    .studio-cta-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 4px 0 0;
+      line-height: 1.5;
+    }
+    .studio-cta-card .balance {
+      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    }
+    .studio-cta-card .balance .num {
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: 30px; line-height: 1; color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .studio-cta-card .balance .num.low { color: #C0392B; }
+    .studio-cta-card .balance .unit {
+      font-size: 14px; color: var(--muted); font-weight: 500;
+    }
+    .studio-cta-card .reports-left {
+      font-size: 12.5px; color: var(--muted); line-height: 1.5;
+    }
+    .studio-cta-card .reports-left.warn { color: #B45309; }
+    .studio-cta-card .actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+    .studio-cta-card a.cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 18px; border-radius: 4px;
+      font-size: 13px; font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .studio-cta-card a.cta.primary { background: var(--primary); color: #fff; }
+    .studio-cta-card a.cta.primary:hover { background: var(--primary-dim); }
+    .studio-cta-card a.cta.secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border-strong);
+    }
+    .studio-cta-card a.cta.secondary:hover { border-color: var(--primary); color: var(--primary); }
+  </style>
+  <script type="module">
+    // ── Localized copy ────────────────────────────────────
+    const STUDIO_COPY = {
+      en: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: 'credits',
+        reportsLeft: n => n === 1 ? '≈ 1 report left' : ('≈ ' + n + ' reports left'),
+        shortBy:     n => 'Need ' + n + ' more credits for 1 report',
+        topUp:       'Top up credits →',
+        newReport:   'New report →',
+        promoTitle:  'Generate your own reports',
+        promoSub:    'Describe any market, attach documents, get a polished PDF in your private studio library.',
+        openStudio:  'Open Studio →'
+      },
+      ja: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: 'クレジット',
+        reportsLeft: n => 'あと約' + n + '件のレポート',
+        shortBy:     n => '1件のレポートにあと' + n + 'クレジット必要',
+        topUp:       'クレジットを購入 →',
+        newReport:   '新規レポート →',
+        promoTitle:  '自分専用のレポートを生成',
+        promoSub:    '任意の市場を説明し、ドキュメントを添付するだけで、洗練されたPDFがあなたの専用ライブラリに保存されます。',
+        openStudio:  'Studioを開く →'
+      },
+      ko: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: '크레딧',
+        reportsLeft: n => '약 ' + n + '개 보고서 가능',
+        shortBy:     n => '1개 보고서당 ' + n + '크레딧 더 필요',
+        topUp:       '크레딧 충전 →',
+        newReport:   '새 보고서 →',
+        promoTitle:  '나만의 보고서 생성',
+        promoSub:    '시장을 설명하고 문서를 첨부하면 잘 다듬어진 PDF가 개인 라이브러리에 저장됩니다.',
+        openStudio:  'Studio 열기 →'
+      },
+      zh: {
+        eyebrow:     'KIRA Studio',
+        creditsUnit: '点数',
+        reportsLeft: n => '约可生成' + n + '份报告',
+        shortBy:     n => '生成1份报告还需' + n + '点数',
+        topUp:       '充值点数 →',
+        newReport:   '新建报告 →',
+        promoTitle:  '生成您专属的报告',
+        promoSub:    '描述任意市场并附上文件，即可在您的专属研究库中获得一份排版精良的PDF。',
+        openStudio:  '打开Studio →'
+      }
+    };
+    const _parts  = window.location.pathname.split('/').filter(Boolean);
+    const _locale = ['en','ja','ko','zh'].includes(_parts[0]) ? _parts[0] : 'en';
+    const _c = STUDIO_COPY[_locale] || STUDIO_COPY.en;
+
+    const STUDIO_BASE   = 'https://studio.kiraresearch.com';
+    const BILLING_URL   = STUDIO_BASE + '/billing';
+    const NEW_REPORT_URL = STUDIO_BASE + '/new';
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    // Static promo (used when not signed in, or credits API errored).
+    function renderPromoCard(host) {
+      const card = document.createElement('div');
+      card.className = 'studio-cta-card';
+      card.innerHTML =
+        `<div class="copy">
+           <span class="eyebrow">${esc(_c.eyebrow)}</span>
+           <h3>${esc(_c.promoTitle)}</h3>
+           <p>${esc(_c.promoSub)}</p>
+         </div>
+         <div class="actions">
+           <a class="cta primary" href="${STUDIO_BASE}/">${esc(_c.openStudio)}</a>
+         </div>`;
+      host.insertAdjacentElement('afterend', card);
+    }
+
+    // Dynamic dashboard (signed-in user with a credit wallet).
+    function renderBalanceCard(host, balance, reportCost) {
+      const cost     = reportCost || 100;
+      const enough   = balance >= cost;
+      const reports  = Math.floor(balance / cost);
+      const shortBy  = cost - balance;
+      const subHtml  = enough
+        ? `<span class="reports-left">${esc(_c.reportsLeft(reports))}</span>`
+        : `<span class="reports-left warn">${esc(_c.shortBy(shortBy))}</span>`;
+      const card = document.createElement('div');
+      card.className = 'studio-cta-card';
+      card.innerHTML =
+        `<div class="copy">
+           <span class="eyebrow">${esc(_c.eyebrow)}</span>
+           <div class="balance">
+             <span class="num${enough ? '' : ' low'}">${balance.toLocaleString()}</span>
+             <span class="unit">${esc(_c.creditsUnit)}</span>
+           </div>
+           ${subHtml}
+         </div>
+         <div class="actions">
+           <a class="cta secondary" href="${BILLING_URL}">${esc(_c.topUp)}</a>
+           <a class="cta primary" href="${NEW_REPORT_URL}">${esc(_c.newReport)}</a>
+         </div>`;
+      host.insertAdjacentElement('afterend', card);
+    }
+
+    // Wait for main render, then fetch credits + inject card.
+    async function tryInject(attempts = 0) {
+      const root = document.getElementById('prof-root');
+      if (!root || !root.querySelector('.prof-header')) {
+        if (attempts < 60) return setTimeout(() => tryInject(attempts + 1), 150);
+        return; // user signed out / render errored — skip silently
+      }
+      if (root.querySelector('.studio-cta-card')) return;
+      const header = root.querySelector('.prof-header');
+
+      // Fetch credit state. Same Vercel project so /api/studio-credits
+      // is reachable from the main domain. Auth shared via the
+      // .kiraresearch.com cookie (Phase N.14) — sessions sync across
+      // subdomains automatically.
+      try {
+        const session = (await window.db.auth.getSession()).data.session;
+        if (!session) { renderPromoCard(header); return; }
+        const r = await fetch('/api/studio-credits', {
+          headers: { 'Authorization': 'Bearer ' + session.access_token }
+        });
+        if (!r.ok) { renderPromoCard(header); return; }
+        const data = await r.json();
+        renderBalanceCard(header, Number(data.balance || 0), Number(data.report_cost || 100));
+      } catch (e) {
+        renderPromoCard(header);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => tryInject());
+  </script>
+</body>
+</html>

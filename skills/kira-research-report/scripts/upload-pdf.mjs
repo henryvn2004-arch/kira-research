@@ -6,11 +6,11 @@ import fs from 'node:fs';
 
 const [, , localPath, reportId, locale] = process.argv;
 if (!localPath || !reportId || !locale) {
-  console.error('usage: upload-pdf.mjs <pdf-local-path> <report-id> <locale-en|ja|ko>');
+  console.error('usage: upload-pdf.mjs <pdf-local-path> <report-id> <locale-en|ja|ko|zh>');
   process.exit(2);
 }
-const url = process.env.SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_KEY;
+const url = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const key = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!url || !key) {
   console.error('SUPABASE_URL + SUPABASE_SERVICE_KEY env vars required');
   process.exit(2);

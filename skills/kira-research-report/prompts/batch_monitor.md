@@ -1,5 +1,7 @@
 # batch_monitor.md — overnight queue + scheduler health check
 
+> **Superseded 2026-10-07:** the queue is in Supabase now and `/en/admin/pipeline` shows this live (status counts, stuck rows, errors, per-stage timing). The steps below read the frozen CSV and no longer reflect reality; kept for history.
+
 Self-contained monitor for the 13-fire batch scheduler ([[project_batch_cron_system]]). Each run is a FRESH Claude session — everything needed is in this prompt.
 
 ---

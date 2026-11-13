@@ -12,6 +12,10 @@
 > memory dir (`~/.claude/projects/.../memory/`) for runtime pickup. See
 > `project des/memory/README.md` for the sync pattern.
 
+> **KIRA brain** (research method library, industry knowledge, SME process method) lives in the
+> **private** repo `kira-pipeline`. Its progress is tracked in that repo's `CLAUDE.md` — read it when
+> the work is about the brain. Never copy brain content into this public repo.
+
 ---
 
 ## Quick facts
@@ -26,13 +30,51 @@
 | Backend | Supabase Postgres + Auth + Storage |
 | Payments | PayPal (USD, Year 1 sole) |
 | CI | GitHub Actions + Playwright smoke tests (free since repo is public) |
-| Locales | EN (default) · JA · KO — all live |
+| Locales | EN (default) · JA · KO · ZH (Simplified, `/zh/`) — all live |
 
 ---
 
-## Current state (2026-05-29 — Company Intelligence Sprint 1 DONE)
+## Current state (2026-10-14 — Phase S: library + expert platform)
 
-**Phase R: Company Intelligence engine — Sprint 1 DONE. Migrations 016+017 live on prod.**
+**Snapshot, measured 2026-10-14** (numbers also in `project des/workplan.md` → "Progress snapshot"; the paragraphs below are the per-feature detail written by each session):
+- **Library:** 127 published reports (+4 retired), all in EN/JA/KO/ZH. Subscriptions (Month, Annual), single-report ($49) and transcript ($29) checkout are built but **switched off** (S7, S19; the owner turns them on). Waitlist 0, topic requests 1, chain requests 0, leads 2: little real demand yet.
+- **Production:** the cloud Routine "Kira Report Generator" runs 3 times a day (08:53, 10:53, 12:53 Vietnam time), one stage per fire. 16 new reports since 2026-10-06; **none on 2026-10-08 → 10-10** (cause not confirmed, likely the account usage limit); 3 a day since 10-12. Queue: 1,878 pending, 376 hold, 124 done. Topics: 1,894 queued. The weekly topic planner is built but paused until the owner reviews the queue.
+- **Company data:** 1,131 entities; each report's "Who's who" chapter feeds it.
+- **Kira Experts:** 20 transcripts published; the daily generator in the private repo runs since 2026-10-11 (3 a day).
+- **Kira Chain:** the owner changed direction on 2026-10-11 and paused the work (`project des/memory/project_kira_chain.md`, PR #99); the prototype below stays as is.
+- **Pages and speed (2026-10-06):** Kira Survey page; Methodology, Experts and Survey redesigned (`css/service.css`); a use-case slider (one list in `js/stories.js`, filtered per page by `data-product`; illustrative scenarios, not client quotes) on the homepage, library, Experts and Survey; nav logo `logo-nav.webp`, mobile hero variants, `/img/*` cached a day, library list uses `-sm.jpg` covers (`scripts/backfill-cover-sm.mjs`; `upload-cover.mjs` writes them for new covers).
+
+**Topic reframe (2026-10-12, S15):** each queued topic is now one level-2 segment × one standard analysis (market overview, competitive landscape, distribution analysis, market entry strategy, regulatory landscape, ...), not one narrow event-led question. Title `Country segment analysis` (e.g. "Vietnam coffee chains market overview"); the published title is `Country segment year: analysis`. Buyer question + chapters come from private `kira-pipeline/taxonomy/analysis_types.json` (`planner/refresh_text.py` re-applies its wording). Every segment's market overview is produced first (336 overviews, priority 70-100). Round 2 (same day) added competitive landscape, customer insight, distribution, value proposition and market entry strategy per segment, chosen by parent industry: the live queue is 1,892 topics. 30 cross-industry rule topics were parked. Each topic also has a one-line hook question (`topics.signals.hook`; all 1,887 are written one by one, not templated). The title stays as is; the hook is shown as the **cover subtitle** (`naming.hook` via `report-name.mjs --hook`, passed from the topic brief in `brain_route.md`), under the `<h1>` on the report page and under the title on library cards. It is stored in `report_translations.preview.hook` (no migration): `build-publish-sql.mjs` reads it from each locale's cover subtitle, so JA/KO/ZH get it from the cover translation. Reports without a hook in `naming.json` are unchanged. Not yet on the coming-soon placeholder pages. Before/after: `kira-pipeline/taxonomy/research/reframe_2026-10-12/`. **Weekly planner v2 (S14, 2026-10-12):** each Monday (Routine, 00:52 UTC) the planner scans the last 14 days of news per country and industry, then either **boosts** a live topic whose subject is in the news (priority = base + 40 + 20 x strength 1-5, so a strong trend goes ahead of every ordinary overview; the newest dated facts go first in the topic's must-cover list; the boost ends after `planner.trend_days`, default 28, editable in `/en/admin/config`) or **adds** a new topic where a segment or analysis is missing. Quota per country = `planner.topics_per_country` (6) +1 for core markets, -1 for small ones; reader demand (email requests, empty searches) always comes first. A boost never touches a topic whose report is produced or in production. Procedure and scripts are in private `kira-pipeline/taxonomy/planner_weekly.md` and `planner/`. The weekly planner stays paused (`planner.weekly_enabled` off in `/en/admin/config`) until the owner has reviewed the queue.
+
+**Kira Data D1 (2026-10-14, migration 057, applied):** free economic data by API for the 15 markets (plan D1–D7 in `project des/workplan.md` → "Open data"). Tables `data_sources` (licence register: only `public` sources reach the site), `econ_indicators`, `econ_series`. World Bank WDI is public (CC BY 4.0); IMF WEO (official SDMX API, covers Taiwan and forecasts) is stored but kept off the site until the IMF grants commercial reuse (owner emails copyright@imf.org). Weekly Vercel cron `/api/cron-econ-refresh` (Mondays 04:10 UTC, health job `econ-refresh`). `GET /api/econ[?country=<slug>]`; pages `/<loc>/data/` and `/<loc>/data/<country>` (noindex, not linked yet). UN Comtrade's free tier is internal-only: trade shown on the site must come from national customs APIs (D2). **D2 (2026-10-15, migration 058, applied):** national APIs in `api/_lib/econ/` (PSA, BoJ, VN NSO, OpenDOSM, BNM, SingStat live; e-Stat, KR customs, ECOS, BoT built and switch on when the owner adds their key in Vercel: `data_sources.env_key`), table `econ_flows` (trade / direct investment / visitors by partner), heavy sources run in their own cron slot (`?source=estat` Tue, `?source=kr_customs` Wed). The country page shows monthly/quarterly tiles and a trade-investment-visitor links table. **D3 (2026-10-15, migration 059, applied):** `segment_data_map` (42 data profiles: HS codes + indicator groups, resolved in `api/_lib/market-map.js`) and `hs_codes`; Eurostat Comext (EU trade by HS code with each market, no key) and US Census (waits for `CENSUS_API_KEY`); `GET /api/market-data?report=|?topic=`; a "Market data" panel (`js/market-panel.js`, `css/market.css`) on every report and coming-soon page; the report pipeline reads the same numbers (`scripts/fetch-market-data.mjs`, BRAIN route step 0b). **D4 (2026-10-15, migration 060, applied):** `company_events` (company moves into the 15 markets) from GDELT news daily (`/api/cron-moves`, rules in `api/_lib/moves/rules.js`, no model) and, with their keys, OpenDART / EDINET filings; news items are drafts the owner publishes at `/en/admin/moves`; public `GET /api/moves`, pages `/<loc>/data/moves` and corridor pages `/<loc>/data/japan-in-vietnam` (`js/data-moves.js`). **D5 (2026-10-15, migration 061, applied):** registry identity on `entities` (LEI, national number, legal name, status, parent LEIs) from GLEIF + ACRA daily (`/api/cron-registry`, 60 entities a day; Houjin Bangou / ABN / NZBN wait for keys); `company_groups` (92 JP/KR/TW groups) flags new Singapore companies and new GLEIF entities with a foreign parent as draft moves; coverage on `/en/admin/companies`. **D6 (2026-10-15, migration 062, applied):** file and page sources in one Saturday slot (`?source=files`): Vietnam Customs monthly PDFs (trade by partner), NSO monthly workbook (registered FDI by investor, year to date), Indonesia BKPM (realised FDI by country, quarterly, 2010–2026), Taiwan approved outward investment, ASEANstats FDI by host × source (its firewall may block Vercel: backfilled from here). SBV, BOI, MIDA, Korea Eximbank, JETRO, DGBAS and CLMB are not reachable or not usable (workplan D6). **D7 (2026-10-15, migration 063, applied):** "email me new moves" alerts (`/api/moves-alert`, double opt-in, one-click unsubscribe, daily digest `/api/cron-moves-alerts` 23:50 UTC, switch `notify.moves_alerts_enabled`, shown in the CRM); paid layer: full-history Excel per market `/api/econ-export` (subscribers + admins) and, while the Month plan is on sale, non-subscribers see the 10 newest moves only; data pages that pass `api/_lib/econ/coverage.js` (>= 8 indicators; corridor >= 3 links or a move) are in the sitemap and switch to `index, follow`, the rest stay noindex. Checkout switches were found **on** on prod on 2026-10-15 (`/api/checkout-status`). **D8 (2026-10-15, migration 064, applied):** `/<loc>/data/` and the market pages are one dashboard (`js/econ-dash.js`, Chart.js vendored in `/js/vendor/`, data `GET /api/econ-dash`): tabs All + 15 markets, "Investing from" filter (`?from=JP`), blocks Where to go (+ compare up to 5 markets over time) / Is now a good time (latest monthly or quarterly reading per market, falling back to the World Bank year; currencies) / Who is investing where / Trade momentum (+ trade balance per partner; Viet Nam half-month totals) / exchange rate 12 months (market tabs with an ECB rate) / Who is visiting (Malaysia, Singapore) / Latest moves (hidden while none is published). Daily ECB exchange rates (`fx_usd_daily`, 9 currencies) and Viet Nam half-month trade totals in the daily slot `?source=daily` (Mon–Fri 15:40 UTC).
+
+**Nav + footer reorganised (2026-10-14, PR #133):** `public/js/nav.js` is the only place both are built. Top nav (desktop and mobile): `Library · Experts · Survey · Insights · Data · Pricing` + the "Explore the library →" button (Data = Kira Data `/data/`, added 2026-10-15; the gaps tighten below 1180 px and 1060 px so the bar stays on one line); `My Library` and `Studio` show only for signed-in readers. Labels are short on purpose ("Experts", "Survey", not "Kira Experts"; the logo already says KIRA). Footer has 3 columns: **Research** (report library, coming soon = `/library?status=soon`, expert transcripts, insights, market data = `/data/`, company moves = `/data/moves`), **Services** (expert calls = `/experts/#request`, Kira Survey, pricing), **Company** (about, methodology, contact, terms, privacy). The transcript link is fixed to `/en/experts/transcripts/` because that listing is EN-only. Old footer links "By country / By industry / Latest" were removed: `library.js` ignores `?filter=`. Kira Chain and the company directory are deliberately not linked. Text keys live in `public/locales/{en,ja,ko,zh}.json` under `nav.*` and `footer.*`; add a new link in all four.
+
+**Library filter by analysis (2026-10-14, migration 056, applied):** the library sidebar group **Stage** (Assess / Enter / Expand) is replaced by **Analysis** (market overview, competitive landscape, distribution, market entry strategy, ...). Key = `tax_competencies.key`: `topics.competency_key` for coming-soon topics, new column `living_reports.analysis` for published reports (backfilled from the linked topic, else from the stage; the batch runner sets it at publish). `GET /api/library-list?analysis=<key>`, facet `facets.analyses`; labels in 4 languages in `js/research-i18n.js` (`kiraR.analysis()`); the report page shows it under Report details. The API still accepts `stage`.
+
+**Two new analyses (2026-10-14, owner):** `trends_outlook` ("Trends & outlook": broad, scenarios to 2030 with signposts; AI is one page in it) and `ai_impact` ("AI impact & use cases": deep, process by process). Rows added to `tax_competencies` (ord 16, 17; applied via MCP, no migration file: taxonomy data); labels in 4 languages in `js/research-i18n.js` (filter label "AI impact"). The brain side (modules, selection matrix, topic planner, bulk script) is in private `kira-pipeline`. Pilot reports for Vietnam banking were generated (EN, 43-45 pages) and approved by the owner on 2026-10-14; they were released (`en_done`, priority 500) for JA/KO/ZH + publish. The other 335 trends + 153 AI-impact topics (AI only for 15 information-heavy parent industries) were created `approved` and are in `report_queue` with priority 130-160: ahead of every market overview (max 100) and other analysis, behind demand-driven topics (`demand x 100 + priority_score`, requested band 20,000+). Throughput is the limit (about one report a day), so the 490 take most of a year. **Naming (2026-10-14, owner):** files a reader downloads are `<report title>_<LOCALE>_<Mon-YYYY>.<ext>` (`api/_lib/report-pdf.js`), and the slug of a topic with an analysis includes it (`report-name.mjs --analysis`, `vietnam-banking-ai-impact-and-use-cases-2026`); the Routine takes `report-name.mjs` from `main`, so this must be merged before more new topics are generated.
+
+**Insights v2 = trending commentary columns (2026-10-14, PR #134 + kira-pipeline runner):** the owner found report extracts useless for SEO/AEO/GEO. New insights are short columns with KIRA's view on how a big force (tariffs, rates, geopolitics, tech, energy, consumer, regulation) hits an industry in our markets, with winners/losers, predictions, FAQ and dated sources. Written daily by the private `kira-pipeline/brain/insights/runner/` (scout 5-10 trending titles, write 3-5, fact-check, ja/ko/zh), saved as `insights.category = commentary`, **draft** until the owner switches `INSIGHTS_PUBLISH_STATUS` to `published`. The existing insight page renders them; styles are the `.ins-*` block in `public/css/kira.css`. Plan and pilot: `project des/insights-v2/`. Bylines are desks; real reviewers to come from the owner.
+
+**Admin backend, Phase 1 (2026-10-07):** the report queue moved from `data/report_queue.csv` (now a frozen archive) to Supabase `report_queue` + `report_queue_events` (migration 031, applied; 185 rows imported). The runner claims and advances rows only through `skills/kira-research-report/scripts/queue.mjs` (atomic claim; replaces `audit-queue.mjs` and `sync-approved-topics.mjs`; `batch_runner.md` updated). Owner steers it at `/en/admin/pipeline` (hold, release, retry from a stage, unstick, run first) via `api/admin-queue.js`; the dashboard pipeline card reads the same tables. Cost: Claude Routine usage is subscription-metered (no per-token data), so events record stage duration + model, and `cost_usd` only for metered external APIs. Admin stays English-only. **The next runner fire is the first to use the DB queue; check `/en/admin/pipeline` after it.** **Phase A (Health, `/en/admin/health`, migration 034 `job_runs`)** and **Phase B (metered costs, migration 035 `service_prices` + `report_queue_events.usage`)**: `gen-cover.mjs` logs the OpenAI token counts per report; the owner enters the provider price once on `/en/admin/pipeline` and dollars are computed at read time (never hard-coded prices). **Funnel (`/en/admin/funnel`, migration 043 `site_events` + `funnel_summary()`):** first-party, cookie-less events from `public/js/track.js` (injected by `nav.js`; random per-tab id, no IP/email, respects Do Not Track, skips admin/studio/previews/localhost) → `POST /api/track` (Origin must be kiraresearch.com, bots dropped by UA, allowlisted events, 120/min/IP) → table `site_events`. Events: pageview, library search (once per query, `hit` flag), and successful `/api/topic-request` / `/api/waitlist` / `/api/leads` POSTs (detected by wrapping `fetch`, so no form was edited). Steps: visited → looked at research → opened a report page → raised a hand; sign-ups are also counted from the real tables as ground truth. Single-report checkout is OFF (`PER_REPORT_PURCHASE=false` in `reports/_view.html`), so "raised a hand" is today's conversion. **CRM (`/en/admin/crm`, migration 045 `crm_contacts`, `api/admin-crm.js`):** one row per email, built at read time from `leads` + `waitlist` + `topic_requests` + completed `purchases` (buyer email via `auth.users`); nothing is copied, so the list cannot drift. Only the owner's stage (open/talking/won/lost), note and follow-up date are stored. A purchase with no account (the April 2026 $49 one) cannot be shown as a person; the page counts those in a note. **Email from the CRM (migration 039 `crm_messages`):** the owner writes one email to ONE person already in the list (`POST /api/admin-crm`; from the KIRA address, Reply-To = the admin; not to strangers, max 30 per 24 h, logged in `crm_messages` and shown in the person's history). There is deliberately no bulk sending: people left their email for one purpose, and mass mail would need an unsubscribe flow. Not built yet (waits for volume): tags, import/export, bulk mail. Owner TODO: mention first-party analytics in the privacy policy; consider a Vercel firewall rate limit on `/api/track`; old visitor events are deleted by the daily cron `/api/cron-site-events-retention` (03:30 UTC) after `retention.site_events_days` (default 180, editable in `/en/admin/config`; shows on `/en/admin/health`). **Settings without a deploy (`/en/admin/config`, migration 036 `app_config`):** every editable setting is registered with type, limits and default in `api/_lib/config.js` (`getConfig(key)`, 60 s cache, any bad value or unreachable DB falls back to the default). 7 keys wired: search auto-placeholders on/off + daily model limit, topic demand weights (email request / empty search), pipeline stuck-after minutes + stalled-after hours (also read by `queue.mjs`), pause the daily "report ready" emails. To make a new number editable: add it to `CONFIG`, read it with `getConfig`; the page renders it automatically. **Pipeline watch (2026-11-13):** cron `/api/cron-pipeline-watch` (every 6 h, `17 */6 * * *`) reads the data from outside (newest non-admin `report_queue_events`, `expert_transcripts.created_at`, commentary `insights.created_at`) because a Routine that exits early on a missing env var logs nothing (the 2026-11-09 to 11-11 silence). Limits `watch.reports_idle_hours` (12) / `watch.experts_idle_hours` (36) / `watch.insights_idle_hours` (36), switch `notify.pipeline_watch_enabled`; writes `job_runs` `pipeline-watch` (red on `/en/admin/health` when a stream is idle) and emails `ADMIN_EMAILS` once per stream per 24 h (dedupe kept in the row's detail, no new table).
+
+**Kira Chain prototype (2026-10-07, noindex, not linked):** one search page `/en/chain/` and one chain page `/en/chain/<country>/<product>` (rewrite to `_view.html`) for every product; `api/chain-search.js`, `api/chain.js`, `api/chain-request.js`; migration 037 `chains` + `chain_requests` (applied). Network view with a Kira Data / Market Estimate toggle; VN coffee is the first chain (`public/chain-data/vn-coffee.json`, 95 companies, sources re-checked 2026-10-07). Detail and open items: `project des/workplan.md` → S10. **Auto-chain builder (2026-10-07):** `skills/kira-research-report/scripts/build-chain.mjs` runs at publish (runner step 5.3b-5) and writes a draft chain from `industry_players` (`stats.auto = true`; arrows are a straight line; never touches hand-made chains); first one: VN convenience store licensing. **Admin page `/en/admin/chains` (`api/admin-chains.js`):** lists chains (auto vs analyst), take one down to draft or publish it, and shows what readers searched for and did not find. **Request emails:** daily cron `/api/notify-chain-published` (02:30 UTC) emails each reader who left an email on a chain search that found nothing (`chain_requests`) once a matching chain is published, once, with the same claim-then-send-and-release pattern as the report-ready cron; it uses the search page's own matching (`api/_lib/chain-match.js`) but only a strong match (score >= 70), pausable in `/en/admin/config` (`notify.chain_ready_enabled`), shown on `/en/admin/health`. Still to build: plan gating, analyst review of arrows and stage estimates.
+
+**Kira Experts = transcript library (2026-10-07, PR #84):** `/en/experts/` now leads with an expert-interview transcript library; the expert request form is a secondary "custom service" at the bottom. Listing `/en/experts/transcripts/` reuses the library list layout (`js/experts-list.js`); one transcript renders from `/<locale>/experts/transcripts/<slug>` → `_view.html` + `js/transcript-view.js`. Data in Supabase (migration 044, applied): `expert_transcripts` + `expert_transcript_translations` (summary / sections / sources as JSON; 8 fixed interview types). APIs: `/api/transcript-list`, `/api/transcript` (summary + the first ~15% of the dialogue, `FREE_SHARE` in `api/_lib/transcripts.js`; locked turns never leave the server), `/api/transcript-content` (full text; `isEntitled()` = ADMIN_EMAILS only until subscriptions ship, then add the subscription check there). Transcripts are "Modelled interviews": built on KIRA field-interview frameworks + dated 2024–2026 sources, every number tied to a public source, labelled as modelled, never presented as a recorded call, no "AI" in copy. The generator + QC live outside this repo (brain). EN only so far.
+
+**Paid search plan (2026-10-12, planned, not built):** Google Ads on long-tail buyer-intent queries, landing on report and coming-soon pages; impulse pricing ($49 report, $29 transcript, $39 list, $149 month) replaces the $299 plan; coming-soon pages promise 2–3 days; ~10,000 no-LLM topic pages behind a thin-content test; email DNS (DKIM/DMARC) found missing. Sprints S16–S21 in `project des/workplan.md` → "Paid search"; each starts only when the owner says go. **S16 (2026-10-12, migration 047, applied):** an instant "we got your request" email follows every new coming-soon sign-up (capped 3 per address per 24 h, 10 per IP per hour); `POST /api/email-webhook` (Resend/Svix signature, env `RESEND_WEBHOOK_SECRET`) logs delivered/bounced/complained into `email_events`, hard bounces and complaints into `email_suppressions` (never mailed again), and `/en/admin/health` shows the 30-day numbers. All owner steps done (DNS verified, webhook live; test email passed SPF/DKIM/DMARC). **S17 (2026-10-12, migration 048, applied; code in PR, owner steps open):** `track.js` keeps the Google Ads click id/utm tags in the browser for 90 days and sends them as `attr` with sign-up POSTs (stored in `attribution` on `topic_requests`/`waitlist`/`leads`; `api/_lib/attribution.js` sanitises), fires GA4 `generate_lead`, `GET /api/admin-ads-conversions` exports the offline-conversion CSV, `/en/admin/funnel` has a "From Google Ads" block, values are owner settings (`ads.value_*`). `/en/privacy` now exists (the footer link was a 404; ja/ko/zh rewrite to EN); Terms still missing. **S18 (2026-10-12, migration 049, applied):** coming-soon pages and the confirmation email show a "ready by" date (`api/_lib/eta.js`: today + `ondemand.target_days`, later when requested reports are ahead, capacity = `ondemand.reports_per_day`, runner cron is 3 fires/day); a topic with an email request goes to a requested band in `report_queue.priority` (`api/_lib/queue-band.js`, first asked first made, applied by `queue.mjs sync-topics`); reader-made placeholders approve themselves on the first email (`ondemand.auto_approve_per_day`); `topics.promise_at` + `/en/admin/health` "Promised dates" flag late ones. S11's "no date on pages" is superseded. **S19 (2026-10-12, migration 050, applied; checkout stays OFF):** single report is $49 (DB price and publish default moved from 39), Month $149 now includes transcripts, pricing pages in 4 languages updated, draft `/en/terms`; selling is behind the setting `checkout.single_report_enabled` (`/en/admin/config`, default off): while off, report pages show "Request access", coming-soon pages show no price and `/api/library-buy?action=create` returns 403. Owner: read `/en/terms`, then turn it on and do one live test purchase. Pricing-page CTAs follow the switch (`js/pricing-live.js`, public `GET /api/checkout-status`). **Transcript purchase ($29, migration 051, applied; switch `checkout.transcript_enabled`, default off):** `api/transcript-buy.js` (PayPal, receipt), table `transcript_purchases`, `isEntitled(user, transcriptId)` in `api/_lib/transcripts.js` = admin or a completed purchase; one purchase unlocks every language. List ($39) purchase is not built. **S7 Month subscription ($149/month, migration 052, applied; switch `checkout.subscription_enabled`, default off):** PayPal Subscriptions, no webhook (status is refreshed from PayPal on read: `api/_lib/subscription.js`); a subscriber reads every report and transcript in full and gets `subscription.pdf_per_month` (5) PDF downloads per billing period through `api/library-pdf.js` (the same PDF again in a period is free); page `/<locale>/subscription` (offer, status, usage, cancel), `api/subscription.js`. **Annual ($1,190 a year, 60 PDFs per year, switch `checkout.annual_enabled`, setting `subscription.pdf_per_year`; built 2026-10-12, default off):** same code path as Month (`PLANS` in `api/_lib/subscription.js`, `plan` in the create call); one subscription per reader, no Month → Annual upgrade button. **S12 Exhibit data download (2026-10-12, migration 053, applied):** new reports write `exhibits.json` (numbers behind each exhibit; check `scripts/check-exhibits.mjs`, store `scripts/publish-exhibits.mjs`, table `report_exhibits`); a reader who bought the report or has the Month plan downloads Excel or PowerPoint (native editable charts) from the report page via `api/library-exhibits.js`. All 9 reports that use the new exhibit layer have data (176 exhibits; `indonesia-ev-charging-2026` by hand, the other 8 via `scripts/dump-exhibits.mjs` + an agent each); the ~112 older reports use a different chart style, need a different dump and show no buttons. Content inconsistencies the agents found in published reports are listed in the workplan S12 block, to be checked at each report's next refresh. **S20 (2026-10-12) closed by a measurement, nothing generated:** template pages for the other pair × lens combinations would be >70% shared text (the 1,892 live pages are only ~50% their own text, ~60 words), so the owner chose the real topics as the ad landing set. **S20 SEO test (2026-10-12, built):** ~195 English coming-soon pages (one market overview per segment, flag `topics.signals.seo_test`) are indexable and in `sitemap-en.xml`; all other placeholders stay `noindex`; meta is set by JavaScript; read Search Console after 4–6 weeks (details in the workplan S20). **Coming-soon showcase (2026-10-13):** coming-soon pages have a free CSS cover (six designs), "A look inside" sample slides and, for the 195 SEO-test topics, **planned contents** (5 chapters with page titles, `topics.signals.planned`, checked by `scripts/check-planned-contents.mjs`, stored by `scripts/publish-planned-contents.mjs`, returned by `/api/topic`; the report runner starts its page plan from them through `fetch-topic-brief.mjs` + `brain_route.md`). The library lists **coming-soon topics in the same list as published reports** (published first, a "Coming soon" ribbon row after them; sidebar group **Status** = Published / Coming soon; `GET /api/library-list?status=all`, topics via `api/_lib/soon.js`; the default without `status` stays published-only for the home page; migration 055 `tax_industries.sector` lets the Sector filter cover topics too). **S21 (set up, paused):** `GET /api/admin-ads-campaign` (button on `/en/admin/funnel`) builds a Google Ads Editor file, one ad group per topic page, everything Paused, plus the negative keyword list; the Google Ads account steps stay with the owner.
+
+Business direction changed 2026-10-05 — full decisions + sprint table in `project des/workplan.md` → **Phase S**. Short version: subscription library for the teams that serve foreign investors in ASEAN; market-seeking-FDI industries only; Topic Planner module with owner approval; ZH added; custom research parked; Studio frozen. "No subscription" and "never claim volume" constraints dropped.
+
+**Revised 2026-10-06 (business-model review):** goal = a self-running business. Main competitor of the library = the buyer's own AI deep research; KIRA wins on citable, exact-fit, no-effort, local-data, native JA/KO/ZH. Three products: Kira Library · **Kira Chain** (product explorer company DB by value chain, UX to brainstorm) · Kira Experts (private calls + KIRA-owned transcript library, AI-led pilot first). New proposed pricing: report $299 · Month $149 (5 PDF) · Annual $1,190 (60 PDF + Kira Chain); Week + $39 dropped. S5b merged (#66: new pricing on the pricing pages, why-KIRA section, cite box). Build order: S11 on-demand ✅ → S13 topic review ✅ → S7 → S9 → S12 → S6 → S8 → S10 Kira Chain last. **S13 (2026-10-07):** 375 segment-level topics across all 15 countries (segment + lens + guiding questions + must-cover triggers), see workplan. Detail + market evidence: `project des/workplan.md` → Phase S.
+
+Sprint S1 (cloud pipeline) merged (#46); Sprint S2 taxonomy approved (13 countries, 171 industries, 15 competencies, in private `kira-pipeline/taxonomy`); Sprint S3 (topic planner + `/en/admin/topics`, migration 023, `sync-approved-topics.mjs` in runner Step 0.6) merged (#48); first lot of 18 topics + 13 level-2 splits approved. Sprint S4 (Simplified Chinese: migration 024, `/zh/` site, ZH stage in the batch runner, `translator_zh.md`) merged (#51), and every published report has a ZH edition. S1 detail: old queue cleaned (16 error rows deleted, 57 pending → `hold`), admin dashboard shows pipeline health, batch runner becomes a cloud Routine instead of the DELL scheduled task. **Coming-soon pages (2026-10-06, migration 027 applied):** a library search with no hit now shows matching Topic Planner topics (`/api/topic-search`, typo-tolerant via pg_trgm; generic words like "market" are ignored and the match threshold is 0.5, migration 046, so a product search is not swallowed by weak matches) as placeholder report pages at `/<locale>/reports/<topic-slug>` (rendered by `reports/_view.html` + `js/coming-soon.js` when the report 404s, noindex), with an "email me when published" form (`/api/topic-request`, table `topic_requests`). A keyword that matches no topic gets a request form instead; a query that names a market ("... in thailand") only returns that market's topics (migration 028). **Three search layers (migration 029):** published report → planned topic → for a query naming exactly one market + an industry KIRA covers there (an active `tax_country_industry` pair, so at most one placeholder per pair), `POST /api/topic-search` creates a `proposed` placeholder topic named after the query, so the reader lands on a coming-soon page; anything else is counted in `search_misses`. **Automatic product-level placeholders (migration 030):** when a no-hit query names one market but no industry exactly ("condom market in australia"), `api/_lib/search-interpret.js` asks Claude Haiku to file it under one of that market's covered industries and returns a placeholder named after the query (`topics.status = 'requested'`, `source = 'reader'`; owner can approve it in `/en/admin/topics` → Requested). No human review: shape check + hard denylist + model judgement + the model's name must share a word with the query + 300 model calls/day cap + every decision cached in `search_interpretations`; no `ANTHROPIC_API_KEY` or any doubt → request form only. Every no-hit search adds to `topics.search_count`; queue demand = 3 per email request + 1 per search (`sync-approved-topics.mjs`, `/en/admin/topics` shows both and the top unmatched keywords). Demand shows in `/en/admin/topics` and `sync-approved-topics.mjs` moves requested topics to the front of the queue. The runner links `topics.report_id` at publish; the daily cron `/api/notify-topic-published` emails requesters. Optional env `CRON_SECRET` locks the cron endpoint. The report pipeline itself (BRAIN route, exhibit layer, cover art) is finished in its own sessions and merged (PRs #40, #41, #43).
+
+---
+
+## Previous state (2026-05-30 — Company Intelligence Sprints 2–9 DONE)
+
+**Phase R: Company Intelligence engine — Sprints 0–9 complete. 250 companies live on prod. Unified search landing page live.**
 
 Sprint 0 complete (`279304c` + `14942a6`):
 - 7 tables live on Supabase: `entities`, `sources`, `facts`, `relationships`, `coverage`, `raw_documents`, `company_reports` + `company_graph_bfs()` RPC
@@ -41,25 +83,54 @@ Sprint 0 complete (`279304c` + `14942a6`):
 - `api/company-search.js` (`?tax_id=&country=VN`, legacy `?mst=` ok) + `api/company-report.js`
 
 Sprint 1 complete (`cf6a0b4` squash-merged 2026-05-29):
-- **Migration 017 live**: 25 top VN companies in `entities` (HOSE/HNX public filings), 100 facts (industry/sector/founding_year/charter_capital at confidence 0.8), 25 `company_reports` stub rows. `facts_entity_key_unique` constraint added.
-- **ĐKKD connector** `api/_lib/company/connectors/vn_dkkd.js` — VietQR API, fetches legal_status/address/registered_name by MST, no API key needed.
-- **Pipeline Stage 2 + Stage 6** implemented: ĐKKD fetch → fact upsert → status_cache sync → assemble report → cache 30 days.
-- **company-report.js** updated: stub payloads trigger inline pipeline run on first page load (user sees real facts, not skeleton).
-- **SEO page** `/en/companies/vn/_view.html` — Organization + BreadcrumbList JSON-LD, facts grid, ~500-word analyst narrative, coverage badges, KIRA CTA.
-- **vercel.json** rewrites `/:locale/companies/vn/:slug` → `/en/companies/vn/_view` for EN/JA/KO.
+- **Migration 017 live**: 25 top VN companies seeded, ĐKKD connector, Pipeline Stage 2 + 6, SEO `_view.html`, vercel.json rewrites.
 
-**Live URL pattern**: `/en/companies/vn/vn-vingroup-0101231488`, `/en/companies/vn/vn-fpt-0101248141` etc.
+Sprint 2 complete (`31b3608`):
+- **Migration 018+019 live**: 200 VN companies total (HOSE/HNX + private sector). Key Players strip on report pages (`loadKeyPlayers()` in reports `_view.html`). Sitemap updated.
 
-**Next: Sprint 2** — expand coverage:
-1. Seed 200 more VN companies (currently 25/200)
-2. `masothue` scraper connector for charter_capital + founding_date from official ĐKKD portal
-3. `/en/companies/vn/` index page — list all seeded companies, filterable by industry/sector
-4. Sitemap entries for company pages
-5. Link company pages from relevant report pages ("Top players" section)
+Sprint 3 complete (`492a705`):
+- `/en/companies/vn/` index page — filterable by industry/sector, search box, loads from `/api/company-list`. Migration 019 (200 companies) applied.
+
+Sprint 4 complete (`5bfdc2a`):
+- **Progressive pipeline enrichment** — company page visit triggers Stage 2 (ĐKKD), Stage 3 (masothue scraper), Stage 4 (Tavily web search) inline if not yet cached. Real facts visible on first load. masothue connector + Tavily connector live.
+
+Sprint 5 complete (`859f13c`):
+- **LLM narrative synthesis** (Stage 5) — Claude Haiku writes ~500-word analyst narrative per company after enrichment stages. Cached in `company_reports.payload`. `api/company-enrich.js` orchestrates all stages.
+
+Sprint 6 complete (`9da5d76`):
+- **Smoke tests** — 5 company intelligence tests added to `tests/smoke.spec.js` (company directory, company page, `/api/company-list`, `/api/company-report`, `/api/company-enrich` POST-only). `/en/admin/companies` + `/api/admin-companies` auth gate tests added. Total: **49 smoke tests**.
+
+Sprint 7 complete (`0d4e859`):
+- **Admin panel** `/en/admin/companies` — KPI strip (total/enriched/with_narrative/pending), searchable table, coverage badges (ĐKKD/MST/Web/LLM), per-row Enrich button. `api/admin-companies.js` auth-gated. Companies link added to all 8 admin sub-navs.
+
+Sprint 8 complete (`c4be8c0` + Migration 021 applied via MCP):
+- **50 JP companies seeded** — 9 sectors: Automotive, Technology/Electronics, Telecom, Banking & Finance, Retail, F&B, Healthcare, Materials, Trading/Conglomerates. 法人番号 (13-digit) as `tax_id`. Facts + company_reports stubs + coverage rows seeded. Admin panel updated with JP country filter.
+- **DB totals**: VN=200 · JP=50 · **Total=250 companies on prod**.
+
+Sprint 9 complete (`33db1be` — squash-merged PR #24 from `feat/company-search-landing`):
+- **Unified company search landing page** `/en/companies/` — country selector (10 KIRA countries) + live typeahead input with 300ms debounce.
+- `api/company-search-live.js` — GET `?q=&country=VN`, DB-first (entities + embedded company_reports slug), OpenCorporates fallback if < 3 DB hits. Returns up to 5 suggestions `{ name, tax_id, country, slug, source }`.
+- `api/company-stub.js` — POST idempotent entity + company_reports stub creation for OC-discovered companies not yet in DB. Returns `{ slug, entity_id }`.
+- Keyboard nav (↑↓ Enter Escape) on dropdown. DB hits redirect directly; OC hits POST to stub then redirect.
+- Country grid: VN + JP as active `<a>` links; KR/AU/SG/MY as `.co-soon` spans.
+- `vercel.json` — 2 new locale rewrites: `/ja/companies/` + `/ko/companies/` → `/en/companies/`
+- 3 new smoke tests (52 total): landing page load, search-live API, company-stub POST-only gate.
+
+**Live URL patterns**:
+- Unified search: `/en/companies/`
+- VN: `/en/companies/vn/vn-vingroup-0101231488`
+- JP: `/en/companies/jp/jp-toyota-motor-corporation-9180301018771`
+- Directory: `/en/companies/vn/` (filterable)
 
 **Owner workflow:** Henry travels 2026-05-29 to ~2026-06-02. Chats daily via Claude mobile app.
 Each sprint = 1 PR → Henry merges on GitHub mobile → Vercel auto-deploys.
 DB migrations: Claude applies via Supabase MCP directly (no owner Supabase action needed).
+
+**Next: Sprint 10 (TBD)** — possible directions:
+1. `/en/companies/jp/` index page for JP directory
+2. Fix admin company profile link — currently hardcodes `/en/companies/vn/` (JP companies need `/en/companies/jp/`)
+3. JP connector — 法人番号公表サイト API for legal status/address enrichment
+4. SEO: `/en/companies/jp/_view.html` page template for JP company profiles
 
 ---
 
@@ -75,7 +146,7 @@ Seven small-but-shippable items, all live on prod by end of session:
 - **Insight cron cwd bug** (`8c271b4` + 4 local SKILL.md edits) — `kira-insight-{0700,1100,1500,2100}` schedulers used `git rev-parse --show-toplevel` to derive cwd. Cron fires launch in the parent dir (gotcha from `feedback_scheduled_task_cwd_parent.md`), so `git rev-parse` always failed and every fire exited with `not in git, no-op` since Phase Q.2 launched 2026-05-25. All 13 EN insights in prod were from manual fires inside the repo, not from the cron. Fix mirrors the batch SKILL.md pattern: hardcoded DELL paths + "ignore the playbook's git rev-parse step" override. Machine-local change (SKILL.md not committed); commit is just the memory note documenting the gotcha. **vnc-f4 needs the same SKILL.md edit applied locally.**
 - **Insights polish verification** — Earlier session's insights polish (commit `cc3124c`, chart CSS + search box + related insights) verified live on prod via curl: kira.css ships `.article-body svg` scoped CSS, `/en/insights/` has search input EN/JA/KO localized (`placeholder="Search by topic, country, industry…"` / `トピック、国、産業で検索…` / `주제, 국가, 산업으로 검색…`), `/api/insight` returns `relatedInsights[3]`, `_view.html` renders `.related-insights-grid`.
 
-Also confirmed: **migration 011 (reports-html bucket) is already live** — 30 of 30 published-report HTML previews uploaded; `/api/preview-html?slug=...` returns 200 with proper `text/html` Content-Type; `_view.html` iframe is wired. No owner click-through needed for that one.
+Also confirmed: **migration 040 (reports-html bucket) is already live** — 30 of 30 published-report HTML previews uploaded; `/api/preview-html?slug=...` returns 200 with proper `text/html` Content-Type; `_view.html` iframe is wired. No owner click-through needed for that one.
 
 Phase R (companies directory) — Henry brainstormed Mordor's playbook with me but parked it to think more. Memory note `project_r_seo_companies_directory.md` still says "brainstorm (not started)".
 
@@ -112,6 +183,81 @@ Phase R (companies directory) — Henry brainstormed Mordor's playbook with me b
 
 ---
 
+## Scheduled routines (Phase Q.7 — 2026-07-29) — ⚠️ SUPERSEDED 2026-10
+
+> **The DELL scheduled task below is history.** Since 2026-10-05 the batch runs as the cloud Routine "Kira Report Generator" (claude.ai Routines, cron `53 1,3,5 * * *` UTC = 08:53, 10:53 and 12:53 Vietnam time), created by Henry, with `kira-pipeline` attached next to this repo. A second Routine, "KIRA weekly topic planner" (Mondays 00:52 UTC), adds topics. A Routine created through the API can only be edited by Henry in the claude.ai Routines page.
+
+Batch gen + dịch chạy bằng scheduled tasks (panel "Routines") trên máy Windows
+của Henry. Q.7 — Henry chốt 2026-07-29: gom **22 routine → 1**. **ĐÃ THỰC THI
+XONG 2026-07-29 trên máy DELL** — panel Routines giờ chỉ còn 1 dòng `kira`.
+
+| | Trước | Sau |
+|---|---|---|
+| Routine | 22 | **1** (`kira`) |
+| Fires/ngày | 22 | **4** — cron `0 18,21,0,3 * * *` |
+| Report/ngày | ~6 | **1** (EN+JA+KO đầy đủ) |
+
+3 fire chạy `batch_runner.md`, fire 03:00 chạy `insight_runner.md` — dispatch
+bằng `date +%H` trong SKILL.md.
+
+**Mỗi fire = 1 hàng × 1 stage.** "Gen" và "dịch" không phải 2 routine riêng —
+runner đọc trạng thái queue rồi tự route sang EN gen / JA translate / KO translate
++ publish. Nên 1 report = 3 fire. Không được gộp 3 stage vào 1 fire (subagent dịch
+vượt output cap → treo; đây là lý do Q.1 tách ra).
+
+**Trạng thái 2026-07-29 sau khi gom:** pipeline đã chạy lại (từng dừng 8 ngày
+07-21 → 07-29 do routine Paused + máy tắt). Queue: 59 `pending` · 16 `error` ·
+106 `done`. Step 6 của runbook — đo `git log --since="7 days ago" | grep -c
+'batch: complete'`, kỳ vọng ~7 — **còn mở, đo lại ~2026-08-05**.
+
+⚠️ **Cron của scheduled tasks là giờ LOCAL (ICT), không phải UTC** — đo trực tiếp
+2026-07-29, sửa lại ghi chú cũ. Viết cron thẳng bằng giờ Việt Nam, đừng +7.
+Có thêm jitter 0–10 phút mỗi fire.
+
+Task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\kira\` (ngoài repo, không theo
+git) → **đổi máy là mất, phải tạo lại**. Runbook:
+`skills/kira-research-report/prompts/routines_consolidate.md` — phải chạy từ Claude
+Code **trên chính máy đó**, session web/mobile không với tới được. Backup 22 routine
+cũ để rollback: `data/routines_backup_2026-07-29.md`.
+Chi tiết + gotcha: `project des/memory/project_batch_cron_system.md`.
+
+---
+
+## Report pipeline — BRAIN route (2026-10-04, PR #40) — ✅ REVAMP DONE 2026-10-05
+
+> **Status:** the writing pipeline revamp is finished (PR #40, #41, #43, #44 merged). Next work moves to the
+> "Kira Research business model" session (operations workplan). Memory note: `project des/memory/project_brain_report_pipeline.md`.
+> The cloud Routine has `kira-pipeline` attached and `OPENAI_API_KEY` set (reports publish with covers).
+
+
+Stage A (EN gen) now plans each report as an answer to a **buyer question** instead of a generic market overview. The default buyer is a Japanese or Korean company. Prompt: `skills/kira-research-report/prompts/brain_route.md`.
+- **How it plans:** the brain (private repo `kira-pipeline`) picks the analyses, so its plan replaces the blueprint (UC1) and design-mode (UC2) planning. Research, content, render, JA/KO and publish are unchanged.
+- **New page types:** `decision_scorecard` and `stage_gate_plan`.
+- **Exhibit layer (PR #41):**
+  - `prompts/storytelling.md` sets the arc and hooks.
+  - `templates/exhibits.html` and `docs/exhibit_library.md` hold the 16 exhibit types.
+  - `exhibit_page` has 7 layouts; overflow splits the page.
+  - There is no page cap.
+  - Pilot v2 vs v1: 77 vs 56 /90.
+  - Batch caps: EN 90 min, JA/KO 75 min, stale claim after 150 min.
+- **Pilot:** blind-judged on one topic, the new route scored 61/80 against 49/80 for the old pipeline.
+- **Batch machine setup:** clone `kira-pipeline` next to `kira-research`, or set env `KIRA_BRAIN_DIR`. Without it, Stage A silently falls back to UC1/UC2.
+- **Never commit brain artifacts here.** They live in an OS temp folder, and the batch runner greps `en.html` for leaks.
+- **Report artifacts are private (owner, 2026-10-13).** The full report HTML, PDFs, exhibits and players are the paid product, so `skills/kira-research-report/outputs/` is git-ignored here and is only a local working folder. A report's folder is saved to and restored from the private repo `kira-pipeline` → `report-archive/batch/<id>/` with `scripts/archive-batch.mjs push|pull <id>` (batch_runner Step 2.5; HTML/JSON/cover only, PDFs stay in Supabase Storage). Never `git add` anything under `outputs/`, and never put full report HTML in `public/`, a public bucket or a public repo: the free preview is the first 5 pages (`scripts/upload-html.mjs` slices at upload, `api/_lib/preview-slice.js` slices again on every `/api/preview-html` response; full copies of reports that were once found unsliced are in the private bucket `reports-html-full`). The Routine needs write access to `kira-pipeline` `main` before its first fire after this change; open follow-ups are tracked in the private repo's CLAUDE.md.
+- **Insights = report pages (owner, 2026-10-13).** Each published report gets one insight made from its own executive-summary page plus its first chart page, cut out of the finished HTML in every language the report has (EN/JA/KO/ZH); nothing is written or translated by a model. `scripts/make-insight.mjs --pending N | --report <slug>` does it (restores the folder from the archive, checks page 4 against the published preview, `scripts/extract-insight-pages.mjs --pages auto`, upserts `insights` + `insight_translations`, renders the cover slides); it runs by itself after each publish (`batch_runner.md` Step 5.3b-6, `--pending 5`, newest first); `prompts/insight_runner.md` is the full procedure for a backfill or a manual run (a separate Routine would need `kira-pipeline` attached by the owner in claude.ai, which the API cannot do). The first 118 were backfilled on 2026-10-14; 5 reports with unsupported layouts are skipped. Styles are the `.kp-*` block in `public/css/kira.css`; the chart colours between `BEGIN/END report-chart-css` are generated by `scripts/sync-insight-chart-css.mjs` (run it, `--check` to test, whenever the exhibit styles in `templates/master_styles.css` change). A report whose layout the styles do not cover is skipped, not failed. The old text-lift insights stay live except the 25 table-only "key data metrics" pages, set to `retired` on 2026-10-13.
+- **Methodology page:** the boilerplate no longer claims field checks or interviews, because the pipeline is desk-only.
+- **`/api/render-pdf` overflow check:** it now also reports text clipped inside boxes. Older published reports have clipped competitor cards and source keys; worth a re-render pass.
+- **Cover art and closing (PR #43):**
+  - `scripts/gen-cover.mjs` draws each report's cover with the OpenAI Images API (`gpt-image-2`, high for reports, medium for insights); 15 house styles rotate by report id. `scripts/upload-cover.mjs` puts it in the public `covers` bucket (migration 026) for the library and insights pages; `scripts/backfill-covers.mjs` covers older reports and insights.
+  - The batch machine needs `OPENAI_API_KEY`. Without it the cover renders plain.
+  - A fixed closing page ends every report.
+  - Images stay relative in the HTML; the render and upload scripts inline them.
+- **Tagline (PR #44):** "Know first. Move first." is fixed on the cover and closing pages; it is not set per report.
+- **Who's who + company DB (2026-10-07):** every report ends with a "Who's who" chapter: the industry's companies grouped by value-chain stage, found with local-language searches. Source = `outputs/batch/<id>/players.json`; `scripts/render-players.mjs` checks it and prints the pages; at publish `scripts/publish-players.mjs` writes the companies to `entities` and `industry_players` (migration 033, applied). This is the seed data for Kira Chain (S10).
+- **Routines:** running again as cloud Routines (see "Scheduled routines", superseded note above).
+
+---
+
 ## Workplan progress by phase
 
 Source of truth for phase/sprint structure is `project des/workplan.md`
@@ -134,18 +280,29 @@ Legend: ✅ done · 🟡 partial · 🔴 not started · ⏸️ owner content/man
 | **5.1** | Demote 3 generation tools | ✅ | `692d907`, `74c21c0` redirects + this session: 6 service-line landings (EN/JA/KO × market-analysis, strategy-builder) rebuilt as analyst-led service pages |
 | **5.2** | Kill /studio/ | ✅ | `692d907` |
 | **5.3** | Credit system scoping | ✅ | `a8a9206` · credit system retired entirely Year 1, all platform-era APIs + profile.html removed |
-| **6** | Report population (50+ EN reports) | ⏸️ | Henry's content production work |
-| **7.1** | Insights blog + article templates | 🟡 | `15e94f2` · UI pagination pending |
+| **6** | Report population (50+ EN reports) | ✅ | 127 published (2026-10-14); the cloud Routine adds 3 a day |
+| **7.1** | Insights blog + article templates | ✅ | `15e94f2` + pagination `8aa3b82` |
 | **7.2** | Content production admin (re-scoped) | ✅ | Year 1 decision: skip LLM auto-gen (brand voice conflict). Built scheduling (published_at gate) + status flow + related-report CTA in admin + improved "Get the full report" copy on `_view.html` |
 | **7.3** | Schema markup + OG + sitemap + GSC | 🟡 | sitemap ✅ (`6bb331f`+`8bcb6d4`) · per-report/article schema + OG/Twitter ✅ (item 7.3-remainder) · GSC submission + internal linking pending |
 | **8.1** | JA infrastructure | ✅ | `9147ea2`…`4bea633`, `8bcb6d4` · sitemap-ja.xml live; native QA + GSC = next-queue item G + owner |
-| **8.2** | JA report translations | ⏸️ | Henry content work |
+| **8.2** | JA report translations | ✅ | Pipeline translates every report (all 121 published have JA) |
 | **8.3** | JA aggregator distribution (GIIResearch) | ⏸️ | Henry outreach work |
 | **8.4** | JA copy rewrites (About/Methodology/Hero) | ✅ | `9147ea2`…`4bea633` |
 | **9.1** | KO infrastructure | ✅ | same commit range + `8bcb6d4` · sitemap-ko.xml live; native QA + GSC = next-queue item G + owner |
-| **9.2** | KO report translations | ⏸️ | Henry content work |
+| **9.2** | KO report translations | ✅ | Pipeline translates every report (all 121 published have KO) |
 | **9.3** | KO aggregator distribution | ⏸️ | Henry outreach work |
-| **10** | Polish & launch | 🔴 | Mobile QA + perf audit + GSC + soft launch pending |
+| **10** | Polish & launch | 🟡 | Mobile emulation check (390px, 12 pages) + image weight fixed 2026-10-06. Still pending: Lighthouse run, real-phone check, soft launch |
+| **R.0** | Company Intelligence schema + API foundation | ✅ | `279304c`+`14942a6` · 7 tables + `company_graph_bfs()` RPC + `api/_lib/company/` + `company-search.js` + `company-report.js` |
+| **R.1** | VN seed (25) + ĐKKD connector + SEO page | ✅ | `cf6a0b4` squash-merged 2026-05-29 · migration 017 |
+| **R.2** | VN scale to 200 + Key Players on reports | ✅ | `31b3608` · migrations 018+019 · sitemap updated |
+| **R.3** | `/en/companies/vn/` directory index | ✅ | `492a705` · filterable by industry/sector + search |
+| **R.4** | Progressive enrichment pipeline (masothue + Tavily) | ✅ | `5bfdc2a` · Stages 2–4 inline on page visit |
+| **R.5** | LLM narrative synthesis (Claude Haiku) | ✅ | `859f13c` · Stage 5 · `api/company-enrich.js` |
+| **R.6** | Smoke tests for Company Intelligence | ✅ | `9da5d76` · 49 total smoke tests |
+| **R.7** | Admin panel `/en/admin/companies` | ✅ | `0d4e859` · `api/admin-companies.js` · all admin sub-navs updated |
+| **R.8** | 50 JP companies seed (250 total) | ✅ | `c4be8c0` + migration 021 applied via MCP · JP=50 · VN=200 |
+| **R.9** | Unified company search `/en/companies/` | ✅ | `33db1be` · `api/company-search-live.js` + `api/company-stub.js` · 52 smoke tests |
+| **R.10** | Universal OC + Wikidata pipeline + sitemap fix | ✅ | `4b8c754` · `connectors/opencorporates.js` + `connectors/wikidata.js` · pipeline v2 · sitemap JP fix |
 | **∞** | **Infra & quality (unplanned)** | ✅ | Smoke CI `7e4e0de`+`87cd168`, security `09dbc30`, memory `9fde035`+`4d9456a` |
 
 **Detail per checkbox:** `project des/workplan.md` has the full
@@ -165,8 +322,12 @@ public/
 │   ├── insights/index.html         # insights list
 │   ├── insights/_view.html         # single article template
 │   ├── custom-research/index.html  # contact + research-on-demand
+│   ├── companies/
+│   │   └── vn/
+│   │       ├── index.html          # VN company directory (filterable by industry/sector)
+│   │       └── _view.html          # single company page (SEO, facts grid, narrative, CTA)
 │   └── admin/                      # EN-only admin (auth-gated)
-│       ├── leads.html  reports.html  insights.html
+│       ├── leads.html  reports.html  insights.html  companies.html
 ├── css/                            # kira.css
 ├── js/                             # nav.js + i18n
 ├── locales/                        # en.json, ja.json, ko.json
@@ -186,8 +347,23 @@ api/                                # 16 Vercel serverless functions (all active
 ├── admin-aggregators.js            # admin CRUD for aggregator_submissions + aggregator_sales (Sprint 4.4)
 ├── admin-stats.js                  # admin dashboard aggregator (KPI cards)
 ├── admin-upload-pdf.js             # admin PDF upload to Supabase Storage (item D)
-├── sitemap.js                      # dynamic sitemap (index + per-locale)
-└── _lib/email.js                   # shared Resend send helper — purchase receipts + lead notifications (Sprint E). NOT a route (Vercel skips `_` dirs).
+├── admin-companies.js              # admin company coverage stats (Phase R.7)
+├── company-search.js               # public search by tax_id + country (Phase R.0)
+├── company-report.js               # public company profile payload (Phase R.0)
+├── company-enrich.js               # POST trigger pipeline stages 2–5 (Phase R.4–5)
+├── company-list.js                 # public paginated list for directory (Phase R.3)
+├── sitemap.js                      # dynamic sitemap (index + per-locale + company pages)
+└── _lib/
+    ├── email.js                    # Resend send helper — receipts + lead notifications (Sprint E)
+    └── company/                    # Company Intelligence pipeline (Phase R)
+        ├── config.js               # per-country settings
+        ├── normalize.js            # legal token strip per country
+        ├── connector.js            # connector registry
+        ├── pipeline.js             # orchestrator (stages 1–6)
+        └── connectors/
+            ├── vn_dkkd.js          # VietQR API — VN legal status/address
+            ├── masothue.js         # masothue.vn scraper — charter_capital/founding_date
+            └── tavily_web.js       # Tavily web search — general enrichment
 
 supabase/migrations/                # idempotent schema
 ├── 001_leads.sql                   # leads table + RLS
@@ -198,9 +374,14 @@ supabase/migrations/                # idempotent schema
 ├── 006_drop_legacy.sql             # drop 6 deprecated tables + 2 fns + 2 buckets (Sprint F finish; keeps credit tables)
 ├── 007_aggregators.sql             # aggregator_submissions + aggregator_sales tables (Sprint 4.4)
 ├── 008_security_hardening.sql      # close advisor flags: RLS credit_costs, REVOKE EXECUTE add/spend_credits, pin search_path
-└── 009_audit_log.sql               # audit_log table — append-only record of admin write actions (Sprint 4.1 close)
+├── 009_audit_log.sql               # audit_log table — append-only record of admin write actions (Sprint 4.1 close)
+├── 016_company_intelligence.sql    # Phase R schema: entities, sources, facts, relationships, coverage, raw_documents, company_reports + BFS RPC
+├── 017_vn_seed_companies.sql       # 25 VN companies seed (Sprint R.1)
+├── 018_vn_connectors.sql           # ĐKKD + masothue connectors, facts_entity_key_unique constraint
+├── 019_vn_more_companies.sql       # 200 VN companies total (Sprint R.2)
+└── 021_jp_seed_companies.sql       # 50 JP companies (法人番号), 9 sectors (Sprint R.8)
 
-tests/smoke.spec.js                 # 41 Playwright tests (CI green)
+tests/smoke.spec.js                 # 49 Playwright tests (CI green)
 .github/workflows/post-deploy-smoke.yml  # CI workflow
 playwright.config.js                # chromium-only, github reporter
 vercel.json                         # cleanUrls + 13 redirects + 11 rewrites (all sources/destinations no-extension form)
@@ -396,18 +577,20 @@ or polish that can wait for actual signal from production traffic.
 From `project des/CLAUDE.md` — repeated here so a new session sees them immediately:
 
 - ❌ Never position as "AI-powered platform / SaaS / app" — we are a **research house**
-- ❌ Never claim volume ("1000+ reports", "thousands of studies")
+- ~~Never claim volume~~ — dropped 2026-10-05 (library model); still no invented numbers, only real counts
 - ❌ Never lead with "AI" in marketing copy — only mentioned on `/methodology`
 - ❌ Never use competitor names in copy: Mordor, Frost, Euromonitor, Synovate, Ipsos
 - ❌ Never use "Claude" or "McKinsey" in UI copy
 - ❌ Never give CLI instructions to owner — always click-through (Vercel/Supabase/GitHub UI)
 - ❌ Never use Next.js syntax in `vercel.json` (no `beforeFiles` / `afterFiles`)
 - ✅ Brand voice: "our analysts" / "our research team" / "we" — never "our platform"
-- ✅ Trilingual EN/JA/KO from Day 1, flat $39 pricing Year 1
+- ✅ Trilingual EN/JA/KO from Day 1 (+ ZH Simplified from Sprint S4). Pricing: flat $39/report until Sprint S7 ships subscriptions; proposed 2026-10-06: report $299 · Month $149 · Annual $1,190 (see workplan Phase S)
 
 ---
 
 ## Gotchas learned the hard way
+
+0. **Static asset caching (2026-10-05).** `vercel.json` headers: HTML, `/css`, `/js` and `/locales` are `max-age=0, must-revalidate` (the browser revalidates, a 304 is cheap). With a browser cache of minutes, a deploy that changed HTML and CSS together showed new pages with the old stylesheet ("broken layout") until the cache expired. Header rules: the LAST matching source wins, so the `/(.*)` catch-all goes first. Functions under `/api` keep the Cache-Control they set themselves.
 
 1. **Vercel blocks deploys if commit author email isn't matched to a GitHub account.**
    - First-time setup on a new machine, MUST run:
@@ -445,6 +628,8 @@ From `project des/CLAUDE.md` — repeated here so a new session sees them immedi
 
 15. **ESLint flat config + 2 rules** — `eslint.config.js` enforces `no-undef` + `no-unused-vars` only. Globals are partitioned per-folder: `public/**/*.js` gets browser globals + `supabase`/`kiraAuth`/`db`/`kira`; `api/**/*.js` + `tests/**/*.js` get Node globals; `tests/**` additionally allows `document`/`window` for `page.evaluate()` callbacks. Don't add stylistic rules — the goal is bug-catching, not formatting. CI gate at `quality.yml`. Bugs the initial pass surfaced: undeclared `user` in `admin-aggregators.js` (actor was named `me`), `const row` redeclared in `admin-{reports,insights}.js` translation upsert.
 
+16. **Migration numbers must be unique.** Parallel sessions each took "the next number" and produced duplicates (011, 023, 030, 037×3, 038×3), renamed 2026-10-11: the later file of each pair moved to 040–046 (`040_reports_html_bucket`, `041_report_codes`, `042_waitlist_report_plan`, `043_site_events`, `044_expert_transcripts`, `045_crm_contacts`, `046_search_topics_generic_words`). Before adding one, run `ls supabase/migrations | tail -5` on a fresh `origin/main` and take the next free number. All are idempotent and applied by hand (MCP or dashboard), never by the Supabase CLI, so no database was touched by the renaming.
+
 ---
 
 ## Pickup checklist for new Claude session
@@ -474,4 +659,4 @@ When this conversation continues on a different machine:
 
 ---
 
-*Last updated: 2026-05-27 evening — honest surface + favicon + stub cleanup + perf session. 7 items live: (1) live counts on home + library facets via `/js/live-counts.js` replacing hardcoded fake numbers, (2) full favicon stack site-wide via nav.js + SVG/PNG/ICO/manifest fallbacks generated from existing `favicon.svg` via transient sharp install, (3) 6 stub field-note insights got real bodies (3000-3600 chars each, KIRA brand voice) + API now filters body=NULL from public surface, (4) insight cron cwd bug discovered + fixed (4 local SKILL.md edits + memory note `feedback_scheduled_task_cwd_parent.md` "Third gotcha"; vnc-f4 needs same SKILL.md fix applied locally), (5) earlier insights polish (chart CSS + search + related cards) verified live via curl, (6) dynamic hero reports + featured grid on home replacing 3 broken hardcoded slugs (indonesia-fmcg-distribution-2026, thailand-ecommerce-logistics-2026, philippines-healthtech-2026 all 404'ed since launch), (7) cache headers in vercel.json for /css /js /locales/fonts/favicons + API s-maxage bumped 300→1800 for report-detail. Latest commit `874b495`. **Code blocker = 0**; cron continues processing 2027-vn-tourism + 2027-vn-ev tonight. Phase R (companies directory) parked — Henry brainstormed Mordor's playbook (aggregator-style breadth via stock-exchange scrape + Wikipedia enrich, vs niche-depth KIRA analyst layer) but wants to think more before committing.)*
+*Last updated: 2026-10-14 — nav + footer reorganised; earlier: current state, locales and routines refreshed from the live database and git history (see `project des/workplan.md` → Progress snapshot). Sections marked "Previous state" are history. **Code blocker = 0**; open items are owner-side: turning on payments, demand, and the new direction for Kira Chain.*

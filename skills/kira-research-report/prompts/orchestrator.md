@@ -1,6 +1,6 @@
 # orchestrator.md — Stage 2 (mode router)
 
-Decide which use-case path the request runs on: **UC1** (template), **UC2** (design mode), or **UC3** (data-grounded). Output a routing decision with reasoning.
+Decide which use-case path the request runs on: **BRAIN** (question-led, default when the brain is available), **UC1** (template), **UC2** (design mode), or **UC3** (data-grounded). Output a routing decision with reasoning.
 
 ## Input
 
@@ -11,11 +11,16 @@ The JSON object emitted by `topic_parser.md`.
 ```
 1.  has_uploaded_files == true                 → route UC3
 2.  forced_mode != null                        → respect forced_mode
+2b. brain available (see below)                → route BRAIN
 3.  Score every blueprint in template_registry against topic.
     If max(score) >= match_threshold (default 0.7)
       → route UC1 with that blueprint
 4.  Otherwise                                  → route UC2
 ```
+
+### BRAIN route availability
+
+The brain is available when `<brain>/runner/retrieve.py` exists, where `<brain>` is env `KIRA_BRAIN_DIR` if set, else `<repo root>/../kira-pipeline/brain`. When available, route BRAIN: `next_prompt: "prompts/brain_route.md"`, `default_output_mode: "publish"`, `requires_confirm_step: false`, `blueprint_id: null`. Still compute blueprint scores and the industry overlay below for telemetry; the overlay's emphasis hints may still be used by content generation. When the brain is missing, note `"brain not found — falling back"` in `warnings` and continue with step 3.
 
 ### How to score a blueprint match
 
@@ -101,14 +106,14 @@ It only adds emphasis hints that downstream prompts (`content_per_section.md`, `
 
 ```json
 {
-  "route": "UC1" | "UC2" | "UC3",
+  "route": "BRAIN" | "UC1" | "UC2" | "UC3",
   "blueprint_id": "market_analysis" | null,
   "blueprint_score": 0.95,
   "all_scores": { "market_analysis": 0.95 },
   "industry_overlay": "fmcg" | "finserv" | "industrial" | "consumer_durables" | "services" | "commodity" | null,
   "overlay_score": 5,
   "all_overlay_scores": { "fmcg": 5, "commodity": 1, "industrial": 0 },
-  "next_prompt": "templates/blueprints/market_analysis/manifest.yaml" | "prompts/design_mode_planner.md" | "prompts/data_ingestion.md",
+  "next_prompt": "prompts/brain_route.md" | "templates/blueprints/market_analysis/manifest.yaml" | "prompts/design_mode_planner.md" | "prompts/data_ingestion.md",
   "default_output_mode": "publish" | "draft",
   "requires_confirm_step": false,
   "reasoning": "Indonesia + construction-materials sub-industries + 2026 — clean match for market_analysis blueprint (1.00). Industry overlay: industrial (4 keyword hits — construction, building materials, cement, roofing). Routing UC1, publish default, no confirm step.",

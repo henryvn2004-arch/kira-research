@@ -13,7 +13,7 @@
   <meta property="og:title"       id="meta-og-title"       content="Company Profile — KIRA RESEARCH" />
   <meta property="og:description" id="meta-og-description" content="Company intelligence profile from KIRA RESEARCH." />
   <meta property="og:url"         id="meta-og-url"         content="https://kiraresearch.com/" />
-  <meta property="og:image"       id="meta-og-image"       content="https://kiraresearch.com/logo.png" />
+  <meta property="og:image"       id="meta-og-image"       content="https://kiraresearch.com/og-image.png" />
   <meta name="twitter:card"  content="summary_large_image" />
   <meta name="twitter:title" id="meta-tw-title" content="Company Profile — KIRA RESEARCH" />
 
@@ -224,6 +224,10 @@
       .co-name { font-size: 22px; }
       .co-cta { flex-direction: column; align-items: flex-start; }
     }
+    @keyframes co-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
   </style>
 </head>
 <body>
@@ -243,7 +247,7 @@
     const slug = parts[parts.length - 1];
 
     if (!slug || slug === '_view') {
-      renderError('No company specified.', 'Browse our <a href="/en/library">report library</a> or <a href="/en/custom-research/">request custom research</a>.');
+      renderError('No company specified.', 'Explore the <a href="/en/library">research library</a> or <a href="/en/experts/">speak with an expert</a>.');
       return;
     }
 
@@ -253,14 +257,41 @@
         if (!r.ok) throw new Error('api_error');
         return r.json();
       })
-      .then(({ report }) => render(report))
+      .then(({ report, needs_enrichment }) => {
+        render(report);
+        // Trigger enrichment if: API flagged it (stub with no payload), or facts are empty
+        const isEmpty = !report.facts || Object.keys(report.facts).length === 0;
+        if (needs_enrichment || isEmpty) {
+          showEnrichBanner();
+          fetch('/api/company-enrich', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug }),
+          })
+          .then(r => r.json())
+          .then(({ enriched }) => { if (enriched) location.reload(); })
+          .catch(() => hideEnrichBanner());
+        }
+      })
       .catch(err => {
         if (err.is404) {
-          renderError('Company not found.', 'We may not have data for this company yet. <a href="/en/custom-research/">Request custom research →</a>');
+          renderError('Company not found.', 'We may not have data for this company yet. <a href="/en/experts/">Speak with an expert →</a>');
         } else {
           renderError('Unable to load company data.', 'Please try again in a moment.');
         }
       });
+
+    function showEnrichBanner() {
+      const b = document.createElement('div');
+      b.id = 'co-enrich-banner';
+      b.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;';
+      b.innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--primary);animation:co-pulse 1.2s ease-in-out infinite;"></span>Fetching company data from public registries…';
+      const main = document.getElementById('co-main');
+      if (main?.firstChild) main.insertBefore(b, main.firstChild);
+    }
+    function hideEnrichBanner() {
+      document.getElementById('co-enrich-banner')?.remove();
+    }
 
     function render(r) {
       updateHead(r);
@@ -285,18 +316,18 @@
             <h1 class="co-name">${esc(r.name)}</h1>
             <div class="co-meta">
               <span class="co-status ${r.status || 'unknown'}">${statusLabel(r.status)}</span>
-              ${r.tax_id ? `<span>MST: <strong>${esc(r.tax_id)}</strong></span>` : ''}
+              ${r.tax_id ? `<span>${taxIdLabel(country)}: <strong>${esc(r.tax_id)}</strong></span>` : ''}
               ${countryLabel ? `<span>${countryLabel}</span>` : ''}
               ${industryLabel ? `<span>${esc(industryLabel)}</span>` : ''}
             </div>
           </div>
         </div>
 
-        ${buildFactsGrid(r.facts)}
+        ${buildFactsGrid(r.facts, r.country_code)}
 
         <div class="co-section">
           <h2 class="co-section-title">Company Overview</h2>
-          <div class="co-body-text">${buildNarrative(r)}</div>
+          <div class="co-body-text">${r.narrative ? '<p>' + esc(r.narrative).split(/\n\n+/).map(p => p.replace(/\n/g,' ')).join('</p><p>') + '</p>' : buildNarrative(r)}</div>
         </div>
 
         ${buildCoverageSection(r.coverage)}
@@ -310,22 +341,21 @@
         </div>
 
         <p class="co-disclaimer">
-          Data sourced from Vietnam's National Business Registration Portal (ĐKKD), tax authority records, and KIRA Research analyst notes.
-          Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND).
-          For investment decisions, verify directly with official registries.
+          ${disclaimerText(r.country_code)}
           Last updated: ${fmtDate(r.generated_at)}.
         </p>
       `;
     }
 
-    function buildFactsGrid(facts) {
+    function buildFactsGrid(facts, countryCode) {
       if (!facts || Object.keys(facts).length === 0) return '';
 
       const items = [];
 
       const cap = facts.charter_capital?.value;
       if (cap) {
-        items.push(factCard('Charter Capital', fmtVND(cap), 'Vietnamese Dong'));
+        const { amount, label } = fmtCapital(cap, countryCode);
+        items.push(factCard('Registered Capital', amount, label));
       }
 
       const fy = facts.founding_year?.value;
@@ -353,6 +383,50 @@
       if (intl) {
         items.push(factCard('International Name', intl, ''));
       }
+
+      const industry = facts.industry?.value;
+      if (industry) {
+        items.push(factCard('Industry', capitalize(industry.replace(/_/g, ' ')), ''));
+      }
+
+      const employees = facts.employees?.value;
+      if (employees) {
+        items.push(factCard('Employees', Number(employees).toLocaleString(), ''));
+      }
+
+      const website = facts.website?.value;
+      if (website) {
+        const wsDisplay = truncate(stripQ(website).replace(/^https?:\/\//, ''), 40);
+        const wsHref = stripQ(website).startsWith('http') ? stripQ(website) : `https://${stripQ(website)}`;
+        items.push(`
+          <div class="co-fact">
+            <div class="co-fact-label">${esc('Website')}</div>
+            <div class="co-fact-value" style="font-size:13px;font-weight:600;">
+              <a href="${esc(wsHref)}" target="_blank" rel="noopener" style="color:var(--primary);">${esc(wsDisplay)}</a>
+            </div>
+          </div>`);
+      }
+
+      const hq = facts.hq_city?.value;
+      if (hq) items.push(factCard('HQ City', stripQ(hq), ''));
+
+      const ceo = facts.ceo_name?.value;
+      if (ceo) items.push(factCard('CEO', stripQ(ceo), ''));
+
+      const parent = facts.parent_company?.value;
+      if (parent) items.push(factCard('Parent Company', stripQ(parent), ''));
+
+      const exchange = facts.stock_exchange?.value;
+      const ticker   = facts.stock_ticker?.value;
+      if (exchange || ticker) {
+        items.push(factCard('Listed', ticker ? stripQ(ticker) : '—', exchange ? stripQ(exchange) : ''));
+      }
+
+      const marketCap = facts.market_cap_usd?.value;
+      if (marketCap) items.push(factCard('Market Cap', fmtUSD(marketCap), 'USD'));
+
+      const revenueUsd = facts.revenue_usd?.value;
+      if (revenueUsd) items.push(factCard('Revenue', fmtUSD(revenueUsd), 'USD (annual)'));
 
       if (items.length === 0) return '';
       return `<div class="co-facts">${items.join('')}</div>`;
@@ -389,7 +463,8 @@
 
       let para2 = '';
       if (cap) {
-        para2 = `The company's registered charter capital stands at ${fmtVND(cap)}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
+        const capFmt = fmtCapital(cap, r.country_code);
+        para2 = `The company's registered charter capital stands at ${capFmt.amount} ${capFmt.label}, reflecting its scale within ${countryFull}'s ${industry} landscape.`;
         if (sector) {
           para2 += ` As a player in the ${capitalize(sector.replace(/_/g,' '))} space, ${name} participates in a market that KIRA Research analysts monitor across Southeast Asia for structural shifts and competitive dynamics.`;
         }
@@ -404,10 +479,14 @@
     function buildCoverageSection(coverage) {
       if (!coverage || Object.keys(coverage).length === 0) return '';
       const sourceLabels = {
+        opencorporates: 'OpenCorporates (Official Registry)',
+        wikidata:       'Wikidata (Knowledge Graph)',
+        tavily:         'Web Search',
+        llm_narrative:  'AI Narrative',
+        static_seed:    'Curated Data',
         dkkd: 'ĐKKD (Business Registry)', tax: 'Tax Authority',
-        static_seed: 'Curated Data', gmb: 'Google Business',
-        noip: 'Trademark (NOIP)', court: 'Court Records',
-        bidding: 'Public Procurement',
+        gmb: 'Google Business', noip: 'Trademark (NOIP)',
+        court: 'Court Records', bidding: 'Public Procurement',
       };
       const badges = Object.entries(coverage)
         .filter(([s]) => s !== 'static_seed')
@@ -506,12 +585,32 @@
       return { active: 'an active', suspended: 'a suspended', dissolved: 'a dissolved', unknown: 'a' }[s] || 'a';
     }
 
-    function fmtVND(n) {
+    function fmtCapital(n, countryCode) {
       const num = Number(n);
-      if (isNaN(num)) return String(n);
-      if (num >= 1e12) return (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion VND';
-      if (num >= 1e9)  return (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion VND';
-      return num.toLocaleString('en') + ' VND';
+      if (isNaN(num)) return { amount: String(n), label: '' };
+      const cc = (countryCode || 'VN').toUpperCase();
+      if (cc === 'JP') {
+        if (num >= 1e12) return { amount: (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion', label: 'Japanese Yen (JPY)' };
+        if (num >= 1e8)  return { amount: (num / 1e8).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' hundred million', label: 'Japanese Yen (JPY)' };
+        return { amount: num.toLocaleString('en') + ' JPY', label: 'Japanese Yen' };
+      }
+      // Default VND
+      if (num >= 1e12) return { amount: (num / 1e12).toLocaleString('en', { maximumFractionDigits: 1 }) + ' trillion', label: 'Vietnamese Dong (VND)' };
+      if (num >= 1e9)  return { amount: (num / 1e9).toLocaleString('en',  { maximumFractionDigits: 1 }) + ' billion',  label: 'Vietnamese Dong (VND)' };
+      return { amount: num.toLocaleString('en') + ' VND', label: 'Vietnamese Dong' };
+    }
+
+    function taxIdLabel(countryCode) {
+      const labels = { JP: '法人番号', KR: '사업자번호', SG: 'UEN', MY: 'SSM No.', AU: 'ABN' };
+      return labels[(countryCode || '').toUpperCase()] || 'MST';
+    }
+
+    function disclaimerText(countryCode) {
+      const cc = (countryCode || 'VN').toUpperCase();
+      if (cc === 'JP') {
+        return 'Data sourced from Japan\'s National Tax Agency corporate number registry (法人番号公表サイト), Tokyo Stock Exchange public filings, and KIRA Research analyst notes. Registration data reflects public filings and may not capture the latest changes. For investment decisions, verify directly with official registries.';
+      }
+      return 'Data sourced from Vietnam\'s National Business Registration Portal (ĐKKD), tax authority records, and KIRA Research analyst notes. Registration data reflects public filings and may not capture the latest changes. Charter capital figures in Vietnamese Dong (VND). For investment decisions, verify directly with official registries.';
     }
 
     function fmtDate(iso) {
@@ -529,6 +628,21 @@
 
     function obj_clean(o) {
       return JSON.parse(JSON.stringify(o, (_, v) => v === undefined ? undefined : v));
+    }
+
+    function fmtUSD(n) {
+      const num = Number(n);
+      if (isNaN(num)) return String(n);
+      if (num >= 1e12) return (num / 1e12).toFixed(1) + ' T';
+      if (num >= 1e9)  return (num / 1e9).toFixed(1)  + ' B';
+      if (num >= 1e6)  return (num / 1e6).toFixed(1)  + ' M';
+      return num.toLocaleString('en');
+    }
+
+    // Facts stored as JSON strings may have surrounding quotes — strip them
+    function stripQ(v) {
+      if (typeof v === 'string') return v.replace(/^"|"$/g, '');
+      return String(v ?? '');
     }
   })();
   </script>

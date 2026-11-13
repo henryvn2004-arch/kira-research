@@ -6,15 +6,32 @@
 //       locale=en
 //       &country=vietnam            (lowercase, optional)
 //       &industry=fintech           (lowercase, optional)
+//       &sector=finance             (optional; one of the 12 groups in _lib/sectors.js)
 //       &year=2026                  (optional)
-//       &sort=recent|price-asc|price-desc  (default: recent)
+//       &stage=XPL|ENT|XPN          (optional; investor stage — explore / enter / expand)
+//       &analysis=market_assessment (optional; analysis type = tax_competencies.key, migration 056)
+//       &type=D|S                   (optional; report type — deep report / snapshot)
+//       &q=VN-FSV | coffee chain    (optional; report-code prefix, or text in
+//                                    slug / segment / industry — see
+//                                    skills/kira-research-report/docs/naming_convention.md)
+//       &sort=recent|oldest|price-asc|price-desc  (default: recent)
 //       &limit=24&offset=0
+//       &status=published|soon|all  (default: published — the insights page relies on that.
+//                                    The library page and the home page (for its counts) send "all": published reports first, then the
+//                                    coming-soon topics of the production queue, shaped like reports
+//                                    with soon: true; see api/_lib/soon.js. Any explicit status also
+//                                    folds the coming-soon topics into facets (facets.totalSoon). soon rows honour country,
+//                                    sector, year, stage, industry and q; type=S has none.)
 //
 // Returns { items: [...], total, facets } where each item carries enough
 // data to render a report-card (slug, title, country, industry, year, price,
 // preview excerpt). facets are { countries: {code: count, ...}, industries: {...} }
-// for the sidebar filter counts.
+// for the sidebar filter counts (plus years, stages, types).
 // ============================================================
+
+import { coverUrls } from './_lib/cover.js';
+import { SECTORS, sectorOf } from './_lib/sectors.js';
+import { soonRows, soonFacets } from './_lib/soon.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -43,12 +60,23 @@ function cors(res) {
   res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
 }
 
-const SUPPORTED = new Set(['en', 'ja', 'ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 const SORTS = {
   'recent':     'published_at.desc.nullslast',
+  'oldest':     'published_at.asc.nullslast',
   'price-asc':  'price.asc',
   'price-desc': 'price.desc'
 };
+
+// Whitelists for the S5 library filters (living_reports.stage / report_type,
+// constrained the same way in migration 041). Case-insensitive input.
+const STAGES = new Set(['XPL', 'ENT', 'XPN']);
+const TYPES  = new Set(['D', 'S']);
+const ANALYSIS_RE = /^[a-z_]{2,40}$/;   // tax_competencies.key
+function upperPick(s, allowed) {
+  const v = typeof s === 'string' ? s.trim().toUpperCase() : '';
+  return allowed.has(v) ? v : '';
+}
 
 function clean(s) { return typeof s === 'string' ? s.trim().toLowerCase() : ''; }
 function int(s, def, max) {
@@ -66,26 +94,59 @@ export default async function handler(req, res) {
   const locale   = SUPPORTED.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
   const country  = clean(url.searchParams.get('country'));
   const industry = clean(url.searchParams.get('industry'));
+  const sectorIn = clean(url.searchParams.get('sector'));
+  const sector   = Object.prototype.hasOwnProperty.call(SECTORS, sectorIn) ? sectorIn : '';
   const year     = url.searchParams.get('year');
+  const stage    = upperPick(url.searchParams.get('stage'), STAGES);
+  const type     = upperPick(url.searchParams.get('type'),  TYPES);
+  const analysisIn = clean(url.searchParams.get('analysis'));
+  const analysis = ANALYSIS_RE.test(analysisIn) ? analysisIn : '';
+  const q        = (url.searchParams.get('q') || '').trim().slice(0, 60);
   const sort     = SORTS[url.searchParams.get('sort')] || SORTS.recent;
   const limit    = int(url.searchParams.get('limit'),  24, 96);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
+  const statusIn = clean(url.searchParams.get('status'));
+  const status   = statusIn === 'all' || statusIn === 'soon' ? statusIn : 'published';
+  const withSoon = url.searchParams.has('status');   // an explicit status asks for the library's merged sidebar counts
 
   try {
     // ── 1) Base query against living_reports (status=published) ──
     const where = ['status=eq.published'];
     if (country)  where.push(`country=ilike.${encodeURIComponent(country)}`);
     if (industry) where.push(`industry=ilike.${encodeURIComponent(industry)}`);
+    if (sector)   where.push(`industry_code=in.(${SECTORS[sector].join(',')})`);
     if (year && /^\d{4}$/.test(year)) where.push(`year=eq.${year}`);
+    if (stage) where.push(`stage=eq.${stage}`);
+    if (analysis) where.push(`analysis=eq.${analysis}`);
+    if (type)  where.push(`report_type=eq.${type}`);
+    if (q) {
+      // Code prefix (VN, VN-FSV, VN-FSV-ENT-D26-01) or text in slug / segment /
+      // industry / country. Characters PostgREST treats as syntax are dropped.
+      const term = q.replace(/[^\p{L}\p{N} &-]/gu, ' ').trim();
+      const ors = [];
+      if (/^[A-Za-z]{2}(-[A-Za-z0-9]{1,4})*-?$/.test(q)) ors.push(`code.like.${encodeURIComponent(q.toUpperCase())}*`);
+      if (term) {
+        const t = encodeURIComponent(`*${term}*`);
+        const ts = encodeURIComponent(`*${term.replace(/[ &]+/g, '-')}*`);   // slugs use hyphens
+        ors.push(`slug.ilike.${ts}`, `segment.ilike.${t}`, `industry.ilike.${t}`, `country.ilike.${t}`);
+      }
+      if (ors.length) where.push(`or=(${ors.join(',')})`);
+    }
 
     const baseQs =
       where.join('&') +
       `&order=${sort}` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,slug,country,industry,year,pages,price`;
+      `&select=id,code,slug,country,industry,industry_code,year,pages,price,stage,analysis,report_type,published_at,cover_url,cover_thumb_url`;
 
-    const { rows: reports, total } = await sb(`living_reports?${baseQs}`);
+    // PostgREST answers 416 when the offset is past the last row, which happens when the page lies
+    // wholly in the coming-soon part of the list: count first and skip the query then.
+    let reports = [], total = 0;
+    if (status !== 'soon') {
+      if (offset > 0) total = (await sb(`living_reports?${where.join('&')}&select=id&limit=1`)).total;
+      if (offset === 0 || offset < total) ({ rows: reports, total } = await sb(`living_reports?${baseQs}`));
+    }
 
     // ── 2) Fetch matching translations in a single in() query ───
     const ids = reports.map(r => r.id);
@@ -115,26 +176,48 @@ export default async function handler(req, res) {
     const items = reports.map(r => {
       const t = byId.get(r.id) || null;
       const lede = t && t.preview && typeof t.preview === 'object' ? t.preview.lede : null;
+      const hook = t && t.preview && typeof t.preview === 'object' && t.preview.hook ? String(t.preview.hook).slice(0, 160) : null;
       return {
+        code:     r.code || null,
         slug:     r.slug,
         country:  r.country,
         industry: r.industry,
+        sector:   sectorOf(r.industry_code),
         year:     r.year,
         pages:    r.pages,
         price:    r.price,
+        stage:    r.stage || null,
+        analysis: r.analysis || null,
+        type:     r.report_type || null,
+        published_at: r.published_at || null,
+        cover:    coverUrls(r, t ? t.locale : 'en'),
         title:    (t && t.title) || null,
+        hook:     hook,
         excerpt:  (lede ? String(lede).slice(0, 240) : null),
         locale:   t ? t.locale : null,
         hasTranslation: !!t
       };
     });
 
+    // ── 3b) Coming-soon topics fill the rest of the page, after every published report ──
+    let soonTotal = 0;
+    if (status !== 'published') {
+      const pubTotal = status === 'all' ? total : 0;
+      const room = limit - items.length;   // free places on this page after the published rows
+      const soon = await soonRows({
+        country, industry, sector, stage, analysis, type, q, year: /^\d{4}$/.test(year || '') ? year : '',
+        offset: Math.max(0, offset - pubTotal), limit: Math.max(room, 1)   // limit 1 = only the count is needed
+      });
+      soonTotal = soon.total;
+      if (room > 0) items.push(...soon.rows.slice(0, room));
+    }
+
     // ── 4) Facets (counts for sidebar) ─────────────────────────
     // One query, no filters except status=published, just to know totals.
     const { rows: all } = await sb(
-      'living_reports?status=eq.published&select=country,industry,year&limit=2000'
+      'living_reports?status=eq.published&select=country,industry,industry_code,year,stage,analysis,report_type&limit=2000'
     );
-    const facets = { countries: {}, industries: {}, years: {} };
+    const facets = { countries: {}, industries: {}, sectors: {}, years: {}, stages: {}, analyses: {}, types: {} };
     all.forEach(r => {
       const c = (r.country || '').toLowerCase();
       const i = (r.industry || '').toLowerCase();
@@ -142,10 +225,23 @@ export default async function handler(req, res) {
       if (c) facets.countries[c]  = (facets.countries[c]  || 0) + 1;
       if (i) facets.industries[i] = (facets.industries[i] || 0) + 1;
       if (y) facets.years[y]      = (facets.years[y]      || 0) + 1;
+      if (r.stage)       facets.stages[r.stage]      = (facets.stages[r.stage]      || 0) + 1;
+      if (r.analysis)    facets.analyses[r.analysis] = (facets.analyses[r.analysis] || 0) + 1;
+      if (r.report_type) facets.types[r.report_type] = (facets.types[r.report_type] || 0) + 1;
+      const sg = sectorOf(r.industry_code);
+      if (sg) facets.sectors[sg] = (facets.sectors[sg] || 0) + 1;
     });
     facets.totalPublished = all.length;
+    if (withSoon) {
+      // Sidebar counts cover both kinds, so the numbers match what a reader finds in the list.
+      const sf = await soonFacets();
+      const add = (a, b) => Object.entries(b || {}).forEach(([k, n]) => { a[k] = (a[k] || 0) + n; });
+      add(facets.countries, sf.countries); add(facets.sectors, sf.sectors); add(facets.years, sf.years);
+      add(facets.stages, sf.stages); add(facets.analyses, sf.analyses); facets.types.D = (facets.types.D || 0) + sf.total;
+      facets.totalSoon = sf.total;
+    }
 
-    res.status(200).json({ items, total, limit, offset, facets, locale });
+    res.status(200).json({ items, total: total + soonTotal, publishedTotal: total, limit, offset, facets, locale });
   } catch (err) {
     console.error('[library-list] error:', err.message);
     res.status(500).json({ error: 'server_error' });

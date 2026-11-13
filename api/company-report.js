@@ -30,12 +30,38 @@ export default async function handler(req, res) {
   try {
     const { data: cr, error } = await supabase
       .from('company_reports')
-      .select('payload, pipeline_version, expires_at, updated_at')
+      .select('entity_id, payload, pipeline_version, expires_at, updated_at')
       .eq('slug', slug)
       .single();
 
     if (error || !cr) {
       return res.status(404).json({ error: 'not_found' });
+    }
+
+    // No payload yet — build thin report from entity data so the page renders
+    if (!cr.payload) {
+      const { data: entity } = await supabase
+        .from('entities')
+        .select('canonical_name, tax_id, country_code, status_cache')
+        .eq('id', cr.entity_id)
+        .single();
+
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(200).json({
+        report: {
+          slug,
+          name:         entity?.canonical_name || slug,
+          tax_id:       entity?.tax_id         || null,
+          country_code: entity?.country_code   || 'VN',
+          status:       entity?.status_cache   || 'unknown',
+          facts:        {},
+          coverage:     {},
+          narrative:    null,
+          generated_at: null,
+        },
+        needs_enrichment: true,
+        updated_at: cr.updated_at,
+      });
     }
 
     const isExpired = cr.expires_at && new Date(cr.expires_at) < new Date();

@@ -1,6 +1,6 @@
 ---
 name: kira-batch-cron-system
-description: "Phase Q.4: 18 daily scheduled tasks fire batch_runner.md (Q.1 3-fire pipeline per report) + Q.4 auto-recovery of stale `*_in_progress` claims via Step 0.5 audit-queue.mjs (90-min threshold, strike-1/strike-2 escalation). Max gap ~60min anywhere except 06:45→17:00 daytime by design."
+description: "Phase Q.7 (executed 2026-07-29): 22 scheduled tasks consolidated into 1 routine `kira`, cron `0 18,21,0,3 * * *` (4 fires/day, LOCAL time) — 3 batch fires + 1 insight fire, dispatched by `date +%H` inside SKILL.md. Steady state = 1 full report/day (EN+JA+KO)."
 metadata:
   node_type: memory
   type: project
@@ -11,13 +11,259 @@ metadata:
 
 Henry's KIRA Research has a daily batch report generation system built on top of the `kira-research-report` skill ("[[project_tool_gen_report|tool gen report]]"). Scheduled tasks (`mcp__scheduled-tasks`) fire daily and pull 1 pending topic per fire from `data/report_queue.csv`, gen it as a 3-language report (EN + JA + KO), auto-publish to Supabase, commit results.
 
-## Current schedule (Phase Q.3 — 2026-05-25)
+## IMPORTANT: Cron times are LOCAL, not UTC
 
-**18 active tasks** = 3 evening (45-min) + 5 bridge (60-min) + 10 overnight (45-min). Max gap = ~60 min anywhere in 24h.
+**Đính chính 2026-07-29 (đo trực tiếp, thay cho ghi chú "cron là UTC" cũ).**
+`mcp__scheduled-tasks` đánh giá cron theo **giờ local của máy** (ICT trên máy Henry).
+Bằng chứng: `kira` cron `0 18,21,0,3 * * *` → `nextRunAt` = `2026-07-29T11:01:52Z`
+= 18:01 ICT. Tương tự `kira-batch-1700` cron `0 17 * * *` → `nextRunAt` 10:07Z
+= 17:07 ICT. Viết cron thẳng bằng giờ Việt Nam, **đừng +7**.
 
-| Task ID | Cron | Local ICT | Block |
+Ghi chú "cron times are UTC" trước đây đến từ thời Q.6 — mà Q.6 chưa từng được
+áp lên máy nào, nên sai chưa bao giờ bị lộ. Bảng Q.6 phía dưới (0000 = 07:00 ICT)
+vì thế cũng sai; bảng Q.3 (1745 = 05:45 PM) mới đúng.
+
+Hệ quả cho scheduler: có thêm **jitter 0–10 phút** cộng vào mỗi fire
+(`jitterSeconds` trong `list_scheduled_tasks`) — 18:00 thực tế nổ ~18:00–18:10.
+
+## Current schedule (Phase Q.7 — executed 2026-07-29) — 22 routine gom về 1
+
+**Henry chốt 2026-07-29: 1 routine duy nhất, 4 fire/ngày, ra 1 report/ngày (EN+JA+KO).**
+**Đã thực thi xong 2026-07-29 ~11:55 ICT** — panel Routines chỉ còn `kira`.
+
+| | Trước | Sau |
+|---|---|---|
+| Routine | 22 | **1** (`kira`) |
+| Fires/ngày | 22 | **4** — `0 18,21,0,3 * * *` |
+| Report/ngày | ~6 (thiết kế) | **1** |
+
+3 fire chạy `batch_runner.md` (1 report = 3 stage: gen EN → dịch JA → dịch KO +
+publish), fire 03:00 chạy `insight_runner.md`. Dispatch bằng `date +%H` ngay
+trong SKILL.md — vẫn 1 routine.
+
+**Fire giãn 3 tiếng** (stage chạy 30–90 phút) nên không bao giờ có 2 fire chồng
+nhau → né luôn rủi ro scheduler skip fire khi lần chạy trước còn sống.
+
+**Hệ quả có chủ đích**: throughput ~1 report/ngày thay vì ~6. Queue 60 hàng
+pending → runway ~60 ngày. Insight của một report cần 6 fire → ~6 ngày mới đủ
+4 bài × 3 thứ tiếng. Muốn nhanh hơn: thêm giờ vào cron, vẫn 1 routine.
+
+Runbook: `skills/kira-research-report/prompts/routines_consolidate.md`.
+Backup 22 routine cũ (rollback): `data/routines_backup_2026-07-29.md`.
+
+### Kết quả thực thi runbook (2026-07-29)
+
+- **Step 1** — 22 routine, tất cả `enabled: true` (KHÔNG Paused như runbook dự đoán;
+  chúng đã được bật lại trước đó và đang chạy bù hàng loạt fire lỡ, ~2 phút/fire).
+- **Step 3** — tạo `kira`, cron `0 18,21,0,3 * * *`, SKILL.md hardcode path DELL +
+  câu "BỎ QUA `git rev-parse`" + env guard + dispatch `date +%H`.
+- **Step 4** — "Run now" xanh: dispatch chọn đúng batch runner (giờ 11 ≠ 03), env
+  guard qua, **không dính permission prompt** (allowlist user-level đã đủ), phát
+  hiện 2 claim live dưới 90 phút → thoát sạch, không claim/commit/spawn.
+- **Step 5** — xoá 22 routine. `delete_scheduled_task` chỉ gỡ khỏi scheduler:
+  **SKILL.md cũ vẫn nằm trên đĩa** ở `~/.claude/scheduled-tasks/<taskId>/` (recover
+  prompt được), và **session đang chạy dở KHÔNG bị giết** — fire cũ vẫn commit
+  `batch: EN done for 2027-sg-digital-assets` lúc 11:54 sau khi task đã bị xoá.
+- **Step 6** — chờ đo 1 tuần (xem mục dưới).
+
+### Phương án 2-routine (đã cân nhắc, không chọn)
+
+Giữ 2 routine tách theo pipeline (`kira-batch` + `kira-insight`), gộp nguyên tập
+giờ cũ. Vướng: layout đang chạy là Q.3 nhịp 45 phút, phút lệch nhau, mà cron là
+tích chéo minute × hour nên **không có biểu thức nào khớp đúng** — vẫn phải
+regularize. Đã regularize thì gom thẳng về 1 routine gọn hơn.
+
+---
+
+## Phương án cũ (2026-07-29 sáng, superseded) — gom về 2, giữ nguyên số fire
+
+18 `kira-batch-HHMM` dùng chung một prompt body, chỉ khác giờ trong cron → gộp
+thành **1 task với cron nhiều giờ**. Tương tự 4 `kira-insight-HHMM` → 1 task.
+
+**⚠️ Cron gộp cụ thể phụ thuộc layout đang chạy trên máy — không hardcode.**
+Xác minh 2026-07-29 qua ảnh panel Routines: máy đang chạy **layout Q.3** (nhịp
+45 phút, phút chạy vòng 00→45→30→15), **không phải Q.6 hourly** như note này
+từng ghi. Q.6 rõ ràng chưa từng được áp lên máy này.
+
+Hệ quả: **Q.3 không gộp nguyên trạng được.** Cron là tích chéo minute × hour, nên
+một nhịp lệch phút (00:00 / 00:45 / 01:30 / 02:15…) không có biểu thức cron nào
+khớp đúng. Muốn gom phải regularize sang nhịp đều, tức **đổi giờ fire thật sự**:
+
+| Phương án | Cron | Fires/ngày | So với 18 hiện tại |
 |---|---|---|---|
-| `kira-batch-1700` | `0 17 * * *` | 05:00 PM | Evening |
+| Hourly, giữ cửa sổ 17:00→06:00 | `0 17-23,0-6 * * *` | 14 | −4 |
+| Mỗi 30 phút, cùng cửa sổ | `0,30 17-23,0-6 * * *` | 28 | +10 (ngốn quota) |
+
+Không có nghiệm giữ đúng 18 fire trong 1 task — 18 fire trong cửa sổ 14 tiếng
+không chia được bằng nhịp đều. Henry chọn phương án trước khi chạy runbook.
+
+Nếu sau này máy được đưa về layout Q.6 (hourly, cùng phút 0) thì gộp thành
+`0 0-17 * * *` là **không đổi gì cả** — đó là Case A trong runbook.
+
+**"Gen" và "dịch" KHÔNG phải 2 task riêng.** Mỗi fire đọc trạng thái (queue.csv
+status với batch, số dòng `insight_translations` với insight) rồi tự route sang
+stage kế tiếp — EN gen, JA translate, hay KO translate + publish. Tách theo đồng
+hồ sẽ làm pipeline nghẽn (task "dịch" fire khi chưa có gì để dịch, task "gen"
+fire khi queue đã dồn ở stage dịch). Vì vậy 2 task = 2 **pipeline** (report /
+insight), không phải 2 **loại việc**.
+
+**Runbook thực thi**: `skills/kira-research-report/prompts/routines_consolidate.md`
+— tự chứa, chạy trên máy Windows đang giữ scheduled tasks (session Claude Code
+trên web/mobile KHÔNG làm được: task nằm ở `C:\Users\<user>\.claude\scheduled-tasks\`,
+ngoài repo). Tạo 2 task mới → Run now verify → mới xoá 22 task cũ.
+
+**Pipeline từng DỪNG 8 ngày (07-21 → 07-29), đã chạy lại**: commit `batch:` cuối
+cùng là 2026-07-21 trong khi queue còn hàng. Nguyên nhân: routine bị Paused +
+máy tắt. Đã bỏ pause trước khi gom (Step 0). Queue lúc gom: **59 pending** ·
+1 `en_in_progress` · 16 `error` · 106 `done`.
+
+Bài học: gom một cỗ máy đang tắt thì sau đó không phân biệt được throughput tụt
+là do gom hay do vốn đã tắt — luôn chạy Step 0 trước.
+
+**Rủi ro đã biết, cần đo sau 48h**: 18 task riêng thì 2 fire chồng nhau là 2 job
+độc lập; gom về 1 task, nếu scheduler skip fire khi lần chạy trước còn sống thì
+throughput tụt (fire batch chạy 30–90 phút, cron hàng giờ). Đo bằng số commit
+`batch:` mỗi ngày trước/sau. Nếu giảm >30% → cron `0,30 0-17 * * *`, không được
+nữa thì tách batch làm 2 task lệch pha (tổng 3, vẫn gọn hơn 22).
+
+## Previous schedule (Phase Q.6 — 2026-05-31, SUPERSEDED by Q.7)
+
+**18 active tasks**, hourly on-the-hour from 00:00–17:00 UTC = **07:00–00:00 ICT**. Gap: 00:00–07:00 ICT (7h overnight).
+
+| Task ID | Cron (UTC) | Vietnam time (ICT) |
+|---|---|---|
+| `kira-batch-0000` | `0 0 * * *` | 07:00 |
+| `kira-batch-0100` | `0 1 * * *` | 08:00 |
+| `kira-batch-0200` | `0 2 * * *` | 09:00 |
+| `kira-batch-0300` | `0 3 * * *` | 10:00 |
+| `kira-batch-0400` | `0 4 * * *` | 11:00 |
+| `kira-batch-0500` | `0 5 * * *` | 12:00 |
+| `kira-batch-0600` | `0 6 * * *` | 13:00 |
+| `kira-batch-0700` | `0 7 * * *` | 14:00 |
+| `kira-batch-0800` | `0 8 * * *` | 15:00 |
+| `kira-batch-0900` | `0 9 * * *` | 16:00 |
+| `kira-batch-1000` | `0 10 * * *` | 17:00 |
+| `kira-batch-1100` | `0 11 * * *` | 18:00 |
+| `kira-batch-1200` | `0 12 * * *` | 19:00 |
+| `kira-batch-1300` | `0 13 * * *` | 20:00 |
+| `kira-batch-1400` | `0 14 * * *` | 21:00 |
+| `kira-batch-1500` | `0 15 * * *` | 22:00 |
+| `kira-batch-1600` | `0 16 * * *` | 23:00 |
+| `kira-batch-1700` | `0 17 * * *` | 00:00 (next day) |
+
+**Daytime gap: 00:00–07:00 ICT** (17:00–24:00 UTC) — 7h overnight. Acceptable since machine typically off after midnight.
+
+## Setup on machine (recreate tasks) — Q.7
+
+Chỉ còn **1 task**. Trong Claude Code trên máy đó:
+> "Đọc `skills/kira-research-report/prompts/routines_consolidate.md` trong repo kira-research rồi làm theo."
+
+Runbook lo hết: kiểm kê task đang có → chọn 4 giờ fire trong cửa sổ máy bật →
+tạo `kira` → Run now verify → xoá task cũ.
+
+Bắt buộc trong SKILL.md: hardcode đường dẫn repo + câu "BỎ QUA bước
+`git rev-parse --show-toplevel`". Thiếu là mọi fire chết ở dòng đầu playbook
+với `not in git, no-op` — xem [[feedback_scheduled_task_cwd_parent]].
+
+Đường dẫn trên DELL: `C:\Users\DELL\Kira Research\kira-research`
+(bash `/c/Users/DELL/Kira Research/kira-research`).
+
+## Baseline throughput đo lúc gom (2026-07-29) — QUAN TRỌNG khi đọc Step 6
+
+Số report `done` mỗi tuần (`git log --format='%ad %s' --date=format:'%Y-W%V' | grep 'batch: complete'`):
+
+| Tuần | done | /ngày |
+|---|---|---|
+| W21 | 1 | 0.1 |
+| W22 | 31 | **4.4** |
+| W23 | 36 | **5.1** |
+| W24 | 21 | 3.0 |
+| W25 | 4 | 0.6 |
+| W26 | 2 | 0.3 |
+| W27 | 2 | 0.3 |
+| W28 | 4 | 0.6 |
+| W29 | 2 | 0.3 |
+
+**Hệ 22 routine chỉ chạy đúng thiết kế trong 3 tuần W22–W24.** Từ giữa tháng 6
+(W25) trở đi throughput tụt về ~0.3–0.6/ngày và ở đó suốt 6 tuần: 22 fire/ngày ×
+42 ngày ≈ 900 fire mà chỉ ra ~14 report.
+
+→ **Mục tiêu 1 report/ngày của Q.7 là tăng ~2 lần so với thực tế 6 tuần trước khi
+gom, không phải giảm 6 lần.** Câu "throughput giảm còn ~1/ngày" trong runbook so
+với con số *thiết kế* (~6/ngày) chứ không phải con số *thực*. Đừng đọc Step 6 như
+một phép so với 6/ngày.
+
+Nguyên nhân nghi nhất cho cú tụt W25: **máy tắt / Claude Code không mở** phần lớn
+thời gian (routine `Local` chỉ chạy khi máy thức + online) — bằng chứng: `lastRunAt`
+của hàng loạt task cũ đứng ở 2026-07-21, và pipeline dừng hẳn 8 ngày 07-21 → 07-29.
+Cộng thêm 16 hàng `error` tích lại từ các đợt second-strike 06-11/06-12/06-18.
+Chưa xác minh dứt điểm.
+
+## Step 6 — theo dõi (mở, bắt đầu 2026-07-29)
+
+### Kết quả Step 6 (đo 2026-08-06, task `kira-q7-measure`)
+
+**Đo cửa sổ 7 ngày (`--since="7 days ago"` tại thời điểm đo = 2026-07-30 → 2026-08-06):**
+
+- **1 report `done`** — `batch: complete 2027-sg-digital-assets (EN+JA+KO, published)` lúc 08-03 08:30.
+- **Chỉ 6 commit `batch:`** trong cả tuần (kỳ vọng ~21 = 3 fire/ngày × 7) —
+  đạt **~29%** kỳ vọng.
+- **Chỉ 3/7 ngày có bất kỳ fire nào nổ**: 07-30, 08-03, 08-04. **4 ngày còn lại
+  (07-31, 08-01, 08-02, 08-05) hoàn toàn không có commit** — không phải 1 fire lỗi,
+  mà là **không fire nào nổ cả** trong cả 4 khung giờ (18/21/0/3) suốt 4 ngày liền.
+- Queue: `pending` 59→58, `error` 16→16 (**không đổi**), `done` 106→107,
+  1 hàng `ja_done` (2026-sg-private-equity, JA xong 08-04, chờ fire KO translate + publish).
+- `audit-queue.mjs`: `recovered=0` — không có hàng `*_in_progress` kẹt.
+- Routine `kira`: vẫn `enabled: true`, cron `0 18,21,0,3 * * *` nguyên vẹn,
+  `lastRunAt` trong vòng 24h (máy đang bật tại thời điểm đo).
+
+**Kết luận — nguyên nhân đúng thứ tự chẩn đoán của Step 6**: **máy tắt/Claude
+Code không mở** là nguyên nhân chính, KHÔNG phải nghẽn pipeline. Bằng chứng:
+(a) error count đứng yên tuyệt đối 16→16 — không có lỗi mới phát sinh; (b) khi
+fire có nổ, pipeline chạy trót lọt không kẹt (audit=0, không có strike);
+(c) bằng chứng trực tiếp nhất — 4/7 ngày có 0 commit ở CẢ 4 khung giờ, không
+phải rải rác 1-2 fire lẻ tẻ mà là cả ngày im lặng. Đây là hoa văn "máy tắt cả
+ngày", không phải "permission prompt chặn 1 fire" (permission prompt chặn thì
+vẫn còn 1 session mở ra và log lại có prompt, không phải 0 commit tuyệt đối).
+
+**Không đọc con số 1/7 report này như thất bại của việc gom.** So với baseline
+thực tế 6 tuần trước khi gom (0.3–0.6/ngày ≈ 2–4 report/7 ngày), tuần này còn
+thấp hơn cả baseline — nhưng khớp với cùng nguyên nhân gốc (máy tắt), không phải
+do kiến trúc 1-routine tệ hơn 22-routine. Bằng chứng: khi 6 commit thực sự nổ,
+zero lỗi zero kẹt — cơ chế chạy đúng như thiết kế mỗi khi máy có bật.
+
+**Đề xuất duy nhất cho Henry**: đừng thêm giờ cron (sẽ không giúp nếu máy vẫn
+tắt); thay vào đó cần máy bật ổn định trong ít nhất 1 trong 4 khung giờ
+18h/21h/0h/3h mỗi ngày. Nếu Henry có 1 khung giờ chắc chắn máy đang mở (vd đang
+làm việc buổi tối), dồn ưu tiên vào khung đó.
+
+---
+
+**Đã tự động hoá**: task một lần `kira-q7-measure` nổ **2026-08-05 19:30 ICT**,
+tự đo + báo cáo + commit kết quả vào note này rồi tự tắt. Không cần Henry nhắc.
+
+Kỳ vọng: **1 commit `batch: complete <id> (EN+JA+KO, published)` mỗi ngày**.
+Chuỗi grep này đã xác minh là đúng (khớp `batch_runner.md:430`, xuất hiện 102 lần
+trong history) — đừng đổi.
+
+**Chỉ số phân biệt nguyên nhân**: đếm số commit `^batch:` trong 7 ngày (kỳ vọng
+~21 = 3 fire/ngày × 7). Ít fire nổ → máy tắt hoặc permission prompt, KHÔNG phải
+lỗi của việc gom. Đủ fire nổ mà ít report done → nghẽn trong pipeline.
+
+Đo sau 7 ngày (≈ 2026-08-05):
+
+```bash
+git log --since="7 days ago" --format='%s' | grep -c 'batch: complete'
+```
+
+~7 là đúng. Thấp hơn nhiều → kiểm theo thứ tự: máy có bật lúc 18/21/00/03 không →
+có hàng `*_in_progress` kẹt không → fire có bị permission prompt chặn không.
+Muốn nhanh hơn: thêm giờ vào cron (vd `0 18,20,22,0,2,4 * * *` = 6 fire = 2
+report/ngày), vẫn 1 routine, sửa đúng 1 dòng.
+
+## Current schedule (Phase Q.3 — 2026-05-25, SUPERSEDED)
+
+Old schedule had crons mislabeled as ICT but actually UTC, causing 10 fires to cluster at 07:00–13:45 ICT and 8 fires at 00:00–06:30 ICT (wasted when machine off). Replaced by Q.6.
 | `kira-batch-1745` | `45 17 * * *` | 05:45 PM | Evening |
 | `kira-batch-1830` | `30 18 * * *` | 06:30 PM | Evening |
 | `kira-batch-1930` | `30 19 * * *` | 07:30 PM | **Bridge (NEW Q.3)** |
@@ -121,9 +367,12 @@ If queue is empty when a fire triggers → fire exits cleanly with "No pending w
 
 ## Files NOT committed (live in user's Claude Code config)
 
-13 task directories: `C:\Users\vnc-f4\.claude\scheduled-tasks\kira-batch-{0000,0045,0130,0215,0300,0345,0430,0515,0600,0645,1700,1745,1830}\SKILL.md`
+Post-Q.7: **1 task directory** — `C:\Users\<user>\.claude\scheduled-tasks\kira\SKILL.md`.
+(Pre-Q.7 là 22: `kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4. 22 thư mục cũ vẫn
+còn trên đĩa DELL sau khi delete — tool không xoá file, chỉ gỡ khỏi scheduler.)
 
-→ **If Henry switches machines, scheduled tasks won't follow.** They need to be recreated on the new machine. To recreate: call `mcp__scheduled-tasks__create_scheduled_task` 13 times with the cron expressions above. The prompt body is identical for all 13 — just delegate to `batch_runner.md` in repo.
+→ **If Henry switches machines, scheduled tasks won't follow.** Recreate on the new machine
+by running `prompts/routines_consolidate.md` — **1** `create_scheduled_task` call thay vì 22.
 
 ## Per-machine env vars
 
@@ -229,5 +478,59 @@ Cost: ~4 × 150K tokens/day = 600K/day Insight (~10% of batch quota).
 **Implication for throughput**: a fire that would previously have wasted hours on a stuck slug now self-heals on the next fire. Theoretical worst case before Q.4 = stuck row consumed slot indefinitely; after Q.4 = stuck row consumed 1 wasted fire (the one that died) + auto-recover commit on the next, then retries on the fire after that. Net loss = ~1 fire (~45 min) instead of unbounded.
 
 Commit: `012bb31`.
+
+## Phase Q.7 changelog (2026-07-29) — 22 scheduled task gom về 1
+
+**Chốt cuối: 1 routine `kira`, 4 fire/ngày, ~1 report/ngày. Đã thực thi xong.**
+Mục dưới đây là bản nháp giữa chừng (gom về 2, giữ nguyên số fire) — giữ lại để
+thấy đường đi của quyết định, KHÔNG phải trạng thái hiện tại.
+
+### Bản nháp giữa chừng (gom về 2 — superseded trong cùng ngày)
+
+**Lý do**: Henry mở panel Routines/Scheduled thấy 22 dòng `kira-batch-*` +
+`kira-insight-*`, mỗi dòng prompt body giống hệt nhau, chỉ khác giờ. Không đọc
+được, không sửa được hàng loạt, và mỗi lần đổi playbook path phải sửa 22 file
+SKILL.md tay.
+
+**Cái gì đổi**: chỉ là *biểu thức cron* — 18 dòng `0 H * * *` (H = 0..17) gộp
+thành `0 0-17 * * *`; 4 dòng insight gộp thành `0 7,11,15,21 * * *`. Số fire, giờ
+fire, prompt, playbook, throughput đều giữ nguyên. Không đụng gì trong repo pipeline.
+
+**Cái gì KHÔNG đổi được**: không tách được thành task "gen" và task "dịch" như
+mental model ban đầu — stage routing phụ thuộc trạng thái queue, không phụ thuộc
+đồng hồ. Tách theo giờ sẽ làm 1 trong 2 task fire rỗng còn task kia dồn việc.
+2 task hiện tại chia theo **pipeline** (report / insight), mỗi cái đã tự làm cả
+gen lẫn dịch.
+
+**Runbook**: `skills/kira-research-report/prompts/routines_consolidate.md`.
+Phải chạy từ Claude Code trên máy Windows giữ scheduled tasks — session trên
+web/mobile không truy cập được `C:\Users\<user>\.claude\scheduled-tasks\`.
+
+**Chưa đo**: throughput sau khi gom (Step 6 của runbook). Nếu scheduler skip fire
+khi lần chạy trước của cùng task còn sống thì phải bù bằng cron dày hơn.
+
+**Đính chính 2026-07-29 (sau khi thấy ảnh panel Routines)**: bản Q.7 đầu tiên giả
+định máy đang chạy layout Q.6 (hourly, cùng phút 0) nên kết luận "gom = không đổi
+gì". Sai — máy chạy layout Q.3 nhịp 45 phút, phút lệch nhau, **không gộp nguyên
+trạng được**. Runbook đã bổ sung Case A (cùng phút → gộp không đổi) / Case B
+(lệch phút → buộc regularize, phải báo số fire trước/sau và hỏi Henry). Bài học:
+memory note ghi "current schedule" không phải bằng chứng — panel Routines mới là.
+
+### Gotcha phát hiện lúc thực thi (2026-07-29)
+
+- **Tool approval lưu theo từng routine, không theo máy.** Routine mới tạo bắt
+  đầu với 0 approval — đó là lý do Step 4 "Run now" bắt buộc, không bỏ qua được.
+  (Ở đây `kira` chạy trót lọt vì allowlist user-level `~/.claude/settings.json`
+  đã phủ Bash/Read/git — xem [[feedback_scheduled_task_cwd_parent]].)
+- **Bật lại routine sau khi Paused → scheduler chạy bù dồn dập.** 22 routine nổ
+  liên tiếp cách nhau ~2 phút, nhiều fire chồng nhau trong cùng working tree.
+  Cơ chế detect-concurrent-fire (xem [[feedback_batch_fire_shared_workdir_overlap]])
+  gánh được phần batch, nhưng **insight thì không có claim** — 2 fire insight cùng
+  chạy có thể sinh dư insight, phải dọn về đúng 3
+  (xem [[feedback_insight_fires_no_claim_race]]). Gom về 1 routine giãn 3 tiếng
+  xoá hẳn lớp rủi ro này.
+- **`delete_scheduled_task` là thao tác an toàn**: chỉ gỡ khỏi scheduler + archive
+  run session cũ. SKILL.md ở lại trên đĩa, session đang chạy dở vẫn chạy tới xong
+  và vẫn commit bình thường.
 
 See also: [[project_tool_gen_report]] · [[reference_kira_research]] · [[feedback_sparticuz_chromium_vercel]] · [[project_o_studio_credits]] · [[project_q_insight_runner]]

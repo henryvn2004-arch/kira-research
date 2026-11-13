@@ -179,7 +179,7 @@ Never name aggregator firms (Mordor / Frost / Euromonitor) in source lines.
 
 ## 8. Length discipline
 
-`schemas/page_schemas.json` defines hard char caps per slot. Treat them as **walls**, not guidelines.
+`schemas/page_schemas.json` defines char caps per slot. They are **physical fit** limits for the 1280×720 page, not content budgets: when the insight does not fit, split it across two pages (exhibit layer, `prompts/storytelling.md` §6) rather than cutting substance. There is no cap on the number of pages; cut only pages that carry no new data-backed claim.
 
 - Always count chars BEFORE finalizing
 - If a paragraph is 8% over cap, trim — don't ship

@@ -14,21 +14,22 @@
 //
 //   page-count defaults to 5.
 import fs from 'node:fs';
+import { inlineAssets } from './lib/inline-assets.mjs';
 
 const [, , localPath, reportId, locale, pageCountArg] = process.argv;
 if (!localPath || !reportId || !locale) {
-  console.error('usage: upload-html.mjs <html-local-path> <report-id> <locale-en|ja|ko> [page-count]');
+  console.error('usage: upload-html.mjs <html-local-path> <report-id> <locale-en|ja|ko|zh> [page-count]');
   process.exit(2);
 }
 const pageCount = Number(pageCountArg) || 5;
-const url = process.env.SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_KEY;
+const url = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const key = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!url || !key) {
   console.error('SUPABASE_URL + SUPABASE_SERVICE_KEY env vars required');
   process.exit(2);
 }
 
-const fullHtml = fs.readFileSync(localPath, 'utf8');
+const fullHtml = inlineAssets(fs.readFileSync(localPath, 'utf8'), localPath);
 const preview  = slicePreview(fullHtml, pageCount);
 if (!preview) {
   console.error(`could not extract ${pageCount} pages from ${localPath}`);
@@ -61,9 +62,11 @@ console.log(`✓ uploaded → public URL: ${url}/storage/v1/object/public/${buck
 // ── HTML slicing ─────────────────────────────────────────────
 // Extract <head>...</head> verbatim (preserves all CSS + font links the
 // PDF master template injects). Then walk through <body> finding top-level
-// <div class="page ..."> blocks. Track <div> depth so nested divs inside
-// each page don't fool the matcher. Return reassembled HTML with the
-// first N pages.
+// page container blocks. Supports both:
+//   <div class="page ...">...</div>   (older template)
+//   <section class="page ...">...</section>  (newer template)
+// Track element depth so nested tags inside each page don't fool the matcher.
+// Return reassembled HTML with the first N pages.
 function slicePreview(html, count) {
   const headMatch = html.match(/<head[\s\S]*?<\/head>/i);
   const head = headMatch ? headMatch[0] : '<head></head>';
@@ -73,15 +76,21 @@ function slicePreview(html, count) {
   const body = bodyMatch[1];
 
   const pages = [];
-  const pageOpenRe = /<div\s+class="page[^"]*"[^>]*>/g;
+
+  // Detect which tag is used for page containers
+  const usesSection = /<section\s+class="page[^"]*"/.test(body);
+  const tag = usesSection ? 'section' : 'div';
+  const pageOpenRe = new RegExp(`<${tag}\\s+class="page[^"]*"[^>]*>`, 'g');
+  const openReStr  = `<${tag}\\b`;
+  const closeReStr = `<\\/${tag}>`;
   let m;
 
   while ((m = pageOpenRe.exec(body)) !== null && pages.length < count) {
     const startIdx   = m.index;
     let depth        = 1;
     let pos          = m.index + m[0].length;
-    const openRe     = /<div\b/g;
-    const closeRe    = /<\/div>/g;
+    const openRe     = new RegExp(openReStr, 'g');
+    const closeRe    = new RegExp(closeReStr, 'g');
     while (depth > 0 && pos < body.length) {
       openRe.lastIndex  = pos;
       closeRe.lastIndex = pos;
@@ -90,10 +99,10 @@ function slicePreview(html, count) {
       if (!close) break;
       if (open && open.index < close.index) {
         depth++;
-        pos = open.index + 4;
+        pos = open.index + tag.length + 1;
       } else {
         depth--;
-        pos = close.index + 6;
+        pos = close.index + tag.length + 3;
       }
     }
     pages.push(body.slice(startIdx, pos));
