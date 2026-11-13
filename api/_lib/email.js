@@ -440,6 +440,39 @@ export async function sendChainPublishedEmail({ to, title, url }) {
   return resendSend({ to, subject, html, text });
 }
 
+// ── "Pipeline went silent" alert to the admins (api/cron-pipeline-watch.js) ──
+// idle = [{ label, last_at (ISO or null), hours, limit }]
+export async function sendPipelineWatchAlert({ idle }) {
+  if (ADMIN_EMAILS.length === 0) {
+    console.warn('[email] ADMIN_EMAILS empty — skipping pipeline watch alert');
+    return false;
+  }
+  if (!idle || !idle.length) return false;
+  const lines = idle.map(i => `- ${i.label}: last activity ${i.last_at ? i.last_at.replace('T', ' ').slice(0, 16) + ' UTC' : 'never'}` +
+    (i.hours == null ? '' : ` (${i.hours} hours ago; alert after ${i.limit})`));
+  const subject = `KIRA pipeline silent: ${idle.map(i => i.label).join(', ')}`;
+  const causes = [
+    'The Routine is paused or the claude.ai usage limit was reached.',
+    'An environment variable on the Routine was renamed or is missing (the Routine then exits quietly before it touches the database).',
+    'The Routine ran but every item failed (look for errors on the Pipeline page).'
+  ];
+  const where = [
+    'claude.ai Routines page (is the Routine enabled, did its last fire run?)',
+    `${APP_URL}/en/admin/pipeline`,
+    `${APP_URL}/en/admin/health`
+  ];
+  const text = `Nothing new has been produced by:\n\n${lines.join('\n')}\n\nLikely causes:\n${causes.map(c => '- ' + c).join('\n')}\n\nWhere to look:\n${where.map(c => '- ' + c).join('\n')}\n\nYou get this at most once a day per stream. Thresholds: ${APP_URL}/en/admin/config`;
+  const li = a => a.map(x => `<li>${esc(x)}</li>`).join('');
+  const html = `
+<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:24px;">
+  <p>Nothing new has been produced by:</p><ul>${li(lines.map(l => l.replace(/^- /, '')))}</ul>
+  <p><strong>Likely causes</strong></p><ul>${li(causes)}</ul>
+  <p><strong>Where to look</strong></p><ul>${li(where)}</ul>
+  <p style="font-size:12px;color:#777;">You get this at most once a day per stream. Thresholds are in /en/admin/config.</p>
+</body></html>`.trim();
+  return resendSend({ to: ADMIN_EMAILS, subject, html, text });
+}
+
 // ── One-to-one email the owner writes in /en/admin/crm ────
 // Sent from the KIRA address with Reply-To = the admin who wrote it, so the answer goes straight to them.
 export async function sendCrmMessage({ to, subject, text, replyTo }) {
