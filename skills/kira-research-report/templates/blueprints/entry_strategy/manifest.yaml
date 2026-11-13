@@ -1,0 +1,179 @@
+# ============================================================
+# KIRA Research — Blueprint: entry_strategy
+#
+# Company-perspective market entry brief for a multinational
+# weighing a country x industry play in SEA. Diverges from
+# market_analysis (which is sizing-and-forecast-led) by
+# compressing the macro/sizing front-half to a single page and
+# spending the back-half on qualitative entry mechanics: target
+# segment, competitive read, regulatory path, channel/partner
+# options, operating-environment read, qualitative risk matrix,
+# phased rollout milestones.
+#
+# QUALITATIVE-ONLY VARIANT (v2): no P&L modeling, no capex
+# stacks, no opex/staffing ramp curves, no numeric risk scoring.
+# The blueprint reads as a market-overview-level decision brief
+# anchored in directional language ("material", "modest",
+# "contested") rather than precise forecast economics. For
+# topics where the buyer wants P&L scenarios + capex stacks,
+# escalate to a custom engagement, not this blueprint.
+#
+# Reader: strategy lead, corp-dev VP, or country-launch GM at
+# a Japanese MNC / Korean conglomerate / Singapore HQ. Buyer
+# wants a decision document framed qualitatively, not a
+# fully-modeled investment case.
+# ============================================================
+
+blueprint_id: entry_strategy
+version: 2
+origin: "Phase H1 — decision-document companion to market_analysis. v2 strips quantitative P&L + capex + opex modeling and replaces with qualitative market / competitive / operating-environment reads. Reuses market_data_chart + competitive_structure + forecast_outlook page schemas; introduces risk_matrix page type as a qualitative 5x5 heatmap (slot spec documented below)."
+
+# Report shape
+shape:
+  total_sections: 14
+  estimated_pages: 13-15
+  estimated_render_time_min: 30-40
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from.
+# All defined in schemas/page_schemas.json EXCEPT risk_matrix,
+# which is new for this blueprint — slot spec below.
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - divider
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - market_data_chart
+  - competitive_structure
+  - forecast_outlook        # reused for the phasing/milestones timeline page
+  - risk_matrix             # NEW — see slot spec below (qualitative variant)
+  - methodology_endnote
+
+# --- risk_matrix page type — slot spec (QUALITATIVE) ---
+# 5x5 heatmap: likelihood (X-axis, 5 bands) x impact (Y-axis, 5 bands).
+# Each populated cell carries a short risk label and a cell color from
+# a 3-tone palette (green LOW / amber MED / red HIGH). 8-12 named
+# risks placed; remaining cells stay empty. Sidebar lists the 3 highest-
+# severity risks in expanded form with mitigation framing.
+#
+# QUALITATIVE-ONLY: cells carry LOW / MED / HIGH severity labels via
+# color and a sidebar tag. NO numerical scores (no 1-5 likelihood, no
+# 1-5 impact, no composite risk score). The 5x5 grid is a visual
+# clustering device, not a math output.
+#
+# Slots (caps in chars, all sentence-case copy unless noted):
+#   h1                : sentence-case page headline                 cap 80
+#   subhead           : 1-3 line risk-framing thesis                cap 220
+#   matrix_grid       : 5x5 SVG heatmap
+#                        - row_height_px 360
+#                        - axis_labels {
+#                            x_axis "Likelihood" — bands ["Rare","Unlikely","Possible","Likely","Almost certain"]
+#                            y_axis "Impact"     — bands ["Marginal","Minor","Moderate","Major","Severe"]
+#                          }
+#                        - risk_cell_count_min 8
+#                        - risk_cell_count_max 12
+#                        - cell_label_max_chars 22 (e.g. "FX devaluation IDR")
+#                        - color_palette {
+#                            low    "#15803D"  # green
+#                            medium "#D97706"  # amber
+#                            high   "#B91C1C"  # red
+#                          }
+#                        - severity_labels {
+#                            low    "LOW"
+#                            medium "MED"
+#                            high   "HIGH"
+#                          }
+#                        - no_numeric_scores: true
+#   key_risks_sidebar : 3-card vertical stack on right rail, one per
+#                        highest-severity risk
+#                        each card = {
+#                          risk_name cap 30 (mono UC),
+#                          severity_tag cap 14 (e.g. "HIGH - LIKELY"),
+#                          body cap 180 chars (qualitative framing + mitigation),
+#                          source_tag
+#                        }
+#   legend_strip      : 1-line legend below matrix
+#                        cap 90 chars (e.g. "Green: monitor - Amber: mitigate - Red: gate the launch")
+#   source_strip      : compressed citation footer cap 110 chars mono UC
+#
+# Char-budget envelope per page (risk_matrix): ~1400 body chars total.
+# Risk placements must reflect the report's qualitative findings from the
+# market / competitive / regulatory / channel / partner / operating-
+# environment sections — not generic SEA-entry boilerplate.
+
+# Research budget
+research:
+  query_count_target: 25
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 20       # KIRA synthesis — partner shortlists, qualitative risk read, competitive interpretation
+    secondary_pct: 60     # cited external — regulator filings, listed-company disclosures, trade press, business-group league tables
+    estimate_pct: 20      # KIRA estimate with anchor — segment sizing, channel-mix read, qualitative severity calls
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 16000-20000
+  callouts_target: 10-14
+  charts_target: 5-7            # market sizing + competitive structure + channel 2x2 + risk matrix + phasing timeline
+  competitor_profiles_target: 0 # top-5 land in a single compressed structure page, no deep profiles
+  partner_candidates_target: 6-9 # JV/distributor/agent shortlist on the partner page
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages <= 720px rendered height"
+  - source_coverage: "Every quantitative claim has [primary|secondary|estimate|user-input] tag"
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines"
+  - char_budgets: "All slot char counts <= schema cap (callout label <= 30, change-line <= 38)"
+  - decision_orientation: "Exec summary recommends ONE entry mode (Build / Partner / Acquire / License / Stay out) framed qualitatively (no year-3 numeric ambition required; directional language suffices)"
+  - qualitative_register: "Market opportunity, competitive intensity, and operating environment pages read as directional reads (material / modest / contested / consolidating) anchored to at most 1-2 anchor numbers per page. No P&L, no capex stacks, no opex ramp curves anywhere in the report."
+  - risk_qualitative_anchor: "Every populated risk-matrix cell references a qualitative finding from the market / competitive / regulatory / channel / partner / operating-environment sections (sections 06-11). Generic SEA-entry boilerplate risks rejected. NO numeric severity scores — LOW/MED/HIGH labels only."
+  - partner_namedness: "Partnership page lists >= 5 named candidate organisations (JV / distributor / agent) with country footprint and segment focus"
+
+# Output mode
+output:
+  default_mode: publish              # auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # qualitative-only — no capex/P&L commitments require user review
+
+# Orchestrator match threshold
+orchestrator:
+  match_threshold: 0.7
+  trigger_intent_hints:
+    - "market entry"
+    - "entry strategy"
+    - "go to market"
+    - "GTM"
+    - "launch plan"
+    - "country launch"
+    - "should we enter"
+    - "enter Vietnam"
+    - "enter Indonesia"
+    - "enter the Philippines"
+    - "expansion into"
+    - "build vs buy vs partner"
+    - "joint venture"
+    - "JV partner"
+    - "distributor selection"
+    - "phased rollout"
+  trigger_industry_hints:
+    - "any country x industry where the topic phrasing centers on a company decision, not market sizing"
+  best_fit_signals:
+    - "Topic phrasing names a company point-of-view: 'entering', 'launching', 'expanding into', 'build vs buy'"
+    - "Country scope is single (not regional/APAC); industry is single"
+    - "Buyer is a strategy / corp-dev / country-GM, not a sizing-only buyer"
+    - "Topic carries implicit decision question (enter? how? when? with whom?)"
+    - "Reader expects a recommended entry mode plus qualitative phasing on page 1; if buyer needs fully-modeled P&L / capex, escalate out of this blueprint"

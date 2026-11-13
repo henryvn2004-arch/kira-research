@@ -1,0 +1,271 @@
+// Shared UI strings for the library + insights pages (list and detail), in the
+// four site locales. Page text that ships in the HTML is translated in place;
+// this file covers what the page scripts render. window.kiraR.t('key').
+(function () {
+  const parts = location.pathname.split('/').filter(Boolean);
+  const locale = ['en', 'ja', 'ko', 'zh'].includes(parts[0]) ? parts[0] : 'en';
+
+  const S = {
+    en: {
+      all: 'All', clearAll: 'Clear all', refineBy: 'Refine by', filters: 'Filters', sort: 'Sort',
+      sortLatest: 'Latest', sortOldest: 'Oldest', apply: 'Apply',
+      analysis: 'Analysis', type: 'Report type', market: 'Market', sector: 'Sector', year: 'Year',
+      searchSectors: 'Search sectors…', searchMarkets: 'Search markets…',
+      showMore: 'Show more', showLess: 'Show less', coming: 'coming',
+      status: 'Status', statusPub: 'Published', statusSoon: 'Coming soon', soonTag: 'Coming soon', getNotified: 'Get notified', plannedTag: 'Contents planned',
+      showResults: n => 'Show ' + n + (n === 1 ? ' result' : ' results'),
+      reports: n => n + (n === 1 ? ' report' : ' reports'),
+      page: (p, n) => 'Page ' + p + ' of ' + n,
+      loading: 'Loading…', loadError: 'Could not load the library. Please retry.',
+      noneTitle: 'No reports found', noneBody: 'No report matches these filters yet. Try removing a filter or another search term.',
+      clearFilters: 'Clear all filters', browseAll: 'Browse all reports',
+      viewReport: 'View report', newTag: 'New', prev: 'Previous', next: 'Next',
+      D: 'Deep report', S: 'Snapshot',
+      // report detail
+      library: 'Library', inThisReport: 'In this report', published: 'Published', pages: 'Pages', format: 'Format',
+      sections: 'Sections', updated: 'Last updated', analyst: 'Analyst', ourTeam: 'Our research team',
+      tabOverview: 'Overview', tabFindings: 'Key data', tabPreview: 'Preview', tabContents: 'Contents', tabRelated: 'Related',
+      execSummary: 'Executive summary', freeToRead: 'Free to read',
+      freeNote: 'The overview, selected data tables, the table of contents and the glossary are open to all readers.',
+      previewTitle: 'Preview the report', freePages: n => 'Pages 1–' + n + ' free to read', pageOf: (p, n) => 'Page ' + p + ' of ' + n, lockedPage: 'The rest of this report is part of the full version, available with the subscription.', previewPages: n => 'Pages 1–' + n,
+      contents: n => 'Table of contents · ' + n + ' sections', glossary: 'Glossary',
+      accessTitle: 'Access the full report', accessBody: 'The full report is part of the KIRA Research subscription. Subscriptions open soon.',
+      requestAccess: 'Request early access', nothingCharged: 'Nothing is charged now.',
+      incl1: 'Full online reading', incl2: 'PDF downloads (monthly allowance)', incl3: 'All charts and data tables', incl4: 'Updates when reports are refreshed',
+      seePlans: 'See plans', reportDetails: 'Report details', reportCode: 'Report code', language: 'Language',
+      relatedSectors: 'Sector', relatedMarkets: 'Market', share: 'Share', copyLink: 'Copy link', copied: 'Copied', citeThis: 'Cite this report', copyCitation: 'Copy citation',
+      continueReading: 'Continue reading', fieldNotes: 'Field notes on this market', relatedReports: 'Related reports',
+      lockedTitle: 'Part of the full report', lockedBody: 'This section is in the full report, available with the subscription. The executive summary on this page is free to read.',
+      notFound: 'Report not found', notFoundBody: 'This report is not in the library yet.', backLibrary: 'Back to the library',
+      fallback: 'This report is not yet published in your language. Showing the English version.',
+      source: 'Source', notAvailable: 'Not yet available in this language', owned: 'You own this report', downloadPdf: 'Download PDF',
+      pdfPending: 'The PDF is being prepared. Your online access is active now.', close: 'Close',
+      subManage: 'Manage subscription', subOwned: 'Included in your subscription', subPdfUsed: '{used} of {limit} PDF downloads used this billing period',
+      subPdfLimit: 'You have used all {limit} PDF downloads for this billing period. Reading online and the transcripts stay unlimited.',
+      subPdfErr: 'Could not prepare the PDF. Please try again.',
+      exhibitsTitle: 'Exhibit data', exhibitsExcel: 'Download Excel', exhibitsPpt: 'Download PowerPoint',
+      exhibitsNote: 'The numbers behind the {n} exhibits in this report. Charts open as editable PowerPoint charts. Text is in English.', exhibitsErr: 'Could not prepare the file. Please try again.',
+      planCta: 'Subscribe — ${price}/month', planBody: 'Every report in full online, every transcript, and {limit} PDF downloads a month. Cancel any time.',
+      // insights
+      insights: 'Insights', readArticle: 'Read article', minRead: 'min read', featured: 'Featured', latest: 'Latest insights',
+      byTeam: 'By our research team', noInsights: 'No articles match this search yet.',
+      subscribeTitle: 'New research in your inbox', subscribeBody: 'We email you when new reports and field notes are published.',
+      emailPh: 'Your work email', subscribe: 'Subscribe', subscribed: 'Thank you. We will be in touch.', subscribeErr: 'Please enter a valid email.',
+      exploreLib: 'Explore the research library', exploreLibBody: 'Every market we cover, with free executive summaries.', browseLib: 'Browse the library',
+      getFull: 'From the report', getFullBody: 'This field note draws on a published report. The report adds the full data, segment views and our analysis.',
+      openReport: 'Open the report', relatedInsights: 'Related insights', latestReports: 'Latest reports', moreSectors: 'All sectors', sectorsCount: n => n + ' sectors', regionAsean: 'Southeast Asia', regionApac: 'Wider Asia-Pacific', featuredReport: 'Featured report', more: 'More', viewAll: 'View all insights',
+      onThisPage: 'On this page',
+      nPages: n => n + ' pages', sector_food: 'Food & agriculture', sector_consumer: 'Consumer & retail', sector_finance: 'Financial services', sector_tech: 'Technology & media', sector_health: 'Healthcare', sector_property: 'Real estate & construction', sector_auto: 'Automotive & mobility', sector_logistics: 'Transport & logistics', sector_energy: 'Energy & resources', sector_industrial: 'Industrials', sector_travel: 'Tourism & hospitality', sector_services: 'Education & services'
+    },
+    ja: {
+      all: 'すべて', clearAll: 'すべて解除', refineBy: '絞り込み', filters: '絞り込み', sort: '並び替え',
+      sortLatest: '新しい順', sortOldest: '古い順', apply: '適用',
+      analysis: '分析の種類', type: 'レポート種別', market: '市場', sector: '業界', year: '年',
+      searchSectors: '業界を検索…', searchMarkets: '市場を検索…',
+      showMore: 'もっと見る', showLess: '閉じる', coming: '準備中',
+      status: '公開状況', statusPub: '公開済み', statusSoon: '近日公開', soonTag: '近日公開', getNotified: '通知を受け取る', plannedTag: '構成を計画済み',
+      showResults: n => n + ' 件を表示', reports: n => n + ' 件のレポート', page: (p, n) => p + ' / ' + n + ' ページ',
+      loading: '読み込み中…', loadError: 'ライブラリを読み込めませんでした。もう一度お試しください。',
+      noneTitle: '該当するレポートはありません', noneBody: 'この条件に該当するレポートはまだありません。条件を外すか、別の語で検索してください。',
+      clearFilters: '絞り込みをすべて解除', browseAll: 'すべてのレポートを見る',
+      viewReport: 'レポートを見る', newTag: '新着', prev: '前へ', next: '次へ',
+      D: '詳細レポート', S: '概況レポート',
+      library: 'ライブラリ', inThisReport: '目次', published: '発行', pages: 'ページ数', format: '形式',
+      sections: 'セクション', updated: '最終更新', analyst: 'アナリスト', ourTeam: '当社リサーチチーム',
+      tabOverview: '概要', tabFindings: '主要データ', tabPreview: 'プレビュー', tabContents: '目次', tabRelated: '関連',
+      execSummary: 'エグゼクティブサマリー', freeToRead: '無料で閲覧可',
+      freeNote: '概要、主要データ表、目次、用語集はどなたでもお読みいただけます。',
+      previewTitle: 'レポートのプレビュー', freePages: n => '1〜' + n + ' ページは無料で閲覧可', pageOf: (p, n) => p + ' / ' + n + ' ページ', lockedPage: '以降のページはレポート全文に含まれ、サブスクリプションでご覧いただけます。', previewPages: n => '1〜' + n + ' ページ',
+      contents: n => '目次 · ' + n + ' セクション', glossary: '用語集',
+      accessTitle: 'レポート全文を読む', accessBody: 'レポート全文は KIRA Research のサブスクリプションでご利用いただけます。受付は近日開始します。',
+      requestAccess: '先行案内を申し込む', nothingCharged: '現時点で料金は発生しません。',
+      incl1: 'オンラインで全文閲覧', incl2: 'PDF ダウンロード（月間上限あり）', incl3: 'すべての図表とデータ表', incl4: 'レポート更新時の改訂版',
+      seePlans: 'プランを見る', reportDetails: 'レポート情報', reportCode: 'レポートコード', language: '言語',
+      relatedSectors: '業界', relatedMarkets: '市場', share: '共有', copyLink: 'リンクをコピー', copied: 'コピーしました', citeThis: 'このレポートを引用', copyCitation: '引用をコピー',
+      continueReading: '関連コンテンツ', fieldNotes: 'この市場のインサイト', relatedReports: '関連レポート',
+      lockedTitle: 'レポート全文の内容です', lockedBody: 'このセクションはサブスクリプションでご利用いただけるレポート全文に含まれます。このページのエグゼクティブサマリーは無料でお読みいただけます。',
+      notFound: 'レポートが見つかりません', notFoundBody: 'このレポートはまだライブラリにありません。', backLibrary: 'ライブラリに戻る',
+      fallback: 'このレポートはまだ日本語版が公開されていません。英語版を表示しています。',
+      source: '出典', notAvailable: 'この言語ではまだ公開されていません', owned: '購入済みのレポートです', downloadPdf: 'PDF をダウンロード',
+      pdfPending: 'PDF を準備中です。オンライン閲覧はすでにご利用いただけます。', close: '閉じる',
+      subManage: '購読を管理', subOwned: 'ご購読に含まれています', subPdfUsed: '今期のPDFダウンロード：{used}／{limit}件',
+      subPdfLimit: '今期のPDFダウンロード{limit}件をすべてご利用になりました。オンライン閲覧とトランスクリプトは引き続き無制限です。',
+      subPdfErr: 'PDFを準備できませんでした。もう一度お試しください。',
+      exhibitsTitle: '図表データ', exhibitsExcel: 'Excel をダウンロード', exhibitsPpt: 'PowerPoint をダウンロード',
+      exhibitsNote: '本レポートの図表 {n} 点の元データです。グラフは PowerPoint 上で編集できます。表記は英語です。', exhibitsErr: 'ファイルを準備できませんでした。もう一度お試しください。',
+      planCta: '購読する — ${price}／月', planBody: '全レポートの全文オンライン閲覧、全トランスクリプト、PDFダウンロード月{limit}件。いつでも解約できます。',
+      insights: 'インサイト', readArticle: '記事を読む', minRead: '分で読めます', featured: '注目', latest: '最新のインサイト',
+      byTeam: '当社リサーチチーム', noInsights: '該当する記事はまだありません。',
+      subscribeTitle: '新しいリサーチをメールで', subscribeBody: '新しいレポートやインサイトの公開時にメールでお知らせします。',
+      emailPh: '勤務先のメールアドレス', subscribe: '登録する', subscribed: 'ご登録ありがとうございます。', subscribeErr: '有効なメールアドレスを入力してください。',
+      exploreLib: 'リサーチライブラリ', exploreLibBody: '対象のすべての市場を、無料のエグゼクティブサマリー付きで。', browseLib: 'ライブラリを見る',
+      getFull: 'レポートより', getFullBody: 'この記事は公開済みのレポートに基づいています。レポートでは詳細なデータ、セグメント別の分析、当社の見解をご覧いただけます。',
+      openReport: 'レポートを開く', relatedInsights: '関連インサイト', latestReports: '最新のレポート', moreSectors: 'すべての業界', sectorsCount: n => n + ' 業界', regionAsean: '東南アジア', regionApac: 'アジア太平洋', featuredReport: '注目のレポート', more: 'その他', viewAll: 'すべてのインサイト',
+      onThisPage: 'このページの内容',
+      nPages: n => n + ' ページ', sector_food: '食品・農業', sector_consumer: '消費財・小売', sector_finance: '金融サービス', sector_tech: 'テクノロジー・メディア', sector_health: 'ヘルスケア', sector_property: '不動産・建設', sector_auto: '自動車・モビリティ', sector_logistics: '運輸・物流', sector_energy: 'エネルギー・資源', sector_industrial: '製造業', sector_travel: '観光・ホスピタリティ', sector_services: '教育・専門サービス'
+    },
+    ko: {
+      all: '전체', clearAll: '모두 해제', refineBy: '필터', filters: '필터', sort: '정렬',
+      sortLatest: '최신순', sortOldest: '오래된순', apply: '적용',
+      analysis: '분석 유형', type: '보고서 유형', market: '시장', sector: '산업', year: '연도',
+      searchSectors: '산업 검색…', searchMarkets: '시장 검색…',
+      showMore: '더 보기', showLess: '접기', coming: '준비 중',
+      status: '공개 상태', statusPub: '공개됨', statusSoon: '곧 공개', soonTag: '곧 공개', getNotified: '알림 받기', plannedTag: '구성 계획됨',
+      showResults: n => '결과 ' + n + '건 보기', reports: n => '보고서 ' + n + '건', page: (p, n) => p + ' / ' + n + ' 페이지',
+      loading: '불러오는 중…', loadError: '라이브러리를 불러올 수 없습니다. 다시 시도해 주십시오.',
+      noneTitle: '해당하는 보고서가 없습니다', noneBody: '조건에 맞는 보고서가 아직 없습니다. 필터를 해제하거나 다른 검색어를 입력해 주십시오.',
+      clearFilters: '필터 모두 해제', browseAll: '전체 보고서 보기',
+      viewReport: '보고서 보기', newTag: '신규', prev: '이전', next: '다음',
+      D: '심층 보고서', S: '스냅샷',
+      library: '라이브러리', inThisReport: '목차', published: '발행', pages: '페이지', format: '형식',
+      sections: '섹션', updated: '최종 업데이트', analyst: '애널리스트', ourTeam: '당사 리서치팀',
+      tabOverview: '개요', tabFindings: '주요 데이터', tabPreview: '미리보기', tabContents: '목차', tabRelated: '관련',
+      execSummary: '요약', freeToRead: '무료 열람',
+      freeNote: '개요, 주요 데이터 표, 목차와 용어집은 누구나 읽을 수 있습니다.',
+      previewTitle: '보고서 미리보기', freePages: n => '1~' + n + '페이지 무료 열람', pageOf: (p, n) => p + ' / ' + n + '페이지', lockedPage: '이후 페이지는 보고서 전문에 포함되며 구독으로 이용하실 수 있습니다.', previewPages: n => '1~' + n + '페이지',
+      contents: n => '목차 · ' + n + '개 섹션', glossary: '용어집',
+      accessTitle: '보고서 전문 보기', accessBody: '보고서 전문은 KIRA Research 구독으로 이용하실 수 있습니다. 구독은 곧 시작됩니다.',
+      requestAccess: '사전 신청하기', nothingCharged: '지금은 요금이 청구되지 않습니다.',
+      incl1: '온라인 전문 열람', incl2: 'PDF 다운로드(월간 한도)', incl3: '모든 차트와 데이터 표', incl4: '보고서 갱신 시 업데이트',
+      seePlans: '요금제 보기', reportDetails: '보고서 정보', reportCode: '보고서 코드', language: '언어',
+      relatedSectors: '산업', relatedMarkets: '시장', share: '공유', copyLink: '링크 복사', copied: '복사됨', citeThis: '이 보고서 인용', copyCitation: '인용 복사',
+      continueReading: '함께 읽기', fieldNotes: '이 시장의 인사이트', relatedReports: '관련 보고서',
+      lockedTitle: '보고서 전문에 포함된 내용입니다', lockedBody: '이 섹션은 구독으로 이용하실 수 있는 보고서 전문에 포함되어 있습니다. 이 페이지의 요약은 무료로 읽을 수 있습니다.',
+      notFound: '보고서를 찾을 수 없습니다', notFoundBody: '이 보고서는 아직 라이브러리에 없습니다.', backLibrary: '라이브러리로 돌아가기',
+      fallback: '이 보고서는 아직 한국어로 발행되지 않았습니다. 영어 버전을 표시합니다.',
+      source: '출처', notAvailable: '이 언어로는 아직 제공되지 않습니다', owned: '구매한 보고서입니다', downloadPdf: 'PDF 다운로드',
+      pdfPending: 'PDF를 준비 중입니다. 온라인 열람은 지금 이용하실 수 있습니다.', close: '닫기',
+      subManage: '구독 관리', subOwned: '구독에 포함되어 있습니다', subPdfUsed: '이번 결제 기간 PDF 다운로드 {used}/{limit}건 사용',
+      subPdfLimit: '이번 결제 기간의 PDF 다운로드 {limit}건을 모두 사용하셨습니다. 온라인 열람과 트랜스크립트는 계속 무제한입니다.',
+      subPdfErr: 'PDF를 준비하지 못했습니다. 다시 시도해 주세요.',
+      exhibitsTitle: '도표 데이터', exhibitsExcel: 'Excel 다운로드', exhibitsPpt: 'PowerPoint 다운로드',
+      exhibitsNote: '이 보고서의 도표 {n}개의 원데이터입니다. 차트는 PowerPoint에서 편집할 수 있습니다. 표기는 영어입니다.', exhibitsErr: '파일을 준비하지 못했습니다. 다시 시도해 주세요.',
+      planCta: '구독하기 — ${price}/월', planBody: '모든 보고서 전문 온라인 열람, 모든 트랜스크립트, 월 PDF 다운로드 {limit}건. 언제든 해지할 수 있습니다.',
+      insights: '인사이트', readArticle: '기사 읽기', minRead: '분 분량', featured: '주목', latest: '최신 인사이트',
+      byTeam: '당사 리서치팀', noInsights: '검색 조건에 맞는 기사가 아직 없습니다.',
+      subscribeTitle: '새 리서치를 이메일로', subscribeBody: '새 보고서와 인사이트가 발행되면 이메일로 알려 드립니다.',
+      emailPh: '업무용 이메일', subscribe: '구독하기', subscribed: '감사합니다. 곧 연락드리겠습니다.', subscribeErr: '유효한 이메일을 입력해 주십시오.',
+      exploreLib: '리서치 라이브러리', exploreLibBody: '당사가 다루는 모든 시장을 무료 요약과 함께 확인하십시오.', browseLib: '라이브러리 보기',
+      getFull: '보고서에서', getFullBody: '이 인사이트는 발행된 보고서를 바탕으로 합니다. 보고서에는 상세 데이터, 세그먼트별 분석과 당사의 견해가 담겨 있습니다.',
+      openReport: '보고서 열기', relatedInsights: '관련 인사이트', latestReports: '최신 보고서', moreSectors: '전체 산업', sectorsCount: n => n + '개 산업', regionAsean: '동남아시아', regionApac: '아시아태평양', featuredReport: '주목할 보고서', more: '더보기', viewAll: '전체 인사이트',
+      onThisPage: '이 페이지의 내용',
+      nPages: n => n + '페이지', sector_food: '식품·농업', sector_consumer: '소비재·유통', sector_finance: '금융 서비스', sector_tech: '기술·미디어', sector_health: '헬스케어', sector_property: '부동산·건설', sector_auto: '자동차·모빌리티', sector_logistics: '운송·물류', sector_energy: '에너지·자원', sector_industrial: '제조업', sector_travel: '관광·숙박', sector_services: '교육·전문 서비스'
+    },
+    zh: {
+      all: '全部', clearAll: '全部清除', refineBy: '筛选', filters: '筛选', sort: '排序',
+      sortLatest: '最新', sortOldest: '最早', apply: '应用',
+      analysis: '分析类型', type: '报告类型', market: '市场', sector: '行业', year: '年份',
+      searchSectors: '搜索行业…', searchMarkets: '搜索市场…',
+      showMore: '显示更多', showLess: '收起', coming: '即将推出',
+      status: '发布状态', statusPub: '已发布', statusSoon: '即将发布', soonTag: '即将发布', getNotified: '通知我', plannedTag: '章节已规划',
+      showResults: n => '查看 ' + n + ' 个结果', reports: n => n + ' 份报告', page: (p, n) => '第 ' + p + ' / ' + n + ' 页',
+      loading: '加载中…', loadError: '无法加载报告库，请重试。',
+      noneTitle: '未找到报告', noneBody: '暂无符合筛选条件的报告。请移除部分筛选条件或换一个搜索词。',
+      clearFilters: '清除全部筛选', browseAll: '浏览全部报告',
+      viewReport: '查看报告', newTag: '最新', prev: '上一页', next: '下一页',
+      D: '深度报告', S: '简报',
+      library: '报告库', inThisReport: '报告目录', published: '发布', pages: '页数', format: '格式',
+      sections: '章节', updated: '最近更新', analyst: '分析师', ourTeam: '我们的研究团队',
+      tabOverview: '概览', tabFindings: '关键数据', tabPreview: '预览', tabContents: '目录', tabRelated: '相关内容',
+      execSummary: '执行摘要', freeToRead: '免费阅读',
+      freeNote: '概览、部分数据表、目录和术语表向所有读者开放。',
+      previewTitle: '报告预览', freePages: n => '第 1–' + n + ' 页免费阅读', pageOf: (p, n) => '第 ' + p + ' / ' + n + ' 页', lockedPage: '其余页面属于完整报告，订阅后即可阅读。', previewPages: n => '第 1–' + n + ' 页',
+      contents: n => '目录 · ' + n + ' 个章节', glossary: '术语表',
+      accessTitle: '阅读完整报告', accessBody: '完整报告包含在 KIRA Research 订阅中。订阅即将开放。',
+      requestAccess: '申请优先体验', nothingCharged: '目前不会收取任何费用。',
+      incl1: '在线阅读全文', incl2: 'PDF 下载（每月限额）', incl3: '全部图表与数据表', incl4: '报告更新时同步更新',
+      seePlans: '查看方案', reportDetails: '报告信息', reportCode: '报告编号', language: '语言',
+      relatedSectors: '行业', relatedMarkets: '市场', share: '分享', copyLink: '复制链接', copied: '已复制', citeThis: '引用本报告', copyCitation: '复制引用',
+      continueReading: '延伸阅读', fieldNotes: '该市场的洞察', relatedReports: '相关报告',
+      lockedTitle: '此部分属于完整报告', lockedBody: '此章节包含在订阅提供的完整报告中。本页的执行摘要可免费阅读。',
+      notFound: '未找到报告', notFoundBody: '该报告尚未收录于报告库。', backLibrary: '返回报告库',
+      fallback: '该报告尚未发布中文版，当前显示英文版。',
+      source: '来源', notAvailable: '该语言版本尚未发布', owned: '您已拥有此报告', downloadPdf: '下载 PDF',
+      pdfPending: 'PDF 正在准备中，您现在即可在线阅读。', close: '关闭',
+      subManage: '管理订阅', subOwned: '已包含在您的订阅中', subPdfUsed: '本计费周期已下载 PDF：{used}/{limit} 份',
+      subPdfLimit: '您已用完本计费周期的 {limit} 份 PDF 下载额度。在线阅读和访谈记录仍不限次数。',
+      subPdfErr: '无法准备 PDF，请重试。',
+      exhibitsTitle: '图表数据', exhibitsExcel: '下载 Excel', exhibitsPpt: '下载 PowerPoint',
+      exhibitsNote: '本报告 {n} 张图表背后的数据。图表可在 PowerPoint 中编辑。内容为英文。', exhibitsErr: '无法生成文件，请重试。',
+      planCta: '订阅 — ${price}/月', planBody: '在线阅读每份报告全文、全部访谈记录，每月 {limit} 份 PDF 下载。可随时取消。',
+      insights: '洞察', readArticle: '阅读文章', minRead: '分钟阅读', featured: '精选', latest: '最新洞察',
+      byTeam: '我们的研究团队', noInsights: '暂无符合条件的文章。',
+      subscribeTitle: '新研究直达邮箱', subscribeBody: '新报告和洞察发布时，我们会通过邮件通知您。',
+      emailPh: '您的工作邮箱', subscribe: '订阅', subscribed: '感谢订阅，我们会与您联系。', subscribeErr: '请输入有效的邮箱地址。',
+      exploreLib: '研究报告库', exploreLibBody: '我们覆盖的所有市场，均附免费执行摘要。', browseLib: '浏览报告库',
+      getFull: '出自报告', getFullBody: '本文基于一份已发布的报告。完整报告提供详细数据、细分市场分析和我们的观点。',
+      openReport: '打开报告', relatedInsights: '相关洞察', latestReports: '最新报告', moreSectors: '全部行业', sectorsCount: n => n + ' 个行业', regionAsean: '东南亚', regionApac: '亚太其他市场', featuredReport: '精选报告', more: '更多', viewAll: '查看全部洞察',
+      onThisPage: '本页内容',
+      nPages: n => n + ' 页', sector_food: '食品与农业', sector_consumer: '消费品与零售', sector_finance: '金融服务', sector_tech: '科技与传媒', sector_health: '医疗健康', sector_property: '房地产与建筑', sector_auto: '汽车与出行', sector_logistics: '运输与物流', sector_energy: '能源与资源', sector_industrial: '工业制造', sector_travel: '旅游与酒店', sector_services: '教育与专业服务'
+    }
+  };
+
+  const COUNTRY = {
+    ja: { vietnam: 'ベトナム', thailand: 'タイ', indonesia: 'インドネシア', malaysia: 'マレーシア', singapore: 'シンガポール', philippines: 'フィリピン', cambodia: 'カンボジア', laos: 'ラオス', myanmar: 'ミャンマー', brunei: 'ブルネイ', australia: 'オーストラリア', 'new zealand': 'ニュージーランド', taiwan: '台湾', japan: '日本', 'south korea': '韓国' },
+    ko: { vietnam: '베트남', thailand: '태국', indonesia: '인도네시아', malaysia: '말레이시아', singapore: '싱가포르', philippines: '필리핀', cambodia: '캄보디아', laos: '라오스', myanmar: '미얀마', brunei: '브루나이', australia: '호주', 'new zealand': '뉴질랜드', taiwan: '대만', japan: '일본', 'south korea': '한국' },
+    zh: { vietnam: '越南', thailand: '泰国', indonesia: '印度尼西亚', malaysia: '马来西亚', singapore: '新加坡', philippines: '菲律宾', cambodia: '柬埔寨', laos: '老挝', myanmar: '缅甸', brunei: '文莱', australia: '澳大利亚', 'new zealand': '新西兰', taiwan: '中国台湾', japan: '日本', 'south korea': '韩国' }
+  };
+  // Analysis types (tax_competencies.key; topics.competency_key, living_reports.analysis).
+  const ANALYSIS = {
+    en: { market_assessment: 'Market overview', competitive_intelligence: 'Competitive landscape', customer_demand: 'Customer insight', distribution_channel: 'Distribution', pricing_landed_cost: 'Pricing', product_portfolio: 'Value proposition', market_entry: 'Market entry strategy', partner_search: 'Partner landscape', investment_case: 'Investment analysis', m_and_a: 'M&A landscape', regulatory_climate: 'Regulatory landscape', growth_strategy: 'Growth strategy', value_chain: 'Value chain', operating_model: 'Operating model', case_studies: 'Case studies', trends_outlook: 'Trends & outlook', ai_impact: 'AI impact' },
+    ja: { market_assessment: '市場概要', competitive_intelligence: '競争環境', customer_demand: '顧客インサイト', distribution_channel: '流通チャネル', pricing_landed_cost: '価格分析', product_portfolio: '価値提案', market_entry: '市場参入戦略', partner_search: 'パートナー候補', investment_case: '投資分析', m_and_a: 'M&A動向', regulatory_climate: '規制環境', growth_strategy: '成長戦略', value_chain: 'バリューチェーン', operating_model: 'オペレーティングモデル', case_studies: 'ケーススタディ', trends_outlook: 'トレンドと展望', ai_impact: 'AIの影響' },
+    ko: { market_assessment: '시장 개요', competitive_intelligence: '경쟁 구도', customer_demand: '고객 인사이트', distribution_channel: '유통 채널', pricing_landed_cost: '가격 분석', product_portfolio: '가치 제안', market_entry: '시장 진출 전략', partner_search: '파트너 현황', investment_case: '투자 분석', m_and_a: 'M&A 동향', regulatory_climate: '규제 환경', growth_strategy: '성장 전략', value_chain: '가치사슬', operating_model: '운영 모델', case_studies: '사례 연구', trends_outlook: '트렌드와 전망', ai_impact: 'AI 영향' },
+    zh: { market_assessment: '市场概览', competitive_intelligence: '竞争格局', customer_demand: '客户洞察', distribution_channel: '分销渠道', pricing_landed_cost: '定价分析', product_portfolio: '价值主张', market_entry: '市场进入策略', partner_search: '合作伙伴格局', investment_case: '投资分析', m_and_a: '并购格局', regulatory_climate: '监管环境', growth_strategy: '增长战略', value_chain: '价值链', operating_model: '运营模式', case_studies: '案例研究', trends_outlook: '趋势与展望', ai_impact: 'AI 影响' }
+  };
+  const DATE_LOCALE = { en: 'en-GB', ja: 'ja-JP', ko: 'ko-KR', zh: 'zh-CN' };
+
+  function titleCase(s) { return String(s || '').replace(/\b\w/g, c => c.toUpperCase()); }
+
+  window.kiraR = {
+    locale,
+    t(key, ...a) { const v = (S[locale] && S[locale][key]) ?? S.en[key]; return typeof v === 'function' ? v(...a) : (v ?? key); },
+    country(name) { const k = String(name || '').toLowerCase().replace(/-/g, ' '); return (COUNTRY[locale] || {})[k] || titleCase(k); },
+    analysis(key) { return (ANALYSIS[locale] || {})[key] || ANALYSIS.en[key] || titleCase(String(key || '').replace(/_/g, ' ')); },
+    sector(name) { return titleCase(String(name || '').replace(/-/g, ' ')); },
+    date(iso, style) {
+      if (!iso) return '';
+      const d = new Date(iso); if (isNaN(d)) return '';
+      return d.toLocaleDateString(DATE_LOCALE[locale], style === 'long' ? { day: 'numeric', month: 'long', year: 'numeric' } : { month: 'short', year: 'numeric' });
+    },
+    esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); },
+    // <img> for a report's cover slide (16:9, title included) from an API `cover`; the wide art if the API has no slide for it.
+    // A slide image that fails to load falls back to the wide art once (listener below).
+    slideImg(c) {
+      const e = window.kiraR.esc;
+      return c.slide
+        ? '<img src="' + e(c.slide) + '" alt="" loading="lazy" decoding="async" width="800" height="450" data-fallback="' + e(c.wide) + '">'
+        : '<img src="' + e(c.wide) + '" alt="" loading="lazy" decoding="async" width="800" height="500">';
+    },
+    // Small inline icons (stroke = currentColor) used in meta rows.
+    icon(name) {
+      const P = {
+        doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+        cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+        globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 2.5 14.4 0 17M12 3.5c-2.5 2.6-2.5 14.4 0 17"/>',
+        arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+        chev: '<path d="M9 6l6 6-6 6"/>',
+        down: '<path d="M6 9l6 6 6-6"/>',
+        filter: '<path d="M4 5h16l-6 8v5l-4 2v-7z"/>',
+        search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/>',
+        x: '<path d="M6 6l12 12M18 6L6 18"/>',
+        clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+        home: '<path d="M4 11l8-7 8 7M6 9.5V20h12V9.5"/>',
+        pages: '<rect x="5" y="3" width="11" height="15" rx="1.5"/><path d="M8 21h11V7"/>',
+        layers: '<path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 16l8 4 8-4"/>',
+        link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7L12 6.3"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+        lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+        check: '<path d="M5 12l5 5 9-10"/>',
+        mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M4 7l8 6 8-6"/>',
+        user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>',
+        expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+        book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/>'
+      };
+      return '<svg class="ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[name] || '') + '</svg>';
+    }
+  };
+  // An <img data-fallback="…"> that fails to load switches to that URL once (see slideImg).
+  document.addEventListener('error', e => {
+    const img = e.target;
+    if (img.tagName === 'IMG' && img.dataset.fallback) { const f = img.dataset.fallback; delete img.dataset.fallback; img.src = f; }
+  }, true);
+})();

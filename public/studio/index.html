@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KIRA Studio — The research report generator our analysts use</title>
+  <meta name="description" content="The market-research report generator KIRA analysts use internally. Now available to professional analysts at strategy teams, consultancies, and BD groups." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="canonical" href="https://studio.kiraresearch.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="KIRA Studio — the research generator our analysts use" />
+  <meta property="og:description" content="The same engine that produces KIRA Research consulting reports. Now available to pro analysts." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://studio.kiraresearch.com/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <!-- Supabase + kiraAuth (used by the nav CTA to detect logged-in state) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+
+  <style>
+    /* ── Studio-specific overrides — sit alongside kira.css ─── */
+    .studio-shell { background: #FAFAFA; }
+    body { background: #FAFAFA; }
+
+    /* HERO — dark, confident, single column */
+    .studio-hero {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 96px 0 112px;
+      position: relative;
+      overflow: hidden;
+    }
+    .studio-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -20%;
+      width: 70%; height: 200%;
+      background: radial-gradient(ellipse at center, rgba(30, 111, 255, 0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .studio-hero .container {
+      max-width: 980px;
+      position: relative;
+    }
+    .studio-hero .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #93C5FD;
+      margin-bottom: 28px;
+      padding: 6px 12px;
+      background: rgba(30, 111, 255, 0.12);
+      border: 1px solid rgba(30, 111, 255, 0.25);
+      border-radius: 999px;
+    }
+    .studio-hero .eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #60A5FA;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+    }
+    .studio-hero h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(38px, 6.5vw, 76px);
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      margin: 0 0 28px;
+      color: #FFFFFF;
+      max-width: 900px;
+    }
+    .studio-hero h1 .accent {
+      color: #60A5FA;
+      font-style: italic;
+      font-weight: 700;
+    }
+    .studio-hero .lede {
+      font-size: clamp(17px, 2vw, 22px);
+      line-height: 1.45;
+      color: #CBD5E1;
+      max-width: 720px;
+      margin: 0 0 40px;
+      font-weight: 400;
+    }
+    .studio-hero .lede strong {
+      color: #F8FAFC;
+      font-weight: 600;
+    }
+    .studio-cta-row {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+    .studio-cta-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #1E6FFF;
+      color: #FFFFFF !important;
+      padding: 16px 28px;
+      border-radius: 4px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .studio-cta-primary:hover { background: #2980F0; transform: translateY(-1px); }
+    .studio-cta-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      color: #E2E8F0 !important;
+      padding: 16px 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .studio-cta-secondary:hover { border-color: #60A5FA; color: #FFFFFF !important; }
+
+    .studio-hero-meta {
+      display: flex; gap: 32px; flex-wrap: wrap;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #94A3B8;
+      letter-spacing: 0.06em;
+    }
+    .studio-hero-meta strong { color: #F1F5F9; font-weight: 600; }
+
+    /* PEER SECTION — quiet, single sentence with a row of analogous tools */
+    .studio-peers {
+      background: #0F172A;
+      padding: 0 0 56px;
+      color: #94A3B8;
+    }
+    .studio-peers .container { max-width: 980px; }
+    .studio-peers .peers-row {
+      padding: 28px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .studio-peers .peers-row p {
+      font-family: 'Satoshi', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: #CBD5E1;
+      margin: 0;
+      line-height: 1.6;
+      max-width: 720px;
+    }
+    .studio-peers .peers-row p strong { color: #F1F5F9; font-weight: 600; }
+    .studio-peers .peer-marks {
+      display: flex; flex-wrap: wrap;
+      gap: 32px 48px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #64748B;
+      padding-top: 8px;
+    }
+
+    /* ── Value props (3 col) ─── */
+    .studio-value {
+      padding: 96px 0;
+      background: #FAFAFA;
+    }
+    .studio-value .container { max-width: 1080px; }
+    .studio-section-head {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 64px;
+    }
+    .studio-section-head .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #1E6FFF;
+      margin-bottom: 14px;
+    }
+    .studio-section-head h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: #0F172A;
+      margin: 0 0 16px;
+    }
+    .studio-section-head p {
+      font-size: 17px;
+      line-height: 1.55;
+      color: #475569;
+      margin: 0;
+    }
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .value-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 32px 28px;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .value-card:hover { border-color: #1E6FFF; transform: translateY(-2px); }
+    .value-card .icon {
+      width: 36px; height: 36px;
+      background: rgba(30, 111, 255, 0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      color: #1E6FFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .value-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: -0.015em;
+      color: #0F172A;
+      margin: 0 0 12px;
+    }
+    .value-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #475569;
+      margin: 0;
+    }
+
+    /* ── Built for ─── */
+    .studio-built {
+      background: #FFFFFF;
+      padding: 96px 0;
+      border-top: 1px solid #E2E8F0;
+      border-bottom: 1px solid #E2E8F0;
+    }
+    .studio-built .container { max-width: 1080px; }
+    .built-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .built-card {
+      padding: 28px 0;
+      border-top: 2px solid #0F172A;
+    }
+    .built-card .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #64748B;
+      margin-bottom: 10px;
+    }
+    .built-card h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+      margin: 0 0 12px;
+    }
+    .built-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #475569;
+      margin: 0;
+    }
+
+    /* ── How it works ─── */
+    .studio-how {
+      background: #FAFAFA;
+      padding: 96px 0;
+    }
+    .studio-how .container { max-width: 980px; }
+    .how-steps {
+      counter-reset: step;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .how-step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-top: 1px solid #E2E8F0;
+    }
+    .how-step:first-child { border-top: none; }
+    .how-step .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 36px;
+      font-weight: 600;
+      color: #1E6FFF;
+      line-height: 1;
+    }
+    .how-step .num::before {
+      content: counter(step, decimal-leading-zero);
+    }
+    .how-step .body h3 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+      font-size: 21px;
+      letter-spacing: -0.015em;
+      color: #0F172A;
+      margin: 0 0 10px;
+    }
+    .how-step .body p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #475569;
+      margin: 0;
+    }
+    .how-step .body .detail {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+    }
+
+    /* ── Final CTA ─── */
+    .studio-final {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 112px 0 128px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .studio-final::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(30,111,255,0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .studio-final .container { position: relative; max-width: 720px; }
+    .studio-final h2 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      margin: 0 0 20px;
+    }
+    .studio-final p {
+      font-size: 17px;
+      line-height: 1.5;
+      color: #CBD5E1;
+      margin: 0 0 36px;
+    }
+
+    .studio-footer {
+      padding: 32px 0;
+      background: #0F172A;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: #64748B;
+    }
+    .studio-footer a { color: #93C5FD; text-decoration: none; margin: 0 12px; }
+    .studio-footer a:hover { text-decoration: underline; }
+
+    .studio-nav {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 24px 0;
+      z-index: 10;
+    }
+    .studio-nav .container {
+      max-width: 1180px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .studio-nav .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      color: #F8FAFC;
+    }
+    .studio-nav .logo-mark {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0.08em;
+      color: #FFFFFF;
+    }
+    .studio-nav .logo-mark .a-accent {
+      color: #60A5FA;
+      display: inline-block;
+      transform: skewX(-12deg);
+    }
+    .studio-nav .logo-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #94A3B8;
+      padding: 4px 8px;
+      background: rgba(30, 111, 255, 0.12);
+      border-radius: 3px;
+    }
+    .studio-nav-links {
+      display: flex; gap: 28px; align-items: center;
+    }
+    .studio-nav-links a {
+      color: #CBD5E1;
+      text-decoration: none;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+    .studio-nav-links a:hover { color: #FFFFFF; }
+    .studio-nav-links a.kira-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: #64748B;
+    }
+
+    @media (max-width: 720px) {
+      .how-step { grid-template-columns: 60px 1fr; }
+      .how-step .num { font-size: 28px; }
+      .studio-nav-links { gap: 16px; }
+      .studio-nav-links a.kira-back { display: none; }
+    }
+  </style>
+</head>
+<body class="studio-shell">
+
+  <!-- HERO -->
+  <section class="studio-hero">
+    <nav class="studio-nav">
+      <div class="container">
+        <a class="logo" href="/">
+          <span class="logo-mark"><img src="/logo.png" alt="KIRA Research" width="176" height="22" style="height:22px;width:auto;display:block"></span>
+          <span class="logo-sub">Studio</span>
+        </a>
+        <div class="studio-nav-links">
+          <a href="/library" id="nav-library" style="display:none;">My library</a>
+          <a href="https://kiraresearch.com" class="kira-back">KIRA Research home ↗</a>
+          <a href="#cta" id="nav-cta">Sign in</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="eyebrow"><span class="dot"></span>The KIRA analyst toolkit</div>
+      <h1>The research report generator <span class="accent">our analysts use.</span></h1>
+      <p class="lede">
+        Same engine that produces our consulting-grade market reports. <strong>Now available to pro analysts</strong> at strategy teams, consultancies, and BD groups who want the output without the engagement timeline.
+      </p>
+      <div class="studio-cta-row">
+        <a href="/new" class="studio-cta-primary" id="hero-cta-primary">Generate your first report →</a>
+        <a href="#how-it-works" class="studio-cta-secondary">See how it works</a>
+      </div>
+      <div class="studio-hero-meta">
+        <span>Output: <strong>polished PDF + HTML</strong></span>
+        <span>Turnaround: <strong>~10 min</strong></span>
+        <span>Coverage: <strong>any country, any sector</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PEERS — quiet positioning row -->
+  <section class="studio-peers">
+    <div class="container">
+      <div class="peers-row">
+        <p>In the tradition of <strong>tools that get released because the in-house team can no longer keep them to themselves</strong> — same DNA as Palantir Foundry, BCG GAMMA, S&P Capital IQ, Bloomberg Terminal. Built for analysts, by analysts.</p>
+        <div class="peer-marks">
+          <span>Palantir Foundry</span>
+          <span>BCG GAMMA</span>
+          <span>S&amp;P Capital IQ</span>
+          <span>Bloomberg Terminal</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE PROPS -->
+  <section class="studio-value">
+    <div class="container">
+      <div class="studio-section-head">
+        <div class="eyebrow">What you get</div>
+        <h2>Source-grounded. Consulting-grade. Yours.</h2>
+        <p>This isn't a chat wrapper. It's the same multi-stage research workflow we run internally — parsed topic, planned sections, dual-language web research, source-tagged drafting, paginated PDF render.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="icon">01</div>
+          <h3>Source-grounded research</h3>
+          <p>Every quantitative claim carries an inline source tag. Local-language press, stats bureaus, industry associations — searched in parallel with English baseline. No hallucinated numbers.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">02</div>
+          <h3>Consulting-grade output</h3>
+          <p>The PDF is visually identical to a KIRA Research consulting report. Same layout, same typography, same source key. No "generated by AI" watermark — it's analyst-quality work, formatted accordingly.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">03</div>
+          <h3>Private library, your control</h3>
+          <p>Your reports stay yours. Saved to a private library under your account — never surfaced in our public catalog, never shared, never indexed. Archive when done.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILT FOR -->
+  <section class="studio-built">
+    <div class="container">
+      <div class="studio-section-head">
+        <div class="eyebrow">Built for</div>
+        <h2>Analysts who'd rather brief their team than wait three weeks.</h2>
+        <p>You already know what a good market report looks like. You just need to generate one faster, on demand, without losing the rigor.</p>
+      </div>
+      <div class="built-grid">
+        <div class="built-card">
+          <div class="label">Strategy teams</div>
+          <h3>Corp-dev shops, in-house strategy</h3>
+          <p>Pre-deal landscape briefs. Quarterly category reviews. Country deep-dives ahead of an exec offsite. Reports you'd otherwise scope to a consulting firm.</p>
+        </div>
+        <div class="built-card">
+          <div class="label">Consultancies</div>
+          <h3>Boutique &amp; mid-tier firms</h3>
+          <p>Pitch desk research at zero marginal cost. Get a 22-page baseline before the engagement starts. Free your senior analysts for the framing, not the typing.</p>
+        </div>
+        <div class="built-card">
+          <div class="label">BD groups</div>
+          <h3>Sales engineering &amp; market dev</h3>
+          <p>Vertical briefs for new territories. Account-prep memos before quarterly business reviews. Customer-segment intel without a research-ops dependency.</p>
+        </div>
+        <div class="built-card">
+          <div class="label">In-house research</div>
+          <h3>Insight teams &amp; CI functions</h3>
+          <p>Baseline reports that free your team to focus on synthesis and recommendations. Use Studio for the breadth — keep your analysts on the depth that matters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="studio-how" id="how-it-works">
+    <div class="container">
+      <div class="studio-section-head">
+        <div class="eyebrow">How it works</div>
+        <h2>One topic in. A finished report out.</h2>
+        <p>No prompt engineering. No setup. Describe what you want; our engine handles the rest.</p>
+      </div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>Describe the topic.</h3>
+            <p>A sentence is enough. "EV market in South Korea 2027 — demand outlook, competitive landscape, policy environment." Country, sector, year, angle — whatever matters.</p>
+            <div class="detail">Optional: attach up to 5 docs (PDF, DOCX, XLSX, CSV) to ground the research in your data.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>Our engine plans the structure.</h3>
+            <p>Topic gets parsed — country, sector, language, intent. A section structure gets drafted (~10 sections: macro, sector overview, competitive landscape, demand, regulatory, outlook).</p>
+            <div class="detail">Uses the same 7-stage workflow as our internal consulting pipeline.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>Research runs in two languages.</h3>
+            <p>Web search fires queries in English plus the country's business-press language — Vietnamese for Vietnam, Korean for Korea, Portuguese for Brazil. Local stats bureaus, industry associations, central bank filings.</p>
+            <div class="detail">Source aliases stay English in the report; original-language source names captured in the page-bottom source key.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="num"></div>
+          <div class="body">
+            <h3>You get a PDF + the web edition.</h3>
+            <p>Sections drafted, charts placed (where data warrants), pages rendered. ~10 minutes total. Saved to your private library — open in browser, download the PDF, or archive when done.</p>
+            <div class="detail">Visually identical to our published consulting reports. No watermarks, no "AI-generated" disclaimers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="studio-final" id="cta">
+    <div class="container">
+      <h2>Stop scoping desk research. Start generating it.</h2>
+      <p>Free during the in-house preview. Sign in with your KIRA Research account or create one to get started.</p>
+      <a href="/new" class="studio-cta-primary" id="final-cta">Generate your first report →</a>
+    </div>
+  </section>
+
+  <footer class="studio-footer">
+    <div class="container">
+      <a href="https://kiraresearch.com">KIRA Research home</a> ·
+      <a href="/library">My library</a> ·
+      <span>© 2026 KIRA Research</span>
+    </div>
+  </footer>
+
+  <script type="module">
+    // ── Detect logged-in state to switch CTAs from "Sign in" to "Generate".
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+    const user = await window.kiraAuth.getUser();
+    const navCta     = document.getElementById('nav-cta');
+    const navLibrary = document.getElementById('nav-library');
+    const heroCta    = document.getElementById('hero-cta-primary');
+    const finalCta   = document.getElementById('final-cta');
+
+    if (user) {
+      if (navCta)     { navCta.textContent = user.email?.split('@')[0] || 'Account'; navCta.setAttribute('href', '/library'); }
+      if (navLibrary) navLibrary.style.display = '';
+      // /new gate is itself auth-aware; CTAs already point there. Keep as-is.
+    } else {
+      // Make CTAs surface the auth flow before landing on /new — kiraAuth.requireAuth
+      // on /new would redirect anyway, but pre-staging the redirect makes the
+      // sign-in screen come back to /new instead of /.
+      function gateToNew(el) {
+        if (!el) return;
+        el.addEventListener('click', (e) => {
+          try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch (_) {}
+        });
+      }
+      gateToNew(heroCta);
+      gateToNew(finalCta);
+      if (navCta) {
+        navCta.addEventListener('click', (e) => {
+          e.preventDefault();
+          try { sessionStorage.setItem('kira_redirect_after_login', '/new'); } catch (_) {}
+          window.location.href = '/auth.html';
+        });
+      }
+    }
+  </script>
+</body>
+</html>

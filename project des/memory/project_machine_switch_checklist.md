@@ -1,0 +1,200 @@
+---
+name: kira-machine-switch-checklist
+description: "Single source of truth for switching kira-research work to a new machine (vnc-f4 ↔ DELL). Covers git config, env vars, user-level Claude Code settings (allowlist + defaultMode auto), memory mirror, scheduled-tasks recreate. Last verified: 2026-05-26 on vnc-f4."
+metadata:
+  node_type: memory
+  type: project
+---
+
+## Why this exists
+
+Henry switches between vnc-f4 and DELL during the day. Some setup travels via git (project files, repo memory, .claude/settings.json for interactive use). Some does NOT travel (user-level settings, env vars, scheduled tasks, user memory). This checklist captures the not-travelling parts so the cron keeps firing on whichever machine is active.
+
+**Critical:** Close Claude Code on the OLD machine before working on the NEW one. Otherwise both machines fire crons simultaneously → 2x quota burn (claim-then-commit prevents double-claim but wastes resources).
+
+---
+
+## On the NEW machine — checklist in order
+
+### 1. Git pull + verify config
+
+Open the kira-research repo dir in a terminal (or Claude Code):
+```
+cd "C:\Users\<new-user>\Rira Research\kira-research"
+git pull
+git config user.email   # should print: henryvn2004@gmail.com
+git config user.name    # should print: henryvn2004-arch
+```
+
+If config is wrong → Vercel will reject deploys. Fix:
+```
+git config user.email henryvn2004@gmail.com
+git config user.name henryvn2004-arch
+```
+
+### 2. Set 3 env vars (Windows User scope)
+
+Source of truth: Vercel project env (kira-research → Settings → Environment Variables). Mirror locally — they cannot be derived.
+
+| Var | Used for |
+|---|---|
+| `PDF_RENDER_SECRET` | `X-Api-Key` on POST /api/render-pdf |
+| `SUPABASE_URL` | `https://iygoynbnscednfzdsflc.supabase.co` |
+| `SUPABASE_SERVICE_KEY` | Bearer token for Supabase Storage + signed-URL gen |
+
+Since 2026-10-05 the writing pipeline also needs (see [[kira-brain-report-pipeline]]):
+
+| Var | Used for |
+|---|---|
+| `OPENAI_API_KEY` | Cover illustration (`scripts/gen-cover.mjs`). Without it, covers render plain. |
+| `KIRA_BRAIN_DIR` (optional) | Path to `kira-pipeline/brain`. Not needed if the private repo `kira-pipeline` is cloned in the same folder as `kira-research`. Without the brain, reports fall back to the old planning. |
+
+**Set via Windows UI (click-through):**
+1. Start menu → search "environment variables" → "Edit environment variables for your account"
+2. New → enter name + value for each of the 3
+3. OK → Restart Claude Code so child processes inherit
+
+### 3. User-level Claude Code settings — CRITICAL for cron auto-approve
+
+Project-level `.claude/settings.json` is committed in the repo, but scheduled-task cron fires launch Claude Code in the PARENT dir (`Rira Research`), not project dir. So project settings don't load for cron. Settings must be at user level.
+
+**Click-through:**
+1. Open File Explorer → navigate to `C:\Users\<new-user>\.claude\`
+   - If `.claude\` doesn't exist, Claude Code creates it on first launch
+2. Open `kira-research/.claude/settings.json` (from the repo) — this is the canonical template
+3. Copy entire content
+4. Create new file `C:\Users\<new-user>\.claude\settings.json` and paste
+5. **IMPORTANT addition** — inside the `"permissions"` object, add this line at the top:
+   ```json
+   "defaultMode": "auto",
+   ```
+   The repo version doesn't have it (because it's per-machine), but cron needs it to auto-approve commands with bash variable expansion (`$VAR`, `${VAR}`). Without `auto`, those commands prompt every fire even when other rules allow.
+
+Final structure should look like:
+```json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "defaultMode": "auto",
+    "allow": [ ... ],
+    "deny": [ ... ]
+  }
+}
+```
+
+Save. No restart needed — next session (and next cron fire) loads it.
+
+### 4. Mirror repo memory → user memory
+
+The `project des/memory/*.md` files in the repo travel via git, but Claude Code reads project memory from `C:\Users\<user>\.claude\projects\<sanitized-cwd>\memory\`. Need to mirror.
+
+**Click-through:**
+1. File Explorer → navigate to `C:\Users\<new-user>\Rira Research\kira-research\project des\memory\`
+2. Select all .md files (Ctrl+A) + copy (Ctrl+C)
+3. Navigate to `C:\Users\<new-user>\.claude\projects\C--Users-<new-user>-Rira-Research\memory\`
+   - Path might differ if Henry's username differs — the sanitized-cwd portion replaces `\` with `-`
+   - If folder doesn't exist, create it: right-click → New → Folder, name it exactly as the path above
+4. Paste all .md files (Ctrl+V). Overwrite if prompted.
+
+See `project des/memory/README.md` in the repo for the canonical sync rationale.
+
+### 5. Verify 2 scheduled tasks exist (Phase Q.7 — 2026-07-29)
+
+Q.7 gom 22 task (`kira-batch-HHMM` × 18 + `kira-insight-HHMM` × 4) về **2**. Check on the new machine:
+
+**Click-through:**
+1. Open File Explorer → `C:\Users\<new-user>\.claude\scheduled-tasks\`
+2. Chỉ nên có 2 folder KIRA:
+   - `kira-batch` — cron `0 0-17 * * *` (18 fires/ngày, hourly 07:00–00:00 ICT) → `batch_runner.md`
+   - `kira-insight` — cron `0 7,11,15,21 * * *` (4 fires/ngày) → `insight_runner.md`
+3. Còn sót folder `kira-batch-HHMM` / `kira-insight-HHMM` kiểu cũ → máy này chưa chạy Q.7.
+
+**Nếu thiếu / còn kiểu cũ:** trong Claude Code trên máy đó → "Đọc
+`skills/kira-research-report/prompts/routines_consolidate.md` rồi làm theo".
+Runbook tự kiểm kê, tạo 2 task, verify, rồi xoá task cũ.
+
+**Bắt buộc** trong SKILL.md của cả 2: hardcode đường dẫn repo của máy này +
+câu "BỎ QUA bước `git rev-parse --show-toplevel`" — thiếu là fire nào cũng chết
+ở dòng đầu playbook. [[feedback_scheduled_task_cwd_parent]]
+
+### 6. Open Claude Code → click "Run now" on 1 task → verify no prompts
+
+This is the final smoke test. If a permission prompt appears:
+- Note the exact tool/command shown
+- Ask Claude (this chat) to add it to user-level settings.json
+- Try again
+
+If no prompts → cron will run unattended overnight. Done.
+
+---
+
+## Common pitfalls (verified mistakes on vnc-f4 2026-05-26)
+
+1. **Project-level `.claude/settings.json` alone is NOT enough.** Cron launches in parent dir, doesn't see it. User-level required. [[feedback_scheduled_task_cwd_parent]]
+2. **Bash `${VAR}` expansion bypasses allowlist** unless `defaultMode: "auto"` is set. Step 0 env check is the canonical failure case. [[feedback_scheduled_task_cwd_parent]]
+3. **Claude Code window paused on prompt blocks ALL subsequent cron fires.** If you suspect this, force-close the paused window (Task Manager → claude-desktop.exe). [[feedback_scheduled_task_cwd_parent]] recovery section.
+4. **Both machines running Claude Code simultaneously** doubles quota burn. Always close Claude Code on the OLD machine before opening it on the NEW one.
+
+---
+
+## Quick diagnostic if cron didn't run overnight
+
+```bash
+cd "C:\Users\<user>\Rira Research\kira-research"
+git log --oneline -10                     # any "batch: ..." commits?
+git status                                # uncommitted queue.csv?
+node -e "...status counts..."             # see how many pending/error/in_progress
+ls C:\Users\<user>\.claude\sessions\      # latest session JSON mtimes
+cat <pid>.json                            # check cwd field — should be project dir
+```
+
+If no batch commits + queue has a row stuck in `*_in_progress`:
+1. Close any paused Claude Code window
+2. `git checkout -- data/report_queue.csv` (if uncommitted) OR manual edit row back to `pending` then commit
+3. Verify user-level settings.json has `defaultMode: "auto"`
+4. Manual "Run now" on 1 task to confirm fix
+
+See [[project_batch_cron_system]] for the full cron architecture + [[feedback_scheduled_task_cwd_parent]] for the cwd diagnostic flow.
+
+---
+
+## Files that DO travel via git (no manual setup needed)
+
+- `data/report_queue.csv` — 99 pending as of 2026-05-25 top-up
+- `skills/kira-research-report/prompts/batch_runner.md` — Q.3 schedule + Q.1 multi-fire + Step 0 node fix
+- `skills/kira-research-report/prompts/insight_runner.md` — Q.2 insight pipeline
+- `.claude/settings.json` — project allowlist (used by interactive sessions started inside the project)
+- `project des/memory/*.md` — repo-tracked memory; mirror to user memory dir manually (Step 4)
+
+## Files that DON'T travel (manual setup on each machine)
+
+- `C:\Users\<user>\.claude\settings.json` — user-level allowlist + defaultMode auto (Step 3)
+- `C:\Users\<user>\.claude\projects\<sanitized>\memory\` — mirrored from repo (Step 4)
+- `C:\Users\<user>\.claude\scheduled-tasks\kira-*\SKILL.md` — 2 tasks post-Q.7 (Step 5)
+- Windows User-scope env vars (Step 2)
+- Git config (Step 1 sub-step)
+
+See also: [[project_batch_cron_system]] · [[feedback_scheduled_task_cwd_parent]] · [[user_henry]] · [[reference_kira_research]]
+
+---
+
+## Deferred cleanup: rename folder `Rira` → `Kira` (typo)
+
+The folder `C:\Users\vnc-f4\Rira Research\` was created with a typo — brand is **KIRA** Research. It's purely local (no public/git impact — domain is `kiraresearch.com`, repo is `kira-research`, brand strings everywhere else are correct). Deferred 2026-05-26 because cron was actively firing — no urgency.
+
+**When ready to fix (vnc-f4, ~5-10 min):**
+
+1. Close Claude Code completely (all windows including any paused cron-fire windows).
+2. Wait for any in-progress fire to finish (or accept the dropped fire — claim row resets to error, manual `git checkout -- data/report_queue.csv` to recover).
+3. File Explorer: rename `C:\Users\vnc-f4\Rira Research\` → `C:\Users\vnc-f4\Kira Research\`.
+4. Update the SKILL.md files at `C:\Users\vnc-f4\.claude\scheduled-tasks\kira-*\SKILL.md` (2 files post-Q.7, 22 before). The "Working directory:" line currently says `C:\Users\vnc-f4\Rira Research\kira-research` — change `Rira` → `Kira` in each.
+   - Or have Claude do it via Glob+Edit once the new Claude Code session opens.
+5. Rename Claude Code project memory dir: `C:\Users\vnc-f4\.claude\projects\C--Users-vnc-f4-Rira-Research\` → `C--Users-vnc-f4-Kira-Research\`.
+6. Reopen Claude Code in the new folder location.
+7. Verify: `git status` in repo works, `git rev-parse --show-toplevel` returns the new path, and a manual "Run now" on a scheduled task succeeds.
+
+**Same procedure for DELL** if its folder is also typo'd.
+
+The repo itself (kira-research) has no `Rira` strings — only the parent folder name does, so renaming the parent doesn't require any repo commits.
+
+**Risk if left unfixed:** zero functional risk. Purely cosmetic.

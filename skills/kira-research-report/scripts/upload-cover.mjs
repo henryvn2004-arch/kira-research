@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+// Upload one cover illustration (from gen-cover.mjs) to the public `covers`
+// bucket and point the report or insight at it (migration 026).
+//
+//   node skills/kira-research-report/scripts/upload-cover.mjs \
+//     --kind report|insight --slug <slug> --in <cover.jpg>
+//
+// Writes four files: <slug>.jpg (1536 wide), <slug>-thumb.jpg (360x480
+// portrait crop), <slug>-sm.jpg (228x304, small library-list thumbnail) and <slug>-wide.jpg (800x500 crop for
+// insight cards). The crops follow the subject: layout L1 art keeps its left
+// third white (crops sit right of centre), L2 its right third (crops sit left
+// of centre); every other layout (full-bleed landscape, square, portrait) is
+// cropped from the centre. Then sets cover_url and
+// cover_thumb_url on living_reports / insights (matched by slug).
+// For --kind report it also copies the URLs to insights that list the report
+// in related_report_slugs and have no cover of their own.
+// Prints one JSON line. Env: SUPABASE_URL, SUPABASE_SERVICE_KEY.
+import fs from 'node:fs';
+import sharp from 'sharp';
+
+const arg = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : null; };
+const kind = arg('kind'), slug = arg('slug'), input = arg('in');
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
+if (!['report', 'insight'].includes(kind) || !slug || !input) {
+  console.error('usage: upload-cover.mjs --kind report|insight --slug <slug> --in <cover.jpg>');
+  process.exit(2);
+}
+if (!/^[a-z0-9][a-z0-9-]{1,150}$/.test(slug)) { console.error('bad slug'); process.exit(2); }
+if (!URL_ || !KEY) { console.log(JSON.stringify({ ok: false, error: 'SUPABASE_URL / SUPABASE_SERVICE_KEY missing' })); process.exit(3); }
+
+const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
+const folder = kind === 'report' ? 'reports' : 'insights';
+const table = kind === 'report' ? 'living_reports' : 'insights';
+
+async function put(name, buf) {
+  const r = await fetch(`${URL_}/storage/v1/object/covers/${folder}/${name}`, {
+    method: 'POST',
+    headers: { ...H, 'Content-Type': 'image/jpeg', 'x-upsert': 'true', 'Cache-Control': 'max-age=31536000' },
+    body: buf,
+  });
+  if (!r.ok) throw new Error(`upload ${name}: ${r.status} ${await r.text()}`);
+  return `${URL_}/storage/v1/object/public/covers/${folder}/${name}`;
+}
+async function patch(path, body) {
+  const r = await fetch(`${URL_}/rest/v1/${path}`, {
+    method: 'PATCH', headers: { ...H, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`patch ${path}: ${r.status} ${await r.text()}`);
+  return r.json();
+}
+
+try {
+  const src = sharp(fs.readFileSync(input));
+  const { width: w, height: h } = await src.metadata();
+  if (!w || !h) throw new Error('not an image');
+  // Where the subject sits: a near-white left (L1) or right (L2) edge band
+  // means the scene fills the other two-thirds; otherwise crop the centre.
+  const px = await src.clone().resize(48, 48, { fit: 'fill' }).greyscale().raw().toBuffer();
+  const band = (x0, x1) => { let t = 0; for (let y = 0; y < 48; y++) for (let x = x0; x < x1; x++) t += px[y * 48 + x]; return t / (48 * (x1 - x0)); };
+  const bl = band(0, 12), br = band(36, 48);
+  const side = bl > 232 && bl - br > 12 ? 'right' : br > 232 && br - bl > 12 ? 'left' : 'center';
+  const fx = { right: 0.62, left: 0.38, center: 0.5 }[side];
+  const tw = Math.min(w, Math.round(h * 3 / 4)), th = Math.min(h, Math.round(tw * 4 / 3));
+  const tx = Math.max(0, Math.min(w - tw, Math.round(w * fx - tw / 2))), ty = Math.round((h - th) / 2);
+  const ww = Math.min(w, side === 'center' ? Math.round(h * 8 / 5) : Math.round(w * 0.68)), wh = Math.min(h, Math.round(ww * 5 / 8));
+  const wx = side === 'right' ? w - ww : side === 'left' ? 0 : Math.round((w - ww) / 2);
+  const full = await src.clone().resize({ width: 1536, withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
+  const thumb = await src.clone().extract({ left: tx, top: ty, width: tw, height: th }).resize(360, 480).jpeg({ quality: 78, mozjpeg: true }).toBuffer();
+  const sm = await sharp(thumb).resize(228, 304).jpeg({ quality: 72, mozjpeg: true }).toBuffer();
+  const wide = await src.clone().extract({ left: wx, top: Math.round((h - wh) / 2), width: ww, height: wh }).resize(800, 500).jpeg({ quality: 78, mozjpeg: true }).toBuffer();
+
+  const v = `?v=${Date.now().toString(36)}`;
+  const cover_url = (await put(`${slug}.jpg`, full)) + v;
+  const cover_thumb_url = (await put(`${slug}-thumb.jpg`, thumb)) + v;
+  await put(`${slug}-sm.jpg`, sm);
+  await put(`${slug}-wide.jpg`, wide);
+
+  const rows = await patch(`${table}?slug=eq.${slug}`, { cover_url, cover_thumb_url });
+  let insights = 0;
+  if (kind === 'report') {
+    // Linked insights without art of their own follow the report's cover.
+    const own = encodeURIComponent('(cover_url.is.null,cover_url.like.*/covers/reports/*)');
+    const linked = await patch(`insights?related_report_slugs=cs.${encodeURIComponent(`{${slug}}`)}&or=${own}`, { cover_url, cover_thumb_url });
+    insights = linked.length;
+  }
+  console.log(JSON.stringify({ ok: true, kind, slug, crop: side, cover_url, rows: rows.length, insights, bytes: { full: full.length, thumb: thumb.length, wide: wide.length } }));
+} catch (e) {
+  console.log(JSON.stringify({ ok: false, kind, slug, error: String(e.message || e) }));
+  process.exit(3);
+}

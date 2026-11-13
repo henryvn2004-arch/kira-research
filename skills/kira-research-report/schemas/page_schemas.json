@@ -1,0 +1,838 @@
+{
+  "schema_meta": {
+    "version": "1.0",
+    "description": "KIRA Research report page schemas — hard character budgets and slot definitions enforced by content generator. Prevents overflow at render time.",
+    "enforcement": "Content generator MUST validate char counts against schema before render. Renderer MUST measure rendered height with Puppeteer post-render; if exceeds page_height_px, regen offending section with -15% budget. Max 3 retry attempts.",
+    "created_at": "2026-05-22"
+  },
+
+  "page_geometry": {
+    "width_px": 1280,
+    "height_px": 720,
+    "ratio": "16:9",
+    "padding_top_px": 36,
+    "padding_bottom_px": 28,
+    "padding_lr_px": 56,
+    "page_header_height_px": 47,
+    "page_footer_height_px": 39,
+    "available_content_height_px": 570,
+    "h1_block_height_px": 40,
+    "subhead_block_height_px": 76,
+    "available_body_height_px": 454,
+    "note": "All page types must fit content within 720px total. Body slot has 454px available after H1+subhead."
+  },
+
+  "global_rules": {
+    "inline_bold_allowed": "<strong>x</strong> for key terms, used sparingly (McKinsey style: 1-2 bolded phrases per paragraph max)",
+    "source_tags": {
+      "_phase_l3_note": "As of Phase L.3, the [primary]/[secondary]/[estimate] trio is REPLACED. Use only:",
+      "kira_estimates": "[Kira estimates] — any KIRA-derived figure (synthesis, triangulation, model output). Replaces both old [primary] AND [estimate].",
+      "named_source": "[<Source Alias> <Year>] — external citable source, alias inline + full citation in page-bottom source_key. Examples: [BPS 2024], [Vinacafe AR 2025], [AC Nielsen 2026].",
+      "user_input": "[user-input] — UC3 only, data from buyer-uploaded file.",
+      "see_spec": "Full spec in prompts/content_per_section.md Step 5."
+    },
+    "source_key_footer": {
+      "required_on": "Every content page that uses any named-source tag. Optional on boilerplate (cover, toc, divider, methodology_inline) and on pages using only [Kira estimates].",
+      "format": "Single line at the bottom of the page body (above page-footer chrome). Pattern: 'SOURCE KEY · alias_1 = full citation 1 · alias_2 = full citation 2 · ... · Kira estimates = KIRA in-house analyst triangulation'",
+      "char_cap": 320,
+      "lines_max": 2,
+      "style": "11px monospace muted gray, italic prefix label",
+      "css_class": ".source-key (defined in master_styles.css)"
+    },
+    "no_brand_violations": [
+      "Never mention source archive firm names",
+      "Never use 'Claude' or 'McKinsey' in any visible copy",
+      "Generic descriptors only: '1,000+ primary research studies'",
+      "Use 'AI' and 'consulting-grade' / 'consulting-style'"
+    ],
+    "register": "Consulting-grade analyst voice. De-cliented: strategic implications for 'market participants' (NOT 'client should'). Confident, precise, numbers-anchored."
+  },
+
+  "page_types": {
+
+    "cover": {
+      "description": "Report cover (2026-10): left text column + per-report illustration (cover.jpg from scripts/gen-cover.mjs, gpt-image, style rotated per report) faded into white on the right. Variant 'plain' when no illustration is available.",
+      "slots": {
+        "kira_logo": {
+          "required": true,
+          "src": "brand/logo.png"
+        },
+        "region_or_country": {
+          "max_chars": 24
+        },
+        "report_kind": {
+          "max_chars": 28,
+          "examples": [
+            "Industry report",
+            "Market entry brief",
+            "Distribution brief"
+          ]
+        },
+        "title_lines": {
+          "count": 3,
+          "each_max_chars": 18,
+          "accent": "line 2",
+          "note": "Short, punchy lines (e.g. 'Philippines' / 'Sari-sari route' / 'to FMCG growth'); add class long if any line > 14 chars."
+        },
+        "subtitle": {
+          "max_chars": 110,
+          "lines_max": 2,
+          "note": "The buyer question in plain words (BRAIN route) or the angle."
+        },
+        "year": {
+          "format": "YYYY"
+        },
+        "tagline": {
+          "fixed": "Know first. / Move first.",
+          "note": "Brand tagline, hard-coded in the template. Do not change it per report."
+        },
+        "cover_image": {
+          "src": "cover.jpg",
+          "generated_by": "scripts/gen-cover.mjs"
+        }
+      }
+    },
+
+    "methodology_inline": {
+      "description": "Page 02 — methodology overview in 2-col grid. SEMI-BOILERPLATE: subhead is fixed; column items may be tailored per blueprint (commodity vs FMCG vs finserv have different primary input sources) but follow the canonical structure.",
+      "is_boilerplate": true,
+      "boilerplate_note": "Never claim fieldwork that was not done: the pipeline is desk research only, so no store walks, calls or interviews unless the report actually used them (UC3 uploads may). Content gen MUST use the default_copy below as base. Substitute column items from the section's section_structure.json `methodology_items_override` if present; otherwise use defaults. Do NOT freelance the subhead — it must explicitly introduce the two columns to keep slide and supporting text aligned (a previous freelance produced 'Twenty-six primary research queries...' which didn't connect to the columns at all).",
+      "default_copy": {
+        "h1": "How we built this view",
+        "subhead": "This view is built from two evidence streams: <strong>analyst research</strong> — local-language desk research, company and channel disclosures, and analyst synthesis — and <strong>secondary anchors</strong> — statistical authorities, listed company filings, and triangulated estimates. Every quantitative claim carries an explicit source tag.",
+        "col_left": {
+          "heading": "Analyst research",
+          "items": [
+            {"label": "Local-language desk research", "desc": "Trade press, regulator notices and industry-body releases in the market's own language — often the only place local prices, store counts and rule changes are reported."},
+            {"label": "Analyst synthesis", "desc": "KIRA in-house triangulation across multiple disclosed inputs. Tagged inline as [Kira estimates]."},
+            {"label": "Company & channel disclosures", "desc": "Store-network announcements, distributor and platform disclosures, retailer price listings — read closer to the demand signal than headline data."}
+          ]
+        },
+        "col_right": {
+          "heading": "Secondary anchors",
+          "items": [
+            {"label": "Statistical authorities", "desc": "Government statistical offices, central banks, customs data — cited inline by named source."},
+            {"label": "Listed company filings", "desc": "Annual reports, prospectuses, investor decks of named players — cited inline by company + period."},
+            {"label": "Triangulated estimates", "desc": "Where no single source covers a figure, we combine 2-3 inputs and disclose the method. Tagged [Kira estimates]."}
+          ]
+        }
+      },
+      "slots": {
+        "h1": {"max_chars": 60},
+        "subhead": {"max_chars": 280, "lines_max": 4, "allow_inline_bold": true},
+        "col_left": {
+          "heading": {"max_chars": 30},
+          "items": {
+            "count_min": 3,
+            "count_max": 4,
+            "each": {"label_max_chars": 40, "desc_max_chars": 160}
+          }
+        },
+        "col_right": {
+          "heading": {"max_chars": 30},
+          "items": {
+            "count_min": 3,
+            "count_max": 4,
+            "each": {"label_max_chars": 40, "desc_max_chars": 160}
+          }
+        }
+      }
+    },
+
+    "toc": {
+      "description": "Table of contents — typically 1-2 pages, list of all 19 sections",
+      "slots": {
+        "h1": {"max_chars": 40},
+        "sections": {
+          "count_max_per_page": 12,
+          "each": {
+            "number": {"format": "NN"},
+            "title_max_chars": 45,
+            "subtitle_max_chars": 60,
+            "page_ref": {"format": "NNN"}
+          }
+        }
+      }
+    },
+
+    "divider": {
+      "description": "Dark-mode section break — McKinsey-style chapter signposting",
+      "background": "dark (#0B0D10)",
+      "slots": {
+        "section_num": {"format": "SECTION NN", "max_chars": 12},
+        "title": {"max_chars": 55, "lines_max": 2, "allow_accent_color": true},
+        "thesis": {
+          "max_chars": 320,
+          "lines_max": 5,
+          "allow_inline_bold": true,
+          "register": "Single declarative claim about the section's main insight"
+        },
+        "mini_toc_pills": {
+          "count_min": 3,
+          "count_max": 6,
+          "each_max_chars": 28
+        }
+      }
+    },
+
+    "exec_summary_p1": {
+      "description": "Executive summary first page — 4 callouts + 2-col narrative + chart",
+      "slots": {
+        "h1": {"max_chars": 75, "lines_max": 1},
+        "subhead": {"max_chars": 200, "lines_max": 3, "allow_inline_bold": true},
+        "callouts": {
+          "count": 4,
+          "row_height_px": 100,
+          "each": {
+            "label_max_chars": 30,
+            "num_max_chars": 12,
+            "unit_max_chars": 8,
+            "change_max_chars": 38,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          }
+        },
+        "narrative_left": {
+          "sections_count": 2,
+          "per_section": {
+            "heading_max_chars": 22,
+            "body_max_chars": 580,
+            "paragraphs_max": 1,
+            "allow_inline_bold": true
+          },
+          "total_chars_max": 1200
+        },
+        "chart_right": {
+          "title_max_chars": 50,
+          "subtitle_max_chars": 38,
+          "unit_max_chars": 8,
+          "source_max_chars": 110,
+          "svg_viewbox_height": 240,
+          "data_categories_max": 3,
+          "data_periods_max": 3
+        }
+      }
+    },
+
+    "exec_summary_p2_implications": {
+      "description": "Strategic implications page — 5-card grid",
+      "slots": {
+        "h1": {"max_chars": 75, "lines_max": 1},
+        "subhead": {"max_chars": 200, "lines_max": 3, "allow_inline_bold": true},
+        "cards": {
+          "count": 5,
+          "each": {
+            "tag_label_max_chars": 18,
+            "title_max_chars": 55,
+            "title_lines_max": 2,
+            "body_max_chars": 360,
+            "allow_inline_bold": true,
+            "anchor_label_max_chars": 50
+          }
+        }
+      }
+    },
+
+    "market_data_chart": {
+      "description": "Generic page with narrative + 1 chart — used for market sizing, growth, forecasts",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+        "narrative_left": {
+          "sections_count_max": 3,
+          "per_section": {
+            "heading_max_chars": 30,
+            "body_max_chars": 350,
+            "paragraphs_max": 1
+          }
+        },
+        "chart_right": {
+          "title_max_chars": 60,
+          "subtitle_max_chars": 50,
+          "data_complexity": "single-axis, max 6 data points or 3 series × 3 periods"
+        }
+      }
+    },
+
+    "competitive_structure": {
+      "description": "Market structure page — chart + sidebar + 4-col player cards",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3},
+        "structure_section": {
+          "row_height_px": 240,
+          "chart_card": {
+            "title_max_chars": 55,
+            "subtitle_max_chars": 40
+          },
+          "sidebar_text": {
+            "heading_max_chars": 30,
+            "body_max_chars": 280,
+            "stat_lines_max": 4,
+            "stat_line_max_chars": 35
+          }
+        },
+        "player_cards_row": {
+          "card_count": 4,
+          "row_height_px": 200,
+          "each": {
+            "rank_label_max_chars": 8,
+            "name_max_chars": 45,
+            "name_lines_max": 2,
+            "parent_max_chars": 55,
+            "stat_rows_count": 3,
+            "stat_label_max_chars": 16,
+            "stat_value_max_chars": 22,
+            "strengths_body_max_chars": 140
+          }
+        }
+      }
+    },
+
+    "competitive_profile_deep": {
+      "description": "Single player deep dive — hero + 2-col body. Used for top 5-6 player profiles.",
+      "slots": {
+        "hero_block": {
+          "row_height_px": 130,
+          "company_name_max_chars": 60,
+          "name_lines_max": 2,
+          "subtitle_max_chars": 90,
+          "tags": {
+            "count_max": 3,
+            "each_max_chars": 22
+          },
+          "stats": {
+            "count": 4,
+            "label_max_chars": 18,
+            "value_max_chars": 8,
+            "unit_max_chars": 14
+          }
+        },
+        "body_left_col": {
+          "sections_count": 2,
+          "per_section": {
+            "heading_max_chars": 30,
+            "body_max_chars": 380,
+            "paragraphs_max": 1
+          }
+        },
+        "body_right_col": {
+          "sections_count": 2,
+          "per_section": {
+            "heading_max_chars": 30,
+            "list_items_max": 5,
+            "item_max_chars": 90,
+            "body_or_list": "either prose paragraph (max 380 chars) OR list (max 5 items × 90 chars)"
+          }
+        }
+      }
+    },
+
+    "ai_overview": {
+      "description": "AI Impact section overview page — narrative + chart + 3 callouts",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 240, "lines_max": 3, "allow_inline_bold": true},
+        "top_row": {
+          "height_px": 280,
+          "narrative_left": {
+            "sections_count": 3,
+            "per_section": {
+              "heading_max_chars": 25,
+              "body_max_chars": 220
+            }
+          },
+          "chart_right": {
+            "title_max_chars": 50,
+            "data_simple_2bar": true
+          }
+        },
+        "callouts_bottom": {
+          "count": 3,
+          "each": {
+            "label_max_chars": 28,
+            "num_max_chars": 14,
+            "change_max_chars": 38
+          }
+        }
+      }
+    },
+
+    "use_case_grid_6": {
+      "description": "6-card grid (3×2) — used for AI use cases, segmentation breakouts, etc.",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+        "cards": {
+          "count": 6,
+          "grid": "3-col × 2-row",
+          "each": {
+            "tag_label_max_chars": 14,
+            "title_max_chars": 45,
+            "title_lines_max": 2,
+            "body_max_chars": 280,
+            "example_label_max_chars": 50
+          }
+        }
+      }
+    },
+
+    "forecast_outlook": {
+      "description": "Forecast page — multi-period projection chart + scenario narrative",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3},
+        "chart_main": {
+          "row_height_px": 280,
+          "title_max_chars": 60,
+          "data_points_max": 8,
+          "scenarios_max": 3
+        },
+        "scenario_cards": {
+          "count": 3,
+          "each": {
+            "scenario_name_max_chars": 22,
+            "value_max_chars": 18,
+            "body_max_chars": 200
+          }
+        }
+      }
+    },
+
+    "methodology_endnote": {
+      "description": "Final methodology + sources page (last section). Two halves: (a) one-paragraph methodology summary referencing the Phase L.3 tag system; (b) consolidated source list — every UNIQUE alias used across the whole report, alphabetical, with full citation. This is the REPORT-LEVEL source roll-up; the per-page source_key footer remains on each content page.",
+      "slots": {
+        "h1": {"max_chars": 60},
+        "methodology_summary": {
+          "max_chars": 700,
+          "note": "Explains the Kira estimates vs named-source system. Example boilerplate: 'This view triangulates two evidence streams. Where a figure carries a named source tag (e.g. [BPS 2024], [Vinacafe AR 2025]), the underlying data comes from that source; the full citation is given below. Where a figure carries [Kira estimates], KIRA analysts derived the number from a blend of disclosed inputs (filings, company and channel disclosures, government data) using methodology disclosed in the relevant section. Approximately X% of quantitative claims are KIRA-derived; Y% are externally cited.'",
+          "boilerplate_pattern": true
+        },
+        "sources_list": {
+          "items_count_max": 30,
+          "each_max_chars": 120,
+          "note": "Format: '<Alias> — <Full citation>'. Sorted alphabetically. Includes every named source used anywhere in the report. Does NOT include 'Kira estimates' — that's described in methodology_summary above."
+        },
+        "disclaimer": {"required": true, "max_chars": 240}
+      }
+    },
+
+    "persona_profile": {
+      "description": "Phase H — consumer_segmentation: single-page deep profile of one consumer persona. Repeated 3x per report (one page per persona). Layout: header strip + 4-stat demo grid + 4-card behavior grid + quote callout + channel preference bar + WTP anchor + source line.",
+      "blueprint": "consumer_segmentation",
+      "slots": {
+        "h1": {"max_chars": 70, "lines_max": 1, "note": "Persona headline thesis, sentence-case (e.g. 'Buys quality once, refuses subscription churn.')"},
+        "subhead": {"max_chars": 180, "lines_max": 2, "allow_inline_bold": true},
+        "persona_label": {
+          "max_chars": 30,
+          "format": "MONO UPPERCASE",
+          "note": "Persona codename, e.g. 'URBAN VALUE-SEEKER · 28-34'"
+        },
+        "demo_stats_grid": {
+          "count": 4,
+          "row_height_px": 100,
+          "axes": ["age_band", "income", "location", "household"],
+          "each": {
+            "label_max_chars": 30,
+            "num_max_chars": 12,
+            "unit_max_chars": 8,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          }
+        },
+        "behavior_grid": {
+          "count": 4,
+          "row_height_px": 110,
+          "axes": ["purchase_frequency", "basket_size", "channel_mix", "decision_driver"],
+          "each": {
+            "metric_max_chars": 14,
+            "label_max_chars": 30,
+            "change_line_max_chars": 38,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          }
+        },
+        "quote_callout": {
+          "body_max_chars": 80,
+          "attribution_max_chars": 40,
+          "note": "Verbatim or [estimate]-tagged composite. Attribution example: 'F, 31, Jakarta · IDI panel n=24'"
+        },
+        "channel_pref_bar": {
+          "row_height_px": 70,
+          "channels_count_min": 5,
+          "channels_count_max": 6,
+          "channel_label_max_chars": 18,
+          "channel_pct_max_chars": 6,
+          "caption_max_chars": 110
+        },
+        "wtp_anchor": {
+          "num_max_chars": 12,
+          "unit_max_chars": 8,
+          "change_line_max_chars": 38,
+          "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1400
+    },
+
+    "policy_timeline": {
+      "description": "Phase H — regulatory_brief: horizontal SVG policy timeline spanning page width with 5-8 dated markers. Each marker carries date + label + brief body + winner/loser chip. Right-rail callouts anchor dominant winner / dominant loser / biggest pending change.",
+      "blueprint": "regulatory_brief",
+      "slots": {
+        "h1": {"max_chars": 60, "lines_max": 1, "note": "Sentence-case, e.g. 'Policy timeline: EV subsidy regime'"},
+        "subhead": {"max_chars": 180, "lines_max": 2, "allow_inline_bold": true},
+        "timeline_svg": {
+          "orientation": "horizontal",
+          "row_height_px": 280,
+          "markers_min": 5,
+          "markers_max": 8,
+          "each": {
+            "date_format": "YYYY-MM",
+            "date_max_chars": 10,
+            "label_max_chars": 16,
+            "body_max_chars": 40,
+            "winner_loser_indicator": ["winner", "loser", "neutral", "mixed", "pending"],
+            "chip_label_max_chars": 8,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          },
+          "note": "When labels would overlap horizontally, alternate body text above/below the axis line."
+        },
+        "right_rail_callouts": {
+          "count_min": 2,
+          "count_max": 3,
+          "anchors": ["dominant_winner", "dominant_loser", "biggest_pending"],
+          "each": {
+            "tag_label_max_chars": 18,
+            "title_max_chars": 30,
+            "body_max_chars": 140,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          }
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1500
+    },
+
+    "risk_matrix": {
+      "description": "Phase H — entry_strategy (QUALITATIVE variant): 5x5 likelihood-by-impact heatmap with LOW/MED/HIGH shading only. 8-12 named risks placed in cells; remaining cells empty. Right-rail 3-card sidebar expands the top likelihood risk, top impact risk, top combined risk. NO numeric scores.",
+      "blueprint": "entry_strategy",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+        "matrix_grid": {
+          "row_height_px": 380,
+          "axis_labels": {
+            "x_axis": "Likelihood",
+            "x_axis_bands": ["Rare", "Unlikely", "Possible", "Likely", "Almost certain"],
+            "y_axis": "Impact",
+            "y_axis_bands": ["Marginal", "Minor", "Moderate", "Major", "Severe"],
+            "band_label_max_chars": 14
+          },
+          "risk_cell_count_min": 8,
+          "risk_cell_count_max": 12,
+          "cell_label_max_chars": 22,
+          "severity_palette": {
+            "low": "#15803D",
+            "medium": "#D97706",
+            "high": "#B91C1C"
+          },
+          "severity_labels": {
+            "low": "LOW",
+            "medium": "MED",
+            "high": "HIGH"
+          },
+          "no_numeric_scores": true,
+          "note": "Severity is conveyed via cell fill + sidebar tag only — never a 1-5 score, never a composite number."
+        },
+        "key_risks_sidebar": {
+          "count": 3,
+          "anchors": ["top_likelihood", "top_impact", "top_combined"],
+          "each": {
+            "risk_name_max_chars": 30,
+            "risk_name_format": "MONO UPPERCASE",
+            "severity_tag_max_chars": 14,
+            "body_max_chars": 180,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          }
+        },
+        "legend_strip": {"max_chars": 90, "note": "e.g. 'Green: monitor — Amber: mitigate — Red: gate the launch'"},
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1400
+    },
+
+    "channel_waterfall": {
+      "description": "Phase H — distribution_analysis: horizontal stacked-bar showing 4-7 channel links from brand ex-factory to consumer shelf. Each segment = link name + margin % at that link with source tag. Subtitle anchors total gross margin and biggest margin keeper.",
+      "blueprint": "distribution_analysis",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true, "note": "Anchor the total brand→consumer gross margin and call out the biggest margin keeper inline."},
+        "waterfall_chart": {
+          "row_height_px": 280,
+          "layers_min": 4,
+          "layers_max": 7,
+          "canonical_layers": [
+            "brand_ex_factory",
+            "importer_or_principal",
+            "master_distributor",
+            "sub_distributor",
+            "modern_trade_retailer",
+            "traditional_trade",
+            "e_commerce_platform_take",
+            "last_mile_logistics",
+            "consumer_shelf_price"
+          ],
+          "each_segment": {
+            "layer_label_max_chars": 16,
+            "margin_pct_max_chars": 8,
+            "margin_pct_unit_max_chars": 4,
+            "take_note_max_chars": 40,
+            "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+          },
+          "note": "Sum of margin segments should approximate 100% of consumer shelf price. Largest segment gets an emphasis stroke."
+        },
+        "bottom_commentary": {
+          "sections_count": 2,
+          "per_section": {
+            "heading_max_chars": 30,
+            "body_max_chars": 220,
+            "paragraphs_max": 1,
+            "allow_inline_bold": true
+          },
+          "note": "Left section reads the structural takeaway. Right section lists 2-3 anomalies (compression points, fat layers, disintermediation risks)."
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1400
+    },
+
+    "price_quality_matrix": {
+      "description": "Phase H — pricing_strategy: 2x2 perceptual scatter mapping brands on perceived quality (y-axis) by price (x-axis). 4 quadrant labels frame strategic positioning. 6-12 brand points plotted with optional dot-size encoding for share. Right-rail narrative interprets contested quadrant + opportunity gap.",
+      "blueprint": "pricing_strategy",
+      "slots": {
+        "h1": {"max_chars": 80, "lines_max": 1},
+        "subhead": {"max_chars": 220, "lines_max": 3, "allow_inline_bold": true},
+        "matrix_chart": {
+          "row_height_px": 380,
+          "x_axis_label_max_chars": 24,
+          "y_axis_label_max_chars": 24,
+          "x_axis_unit": "indicative price band (low / mid / high) or local-currency band midpoint",
+          "y_axis_unit": "quality score 0-100 (KIRA composite) OR survey perception index",
+          "quadrant_labels": {
+            "count": 4,
+            "each_max_chars": 24,
+            "positions": {
+              "top-right": "premium fortress / NE",
+              "top-left": "overpriced / NW",
+              "bottom-right": "value sweet-spot / SE",
+              "bottom-left": "mass-market core / SW"
+            },
+            "note": "Labels should be category-specific, not generic. Each <= 24 chars."
+          },
+          "brand_points": {
+            "count_min": 6,
+            "count_max": 12,
+            "each": {
+              "label_max_chars": 18,
+              "dot_size_meaning": "optional — encodes share or revenue",
+              "source_tag": ["Kira estimates", "<Source Alias> <Year>"]
+            }
+          }
+        },
+        "sidebar_narrative": {
+          "heading_max_chars": 30,
+          "body_max_chars": 380,
+          "paragraphs_max": 2,
+          "allow_inline_bold": true,
+          "note": "Identify the most contested quadrant + the key opportunity gap (empty quadrant or thin band)."
+        },
+        "source_strip": {"max_chars": 110, "format": "MONO UPPERCASE"}
+      },
+      "char_budget_envelope_total": 1500
+    },
+    "decision_scorecard": {
+      "description": "Decision brief (BRAIN route): options x criteria table rated STRONG / FAIR / WEAK (no numeric scores), recommended row highlighted, right rail with the verdict and what would change it. Use when the report compares entry modes, partner types, segments, formats or locations.",
+      "blueprint": "brain",
+      "slots": {
+        "h1": {
+          "max_chars": 80,
+          "lines_max": 1
+        },
+        "subhead": {
+          "max_chars": 220,
+          "lines_max": 3,
+          "allow_inline_bold": true
+        },
+        "table": {
+          "options_count_min": 3,
+          "options_count_max": 5,
+          "criteria_count_min": 4,
+          "criteria_count_max": 6,
+          "option_name_max_chars": 34,
+          "criterion_label_max_chars": 22,
+          "rating_labels": [
+            "Strong",
+            "Fair",
+            "Weak"
+          ],
+          "cell_note_max_chars": 60,
+          "no_numeric_scores": true,
+          "note": "Ratings must follow from evidence elsewhere in the report; cell notes carry the reason, with a source tag where a number is used. Mark the chosen row with class recommended (the CSS adds the RECOMMENDED label)."
+        },
+        "rail": {
+          "heading_max_chars": 30,
+          "body_max_chars": 420,
+          "paragraphs_max": 3,
+          "note": "Verdict first, then the 1-2 facts that would flip it."
+        },
+        "source_key": {
+          "char_cap": 320,
+          "lines_max": 2,
+          "note": "Standard page-bottom source key (global_rules.source_key_footer)."
+        }
+      },
+      "char_budget_envelope_total": 1700
+    },
+    "stage_gate_plan": {
+      "description": "Decision brief (BRAIN route): 3-4 stage gates (scope, budget range, duration, go/no-go test) plus a first-90-days action list. Closes every question-led report before the methodology endnote.",
+      "blueprint": "brain",
+      "slots": {
+        "h1": {
+          "max_chars": 80,
+          "lines_max": 1
+        },
+        "subhead": {
+          "max_chars": 220,
+          "lines_max": 3,
+          "allow_inline_bold": true
+        },
+        "gates": {
+          "count_min": 3,
+          "count_max": 4,
+          "gate_name_max_chars": 24,
+          "scope_max_chars": 90,
+          "budget_max_chars": 14,
+          "duration_max_chars": 14,
+          "test_max_chars": 90,
+          "note": "Budgets are short ranges (e.g. USD 1.5-3m). Put [Kira estimates] once in the subhead for all budgets unless a budget is sourced; then tag that cell. The test is measurable (a number and a date)."
+        },
+        "actions": {
+          "heading_max_chars": 30,
+          "count_min": 5,
+          "count_max": 7,
+          "each_max_chars": 110
+        },
+        "source_key": {
+          "char_cap": 320,
+          "lines_max": 2,
+          "note": "Standard page-bottom source key (global_rules.source_key_footer)."
+        }
+      },
+      "char_budget_envelope_total": 1500
+    },
+    "exhibit_page": {
+      "description": "Flexible exhibit page (exhibit layer, 2026-10). Action title + optional kicker + 1-3 exhibits arranged in a layout + optional commentary / big number / callout + takeaway bar. Default body page for the BRAIN route; usable by any route. Exhibit snippets: templates/exhibits.html; rules: docs/exhibit_library.md; writing: prompts/storytelling.md.",
+      "slots": {
+        "h1": {
+          "max_chars": 120,
+          "lines_max": 2,
+          "note": "Action title: the page's conclusion as a sentence."
+        },
+        "kicker": {
+          "max_chars": 240,
+          "lines_max": 2,
+          "optional": true
+        },
+        "layout": {
+          "one_of": [
+            "layout-full",
+            "layout-split",
+            "layout-main-side",
+            "layout-side-main",
+            "layout-trio",
+            "layout-stack",
+            "layout-hero"
+          ]
+        },
+        "exhibits": {
+          "count_min": 1,
+          "count_max": 3,
+          "types": "see docs/exhibit_library.md (16 types)"
+        },
+        "commentary": {
+          "optional": true,
+          "paragraphs_max": 4,
+          "each_max_chars": 300
+        },
+        "takeaway": {
+          "max_chars": 160,
+          "lines_max": 2,
+          "note": "The so-what for the buyer; never restates the title."
+        },
+        "source_key": {
+          "char_cap": 320,
+          "lines_max": 2
+        }
+      },
+      "fit_rule": "Caps are physical fit only. If content does not fit, split into two exhibit pages instead of trimming the insight."
+    },
+    "closing": {
+      "description": "Closing page (2026-10): identical brand page on every report (blue, thank-you, contacts). No image generation. Always the last page, after the methodology endnote, in every route.",
+      "slots": {
+        "report_short_title": {
+          "max_chars": 32
+        },
+        "report_kind": {
+          "max_chars": 28
+        },
+        "year": {
+          "format": "YYYY"
+        }
+      },
+      "is_boilerplate": true
+    }
+
+  },
+
+  "validation_rules": {
+    "pre_render": [
+      "Validate ALL char counts against schema for given page type",
+      "If any slot exceeds budget by >10%, fail and request shorter content",
+      "If exceeds 5-10%, allow with warning logged",
+      "If under-budget by >40%, flag for content expansion (page looks empty)"
+    ],
+    "post_render": [
+      "Use Puppeteer to measure actual rendered page height",
+      "If height > 720px, fail and request -15% content for offending section",
+      "Retry max 3 times before flagging for manual review",
+      "Log final char counts and rendered height to audit.log"
+    ],
+    "manual_review_triggers": [
+      "3 retries fail",
+      "Schema mismatch for page type",
+      "Required slot empty"
+    ]
+  },
+
+  "section_to_page_type_map": {
+    "01_cover": "cover",
+    "02_methodology": "methodology_inline",
+    "03_toc": "toc",
+    "04_executive_summary": ["exec_summary_p1", "exec_summary_p2_implications"],
+    "05_market_overview": ["divider", "market_data_chart", "market_data_chart"],
+    "06_market_sizing": ["market_data_chart", "market_data_chart"],
+    "07_segmentation": ["market_data_chart", "use_case_grid_6"],
+    "08_industry_structure": ["market_data_chart", "market_data_chart"],
+    "09_competitive_landscape": ["divider", "competitive_structure", "competitive_profile_deep", "competitive_profile_deep", "competitive_profile_deep"],
+    "10_channel_distribution": ["divider", "market_data_chart", "use_case_grid_6"],
+    "11_pricing": ["market_data_chart"],
+    "12_customer_insights": ["market_data_chart"],
+    "13_regulatory": ["divider", "market_data_chart"],
+    "14_ai_impact": ["divider", "ai_overview", "use_case_grid_6"],
+    "15_sustainability": ["divider", "market_data_chart", "use_case_grid_6"],
+    "16_digital_transformation": ["market_data_chart"],
+    "17_forecast": ["forecast_outlook"],
+    "18_strategic_implications": ["exec_summary_p2_implications"],
+    "19_methodology_endnote": ["methodology_endnote"]
+  },
+
+  "estimated_total_pages": "115-130 per report (varies by section depth)"
+}

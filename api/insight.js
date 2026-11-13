@@ -9,6 +9,8 @@
 // related reports so the article page can link them.
 // ============================================================
 
+import { coverUrls, insightCoverUrls } from './_lib/cover.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -28,10 +30,10 @@ function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=86400');
 }
 
-const SUPPORTED = new Set(['en','ja','ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 
 function clean(s, max = 200) {
   return typeof s === 'string' ? s.trim().slice(0, max) : '';
@@ -93,6 +95,14 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Reject stubs — title+excerpt without a body would render the
+    // "Full article body is being written…" fallback on _view.html.
+    // That looks broken to a buyer, so treat it as not_found.
+    if (!translation.body || !translation.body.trim()) {
+      res.status(404).json({ error: 'body_empty' });
+      return;
+    }
+
     // 3) Available locales for the article (for hreflang)
     const allRows = await sb(
       `insight_translations?insight_id=eq.${base.id}` +
@@ -107,7 +117,7 @@ export default async function handler(req, res) {
     if (Array.isArray(base.related_report_slugs) && base.related_report_slugs.length) {
       const slugList = encodeURIComponent('(' + base.related_report_slugs.join(',') + ')');
       const reportRows = await sb(
-        `living_reports?slug=in.${slugList}&status=eq.published&select=id,slug,country,industry,year,price`
+        `living_reports?slug=in.${slugList}&status=eq.published&select=id,slug,country,industry,year,price,pages,cover_url,cover_thumb_url`
       );
       const reportIds = (reportRows || []).map(r => r.id);
       let titleByReport = new Map();
@@ -133,10 +143,77 @@ export default async function handler(req, res) {
           industry: r.industry,
           year:     r.year,
           price:    r.price,
+          pages:    r.pages || null,
+          cover:    coverUrls(r, (t && t.locale) || 'en'),
           title:    (t && t.title) || null,
           excerpt:  lede ? String(lede).slice(0, 180) : null
         };
       });
+    }
+
+    // 5) Related insights (insight → insight cross-link, for SEO + dwell time).
+    //    Scoring (mirrors library-report.js relatedReports):
+    //      same country  +3
+    //      same industry +2
+    //      published in last 90 days +1
+    //    Exclude self. Take top 3.
+    let relatedInsights = [];
+    try {
+      const orParts = [];
+      if (base.country)  orParts.push(`country.eq.${encodeURIComponent(base.country)}`);
+      if (base.industry) orParts.push(`industry.eq.${encodeURIComponent(base.industry)}`);
+      if (orParts.length) {
+        const candWhere =
+          `or=(${orParts.join(',')})` +
+          `&status=eq.published` +
+          `&published_at=lte.${encodeURIComponent(nowIso)}` +
+          `&id=neq.${base.id}` +
+          `&select=id,slug,country,industry,category,published_at,cover_url,cover_thumb_url` +
+          `&limit=24`;
+        const candRows = await sb(`insights?${candWhere}`);
+        const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+        const scored = (Array.isArray(candRows) ? candRows : []).map(c => {
+          let score = 0;
+          if (base.country  && c.country  === base.country)  score += 3;
+          if (base.industry && c.industry === base.industry) score += 2;
+          if (c.published_at && new Date(c.published_at).getTime() >= cutoff) score += 1;
+          return { c, score };
+        }).filter(x => x.score > 0)
+          .sort((a, b) => b.score - a.score || new Date(b.c.published_at || 0) - new Date(a.c.published_at || 0))
+          .slice(0, 3);
+
+        if (scored.length) {
+          const candIds = scored.map(x => x.c.id);
+          const idList = encodeURIComponent('(' + candIds.join(',') + ')');
+          const titleRows = await sb(
+            `insight_translations?insight_id=in.${idList}` +
+            `&status=eq.published&locale=in.(${effectiveLocale},en)` +
+            `&select=insight_id,locale,title`
+          );
+          const titleByInsight = new Map();
+          (titleRows || []).forEach(t => {
+            const cur = titleByInsight.get(t.insight_id);
+            if (!cur || (t.locale === effectiveLocale && cur.locale !== effectiveLocale)) {
+              titleByInsight.set(t.insight_id, t);
+            }
+          });
+          relatedInsights = scored.map(({ c }) => {
+            const t = titleByInsight.get(c.id);
+            return {
+              slug:     c.slug,
+              country:  c.country,
+              industry: c.industry,
+              category: c.category,
+              published_at: c.published_at,
+              cover:    insightCoverUrls(c, (t && t.locale) || 'en'),
+              title:    (t && t.title) || null
+            };
+          }).filter(x => x.title); // hide rows we couldn't get a title for
+        }
+      }
+    } catch (err) {
+      // Non-fatal — log and serve the article without related insights.
+      console.error('[insight] relatedInsights error:', err.message);
     }
 
     res.status(200).json({
@@ -146,6 +223,7 @@ export default async function handler(req, res) {
       industry:       base.industry,
       published_at:   base.published_at,
       featured:       !!base.featured,
+      cover:          coverUrls(base) || (relatedReports.find(r => r.cover) || {}).cover || null,
 
       locale:         effectiveLocale,
       isFallback,
@@ -157,7 +235,8 @@ export default async function handler(req, res) {
       body:           translation.body,     // markdown-ish HTML stored in DB
       read_time:      translation.read_time,
 
-      relatedReports
+      relatedReports,
+      relatedInsights
     });
   } catch (err) {
     console.error('[insight] error:', err.message);

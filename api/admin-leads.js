@@ -94,7 +94,7 @@ export default async function handler(req, res) {
 
       const filters = ['order=created_at.desc', 'limit=200'];
       if (status && STATUSES.has(status)) filters.push(`status=eq.${status}`);
-      if (locale && ['en','ja','ko'].includes(locale)) filters.push(`locale=eq.${locale}`);
+      if (locale && ['en', 'ja', 'ko', 'zh'].includes(locale)) filters.push(`locale=eq.${locale}`);
 
       const leads = await supabase('leads?' + filters.join('&'));
       res.status(200).json({ leads });
