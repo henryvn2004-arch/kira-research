@@ -32,10 +32,12 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  # Newer deploy supersedes in-flight runs — no point smoke-testing stale code.
-  group: smoke-${{ github.ref }}
-  cancel-in-progress: true
+# No concurrency block on purpose. github.ref for deployment_status
+# events doesn't cleanly partition across deployments (Vercel preview
+# deploys from Dependabot PRs ended up sharing groups with prod and
+# cancel-in-progress was killing the prod smoke mid-step). Vercel
+# already dedupes rapid pushes into a single prod deploy, so we don't
+# need GH-side cancellation; just let each event run to completion.
 
 jobs:
   smoke:
@@ -52,26 +54,26 @@ jobs:
     steps:
       - name: Checkout (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout (deployment_status — deployed SHA)
         if: github.event_name == 'deployment_status'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Run smoke against the exact code Vercel just shipped, not
           # whatever main happens to be at the moment the runner spins up.
           ref: ${{ github.event.deployment.sha }}
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright

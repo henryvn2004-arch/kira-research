@@ -1,0 +1,527 @@
+<!-- ==========================================================
+     KIRA Research — Page Component Templates v1.0
+     
+     Placeholder syntax: {{VARIABLE_NAME}} or {{#each items}}...{{/each}}
+     Use simple Handlebars-style substitution. Loop syntax uses comments.
+     
+     Each template = ONE page (1280×720px).
+     Pipeline picks template by section_to_page_type_map from page_schemas.json.
+     ========================================================== -->
+
+
+<!-- ============================================================
+     TEMPLATE: cover
+     Usage: Section 01 — Report cover page
+     ============================================================ -->
+<!-- TEMPLATE_START: cover -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="page-inner">
+      <div class="cover-top">
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 28px;">KIRA<span style="color: var(--primary);">.</span></span>
+        <span style="font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.32em; color: var(--primary); text-transform: uppercase;">RESEARCH</span>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">{{COUNTRY}} · {{INDUSTRY}} · {{YEAR}}</div>
+        <h1>{{REPORT_TITLE_LINE_1}}<br>{{REPORT_TITLE_LINE_2}} <span class="accent">{{REPORT_TITLE_ACCENT}}</span></h1>
+        <p class="cover-subtitle">{{COVER_SUBTITLE}}</p>
+      </div>
+      <div>
+        <div class="cover-meta-grid">
+          <div class="cover-meta-item"><div class="label">Country</div><div class="val">{{COUNTRY}}</div></div>
+          <div class="cover-meta-item"><div class="label">Sector</div><div class="val">{{INDUSTRY_SHORT}}</div></div>
+          <div class="cover-meta-item"><div class="label">Published</div><div class="val">{{PUBLISH_DATE}}</div></div>
+          <div class="cover-meta-item"><div class="label">Report ID</div><div class="val"><span class="accent">{{REPORT_ID}}</span></div></div>
+        </div>
+        <div class="cover-confidential" style="margin-top: 16px;"><strong>CONFIDENTIAL</strong> · Single-user license · © 2026 KIRA Research</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: cover -->
+
+
+<!-- ============================================================
+     TEMPLATE: divider
+     Usage: Section break (dark mode), McKinsey-style chapter signpost
+     ============================================================ -->
+<!-- TEMPLATE_START: divider -->
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION {{SECTION_NUM}}</div>
+    <h1 class="divider-title">{{TITLE_PART_1}} <span class="accent">{{TITLE_PART_2}}</span></h1>
+    <div class="divider-thesis">{{THESIS_HTML}}</div>
+    <div class="divider-mini-toc">
+      <!-- LOOP: pills -->
+      <div class="toc-pill">{{PILL_LABEL}}</div>
+      <!-- END LOOP -->
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: divider -->
+
+
+<!-- ============================================================
+     TEMPLATE: exec_summary_p1
+     Usage: Section 04 page 1 — callouts + 2-col narrative + chart
+     Slot budgets per page_schemas.json
+     ============================================================ -->
+<!-- TEMPLATE_START: exec_summary_p1 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="exec-callouts">
+      <!-- LOOP: 4 callouts -->
+      <div class="callout">
+        <div class="label">{{CALLOUT_LABEL}}</div>
+        <div class="num">{{CALLOUT_NUM}}<span class="unit">{{CALLOUT_UNIT}}</span></div>
+        <div class="change {{CALLOUT_CHANGE_DIR}}">{{CALLOUT_CHANGE}}</div>
+        <div class="source-tag {{CALLOUT_SOURCE_TAG}}">{{CALLOUT_SOURCE_LABEL}}</div>
+      </div>
+      <!-- END LOOP -->
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <!-- LOOP: 2 narrative sections -->
+        <h3>{{NARRATIVE_HEADING}}</h3>
+        <p>{{NARRATIVE_BODY_HTML}}</p>
+        <!-- END LOOP -->
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">{{CHART_TITLE}}</div>
+            <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+          </div>
+          <div class="chart-unit">{{CHART_UNIT}}</div>
+        </div>
+        <div class="chart-body-flex">{{CHART_SVG}}</div>
+        <div class="chart-source">{{CHART_SOURCE}}</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: exec_summary_p1 -->
+
+
+<!-- ============================================================
+     TEMPLATE: exec_summary_p2_implications
+     Usage: Section 04 page 2 + Section 18 — 5-card grid
+     ============================================================ -->
+<!-- TEMPLATE_START: exec_summary_p2_implications -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="imp-grid">
+      <!-- LOOP: 5 implication cards -->
+      <div class="imp-card">
+        <div class="num">{{CARD_NUM_TAG}}</div>
+        <div class="title">{{CARD_TITLE}}</div>
+        <div class="body-text">{{CARD_BODY_HTML}}</div>
+        <div class="anchor">{{CARD_ANCHOR_HTML}}</div>
+      </div>
+      <!-- END LOOP -->
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: exec_summary_p2_implications -->
+
+
+<!-- ============================================================
+     TEMPLATE: market_data_chart
+     Usage: Generic page with narrative + 1 chart (market sizing, growth, etc.)
+     ============================================================ -->
+<!-- TEMPLATE_START: market_data_chart -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <!-- LOOP: 2-3 narrative sections -->
+        <h3>{{NARRATIVE_HEADING}}</h3>
+        <p>{{NARRATIVE_BODY_HTML}}</p>
+        <!-- END LOOP -->
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">{{CHART_TITLE}}</div>
+            <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+          </div>
+          <div class="chart-unit">{{CHART_UNIT}}</div>
+        </div>
+        <div class="chart-body-flex">{{CHART_SVG}}</div>
+        <div class="chart-source">{{CHART_SOURCE}}</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: market_data_chart -->
+
+
+<!-- ============================================================
+     TEMPLATE: competitive_structure
+     Usage: Section 09 page 1 — HHI chart + sidebar + 4-col cards
+     ============================================================ -->
+<!-- TEMPLATE_START: competitive_structure -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">{{CHART_TITLE}}</div>
+            <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+          </div>
+          <div class="chart-unit">{{CHART_UNIT}}</div>
+        </div>
+        <div class="chart-body-flex">{{CHART_SVG}}</div>
+        <div class="chart-source">{{CHART_SOURCE}}</div>
+      </div>
+      <div class="comp-side-text">
+        <h3>{{SIDEBAR_HEADING}}</h3>
+        <p>{{SIDEBAR_BODY_HTML}}</p>
+        <div class="stat-stack">
+          <!-- LOOP: stat lines (max 4) -->
+          <div class="stat-line"><span>{{STAT_LABEL}}</span><span class="val">{{STAT_VALUE}}</span></div>
+          <!-- END LOOP -->
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <!-- LOOP: 4 player cards (first is leader if applicable) -->
+      <div class="comp-card {{IS_LEADER_CLASS}}">
+        <div class="comp-rank">{{RANK_LABEL}}</div>
+        <div class="comp-name">{{COMPANY_NAME}}</div>
+        <div class="comp-parent">{{COMPANY_PARENT}}</div>
+        <!-- LOOP: 3 stat rows -->
+        <div class="comp-stat-row"><span>{{STAT_LABEL}}</span><span class="val">{{STAT_VALUE}}</span></div>
+        <!-- END LOOP -->
+        <div class="comp-strengths">{{STRENGTHS_HTML}}</div>
+      </div>
+      <!-- END LOOP -->
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: competitive_structure -->
+
+
+<!-- ============================================================
+     TEMPLATE: competitive_profile_deep
+     Usage: Section 09 — single player deep dive (hero + 2-col)
+     ============================================================ -->
+<!-- TEMPLATE_START: competitive_profile_deep -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+
+    <div class="profile-hero">
+      <div>
+        <h2>{{COMPANY_NAME}}</h2>
+        <div class="sub">{{COMPANY_SUBTITLE}}</div>
+        <div class="tags">
+          <!-- LOOP: tags (max 3) -->
+          <span class="data-tag {{TAG_TYPE}}">{{TAG_LABEL}}</span>
+          <!-- END LOOP -->
+        </div>
+      </div>
+      <div class="profile-stats">
+        <!-- LOOP: 4 stats -->
+        <div class="stat">
+          <div class="label">{{STAT_LABEL}}</div>
+          <div class="val">{{STAT_VAL}}<span class="unit">{{STAT_UNIT}}</span></div>
+        </div>
+        <!-- END LOOP -->
+      </div>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-col">
+        <!-- LOOP: left col 2 sections -->
+        <h3>{{LEFT_SECTION_HEADING}}</h3>
+        <p>{{LEFT_SECTION_BODY_HTML}}</p>
+        <!-- END LOOP -->
+      </div>
+
+      <div class="profile-col">
+        <!-- LOOP: right col 2 sections (one can be a list instead of paragraph) -->
+        <h3>{{RIGHT_SECTION_HEADING}}</h3>
+        <!-- If section type is paragraph: -->
+        <p>{{RIGHT_SECTION_BODY_HTML}}</p>
+        <!-- If section type is list: -->
+        <ul>
+          <li>{{LIST_ITEM_HTML}}</li>
+        </ul>
+        <!-- END LOOP -->
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: competitive_profile_deep -->
+
+
+<!-- ============================================================
+     TEMPLATE: ai_overview
+     Usage: Section 14 page 1 — narrative + chart + 3 callouts
+     ============================================================ -->
+<!-- TEMPLATE_START: ai_overview -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <!-- LOOP: 3 narrative sections -->
+        <h3>{{NARRATIVE_HEADING}}</h3>
+        <p>{{NARRATIVE_BODY_HTML}}</p>
+        <!-- END LOOP -->
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">{{CHART_TITLE}}</div>
+            <div class="chart-subtitle">{{CHART_SUBTITLE}}</div>
+          </div>
+          <div class="chart-unit">{{CHART_UNIT}}</div>
+        </div>
+        <div class="chart-body-flex">{{CHART_SVG}}</div>
+        <div class="chart-source">{{CHART_SOURCE}}</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <!-- LOOP: 3 callouts -->
+      <div class="callout">
+        <div class="label">{{CALLOUT_LABEL}}</div>
+        <div class="num">{{CALLOUT_NUM}}<span class="unit">{{CALLOUT_UNIT}}</span></div>
+        <div class="change">{{CALLOUT_CHANGE}}</div>
+        <div class="source-tag {{CALLOUT_SOURCE_TAG}}">{{CALLOUT_SOURCE_LABEL}}</div>
+      </div>
+      <!-- END LOOP -->
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: ai_overview -->
+
+
+<!-- ============================================================
+     TEMPLATE: use_case_grid_6
+     Usage: 6-card 3×2 grid (AI use cases, segmentation breakouts, etc.)
+     ============================================================ -->
+<!-- TEMPLATE_START: use_case_grid_6 -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">{{SECTION_TAG}}</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="ai-usecase-grid">
+      <!-- LOOP: 6 cards (3 cols × 2 rows) -->
+      <div class="ai-usecase">
+        <div class="uc-num">{{CARD_NUM_TAG}}</div>
+        <div class="uc-title">{{CARD_TITLE}}</div>
+        <div class="uc-body">{{CARD_BODY_HTML}}</div>
+        <div class="uc-example">{{CARD_EXAMPLE_LABEL}}</div>
+      </div>
+      <!-- END LOOP -->
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: use_case_grid_6 -->
+
+
+<!-- ============================================================
+     TEMPLATE: methodology_inline
+     Usage: Section 02 — methodology overview, 2-col grid
+     ============================================================ -->
+<!-- TEMPLATE_START: methodology_inline -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 02 · Methodology</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{SUBHEAD_HTML}}</p>
+
+    <div class="exec-body" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">{{LEFT_COL_HEADING}}</h3>
+        <!-- LOOP: 3-4 items left col -->
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ {{ITEM_LABEL}}</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">{{ITEM_DESC_HTML}}</div>
+        </div>
+        <!-- END LOOP -->
+      </div>
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">{{RIGHT_COL_HEADING}}</h3>
+        <!-- LOOP: 3-4 items right col -->
+        <div style="margin-bottom: 14px; padding-left: 20px; position: relative;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 3px;">→ {{ITEM_LABEL}}</div>
+          <div style="font-size: 12px; color: var(--text-mid); line-height: 1.55;">{{ITEM_DESC_HTML}}</div>
+        </div>
+        <!-- END LOOP -->
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: methodology_inline -->
+
+
+<!-- ============================================================
+     TEMPLATE: toc
+     Usage: Section 03 — Table of contents (1-2 pages)
+     ============================================================ -->
+<!-- TEMPLATE_START: toc -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 03 · Table of Contents</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow: hidden;">
+      <!-- LOOP: sections (max 12 per page) -->
+      <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: center;">
+        <div class="mono" style="font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 0.1em;">{{SECTION_NUM}}</div>
+        <div>
+          <div style="font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px;">{{SECTION_TITLE}}</div>
+          <div style="font-size: 11px; color: var(--text-mid);">{{SECTION_SUBTITLE}}</div>
+        </div>
+        <div class="mono" style="font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 0.05em;">PG {{PAGE_REF}}</div>
+      </div>
+      <!-- END LOOP -->
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{FOOTER_TEXT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: toc -->
+
+
+<!-- ============================================================
+     TEMPLATE: methodology_endnote
+     Usage: Section 19 — Final methodology + sources
+     ============================================================ -->
+<!-- TEMPLATE_START: methodology_endnote -->
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 19 · Methodology &amp; Sources</div>
+      <div class="page-section-counter">{{PAGE_NUM}} / {{TOTAL_PAGES}}</div>
+    </div>
+    <h1 class="page-h1">{{PAGE_H1}}</h1>
+    <p class="page-subhead">{{METHODOLOGY_SUMMARY_HTML}}</p>
+
+    <div style="flex: 1; overflow: hidden; min-height: 0;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">Source Index</h3>
+      <div style="columns: 2; column-gap: 32px; font-size: 11px; line-height: 1.6;">
+        <!-- LOOP: sources -->
+        <div style="margin-bottom: 6px; color: var(--text-mid);">
+          <span class="mono" style="color: var(--primary); margin-right: 6px;">[{{SOURCE_NUM}}]</span>{{SOURCE_TEXT}}
+        </div>
+        <!-- END LOOP -->
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>{{DISCLAIMER_SHORT}}</div>
+    </div>
+  </div>
+</div>
+<!-- TEMPLATE_END: methodology_endnote -->
+
+
+<!-- ============================================================
+     END OF TEMPLATES — 10 page types defined.
+     Pipeline reads this file, extracts by markers, fills placeholders.
+     ============================================================ -->

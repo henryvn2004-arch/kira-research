@@ -3,16 +3,18 @@
 //
 // Dynamic sitemap endpoint backing /sitemap.xml + /sitemap-{locale}.xml.
 //
-//   GET /api/sitemap                  → sitemap index listing 3 per-locale sitemaps
+//   GET /api/sitemap                  → sitemap index listing 4 per-locale sitemaps
 //   GET /api/sitemap?locale=en        → full urlset for EN (static + reports + insights)
 //   GET /api/sitemap?locale=ja        → full urlset for JA
 //   GET /api/sitemap?locale=ko        → full urlset for KO
+//   GET /api/sitemap?locale=zh        → full urlset for ZH (Simplified Chinese)
 //
 // Wired up via vercel.json rewrites:
 //   /sitemap.xml         → /api/sitemap
 //   /sitemap-en.xml      → /api/sitemap?locale=en
 //   /sitemap-ja.xml      → /api/sitemap?locale=ja
 //   /sitemap-ko.xml      → /api/sitemap?locale=ko
+//   /sitemap-zh.xml      → /api/sitemap?locale=zh
 //
 // Each <url> entry in a per-locale sitemap carries <xhtml:link rel="alternate"
 // hreflang="..."> annotations pointing to the equivalent URL in the other
@@ -23,12 +25,18 @@
 // DB only gets hit at most once per hour per locale per edge region.
 // ============================================================
 
+import { coverage, countryIndexable, pairIndexable } from './_lib/econ/coverage.js';
+import { INVESTOR_SLUG, HOST_SLUG } from './_lib/moves/alerts.js';
+import { listHubs, tradeIndex, tradeTopicIndexable, topicSlug, countries, slugOf } from './_lib/geo.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 const ORIGIN     = 'https://kiraresearch.com';
-const LOCALES    = ['en', 'ja', 'ko'];
+const LOCALES    = ['en', 'ja', 'ko', 'zh'];
 const SUPPORTED  = new Set(LOCALES);
+// hreflang value per locale (Simplified Chinese is zh-Hans; the URL prefix stays /zh/).
+const HREFLANG   = { en: 'en', ja: 'ja', ko: 'ko', zh: 'zh-Hans' };
 const X_DEFAULT  = 'en';
 
 // Static pages present in every locale. Path is relative to /<locale>.
@@ -40,9 +48,10 @@ const STATIC_PAGES = [
   { path: 'about',                                changefreq: 'monthly', priority: '0.6' },
   { path: 'methodology',                          changefreq: 'monthly', priority: '0.6' },
   { path: 'pricing',                              changefreq: 'monthly', priority: '0.6' },
-  { path: 'custom-research/',                     changefreq: 'monthly', priority: '0.7' },
-  { path: 'custom-research/market-analysis/',     changefreq: 'monthly', priority: '0.7' },
-  { path: 'custom-research/strategy-builder/',    changefreq: 'monthly', priority: '0.7' }
+  { path: 'privacy',                              changefreq: 'yearly',  priority: '0.3' },
+  { path: 'terms',                                changefreq: 'yearly',  priority: '0.3' },
+  { path: 'experts/',                             changefreq: 'monthly', priority: '0.7' },
+  { path: 'survey/',                              changefreq: 'monthly', priority: '0.7' }
 ];
 
 // ── Supabase helper (read-only, anon-safe with service key) ──
@@ -77,20 +86,20 @@ function xmlEscape(s) {
 }
 
 // Build one <url> entry with hreflang alternates pointing to /<otherLocale>/<sameSubpath>.
-function urlEntry({ subPath, locale, lastmod, changefreq, priority }) {
+function urlEntry({ subPath, locale, lastmod, changefreq, priority, noAlternates }) {
   const loc = `${ORIGIN}/${locale}/${subPath}`;
-  const alternates = LOCALES
-    .map(l => `    <xhtml:link rel="alternate" hreflang="${l}" href="${xmlEscape(`${ORIGIN}/${l}/${subPath}`)}"/>`)
+  const alternates = noAlternates ? '' : LOCALES
+    .map(l => `    <xhtml:link rel="alternate" hreflang="${HREFLANG[l]}" href="${xmlEscape(`${ORIGIN}/${l}/${subPath}`)}"/>`)
     .join('\n');
-  const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(`${ORIGIN}/${X_DEFAULT}/${subPath}`)}"/>`;
+  const xDefault = noAlternates ? '' : `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(`${ORIGIN}/${X_DEFAULT}/${subPath}`)}"/>`;
   const lastmodTag = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : '';
   return [
     '  <url>',
     `    <loc>${xmlEscape(loc)}</loc>${lastmodTag}`,
     changefreq ? `    <changefreq>${changefreq}</changefreq>` : null,
     priority ? `    <priority>${priority}</priority>` : null,
-    alternates,
-    xDefault,
+    alternates || null,
+    xDefault || null,
     '  </url>'
   ].filter(Boolean).join('\n');
 }
@@ -119,6 +128,17 @@ function buildIndex() {
   ].join('\n');
 }
 
+// Every row of a query (PostgREST answers at most 1,000 rows at a time): pages of 1,000, stable order by id.
+async function sbPaged(path) {
+  const all = [];
+  for (let from = 0; from < 50000; from += 1000) {
+    const { rows } = await sb(`${path}&order=id.asc&limit=1000&offset=${from}`);
+    all.push(...rows);
+    if (rows.length < 1000) break;
+  }
+  return { rows: all };
+}
+
 // ── Per-locale sitemap (full urlset) ──
 async function buildLocale(locale) {
   const urls = [];
@@ -141,9 +161,8 @@ async function buildLocale(locale) {
     'status=eq.published' +
     `&select=slug,updated_at,report_translations!inner(locale,status,updated_at)` +
     `&report_translations.locale=eq.${locale}` +
-    `&report_translations.status=eq.published` +
-    '&limit=5000';
-  const { rows: reports } = await sb(`living_reports?${reportQs}`);
+    `&report_translations.status=eq.published`;
+  const { rows: reports } = await sbPaged(`living_reports?${reportQs}`);
   for (const r of reports) {
     // Pick the more recent of base updated_at vs translation updated_at as lastmod.
     const trans = Array.isArray(r.report_translations) && r.report_translations[0];
@@ -167,9 +186,8 @@ async function buildLocale(locale) {
     `&published_at=lte.${encodeURIComponent(nowIso)}` +
     `&select=slug,updated_at,insight_translations!inner(locale,status,updated_at)` +
     `&insight_translations.locale=eq.${locale}` +
-    `&insight_translations.status=eq.published` +
-    '&limit=5000';
-  const { rows: insights } = await sb(`insights?${insightQs}`);
+    `&insight_translations.status=eq.published`;
+  const { rows: insights } = await sbPaged(`insights?${insightQs}`);
   for (const i of insights) {
     const trans = Array.isArray(i.insight_translations) && i.insight_translations[0];
     const lastmod = (trans && trans.updated_at && trans.updated_at > i.updated_at)
@@ -182,6 +200,115 @@ async function buildLocale(locale) {
       changefreq: 'monthly',
       priority:   '0.6'
     }));
+  }
+
+  // 3b) Kira Experts transcripts (migration 044) — the listing plus every published
+  //     transcript that has a translation in this locale.
+  urls.push(urlEntry({ subPath: 'experts/transcripts/', locale, changefreq: 'weekly', priority: '0.7' }));
+  const transcriptQs =
+    'status=eq.published' +
+    '&select=slug,updated_at,expert_transcript_translations!inner(locale,status,updated_at)' +
+    `&expert_transcript_translations.locale=eq.${locale}` +
+    '&expert_transcript_translations.status=eq.published';
+  const { rows: transcripts } = await sbPaged(`expert_transcripts?${transcriptQs}`);
+  for (const tr of transcripts) {
+    const t = Array.isArray(tr.expert_transcript_translations) && tr.expert_transcript_translations[0];
+    const lastmod = (t && t.updated_at && t.updated_at > tr.updated_at) ? t.updated_at : tr.updated_at;
+    urls.push(urlEntry({
+      subPath:    `experts/transcripts/${tr.slug}`,
+      locale,
+      lastmod:    lastmod ? lastmod.slice(0, 10) : null,
+      changefreq: 'monthly',
+      priority:   '0.6'
+    }));
+  }
+
+  // 3c) S20 SEO test: the coming-soon pages of the topics flagged `signals.seo_test` (English only,
+  //     no hreflang because their JA/KO/ZH twins stay noindex). A topic drops out once it has a report.
+  if (locale === 'en') {
+    const { rows: seoTopics } = await sb(
+      'topics?status=neq.rejected&report_id=is.null&signals->>seo_test=eq.true&select=slug&order=slug.asc&limit=1000'
+    );
+    for (const t of seoTopics) {
+      urls.push(urlEntry({ subPath: `reports/${t.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+    }
+  }
+
+  // 3d) Kira Data pages (D7) that pass the data check (api/_lib/econ/coverage.js): the index, market pages with
+  //     enough indicators, corridor pages with enough links or a published move, and the moves feed once a move
+  //     is published. Every locale, with hreflang (the pages are translated).
+  try {
+    const cov = await coverage();
+    const [{ rows: countries }, { rows: moves }] = await Promise.all([
+      sb('tax_countries?select=code,name'),
+      sb('company_events?status=eq.published&select=host_country,investor_country&limit=5000')
+    ]);
+    const slugOf = (n) => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    urls.push(urlEntry({ subPath: 'data/', locale, changefreq: 'weekly', priority: '0.6' }));
+    for (const c of countries) {
+      if (countryIndexable(cov, c.code)) urls.push(urlEntry({ subPath: `data/${slugOf(c.name)}`, locale, changefreq: 'weekly', priority: '0.6' }));
+    }
+    if (moves.length) urls.push(urlEntry({ subPath: 'data/moves', locale, changefreq: 'daily', priority: '0.5' }));
+    for (const [inv, invSlug] of Object.entries(INVESTOR_SLUG)) {
+      for (const [host, hostSlug] of Object.entries(HOST_SLUG)) {
+        if (inv === host) continue;
+        const n = moves.filter((m) => m.host_country === host && m.investor_country === inv).length;
+        if (pairIndexable(cov, inv, host, n)) urls.push(urlEntry({ subPath: `data/${invSlug}-in-${hostSlug}`, locale, changefreq: 'weekly', priority: '0.5' }));
+      }
+    }
+  } catch (err) {
+    console.error('[sitemap] data pages skipped:', err.message);   // never fail the sitemap over one section
+  }
+
+  // 3e) GEO hubs (G4/G7): hubs and trade pages that are indexable in THIS language (ja/ko/zh only once their
+  //     translated rows meet the same thresholds). lastmod = newest row behind the page. The pages carry their
+  //     own hreflang tags, so no alternates here.
+  try {
+    const [hubs, cos, trade] = await Promise.all([listHubs(), countries(), tradeIndex(locale)]);
+    const withHubs = new Set(hubs.filter((h) => h.byLocale[locale]).map((h) => h.code));
+    if (withHubs.size) urls.push(urlEntry({ subPath: 'markets', locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    for (const co of cos) {
+      if (withHubs.has(co.code)) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}`, locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    }
+    for (const h of hubs) {
+      const co = cos.find((c) => c.code === h.code);
+      if (h.byLocale[locale] && co) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}/${h.segment}`, locale, lastmod: h.updated ? h.updated.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    }
+    for (const ind of trade.idx.values()) {
+      let any = false;
+      for (const [topic, claims] of ind.topics) {
+        if (!tradeTopicIndexable(claims, topic)) continue;
+        any = true;
+        const lm = claims.reduce((m, c) => (c.updated_at > m ? c.updated_at : m), '');
+        urls.push(urlEntry({ subPath: `trade/${ind.slug}/${topicSlug(topic)}`, locale, lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+      }
+      if (any) urls.push(urlEntry({ subPath: `trade/${ind.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+    }
+  } catch (err) {
+    console.error('[sitemap] geo pages skipped:', err.message);
+  }
+
+  // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
+  //    Only include EN locale to avoid duplicate sitemap entries for the same content.
+  if (locale === 'en') {
+    // Join entities to get per-company country_code for correct URL paths
+    const companyQs = 'select=slug,updated_at,entities!inner(country_code)&order=updated_at.desc&limit=5000';
+    const { rows: companies } = await sb(`company_reports?${companyQs}`);
+    // Unified search landing + per-country directory index pages
+    urls.push(urlEntry({ subPath: 'companies/',     locale, changefreq: 'weekly',  priority: '0.7' }));
+    urls.push(urlEntry({ subPath: 'companies/vn/',  locale, changefreq: 'weekly',  priority: '0.6' }));
+    urls.push(urlEntry({ subPath: 'companies/jp/',  locale, changefreq: 'weekly',  priority: '0.6' }));
+    for (const c of companies) {
+      if (!c.slug) continue;
+      const countryCode = (c.entities?.country_code || 'VN').toLowerCase();
+      urls.push(urlEntry({
+        subPath:    `companies/${countryCode}/${c.slug}`,
+        locale,
+        lastmod:    c.updated_at ? c.updated_at.slice(0, 10) : null,
+        changefreq: 'monthly',
+        priority:   '0.5',
+      }));
+    }
   }
 
   return [

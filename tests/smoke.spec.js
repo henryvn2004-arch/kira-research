@@ -10,6 +10,7 @@
 // ============================================================
 
 import { test, expect } from '@playwright/test';
+import { limitPreviewPages } from '../api/_lib/preview-slice.js';
 
 // ── 1) Every static + dynamic-list page across all 3 locales ──
 //
@@ -23,13 +24,15 @@ const STATIC_PAGES = [
   '/about',
   '/methodology',
   '/pricing',
-  '/custom-research/',                          // landing
-  '/custom-research/market-analysis/',          // Sprint 5.1 service line
-  '/custom-research/strategy-builder/',         // Sprint 5.1 service line
+  '/experts/',                                  // Kira Experts (replaces Custom Research, S5)
+  '/survey/',                                   // Kira Survey (customer surveys + in-depth interviews)
   '/insights/'                                  // folder route
 ];
 
-for (const locale of ['en', 'ja', 'ko']) {
+// <html lang> value per locale (Simplified Chinese is zh-Hans; URL prefix is /zh/).
+const HTML_LANG = { en: 'en', ja: 'ja', ko: 'ko', zh: 'zh-Hans' };
+
+for (const locale of ['en', 'ja', 'ko', 'zh']) {
   test.describe(`${locale} static pages`, () => {
     for (const path of STATIC_PAGES) {
       const url = `/${locale}${path}`;
@@ -40,7 +43,7 @@ for (const locale of ['en', 'ja', 'ko']) {
 
         // <html lang> must be set correctly (locale detection works).
         const lang = await page.locator('html').getAttribute('lang');
-        expect(lang).toBe(locale);
+        expect(lang).toBe(HTML_LANG[locale]);
 
         // nav.js injects .logo-mark in BOTH the top nav and the footer.
         // We scope to .nav-wrap so the locator is unambiguous — its presence
@@ -67,7 +70,7 @@ test.describe('dynamic report page (rewrite)', () => {
     // _view.html always renders the breadcrumb container first.
     // Multi-selector matches whichever state the page is in (loaded, 404,
     // or loading). .first() avoids strict-mode if more than one is in the DOM.
-    await expect(page.locator('.rpt-breadcrumb, .rpt-404, .rpt-loading').first()).toBeVisible();
+    await expect(page.locator('.r-crumbs, .r-empty, .rd-loading').first()).toBeVisible();
 
     // Confirm we landed on _view's HTML (not a 404 page from Vercel).
     // Title casing is "KIRA Research" (mixed case) — match case-insensitively.
@@ -80,7 +83,7 @@ test.describe('dynamic report page (rewrite)', () => {
     // the page should still render its 404 message (still proves rewrite works).
     const res = await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
     expect(res.status()).toBeLessThan(400);
-    await expect(page.locator('.article-breadcrumb, .art-404, .art-loading').first()).toBeVisible();
+    await expect(page.locator('.r-crumbs, .r-empty, .art-loading').first()).toBeVisible();
   });
 
   // Dynamic templates use <script type="module"> + top-level await. A latent
@@ -126,11 +129,11 @@ test.describe('dynamic report page (rewrite)', () => {
 // ── 3) Root redirect respects user language ──
 test('root / redirects to a supported locale', async ({ page }) => {
   await page.goto('/', { waitUntil: 'load' });
-  // After the JS redirect runs, URL must end in /en/, /ja/, or /ko/.
+  // After the JS redirect runs, URL must end in /en/, /ja/, /ko/, or /zh/.
   // Give the redirect a moment to fire.
-  await page.waitForURL(/\/(en|ja|ko)\/?$/, { timeout: 8_000 });
+  await page.waitForURL(/\/(en|ja|ko|zh)\/?$/, { timeout: 8_000 });
   const url = new URL(page.url());
-  expect(url.pathname).toMatch(/^\/(en|ja|ko)\/?$/);
+  expect(url.pathname).toMatch(/^\/(en|ja|ko|zh)\/?$/);
 });
 
 // ── 4) Legacy URL redirects ──
@@ -140,16 +143,22 @@ test('root / redirects to a supported locale', async ({ page }) => {
 // rewrite-then-redirect sequences. We use page.url() with waitUntil:'load'
 // to read the browser's final landing URL, which is the user-facing truth.
 test.describe('legacy redirects (vercel.json)', () => {
-  test('/report.html → /en/custom-research/market-analysis/', async ({ page }) => {
-    // Sprint 5.1: legacy /report now lands on the dedicated service-line page,
-    // not the parent. More relevant context for the user, slightly better SEO.
+  test('/report.html → /en/library', async ({ page }) => {
+    // Sprint S5: Custom Research is retired; legacy /report lands on the library.
     await page.goto('/report.html', { waitUntil: 'load' });
-    expect(page.url()).toContain('/en/custom-research/market-analysis');
+    expect(page.url()).toContain('/en/library');
   });
-  test('/strategy-builder.html → /en/custom-research/strategy-builder/', async ({ page }) => {
+  test('/strategy-builder.html → /en/experts/', async ({ page }) => {
     await page.goto('/strategy-builder.html', { waitUntil: 'load' });
-    expect(page.url()).toContain('/en/custom-research/strategy-builder');
+    expect(page.url()).toContain('/en/experts');
   });
+  // Sprint S5: Custom Research pages (all locales, all subpages) → Kira Experts.
+  for (const path of ['/en/custom-research/', '/ja/custom-research/market-analysis/', '/ko/custom-research/strategy-builder']) {
+    test(`${path} → Kira Experts`, async ({ page }) => {
+      await page.goto(path, { waitUntil: 'load' });
+      expect(page.url()).toMatch(/\/(en|ja|ko|zh)\/experts\/?/);
+    });
+  }
   test('/library.html → /en/library', async ({ page }) => {
     await page.goto('/library.html', { waitUntil: 'load' });
     expect(page.url()).toContain('/en/library');
@@ -179,13 +188,18 @@ test.describe('branded 404', () => {
     await page.goto('/ja/missing-page', { waitUntil: 'load' });
     await expect(page.locator('#err-title')).toHaveText('ページが見つかりません。');
   });
+
+  test('/zh/missing-page swaps title to Simplified Chinese', async ({ page }) => {
+    await page.goto('/zh/missing-page', { waitUntil: 'load' });
+    await expect(page.locator('#err-title')).toHaveText('页面不存在。');
+  });
 });
 
 // ── 5) Admin pages require auth ──
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/audit'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/crm', '/en/admin/chains', '/en/admin/transcripts', '/en/admin/geo'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -214,6 +228,38 @@ test.describe('admin auth gate', () => {
 });
 
 // ── 6) Public APIs return JSON, not HTML 404 ──
+// The free preview is the first 5 pages of a report; /api/preview-html must never
+// serve more, even if the bucket holds the whole file. Pure function, no network.
+test.describe('report preview slicing', () => {
+  const doc = (n, tag = 'div') => '<html><head><style>.page{}</style></head><body>\n' +
+    Array.from({ length: n }, (_, i) => `<${tag} class="page"><div class="page-inner">PAGE-${i + 1}</div></${tag}>`).join('\n') +
+    '\n</body></html>';
+
+  test('keeps the first 5 pages and drops the rest', () => {
+    const out = limitPreviewPages(doc(9));
+    expect(out).toContain('PAGE-5');
+    expect(out).not.toContain('PAGE-6');
+    expect(out).toContain('<style>');
+    expect(out.trim().endsWith('</html>')).toBe(true);
+  });
+
+  test('leaves a preview of 5 pages or fewer untouched', () => {
+    expect(limitPreviewPages(doc(5))).toBe(doc(5));
+    expect(limitPreviewPages(doc(2))).toBe(doc(2));
+  });
+
+  test('counts <section> pages and divider pages too', () => {
+    expect(limitPreviewPages(doc(7, 'section'))).not.toContain('PAGE-6');
+    const divider = doc(7).replace('class="page"', 'class="page divider-page"');
+    expect(limitPreviewPages(divider)).not.toContain('PAGE-6');
+  });
+
+  test('does not mistake page-inner or page-header for a page', () => {
+    const nested = '<body><div class="page"><div class="page-inner"><div class="page-header">x</div></div></div></body>';
+    expect(limitPreviewPages(nested, 1)).toBe(nested);
+  });
+});
+
 test.describe('public APIs', () => {
   test('/api/library-list returns JSON', async ({ request }) => {
     const r = await request.get('/api/library-list?locale=en&limit=4');
@@ -221,6 +267,42 @@ test.describe('public APIs', () => {
     expect(r.status()).toBeLessThan(600);
     const ct = r.headers()['content-type'] || '';
     expect(ct).toContain('application/json');
+  });
+
+  test('/api/library-list?q= finds reports by code prefix', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&q=VN&limit=4');
+    expect(r.status()).toBe(200);
+    const { items } = await r.json();
+    expect(items.length).toBeGreaterThan(0);
+    for (const it of items) expect(it.code).toMatch(/^VN-/);
+  });
+
+  // Sprint S5 — library filters by investor stage + report type.
+  test('/api/library-list accepts ?stage=ENT', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&stage=ENT&limit=4');
+    expect(r.status()).toBe(200);
+    expect(r.headers()['content-type'] || '').toContain('application/json');
+    const body = await r.json();
+    expect(Array.isArray(body.items)).toBe(true);
+    for (const it of body.items) expect(it.stage).toBe('ENT');
+  });
+
+  test('/api/library-list accepts ?analysis=market_assessment', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&analysis=market_assessment&status=all&limit=4');
+    expect(r.status()).toBe(200);
+    const body = await r.json();
+    expect(Array.isArray(body.items)).toBe(true);
+    for (const it of body.items) expect(it.analysis).toBe('market_assessment');
+    expect(typeof body.facets.analyses).toBe('object');
+  });
+
+  test('/api/library-list accepts ?type=D', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&type=D&limit=4');
+    expect(r.status()).toBe(200);
+    expect(r.headers()['content-type'] || '').toContain('application/json');
+    const body = await r.json();
+    expect(Array.isArray(body.items)).toBe(true);
+    for (const it of body.items) expect(it.type).toBe('D');
   });
 
   test('/api/insights-list returns JSON', async ({ request }) => {
@@ -233,6 +315,210 @@ test.describe('public APIs', () => {
   test('/api/leads rejects GET (POST only)', async ({ request }) => {
     const r = await request.get('/api/leads');
     expect(r.status()).toBe(405);
+  });
+
+  // Sprint S5 — subscription waitlist.
+  test('/api/waitlist rejects GET (POST only)', async ({ request }) => {
+    const r = await request.get('/api/waitlist');
+    expect(r.status()).toBe(405);
+  });
+
+  // Honeypot path: exercises the handler + email-helper import without writing a row.
+  test('/api/waitlist POST honeypot path returns 200 JSON', async ({ request }) => {
+    const r = await request.post('/api/waitlist', {
+      data: { email: 'ci@example.com', plan: 'month', hp: 'bot' },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    const body = await r.json();
+    expect(body.ok).toBe(true);
+  });
+
+  test('/api/admin-waitlist rejects unauthenticated', async ({ request }) => {
+    const r = await request.get('/api/admin-waitlist');
+    expect(r.status()).toBe(401);
+  });
+
+  // Coming-soon topics (migration 027): search fallback, request form, topic page.
+  test('/api/topic-request rejects GET and accepts the honeypot path', async ({ request }) => {
+    expect((await request.get('/api/topic-request')).status()).toBe(405);
+    const r = await request.post('/api/topic-request', {
+      data: { email: 'ci@example.com', keyword: 'ci probe', hp: 'bot' },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).ok).toBe(true);
+  });
+
+  // S16: Resend bounce/complaint webhook. Unsigned calls must be refused before anything is stored.
+  test('/api/email-webhook rejects GET and unsigned POST', async ({ request }) => {
+    expect((await request.get('/api/email-webhook')).status()).toBe(405);
+    const r = await request.post('/api/email-webhook', {
+      data: { type: 'email.bounced', data: { to: ['ci@example.com'] } },
+      headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(400);
+  });
+
+  // S17: ad attribution export is admin-only; the privacy notice the footer links to must exist in every locale.
+  test('/api/admin-ads-conversions requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-ads-conversions')).status()).toBe(401);
+  });
+
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/privacy loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/privacy`);
+      expect(r.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Privacy');
+    });
+  }
+
+  // S21: the Google Ads Editor file is admin-only.
+  test('/api/admin-ads-campaign requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-ads-campaign')).status()).toBe(401);
+  });
+
+  // S19: terms of sale exist in every locale; checkout is closed by default (config checkout.single_report_enabled).
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/terms loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/terms`);
+      expect(r.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Terms');
+    });
+  }
+
+  // S19 follow-up: transcript checkout + the public "what can be bought" switch.
+  test('/api/checkout-status reports what can be bought', async ({ request }) => {
+    const r = await request.get('/api/checkout-status');
+    expect(r.status()).toBe(200);
+    const b = await r.json();
+    expect(typeof b.report.enabled).toBe('boolean');
+    expect(b.report.price).toBe(49);
+    expect(typeof b.transcript.enabled).toBe('boolean');
+    expect(b.transcript.price).toBe(29);
+  });
+
+  test('/api/transcript-buy answers 405 to GET and refuses create for an unknown transcript', async ({ request }) => {
+    expect((await request.get('/api/transcript-buy')).status()).toBe(405);
+    const r = await request.post('/api/transcript-buy?action=create', { data: { slug: 'no-such-transcript', locale: 'en' } });
+    expect([403, 404]).toContain(r.status());
+  });
+
+  test('/api/transcript-content refuses a reader who is not signed in', async ({ request }) => {
+    expect((await request.get('/api/transcript-content?slug=anything-here')).status()).toBe(401);
+  });
+
+  // S7: the Month subscription.
+  test('/api/subscription needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/subscription')).status()).toBe(401);
+    expect((await request.post('/api/subscription?action=create', { data: { locale: 'en' } })).status()).toBe(401);
+    expect((await request.post('/api/subscription?action=cancel')).status()).toBe(401);
+  });
+
+  test('/api/library-pdf needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/library-pdf?slug=anything-here')).status()).toBe(401);
+  });
+
+  test('/api/library-exhibits needs a signed-in reader', async ({ request }) => {
+    expect((await request.get('/api/library-exhibits?slug=anything-here&format=xlsx')).status()).toBe(401);
+  });
+
+  test('/api/checkout-status includes the Month plan', async ({ request }) => {
+    const b = await (await request.get('/api/checkout-status')).json();
+    expect(typeof b.subscription.enabled).toBe('boolean');
+    expect(b.subscription.price).toBe(149);
+    expect(typeof b.annual.enabled).toBe('boolean');
+    expect(b.annual.price).toBe(1190);
+  });
+
+  for (const loc of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${loc}/subscription loads`, async ({ page }) => {
+      const r = await page.goto(`/${loc}/subscription`);
+      expect(r.status()).toBe(200);
+      await expect(page).toHaveTitle(/Subscription/);
+    });
+  }
+
+  test('/api/library-buy create is refused while single-report checkout is off', async ({ request }) => {
+    const r = await request.post('/api/library-buy?action=create', { data: { slug: 'no-such-report', locale: 'en' } });
+    expect([403, 404]).toContain(r.status());
+  });
+
+  test('/api/topic-search returns an items array; short queries are empty', async ({ request }) => {
+    const short = await request.get('/api/topic-search?q=ab');
+    expect(short.status()).toBe(200);
+    expect((await short.json()).items).toEqual([]);
+    const r = await request.get('/api/topic-search?q=vietnam%20retail');
+    expect(r.status()).toBe(200);
+    expect(Array.isArray((await r.json()).items)).toBe(true);
+  });
+
+  // unmet:false never writes; nonsense matches nothing, so this leaves no row behind.
+  test('/api/library-list: default is published only; status=all appends coming-soon topics', async ({ request }) => {
+    const d = await (await request.get('/api/library-list?limit=3')).json();
+    expect(d.items.every((i) => !i.soon)).toBe(true);
+    expect(d.facets.totalSoon).toBeUndefined();   // the insights page relies on the published-only default
+    const a = await (await request.get('/api/library-list?status=all&limit=3')).json();
+    expect(a.total).toBeGreaterThanOrEqual(d.total);
+    expect(a.facets.totalPublished).toBe(d.total);
+    test.skip(!a.facets.totalSoon, 'no queued topics');
+    expect(a.total).toBe(d.total + a.facets.totalSoon);
+    const s = await (await request.get('/api/library-list?status=soon&limit=3')).json();
+    expect(s.items.length).toBeGreaterThan(0);
+    expect(s.items.every((i) => i.soon === true && i.slug && i.title)).toBe(true);
+  });
+
+  test('library lists coming-soon topics next to reports and the Status filter narrows them', async ({ page, request }) => {
+    const a = await (await request.get('/api/library-list?status=all&limit=1')).json();
+    test.skip(!a.facets.totalSoon, 'no queued topics');
+    await page.goto('/en/library?status=soon');
+    await expect(page.locator('.soonrow').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.lrow:not(.soonrow)')).toHaveCount(0);
+    await page.goto('/en/library');
+    await expect(page.locator('.lrow:not(.soonrow)').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.lib2-side [data-group="status"]')).toBeVisible();
+  });
+
+  test('/api/topic-search POST answers, and a nonsense query yields no topic', async ({ request }) => {
+    const r = await request.post('/api/topic-search', {
+      data: { q: 'zzqx wvkp', unmet: false }, headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).items).toEqual([]);
+  });
+
+  // S18: a coming-soon topic carries the "ready by" date (eta may be null if it can not be worked out, but the key is there).
+  test('/api/topic returns an eta field for a coming-soon topic', async ({ request }) => {
+    const found = await (await request.get('/api/topic-search?q=indonesia%20ev%20charging')).json();
+    const item = (found.items || [])[0];
+    test.skip(!item, 'no coming-soon topic matched the probe query');
+    const d = await (await request.get('/api/topic?slug=' + encodeURIComponent(item.slug))).json();
+    if (!d.published) expect(d).toHaveProperty('eta');
+  });
+
+  test('/api/topic 404s for an unknown slug', async ({ request }) => {
+    expect((await request.get('/api/topic?slug=no-such-topic-xyz')).status()).toBe(404);
+  });
+
+  test('a coming-soon topic renders as a placeholder report page', async ({ page, request }) => {
+    const found = await (await request.get('/api/topic-search?q=convenience%20stores')).json();
+    test.skip(!found.items.length, 'no unpublished convenience-store topic left');
+    await page.goto('/en/reports/' + found.items[0].slug);
+    await expect(page.locator('.cs-cover')).toBeVisible();
+    await expect(page.locator('#cs-req form[data-cs-form]')).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"][content^="noindex"]')).toHaveCount(1);
+  });
+
+  test('/en/pricing has the waitlist form and no per-report price', async ({ page }) => {
+    await page.goto('/en/pricing', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#waitlist form#wl-form')).toHaveCount(1);
+    await expect(page.locator('#wl-form input[name="email"]')).toHaveCount(1);
+    await expect(page.locator('#wl-form input[name="hp"]')).toHaveCount(1);
+    // Plans: single report, month, annual (the Week plan was dropped in S5b).
+    await expect(page.locator('#wl-form input[name="plan"][value="report"]')).toHaveCount(1);
+    await expect(page.locator('#wl-form input[name="plan"][value="week"]')).toHaveCount(0);
+    const html = await page.content();
+    expect(html).not.toContain('$39');
   });
 
   test('/api/admin-leads rejects unauthenticated', async ({ request }) => {
@@ -271,6 +557,62 @@ test.describe('public APIs', () => {
   test('/api/admin-audit rejects unauthenticated', async ({ request }) => {
     const r = await request.get('/api/admin-audit');
     expect(r.status()).toBe(401);
+  });
+
+  test('/api/admin-companies rejects unauthenticated', async ({ request }) => {
+    const r = await request.get('/api/admin-companies');
+    expect(r.status()).toBe(401);
+  });
+
+  test('/api/admin-config rejects unauthenticated (GET and PATCH)', async ({ request }) => {
+    expect((await request.get('/api/admin-config')).status()).toBe(401);
+    expect((await request.patch('/api/admin-config', { data: { key: 'search.daily_model_limit', value: 1 } })).status()).toBe(401);
+  });
+
+  test('/api/admin-funnel rejects unauthenticated', async ({ request }) => {
+    expect((await request.get('/api/admin-funnel')).status()).toBe(401);
+  });
+
+  test('/api/notify-chain-published accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/notify-chain-published')).status()).toBe(405);
+  });
+
+  test('/api/cron-pipeline-watch accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/cron-pipeline-watch')).status()).toBe(405);
+  });
+
+  test('/api/cron-site-events-retention accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/cron-site-events-retention')).status()).toBe(405);
+  });
+
+  test('/api/admin-crm rejects unauthenticated', async ({ request }) => {
+    expect((await request.get('/api/admin-crm')).status()).toBe(401);
+    expect((await request.patch('/api/admin-crm', { data: { email: 'a@b.co', stage: 'won' } })).status()).toBe(401);
+    expect((await request.post('/api/admin-crm', { data: { email: 'a@b.co', subject: 's', body: 'b' } })).status()).toBe(401);
+  });
+
+  test('/api/track accepts POST only and always answers quietly', async ({ request }) => {
+    expect((await request.get('/api/track')).status()).toBe(405);
+    expect((await request.post('/api/track', { data: { e: 'pageview', s: 'smoketest01', p: '/en/' } })).status()).toBe(204);
+  });
+
+  test('/api/admin-health rejects unauthenticated', async ({ request }) => {
+    expect((await request.get('/api/admin-health')).status()).toBe(401);
+  });
+
+  test('/api/admin-transcripts rejects unauthenticated (GET and PATCH)', async ({ request }) => {
+    expect((await request.get('/api/admin-transcripts')).status()).toBe(401);
+    expect((await request.patch('/api/admin-transcripts', { data: { slug: 'x', status: 'retired' } })).status()).toBe(401);
+  });
+
+  test('/api/admin-chains rejects unauthenticated (GET and PATCH)', async ({ request }) => {
+    expect((await request.get('/api/admin-chains')).status()).toBe(401);
+    expect((await request.patch('/api/admin-chains', { data: { country: 'VN', slug: 'x', status: 'draft' } })).status()).toBe(401);
+  });
+
+  test('/api/admin-queue rejects unauthenticated (GET and PATCH)', async ({ request }) => {
+    expect((await request.get('/api/admin-queue')).status()).toBe(401);
+    expect((await request.patch('/api/admin-queue', { data: { id: 'x', action: 'hold' } })).status()).toBe(401);
   });
 
   // Sprint 8 — internal linking: API must echo relatedInsights[] so the
@@ -368,13 +710,14 @@ test.describe('SEO surface', () => {
     expect(ct).toMatch(/xml/i);
     const body = await r.text();
     expect(body).toContain('<sitemapindex');
-    // Must reference all 3 per-locale sitemaps.
+    // Must reference all 4 per-locale sitemaps.
     expect(body).toContain('sitemap-en.xml');
     expect(body).toContain('sitemap-ja.xml');
     expect(body).toContain('sitemap-ko.xml');
+    expect(body).toContain('sitemap-zh.xml');
   });
 
-  for (const locale of ['en', 'ja', 'ko']) {
+  for (const locale of ['en', 'ja', 'ko', 'zh']) {
     test(`/sitemap-${locale}.xml returns a urlset with hreflang annotations`, async ({ request }) => {
       const r = await request.get(`/sitemap-${locale}.xml`);
       expect(r.status()).toBe(200);
@@ -382,9 +725,9 @@ test.describe('SEO surface', () => {
       expect(body).toContain('<urlset');
       // Static pages always present even when DB is empty/unmigrated.
       expect(body).toContain(`/${locale}/library`);
-      // Sprint 5.1 service-line landings — must surface for SEO.
-      expect(body).toContain(`/${locale}/custom-research/market-analysis/`);
-      expect(body).toContain(`/${locale}/custom-research/strategy-builder/`);
+      // Kira Experts landing (S5, replaces the custom-research pages).
+      expect(body).toContain(`/${locale}/experts/`);
+      expect(body).not.toContain('/custom-research/');
       // hreflang alternates must be declared inline for every URL.
       expect(body).toMatch(/xhtml:link[^>]*hreflang=/);
     });
@@ -430,7 +773,7 @@ test.describe('SEO surface', () => {
     // page enters the 404 branch — in that case the schema injection never
     // runs, so we condition the assertions on the loaded-state breadcrumb.
     await page.goto('/en/reports/vietnam-fintech-2026', { waitUntil: 'networkidle' });
-    const loaded = await page.locator('.rpt-breadcrumb').count();
+    const loaded = await page.locator('.rd-main').count();
     test.skip(loaded === 0, 'report data not available in this environment');
 
     // OG tags filled by updateHead()
@@ -440,9 +783,13 @@ test.describe('SEO surface', () => {
     // Product JSON-LD
     await page.waitForSelector('script#ld-product', { state: 'attached', timeout: 5_000 });
     const productText = await page.locator('script#ld-product').textContent();
-    const product = JSON.parse(productText);
+    const productLd = JSON.parse(productText);
+    // The page emits a @graph (Product + Dataset); older shape was a bare Product.
+    const product = productLd['@graph'] ? productLd['@graph'].find(n => n['@type'] === 'Product') : productLd;
     expect(product['@type']).toBe('Product');
-    expect(product.offers.priceCurrency).toBe('USD');
+    // Sprint S5: the single-report Offer is only emitted while
+    // PER_REPORT_PURCHASE is on in _view.html (subscription model hides it).
+    if (product.offers) expect(product.offers.priceCurrency).toBe('USD');
 
     // BreadcrumbList JSON-LD
     await page.waitForSelector('script#ld-breadcrumb', { state: 'attached', timeout: 5_000 });
@@ -454,7 +801,7 @@ test.describe('SEO surface', () => {
 
   test('/en/insights/<slug> injects OG + Article JSON-LD when data loads', async ({ page }) => {
     await page.goto('/en/insights/vietnam-sme-lending-shift', { waitUntil: 'networkidle' });
-    const loaded = await page.locator('.article-breadcrumb').count();
+    const loaded = await page.locator('.art-hero').count();
     test.skip(loaded === 0, 'insight data not available in this environment');
 
     const ogType = await page.locator('meta[property="og:type"]').getAttribute('content');
@@ -468,7 +815,120 @@ test.describe('SEO surface', () => {
   });
 });
 
-// ── 9) Mobile viewport sanity — Phase 10.1 ──
+// ── 9) Company Intelligence — Phase R ──
+//
+// Covers the directory index, a seeded company profile, and the three
+// company API endpoints. We use Vingroup (MST 0101231488) as the known
+// anchor because it's seeded by migration 016 and won't be removed.
+test.describe('company intelligence', () => {
+  const KNOWN_SLUG = 'vn-vingroup-0101231488';
+  const JP_SLUG    = 'jp-toyota-motor-corporation-9180301018771';
+
+  test('/en/companies/vn/ loads the directory shell', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/companies/vn/', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on /en/companies/vn/: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/en/companies/jp/ loads the JP directory shell', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/companies/jp/', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on /en/companies/jp/: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/company-list?country=JP returns JSON array', async ({ request }) => {
+    const r = await request.get('/api/company-list?country=JP&page=1');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.companies)).toBe(true);
+      expect(typeof data.total).toBe('number');
+    }
+  });
+
+  test(`/en/companies/vn/${KNOWN_SLUG} loads without JS errors`, async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto(`/en/companies/vn/${KNOWN_SLUG}`, { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on company _view: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test(`/en/companies/jp/${JP_SLUG} loads without JS errors`, async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto(`/en/companies/jp/${JP_SLUG}`, { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    expect(errors, `pageerror on JP company _view: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/company-list?country=VN returns JSON array', async ({ request }) => {
+    const r = await request.get('/api/company-list?country=VN&page=1');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.companies)).toBe(true);
+      expect(typeof data.total).toBe('number');
+    }
+  });
+
+  test('/api/company-report returns payload for known slug', async ({ request }) => {
+    const r = await request.get(`/api/company-report?slug=${KNOWN_SLUG}`);
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(data.report || data.error).toBeTruthy();
+    }
+  });
+
+  test('/api/company-enrich rejects GET (POST only)', async ({ request }) => {
+    const r = await request.get('/api/company-enrich');
+    expect(r.status()).toBe(405);
+  });
+
+  test('/en/companies/ unified search landing page loads', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const res = await page.goto('/en/companies/', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    await expect(page.locator('#co-query')).toBeVisible();
+    await expect(page.locator('#co-country')).toBeVisible();
+    expect(errors, `pageerror on /en/companies/: ${errors.join(' | ')}`).toEqual([]);
+  });
+
+  test('/api/company-search-live returns suggestions JSON', async ({ request }) => {
+    const r = await request.get('/api/company-search-live?q=vingroup&country=VN');
+    expect(r.status()).toBeLessThan(600);
+    const ct = r.headers()['content-type'] || '';
+    expect(ct).toContain('application/json');
+    if (r.ok()) {
+      const data = await r.json();
+      expect(Array.isArray(data.suggestions)).toBe(true);
+    }
+  });
+
+  test('/api/company-stub rejects GET (POST only)', async ({ request }) => {
+    const r = await request.get('/api/company-stub');
+    expect(r.status()).toBe(405);
+  });
+});
+
+// ── 10) Mobile viewport sanity — Phase 10.1 ──
 //
 // We don't replace Lighthouse here — that's an owner-run audit step. These
 // tests catch regressions that ONLY surface at narrow viewports: horizontal
@@ -509,4 +969,416 @@ test.describe('mobile viewport sanity (375×667)', () => {
     // Desktop .nav-links is display:none at this width.
     await expect(page.locator('.nav-wrap .nav-links')).toBeHidden();
   });
+});
+
+// ── Library + insights redesign (covers, compact rows) ──
+test.describe('library and insights pages', () => {
+  for (const locale of ['en', 'ja', 'ko', 'zh']) {
+    test(`/${locale}/library renders report rows`, async ({ page }) => {
+      const errors = [];
+      page.on('pageerror', e => errors.push(e.message));
+      await page.goto(`/${locale}/library`, { waitUntil: 'networkidle' });
+      await expect(page.locator('.lrow, .r-empty').first()).toBeVisible();
+      expect(errors, errors.join(' | ')).toEqual([]);
+    });
+    test(`/${locale}/insights/ renders article cards`, async ({ page }) => {
+      const errors = [];
+      page.on('pageerror', e => errors.push(e.message));
+      await page.goto(`/${locale}/insights/`, { waitUntil: 'networkidle' });
+      await expect(page.locator('.ins-feature, .rcard, .r-empty').first()).toBeVisible();
+      expect(errors, errors.join(' | ')).toEqual([]);
+    });
+  }
+
+  test('library filter sheet opens on a phone', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/en/library', { waitUntil: 'networkidle' });
+    await page.click('[data-open="filters"]');
+    await expect(page.locator('.sheet.open .sheet-panel')).toBeVisible();
+  });
+
+  test('/api/library-list filters by sector group', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&sector=finance&limit=6');
+    const body = await r.json();
+    expect(typeof body.facets.sectors).toBe('object');
+    for (const it of body.items) expect(it.sector).toBe('finance');
+  });
+
+  test('/api/library-list items carry a cover field', async ({ request }) => {
+    const r = await request.get('/api/library-list?locale=en&limit=4');
+    const body = await r.json();
+    expect(body.items.length).toBeGreaterThan(0);
+    expect('cover' in body.items[0]).toBe(true);
+  });
+
+  test('homepage headline numbers come from the live library', async ({ page, request }) => {
+    // published reports + coming-soon topics, as the library counts them
+    const body = await (await request.get('/api/library-list?locale=en&limit=24&sort=recent&status=all')).json();
+    await page.goto('/en/');
+    await expect(page.locator('[data-stat="reports"]')).toHaveText(String(body.facets.totalPublished + (body.facets.totalSoon || 0)), { timeout: 10000 });
+  });
+
+  test('homepage use-case slider renders in every locale', async ({ page }) => {
+    for (const locale of ['en', 'ja', 'ko', 'zh']) {
+      await page.goto('/' + locale + '/');
+      await expect(page.locator('#home-stories .st-card')).toHaveCount(15, { timeout: 10000 });
+    }
+  });
+
+  test('use-case slider on library, experts and survey shows only that product', async ({ page }) => {
+    const want = { library: ['library.html', 15], experts: ['experts/', 15], survey: ['survey/', 15] };
+    for (const locale of ['en', 'ja', 'ko', 'zh']) {
+      for (const [prod, [path, n]] of Object.entries(want)) {
+        await page.goto('/' + locale + '/' + path.replace('.html', ''));
+        await expect(page.locator('#home-stories[data-product="' + prod + '"] .st-card')).toHaveCount(n, { timeout: 10000 });
+      }
+    }
+  });
+
+  test('/api/transcript-list returns published transcripts', async ({ request }) => {
+    const body = await (await request.get('/api/transcript-list?locale=en')).json();
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body.items.length).toBeGreaterThan(0);
+    for (const k of ['slug', 'title', 'interview_type', 'market']) expect(k in body.items[0]).toBe(true);
+  });
+
+  test('transcript page shows the free opening and locks the rest', async ({ page, request }) => {
+    const { items } = await (await request.get('/api/transcript-list?locale=en')).json();
+    const t = await (await request.get('/api/transcript?slug=' + items[0].slug + '&locale=en')).json();
+    expect(t.lockedTurns).toBeGreaterThan(0);
+    expect(t.sections.reduce((n, s) => n + s.turns.length, 0)).toBe(t.totalTurns - t.lockedTurns);
+    await page.goto('/en/experts/transcripts/' + items[0].slug);
+    await expect(page.locator('.tv-head h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('#tv-locked')).toBeVisible();
+  });
+
+  test('/api/transcript-content needs a signed-in reader', async ({ request }) => {
+    const r = await request.get('/api/transcript-content?slug=vn-auto-battery-channel-2026');
+    expect(r.status()).toBe(401);
+  });
+
+  test('/en/experts/transcripts/ lists transcripts', async ({ page }) => {
+    await page.goto('/en/experts/transcripts/');
+    await expect(page.locator('.lrow').first()).toBeVisible({ timeout: 10000 });
+  });
+});
+
+// ── Kira Chain (migration 037): one search, one page for every product ──
+// Prototype pages, noindex. They depend on the published VN coffee chain; tests
+// skip rather than fail if no chain is published.
+test.describe('Kira Chain', () => {
+  test('/api/chain-search lists published chains; a query finds coffee', async ({ request }) => {
+    const all = await (await request.get('/api/chain-search')).json();
+    expect(all.all).toBe(true);
+    expect(Array.isArray(all.items)).toBe(true);
+    test.skip(!all.items.some((c) => c.slug === 'coffee'), 'VN coffee chain not published');
+    const hit = await (await request.get('/api/chain-search?q=cofee')).json();
+    expect(hit.items.some((c) => c.slug === 'coffee' && c.country_code === 'VN')).toBe(true);
+    const other = await (await request.get('/api/chain-search?q=coffee%20in%20australia')).json();
+    expect(other.items.every((c) => c.country_code === 'AU')).toBe(true);
+  });
+
+  test('/api/chain validates input and 404s for an unknown chain', async ({ request }) => {
+    expect((await request.get('/api/chain')).status()).toBe(400);
+    expect((await request.get('/api/chain?country=vn&slug=no-such-chain-xyz')).status()).toBe(404);
+  });
+
+  test('/api/chain-request rejects GET and accepts the honeypot path', async ({ request }) => {
+    expect((await request.get('/api/chain-request')).status()).toBe(405);
+    const r = await request.post('/api/chain-request', {
+      data: { query: 'ci probe', hp: 'bot' }, headers: { 'Content-Type': 'application/json' }
+    });
+    expect(r.status()).toBe(200);
+    expect((await r.json()).ok).toBe(true);
+  });
+
+  test('/en/chain/ search page loads; a chain page draws its network', async ({ page, request }) => {
+    await page.goto('/en/chain/');
+    await expect(page.locator('h1')).toContainText('value chain');
+    const all = await (await request.get('/api/chain-search')).json();
+    test.skip(!all.items.some((c) => c.slug === 'coffee' && c.country_code === 'VN'), 'VN coffee chain not published');
+    await page.goto('/en/chain/vn/coffee');
+    await expect(page.locator('#kc-h1')).toContainText('Coffee', { timeout: 15000 });
+    await expect(page.locator('.node-c').first()).toBeVisible({ timeout: 15000 });
+    expect(await page.locator('.node-h').count()).toBeGreaterThan(3);
+  });
+
+  test('an unknown chain page says so instead of breaking', async ({ page }) => {
+    await page.goto('/en/chain/vn/no-such-chain-xyz');
+    await expect(page.locator('#kc-h1')).toHaveText('No chain here yet', { timeout: 15000 });
+  });
+});
+
+test.describe('Kira Data (D1)', () => {
+  test('/api/econ serves only public sources', async ({ request }) => {
+    const body = await (await request.get('/api/econ?country=vietnam')).json();
+    expect(body.country.code).toBe('VN');
+    expect(body.indicators.length).toBeGreaterThan(5);
+    for (const i of body.indicators) expect(body.sources.map((s) => s.key)).toContain(i.source_key);
+    expect(body.indicators.some((i) => i.source_key === 'imf_weo')).toBe(false);
+  });
+
+  test('/api/econ links come only from public sources (D2)', async ({ request }) => {
+    const body = await (await request.get('/api/econ?country=vietnam')).json();
+    expect(Array.isArray(body.flows)).toBe(true);
+    for (const f of body.flows) {
+      expect(body.sources.map((s) => s.key)).toContain(f.source_key);
+      expect([f.reporter, f.partner]).toContain('VN');
+    }
+  });
+
+  test('/api/market-data: segment trade from public sources only (D3)', async ({ request }) => {
+    const body = await (await request.get('/api/market-data?report=vietnam-coffee-chains-2026')).json();
+    expect(body.country.code).toBe('VN');
+    expect(body.profile).toBe('coffee');
+    const keys = body.sources.map((s) => s.key);
+    for (const t of body.trade) for (const r of t.rows) expect(keys).toContain(r.source_key);
+    expect((await request.get('/api/market-data?report=no-such-report-xyz')).status()).toBe(404);
+  });
+
+  test('report page shows the market data panel (D3)', async ({ page }) => {
+    await page.goto('/en/reports/vietnam-coffee-chains-2026');
+    await expect(page.locator('#market-data h2')).toBeVisible({ timeout: 15000 });
+  });
+
+  test('/api/moves: published moves from public sources, corridor links (D4)', async ({ request }) => {
+    const body = await (await request.get('/api/moves?host=VN&investor=JP&limit=20')).json();
+    expect(Array.isArray(body.events)).toBe(true);
+    expect(Array.isArray(body.corridor.links)).toBe(true);
+    const keys = body.sources.map((s) => s.key);
+    for (const e of body.events) { expect(keys).toContain(e.source_key); expect(e.host_country).toBe('VN'); }
+    expect((await request.get('/api/admin-moves')).status()).toBe(401);
+  });
+
+  test('moves feed and a corridor page render (D4)', async ({ page }) => {
+    await page.goto('/en/data/moves');
+    await expect(page.locator('.mv-filters')).toBeVisible({ timeout: 15000 });
+    await page.goto('/ja/data/japan-in-vietnam');
+    await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 15000 });
+  });
+
+  test('/api/econ: file sources add Vietnam trade and FDI by partner (D6)', async ({ request }) => {
+    const body = await (await request.get('/api/econ?country=vietnam')).json();
+    const sources = new Set(body.flows.map((f) => f.source_key));
+    expect(sources.has('vn_customs')).toBe(true);
+    const ytd = body.flows.filter((f) => f.product === 'FDI_REG_YTD');
+    expect(ytd.length).toBeGreaterThan(0);
+    // Year-to-date links all end in the same, latest month.
+    expect(new Set(ytd.map((f) => f.period)).size).toBe(1);
+  });
+
+  test('moves alerts: sign-up validation, bad link, paid export needs sign-in (D7)', async ({ request }) => {
+    expect((await request.get('/api/moves-alert')).status()).toBe(405);
+    expect((await request.post('/api/moves-alert', { data: { email: 'not-an-email', host: 'VN' } })).status()).toBe(400);
+    expect((await request.post('/api/moves-alert', { data: { email: 'a@example.com' } })).status()).toBe(400);
+    const bad = await request.get('/api/moves-alert?t=deadbeefdeadbeefdeadbeef&a=confirm', { maxRedirects: 0 });
+    expect(bad.status()).toBe(302);
+    expect(bad.headers()['location']).toContain('alert=unknown');
+    expect((await request.get('/api/econ-export?country=vietnam')).status()).toBe(401);
+  });
+
+  test('data pages that pass the data check are in the sitemap and indexable (D7)', async ({ request }) => {
+    const xml = await (await request.get('/sitemap-en.xml')).text();
+    expect(xml).toContain('https://kiraresearch.com/en/data/vietnam');
+    expect((await (await request.get('/api/econ?country=vietnam')).json()).indexable).toBe(true);
+  });
+
+  test('/api/econ rejects an unknown market', async ({ request }) => {
+    expect((await request.get('/api/econ?country=atlantis')).status()).toBe(404);
+  });
+
+  test('data index and country page render; indexed only when the data check passes (D7)', async ({ page }) => {
+    await page.goto('/en/data/');
+    await expect(page.locator('#dd-bubble')).toBeVisible({ timeout: 15000 });
+    await page.goto('/ja/data/vietnam');
+    await expect(page.locator('.ed-head h1')).toContainText('ベトナム', { timeout: 10000 });
+    await expect(page.locator('.ed-tile').first()).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
+    await page.goto('/en/data/taiwan');   // no public indicators for Taiwan yet
+    await expect(page.locator('.ed-head h1')).toBeVisible({ timeout: 10000 });
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+  });
+
+  test('/api/econ-dash: dashboard data from public sources, with daily exchange rates', async ({ request }) => {
+    const body = await (await request.get('/api/econ-dash')).json();
+    expect(body.countries.length).toBe(15);
+    expect(body.compare.VN.gdp_growth.length).toBeGreaterThan(5);
+    expect(body.invest.some((s) => s.src === 'aseanstats')).toBe(true);
+    expect(body.trade.some((s) => s.reporter === 'VN' && s.partner === 'CN')).toBe(true);
+    expect(body.fx.find((f) => f.code === 'JP').last[0]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    for (const s of body.sources) expect(s.key).not.toBe('imf_weo');
+  });
+
+  test('data dashboard: one tab per market and the "Investing from" filter', async ({ page }) => {
+    await page.goto('/en/data/vietnam?from=CN');
+    await expect(page.locator('.dd-tab')).toHaveCount(16, { timeout: 15000 });
+    await expect(page.locator('.dd-tab.on')).toHaveText('Vietnam');
+    await expect(page.locator('#dd-lens')).toHaveValue('CN');
+    await expect(page.locator('#dd-tm')).toBeVisible();
+    await expect(page.locator('.dd-tab').first()).toHaveAttribute('href', '/en/data/?from=CN');
+  });
+});
+
+// ── GEO G0: content pages answer with real HTML, no JavaScript needed ──
+// A bot that does not run JS (GPTBot, ClaudeBot, PerplexityBot) must see the title and the text.
+test.describe('Server-rendered content pages (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+  const htmlOf = async (request, path) => {
+    const r = await request.get(path, { headers: BOT });
+    expect(r.status()).toBe(200);
+    return r.text();
+  };
+  const titleOf = (h) => (h.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+  const unesc = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');   // &amp; last, so "&amp;lt;" is not unescaped twice
+
+  test('transcript: title, basis line, dialogue and JSON-LD in the first response', async ({ request }) => {
+    const list = await (await request.get('/api/transcript-list?locale=en')).json();
+    test.skip(!list.items.length, 'no published transcripts');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/experts/transcripts/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('tv-turn q');
+    expect(h).toContain(`<b>${it.format.replace(/&/g, '&amp;')}.</b>`);   // "Modelled interview" label stays visible
+    expect(h).toContain(`rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/experts/transcripts/${it.slug}"`);
+    expect(h).toContain('"@type":"Article"');
+    expect(h).toContain('"@type":"BreadcrumbList"');
+    expect(h).not.toContain('tv-locked');
+    const ja = await htmlOf(request, `/ja/experts/transcripts/${it.slug}`);   // falls back to EN text when no JA edition
+    expect(ja).toContain('tv-turn q');
+  });
+
+  test('insight: full body in the first response', async ({ request }) => {
+    const list = await (await request.get('/api/insights-list?locale=en&limit=3')).json();
+    test.skip(!list.items.length, 'no published insights');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/insights/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('class="article-body"');
+    expect(h).toContain('"@type":"Article"');
+    const ja = await htmlOf(request, `/ja/insights/${it.slug}`);
+    expect(ja).toContain('class="article-body"');
+  });
+
+  test('report: title, summary and key-questions container, no paid text', async ({ request }) => {
+    const list = await (await request.get('/api/library-list?locale=en&limit=3')).json();
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/reports/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('id="overview"');
+    expect(h).toContain('id="key-questions"');
+    expect(h).toContain('"@type":"Product"');
+    expect(h).not.toContain('report-full-content');
+    const ja = await htmlOf(request, `/ja/reports/${it.slug}`);
+    expect(ja).toContain('id="overview"');
+  });
+
+  test('coming-soon: title in the first response, noindex unless it is an SEO-test topic', async ({ request }) => {
+    const list = await (await request.get('/api/library-list?locale=en&status=soon&limit=3')).json();
+    test.skip(!list.items.length, 'no coming-soon topics');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/reports/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    const topic = await (await request.get(`/api/topic?slug=${it.slug}`)).json();
+    if (topic.index) expect(h).not.toContain('content="noindex');
+    else expect(h).toContain('name="robots" content="noindex,follow"');
+  });
+
+  test('unknown slugs still reach the page script (client shows not found)', async ({ request }) => {
+    const h = await htmlOf(request, '/en/reports/this-report-does-not-exist-xyz');
+    expect(h).toContain('id="rpt-root"');
+  });
+});
+
+// ── GEO G4: market hubs + trade pages render real Q&A / practitioner text in the first response ──
+test.describe('GEO hubs (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+  const hubPath = '/en/markets/thailand/data-centres-cloud--data-centres';
+
+  test('segment hub: questions, answers, sources, FAQ JSON-LD, index rule', async ({ request }) => {
+    const r = await request.get(hubPath, { headers: BOT });
+    test.skip(r.status() === 404, 'hub data not in this environment');
+    expect(r.status()).toBe(200);
+    const h = await r.text();
+    expect(h).toContain('<h1>Thailand Data centres');
+    expect(h).toMatch(/<h3>[^<]+\?<\/h3><p>[^<]{40,}/);        // a real question + answer
+    expect(h).toContain('Source:');
+    expect(h).toContain('"@type":"FAQPage"');
+    expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com' + hubPath + '"');
+    expect(h).not.toContain('name="robots" content="noindex');  // >= 1 source and >= 5 answers
+    const ja = await (await request.get('/ja/markets/thailand/data-centres-cloud--data-centres', { headers: BOT })).text();
+    // Either translated rows qualify (own canonical, indexable) or the URL serves English text out of the index.
+    if (/rel="canonical"[^>]*href="https:\/\/kiraresearch\.com\/ja\//.test(ja)) {
+      expect(ja).not.toContain('name="robots" content="noindex');
+      expect(ja).toContain('<html lang="ja"');
+      expect(ja).toContain('hreflang="ja"');
+    } else {
+      expect(ja).toContain('name="robots" content="noindex,follow"');
+      expect(ja).toContain('href="https://kiraresearch.com' + hubPath + '"');
+    }
+  });
+
+  test('trade page: practitioner claims always carry their basis label', async ({ request }) => {
+    const sm = await (await request.get('/sitemap-en.xml')).text();
+    const m = sm.match(/<loc>(https:\/\/kiraresearch\.com\/en\/trade\/[a-z0-9-]+\/[a-z0-9-]+)<\/loc>/);
+    test.skip(!m, 'no indexable trade page yet');
+    const h = await (await request.get(new URL(m[1]).pathname, { headers: BOT })).text();
+    expect(h).toContain('geo-claims');
+    expect((h.match(/<li>[^<]{30,}<span class="geo-basis">/g) || []).length).toBeGreaterThan(2);
+    expect(h).toContain('KIRA field research');
+  });
+});
+
+test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed columns)', async ({ request }) => {
+  const r = await request.get('/api/geo-feed?country=TH');
+  expect(r.status()).toBe(200);
+  expect(r.headers()['cache-control']).toContain('s-maxage=3600');
+  const j = await r.json();
+  expect(Array.isArray(j.crosswalk) && Array.isArray(j.answers) && Array.isArray(j.claims)).toBe(true);
+  expect(j.generated_at).toBeTruthy();
+  expect(j.answers.every((a) => a.country_code === 'TH')).toBe(true);
+  if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'i18n', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
+  if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
+  expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
+});
+
+test('GEO measurement: admin AI-visibility endpoint rejects unauthenticated', async ({ request }) => {
+  expect((await request.get('/api/admin-geo-hits')).status()).toBe(401);
+});
+
+test.describe('GEO admin', () => {
+  test('/api/admin-geo requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-geo')).status()).toBe(401);
+    expect((await request.post('/api/admin-geo', { data: { transcript_slug: 'x-y', posted: true } })).status()).toBe(401);
+  });
+});
+
+// ── GEO hub v2: index pages, who-decides, llms.txt ──
+test.describe('GEO hub v2 (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+
+  test('/en/markets and a country page list hubs in the first response', async ({ request }) => {
+    const r = await request.get('/en/markets', { headers: BOT });
+    expect(r.status()).toBe(200);
+    const h = await r.text();
+    test.skip(!/<h1>Market facts by country/.test(h) || !/href="\/en\/markets\/[a-z-]+"/.test(h), 'no indexable hubs yet');
+    expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/markets"');
+    const m = h.match(/href="(\/en\/markets\/[a-z-]+)"/);
+    const c = await (await request.get(m[1], { headers: BOT })).text();
+    expect(c).toContain('/markets/');
+    expect(c).toMatch(/<h2>[^<]+<\/h2><ul class="geo-list"><li><a href="\/en\/markets\/[a-z-]+\/[a-z0-9-]+"/);
+    expect(c).not.toContain('name="robots" content="noindex');
+  });
+
+  test('footer links to Market facts; llms.txt points at the hubs', async ({ request }) => {
+    const l = await (await request.get('/llms.txt')).text();
+    expect(l).toContain('https://kiraresearch.com/en/markets');
+    expect(l).toContain('https://kiraresearch.com/en/trade');
+    expect(l).toContain('https://kiraresearch.com/en/methodology');
+    expect(l).toContain('How to cite');
+  });
+});
+
+test('footer Research column has Market facts', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(1);
 });
