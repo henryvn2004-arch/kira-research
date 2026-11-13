@@ -53,13 +53,17 @@ const ADAPTERS = {
   bkpm: { flows: bkpm.flows, slot: 'files' },
   aseanstats: { flows: aseanstats.flows, slot: 'files' },
   vn_nso_fdi: { flows: vnNsoFdi.flows, slot: 'files' },       // rows carry source_key vn_nso (same publisher)
-  vn_customs: { flows: vnCustoms.flows, slot: 'files' },
+  vn_customs: { flows: vnCustoms.flows, slot: 'files', off: true },
   // Keyed by indicator: these indicators belong to vn_customs, whose monthly files run in the files slot.
-  vn_exports_half: { series: vnCustoms.series, slot: 'daily' },
-  vn_imports_half: { series: vnCustoms.series, slot: 'daily' },
+  vn_exports_half: { series: vnCustoms.series, slot: 'daily', off: true },
+  vn_imports_half: { series: vnCustoms.series, slot: 'daily', off: true },
   ecb: { series: ecb.series, slot: 'daily' },
   tw_mac: { flows: twMac.flows, slot: 'files' }
 };
+
+// `off: true` = switched off in code (the adapter file stays so it can come back). Viet Nam Customs: customs.gov.vn has been unreachable
+// from Vercel since 2026-10-20 (connect timeout, an IP block), so its monthly partner files and half-month totals are off; monthly
+// Viet Nam trade totals come from the NSO workbook instead (vn-nso-fdi.js). Remove `off` when customs.gov.vn answers again.
 
 // indicators: econ_indicators rows; sources: data_sources rows ({ key, env_key });
 // only: run just this source key (its own cron slot); otherwise run every source not marked `own`.
@@ -67,6 +71,7 @@ const ADAPTERS = {
 export async function collect(indicators, sources = [], { only = null, hs = [] } = {}) {
   const runs = (key) => {
     const ad = ADAPTERS[key] || {};
+    if (ad.off) return false;
     return only ? key === only || ad.slot === only : !(ad.own || ad.slot);
   };
   const envOf = Object.fromEntries(sources.map((s) => [s.key, s.env_key]));

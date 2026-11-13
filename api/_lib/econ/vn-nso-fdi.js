@@ -4,6 +4,8 @@
 // the month in the sheet title), US$ million, registered capital: new + adjusted (capital contributions and share
 // purchases are left out: only some months print them) for the
 // top ~20 partners plus the national total. The Foreign Investment Agency's own monthly report is no longer online.
+// The same workbooks also carry the month's total exports and imports (sheets 14 and 15): flows reporter VN, partner
+// 'WLD', product TOTAL, flow X | M, freq M, US$ (see parseTrade). This is the Viet Nam trade source while customs.gov.vn is blocked.
 //   flows: reporter VN, partner ISO2 ('WLD' = all), product FDI_REG_YTD (year to date: summarise() compares the
 //          latest month with the same month a year before), flow M, freq M, period = end month, USD.
 import XLSX from 'xlsx';
@@ -92,22 +94,56 @@ export function parseWorkbook(buf) {
   return { period, rows: out };
 }
 
+// Trade sheets ("14.XK tháng" exports, "15.NK tháng" imports; found by the title in cell A1): the "TỔNG TRỊ GIÁ" row holds the
+// month's total (US$ million, preliminary) as the first number after the label. Month and year come from the header rows
+// ("Tháng 10" / "năm 2026"). → { period, X, M } in US$ million, or null.
+export function parseTrade(buf) {
+  const wb = XLSX.read(buf, { type: 'buffer' });
+  const out = { period: null, X: null, M: null };
+  for (const name of wb.SheetNames) {
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: '' });
+    const title = norm(rows[0] && rows[0][0]);
+    const flow = /hàng hóa xuất khẩu|hàng hoá xuất khẩu/.test(title) ? 'X' : /hàng hóa nhập khẩu|hàng hoá nhập khẩu/.test(title) ? 'M' : null;
+    if (!flow) continue;
+    const head = rows.slice(1, 8).map((r) => r.join(' ')).join(' ');
+    const mo = /Tháng\s+(\d{1,2})/i.exec(head), yr = /năm\s+(\d{4})/i.exec(head);
+    const tot = rows.slice(0, 15).find((r) => /^tổng trị giá/.test(norm(r[0])));
+    if (!mo || !yr || !tot) continue;
+    const v = tot.slice(1).map(Number).find((x, i) => tot[i + 1] !== '' && Number.isFinite(x) && x > 0);
+    if (!v) continue;
+    out.period = `${yr[1]}-${String(mo[1]).padStart(2, '0')}`;
+    out[flow] = v;
+  }
+  return out.period && out.X && out.M ? out : null;
+}
+
 export async function flows() {
   const list = await listWorkbooks();
   if (!list.length) throw new Error('NSO: no monthly workbook found');
-  const seen = new Set();
+  const seen = new Set(), seenTrade = new Set();
   const out = [];
   let read = 0;
   for (const w of list) {
     if (read >= MONTHS + 6) break;
     read++;
-    let parsed;
-    try { parsed = parseWorkbook(await get(w.url, 'buffer')); } catch { continue; }
-    if (!parsed || seen.has(parsed.period) || !parsed.rows.length) continue;  // newest upload of a month wins
-    seen.add(parsed.period);
-    for (const r of parsed.rows) {
-      out.push({ source_key: 'vn_nso', reporter: 'VN', partner: r.partner, product: 'FDI_REG_YTD', flow: 'M', freq: 'M',
-        period: parsed.period, value: r.value * 1e6, currency: 'USD' });
+    let buf, parsed = null, trade = null;
+    try { buf = await get(w.url, 'buffer'); } catch { continue; }
+    try { parsed = parseWorkbook(buf); } catch { /* no FDI sheet */ }
+    try { trade = parseTrade(buf); } catch { /* no trade sheets */ }
+    // Total goods trade of the month (NSO, preliminary): replaces the Viet Nam Customs releases, which are not reachable.
+    if (trade && !seenTrade.has(trade.period)) {   // newest upload of a month wins
+      seenTrade.add(trade.period);
+      for (const f of ['X', 'M']) {
+        out.push({ source_key: 'vn_nso', reporter: 'VN', partner: 'WLD', product: 'TOTAL', flow: f, freq: 'M',
+          period: trade.period, value: Math.round(trade[f] * 1e6), currency: 'USD' });
+      }
+    }
+    if (parsed && !seen.has(parsed.period) && parsed.rows.length) {
+      seen.add(parsed.period);
+      for (const r of parsed.rows) {
+        out.push({ source_key: 'vn_nso', reporter: 'VN', partner: r.partner, product: 'FDI_REG_YTD', flow: 'M', freq: 'M',
+          period: parsed.period, value: r.value * 1e6, currency: 'USD' });
+      }
     }
     if (seen.size >= MONTHS) break;
     await sleep(500);

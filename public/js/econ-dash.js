@@ -431,7 +431,9 @@
 
     // Half-month trade totals (Viet Nam Customs): the earliest read of trade in the region.
     const hx = ser('vn_exports_half'), hmv = ser('vn_imports_half');
-    if (hx.length && hmv.length) {
+    // Hidden once the newest half month is more than 75 days old (the source stopped), so no stale chart stays on the page.
+    const halfAge = (a) => { const m = /^(\d{4})-(\d{2})-H([12])/.exec(a.length ? a[a.length - 1][0] : ''); return m ? (Date.now() - Date.UTC(+m[1], +m[2] - 1, m[3] === '1' ? 15 : 28)) / 864e5 : 1e9; };
+    if (hx.length && hmv.length && halfAge(hx) < 75 && halfAge(hmv) < 75) {
       const halves = [...new Set([...hx, ...hmv].map((p) => p[0]))].sort().slice(-24);
       const at = (a, p) => { const x = a.find((y) => y[0] === p); return x ? x[1] : null; };
       h += sec(T.qTrade, T.hHalf(C), box('dd-half'), esc(T.capHalf) + ' · ' + esc(T.srcLbl(SRC.vn_customs, per(halves[halves.length - 1]))));
