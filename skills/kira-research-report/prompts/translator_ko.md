@@ -12,6 +12,13 @@ This prompt is the canonical KO voice guide for this skill. Whenever you ship KO
 
 **Output:** Same HTML structure, every translatable text node replaced with KO equivalent. The PDF re-renders via the same `/api/render-pdf` endpoint after substitution.
 
+**Document shell (KO-specific, do these in the shell Write):**
+- `<html lang="en">` → `<html lang="ko">` (the CSS matches it with `html:lang(ko)`).
+- Add the webfont to `<head>`, right after the existing Google Fonts `<link>`:
+  `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">`
+  The PDF renderer has no system CJK fonts; without this link the whole PDF renders as tofu boxes (found 2026-10-29: 94 ja and 46 ko published files had no link).
+- Font stacks: current reports carry `var(--font-cjk)` in every `font-family`, so nothing more is needed. **If the inlined `<style>` has no `--font-cjk`** (older reports, backfill rows), insert `'Noto Sans KR', ` after every `'Satoshi', ` and every `'JetBrains Mono', ` in `font-family` declarations, in the shell `<style>` and in inline `style="…"` attributes; the link alone does not help there.
+
 **What you DO NOT touch:**
 - SVG geometry (only `<text>` content inside SVGs)
 - **Source tags — keep ALL bracketed citations verbatim in English brackets**:
