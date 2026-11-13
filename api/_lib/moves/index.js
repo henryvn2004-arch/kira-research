@@ -23,7 +23,7 @@ export async function collect({ sources = [], recent = [], log = null } = {}) {
     try {
       const got = await ad.items({ env: process.env[envOf[key]], log });
       raw.push(...got);
-      if (got.failed) errors.push(`${key}: no answer for ${got.failed.join(', ')}`);
+      if (got.failed) errors.push(`${key}: no answer for ${got.failed.join(', ')}${got.lastError ? ' (' + got.lastError + ')' : ''}`);
     }
     catch (err) { errors.push(`${key}: ${err.message}`); }
   }

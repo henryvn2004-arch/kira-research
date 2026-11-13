@@ -577,6 +577,10 @@ test.describe('public APIs', () => {
     expect((await request.put('/api/notify-chain-published')).status()).toBe(405);
   });
 
+  test('/api/cron-pipeline-watch accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/cron-pipeline-watch')).status()).toBe(405);
+  });
+
   test('/api/cron-site-events-retention accepts GET/POST only', async ({ request }) => {
     expect((await request.put('/api/cron-site-events-retention')).status()).toBe(405);
   });
