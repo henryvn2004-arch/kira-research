@@ -30,6 +30,7 @@ import * as twMac from './tw-mac.js';
 import * as ecb from './ecb.js';
 
 export { ISO3, FIRST_YEAR } from './util.js';
+import { errText } from './util.js';
 
 // `own: true` = a heavy source that runs in its own cron slot (/api/cron-econ-refresh?source=<key>), not in the default run.
 // `slot: 'files'` = file and page sources (D6: PDFs, workbooks, CSV files) that share one slot (?source=files).
@@ -82,7 +83,7 @@ export async function collect(indicators, sources = [], { only = null, hs = [] }
     try {
       rows.push(...(await ad.series(ind, { env: process.env[envOf[ind.source_key]] })));
     } catch (err) {
-      errors.push(`${ind.key}: ${err.message}`);
+      errors.push(`${ind.key}: ${errText(err)}`);
     }
   }
   for (const [key, ad] of Object.entries(ADAPTERS)) {
@@ -91,7 +92,7 @@ export async function collect(indicators, sources = [], { only = null, hs = [] }
     try {
       flows.push(...(await ad.flows({ env: process.env[envOf[key]], hs })));
     } catch (err) {
-      errors.push(`${key} flows: ${err.message}`);
+      errors.push(`${key} flows: ${errText(err)}`);
     }
   }
   return { rows, flows, errors, waiting: [...waiting] };
