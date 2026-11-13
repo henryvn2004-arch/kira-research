@@ -9,6 +9,7 @@
 //   - every field is present and non-empty;
 //   - the numbers in it are exactly the numbers of the English text (same tokens, same count; full-width digits allowed;
 //     an English month name may appear as its month digit);
+//   - no English month name, number word or "per <unit>" is left outside brackets;
 //   - an answer still names KIRA as the source (the Latin word "KIRA");
 //   - a transcript answer, and a claim's basis_label, carry the locale's fixed basis-label opening (BASIS_OPEN below).
 // Failing locales are removed from the row; the English row itself is never touched.
@@ -45,11 +46,18 @@ function trNums(enText, trText) {
   return out;
 }
 
+// Words a translation must not keep in English: full month names and lower-case number words / "per <unit>".
+// Text inside (), [], （） is a source tag and stays in English, so it is not checked.
+const LEFTOVER = /\b(January|February|March|April|June|July|August|September|October|November|December|two|three|four|five|six|seven|eight|nine|ten|twice|per (?:kWh|liter|litre|hectare|tonne|ton))\b/;
+const leftover = (s) => s.replace(/\([^)]*\)|\[[^\]]*\]|（[^）]*）/g, '').match(LEFTOVER)?.[0];
+
 function check(enText, tr, fields, extra) {
   const reasons = [];
   for (const f of fields) if (!tr?.[f] || !String(tr[f]).trim()) reasons.push(`${f} missing`);
   if (reasons.length) return reasons;
   if (!same(nums(enText), trNums(enText, fields.map((f) => tr[f]).join(' ')))) reasons.push('numbers differ from English');
+  const left = leftover(fields.map((f) => tr[f]).join(' '));
+  if (left) reasons.push(`English left in text: "${left}"`);
   if (extra) reasons.push(...extra());
   return reasons;
 }
