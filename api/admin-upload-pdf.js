@@ -56,7 +56,7 @@ function cors(res) {
   res.setHeader('Cache-Control', 'private, no-store');
 }
 
-const LOCALES = new Set(['en', 'ja', 'ko']);
+const LOCALES = new Set(['en', 'ja', 'ko', 'zh']);
 const UUID    = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default async function handler(req, res) {

@@ -1,0 +1,137 @@
+# ============================================================
+# KIRA Research — Blueprint: regulatory_brief
+#
+# Policy + regulation deep dive on 1 industry/topic in one SEA
+# country. Best fit: "EV subsidy regime Vietnam 2026", "Halal
+# certification Indonesia 2026", "FX controls Thailand 2026",
+# "Data localization Philippines 2026". Lower data-viz density
+# than market_analysis; centre of gravity is the policy timeline
+# and winner/loser industry mapping.
+# ============================================================
+
+blueprint_id: regulatory_brief
+version: 1
+origin: "Designed Phase H1 — derived from market_analysis (R0152) chassis, swapped competitive/forecast spine for policy-history + timeline + winner/loser spine."
+
+# Report shape
+shape:
+  total_sections: 14
+  estimated_pages: 13-14
+  estimated_render_time_min: 25-40
+  locale: en
+  page_dim_px: { width: 1280, height: 720 }
+
+# Page-type mix this blueprint composes from.
+# All listed types except `policy_timeline` are pre-defined in schemas/page_schemas.json.
+#
+# NEW page_type required: `policy_timeline`
+# -----------------------------------------
+# Shape proposal (orchestrator/page_schemas.json owner to confirm):
+#   h1: max 60 chars (sentence-case, e.g. "Policy timeline: EV subsidy regime")
+#   subhead: max 180 chars
+#   timeline_svg:
+#     orientation: horizontal
+#     axis: dated, monthly or yearly granularity
+#     markers_min: 5
+#     markers_max: 8
+#     each marker: { date (YYYY-MM), label_max_chars: 38, body_max_chars: 110,
+#                    winner_loser_indicator: one of [winner, loser, neutral, mixed],
+#                    source_tag: [primary|secondary|estimate] }
+#   side_callout: optional 1 callout block (number + label + change-line)
+#                 to anchor the "decisive shift" datapoint
+#   source_line: compressed citation, ≤110 chars, all caps mono
+#
+# Rendering notes:
+#   - Winner/loser indicators render as small chips beside each marker label
+#     (green chip "WINNER" / amber "MIXED" / red "LOSER" / grey "NEUTRAL")
+#   - Markers stack vertically when labels would overlap horizontally
+#   - This is a FULL-PAGE page type — h1 + subhead + timeline + source line
+#     fills the 454px body height; no additional body paragraphs alongside
+#
+# If schema authoring slips, fall back to repurposing `market_data_chart`
+# with a manually drawn SVG timeline in the chart slot.
+
+page_types_used:
+  - cover
+  - methodology_inline
+  - toc
+  - exec_summary_p1
+  - exec_summary_p2_implications
+  - divider
+  - market_data_chart        # used for policy_context (small reg-count chart) + framework table + compliance-cost analysis
+  - competitive_structure    # repurposed for cross-border ASEAN peer comparison (4-card grid + sidebar narrative)
+  - policy_timeline          # NEW — centerpiece, see comment above
+  - forecast_outlook         # repurposed for pending/proposed changes (base/likely/stretch policy scenarios)
+  - methodology_endnote
+
+# Research budget
+research:
+  query_count_target: 20
+  query_strategy_file: query_strategy.json
+  source_mix_target:
+    primary_pct: 15          # KIRA synthesis — lighter than market_analysis (policy text is mostly cited verbatim)
+    secondary_pct: 70        # cited government docs, gazettes, ministry releases, trade press
+    estimate_pct: 15         # compliance-cost triangulation, lobby-position inference
+
+# Char budget envelope (informational — strict per-slot caps in page_schemas.json)
+content_volume:
+  total_body_chars_target: 16000-20000
+  callouts_target: 10-14
+  charts_target: 4-6         # lighter viz than market_analysis (8-12)
+  timeline_markers_target: 6-8
+  statute_table_rows_target: 6-10
+
+# Quality gates
+quality_gates:
+  - overflow_check: "All pages ≤ 720px rendered height"
+  - source_coverage: "Every quantitative claim AND every policy citation has [primary|secondary|estimate|user-input] tag. Policy citations should additionally name the issuing body inline (e.g. 'Decree 100/2024/ND-CP [secondary]')."
+  - anti_positioning: "No mention of Claude, McKinsey, Mordor, Frost, Euromonitor, Synovate, Ipsos, IMARC, source-archive R-numbers"
+  - voice_register: "De-cliented; no 'client should' language; sentence-case headlines; winner/loser language stays neutral analytical, never moralising"
+  - char_budgets: "All slot char counts ≤ schema cap (callout label 30, change-line 38)"
+  - policy_dates: "Every policy reference includes effective date (or 'pending' / 'proposed [date]'). No floating 'recently' / 'recently passed' phrasing."
+
+# Output mode
+output:
+  default_mode: publish              # template validated; auto-upload to Supabase + kiraresearch.com
+  publish_targets:
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.html"
+    - supabase_storage: "reports-pdfs/<REPORT_ID>/en.pdf"
+    - supabase_table: living_reports
+    - supabase_table: report_translations
+    - supabase_table: audit_log
+  draft_targets:
+    - local_html: "outputs/<REPORT_ID>/en.html"
+    - local_pdf: "outputs/<REPORT_ID>/en.pdf"
+
+# Confirm step
+requires_confirm_step: false   # template validated; skip user confirmation
+
+# Orchestrator match threshold
+orchestrator:
+  match_threshold: 0.7
+  intent_keywords_strong:
+    - "regulation"
+    - "regulatory"
+    - "policy"
+    - "subsidy"
+    - "subsidies"
+    - "certification"
+    - "compliance"
+    - "tariff"
+    - "tariffs"
+    - "FX controls"
+    - "capital controls"
+    - "data localization"
+    - "data localisation"
+    - "halal"
+    - "licensing"
+    - "decree"
+    - "statute"
+    - "gazette"
+    - "ministry"
+  intent_keywords_weak:
+    - "framework"
+    - "rules"
+    - "law"
+    - "act"
+    - "reform"

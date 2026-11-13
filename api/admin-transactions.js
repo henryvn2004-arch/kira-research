@@ -100,7 +100,7 @@ function cors(res) {
 }
 
 const STATUSES = new Set(['pending', 'completed', 'refunded', 'failed']);
-const LOCALES  = new Set(['en', 'ja', 'ko']);
+const LOCALES  = new Set(['en', 'ja', 'ko', 'zh']);
 
 // PostgREST IN clause: values are bare, comma-separated, parenthesised.
 // We control the input (uuids only) so injection isn't a concern, but quote

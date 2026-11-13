@@ -18,13 +18,36 @@ node_modules/
 # Local debugging / ephemeral
 runs.json
 *.tmp.json
+/tmp-smoke/
 
 # Env (never commit secrets)
 .env
 .env.local
 .env.*.local
 
+# Google Indexing API service account key — contains private key, NEVER commit
+scripts/indexing-sa.json
+
 # Editor
 .idea/
 .vscode/
 *.swp
+
+# Claude Code per-machine overrides (settings.json itself IS committed
+# so the cron allowlist travels — only the local override file is ignored)
+.claude/settings.local.json
+
+# Batch report PDFs — uploaded to Supabase Storage (reports-pdfs bucket) as
+# source of truth. Keeping copies in the public repo would (a) bloat the
+# repo by ~1.8 MB per topic, (b) let anyone with the raw.githubusercontent
+# URL download the paid PDF without authentication. HTML siblings stay
+# tracked as searchable archival artifacts.
+skills/kira-research-report/outputs/batch/*/*.pdf
+
+# Report artifacts (full report HTML, PDFs, exhibits, players) are the paid product: they live in the
+# PRIVATE kira-pipeline repo (report-archive/), never in this public one. See
+# skills/kira-research-report/scripts/archive-batch.mjs. Local working copies stay on disk, untracked.
+/skills/kira-research-report/outputs/*
+!/skills/kira-research-report/outputs/batch/
+/skills/kira-research-report/outputs/batch/*
+!/skills/kira-research-report/outputs/batch/.gitkeep

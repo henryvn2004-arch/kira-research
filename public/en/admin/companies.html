@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Companies — Admin · KIRA RESEARCH</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="/css/kira.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js"></script>
+</head>
+<body>
+
+  <!-- nav + footer injected by /js/nav.js -->
+
+  <div class="container" style="padding:32px 0 96px;">
+    <!-- Admin sub-nav -->
+    <nav class="admin-sub-nav">
+      <span class="label">ADMIN</span>
+      <a href="/en/admin/">Dashboard</a>
+      <a href="/en/admin/pipeline">Pipeline</a>
+      <a href="/en/admin/funnel">Funnel</a>
+      <a href="/en/admin/crm">CRM</a>
+      <a href="/en/admin/health">Health</a>
+      <a href="/en/admin/config">Settings</a>
+      <a href="/en/admin/leads">Leads</a>
+      <a href="/en/admin/waitlist">Waitlist</a>
+      <a href="/en/admin/reports">Reports</a>
+      <a href="/en/admin/insights">Insights</a>
+      <a href="/en/admin/transactions">Transactions</a>
+      <a href="/en/admin/users">Users</a>
+      <a href="/en/admin/aggregators">Aggregators</a>
+      <a href="/en/admin/companies" class="active">Companies</a>
+      <a href="/en/admin/chains">Chains</a>
+      <a href="/en/admin/moves">Moves</a>
+      <a href="/en/admin/transcripts">Transcripts</a>
+      <a href="/en/admin/geo">GEO</a>
+      <a href="/en/admin/topics">Topics</a>
+      <a href="/en/admin/audit">Audit</a>
+      <span class="spacer"></span>
+      <span class="me" id="admin-me"></span>
+    </nav>
+
+    <div id="admin-root">
+      <div class="admin-empty">Loading…</div>
+    </div>
+  </div>
+
+  <script src="/js/nav.js" defer></script>
+
+  <script type="module">
+    while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
+
+    // ── Auth gate ────────────────────────────────────────
+    const user = await window.kiraAuth.getUser();
+    if (!user) {
+      sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
+      window.location.href = '/auth.html';
+      throw new Error('halt');
+    }
+    document.getElementById('admin-me').innerHTML =
+      user.email + ' · <a href="#" id="signout-link">sign out</a>';
+    document.getElementById('signout-link').addEventListener('click', async e => {
+      e.preventDefault();
+      await window.db.auth.signOut();
+      window.location.href = '/auth.html';
+    });
+
+    const root = document.getElementById('admin-root');
+
+    // ── API helper ───────────────────────────────────────
+    async function api(path) {
+      const session = (await window.db.auth.getSession()).data.session;
+      if (!session) throw new Error('no_session');
+      const r = await fetch(path, {
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+      });
+      if (!r.ok) throw new Error(`${r.status}`);
+      return r.json();
+    }
+
+    // ── Coverage badge ───────────────────────────────────
+    function badge(status) {
+      if (!status) return '<span class="co-badge co-badge--none">—</span>';
+      if (status === 'found')         return '<span class="co-badge co-badge--found">✓</span>';
+      if (status === 'checked_empty') return '<span class="co-badge co-badge--empty">∅</span>';
+      if (status === 'failed')        return '<span class="co-badge co-badge--fail">✗</span>';
+      return `<span class="co-badge co-badge--none">${status}</span>`;
+    }
+
+    // ── Enrich single company ────────────────────────────
+    async function enrich(slug, btn) {
+      btn.disabled = true;
+      btn.textContent = '…';
+      try {
+        const r = await fetch('/api/company-enrich', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug })
+        });
+        const d = await r.json();
+        btn.textContent = d.enriched ? '✓ done' : d.reason || 'skip';
+      } catch {
+        btn.textContent = 'error';
+      }
+    }
+
+    // ── Render ───────────────────────────────────────────
+    function render({ stats, companies }) {
+      const { total, enriched, with_narrative, with_registry } = stats;
+
+      // KPI strip
+      const kpi = `
+        <div class="admin-stats-strip" style="margin-bottom:24px;">
+          <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">Companies</div></div>
+          <div class="stat-card"><div class="stat-val">${enriched}</div><div class="stat-lbl">Enriched</div></div>
+          <div class="stat-card"><div class="stat-val">${with_narrative}</div><div class="stat-lbl">With narrative</div></div>
+          <div class="stat-card"><div class="stat-val">${with_registry || 0}</div><div class="stat-lbl">Registry match (LEI / UEN …)</div></div>
+          <div class="stat-card"><div class="stat-val">${total - enriched}</div><div class="stat-lbl">Pending</div></div>
+        </div>`;
+
+      if (companies.length === 0) {
+        root.innerHTML = kpi + '<div class="admin-empty">No companies found.</div>';
+        return;
+      }
+
+      // Search + country filter
+      const controls = `
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+          <input type="search" id="co-search" placeholder="Search name or MST…"
+            style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;width:220px;" />
+          <select id="co-country"
+            style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;">
+            <option value="">All countries</option>
+            <option value="VN" selected>Vietnam (VN)</option>
+            <option value="JP">Japan (JP)</option>
+          </select>
+          <span id="co-count" style="font-size:13px;color:var(--ink-muted);">${companies.length} companies</span>
+        </div>`;
+
+      const head = `
+        <table class="admin-table">
+          <thead><tr>
+            <th>Company</th>
+            <th>Tax ID</th>
+            <th>Industry</th>
+            <th>Registry</th>
+            <th style="text-align:center;">OC</th>
+            <th style="text-align:center;">Wiki</th>
+            <th style="text-align:center;">Web</th>
+            <th style="text-align:center;">LLM</th>
+            <th>Updated</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="co-tbody">`;
+
+      function rows(list) {
+        return list.map(c => {
+          const countryPath = (c.country_code || 'VN').toLowerCase();
+          const profileLink = c.slug
+            ? `<a href="/en/companies/${countryPath}/${c.slug}" target="_blank" style="color:var(--primary);">${c.name}</a>`
+            : c.name;
+          const updated = c.updated_at ? c.updated_at.slice(0, 10) : '—';
+          const enrichBtn = c.slug
+            ? `<button class="admin-btn-sm" data-slug="${c.slug}">Enrich</button>`
+            : '—';
+          return `<tr>
+            <td>${profileLink}${c.industry ? `<br><small style="color:var(--ink-muted)">${c.industry}</small>` : ''}</td>
+            <td style="font-family:monospace;font-size:13px;">${c.tax_id || '—'}</td>
+            <td>${c.industry || '—'}</td>
+            <td style="font-family:monospace;font-size:12px;" title="${(c.legal_name || '').replace(/"/g, '&quot;')}">${c.lei ? 'LEI ' + c.lei : ''}${c.lei && c.reg_id ? '<br>' : ''}${c.reg_id || ''}${!c.lei && !c.reg_id ? '—' : ''}${c.reg_status ? `<br><small style="color:var(--ink-muted)">${c.reg_status}</small>` : ''}</td>
+            <td style="text-align:center;">${badge(c.coverage.opencorporates)}</td>
+            <td style="text-align:center;">${badge(c.coverage.wikidata)}</td>
+            <td style="text-align:center;">${badge(c.coverage.tavily)}</td>
+            <td style="text-align:center;">${badge(c.coverage.llm_narrative)}</td>
+            <td style="font-size:13px;color:var(--ink-muted);">${updated}</td>
+            <td>${enrichBtn}</td>
+          </tr>`;
+        }).join('');
+      }
+
+      root.innerHTML = kpi + controls + head + rows(companies) + '</tbody></table>';
+
+      // Wire search
+      let allCos = companies;
+      const searchEl  = document.getElementById('co-search');
+      const countEl   = document.getElementById('co-count');
+      const tbody     = document.getElementById('co-tbody');
+
+      function filter() {
+        const q = searchEl.value.toLowerCase().trim();
+        const filtered = q
+          ? allCos.filter(c => c.name.toLowerCase().includes(q) || (c.tax_id || '').includes(q))
+          : allCos;
+        tbody.innerHTML = rows(filtered);
+        countEl.textContent = `${filtered.length} companies`;
+        wireEnrich();
+      }
+
+      searchEl.addEventListener('input', filter);
+
+      document.getElementById('co-country').addEventListener('change', async e => {
+        const country = e.target.value;
+        root.innerHTML = '<div class="admin-empty">Loading…</div>';
+        try {
+          const data = await api('/api/admin-companies' + (country ? `?country=${country}` : ''));
+          render(data);
+        } catch (err) {
+          root.innerHTML = `<div class="admin-empty">Error: ${err.message}</div>`;
+        }
+      });
+
+      function wireEnrich() {
+        document.querySelectorAll('[data-slug]').forEach(btn => {
+          btn.addEventListener('click', () => enrich(btn.dataset.slug, btn));
+        });
+      }
+      wireEnrich();
+    }
+
+    // ── Load ─────────────────────────────────────────────
+    root.innerHTML = '<div class="admin-empty">Loading companies…</div>';
+    try {
+      const data = await api('/api/admin-companies?country=VN');
+      render(data);
+    } catch (err) {
+      root.innerHTML = `<div class="admin-empty">Error: ${err.message}</div>`;
+    }
+
+    // ── Wikidata seeder ────────────────────────────────────
+    document.getElementById('seed-btn').addEventListener('click', async () => {
+      const country  = document.getElementById('seed-country').value;
+      const btn      = document.getElementById('seed-btn');
+      const progress = document.getElementById('seed-progress');
+
+      btn.disabled = true;
+      let offset = 0, totalImported = 0, totalUpdated = 0, page = 1;
+
+      while (true) {
+        progress.innerHTML = `Page ${page} (offset ${offset})…`;
+        let result;
+        try {
+          const session = (await window.db.auth.getSession()).data.session;
+          const r = await fetch('/api/admin-wikidata-seed', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                       'Authorization': `Bearer ${session.access_token}` },
+            body: JSON.stringify({ country, offset }),
+          });
+          result = await r.json();
+        } catch (err) {
+          progress.innerHTML = `<span style="color:#dc2626">Error: ${err.message}</span>`;
+          btn.disabled = false;
+          break;
+        }
+
+        if (result.error) {
+          progress.innerHTML = `<span style="color:#dc2626">✗ ${result.error}</span>`;
+          btn.disabled = false;
+          break;
+        }
+
+        totalImported += result.imported || 0;
+        totalUpdated  += result.updated  || 0;
+
+        if (result.done) {
+          progress.innerHTML = `<span style="color:#16a34a">✓ Done — ${totalImported} new · ${totalUpdated} matched</span>`;
+          btn.disabled = false;
+          try { const d = await api(`/api/admin-companies?country=${country}`); render(d); } catch (_) {}
+          break;
+        }
+
+        offset = result.next_offset;
+        page++;
+        await new Promise(r => setTimeout(r, 1300)); // Wikidata rate limit
+      }
+    });
+  </script>
+
+  <!-- Wikidata seeder panel -->
+  <div style="max-width:860px;margin:24px auto 0;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+    <div style="font-family:'Satoshi',sans-serif;font-weight:700;font-size:15px;margin-bottom:8px;">Seed from Wikidata</div>
+    <p style="font-size:13px;color:var(--ink-muted);margin:0 0 14px;">Imports company stubs from Wikidata SPARQL (500 per page). Matches by tax ID or name; creates stubs for new companies.</p>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <select id="seed-country" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-size:14px;">
+        <option value="VN">Vietnam (VN)</option>
+        <option value="JP">Japan (JP)</option>
+        <option value="KR">South Korea (KR)</option>
+        <option value="AU">Australia (AU)</option>
+        <option value="SG">Singapore (SG)</option>
+        <option value="MY">Malaysia (MY)</option>
+        <option value="ID">Indonesia (ID)</option>
+        <option value="TH">Thailand (TH)</option>
+        <option value="PH">Philippines (PH)</option>
+        <option value="NZ">New Zealand (NZ)</option>
+      </select>
+      <button id="seed-btn" class="admin-btn-sm" style="padding:8px 18px;font-size:13px;">Run seed →</button>
+      <span id="seed-progress" style="font-size:13px;color:var(--ink-muted);"></span>
+    </div>
+  </div>
+
+  <style>
+    .co-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .co-badge--found { background: #166534; color: #bbf7d0; }
+    .co-badge--empty { background: #78350f; color: #fde68a; }
+    .co-badge--fail  { background: #991b1b; color: #fecaca; }
+    .co-badge--none  { background: transparent; color: var(--ink-muted); }
+    .admin-btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .admin-btn-sm:hover { border-color: var(--primary); color: var(--primary); }
+    .admin-btn-sm:disabled { opacity: 0.5; cursor: default; }
+  </style>
+
+</body>
+</html>

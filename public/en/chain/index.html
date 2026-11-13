@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Kira Chain (prototype) — KIRA RESEARCH</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" />
+  <link rel="stylesheet" href="/css/kira.css" />
+  <style>
+    .kc-wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+    .kc-proto { background: #FFF7E6; border: 1px solid #F2D49B; color: #6B4A00; border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 24px; }
+    .kc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--primary); margin-bottom: 10px; }
+    .kc-wrap h1 { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 0 0 12px; color: var(--text); }
+    .kc-sub { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 700px; margin: 0 0 24px; }
+    .kc-search { position: relative; margin-bottom: 28px; }
+    .kc-search input { width: 100%; box-sizing: border-box; height: 54px; padding: 0 16px; font: inherit; font-size: 16px; border: 1.5px solid var(--border-strong); border-radius: 10px; background: #fff; color: var(--text); box-shadow: 0 2px 16px rgba(0,0,0,.06); }
+    .kc-search input:focus { outline: none; border-color: var(--primary); }
+    .kc-h2 { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-dim); margin: 0 0 12px; }
+    .kc-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .kc-card { display: block; border: 1px solid var(--border); border-radius: 12px; padding: 20px; background: #fff; text-decoration: none; color: inherit; transition: box-shadow .12s, border-color .12s; }
+    .kc-card:hover, .kc-card:focus-visible { box-shadow: var(--elevation-md); border-color: var(--primary); outline: none; }
+    .kc-card.top { border-color: var(--primary); }
+    .kc-card .c { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-dim); }
+    .kc-card h3 { font-family: 'Satoshi', sans-serif; font-size: 22px; margin: 6px 0 8px; color: var(--text); }
+    .kc-card p { font-size: 13.5px; color: var(--muted); line-height: 1.5; margin: 0 0 12px; }
+    .kc-card .go { font-size: 13px; font-weight: 600; color: var(--primary); }
+    .kc-none { border: 1px dashed var(--border-strong); border-radius: 12px; padding: 20px; background: var(--surface); margin-bottom: 28px; }
+    .kc-none h3 { font-family: 'Satoshi', sans-serif; font-size: 18px; margin: 0 0 6px; }
+    .kc-none p { font-size: 14px; color: var(--muted); line-height: 1.55; margin: 0 0 12px; }
+    .kc-none form { display: flex; flex-wrap: wrap; gap: 10px; }
+    .kc-none input[type=email] { flex: 1 1 220px; height: 42px; padding: 0 12px; font: inherit; font-size: 14px; border: 1.5px solid var(--border-strong); border-radius: 8px; background: #fff; }
+    .kc-none button { height: 42px; padding: 0 18px; font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--primary); border: 0; border-radius: 8px; cursor: pointer; }
+    .kc-none .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .kc-msg { font-size: 13.5px; margin-top: 10px; color: #1E6B35; }
+    .kc-soon { font-size: 13px; color: var(--muted-dim); }
+    @media (max-width: 720px) { .kc-wrap { padding: 28px 16px 72px; } }
+  </style>
+</head>
+<body>
+  <main class="kc-wrap">
+    <div class="kc-proto"><strong>Prototype for internal review.</strong> Kira Chain is not launched. The chains here hold desk-research data that has not been reviewed by analysts, and these pages are not linked from the site.</div>
+    <div class="kc-eyebrow">Kira Chain</div>
+    <h1>Who is in the value chain of any product?</h1>
+    <p class="kc-sub">Type a product or service. You get its value chain: the groups of companies at each stage, how the product moves between stages, and who operates at several stages.</p>
+
+    <div class="kc-search">
+      <input type="search" id="q" placeholder="Search a product or service, e.g. coffee" autocomplete="off" aria-label="Search a product or service" />
+    </div>
+
+    <div id="kc-none" class="kc-none" hidden></div>
+    <div class="kc-h2" id="kc-h2">Available now</div>
+    <div class="kc-cards" id="kc-cards"></div>
+    <p class="kc-soon">More products and countries are added as their data is collected and checked. Searches with no result help us decide what to build next.</p>
+  </main>
+
+  <script src="/js/nav.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    var timer = null, seq = 0, all = [];
+
+    function card(c, top) {
+      var st = c.stats || {};
+      var meta = st.companies ? st.companies + ' companies across ' + (st.stages || '?') + ' stages' + (st.checked ? ' · sources checked ' + st.checked : '') : '';
+      return '<a class="kc-card' + (top ? ' top' : '') + '" href="/en/chain/' + esc(c.country_code.toLowerCase()) + '/' + esc(c.slug) + '">' +
+        '<div class="c">' + esc(c.country_name) + '</div><h3>' + esc(c.name) + '</h3><p>' + esc(c.summary || '') + (meta ? ' <br><span style="color:var(--muted-dim)">' + esc(meta) + '</span>' : '') + '</p>' +
+        '<span class="go">Open the value chain →</span></a>';
+    }
+
+    function show(items, query) {
+      var none = $('kc-none');
+      if (!query) { none.hidden = true; $('kc-h2').textContent = 'Available now'; $('kc-cards').innerHTML = items.map(function (c) { return card(c, false); }).join(''); return; }
+      if (items.length) {
+        none.hidden = true; $('kc-h2').textContent = 'Best match' + (items.length > 1 ? 'es' : '');
+        $('kc-cards').innerHTML = items.map(function (c, i) { return card(c, i === 0); }).join('');
+        return;
+      }
+      $('kc-h2').textContent = 'Available now';
+      $('kc-cards').innerHTML = all.map(function (c) { return card(c, false); }).join('');
+      none.hidden = false;
+      none.innerHTML = '<h3>No value chain for “' + esc(query) + '” yet</h3><p>Tell us you want it. Requests decide which chains we build next. You can leave an email so we can reach you about it.</p>' +
+        '<form id="kc-req"><input type="email" id="kc-email" placeholder="Email (optional)" autocomplete="email" /><span class="hp"><input type="text" id="kc-hp" tabindex="-1" autocomplete="off" aria-hidden="true" /></span><button type="submit">Request this chain</button></form><div class="kc-msg" id="kc-msg" role="status"></div>';
+      $('kc-req').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = e.target.querySelector('button'); btn.disabled = true;
+        fetch('/api/chain-request', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: query, email: $('kc-email').value, hp: $('kc-hp').value }) })
+          .then(function (r) { if (!r.ok) throw new Error(r.status); $('kc-msg').style.color = '#1E6B35'; $('kc-msg').textContent = 'Thanks, we have noted “' + query + '”.'; })
+          .catch(function () { btn.disabled = false; $('kc-msg').style.color = '#9B2C2C'; $('kc-msg').textContent = 'That did not go through. Check the email address and try again.'; });
+      });
+    }
+
+    function run() {
+      var query = $('q').value.trim(), my = ++seq;
+      if (query.length < 2) { show(all, ''); return; }
+      fetch('/api/chain-search?q=' + encodeURIComponent(query)).then(function (r) { return r.json(); }).then(function (d) {
+        if (my === seq) show(d.items || [], query);
+      }).catch(function () {});
+    }
+
+    $('q').addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(run, 250); });
+    $('q').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      var first = document.querySelector('.kc-card.top'); if (first) location.href = first.getAttribute('href');
+    });
+
+    fetch('/api/chain-search').then(function (r) { return r.json(); }).then(function (d) {
+      all = d.items || []; show(all, '');
+      var pre = new URLSearchParams(location.search).get('q'); if (pre) { $('q').value = pre; run(); }
+    }).catch(function () { $('kc-cards').innerHTML = '<p class="kc-soon">Could not load the list. Please refresh.</p>'; });
+  })();
+  </script>
+</body>
+</html>

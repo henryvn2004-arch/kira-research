@@ -11,6 +11,7 @@
 // ============================================================
 
 import { sendLeadNotification } from './_lib/email.js';
+import { cleanAttr } from './_lib/attribution.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -42,7 +43,7 @@ function cors(res) {
 
 // ── Validation ─────────────────────────────────────────────
 const EMAIL_RE   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const LOCALES    = new Set(['en', 'ja', 'ko']);
+const LOCALES    = new Set(['en', 'ja', 'ko', 'zh']);
 const TIERS      = new Set(['briefing', 'custom', 'retainer', 'not-sure']);
 const DEADLINES  = new Set(['2w', 'month', 'quarter', 'flex']);
 
@@ -109,6 +110,8 @@ export default async function handler(req, res) {
     referer:    referer || null,
     status:     'new'
   };
+  const attribution = cleanAttr(body.attr);
+  if (attribution) row.attribution = attribution;
 
   try {
     const inserted = await supabase('leads', 'POST', row);

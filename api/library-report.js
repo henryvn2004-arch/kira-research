@@ -12,6 +12,11 @@
 // Falls back gracefully when only one of the two rows exists.
 // ============================================================
 
+import { coverUrls, insightCoverUrls } from './_lib/cover.js';
+import { sectorOf } from './_lib/sectors.js';
+import { getConfig } from './_lib/config.js';
+import { REPORT_PRICE_DEFAULT, SUBSCRIPTION_MONTH_PRICE } from './_lib/pricing.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -34,10 +39,12 @@ function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+  // Reports change rarely (admin write only). 30-min edge cache with 1-day SWR
+  // means cold-load latency from the report-detail page drops materially.
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=86400');
 }
 
-const SUPPORTED = new Set(['en', 'ja', 'ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 
 function clean(s, max = 2000) {
   return typeof s === 'string' ? s.trim().slice(0, max) : '';
@@ -121,7 +128,7 @@ export default async function handler(req, res) {
         `&status=eq.published` +
         `&published_at=lte.${encodeURIComponent(nowIso)}` +
         `&order=published_at.desc&limit=12` +
-        `&select=id,slug,country,industry,published_at,related_report_slugs`
+        `&select=id,slug,country,industry,published_at,related_report_slugs,cover_url,cover_thumb_url`
       );
 
       const scored = (candidates || []).map(i => {
@@ -162,6 +169,8 @@ export default async function handler(req, res) {
             title:     t.title,
             excerpt:   t.excerpt,
             read_time: t.read_time,
+            published_at: i.published_at,
+            cover:     insightCoverUrls(i, t.locale),
             locale:    t.locale
           };
         }).filter(Boolean);
@@ -171,13 +180,87 @@ export default async function handler(req, res) {
       // Swallow — non-critical for the report render.
     }
 
+    // 6) Related reports — cross-sell.
+    //    Match strategy, scored highest-to-lowest:
+    //      • Same country (+3)
+    //      • Same industry (+2)
+    //      • Year within 1 of base.year (+1)
+    //    Filter: status=published, exclude self. Order by score desc then year desc.
+    //    Limit 3. Pull title from report_translations (prefer effectiveLocale, fall
+    //    back to EN). Failures degrade to empty array.
+    let relatedReports = [];
+    try {
+      const orParts = [];
+      if (base.country)  orParts.push(`country.eq.${encodeURIComponent(base.country)}`);
+      if (base.industry) orParts.push(`industry.eq.${encodeURIComponent(base.industry)}`);
+      if (!orParts.length) throw new Error('no country/industry on base');
+
+      const candidates = await sb(
+        `living_reports?or=(${orParts.join(',')})` +
+        `&status=eq.published&id=neq.${base.id}` +
+        `&select=id,slug,country,industry,year,price,cover_url,cover_thumb_url` +
+        `&limit=24`
+      );
+
+      const scored = (candidates || []).map(r => {
+        let s = 0;
+        if (base.country  && r.country  === base.country)  s += 3;
+        if (base.industry && r.industry === base.industry) s += 2;
+        if (base.year && r.year && Math.abs(r.year - base.year) <= 1) s += 1;
+        return { r, s };
+      }).filter(x => x.s > 0);
+      scored.sort((a, b) => b.s - a.s || (b.r.year || 0) - (a.r.year || 0));
+      const top = scored.slice(0, 3).map(x => x.r);
+
+      if (top.length) {
+        const topIds = top.map(x => x.id);
+        const titleRows = await sb(
+          `report_translations?report_id=in.(${topIds.join(',')})` +
+          `&status=eq.published&locale=in.(${effectiveLocale},en)` +
+          `&select=report_id,locale,title,eyebrow`
+        );
+        const byReport = new Map();
+        (titleRows || []).forEach(t => {
+          const cur = byReport.get(t.report_id);
+          if (!cur || (t.locale === effectiveLocale && cur.locale !== effectiveLocale)) {
+            byReport.set(t.report_id, t);
+          }
+        });
+        relatedReports = top.map(r => {
+          const t = byReport.get(r.id);
+          if (!t) return null;
+          return {
+            slug:     r.slug,
+            country:  r.country,
+            industry: r.industry,
+            year:     r.year,
+            price:    r.price || REPORT_PRICE_DEFAULT,
+            title:    t.title,
+            eyebrow:  t.eyebrow,
+            cover:    coverUrls(r, t.locale),
+            locale:   t.locale
+          };
+        }).filter(Boolean);
+      }
+    } catch (relErr) {
+      console.warn('[library-report] related reports lookup failed:', relErr.message);
+    }
+
     res.status(200).json({
       slug:           base.slug,
       country:        base.country || '',
       industry:       base.industry || '',
       year:           base.year || null,
-      price:          base.price || 39,
+      price:          base.price || REPORT_PRICE_DEFAULT,
+      purchaseEnabled: await getConfig('checkout.single_report_enabled'),
+      subscription:   { enabled: await getConfig('checkout.subscription_enabled'), price: SUBSCRIPTION_MONTH_PRICE, pdfPerMonth: await getConfig('subscription.pdf_per_month') },
       pages:          base.pages || null,
+      code:           base.code || null,
+      sector:         sectorOf(base.industry_code),
+      stage:          base.stage || null,
+      analysis:       base.analysis || null,
+      type:           base.report_type || null,
+      cover:          coverUrls(base),
       published_at:   translation?.published_at || base.published_at || null,
       last_refresh:   translation?.updated_at   || base.updated_at   || null,
 
@@ -187,14 +270,18 @@ export default async function handler(req, res) {
 
       // Translation content (may be null if no rows)
       title:          translation?.title    || null,
-      eyebrow:        translation?.eyebrow  || null,  // e.g. "VIETNAM · FINTECH · MARKET ANALYSIS"
-      preview:        translation?.preview  || null,  // first-section HTML/text
-      toc:            translation?.toc      || [],    // [{num,name,pages,locked}]
-      full_content:   null,                            // never served on this endpoint;
-                                                       // post-purchase only via /api/get-purchased-report
+      eyebrow:        translation?.eyebrow  || null,
+      abstract:       translation?.abstract || null,  // public 200-300 word summary, indexed by Google
+      preview:        translation?.preview  || null,
+      toc:            translation?.toc      || [],
+      toc_json:       translation?.toc_json       || null, // [{section, page_ref}]
+      preview_tables: translation?.preview_tables || null, // [{title, source, html}]
+      glossary_json:  translation?.glossary_json  || null, // [{term, definition}]
+      full_content:   null,
       aggregators:    base.aggregators || [],
 
-      relatedInsights  // [{slug,title,excerpt,read_time,country,industry,locale}, ...] up to 3
+      relatedInsights, // [{slug,title,excerpt,read_time,country,industry,locale}, ...] up to 3
+      relatedReports   // [{slug,title,eyebrow,country,industry,year,price,locale}, ...] up to 3
     });
   } catch (err) {
     console.error('[library-report] error:', err.message);

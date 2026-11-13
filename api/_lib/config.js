@@ -1,0 +1,237 @@
+// ============================================================
+// KIRA RESEARCH — api/_lib/config.js
+// Owner-editable settings that take effect without a deploy (table app_config, migration 036,
+// edited on /en/admin/config). Every setting is registered here with its type, limits and the
+// default the code used before it became editable, so:
+//   - a missing row, a bad value or an unreachable database all fall back to the default
+//     (the site never breaks because of config);
+//   - the admin page can only write values that pass validation here.
+// Read with `await getConfig('key')`; instances cache the table for 60 s, so a change is live
+// within about a minute everywhere.
+// ============================================================
+
+const SUPABASE_URL         = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
+
+export const CONFIG = {
+  'search.auto_placeholders': {
+    group: 'Search', type: 'bool', default: true,
+    label: 'Create placeholder pages for product searches automatically',
+    help: 'On: a search such as "condom market in australia" gets a coming-soon page after an AI check. Off: that step is skipped and the reader sees the plain request form (everything else about search is unchanged).'
+  },
+  'search.daily_model_limit': {
+    group: 'Search', type: 'int', min: 0, max: 5000, default: 300, unit: 'calls per 24 h',
+    label: 'Daily limit for the AI check behind automatic placeholders',
+    help: 'Caps how many new searches per 24 hours may be sent to the model. 0 stops new checks (cached answers still work). This is the spending cap for that feature.'
+  },
+  'topics.demand_weight_request': {
+    group: 'Topic queue', type: 'int', min: 0, max: 50, default: 3, unit: 'points',
+    label: 'Demand points for an "email me when it is ready" request',
+    help: 'Topics with more demand points are produced first and shown first in Topics. A reader who leaves an email is a stronger signal than a search, hence more points.'
+  },
+  'topics.demand_weight_search': {
+    group: 'Topic queue', type: 'int', min: 0, max: 50, default: 1, unit: 'points',
+    label: 'Demand points for one search that found nothing',
+    help: 'Added once per search that matched no published report. Set to 0 to rank by email requests only.'
+  },
+  'planner.weekly_enabled': {
+    group: 'Topic queue', type: 'bool', default: true,
+    label: 'Plan new topics every week',
+    help: 'On: once a week the topic planner looks at the news in each country and either moves a topic that is in the news to the front of the queue or adds a new topic (one market segment × one standard analysis, market overview first), after answering reader demand (requests, searches). Off: the weekly run does nothing.'
+  },
+  'planner.topics_per_country': {
+    group: 'Topic queue', type: 'int', min: 0, max: 15, default: 6, unit: 'topics per country per week',
+    label: 'New topics per country each week',
+    help: 'The base number of topics the weekly planner picks for each of the 15 countries. The core markets (Vietnam, Thailand, Indonesia, Philippines, Malaysia, Singapore) get one more, the smallest markets (New Zealand, Cambodia, Laos, Myanmar, Brunei) one fewer, so the default 6 means 5 to 7 a week. Reader-requested topics count towards the number and are handled first. 0 pauses the planner.'
+  },
+  'planner.trend_days': {
+    group: 'Topic queue', type: 'int', min: 7, max: 90, default: 28, unit: 'days',
+    label: 'A topic that is in the news stays at the front for',
+    help: 'When the weekly planner finds that a topic is in the news, it moves up the queue. After this many days it goes back to its normal place if it has not been produced yet.'
+  },
+  'planner.auto_approve': {
+    group: 'Topic queue', type: 'bool', default: true,
+    label: 'Weekly topics go straight into the production queue',
+    help: 'On: new planner topics are approved and enter the queue at the next runner fire. Off: they wait in Topics as "proposed" until you approve them.'
+  },
+  'pipeline.stale_minutes': {
+    group: 'Report pipeline', type: 'int', min: 60, max: 600, default: 150, unit: 'minutes',
+    label: 'A running report counts as stuck after',
+    help: 'If a stage has been "in progress" longer than this, the next runner fire puts it back and the Pipeline page flags it. Keep it above the longest stage (English generation can take 90 minutes).'
+  },
+  'pipeline.stalled_hours': {
+    group: 'Report pipeline', type: 'int', min: 6, max: 168, default: 30, unit: 'hours',
+    label: 'Warn when no report stage has finished for',
+    help: 'With work waiting in the queue, the dashboard and Health page turn red after this many hours without a finished stage.'
+  },
+  'notify.report_ready_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Send the daily "your report is ready" emails',
+    help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
+  },
+  'notify.moves_alerts_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Send the daily "new company moves" emails (Kira Data alerts)',
+    help: 'Off: nothing is sent and every alert keeps its place, so readers get the moves they missed when you switch it back on. Readers sign up on the moves and corridor pages and confirm by email first.'
+  },
+  'notify.chain_ready_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Send the daily "your value chain is ready" emails',
+    help: 'Off: the daily job runs but sends nothing and keeps everyone queued, so they are emailed when you switch it back on.'
+  },
+  'notify.pipeline_watch_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Email me when a content pipeline goes silent',
+    help: 'A check runs every 6 hours and looks at the data itself (new report stages, new expert transcripts, new commentary insights). If one has been quiet longer than its limit below, the Health page turns red and you get one email per stream per day. Off: the Health page still turns red, no email is sent.'
+  },
+  'watch.reports_idle_hours': {
+    group: 'Pipeline watch', type: 'int', min: 3, max: 168, default: 12, unit: 'hours',
+    label: 'Report runner: alert after no activity for',
+    help: 'The report Routine fires 3 times a day. Any claim or finished stage counts as activity; your own actions on the Pipeline page do not.'
+  },
+  'watch.experts_idle_hours': {
+    group: 'Pipeline watch', type: 'int', min: 6, max: 336, default: 36, unit: 'hours',
+    label: 'Kira Experts: alert after no new transcript for',
+    help: 'Measured on the newest transcript created, whatever its status.'
+  },
+  'watch.insights_idle_hours': {
+    group: 'Pipeline watch', type: 'int', min: 6, max: 336, default: 36, unit: 'hours',
+    label: 'Insights: alert after no new commentary column for',
+    help: 'Measured on the newest commentary insight created, whatever its status.'
+  },
+  'ondemand.target_days': {
+    group: 'On-demand reports', type: 'int', min: 1, max: 30, default: 3, unit: 'days',
+    label: 'Promised time to make a requested report',
+    help: 'The "ready by" date on a coming-soon page and in the confirmation email is today plus this many days, as long as the report is not stuck behind other requested reports (then the date moves out on its own). Lower it only after you have added runner fires.'
+  },
+  'ondemand.reports_per_day': {
+    group: 'On-demand reports', type: 'int', min: 1, max: 50, default: 3, unit: 'reports per day',
+    label: 'How many reports the runner makes per day',
+    help: 'Tell the site how fast the Routine "Kira Report Generator" really is (one fire = one report in four languages; its cron today has 3 fires a day). It is used only to work out the "ready by" date when several reports were requested. It does NOT change the Routine: change the cron there first, then raise this number.'
+  },
+  'ondemand.auto_approve_per_day': {
+    group: 'On-demand reports', type: 'int', min: 0, max: 100, default: 10, unit: 'topics per 24 h',
+    label: 'Reader-made topics that approve themselves each day',
+    help: 'A topic created from a reader search is approved and queued as soon as someone leaves an email for it, so it can be made within the promised time. This caps how many such topics can start production per 24 hours (each one costs a full report). 0 = they wait for your approval in Topics.'
+  },
+  'checkout.single_report_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell single reports (PayPal checkout)',
+    help: 'Off: report pages show "Request access" and coming-soon pages show no price; nothing can be bought. On: report pages show the price and the PayPal button, and coming-soon pages say what the report will cost. Turn it on only after you have read /en/terms and are happy with the refund policy.'
+  },
+  'transcripts.public_full': {
+    group: 'Checkout', type: 'bool', default: true,
+    label: 'Expert-interview transcripts are fully public',
+    help: 'On (owner decision 2026-11-11): the whole dialogue of every transcript is readable and indexable by anyone, and search and AI engines see it in the page HTML. Off: only the opening share of each transcript is public, the rest needs a subscription or a purchase.'
+  },
+  'checkout.transcript_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell expert-interview transcripts (PayPal checkout)',
+    help: 'Off: a locked transcript still points to the waitlist. On: the lock card offers the full transcript for $29 (one purchase covers every language) and the PayPal button works. Turn it on after /en/terms (it also covers transcripts) is approved.'
+  },
+  'checkout.subscription_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell the Month subscription ($149, PayPal Subscriptions)',
+    help: 'Off: the Month card on the pricing page keeps the early-access form and nobody can start a subscription; people who already subscribed keep their access. On: the Month card becomes "Subscribe" (sign-in, then PayPal) and report pages offer it. Read /en/terms first (it covers the subscription), and make one live test subscription before you advertise it.'
+  },
+  'checkout.annual_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell the Annual subscription ($1,190 a year, PayPal Subscriptions)',
+    help: 'Off: the Annual card on the pricing page keeps the early-access form and nobody can start an Annual plan; people who already subscribed keep their access. On: the Annual card becomes "Subscribe" (sign-in, then PayPal) on the subscription page. It needs the same setup as the Month plan (PayPal Subscriptions enabled, /en/terms read) and is separate from the Month switch. A reader can hold one subscription at a time; moving from Month to Annual means cancelling Month and subscribing to Annual when its paid period ends.'
+  },
+  'subscription.pdf_per_year': {
+    group: 'Checkout', type: 'int', min: 1, max: 1000, default: 60, unit: 'PDFs per billing year',
+    label: 'PDF downloads included in the Annual plan',
+    help: 'How many different report PDFs an Annual subscriber can download in each yearly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
+  },
+  'subscription.pdf_per_month': {
+    group: 'Checkout', type: 'int', min: 1, max: 100, default: 5, unit: 'PDFs per billing period',
+    label: 'PDF downloads included in the Month plan',
+    help: 'How many different report PDFs a subscriber can download in each monthly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
+  },
+  'ads.value_request': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 5, unit: 'USD',
+    label: 'What an "email me when ready" sign-up is worth',
+    help: 'Sent to Google Ads with each such conversion in the file from the Funnel page, so it can favour clicks that produce them. Your own estimate of the value of one sign-up; 0 sends none.'
+  },
+  'ads.value_waitlist': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 15, unit: 'USD',
+    label: 'What a subscription-waitlist sign-up is worth',
+    help: 'Same as above, for the waitlist form on the pricing page.'
+  },
+  'ads.value_lead': {
+    group: 'Google Ads', type: 'int', min: 0, max: 100000, default: 100, unit: 'USD',
+    label: 'What a custom-research enquiry is worth',
+    help: 'Same as above, for the enquiry form (a person asking for a quote).'
+  },
+  'retention.site_events_days': {
+    group: 'Data', type: 'int', min: 30, max: 730, default: 180,
+    label: 'Keep visitor events for (days)',
+    help: 'The Funnel page reads these events. A daily job deletes anything older. Lower it to keep the database small; the Funnel page can then look back at most this far.'
+  }
+};
+
+let cache = { at: 0, rows: null };
+
+async function loadRows() {
+  if (cache.rows && Date.now() - cache.at < 60 * 1000) return cache.rows;
+  let rows = cache.rows || {};
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/app_config?select=key,value,updated_at,updated_by`, {
+      headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` }
+    });
+    if (!r.ok) throw new Error(`Supabase ${r.status}`);
+    rows = Object.fromEntries((await r.json()).map(x => [x.key, x]));
+  } catch (err) {
+    console.warn('[config] using last known / default values:', err.message);
+  }
+  cache = { at: Date.now(), rows };
+  return rows;
+}
+
+export function invalidateConfig() { cache = { at: 0, rows: null }; }
+
+// Validate a raw value for a registered key. Returns { ok:true, value } or { ok:false, error }.
+export function coerceConfig(key, raw) {
+  const def = CONFIG[key];
+  if (!def) return { ok: false, error: 'unknown_key' };
+  if (def.type === 'bool') {
+    if (raw === true || raw === 'true') return { ok: true, value: true };
+    if (raw === false || raw === 'false') return { ok: true, value: false };
+    return { ok: false, error: 'not_a_boolean' };
+  }
+  if (def.type === 'int') {
+    const n = typeof raw === 'number' ? raw : (typeof raw === 'string' && raw.trim() !== '' ? Number(raw) : NaN);
+    if (!Number.isInteger(n)) return { ok: false, error: 'not_a_whole_number' };
+    if (n < def.min || n > def.max) return { ok: false, error: `out_of_range_${def.min}_${def.max}` };
+    return { ok: true, value: n };
+  }
+  return { ok: false, error: 'bad_type' };
+}
+
+export async function getConfig(key) {
+  const def = CONFIG[key];
+  if (!def) throw new Error(`unregistered config key ${key}`);
+  const row = (await loadRows())[key];
+  if (row) {
+    const c = coerceConfig(key, row.value);
+    if (c.ok) return c.value;
+  }
+  return def.default;
+}
+
+// For the admin page: every registered setting with its current value and where it comes from.
+export async function listConfig() {
+  const rows = await loadRows();
+  return Object.entries(CONFIG).map(([key, def]) => {
+    const row = rows[key];
+    const c = row ? coerceConfig(key, row.value) : null;
+    return {
+      key, group: def.group, type: def.type, label: def.label, help: def.help, unit: def.unit || null,
+      min: def.min ?? null, max: def.max ?? null, default: def.default,
+      value: c && c.ok ? c.value : def.default,
+      is_default: !(c && c.ok),
+      updated_at: c && c.ok ? row.updated_at : null, updated_by: c && c.ok ? row.updated_by : null
+    };
+  });
+}

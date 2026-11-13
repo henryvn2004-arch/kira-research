@@ -5,45 +5,63 @@
 //   GET /api/insights-list?
 //       locale=en
 //       &category=fintech|methodology|vietnam|...   (optional)
+//       &q=coffee+vietnam                           (optional — server-side
+//                                                    keyword search across
+//                                                    title, excerpt, slug,
+//                                                    country, industry, category)
 //       &limit=24&offset=0
 //
 // Returns { items: [...], total } — each item has slug, category,
 // country, industry, title, excerpt, read_time, published_at.
 // ============================================================
 
+import { insightCoverUrls } from './_lib/cover.js';
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-async function sb(path) {
+async function sb(path, { countOnly = false } = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       'apikey':        SUPABASE_SERVICE_KEY,
       'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
       'Content-Type':  'application/json',
-      'Prefer':        'count=exact'
+      'Prefer':        'count=exact',
+      ...(countOnly ? { 'Range-Unit': 'items', 'Range': '0-0' } : {})
     }
   });
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
-  const data = await res.json();
   const range = res.headers.get('content-range') || '';
-  const total = parseInt(range.split('/')[1], 10) || data.length || 0;
-  return { rows: data, total };
+  const total = parseInt(range.split('/')[1], 10) || 0;
+  if (countOnly) return { rows: [], total };
+  const data = await res.json();
+  return { rows: data, total: total || data.length };
 }
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=300');
+  res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
 }
 
-const SUPPORTED = new Set(['en','ja','ko']);
+const SUPPORTED = new Set(['en', 'ja', 'ko', 'zh']);
 
 function clean(s) { return typeof s === 'string' ? s.trim().toLowerCase() : ''; }
 function int(s, def, max) {
   const n = parseInt(s, 10);
   if (isNaN(n) || n < 0) return def;
   return Math.min(n, max);
+}
+
+// PostgREST ILIKE wants `*foo*`; escape commas/parens since they're
+// part of the or-filter syntax. Cap length to keep the URL sane.
+function sanitizeQ(q) {
+  if (typeof q !== 'string') return '';
+  const trimmed = q.trim().slice(0, 64);
+  if (trimmed.length < 2) return '';
+  // Strip characters that break PostgREST or-filter parsing.
+  return trimmed.replace(/[(),*]/g, ' ').trim();
 }
 
 export default async function handler(req, res) {
@@ -54,7 +72,8 @@ export default async function handler(req, res) {
   const url      = new URL(req.url, `https://${req.headers.host || 'x'}`);
   const locale   = SUPPORTED.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
   const category = clean(url.searchParams.get('category'));
-  const limit    = int(url.searchParams.get('limit'),  24, 96);
+  const q        = sanitizeQ(url.searchParams.get('q'));
+  const limit    = int(url.searchParams.get('limit'),  24, 200);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);
 
   try {
@@ -75,16 +94,51 @@ export default async function handler(req, res) {
         `industry.ilike.${encodeURIComponent(category)})`
       );
     }
+
+    // 1b) Keyword search (server-side, two-phase):
+    //     - Phase A: find insight_translations matching title/excerpt ILIKE
+    //     - Phase B: find insights matching slug/country/industry/category ILIKE
+    //     Union the IDs and filter the main query with id=in.(...)
+    if (q) {
+      const qPattern = encodeURIComponent(`*${q}*`);
+      // Phase A: title + excerpt across all locales (case-insensitive)
+      const transRes = await sb(
+        `insight_translations?status=eq.published` +
+        `&or=(title.ilike.${qPattern},excerpt.ilike.${qPattern})` +
+        `&select=insight_id&limit=500`
+      );
+      const transIds = new Set((transRes.rows || []).map(r => r.insight_id));
+
+      // Phase B: slug + country + industry + category on the base insights table
+      const slugRes = await sb(
+        `insights?status=eq.published` +
+        `&or=(slug.ilike.${qPattern},country.ilike.${qPattern},industry.ilike.${qPattern},category.ilike.${qPattern})` +
+        `&select=id&limit=500`
+      );
+      (slugRes.rows || []).forEach(r => transIds.add(r.id));
+
+      if (!transIds.size) {
+        res.status(200).json({ items: [], total: 0, limit, offset, locale });
+        return;
+      }
+      where.push(`id=in.(${Array.from(transIds).join(',')})`);
+    }
+    const baseWhere = where.join('&');
     const baseQs =
-      where.join('&') +
+      baseWhere +
       `&order=published_at.desc.nullslast` +
       `&limit=${limit}` +
       `&offset=${offset}` +
-      `&select=id,slug,category,country,industry,published_at,featured`;
+      `&select=id,slug,category,country,industry,published_at,featured,cover_url,cover_thumb_url`;
 
-    const { rows: insights, total } = await sb(`insights?${baseQs}`);
+    const [{ rows: insights }, { total: dbTotal }] = await Promise.all([
+      sb(`insights?${baseQs}`),
+      sb(`insights?${baseWhere}&select=id`, { countOnly: true })
+    ]);
 
-    // 2) Translations in one in() query.
+    // 2) Translations in one in() query. We also pull body length so we
+    //    can drop stub rows (title+excerpt present but body never written)
+    //    from the public list. body=not.is.null is the PostgREST filter.
     const ids = insights.map(r => r.id);
     let translations = [];
     if (ids.length) {
@@ -92,10 +146,12 @@ export default async function handler(req, res) {
       const tQs =
         `insight_id=in.${idList}` +
         `&status=eq.published` +
+        `&body=not.is.null` +
         `&locale=in.(${locale},en)` +
-        `&select=insight_id,locale,title,excerpt,read_time`;
+        `&select=insight_id,locale,title,excerpt,read_time,body`;
       const { rows } = await sb(`insight_translations?${tQs}`);
-      translations = rows;
+      // Drop empty-string bodies that slipped past the IS NULL filter.
+      translations = rows.filter(r => r.body && r.body.length > 0);
     }
 
     const byId = new Map();
@@ -106,24 +162,32 @@ export default async function handler(req, res) {
       }
     });
 
-    const items = insights.map(i => {
-      const t = byId.get(i.id) || null;
-      return {
-        slug:         i.slug,
-        category:     i.category,
-        country:      i.country,
-        industry:     i.industry,
-        published_at: i.published_at,
-        featured:     !!i.featured,
-        title:        (t && t.title)    || null,
-        excerpt:      (t && t.excerpt)  || null,
-        read_time:    (t && t.read_time) || null,
-        locale:       t ? t.locale : null,
-        hasTranslation: !!t
-      };
-    });
+    // Filter out insights whose only published translation has a null/empty
+    // body — those would render as "Full article body is being written…" stubs
+    // on the detail page, which looks broken from a buyer's POV. Better to
+    // hide them entirely until someone writes the body.
+    const items = insights
+      .map(i => {
+        const t = byId.get(i.id) || null;
+        if (!t) return null;
+        return {
+          slug:         i.slug,
+          category:     i.category,
+          country:      i.country,
+          industry:     i.industry,
+          published_at: i.published_at,
+          featured:     !!i.featured,
+          cover:        insightCoverUrls(i, t.locale),
+          title:        t.title    || null,
+          excerpt:      t.excerpt  || null,
+          read_time:    t.read_time || null,
+          locale:       t.locale,
+          hasTranslation: true
+        };
+      })
+      .filter(Boolean);
 
-    res.status(200).json({ items, total, limit, offset, locale });
+    res.status(200).json({ items, total: dbTotal, limit, offset, locale });
   } catch (err) {
     console.error('[insights-list] error:', err.message);
     res.status(500).json({ error: 'server_error' });

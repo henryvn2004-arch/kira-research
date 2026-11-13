@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KIRA Research — Indonesia Roofing, Exterior & Insulation 2026 (Sample v3 — Schema-Compliant Opus Baseline)</title>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #FFFFFF; --bg-soft: #F8F9FB; --surface-alt: #F4F6F8;
+    --text: #0B0D10; --text-mid: #4A5568; --muted: #6B7280;
+    --primary: #1E6FFF; --primary-dim: #1850BF; --primary-soft: #EEF3FF;
+    --border: #E5E7EB; --border-strong: #D1D5DB;
+    --green: #00A88B; --green-soft: #E6F7F3;
+    --amber: #D97706; --amber-soft: #FEF3E7;
+    --dark-bg: #0B0D10; --dark-text: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #DDE0E5; color: var(--text); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 40px 0; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  .viewer-divider { max-width: 1280px; margin: 32px auto 12px; padding: 0 16px; color: var(--text-mid); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; display: flex; justify-content: space-between; }
+  .viewer-divider::before { content: "▾"; color: var(--primary); margin-right: 8px; }
+  .viewer-divider .label { flex: 1; }
+  .viewer-divider .meta { color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0.02em; }
+
+  .page { width: 1280px; height: 720px; margin: 0 auto; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+  .page-inner { padding: 36px 56px 28px; height: 100%; display: flex; flex-direction: column; position: relative; }
+  .page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-shrink: 0; }
+  .page-section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .page-section-tag::before { content: ""; width: 16px; height: 1px; background: var(--primary); }
+  .page-section-counter { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+  .page-footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+  .page-footer .logo-foot { font-weight: 700; color: var(--text); }
+  .page-footer .logo-foot .accent { color: var(--primary); }
+
+  .page-h1 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6px; color: var(--text); flex-shrink: 0; }
+  .page-subhead { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; max-width: 1100px; flex-shrink: 0; }
+  .page-subhead strong { color: var(--text); font-weight: 600; }
+
+  .data-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; display: inline-block; }
+  .data-tag.primary { background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(30,111,255,0.3); }
+  .data-tag.secondary { background: var(--green-soft); color: var(--green); border: 1px solid rgba(0,168,139,0.3); }
+  .data-tag.estimate { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+
+  /* ============ DIVIDER (DARK) ============ */
+  .divider-page { background: var(--dark-bg); color: var(--dark-text); }
+  .divider-page .atmosphere { position: absolute; inset: 0; background-image: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(30,111,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(30,111,255,0.08) 0%, transparent 60%); pointer-events: none; }
+  .divider-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 80px 96px; }
+  .divider-section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary); letter-spacing: 0.3em; margin-bottom: 28px; font-weight: 600; }
+  .divider-title { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 72px; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 1000px; color: var(--dark-text); }
+  .divider-title .accent { color: var(--primary); }
+  .divider-thesis { font-size: 19px; line-height: 1.45; color: #A3A9B6; max-width: 820px; border-left: 2px solid var(--primary); padding-left: 24px; }
+  .divider-thesis strong { color: var(--dark-text); font-weight: 600; }
+  .divider-mini-toc { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .toc-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6; padding: 8px 16px; border: 1px solid #252A33; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+  /* ============ EXEC SUMMARY ============ */
+  .exec-callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; flex-shrink: 0; }
+  .callout { background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 6px; position: relative; overflow: hidden; min-height: 100px; }
+  .callout::before { content: ""; position: absolute; top: 0; left: 0; width: 32px; height: 2px; background: var(--primary); }
+  .callout .num { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+  .callout .num .unit { font-size: 13px; color: var(--primary); margin-left: 4px; font-weight: 700; }
+  .callout .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+  .callout .change { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); font-weight: 600; }
+  .callout .change.down { color: var(--amber); }
+  .callout .source-tag { position: absolute; bottom: 6px; right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+  .callout .source-tag.est { color: var(--amber); }
+  .callout .source-tag.sec { color: var(--green); }
+
+  .exec-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+  .exec-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; margin-top: 14px; letter-spacing: -0.005em; }
+  .exec-narrative h3:first-child { margin-top: 0; }
+  .exec-narrative p { font-size: 12.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+  .exec-narrative p strong { color: var(--text); font-weight: 600; }
+
+  .exec-chart { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .chart-title { font-size: 12px; font-weight: 700; color: var(--text); }
+  .chart-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+  .chart-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+  .chart-body-flex { flex: 1; min-height: 0; position: relative; }
+  .chart-body-flex svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+  .chart-source { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; flex-shrink: 0; letter-spacing: 0.05em; }
+
+  /* ============ IMPLICATIONS GRID ============ */
+  .imp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; flex: 1; min-height: 0; }
+  .imp-card { background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 4px; padding: 16px 14px 14px; display: flex; flex-direction: column; }
+  .imp-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 8px; }
+  .imp-card .title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--text); margin-bottom: 8px; min-height: 32px; }
+  .imp-card .body-text { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+  .imp-card .body-text strong { color: var(--text); font-weight: 600; }
+  .imp-card .anchor { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+  .imp-card .anchor .num-anchor { color: var(--text); font-weight: 700; }
+
+  /* ============ COMPETITIVE ============ */
+  .comp-section-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; flex-shrink: 0; margin-bottom: 14px; }
+  .comp-chart-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; height: 240px; }
+  .comp-side-text h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+  .comp-side-text p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+  .comp-side-text p strong { color: var(--text); font-weight: 600; }
+  .comp-side-text .stat-stack { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .comp-side-text .stat-line { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 0; color: var(--text-mid); }
+  .comp-side-text .stat-line .val { color: var(--text); font-weight: 700; }
+
+  .comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; min-height: 0; }
+  .comp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0; }
+  .comp-card.leader { border-color: var(--primary); border-width: 1.5px; }
+  .comp-card.leader::before { content: "MARKET LEADER"; position: absolute; top: -1px; left: 14px; background: var(--primary); color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; border-radius: 0 0 3px 3px; font-weight: 600; }
+  .comp-card.leader { padding-top: 22px; }
+  .comp-rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+  .comp-name { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+  .comp-parent { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+  .comp-stat-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted var(--border); color: var(--text-mid); }
+  .comp-stat-row:last-of-type { border-bottom: none; }
+  .comp-stat-row .val { color: var(--text); font-weight: 700; }
+  .comp-strengths { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.45; color: var(--text-mid); }
+  .comp-strengths strong { color: var(--text); font-weight: 600; }
+
+  /* ============ PROFILE DEEP-DIVE ============ */
+  .profile-hero { background: var(--bg-soft); border-left: 3px solid var(--primary); padding: 14px 18px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 3fr; gap: 30px; flex-shrink: 0; }
+  .profile-hero h2 { font-family: 'Satoshi', sans-serif; font-weight: 900; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+  .profile-hero .sub { font-size: 11.5px; color: var(--text-mid); margin-bottom: 8px; }
+  .profile-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .profile-stats .stat { border-left: 1px solid var(--border); padding-left: 10px; }
+  .profile-stats .stat:first-child { border-left: none; padding-left: 0; }
+  .profile-stats .stat .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+  .profile-stats .stat .val { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); line-height: 1.1; }
+  .profile-stats .stat .val .unit { font-size: 10px; color: var(--text-mid); font-weight: 500; margin-left: 3px; }
+
+  .profile-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; min-height: 0; }
+  .profile-col h3 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  .profile-col h3:not(:first-child) { margin-top: 14px; }
+  .profile-col p { font-size: 11.5px; line-height: 1.55; color: var(--text-mid); margin-bottom: 8px; }
+  .profile-col p strong { color: var(--text); font-weight: 600; }
+  .profile-col ul { list-style: none; padding: 0; margin: 0; }
+  .profile-col li { font-size: 11px; line-height: 1.5; color: var(--text-mid); padding-left: 16px; position: relative; margin-bottom: 5px; }
+  .profile-col li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .profile-col li strong { color: var(--text); font-weight: 600; }
+
+  /* ============ AI ============ */
+  .ai-overview-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-shrink: 0; margin-bottom: 14px; height: 270px; }
+  .ai-narrative h3 { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; margin-top: 12px; }
+  .ai-narrative h3:first-child { margin-top: 0; }
+  .ai-narrative p { font-size: 11.5px; line-height: 1.5; color: var(--text-mid); margin-bottom: 6px; }
+  .ai-narrative p strong { color: var(--text); font-weight: 600; }
+
+  .ai-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+
+  .ai-usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 14px; flex: 1; min-height: 0; }
+  .ai-usecase { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; position: relative; }
+  .ai-usecase .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--primary); letter-spacing: 0.15em; font-weight: 700; margin-bottom: 6px; }
+  .ai-usecase .uc-title { font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+  .ai-usecase .uc-body { font-size: 11px; line-height: 1.5; color: var(--text-mid); flex: 1; }
+  .ai-usecase .uc-body strong { color: var(--text); font-weight: 600; }
+  .ai-usecase .uc-example { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+  /* SVG utils */
+  .axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--muted); }
+  .axis-line { stroke: var(--border); stroke-width: 1; }
+  .grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 2; }
+  .bar-primary { fill: var(--primary); }
+  .bar-secondary { fill: var(--green); }
+  .bar-tertiary { fill: var(--amber); }
+  .label-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text); font-weight: 700; }
+  .label-small { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-mid); }
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 1: EXEC SUMMARY p1 — SCHEMA-COMPLIANT, OVERFLOW FIXED ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 1/8 — Exec Summary p.1 [exec_summary_p1]</span>
+  <span class="meta">Fixed: 3 sections → 2 sections per schema. Narrative ≤1200 chars.</span>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">012 / 125</div>
+    </div>
+
+    <h1 class="page-h1">Indonesia's roofing, exterior &amp; insulation market — 2026 inflection</h1>
+    <p class="page-subhead">
+      A <strong>USD 24 bn construction backdrop</strong> meets accelerating non-asbestos substitution, a renewed property cycle, and a consolidating supply base. Long-form opportunity outweighs short-term cyclical noise.
+    </p>
+
+    <div class="exec-callouts">
+      <div class="callout">
+        <div class="label">Indonesia Roofing TAM 2025</div>
+        <div class="num">1.8–2.2<span class="unit">USD bn</span></div>
+        <div class="change">↑ to ~3.0 bn by 2031</div>
+        <div class="source-tag est">KIRA Est.</div>
+      </div>
+      <div class="callout">
+        <div class="label">Roofing Growth 2029</div>
+        <div class="num">11.61<span class="unit">% YoY</span></div>
+        <div class="change">↑ from 8.29% in 2025</div>
+        <div class="source-tag sec">Secondary</div>
+      </div>
+      <div class="callout">
+        <div class="label">Fiber Cement HHI 2023</div>
+        <div class="num">8,737</div>
+        <div class="change down">↑ from 4,171 (2017)</div>
+        <div class="source-tag sec">Secondary</div>
+      </div>
+      <div class="callout">
+        <div class="label">Indonesia Construction Mkt 2024</div>
+        <div class="num">24<span class="unit">USD bn</span></div>
+        <div class="change">9.84% of national GDP</div>
+        <div class="source-tag sec">Secondary</div>
+      </div>
+    </div>
+
+    <div class="exec-body">
+      <div class="exec-narrative">
+        <h3>Market context</h3>
+        <p>
+          Indonesia's construction sector contributed <strong>9.84% of GDP in Q1 2025</strong>, anchoring a roofing, exterior and insulation opportunity sized at <strong>USD 1.8–2.2 billion</strong>. After 7.0% real growth in 2024, value-add softened to 3.6% in H1 2025 as IKN financing eased. The 2026–2031 horizon stays structurally constructive: a <strong>9.9–11 million housing backlog</strong>, the Prabowo administration's <strong>3 Million Houses Program</strong>, and extended 100% VAT exemption form the demand floor.
+        </p>
+
+        <h3>Why now: three convergent forces</h3>
+        <p>
+          BI's H2 2024 rate cut from 6.25% to 6.00% lifted KPR mortgage transactions <strong>+58% QoQ in Q4 2024</strong>. The March 2024 Supreme Court mandate on asbestos warning labels compresses a long-promised substitution — Indonesia still imports <strong>~150,000 tons of asbestos annually</strong>, roofing 13% of households. Fiber cement HHI nearly doubled from 4,171 (2017) to <strong>8,737 (2023)</strong>, widening the gap between scale incumbents and the long tail.
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Indonesia roofing materials — sized by category</div>
+            <div class="chart-subtitle">2023 actual · 2025 estimate · 2031 forecast</div>
+          </div>
+          <div class="chart-unit">USD MN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="60" y1="20" x2="60" y2="240"/>
+            <line class="axis-line" x1="60" y1="240" x2="470" y2="240"/>
+            <line class="grid-line" x1="60" y1="60" x2="470" y2="60"/>
+            <line class="grid-line" x1="60" y1="100" x2="470" y2="100"/>
+            <line class="grid-line" x1="60" y1="140" x2="470" y2="140"/>
+            <line class="grid-line" x1="60" y1="180" x2="470" y2="180"/>
+            <text class="axis-text" x="55" y="244" text-anchor="end">0</text>
+            <text class="axis-text" x="55" y="184" text-anchor="end">800</text>
+            <text class="axis-text" x="55" y="144" text-anchor="end">1,200</text>
+            <text class="axis-text" x="55" y="104" text-anchor="end">1,600</text>
+            <text class="axis-text" x="55" y="64" text-anchor="end">2,000</text>
+            <rect class="bar-primary" x="90" y="138" width="22" height="102"/>
+            <rect class="bar-secondary" x="115" y="180" width="22" height="60"/>
+            <rect class="bar-tertiary" x="140" y="216" width="22" height="24"/>
+            <rect class="bar-primary" x="220" y="120" width="22" height="120"/>
+            <rect class="bar-secondary" x="245" y="170" width="22" height="70"/>
+            <rect class="bar-tertiary" x="270" y="212" width="22" height="28"/>
+            <rect class="bar-primary" x="350" y="68" width="22" height="172"/>
+            <rect class="bar-secondary" x="375" y="148" width="22" height="92"/>
+            <rect class="bar-tertiary" x="400" y="200" width="22" height="40"/>
+            <text class="axis-text" x="125" y="258" text-anchor="middle">2023</text>
+            <text class="axis-text" x="255" y="258" text-anchor="middle">2025E</text>
+            <text class="axis-text" x="385" y="258" text-anchor="middle">2031F</text>
+            <text class="label-data" x="101" y="132" text-anchor="middle">1,100</text>
+            <text class="label-small" x="126" y="174" text-anchor="middle">286</text>
+            <text class="label-small" x="151" y="210" text-anchor="middle">~520</text>
+            <text class="label-data" x="231" y="114" text-anchor="middle">1,350</text>
+            <text class="label-small" x="256" y="164" text-anchor="middle">~395</text>
+            <text class="label-small" x="281" y="206" text-anchor="middle">~605</text>
+            <text class="label-data" x="361" y="62" text-anchor="middle">1,950</text>
+            <text class="label-small" x="386" y="142" text-anchor="middle">~675</text>
+            <text class="label-small" x="411" y="194" text-anchor="middle">~825</text>
+            <rect class="bar-primary" x="60" y="10" width="10" height="10"/>
+            <text class="label-small" x="74" y="19">Fiber cement</text>
+            <rect class="bar-secondary" x="160" y="10" width="10" height="10"/>
+            <text class="label-small" x="174" y="19">Metal</text>
+            <rect class="bar-tertiary" x="225" y="10" width="10" height="10"/>
+            <text class="label-small" x="239" y="19">Concrete/clay tile</text>
+          </svg>
+        </div>
+        <div class="chart-source">Source: Ken Research, Data Bridge, KIRA estimates · Methodology: APAC market × Indonesia construction share triangulation</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 2: EXEC SUMMARY p2 — 5 IMPLICATIONS ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 2/8 — Exec Summary p.2 [exec_summary_p2_implications]</span>
+  <span class="meta">5 cards · each body ≤360 chars per schema</span>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 04 · Executive Summary</div>
+      <div class="page-section-counter">013 / 125</div>
+    </div>
+
+    <h1 class="page-h1">Five strategic implications for market participants</h1>
+    <p class="page-subhead">
+      Five forces materially reshape competitive dynamics through 2031. Each is anchored to documented market data and KIRA's synthesis from two decades of building materials studies across Southeast Asia.
+    </p>
+
+    <div class="imp-grid">
+      <div class="imp-card">
+        <div class="num">01 · SUBSTITUTION</div>
+        <div class="title">Non-asbestos transition unlocks share gain</div>
+        <div class="body-text">
+          Indonesia imports <strong>~150,000 tons of asbestos annually</strong> with no full ban yet. Supreme Court warning-label mandate (Mar 2024) plus the 2035 Asbestos-Free target compresses substitution into 5–7 years. Etex KALSI/ETER and listed Impact Pratama (IMPC) best positioned.
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">13%</span> ID households on asbestos</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">02 · CHANNEL</div>
+        <div class="title">Modern trade reorders distribution economics</div>
+        <div class="body-text">
+          Mitra10 (<strong>48+ Superstores</strong>), Ace Hardware (USD 515M revenue), Depo Bangunan captured <strong>~20–25% share</strong> versus &lt;10% a decade ago. B2B e-commerce grows <strong>15.9% CAGR</strong>; 6M annual online transactions reroute long-tail demand.
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">USD 4.5 bn</span> DIY/hardware 2023</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">03 · CONSOLIDATION</div>
+        <div class="title">HHI doubling drives 3–4 winner outcome</div>
+        <div class="body-text">
+          Fiber cement HHI <strong>moved from 4,171 (2017) to 8,737 (2023)</strong>, crossing the highly concentrated threshold. M&amp;A and informal exit of sub-scale converters accelerates. Etex, SCG (Siam Indo), Impack likely capture <strong>&gt;60% volume</strong> by 2028.
+        </div>
+        <div class="anchor">Anchor: HHI <span class="num-anchor">+109%</span> in 6 years</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">04 · AI/DIGITAL</div>
+        <div class="title">AI procurement reshapes spec influence</div>
+        <div class="body-text">
+          Indonesia AI in construction market reached <strong>USD 2.3 billion in 2024</strong>. PUPR's BIM Roadmap completed Phase 4 in 2024. AI-driven spec recommendations, demand forecasting, and channel pricing shift bargaining power from sales reps to data-enabled procurement.
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">USD 2.3 bn</span> ID AI/construction</div>
+      </div>
+
+      <div class="imp-card">
+        <div class="num">05 · SUSTAINABILITY</div>
+        <div class="title">Green-building spec mandates favour certified</div>
+        <div class="body-text">
+          GBCI Greenship + government BGH (PWPH Reg 21/2021) create dual-track green incentives. <strong>60+ buildings certified</strong> by July 2024. Cement decarbonization mandate (<strong>30% emissions cut by 2030</strong>) trickles into specifier-led material substitution.
+        </div>
+        <div class="anchor">Anchor: <span class="num-anchor">60+</span> GBCI certified</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 3: SECTION 09 DIVIDER ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 3/8 — Section 09 Divider [divider]</span>
+  <span class="meta">Dark · thesis ≤320 chars per schema</span>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 09</div>
+    <h1 class="divider-title">Competitive <span class="accent">Landscape</span></h1>
+    <div class="divider-thesis">
+      Indonesia's roofing and exterior market is <strong>consolidating fast</strong>. The Herfindahl index nearly doubled from 4,171 (2017) to 8,737 (2023), with Etex Group's <strong>KALSI franchise extending its multi-decade lead</strong> over a long tail of regional manufacturers.
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">9.1 Market Structure</div>
+      <div class="toc-pill">9.2 Top 5 Players</div>
+      <div class="toc-pill">9.3 Player Profiles</div>
+      <div class="toc-pill">9.4 Substitution Dynamics</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 4: COMPETITIVE STRUCTURE — TIGHTENED CARDS ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 4/8 — Competitive Structure [competitive_structure]</span>
+  <span class="meta">Card strengths text ≤140 chars per schema</span>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09 · Competitive Landscape</div>
+      <div class="page-section-counter">042 / 125</div>
+    </div>
+
+    <h1 class="page-h1">Market structure: consolidating to highly concentrated</h1>
+    <p class="page-subhead">
+      The HHI for Indonesia fiber cement crossed the <strong>highly concentrated threshold (HHI &gt;8,000)</strong> in 2023, having spent 2017 well within the moderately concentrated band. Asbestos compliance costs and two-plant scale economics favour 3–4 incumbents.
+    </p>
+
+    <div class="comp-section-wrap">
+      <div class="comp-chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Fiber cement market concentration (HHI) — 2017 vs 2023</div>
+            <div class="chart-subtitle">Threshold bands per US DOJ guidelines</div>
+          </div>
+          <div class="chart-unit">HHI INDEX</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <rect x="50" y="20" width="540" height="38" fill="#FEF3E7" opacity="0.7"/>
+            <rect x="50" y="58" width="540" height="50" fill="#FEFCE8" opacity="0.7"/>
+            <rect x="50" y="108" width="540" height="76" fill="#E6F7F3" opacity="0.5"/>
+            <text class="label-small" x="585" y="32" text-anchor="end" style="fill:#D97706">Highly concentrated &gt;8,000</text>
+            <text class="label-small" x="585" y="80" text-anchor="end" style="fill:#A16207">Concentrated 2,500-8,000</text>
+            <text class="label-small" x="585" y="135" text-anchor="end" style="fill:#00A88B">Competitive &lt;2,500</text>
+            <line class="axis-line" x1="50" y1="184" x2="590" y2="184"/>
+            <rect class="bar-secondary" x="150" y="120" width="80" height="64"/>
+            <text class="label-data" x="190" y="112" text-anchor="middle">4,171</text>
+            <text class="axis-text" x="190" y="200" text-anchor="middle">2017</text>
+            <rect class="bar-tertiary" x="370" y="34" width="80" height="150"/>
+            <text class="label-data" x="410" y="28" text-anchor="middle" style="fill:#D97706">8,737</text>
+            <text class="axis-text" x="410" y="200" text-anchor="middle">2023</text>
+            <path d="M 235 100 L 360 60" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+            <text class="label-small" x="298" y="76" text-anchor="middle" style="fill:var(--primary); font-weight:700">+4,566 pts / 6 yrs</text>
+            <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--primary)"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">Source: 6W Research · KIRA analysis</div>
+      </div>
+
+      <div class="comp-side-text">
+        <h3>Consolidation accelerating</h3>
+        <p>
+          Sub-scale local converters reliant on asbestos formulations are giving way to <strong>two-plant national-coverage incumbents</strong> with European, Thai or Belgian backing.
+        </p>
+        <div class="stat-stack">
+          <div class="stat-line"><span>HHI Δ 2017→2023</span><span class="val">+109%</span></div>
+          <div class="stat-line"><span>Top 3 share est.</span><span class="val">~58%</span></div>
+          <div class="stat-line"><span>Market 2023</span><span class="val">USD 1.1 bn</span></div>
+          <div class="stat-line"><span>Forecast CAGR</span><span class="val">5.92%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card leader">
+        <div class="comp-rank">RANK 01</div>
+        <div class="comp-name">PT Etex Building Performance Indonesia</div>
+        <div class="comp-parent">Etex Group (Belgium) · Semen Indonesia minority</div>
+        <div class="comp-stat-row"><span>Brands</span><span class="val">KALSI · ETER</span></div>
+        <div class="comp-stat-row"><span>Plants</span><span class="val">2 (Gresik, Karawang)</span></div>
+        <div class="comp-stat-row"><span>Since</span><span class="val">1971</span></div>
+        <div class="comp-strengths">
+          <strong>Strengths:</strong> Asbestos-free pioneer, two-plant E/W Java, broad range from boards to corrugated roofing.
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 02</div>
+        <div class="comp-name">PT Siam Indo Gypsum Industry</div>
+        <div class="comp-parent">Siam Cement Group (SCG, Thailand)</div>
+        <div class="comp-stat-row"><span>Category</span><span class="val">Fiber cement, gypsum</span></div>
+        <div class="comp-stat-row"><span>Exports</span><span class="val">Brunei (2024)</span></div>
+        <div class="comp-stat-row"><span>ID adjacency</span><span class="val">Semen Jawa, Jayamix</span></div>
+        <div class="comp-strengths">
+          <strong>Strengths:</strong> SCG cross-sell with cement/concrete, sustainability initiatives, regional supply chain.
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 03</div>
+        <div class="comp-name">PT Impack Pratama Industri</div>
+        <div class="comp-parent">Local listed (IDX: IMPC)</div>
+        <div class="comp-stat-row"><span>Flagship</span><span class="val">EZ-Lock (2020)</span></div>
+        <div class="comp-stat-row"><span>USP</span><span class="val">UV-blocking 98%</span></div>
+        <div class="comp-stat-row"><span>Format</span><span class="val">Twin-wall</span></div>
+        <div class="comp-strengths">
+          <strong>Strengths:</strong> Listed transparency, product innovation, strong Java distribution depth.
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-rank">RANK 04</div>
+        <div class="comp-name">PT Mahaphant Fibre Cement</div>
+        <div class="comp-parent">Mahaphant Group (Thailand)</div>
+        <div class="comp-stat-row"><span>Category</span><span class="val">Boards, siding</span></div>
+        <div class="comp-stat-row"><span>Footprint</span><span class="val">Single plant</span></div>
+        <div class="comp-stat-row"><span>Position</span><span class="val">Cost-competitive</span></div>
+        <div class="comp-strengths">
+          <strong>Strengths:</strong> Thai parent supply chain, regional sourcing scale, emerging brand recognition.
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 5: ETEX PROFILE — TIGHTENED ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 5/8 — Etex Profile [competitive_profile_deep]</span>
+  <span class="meta">Body sections ≤380 chars each per schema</span>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 09.3 · Player Profile</div>
+      <div class="page-section-counter">046 / 125</div>
+    </div>
+
+    <div class="profile-hero">
+      <div>
+        <h2>PT Etex Building Performance Indonesia</h2>
+        <div class="sub">Formerly PT Eternit Gresik · Subsidiary of Etex Group (Belgium)</div>
+        <div class="tags">
+          <span class="data-tag primary">Market Leader</span>
+          <span class="data-tag secondary">Asbestos-Free Pioneer</span>
+          <span class="data-tag estimate">KIRA Tier 1</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><div class="label">Founded</div><div class="val">1971</div></div>
+        <div class="stat"><div class="label">Plants ID</div><div class="val">2<span class="unit">JI/JBR</span></div></div>
+        <div class="stat"><div class="label">Group Rev.</div><div class="val">€3 bn<span class="unit">global</span></div></div>
+        <div class="stat"><div class="label">Group Plants</div><div class="val">118<span class="unit">/45 ctry</span></div></div>
+      </div>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-col">
+        <h3>Business Overview</h3>
+        <p>
+          The reference manufacturer of fiber cement building boards in Indonesia for over 50 years. Established 1971 as a JV between Eternit Belgium and PT Semen Gresik; began operations 1973 selling corrugated fiber cement roofing and flat boards. Renamed from <strong>PT Eternit Gresik to PT Etex Building Performance Indonesia</strong>.
+        </p>
+
+        <h3>Brand Architecture</h3>
+        <p>
+          Two anchor brands. <strong>KALSI</strong> covers flat fiber cement boards (ceilings, partitions, cladding, list-plank, façades, flooring). <strong>ETER</strong> covers corrugated sheet roofing (Eter6, Eter11, Eter14). Both ranges are <strong>100% asbestos-free</strong>, with Etex Indonesia the local pioneer in asbestos-free fiber cement technology.
+        </p>
+      </div>
+
+      <div class="profile-col">
+        <h3>Strategic Positioning</h3>
+        <p>
+          KALSI sits within Etex's global commercial brand portfolio alongside CEDRAL, DURLOCK, EQUITONE, ETERNIT, PROMAT and SINIAT. Parent operates <strong>118 production sites across 45 countries, €3 billion+ turnover</strong>. Belgian group brings R&amp;D depth and technology transfer beyond local competitor reach.
+        </p>
+
+        <h3>Strengths &amp; Watchlist</h3>
+        <ul>
+          <li><strong>Heritage:</strong> 50+ years entrenched distributor and specifier relationships</li>
+          <li><strong>Scale:</strong> Two-plant national logistics economics</li>
+          <li><strong>Asbestos-free pioneer</strong> — best positioned for 2035 transition</li>
+          <li><strong>Watch:</strong> SCG cross-sell pressure; Impack innovation in twin-wall</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 6: SECTION 14 DIVIDER ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 6/8 — Section 14 Divider [divider]</span>
+  <span class="meta">Schema-compliant thesis ≤320 chars</span>
+</div>
+
+<div class="page divider-page">
+  <div class="atmosphere"></div>
+  <div class="divider-content">
+    <div class="divider-section-num">SECTION 14</div>
+    <h1 class="divider-title">AI Impact on <span class="accent">Building Materials</span></h1>
+    <div class="divider-thesis">
+      Indonesia's AI-in-construction market reached <strong>USD 2.3 billion in 2024</strong>, marking a generational shift in how roofing, exterior and insulation players forecast demand, optimize pricing, and influence specifier decisions. PUPR's BIM Roadmap (2017–2024) has completed; the 2026–2031 period is about translation.
+    </div>
+    <div class="divider-mini-toc">
+      <div class="toc-pill">14.1 Market Sizing</div>
+      <div class="toc-pill">14.2 Use Cases</div>
+      <div class="toc-pill">14.3 BIM Adoption</div>
+      <div class="toc-pill">14.4 Outlook</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 7: AI OVERVIEW — TIGHTENED NARRATIVE ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 7/8 — AI Overview [ai_overview]</span>
+  <span class="meta">Narrative sections ≤220 chars each per schema</span>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 14 · AI Impact on Building Materials</div>
+      <div class="page-section-counter">078 / 125</div>
+    </div>
+
+    <h1 class="page-h1">AI in Indonesian construction: USD 2.3 bn market, accelerating</h1>
+    <p class="page-subhead">
+      Indonesia AI-in-construction sized at <strong>USD 2.3 billion (2024)</strong> reflects a generational re-platforming. Global construction design software on a <strong>7.7% CAGR to USD 15.4 billion by 2030</strong>, with emerging markets — Indonesia, India, Vietnam — as fastest adopters.
+    </p>
+
+    <div class="ai-overview-top">
+      <div class="ai-narrative">
+        <h3>Market size &amp; velocity</h3>
+        <p>
+          Indonesia AI in construction sized at <strong>USD 2.3 bn (2024)</strong>, anchored by predictive analytics, BIM, and machine learning adoption across project lifecycle. Concentrated in large-tier developers and MNC contractors; now extending into distributor workflows.
+        </p>
+
+        <h3>Government catalyst</h3>
+        <p>
+          PUPR's <strong>BIM Roadmap (4 phases, 2017–2024)</strong> codified by BALITBANG PU Decree 32/KPTS/KL/2017. Concluded 2024 with mandatory BIM on government infrastructure projects; growing private-sector uptake.
+        </p>
+
+        <h3>Regional benchmark</h3>
+        <p>
+          Singapore's BCA Construction AI Mandate (2023) sets the regional standard. Indonesia lags 2–3 years but compresses fast given RPJMN 2024–2029 (5% GDP target, 200+ National Strategic Projects).
+        </p>
+      </div>
+
+      <div class="exec-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Construction design software — global trajectory</div>
+            <div class="chart-subtitle">2024 actual · 2030 forecast</div>
+          </div>
+          <div class="chart-unit">USD BN</div>
+        </div>
+        <div class="chart-body-flex">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="50" y1="20" x2="50" y2="200"/>
+            <line class="axis-line" x1="50" y1="200" x2="390" y2="200"/>
+            <line class="grid-line" x1="50" y1="60" x2="390" y2="60"/>
+            <line class="grid-line" x1="50" y1="100" x2="390" y2="100"/>
+            <line class="grid-line" x1="50" y1="140" x2="390" y2="140"/>
+            <text class="axis-text" x="45" y="204" text-anchor="end">0</text>
+            <text class="axis-text" x="45" y="144" text-anchor="end">5</text>
+            <text class="axis-text" x="45" y="104" text-anchor="end">10</text>
+            <text class="axis-text" x="45" y="64" text-anchor="end">15</text>
+            <text class="axis-text" x="45" y="24" text-anchor="end">20</text>
+            <rect class="bar-secondary" x="120" y="121" width="60" height="79"/>
+            <text class="label-data" x="150" y="113" text-anchor="middle">9.9</text>
+            <text class="axis-text" x="150" y="218" text-anchor="middle">2024</text>
+            <rect class="bar-primary" x="270" y="79" width="60" height="121"/>
+            <text class="label-data" x="300" y="71" text-anchor="middle">15.4</text>
+            <text class="axis-text" x="300" y="218" text-anchor="middle">2030F</text>
+            <path d="M 185 120 L 265 90" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arr2)"/>
+            <text class="label-small" x="225" y="100" text-anchor="middle" style="fill:var(--primary); font-weight:700">CAGR 7.7%</text>
+            <defs><marker id="arr2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--primary)"/></marker></defs>
+          </svg>
+        </div>
+        <div class="chart-source">Source: ResearchAndMarkets · KIRA analysis</div>
+      </div>
+    </div>
+
+    <div class="ai-callouts">
+      <div class="callout">
+        <div class="label">Indonesia AI/Construction 2024</div>
+        <div class="num">2.3<span class="unit">USD bn</span></div>
+        <div class="change">Anchor market size</div>
+        <div class="source-tag sec">Secondary</div>
+      </div>
+      <div class="callout">
+        <div class="label">PUPR BIM Roadmap</div>
+        <div class="num">2017–2024</div>
+        <div class="change">4 phases complete</div>
+        <div class="source-tag sec">Secondary</div>
+      </div>
+      <div class="callout">
+        <div class="label">Regional Benchmark</div>
+        <div class="num">BCA<span class="unit">SG</span></div>
+        <div class="change">Construction AI Mandate, 2023</div>
+        <div class="source-tag sec">Secondary</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 8: AI USE CASES — 6 CARDS ====== -->
+<div class="viewer-divider">
+  <span class="label">Page 8/8 — AI Use Cases [use_case_grid_6]</span>
+  <span class="meta">6 cards · body ≤280 chars each per schema</span>
+</div>
+
+<div class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-section-tag">Section 14.2 · AI Use Cases</div>
+      <div class="page-section-counter">079 / 125</div>
+    </div>
+
+    <h1 class="page-h1">Six AI applications reshaping roofing, exterior &amp; insulation operators</h1>
+    <p class="page-subhead">
+      AI translation into operating practice will distinguish 2026 winners from laggards. Use cases below span <strong>specification influence</strong> through <strong>channel execution</strong>, with deployment patterns observable in Indonesia or closest regional benchmarks today.
+    </p>
+
+    <div class="ai-usecase-grid">
+      <div class="ai-usecase">
+        <div class="uc-num">01 · DEMAND</div>
+        <div class="uc-title">Distributor demand forecasting</div>
+        <div class="uc-body">
+          ML models combining project pipeline (PUPR, IKN), weather seasonality, FX, and toko bangunan order velocity. Cuts stockouts and improves working capital. Highest adoption among modern-trade distributors with B2B SKU breadth.
+        </div>
+        <div class="uc-example">Observable: Mitra10, Adimas Isolasitama</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">02 · SPEC</div>
+        <div class="uc-title">BIM-integrated spec recommendations</div>
+        <div class="uc-body">
+          AI plug-ins for Revit and ArchiCAD surface relevant material specs at the architect's decision moment. Pushes branded fiber cement, insulation, façade systems into BIM model objects with traceable specs.
+        </div>
+        <div class="uc-example">Benchmark: Singapore BCA workflow</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">03 · PRICING</div>
+        <div class="uc-title">Channel pricing optimization</div>
+        <div class="uc-body">
+          Real-time engines arbitrate between modern trade (Mitra10, Ace), traditional <em>toko bangunan</em>, and B2B e-commerce (Ralali, Tokopedia). Captures 15.9% B2B e-commerce CAGR upside without channel cannibalization.
+        </div>
+        <div class="uc-example">Channel mix in flux through 2028</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">04 · QUALITY</div>
+        <div class="uc-title">Drone + AI installation QC</div>
+        <div class="uc-body">
+          Commercial and high-rise roofing benefits from drone visual inspection paired with computer-vision defect models. Reduces warranty claims and reinforces premium-brand positioning for asbestos-free formats.
+        </div>
+        <div class="uc-example">Pilot: IKN projects, Jakarta high-rise</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">05 · WASTE</div>
+        <div class="uc-title">Material waste optimization</div>
+        <div class="uc-body">
+          AI-driven cutting optimization on fiber cement and insulation rolls reduces wastage <strong>12–15% on documented deployments</strong>. Aligns with cement industry's 30% decarbonization mandate by 2030.
+        </div>
+        <div class="uc-example">Tie-in: GBCI material credits</div>
+      </div>
+
+      <div class="ai-usecase">
+        <div class="uc-num">06 · SEARCH</div>
+        <div class="uc-title">AEO &amp; conversational visibility</div>
+        <div class="uc-body">
+          As specifiers shift from Google to AI assistants (ChatGPT, Gemini, Perplexity), brand visibility in answer engines becomes table stakes. Structured content, FAQ-rich pages, and FAQPage schema gain disproportionate spec influence.
+        </div>
+        <div class="uc-example">Emerging table-stakes capability</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="logo-foot">KIRA<span class="accent">.</span> RESEARCH</div>
+      <div>Confidential · For licensed reader use only · © 2026 KIRA Research</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
